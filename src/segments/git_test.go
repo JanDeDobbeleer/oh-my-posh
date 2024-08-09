@@ -74,13 +74,13 @@ func TestResolveEmptyGitPath(t *testing.T) {
 func TestEnabledInWorktree(t *testing.T) {
 	cases := []struct {
 		Case                  string
-		ExpectedEnabled       bool
 		WorkingFolder         string
 		WorkingFolderAddon    string
 		WorkingFolderContent  string
 		ExpectedRealFolder    string
 		ExpectedWorkingFolder string
 		ExpectedRootFolder    string
+		ExpectedEnabled       bool
 	}{
 		{
 			Case:                  "worktree",
@@ -156,12 +156,12 @@ func TestEnabledInBareRepo(t *testing.T) {
 		Case            string
 		HEAD            string
 		IsBare          string
-		FetchRemote     bool
 		Remote          string
 		RemoteURL       string
-		ExpectedEnabled bool
 		ExpectedHEAD    string
 		ExpectedRemote  string
+		FetchRemote     bool
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Bare repo on main",
@@ -234,19 +234,19 @@ func TestGetGitOutputForCommand(t *testing.T) {
 
 func TestSetGitHEADContextClean(t *testing.T) {
 	cases := []struct {
-		Case        string
+		Ours        string
 		Expected    string
 		Ref         string
-		RebaseMerge bool
-		RebaseApply bool
-		Merge       bool
-		CherryPick  bool
-		Revert      bool
-		Sequencer   bool
-		Ours        string
-		Theirs      string
-		Step        string
+		Case        string
 		Total       string
+		Step        string
+		Theirs      string
+		RebaseMerge bool
+		Sequencer   bool
+		Revert      bool
+		CherryPick  bool
+		Merge       bool
+		RebaseApply bool
 	}{
 		{Case: "detached on commit", Ref: DETACHED, Expected: "branch detached at commit 1234567"},
 		{Case: "not detached, clean", Ref: "main", Expected: "branch main"},
@@ -428,16 +428,16 @@ func TestSetPrettyHEADName(t *testing.T) {
 
 func TestSetGitStatus(t *testing.T) {
 	cases := []struct {
-		Case                 string
-		Output               string
 		ExpectedWorking      *GitStatus
 		ExpectedStaging      *GitStatus
+		Case                 string
+		Output               string
 		ExpectedHash         string
 		ExpectedRef          string
 		ExpectedUpstream     string
-		ExpectedUpstreamGone bool
 		ExpectedAhead        int
 		ExpectedBehind       int
+		ExpectedUpstreamGone bool
 		Rebase               bool
 		Merge                bool
 	}{
@@ -610,8 +610,8 @@ func TestSetGitStatus(t *testing.T) {
 
 func TestGetStashContextZeroEntries(t *testing.T) {
 	cases := []struct {
-		Expected     int
 		StashContent string
+		Expected     int
 	}{
 		{Expected: 0, StashContent: ""},
 		{Expected: 2, StashContent: "1\n2\n"},
@@ -712,9 +712,9 @@ func TestGetBranchStatus(t *testing.T) {
 	cases := []struct {
 		Case         string
 		Expected     string
+		Upstream     string
 		Ahead        int
 		Behind       int
-		Upstream     string
 		UpstreamGone bool
 	}{
 		{Case: "Equal with remote", Expected: "equal", Upstream: branchName},
@@ -749,10 +749,10 @@ func TestGetBranchStatus(t *testing.T) {
 
 func TestGitTemplateString(t *testing.T) {
 	cases := []struct {
+		Git      *Git
 		Case     string
 		Expected string
 		Template string
-		Git      *Git
 	}{
 		{
 			Case:     "Only HEAD name",
@@ -884,9 +884,9 @@ func TestGitTemplateString(t *testing.T) {
 
 func TestGitUntrackedMode(t *testing.T) {
 	cases := []struct {
+		UntrackedModes map[string]string
 		Case           string
 		Expected       string
-		UntrackedModes map[string]string
 	}{
 		{
 			Case:     "Default mode - no map",
@@ -932,9 +932,9 @@ func TestGitUntrackedMode(t *testing.T) {
 
 func TestGitIgnoreSubmodules(t *testing.T) {
 	cases := []struct {
+		IgnoreSubmodules map[string]string
 		Case             string
 		Expected         string
-		IgnoreSubmodules map[string]string
 	}{
 		{
 			Case:     "Overide",
@@ -1059,8 +1059,8 @@ func TestGitCommit(t *testing.T) {
 func TestGitRemotes(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected int
 		Config   string
+		Expected int
 	}{
 		{
 			Case:     "Empty config file",

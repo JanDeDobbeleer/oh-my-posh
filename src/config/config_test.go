@@ -5,8 +5,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -18,10 +18,10 @@ func TestGetPalette(t *testing.T) {
 		"blue": "#0000ff",
 	}
 	cases := []struct {
-		Case            string
 		Palettes        *color.Palettes
 		Palette         color.Palette
 		ExpectedPalette color.Palette
+		Case            string
 	}{
 		{
 			Case: "match",
@@ -73,11 +73,12 @@ func TestGetPalette(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("TemplateCache").Return(&cache.Template{
-			Env:   map[string]string{},
 			Shell: "bash",
 		})
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
+		env.On("Shell").Return("bash")
+
+		template.Init(env)
 
 		cfg := &Config{
 			env:      env,

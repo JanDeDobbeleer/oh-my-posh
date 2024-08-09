@@ -1,111 +1,77 @@
 package template
 
 import (
-	"bytes"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
-	"text/template"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
-const (
-	// Errors to show when the template handling fails
-	InvalidTemplate   = "invalid template text"
-	IncorrectTemplate = "unable to create text based on template"
-
-	globalRef = ".$"
-
-	elvish = "elvish"
-	xonsh  = "xonsh"
-)
-
-var (
-	knownVariables = []string{
-		"Root",
-		"PWD",
-		"AbsolutePWD",
-		"PSWD",
-		"Folder",
-		"Shell",
-		"ShellVersion",
-		"UserName",
-		"HostName",
-		"Code",
-		"Env",
-		"OS",
-		"WSL",
-		"PromptCount",
-		"Segments",
-		"SHLVL",
-		"Templates",
-		"Var",
-		"Data",
-		"Jobs",
-	}
-
-	shell string
 )
 
 type Text struct {
-	Template        string
-	Context         any
-	Env             runtime.Environment
-	TemplatesResult string
+	Context  any
+	Template string
 }
 
 type Data any
 
-type Context struct {
-	*cache.Template
-
-	// Simple container to hold ANY object
+type context struct {
 	Data
-	Templates string
+	Getenv func(string) string
+	cache.Template
+	initialized bool
 }
 
-func (c *Context) init(t *Text) {
+func (c *context) init(t *Text) {
 	c.Data = t.Context
-	c.Templates = t.TemplatesResult
-	if tmplCache := t.Env.TemplateCache(); tmplCache != nil {
-		c.Template = tmplCache
+
+	if c.initialized {
 		return
 	}
+
+	c.Getenv = env.Getenv
+	c.Template = *env.TemplateCache()
+
+	c.initialized = true
+}
+
+func (c *context) release() {
+	c.Data = nil
+	contextPool.Put(c)
 }
 
 func (t *Text) Render() (string, error) {
-	t.Env.DebugF("rendering template: %s", t.Template)
-
-	shell = t.Env.Flags().Shell
+	env.DebugF("rendering template: %s", t.Template)
 
 	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
 		return t.Template, nil
 	}
 
-	t.cleanTemplate()
+	t.patchTemplate()
 
-	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
+	tmpl, err := tmplFunc.Parse(t.Template)
 	if err != nil {
-		t.Env.Error(err)
+		env.Error(err)
 		return "", errors.New(InvalidTemplate)
 	}
 
-	context := &Context{}
+	context := contextPool.Get().(*context)
 	context.init(t)
+	defer context.release()
 
-	buffer := new(bytes.Buffer)
-	defer buffer.Reset()
+	buffer := buffPool.Get().(*buff)
+	defer buffer.release()
 
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
-		t.Env.Error(err)
+		env.Error(err)
 		msg := regex.FindNamedRegexMatch(`at (?P<MSG><.*)$`, err.Error())
 		if len(msg) == 0 {
 			return "", errors.New(IncorrectTemplate)
 		}
+
 		return "", errors.New(msg["MSG"])
 	}
 
@@ -117,7 +83,7 @@ func (t *Text) Render() (string, error) {
 	return text, nil
 }
 
-func (t *Text) cleanTemplate() {
+func (t *Text) patchTemplate() {
 	isKnownVariable := func(variable string) bool {
 		variable = strings.TrimPrefix(variable, ".")
 		splitted := strings.Split(variable, ".")
@@ -181,26 +147,35 @@ func (t *Text) cleanTemplate() {
 				result += string(char)
 				continue
 			}
-			// end of a variable, needs to be appended
-			if !isKnownVariable(property) { //nolint: gocritic
+
+			switch {
+			case !isKnownVariable(property):
+				// end of a variable, needs to be appended
 				result += ".Data" + property
-			} else if strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains") {
+			case strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains"):
 				// as we can't provide a clean way to access the list
 				// of segments, we need to replace the property with
 				// the list of segments so they can be accessed directly
 				property = strings.Replace(property, ".Segments", ".Segments.ToSimple", 1)
 				result += property
-			} else {
+			case strings.HasPrefix(property, ".Env."):
+				// we need to replace the property with the getEnv function
+				// so we can access the environment variables directly
+				property = strings.TrimPrefix(property, ".Env.")
+				result += fmt.Sprintf(`(call .Getenv "%s")`, property)
+			default:
 				// check if we have the same property in Data
 				// and replace it with the Data property so it
 				// can take precedence
 				if fields.hasField(property) {
 					property = ".Data" + property
 				}
+
 				// remove the global reference so we can use it directly
 				property = strings.TrimPrefix(property, globalRef)
 				result += property
 			}
+
 			property = ""
 			result += string(char)
 			inProperty = false

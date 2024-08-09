@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	testify_ "github.com/stretchr/testify/mock"
 )
@@ -74,15 +75,14 @@ func TestAnsiRender(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"TERM_PROGRAM": tc.Term,
-			},
-		})
-		env.On("Flags").Return(&runtime.Flags{})
+		env.On("TemplateCache").Return(&cache.Template{})
+		env.On("Getenv", "TERM_PROGRAM").Return(tc.Term)
+		env.On("Shell").Return("foo")
+
+		template.Init(env)
 
 		ansi := Ansi("{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
-		got := ansi.ResolveTemplate(env)
+		got := ansi.ResolveTemplate()
 
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}

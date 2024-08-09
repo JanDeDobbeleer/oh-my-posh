@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/shirou/gopsutil/v3/host"
 	mem "github.com/shirou/gopsutil/v3/mem"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
@@ -35,12 +36,15 @@ func (term *Terminal) IsWsl() bool {
 		term.Debug(val)
 		return val == "true"
 	}
+
 	var val bool
 	defer func() {
-		term.Cache().Set(key, strconv.FormatBool(val), -1)
+		term.Cache().Set(key, strconv.FormatBool(val), cache.INFINITE)
 	}()
+
 	val = term.HasCommand("wslpath")
 	term.Debug(strconv.FormatBool(val))
+
 	return val
 }
 
@@ -92,15 +96,18 @@ func (term *Terminal) Platform() string {
 		term.Debug(val)
 		return val
 	}
+
 	var platform string
 	defer func() {
-		term.Cache().Set(key, platform, -1)
+		term.Cache().Set(key, platform, cache.INFINITE)
 	}()
+
 	if wsl := term.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
 		platform = strings.Split(strings.ToLower(wsl), "-")[0]
 		term.Debug(platform)
 		return platform
 	}
+
 	platform, _, _, _ = host.PlatformInformation()
 	if platform == "arch" {
 		// validate for Manjaro
@@ -109,6 +116,7 @@ func (term *Terminal) Platform() string {
 			platform = "manjaro"
 		}
 	}
+
 	term.Debug(platform)
 	return platform
 }

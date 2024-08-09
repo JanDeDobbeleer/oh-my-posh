@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/spf13/cobra"
@@ -42,13 +43,15 @@ var debugCmd = &cobra.Command{
 		env.Init()
 		defer env.Close()
 
+		template.Init(env)
+
 		cfg := config.Load(env)
 
 		// add variables to the environment
 		env.Var = cfg.Var
 
 		terminal.Init(shell.GENERIC)
-		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 		terminal.Colors = cfg.MakeColors()
 		terminal.Plain = plain
 

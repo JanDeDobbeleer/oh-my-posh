@@ -33,25 +33,28 @@ func renderTemplateNoTrimSpace(env *mock.Environment, segmentTemplate string, co
 			break
 		}
 	}
+
 	if !found {
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: make(map[string]string),
-		})
+		env.On("TemplateCache").Return(&cache.Template{})
 	}
+
 	env.On("Error", testify_.Anything)
 	env.On("Debug", testify_.Anything)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-	env.On("Flags").Return(&runtime.Flags{})
+	env.On("Shell").Return("foo")
+
+	template.Init(env)
 
 	tmpl := &template.Text{
 		Template: segmentTemplate,
 		Context:  context,
-		Env:      env,
 	}
+
 	text, err := tmpl.Render()
 	if err != nil {
 		return err.Error()
 	}
+
 	return text
 }
 
@@ -157,7 +160,9 @@ func TestParent(t *testing.T) {
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
 			},
 		}
+
 		path.setPaths()
+
 		got := path.Parent()
 		assert.EqualValues(t, tc.Expected, got, tc.Case)
 	}
@@ -165,18 +170,18 @@ func TestParent(t *testing.T) {
 
 func TestAgnosterPathStyles(t *testing.T) {
 	cases := []struct {
-		Style               string
-		Expected            string
-		HomePath            string
+		CygpathError        error
+		GOOS                string
+		Shell               string
 		Pswd                string
 		Pwd                 string
 		PathSeparator       string
 		HomeIcon            string
+		HomePath            string
+		Style               string
 		FolderSeparatorIcon string
-		GOOS                string
-		Shell               string
 		Cygpath             string
-		CygpathError        error
+		Expected            string
 		MaxDepth            int
 		MaxWidth            int
 		HideRootLocation    bool
@@ -816,11 +821,11 @@ func TestFullAndFolderPath(t *testing.T) {
 		Pwd                    string
 		Pswd                   string
 		Expected               string
-		DisableMappedLocations bool
 		GOOS                   string
 		PathSeparator          string
-		StackCount             int
 		Template               string
+		StackCount             int
+		DisableMappedLocations bool
 	}{
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "/", Expected: "/"},
@@ -946,7 +951,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		PathSeparator   string
 		Expected        string
 	}{
-		{Pwd: abcd, MappedLocations: map[string]string{"{{ .Env.HOME }}/d": "#"}, Expected: "#"},
+		{Pwd: homeDir + "/d", MappedLocations: map[string]string{"{{ .Env.HOME }}/d": "#"}, Expected: "#"},
 		{Pwd: abcd, MappedLocations: map[string]string{abcd: "#"}, Expected: "#"},
 		{Pwd: "\\a\\b\\c\\d", MappedLocations: map[string]string{"\\a\\b": "#"}, GOOS: runtime.WINDOWS, PathSeparator: "\\", Expected: "#\\c\\d"},
 		{Pwd: abcd, MappedLocations: map[string]string{"/a/b": "#"}, Expected: "#/c/d"},
@@ -979,11 +984,10 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.GENERIC)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"HOME": "/a/b/c",
-			},
-		})
+		env.On("TemplateCache").Return(&cache.Template{})
+		env.On("Getenv", "HOME").Return(homeDir)
+
+		template.Init(env)
 
 		path := &Path{
 			env: env,
@@ -996,6 +1000,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 
 		path.setPaths()
 		path.setStyle()
+
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -1018,7 +1023,8 @@ func TestPowerlevelMappedLocations(t *testing.T) {
 		env.On("PathSeparator").Return("/")
 		env.On("Shell").Return(shell.GENERIC)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
+
+		template.Init(env)
 
 		path := &Path{
 			env: env,
@@ -1049,6 +1055,9 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 	env.On("Flags").Return(args)
 	env.On("Shell").Return(shell.GENERIC)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+
+	template.Init(env)
+
 	path := &Path{
 		env: env,
 		props: properties.Map{
@@ -1058,8 +1067,10 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 			},
 		},
 	}
+
 	path.setPaths()
 	path.setStyle()
+
 	got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
 	assert.Equal(t, "#", got)
 }
@@ -1402,10 +1413,10 @@ func TestAgnosterLeftPath(t *testing.T) {
 
 func TestGetPwd(t *testing.T) {
 	cases := []struct {
-		MappedLocationsEnabled bool
 		Pwd                    string
 		Pswd                   string
 		Expected               string
+		MappedLocationsEnabled bool
 	}{
 		{MappedLocationsEnabled: true, Pwd: homeDir, Expected: "~"},
 		{MappedLocationsEnabled: true, Pwd: homeDir + "-test", Expected: homeDir + "-test"},
@@ -1438,6 +1449,9 @@ func TestGetPwd(t *testing.T) {
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PWSH)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+
+		template.Init(env)
+
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -1447,6 +1461,7 @@ func TestGetPwd(t *testing.T) {
 				},
 			},
 		}
+
 		path.setPaths()
 		assert.Equal(t, tc.Expected, path.pwd)
 	}
@@ -1471,7 +1486,9 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("Error", testify_.Anything)
 		env.On("Debug", testify_.Anything)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
+		env.On("Shell").Return(shell.GENERIC)
+
+		template.Init(env)
 
 		path := &Path{
 			env:           env,
@@ -1489,7 +1506,6 @@ func TestGetFolderSeparator(t *testing.T) {
 		}
 
 		env.On("TemplateCache").Return(&cache.Template{
-			Env:   make(map[string]string),
 			Shell: "bash",
 		})
 
@@ -1551,7 +1567,8 @@ func TestReplaceMappedLocations(t *testing.T) {
 		env.On("GOOS").Return(runtime.DARWIN)
 		env.On("Home").Return("/a/b/k")
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
+
+		template.Init(env)
 
 		path := &Path{
 			env: env,
@@ -1644,8 +1661,8 @@ func TestSplitPath(t *testing.T) {
 
 func TestGetMaxWidth(t *testing.T) {
 	cases := []struct {
-		Case     string
 		MaxWidth any
+		Case     string
 		Expected int
 	}{
 		{
@@ -1673,13 +1690,11 @@ func TestGetMaxWidth(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Error", testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"MAX_WIDTH": "120",
-			},
-			Shell: "bash",
-		})
+		env.On("TemplateCache").Return(&cache.Template{})
+		env.On("Getenv", "MAX_WIDTH").Return("120")
+		env.On("Shell").Return(shell.BASH)
+
+		template.Init(env)
 
 		path := &Path{
 			env: env,

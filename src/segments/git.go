@@ -122,37 +122,33 @@ const (
 )
 
 type Git struct {
-	scm
-
+	User           *User
 	Working        *GitStatus
 	Staging        *GitStatus
-	Ahead          int
-	Behind         int
-	HEAD           string
+	commit         *Commit
+	UpstreamURL    string
+	UpstreamIcon   string
 	Ref            string
 	Hash           string
 	ShortHash      string
 	BranchStatus   string
 	Upstream       string
-	UpstreamIcon   string
-	UpstreamURL    string
+	HEAD           string
 	RawUpstreamURL string
-	UpstreamGone   bool
-	IsWorkTree     bool
-	IsBare         bool
-	User           *User
-	Detached       bool
-	Merge          bool
-	Rebase         bool
-	CherryPick     bool
-	Revert         bool
-
-	// needed for posh-git support
-	poshgit       bool
+	scm
+	Ahead         int
 	stashCount    int
 	worktreeCount int
-
-	commit *Commit
+	Behind        int
+	IsWorkTree    bool
+	Merge         bool
+	Rebase        bool
+	CherryPick    bool
+	Revert        bool
+	poshgit       bool
+	Detached      bool
+	IsBare        bool
+	UpstreamGone  bool
 }
 
 func (g *Git) Template() string {

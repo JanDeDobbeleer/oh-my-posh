@@ -75,26 +75,34 @@ var printCmd = &cobra.Command{
 		eng := prompt.New(flags)
 		defer eng.Env.Close()
 
+		var output string
+
 		switch args[0] {
 		case "debug":
-			fmt.Print(eng.ExtraPrompt(prompt.Debug))
+			output = eng.ExtraPrompt(prompt.Debug)
 		case "primary":
-			fmt.Print(eng.Primary())
+			output = eng.Primary()
 		case "secondary":
-			fmt.Print(eng.ExtraPrompt(prompt.Secondary))
+			output = eng.ExtraPrompt(prompt.Secondary)
 		case "transient":
-			fmt.Print(eng.ExtraPrompt(prompt.Transient))
+			output = eng.ExtraPrompt(prompt.Transient)
 		case "right":
-			fmt.Print(eng.RPrompt())
+			output = eng.RPrompt()
 		case "tooltip":
-			fmt.Print(eng.Tooltip(command))
+			output = eng.Tooltip(command)
 		case "valid":
-			fmt.Print(eng.ExtraPrompt(prompt.Valid))
+			output = eng.ExtraPrompt(prompt.Valid)
 		case "error":
-			fmt.Print(eng.ExtraPrompt(prompt.Error))
+			output = eng.ExtraPrompt(prompt.Error)
 		default:
 			_ = cmd.Help()
 		}
+
+		if silent {
+			return
+		}
+
+		fmt.Print(output)
 	},
 }
 

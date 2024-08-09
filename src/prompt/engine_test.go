@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
@@ -17,12 +18,12 @@ import (
 
 func TestCanWriteRPrompt(t *testing.T) {
 	cases := []struct {
-		Case               string
-		Expected           bool
-		TerminalWidth      int
 		TerminalWidthError error
+		Case               string
+		TerminalWidth      int
 		PromptLength       int
 		RPromptLength      int
+		Expected           bool
 	}{
 		{Case: "Width Error", Expected: false, TerminalWidthError: errors.New("burp")},
 		{Case: "Terminal > Prompt enabled", Expected: true, TerminalWidth: 200, PromptLength: 100, RPromptLength: 10},
@@ -56,14 +57,12 @@ func TestPrintPWD(t *testing.T) {
 		Pwd      string
 		Shell    string
 		Cygwin   bool
-		OSC99    bool
 	}{
 		{Case: "Empty PWD"},
 		{Case: "OSC99", Config: terminal.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
 		{Case: "OSC99 - Elvish", Config: terminal.OSC99, Shell: shell.ELVISH},
 		{Case: "OSC7", Config: terminal.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{Case: "OSC51", Config: terminal.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
-		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;pwd\x1b\\"},
 		{Case: "Template (empty)", Config: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
 		{Case: "Template (non empty)", Config: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{
@@ -94,18 +93,16 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Host").Return("host", nil)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("TemplateCache").Return(&cache.Template{
-			Env:   make(map[string]string),
 			Shell: "shell",
 		})
-		env.On("Flags").Return(&runtime.Flags{})
 
 		terminal.Init(shell.GENERIC)
+		template.Init(env)
 
 		engine := &Engine{
 			Env: env,
 			Config: &config.Config{
-				PWD:   tc.Config,
-				OSC99: tc.OSC99,
+				PWD: tc.Config,
 			},
 		}
 
@@ -130,7 +127,7 @@ func engineRender() {
 	cfg := config.Load(env)
 
 	terminal.Init(shell.GENERIC)
-	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors()
 
 	engine := &Engine{
@@ -150,12 +147,12 @@ func BenchmarkEngineRenderPalette(b *testing.B) {
 func TestGetTitle(t *testing.T) {
 	cases := []struct {
 		Template      string
-		Root          bool
 		User          string
 		Cwd           string
 		PathSeparator string
 		ShellName     string
 		Expected      string
+		Root          bool
 	}{
 		{
 			Template:      "{{.Env.USERDOMAIN}} :: {{.PWD}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
@@ -188,11 +185,7 @@ func TestGetTitle(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"USERDOMAIN": "MyCompany",
-			},
 			Shell:    tc.ShellName,
 			UserName: "MyUser",
 			Root:     tc.Root,
@@ -200,8 +193,11 @@ func TestGetTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
 		})
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("Shell").Return(tc.ShellName)
 
 		terminal.Init(shell.GENERIC)
+		template.Init(env)
 
 		engine := &Engine{
 			Config: &config.Config{
@@ -220,12 +216,12 @@ func TestGetTitle(t *testing.T) {
 func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	cases := []struct {
 		Template      string
-		Root          bool
 		User          string
 		Cwd           string
 		PathSeparator string
 		ShellName     string
 		Expected      string
+		Root          bool
 	}{
 		{
 			Template:      "Not using Host only {{.UserName}} and {{.Shell}}",
@@ -252,18 +248,17 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"USERDOMAIN": "MyCompany",
-			},
 			Shell:    tc.ShellName,
 			UserName: "MyUser",
 			Root:     tc.Root,
 			HostName: "",
 		})
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("Shell").Return(tc.ShellName)
 
 		terminal.Init(shell.GENERIC)
+		template.Init(env)
 
 		engine := &Engine{
 			Config: &config.Config{

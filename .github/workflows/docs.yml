@@ -22,11 +22,8 @@ jobs:
         with:
           submodules: true
           persist-credentials: false
-      - name: Install Go
-        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
-        with:
-          go-version: 1.21
-          cache-dependency-path: src/go.sum
+      - name: Install Go 🗳
+        uses: ./.github/workflows/composite/bootstrap-go
       - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b
         with:
           node-version: 20.9.0

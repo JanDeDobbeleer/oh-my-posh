@@ -400,7 +400,6 @@ func write(s rune) {
 		}
 	}
 
-	// length += utf8.RuneCountInString(string(s))
 	length += runewidth.RuneWidth(s)
 	lastRune = s
 	builder.WriteRune(s)
@@ -423,17 +422,19 @@ func writeSegmentColors() {
 		return
 	}
 
-	if fg.IsTransparent() && len(BackgroundColor) != 0 { //nolint: gocritic
+	switch {
+	case fg.IsTransparent() && len(BackgroundColor) != 0:
 		background := getAnsiFromColorString(BackgroundColor, false)
 		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
-	} else if fg.IsTransparent() && !bg.IsEmpty() {
+	case fg.IsTransparent() && !bg.IsEmpty():
 		isTransparent = true
 		writeEscapedAnsiString(fmt.Sprintf(transparentStart, bg))
-	} else {
+	default:
 		if !bg.IsEmpty() && !bg.IsTransparent() {
 			writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
 		}
+
 		if !fg.IsEmpty() {
 			writeEscapedAnsiString(fmt.Sprintf(colorise, fg))
 		}

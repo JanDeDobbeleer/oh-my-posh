@@ -17,9 +17,9 @@ import (
 func TestUmbracoSegment(t *testing.T) {
 	cases := []struct {
 		Case                    string
-		ExpectedEnabled         bool
 		ExpectedString          string
 		Template                string
+		ExpectedEnabled         bool
 		HasUmbracoFolder        bool
 		HasCsproj               bool
 		HasWebConfig            bool

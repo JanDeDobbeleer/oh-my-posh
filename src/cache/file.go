@@ -59,7 +59,7 @@ func (fc *File) Close() {
 }
 
 // returns the value for the given key as long as
-// the TTL (minutes) is not expired
+// the duration is not expired
 func (fc *File) Get(key string) (string, bool) {
 	val, found := fc.cache.Get(key)
 	if !found {
@@ -71,12 +71,12 @@ func (fc *File) Get(key string) (string, bool) {
 	return "", false
 }
 
-// sets the value for the given key with a TTL (minutes)
-func (fc *File) Set(key, value string, ttl int) {
+// sets the value for the given key with a duration
+func (fc *File) Set(key, value string, duration Duration) {
 	fc.cache.Set(key, &Entry{
 		Value:     value,
 		Timestamp: time.Now().Unix(),
-		TTL:       ttl,
+		TTL:       duration.Seconds(),
 	})
 	fc.dirty = true
 }

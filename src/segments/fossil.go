@@ -27,10 +27,9 @@ const (
 )
 
 type Fossil struct {
-	scm
-
 	Status *FossilStatus
 	Branch string
+	scm
 }
 
 func (f *Fossil) Template() string {

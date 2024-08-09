@@ -1,17 +1,15 @@
 package cli
 
 import (
-	"fmt"
 	"os"
-	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/spf13/cobra"
 )
 
 var (
-	configFlag     string
-	displayVersion bool
+	configFlag string
+	shellName  string
+	silent     bool
 )
 
 var RootCmd = &cobra.Command{
@@ -22,14 +20,6 @@ It can use the same configuration everywhere to offer a consistent
 experience, regardless of where you are. For a detailed guide
 on getting started, have a look at the docs at https://ohmyposh.dev`,
 	Run: func(cmd *cobra.Command, _ []string) {
-		if initialize {
-			runInit(strings.ToLower(shellName))
-			return
-		}
-		if displayVersion {
-			fmt.Println(build.Version)
-			return
-		}
 		_ = cmd.Help()
 	},
 }
@@ -41,15 +31,7 @@ func Execute() {
 	}
 }
 
-// Backwards compatibility
-var (
-	shellName  string
-	initialize bool
-)
-
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "config file path")
-	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
-	RootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
-	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")
+	RootCmd.PersistentFlags().BoolVar(&silent, "silent", false, "do not print anything")
 }

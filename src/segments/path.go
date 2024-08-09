@@ -14,22 +14,20 @@ import (
 )
 
 type Path struct {
-	props properties.Properties
-	env   runtime.Environment
-
+	props         properties.Properties
+	env           runtime.Environment
 	root          string
 	relative      string
 	pwd           string
-	cygPath       bool
-	windowsPath   bool
+	Location      string
 	pathSeparator string
-
-	Path       string
-	StackCount int
-	Location   string
-	Writable   bool
-	RootDir    bool
-	Folders    Folders
+	Path          string
+	Folders       Folders
+	StackCount    int
+	windowsPath   bool
+	Writable      bool
+	RootDir       bool
+	cygPath       bool
 }
 
 const (
@@ -228,7 +226,6 @@ func (pt *Path) getMaxWidth() int {
 	tmpl := &template.Text{
 		Template: width,
 		Context:  pt,
-		Env:      pt.env,
 	}
 
 	text, err := tmpl.Render()
@@ -260,7 +257,6 @@ func (pt *Path) getFolderSeparator() string {
 	tmpl := &template.Text{
 		Template: separatorTemplate,
 		Context:  pt,
-		Env:      pt.env,
 	}
 
 	text, err := tmpl.Render()
@@ -528,7 +524,6 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 		tmpl := &template.Text{
 			Template: key,
 			Context:  pt,
-			Env:      pt.env,
 		}
 
 		path, err := tmpl.Render()
@@ -772,8 +767,8 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 
 type Folder struct {
 	Name    string
-	Display bool
 	Path    string
+	Display bool
 }
 
 type Folders []*Folder

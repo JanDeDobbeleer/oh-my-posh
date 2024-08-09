@@ -30,15 +30,14 @@ func TestTextSegment(t *testing.T) {
 		env.On("PathSeparator").Return("/")
 		env.On("TemplateCache").Return(&cache.Template{
 			UserName: "Posh",
-			Env: map[string]string{
-				"HELLO": "hello",
-				"WORLD": "",
-			},
 			HostName: "MyHost",
 			Shell:    "terminal",
 			Root:     true,
 			Folder:   "posh",
 		})
+		env.On("Getenv", "HELLO").Return("hello")
+		env.On("Getenv", "WORLD").Return("")
+
 		txt := &Text{
 			env: env,
 		}

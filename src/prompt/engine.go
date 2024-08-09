@@ -15,17 +15,15 @@ import (
 var cycle *color.Cycle = &color.Cycle{}
 
 type Engine struct {
-	Config *config.Config
-	Env    runtime.Environment
-	Plain  bool
-
-	prompt            strings.Builder
-	currentLineLength int
-	rprompt           string
-	rpromptLength     int
-
+	Env                   runtime.Environment
+	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
+	rprompt               string
+	prompt                strings.Builder
+	currentLineLength     int
+	rpromptLength         int
+	Plain                 bool
 }
 
 func (e *Engine) write(text string) {
@@ -70,7 +68,7 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 
 func (e *Engine) pwd() {
 	// only print when relevant
-	if len(e.Config.PWD) == 0 && !e.Config.OSC99 {
+	if len(e.Config.PWD) == 0 {
 		return
 	}
 
@@ -85,16 +83,9 @@ func (e *Engine) pwd() {
 		pwd = strings.ReplaceAll(pwd, `\`, `/`)
 	}
 
-	// Backwards compatibility for deprecated OSC99
-	if e.Config.OSC99 {
-		e.write(terminal.Pwd(terminal.OSC99, "", "", pwd))
-		return
-	}
-
 	// Allow template logic to define when to enable the PWD (when supported)
 	tmpl := &template.Text{
 		Template: e.Config.PWD,
-		Env:      e.Env,
 	}
 
 	pwdType, err := tmpl.Render()
@@ -162,7 +153,6 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 func (e *Engine) getTitleTemplateText() string {
 	tmpl := &template.Text{
 		Template: e.Config.ConsoleTitleTemplate,
-		Env:      e.Env,
 	}
 	if text, err := tmpl.Render(); err == nil {
 		return text
@@ -208,10 +198,6 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 
 	switch block.Type { //nolint:exhaustive
 	case config.Prompt:
-		if block.VerticalOffset != 0 {
-			e.write(terminal.ChangeLine(block.VerticalOffset))
-		}
-
 		if block.Alignment == config.Left {
 			e.currentLineLength += length
 			e.write(text)
@@ -318,6 +304,8 @@ func (e *Engine) filterSegments(block *config.Block) {
 	segments := make([]*config.Segment, 0)
 
 	for _, segment := range block.Segments {
+		segment.SetText()
+
 		if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 			continue
 		}
@@ -514,6 +502,8 @@ func New(flags *runtime.Flags) *Engine {
 	env.Init()
 	cfg := config.Load(env)
 
+	template.Init(env)
+
 	if cfg.PatchPwshBleed {
 		patchPowerShellBleed(env.Shell(), flags)
 	}
@@ -522,7 +512,7 @@ func New(flags *runtime.Flags) *Engine {
 	flags.HasTransient = cfg.TransientPrompt != nil
 
 	terminal.Init(env.Shell())
-	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors()
 	terminal.Plain = flags.Plain
 

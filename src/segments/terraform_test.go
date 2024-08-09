@@ -14,14 +14,14 @@ func TestTerraform(t *testing.T) {
 	cases := []struct {
 		Case              string
 		Template          string
+		WorkspaceName     string
+		ExpectedString    string
 		HasTfCommand      bool
 		HasTfFolder       bool
 		HasTfFiles        bool
 		HasTfVersionFiles bool
 		HasTfStateFile    bool
 		FetchVersion      bool
-		WorkspaceName     string
-		ExpectedString    string
 		ExpectedEnabled   bool
 	}{
 		{

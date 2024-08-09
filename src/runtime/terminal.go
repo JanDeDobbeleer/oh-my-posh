@@ -31,22 +31,17 @@ import (
 )
 
 type Terminal struct {
-	CmdFlags *Flags
-	Var      maps.Simple
-
-	cwd      string
-	host     string
-	cmdCache *cache.Command
-
+	CmdFlags     *Flags
+	Var          maps.Simple
+	cmdCache     *cache.Command
 	deviceCache  *cache.File
 	sessionCache *cache.File
-
-	tmplCache *cache.Template
-	networks  []*Connection
-
+	tmplCache    *cache.Template
+	lsDirMap     maps.Concurrent
+	cwd          string
+	host         string
+	networks     []*Connection
 	sync.RWMutex
-
-	lsDirMap maps.Concurrent
 }
 
 func (term *Terminal) Init() {
@@ -580,6 +575,13 @@ func (term *Terminal) Session() cache.Cache {
 	return term.sessionCache
 }
 
+func (term *Terminal) Close() {
+	defer term.Trace(time.Now())
+	term.saveTemplateCache()
+	term.deviceCache.Close()
+	term.sessionCache.Close()
+}
+
 func (term *Terminal) saveTemplateCache() {
 	// only store this when in a primary prompt
 	// and when we have a transient prompt in the config
@@ -593,15 +595,8 @@ func (term *Terminal) saveTemplateCache() {
 
 	templateCache, err := json.Marshal(tmplCache)
 	if err == nil {
-		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), 1440)
+		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), "1day")
 	}
-}
-
-func (term *Terminal) Close() {
-	defer term.Trace(time.Now())
-	term.saveTemplateCache()
-	term.deviceCache.Close()
-	term.sessionCache.Close()
 }
 
 func (term *Terminal) LoadTemplateCache() {
@@ -633,8 +628,6 @@ func (term *Terminal) Logs() string {
 func (term *Terminal) TemplateCache() *cache.Template {
 	defer term.Trace(time.Now())
 	tmplCache := term.tmplCache
-	tmplCache.Lock()
-	defer tmplCache.Unlock()
 
 	if tmplCache.Initialized {
 		return tmplCache
@@ -647,23 +640,11 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	tmplCache.WSL = term.IsWsl()
 	tmplCache.Segments = maps.NewConcurrent()
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
-	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
 	tmplCache.Jobs = term.CmdFlags.JobCount
 
 	if term.Var != nil {
 		tmplCache.Var = term.Var
-	}
-
-	const separator = "="
-	values := os.Environ()
-	term.DebugF("environment: %v", values)
-	for value := range values {
-		key, val, valid := strings.Cut(values[value], separator)
-		if !valid {
-			continue
-		}
-		tmplCache.Env[key] = val
 	}
 
 	pwd := term.Pwd()
@@ -754,15 +735,18 @@ func (term *Terminal) SetPromptCount() {
 			return
 		}
 	}
+
 	var count int
 	if val, found := term.Session().Get(cache.PROMPTCOUNTCACHE); found {
 		count, _ = strconv.Atoi(val)
 	}
+
 	// only write to cache if we're the primary prompt
 	if term.CmdFlags.Primary {
 		count++
-		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
+		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), "1day")
 	}
+
 	term.CmdFlags.PromptCount = count
 }
 

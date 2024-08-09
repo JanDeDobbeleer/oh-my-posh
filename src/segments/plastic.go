@@ -28,14 +28,12 @@ func (s *PlasticStatus) add(code string) {
 }
 
 type Plastic struct {
+	Status                 *PlasticStatus
+	Selector               string
+	plasticWorkspaceFolder string
 	scm
-
-	Status       *PlasticStatus
 	Behind       bool
-	Selector     string
 	MergePending bool
-
-	plasticWorkspaceFolder string // root folder of workspace
 }
 
 func (p *Plastic) Init(props properties.Properties, env runtime.Environment) {

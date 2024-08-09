@@ -78,30 +78,30 @@ type Environment interface {
 }
 
 type Flags struct {
-	ErrorCode     int
+	PSWD          string
 	PipeStatus    string
 	Config        string
 	Shell         string
 	ShellVersion  string
 	PWD           string
-	PSWD          string
+	PromptCount   int
 	ExecutionTime float64
-	Eval          bool
+	JobCount      int
 	StackCount    int
-	Migrate       bool
+	Column        int
 	TerminalWidth int
-	Strict        bool
-	Debug         bool
-	Manual        bool
+	ErrorCode     int
 	Plain         bool
+	Manual        bool
+	Debug         bool
 	Primary       bool
 	HasTransient  bool
-	PromptCount   int
+	Strict        bool
 	Cleared       bool
 	Cached        bool
 	NoExitCode    bool
-	Column        int
-	JobCount      int
+	Migrate       bool
+	Eval          bool
 }
 
 type CommandError struct {
@@ -130,9 +130,9 @@ const (
 
 type WindowsRegistryValue struct {
 	ValueType WindowsRegistryValueType
+	String    string
 	DWord     uint64
 	QWord     uint64
-	String    string
 }
 
 type NotImplemented struct{}
@@ -153,9 +153,9 @@ const (
 type Connection struct {
 	Name         string
 	Type         ConnectionType
+	SSID         string
 	TransmitRate uint64
 	ReceiveRate  uint64
-	SSID         string // Wi-Fi only
 }
 
 type Memory struct {
@@ -169,12 +169,9 @@ type Memory struct {
 }
 
 type SystemInfo struct {
-	// mem
+	Disks map[string]disk.IOCountersStat
 	Memory
-	// load
 	Load1  float64
 	Load5  float64
 	Load15 float64
-	// disk
-	Disks map[string]disk.IOCountersStat
 }

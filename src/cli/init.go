@@ -7,7 +7,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +43,45 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 				_ = cmd.Help()
 				return
 			}
-			runInit(args[0])
+
+			var startTime time.Time
+			if debug {
+				startTime = time.Now()
+			}
+
+			env := &runtime.Terminal{
+				CmdFlags: &runtime.Flags{
+					Shell:  shellName,
+					Config: configFlag,
+					Strict: strict,
+					Manual: manual,
+					Debug:  debug,
+				},
+			}
+
+			env.Init()
+			defer env.Close()
+
+			template.Init(env)
+
+			cfg := config.Load(env)
+
+			feats := cfg.Features()
+
+			var output string
+
+			switch {
+			case printOutput, debug:
+				output = shell.PrintInit(env, feats, &startTime)
+			default:
+				output = shell.Init(env, feats)
+			}
+
+			if silent {
+				return
+			}
+
+			fmt.Print(output)
 		},
 	}
 )
@@ -55,37 +93,4 @@ func init() {
 	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
 	_ = initCmd.MarkPersistentFlagRequired("config")
 	RootCmd.AddCommand(initCmd)
-}
-
-func runInit(shellName string) {
-	var startTime time.Time
-	if debug {
-		startTime = time.Now()
-	}
-
-	env := &runtime.Terminal{
-		CmdFlags: &runtime.Flags{
-			Shell:  shellName,
-			Config: configFlag,
-			Strict: strict,
-			Manual: manual,
-			Debug:  debug,
-		},
-	}
-
-	env.Init()
-	defer env.Close()
-
-	cfg := config.Load(env)
-
-	feats := cfg.Features()
-
-	if printOutput || debug {
-		init := shell.PrintInit(env, feats, &startTime)
-		fmt.Print(init)
-		return
-	}
-
-	init := shell.Init(env, feats)
-	fmt.Print(init)
 }

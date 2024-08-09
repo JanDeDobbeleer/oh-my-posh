@@ -18,6 +18,7 @@ const (
 
 // ScmStatus represents part of the status of a repository
 type ScmStatus struct {
+	Formats    map[string]string
 	Unmerged   int
 	Deleted    int
 	Added      int
@@ -28,8 +29,6 @@ type ScmStatus struct {
 	Clean      int
 	Missing    int
 	Ignored    int
-
-	Formats map[string]string
 }
 
 func (s *ScmStatus) Changed() bool {
@@ -81,19 +80,17 @@ func (s *ScmStatus) String() string {
 }
 
 type scm struct {
-	props properties.Properties
-	env   runtime.Environment
-
+	props           properties.Properties
+	env             runtime.Environment
+	Dir             string
+	RepoName        string
+	workingDir      string
+	rootDir         string
+	realDir         string
+	command         string
 	IsWslSharedPath bool
 	CommandMissing  bool
-	Dir             string // actual repo root directory
-	RepoName        string
-
-	workingDir     string
-	rootDir        string
-	realDir        string // real directory (can be different from current path when in worktrees)
-	command        string
-	nativeFallback bool
+	nativeFallback  bool
 }
 
 const (

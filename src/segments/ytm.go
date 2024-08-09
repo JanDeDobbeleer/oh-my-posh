@@ -36,19 +36,19 @@ func (y *Ytm) Init(props properties.Properties, env runtime.Environment) {
 }
 
 type ytmdaStatusResponse struct {
-	player `json:"player"`
 	track  `json:"track"`
+	player `json:"player"`
 }
 
 type player struct {
-	HasSong                     bool    `json:"hasSong"`
-	IsPaused                    bool    `json:"isPaused"`
-	VolumePercent               int     `json:"volumePercent"`
-	SeekbarCurrentPosition      int     `json:"seekbarCurrentPosition"`
 	SeekbarCurrentPositionHuman string  `json:"seekbarCurrentPositionHuman"`
-	StatePercent                float64 `json:"statePercent"`
 	LikeStatus                  string  `json:"likeStatus"`
 	RepeatType                  string  `json:"repeatType"`
+	VolumePercent               int     `json:"volumePercent"`
+	SeekbarCurrentPosition      int     `json:"seekbarCurrentPosition"`
+	StatePercent                float64 `json:"statePercent"`
+	HasSong                     bool    `json:"hasSong"`
+	IsPaused                    bool    `json:"isPaused"`
 }
 
 type track struct {
@@ -56,10 +56,10 @@ type track struct {
 	Title           string `json:"title"`
 	Album           string `json:"album"`
 	Cover           string `json:"cover"`
-	Duration        int    `json:"duration"`
 	DurationHuman   string `json:"durationHuman"`
 	URL             string `json:"url"`
 	ID              string `json:"id"`
+	Duration        int    `json:"duration"`
 	IsVideo         bool   `json:"isVideo"`
 	IsAdvertisement bool   `json:"isAdvertisement"`
 	InLibrary       bool   `json:"inLibrary"`

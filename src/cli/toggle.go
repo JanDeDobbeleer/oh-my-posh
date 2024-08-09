@@ -44,7 +44,7 @@ var toggleCmd = &cobra.Command{
 			newToggles = append(newToggles, segment)
 		}
 
-		env.Session().Set(cache.TOGGLECACHE, strings.Join(newToggles, ","), 1440)
+		env.Session().Set(cache.TOGGLECACHE, strings.Join(newToggles, ","), "1day")
 	},
 }
 

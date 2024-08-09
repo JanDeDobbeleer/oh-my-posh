@@ -18,9 +18,9 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 	}
 	cases := []struct {
 		Case            string
-		Expected        bool
 		ExpectedVersion string
 		RCVersion       string
+		Expected        bool
 	}{
 		{Case: "no file context", Expected: true, RCVersion: ""},
 		{Case: "version match", Expected: true, ExpectedVersion: "20.14.0", RCVersion: "20.14.0"},
@@ -55,12 +55,12 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 func TestNodeInContext(t *testing.T) {
 	cases := []struct {
 		Case           string
+		ExpectedString string
 		hasPNPM        bool
 		hasYarn        bool
 		hasNPM         bool
 		hasDefault     bool
 		PkgMgrEnabled  bool
-		ExpectedString string
 	}{
 		{Case: "no package manager file", ExpectedString: "", PkgMgrEnabled: true},
 		{Case: "pnpm", hasPNPM: true, ExpectedString: "pnpm", PkgMgrEnabled: true},

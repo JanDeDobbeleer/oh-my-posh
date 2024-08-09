@@ -35,11 +35,11 @@ type version struct {
 }
 
 type cmd struct {
-	executable         string
-	args               []string
-	regex              string
 	getVersion         getVersion
+	executable         string
+	regex              string
 	versionURLTemplate string
+	args               []string
 }
 
 func (c *cmd) parse(versionInfo string) (*version, error) {
@@ -60,25 +60,23 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 }
 
 type language struct {
-	props              properties.Properties
 	env                runtime.Environment
-	extensions         []string
-	folders            []string
-	commands           []*cmd
-	versionURLTemplate string
-	exitCode           int
+	props              properties.Properties
+	projectRoot        *runtime.FileInfo
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
-	homeEnabled        bool
-	displayMode        string
-	// root is the root folder of the project
-	projectFiles []string
-	projectRoot  *runtime.FileInfo
-
 	version
-	Error    string
-	Mismatch bool
+	displayMode        string
+	Error              string
+	versionURLTemplate string
+	commands           []*cmd
+	projectFiles       []string
+	folders            []string
+	extensions         []string
+	exitCode           int
+	homeEnabled        bool
+	Mismatch           bool
 }
 
 const (
@@ -195,22 +193,10 @@ func (l *language) hasLanguageFolders() bool {
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
 	var lastError error
-	cacheVersion := l.props.GetBool(CacheVersion, false)
 
 	for _, command := range l.commands {
 		var versionStr string
 		var err error
-
-		versionKey := fmt.Sprintf("%s_version", command.executable)
-		versionURL := fmt.Sprintf("%s_version_url", command.executable)
-
-		if versionStr, OK := l.env.Cache().Get(versionKey); OK {
-			version, _ := command.parse(versionStr)
-			l.version = *version
-			l.version.Executable = command.executable
-			l.version.URL, _ = l.env.Cache().Get(versionURL)
-			return nil
-		}
 
 		if command.getVersion == nil {
 			if !l.env.HasCommand(command.executable) {
@@ -246,12 +232,6 @@ func (l *language) setVersion() error {
 		l.buildVersionURL()
 		l.version.Executable = command.executable
 
-		if cacheVersion {
-			timeout := l.props.GetInt(properties.CacheTimeout, 1440)
-			l.env.Cache().Set(versionKey, versionStr, timeout)
-			l.env.Cache().Set(versionURL, l.version.URL, timeout)
-		}
-
 		return nil
 	}
 	if lastError != nil {
@@ -279,14 +259,16 @@ func (l *language) buildVersionURL() {
 	if len(versionURLTemplate) == 0 {
 		return
 	}
+
 	tmpl := &template.Text{
 		Template: versionURLTemplate,
 		Context:  l.version,
-		Env:      l.env,
 	}
+
 	url, err := tmpl.Render()
 	if err != nil {
 		return
 	}
+
 	l.version.URL = url
 }

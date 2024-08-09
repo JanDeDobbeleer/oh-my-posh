@@ -2674,6 +2674,16 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "sarpuser",
+      "name": "Sarp User",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23362324?v=4",
+      "profile": "https://github.com/sarpuser",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

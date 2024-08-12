@@ -2,7 +2,6 @@ package segments
 
 import (
 	"encoding/json"
-	"fmt"
 	"path"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -35,15 +34,15 @@ type UserConfig struct {
 
 func (s *Sitecore) Enabled() bool {
 	if !s.env.HasFiles(sitecoreFileName) || !s.env.HasFilesInDir(sitecoreFolderName, userFileName) {
-		s.env.Debug("The Sitecore CLI configuration files were not found")
+		s.env.Debug("sitecore cli configuration files were not found")
 		return false
 	}
 
 	var userConfig, err = getUserConfig(s)
 
 	if err != nil {
-		dbgMsg := fmt.Sprintf("Unable to read '%s' file. %s", userFileName, err.Error())
-		s.env.Debug(dbgMsg)
+		s.env.Debug("unable to read 'user.json' file")
+		s.env.Error(err)
 		return false
 	}
 
@@ -52,7 +51,7 @@ func (s *Sitecore) Enabled() bool {
 	displayDefault := s.props.GetBool(properties.DisplayDefault, true)
 
 	if !displayDefault && s.EndpointName == defaultEnpointName {
-		s.env.Debug("The displaying of the default environment is turned off")
+		s.env.Debug("displaying of the default environment is turned off")
 		return false
 	}
 

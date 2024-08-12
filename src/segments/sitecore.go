@@ -41,7 +41,6 @@ func (s *Sitecore) Enabled() bool {
 	var userConfig, err = getUserConfig(s)
 
 	if err != nil {
-		s.env.Debug("unable to read 'user.json' file")
 		s.env.Error(err)
 		return false
 	}

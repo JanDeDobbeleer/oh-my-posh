@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestSitecoreSegment(t *testing.T) {
@@ -86,8 +87,10 @@ func TestSitecoreSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("HasFiles", "sitecore.json").Return(tc.SitecoreFileExists)
-		env.On("HasFiles", path.Join(".sitecore", "user.json")).Return(tc.UserFileExists)
+		env.On("HasFilesInDir", ".sitecore", "user.json").Return(tc.UserFileExists)
 		env.On("FileContent", path.Join(".sitecore", "user.json")).Return(tc.UserFileContent)
+		env.On("Debug", testify_.Anything)
+		env.On("Error", testify_.Anything)
 
 		props := properties.Map{
 			properties.DisplayDefault: tc.DisplayDefault,

@@ -1,0 +1,32 @@
+---
+id: random
+title: Random
+sidebar_label: Random
+---
+
+## What
+
+Display a random string from a provided list.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "random",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    properties: {
+      options: ["🦑", "🦆", "🐙", "🐧"],
+    },
+  }}
+/>
+
+## Properties
+
+| Name      | Type       | Description                             |
+| --------- | ---------- | --------------------------------------- |
+| `options` | `string[]` | List of strings to choose from randomly |

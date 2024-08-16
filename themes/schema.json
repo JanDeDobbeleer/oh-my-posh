@@ -371,6 +371,7 @@
             "ruby",
             "rust",
             "r",
+            "random",
             "react",
             "sapling",
             "session",
@@ -4460,6 +4461,32 @@
                   },
                   "folders": {
                     "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "random" }
+            }
+          },
+          "then": {
+            "title": "Display a random string from a list",
+            "description": "https://ohmyposh.dev/docs/segments/misc/random",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "title": "Random Options",
+                    "description": "List of strings to choose from randomly",
+                    "default": ["a", "b", "c"]
                   }
                 }
               }

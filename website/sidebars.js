@@ -200,6 +200,14 @@ module.exports = {
             "segments/web/wakatime",
           ]
         },
+        {
+          type: "category",
+          label: "🎲 Miscellaneous",
+          collapsed: true,
+          items: [
+            "segments/misc/random",
+          ]
+        }
       ],
     },
     {

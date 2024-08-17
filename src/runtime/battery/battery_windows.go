@@ -91,8 +91,8 @@ func uint32ToFloat64(num uint32) (float64, error) {
 	return float64(num), nil
 }
 
-func setupDiSetup(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr) (uintptr, error) {
-	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) //nolint:staticcheck
+func setupDiSetup(proc *windows.LazyProc, args ...uintptr) (uintptr, error) {
+	r1, _, errno := syscall.SyscallN(proc.Addr(), args...)
 	if windows.Handle(r1) == windows.InvalidHandle {
 		if errno != 0 {
 			return 0, error(errno)
@@ -102,8 +102,8 @@ func setupDiSetup(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr)
 	return r1, nil
 }
 
-func setupDiCall(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr) syscall.Errno {
-	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) //nolint:staticcheck
+func setupDiCall(proc *windows.LazyProc, args ...uintptr) syscall.Errno {
+	r1, _, errno := syscall.SyscallN(proc.Addr(), args...)
 	if r1 == 0 {
 		if errno != 0 {
 			return errno
@@ -137,12 +137,10 @@ func readState(powerState uint32) State {
 func systemGet(idx int) (*battery, error) {
 	hdev, err := setupDiSetup(
 		setupDiGetClassDevsW,
-		4,
 		uintptr(unsafe.Pointer(&guidDeviceBattery)),
 		0,
 		0,
 		2|16, // DIGCF_PRESENT|DIGCF_DEVICEINTERFACE
-		0, 0,
 	)
 
 	if err != nil {
@@ -150,20 +148,18 @@ func systemGet(idx int) (*battery, error) {
 	}
 
 	defer func() {
-		_, _, _ = syscall.Syscall(setupDiDestroyDeviceInfoList.Addr(), 1, hdev, 0, 0) //nolint:staticcheck
+		_, _, _ = syscall.SyscallN(setupDiDestroyDeviceInfoList.Addr(), hdev)
 	}()
 
 	var did spDeviceInterfaceData
 	did.cbSize = uint32(unsafe.Sizeof(did))
 	errno := setupDiCall(
 		setupDiEnumDeviceInterfaces,
-		5,
 		hdev,
 		0,
 		uintptr(unsafe.Pointer(&guidDeviceBattery)),
 		uintptr(idx),
 		uintptr(unsafe.Pointer(&did)),
-		0,
 	)
 
 	if errno == 259 { // ERROR_NO_MORE_ITEMS
@@ -177,7 +173,6 @@ func systemGet(idx int) (*battery, error) {
 	var cbRequired uint32
 	errno = setupDiCall(
 		setupDiGetDeviceInterfaceDetailW,
-		6,
 		hdev,
 		uintptr(unsafe.Pointer(&did)),
 		0,
@@ -203,7 +198,6 @@ func systemGet(idx int) (*battery, error) {
 
 	errno = setupDiCall(
 		setupDiGetDeviceInterfaceDetailW,
-		6,
 		hdev,
 		uintptr(unsafe.Pointer(&did)),
 		uintptr(unsafe.Pointer(&didd[0])),

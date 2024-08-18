@@ -51,8 +51,7 @@ func GetFormats(shell string) *Formats {
 			ITermCurrentDir:       "\\[\x1b]1337;CurrentDir=%s\x07\\]",
 			ITermRemoteHost:       "\\[\x1b]1337;RemoteHost=%s@%s\x07\\]",
 			EscapeSequences: map[rune]rune{
-				96: 92, // backtick
-				92: 92, // backslash
+				'\\': '\\',
 			},
 		}
 	case ZSH, TCSH:
@@ -101,8 +100,7 @@ func GetFormats(shell string) *Formats {
 
 	if shell == ZSH {
 		formats.EscapeSequences = map[rune]rune{
-			96: 92, // backtick
-			37: 37, // %
+			'%': '%',
 		}
 	}
 

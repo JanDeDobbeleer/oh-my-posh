@@ -35,7 +35,7 @@ function _omp_set_cursor_position() {
 
     local COL
     local ROW
-    IFS=';' read -sdR -p $'\E[6n' ROW COL
+    IFS=';' read -rsdR -p $'\E[6n' ROW COL
 
     stty "$oldstty"
 
@@ -60,10 +60,10 @@ function set_poshcontext() {
 
 # regular prompt
 function _omp_hook() {
-    _omp_status_cache=$? _omp_pipestatus_cache=(${PIPESTATUS[@]})
+    _omp_status_cache=$? _omp_pipestatus_cache=("${PIPESTATUS[@]}")
 
     if [[ ${#BP_PIPESTATUS[@]} -ge ${#_omp_pipestatus_cache[@]} ]]; then
-        _omp_pipestatus_cache=(${BP_PIPESTATUS[@]})
+        _omp_pipestatus_cache=("${BP_PIPESTATUS[@]}")
     fi
 
     _omp_stack_count=$((${#DIRSTACK[@]} - 1))
@@ -87,6 +87,14 @@ function _omp_hook() {
     return $_omp_status_cache
 }
 
-if [[ $TERM != linux ]] && ! [[ $PROMPT_COMMAND =~ _omp_hook ]]; then
-    PROMPT_COMMAND="_omp_hook; $PROMPT_COMMAND"
-fi
+function _omp_install_hook() {
+    local cmd
+    for cmd in "${PROMPT_COMMAND[@]}"; do
+        if [[ $cmd = "_omp_hook" ]]; then
+            return
+        fi
+    done
+    PROMPT_COMMAND=(_omp_hook "${PROMPT_COMMAND[@]}")
+}
+
+[[ $TERM != linux ]] && _omp_install_hook

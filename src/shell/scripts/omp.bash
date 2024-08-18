@@ -20,8 +20,9 @@ _omp_ftcs_marks=0
 
 # start timer on command start
 PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_command_start)'
+
 # set secondary prompt
-PS2="$("$_omp_executable" print secondary --shell=bash --shell-version="$BASH_VERSION")"
+_omp_secondary_prompt=$("$_omp_executable" print secondary --shell=bash --shell-version="$BASH_VERSION")
 
 function _omp_set_cursor_position() {
     # not supported in Midnight Commander
@@ -82,7 +83,17 @@ function _omp_hook() {
     set_poshcontext
     _omp_set_cursor_position
 
-    PS1="$("$_omp_executable" print primary --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
+    # We do this to avoid unexpected expansions in a prompt string.
+    shopt -u promptvars
+
+    if shopt -oq posix; then
+        # Disable in POSIX mode.
+        PS1='[NOTICE: Oh My Posh prompt is not supported in POSIX mode]\n\u@\h:\w\$ '
+        PS2='> '
+    else
+        PS1=$("$_omp_executable" print primary --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')
+        PS2=$_omp_secondary_prompt
+    fi
 
     return $_omp_status_cache
 }

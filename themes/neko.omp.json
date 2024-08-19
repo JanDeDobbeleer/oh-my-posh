@@ -6,7 +6,7 @@
         "segments": [
           {
             "style": "plain",
-            "template": "😺💬<#FF8000> Meow! What should I do next? ...</>",
+            "template": "😺💬<#FF8000> Meow! Rizvy what should I do next? ...</>",
             "type": "text"
           }],
           "type": "prompt"

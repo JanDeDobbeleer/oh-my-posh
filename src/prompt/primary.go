@@ -23,12 +23,14 @@ func (e *Engine) Primary() string {
 		// Warp doesn't support RPROMPT so we need to write it manually
 		if e.isWarp() {
 			e.writePrimaryRightPrompt()
-			prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(e.string()))
+			// escape double quotes contained in the prompt
+			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 			return prompt
 		}
 
-		prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(e.string()))
-		prompt += fmt.Sprintf("\nRPROMPT=%s", shell.QuotePosixStr(e.rprompt))
+		// escape double quotes contained in the prompt
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
+		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 
 		return prompt
 	default:

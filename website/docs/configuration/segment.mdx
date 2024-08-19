@@ -50,19 +50,10 @@ understand how to configure a segment.
 | `templates`                | `[]Template` | in some cases having a single [template][templates] string is a bit cumbersome. Templates allows you to span the segment's [template][templates] string multiple lines where every [template][templates] is evaluated and depending on what you aim to achieve, there are two possible outcomes based on `templates_logic` |
 | `templates_logic`          | `string`     | <ul><li>`first_match`: return the first non-whitespace string and skip everything else</li><li>`join`:evaluate all templates and join all non-whitespace strings (**default**)</li></ul>                                                                                                                                   |
 | `properties`               | `[]Property` | see [Properties][properties] below                                                                                                                                                                                                                                                                                         |
-| `interactive`              | `boolean`    | when is true, the segment text is not escaped to allow the use of interactive prompt escape sequences in Bash/Zsh - defaults to `false`                                                                                                                                                                                    |
+| `interactive`              | `boolean`    | when is true, the segment text is not escaped to allow the use of interactive prompt escape sequences - defaults to `false`                                                                                                                                                                                                |
 | `alias`                    | `string`     | for use with [cross segment template properties][cstp]                                                                                                                                                                                                                                                                     |
 | `min_width`                | `int`        | if the terminal width is smaller than this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                               |
 | `max_width`                | `int`        | if the terminal width exceeds this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                                       |
-
-:::warning
-In Bash/Zsh, when the property `interactive` is `true` for a segment, the prompt length calculation can be wrong
-because of possible string expansions (e.g., `\w` in Bash and `%d` in Zsh which both expand to the current working
-directory), thus a right-aligned block is not being properly right-aligned.
-
-Unfortunately, it's not possible for Oh My Posh to know the final prompt length since the string expansion is done
-by your shell, so use this at your own risk.
-:::
 
 ## Style
 

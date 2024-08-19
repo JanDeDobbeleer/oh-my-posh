@@ -58,6 +58,8 @@ var (
 	isInvisible   bool
 	isHyperlink   bool
 
+	lastRune rune
+
 	Shell   string
 	Program string
 
@@ -194,9 +196,9 @@ func FormatTitle(title string) string {
 	// we have to do this to prevent bash/zsh from misidentifying escape sequences
 	switch Shell {
 	case shell.BASH:
-		title = strings.ReplaceAll(title, `\`, `\\`)
+		title = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(title)
 	case shell.ZSH:
-		title = strings.ReplaceAll(title, "%", "%%")
+		title = strings.NewReplacer("`", "\\`", `%`, `%%`).Replace(title)
 	case shell.ELVISH, shell.XONSH:
 		// these shells don't support setting the title
 		return ""
@@ -390,15 +392,17 @@ func write(s rune) {
 		return
 	}
 
-	if !Interactive && !Plain {
-		escapeChar, shouldEscape := formats.EscapeSequences[s]
-		if shouldEscape {
-			builder.WriteRune(escapeChar)
+	if !Interactive {
+		for special, escape := range formats.EscapeSequences {
+			if s == special && lastRune != escape {
+				builder.WriteRune(escape)
+			}
 		}
 	}
 
 	// length += utf8.RuneCountInString(string(s))
 	length += runewidth.RuneWidth(s)
+	lastRune = s
 	builder.WriteRune(s)
 }
 

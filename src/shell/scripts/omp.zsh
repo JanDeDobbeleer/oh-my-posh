@@ -13,7 +13,7 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # set secondary prompt
-_omp_secondary_prompt=$($_omp_executable print secondary --shell=zsh)
+PS2="$($_omp_executable print secondary --shell=zsh)"
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander
@@ -72,15 +72,6 @@ function _omp_precmd() {
 
   set_poshcontext
   _omp_set_cursor_position
-
-  # We do this to avoid unexpected expansions in a prompt string.
-  unsetopt PROMPT_SUBST
-  unsetopt PROMPT_BANG
-
-  # Ensure that escape sequences work in a prompt string.
-  setopt PROMPT_PERCENT
-
-  PS2=$_omp_secondary_prompt
 
   eval "$($_omp_executable print primary --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
   unset _omp_start_time

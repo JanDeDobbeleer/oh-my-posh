@@ -32,7 +32,7 @@ func (f Feature) Bash() Code {
 	}
 }
 
-func QuotePosixStr(str string) string {
+func quotePosixStr(str string) string {
 	if len(str) == 0 {
 		return "''"
 	}

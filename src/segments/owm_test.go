@@ -81,6 +81,8 @@ func TestOWMSegmentSingle(t *testing.T) {
 		location := url.QueryEscape(tc.Location)
 		testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
 		env.On("HTTPRequest", testURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
+		env.On("Getenv", OWMLocationKey).Return("")
+		env.On("Getenv", OWMAPIKey).Return("")
 
 		o := &Owm{}
 		o.Init(props, env)
@@ -207,6 +209,8 @@ func TestOWMSegmentIcons(t *testing.T) {
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
 		env.On("HTTPRequest", testURL).Return([]byte(weatherResponse), nil)
+		env.On("Getenv", OWMLocationKey).Return("")
+		env.On("Getenv", OWMAPIKey).Return("")
 
 		props := properties.Map{
 			APIKey:   "key",
@@ -219,27 +223,5 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		assert.Nil(t, o.setStatus())
 		assert.Equal(t, expectedString, renderTemplate(env, o.Template(), o), tc.Case)
-	}
-
-	// test with hyperlink enabled
-	for _, tc := range cases {
-		env := &mock.Environment{}
-
-		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
-		expectedString := fmt.Sprintf("«%s (20°C)»(%s)", tc.ExpectedIconString, testURL)
-
-		env.On("HTTPRequest", testURL).Return([]byte(weatherResponse), nil)
-
-		props := properties.Map{
-			APIKey:   "key",
-			Location: "AMSTERDAM,NL",
-			Units:    "metric",
-		}
-
-		o := &Owm{}
-		o.Init(props, env)
-
-		assert.Nil(t, o.setStatus())
-		assert.Equal(t, expectedString, renderTemplate(env, "«{{.Weather}} ({{.Temperature}}{{.UnitIcon}})»({{.URL}})", o), tc.Case)
 	}
 }

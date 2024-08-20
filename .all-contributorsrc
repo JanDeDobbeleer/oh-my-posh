@@ -2684,6 +2684,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "clemyan",
+      "name": "Clement Yan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41266433?v=4",
+      "profile": "https://github.com/clemyan",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

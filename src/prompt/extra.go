@@ -110,10 +110,14 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 		return str
 	case shell.PWSH, shell.PWSH5:
-		// Return the string and empty our buffer
-		// clear the line afterwards to prevent text from being written on the same line
-		// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
-		return str + terminal.ClearAfter()
+		if promptType == Transient {
+			// Return the string and empty our buffer
+			// clear the line afterwards to prevent text from being written on the same line
+			// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
+			return str + terminal.ClearAfter()
+		}
+
+		return str
 	case shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.GENERIC:
 		// Return the string and empty our buffer
 		return str

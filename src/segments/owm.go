@@ -32,8 +32,10 @@ const (
 	CacheKeyResponse string = "owm_response"
 	// CacheKeyURL key used when caching the url responsible for the response
 	CacheKeyURL string = "owm_url"
-
-	PoshOWMAPIKey = "POSH_OWM_API_KEY"
+	// Environmental variable to dynamically set the Open Map API key
+	OWMAPIKey string = "POSH_OWM_API_KEY"
+	// Environmental variable to dynamically set the location string
+	OWMLocationKey string = "POSH_OWM_LOCATION"
 )
 
 type weather struct {
@@ -68,17 +70,21 @@ func (d *Owm) Template() string {
 func (d *Owm) getResult() (*owmDataResponse, error) {
 	response := new(owmDataResponse)
 
-	apikey := properties.OneOf(d.props, ".", APIKey, "apiKey")
+	apikey := properties.OneOf(d.props, d.env.Getenv(OWMAPIKey), APIKey, "apiKey")
 	if len(apikey) == 0 {
-		apikey = d.env.Getenv(PoshOWMAPIKey)
+		apikey = "."
 	}
 
-	location := d.props.GetString(Location, "De Bilt,NL")
+	if len(apikey) == 0 {
+		return nil, errors.New("no api key found")
+	}
+
+	location := d.props.GetString(Location, d.env.Getenv(OWMLocationKey))
+	if len(location) == 0 {
+		return nil, errors.New("no location found")
+	}
+
 	location = url.QueryEscape(location)
-
-	if len(apikey) == 0 || len(location) == 0 {
-		return nil, errors.New("no api key or location found")
-	}
 
 	units := d.props.GetString(Units, "standard")
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)

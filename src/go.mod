@@ -30,7 +30,7 @@ require (
 	github.com/ConradIrwin/font v0.0.0-20210318200717-ce8d41cc0732
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.27.0
-	github.com/charmbracelet/lipgloss v0.12.1
+	github.com/charmbracelet/lipgloss v0.13.0
 	github.com/goccy/go-json v0.10.3
 	github.com/goccy/go-yaml v1.11.3
 	github.com/gookit/goutil v0.6.16

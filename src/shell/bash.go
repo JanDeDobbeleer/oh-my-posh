@@ -10,11 +10,6 @@ import (
 //go:embed scripts/omp.bash
 var bashInit string
 
-const (
-	unixUpgrade = "$_omp_executable upgrade"
-	unixNotice  = "$_omp_executable notice"
-)
-
 func (f Feature) Bash() Code {
 	switch f {
 	case CursorPositioning:
@@ -22,9 +17,9 @@ func (f Feature) Bash() Code {
 	case FTCSMarks:
 		return "_omp_ftcs_marks=1"
 	case Upgrade:
-		return unixUpgrade
+		return `"$_omp_executable" upgrade`
 	case Notice:
-		return unixNotice
+		return `"$_omp_executable" notice`
 	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, Transient:
 		fallthrough
 	default:

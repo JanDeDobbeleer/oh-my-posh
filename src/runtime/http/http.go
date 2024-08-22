@@ -3,8 +3,6 @@ package http
 import (
 	"net"
 	"net/http"
-	"net/url"
-	"os"
 	"time"
 )
 
@@ -14,17 +12,9 @@ type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-func Proxy(_ *http.Request) (*url.URL, error) {
-	proxyURL := os.Getenv("HTTPS_PROXY")
-	if len(proxyURL) == 0 {
-		return nil, nil
-	}
-	return url.Parse(proxyURL)
-}
-
 var (
 	defaultTransport http.RoundTripper = &http.Transport{
-		Proxy: Proxy,
+		Proxy: http.ProxyFromEnvironment,
 		Dial: (&net.Dialer{
 			Timeout: 10 * time.Second,
 		}).Dial,

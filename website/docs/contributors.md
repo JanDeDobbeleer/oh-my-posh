@@ -380,6 +380,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sarpuser"><img src="https://avatars.githubusercontent.com/u/23362324?v=4?s=100" width="100px;" alt="Sarp User"/><br /><sub><b>Sarp User</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sarpuser" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sarpuser" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/clemyan"><img src="https://avatars.githubusercontent.com/u/41266433?v=4?s=100" width="100px;" alt="Clement Yan"/><br /><sub><b>Clement Yan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=clemyan" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thep0y"><img src="https://avatars.githubusercontent.com/u/51874567?v=4?s=100" width="100px;" alt="thep0y"/><br /><sub><b>thep0y</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=thep0y" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

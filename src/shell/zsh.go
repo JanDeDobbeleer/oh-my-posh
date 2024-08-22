@@ -7,6 +7,11 @@ import (
 //go:embed scripts/omp.zsh
 var zshInit string
 
+const (
+	unixUpgrade = "$_omp_executable upgrade"
+	unixNotice  = "$_omp_executable notice"
+)
+
 func (f Feature) Zsh() Code {
 	switch f {
 	case CursorPositioning:

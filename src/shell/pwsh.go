@@ -37,6 +37,6 @@ func (f Feature) Pwsh() Code {
 	}
 }
 
-func quotePwshStr(str string) string {
+func quotePwshOrElvishStr(str string) string {
 	return fmt.Sprintf("'%s'", strings.ReplaceAll(str, "'", "''"))
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestQuotePwshStr(t *testing.T) {
+func TestQuotePwshOrElvishStr(t *testing.T) {
 	tests := []struct {
 		str      string
 		expected string
@@ -19,7 +19,7 @@ func TestQuotePwshStr(t *testing.T) {
 		{str: `C:\tmp\omp's dir\oh-my-posh.exe`, expected: `'C:\tmp\omp''s dir\oh-my-posh.exe'`},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.expected, quotePwshStr(tc.str), fmt.Sprintf("quotePwshStr: %s", tc.str))
+		assert.Equal(t, tc.expected, quotePwshOrElvishStr(tc.str), fmt.Sprintf("quotePwshStr: %s", tc.str))
 	}
 }
 

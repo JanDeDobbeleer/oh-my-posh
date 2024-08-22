@@ -54,15 +54,16 @@ func Init(env runtime.Environment, feats Features) string {
 		}
 
 		var command, config string
+
 		switch shell {
 		case PWSH, PWSH5:
 			command = "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
-			config = quotePwshStr(env.Flags().Config)
-			executable = quotePwshStr(executable)
 		case ELVISH:
-			command = "eval (%s init %s --config=%s --print%s | slurp)"
-			config = env.Flags().Config
+			command = "eval ((external %s) init %s --config=%s --print%s | slurp)"
 		}
+
+		config = quotePwshOrElvishStr(env.Flags().Config)
+		executable = quotePwshOrElvishStr(executable)
 
 		return fmt.Sprintf(command, executable, shell, config, additionalParams)
 	case ZSH, BASH, FISH, CMD, TCSH, XONSH:
@@ -88,8 +89,8 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 
 	switch shell {
 	case PWSH, PWSH5:
-		executable = quotePwshStr(executable)
-		configFile = quotePwshStr(configFile)
+		executable = quotePwshOrElvishStr(executable)
+		configFile = quotePwshOrElvishStr(configFile)
 		script = pwshInit
 	case ZSH:
 		executable = quotePosixStr(executable)
@@ -116,6 +117,8 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		configFile = quotePosixStr(configFile)
 		script = tcshInit
 	case ELVISH:
+		executable = quotePwshOrElvishStr(executable)
+		configFile = quotePwshOrElvishStr(configFile)
 		script = elvishInit
 	case XONSH:
 		script = xonshInit

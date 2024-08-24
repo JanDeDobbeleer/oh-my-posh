@@ -20,8 +20,9 @@ _omp_ftcs_marks=0
 
 # start timer on command start
 PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_command_start)'
+
 # set secondary prompt
-PS2="$("$_omp_executable" print secondary --shell=bash --shell-version="$BASH_VERSION")"
+_omp_secondary_prompt=$("$_omp_executable" print secondary --shell=bash --shell-version="$BASH_VERSION")
 
 function _omp_set_cursor_position() {
     # not supported in Midnight Commander
@@ -58,7 +59,38 @@ function set_poshcontext() {
     return
 }
 
-# regular prompt
+function _omp_print_primary() {
+    # Avoid unexpected expansions.
+    shopt -u promptvars
+
+    local prompt
+    if shopt -oq posix; then
+        # Disable in POSIX mode.
+        prompt='[NOTICE: Oh My Posh prompt is not supported in POSIX mode]\n\u@\h:\w\$ '
+    else
+        prompt=$("$_omp_executable" print primary --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')
+    fi
+    echo "${prompt@P}"
+
+    # Allow command substitution in PS0.
+    shopt -s promptvars
+}
+
+function _omp_print_secondary() {
+    # Avoid unexpected expansions.
+    shopt -u promptvars
+
+    if shopt -oq posix; then
+        # Disable in POSIX mode.
+        echo '> '
+    else
+        echo "${_omp_secondary_prompt@P}"
+    fi
+
+    # Allow command substitution in PS0.
+    shopt -s promptvars
+}
+
 function _omp_hook() {
     _omp_status_cache=$? _omp_pipestatus_cache=(${PIPESTATUS[@]})
 
@@ -82,7 +114,8 @@ function _omp_hook() {
     set_poshcontext
     _omp_set_cursor_position
 
-    PS1="$("$_omp_executable" print primary --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
+    PS1='$(_omp_print_primary)'
+    PS2='$(_omp_print_secondary)'
 
     return $_omp_status_cache
 }

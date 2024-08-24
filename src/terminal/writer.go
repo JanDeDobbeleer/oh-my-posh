@@ -58,8 +58,6 @@ var (
 	isInvisible   bool
 	isHyperlink   bool
 
-	lastRune rune
-
 	Shell   string
 	Program string
 
@@ -187,24 +185,34 @@ func ClearAfter() string {
 }
 
 func FormatTitle(title string) string {
+	// These shells don't support setting the console title.
+	if Shell == shell.ELVISH || Shell == shell.XONSH {
+		return ""
+	}
+
 	title = trimAnsi(title)
 
 	if Plain {
 		return title
 	}
 
-	// we have to do this to prevent bash/zsh from misidentifying escape sequences
-	switch Shell {
-	case shell.BASH:
-		title = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(title)
-	case shell.ZSH:
-		title = strings.NewReplacer("`", "\\`", `%`, `%%`).Replace(title)
-	case shell.ELVISH, shell.XONSH:
-		// these shells don't support setting the title
-		return ""
+	if Shell != shell.BASH && Shell != shell.ZSH {
+		return fmt.Sprintf(formats.Title, title)
 	}
 
-	return fmt.Sprintf(formats.Title, title)
+	// We have to do this to prevent Bash/Zsh from misidentifying escape sequences.
+	s := new(strings.Builder)
+	for _, char := range title {
+		escaped, shouldEscape := formats.EscapeSequences[char]
+		if shouldEscape {
+			s.WriteString(escaped)
+			continue
+		}
+
+		s.WriteRune(char)
+	}
+
+	return fmt.Sprintf(formats.Title, s.String())
 }
 
 func EscapeText(text string) string {
@@ -392,17 +400,18 @@ func write(s rune) {
 		return
 	}
 
-	if !Interactive {
-		for special, escape := range formats.EscapeSequences {
-			if s == special && lastRune != escape {
-				builder.WriteRune(escape)
-			}
+	// UNSOLVABLE: When "Interactive" is true, the prompt length calculation in Bash/Zsh can be wrong, since the final string expansion is done by shells.
+	length += runewidth.RuneWidth(s)
+	// length += utf8.RuneCountInString(string(s))
+
+	if !Interactive && !Plain {
+		escaped, shouldEscape := formats.EscapeSequences[s]
+		if shouldEscape {
+			builder.WriteString(escaped)
+			return
 		}
 	}
 
-	// length += utf8.RuneCountInString(string(s))
-	length += runewidth.RuneWidth(s)
-	lastRune = s
 	builder.WriteRune(s)
 }
 

@@ -74,7 +74,7 @@ func (term *Terminal) Init() {
 	term.deviceCache = initCache(cache.FileName)
 	term.sessionCache = initCache(cache.SessionFileName)
 
-	term.resolveConfigPath()
+	term.ResolveConfigPath()
 
 	term.cmdCache = &cache.Command{
 		Commands: maps.NewConcurrent(),
@@ -82,12 +82,10 @@ func (term *Terminal) Init() {
 
 	term.tmplCache = &cache.Template{}
 
-	if !term.CmdFlags.Cached {
-		term.SetPromptCount()
-	}
+	term.SetPromptCount()
 }
 
-func (term *Terminal) resolveConfigPath() {
+func (term *Terminal) ResolveConfigPath() {
 	defer term.Trace(time.Now())
 
 	// if the config flag is set, we'll use that over POSH_THEME
@@ -129,11 +127,7 @@ func (term *Terminal) resolveConfigPath() {
 		return
 	}
 
-	configFile := term.CmdFlags.Config
-	if strings.HasPrefix(configFile, "~") {
-		configFile = strings.TrimPrefix(configFile, "~")
-		configFile = filepath.Join(term.Home(), configFile)
-	}
+	configFile := ReplaceTildePrefixWithHomeDir(term, term.CmdFlags.Config)
 
 	abs, err := filepath.Abs(configFile)
 	if err != nil {
@@ -726,11 +720,14 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	}
 
 	for _, element := range regexes {
-		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
-		if strings.HasPrefix(normalizedElement, "~") {
-			normalizedElement = strings.Replace(normalizedElement, "~", home, 1)
+		normalized := strings.ReplaceAll(element, "\\\\", "/")
+		if strings.HasPrefix(normalized, "~") {
+			rem := normalized[1:]
+			if len(rem) == 0 || rem[0] == '/' {
+				normalized = home + rem
+			}
 		}
-		pattern := fmt.Sprintf("^%s$", normalizedElement)
+		pattern := fmt.Sprintf("^%s$", normalized)
 		if goos == WINDOWS || goos == DARWIN {
 			pattern = "(?i)" + pattern
 		}
@@ -843,9 +840,19 @@ func Base(env Environment, path string) string {
 	return path
 }
 
+func ReplaceTildePrefixWithHomeDir(env Environment, path string) string {
+	if !strings.HasPrefix(path, "~") {
+		return path
+	}
+	rem := path[1:]
+	if len(rem) == 0 || IsPathSeparator(env, rem[0]) {
+		return env.Home() + rem
+	}
+	return path
+}
+
 func ReplaceHomeDirPrefixWithTilde(env Environment, path string) string {
 	home := env.Home()
-	// match Home directory exactly
 	if !strings.HasPrefix(path, home) {
 		return path
 	}

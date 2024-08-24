@@ -35,7 +35,7 @@ func TestQuotePosixStr(t *testing.T) {
 		{str: `C:/tmp/omp's dir/oh-my-posh.exe`, expected: `$'C:/tmp/omp\'s dir/oh-my-posh.exe'`},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.expected, quotePosixStr(tc.str), fmt.Sprintf("quotePosixStr: %s", tc.str))
+		assert.Equal(t, tc.expected, QuotePosixStr(tc.str), fmt.Sprintf("quotePosixStr: %s", tc.str))
 	}
 }
 

@@ -5,6 +5,10 @@ export POSH_PID=$$
 export CONDA_PROMPT_MODIFIER=false
 export OSTYPE=$OSTYPE
 
+if [[ $OSTYPE =~ ^(msys|cygwin) ]]; then
+    export POSH_PID=$(command cat /proc/$$/winpid)
+fi
+
 # global variables
 _omp_start_time=""
 _omp_stack_count=0

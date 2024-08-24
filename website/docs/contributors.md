@@ -382,6 +382,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/thep0y"><img src="https://avatars.githubusercontent.com/u/51874567?v=4?s=100" width="100px;" alt="thep0y"/><br /><sub><b>thep0y</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=thep0y" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ClxUne09"><img src="https://avatars.githubusercontent.com/u/175628107?v=4?s=100" width="100px;" alt="Artin"/><br /><sub><b>Artin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ClxUne09" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

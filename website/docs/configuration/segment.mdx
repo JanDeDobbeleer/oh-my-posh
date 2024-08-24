@@ -141,7 +141,7 @@ will not be rendered when in one of the excluded locations.
 ```
 
 The strings specified in these properties are evaluated as [regular expressions][regex]. You
-can use any valid regular expression construct, but the regular expression must match the entire directory
+can use any valid regular expression construct, but the regular expression must match the **ENTIRE** directory
 name. The following will match `/Users/posh/Projects/Foo` but not `/home/Users/posh/Projects/Foo`.
 
 ```json
@@ -165,8 +165,8 @@ You can also combine these properties:
 
 - Oh My Posh will accept both `/` and `\` as path separators for a folder and will match regardless of which
   is used by the current operating system.
-- Because the strings are evaluated as regular expressions, if you want to use a `\` in a Windows
-  directory name, you need to specify it as `\\\\`.
+- Because the strings are evaluated as regular expressions, if you want to use a backslash (`\`) in a Windows
+  directory name, you need to specify it as double backslashes, and if using JSON format you should escape it as `\\\\`.
 - The character `~` at the start of a specified folder will match the user's home directory.
 - The comparison is case-insensitive on Windows and macOS, but case-sensitive on other operating systems.
 

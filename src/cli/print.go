@@ -66,7 +66,6 @@ var printCmd = &cobra.Command{
 			Plain:         plain,
 			Primary:       args[0] == "primary",
 			Cleared:       cleared,
-			Cached:        cached,
 			NoExitCode:    noStatus,
 			Column:        column,
 			JobCount:      jobCount,

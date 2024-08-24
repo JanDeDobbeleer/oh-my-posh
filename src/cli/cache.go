@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -50,32 +49,13 @@ You can do the following:
 			clear(env.CachePath())
 		case "edit":
 			cacheFilePath := filepath.Join(env.CachePath(), cache.FileName)
-			editFileWithEditor(cacheFilePath)
+			os.Exit(editFileWithEditor(cacheFilePath))
 		}
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(getCache)
-}
-
-func editFileWithEditor(file string) {
-	editor := os.Getenv("EDITOR")
-
-	var args []string
-	if strings.Contains(editor, " ") {
-		splitted := strings.Split(editor, " ")
-		editor = splitted[0]
-		args = splitted[1:]
-	}
-
-	args = append(args, file)
-	cmd := exec.Command(editor, args...)
-
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println(err.Error())
-	}
 }
 
 func clear(cachePath string) {

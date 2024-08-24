@@ -98,7 +98,6 @@ type Flags struct {
 	HasTransient  bool
 	PromptCount   int
 	Cleared       bool
-	Cached        bool
 	NoExitCode    bool
 	Column        int
 	JobCount      int

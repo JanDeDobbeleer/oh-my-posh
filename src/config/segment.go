@@ -53,13 +53,13 @@ type Segment struct {
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
-	Background             color.Ansi     `json:"background" toml:"background"`
-	Foreground             color.Ansi     `json:"foreground" toml:"foreground"`
+	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
+	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
 
 	Enabled bool `json:"-" toml:"-"`
 
-	Text string
+	Text string `json:"-" toml:"-"`
 
 	env        runtime.Environment
 	writer     SegmentWriter
@@ -67,8 +67,8 @@ type Segment struct {
 	name       string
 
 	// debug info
-	Duration   time.Duration
-	NameLength int
+	Duration   time.Duration `json:"-" toml:"-"`
+	NameLength int           `json:"-" toml:"-"`
 }
 
 func (segment *Segment) Name() string {

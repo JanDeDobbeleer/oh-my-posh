@@ -5,6 +5,11 @@ export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 export POSH_PROMPT_COUNT=0
 export ZLE_RPROMPT_INDENT=0
+export OSTYPE=$OSTYPE
+
+if [[ $OSTYPE =~ ^(msys|cygwin) ]]; then
+  export POSH_PID=$(command cat /proc/$$/winpid)
+fi
 
 _omp_executable=::OMP::
 

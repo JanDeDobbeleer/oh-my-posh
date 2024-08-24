@@ -7,6 +7,10 @@ set --global _omp_tooltip_command ''
 set --global _omp_current_rprompt ''
 set --global _omp_transient 0
 
+if command uname -s | string match -qr '^(CYGWIN|MSYS|MINGW)'
+    set --export POSH_PID (command cat /proc/$fish_pid/winpid)
+end
+
 set --global _omp_executable ::OMP::
 set --global _omp_ftcs_marks 0
 set --global _omp_transient_prompt 0
@@ -112,25 +116,25 @@ function _omp_preexec --on-event fish_preexec
 end
 
 # perform cleanup so a new initialization in current session works
-if bind \r --user 2>/dev/null | string match -q -e _omp_enter_key_handler
+if bind \r --user 2>/dev/null | string match -qe _omp_enter_key_handler
     bind -e \r -M default
     bind -e \r -M insert
     bind -e \r -M visual
 end
 
-if bind \n --user 2>/dev/null | string match -q -e _omp_enter_key_handler
+if bind \n --user 2>/dev/null | string match -qe _omp_enter_key_handler
     bind -e \n -M default
     bind -e \n -M insert
     bind -e \n -M visual
 end
 
-if bind \cc --user 2>/dev/null | string match -q -e _omp_ctrl_c_key_handler
+if bind \cc --user 2>/dev/null | string match -qe _omp_ctrl_c_key_handler
     bind -e \cc -M default
     bind -e \cc -M insert
     bind -e \cc -M visual
 end
 
-if bind \x20 --user 2>/dev/null | string match -q -e _omp_space_key_handler
+if bind \x20 --user 2>/dev/null | string match -qe _omp_space_key_handler
     bind -e \x20 -M default
     bind -e \x20 -M insert
 end

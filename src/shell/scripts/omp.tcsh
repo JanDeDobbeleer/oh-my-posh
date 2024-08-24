@@ -2,6 +2,11 @@ setenv POWERLINE_COMMAND "oh-my-posh";
 setenv POSH_THEME ::CONFIG::;
 setenv POSH_SHELL_VERSION "";
 setenv POSH_PID $$;
+setenv OSTYPE "$OSTYPE";
+
+if ("$OSTYPE" =~ {msys,cygwin}*) then
+  setenv POSH_PID "`cat /proc/$$/winpid`";
+endif
 
 set POSH_COMMAND = ::OMP::;
 set USER_PRECMD = "`alias precmd`";

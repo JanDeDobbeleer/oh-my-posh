@@ -287,8 +287,6 @@ func TestWriteLength(t *testing.T) {
 		CurrentColors = tc.Colors
 		Colors = &color.Defaults{}
 
-		Init(shell.GENERIC)
-
 		Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
 
 		_, got := String()

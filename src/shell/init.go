@@ -93,12 +93,12 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		configFile = quotePwshOrElvishStr(configFile)
 		script = pwshInit
 	case ZSH:
-		executable = quotePosixStr(executable)
-		configFile = quotePosixStr(configFile)
+		executable = QuotePosixStr(executable)
+		configFile = QuotePosixStr(configFile)
 		script = zshInit
 	case BASH:
-		executable = quotePosixStr(executable)
-		configFile = quotePosixStr(configFile)
+		executable = QuotePosixStr(executable)
+		configFile = QuotePosixStr(configFile)
 		script = bashInit
 	case FISH:
 		executable = quoteFishStr(executable)
@@ -113,8 +113,8 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		configFile = quoteNuStr(configFile)
 		script = nuInit
 	case TCSH:
-		executable = quotePosixStr(executable)
-		configFile = quotePosixStr(configFile)
+		executable = QuotePosixStr(executable)
+		configFile = QuotePosixStr(configFile)
 		script = tcshInit
 	case ELVISH:
 		executable = quotePwshOrElvishStr(executable)

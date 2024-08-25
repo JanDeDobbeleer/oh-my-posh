@@ -14,7 +14,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -41,11 +40,11 @@ type Terminal struct {
 	cwd          string
 	host         string
 	networks     []*Connection
-	sync.RWMutex
 }
 
 func (term *Terminal) Init() {
 	defer term.Trace(time.Now())
+
 	if term.CmdFlags == nil {
 		term.CmdFlags = &Flags{}
 	}
@@ -69,6 +68,8 @@ func (term *Terminal) Init() {
 	term.deviceCache = initCache(cache.FileName)
 	term.sessionCache = initCache(cache.SessionFileName)
 	term.setPromptCount()
+
+	term.setPwd()
 
 	term.ResolveConfigPath()
 
@@ -161,28 +162,35 @@ func (term *Terminal) Getenv(key string) string {
 }
 
 func (term *Terminal) Pwd() string {
-	term.Lock()
+	return term.cwd
+}
+
+func (term *Terminal) setPwd() {
 	defer term.Trace(time.Now())
-	defer term.Unlock()
-	if term.cwd != "" {
-		return term.cwd
+
+	correctPath := func(pwd string) string {
+		if term.GOOS() != WINDOWS {
+			return pwd
+		}
+		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
+		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
+		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
 
 	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
 		term.cwd = CleanPath(term, term.CmdFlags.PWD)
 		term.Debug(term.cwd)
-		return term.cwd
+		return
 	}
 
 	dir, err := os.Getwd()
 	if err != nil {
 		term.Error(err)
-		return ""
+		return
 	}
 
-	term.cwd = CleanPath(term, dir)
+	term.cwd = correctPath(dir)
 	term.Debug(term.cwd)
-	return term.cwd
 }
 
 func (term *Terminal) HasFiles(pattern string) bool {
@@ -212,9 +220,6 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 	}
 
 	pattern = strings.ToLower(pattern)
-
-	term.RWMutex.RLock()
-	defer term.RWMutex.RUnlock()
 
 	for _, match := range dirEntries {
 		if match.IsDir() {

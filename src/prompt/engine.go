@@ -168,19 +168,6 @@ func (e *Engine) getTitleTemplateText() string {
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	defer e.applyPowerShellBleedPatch()
 
-	// This is deprecated but we leave it in to not break configs
-	// It is encouraged to use "newline": true on block level
-	// rather than the standalone linebreak block
-	if block.Type == config.LineBreak {
-		// do not print a newline to avoid a leading space
-		// when we're printing the first primary prompt in
-		// the shell
-		if !cancelNewline {
-			e.writeNewline()
-		}
-		return false
-	}
-
 	block.Init(e.Env)
 
 	if !block.Enabled() {
@@ -201,7 +188,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		return false
 	}
 
-	switch block.Type { //nolint:exhaustive
+	switch block.Type {
 	case config.Prompt:
 		if block.Alignment == config.Left {
 			e.currentLineLength += length

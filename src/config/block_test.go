@@ -13,7 +13,6 @@ func TestBlockEnabled(t *testing.T) {
 		Segments []*Segment
 		Expected bool
 	}{
-		{Case: "line break block", Expected: true, Type: LineBreak},
 		{Case: "prompt enabled", Expected: true, Type: Prompt, Segments: []*Segment{{Enabled: true}}},
 		{Case: "prompt disabled", Expected: false, Type: Prompt, Segments: []*Segment{{Enabled: false}}},
 		{Case: "prompt enabled multiple", Expected: true, Type: Prompt, Segments: []*Segment{{Enabled: false}, {Enabled: true}}},

@@ -18,8 +18,6 @@ type Overflow string
 const (
 	// Prompt writes one or more Segments
 	Prompt BlockType = "prompt"
-	// LineBreak creates a line break in the prompt
-	LineBreak BlockType = "newline"
 	// RPrompt is a right aligned prompt
 	RPrompt BlockType = "rprompt"
 	// Left aligns left
@@ -53,10 +51,6 @@ func (b *Block) Init(env runtime.Environment) {
 }
 
 func (b *Block) Enabled() bool {
-	if b.Type == LineBreak {
-		return true
-	}
-
 	for _, segment := range b.Segments {
 		if segment.Enabled {
 			return true

@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
@@ -30,7 +29,6 @@ var upgradeCmd = &cobra.Command{
 		}
 
 		if !slices.Contains(supportedPlatforms, stdruntime.GOOS) {
-			fmt.Print("\n⚠️ upgrade is not supported on this platform\n\n")
 			return
 		}
 
@@ -53,8 +51,6 @@ var upgradeCmd = &cobra.Command{
 			return
 		}
 
-		cfg := config.Load(env)
-
 		version := fmt.Sprintf("v%s", build.Version)
 
 		if upgrade.IsMajorUpgrade(version, latest) {
@@ -69,13 +65,7 @@ var upgradeCmd = &cobra.Command{
 			return
 		}
 
-		message := terminal.StopProgress()
-
-		if !cfg.DisableNotice {
-			message += "\n✅ no new version available\n\n"
-		}
-
-		fmt.Print(message)
+		fmt.Print(terminal.StopProgress())
 	},
 }
 

@@ -459,7 +459,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterFull,
-			Expected:            "PSDRIVE:/ | src",
+			Expected:            "PSDRIVE: | src",
 			HomePath:            homeDir,
 			Pwd:                 "/foo",
 			Pswd:                "PSDRIVE:/src",
@@ -489,7 +489,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            ".. | src",
+			Expected:            "PSDRIVE: | src",
 			HomePath:            homeDir,
 			Pwd:                 "/foo",
 			Pswd:                "PSDRIVE:/src",
@@ -591,7 +591,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            "PSDRIVE:/ | .. | init",
+			Expected:            "PSDRIVE: | .. | init",
 			HomePath:            homeDir,
 			Pwd:                 "/foo",
 			Pswd:                "PSDRIVE:/src/init",
@@ -630,7 +630,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            ".. > foo",
+			Expected:            "~ > foo",
 			HomePath:            homeDir,
 			Pwd:                 homeDir + "/foo",
 			PathSeparator:       "/",
@@ -640,7 +640,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            ".. > foo > bar",
+			Expected:            "~ > foo > bar",
 			HomePath:            homeDir,
 			Pwd:                 homeDir + "/foo/bar",
 			PathSeparator:       "/",
@@ -661,7 +661,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            ".. | space foo",
+			Expected:            "~ | space foo",
 			HomePath:            homeDir,
 			Pwd:                 homeDir + "/space foo",
 			PathSeparator:       "/",
@@ -752,7 +752,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            ".. > foo",
+			Expected:            "~ > foo",
 			HomePath:            homeDirWindows,
 			Pwd:                 homeDirWindows + "\\foo",
 			GOOS:                runtime.WINDOWS,
@@ -848,6 +848,7 @@ func TestFullAndFolderPath(t *testing.T) {
 
 		// for Windows paths
 		{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: runtime.WINDOWS},
+		{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: "\\\\localhost\\d$", Expected: "\\\\localhost\\d$", PathSeparator: "\\", GOOS: runtime.WINDOWS},
 		{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: runtime.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: runtime.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: "\\", GOOS: runtime.WINDOWS},
@@ -996,41 +997,6 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 
 		path.setPaths()
 		path.setStyle()
-		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
-		assert.Equal(t, tc.Expected, got)
-	}
-}
-
-func TestPowerlevelMappedLocations(t *testing.T) {
-	cases := []struct {
-		Pwd             string
-		MappedLocations map[string]string
-		Expected        string
-	}{
-		{Pwd: "/Users/michal/Applications", MappedLocations: map[string]string{"~": "#"}, Expected: "#/Applications"},
-	}
-
-	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("Home").Return("/Users/michal")
-		env.On("Pwd").Return(tc.Pwd)
-		env.On("GOOS").Return(runtime.DARWIN)
-		env.On("PathSeparator").Return("/")
-		env.On("Shell").Return(shell.GENERIC)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
-
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				properties.Style: Powerlevel,
-				MappedLocations:  tc.MappedLocations,
-			},
-		}
-
-		path.setPaths()
-		path.setStyle()
-
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -1501,46 +1467,155 @@ func TestGetFolderSeparator(t *testing.T) {
 
 func TestNormalizePath(t *testing.T) {
 	cases := []struct {
-		Input    string
-		HomeDir  string
-		GOOS     string
-		Expected string
+		Case          string
+		Input         string
+		HomeDir       string
+		GOOS          string
+		PathSeparator string
+		Expected      string
 	}{
-		{Input: "/foo/~/bar", HomeDir: homeDirWindows, GOOS: runtime.WINDOWS, Expected: "\\foo\\~\\bar"},
-		{Input: homeDirWindows + "\\Foo", HomeDir: homeDirWindows, GOOS: runtime.WINDOWS, Expected: "c:\\users\\someone\\foo"},
-		{Input: "~/Bob\\Foo", HomeDir: homeDir, GOOS: runtime.LINUX, Expected: homeDir + "/Bob\\Foo"},
-		{Input: "~/Bob\\Foo", HomeDir: homeDir, GOOS: runtime.DARWIN, Expected: homeDir + "/bob\\foo"},
-		{Input: "~\\Bob\\Foo", HomeDir: homeDirWindows, GOOS: runtime.WINDOWS, Expected: "c:\\users\\someone\\bob\\foo"},
-		{Input: "/foo/~/bar", HomeDir: homeDir, GOOS: runtime.LINUX, Expected: "/foo/~/bar"},
-		{Input: "~/baz", HomeDir: homeDir, GOOS: runtime.LINUX, Expected: homeDir + "/baz"},
-		{Input: "~/baz", HomeDir: homeDirWindows, GOOS: runtime.WINDOWS, Expected: "c:\\users\\someone\\baz"},
+		{
+			Case:          "Windows: absolute w/o drive letter, forward slash included",
+			Input:         "/foo/~/bar",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\foo\\~\\bar",
+		},
+		{
+			Case:          "Windows: absolute",
+			Input:         homeDirWindows + "\\Foo",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "c:\\users\\someone\\foo",
+		},
+		{
+			Case:     "Linux: home prefix, backslash included",
+			Input:    "~/Bob\\Foo",
+			HomeDir:  homeDir,
+			GOOS:     runtime.LINUX,
+			Expected: homeDir + "/Bob\\Foo",
+		},
+		{
+			Case:     "macOS: home prefix, backslash included",
+			Input:    "~/Bob\\Foo",
+			HomeDir:  homeDir,
+			GOOS:     runtime.DARWIN,
+			Expected: homeDir + "/bob\\foo",
+		},
+		{
+			Case:          "Windows: home prefix",
+			Input:         "~\\Bob\\Foo",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "c:\\users\\someone\\bob\\foo",
+		},
+		{
+			Case:     "Linux: absolute",
+			Input:    "/foo/~/bar",
+			HomeDir:  homeDir,
+			GOOS:     runtime.LINUX,
+			Expected: "/foo/~/bar",
+		},
+		{
+			Case:     "Linux: home prefix",
+			Input:    "~/baz",
+			HomeDir:  homeDir,
+			GOOS:     runtime.LINUX,
+			Expected: homeDir + "/baz",
+		},
+		{
+			Case:          "Windows: home prefix",
+			Input:         "~/baz",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "c:\\users\\someone\\baz",
+		},
+		{
+			Case:          "Windows: UNC root w/ prefix",
+			Input:         `\\.\UNC\localhost\c$`,
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\\\localhost\\c$",
+		},
+		{
+			Case:          "Windows: UNC root w/ prefix, forward slash included",
+			Input:         "//./UNC/localhost/c$",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\\\localhost\\c$",
+		},
+		{
+			Case:          "Windows: UNC root",
+			Input:         `\\localhost\c$\`,
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\\\localhost\\c$",
+		},
+		{
+			Case:          "Windows: UNC root, forward slash included",
+			Input:         "//localhost/c$",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\\\localhost\\c$",
+		},
+		{
+			Case:          "Windows: UNC",
+			Input:         `\\localhost\c$\some`,
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\\\localhost\\c$\\some",
+		},
+		{
+			Case:          "Windows: UNC, forward slash included",
+			Input:         "//localhost/c$/some",
+			HomeDir:       homeDirWindows,
+			GOOS:          runtime.WINDOWS,
+			PathSeparator: `\`,
+			Expected:      "\\\\localhost\\c$\\some",
+		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("Home").Return(tc.HomeDir)
 		env.On("GOOS").Return(tc.GOOS)
-		pt := &Path{
-			env: env,
+
+		if len(tc.PathSeparator) == 0 {
+			tc.PathSeparator = "/"
 		}
+
+		env.On("PathSeparator").Return(tc.PathSeparator)
+		pt := &Path{env: env}
 		got := pt.normalize(tc.Input)
-		assert.Equal(t, tc.Expected, got)
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
 
 func TestReplaceMappedLocations(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Pwd      string
-		Expected string
+		Case                   string
+		Pwd                    string
+		MappedLocationsEnabled bool
+		Expected               string
 	}{
 		{Pwd: "/c/l/k/f", Expected: "f"},
 		{Pwd: "/f/g/h", Expected: "/f/g/h"},
 		{Pwd: "/f/g/h/e", Expected: "^/e"},
 		{Pwd: abcd, Expected: "#"},
 		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
-		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
+		{Pwd: "/a/b/c/D/e", Expected: "#/e"},
 		{Pwd: "/a/b/k/j/e", Expected: "e"},
+		{Pwd: "/a/b/k/l", Expected: "@/l"},
+		{Pwd: "/a/b/k/l", MappedLocationsEnabled: true, Expected: "~/l"},
 	}
 
 	for _, tc := range cases {
@@ -1556,11 +1631,12 @@ func TestReplaceMappedLocations(t *testing.T) {
 		path := &Path{
 			env: env,
 			props: properties.Map{
-				MappedLocationsEnabled: false,
+				MappedLocationsEnabled: tc.MappedLocationsEnabled,
 				MappedLocations: map[string]string{
 					abcd:       "#",
 					"/f/g/h/*": "^",
 					"/c/l/k/*": "",
+					"~":        "@",
 					"~/j/*":    "",
 				},
 			},
@@ -1600,8 +1676,8 @@ func TestSplitPath(t *testing.T) {
 			GitDir:       &runtime.FileInfo{IsDir: true, ParentFolder: "/a/b/c"},
 			GitDirFormat: "<b>%s</b>",
 			Expected: Folders{
-				{Name: "<b>c</b>", Path: "/a/b/c", Display: true},
-				{Name: "d", Path: "/a/b/c/d"},
+				{Name: "<b>c</b>", Path: "~/c", Display: true},
+				{Name: "d", Path: "~/c/d"},
 			},
 		},
 		{
@@ -1622,6 +1698,7 @@ func TestSplitPath(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
+		env.On("PathSeparator").Return("/")
 		env.On("Home").Return("/a/b")
 		env.On("HasParentFilePath", ".git", false).Return(tc.GitDir, nil)
 		env.On("GOOS").Return(tc.GOOS)

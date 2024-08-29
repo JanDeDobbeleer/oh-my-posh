@@ -77,7 +77,9 @@ For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do t
 - To make mapped locations work cross-platform, use `/` as the path separator, Oh My Posh will
   automatically match effective separators based on the running operating system.
 - If you want to match all child directories, you can use `*` as a wildcard, for example:
-  `"C:/Users/Bill/*": "$"` will turn `C:/Users/Bill/Downloads` into `$/Downloads`.
+  `"C:/Users/Bill/*": "$"` will turn `C:/Users/Bill/Downloads` into `$/Downloads` but leave `C:/Users/Bill` unchanged.
+- To prevent mangling path elements, if you use any text style tags (e.g., `<lightGreen>...</>`) in replacement values,
+  you should avoid using a chevron character (`<`/`>`) in the `folder_separator_icon` property, and vice versa.
 - The character `~` at the start of a mapped location will match the user's home directory.
 - The match is case-insensitive on Windows and macOS, but case-sensitive on other operating systems. This means that for
   user Bill, who has a user account `Bill` on Windows and `bill` on Linux, `~/Foo` might match

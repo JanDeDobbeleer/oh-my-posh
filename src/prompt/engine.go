@@ -171,7 +171,7 @@ func (e *Engine) getTitleTemplateText() string {
 }
 
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
-	defer e.patchPowerShellBleed()
+	defer e.applyPowerShellBleedPatch()
 
 	// This is deprecated but we leave it in to not break configs
 	// It is encouraged to use "newline": true on block level
@@ -267,7 +267,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	return true
 }
 
-func (e *Engine) patchPowerShellBleed() {
+func (e *Engine) applyPowerShellBleedPatch() {
 	// when in PowerShell, we need to clear the line after the prompt
 	// to avoid the background being printed on the next line
 	// when at the end of the buffer.
@@ -514,10 +514,6 @@ func New(flags *runtime.Flags) *Engine {
 	env.Init()
 	cfg := config.Load(env)
 
-	if cfg.PatchPwshBleed {
-		patchPowerShellBleed(env.Shell(), flags)
-	}
-
 	env.Var = cfg.Var
 	flags.HasTransient = cfg.TransientPrompt != nil
 
@@ -532,10 +528,16 @@ func New(flags *runtime.Flags) *Engine {
 		Plain:  flags.Plain,
 	}
 
+	if cfg.PatchPwshBleed {
+		eng.patchPowerShellBleed()
+	}
+
 	return eng
 }
 
-func patchPowerShellBleed(sh string, flags *runtime.Flags) {
+func (e *Engine) patchPowerShellBleed() {
+	sh := e.Env.Shell()
+
 	// when in PowerShell, and force patching the bleed bug
 	// we need to reduce the terminal width by 1 so the last
 	// character isn't cut off by the ANSI escape sequences
@@ -544,10 +546,12 @@ func patchPowerShellBleed(sh string, flags *runtime.Flags) {
 		return
 	}
 
-	// only do this when relevant
-	if flags.TerminalWidth <= 0 {
+	// Since the terminal width may not be given by the CLI flag, we should always call this here.
+	_, err := e.Env.TerminalWidth()
+	if err != nil {
+		// Skip when we're unable to determine the terminal width.
 		return
 	}
 
-	flags.TerminalWidth--
+	e.Env.Flags().TerminalWidth--
 }

@@ -86,6 +86,8 @@ const (
 	hyperLinkText    = "<TEXT>"
 	hyperLinkTextEnd = "</TEXT>"
 
+	empty = "<>"
+
 	startProgress = "\x1b]9;4;3;0\x07"
 	endProgress   = "\x1b]9;4;0;0\x07"
 
@@ -158,10 +160,6 @@ func ChangeLine(numberOfLines int) string {
 func Pwd(pwdType, userName, hostName, pwd string) string {
 	if Plain {
 		return ""
-	}
-
-	if strings.HasSuffix(pwd, ":") {
-		pwd += `/`
 	}
 
 	switch pwdType {
@@ -345,6 +343,9 @@ func Write(background, foreground color.Ansi, text string) {
 			case hyperLinkEnd:
 				i += len([]rune(match[ANCHOR])) - 1
 				builder.WriteString(formats.HyperlinkEnd)
+				continue
+			case empty:
+				i += len([]rune(match[ANCHOR])) - 1
 				continue
 			}
 

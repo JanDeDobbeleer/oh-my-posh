@@ -173,25 +173,20 @@ func (term *Terminal) Pwd() string {
 	if term.cwd != "" {
 		return term.cwd
 	}
-	correctPath := func(pwd string) string {
-		if term.GOOS() != WINDOWS {
-			return pwd
-		}
-		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
-		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
-	}
+
 	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
-		term.cwd = correctPath(term.CmdFlags.PWD)
+		term.cwd = CleanPath(term, term.CmdFlags.PWD)
 		term.Debug(term.cwd)
 		return term.cwd
 	}
+
 	dir, err := os.Getwd()
 	if err != nil {
 		term.Error(err)
 		return ""
 	}
-	term.cwd = correctPath(dir)
+
+	term.cwd = CleanPath(term, dir)
 	term.Debug(term.cwd)
 	return term.cwd
 }
@@ -321,7 +316,10 @@ func (term *Terminal) LsDir(path string) []fs.DirEntry {
 
 func (term *Terminal) PathSeparator() string {
 	defer term.Trace(time.Now())
-	return string(os.PathSeparator)
+	if term.GOOS() == WINDOWS {
+		return `\`
+	}
+	return "/"
 }
 
 func (term *Terminal) User() string {
@@ -880,6 +878,54 @@ func Base(env Environment, path string) string {
 		return env.PathSeparator()
 	}
 	return path
+}
+
+func CleanPath(env Environment, path string) string {
+	if len(path) == 0 {
+		return path
+	}
+
+	cleaned := path
+	separator := env.PathSeparator()
+
+	// The prefix can be empty for a relative path.
+	var prefix string
+	if IsPathSeparator(env, cleaned[0]) {
+		prefix = separator
+	}
+
+	if env.GOOS() == WINDOWS {
+		// Normalize (forward) slashes to backslashes on Windows.
+		cleaned = strings.ReplaceAll(cleaned, "/", `\`)
+
+		// Clean the prefix for a UNC path, if any.
+		if regex.MatchString(`^\\{2}[^\\]+`, cleaned) {
+			cleaned = strings.TrimPrefix(cleaned, `\\.\UNC\`)
+			if len(cleaned) == 0 {
+				return cleaned
+			}
+			prefix = `\\`
+		}
+
+		// Always use an uppercase drive letter on Windows.
+		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
+		cleaned = driveLetter.ReplaceAllStringFunc(cleaned, strings.ToUpper)
+	}
+
+	sb := new(strings.Builder)
+	sb.WriteString(prefix)
+
+	// Clean slashes.
+	matches := regex.FindAllNamedRegexMatch(fmt.Sprintf(`(?P<element>[^\%s]+)`, separator), cleaned)
+	n := len(matches) - 1
+	for i, m := range matches {
+		sb.WriteString(m["element"])
+		if i != n {
+			sb.WriteString(separator)
+		}
+	}
+
+	return sb.String()
 }
 
 func ReplaceTildePrefixWithHomeDir(env Environment, path string) string {

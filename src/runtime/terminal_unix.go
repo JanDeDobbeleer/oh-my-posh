@@ -113,27 +113,6 @@ func (term *Terminal) Platform() string {
 	return platform
 }
 
-func (term *Terminal) CachePath() string {
-	defer term.Trace(time.Now())
-
-	// allow the user to set the cache path using OMP_CACHE_DIR
-	if cachePath := returnOrBuildCachePath(term.Getenv("OMP_CACHE_DIR")); len(cachePath) != 0 {
-		return cachePath
-	}
-
-	// get XDG_CACHE_HOME if present
-	if cachePath := returnOrBuildCachePath(term.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
-		return cachePath
-	}
-
-	// HOME cache folder
-	if cachePath := returnOrBuildCachePath(term.Home() + "/.cache"); len(cachePath) != 0 {
-		return cachePath
-	}
-
-	return term.Home()
-}
-
 func (term *Terminal) WindowsRegistryKeyValue(_ string) (*WindowsRegistryValue, error) {
 	return nil, &NotImplemented{}
 }

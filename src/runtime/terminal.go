@@ -798,6 +798,48 @@ func (term *Terminal) SystemInfo() (*SystemInfo, error) {
 	return s, nil
 }
 
+func (term *Terminal) CachePath() string {
+	defer term.Trace(time.Now())
+
+	returnOrBuildCachePath := func(path string) string {
+		// validate root path
+		if _, err := os.Stat(path); err != nil {
+			return ""
+		}
+		// validate oh-my-posh folder, if non existent, create it
+		cachePath := filepath.Join(path, "oh-my-posh")
+		if _, err := os.Stat(cachePath); err == nil {
+			return cachePath
+		}
+		if err := os.Mkdir(cachePath, 0o755); err != nil {
+			return ""
+		}
+		return cachePath
+	}
+
+	// WINDOWS cache folder, should not exist elsewhere
+	if cachePath := returnOrBuildCachePath(term.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
+		return cachePath
+	}
+
+	// allow the user to set the cache path using OMP_CACHE_DIR
+	if cachePath := returnOrBuildCachePath(term.Getenv("OMP_CACHE_DIR")); len(cachePath) != 0 {
+		return cachePath
+	}
+
+	// get XDG_CACHE_HOME if present
+	if cachePath := returnOrBuildCachePath(term.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
+		return cachePath
+	}
+
+	// HOME cache folder
+	if cachePath := returnOrBuildCachePath(term.Home() + "/.cache"); len(cachePath) != 0 {
+		return cachePath
+	}
+
+	return term.Home()
+}
+
 func IsPathSeparator(env Environment, c uint8) bool {
 	if c == '/' {
 		return true
@@ -875,20 +917,4 @@ func cleanHostName(hostName string) string {
 		}
 	}
 	return hostName
-}
-
-func returnOrBuildCachePath(path string) string {
-	// validate root path
-	if _, err := os.Stat(path); err != nil {
-		return ""
-	}
-	// validate oh-my-posh folder, if non existent, create it
-	cachePath := filepath.Join(path, "oh-my-posh")
-	if _, err := os.Stat(cachePath); err == nil {
-		return cachePath
-	}
-	if err := os.Mkdir(cachePath, 0o755); err != nil {
-		return ""
-	}
-	return cachePath
 }

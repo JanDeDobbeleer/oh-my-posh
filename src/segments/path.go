@@ -13,23 +13,44 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
+type Folder struct {
+	Name    string
+	Display bool
+	Path    string
+}
+
+type Folders []*Folder
+
+func (f Folders) List() []string {
+	var list []string
+
+	for _, folder := range f {
+		list = append(list, folder.Name)
+	}
+
+	return list
+}
+
 type Path struct {
 	props properties.Properties
 	env   runtime.Environment
 
-	root          string
-	relative      string
-	pwd           string
-	cygPath       bool
-	windowsPath   bool
-	pathSeparator string
+	pwd      string
+	root     string
+	relative string
+	folders  Folders
+	// After `setPaths` is called, the above 4 fields should remain unchanged to preserve the original path info.
+
+	cygPath         bool
+	windowsPath     bool
+	pathSeparator   string
+	mappedLocations map[string]string
 
 	Path       string
 	StackCount int
 	Location   string
 	Writable   bool
 	RootDir    bool
-	Folders    Folders
 }
 
 const (
@@ -121,7 +142,7 @@ func (pt *Path) Enabled() bool {
 
 func (pt *Path) setPaths() {
 	defer func() {
-		pt.Folders = pt.splitPath()
+		pt.folders = pt.splitPath()
 	}()
 
 	displayCygpath := func() bool {
@@ -147,33 +168,33 @@ func (pt *Path) setPaths() {
 	}
 
 	// ensure a clean path
-	pt.root, pt.relative = pt.replaceMappedLocations()
-
-	// this is a full replacement of the parent
-	if len(pt.root) == 0 {
-		pt.pwd = pt.relative
-		return
-	}
-
-	if !strings.HasSuffix(pt.root, pt.pathSeparator) && len(pt.relative) > 0 {
-		pt.pwd = pt.root + pt.pathSeparator + pt.relative
-		return
-	}
-
-	pt.pwd = pt.root + pt.relative
+	pt.root, pt.relative = pt.replaceMappedLocations(pt.pwd)
+	pt.pwd = pt.join(pt.root, pt.relative)
 }
 
 func (pt *Path) Parent() string {
 	if len(pt.pwd) == 0 {
 		return ""
 	}
-	if len(pt.relative) == 0 {
-		// a root path has no parent
+
+	folders := pt.folders.List()
+	if len(folders) == 0 {
+		// No parent.
 		return ""
 	}
-	base := runtime.Base(pt.env, pt.pwd)
-	path := pt.replaceFolderSeparators(pt.pwd[:len(pt.pwd)-len(base)])
-	return path
+
+	sb := new(strings.Builder)
+	folderSeparator := pt.getFolderSeparator()
+
+	sb.WriteString(pt.root)
+	if !pt.endWithSeparator(pt.root) {
+		sb.WriteString(folderSeparator)
+	}
+	for _, folder := range folders[:len(folders)-1] {
+		sb.WriteString(folder)
+		sb.WriteString(folderSeparator)
+	}
+	return sb.String()
 }
 
 func (pt *Path) Init(props properties.Properties, env runtime.Environment) {
@@ -183,12 +204,14 @@ func (pt *Path) Init(props properties.Properties, env runtime.Environment) {
 
 func (pt *Path) setStyle() {
 	if len(pt.relative) == 0 {
+		root := pt.root
+
 		// Only append a separator to a non-filesystem PSDrive root or a Windows drive root.
-		if (len(pt.env.Flags().PSWD) != 0 || pt.windowsPath) && strings.HasSuffix(pt.root, ":") {
-			pt.root += pt.getFolderSeparator()
+		if (len(pt.env.Flags().PSWD) != 0 || pt.windowsPath) && strings.HasSuffix(root, ":") {
+			root += pt.getFolderSeparator()
 		}
 
-		pt.Path = pt.colorizePath(pt.root, nil)
+		pt.Path = pt.colorizePath(root, nil)
 		return
 	}
 
@@ -276,75 +299,77 @@ func (pt *Path) getFolderSeparator() string {
 }
 
 func (pt *Path) getMixedPath() string {
+	root := pt.root
+	folders := pt.folders
 	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
-	if pt.root == pt.pathSeparator {
-		pt.root = pt.Folders[0].Name
-		pt.Folders = pt.Folders[1:]
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
 	}
 
-	var folders []string
+	var elements []string
 
-	for i, n := 0, len(pt.Folders); i < n; i++ {
-		folder := pt.Folders[i].Name
-		if len(folder) > threshold && i != n-1 && !pt.Folders[i].Display {
-			folder = folderIcon
+	for i, n := 0, len(folders); i < n; i++ {
+		folderName := folders[i].Name
+		if len(folderName) > threshold && i != n-1 && !folders[i].Display {
+			elements = append(elements, folderIcon)
+			continue
 		}
-		folders = append(folders, folder)
+
+		elements = append(elements, folderName)
 	}
 
-	return pt.colorizePath(pt.root, folders)
+	return pt.colorizePath(root, elements)
 }
 
 func (pt *Path) getAgnosterPath() string {
+	root := pt.root
+	folders := pt.folders
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
-	if pt.root == pt.pathSeparator {
-		pt.root = pt.Folders[0].Name
-		pt.Folders = pt.Folders[1:]
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
 	}
 
 	var elements []string
-	n := len(pt.Folders)
-	for i := 0; i < n-1; i++ {
-		name := folderIcon
 
-		if pt.Folders[i].Display {
-			name = pt.Folders[i].Name
-		}
-
-		elements = append(elements, name)
-	}
-
-	if len(pt.Folders) > 0 {
-		elements = append(elements, pt.Folders[n-1].Name)
-	}
-
-	return pt.colorizePath(pt.root, elements)
-}
-
-func (pt *Path) getAgnosterLeftPath() string {
-	folderIcon := pt.props.GetString(FolderIcon, "..")
-
-	if pt.root == pt.pathSeparator {
-		pt.root = pt.Folders[0].Name
-		pt.Folders = pt.Folders[1:]
-	}
-
-	var elements []string
-	n := len(pt.Folders)
-	elements = append(elements, pt.Folders[0].Name)
-	for i := 1; i < n; i++ {
-		if pt.Folders[i].Display {
-			elements = append(elements, pt.Folders[i].Name)
+	for i, n := 0, len(folders); i < n; i++ {
+		if folders[i].Display || i == n-1 {
+			elements = append(elements, folders[i].Name)
 			continue
 		}
 
 		elements = append(elements, folderIcon)
 	}
 
-	return pt.colorizePath(pt.root, elements)
+	return pt.colorizePath(root, elements)
+}
+
+func (pt *Path) getAgnosterLeftPath() string {
+	root := pt.root
+	folders := pt.folders
+	folderIcon := pt.props.GetString(FolderIcon, "..")
+
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
+	}
+
+	var elements []string
+	elements = append(elements, folders[0].Name)
+	for i, n := 1, len(folders); i < n; i++ {
+		if folders[i].Display {
+			elements = append(elements, folders[i].Name)
+			continue
+		}
+
+		elements = append(elements, folderIcon)
+	}
+
+	return pt.colorizePath(root, elements)
 }
 
 func (pt *Path) getRelevantLetter(folder *Folder) string {
@@ -365,62 +390,78 @@ func (pt *Path) getRelevantLetter(folder *Folder) string {
 }
 
 func (pt *Path) getLetterPath() string {
-	if pt.root == pt.pathSeparator {
-		pt.root = pt.Folders[0].Name
-		pt.Folders = pt.Folders[1:]
+	root := pt.root
+	folders := pt.folders
+
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
 	}
 
-	pt.root = pt.getRelevantLetter(&Folder{Name: pt.root})
+	root = pt.getRelevantLetter(&Folder{Name: root})
 
 	var elements []string
-	n := len(pt.Folders)
-	for i := 0; i < n-1; i++ {
-		if pt.Folders[i].Display {
-			elements = append(elements, pt.Folders[i].Name)
+	for i, n := 0, len(folders); i < n; i++ {
+		if folders[i].Display || i == n-1 {
+			elements = append(elements, folders[i].Name)
 			continue
 		}
 
-		letter := pt.getRelevantLetter(pt.Folders[i])
+		letter := pt.getRelevantLetter(folders[i])
 		elements = append(elements, letter)
 	}
 
-	if len(pt.Folders) > 0 {
-		elements = append(elements, pt.Folders[n-1].Name)
-	}
-
-	return pt.colorizePath(pt.root, elements)
+	return pt.colorizePath(root, elements)
 }
 
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
+	root := pt.root
+	folders := pt.folders
 	separator := pt.getFolderSeparator()
 
-	if pt.root == pt.pathSeparator {
-		pt.root = pt.Folders[0].Name
-		pt.Folders = pt.Folders[1:]
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
+	}
+
+	folderNames := folders.List()
+
+	usePowerlevelStyle := func(root, relative string) bool {
+		length := len(root) + len(relative)
+		if !pt.endWithSeparator(root) {
+			length += len(separator)
+		}
+		return length <= maxWidth
 	}
 
 	if maxWidth > 0 {
-		path := strings.Join(pt.Folders.List(), separator)
-		if len(path) <= maxWidth {
-			return pt.colorizePath(pt.root, pt.Folders.List())
+		relative := strings.Join(folderNames, separator)
+		if usePowerlevelStyle(root, relative) {
+			return pt.colorizePath(root, folderNames)
 		}
 	}
 
-	pt.root = pt.getRelevantLetter(&Folder{Name: pt.root})
+	root = pt.getRelevantLetter(&Folder{Name: root})
 
 	var elements []string
-	n := len(pt.Folders)
 	letters := make(map[string]bool)
-	letters[pt.root] = true
-	for i := 0; i < n-1; i++ {
-		folder := pt.Folders[i].Name
-		letter := pt.getRelevantLetter(pt.Folders[i])
+	letters[root] = true
+
+	for i, n := 0, len(folders); i < n; i++ {
+		folderName := folderNames[i]
+
+		if i == n-1 {
+			elements = append(elements, folderName)
+			break
+		}
+
+		letter := pt.getRelevantLetter(folders[i])
 
 		for letters[letter] {
-			if letter == folder {
+			if letter == folderName {
 				break
 			}
-			letter += folder[len(letter) : len(letter)+1]
+			letter += folderName[len(letter) : len(letter)+1]
 		}
 
 		letters[letter] = true
@@ -429,87 +470,95 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 		// only return early on maxWidth > 0
 		// this enables the powerlevel10k behavior
 		if maxWidth > 0 {
-			list := pt.Folders[i+1:].List()
-			list = append(list, elements...)
-			current := strings.Join(list, separator)
-			leftover := maxWidth - len(current) - len(pt.root) - len(separator)
-			if leftover >= 0 {
-				elements = append(elements, strings.Join(pt.Folders[i+1:].List(), separator))
-				return pt.colorizePath(pt.root, elements)
+			list := elements
+			list = append(list, folderNames[i+1:]...)
+			relative := strings.Join(list, separator)
+			if usePowerlevelStyle(root, relative) {
+				return pt.colorizePath(root, list)
 			}
 		}
 	}
 
-	if len(pt.Folders) > 0 {
-		elements = append(elements, pt.Folders[n-1].Name)
-	}
-
-	return pt.colorizePath(pt.root, elements)
+	return pt.colorizePath(root, elements)
 }
 
 func (pt *Path) getAgnosterFullPath() string {
-	if pt.root == pt.pathSeparator {
-		pt.root = pt.Folders[0].Name
-		pt.Folders = pt.Folders[1:]
+	root := pt.root
+	folders := pt.folders
+
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
 	}
 
-	return pt.colorizePath(pt.root, pt.Folders.List())
+	return pt.colorizePath(root, folders.List())
 }
 
 func (pt *Path) getAgnosterShortPath() string {
-	pathDepth := len(pt.Folders)
+	root := pt.root
+	folders := pt.folders
+
+	if pt.isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
+	}
 
 	maxDepth := pt.props.GetInt(MaxDepth, 1)
 	if maxDepth < 1 {
 		maxDepth = 1
 	}
 
-	folderIcon := pt.props.GetString(FolderIcon, "..")
+	pathDepth := len(folders)
 	hideRootLocation := pt.props.GetBool(HideRootLocation, false)
+	folderIcon := pt.props.GetString(FolderIcon, "..")
 
-	if pathDepth <= maxDepth {
-		if hideRootLocation {
-			pt.root = folderIcon
-		}
+	// No need to shorten.
+	if pathDepth < maxDepth || (pathDepth == maxDepth && !hideRootLocation) {
 		return pt.getAgnosterFullPath()
 	}
 
-	splitPos := pathDepth - maxDepth
+	elements := []string{folderIcon}
 
-	var folders []string
-	// unix root, needs to be replaced with the folder we're in at root level
-	root := pt.root
-	room := pathDepth - maxDepth
-	if root == pt.pathSeparator {
-		root = pt.Folders[0].Name
-		room--
-	}
-
-	if hideRootLocation || room > 0 {
-		folders = append(folders, folderIcon)
+	for i := pathDepth - maxDepth; i < pathDepth; i++ {
+		elements = append(elements, folders[i].Name)
 	}
 
 	if hideRootLocation {
-		root = ""
+		return pt.colorizePath(elements[0], elements[1:])
 	}
 
-	for i := splitPos; i < pathDepth; i++ {
-		folders = append(folders, pt.Folders[i].Name)
-	}
-
-	return pt.colorizePath(root, folders)
+	return pt.colorizePath(root, elements)
 }
 
 func (pt *Path) getFullPath() string {
-	return pt.colorizePath(pt.root, pt.Folders.List())
+	return pt.colorizePath(pt.root, pt.folders.List())
 }
 
 func (pt *Path) getFolderPath() string {
-	return pt.colorizePath(runtime.Base(pt.env, pt.pwd), nil)
+	folderName := pt.folders[len(pt.folders)-1].Name
+	return pt.colorizePath(folderName, nil)
 }
 
-func (pt *Path) replaceMappedLocations() (string, string) {
-	mappedLocations := map[string]string{}
+func (pt *Path) join(root, relative string) string {
+	// this is a full replacement of the parent
+	if len(root) == 0 {
+		return relative
+	}
+
+	if !pt.endWithSeparator(root) && len(relative) > 0 {
+		return root + pt.pathSeparator + relative
+	}
+
+	return root + relative
+}
+
+func (pt *Path) setMappedLocations() {
+	if pt.mappedLocations != nil {
+		return
+	}
+
+	mappedLocations := make(map[string]string)
+
 	// predefined mapped locations, can be disabled
 	if pt.props.GetBool(MappedLocationsEnabled, true) {
 		mappedLocations["hkcu:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
@@ -520,7 +569,7 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 	// merge custom locations with mapped locations
 	// mapped locations can override predefined locations
 	keyValues := pt.props.GetKeyValueMap(MappedLocations, make(map[string]string))
-	for key, val := range keyValues {
+	for key, value := range keyValues {
 		if len(key) == 0 {
 			continue
 		}
@@ -540,89 +589,86 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 			continue
 		}
 
-		mappedLocations[pt.normalize(path)] = val
+		// When two templates resolve to the same key, the values are compared in ascending order and the latter is taken.
+		if v, exist := mappedLocations[pt.normalize(path)]; exist && value <= v {
+			continue
+		}
+
+		mappedLocations[pt.normalize(path)] = value
+	}
+
+	pt.mappedLocations = mappedLocations
+}
+
+func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
+	root, relative := pt.parsePath(inputPath)
+	if len(relative) == 0 {
+		pt.RootDir = true
+	}
+
+	pt.setMappedLocations()
+	if len(pt.mappedLocations) == 0 {
+		return root, relative
 	}
 
 	// sort map keys in reverse order
 	// fixes case when a subfoder and its parent are mapped
 	// ex /users/test and /users/test/dev
-	keys := make([]string, 0, len(mappedLocations))
-	for k := range mappedLocations {
+	keys := make([]string, 0, len(pt.mappedLocations))
+	for k := range pt.mappedLocations {
 		keys = append(keys, k)
 	}
-
 	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
-
-	root, relative := pt.parsePath(pt.pwd)
-	if len(relative) == 0 {
-		pt.RootDir = true
-	}
 
 	rootN := pt.normalize(root)
 	relativeN := pt.normalize(relative)
 
+	escape := func(path string) string {
+		// Escape chevron characters to avoid applying unexpected text styles.
+		return strings.NewReplacer("<", "<<>", ">", "<>>").Replace(path)
+	}
+
 	for _, key := range keys {
 		keyRoot, keyRelative := pt.parsePath(key)
-		matchSubFolders := strings.HasSuffix(keyRelative, "*")
+		matchSubFolders := strings.HasSuffix(keyRelative, pt.pathSeparator+"*")
 
-		if matchSubFolders && len(keyRelative) > 1 {
-			keyRelative = keyRelative[0 : len(keyRelative)-1] // remove trailing /* or \*
+		if matchSubFolders {
+			// Remove the trailing wildcard (*).
+			keyRelative = keyRelative[:len(keyRelative)-1]
 		}
 
 		if keyRoot != rootN || !strings.HasPrefix(relativeN, keyRelative) {
 			continue
 		}
 
-		value := mappedLocations[key]
+		value := pt.mappedLocations[key]
 		overflow := relative[len(keyRelative):]
 
+		// exactly match the full path
 		if len(overflow) == 0 {
-			// exactly match the full path
 			return value, ""
 		}
 
+		// only match the root
 		if len(keyRelative) == 0 {
-			// only match the root
-			return value, strings.Trim(relative, pt.pathSeparator)
+			return value, strings.Trim(escape(relative), pt.pathSeparator)
 		}
 
 		// match several prefix elements
-		if matchSubFolders || overflow[0:1] == pt.pathSeparator {
-			return value, strings.Trim(overflow, pt.pathSeparator)
+		if matchSubFolders || overflow[:1] == pt.pathSeparator {
+			return value, strings.Trim(escape(overflow), pt.pathSeparator)
 		}
 	}
 
-	return root, strings.Trim(relative, pt.pathSeparator)
+	return escape(root), strings.Trim(escape(relative), pt.pathSeparator)
 }
 
-func (pt *Path) normalizePath(path string) string {
-	if pt.env.GOOS() != runtime.WINDOWS || pt.cygPath {
-		return path
-	}
-
-	var clean []rune
-	for _, char := range path {
-		var lastChar rune
-		if len(clean) > 0 {
-			lastChar = clean[len(clean)-1:][0]
-		}
-
-		if char == '/' && lastChar != 60 { // 60 == <, this is done to avoid replacing color codes
-			clean = append(clean, 92) // 92 == \
-			continue
-		}
-
-		clean = append(clean, char)
-	}
-
-	return string(clean)
-}
-
-// ParsePath parses an input path and returns a clean root and a clean path.
+// parsePath parses a clean input path into a root and a relative.
 func (pt *Path) parsePath(inputPath string) (string, string) {
-	var root, path string
+	var root, relative string
+
 	if len(inputPath) == 0 {
-		return root, path
+		return root, relative
 	}
 
 	if pt.cygPath {
@@ -638,74 +684,56 @@ func (pt *Path) parsePath(inputPath string) (string, string) {
 		}
 	}
 
-	clean := func(path string) string {
-		matches := regex.FindAllNamedRegexMatch(fmt.Sprintf(`(?P<element>[^\%s]+)`, pt.pathSeparator), path)
-		n := len(matches) - 1
-		s := new(strings.Builder)
-		for i, m := range matches {
-			s.WriteString(m["element"])
-			if i != n {
-				s.WriteString(pt.pathSeparator)
-			}
-		}
-		return s.String()
-	}
-
-	if pt.windowsPath {
-		inputPath = pt.normalizePath(inputPath)
-		// for a UNC path, extract \\hostname\sharename as the root
-		matches := regex.FindNamedRegexMatch(`^\\\\(?P<hostname>[^\\]+)\\+(?P<sharename>[^\\]+)\\*(?P<path>[\s\S]*)$`, inputPath)
+	if pt.env.GOOS() == runtime.WINDOWS {
+		// Handle a UNC path, if any.
+		pattern := fmt.Sprintf(`^\%[1]s{2}(?P<hostname>[^\%[1]s]+)\%[1]s(?P<sharename>[^\%[1]s]+)(\%[1]s(?P<path>[\s\S]*))?$`, pt.pathSeparator)
+		matches := regex.FindNamedRegexMatch(pattern, inputPath)
 		if len(matches) > 0 {
-			root = `\\` + matches["hostname"] + `\` + matches["sharename"]
-			path = clean(matches["path"])
-			return root, path
+			root = fmt.Sprintf(`%[1]s%[1]s%[2]s%[1]s%[3]s`, pt.pathSeparator, matches["hostname"], matches["sharename"])
+			relative = matches["path"]
+			return root, relative
 		}
 	}
 
 	s := strings.SplitAfterN(inputPath, pt.pathSeparator, 2)
 	root = s[0]
 
-	if pt.windowsPath {
-		root = strings.TrimSuffix(root, pt.pathSeparator)
-	}
-
 	if len(s) == 2 {
-		path = clean(s[1])
+		if len(root) > 1 {
+			root = root[:len(root)-1]
+		}
+
+		relative = s[1]
 	}
 
-	return root, path
+	return root, relative
+}
+
+func (pt *Path) isRootFS(path string) bool {
+	return len(path) == 1 && runtime.IsPathSeparator(pt.env, path[0])
+}
+
+func (pt *Path) endWithSeparator(path string) bool {
+	if len(path) == 0 {
+		return false
+	}
+	return runtime.IsPathSeparator(pt.env, path[len(path)-1])
 }
 
 func (pt *Path) normalize(inputPath string) string {
 	normalized := inputPath
+
 	if strings.HasPrefix(normalized, "~") && (len(normalized) == 1 || runtime.IsPathSeparator(pt.env, normalized[1])) {
 		normalized = pt.env.Home() + normalized[1:]
 	}
 
-	if pt.cygPath {
-		return normalized
-	}
+	normalized = runtime.CleanPath(pt.env, normalized)
 
-	switch pt.env.GOOS() {
-	case runtime.WINDOWS:
-		normalized = pt.normalizePath(normalized)
-		fallthrough
-	case runtime.DARWIN:
+	if pt.env.GOOS() == runtime.WINDOWS || pt.env.GOOS() == runtime.DARWIN {
 		normalized = strings.ToLower(normalized)
 	}
 
 	return normalized
-}
-
-func (pt *Path) replaceFolderSeparators(pwd string) string {
-	defaultSeparator := pt.pathSeparator
-	folderSeparator := pt.getFolderSeparator()
-	if folderSeparator == defaultSeparator {
-		return pwd
-	}
-
-	pwd = strings.ReplaceAll(pwd, defaultSeparator, folderSeparator)
-	return pwd
 }
 
 func (pt *Path) colorizePath(root string, elements []string) string {
@@ -730,8 +758,8 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	}
 
 	if len(elements) == 0 {
-		root = fmt.Sprintf(leftFormat, root)
-		return colorizeElement(root)
+		formattedRoot := fmt.Sprintf(leftFormat, root)
+		return colorizeElement(formattedRoot)
 	}
 
 	colorizeSeparator := func() string {
@@ -741,13 +769,13 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 		return fmt.Sprintf("<%s>%s</>", cycle[0], folderSeparator)
 	}
 
-	var builder strings.Builder
+	sb := new(strings.Builder)
 
 	formattedRoot := fmt.Sprintf(leftFormat, root)
-	builder.WriteString(colorizeElement(formattedRoot))
+	sb.WriteString(colorizeElement(formattedRoot))
 
-	if root != pt.pathSeparator && len(root) != 0 {
-		builder.WriteString(colorizeSeparator())
+	if !pt.endWithSeparator(root) {
+		sb.WriteString(colorizeSeparator())
 	}
 
 	for i, element := range elements {
@@ -760,76 +788,49 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 			format = rightFormat
 		}
 
-		element = fmt.Sprintf(format, element)
-		builder.WriteString(colorizeElement(element))
+		formattedElement := fmt.Sprintf(format, element)
+		sb.WriteString(colorizeElement(formattedElement))
 		if i != len(elements)-1 {
-			builder.WriteString(colorizeSeparator())
+			sb.WriteString(colorizeSeparator())
 		}
 	}
 
-	return builder.String()
-}
-
-type Folder struct {
-	Name    string
-	Display bool
-	Path    string
-}
-
-type Folders []*Folder
-
-func (f Folders) List() []string {
-	var list []string
-
-	for _, folder := range f {
-		list = append(list, folder.Name)
-	}
-
-	return list
+	return sb.String()
 }
 
 func (pt *Path) splitPath() Folders {
-	result := Folders{}
-	folders := []string{}
+	folders := Folders{}
 
-	if len(pt.relative) != 0 {
-		folders = strings.Split(pt.relative, pt.pathSeparator)
+	if len(pt.relative) == 0 {
+		return folders
 	}
 
+	elements := strings.Split(pt.relative, pt.pathSeparator)
 	folderFormatMap := pt.makeFolderFormatMap()
+	currentPath := pt.root
 
-	getCurrentPath := func() string {
-		if pt.root == "~" {
-			return pt.env.Home() + pt.pathSeparator
-		}
-
-		if pt.windowsPath {
-			return pt.root + pt.pathSeparator
-		}
-
-		return pt.root
+	if !pt.endWithSeparator(pt.root) {
+		currentPath += pt.pathSeparator
 	}
-
-	currentPath := getCurrentPath()
 
 	var display bool
 
-	for _, folder := range folders {
-		currentPath += folder
+	for _, element := range elements {
+		currentPath += element
 
 		if format := folderFormatMap[currentPath]; len(format) != 0 {
-			folder = fmt.Sprintf(format, folder)
+			element = fmt.Sprintf(format, element)
 			display = true
 		}
 
-		result = append(result, &Folder{Name: folder, Path: currentPath, Display: display})
+		folders = append(folders, &Folder{Name: element, Path: currentPath, Display: display})
 
 		currentPath += pt.pathSeparator
 
 		display = false
 	}
 
-	return result
+	return folders
 }
 
 func (pt *Path) makeFolderFormatMap() map[string]string {
@@ -838,7 +839,9 @@ func (pt *Path) makeFolderFormatMap() map[string]string {
 	if gitDirFormat := pt.props.GetString(GitDirFormat, ""); len(gitDirFormat) != 0 {
 		dir, err := pt.env.HasParentFilePath(".git", false)
 		if err == nil && dir.IsDir {
-			folderFormatMap[dir.ParentFolder] = gitDirFormat
+			// Make it consistent with the modified path.
+			path := pt.join(pt.replaceMappedLocations(dir.ParentFolder))
+			folderFormatMap[path] = gitDirFormat
 		}
 	}
 

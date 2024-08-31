@@ -9,9 +9,9 @@
     "themes": "node export_themes.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.4.0",
-    "@docusaurus/preset-classic": "^3.4.0",
-    "@docusaurus/theme-search-algolia": "^3.4.0",
+    "@docusaurus/core": "^3.5.1",
+    "@docusaurus/preset-classic": "^3.5.1",
+    "@docusaurus/theme-search-algolia": "^3.5.1",
     "@iarna/toml": "^2.2.5",
     "@mdx-js/react": "^3.0.1",
     "classnames": "^2.5.1",

@@ -2501,7 +2501,10 @@
                     "default": 1
                   },
                   "max_width": {
-                    "type": ["integer","string"],
+                    "type": [
+                      "integer",
+                      "string"
+                    ],
                     "title": "Maximum Width",
                     "description": "Maximum path width to display for powerlevel style",
                     "default": 0
@@ -4634,7 +4637,10 @@
                     "type": "array",
                     "title": "Extensions",
                     "description": "The extensions to look for when determining if a folder is an PNPM workspace",
-                    "default": ["package.json", "pnpm-lock.yaml"],
+                    "default": [
+                      "package.json",
+                      "pnpm-lock.yaml"
+                    ],
                     "items": {
                       "type": "string"
                     }
@@ -4683,7 +4689,10 @@
                     "type": "array",
                     "title": "Extensions",
                     "description": "The extensions to look for when determining if a folder is an Yarn workspace",
-                    "default": ["package.json", "yarn.lock"],
+                    "default": [
+                      "package.json",
+                      "yarn.lock"
+                    ],
                     "items": {
                       "type": "string"
                     }
@@ -4901,6 +4910,12 @@
           "remote_host"
         ]
       }
+    },
+    "var": {
+      "type": "object",
+      "title": "Config variables to use in templates (can be any value)",
+      "description": "https://ohmyposh.dev/docs/configuration/templates#config-variables",
+      "default": {}
     }
   }
 }

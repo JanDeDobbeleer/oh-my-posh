@@ -65,16 +65,31 @@ func (cfg *Config) getPalette() color.Palette {
 	if cfg.Palettes == nil {
 		return cfg.Palette
 	}
+
 	tmpl := &template.Text{
 		Template: cfg.Palettes.Template,
 		Env:      cfg.env,
 	}
-	if palette, err := tmpl.Render(); err == nil {
-		if p, ok := cfg.Palettes.List[palette]; ok {
-			return p
-		}
+
+	key, err := tmpl.Render()
+	if err != nil {
+		return cfg.Palette
 	}
-	return cfg.Palette
+
+	palette, ok := cfg.Palettes.List[key]
+	if !ok {
+		return cfg.Palette
+	}
+
+	for key, color := range cfg.Palette {
+		if _, ok := palette[key]; ok {
+			continue
+		}
+
+		palette[key] = color
+	}
+
+	return palette
 }
 
 func (cfg *Config) Features() shell.Features {

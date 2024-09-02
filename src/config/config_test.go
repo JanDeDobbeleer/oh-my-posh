@@ -17,6 +17,7 @@ func TestGetPalette(t *testing.T) {
 		"red":  "#ff0000",
 		"blue": "#0000ff",
 	}
+
 	cases := []struct {
 		Case            string
 		Palettes        *color.Palettes
@@ -69,7 +70,26 @@ func TestGetPalette(t *testing.T) {
 			Case:            "no palettes",
 			ExpectedPalette: nil,
 		},
+		{
+			Case: "match, with override",
+			Palettes: &color.Palettes{
+				Template: "{{ .Shell }}",
+				List: map[string]color.Palette{
+					"bash": {
+						"red":    "#ff0001",
+						"yellow": "#ffff00",
+					},
+				},
+			},
+			Palette: palette,
+			ExpectedPalette: color.Palette{
+				"red":    "#ff0001",
+				"blue":   "#0000ff",
+				"yellow": "#ffff00",
+			},
+		},
 	}
+
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("TemplateCache").Return(&cache.Template{

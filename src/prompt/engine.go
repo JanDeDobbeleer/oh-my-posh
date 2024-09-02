@@ -108,8 +108,9 @@ func (e *Engine) pwd() {
 }
 
 func (e *Engine) getNewline() string {
-	// WARP terminal will remove \n from the prompt, so we hack a newline in
-	if e.isWarp() {
+	// WARP terminal will remove \n from the prompt, so we hack a newline in.
+	// For Elvish, we do this to prevent cutting off a right-aligned block.
+	if e.isWarp() || e.Env.Shell() == shell.ELVISH {
 		return terminal.LineBreak()
 	}
 
@@ -528,24 +529,25 @@ func New(flags *runtime.Flags) *Engine {
 		Plain:  flags.Plain,
 	}
 
-	if cfg.PatchPwshBleed {
-		eng.patchPowerShellBleed()
+	switch env.Shell() {
+	case shell.ELVISH:
+		// In Elvish, continuous text is always cut off before the right-most cell on the terminal screen.
+		// We have to reduce the terminal width by 1 so a right-aligned block will not be broken.
+		eng.rectifyTerminalWidth(-1)
+	case shell.PWSH, shell.PWSH5:
+		// when in PowerShell, and force patching the bleed bug
+		// we need to reduce the terminal width by 1 so the last
+		// character isn't cut off by the ANSI escape sequences
+		// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
+		if cfg.PatchPwshBleed {
+			eng.rectifyTerminalWidth(-1)
+		}
 	}
 
 	return eng
 }
 
-func (e *Engine) patchPowerShellBleed() {
-	sh := e.Env.Shell()
-
-	// when in PowerShell, and force patching the bleed bug
-	// we need to reduce the terminal width by 1 so the last
-	// character isn't cut off by the ANSI escape sequences
-	// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
-	if sh != shell.PWSH && sh != shell.PWSH5 {
-		return
-	}
-
+func (e *Engine) rectifyTerminalWidth(diff int) {
 	// Since the terminal width may not be given by the CLI flag, we should always call this here.
 	_, err := e.Env.TerminalWidth()
 	if err != nil {
@@ -553,5 +555,5 @@ func (e *Engine) patchPowerShellBleed() {
 		return
 	}
 
-	e.Env.Flags().TerminalWidth--
+	e.Env.Flags().TerminalWidth += diff
 }

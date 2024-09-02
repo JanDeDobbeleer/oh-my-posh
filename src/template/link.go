@@ -23,7 +23,7 @@ func url(text, url string) (string, error) {
 	return fmt.Sprintf("<LINK>%s<TEXT>%s</TEXT></LINK>", url, text), nil
 }
 
-func path(text, path string) (string, error) {
+func filePath(text, path string) (string, error) {
 	unsupported := []string{elvish, xonsh}
 	if slices.Contains(unsupported, shell) {
 		return text, nil

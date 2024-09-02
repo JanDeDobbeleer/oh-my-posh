@@ -2100,7 +2100,7 @@
                     "type": "boolean",
                     "title": "Parse kubeconfig",
                     "description": "Parse kubeconfig files instead of calling out to kubectl to improve performance.",
-                    "default": false
+                    "default": true
                   },
                   "context_aliases": {
                     "type": "object",

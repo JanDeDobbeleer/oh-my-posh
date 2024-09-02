@@ -90,7 +90,7 @@ func (k *Kubectl) Enabled() bool {
 		}
 	}()
 
-	parseKubeConfig := k.props.GetBool(ParseKubeConfig, false)
+	parseKubeConfig := k.props.GetBool(ParseKubeConfig, true)
 
 	if parseKubeConfig {
 		return k.doParseKubeConfig()

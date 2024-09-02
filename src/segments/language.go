@@ -128,7 +128,9 @@ func (l *language) Enabled() bool {
 		if len(l.displayMode) == 0 {
 			l.displayMode = l.props.GetString(DisplayMode, DisplayModeFiles)
 		}
+
 		l.loadLanguageContext()
+
 		switch l.displayMode {
 		case DisplayModeAlways:
 			enabled = true

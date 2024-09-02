@@ -30,7 +30,8 @@ module.exports = {
       title: 'Oh My Posh',
       logo: {
         alt: 'Oh My Posh Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo-dark.svg',
+        srcDark: 'img/logo-light.svg',
       },
       items: [
         {

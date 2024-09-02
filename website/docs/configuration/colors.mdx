@@ -4,6 +4,8 @@ title: Colors
 sidebar_label: Colors
 ---
 
+import Config from "@site/src/components/Config.js";
+
 ## Standard colors
 
 Oh My Posh supports multiple different color references, being:
@@ -37,19 +39,19 @@ section in the documentation. The general template properties are listed [here][
 
 The following sample is based on the [AWS Segment][aws].
 
-```json
-{
-  "type": "aws",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#111111",
-  "foreground_templates": [
-    "{{if contains \"default\" .Profile}}#FFA400{{end}}",
-    "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
-  ]
-}
-```
+<Config
+  data={{
+    type: "aws",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#111111",
+    foreground_templates: [
+      '{{if contains "default" .Profile}}#FFA400{{end}}',
+      '{{if contains "jan" .Profile}}#f1184c{{end}}',
+    ],
+  }}
+/>
 
 The logic is as follows: when `foreground_templates` contains an array, we will check every template line until there's
 one that returns a non-empty string. So, when the contents of `.Profile` contain the word `default`, the first template
@@ -66,53 +68,55 @@ Anything between the color start `<#FF479C>` and end `</>` will be colored accor
 If you want to print a colored bracket that isn't the same as the segment's `foreground`, you can
 do so like this:
 
-```json
-"template": "<#CB4B16>┏[</>",
-```
+<Config
+  data={{
+    template: "<#CB4B16>┏[</>",
+  }}
+/>
 
 If you also wanted to change the background color in the previous command, you would do so like this:
 
-```json
-"template": "<#CB4B16,#FFFFFF>┏[</>",
-```
+<Config
+  data={{
+    template: "<#CB4B16,#FFFFFF>┏[</>",
+  }}
+/>
 
 To change _only_ the background color, just omit the first color from the above string:
 
-```json
-"template": "<,#FFFFFF>┏[</>",
-```
+<Config
+  data={{
+    template: "<,#FFFFFF>┏[</>",
+  }}
+/>
 
 ## Palette
 
-If your theme defined the Palette, you can use the _Palette reference_ `p:<palette key>` in places where the
+If your configuration defined the Palette, you can use the _Palette reference_ `p:<palette key>` in places where the
 **Standard color** is expected.
 
 ### Defining a Palette
 
 Palette is a set of named **Standard colors**. To use a Palette, define a `"palette"` object
-at the top level of your theme:
+at the top level of your configuration:
 
-```json
-{
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "palette": {
-        "git-foreground": "#193549",
-        "git": "#FFFB38",
-        "git-modified": "#FF9248",
-        "git-diverged": "#FF4500",
-        "git-ahead": "#B388FF",
-        "git-behind": "#B388FF",
-        "red":   "#FF0000",
-        "green": "#00FF00",
-        "blue":  "#0000FF",
-        "white": "#FFFFFF",
-        "black": "#111111"
+<Config
+  data={{
+    palette: {
+      "git-foreground": "#193549",
+      git: "#FFFB38",
+      "git-modified": "#FF9248",
+      "git-diverged": "#FF4500",
+      "git-ahead": "#B388FF",
+      "git-behind": "#B388FF",
+      red: "#FF0000",
+      green: "#00FF00",
+      blue: "#0000FF",
+      white: "#FFFFFF",
+      black: "#111111",
     },
-    "blocks": {
-        ...
-    }
-}
-```
+  }}
+/>
 
 Color names (palette keys) can have any string value, so be creative.
 Color values, on the other hand, should adhere to the **Standard color** format.
@@ -123,48 +127,47 @@ You can now use _Palette references_ in any [Segment's][segment] `foreground`, `
 `background`, `background_templates` properties, and other config properties that expect **Standard color** value.
 _Palette reference_ format is `p:<palette key>`. Take a look at the [Git][git] segment using _Palette references_:
 
-```json
-{
-    "type": "git",
-    "style": "powerline",
-    "powerline_symbol": "\uE0B0",
-    "foreground": "p:git-foreground",
-    "background": "p:git",
-    "background_templates": [
-        "{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-modified{{ end }}",
-        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-diverged{{ end }}",
-        "{{ if gt .Ahead 0 }}p:git-ahead{{ end }}",
-        "{{ if gt .Behind 0 }}p:git-behind{{ end }}"
+<Config
+  data={{
+    type: "git",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "p:git-foreground",
+    background: "p:git",
+    background_templates: [
+      "{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-modified{{ end }}",
+      "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-diverged{{ end }}",
+      "{{ if gt .Ahead 0 }}p:git-ahead{{ end }}",
+      "{{ if gt .Behind 0 }}p:git-behind{{ end }}",
     ],
-    ...
-},
-```
+  }}
+/>
 
-Having all of the colors defined in one place allows you to import existing color themes (usually with slight
+Having all of the colors defined in one place allows you to import existing color configurations (usually with slight
 tweaking to adhere to the format), easily change colors of multiple segments at once, and have a more
-organized theme overall. Be creative!
+organized configuration overall. Be creative!
 
 ### _Palette references_ and **Standard colors**
 
-Using Palette does not interfere with using **Standard colors** in your theme. You can still use **Standard colors**
+Using Palette does not interfere with using **Standard colors** in your configuration. You can still use **Standard colors**
 everywhere. This can be useful if you want to use a specific color for a single segment element, or in a
 _Color override_ ([Battery segment][battery]):
 
-```json
-{
-    "type": "battery",
-    "style": "powerline",
-    "invert_powerline": true,
-    "powerline_symbol": "\uE0B2",
-    "foreground": "p:white",
-    "background": "p:black",
-    "properties": {
-        "discharging_icon": "<#ffa500>-</> ",
-        "charging_icon": "+ ",
-        "charged_icon": "* ",
-    }
-},
-```
+<Config
+  data={{
+    type: "battery",
+    style: "powerline",
+    invert_powerline: true,
+    powerline_symbol: "\uE0B2",
+    foreground: "p:white",
+    background: "p:black",
+    properties: {
+      discharging_icon: "<#ffa500>-</> ",
+      charging_icon: "+ ",
+      charged_icon: "* ",
+    },
+  }}
+/>
 
 ### Handling of invalid references
 
@@ -178,18 +181,16 @@ Palette allows for recursive _Palette reference_ resolution. You can use a _Pale
 value in Palette. This allows you to define named colors, and use references to those colors as Palette values.
 For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F80" and "#023E8A":
 
-```json
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "palette": {
-        "light-blue": "#CAF0F8",
-        "dark-blue": "#023E8A",
-        "foreground": "p:light-blue",
-        "background": "p:dark-blue"
+<Config
+  data={{
+    palette: {
+      "light-blue": "#CAF0F8",
+      "dark-blue": "#023E8A",
+      foreground: "p:light-blue",
+      background: "p:dark-blue",
     },
-    "blocks": {
-        ...
-    }
-```
+  }}
+/>
 
 ## Palettes
 
@@ -199,42 +200,72 @@ runtime so your prompt can change at any time based on the outcome of the `templ
 
 Take the following configuration:
 
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "palettes": {
-    "template": "{{ if eq .Shell \"pwsh\" }}latte{{ else }}frappe{{ end }}",
-    "list": {
-      "latte": {
-        "black": "#262B44",
-        "green": "#59C9A5",
-        "orange": "#F07623",
-        "red": "#e64553",
-        "white": "#E0DEF4",
-        "yellow": "#df8e1d",
-        "blue": "#7287fd"
+<Config
+  data={{
+    palettes: {
+      template: '{{ if eq .Shell "pwsh" }}latte{{ else }}frappe{{ end }}',
+      list: {
+        latte: {
+          black: "#262B44",
+          green: "#59C9A5",
+          orange: "#F07623",
+          red: "#e64553",
+          white: "#E0DEF4",
+          yellow: "#df8e1d",
+          blue: "#7287fd",
+        },
+        frappe: {
+          black: "#262B44",
+          green: "#59C9A5",
+          orange: "#F07623",
+          red: "#D81E5B",
+          white: "#E0DEF4",
+          yellow: "#F3AE35",
+          blue: "#4B95E9",
+        },
       },
-      "frappe": {
-        "black": "#262B44",
-        "green": "#59C9A5",
-        "orange": "#F07623",
-        "red": "#D81E5B",
-        "white": "#E0DEF4",
-        "yellow": "#F3AE35",
-        "blue": "#4B95E9"
-      }
-    }
-  },
-  "blocks": [
-    ...
-  ]
-}
-```
+    },
+  }}
+/>
 
 In this case, when the shell is `pwsh`, the `latte` palette will be used, otherwise it uses the `frappe` palette. If you want,
 you could also add `frappe` as the default `palette`, given that one is used as a fallback when not match can be found based on what
 the `template` resolves to. In case no match is available and no `palette` is defined, it will also fallback to `transparent`
 for any palette color reference in templates/colors.
+
+If you want to avoid color duplication, you can use palettes in combination with the `palette` property. This way you can define
+a color once and reuse it in multiple palettes. For example:
+
+<Config
+  data={{
+    palette: {
+      black: "#262B44",
+      green: "#59C9A5",
+      orange: "#F07623",
+    },
+    palettes: {
+      template: '{{ if eq .Shell "pwsh" }}latte{{ else }}frappe{{ end }}',
+      list: {
+        latte: {
+          red: "#e64553",
+          white: "#E0DEF4",
+          yellow: "#df8e1d",
+          blue: "#7287fd",
+        },
+        frappe: {
+          red: "#D81E5B",
+          white: "#E0DEF4",
+          yellow: "#F3AE35",
+          blue: "#4B95E9",
+        },
+      },
+    },
+  }}
+/>
+
+:::info
+If a color is defined in both palette and palettes, the palettes' resolved color will take precedence.
+:::
 
 ## Cycle
 
@@ -242,24 +273,24 @@ When you want to display the same **sequence of colors** (background and foregro
 make use of the cycle property. This property is a list of colors which are used one after the other in a continuous loop. A defined
 cycle always gets precedence over everything else.
 
-```json
-...
-"cycle": [
-  {
-    "background": "p:blue",
-    "foreground": "p:white"
-  },
-  {
-    "background": "p:green",
-    "foreground": "p:black"
-  },
-  {
-    "background": "p:orange",
-    "foreground": "p:white"
-  }
-],
-...
-```
+<Config
+  data={{
+    cycle: [
+      {
+        background: "p:blue",
+        foreground: "p:white",
+      },
+      {
+        background: "p:green",
+        foreground: "p:black",
+      },
+      {
+        background: "p:orange",
+        foreground: "p:white",
+      },
+    ],
+  }}
+/>
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

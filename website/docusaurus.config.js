@@ -168,6 +168,9 @@ module.exports = {
             require.resolve('./src/css/custom.css')
           ],
         },
+        blog: {
+          onInlineAuthors: 'ignore'
+        },
       },
     ],
   ],

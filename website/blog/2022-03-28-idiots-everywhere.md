@@ -16,6 +16,8 @@ using an old and new version of Oh My Posh at the same time. Who does that you m
 using WSL on Windows, or VM’s on any system while sharing the same configuration cross installation.
 Not the main use-case, but also not exotic either.
 
+<!-- truncate -->
+
 ## What happened?
 
 In the beginning of the year, after what has been quite the struggle, I was finally able to deliver **the most important

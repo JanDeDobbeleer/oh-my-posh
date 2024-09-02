@@ -53,6 +53,8 @@ const (
 	DefaultCacheTimeout = 10
 	// CacheTimeout cache timeout
 	CacheTimeout Property = "cache_timeout"
+	// Files to trigger the segment on
+	Files Property = "files"
 )
 
 type Map map[Property]any

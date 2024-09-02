@@ -41,12 +41,17 @@ func (c *CfTarget) Enabled() bool {
 		return c.setCFTargetStatus()
 	}
 
-	manifest, err := c.env.HasParentFilePath("manifest.yml", false)
-	if err != nil || manifest.IsDir {
-		return false
+	files := c.props.GetStringArray(properties.Files, []string{"manifest.yml"})
+	for _, file := range files {
+		manifest, err := c.env.HasParentFilePath(file, false)
+		if err != nil || manifest.IsDir {
+			continue
+		}
+
+		return c.setCFTargetStatus()
 	}
 
-	return c.setCFTargetStatus()
+	return false
 }
 
 func (c *CfTarget) setCFTargetStatus() bool {

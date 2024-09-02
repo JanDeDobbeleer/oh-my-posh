@@ -10,22 +10,25 @@ Display the details of the logged [Cloud Foundry endpoint][cf-target] (`cf targe
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "background": "#a7cae1",
-  "foreground": "#100e23",
-  "powerline_symbol": "\ue0b0",
-  "template": " \uf40a {{ .Org }}/{{ .Space }} ",
-  "style": "powerline",
-  "type": "cftarget"
-}}/>
+<Config
+  data={{
+    background: "#a7cae1",
+    foreground: "#100e23",
+    powerline_symbol: "\ue0b0",
+    template: " \uf40a {{ .Org }}/{{ .Space }} ",
+    style: "powerline",
+    type: "cftarget",
+  }}
+/>
 
 ## Properties
 
-| Name           | Type     | Default  | Description                                                                                                                                       |
-| -------------- | :------: | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `display_mode` | `string` | `always` | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when a `manifest.yml` file is present </li></ul> |
+| Name           |    Type    |      Default       | Description                                                                                                                                                                            |
+| -------------- | :--------: | :----------------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `display_mode` |  `string`  |      `always`      | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when a `manifest.yml` file is present (or defined otherwise using `files`) </li></ul> |
+| `files`        | `[]string` | `["manifest.yml"]` | on which files to display the segment on. Will look in parent folders as well                                                                                                          |
 
 ## Template ([info][templates])
 

@@ -3,7 +3,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import classnames from "classnames";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./styles.module.css";
 
 const features = [
@@ -54,6 +54,24 @@ function Feature({ imageUrl, title, description }) {
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
+
+  useEffect(() => {
+    const linkElement = document.querySelector("link[rel='icon']");
+    const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    if (linkElement) {
+      linkElement.href = darkModeQuery.matches
+        ? "/img/favicon-light.ico"
+        : "/img/favicon-dark.ico";
+    }
+
+    darkModeQuery.addEventListener('change', (event) => {
+      linkElement.href = event.matches
+        ? "/img/favicon-light.ico"
+        : "/img/favicon-dark.ico";
+    });
+  }, []);
+
   return (
     <Layout title="Home" description={`${siteConfig.tagline}`}>
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
@@ -80,7 +98,7 @@ function Home() {
               See themes &rarr;
             </Link>
           </div>
-          <img class="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
+          <img className="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
         </div>
       </header>
       <main>

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
+  "final_space": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "path",
+          "style": "powerline",
+          "template": " {{ .Path }} ",
+          "properties": {
+            "folder_icon": "\uf07c",
+            "home_icon": "\u2302",
+            "style": "full"
+          },
+          "background": "#333333",
+          "foreground": "#FFFFFF"
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "template": " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "background": "#444444",
+          "foreground": "#C0C0C0"
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "template": " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+          "properties": {
+            "fetch_version": true
+          },
+          "background": "#555555",
+          "foreground": "#B0B0B0"
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
+          "properties": {
+            "fetch_version": true
+          },
+          "background": "#666666",
+          "foreground": "#A0A0A0"
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} ",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "foreground": "#808080"
+        }
+      ]
+    }
+  ]
+}

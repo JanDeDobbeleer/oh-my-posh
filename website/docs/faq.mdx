@@ -306,6 +306,18 @@ After that, you can use the value in a template. The following replicates the [e
 }
 ```
 
+### Fish: Integrate with `Alt+←` and `Alt+→` Bindings to `prevd` and `nextd`
+
+Fish supports using `Alt+←` (Alt+Left) and `Alt+→` (Alt+Right) bindings to [navigate the directory history](https://fishshell.com/docs/current/interactive.html#id13).
+
+To have oh-my-posh update the directory context as the directory history is navigated, use a function that calls `omp_repaint_prompt` when the `$PWD` variable changes:
+
+```fish
+function rerender_on_dir_change --on-variable PWD
+  omp_repaint_prompt
+end
+```
+
 ### After updating my Nerd Font to a newer version, the prompt displays unknown characters
 
 Nerd Fonts moved the icons to a different location in the font for v3.

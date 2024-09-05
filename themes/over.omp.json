@@ -1,0 +1,11 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+        ...
+    ],
+    "transient_prompt": {
+        "background": "transparent",
+        "foreground": "#ffffff",
+        "template": "{{ .Path }}> "
+    }
+}

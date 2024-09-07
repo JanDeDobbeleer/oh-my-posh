@@ -451,6 +451,14 @@ func (g *Git) setBranchStatus() {
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {
+	// https://{organization}@dev.azure.com/{organization}/{project}/_git/{repository}
+	if strings.Contains(url, "@dev.azure.com") {
+		match := regex.FindNamedRegexMatch(`.*@(?P<URL>dev.azure.com.*)`, url)
+		if len(match) != 0 {
+			return fmt.Sprintf("https://%s", match["URL"])
+		}
+	}
+
 	if strings.HasPrefix(url, "http") {
 		return url
 	}

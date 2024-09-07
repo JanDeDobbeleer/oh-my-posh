@@ -451,11 +451,11 @@ func (g *Git) setBranchStatus() {
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {
-	// https://{organization}@dev.azure.com/{organization}/{project}/_git/{repository}
-	if strings.Contains(url, "@dev.azure.com") {
-		match := regex.FindNamedRegexMatch(`.*@(?P<URL>dev.azure.com.*)`, url)
-		if len(match) != 0 {
-			return fmt.Sprintf("https://%s", match["URL"])
+	// Azure DevOps
+	if strings.Contains(url, "dev.azure.com") {
+		match := regex.FindNamedRegexMatch(`^.*@(ssh.)?dev\.azure\.com(:v3)?/(?P<ORGANIZATION>[A-Za-z0-9_-]+)/(?P<PROJECT>[A-Za-z0-9_-]+)/(_git/)?(?P<REPOSITORY>[A-Za-z0-9_-]+)$`, url)
+		if len(match) == 4 {
+			return fmt.Sprintf("https://dev.azure.com/%s/%s/_git/%s", match["ORGANIZATION"], match["PROJECT"], match["REPOSITORY"])
 		}
 	}
 

@@ -649,7 +649,8 @@ func TestGitCleanSSHURL(t *testing.T) {
 		{Case: "gitea no port, no user", Expected: "https://src.example.com/user/repo", Upstream: "_gitea@src.example.com:user/repo.git"},
 		{Case: "git@ with user", Expected: "https://github.com/JanDeDobbeleer/oh-my-posh", Upstream: "git@github.com:JanDeDobbeleer/oh-my-posh"},
 		{Case: "unsupported", Upstream: "\\test\\repo.git"},
-		{Case: "Azure DevOps", Expected: "https://dev.azure.com/posh/oh-my-posh/_git/website", Upstream: "https://posh@dev.azure.com/posh/oh-my-posh/_git/website"},
+		{Case: "Azure DevOps, https", Expected: "https://dev.azure.com/posh/oh-my-posh/_git/website", Upstream: "https://posh@dev.azure.com/posh/oh-my-posh/_git/website"},
+		{Case: "Azure DevOps, ssh", Expected: "https://dev.azure.com/posh/oh-my-posh/_git/website", Upstream: "git@ssh.dev.azure.com:v3/posh/oh-my-posh/website"},
 	}
 	for _, tc := range cases {
 		g := &Git{}

@@ -2720,6 +2720,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "rocketraman",
+      "name": "Raman Gupta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53049?v=4",
+      "profile": "http://vivosys.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

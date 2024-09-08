@@ -5,7 +5,7 @@ module.exports = {
   tagline: 'A prompt theme engine for any shell.',
   url: 'https://ohmyposh.dev',
   baseUrl: '/',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicons.svg',
   organizationName: 'jandedobbeleer',
   projectName: 'oh-my-posh',
   onBrokenLinks: 'ignore',

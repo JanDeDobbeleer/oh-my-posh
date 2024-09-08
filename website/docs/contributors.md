@@ -385,6 +385,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ClxUne09"><img src="https://avatars.githubusercontent.com/u/175628107?v=4?s=100" width="100px;" alt="Artin"/><br /><sub><b>Artin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ClxUne09" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/guspan-tanadi"><img src="https://avatars.githubusercontent.com/u/36249910?v=4?s=100" width="100px;" alt="Guspan Tanadi"/><br /><sub><b>Guspan Tanadi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=guspan-tanadi" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://vivosys.com"><img src="https://avatars.githubusercontent.com/u/53049?v=4?s=100" width="100px;" alt="Raman Gupta"/><br /><sub><b>Raman Gupta</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=rocketraman" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hsnabszhdn"><img src="https://avatars.githubusercontent.com/u/16090309?v=4?s=100" width="100px;" alt="Hossein Abbasi"/><br /><sub><b>Hossein Abbasi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=hsnabszhdn" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

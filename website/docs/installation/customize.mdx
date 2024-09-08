@@ -28,7 +28,7 @@ There are two possible values the `--config` flag can handle:
 --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'
 ```
 
-### Shell syntax
+### Set the configuration
 
 The example below use a local path to the [jandedobbeleer][jandedobbeleer] theme, adjust the `--config` value
 to reflect your configuration file, local or remote.
@@ -237,7 +237,7 @@ Windows user's home folder.
 Inside the WSL, you can find your Windows user's home folder here: `/mnt/c/Users/<WINDOWSUSERNAME>`.
 :::
 
-### Get inspiration
+### Themes
 
 The Windows and homebrew installers also bundle the **predefined configurations** ([themes][themes]). You can use the
 following way to reference them directly. This will keep them up-to-date and compatible with future updates.
@@ -271,14 +271,14 @@ eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedob
 </TabItem>
 </Tabs>
 
-### Adjust a theme
+### Custom configuration
 
 Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there's a segment you
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, **read through
 available options first**, by starting with the [configuration][configuration].
 
 You can export the current theme (default, or set via `--config`) to the format you like (`json`, `yaml`, or `toml`)
-which can be used to tweak and store as your own custom theme.
+which can be used to tweak and store as your own custom configuration.
 
 ```bash
 oh-my-posh config export --output ~/.mytheme.omp.json

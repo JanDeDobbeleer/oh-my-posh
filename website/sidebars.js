@@ -24,6 +24,7 @@ module.exports = {
             "installation/fonts",
             "installation/prompt",
             "installation/customize",
+            "installation/upgrade",
           ],
         },
       ],

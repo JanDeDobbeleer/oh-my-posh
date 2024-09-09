@@ -214,6 +214,26 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}()
 			m.spinner.Spinner = spinner.Globe
 			return m, m.spinner.Tick
+
+		case "up", "k":
+			if m.list != nil {
+				if m.list.Index() == 0 {
+					m.list.Select(len(m.list.Items()) - 1)
+				} else {
+					m.list.Select(m.list.Index() - 1)
+				}
+			}
+			return m, nil
+
+		case "down", "j":
+			if m.list != nil {
+				if m.list.Index() == len(m.list.Items())-1 {
+					m.list.Select(0)
+				} else {
+					m.list.Select(m.list.Index() + 1)
+				}
+			}
+			return m, nil
 		}
 
 	case zipMsg:

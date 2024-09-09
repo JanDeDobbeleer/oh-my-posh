@@ -990,7 +990,7 @@ func TestGitCommit(t *testing.T) {
 			at:1673176335
 			su:docs(error): you can't use cross segment properties
 			ha:1234567891011121314
-			rf:HEAD -> refs/heads/main, tag: refs/tags/tag-1, tag: refs/tags/0.3.4, refs/remotes/origin/main, refs/remotes/origin/dev, refs/heads/dev
+			rf:HEAD -> refs/heads/main, tag: refs/tags/tag-1, tag: refs/tags/0.3.4, refs/remotes/origin/main, refs/remotes/origin/dev, refs/heads/dev, refs/remotes/origin/HEAD
 			`,
 			Expected: &Commit{
 				Author: &User{

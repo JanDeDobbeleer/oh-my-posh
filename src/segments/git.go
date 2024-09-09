@@ -250,8 +250,8 @@ func (g *Git) Commit() *Commit {
 			for _, ref := range refs {
 				ref = strings.TrimSpace(ref)
 				switch {
-				case ref == "HEAD":
-					// skip "HEAD"
+				case strings.HasSuffix(ref, "HEAD"):
+					continue
 				case strings.HasPrefix(ref, "tag: refs/tags/"):
 					g.commit.Refs.Tags = append(g.commit.Refs.Tags, strings.TrimPrefix(ref, "tag: refs/tags/"))
 				case strings.HasPrefix(ref, "refs/remotes/"):

@@ -106,7 +106,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "💖 Health",
+          label: "🩺 Health",
           collapsed: true,
           items: [
             "segments/health/nightscout",
@@ -153,7 +153,7 @@ module.exports = {
         },
         {
           type: "category",
-          label: "🧑‍💻 Source control",
+          label: "🗂️ Source control",
           collapsed: true,
           items: [
             "segments/scm/fossil",
@@ -204,7 +204,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "🙋🏾‍♀️ Contributing",
+      label: "🤝 Contributing",
       collapsed: true,
       items: [
         "contributing/started",

@@ -7,6 +7,11 @@
     "davidanson.vscode-markdownlint",
     "yzhang.markdown-all-in-one",
     "tamasfe.even-better-toml",
-    "redhat.vscode-yaml"
+    "redhat.vscode-yaml",
+    "ms-vscode.powershell",
+    "sumneko.lua",
+    "bmalehorn.vscode-fish",
+    "elves.elvish",
+    "jnoortheen.xonsh"
   ]
 }

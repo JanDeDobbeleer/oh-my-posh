@@ -2738,6 +2738,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kizivat",
+      "name": "David Kizivat",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3535926?v=4",
+      "profile": "https://kizivat.eu",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

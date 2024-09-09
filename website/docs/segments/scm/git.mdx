@@ -37,7 +37,7 @@ import Config from "@site/src/components/Config.js";
       source: "cli",
       mapped_branches: {
         "feat/*": "🚀 ",
-				"bug/*":  "🐛 ",
+        "bug/*": "🐛 ",
       },
     },
   }}
@@ -175,6 +175,7 @@ Local changes use the following syntax:
 | `.Subject`   | `string`    | the commit subject                      |
 | `.Timestamp` | `time.Time` | the commit timestamp                    |
 | `.Sha`       | `string`    | the commit SHA1                         |
+| `.Refs`      | `Refs`      | the commit references                   |
 
 ### User
 
@@ -182,6 +183,20 @@ Local changes use the following syntax:
 | -------- | -------- | ---------------- |
 | `.Name`  | `string` | the user's name  |
 | `.Email` | `string` | the user's email |
+
+### Refs
+
+| Name       | Type       | Description       |
+| ---------- | ---------- | ----------------- |
+| `.Heads`   | `[]string` | branches          |
+| `.Tags`    | `[]string` | commit's tags     |
+| `.Remotes` | `[]string` | remote references |
+
+As these are arrays of strings, you can join them using the `join` function:
+
+```template
+{{ join ", " .Commit.Refs.Tags }}
+```
 
 ## posh-git
 

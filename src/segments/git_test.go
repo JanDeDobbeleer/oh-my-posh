@@ -990,6 +990,7 @@ func TestGitCommit(t *testing.T) {
 			at:1673176335
 			su:docs(error): you can't use cross segment properties
 			ha:1234567891011121314
+			rf:HEAD -> refs/heads/main, tag: refs/tags/tag-1, tag: refs/tags/0.3.4, refs/remotes/origin/main, refs/remotes/origin/dev, refs/heads/dev, refs/remotes/origin/HEAD
 			`,
 			Expected: &Commit{
 				Author: &User{
@@ -1002,7 +1003,12 @@ func TestGitCommit(t *testing.T) {
 				},
 				Subject:   "docs(error): you can't use cross segment properties",
 				Timestamp: time.Unix(1673176335, 0),
-				Sha:       "1234567891011121314",
+				Refs: &Refs{
+					Tags:    []string{"tag-1", "0.3.4"},
+					Heads:   []string{"main", "dev"},
+					Remotes: []string{"origin/main", "origin/dev"},
+				},
+				Sha: "1234567891011121314",
 			},
 		},
 		{
@@ -1010,6 +1016,7 @@ func TestGitCommit(t *testing.T) {
 			Expected: &Commit{
 				Author:    &User{},
 				Committer: &User{},
+				Refs:      &Refs{},
 			},
 		},
 		{
@@ -1030,6 +1037,44 @@ func TestGitCommit(t *testing.T) {
 				},
 				Subject:   "docs(error): you can't use cross segment properties",
 				Timestamp: time.Unix(1673176335, 0),
+				Refs:      &Refs{},
+			},
+		},
+		{
+			Case: "No refs",
+			Output: `
+			rf:HEAD
+			`,
+			Expected: &Commit{
+				Author:    &User{},
+				Committer: &User{},
+				Refs:      &Refs{},
+			},
+		},
+		{
+			Case: "Just tag ref",
+			Output: `
+			rf:HEAD, tag: refs/tags/tag-1
+			`,
+			Expected: &Commit{
+				Author:    &User{},
+				Committer: &User{},
+				Refs: &Refs{
+					Tags: []string{"tag-1"},
+				},
+			},
+		},
+		{
+			Case: "Feature branch including slash",
+			Output: `
+			rf:HEAD, tag: refs/tags/feat/feat-1
+			`,
+			Expected: &Commit{
+				Author:    &User{},
+				Committer: &User{},
+				Refs: &Refs{
+					Tags: []string{"feat/feat-1"},
+				},
 			},
 		},
 		{
@@ -1040,13 +1085,14 @@ func TestGitCommit(t *testing.T) {
 			Expected: &Commit{
 				Author:    &User{},
 				Committer: &User{},
+				Refs:      &Refs{},
 			},
 		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H")
+		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
 		g := &Git{
 			scm: scm{
 				env:     env,

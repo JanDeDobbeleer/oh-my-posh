@@ -22,6 +22,13 @@ type Commit struct {
 	Subject   string
 	Timestamp time.Time
 	Sha       string
+	Refs      *Refs
+}
+
+type Refs struct {
+	Heads   []string
+	Tags    []string
+	Remotes []string
 }
 
 type User struct {
@@ -210,8 +217,9 @@ func (g *Git) Commit() *Commit {
 	g.commit = &Commit{
 		Author:    &User{},
 		Committer: &User{},
+		Refs:      &Refs{},
 	}
-	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H")
+	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
 	splitted := strings.Split(strings.TrimSpace(commitBody), "\n")
 	for _, line := range splitted {
 		line = strings.TrimSpace(line)
@@ -237,6 +245,25 @@ func (g *Git) Commit() *Commit {
 			g.commit.Subject = line
 		case "ha:":
 			g.commit.Sha = line
+		case "rf:":
+			refs := strings.Split(line, ", ")
+			for _, ref := range refs {
+				ref = strings.TrimSpace(ref)
+				switch {
+				case ref == "HEAD":
+					// skip "HEAD"
+				case strings.HasPrefix(ref, "tag: refs/tags/"):
+					g.commit.Refs.Tags = append(g.commit.Refs.Tags, strings.TrimPrefix(ref, "tag: refs/tags/"))
+				case strings.HasPrefix(ref, "refs/remotes/"):
+					g.commit.Refs.Remotes = append(g.commit.Refs.Remotes, strings.TrimPrefix(ref, "refs/remotes/"))
+				case strings.HasPrefix(ref, "HEAD -> refs/heads/"):
+					g.commit.Refs.Heads = append(g.commit.Refs.Heads, strings.TrimPrefix(ref, "HEAD -> refs/heads/"))
+				case strings.HasPrefix(ref, "refs/heads/"):
+					g.commit.Refs.Heads = append(g.commit.Refs.Heads, strings.TrimPrefix(ref, "refs/heads/"))
+				default:
+					g.commit.Refs.Heads = append(g.commit.Refs.Heads, ref)
+				}
+			}
 		}
 	}
 	return g.commit

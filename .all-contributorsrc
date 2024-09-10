@@ -2748,6 +2748,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "mgrubb",
+      "name": "Michael Grubb",
+      "avatar_url": "https://avatars.githubusercontent.com/u/351301?v=4",
+      "profile": "https://github.com/mgrubb",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

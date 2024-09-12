@@ -157,7 +157,9 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 	}
 
 	repeat := padLength / lenFiller
-	return strings.Repeat(filler, repeat), true
+	unfilled := padLength % lenFiller
+	text := strings.Repeat(filler, repeat) + strings.Repeat(" ", unfilled)
+	return text, true
 }
 
 func (e *Engine) getTitleTemplateText() string {
@@ -531,7 +533,7 @@ func New(flags *runtime.Flags) *Engine {
 
 	switch env.Shell() {
 	case shell.ELVISH:
-		// In Elvish, continuous text is always cut off before the right-most cell on the terminal screen.
+		// In Elvish, a prompt line will always wrap when the cursor reaches the rightmost cell on the terminal screen.
 		// We have to reduce the terminal width by 1 so a right-aligned block will not be broken.
 		eng.rectifyTerminalWidth(-1)
 	case shell.PWSH, shell.PWSH5:

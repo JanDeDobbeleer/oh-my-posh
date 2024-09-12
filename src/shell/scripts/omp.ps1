@@ -458,7 +458,18 @@ Example:
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
 
         # The output can be multi-line, joining them ensures proper rendering.
-        $standardOut -join "`n"
+        $output = $standardOut -join "`n"
+
+        if ($script:PromptType -eq 'transient') {
+            # Workaround to prevent a command from eating the tail of a transient prompt, when we're at the end of the line.
+            $command = ''
+            [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
+            if ($command) {
+                $output += "  `b`b"
+            }
+        }
+
+        $output
 
         # remove any posh-git status
         $env:POSH_GIT_STATUS = $null

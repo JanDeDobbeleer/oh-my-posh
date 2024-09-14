@@ -17,10 +17,7 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   "oh-my-posh",
 	Short: "oh-my-posh is a tool to render your prompt",
-	Long: `oh-my-posh is a cross platform tool to render your prompt.
-It can use the same configuration everywhere to offer a consistent
-experience, regardless of where you are. For a detailed guide
-on getting started, have a look at the docs at https://ohmyposh.dev`,
+	Long:  string(*GetLongDescription()),
 	Run: func(cmd *cobra.Command, _ []string) {
 		if initialize {
 			runInit(strings.ToLower(shellName))
@@ -39,6 +36,17 @@ func Execute() {
 		// software error
 		os.Exit(70)
 	}
+}
+func GetLongDescription() *[]byte {
+	root, _ := os.Getwd()
+	data, err := os.ReadFile(root + "/cli/long.posh")
+	if err != nil {
+		panic(err)
+	}
+	if len(data) > 0 {
+		return &data
+	}
+	return nil
 }
 
 // Backwards compatibility

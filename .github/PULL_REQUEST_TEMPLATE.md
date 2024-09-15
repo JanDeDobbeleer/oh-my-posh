@@ -2,8 +2,8 @@
 
 - [ ] I have read and understood the [Contributing Guide][contributing].
 - [ ] My commit message follows the [Conventional Commits][cc] guidelines.
-- [ ] Relevant tests have been added or updated (for bug fixes/features).
-- [ ] Documentation has been added or updated (for bug fixes/features).
+- [ ] Relevant tests have been added or updated (for bug fixes or features).
+- [ ] Documentation has been added or updated (for bug fixes or features).
 
 ## Description
 

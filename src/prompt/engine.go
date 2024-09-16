@@ -108,17 +108,19 @@ func (e *Engine) pwd() {
 }
 
 func (e *Engine) getNewline() string {
-	// WARP terminal will remove \n from the prompt, so we hack a newline in.
+	if e.Plain || e.Env.Flags().Debug {
+		return "\n"
+	}
+
+	// Warp terminal will remove a newline character ('\n') from the prompt, so we hack it in.
 	// For Elvish, we do this to prevent cutting off a right-aligned block.
 	if e.isWarp() || e.Env.Shell() == shell.ELVISH {
 		return terminal.LineBreak()
 	}
 
-	// TCSH needs a space before the LITERAL newline character or it will not render correctly
-	// don't ask why, it be like that sometimes.
-	// https://unix.stackexchange.com/questions/99101/properly-defining-a-multi-line-prompt-in-tcsh#comment1342462_322189
+	// To avoid improper translations in Tcsh, we use an invisible word joiner character (U+2060) to separate a newline from possible preceding escape sequences.
 	if e.Env.Shell() == shell.TCSH {
-		return ` \n`
+		return "\u2060\\n"
 	}
 
 	return "\n"

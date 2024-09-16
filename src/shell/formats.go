@@ -73,6 +73,9 @@ func GetFormats(shell string) *Formats {
 			ITermPromptMark:       "%{$(iterm2_prompt_mark)%}",
 			ITermCurrentDir:       "%%{\x1b]1337;CurrentDir=%s\x07%%}",
 			ITermRemoteHost:       "%%{\x1b]1337;RemoteHost=%s@%s\x07%%}",
+			EscapeSequences: map[rune]string{
+				'%': "%%",
+			},
 		}
 	default:
 		formats = &Formats{
@@ -98,10 +101,9 @@ func GetFormats(shell string) *Formats {
 		}
 	}
 
-	if shell == ZSH {
-		formats.EscapeSequences = map[rune]string{
-			'%': "%%",
-		}
+	if shell == TCSH {
+		formats.EscapeSequences['\\'] = `\\`
+		formats.EscapeSequences['!'] = `\!`
 	}
 
 	return formats

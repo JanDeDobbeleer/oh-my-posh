@@ -39,6 +39,7 @@ fn _omp-after-command-hook {|m|
 
 fn _omp_get_prompt {|type @arguments|
     $_omp_executable print $type ^
+        --save-cache ^
         --shell=elvish ^
         --shell-version=$E:POSH_SHELL_VERSION ^
         --status=$_omp_status ^

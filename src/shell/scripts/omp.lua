@@ -144,6 +144,7 @@ local function get_posh_prompt(prompt_type, ...)
     local command = table.concat({
         'print',
         prompt_type,
+        '--save-cache',
         '--shell=cmd',
         status_option(),
         no_status_option(),

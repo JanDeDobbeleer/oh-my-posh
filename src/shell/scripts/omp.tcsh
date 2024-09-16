@@ -15,6 +15,7 @@ if ( ! $?_omp_enabled ) alias precmd '
   unset _omp_cmd_executed;
   @ _omp_stack_count = $#dirstack - 1;
   set prompt = "`$_omp_executable:q print primary
+    --save-cache
     --shell=tcsh
     --shell-version=$tcsh
     --status=$_omp_status

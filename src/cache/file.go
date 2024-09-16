@@ -13,13 +13,15 @@ type File struct {
 	cache         *maps.Concurrent
 	cacheFilePath string
 	dirty         bool
+	persist       bool
 }
 
-func (fc *File) Init(cacheFilePath string) {
+func (fc *File) Init(cacheFilePath string, persist bool) {
 	defer log.Trace(time.Now(), cacheFilePath)
 
 	fc.cache = maps.NewConcurrent()
 	fc.cacheFilePath = cacheFilePath
+	fc.persist = persist
 
 	log.Debug("loading cache file:", fc.cacheFilePath)
 
@@ -47,14 +49,14 @@ func (fc *File) Init(cacheFilePath string) {
 }
 
 func (fc *File) Close() {
-	if !fc.dirty {
+	if !fc.persist || !fc.dirty {
 		return
 	}
 
 	cache := fc.cache.ToSimple()
 
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
-		_ = os.WriteFile(fc.cacheFilePath, dump, 0644)
+		_ = os.WriteFile(fc.cacheFilePath, dump, 0o644)
 	}
 }
 

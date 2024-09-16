@@ -29,6 +29,7 @@ function _omp_get_prompt
         return
     end
     $_omp_executable print $argv[1] \
+        --save-cache \
         --shell=fish \
         --shell-version=$FISH_VERSION \
         --status=$_omp_status \

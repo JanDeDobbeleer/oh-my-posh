@@ -508,6 +508,17 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 	}
 }
 
+func (e *Engine) rectifyTerminalWidth(diff int) {
+	// Since the terminal width may not be given by the CLI flag, we should always call this here.
+	_, err := e.Env.TerminalWidth()
+	if err != nil {
+		// Skip when we're unable to determine the terminal width.
+		return
+	}
+
+	e.Env.Flags().TerminalWidth += diff
+}
+
 // New returns a prompt engine initialized with the
 // given configuration options, and is ready to print any
 // of the prompt components.
@@ -534,10 +545,16 @@ func New(flags *runtime.Flags) *Engine {
 	}
 
 	switch env.Shell() {
-	case shell.ELVISH:
-		// In Elvish, a prompt line will always wrap when the cursor reaches the rightmost cell on the terminal screen.
-		// We have to reduce the terminal width by 1 so a right-aligned block will not be broken.
+	case shell.TCSH:
+		// In Tcsh, newlines in a prompt are badly translated.
+		// No silver bullet here. We have to reduce the terminal width by 1 so a right-aligned block will not be broken.
 		eng.rectifyTerminalWidth(-1)
+	case shell.ELVISH, shell.XONSH:
+		// In these shells, the behavior of wrapping at the end of a prompt line is inconsistent across platforms.
+		// On Windows, it wraps before the rightmost cell on the terminal screen, that is, the rightmost cell is never available for a prompt line.
+		if eng.Env.GOOS() == runtime.WINDOWS {
+			eng.rectifyTerminalWidth(-1)
+		}
 	case shell.PWSH, shell.PWSH5:
 		// when in PowerShell, and force patching the bleed bug
 		// we need to reduce the terminal width by 1 so the last
@@ -549,15 +566,4 @@ func New(flags *runtime.Flags) *Engine {
 	}
 
 	return eng
-}
-
-func (e *Engine) rectifyTerminalWidth(diff int) {
-	// Since the terminal width may not be given by the CLI flag, we should always call this here.
-	_, err := e.Env.TerminalWidth()
-	if err != nil {
-		// Skip when we're unable to determine the terminal width.
-		return
-	}
-
-	e.Env.Flags().TerminalWidth += diff
 }

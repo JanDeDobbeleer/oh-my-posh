@@ -4748,9 +4748,9 @@
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": ""
     },
-    "disable_notice": {
+    "upgrade_notice": {
       "type": "boolean",
-      "title": "Disable Upgrade Notice",
+      "title": "Enable Upgrade Notice",
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },

@@ -79,6 +79,7 @@ function _omp_get_primary() {
     else
         prompt=$(
             "$_omp_executable" print primary \
+                --save-cache \
                 --shell=bash \
                 --shell-version="$BASH_VERSION" \
                 --status="$_omp_status" \

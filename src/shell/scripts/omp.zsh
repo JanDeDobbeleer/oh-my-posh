@@ -3,7 +3,6 @@ export POSH_SHELL_VERSION=$ZSH_VERSION
 export POSH_PID=$$
 export POWERLINE_COMMAND='oh-my-posh'
 export CONDA_PROMPT_MODIFIER=false
-export POSH_PROMPT_COUNT=0
 export ZLE_RPROMPT_INDENT=0
 export OSTYPE=$OSTYPE
 
@@ -74,9 +73,6 @@ function _omp_precmd() {
     _omp_pipestatus=("$_omp_status")
   fi
 
-  count=$((POSH_PROMPT_COUNT + 1))
-  export POSH_PROMPT_COUNT=$count
-
   set_poshcontext
   _omp_set_cursor_position
 
@@ -122,6 +118,7 @@ function _omp_get_prompt() {
   local type=$1
   local args=("${@[2,-1]}")
   $_omp_executable print $type \
+    --save-cache \
     --shell=zsh \
     --shell-version=$ZSH_VERSION \
     --status=$_omp_status \

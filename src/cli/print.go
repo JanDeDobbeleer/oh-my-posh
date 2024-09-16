@@ -21,6 +21,7 @@ var (
 	cleared       bool
 	cached        bool
 	jobCount      int
+	saveCache     bool
 
 	command      string
 	shellVersion string
@@ -76,6 +77,7 @@ func createPrintCmd() *cobra.Command {
 				NoExitCode:    noStatus,
 				Column:        column,
 				JobCount:      jobCount,
+				SaveCache:     saveCache,
 			}
 
 			eng := prompt.New(flags)
@@ -120,6 +122,7 @@ func createPrintCmd() *cobra.Command {
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
 	printCmd.Flags().IntVar(&jobCount, "job-count", 0, "number of background jobs")
+	printCmd.Flags().BoolVar(&saveCache, "save-cache", false, "save updated cache to file")
 
 	// Deprecated flags, should be kept to avoid breaking CLI integration.
 	printCmd.Flags().IntVarP(&status, "error", "e", 0, "last exit code")
@@ -130,6 +133,7 @@ func createPrintCmd() *cobra.Command {
 	_ = printCmd.Flags().MarkHidden("error")
 	_ = printCmd.Flags().MarkHidden("no-exit-code")
 	_ = printCmd.Flags().MarkHidden("cached")
+	_ = printCmd.Flags().MarkHidden("save-cache")
 
 	return printCmd
 }

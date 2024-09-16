@@ -240,6 +240,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $terminalWidth = Get-TerminalWidth
         Invoke-Utf8Posh @(
             "print", $Type
+            "--save-cache"
             "--shell=$script:ShellName"
             "--shell-version=$script:PSVersion"
             "--status=$script:ErrorCode"

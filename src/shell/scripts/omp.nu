@@ -28,6 +28,7 @@ def --wrapped _omp_get_prompt [
 
     (
         ^$_omp_executable print $type
+            --save-cache
             --shell=nu
             $"--shell-version=($env.POSH_SHELL_VERSION)"
             $"--status=($env.LAST_EXIT_CODE)"

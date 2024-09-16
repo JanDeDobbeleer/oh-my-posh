@@ -49,10 +49,6 @@ func Init(env runtime.Environment, feats Features) string {
 			additionalParams += " --strict"
 		}
 
-		if env.Flags().Manual {
-			additionalParams += " --manual"
-		}
-
 		var command, config string
 
 		switch shell {

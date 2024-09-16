@@ -1,6 +1,6 @@
 export POSH_THEME=::CONFIG::
 export POSH_SHELL_VERSION=$BASH_VERSION
-export POWERLINE_COMMAND="oh-my-posh"
+export POWERLINE_COMMAND='oh-my-posh'
 export POSH_PID=$$
 export CONDA_PROMPT_MODIFIER=false
 export OSTYPE=$OSTYPE
@@ -10,12 +10,12 @@ if [[ $OSTYPE =~ ^(msys|cygwin) ]]; then
 fi
 
 # global variables
-_omp_start_time=""
+_omp_start_time=''
 _omp_stack_count=0
-_omp_elapsed=-1
-_omp_no_exit_code="true"
-_omp_status_cache=0
-_omp_pipestatus_cache=0
+_omp_execution_time=-1
+_omp_no_status=true
+_omp_status=0
+_omp_pipestatus=0
 _omp_executable=::OMP::
 
 # switches to enable/disable features
@@ -26,7 +26,11 @@ _omp_ftcs_marks=0
 PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_command_start)'
 
 # set secondary prompt
-_omp_secondary_prompt=$("$_omp_executable" print secondary --shell=bash --shell-version="$BASH_VERSION")
+_omp_secondary_prompt=$(
+    "$_omp_executable" print secondary \
+        --shell=bash \
+        --shell-version="$BASH_VERSION"
+)
 
 function _omp_set_cursor_position() {
     # not supported in Midnight Commander
@@ -54,7 +58,7 @@ function _omp_start_timer() {
 
 function _omp_ftcs_command_start() {
     if [[ $_omp_ftcs_marks == 1 ]]; then
-        printf "\e]133;C\a"
+        printf '\e]133;C\a'
     fi
 }
 
@@ -63,26 +67,36 @@ function set_poshcontext() {
     return
 }
 
-function _omp_print_primary() {
-    # Avoid unexpected expansions.
+function _omp_get_primary() {
+    # Avoid unexpected expansions when we're generating the prompt below.
     shopt -u promptvars
+    trap 'shopt -s promptvars' RETURN
 
     local prompt
     if shopt -oq posix; then
         # Disable in POSIX mode.
         prompt='[NOTICE: Oh My Posh prompt is not supported in POSIX mode]\n\u@\h:\w\$ '
     else
-        prompt=$("$_omp_executable" print primary --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')
+        prompt=$(
+            "$_omp_executable" print primary \
+                --shell=bash \
+                --shell-version="$BASH_VERSION" \
+                --status="$_omp_status" \
+                --pipestatus="${_omp_pipestatus[*]}" \
+                --no-status="$_omp_no_status" \
+                --execution-time="$_omp_execution_time" \
+                --stack-count="$_omp_stack_count" \
+                --terminal-width="${COLUMNS-0}" |
+                tr -d '\0'
+        )
     fi
     echo "${prompt@P}"
-
-    # Allow command substitution in PS0.
-    shopt -s promptvars
 }
 
-function _omp_print_secondary() {
-    # Avoid unexpected expansions.
+function _omp_get_secondary() {
+    # Avoid unexpected expansions when we're generating the prompt below.
     shopt -u promptvars
+    trap 'shopt -s promptvars' RETURN
 
     if shopt -oq posix; then
         # Disable in POSIX mode.
@@ -90,38 +104,39 @@ function _omp_print_secondary() {
     else
         echo "${_omp_secondary_prompt@P}"
     fi
-
-    # Allow command substitution in PS0.
-    shopt -s promptvars
 }
 
 function _omp_hook() {
-    _omp_status_cache=$? _omp_pipestatus_cache=("${PIPESTATUS[@]}")
+    _omp_status=$? _omp_pipestatus=("${PIPESTATUS[@]}")
 
-    if [[ ${#BP_PIPESTATUS[@]} -ge ${#_omp_pipestatus_cache[@]} ]]; then
-        _omp_pipestatus_cache=("${BP_PIPESTATUS[@]}")
+    if [[ ${#BP_PIPESTATUS[@]} -ge ${#_omp_pipestatus[@]} ]]; then
+        _omp_pipestatus=("${BP_PIPESTATUS[@]}")
     fi
 
     _omp_stack_count=$((${#DIRSTACK[@]} - 1))
 
+    _omp_execution_time=-1
     if [[ $_omp_start_time ]]; then
-        local omp_now=$("$_omp_executable" get millis --shell=bash)
-        _omp_elapsed=$((omp_now - _omp_start_time))
-        _omp_start_time=""
-        _omp_no_exit_code="false"
+        local omp_now=$("$_omp_executable" get millis)
+        _omp_execution_time=$((omp_now - _omp_start_time))
+        _omp_no_status=false
     fi
+    _omp_start_time=''
 
-    if [[ ${_omp_pipestatus_cache[-1]} != "$_omp_status_cache" ]]; then
-        _omp_pipestatus_cache=("$_omp_status_cache")
+    if [[ ${_omp_pipestatus[-1]} != "$_omp_status" ]]; then
+        _omp_pipestatus=("$_omp_status")
     fi
 
     set_poshcontext
     _omp_set_cursor_position
 
-    PS1='$(_omp_print_primary)'
-    PS2='$(_omp_print_secondary)'
+    PS1='$(_omp_get_primary)'
+    PS2='$(_omp_get_secondary)'
 
-    return $_omp_status_cache
+    # Ensure that command substitution works in a prompt string.
+    shopt -s promptvars
+
+    return $_omp_status
 }
 
 function _omp_install_hook() {
@@ -129,7 +144,7 @@ function _omp_install_hook() {
 
     local cmd
     for cmd in "${PROMPT_COMMAND[@]}"; do
-        if [[ $cmd = "_omp_hook" ]]; then
+        if [[ $cmd = _omp_hook ]]; then
             return
         fi
     done

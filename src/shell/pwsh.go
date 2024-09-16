@@ -2,7 +2,6 @@ package shell
 
 import (
 	_ "embed"
-
 	"fmt"
 	"strings"
 )
@@ -38,5 +37,9 @@ func (f Feature) Pwsh() Code {
 }
 
 func quotePwshOrElvishStr(str string) string {
+	if len(str) == 0 {
+		return "''"
+	}
+
 	return fmt.Sprintf("'%s'", strings.ReplaceAll(str, "'", "''"))
 }

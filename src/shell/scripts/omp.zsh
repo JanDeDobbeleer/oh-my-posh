@@ -1,7 +1,7 @@
 export POSH_THEME=::CONFIG::
 export POSH_SHELL_VERSION=$ZSH_VERSION
 export POSH_PID=$$
-export POWERLINE_COMMAND="oh-my-posh"
+export POWERLINE_COMMAND='oh-my-posh'
 export CONDA_PROMPT_MODIFIER=false
 export POSH_PROMPT_COUNT=0
 export ZLE_RPROMPT_INDENT=0
@@ -12,6 +12,7 @@ if [[ $OSTYPE =~ ^(msys|cygwin) ]]; then
 fi
 
 _omp_executable=::OMP::
+_omp_tooltip_command=''
 
 # switches to enable/disable features
 _omp_cursor_positioning=0
@@ -31,7 +32,7 @@ function _omp_set_cursor_position() {
   stty raw -echo min 0
 
   local pos
-  echo -en "\033[6n" >/dev/tty
+  echo -en '\033[6n' >/dev/tty
   read -r -d R pos
   pos=${pos:2} # strip off the esc-[
   local parts=(${(s:;:)pos})
@@ -49,27 +50,28 @@ function set_poshcontext() {
 
 function _omp_preexec() {
   if [[ $_omp_ftcs_marks == 0 ]]; then
-    printf "\033]133;C\007"
+    printf '\033]133;C\007'
   fi
 
   _omp_start_time=$($_omp_executable get millis)
 }
 
 function _omp_precmd() {
-  _omp_status_cache=$?
-  _omp_pipestatus_cache=(${pipestatus[@]})
+  _omp_status=$?
+  _omp_pipestatus=(${pipestatus[@]})
   _omp_stack_count=${#dirstack[@]}
-  _omp_elapsed=-1
-  _omp_no_exit_code="true"
+  _omp_execution_time=-1
+  _omp_no_status=true
+  _omp_tooltip_command=''
 
   if [ $_omp_start_time ]; then
-    local omp_now=$($_omp_executable get millis --shell=zsh)
-    _omp_elapsed=$(($omp_now - $_omp_start_time))
-    _omp_no_exit_code="false"
+    local omp_now=$($_omp_executable get millis)
+    _omp_execution_time=$(($omp_now - $_omp_start_time))
+    _omp_no_status=false
   fi
 
-  if [[ ${_omp_pipestatus_cache[-1]} != "$_omp_status_cache" ]]; then
-    _omp_pipestatus_cache=("$_omp_status_cache")
+  if [[ ${_omp_pipestatus[-1]} != "$_omp_status" ]]; then
+    _omp_pipestatus=("$_omp_status")
   fi
 
   count=$((POSH_PROMPT_COUNT + 1))
@@ -86,8 +88,8 @@ function _omp_precmd() {
   setopt PROMPT_PERCENT
 
   PS2=$_omp_secondary_prompt
+  eval "$(_omp_get_prompt primary --eval)"
 
-  eval "$($_omp_executable print primary --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
   unset _omp_start_time
 }
 
@@ -116,6 +118,20 @@ function _omp_cleanup() {
 _omp_cleanup
 unset -f _omp_cleanup
 
+function _omp_get_prompt() {
+  local type=$1
+  local args=("${@[2,-1]}")
+  $_omp_executable print $type \
+    --shell=zsh \
+    --shell-version=$ZSH_VERSION \
+    --status=$_omp_status \
+    --pipestatus="${_omp_pipestatus[*]}" \
+    --no-status=$_omp_no_status \
+    --execution-time=$_omp_execution_time \
+    --stack-count=$_omp_stack_count \
+    ${args[@]}
+}
+
 function _omp_render_tooltip() {
   if [[ $KEYS != ' ' ]]; then
     return
@@ -130,7 +146,7 @@ function _omp_render_tooltip() {
   fi
 
   _omp_tooltip_command="$tooltip_command"
-  local tooltip=$($_omp_executable print tooltip --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")
+  local tooltip=$(_omp_get_prompt tooltip --command="$tooltip_command")
   if [[ -z $tooltip ]]; then
     return
   fi
@@ -148,23 +164,21 @@ function _omp_zle-line-init() {
   local -i ret=$?
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-  _omp_tooltip_command=''
-  eval "$($_omp_executable print transient --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
+  eval "$(_omp_get_prompt transient --eval)"
   zle .reset-prompt
-
-  # Exit the shell if we receive EOT.
-  if [[ $ret == 0 && $KEYS == $'\4' ]]; then
-    exit
-  fi
 
   if ((ret)); then
     # TODO (fix): this is not equal to sending a SIGINT, since the status code ($?) is set to 1 instead of 130.
     zle .send-break
-  else
-    # Enter
-    zle .accept-line
   fi
-  return ret
+
+  # Exit the shell if we receive EOT.
+  if [[ $KEYS == $'\4' ]]; then
+    exit
+  fi
+
+  zle .accept-line
+  return $ret
 }
 
 # Helper function for calling a widget before the specified OMP function.
@@ -205,7 +219,7 @@ function _omp_create_widget() {
 }
 
 function enable_poshtooltips() {
-  local widget=${$(bindkey " "):2}
+  local widget=${$(bindkey ' '):2}
 
   if [[ -z $widget ]]; then
     widget=self-insert

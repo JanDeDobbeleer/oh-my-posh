@@ -42,7 +42,7 @@ type Config struct {
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
 	Version                 int                    `json:"version" toml:"version"`
-	DisableNotice           bool                   `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
+	UpgradeNotice           bool                   `json:"upgrade_notice,omitempty" toml:"upgrade_notice,omitempty"`
 	AutoUpgrade             bool                   `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
 	ShellIntegration        bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
 	MigrateGlyphs           bool                   `json:"-" toml:"-"`
@@ -103,7 +103,7 @@ func (cfg *Config) Features() shell.Features {
 		autoUpgrade = true
 	}
 
-	if !autoUpgrade && !cfg.DisableNotice {
+	if cfg.UpgradeNotice && !autoUpgrade {
 		feats = append(feats, shell.Notice)
 	}
 

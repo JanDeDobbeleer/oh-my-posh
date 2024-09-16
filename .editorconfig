@@ -32,3 +32,17 @@ trim_trailing_whitespace = false
 [*.{ps1,psd1,psm1}]
 indent_size = 4
 charset = utf-8-bom
+
+; Lua
+[*.lua]
+line_space_after_comment = max(2)
+line_space_after_do_statement = max(2)
+line_space_after_expression_statement = max(2)
+line_space_after_for_statement = max(2)
+line_space_after_function_statement = fixed(2)
+line_space_after_if_statement = max(2)
+line_space_after_local_or_assign_statement = max(2)
+line_space_after_repeat_statement = max(2)
+line_space_after_while_statement = max(2)
+max_line_length = unset
+quote_style = single

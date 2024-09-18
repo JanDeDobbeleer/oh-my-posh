@@ -28,7 +28,7 @@ The basic layout of the config file is as follows.
 
 A [block][block] has properties that indicate its position and the [segments][segment] it will render.
 
-```json
+```jsonc
 {
     "blocks": [
         {

@@ -42,7 +42,7 @@ import Config from '@site/src/components/Config.js';
 
 If you don't want to include the API key into your configuration, the following modification can be done.
 
-```json
+```jsonc
 "properties": {
   // highlight-next-line
   "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",

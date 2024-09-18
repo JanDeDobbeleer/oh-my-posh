@@ -118,7 +118,7 @@ the steps [here][export] to export it to a local file so you can adjust the [seg
 
 In the example below, it's assumed that the execution segment's icon `\ueba2` has an unexpected space after it in Windows Terminal.
 
-```json
+```jsonc
 {
   "type": "executiontime",
   "template": "\ueba2" // unexpected space
@@ -127,7 +127,7 @@ In the example below, it's assumed that the execution segment's icon `\ueba2` ha
 
 Adjust it by adding `\u2800` immediately after the icon.
 
-```json
+```jsonc
 {
   "type": "executiontime",
   "template": "\ueba2\u2800" // solved

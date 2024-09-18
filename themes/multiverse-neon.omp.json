@@ -50,19 +50,19 @@
      {
       "alignment": "right",
       "segments": [
-
         {
-          "foreground": "#5fb157",
+          "type": "node",
+          "style": "plain",
+          "foreground": "#88e570",
           "properties": {
             "display_mode": "files",
             "fetch_package_manager": true,
             "fetch_version": true,
-            "npm_icon": "<#FE4A49>\ue71e npm</> ",
-            "yarn_icon":"<#44FFD2>\uf487 yarn</> "
+            "npm_icon": "<#e5272d>\ue616 npm</> ",
+            "yarn_icon": "<#37aee5>\ue6a7 yarn</> ",
+            "pnpm_icon": "<#e5a100>\udb80\udec1 pnpm</> "
           },
-          "style": "plain",
-          "template": "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}\ue718 {{ .Full }}",
-          "type": "node"
+          "template": "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}\ue718 {{ .Full }}"
         },
         {
           "foreground": "#4063D8",

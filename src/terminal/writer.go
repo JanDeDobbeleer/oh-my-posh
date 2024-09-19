@@ -183,34 +183,29 @@ func ClearAfter() string {
 }
 
 func FormatTitle(title string) string {
+	switch Shell {
 	// These shells don't support setting the console title.
-	if Shell == shell.ELVISH || Shell == shell.XONSH {
+	case shell.ELVISH, shell.XONSH, shell.TCSH:
 		return ""
-	}
+	case shell.BASH, shell.ZSH:
+		title = trimAnsi(title)
+		s := new(strings.Builder)
 
-	title = trimAnsi(title)
+		// We have to do this to prevent the shell from misidentifying escape sequences.
+		for _, char := range title {
+			escaped, shouldEscape := formats.EscapeSequences[char]
+			if shouldEscape {
+				s.WriteString(escaped)
+				continue
+			}
 
-	if Plain {
-		return title
-	}
-
-	if Shell != shell.BASH && Shell != shell.ZSH {
-		return fmt.Sprintf(formats.Title, title)
-	}
-
-	// We have to do this to prevent Bash/Zsh from misidentifying escape sequences.
-	s := new(strings.Builder)
-	for _, char := range title {
-		escaped, shouldEscape := formats.EscapeSequences[char]
-		if shouldEscape {
-			s.WriteString(escaped)
-			continue
+			s.WriteRune(char)
 		}
 
-		s.WriteRune(char)
+		return fmt.Sprintf(formats.Title, s.String())
+	default:
+		return fmt.Sprintf(formats.Title, trimAnsi(title))
 	}
-
-	return fmt.Sprintf(formats.Title, s.String())
 }
 
 func EscapeText(text string) string {

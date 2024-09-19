@@ -49,10 +49,6 @@ func Init(env runtime.Environment, feats Features) string {
 			additionalParams += " --strict"
 		}
 
-		if env.Flags().Manual {
-			additionalParams += " --manual"
-		}
-
 		var command, config string
 
 		switch shell {
@@ -72,7 +68,7 @@ func Init(env runtime.Environment, feats Features) string {
 		createNuInit(env, feats)
 		return ""
 	default:
-		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
+		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, shell)
 	}
 }
 
@@ -105,22 +101,24 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		configFile = quoteFishStr(configFile)
 		script = fishInit
 	case CMD:
-		executable = quoteLuaStr(executable)
-		configFile = quoteLuaStr(configFile)
+		executable = escapeLuaStr(executable)
+		configFile = escapeLuaStr(configFile)
 		script = cmdInit
 	case NU:
 		executable = quoteNuStr(executable)
 		configFile = quoteNuStr(configFile)
 		script = nuInit
 	case TCSH:
-		executable = QuotePosixStr(executable)
-		configFile = QuotePosixStr(configFile)
+		executable = quoteCshStr(executable)
+		configFile = quoteCshStr(configFile)
 		script = tcshInit
 	case ELVISH:
 		executable = quotePwshOrElvishStr(executable)
 		configFile = quotePwshOrElvishStr(configFile)
 		script = elvishInit
 	case XONSH:
+		executable = quotePythonStr(executable)
+		configFile = quotePythonStr(configFile)
 		script = xonshInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)

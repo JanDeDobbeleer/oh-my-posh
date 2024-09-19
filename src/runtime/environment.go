@@ -68,7 +68,6 @@ type Environment interface {
 	Connection(connectionType ConnectionType) (*Connection, error)
 	TemplateCache() *cache.Template
 	LoadTemplateCache()
-	SetPromptCount()
 	CursorPosition() (row, col int)
 	SystemInfo() (*SystemInfo, error)
 	Debug(message string)
@@ -92,7 +91,6 @@ type Flags struct {
 	TerminalWidth int
 	Strict        bool
 	Debug         bool
-	Manual        bool
 	Plain         bool
 	Primary       bool
 	HasTransient  bool
@@ -101,6 +99,7 @@ type Flags struct {
 	NoExitCode    bool
 	Column        int
 	JobCount      int
+	SaveCache     bool
 }
 
 type CommandError struct {

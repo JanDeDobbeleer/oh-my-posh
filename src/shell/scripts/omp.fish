@@ -24,42 +24,58 @@ function set_poshcontext
     return
 end
 
+function _omp_get_prompt
+    if test (count $argv) -eq 0
+        return
+    end
+    $_omp_executable print $argv[1] \
+        --save-cache \
+        --shell=fish \
+        --shell-version=$FISH_VERSION \
+        --status=$_omp_status \
+        --pipestatus="$_omp_pipestatus" \
+        --no-status=$_omp_no_status \
+        --execution-time=$_omp_execution_time \
+        --stack-count=$_omp_stack_count \
+        $argv[2..]
+end
+
 # NOTE: Input function calls via `commandline --function` are put into a queue and will not be executed until an outer regular function returns. See https://fishshell.com/docs/current/cmds/commandline.html.
 
 function fish_prompt
-    set --local omp_status_cache_temp $status
-    set --local omp_pipestatus_cache_temp $pipestatus
+    set --local omp_status_temp $status
+    set --local omp_pipestatus_temp $pipestatus
     # clear from cursor to end of screen as
     # commandline --function repaint does not do this
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
     if test "$_omp_transient" = 1
-        $_omp_executable print transient --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
+        _omp_get_prompt transient
         return
     end
     if test "$_omp_new_prompt" = 0
         echo -n "$_omp_current_prompt"
         return
     end
-    set --global _omp_status_cache $omp_status_cache_temp
-    set --global _omp_pipestatus_cache $omp_pipestatus_cache_temp
+    set --global _omp_status $omp_status_temp
+    set --global _omp_pipestatus $omp_pipestatus_temp
+    set --global _omp_no_status false
+    set --global _omp_execution_time "$CMD_DURATION$cmd_duration"
     set --global _omp_stack_count (count $dirstack)
-    set --global _omp_duration "$CMD_DURATION$cmd_duration"
-    set --global _omp_no_exit_code false
 
     # check if variable set, < 3.2 case
     if set --query _omp_last_command && test -z "$_omp_last_command"
-        set _omp_duration 0
-        set _omp_no_exit_code true
+        set _omp_execution_time 0
+        set _omp_no_status true
     end
 
     # works with fish >=3.2
     if set --query _omp_last_status_generation && test "$_omp_last_status_generation" = "$status_generation"
-        set _omp_duration 0
-        set _omp_no_exit_code true
+        set _omp_execution_time 0
+        set _omp_no_status true
     else if test -z "$_omp_last_status_generation"
         # first execution - $status_generation is 0, $_omp_last_status_generation is empty
-        set _omp_no_exit_code true
+        set _omp_no_status true
     end
 
     if set --query status_generation
@@ -81,7 +97,8 @@ function fish_prompt
     end
 
     # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
-    set --global _omp_current_prompt ($_omp_executable print primary --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$_omp_no_exit_code | string collect)
+    set --global _omp_current_prompt (_omp_get_prompt primary --cleared=$omp_cleared | string join \n | string collect)
+
     echo -n "$_omp_current_prompt"
 end
 
@@ -98,7 +115,7 @@ function fish_right_prompt
     end
 
     set _omp_new_prompt 0
-    set --global _omp_current_rprompt ($_omp_executable print right --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
+    set --global _omp_current_rprompt (_omp_get_prompt right | string join '')
 
     echo -n "$_omp_current_rprompt"
 end
@@ -154,7 +171,7 @@ function _omp_space_key_handler
     end
 
     set _omp_tooltip_command $tooltip_command
-    set --local tooltip_prompt ($_omp_executable print tooltip --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --command $_omp_tooltip_command --no-status=$_omp_no_exit_code | string join '')
+    set --local tooltip_prompt (_omp_get_prompt tooltip --command=$_omp_tooltip_command | string join '')
 
     if test -z "$tooltip_prompt"
         return

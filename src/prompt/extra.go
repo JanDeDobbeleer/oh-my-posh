@@ -101,23 +101,22 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	switch e.Env.Shell() {
 	case shell.ZSH:
 		if promptType == Transient {
+			if !e.Env.Flags().Eval {
+				break
+			}
+
 			prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
 			// empty RPROMPT
 			prompt += "\nRPROMPT=''"
 			return prompt
 		}
-		return str
 	case shell.PWSH, shell.PWSH5:
 		if promptType == Transient {
 			// clear the line afterwards to prevent text from being written on the same line
 			// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
 			return str + terminal.ClearAfter()
 		}
-
-		return str
-	case shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.GENERIC:
-		return str
 	}
 
-	return ""
+	return str
 }

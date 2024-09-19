@@ -16,8 +16,11 @@ var noticeCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
 		env := &runtime.Terminal{
-			CmdFlags: &runtime.Flags{},
+			CmdFlags: &runtime.Flags{
+				SaveCache: true,
+			},
 		}
+
 		env.Init()
 		defer env.Close()
 

@@ -281,10 +281,6 @@ func (env *Environment) DirIsWritable(path string) bool {
 	return args.Bool(0)
 }
 
-func (env *Environment) SetPromptCount() {
-	_ = env.Called()
-}
-
 func (env *Environment) CursorPosition() (int, int) {
 	args := env.Called()
 	return args.Int(0), args.Int(1)

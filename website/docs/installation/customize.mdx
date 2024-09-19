@@ -188,10 +188,10 @@ to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSig
 Adjust the Oh My Posh init line in `~/.tcshrc` by adding the `--config` flag with the location of your configuration.
 
 ```bash
-eval `oh-my-posh init tcsh --config ~/jandedobbeleer.omp.json`
+eval "`oh-my-posh init tcsh --config ~/jandedobbeleer.omp.json`"
 ```
 
-Once added, reload your profile for the changes to take effect.
+Note that the surrounding quotes are required. Once added, reload your profile for the changes to take effect.
 
 ```bash
 exec tcsh

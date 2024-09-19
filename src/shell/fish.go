@@ -2,7 +2,6 @@ package shell
 
 import (
 	_ "embed"
-
 	"fmt"
 	"strings"
 )
@@ -35,27 +34,6 @@ func quoteFishStr(str string) string {
 	if len(str) == 0 {
 		return "''"
 	}
-	needQuoting := false
-	var b strings.Builder
-	for _, r := range str {
-		normal := false
-		switch r {
-		case ';', '"', '(', ')', '[', ']', '{', '}', '$', '|', '&', '>', '<', ' ', '#', '~', '*', '?', '=':
-			b.WriteRune(r)
-		case '\\', '\'':
-			b.WriteByte('\\')
-			b.WriteRune(r)
-		default:
-			b.WriteRune(r)
-			normal = true
-		}
-		if !normal {
-			needQuoting = true
-		}
-	}
-	// single quotes are used when the string contains any special characters
-	if needQuoting {
-		return fmt.Sprintf("'%s'", b.String())
-	}
-	return b.String()
+
+	return fmt.Sprintf("'%s'", strings.NewReplacer(`\`, `\\`, "'", `\'`).Replace(str))
 }

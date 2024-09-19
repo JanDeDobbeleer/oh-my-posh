@@ -74,7 +74,7 @@ help: |
               **Usage**: Use for new tests or fixes to existing tests.
               **Example**: `test: add unit tests for user service`
 
-  `theme`:    Work on or add a theme.
+  `theme`:    Work on a theme.
   
               **Usage**: Use for theme-related changes.
-              **Example**: `theme: add new theme`
+              **Example**: `theme(jandedobbeleer): update git branch icon`

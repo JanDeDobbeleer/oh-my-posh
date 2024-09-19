@@ -36,7 +36,12 @@ This command is used to install fonts and configure the font in your terminal.
 					fontName = args[1]
 				}
 
-				env := &runtime.Terminal{}
+				env := &runtime.Terminal{
+					CmdFlags: &runtime.Flags{
+						SaveCache: true,
+					},
+				}
+
 				env.Init()
 				defer env.Close()
 

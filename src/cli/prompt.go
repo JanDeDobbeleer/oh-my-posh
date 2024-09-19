@@ -6,10 +6,11 @@ import (
 
 // promptCmd represents the prompt command
 var promptCmd = &cobra.Command{
-	Use:   "prompt",
-	Short: "Set up the prompt for your shell (deprecated)",
-	Long:  `Set up the prompt for your shell. (deprecated)`,
-	Args:  cobra.NoArgs,
+	Use:    "prompt",
+	Short:  "Set up the prompt for your shell (deprecated)",
+	Long:   `Set up the prompt for your shell. (deprecated)`,
+	Hidden: true,
+	Args:   cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},
@@ -17,8 +18,8 @@ var promptCmd = &cobra.Command{
 
 func init() {
 	// legacy support
-	promptCmd.AddCommand(initCmd)
-	promptCmd.AddCommand(debugCmd)
-	promptCmd.AddCommand(printCmd)
+	promptCmd.AddCommand(createInitCmd())
+	promptCmd.AddCommand(createDebugCmd())
+	promptCmd.AddCommand(createPrintCmd())
 	RootCmd.AddCommand(promptCmd)
 }

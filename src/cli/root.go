@@ -49,7 +49,13 @@ var (
 
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "config file path")
-	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
 	RootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
-	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")
+
+	// Deprecated flags, should be kept to avoid breaking CLI integration.
+	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init")
+	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell")
+
+	// Hide flags that are deprecated or for internal use only.
+	_ = RootCmd.Flags().MarkHidden("init")
+	_ = RootCmd.Flags().MarkHidden("shell")
 }

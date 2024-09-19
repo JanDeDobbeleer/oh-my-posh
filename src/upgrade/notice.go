@@ -47,6 +47,7 @@ func Latest(env runtime.Environment) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	var release release
 	// this can't fail
 	_ = json.Unmarshal(body, &release)

@@ -4,28 +4,48 @@ if ($env.config? | is-not-empty) {
 }
 
 $env.POWERLINE_COMMAND = 'oh-my-posh'
-$env.POSH_THEME = ::CONFIG::
+$env.POSH_THEME = (echo ::CONFIG::)
 $env.PROMPT_INDICATOR = ""
 $env.POSH_PID = (random uuid)
 $env.POSH_SHELL_VERSION = (version | get version)
 
-let _omp_executable: string = ::OMP::
-
-def posh_cmd_duration [] {
-    # We have to do this because the initial value of `$env.CMD_DURATION_MS` is always `0823`,
-    # which is an official setting.
-    # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
-    if $env.CMD_DURATION_MS == "0823" { 0 } else { $env.CMD_DURATION_MS }
-}
-
-def posh_width [] {
-    (term size).columns | into string
-}
+let _omp_executable: string = (echo ::OMP::)
 
 # PROMPTS
-$env.PROMPT_MULTILINE_INDICATOR = (^$_omp_executable print secondary --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)")
 
-$env.PROMPT_COMMAND = { ||
+def --wrapped _omp_get_prompt [
+    type: string,
+    ...args: string
+] {
+    mut execution_time = -1
+    mut no_status = true
+    # We have to do this because the initial value of `$env.CMD_DURATION_MS` is always `0823`, which is an official setting.
+    # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
+    if $env.CMD_DURATION_MS != '0823' {
+        $execution_time = $env.CMD_DURATION_MS
+        $no_status = false
+    }
+
+    (
+        ^$_omp_executable print $type
+            --save-cache
+            --shell=nu
+            $"--shell-version=($env.POSH_SHELL_VERSION)"
+            $"--status=($env.LAST_EXIT_CODE)"
+            $"--no-status=($no_status)"
+            $"--execution-time=($execution_time)"
+            $"--terminal-width=((term size).columns)"
+            ...$args
+    )
+}
+
+$env.PROMPT_MULTILINE_INDICATOR = (
+    ^$_omp_executable print secondary
+        --shell=nu
+        $"--shell-version=($env.POSH_SHELL_VERSION)"
+)
+
+$env.PROMPT_COMMAND = {||
     # hack to set the cursor line to 1 when the user clears the screen
     # this obviously isn't bulletproof, but it's a start
     mut clear = false
@@ -37,9 +57,7 @@ $env.PROMPT_COMMAND = { ||
         do --env $env.SET_POSHCONTEXT
     }
 
-    ^$_omp_executable print primary --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)" $"--cleared=($clear)"
+    _omp_get_prompt primary $"--cleared=($clear)"
 }
 
-$env.PROMPT_COMMAND_RIGHT = { ||
-    ^$_omp_executable print right --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)"
-}
+$env.PROMPT_COMMAND_RIGHT = {|| _omp_get_prompt right }

@@ -67,12 +67,13 @@ func (term *Terminal) Init() {
 
 	initCache := func(fileName string) *cache.File {
 		cache := &cache.File{}
-		cache.Init(filepath.Join(term.CachePath(), fileName))
+		cache.Init(filepath.Join(term.CachePath(), fileName), term.CmdFlags.SaveCache)
 		return cache
 	}
 
 	term.deviceCache = initCache(cache.FileName)
 	term.sessionCache = initCache(cache.SessionFileName)
+	term.setPromptCount()
 
 	term.ResolveConfigPath()
 
@@ -81,8 +82,6 @@ func (term *Terminal) Init() {
 	}
 
 	term.tmplCache = &cache.Template{}
-
-	term.SetPromptCount()
 }
 
 func (term *Terminal) ResolveConfigPath() {
@@ -737,27 +736,20 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	return false
 }
 
-func (term *Terminal) SetPromptCount() {
+func (term *Terminal) setPromptCount() {
 	defer term.Trace(time.Now())
 
-	countStr := os.Getenv("POSH_PROMPT_COUNT")
-	if len(countStr) > 0 {
-		// this counter is incremented by the shell
-		count, err := strconv.Atoi(countStr)
-		if err == nil {
-			term.CmdFlags.PromptCount = count
-			return
-		}
-	}
 	var count int
 	if val, found := term.Session().Get(cache.PROMPTCOUNTCACHE); found {
 		count, _ = strconv.Atoi(val)
 	}
-	// only write to cache if we're the primary prompt
+
+	// Only update the count if we're generating a primary prompt.
 	if term.CmdFlags.Primary {
 		count++
 		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
 	}
+
 	term.CmdFlags.PromptCount = count
 }
 

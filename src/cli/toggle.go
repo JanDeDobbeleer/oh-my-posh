@@ -19,7 +19,13 @@ var toggleCmd = &cobra.Command{
 			_ = cmd.Help()
 			return
 		}
-		env := &runtime.Terminal{}
+
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
+				SaveCache: true,
+			},
+		}
+
 		env.Init()
 		defer env.Close()
 

@@ -30,7 +30,15 @@ var (
 		"xonsh",
 	}
 
-	initCmd = &cobra.Command{
+	initCmd = createInitCmd()
+)
+
+func init() {
+	RootCmd.AddCommand(initCmd)
+}
+
+func createInitCmd() *cobra.Command {
+	initCmd := &cobra.Command{
 		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|tcsh|elvish|xonsh]",
 		Short: "Initialize your shell and config",
 		Long: `Initialize your shell and config.
@@ -46,15 +54,20 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 			runInit(args[0])
 		},
 	}
-)
 
-func init() {
 	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
-	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")
 	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
+
+	// Deprecated flags, should be kept to avoid breaking CLI integration.
+	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")
+
+	// Hide flags that are deprecated or for internal use only.
+	_ = initCmd.Flags().MarkHidden("manual")
+
 	_ = initCmd.MarkPersistentFlagRequired("config")
-	RootCmd.AddCommand(initCmd)
+
+	return initCmd
 }
 
 func runInit(shellName string) {
@@ -68,7 +81,6 @@ func runInit(shellName string) {
 			Shell:  shellName,
 			Config: configFlag,
 			Strict: strict,
-			Manual: manual,
 			Debug:  debug,
 		},
 	}

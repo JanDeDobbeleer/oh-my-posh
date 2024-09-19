@@ -1,13 +1,14 @@
 ## Prerequisites
 
 - [ ] I have read and understood the [Contributing Guide][contributing].
-- [ ] My commit message follows the [Conventional Commits][cc] guidelines.
+- [ ] My commit messages follow the [Conventional Commits][cc] guidelines and our [commitlint rules and standards][commitlint].
 - [ ] Relevant tests have been added or updated (for bug fixes or features).
-- [ ] Documentation has been added or updated (for bug fixes or features).
+- [ ] Documentations have been added or updated (for bug fixes or features).
 
 ## Description
 
 <!--
+
 **Description of Changes:**
 
 Please provide a clear and concise description of the changes introduced by this pull request. You should explain the following:
@@ -16,18 +17,29 @@ Please provide a clear and concise description of the changes introduced by this
 2. **Problem:** Specify the issue or problem this PR addresses. Include any relevant context or background to explain why this change is necessary.
 3. **Solution:** Explain how your changes resolve the issue or add the new feature. Provide key implementation details to clarify how the solution works.
 4. **Impact:** Note any potential impacts or side effects of your changes. Mention if additional testing is needed or if there are any known limitations.
+5. **Issue Closure:** Indicate which issues this PR resolves or closes.
 
 **Example:**
-"This PR introduces a new feature for X by implementing Y. This change addresses the issue reported in #123 by [explain how it fixes the problem].
+"This PR introduces a new feature for X by implementing Y that will optimize the query logic, which reduces execution time and prevents the error. This change addresses the issue reported in #123.
+
 Closes #123"
 
 Please ensure that each section is thoroughly explained to assist reviewers in understanding your changes.
 
 -->
 
-<!-- Description of your changes: -->
+---
+
+<br>
+<br>
+<br>
 
 
+<!-- _Description of your changes:_ -->
+
+
+
+<br>
 <br>
 <br>
 <br>
@@ -37,7 +49,7 @@ Please ensure that each section is thoroughly explained to assist reviewers in u
 ### Helpful Resources
 
 - **[Getting Started Guide][started-guide]:** For first-time contributors, this guide will help you get acquainted with the project.
-- **[OhMyPosh Git Guide][git-guide]:** For understanding Git practices and commands.
+- **[Oh My Posh Git Guide][git-guide]:** For understanding Git practices and commands.
 - **[Discussions Page][discussions]:** Join project discussions and ask questions.
 - **[GitKraken Guide][gitkraken]:** Recommended tool for managing Git repositories.
 <!-- - **[Code Structure Guide][code-structure]:** Understand the overall organization of our codebase. -->
@@ -51,6 +63,7 @@ Please ensure that each section is thoroughly explained to assist reviewers in u
 
 [contributing]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
+[commitlint]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/.commitlintrc.yml
 [started-guide]: https://ohmyposh.dev/docs/contributing/started
 [git-guide]: https://ohmyposh.dev/docs/contributing/git
 [discussions]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions

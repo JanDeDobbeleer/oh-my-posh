@@ -44,11 +44,14 @@ func init() {
 func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	env := &runtime.Terminal{
 		CmdFlags: &runtime.Flags{
-			Shell: shellName,
+			Shell:     shellName,
+			SaveCache: true,
 		},
 	}
+
 	env.Init()
 	defer env.Close()
+
 	switch feature {
 	case "notice":
 		if enable {

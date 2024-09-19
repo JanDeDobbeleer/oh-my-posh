@@ -155,8 +155,6 @@ const (
 	QUASAR SegmentType = "quasar"
 	// R version
 	R SegmentType = "r"
-	// RANDOM displays a random string from a list
-	RANDOM SegmentType = "random"
 	// REACT writes the current react version
 	REACT SegmentType = "react"
 	// ROOT writes root symbol
@@ -284,7 +282,6 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PYTHON:          func() SegmentWriter { return &segments.Python{} },
 	QUASAR:          func() SegmentWriter { return &segments.Quasar{} },
 	R:               func() SegmentWriter { return &segments.R{} },
-	RANDOM:          func() SegmentWriter { return &segments.Random{} },
 	REACT:           func() SegmentWriter { return &segments.React{} },
 	ROOT:            func() SegmentWriter { return &segments.Root{} },
 	RUBY:            func() SegmentWriter { return &segments.Ruby{} },

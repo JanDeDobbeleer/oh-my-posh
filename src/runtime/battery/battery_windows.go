@@ -185,6 +185,10 @@ func systemGet(idx int) (*battery, error) {
 		return nil, errno
 	}
 
+	if cbRequired == 0 {
+		return nil, errors.New("no buffer information returned")
+	}
+
 	// The god damn struct with ANYSIZE_ARRAY of utf16 in it is crazy.
 	// So... let's emulate it with array of uint16 ;-D.
 	// Keep in mind that the first two elements are actually cbSize.
@@ -250,7 +254,7 @@ func systemGet(idx int) (*battery, error) {
 	}
 
 	if bqi.BatteryTag == 0 {
-		return nil, errors.New("BatteryTag not returned")
+		return nil, errors.New("battery tag not returned")
 	}
 
 	b := &battery{}
@@ -274,6 +278,7 @@ func systemGet(idx int) (*battery, error) {
 	b.Full = float64(bi.FullChargedCapacity)
 
 	bws := batteryWaitStatus{BatteryTag: bqi.BatteryTag}
+
 	var bs batteryStatus
 	err = windows.DeviceIoControl(
 		handle,

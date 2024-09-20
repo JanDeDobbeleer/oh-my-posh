@@ -389,6 +389,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://kizivat.eu"><img src="https://avatars.githubusercontent.com/u/3535926?v=4?s=100" width="100px;" alt="David Kizivat"/><br /><sub><b>David Kizivat</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kizivat" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kizivat" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mgrubb"><img src="https://avatars.githubusercontent.com/u/351301?v=4?s=100" width="100px;" alt="Michael Grubb"/><br /><sub><b>Michael Grubb</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mgrubb" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/oliviaBahr"><img src="https://avatars.githubusercontent.com/u/98684296?v=4?s=100" width="100px;" alt="Olivia Bahr"/><br /><sub><b>Olivia Bahr</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oliviaBahr" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oliviaBahr" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

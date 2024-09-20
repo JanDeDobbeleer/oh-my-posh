@@ -17,6 +17,7 @@ func funcMap() template.FuncMap {
 		"replaceP":     replaceP,
 		"gt":           gt,
 		"lt":           lt,
+		"random":       random,
 		"reason":       GetReasonFromStatus,
 		"hresult":      hresult,
 		"trunc":        trunc,

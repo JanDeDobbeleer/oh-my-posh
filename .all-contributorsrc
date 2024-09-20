@@ -2758,6 +2758,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "oliviaBahr",
+      "name": "Olivia Bahr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/98684296?v=4",
+      "profile": "https://github.com/oliviaBahr",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

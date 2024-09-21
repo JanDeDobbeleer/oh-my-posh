@@ -32,7 +32,7 @@ oh-my-posh get shell
 }>
 <TabItem value="bash">
 
-Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
+Add the following snippet as the last line to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
 
 ```bash
 eval "$(oh-my-posh init bash)"
@@ -69,7 +69,7 @@ Once added, restart cmd for the changes to take effect.
 </TabItem>
 <TabItem value="elvish">
 
-Add the following at the end of `~/.elvish/rc.elv`:
+Add the following snippet as the last line to `~/.elvish/rc.elv`:
 
 ```bash
 eval (oh-my-posh init elvish)
@@ -88,7 +88,7 @@ exec elvish
 It is recommended to use the latest version of Fish. Versions below 3.1.2 have issues displaying the prompt.
 :::
 
-Initialize Oh My Posh in `~/.config/fish/config.fish`:
+Add the following snippet as the last line to `~/.config/fish/config.fish`:
 
 ```bash
 oh-my-posh init fish | source
@@ -107,7 +107,7 @@ exec fish
 Oh My Posh requires Nushell v0.93.0 or higher.
 :::
 
-Add the following line to the Nushell env file (`$nu.env-path`):
+Add the following snippet as the last line to the Nushell env file (`$nu.env-path`):
 
 ```bash
 oh-my-posh init nu
@@ -154,7 +154,7 @@ In this scenario, it can also be that PowerShell blocks running local scripts. T
 to only require remote scripts to be signed using `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`, or [sign the profile][sign].
 :::
 
-Then add the following line.
+Add the following snippet as the last line to your PowerShell profile script:
 
 ```powershell
 oh-my-posh init pwsh | Invoke-Expression
@@ -180,7 +180,7 @@ Once added, reload your profile for the changes to take effect.
 </TabItem>
 <TabItem value="tcsh">
 
-Add the following at the end of `~/.tcshrc`:
+Add the following snippet as the last line to `~/.tcshrc`:
 
 ```bash
 eval "`oh-my-posh init tcsh`"
@@ -195,7 +195,7 @@ exec tcsh
 </TabItem>
 <TabItem value="xonsh">
 
-Add the following line at the end of `~/.xonshrc`:
+Add the following snippet as the last line to `~/.xonshrc`:
 
 ```bash
 execx($(oh-my-posh init xonsh))
@@ -210,7 +210,7 @@ exec xonsh
 </TabItem>
 <TabItem value="zsh">
 
-Add the following to `~/.zshrc`:
+Add the following snippet as the last line to `~/.zshrc`:
 
 ```bash
 eval "$(oh-my-posh init zsh)"

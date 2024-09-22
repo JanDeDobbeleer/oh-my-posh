@@ -2768,6 +2768,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "garysassano",
+      "name": "Gary Sassano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10464497?v=4",
+      "profile": "https://github.com/garysassano",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,7 +1,7 @@
 ## Prerequisites
 
 - [ ] I have read and understood the [Contributing Guide][contributing].
-- [ ] My commit messages follow the [Conventional Commits][cc] guidelines and our [commitlint rules and standards][commitlint].
+- [ ] My commit messages are written according the [Conventional Commits][cc] guidelines, respecting our [rules][commitlint].
 - [ ] Relevant tests have been added or updated (for bug fixes or features).
 - [ ] Documentations have been added or updated (for bug fixes or features).
 

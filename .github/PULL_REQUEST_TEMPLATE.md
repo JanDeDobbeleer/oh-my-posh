@@ -11,7 +11,7 @@
 
 **Description of Changes:**
 
-Please provide a clear and concise description of the changes introduced by this pull request. You should explain the following:
+Please provide a clear and concise description of the changes introduced by this pull request. Explain the following when relevant:
 
 1. **Summary:** Briefly describe the main change or addition in this PR. What is the overall purpose of your changes?
 2. **Problem:** Specify the issue or problem this PR addresses. Include any relevant context or background to explain why this change is necessary.

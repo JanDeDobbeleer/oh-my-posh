@@ -1,14 +1,10 @@
 export POSH_THEME=::CONFIG::
 export POSH_SHELL_VERSION=$ZSH_VERSION
-export POSH_PID=$$
+export POSH_SESSION_ID=::SESSION_ID::
 export POWERLINE_COMMAND='oh-my-posh'
 export CONDA_PROMPT_MODIFIER=false
 export ZLE_RPROMPT_INDENT=0
 export OSTYPE=$OSTYPE
-
-if [[ $OSTYPE =~ ^(msys|cygwin) ]]; then
-  export POSH_PID=$(command cat /proc/$$/winpid)
-fi
 
 _omp_executable=::OMP::
 _omp_tooltip_command=''

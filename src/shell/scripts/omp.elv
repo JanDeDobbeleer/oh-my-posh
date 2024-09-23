@@ -1,4 +1,4 @@
-set-env POSH_PID (to-string (randint 10000000000000 10000000000000000))
+set-env POSH_SESSION_ID ::SESSION_ID::
 set-env POSH_THEME ::CONFIG::
 set-env POSH_SHELL_VERSION $version
 set-env POWERLINE_COMMAND oh-my-posh

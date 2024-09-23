@@ -6,7 +6,7 @@ if ($env.config? | is-not-empty) {
 $env.POWERLINE_COMMAND = 'oh-my-posh'
 $env.POSH_THEME = (echo ::CONFIG::)
 $env.PROMPT_INDICATOR = ""
-$env.POSH_PID = (random uuid)
+$env.POSH_SESSION_ID = (echo ::SESSION_ID::)
 $env.POSH_SHELL_VERSION = (version | get version)
 
 let _omp_executable: string = (echo ::OMP::)

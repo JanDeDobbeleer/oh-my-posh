@@ -30,9 +30,9 @@ const (
 var SessionFileName = fmt.Sprintf("%s.%s", FileName, sessionID())
 
 func sessionID() string {
-	pid := os.Getenv("POSH_PID")
+	pid := os.Getenv("POSH_SESSION_ID")
 	if len(pid) == 0 {
-		log.Debug("POSH_PID not set, using process pid")
+		log.Debug("POSH_SESSION_ID not set, using PID")
 		pid = strconv.Itoa(os.Getppid())
 	}
 

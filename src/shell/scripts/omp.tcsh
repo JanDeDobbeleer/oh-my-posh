@@ -1,10 +1,8 @@
 setenv POWERLINE_COMMAND "oh-my-posh";
 setenv POSH_THEME ::CONFIG::;
 setenv POSH_SHELL_VERSION "$tcsh";
-setenv POSH_PID $$;
+setenv POSH_SESSION_ID ::SESSION_ID::;
 setenv OSTYPE "$OSTYPE";
-
-if ( "$OSTYPE" =~ {msys,cygwin}* ) setenv POSH_PID "`cat /proc/$$/winpid`";
 
 if ( ! $?_omp_enabled ) alias precmd '
   set _omp_status = $status;

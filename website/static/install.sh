@@ -27,7 +27,7 @@ help() {
     echo "-h     Print this help."
     echo "-d     Specify the installation directory. Defaults to $HOME/bin, $HOME/.local/bin or the directory where oh-my-posh is installed."
     echo "-t     Specify the themes installation directory. Defaults to the oh-my-posh cache directory."
-    echo "-v     Version to download"
+    echo "-v     Version to download, defaults to latest"
     echo
 }
 

@@ -17,12 +17,6 @@
           "type": "root"
         },
         {
-          "foreground": "#ffffff",
-          "style": "plain",
-          "template": "{{ .UserName }}@{{ .HostName }} ",
-          "type": "session"
-        },
-        {
           "background": "#007ACC",
           "foreground": "#ffffff",
           "properties": {

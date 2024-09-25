@@ -22,7 +22,7 @@ help() {
     # Display Help
     echo "Install script for Oh My Posh"
     echo
-    echo "Syntax: install.sh [-h] [-d <directory>] [-t <directory>] [-v <version>]"
+    echo "Syntax: install.sh [-h] [-d <dir>] [-t <dir>] [-v <ver>]"
     echo "options:"
     echo "-h     Print this help."
     echo "-d     Specify the installation directory. Defaults to $HOME/bin, $HOME/.local/bin or the directory where oh-my-posh is installed."

@@ -392,6 +392,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/oliviaBahr"><img src="https://avatars.githubusercontent.com/u/98684296?v=4?s=100" width="100px;" alt="Olivia Bahr"/><br /><sub><b>Olivia Bahr</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oliviaBahr" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oliviaBahr" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/garysassano"><img src="https://avatars.githubusercontent.com/u/10464497?v=4?s=100" width="100px;" alt="Gary Sassano"/><br /><sub><b>Gary Sassano</b></sub></a><br /><a href="#design-garysassano" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ilaumjd"><img src="https://avatars.githubusercontent.com/u/16514431?v=4?s=100" width="100px;" alt="Ilham AM"/><br /><sub><b>Ilham AM</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ilaumjd" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ilaumjd" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

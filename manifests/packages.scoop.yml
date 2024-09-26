@@ -1,0 +1,36 @@
+- version: latest
+  description: Install Visual Studio Code
+  homepage: https://code.visualstudio.com/
+  license: MIT
+  url: https://update.code.visualstudio.com/latest/win32-x64/stable
+  hash: auto
+  bin: Code.exe
+  shortcuts:
+    - - Code.exe
+      - Visual Studio Code
+
+- version: latest
+  description: Install Golang
+  homepage: https://golang.org/
+  license: BSD-3-Clause
+  url: https://golang.org/dl/go1.20.windows-amd64.msi
+  hash: auto
+  bin: go.exe
+  env_add_path: bin
+
+- version: latest
+  description: Install golangci-lint
+  homepage: https://golangci-lint.run/
+  license: MIT
+  url: https://github.com/golangci/golangci-lint/releases/download/v1.50.0/golangci-lint-1.50.0-windows-amd64.zip
+  hash: auto
+  bin: golangci-lint.exe
+
+- version: latest
+  description: Install NodeJS
+  homepage: https://nodejs.org/
+  license: MIT
+  url: https://nodejs.org/dist/v18.16.0/node-v18.16.0-x64.msi
+  hash: auto
+  bin: node.exe
+  env_add_path: bin

@@ -26,6 +26,7 @@ git clone git@github.com:<user>/oh-my-posh.git
   values={[
     { label: 'Manual', value: 'manual', },
     { label: 'Winget', value: 'winget', },
+    { label: 'Scoop',  value: 'scoop',  },
   ]
 }>
 <TabItem value="manual">
@@ -56,14 +57,26 @@ You can download it [here][code].
 </TabItem>
 <TabItem value="winget">
 
-The project has a [winget] [configuration][winget-configuration] file available to install the dependencies.
+The project has a [winget] [manifest][winget-manifest] file available to install the dependencies.
 Navigate to the cloned repository and use winget to install the dependencies:
 
 ```powershell
-winget configure configurations/configuration.dsc.yaml
+winget configure ./manifests/packages.winget.yml
 ```
 
 Done! Restart the terminal and you're ready to continue below.
+
+</TabItem>
+<TabItem value="scoop">
+
+The project has a [scoop] [manifest][scoop-manifest] file available to install the dependencies.
+Navigate to the cloned repository and use scoop to install the dependencies:
+
+```powershell
+scoop install ./manifests/packages.scoop.yml
+```
+
+Done! Restart the terminal, and you're ready to continue below.
 
 </TabItem>
 </Tabs>
@@ -164,6 +177,8 @@ With everything set up, you're ready to start making changes and create your fir
 [code]: https://code.visualstudio.com
 [delve]: https://github.com/go-delve/delve
 [docusaurus]: https://docusaurus.io
-[winget-configuration]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/configurations/configuration.dsc.yaml
+[winget-manifest]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/manifests/packages.winget.yml
 [winget]: https://learn.microsoft.com/en-us/windows/package-manager/winget/
+[scoop-manifest]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/manifests/packages.scoop.yml
+[scoop]: https://https://scoop.sh/
 [nodejs]: https://nodejs.org/en/download/

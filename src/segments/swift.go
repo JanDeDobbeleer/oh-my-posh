@@ -17,7 +17,7 @@ func (s *Swift) Init(props properties.Properties, env runtime.Environment) {
 	s.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.swift", "*.SWIFT"},
+		extensions: []string{"*.swift", "*.SWIFT", "Podfile"},
 		commands: []*cmd{
 			{
 				executable: "swift",

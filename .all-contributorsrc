@@ -2787,6 +2787,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "trajano",
+      "name": "Archimedes Trajano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110627?v=4",
+      "profile": "https://trajano.net/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

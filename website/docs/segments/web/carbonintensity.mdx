@@ -38,17 +38,15 @@ import Config from "@site/src/components/Config.js";
       " CO₂ {{ .Index.Icon }}{{ .Actual.String }} {{ .TrendIcon }} {{ .Forecast.String }} ",
     properties: {
       http_timeout: 5000,
-      cache_timeout: 10,
     },
   }}
 />
 
 ## Properties
 
-| Name            | Type  | Default | Description                                                                                                                                      |
-| --------------- | :---: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `http_timeout`  | `int` | `20`    | Timeout (in milliseconds) for HTTP requests. The default is 20ms, but you may need to set this to as high as 5000ms to handle slow API requests. |
-| `cache_timeout` | `int` | `10`    | Timeout (in minutes) for the response cache. The default is 10m. A value of 0 disables the cache.                                                |
+| Name           | Type  | Default | Description                                                                                                                                      |
+| -------------- | :---: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `http_timeout` | `int` |  `20`   | Timeout (in milliseconds) for HTTP requests. The default is 20ms, but you may need to set this to as high as 5000ms to handle slow API requests. |
 
 ## Template ([info][templates])
 

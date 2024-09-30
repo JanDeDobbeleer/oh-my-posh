@@ -59,6 +59,15 @@ func (s *Svn) Enabled() bool {
 	return true
 }
 
+func (s *Svn) CacheKey() (string, bool) {
+	dir, err := s.env.HasParentFilePath(".svn", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
+}
+
 func (s *Svn) shouldDisplay() bool {
 	if !s.hasCommand(SVNCOMMAND) {
 		return false

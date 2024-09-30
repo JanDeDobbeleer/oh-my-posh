@@ -23,6 +23,10 @@ type Cache interface {
 	Delete(key string)
 }
 
+type Context interface {
+	CacheKey() (string, bool)
+}
+
 const (
 	FileName = "omp.cache"
 )

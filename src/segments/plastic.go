@@ -72,6 +72,15 @@ func (p *Plastic) Enabled() bool {
 	return true
 }
 
+func (p *Plastic) CacheKey() (string, bool) {
+	dir, err := p.env.HasParentFilePath(".plastic", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
+}
+
 func (p *Plastic) setPlasticStatus() {
 	output := p.getCmCommandOutput("status", "--all", "--machinereadable")
 	splittedOutput := strings.Split(output, "\n")

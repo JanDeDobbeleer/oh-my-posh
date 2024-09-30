@@ -164,7 +164,6 @@ func TestKubectlSegment(t *testing.T) {
 				properties.DisplayError: tc.DisplayError,
 				ParseKubeConfig:         tc.ParseKubeConfig,
 				ContextAliases:          tc.ContextAliases,
-				properties.CacheTimeout: 0,
 			},
 		}
 

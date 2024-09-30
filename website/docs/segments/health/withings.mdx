@@ -26,31 +26,32 @@ Click the following link to connect with Withings:
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "withings",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#000000",
-  "template": "{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}",
-  "properties": {
-    "access_token": "11111111111111111",
-    "refresh_token": "1111111111111111",
-    "http_timeout": 1500
-  }
-}}/>
+<Config
+  data={{
+    type: "withings",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#000000",
+    template: "{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}",
+    properties: {
+      access_token: "11111111111111111",
+      refresh_token: "1111111111111111",
+      http_timeout: 1500,
+    },
+  }}
+/>
 
 ## Properties
 
-| Name             | Type     | Default | Description                                                                                   |
-| ---------------- | :------: | :-----: | --------------------------------------------------------------------------------------------- |
-| `access_token`   | `string` |         | token from Withings login, see login link in section above.                                   |
-| `refresh_token`  | `string` |         | token from Withings login, see login link in section above.                                   |
-| `expires_in`     | `int`    | `0`     | the default timeout of the token from the Withings login                                      |
-| `http_timeout`   | `int`    | `500`   | how long do you want to wait before you want to see your prompt more than your Withings data? |
-| `cache_timeout`  | `int`    | `5`     | in minutes - How long do you want your Withings data cached?                                  |
+| Name            |   Type   | Default | Description                                                                                   |
+| --------------- | :------: | :-----: | --------------------------------------------------------------------------------------------- |
+| `access_token`  | `string` |         | token from Withings login, see login link in section above.                                   |
+| `refresh_token` | `string` |         | token from Withings login, see login link in section above.                                   |
+| `expires_in`    |  `int`   |   `0`   | the default timeout of the token from the Withings login                                      |
+| `http_timeout`  |  `int`   |  `500`  | how long do you want to wait before you want to see your prompt more than your Withings data? |
 
 ## Template ([info][templates])
 

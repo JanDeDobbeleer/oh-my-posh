@@ -13,64 +13,24 @@ func TestSeconds(t *testing.T) {
 		Expected int
 	}{
 		{
-			Case:     "1 second",
-			Duration: "1second",
-			Expected: 1,
-		},
-		{
 			Case:     "2 seconds",
-			Duration: "2seconds",
+			Duration: "2s",
 			Expected: 2,
 		},
 		{
 			Case:     "1 minute",
-			Duration: "1minute",
+			Duration: "1m",
 			Expected: 60,
 		},
 		{
-			Case:     "2 minutes",
-			Duration: "2minutes",
-			Expected: 120,
-		},
-		{
-			Case:     "1 hour",
-			Duration: "1hour",
-			Expected: 3600,
-		},
-		{
 			Case:     "2 hours",
-			Duration: "2hours",
+			Duration: "2h",
 			Expected: 7200,
 		},
 		{
-			Case:     "1 day",
-			Duration: "1day",
-			Expected: 86400,
-		},
-		{
 			Case:     "2 days",
-			Duration: "2days",
+			Duration: "48h",
 			Expected: 172800,
-		},
-		{
-			Case:     "1 week",
-			Duration: "1week",
-			Expected: 604800,
-		},
-		{
-			Case:     "2 weeks",
-			Duration: "2weeks",
-			Expected: 1209600,
-		},
-		{
-			Case:     "1 month",
-			Duration: "1month",
-			Expected: 2592000,
-		},
-		{
-			Case:     "2 months",
-			Duration: "2month",
-			Expected: 5184000,
 		},
 		{
 			Case:     "invalid",

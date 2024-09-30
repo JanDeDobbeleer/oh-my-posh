@@ -93,6 +93,15 @@ func (sl *Sapling) shouldDisplay() bool {
 	return true
 }
 
+func (sl *Sapling) CacheKey() (string, bool) {
+	dir, err := sl.env.HasParentFilePath(".sl", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
+}
+
 func (sl *Sapling) setDir(dir string) {
 	dir = runtime.ReplaceHomeDirPrefixWithTilde(sl.env, dir) // align with template PWD
 	if sl.env.GOOS() == runtime.WINDOWS {

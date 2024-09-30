@@ -47,10 +47,6 @@ const (
 	HTTPTimeout Property = "http_timeout"
 	// DefaultHTTPTimeout default timeout used when executing http request
 	DefaultHTTPTimeout = 20
-	// DefaultCacheTimeout default timeout used when caching data
-	DefaultCacheTimeout = 10
-	// CacheTimeout cache timeout
-	CacheTimeout Property = "cache_timeout"
 	// Files to trigger the segment on
 	Files Property = "files"
 )

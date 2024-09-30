@@ -182,6 +182,7 @@ use them.
 | `{{ replaceP "c.t" "cut code cat" "dog" }}`                        | Exposes [regexp.ReplaceAllString][regexpra] as a string template function.                                                 |
 | <code>\{\{ .Code &vert; hresult \}\}</code>                        | Transform a status code to its HRESULT value for easy troubleshooting. For example `-1978335212` becomes `0x8A150014`.     |
 | `{{ readFile ".version.json" }}`                                   | Read a file in the current directory. Returns a string.                                                                    |
+| `{{ random (list \"a\" 2 .MyThirdItem) }}`                         | Selects a random element from a list. The list can be an array or slice containing any types (use sprig's `list`).         |
 
 <!-- markdownlint-enable MD013 -->
 

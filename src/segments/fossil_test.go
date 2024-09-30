@@ -43,12 +43,19 @@ func TestFossilStatus(t *testing.T) {
 			parent:       e8a051e6a943a26c9c33a30df8ceda069c06c174 2022-06-04 23:09:02 UTC
 			tags:         trunk
 			comment:      In the /setup_skin page, add a mention of/link to /skins, per request in the forum. (user: stephan)
-			EDITED     auto.def
-			EDITED     configure
-			ADDED      test.tst
+			CONFLICT             test.tst
+			DELETED	             test.tst
+			ADDED                test.tst
+			ADDED_BY_INTEGRATE   test.tst
+			EDITED               auto.def
+			UPDATED              test.tst
+			UPDATED_BY_INTEGRATE test.tst
+			UPDATED_BY_MERGE 	 test.tst
+			CHANGED 	         test.tst
+			RENAMED 		     test.tst
 			`,
 			ExpectedBranch: "trunk",
-			ExpectedStatus: "+1 ~2",
+			ExpectedStatus: "+2 ~5 -1 >1 !1",
 		},
 	}
 	for _, tc := range cases {

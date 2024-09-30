@@ -17,7 +17,7 @@ jobs:
         shell: pwsh
     steps:
     - name: Checkout code 👋
-      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+      uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
     - name: Run GoReleaser 🚀

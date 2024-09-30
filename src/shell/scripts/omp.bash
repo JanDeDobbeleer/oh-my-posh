@@ -1,13 +1,9 @@
 export POSH_THEME=::CONFIG::
 export POSH_SHELL_VERSION=$BASH_VERSION
 export POWERLINE_COMMAND='oh-my-posh'
-export POSH_PID=$$
+export POSH_SESSION_ID=::SESSION_ID::
 export CONDA_PROMPT_MODIFIER=false
 export OSTYPE=$OSTYPE
-
-if [[ $OSTYPE =~ ^(msys|cygwin) ]]; then
-    export POSH_PID=$(command cat /proc/$$/winpid)
-fi
 
 # global variables
 _omp_start_time=''

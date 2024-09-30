@@ -40,7 +40,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL_VERSION = $script:PSVersion
-    $env:POSH_PID = $PID
+    $env:POSH_SESSION_ID = ::SESSION_ID::
     $env:CONDA_PROMPT_MODIFIER = $false
 
     # set the default theme

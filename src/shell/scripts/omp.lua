@@ -3,7 +3,7 @@
 ---@diagnostic disable: lowercase-global
 
 -- Cache PID
-os.setenv('POSH_PID', os.getpid())
+os.setenv('POSH_SESSION_ID', '::SESSION_ID::')
 
 -- Helper functions
 

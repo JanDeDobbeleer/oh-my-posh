@@ -2758,6 +2758,44 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "oliviaBahr",
+      "name": "Olivia Bahr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/98684296?v=4",
+      "profile": "https://github.com/oliviaBahr",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "garysassano",
+      "name": "Gary Sassano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10464497?v=4",
+      "profile": "https://github.com/garysassano",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "ilaumjd",
+      "name": "Ilham AM",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16514431?v=4",
+      "profile": "https://github.com/ilaumjd",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "trajano",
+      "name": "Archimedes Trajano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110627?v=4",
+      "profile": "https://trajano.net/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,8 +1,6 @@
-import uuid
-
 $POWERLINE_COMMAND = "oh-my-posh"
 $POSH_THEME = ::CONFIG::
-$POSH_PID = uuid.uuid4().hex
+$POSH_SESSION_ID = ::SESSION_ID::
 $POSH_SHELL_VERSION = $XONSH_VERSION
 
 _omp_executable = ::OMP::

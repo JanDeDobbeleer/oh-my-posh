@@ -3,6 +3,7 @@
 install_dir=""
 themes_dir=""
 executable=""
+version=""
 
 error() {
     printf "\e[31m$1\e[0m\n"
@@ -21,15 +22,16 @@ help() {
     # Display Help
     echo "Install script for Oh My Posh"
     echo
-    echo "Syntax: install.sh [-h|d|t]"
+    echo "Syntax: install.sh [-h] [-d <dir>] [-t <dir>] [-v <ver>]"
     echo "options:"
     echo "-h     Print this help."
     echo "-d     Specify the installation directory. Defaults to $HOME/bin, $HOME/.local/bin or the directory where oh-my-posh is installed."
     echo "-t     Specify the themes installation directory. Defaults to the oh-my-posh cache directory."
+    echo "-v     Version to download, defaults to latest"
     echo
 }
 
-while getopts ":hd:t:" option; do
+while getopts ":hd:t:v:" option; do
    case $option in
       h) # display Help
          help
@@ -38,6 +40,8 @@ while getopts ":hd:t:" option; do
          install_dir=${OPTARG};;
       t) # themes directory
          themes_dir=${OPTARG};;
+      v) # version
+         version=${OPTARG};;
      \?) # Invalid option
          echo "Invalid option command line option. Use -h for help."
          exit 1
@@ -188,6 +192,9 @@ install() {
 
     executable=${install_dir}/oh-my-posh
     url=https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-${target}
+    if [ "$version" ]; then
+      url=https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${version}/posh-${target}
+    fi
 
     info "⬇️  Downloading oh-my-posh from ${url}"
 

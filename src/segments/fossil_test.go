@@ -45,8 +45,10 @@ func TestFossilStatus(t *testing.T) {
 			comment:      In the /setup_skin page, add a mention of/link to /skins, per request in the forum. (user: stephan)
 			CONFLICT             test.tst
 			DELETED	             test.tst
+			MISSING              test.tst
 			ADDED                test.tst
 			ADDED_BY_INTEGRATE   test.tst
+			ADDED_BY_MERGE       test.tst
 			EDITED               auto.def
 			UPDATED              test.tst
 			UPDATED_BY_INTEGRATE test.tst
@@ -55,7 +57,7 @@ func TestFossilStatus(t *testing.T) {
 			RENAMED 		     test.tst
 			`,
 			ExpectedBranch: "trunk",
-			ExpectedStatus: "+2 ~5 -1 >1 !1",
+			ExpectedStatus: "+3 ~5 -2 >1 !1",
 		},
 	}
 	for _, tc := range cases {

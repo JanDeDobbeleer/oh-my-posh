@@ -11,9 +11,9 @@ func (s *FossilStatus) add(code string) {
 	switch code {
 	case "CONFLICT":
 		s.Conflicted++
-	case "DELETED":
+	case "DELETED", "MISSING":
 		s.Deleted++
-	case "ADDED", "ADDED_BY_INTEGRATE":
+	case "ADDED", "ADDED_BY_INTEGRATE", "ADDED_BY_MERGE":
 		s.Added++
 	case "EDITED", "UPDATED", "UPDATED_BY_INTEGRATE", "UPDATED_BY_MERGE", "CHANGED":
 		s.Modified++

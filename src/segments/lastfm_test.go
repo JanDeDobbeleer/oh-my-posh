@@ -55,10 +55,9 @@ func TestLFMSegmentSingle(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		var props properties.Map = properties.Map{
-			APIKey:                  "key",
-			Username:                "KibbeWater",
-			properties.CacheTimeout: 0,
-			properties.HTTPTimeout:  20000,
+			APIKey:                 "key",
+			Username:               "KibbeWater",
+			properties.HTTPTimeout: 20000,
 		}
 
 		env.On("HTTPRequest", LFMAPIURL).Return([]byte(tc.APIJSONResponse), tc.Error)

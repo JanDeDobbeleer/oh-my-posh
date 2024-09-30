@@ -23,34 +23,35 @@ an issue if, for example there is a Tilt or similar device that is supposed to b
 Temperature units are in degrees C and specific gravity is expressed as `X.XXX` values.
 :::
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-    "type":"brewfather",
-    "style": "powerline",
-    "powerline_symbol": "\uE0B0",
-    "foreground": "#ffffff",
-    "background": "#33158A",
-    "background_templates": [
-        "{{ if and (.Reading) (eq .Status \"Fermenting\") (gt .ReadingAge 4) }}#cc1515{{end}}"
+<Config
+  data={{
+    type: "brewfather",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#33158A",
+    background_templates: [
+      '{{ if and (.Reading) (eq .Status "Fermenting") (gt .ReadingAge 4) }}#cc1515{{end}}',
     ],
-    "properties": {
-        "user_id":"abcdefg123456",
-        "api_key":"qrstuvw78910",
-        "batch_id":"hijklmno098765",
-    }
-}}/>
+    properties: {
+      user_id: "abcdefg123456",
+      api_key: "qrstuvw78910",
+      batch_id: "hijklmno098765",
+    },
+  }}
+/>
 
 ## Properties
 
-| Name            | Type     | Default | Description                                                                                                                     |
-| --------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------- |
-| `user_id`       | `string` |         | as provided by Brewfather's Generate API Key screen                                                                             |
-| `api_key`       | `string` |         | as provided by Brewfather's Generate API Key screen                                                                             |
-| `batch_id`      | `string` |         | Get this by navigating to the desired batch on the brewfather website, the batch id is at the end of the URL in the address bar |
-| `http_timeout`  | `int`    | `2`     | in milliseconds - How long to wait for the Brewfather service to answer the request                                             |
-| `cache_timeout` | `int`    | `5`     | in minutes - How long to wait before updating the data from Brewfather                                                          |
-| `day_icon`      | `string` | `d`     | icon or letter to use to indicate days                                                                                          |
+| Name           |   Type   | Default | Description                                                                                                                     |
+| -------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------- |
+| `user_id`      | `string` |         | as provided by Brewfather's Generate API Key screen                                                                             |
+| `api_key`      | `string` |         | as provided by Brewfather's Generate API Key screen                                                                             |
+| `batch_id`     | `string` |         | Get this by navigating to the desired batch on the brewfather website, the batch id is at the end of the URL in the address bar |
+| `http_timeout` |  `int`   |   `2`   | in milliseconds - How long to wait for the Brewfather service to answer the request                                             |
+| `day_icon`     | `string` |   `d`   | icon or letter to use to indicate days                                                                                          |
 
 ## Icons
 

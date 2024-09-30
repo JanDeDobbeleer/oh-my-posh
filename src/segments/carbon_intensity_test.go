@@ -204,8 +204,7 @@ func TestCarbonIntensitySegmentSingle(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		var props = properties.Map{
-			properties.HTTPTimeout:  5000,
-			properties.CacheTimeout: 0,
+			properties.HTTPTimeout: 5000,
 		}
 
 		jsonResponse := fmt.Sprintf(

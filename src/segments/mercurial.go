@@ -61,6 +61,15 @@ func (hg *Mercurial) Enabled() bool {
 	return true
 }
 
+func (hg *Mercurial) CacheKey() (string, bool) {
+	dir, err := hg.env.HasParentFilePath(".hg", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
+}
+
 func (hg *Mercurial) shouldDisplay() bool {
 	if !hg.hasCommand(MERCURIALCOMMAND) {
 		return false

@@ -40,10 +40,10 @@ type Segment struct {
 	writer                 SegmentWriter
 	env                    runtime.Environment
 	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
-	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
-	Background             color.Ansi     `json:"background" toml:"background"`
-	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
-	Text                   string         `json:"-" toml:"-"`
+	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
+	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
+	styleCache             SegmentStyle
+	Text                   string `json:"-" toml:"-"`
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
@@ -51,15 +51,15 @@ type Segment struct {
 	Foreground             color.Ansi     `json:"foreground" toml:"foreground"`
 	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty"`
 	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
-	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
+	Background             color.Ansi     `json:"background" toml:"background"`
 	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
-	styleCache             SegmentStyle
-	CacheDuration          cache.Duration `json:"cache_duration,omitempty" toml:"cache_duration,omitempty"`
-	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
+	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
+	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
 	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
 	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
+	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	Duration               time.Duration  `json:"-" toml:"-"`
@@ -132,6 +132,10 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 	}
 }
 
+func (segment *Segment) HasCache() bool {
+	return segment.Cache != nil && !segment.Cache.Duration.IsEmpty()
+}
+
 func (segment *Segment) isToggled() bool {
 	toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE)
 	if !OK || len(toggles) == 0 {
@@ -150,11 +154,11 @@ func (segment *Segment) isToggled() bool {
 }
 
 func (segment *Segment) restoreCache() bool {
-	if segment.CacheDuration.IsEmpty() {
+	if !segment.HasCache() {
 		return false
 	}
 
-	text, OK := segment.env.Session().Get(segment.cacheKey())
+	text, OK := segment.env.Session().Get(segment.textCacheKey())
 	if !OK {
 		return false
 	}
@@ -179,11 +183,11 @@ func (segment *Segment) restoreCache() bool {
 }
 
 func (segment *Segment) setCache() {
-	if segment.CacheDuration.IsEmpty() {
+	if !segment.HasCache() {
 		return
 	}
 
-	segment.env.Session().Set(segment.cacheKey(), segment.Text, segment.CacheDuration)
+	segment.env.Session().Set(segment.textCacheKey(), segment.Text, segment.Cache.Duration)
 
 	data, err := json.Marshal(segment.writer)
 	if err != nil {
@@ -191,15 +195,39 @@ func (segment *Segment) setCache() {
 		return
 	}
 
-	segment.env.Session().Set(segment.writerCacheKey(), string(data), segment.CacheDuration)
+	segment.env.Session().Set(segment.writerCacheKey(), string(data), segment.Cache.Duration)
 }
 
-func (segment *Segment) cacheKey() string {
-	return fmt.Sprintf("segment_cache_%s_%s", segment.Name(), segment.env.Pwd())
+func (segment *Segment) textCacheKey() string {
+	return segment.cacheKey("segment_cache_%s")
 }
 
 func (segment *Segment) writerCacheKey() string {
-	return fmt.Sprintf("segment_cache_writer_%s_%s", segment.Name(), segment.env.Pwd())
+	return segment.cacheKey("segment_cache_writer_%s")
+}
+
+func (segment *Segment) cacheKey(format string) string {
+	switch segment.Cache.Strategy {
+	case cache.Session:
+		return fmt.Sprintf(format, segment.Name())
+	case cache.Folder:
+		fallthrough
+	default:
+		return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_"))
+	}
+}
+
+func (segment *Segment) folderKey() string {
+	ctx, ok := segment.writer.(cache.Context)
+	if !ok {
+		return segment.env.Pwd()
+	}
+
+	if key, OK := ctx.CacheKey(); OK {
+		return key
+	}
+
+	return segment.env.Pwd()
 }
 
 func (segment *Segment) SetText() {
@@ -274,7 +302,7 @@ func (segment *Segment) cwdIncluded() bool {
 func (segment *Segment) cwdExcluded() bool {
 	value, ok := segment.Properties[properties.ExcludeFolders]
 	if !ok {
-		value = segment.Properties[properties.IgnoreFolders]
+		return false
 	}
 
 	list := properties.ParseStringArray(value)

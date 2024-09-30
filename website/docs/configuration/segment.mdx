@@ -4,34 +4,35 @@ title: Segment
 sidebar_label: Segment
 ---
 
+import Config from "@site/src/components/Config.js";
+
 A segment is a part of the prompt with a certain context. There are different types available out-of-the-box, if you're
 looking for what's included, feel free to skip this part and browse through the [segments][segments]. Keep reading to
 understand how to configure a segment.
 
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  ...
-  "blocks": [
-    {
-      ...
-      "segments": [
-        {
-          "type": "path",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#ffffff",
-          "background": "#61AFEF",
-          "template": " {{ .Path }} ",
-          "properties": {
-            ...
-          }
-        }
-      ]
-    }
-  ]
-}
-```
+<Config
+  data={{
+    $schema:
+      "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    blocks: [
+      {
+        segments: [
+          {
+            type: "path",
+            style: "powerline",
+            powerline_symbol: "\uE0B0",
+            foreground: "#ffffff",
+            background: "#61AFEF",
+            template: " {{ .Path }} ",
+            properties: {
+              include_folders: ["/Users/posh/Projects"],
+            },
+          },
+        ],
+      },
+    ],
+  }}
+/>
 
 | Name                       | Type         | Description                                                                                                                                                                                                                                                                                                                |
 | -------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -54,6 +55,7 @@ understand how to configure a segment.
 | `alias`                    | `string`     | for use with [cross segment template properties][cstp]                                                                                                                                                                                                                                                                     |
 | `min_width`                | `int`        | if the terminal width is smaller than this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                               |
 | `max_width`                | `int`        | if the terminal width exceeds this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                                       |
+| `cache`                    | `Cache`      | how to cache the segment to avoid fetching information too much, see [Cache][cache] below                                                                                                                                                                                                                                  |
 
 :::warning
 In Bash/Zsh, when the property `interactive` is `true` for a segment, the prompt length calculation can be wrong
@@ -90,6 +92,7 @@ The following prompt configuration has the same problem:
 ```bash
 export PS1=" "
 ```
+
 :::
 
 ### Plain
@@ -106,6 +109,40 @@ segment background as their foreground color.
 
 Same as Powerline except that it will display even when disabled, but without text. That way it seems
 as if the segment is not expanded, just like an accordion.
+
+## Cache
+
+The cache property allows you to control how often a segment is refreshed. This is useful when a segment is slow to
+generate or when you want to avoid fetching information too often. The cache property is an object with the following
+properties:
+
+| Name       | Type     | Description                                                                                                                                                                                                                                 |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration` | `string` | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s`. The duration is parsed using the [time.ParseDuration](https://golang.org/pkg/time/#ParseDuration) function from the Go standard library |
+| `strategy` | `string` | the strategy to use to identify if we should show the segment's cache value. See below for more information on strategy                                                                                                                     |
+
+<Config
+  data={{
+    cache: {
+      duration: "1h",
+      strategy: "folder",
+    },
+  }}
+/>
+
+### Strategy
+
+#### Folder
+
+The folder strategy will cache the segment based on the current working directory. It will cache a separate value for each
+directory. This is useful when you for example work with language segments, or source control segments. The source control
+segments understand repository context in this case, so the same segment cache value is used when in a git repository,
+regardless of the folder you're in.
+
+#### Session
+
+The session strategy will cache the segment based on the current shell session. Use this for segments you want to display at all times
+but don't want to refresh too often.
 
 ## Properties
 
@@ -128,38 +165,44 @@ Sometimes you might want to have a segment only rendered in certain folders. If 
 the segment will only be rendered when in one of those locations. If `exclude_folders` is specified, the segment
 will not be rendered when in one of the excluded locations.
 
-```json
-"include_folders": [
-  "/Users/posh/Projects"
-]
-```
+<Config
+  data={{
+    properties: {
+      include_folders: ["/Users/posh/Projects"],
+    },
+  }}
+/>
 
-```json
-"exclude_folders": [
-  "/Users/posh/Projects"
-]
-```
+<Config
+  data={{
+    properties: {
+      exclude_folders: ["/Users/posh/Projects"],
+    },
+  }}
+/>
 
 The strings specified in these properties are evaluated as [regular expressions][regex]. You
 can use any valid regular expression construct, but the regular expression must match the **ENTIRE** directory
 name. The following will match `/Users/posh/Projects/Foo` but not `/home/Users/posh/Projects/Foo`.
 
-```json
-"include_folders": [
-  "/Users/posh/Projects.*"
-]
-```
+<Config
+  data={{
+    properties: {
+      include_folders: ["/Users/posh/Projects.*"],
+    },
+  }}
+/>
 
 You can also combine these properties:
 
-```json
-"include_folders": [
-  "/Users/posh/Projects.*"
-],
-"exclude_folders": [
-  "/Users/posh/Projects/secret-project.*"
-]
-```
+<Config
+  data={{
+    properties: {
+      include_folders: ["/Users/posh/Projects.*"],
+      exclude_folders: ["/Users/posh/Projects/secret-project.*"],
+    },
+  }}
+/>
 
 #### Notes
 
@@ -183,17 +226,17 @@ a diamond segment, only if the environment variable `POSH_ENV` is not empty.
 
 Only spaces are excluded, meaning you can still add line breaks and tabs if that is something you're after.
 
-```json
-{
-  "type": "text",
-  "style": "diamond",
-  "leading_diamond": " \ue0b6",
-  "trailing_diamond": "\ue0b4",
-  "foreground": "#ffffff",
-  "background": "#d53c14",
-  "template": "{{ if .Env.POSH_ENV }} \uf8c5 {{ .Env.POSH_ENV }} {{ end }}"
-}
-```
+<Config
+  data={{
+    type: "text",
+    style: "diamond",
+    leading_diamond: " \ue0b6",
+    trailing_diamond: "\ue0b4",
+    foreground: "#ffffff",
+    background: "#d53c14",
+    template: "{{ if .Env.POSH_ENV }} \uf8c5 {{ .Env.POSH_ENV }} {{ end }}",
+  }}
+/>
 
 ### On the fly
 

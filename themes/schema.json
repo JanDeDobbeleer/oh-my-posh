@@ -484,16 +484,6 @@
               "items": {
                 "type": "string"
               }
-            },
-            "ignore_folders": {
-              "type": "array",
-              "title": "Deprecated - please use `exclude_folders` instead",
-              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
-              "default": [],
-              "items": {
-                "type": "string"
-              },
-              "deprecated": true
             }
           }
         },
@@ -508,6 +498,31 @@
           "title": "Give the segment an alias for use in templates",
           "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": ""
+        },
+        "cache": {
+          "type": "object",
+          "title": "Cache settings",
+          "description": "https://ohmyposh.dev/docs/configuration/cache",
+          "default": {},
+          "properties": {
+            "duration": {
+              "type": "string",
+              "title": "Cache duration",
+              "description": "https://ohmyposh.dev/docs/configuration/cache#duration",
+              "default": "^(infinite)|([0-9])+(second|seconds|minute|minutes|hour|hours|day|days|week|weeks|month|months)$",
+              "pattern": "^$"
+            },
+            "strategy": {
+              "type": "string",
+              "title": "Cache strategy",
+              "description": "https://ohmyposh.dev/docs/configuration/cache#strategy",
+              "default": "folder",
+              "enum": [
+                "folder",
+                "session"
+              ]
+            }
+          }
         }
       },
       "allOf": [

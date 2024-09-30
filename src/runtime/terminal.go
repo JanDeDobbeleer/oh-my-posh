@@ -565,6 +565,7 @@ func (term *Terminal) StackCount() int {
 	if term.CmdFlags.StackCount < 0 {
 		return 0
 	}
+
 	return term.CmdFlags.StackCount
 }
 

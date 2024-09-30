@@ -192,6 +192,7 @@ func (g *Git) Enabled() bool {
 	if g.shouldIgnoreStatus() {
 		displayStatus = false
 	}
+
 	if displayStatus {
 		g.setGitStatus()
 		g.setGitHEADContext()
@@ -199,10 +200,21 @@ func (g *Git) Enabled() bool {
 	} else {
 		g.setPrettyHEADName()
 	}
+
 	if g.props.GetBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
+
 	return true
+}
+
+func (g *Git) CacheKey() (string, bool) {
+	dir, err := g.env.HasParentFilePath(".git", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
 }
 
 func (g *Git) Commit() *Commit {

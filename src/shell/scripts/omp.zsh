@@ -44,7 +44,7 @@ function set_poshcontext() {
 }
 
 function _omp_preexec() {
-  if [[ $_omp_ftcs_marks == 0 ]]; then
+  if [[ $_omp_ftcs_marks == 1 ]]; then
     printf '\033]133;C\007'
   fi
 

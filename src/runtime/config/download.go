@@ -17,6 +17,10 @@ import (
 func Download(cachePath, url string) (string, error) {
 	defer log.Trace(time.Now(), cachePath, url)
 
+	// some users use the blob url, we need to convert it to the raw url
+	themeBlob := "https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/"
+	url = strings.Replace(url, themeBlob, "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/", 1)
+
 	configPath, shouldUpdate := shouldUpdate(cachePath, url)
 	if !shouldUpdate {
 		return configPath, nil

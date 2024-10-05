@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gookit/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
@@ -24,6 +26,20 @@ type String interface {
 type Set struct {
 	Background Ansi `json:"background" toml:"background"`
 	Foreground Ansi `json:"foreground" toml:"foreground"`
+}
+
+func (c *Set) String() string {
+	return fmt.Sprintf("%s|%s", c.Foreground, c.Background)
+}
+
+func (c *Set) ParseString(colors string) {
+	parts := strings.Split(colors, "|")
+	if len(parts) != 2 {
+		return
+	}
+
+	c.Foreground = Ansi(parts[0])
+	c.Background = Ansi(parts[1])
 }
 
 type History []*Set
@@ -142,6 +158,42 @@ func MakeColors(palette Palette, cacheEnabled bool, accentColor Ansi, env runtim
 		colors = &Cached{ansiColors: colors}
 	}
 	return
+}
+
+func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
+	defer env.Trace(time.Now())
+
+	// get accent color from session cache first
+	if accent, OK := env.Session().Get("accent_color"); OK {
+		accentColors := &Set{}
+		accentColors.ParseString(accent)
+		d.accent = accentColors
+		return
+	}
+
+	rgb, err := GetAccentColor(env)
+	if err != nil {
+		d.accent = &Set{
+			Foreground: d.ToAnsi(defaultColor, false),
+			Background: d.ToAnsi(defaultColor, true),
+		}
+
+		return
+	}
+
+	if len(defaultColor) == 0 {
+		return
+	}
+
+	foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
+	background := color.RGB(rgb.R, rgb.G, rgb.B, true)
+
+	d.accent = &Set{
+		Foreground: Ansi(foreground.String()),
+		Background: Ansi(background.String()),
+	}
+
+	env.Session().Set("accent_color", d.accent.String(), cache.INFINITE)
 }
 
 type RGB struct {

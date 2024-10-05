@@ -49,6 +49,7 @@ const (
 	ONEDAY   = 1440
 	ONEWEEK  = 10080
 	ONEMONTH = 43200
+	INFINITE = -1
 )
 
 type Entry struct {
@@ -61,5 +62,6 @@ func (c *Entry) Expired() bool {
 	if c.TTL < 0 {
 		return false
 	}
+
 	return time.Now().Unix() >= (c.Timestamp + int64(c.TTL)*60)
 }

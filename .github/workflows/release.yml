@@ -11,7 +11,7 @@ on:
 
 jobs:
   changelog:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     outputs:
       version: ${{ steps.changelog.outputs.version }}
       body: ${{ steps.changelog.outputs.clean_changelog }}

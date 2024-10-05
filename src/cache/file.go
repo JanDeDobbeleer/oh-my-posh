@@ -80,6 +80,7 @@ func (fc *File) Set(key, value string, ttl int) {
 		Timestamp: time.Now().Unix(),
 		TTL:       ttl,
 	})
+
 	fc.dirty = true
 }
 

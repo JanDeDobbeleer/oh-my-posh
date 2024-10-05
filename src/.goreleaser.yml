@@ -13,7 +13,10 @@ builds:
     flags:
       - -a
     ldflags:
-      - -s -w -X github.com/jandedobbeleer/oh-my-posh/src/build.Version={{ .Version }} -X github.com/jandedobbeleer/oh-my-posh/src/build.Date={{ .Date }} -extldflags "-static"
+      - -s -w
+      - -X github.com/jandedobbeleer/oh-my-posh/src/build.Version={{ .Version }}
+      - -X github.com/jandedobbeleer/oh-my-posh/src/build.Date={{ .Date }}
+      - -extldflags "-static"
     tags:
       - netgo
       - osusergo

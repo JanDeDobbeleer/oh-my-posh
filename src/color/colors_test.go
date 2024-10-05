@@ -6,6 +6,7 @@ import (
 
 	"github.com/alecthomas/assert"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -42,6 +43,12 @@ func TestGetAnsiFromColorString(t *testing.T) {
 
 func TestMakeColors(t *testing.T) {
 	env := &mock.Environment{}
+
+	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
+
+	c := &cache_.Cache{}
+	c.On("Get", "accent_color").Return("", true)
+	env.On("Session").Return(c)
 
 	env.On("WindowsRegistryKeyValue", `HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`).Return(&runtime.WindowsRegistryValue{}, errors.New("err"))
 	colors := MakeColors(nil, false, "", env)

@@ -198,3 +198,48 @@ func TestPythonVirtualEnvIgnoreDefaultVenvNames(t *testing.T) {
 		assert.Equal(t, tc.Expected, python.Venv)
 	}
 }
+
+func TestPythonVirtualEnvIgnoreCustomVenvNames(t *testing.T) {
+	cases := []struct {
+		Expected           string
+		FolderNameFallback bool
+		FallbackNames      []string
+		VirtualEnvName     string
+	}{
+		{
+			Expected:           "folder",
+			FolderNameFallback: true,
+			FallbackNames:      []string{"env"},
+			VirtualEnvName:     "/path/to/folder/env",
+		},
+		{
+			Expected:           "venv",
+			FolderNameFallback: true,
+			FallbackNames:      []string{"env"},
+			VirtualEnvName:     "/path/to/folder/venv",
+		},
+	}
+
+	for _, tc := range cases {
+		params := &mockedLanguageParams{}
+		env, props := getMockedLanguageEnv(params)
+
+		env.On("GOOS").Return("")
+		env.On("PathSeparator").Return("/")
+		env.On("CommandPath", testify_.Anything).Return("")
+		env.On("HasFilesInDir", testify_.Anything, "pyvenv.cfg").Return(false)
+		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_ENV_PATH").Return("")
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
+		env.On("Getenv", "PYENV_VERSION").Return("")
+		env.On("HasParentFilePath", ".python-version", false).Return(&runtime.FileInfo{}, errors.New("no match at root level"))
+
+		props[FolderNameFallback] = tc.FolderNameFallback
+		props[FallbackNames] = tc.FallbackNames
+
+		python := &Python{}
+		python.Init(props, env)
+		python.loadContext()
+		assert.Equal(t, tc.Expected, python.Venv)
+	}
+}

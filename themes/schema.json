@@ -2653,6 +2653,24 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "folder_name_fallback": {
+                    "type": "boolean",
+                    "title": "Folder Name Fallback",
+                    "description": "Replace virtual environment names in fallback_names list with parent folder name",
+                    "default": "true"
+                  },
+                  "fallback_names": {
+                    "type": "array",
+                    "title": "Fallback Names",
+                    "description": "Names to replace when folder_name_fallback is true",
+                    "default": [
+                      ".venv",
+                      "venv"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }

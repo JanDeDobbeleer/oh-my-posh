@@ -38,7 +38,8 @@ import Config from "@site/src/components/Config.js";
 | `extensions`           | `[]string` | `*.py, *.ipynb, pyproject.toml, venv.bak` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                                           | allows to override the list of folder names to validate                                                                                                                                                                              |
 | `cache_version`        | `boolean`  | `false`                                   | cache the executable's version or not                                                                                                                                                                                                |
-| `folder_name_fallback` | `boolean`  | `true`                                    | instead of `venv` or `.venv` (case sensitive), use the parent folder name as the virtual environment's name or not                                                                                                                   |
+| `folder_name_fallback` | `boolean`  | `true`                                    | instead of `fallback_names` (case sensitive), use the parent folder name as the virtual environment's name or not                                                                                                                   |
+| `fallback_names`       | `[]string` | `.venv, venv` | allows to override the list of environment's name replaced when `folder_name_fallback` is `true` |
 
 ## Template ([info][templates])
 

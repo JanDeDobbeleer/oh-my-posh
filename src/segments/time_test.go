@@ -16,9 +16,9 @@ func TestTimeSegmentTemplate(t *testing.T) {
 	currentDate := time.Now()
 	cases := []struct {
 		Case            string
-		ExpectedEnabled bool
 		ExpectedString  string
 		Template        string
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "no template",

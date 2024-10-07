@@ -15,17 +15,13 @@ const (
 )
 
 type Status struct {
-	props properties.Properties
-	env   runtime.Environment
-
-	String string
-	Error  bool
-	Code   int
-
+	props    properties.Properties
+	env      runtime.Environment
 	template *template.Text
-
-	// Deprecated: Use {{ reason .Code }} instead
-	Meaning string
+	String   string
+	Meaning  string
+	Code     int
+	Error    bool
 }
 
 func (s *Status) Template() string {
@@ -53,7 +49,6 @@ func (s *Status) Init(props properties.Properties, env runtime.Environment) {
 	statusTemplate := s.props.GetString(StatusTemplate, "{{ .Code }}")
 	s.template = &template.Text{
 		Template: statusTemplate,
-		Env:      s.env,
 	}
 }
 

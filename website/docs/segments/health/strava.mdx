@@ -4,7 +4,7 @@ title: Strava
 sidebar_label: Strava
 ---
 
-import StravaConnect from '/img/strava_connect.svg';
+import StravaConnect from "/img/strava_connect.svg";
 
 ## What
 
@@ -30,41 +30,42 @@ This configuration sets the background green if you have an activity the last tw
 orange if you have one last 5 days, and red otherwise. The `foreground_templates` example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "strava",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#000000",
-  "background_templates": [
-    "{{ if gt .Hours 100 }}#dc3545{{ end }}",
-    "{{ if and (lt .Hours 100) (gt .Hours 50) }}#ffc107{{ end }}",
-    "{{ if lt .Hours 50 }}#28a745{{ end }}"
-  ],
-  "foreground_templates": [
-    "{{ if gt .Hours 100 }}#FFFFFF{{ end }}",
-    "{{ if and (lt .Hours 100) (gt .Hours 50) }}#343a40{{ end }}",
-    "{{ if lt .Hours 50 }}#FFFFFF{{ end }}"
-  ],
-  "template": " {{.Name}} {{.Ago}} {{.Icon}} ",
-  "properties": {
-    "access_token": "11111111111111111",
-    "refresh_token": "1111111111111111",
-    "http_timeout": 1500
-  }
-}}/>
+<Config
+  data={{
+    type: "strava",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#000000",
+    background_templates: [
+      "{{ if gt .Hours 100 }}#dc3545{{ end }}",
+      "{{ if and (lt .Hours 100) (gt .Hours 50) }}#ffc107{{ end }}",
+      "{{ if lt .Hours 50 }}#28a745{{ end }}",
+    ],
+    foreground_templates: [
+      "{{ if gt .Hours 100 }}#FFFFFF{{ end }}",
+      "{{ if and (lt .Hours 100) (gt .Hours 50) }}#343a40{{ end }}",
+      "{{ if lt .Hours 50 }}#FFFFFF{{ end }}",
+    ],
+    template: " {{.Name}} {{.Ago}} {{.Icon}} ",
+    properties: {
+      access_token: "11111111111111111",
+      refresh_token: "1111111111111111",
+      http_timeout: 1500,
+    },
+  }}
+/>
 
 ## Properties
 
-| Name                    | Type     | Default  | Description                                                                                                   |
+| Name                    |   Type   | Default  | Description                                                                                                   |
 | ----------------------- | :------: | :------: | ------------------------------------------------------------------------------------------------------------- |
 | `access_token`          | `string` |          | token from Strava login, see login link in section above.                                                     |
 | `refresh_token`         | `string` |          | token from Strava login, see login link in section above.                                                     |
-| `expires_in`            | `int`    | `0`      | the default timeout of the token from the Strava login                                                        |
-| `http_timeout`          | `int`    | `500`    | in milliseconds - how long do you want to wait before you want to see your prompt more than your strava data? |
-| `cache_timeout`         | `int`    | `5`      | in minutes - How long do you want your Strava data cached?                                                    |
+| `expires_in`            |  `int`   |   `0`    | the default timeout of the token from the Strava login                                                        |
+| `http_timeout`          |  `int`   |  `500`   | in milliseconds - how long do you want to wait before you want to see your prompt more than your strava data? |
 | `ride_icon`             | `string` | `\uf206` |                                                                                                               |
 | `run_icon`              | `string` | `\ue213` |                                                                                                               |
 | `skiing_icon`           | `string` | `\ue213` |                                                                                                               |

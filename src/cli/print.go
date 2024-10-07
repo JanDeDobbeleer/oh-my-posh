@@ -19,7 +19,6 @@ var (
 	terminalWidth int
 	eval          bool
 	cleared       bool
-	cached        bool
 	jobCount      int
 	saveCache     bool
 
@@ -124,15 +123,7 @@ func createPrintCmd() *cobra.Command {
 	printCmd.Flags().IntVar(&jobCount, "job-count", 0, "number of background jobs")
 	printCmd.Flags().BoolVar(&saveCache, "save-cache", false, "save updated cache to file")
 
-	// Deprecated flags, should be kept to avoid breaking CLI integration.
-	printCmd.Flags().IntVarP(&status, "error", "e", 0, "last exit code")
-	printCmd.Flags().BoolVar(&noStatus, "no-exit-code", false, "no valid exit code (cancelled or no command yet)")
-	printCmd.Flags().BoolVar(&cached, "cached", false, "use a cached prompt")
-
-	// Hide flags that are deprecated or for internal use only.
-	_ = printCmd.Flags().MarkHidden("error")
-	_ = printCmd.Flags().MarkHidden("no-exit-code")
-	_ = printCmd.Flags().MarkHidden("cached")
+	// Hide flags that are for internal use only.
 	_ = printCmd.Flags().MarkHidden("save-cache")
 
 	return printCmd

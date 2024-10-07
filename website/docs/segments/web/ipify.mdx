@@ -10,29 +10,29 @@ sidebar_label: Ipify
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "ipify",
-  "style": "diamond",
-  "foreground": "#ffffff",
-  "background": "#c386f1",
-  "leading_diamond": "\ue0b6",
-  "trailing_diamond": "\uE0B0",
-  "template": "{{ .IP }}",
-  "properties": {
-    "cache_timeout": 5,
-    "http_timeout": 1000
-  }
-}}/>
+<Config
+  data={{
+    type: "ipify",
+    style: "diamond",
+    foreground: "#ffffff",
+    background: "#c386f1",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\uE0B0",
+    template: "{{ .IP }}",
+    properties: {
+      http_timeout: 1000,
+    },
+  }}
+/>
 
 ## Properties
 
-| Name            | Type     | Default                 |  Description                                                                    |
-| --------------- | :------: | :---------------------: | ------------------------------------------------------------------------------- |
-| `url`           | `string` | `https://api.ipify.org` | The Ipify URL, by default IPv4 is used, use `https://api64.ipify.org` for IPv6  |
-| `http_timeout`  | `int`    | `20`                    | in milliseconds - how long may the segment wait for a response of the ipify API |
-| `cache_timeout` | `int`    | `10`                    | in minutes - How long you want your IP address cached                           |
+| Name           |   Type   |         Default         | Description                                                                     |
+| -------------- | :------: | :---------------------: | ------------------------------------------------------------------------------- |
+| `url`          | `string` | `https://api.ipify.org` | The Ipify URL, by default IPv4 is used, use `https://api64.ipify.org` for IPv6  |
+| `http_timeout` |  `int`   |          `20`           | in milliseconds - how long may the segment wait for a response of the ipify API |
 
 ## Template ([info][templates])
 

@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -26,19 +25,18 @@ func TestGetNodePackageVersion(t *testing.T) {
 
 	for _, tc := range cases {
 		var env = new(mock.Environment)
-		// mock  getVersion methods
 		env.On("Pwd").Return("posh")
 		path := filepath.Join("posh", "node_modules", "nx")
 		env.On("HasFilesInDir", path, "package.json").Return(!tc.NoFiles)
 		env.On("FileContent", filepath.Join(path, "package.json")).Return(tc.PackageJSON)
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: make(map[string]string),
-		})
+
 		got, err := getNodePackageVersion(env, "nx")
+
 		if tc.ShouldFail {
 			assert.Error(t, err, tc.Case)
 			return
 		}
+
 		assert.Nil(t, err, tc.Case)
 		assert.Equal(t, tc.Version, got, tc.Case)
 	}

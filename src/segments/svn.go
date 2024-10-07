@@ -39,11 +39,10 @@ const (
 )
 
 type Svn struct {
-	scm
-
 	Working *SvnStatus
-	BaseRev int
 	Branch  string
+	scm
+	BaseRev int
 }
 
 func (s *Svn) Template() string {
@@ -58,6 +57,15 @@ func (s *Svn) Enabled() bool {
 	s.setSvnStatus()
 
 	return true
+}
+
+func (s *Svn) CacheKey() (string, bool) {
+	dir, err := s.env.HasParentFilePath(".svn", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
 }
 
 func (s *Svn) shouldDisplay() bool {

@@ -27,10 +27,9 @@ const (
 )
 
 type Fossil struct {
-	scm
-
 	Status *FossilStatus
 	Branch string
+	scm
 }
 
 func (f *Fossil) Template() string {
@@ -41,13 +40,16 @@ func (f *Fossil) Enabled() bool {
 	if !f.hasCommand(FOSSILCOMMAND) {
 		return false
 	}
+
 	// run fossil command
 	output, err := f.env.RunCommand(f.command, "status")
 	if err != nil {
 		return false
 	}
+
 	f.Status = &FossilStatus{}
 	lines := strings.Split(output, "\n")
+
 	for _, line := range lines {
 		if len(line) == 0 {
 			continue
@@ -63,5 +65,6 @@ func (f *Fossil) Enabled() bool {
 			f.Status.add(context[0])
 		}
 	}
+
 	return true
 }

@@ -184,9 +184,9 @@ func TestShouldDisplay(t *testing.T) {
 func TestSetHeadContext(t *testing.T) {
 	cases := []struct {
 		Case        string
-		FetchStatus bool
 		Output      string
 		Expected    string
+		FetchStatus bool
 	}{
 		{
 			Case: "Do not fetch status",

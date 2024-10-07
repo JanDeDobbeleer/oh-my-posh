@@ -29,8 +29,6 @@ const (
 	IncludeFolders Property = "include_folders"
 	// ExcludeFolders indicates folders to be excluded for the segment logic
 	ExcludeFolders Property = "exclude_folders"
-	// IgnoreFolders is a duplicate of ExcludeFolders
-	IgnoreFolders Property = "ignore_folders"
 	// FetchVersion decides whether to fetch the version number or not
 	FetchVersion Property = "fetch_version"
 	// AlwaysEnabled decides whether or not to always display the info
@@ -49,10 +47,6 @@ const (
 	HTTPTimeout Property = "http_timeout"
 	// DefaultHTTPTimeout default timeout used when executing http request
 	DefaultHTTPTimeout = 20
-	// DefaultCacheTimeout default timeout used when caching data
-	DefaultCacheTimeout = 10
-	// CacheTimeout cache timeout
-	CacheTimeout Property = "cache_timeout"
 	// Files to trigger the segment on
 	Files Property = "files"
 )

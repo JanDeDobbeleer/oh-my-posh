@@ -23,31 +23,33 @@ white text on a yellow background, for example.
 The `foreground_templates` example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "nightscout",
-  "style": "diamond",
-  "foreground": "#ffffff",
-  "background": "#ff0000",
-  "background_templates": [
-    "{{ if gt .Sgv 150 }}#FFFF00{{ end }}",
-    "{{ if lt .Sgv 60 }}#FF0000{{ end }}",
-    "#00FF00"
-  ],
-  "foreground_templates": [
-    "{{ if gt .Sgv 150 }}#000000{{ end }}",
-    "{{ if lt .Sgv 60 }}#000000{{ end }}",
-    "#000000"
-  ],
-  "leading_diamond": "\ue0b6",
-  "trailing_diamond": "\uE0B0",
-  "template": "\ue2a1 {{ .Sgv }}{{ .TrendIcon }}",
-  "properties": {
-    "url": "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
-    "http_timeout": 1500
-  }
-}}/>
+<Config
+  data={{
+    type: "nightscout",
+    style: "diamond",
+    foreground: "#ffffff",
+    background: "#ff0000",
+    background_templates: [
+      "{{ if gt .Sgv 150 }}#FFFF00{{ end }}",
+      "{{ if lt .Sgv 60 }}#FF0000{{ end }}",
+      "#00FF00",
+    ],
+    foreground_templates: [
+      "{{ if gt .Sgv 150 }}#000000{{ end }}",
+      "{{ if lt .Sgv 60 }}#000000{{ end }}",
+      "#000000",
+    ],
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\uE0B0",
+    template: "\ue2a1 {{ .Sgv }}{{ .TrendIcon }}",
+    properties: {
+      url: "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
+      http_timeout: 1500,
+    },
+  }}
+/>
 
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 
@@ -57,12 +59,11 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 
 ## Properties
 
-| Name            | Type                | Default | Description                                                                                                                                                                  |
-| --------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string`            |         | Your Nightscout URL, including the full path to entries.json AND count=1 AND token. Example above. You'll know this works if you can curl it yourself and get a single value |
-| `headers`       | `map[string]string` |         | A key, value map of Headers to send with the request                                                                                                                         |
-| `http_timeout`  | `int`               | `500`   | in milliseconds - how long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default                             |
-| `cache_timeout` | `int`               | `5`     | in minutes - how long do you want your numbers cached?                                                                                                                       |
+| Name           |        Type         | Default | Description                                                                                                                                                                  |
+| -------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`          |      `string`       |         | Your Nightscout URL, including the full path to entries.json AND count=1 AND token. Example above. You'll know this works if you can curl it yourself and get a single value |
+| `headers`      | `map[string]string` |         | A key, value map of Headers to send with the request                                                                                                                         |
+| `http_timeout` |        `int`        |  `500`  | in milliseconds - how long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default                             |
 
 :::info
 You can change the icons for trend, put the trend elsewhere, add text, however you like!

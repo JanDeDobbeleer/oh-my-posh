@@ -14,7 +14,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -31,26 +30,21 @@ import (
 )
 
 type Terminal struct {
-	CmdFlags *Flags
-	Var      maps.Simple
-
-	cwd      string
-	host     string
-	cmdCache *cache.Command
-
+	CmdFlags     *Flags
+	Var          maps.Simple
+	cmdCache     *cache.Command
 	deviceCache  *cache.File
 	sessionCache *cache.File
-
-	tmplCache *cache.Template
-	networks  []*Connection
-
-	sync.RWMutex
-
-	lsDirMap maps.Concurrent
+	tmplCache    *cache.Template
+	lsDirMap     maps.Concurrent
+	cwd          string
+	host         string
+	networks     []*Connection
 }
 
 func (term *Terminal) Init() {
 	defer term.Trace(time.Now())
+
 	if term.CmdFlags == nil {
 		term.CmdFlags = &Flags{}
 	}
@@ -74,6 +68,8 @@ func (term *Terminal) Init() {
 	term.deviceCache = initCache(cache.FileName)
 	term.sessionCache = initCache(cache.SessionFileName)
 	term.setPromptCount()
+
+	term.setPwd()
 
 	term.ResolveConfigPath()
 
@@ -166,28 +162,35 @@ func (term *Terminal) Getenv(key string) string {
 }
 
 func (term *Terminal) Pwd() string {
-	term.Lock()
+	return term.cwd
+}
+
+func (term *Terminal) setPwd() {
 	defer term.Trace(time.Now())
-	defer term.Unlock()
-	if term.cwd != "" {
-		return term.cwd
+
+	correctPath := func(pwd string) string {
+		if term.GOOS() != WINDOWS {
+			return pwd
+		}
+		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
+		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
+		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
 
 	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
 		term.cwd = CleanPath(term, term.CmdFlags.PWD)
 		term.Debug(term.cwd)
-		return term.cwd
+		return
 	}
 
 	dir, err := os.Getwd()
 	if err != nil {
 		term.Error(err)
-		return ""
+		return
 	}
 
-	term.cwd = CleanPath(term, dir)
+	term.cwd = correctPath(dir)
 	term.Debug(term.cwd)
-	return term.cwd
 }
 
 func (term *Terminal) HasFiles(pattern string) bool {
@@ -217,9 +220,6 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 	}
 
 	pattern = strings.ToLower(pattern)
-
-	term.RWMutex.RLock()
-	defer term.RWMutex.RUnlock()
 
 	for _, match := range dirEntries {
 		if match.IsDir() {
@@ -565,6 +565,7 @@ func (term *Terminal) StackCount() int {
 	if term.CmdFlags.StackCount < 0 {
 		return 0
 	}
+
 	return term.CmdFlags.StackCount
 }
 
@@ -574,6 +575,13 @@ func (term *Terminal) Cache() cache.Cache {
 
 func (term *Terminal) Session() cache.Cache {
 	return term.sessionCache
+}
+
+func (term *Terminal) Close() {
+	defer term.Trace(time.Now())
+	term.saveTemplateCache()
+	term.deviceCache.Close()
+	term.sessionCache.Close()
 }
 
 func (term *Terminal) saveTemplateCache() {
@@ -589,15 +597,8 @@ func (term *Terminal) saveTemplateCache() {
 
 	templateCache, err := json.Marshal(tmplCache)
 	if err == nil {
-		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), 1440)
+		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), "1day")
 	}
-}
-
-func (term *Terminal) Close() {
-	defer term.Trace(time.Now())
-	term.saveTemplateCache()
-	term.deviceCache.Close()
-	term.sessionCache.Close()
 }
 
 func (term *Terminal) LoadTemplateCache() {
@@ -629,8 +630,6 @@ func (term *Terminal) Logs() string {
 func (term *Terminal) TemplateCache() *cache.Template {
 	defer term.Trace(time.Now())
 	tmplCache := term.tmplCache
-	tmplCache.Lock()
-	defer tmplCache.Unlock()
 
 	if tmplCache.Initialized {
 		return tmplCache
@@ -643,23 +642,11 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	tmplCache.WSL = term.IsWsl()
 	tmplCache.Segments = maps.NewConcurrent()
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
-	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
 	tmplCache.Jobs = term.CmdFlags.JobCount
 
 	if term.Var != nil {
 		tmplCache.Var = term.Var
-	}
-
-	const separator = "="
-	values := os.Environ()
-	term.DebugF("environment: %v", values)
-	for value := range values {
-		key, val, valid := strings.Cut(values[value], separator)
-		if !valid {
-			continue
-		}
-		tmplCache.Env[key] = val
 	}
 
 	pwd := term.Pwd()
@@ -752,7 +739,7 @@ func (term *Terminal) setPromptCount() {
 	// Only update the count if we're generating a primary prompt.
 	if term.CmdFlags.Primary {
 		count++
-		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
+		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), "1day")
 	}
 
 	term.CmdFlags.PromptCount = count

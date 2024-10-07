@@ -60,12 +60,6 @@
       "description": "Cache the executable's version or not",
       "default": false
     },
-    "cache_timeout": {
-      "type": "integer",
-      "title": "cache timeout",
-      "description": "Minutes the response is cached. A value of 0 disables the cache.",
-      "default": 10
-    },
     "expires_in": {
       "type": "integer",
       "title": "Expires in",
@@ -484,16 +478,6 @@
               "items": {
                 "type": "string"
               }
-            },
-            "ignore_folders": {
-              "type": "array",
-              "title": "Deprecated - please use `exclude_folders` instead",
-              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
-              "default": [],
-              "items": {
-                "type": "string"
-              },
-              "deprecated": true
             }
           }
         },
@@ -508,6 +492,31 @@
           "title": "Give the segment an alias for use in templates",
           "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": ""
+        },
+        "cache": {
+          "type": "object",
+          "title": "Cache settings",
+          "description": "https://ohmyposh.dev/docs/configuration/cache",
+          "default": {},
+          "properties": {
+            "duration": {
+              "type": "string",
+              "title": "Cache duration",
+              "description": "https://ohmyposh.dev/docs/configuration/cache#duration",
+              "default": "^(infinite)|([0-9])+(second|seconds|minute|minutes|hour|hours|day|days|week|weeks|month|months)$",
+              "pattern": "^$"
+            },
+            "strategy": {
+              "type": "string",
+              "title": "Cache strategy",
+              "description": "https://ohmyposh.dev/docs/configuration/cache#strategy",
+              "default": "folder",
+              "enum": [
+                "folder",
+                "session"
+              ]
+            }
+          }
         }
       },
       "allOf": [
@@ -928,9 +937,6 @@
                 "properties": {
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -3062,9 +3068,6 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -3248,9 +3251,6 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   },
                   "access_token": {
                     "$ref": "#/definitions/access_token"
@@ -3528,9 +3528,6 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -3584,9 +3581,6 @@
                 "properties": {
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   },
                   "access_token": {
                     "$ref": "#/definitions/access_token"
@@ -3704,12 +3698,6 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   },
-                  "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "Minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 5
-                  },
                   "doubleup_icon": {
                     "type": "string",
                     "title": "Temperature trend icon, very high positive change",
@@ -3815,9 +3803,6 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -3996,16 +3981,7 @@
           },
           "then": {
             "title": "Upgrade Segment",
-            "description": "https://ohmyposh.dev/docs/segments/system/upgrade",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/system/upgrade"
           }
         },
         {
@@ -4233,9 +4209,6 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
-                  },
-                  "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -4502,19 +4475,7 @@
           },
           "then": {
             "title": "Display GitVersion segment",
-            "description": "https://ohmyposh.dev/docs/segments/cli/gitversion",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "Minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 30
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/cli/gitversion"
           }
         },
         {
@@ -4564,12 +4525,6 @@
                     "title": "URL",
                     "description": "The URL to the Nightscout API",
                     "default": ""
-                  },
-                  "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "Minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 5
                   },
                   "http_timeout": {
                     "type": "integer",
@@ -4748,9 +4703,9 @@
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": ""
     },
-    "disable_notice": {
+    "upgrade_notice": {
       "type": "boolean",
-      "title": "Disable Upgrade Notice",
+      "title": "Enable Upgrade Notice",
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },

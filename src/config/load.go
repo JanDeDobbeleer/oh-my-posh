@@ -91,7 +91,5 @@ func loadConfig(env runtime.Environment) *Config {
 		return Default(env, true)
 	}
 
-	setDisableNotice(data, &cfg)
-
 	return &cfg
 }

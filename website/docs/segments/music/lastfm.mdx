@@ -12,7 +12,7 @@ Show the currently playing song from a [LastFM][lastfm] user.
 Be aware that LastFM updates may be severely delayed when paused and songs may linger in the "now playing" state for a prolonged time.
 
 Additionally, we are using HTTP requests to get the data,
-so you may need to adjust the `http_timeout` and `cache_timeout` to your liking to get better results.
+so you may need to adjust the `http_timeout` to your liking to get better results.
 
 You **must** request an [API key][api-key] at the LastFM website.
 :::
@@ -30,7 +30,6 @@ import Config from "@site/src/components/Config.js";
       api_key: "<YOUR_API_KEY>",
       username: "<LASTFM_USERNAME>",
       http_timeout: 20000,
-      cache_timeout: 1,
     },
     style: "powerline",
     template: ' {{ .Icon }}{{ if ne .Status "stopped" }}{{ .Full }}{{ end }} ',

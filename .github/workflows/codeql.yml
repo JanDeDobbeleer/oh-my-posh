@@ -25,7 +25,7 @@ jobs:
         go-version: 1.21
         cache-dependency-path: src/go.sum
     - name: Checkout code
-      uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938
+      uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
     - name: Initialize CodeQL
       uses: github/codeql-action/init@6db8d6351fd0be61f9ed8ebd12ccd35dcec51fea
       with:

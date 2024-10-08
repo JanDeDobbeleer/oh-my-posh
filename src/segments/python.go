@@ -22,7 +22,7 @@ const (
 	FetchVirtualEnv      properties.Property = "fetch_virtual_env"
 	UsePythonVersionFile properties.Property = "use_python_version_file"
 	FolderNameFallback   properties.Property = "folder_name_fallback"
-	FallbackNames        properties.Property = "fallback_names"
+	DefaultVenvNames     properties.Property = "default_venv_names"
 )
 
 func (p *Python) Template() string {
@@ -82,7 +82,7 @@ func (p *Python) loadContext() {
 	}
 
 	folderNameFallback := p.language.props.GetBool(FolderNameFallback, true)
-	defaultVenvNames := p.language.props.GetStringArray(FallbackNames, []string{
+	defaultVenvNames := p.language.props.GetStringArray(DefaultVenvNames, []string{
 		".venv",
 		"venv",
 	})

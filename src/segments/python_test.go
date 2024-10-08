@@ -203,19 +203,19 @@ func TestPythonVirtualEnvIgnoreCustomVenvNames(t *testing.T) {
 	cases := []struct {
 		Expected           string
 		FolderNameFallback bool
-		FallbackNames      []string
+		DefaultVenvNames   []string
 		VirtualEnvName     string
 	}{
 		{
 			Expected:           "folder",
 			FolderNameFallback: true,
-			FallbackNames:      []string{"env"},
+			DefaultVenvNames:   []string{"env"},
 			VirtualEnvName:     "/path/to/folder/env",
 		},
 		{
 			Expected:           "venv",
 			FolderNameFallback: true,
-			FallbackNames:      []string{"env"},
+			DefaultVenvNames:   []string{"env"},
 			VirtualEnvName:     "/path/to/folder/venv",
 		},
 	}
@@ -235,7 +235,7 @@ func TestPythonVirtualEnvIgnoreCustomVenvNames(t *testing.T) {
 		env.On("HasParentFilePath", ".python-version", false).Return(&runtime.FileInfo{}, errors.New("no match at root level"))
 
 		props[FolderNameFallback] = tc.FolderNameFallback
-		props[FallbackNames] = tc.FallbackNames
+		props[DefaultVenvNames] = tc.DefaultVenvNames
 
 		python := &Python{}
 		python.Init(props, env)

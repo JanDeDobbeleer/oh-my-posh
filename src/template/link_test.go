@@ -27,6 +27,7 @@ func TestUrl(t *testing.T) {
 	env.On("Debug", testify_.Anything)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	env.On("Shell").Return("foo")
+	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 	Init(env)
 

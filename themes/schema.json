@@ -430,10 +430,6 @@
           "description": "https://ohmyposh.dev/docs/configuration/templates",
           "default": ""
         },
-        "templates": {
-          "$ref": "#/definitions/templates",
-          "description": "https://ohmyposh.dev/docs/configuration/segment"
-        },
         "templates_logic": {
           "type": "string",
           "title": "Templates Logic",

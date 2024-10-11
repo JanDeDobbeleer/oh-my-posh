@@ -242,6 +242,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Flags").Return(&runtime.Flags{})
 		env.On("Shell").Return("foo")
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("TemplateCache").Return(&cache.Template{
 			OS: "darwin",
 		})
@@ -374,6 +375,7 @@ func TestSegmentContains(t *testing.T) {
 		Segments: segments,
 	})
 	env.On("Shell").Return("foo")
+	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 	Init(env)
 

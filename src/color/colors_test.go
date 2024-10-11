@@ -85,6 +85,7 @@ func TestAnsiRender(t *testing.T) {
 		env.On("TemplateCache").Return(&cache.Template{})
 		env.On("Getenv", "TERM_PROGRAM").Return(tc.Term)
 		env.On("Shell").Return("foo")
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 

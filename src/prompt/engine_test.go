@@ -89,6 +89,7 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("User").Return("user")
 		env.On("Shell").Return(tc.Shell)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("IsCygwin").Return(tc.Cygwin)
 		env.On("Host").Return("host", nil)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
@@ -195,6 +196,7 @@ func TestGetTitle(t *testing.T) {
 		})
 		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
 		env.On("Shell").Return(tc.ShellName)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		terminal.Init(shell.GENERIC)
 		template.Init(env)
@@ -256,6 +258,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		})
 		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
 		env.On("Shell").Return(tc.ShellName)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		terminal.Init(shell.GENERIC)
 		template.Init(env)

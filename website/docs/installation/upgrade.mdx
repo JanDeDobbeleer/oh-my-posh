@@ -4,6 +4,9 @@ title: Upgrade
 sidebar_label: ♻️ Upgrade
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 ## Manual
 
 While you can always follow the upgrade steps listed under the installation section,
@@ -13,11 +16,24 @@ you can also use the `upgrade` command to update Oh My Posh to the latest versio
 oh-my-posh upgrade
 ```
 
-## Automatic
+## Automated
 
-In case you want to enable auto-upgrades, you need to edit your configuration file.
-If you don't yet have a configuration file, have a look at the [customize page][customize] to get started,
-afterwards you can add the following line to your configuration file:
+<Tabs
+  defaultValue="cli"
+  groupId="sample"
+  values={[
+    { label: 'CLI', value: 'cli', },
+    { label: 'Configuration', value: 'config', },
+  ]
+}>
+<TabItem value="cli">
+
+```powershell
+oh-my-posh enable autoupgrade
+```
+
+</TabItem>
+<TabItem value="config">
 
 import Config from "@site/src/components/Config.js";
 
@@ -26,5 +42,8 @@ import Config from "@site/src/components/Config.js";
     "auto_upgrade": true
   }}
 />
+
+</TabItem>
+</Tabs>
 
 [customize]: /docs/installation/customize#custom-configuration

@@ -7,6 +7,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -85,7 +86,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}}{{.Burp}}",
-			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
+			ExpectedString:  template.IncorrectTemplate,
 			ExpectedEnabled: true,
 		},
 	}

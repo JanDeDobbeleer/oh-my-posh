@@ -1,49 +1,21 @@
 package template
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 type Text struct {
-	Context  any
+	Context  Data
 	Template string
 }
 
-type Data any
-
-type context struct {
-	Data
-	Getenv func(string) string
-	cache.Template
-	initialized bool
-}
-
-func (c *context) init(t *Text) {
-	c.Data = t.Context
-
-	if c.initialized {
-		return
-	}
-
-	c.Getenv = env.Getenv
-	c.Template = *env.TemplateCache()
-
-	c.initialized = true
-}
-
-func (c *context) release() {
-	c.Data = nil
-	contextPool.Put(c)
-}
-
 func (t *Text) Render() (string, error) {
-	env.DebugF("rendering template: %s", t.Template)
+	defer env.Trace(time.Now(), t.Template)
 
 	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
 		return t.Template, nil
@@ -51,36 +23,10 @@ func (t *Text) Render() (string, error) {
 
 	t.patchTemplate()
 
-	tmpl, err := tmplFunc.Parse(t.Template)
-	if err != nil {
-		env.Error(err)
-		return "", errors.New(InvalidTemplate)
-	}
+	renderer := renderPool.Get().(*renderer)
+	defer renderer.release()
 
-	context := contextPool.Get().(*context)
-	context.init(t)
-	defer context.release()
-
-	buffer := buffPool.Get().(*buff)
-	defer buffer.release()
-
-	err = tmpl.Execute(buffer, context)
-	if err != nil {
-		env.Error(err)
-		msg := regex.FindNamedRegexMatch(`at (?P<MSG><.*)$`, err.Error())
-		if len(msg) == 0 {
-			return "", errors.New(IncorrectTemplate)
-		}
-
-		return "", errors.New(msg["MSG"])
-	}
-
-	text := buffer.String()
-	// issue with missingkey=zero ignored for map[string]any
-	// https://github.com/golang/go/issues/24963
-	text = strings.ReplaceAll(text, "<no value>", "")
-
-	return text, nil
+	return renderer.execute(t)
 }
 
 func (t *Text) patchTemplate() {

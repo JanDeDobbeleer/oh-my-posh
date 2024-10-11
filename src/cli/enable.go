@@ -6,7 +6,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/spf13/cobra"
 )
@@ -19,8 +18,8 @@ This command is used to %s one of the following features:
 
 - notice`
 	toggleArgs = []string{
-		"notice",
-		"autoupgrade",
+		config.UPGRADENOTICE,
+		config.AUTOUPGRADE,
 	}
 )
 
@@ -55,22 +54,24 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	env.Init()
 	defer env.Close()
 
+	var key string
+
 	switch feature {
 	case "notice":
-		if enable {
-			env.Cache().Delete(upgrade.CACHEKEY)
-			return
-		}
-
-		env.Cache().Set(upgrade.CACHEKEY, "disabled", cache.INFINITE)
+		key = config.UPGRADENOTICE
 	case "autoupgrade":
-		if enable {
-			env.Cache().Set(config.AUTOUPGRADE, "true", cache.INFINITE)
-			return
-		}
-
-		env.Cache().Delete(config.AUTOUPGRADE)
-	default:
-		_ = cmd.Help()
+		key = config.AUTOUPGRADE
 	}
+
+	if len(key) == 0 {
+		_ = cmd.Help()
+		return
+	}
+
+	if enable {
+		env.Cache().Set(key, "true", cache.INFINITE)
+		return
+	}
+
+	env.Cache().Delete(key)
 }

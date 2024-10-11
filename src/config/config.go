@@ -14,7 +14,8 @@ const (
 	YAML string = "yaml"
 	TOML string = "toml"
 
-	AUTOUPGRADE = "auto_upgrade"
+	AUTOUPGRADE   = "autoupgrade"
+	UPGRADENOTICE = "upgradenotice"
 
 	Version = 2
 )
@@ -103,7 +104,12 @@ func (cfg *Config) Features() shell.Features {
 		autoUpgrade = true
 	}
 
-	if cfg.UpgradeNotice && !autoUpgrade {
+	upgradeNotice := cfg.UpgradeNotice
+	if _, OK := cfg.env.Cache().Get(UPGRADENOTICE); OK {
+		upgradeNotice = true
+	}
+
+	if upgradeNotice && !autoUpgrade {
 		feats = append(feats, shell.Notice)
 	}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -50,7 +51,7 @@ func TestAzSegment(t *testing.T) {
 		{
 			Case:            "Faulty template",
 			ExpectedEnabled: true,
-			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
+			ExpectedString:  template.IncorrectTemplate,
 			Template:        "{{ .Burp }}",
 			HasPowerShell:   true,
 		},

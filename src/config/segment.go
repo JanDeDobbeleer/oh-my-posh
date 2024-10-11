@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"runtime/debug"
 	"strings"
 	"time"
 
@@ -37,8 +36,9 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 }
 
 type Segment struct {
-	writer                 SegmentWriter
-	env                    runtime.Environment
+	writer SegmentWriter
+	env    runtime.Environment
+
 	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
 	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
@@ -83,19 +83,7 @@ func (segment *Segment) Name() string {
 	return name
 }
 
-func (segment *Segment) SetEnabled(env runtime.Environment) {
-	defer func() {
-		err := recover()
-		if err == nil {
-			return
-		}
-
-		// display a message explaining omp failed(with the err)
-		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
-		fmt.Println(message)
-		segment.Enabled = true
-	}()
-
+func (segment *Segment) Execute(env runtime.Environment) {
 	// segment timings for debug purposes
 	var start time.Time
 	if env.Flags().Debug {
@@ -131,7 +119,64 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 	}
 }
 
-func (segment *Segment) HasCache() bool {
+func (segment *Segment) Render() {
+	if !segment.Enabled {
+		return
+	}
+
+	segment.Text = segment.string()
+	segment.Enabled = len(strings.ReplaceAll(segment.Text, " ", "")) > 0
+
+	if !segment.Enabled {
+		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
+		return
+	}
+
+	segment.setCache()
+}
+
+func (segment *Segment) ResolveForeground() color.Ansi {
+	if len(segment.ForegroundTemplates) != 0 {
+		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
+		segment.Foreground = color.Ansi(match)
+	}
+
+	return segment.Foreground
+}
+
+func (segment *Segment) ResolveBackground() color.Ansi {
+	if len(segment.BackgroundTemplates) != 0 {
+		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
+		segment.Background = color.Ansi(match)
+	}
+
+	return segment.Background
+}
+
+func (segment *Segment) ResolveStyle() SegmentStyle {
+	if len(segment.styleCache) != 0 {
+		return segment.styleCache
+	}
+
+	segment.styleCache = segment.Style.resolve(segment.writer)
+
+	return segment.styleCache
+}
+
+func (segment *Segment) IsPowerline() bool {
+	style := segment.ResolveStyle()
+	return style == Powerline || style == Accordion
+}
+
+func (segment *Segment) HasEmptyDiamondAtEnd() bool {
+	if segment.ResolveStyle() != Diamond {
+		return false
+	}
+
+	return len(segment.TrailingDiamond) == 0
+}
+
+func (segment *Segment) hasCache() bool {
 	return segment.Cache != nil && !segment.Cache.Duration.IsEmpty()
 }
 
@@ -153,7 +198,7 @@ func (segment *Segment) isToggled() bool {
 }
 
 func (segment *Segment) restoreCache() bool {
-	if !segment.HasCache() {
+	if !segment.hasCache() {
 		return false
 	}
 
@@ -182,7 +227,7 @@ func (segment *Segment) restoreCache() bool {
 }
 
 func (segment *Segment) setCache() {
-	if !segment.HasCache() {
+	if !segment.hasCache() {
 		return
 	}
 
@@ -227,22 +272,6 @@ func (segment *Segment) folderKey() string {
 	}
 
 	return segment.env.Pwd()
-}
-
-func (segment *Segment) SetText() {
-	if !segment.Enabled {
-		return
-	}
-
-	segment.Text = segment.string()
-	segment.Enabled = len(strings.ReplaceAll(segment.Text, " ", "")) > 0
-
-	if !segment.Enabled {
-		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
-		return
-	}
-
-	segment.setCache()
 }
 
 func (segment *Segment) string() string {
@@ -299,45 +328,4 @@ func (segment *Segment) cwdExcluded() bool {
 
 	list := properties.ParseStringArray(value)
 	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
-}
-
-func (segment *Segment) ResolveForeground() color.Ansi {
-	if len(segment.ForegroundTemplates) != 0 {
-		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
-		segment.Foreground = color.Ansi(match)
-	}
-
-	return segment.Foreground
-}
-
-func (segment *Segment) ResolveBackground() color.Ansi {
-	if len(segment.BackgroundTemplates) != 0 {
-		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
-		segment.Background = color.Ansi(match)
-	}
-
-	return segment.Background
-}
-
-func (segment *Segment) ResolveStyle() SegmentStyle {
-	if len(segment.styleCache) != 0 {
-		return segment.styleCache
-	}
-
-	segment.styleCache = segment.Style.resolve(segment.writer)
-
-	return segment.styleCache
-}
-
-func (segment *Segment) IsPowerline() bool {
-	style := segment.ResolveStyle()
-	return style == Powerline || style == Accordion
-}
-
-func (segment *Segment) HasEmptyDiamondAtEnd() bool {
-	if segment.ResolveStyle() != Diamond {
-		return false
-	}
-
-	return len(segment.TrailingDiamond) == 0
 }

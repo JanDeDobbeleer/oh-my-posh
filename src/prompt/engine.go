@@ -168,12 +168,6 @@ func (e *Engine) getTitleTemplateText() string {
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	defer e.applyPowerShellBleedPatch()
 
-	block.Init(e.Env)
-
-	if !block.Enabled() {
-		return false
-	}
-
 	// do not print a newline to avoid a leading space
 	// when we're printing the first primary prompt in
 	// the shell
@@ -181,7 +175,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		e.writeNewline()
 	}
 
-	text, length := e.renderBlockSegments(block)
+	text, length := e.writeBlockSegments(block)
 
 	// do not print anything when we don't have any text
 	if length == 0 {
@@ -262,52 +256,6 @@ func (e *Engine) applyPowerShellBleedPatch() {
 	e.write(terminal.ClearAfter())
 }
 
-func (e *Engine) renderBlockSegments(block *config.Block) (string, int) {
-	e.filterSegments(block)
-
-	for i, segment := range block.Segments {
-		if colors, newCycle := cycle.Loop(); colors != nil {
-			cycle = &newCycle
-			segment.Foreground = colors.Foreground
-			segment.Background = colors.Background
-		}
-
-		if i == 0 && len(block.LeadingDiamond) > 0 {
-			segment.LeadingDiamond = block.LeadingDiamond
-		}
-
-		if i == len(block.Segments)-1 && len(block.TrailingDiamond) > 0 {
-			segment.TrailingDiamond = block.TrailingDiamond
-		}
-
-		e.setActiveSegment(segment)
-		e.renderActiveSegment()
-	}
-
-	e.writeSeparator(true)
-
-	e.activeSegment = nil
-	e.previousActiveSegment = nil
-
-	return terminal.String()
-}
-
-func (e *Engine) filterSegments(block *config.Block) {
-	segments := make([]*config.Segment, 0)
-
-	for _, segment := range block.Segments {
-		segment.SetText()
-
-		if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
-			continue
-		}
-
-		segments = append(segments, segment)
-	}
-
-	block.Segments = segments
-}
-
 func (e *Engine) setActiveSegment(segment *config.Segment) {
 	e.activeSegment = segment
 	terminal.Interactive = segment.Interactive
@@ -341,6 +289,10 @@ func (e *Engine) renderActiveSegment() {
 }
 
 func (e *Engine) writeSeparator(final bool) {
+	if e.activeSegment == nil {
+		return
+	}
+
 	isCurrentDiamond := e.activeSegment.ResolveStyle() == config.Diamond
 	if final && isCurrentDiamond {
 		terminal.Write(color.Transparent, color.Background, e.activeSegment.TrailingDiamond)

@@ -97,6 +97,7 @@ func TestGetPalette(t *testing.T) {
 		})
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Shell").Return("bash")
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 

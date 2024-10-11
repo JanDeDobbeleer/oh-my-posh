@@ -41,6 +41,7 @@ func renderTemplateNoTrimSpace(env *mock.Environment, segmentTemplate string, co
 	env.On("Error", testify_.Anything)
 	env.On("Debug", testify_.Anything)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 	env.On("Shell").Return("foo")
 
 	template.Init(env)
@@ -987,6 +988,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("TemplateCache").Return(&cache.Template{})
 		env.On("Getenv", "HOME").Return(homeDir)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 
@@ -1020,6 +1022,7 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 	env.On("Flags").Return(args)
 	env.On("Shell").Return(shell.GENERIC)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 	template.Init(env)
 
@@ -1414,6 +1417,7 @@ func TestGetPwd(t *testing.T) {
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PWSH)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 
@@ -1452,6 +1456,7 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("Debug", testify_.Anything)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Shell").Return(shell.GENERIC)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 
@@ -1641,6 +1646,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 		env.On("GOOS").Return(runtime.DARWIN)
 		env.On("Home").Return("/a/b/k")
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 
@@ -1769,6 +1775,7 @@ func TestGetMaxWidth(t *testing.T) {
 		env.On("TemplateCache").Return(&cache.Template{})
 		env.On("Getenv", "MAX_WIDTH").Return("120")
 		env.On("Shell").Return(shell.BASH)
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 		template.Init(env)
 

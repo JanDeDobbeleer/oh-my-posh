@@ -17,7 +17,7 @@ func (e *Engine) Tooltip(tip string) string {
 			continue
 		}
 
-		tooltip.SetEnabled(e.Env)
+		tooltip.Execute(e.Env)
 
 		if !tooltip.Enabled {
 			continue
@@ -36,13 +36,12 @@ func (e *Engine) Tooltip(tip string) string {
 		Segments:  tooltips,
 	}
 
-	block.Init(e.Env)
+	text, length := e.writeBlockSegments(block)
 
-	if !block.Enabled() {
+	// do not print anything when we don't have any text
+	if length == 0 {
 		return ""
 	}
-
-	text, length := e.renderBlockSegments(block)
 
 	switch e.Env.Shell() {
 	case shell.PWSH, shell.PWSH5:

@@ -3,6 +3,8 @@ package cli
 import (
 	"fmt"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
@@ -18,6 +20,7 @@ This command is used to %s one of the following features:
 - notice`
 	toggleArgs = []string{
 		"notice",
+		"autoupgrade",
 	}
 )
 
@@ -59,7 +62,14 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 			return
 		}
 
-		env.Cache().Set(upgrade.CACHEKEY, "disabled", -1)
+		env.Cache().Set(upgrade.CACHEKEY, "disabled", cache.INFINITE)
+	case "autoupgrade":
+		if enable {
+			env.Cache().Set(config.AUTOUPGRADE, "true", cache.INFINITE)
+			return
+		}
+
+		env.Cache().Delete(config.AUTOUPGRADE)
 	default:
 		_ = cmd.Help()
 	}

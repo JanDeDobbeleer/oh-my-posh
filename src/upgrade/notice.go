@@ -38,7 +38,7 @@ const (
 A new release of Oh My Posh is available: %s → %s
 To upgrade, run: 'oh-my-posh upgrade'
 
-To enable automated upgrades, set 'auto_upgrade' to 'true' in your configuration.
+To enable automated upgrades, run: 'oh-my-posh enable autoupgrade'.
 `
 )
 

@@ -58,7 +58,6 @@ type Segment struct {
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
 	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
-	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
@@ -247,13 +246,6 @@ func (segment *Segment) SetText() {
 }
 
 func (segment *Segment) string() string {
-	if !segment.Templates.Empty() {
-		templatesResult := segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
-		if len(segment.Template) == 0 {
-			return templatesResult
-		}
-	}
-
 	if len(segment.Template) == 0 {
 		segment.Template = segment.writer.Template()
 	}

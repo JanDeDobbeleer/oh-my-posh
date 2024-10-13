@@ -82,6 +82,7 @@ func runInit(shellName string) {
 			Config: configFlag,
 			Strict: strict,
 			Debug:  debug,
+			Init:   true,
 		},
 	}
 

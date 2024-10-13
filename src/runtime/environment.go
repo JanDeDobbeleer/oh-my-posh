@@ -100,6 +100,7 @@ type Flags struct {
 	Column        int
 	JobCount      int
 	SaveCache     bool
+	Init          bool
 }
 
 type CommandError struct {

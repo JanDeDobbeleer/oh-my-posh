@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -46,7 +45,15 @@ You can do the following:
 		case "path":
 			fmt.Println(env.CachePath())
 		case "clear":
-			clear(env.CachePath())
+			deletedFiles, err := cache.Clear(env.CachePath(), true)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			for _, file := range deletedFiles {
+				fmt.Println("removed cache file:", file)
+			}
 		case "edit":
 			cacheFilePath := filepath.Join(env.CachePath(), cache.FileName)
 			os.Exit(editFileWithEditor(cacheFilePath))
@@ -56,27 +63,4 @@ You can do the following:
 
 func init() {
 	RootCmd.AddCommand(getCache)
-}
-
-func clear(cachePath string) {
-	// get all files in the cache directory that start with omp.cache and delete them
-	files, err := os.ReadDir(cachePath)
-	if err != nil {
-		return
-	}
-
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-
-		if !strings.HasPrefix(file.Name(), cache.FileName) {
-			continue
-		}
-
-		path := filepath.Join(cachePath, file.Name())
-		if err := os.Remove(path); err == nil {
-			fmt.Println("removed cache file:", path)
-		}
-	}
 }

@@ -596,8 +596,25 @@ func (term *Terminal) saveTemplateCache() {
 func (term *Terminal) Close() {
 	defer term.Trace(time.Now())
 	term.saveTemplateCache()
+	term.clearCacheFiles()
 	term.deviceCache.Close()
 	term.sessionCache.Close()
+}
+
+func (term *Terminal) clearCacheFiles() {
+	if !term.CmdFlags.Init {
+		return
+	}
+
+	deletedFiles, err := cache.Clear(term.CachePath(), false)
+	if err != nil {
+		term.Error(err)
+		return
+	}
+
+	for _, file := range deletedFiles {
+		term.DebugF("removed cache file: %s", file)
+	}
 }
 
 func (term *Terminal) LoadTemplateCache() {

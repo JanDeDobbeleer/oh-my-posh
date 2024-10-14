@@ -241,11 +241,13 @@ func (term *Terminal) Connection(connectionType ConnectionType) (*Connection, er
 		}
 		term.networks = networks
 	}
+
 	for _, network := range term.networks {
 		if network.Type == connectionType {
 			return network, nil
 		}
 	}
+
 	term.Error(fmt.Errorf("Network type '%s' not found", connectionType))
 	return nil, &NotImplemented{}
 }

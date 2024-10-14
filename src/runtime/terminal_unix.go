@@ -154,6 +154,7 @@ func (term *Terminal) Connection(_ ConnectionType) (*Connection, error) {
 	if len(term.networks) == 0 {
 		return nil, &NotImplemented{}
 	}
+
 	return nil, &NotImplemented{}
 }
 

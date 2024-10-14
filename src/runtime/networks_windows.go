@@ -144,7 +144,7 @@ type DOT11_SSID struct {
 	ucSSID      [DOT11_SSID_MAX_LENGTH]uint8
 }
 
-func (env *Terminal) getConnections() []*Connection {
+func (term *Terminal) getConnections() []*Connection {
 	var pIFTable2 *MIN_IF_TABLE2
 	_, _, _ = hGetIfTable2.Call(uintptr(unsafe.Pointer(&pIFTable2)))
 
@@ -153,7 +153,6 @@ func (env *Terminal) getConnections() []*Connection {
 	for i := 0; i < int(pIFTable2.NumEntries); i++ {
 		networkInterface := pIFTable2.Table[i]
 		alias := strings.TrimRight(syscall.UTF16ToString(networkInterface.Alias[:]), "\x00")
-		description := strings.TrimRight(syscall.UTF16ToString(networkInterface.Description[:]), "\x00")
 
 		if networkInterface.OperStatus != 1 || // not connected or functional
 			!networkInterface.InterfaceAndOperStatusFlags.HardwareInterface || // rule out software interfaces
@@ -181,9 +180,11 @@ func (env *Terminal) getConnections() []*Connection {
 			continue
 		}
 
+		term.DebugF("Found network interface: %s", alias)
+
 		network := &Connection{
 			Type:         connectionType,
-			Name:         description, // we want a relatable name, alias isn't that
+			Name:         alias,
 			TransmitRate: networkInterface.TransmitLinkSpeed,
 			ReceiveRate:  networkInterface.ReceiveLinkSpeed,
 			SSID:         ssid,
@@ -192,15 +193,15 @@ func (env *Terminal) getConnections() []*Connection {
 		networks = append(networks, network)
 	}
 
-	if wifi, err := env.wifiNetwork(); err == nil {
+	if wifi, err := term.wifiNetwork(); err == nil {
 		networks = append(networks, wifi)
 	}
 
 	return networks
 }
 
-func (env *Terminal) wifiNetwork() (*Connection, error) {
-	env.Trace(time.Now())
+func (term *Terminal) wifiNetwork() (*Connection, error) {
+	term.Trace(time.Now())
 	// Open handle
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32
@@ -209,7 +210,6 @@ func (env *Terminal) wifiNetwork() (*Connection, error) {
 		return nil, err
 	}
 
-	// defer closing handle
 	defer func() {
 		_, _, _ = hWlanCloseHandle.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)))
 	}()
@@ -229,12 +229,14 @@ func (env *Terminal) wifiNetwork() (*Connection, error) {
 		if network.isState != 1 {
 			continue
 		}
-		return env.parseNetworkInterface(network, phClientHandle)
+
+		return term.parseNetworkInterface(network, phClientHandle)
 	}
+
 	return nil, errors.New("Not connected")
 }
 
-func (env *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*Connection, error) {
+func (term *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*Connection, error) {
 	info := Connection{
 		Type: WIFI,
 	}
@@ -250,7 +252,7 @@ func (env *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientH
 		uintptr(unsafe.Pointer(&wlanAttr)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		env.Error(err)
+		term.Error(err)
 		return &info, err
 	}
 
@@ -258,6 +260,8 @@ func (env *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientH
 	ssid := wlanAttr.wlanAssociationAttributes.dot11Ssid
 	if ssid.uSSIDLength > 0 {
 		info.SSID = string(ssid.ucSSID[0:ssid.uSSIDLength])
+		info.Name = info.SSID
+		term.DebugF("Found wifi interface: %s", info.SSID)
 	}
 
 	info.TransmitRate = uint64(wlanAttr.wlanAssociationAttributes.ulTxRate / 1024)

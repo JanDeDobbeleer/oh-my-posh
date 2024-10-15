@@ -9,6 +9,7 @@ AppPublisherURL=https://ohmyposh.dev
 AppSupportURL=https://github.com/JanDeDobbeleer/oh-my-posh/issues
 LicenseFile="bin\COPYING.txt"
 OutputBaseFilename=install
+UninstallDisplayIcon={app}\Oh My Posh
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ChangesEnvironment=yes

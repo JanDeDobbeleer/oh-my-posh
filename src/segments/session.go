@@ -7,14 +7,10 @@ import (
 )
 
 type Session struct {
-	props properties.Properties
-	env   runtime.Environment
-	// text  string
-
-	SSHSession bool
-
-	// Deprecated
+	props           properties.Properties
+	env             runtime.Environment
 	DefaultUserName string
+	SSHSession      bool
 }
 
 func (s *Session) Enabled() bool {

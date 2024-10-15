@@ -16,9 +16,9 @@ import (
 func TestAzdSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		ExpectedEnabled bool
 		ExpectedString  string
 		Template        string
+		ExpectedEnabled bool
 		IsInited        bool
 	}{
 		{

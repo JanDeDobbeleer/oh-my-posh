@@ -15,12 +15,12 @@ import (
 func TestHelmSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HelmExists      bool
-		ExpectedEnabled bool
 		ExpectedString  string
 		Template        string
 		DisplayMode     string
 		ChartFile       string
+		HelmExists      bool
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Helm not installed",

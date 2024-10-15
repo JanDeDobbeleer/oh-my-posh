@@ -18,8 +18,8 @@ import (
 
 // WithingsData struct contains the API data
 type WithingsData struct {
-	Status int   `json:"status"`
 	Body   *Body `json:"body"`
+	Status int   `json:"status"`
 }
 
 type Body struct {
@@ -29,8 +29,8 @@ type Body struct {
 }
 
 type MeasureGroup struct {
-	Measures []*Measure `json:"measures"`
 	Comment  any        `json:"comment"`
+	Measures []*Measure `json:"measures"`
 }
 
 type Measure struct {
@@ -136,13 +136,11 @@ func (w *withingsAPI) getWithingsData(endpoint string, formData url.Values) (*Wi
 }
 
 type Withings struct {
-	props properties.Properties
-
-	Weight     float64
+	props      properties.Properties
+	api        WithingsAPI
 	SleepHours string
+	Weight     float64
 	Steps      int
-
-	api WithingsAPI
 }
 
 const (
@@ -233,9 +231,8 @@ func (w *Withings) Init(props properties.Properties, env runtime.Environment) {
 		AccessToken:     w.props.GetString(properties.AccessToken, ""),
 		RefreshToken:    w.props.GetString(properties.RefreshToken, ""),
 		Request: http.Request{
-			Env:          env,
-			CacheTimeout: w.props.GetInt(properties.CacheTimeout, 30),
-			HTTPTimeout:  w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+			Env:         env,
+			HTTPTimeout: w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
 		},
 	}
 

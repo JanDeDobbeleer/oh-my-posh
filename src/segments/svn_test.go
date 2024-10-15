@@ -54,10 +54,10 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 
 func TestSvnTemplateString(t *testing.T) {
 	cases := []struct {
+		Svn      *Svn
 		Case     string
 		Expected string
 		Template string
-		Svn      *Svn
 	}{
 		{
 			Case:     "Default template",

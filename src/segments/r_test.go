@@ -11,10 +11,10 @@ func TestR(t *testing.T) {
 	cases := []struct {
 		Case           string
 		ExpectedString string
+		Version        string
 		HasRscript     bool
 		HasR           bool
 		HasRexe        bool
-		Version        string
 	}{
 		{Case: "Rscript 4.2.0", ExpectedString: "4.2.0", HasRscript: true, Version: "Rscript (R) version 4.2.0 (2022-04-22)"},
 		{Case: "Rscript 4.1.3", ExpectedString: "4.1.3", HasRscript: true, Version: "R scripting front-end version 4.1.3 (2022-03-10)"},

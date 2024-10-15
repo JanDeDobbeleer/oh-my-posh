@@ -18,11 +18,10 @@ type Package struct {
 }
 
 type Quasar struct {
-	language
-
-	HasVite bool
 	Vite    *Package
 	AppVite *Package
+	language
+	HasVite bool
 }
 
 func (q *Quasar) Enabled() bool {

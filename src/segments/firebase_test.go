@@ -19,8 +19,8 @@ func TestFirebaseSegment(t *testing.T) {
 		Case            string
 		ActiveConfig    string
 		ActivePath      string
-		ExpectedEnabled bool
 		ExpectedString  string
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "happy path",

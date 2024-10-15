@@ -1,6 +1,9 @@
 package mock
 
-import mock "github.com/stretchr/testify/mock"
+import (
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	mock "github.com/stretchr/testify/mock"
+)
 
 type Cache struct {
 	mock.Mock
@@ -34,8 +37,9 @@ func (_m *Cache) Get(key string) (string, bool) {
 	return r0, r1
 }
 
-func (_m *Cache) Set(key, value string, ttl int) {
-	_m.Called(key, value, ttl)
+// set provides a mock function with given fields: key, value, ttl
+func (_m *Cache) Set(key, value string, duration cache.Duration) {
+	_m.Called(key, value, duration)
 }
 
 func (_m *Cache) Delete(key string) {

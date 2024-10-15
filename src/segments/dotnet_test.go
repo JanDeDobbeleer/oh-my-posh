@@ -13,8 +13,8 @@ func TestDotnetSegment(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Expected string
-		ExitCode int
 		Version  string
+		ExitCode int
 	}{
 		{Case: "Unsupported version", Expected: "\uf071", ExitCode: constants.DotnetExitCode, Version: "3.1.402"},
 		{Case: "Regular version", Expected: "3.1.402", Version: "3.1.402"},

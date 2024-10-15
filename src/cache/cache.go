@@ -14,13 +14,17 @@ type Cache interface {
 	Close()
 	// Gets the value for a given key.
 	// Returns the value and a boolean indicating if the key was found.
-	// In case the ttl expired, the function returns false.
+	// In case the duration expired, the function returns false.
 	Get(key string) (string, bool)
 	// Sets a value for a given key.
-	// The ttl indicates how many minutes to cache the value.
-	Set(key, value string, ttl int)
+	// The duration indicates how many minutes to cache the value.
+	Set(key, value string, duration Duration)
 	// Deletes a key from the cache.
 	Delete(key string)
+}
+
+type Context interface {
+	CacheKey() (string, bool)
 }
 
 const (
@@ -45,11 +49,6 @@ const (
 	PROMPTCOUNTCACHE = "prompt_count_cache"
 	ENGINECACHE      = "engine_cache"
 	FONTLISTCACHE    = "font_list_cache"
-
-	ONEDAY   = 1440
-	ONEWEEK  = 10080
-	ONEMONTH = 43200
-	INFINITE = -1
 )
 
 type Entry struct {
@@ -63,5 +62,5 @@ func (c *Entry) Expired() bool {
 		return false
 	}
 
-	return time.Now().Unix() >= (c.Timestamp + int64(c.TTL)*60)
+	return time.Now().Unix() >= (c.Timestamp + int64(c.TTL))
 }

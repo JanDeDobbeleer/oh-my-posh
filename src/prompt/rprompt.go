@@ -22,13 +22,13 @@ func (e *Engine) RPrompt() string {
 		return ""
 	}
 
-	rprompt.Init(e.Env)
+	text, length := e.writeBlockSegments(rprompt)
 
-	if !rprompt.Enabled() {
+	// do not print anything when we don't have any text
+	if length == 0 {
 		return ""
 	}
 
-	text, length := e.renderBlockSegments(rprompt)
 	e.rpromptLength = length
 
 	if e.Env.Shell() == shell.ELVISH && e.Env.GOOS() != runtime.WINDOWS {

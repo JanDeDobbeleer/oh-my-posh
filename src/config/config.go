@@ -14,48 +14,43 @@ const (
 	YAML string = "yaml"
 	TOML string = "toml"
 
-	AUTOUPGRADE = "auto_upgrade"
+	AUTOUPGRADE   = "autoupgrade"
+	UPGRADENOTICE = "upgradenotice"
 
 	Version = 2
 )
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version                 int                    `json:"version" toml:"version"`
-	FinalSpace              bool                   `json:"final_space,omitempty" toml:"final_space,omitempty"`
-	ConsoleTitleTemplate    string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
-	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	env                     runtime.Environment
+	Palette                 color.Palette   `json:"palette,omitempty" toml:"palette,omitempty"`
+	DebugPrompt             *Segment        `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
+	Var                     map[string]any  `json:"var,omitempty" toml:"var,omitempty"`
+	Palettes                *color.Palettes `json:"palettes,omitempty" toml:"palettes,omitempty"`
+	ValidLine               *Segment        `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
+	SecondaryPrompt         *Segment        `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
+	TransientPrompt         *Segment        `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
+	ErrorLine               *Segment        `json:"error_line,omitempty" toml:"error_line,omitempty"`
+	ConsoleTitleTemplate    string          `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
+	Format                  string          `json:"-" toml:"-"`
+	origin                  string
+	PWD                     string                 `json:"pwd,omitempty" toml:"pwd,omitempty"`
 	AccentColor             color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
+	Output                  string                 `json:"-" toml:"-"`
+	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty"`
+	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
-	TransientPrompt         *Segment               `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
-	ValidLine               *Segment               `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
-	ErrorLine               *Segment               `json:"error_line,omitempty" toml:"error_line,omitempty"`
-	SecondaryPrompt         *Segment               `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
-	DebugPrompt             *Segment               `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
-	Palette                 color.Palette          `json:"palette,omitempty" toml:"palette,omitempty"`
-	Palettes                *color.Palettes        `json:"palettes,omitempty" toml:"palettes,omitempty"`
-	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty"`
-	ShellIntegration        bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
-	PWD                     string                 `json:"pwd,omitempty" toml:"pwd,omitempty"`
-	Var                     map[string]any         `json:"var,omitempty" toml:"var,omitempty"`
-	EnableCursorPositioning bool                   `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty"`
-	PatchPwshBleed          bool                   `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
-	DisableNotice           bool                   `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
+	Version                 int                    `json:"version" toml:"version"`
+	UpgradeNotice           bool                   `json:"upgrade_notice,omitempty" toml:"upgrade_notice,omitempty"`
 	AutoUpgrade             bool                   `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
-	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
-
-	// Deprecated
-	OSC99 bool `json:"osc99,omitempty" toml:"osc99,omitempty"`
-
-	Output        string `json:"-" toml:"-"`
-	MigrateGlyphs bool   `json:"-" toml:"-"`
-	Format        string `json:"-" toml:"-"`
-
-	origin string
-	// eval    bool
-	updated bool
-	env     runtime.Environment
+	ShellIntegration        bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
+	MigrateGlyphs           bool                   `json:"-" toml:"-"`
+	PatchPwshBleed          bool                   `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
+	EnableCursorPositioning bool                   `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty"`
+	updated                 bool
+	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty"`
 }
 
 func (cfg *Config) MakeColors() color.String {
@@ -70,7 +65,6 @@ func (cfg *Config) getPalette() color.Palette {
 
 	tmpl := &template.Text{
 		Template: cfg.Palettes.Template,
-		Env:      cfg.env,
 	}
 
 	key, err := tmpl.Render()
@@ -110,7 +104,12 @@ func (cfg *Config) Features() shell.Features {
 		autoUpgrade = true
 	}
 
-	if !autoUpgrade && !cfg.DisableNotice {
+	upgradeNotice := cfg.UpgradeNotice
+	if _, OK := cfg.env.Cache().Get(UPGRADENOTICE); OK {
+		upgradeNotice = true
+	}
+
+	if upgradeNotice && !autoUpgrade {
 		feats = append(feats, shell.Notice)
 	}
 

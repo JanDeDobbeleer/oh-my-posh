@@ -85,6 +85,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 		testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
 		env.On("HTTPRequest", testURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
 		env.On("Error", testify_.Anything)
+		env.On("Getenv", "POSH_OWM_LOCATION").Return("")
 
 		o := &Owm{
 			props: props,

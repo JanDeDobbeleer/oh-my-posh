@@ -77,6 +77,11 @@ func (n *Project) Enabled() bool {
 			Fetcher: n.getPythonPackage,
 		},
 		{
+			Name:    "mojo",
+			Files:   []string{"mojoproject.toml"},
+			Fetcher: n.getPythonPackage,
+		},
+		{
 			Name:    "php",
 			Files:   []string{"composer.json"},
 			Fetcher: n.getNodePackage,

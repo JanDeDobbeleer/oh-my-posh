@@ -139,6 +139,22 @@ func TestPackage(t *testing.T) {
 			PackageContents: "[project]\nname=\"test\"\nversion=\"3.2.1\"\n",
 		},
 		{
+			Case:            "1.0.0 mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nname=\"test\"\nversion=\"1.0.0\"\n",
+		},
+		{
+			Case:            "3.2.1 mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 3.2.1 test",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nname=\"test\"\nversion=\"3.2.1\"\n",
+		},
+		{
 			Case:            "No version present node.js",
 			ExpectedEnabled: true,
 			ExpectedString:  "test",
@@ -176,6 +192,14 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "test",
 			Name:            "python",
 			File:            "pyproject.toml",
+			PackageContents: "[project]\nname=\"test\"\n",
+		},
+		{
+			Case:            "No version present mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "test",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
 			PackageContents: "[project]\nname=\"test\"\n",
 		},
 		{
@@ -219,6 +243,14 @@ func TestPackage(t *testing.T) {
 			PackageContents: "[project]\nversion=\"1.0.0\"\n",
 		},
 		{
+			Case:            "No name present mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nversion=\"1.0.0\"\n",
+		},
+		{
 			Case:            "Empty project package node.js",
 			ExpectedEnabled: true,
 			Name:            "node",
@@ -244,6 +276,13 @@ func TestPackage(t *testing.T) {
 			ExpectedEnabled: true,
 			Name:            "python",
 			File:            "pyproject.toml",
+			PackageContents: "",
+		},
+		{
+			Case:            "Empty project package mojo",
+			ExpectedEnabled: true,
+			Name:            "mojo",
+			File:            "mojoproject.toml",
 			PackageContents: "",
 		},
 		{

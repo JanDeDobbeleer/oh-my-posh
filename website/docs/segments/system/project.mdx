@@ -13,6 +13,7 @@ Supports:
 - Node.js project (`package.json`)
 - Cargo project (`Cargo.toml`)
 - Python project (`pyproject.toml`, supports metadata defined according to [PEP 621][pep621-standard] or [Poetry][poetry-standard])
+- Mojo project (`mojoproject.toml`)
 - PHP project (`composer.json`)
 - Dart project (`pubspec.yaml`)
 - Any nuspec based project (`*.nuspec`, first file match info is displayed)
@@ -38,7 +39,7 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name             | Type      | Default | Description             |
+| Name             |   Type    | Default | Description             |
 | ---------------- | :-------: | :-----: | ----------------------- |
 | `always_enabled` | `boolean` | `false` | always show the segment |
 
@@ -54,13 +55,13 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name       | Type     | Description                                                                                                                                                        |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`python`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
-| `.Version` | `string` | The version of your project                                                                                                                                        |
-| `.Target`  | `string` | The target framework/language version of your project                                                                                                               |
-| `.Name`    | `string` | The name of your project                                                                                                                                           |
-| `.Error`   | `string` | The error context when we can't fetch the project info                                                                                                             |
+| Name       | Type     | Description                                                                                                                                                                                      |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`python`</li><li>`mojo`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
+| `.Version` | `string` | The version of your project                                                                                                                                                                      |
+| `.Target`  | `string` | The target framework/language version of your project                                                                                                                                            |
+| `.Name`    | `string` | The name of your project                                                                                                                                                                         |
+| `.Error`   | `string` | The error context when we can't fetch the project info                                                                                                                                           |
 
 [templates]: /docs/configuration/templates
 [pep621-standard]: https://peps.python.org/pep-0621/

@@ -16,12 +16,10 @@ func TestSvnEnabledToolNotFound(t *testing.T) {
 	env.On("HasCommand", "svn").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	s := &Svn{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	s := &Svn{}
+	s.Init(properties.Map{}, env)
+
 	assert.False(t, s.Enabled())
 }
 
@@ -41,12 +39,10 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "relative-url"}).Return("", nil)
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".svn", false).Return(fileInfo, nil)
-	s := &Svn{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	s := &Svn{}
+	s.Init(properties.Map{}, env)
+
 	assert.True(t, s.Enabled())
 	assert.Equal(t, fileInfo.Path, s.workingDir)
 	assert.Equal(t, fileInfo.Path, s.realDir)
@@ -242,15 +238,17 @@ R       Moved.File`,
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "relative-url"}).Return(tc.BranchOutput, nil)
 		env.On("RunCommand", "svn", []string{"status", ""}).Return(tc.StatusOutput, nil)
 
+		props := properties.Map{
+			FetchStatus: true,
+		}
+
 		s := &Svn{
 			scm: scm{
-				env: env,
-				props: properties.Map{
-					FetchStatus: true,
-				},
 				command: SVNCOMMAND,
 			},
 		}
+		s.Init(props, env)
+
 		s.setSvnStatus()
 		if tc.ExpectedWorking == nil {
 			tc.ExpectedWorking = &SvnStatus{}
@@ -293,12 +291,13 @@ func TestRepo(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "repos-root-url"}).Return(tc.Repo, nil)
+
 		s := &Svn{
 			scm: scm{
-				env:     env,
 				command: SVNCOMMAND,
 			},
 		}
+		s.Init(properties.Map{}, env)
 
 		assert.Equal(t, tc.Expected, s.Repo(), tc.Case)
 	}

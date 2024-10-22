@@ -60,8 +60,8 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 }
 
 type language struct {
-	env                runtime.Environment
-	props              properties.Properties
+	base
+
 	projectRoot        *runtime.FileInfo
 	loadContext        loadContext
 	inContext          inContext

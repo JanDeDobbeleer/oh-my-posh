@@ -8,15 +8,17 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Unity struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	UnityVersion  string
 	CSharpVersion string
+}
+
+func (u *Unity) Template() string {
+	return " \ue721 {{ .UnityVersion }}{{ if .CSharpVersion }} {{ .CSharpVersion }}{{ end }} "
 }
 
 func (u *Unity) Enabled() bool {
@@ -135,13 +137,4 @@ func (u *Unity) GetCSharpVersionFromWeb(shortUnityVersion string) (version strin
 	}
 
 	return "", nil
-}
-
-func (u *Unity) Template() string {
-	return " \ue721 {{ .UnityVersion }}{{ if .CSharpVersion }} {{ .CSharpVersion }}{{ end }} "
-}
-
-func (u *Unity) Init(props properties.Properties, env runtime.Environment) {
-	u.props = props
-	u.env = env
 }

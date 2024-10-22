@@ -2,9 +2,6 @@ package segments
 
 import (
 	"encoding/json"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Cds struct {
@@ -16,25 +13,20 @@ func (c *Cds) Template() string {
 	return languageTemplate
 }
 
-func (c *Cds) Init(props properties.Properties, env runtime.Environment) {
-	c.language = language{
-		env:        env,
-		props:      props,
-		extensions: []string{".cdsrc.json", ".cdsrc-private.json", "*.cds"},
-		commands: []*cmd{
-			{
-				executable: "cds",
-				args:       []string{"--version"},
-				regex:      `@sap/cds: (?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			},
-		},
-		loadContext: c.loadContext,
-		inContext:   c.inContext,
-		displayMode: props.GetString(DisplayMode, DisplayModeContext),
-	}
-}
-
 func (c *Cds) Enabled() bool {
+	c.extensions = []string{".cdsrc.json", ".cdsrc-private.json", "*.cds"}
+	c.commands = []*cmd{
+		{
+			executable: "cds",
+			args:       []string{"--version"},
+			regex:      `@sap/cds: (?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+	}
+	//TODO: is this necessary?
+	c.language.loadContext = c.loadContext
+	c.language.inContext = c.inContext
+	c.displayMode = c.props.GetString(DisplayMode, DisplayModeContext)
+
 	return c.language.Enabled()
 }
 

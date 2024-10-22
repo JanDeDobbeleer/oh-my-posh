@@ -14,20 +14,20 @@ import (
 func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(1337)
-	executionTime := &Executiontime{
-		env:   env,
-		props: properties.Map{},
-	}
+
+	executionTime := &Executiontime{}
+	executionTime.Init(properties.Map{}, env)
+
 	assert.True(t, executionTime.Enabled())
 }
 
 func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(1)
-	executionTime := &Executiontime{
-		env:   env,
-		props: properties.Map{},
-	}
+
+	executionTime := &Executiontime{}
+	executionTime.Init(properties.Map{}, env)
+
 	assert.False(t, executionTime.Enabled())
 }
 
@@ -37,10 +37,10 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 	props := properties.Map{
 		ThresholdProperty: float64(10),
 	}
-	executionTime := &Executiontime{
-		env:   env,
-		props: props,
-	}
+
+	executionTime := &Executiontime{}
+	executionTime.Init(props, env)
+
 	assert.True(t, executionTime.Enabled())
 }
 
@@ -50,10 +50,10 @@ func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 	props := properties.Map{
 		ThresholdProperty: float64(100),
 	}
-	executionTime := &Executiontime{
-		env:   env,
-		props: props,
-	}
+
+	executionTime := &Executiontime{}
+	executionTime.Init(props, env)
+
 	assert.False(t, executionTime.Enabled())
 }
 
@@ -62,10 +62,10 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 	expected := "1.337s"
 	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(input)
-	executionTime := &Executiontime{
-		env:   env,
-		props: properties.Map{},
-	}
+
+	executionTime := &Executiontime{}
+	executionTime.Init(properties.Map{}, env)
+
 	executionTime.Enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)
 }
@@ -75,10 +75,10 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 	expected := "3h 42m 51.337s"
 	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(input)
-	executionTime := &Executiontime{
-		env:   env,
-		props: properties.Map{},
-	}
+
+	executionTime := &Executiontime{}
+	executionTime.Init(properties.Map{}, env)
+
 	executionTime.Enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)
 }

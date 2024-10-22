@@ -37,8 +37,10 @@ func TestArgocdGetConfigFromOpts(t *testing.T) {
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
-			env:   env,
-			props: properties.Map{},
+			base: base{
+				env:   env,
+				props: properties.Map{},
+			},
 		}
 		config := argocd.getConfigFromOpts()
 		assert.Equal(t, tc.Expected, config, tc.Case)
@@ -63,8 +65,10 @@ func TestArgocdGetConfigPath(t *testing.T) {
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
-			env:   env,
-			props: properties.Map{},
+			base: base{
+				env:   env,
+				props: properties.Map{},
+			},
 		}
 		assert.Equal(t, tc.Expected, argocd.getConfigPath())
 	}
@@ -159,8 +163,10 @@ users:
 		env.On("Error", testify_.Anything).Return()
 
 		argocd := &Argocd{
-			env:   env,
-			props: properties.Map{},
+			base: base{
+				env:   env,
+				props: properties.Map{},
+			},
 		}
 		if len(tc.ExpectedError) > 0 {
 			_, err := argocd.parseConfig(configFile)
@@ -254,10 +260,8 @@ servers:
 		env.On("Error", testify_.Anything).Return()
 		env.On("Flags").Return(&runtime.Flags{})
 
-		argocd := &Argocd{
-			env:   env,
-			props: properties.Map{},
-		}
+		argocd := &Argocd{}
+		argocd.Init(properties.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, argocd.Enabled(), tc.Case)
 

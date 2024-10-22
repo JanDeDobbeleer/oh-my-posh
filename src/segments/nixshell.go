@@ -3,9 +3,6 @@ package segments
 import (
 	"path/filepath"
 	"strings"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -13,8 +10,7 @@ const (
 )
 
 type NixShell struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Type string
 }
@@ -51,11 +47,6 @@ func (n *NixShell) InNewNixShell() bool {
 	}
 
 	return false
-}
-
-func (n *NixShell) Init(props properties.Properties, env runtime.Environment) {
-	n.props = props
-	n.env = env
 }
 
 func (n *NixShell) Enabled() bool {

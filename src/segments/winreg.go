@@ -6,8 +6,7 @@ import (
 )
 
 type WindowsRegistry struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Value string
 }
@@ -21,11 +20,6 @@ const (
 
 func (wr *WindowsRegistry) Template() string {
 	return " {{ .Value }} "
-}
-
-func (wr *WindowsRegistry) Init(props properties.Properties, env runtime.Environment) {
-	wr.props = props
-	wr.env = env
 }
 
 func (wr *WindowsRegistry) Enabled() bool {

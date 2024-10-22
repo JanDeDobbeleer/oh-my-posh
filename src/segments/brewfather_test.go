@@ -156,20 +156,18 @@ func TestBrewfatherSegment(t *testing.T) {
 		env.On("HTTPRequest", BFBatchReadingsURL).Return([]byte(tc.BatchReadingsJSONResponse), tc.Error)
 		env.On("Flags").Return(&runtime.Flags{})
 
-		ns := &Brewfather{
-			props: props,
-			env:   env,
-		}
+		brew := &Brewfather{}
+		brew.Init(props, env)
 
-		enabled := ns.Enabled()
+		enabled := brew.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
 		if tc.Template == "" {
-			tc.Template = ns.Template()
+			tc.Template = brew.Template()
 		}
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ns), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, brew), tc.Case)
 	}
 }

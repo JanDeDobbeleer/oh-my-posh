@@ -1,10 +1,5 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
 type Buf struct {
 	language
 }
@@ -13,22 +8,16 @@ func (b *Buf) Template() string {
 	return languageTemplate
 }
 
-func (b *Buf) Init(props properties.Properties, env runtime.Environment) {
-	b.language = language{
-		env:        env,
-		props:      props,
-		extensions: []string{"buf.yaml", "buf.gen.yaml", "buf.work.yaml"},
-		commands: []*cmd{
-			{
-				executable: "buf",
-				args:       []string{"--version"},
-				regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			},
-		},
-		versionURLTemplate: "https://github.com/bufbuild/buf/releases/tag/v{{.Full}}",
-	}
-}
-
 func (b *Buf) Enabled() bool {
+	b.extensions = []string{"buf.yaml", "buf.gen.yaml", "buf.work.yaml"}
+	b.commands = []*cmd{
+		{
+			executable: "buf",
+			args:       []string{"--version"},
+			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+	}
+	b.versionURLTemplate = "https://github.com/bufbuild/buf/releases/tag/v{{.Full}}"
+
 	return b.language.Enabled()
 }

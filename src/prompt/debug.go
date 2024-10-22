@@ -21,14 +21,16 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	// console title timing
 	titleStartTime := time.Now()
 	e.Env.Debug("segment: Title")
-	title := e.getTitleTemplateText()
 	consoleTitle := &config.Segment{
 		Alias:      "ConsoleTitle",
 		NameLength: 12,
 		Enabled:    len(e.Config.ConsoleTitleTemplate) > 0,
-		Text:       title,
 		Duration:   time.Since(titleStartTime),
+		Type:       config.TEXT,
 	}
+	_ = consoleTitle.MapSegmentWithWriter(e.Env)
+	consoleTitle.SetText(e.getTitleTemplateText())
+
 	largestSegmentNameLength := consoleTitle.NameLength
 
 	// render prompt

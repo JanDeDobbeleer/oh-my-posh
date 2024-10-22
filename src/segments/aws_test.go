@@ -66,10 +66,8 @@ func TestAWSSegment(t *testing.T) {
 		}
 		env.On("Flags").Return(&runtime.Flags{})
 
-		aws := &Aws{
-			env:   env,
-			props: props,
-		}
+		aws := &Aws{}
+		aws.Init(props, env)
 
 		if tc.Template == "" {
 			tc.Template = aws.Template()

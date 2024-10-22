@@ -11,6 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"golang.org/x/exp/slices"
 
+	yaml "github.com/goccy/go-yaml"
 	toml "github.com/pelletier/go-toml/v2"
 )
 
@@ -79,6 +80,11 @@ func (n *Project) Enabled() bool {
 			Name:    "php",
 			Files:   []string{"composer.json"},
 			Fetcher: n.getNodePackage,
+		},
+		{
+			Name:    "dart",
+			Files:   []string{"pubspec.yaml"},
+			Fetcher: n.getDartPackage,
 		},
 		{
 			Name:    "nuspec",
@@ -178,6 +184,18 @@ func (n *Project) getPythonPackage(item ProjectItem) *ProjectData {
 		Version: data.Project.Version,
 		Name:    data.Project.Name,
 	}
+}
+
+func (n *Project) getDartPackage(item ProjectItem) *ProjectData {
+	content := n.env.FileContent(item.Files[0])
+	var data ProjectData
+	err := yaml.Unmarshal([]byte(content), &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &data
 }
 
 func (n *Project) getNuSpecPackage(_ ProjectItem) *ProjectData {

@@ -14,6 +14,7 @@ Supports:
 - Cargo project (`Cargo.toml`)
 - Python project (`pyproject.toml`, supports metadata defined according to [PEP 621][pep621-standard] or [Poetry][poetry-standard])
 - PHP project (`composer.json`)
+- Dart project (`pubspec.yaml`)
 - Any nuspec based project (`*.nuspec`, first file match info is displayed)
 - .NET project (`*.sln`, `*.slnf`, `*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
 - Julia project (`JuliaProject.toml`, `Project.toml`)
@@ -55,7 +56,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name       | Type     | Description                                                                                                                                                        |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`python`</li><li>`php`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
+| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`python`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
 | `.Version` | `string` | The version of your project                                                                                                                                        |
 | `.Target`  | `string` | The target framwork/language version of your project                                                                                                               |
 | `.Name`    | `string` | The name of your project                                                                                                                                           |

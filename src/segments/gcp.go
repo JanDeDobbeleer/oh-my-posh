@@ -4,7 +4,6 @@ import (
 	"errors"
 	"path"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"gopkg.in/ini.v1"
@@ -15,8 +14,7 @@ const (
 )
 
 type Gcp struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Account string
 	Project string
@@ -25,11 +23,6 @@ type Gcp struct {
 
 func (g *Gcp) Template() string {
 	return " {{ .Project }} "
-}
-
-func (g *Gcp) Init(props properties.Properties, env runtime.Environment) {
-	g.props = props
-	g.env = env
 }
 
 func (g *Gcp) Enabled() bool {

@@ -6,26 +6,20 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
 )
 
 type Terraform struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
+
 	TerraformBlock
 	WorkspaceName string
 }
 
 func (tf *Terraform) Template() string {
 	return " {{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }} "
-}
-
-func (tf *Terraform) Init(props properties.Properties, env runtime.Environment) {
-	tf.props = props
-	tf.env = env
 }
 
 type TerraFormConfig struct {

@@ -4,7 +4,6 @@ import (
 	"net"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -26,6 +25,8 @@ func (i *ipAPI) Get() (*ipData, error) {
 }
 
 type IPify struct {
+	base
+
 	api IPAPI
 	IP  string
 }
@@ -41,6 +42,8 @@ func (i *IPify) Template() string {
 }
 
 func (i *IPify) Enabled() bool {
+	i.initAPI()
+
 	ip, err := i.getResult()
 	if err != nil {
 		return false
@@ -55,16 +58,22 @@ func (i *IPify) getResult() (string, error) {
 	if dnsErr, OK := err.(*net.DNSError); OK && dnsErr.IsNotFound {
 		return OFFLINE, nil
 	}
+
 	if err != nil {
 		return "", err
 	}
+
 	return data.IP, err
 }
 
-func (i *IPify) Init(props properties.Properties, env runtime.Environment) {
+func (i *IPify) initAPI() {
+	if i.api != nil {
+		return
+	}
+
 	request := &http.Request{
-		Env:         env,
-		HTTPTimeout: props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		Env:         i.env,
+		HTTPTimeout: i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
 	}
 
 	i.api = &ipAPI{

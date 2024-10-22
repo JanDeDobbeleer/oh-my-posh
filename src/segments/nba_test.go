@@ -94,10 +94,8 @@ func TestNBASegment(t *testing.T) {
 			env.On("HTTPRequest", scheduleURLEndpoint).Return([]byte(tc.JSONResponse), tc.Error)
 		}
 
-		nba := &Nba{
-			props: props,
-			env:   env,
-		}
+		nba := &Nba{}
+		nba.Init(props, env)
 
 		enabled := nba.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

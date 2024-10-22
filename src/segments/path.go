@@ -32,8 +32,8 @@ func (f Folders) List() []string {
 }
 
 type Path struct {
-	props           properties.Properties
-	env             runtime.Environment
+	base
+
 	mappedLocations map[string]string
 	root            string
 	relative        string
@@ -191,11 +191,6 @@ func (pt *Path) Parent() string {
 		sb.WriteString(folderSeparator)
 	}
 	return sb.String()
-}
-
-func (pt *Path) Init(props properties.Properties, env runtime.Environment) {
-	pt.props = props
-	pt.env = env
 }
 
 func (pt *Path) setStyle() {

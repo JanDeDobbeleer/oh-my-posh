@@ -2,13 +2,11 @@ package segments
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 )
 
 type Battery struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	*battery.Info
 	Error string
@@ -82,9 +80,4 @@ func (b *Battery) enabledWhileError(err error) bool {
 	b.Percentage = 100
 	b.State = battery.Full
 	return true
-}
-
-func (b *Battery) Init(props properties.Properties, env runtime.Environment) {
-	b.props = props
-	b.env = env
 }

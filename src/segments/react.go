@@ -1,10 +1,5 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
 type React struct {
 	language
 }
@@ -13,22 +8,16 @@ func (r *React) Template() string {
 	return languageTemplate
 }
 
-func (r *React) Init(props properties.Properties, env runtime.Environment) {
-	r.language = language{
-		env:        env,
-		props:      props,
-		extensions: []string{"package.json"},
-		commands: []*cmd{
-			{
-				regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-				getVersion: r.getVersion,
-			},
-		},
-		versionURLTemplate: "https://github.com/facebook/react/releases/tag/v{{.Full}}",
-	}
-}
-
 func (r *React) Enabled() bool {
+	r.extensions = []string{"package.json"}
+	r.commands = []*cmd{
+		{
+			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			getVersion: r.getVersion,
+		},
+	}
+	r.versionURLTemplate = "https://github.com/facebook/react/releases/tag/v{{.Full}}"
+
 	return r.language.Enabled()
 }
 

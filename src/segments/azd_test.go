@@ -62,10 +62,8 @@ func TestAzdSegment(t *testing.T) {
 			env.On("HasParentFilePath", ".azure", false).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 		}
 
-		azd := Azd{
-			env:   env,
-			props: properties.Map{},
-		}
+		azd := Azd{}
+		azd.Init(properties.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, azd.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, azd), tc.Case)

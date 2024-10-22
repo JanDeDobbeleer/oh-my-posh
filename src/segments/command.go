@@ -4,12 +4,10 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Cmd struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Output string
 }
@@ -84,9 +82,4 @@ func (c *Cmd) runCommand(shell, command string) bool {
 func (c *Cmd) runScript(shell, script string) bool {
 	c.Output = c.env.RunShellCommand(shell, script)
 	return len(c.Output) != 0
-}
-
-func (c *Cmd) Init(props properties.Properties, env runtime.Environment) {
-	c.props = props
-	c.env = env
 }

@@ -33,10 +33,8 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(tc.Artist, nil)
 		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(tc.Track, nil)
 
-		s := &Spotify{
-			env:   env,
-			props: properties.Map{},
-		}
+		s := &Spotify{}
+		s.Init(properties.Map{}, env)
 
 		assert.Equal(t, tc.Running == "true", s.Enabled())
 		assert.Equal(t, tc.Expected, renderTemplate(env, s.Template(), s))

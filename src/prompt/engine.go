@@ -267,7 +267,7 @@ func (e *Engine) renderActiveSegment() {
 
 	switch e.activeSegment.ResolveStyle() {
 	case config.Plain, config.Powerline:
-		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
+		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Diamond:
 		background := color.Transparent
 
@@ -276,10 +276,10 @@ func (e *Engine) renderActiveSegment() {
 		}
 
 		terminal.Write(background, color.Background, e.activeSegment.LeadingDiamond)
-		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
+		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Accordion:
 		if e.activeSegment.Enabled {
-			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
+			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 		}
 	}
 

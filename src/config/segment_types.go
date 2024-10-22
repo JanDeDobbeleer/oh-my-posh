@@ -15,6 +15,8 @@ type SegmentType string
 type SegmentWriter interface {
 	Enabled() bool
 	Template() string
+	SetText(text string)
+	Text() string
 	Init(props properties.Properties, env runtime.Environment)
 }
 
@@ -320,15 +322,16 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 		segment.Properties = make(properties.Map)
 	}
 
-	if f, ok := Segments[segment.Type]; ok {
-		writer := f()
-		wrapper := &properties.Wrapper{
-			Properties: segment.Properties,
-		}
-		writer.Init(wrapper, env)
-		segment.writer = writer
-		return nil
+	f, ok := Segments[segment.Type]
+	if !ok {
+		return errors.New("unable to map writer")
 	}
 
-	return errors.New("unable to map writer")
+	writer := f()
+	wrapper := &properties.Wrapper{
+		Properties: segment.Properties,
+	}
+	writer.Init(wrapper, env)
+	segment.writer = writer
+	return nil
 }

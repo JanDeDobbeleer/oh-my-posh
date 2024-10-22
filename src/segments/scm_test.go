@@ -128,13 +128,15 @@ func TestHasCommand(t *testing.T) {
 		env.On("InWSLSharedDrive").Return(tc.IsWslSharedPath)
 		env.On("HasCommand", "git").Return(true)
 		env.On("HasCommand", "git.exe").Return(!tc.NativeFallback)
+
+		props := properties.Map{
+			NativeFallback: tc.NativeFallback,
+		}
+
 		s := &scm{
-			env: env,
-			props: properties.Map{
-				NativeFallback: tc.NativeFallback,
-			},
 			command: tc.Command,
 		}
+		s.Init(props, env)
 
 		_ = s.hasCommand(GITCOMMAND)
 		assert.Equal(t, tc.ExpectedCommand, s.command, tc.Case)
@@ -212,16 +214,15 @@ func TestFormatBranch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		g := &Git{
-			scm: scm{
-				props: properties.Map{
-					MappedBranches:  tc.MappedBranches,
-					BranchMaxLength: tc.BranchMaxLength,
-					TruncateSymbol:  tc.TruncateSymbol,
-					FullBranchPath:  !tc.NoFullBranchPath,
-				},
-			},
+		props := properties.Map{
+			MappedBranches:  tc.MappedBranches,
+			BranchMaxLength: tc.BranchMaxLength,
+			TruncateSymbol:  tc.TruncateSymbol,
+			FullBranchPath:  !tc.NoFullBranchPath,
 		}
+
+		g := &Git{}
+		g.Init(props, nil)
 
 		got := g.formatBranch(tc.Input)
 		assert.Equal(t, tc.Expected, got, tc.Case)

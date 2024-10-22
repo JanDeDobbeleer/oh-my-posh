@@ -65,12 +65,12 @@ func TestWTTrackedTime(t *testing.T) {
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
-		w := &Wakatime{
-			props: properties.Map{
-				URL: FAKEAPIURL,
-			},
-			env: env,
+		props := properties.Map{
+			URL: FAKEAPIURL,
 		}
+
+		w := &Wakatime{}
+		w.Init(props, env)
 
 		assert.ErrorIs(t, tc.Error, w.setAPIData(), tc.Case+" - Error")
 		assert.Equal(t, tc.Expected, renderTemplate(env, w.Template(), w), tc.Case+" - String")

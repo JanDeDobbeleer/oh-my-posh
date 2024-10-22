@@ -151,9 +151,9 @@ func TestWithingsSegment(t *testing.T) {
 		api.On("GetSleep").Return(tc.WithingsData, tc.SleepError)
 
 		withings := &Withings{
-			api:   api,
-			props: &properties.Map{},
+			api: api,
 		}
+		withings.Init(properties.Map{}, &mock.Environment{})
 
 		enabled := withings.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

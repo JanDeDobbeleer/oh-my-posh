@@ -8,12 +8,11 @@ import (
 	"net/url"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Owm struct {
-	props       properties.Properties
-	env         runtime.Environment
+	base
+
 	Weather     string
 	URL         string
 	units       string
@@ -166,9 +165,4 @@ func (d *Owm) setStatus() error {
 		d.UnitIcon = "°K" // <b>K</b>"
 	}
 	return nil
-}
-
-func (d *Owm) Init(props properties.Properties, env runtime.Environment) {
-	d.props = props
-	d.env = env
 }

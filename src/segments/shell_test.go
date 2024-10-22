@@ -15,10 +15,10 @@ func TestWriteCurrentShell(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("Shell").Return(expected, nil)
 	env.On("Flags").Return(&runtime.Flags{ShellVersion: "1.2.3"})
-	s := &Shell{
-		env:   env,
-		props: properties.Map{},
-	}
+
+	s := &Shell{}
+	s.Init(properties.Map{}, env)
+
 	_ = s.Enabled()
 	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
 }
@@ -36,12 +36,14 @@ func TestUseMappedShellNames(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("Shell").Return(tc.Expected, nil)
 		env.On("Flags").Return(&runtime.Flags{ShellVersion: "1.2.3"})
-		s := &Shell{
-			env: env,
-			props: properties.Map{
-				MappedShellNames: map[string]string{"pwsh": "PS"},
-			},
+
+		props := properties.Map{
+			MappedShellNames: map[string]string{"pwsh": "PS"},
 		}
+
+		s := &Shell{}
+		s.Init(props, env)
+
 		_ = s.Enabled()
 		got := renderTemplate(env, s.Template(), s)
 		assert.Equal(t, tc.Expected, got)

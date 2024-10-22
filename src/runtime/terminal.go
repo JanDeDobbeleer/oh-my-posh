@@ -800,39 +800,48 @@ func (term *Terminal) SystemInfo() (*SystemInfo, error) {
 func (term *Terminal) CachePath() string {
 	defer term.Trace(time.Now())
 
-	returnOrBuildCachePath := func(path string) string {
+	returnOrBuildCachePath := func(path string) (string, bool) {
 		// validate root path
 		if _, err := os.Stat(path); err != nil {
-			return ""
+			return "", false
 		}
+
 		// validate oh-my-posh folder, if non existent, create it
 		cachePath := filepath.Join(path, "oh-my-posh")
 		if _, err := os.Stat(cachePath); err == nil {
-			return cachePath
+			return cachePath, true
 		}
+
 		if err := os.Mkdir(cachePath, 0o755); err != nil {
-			return ""
+			return "", false
 		}
-		return cachePath
+
+		return cachePath, true
 	}
 
 	// WINDOWS cache folder, should not exist elsewhere
-	if cachePath := returnOrBuildCachePath(term.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
+	if cachePath, OK := returnOrBuildCachePath(term.Getenv("LOCALAPPDATA")); OK {
 		return cachePath
 	}
 
 	// allow the user to set the cache path using OMP_CACHE_DIR
-	if cachePath := returnOrBuildCachePath(term.Getenv("OMP_CACHE_DIR")); len(cachePath) != 0 {
+	if cachePath, OK := returnOrBuildCachePath(term.Getenv("OMP_CACHE_DIR")); OK {
 		return cachePath
 	}
 
 	// get XDG_CACHE_HOME if present
-	if cachePath := returnOrBuildCachePath(term.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
+	if cachePath, OK := returnOrBuildCachePath(term.Getenv("XDG_CACHE_HOME")); OK {
 		return cachePath
 	}
 
+	// try to create the cache folder in the user's home directory if non-existent
+	dotCache := filepath.Join(term.Home(), ".cache")
+	if _, err := os.Stat(dotCache); err != nil {
+		_ = os.Mkdir(dotCache, 0o755)
+	}
+
 	// HOME cache folder
-	if cachePath := returnOrBuildCachePath(term.Home() + "/.cache"); len(cachePath) != 0 {
+	if cachePath, OK := returnOrBuildCachePath(dotCache); OK {
 		return cachePath
 	}
 

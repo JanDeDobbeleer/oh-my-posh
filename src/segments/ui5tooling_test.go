@@ -5,9 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -80,7 +83,7 @@ func TestUI5Tooling(t *testing.T) {
 		ui5tooling := &UI5Tooling{}
 		ui5tooling.Init(props, env)
 
-		err := mockFilePresence(&tc, ui5tooling, env)
+		err := mockFilePresence(&tc, env)
 
 		if err != nil {
 			t.Fail()
@@ -90,14 +93,19 @@ func TestUI5Tooling(t *testing.T) {
 			tc.Template = ui5tooling.Template()
 		}
 
+		env.On("Shell").Return("foo")
+		env.On("TemplateCache").Return(&cache.Template{})
+		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
+		template.Init(env)
+
 		failMsg := fmt.Sprintf("Failed in case: %s", tc.Case)
 		assert.True(t, ui5tooling.Enabled(), failMsg)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ui5tooling), failMsg)
 	}
 }
 
-func mockFilePresence(tc *testCase, ui5tooling *UI5Tooling, env *mock.Environment) error {
-	for _, f := range ui5tooling.language.extensions {
+func mockFilePresence(tc *testCase, env *mock.Environment) error {
+	for _, f := range []string{UI5ToolingYamlPattern} {
 		match, err := filepath.Match(f, tc.UI5YamlFilename)
 
 		if err != nil {

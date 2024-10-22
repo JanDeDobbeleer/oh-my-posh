@@ -6,8 +6,7 @@ import (
 )
 
 type Os struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Icon string
 }
@@ -90,9 +89,4 @@ func (oi *Os) getDistroIcon(distro string) string {
 	}
 
 	return oi.props.GetString(Linux, "\uF17C")
-}
-
-func (oi *Os) Init(props properties.Properties, env runtime.Environment) {
-	oi.props = props
-	oi.env = env
 }

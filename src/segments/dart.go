@@ -1,10 +1,5 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
 var (
 	dartExtensions = []string{"*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock"}
 	dartFolders    = []string{".dart_tool"}
@@ -18,23 +13,17 @@ func (d *Dart) Template() string {
 	return languageTemplate
 }
 
-func (d *Dart) Init(props properties.Properties, env runtime.Environment) {
-	d.language = language{
-		env:        env,
-		props:      props,
-		extensions: dartExtensions,
-		folders:    dartFolders,
-		commands: []*cmd{
-			{
-				executable: "dart",
-				args:       []string{"--version"},
-				regex:      `Dart SDK version: (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
-			},
-		},
-		versionURLTemplate: "https://dart.dev/guides/language/evolution#dart-{{ .Major }}{{ .Minor }}",
-	}
-}
-
 func (d *Dart) Enabled() bool {
+	d.extensions = dartExtensions
+	d.folders = dartFolders
+	d.commands = []*cmd{
+		{
+			executable: "dart",
+			args:       []string{"--version"},
+			regex:      `Dart SDK version: (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		},
+	}
+	d.versionURLTemplate = "https://dart.dev/guides/language/evolution#dart-{{ .Major }}{{ .Minor }}"
+
 	return d.language.Enabled()
 }

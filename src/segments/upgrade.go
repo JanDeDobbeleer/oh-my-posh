@@ -2,8 +2,6 @@ package segments
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
 
@@ -13,8 +11,7 @@ type upgradeData struct {
 }
 
 type Upgrade struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	// deprecated
 	Version string
@@ -24,11 +21,6 @@ type Upgrade struct {
 
 func (u *Upgrade) Template() string {
 	return " \uf019 "
-}
-
-func (u *Upgrade) Init(props properties.Properties, env runtime.Environment) {
-	u.props = props
-	u.env = env
 }
 
 func (u *Upgrade) Enabled() bool {

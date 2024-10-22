@@ -16,10 +16,10 @@ func TestExecuteCommand(t *testing.T) {
 	props := properties.Map{
 		Command: "echo hello",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.True(t, enabled)
 	assert.Equal(t, "hello", renderTemplate(env, c.Template(), c))
@@ -34,10 +34,10 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 	props := properties.Map{
 		Command: "exit 1 || echo hello",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.True(t, enabled)
 	assert.Equal(t, "hello", renderTemplate(env, c.Template(), c))
@@ -51,10 +51,10 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 	props := properties.Map{
 		Command: "echo hello || echo world",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.True(t, enabled)
 	assert.Equal(t, "hello", renderTemplate(env, c.Template(), c))
@@ -68,10 +68,10 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 	props := properties.Map{
 		Command: "echo hello && echo world",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.True(t, enabled)
 	assert.Equal(t, "helloworld", renderTemplate(env, c.Template(), c))
@@ -84,10 +84,10 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 	props := properties.Map{
 		Command: "",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.False(t, enabled)
 }
@@ -97,10 +97,10 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "").Return("")
 	var props properties.Map
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.False(t, enabled)
 }
@@ -112,10 +112,10 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 	props := properties.Map{
 		Command: "echo && echo",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.False(t, enabled)
 }
@@ -128,10 +128,10 @@ func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 	props := properties.Map{
 		Command: "echo|| echo",
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.False(t, enabled)
 }
@@ -144,10 +144,10 @@ func TestExecuteNonInterpretedCommand(t *testing.T) {
 		Command:   "echo hello && echo world",
 		Interpret: false,
 	}
-	c := &Cmd{
-		props: props,
-		env:   env,
-	}
+
+	c := &Cmd{}
+	c.Init(props, env)
+
 	enabled := c.Enabled()
 	assert.True(t, enabled)
 	assert.Equal(t, "hello world", renderTemplate(env, c.Template(), c))
@@ -180,10 +180,10 @@ func TestExecuteScript(t *testing.T) {
 		props := properties.Map{
 			Script: script,
 		}
-		c := &Cmd{
-			props: props,
-			env:   env,
-		}
+
+		c := &Cmd{}
+		c.Init(props, env)
+
 		enabled := c.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if tc.ExpectedEnabled {

@@ -229,10 +229,8 @@ func TestCarbonIntensitySegmentSingle(t *testing.T) {
 		env.On("Error", testify_.Anything)
 		env.On("Flags").Return(&runtime.Flags{})
 
-		d := &CarbonIntensity{
-			props: props,
-			env:   env,
-		}
+		d := &CarbonIntensity{}
+		d.Init(props, env)
 
 		enabled := d.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -38,9 +39,9 @@ func TestTextSegment(t *testing.T) {
 		env.On("Getenv", "HELLO").Return("hello")
 		env.On("Getenv", "WORLD").Return("")
 
-		txt := &Text{
-			env: env,
-		}
+		txt := &Text{}
+		txt.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, txt), tc.Case)
 	}
 }

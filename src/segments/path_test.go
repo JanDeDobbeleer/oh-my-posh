@@ -155,12 +155,13 @@ func TestParent(t *testing.T) {
 		env.On("Shell").Return(shell.GENERIC)
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("GOOS").Return(tc.GOOS)
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				FolderSeparatorIcon: tc.FolderSeparatorIcon,
-			},
+
+		props := properties.Map{
+			FolderSeparatorIcon: tc.FolderSeparatorIcon,
 		}
+
+		path := &Path{}
+		path.Init(props, env)
 
 		path.setPaths()
 
@@ -795,17 +796,17 @@ func TestAgnosterPathStyles(t *testing.T) {
 			env.On("RunCommand", "cygpath", testify_.Anything).Return("brrrr", nil)
 		}
 
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				FolderSeparatorIcon: tc.FolderSeparatorIcon,
-				properties.Style:    tc.Style,
-				MaxDepth:            tc.MaxDepth,
-				MaxWidth:            tc.MaxWidth,
-				HideRootLocation:    tc.HideRootLocation,
-				DisplayCygpath:      displayCygpath,
-			},
+		props := properties.Map{
+			FolderSeparatorIcon: tc.FolderSeparatorIcon,
+			properties.Style:    tc.Style,
+			MaxDepth:            tc.MaxDepth,
+			MaxWidth:            tc.MaxWidth,
+			HideRootLocation:    tc.HideRootLocation,
+			DisplayCygpath:      displayCygpath,
 		}
+
+		path := &Path{}
+		path.Init(props, env)
 
 		path.setPaths()
 		path.setStyle()
@@ -933,11 +934,12 @@ func TestFullAndFolderPath(t *testing.T) {
 		if tc.DisableMappedLocations {
 			props[MappedLocationsEnabled] = false
 		}
+
 		path := &Path{
-			env:        env,
-			props:      props,
 			StackCount: env.StackCount(),
 		}
+		path.Init(props, env)
+
 		path.setPaths()
 		path.setStyle()
 		got := renderTemplateNoTrimSpace(env, tc.Template, path)
@@ -992,14 +994,14 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 
 		template.Init(env)
 
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				properties.Style:       Full,
-				MappedLocationsEnabled: false,
-				MappedLocations:        tc.MappedLocations,
-			},
+		props := properties.Map{
+			properties.Style:       Full,
+			MappedLocationsEnabled: false,
+			MappedLocations:        tc.MappedLocations,
 		}
+
+		path := &Path{}
+		path.Init(props, env)
 
 		path.setPaths()
 		path.setStyle()
@@ -1026,15 +1028,15 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 
 	template.Init(env)
 
-	path := &Path{
-		env: env,
-		props: properties.Map{
-			properties.Style: FolderType,
-			MappedLocations: map[string]string{
-				abcd: "#",
-			},
+	props := properties.Map{
+		properties.Style: FolderType,
+		MappedLocations: map[string]string{
+			abcd: "#",
 		},
 	}
+
+	path := &Path{}
+	path.Init(props, env)
 
 	path.setPaths()
 	path.setStyle()
@@ -1207,17 +1209,19 @@ func TestAgnosterPath(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PWSH)
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				properties.Style:     Agnoster,
-				FolderSeparatorIcon:  " > ",
-				FolderIcon:           "f",
-				HomeIcon:             "~",
-				Cycle:                tc.Cycle,
-				CycleFolderSeparator: tc.ColorSeparator,
-			},
+
+		props := properties.Map{
+			properties.Style:     Agnoster,
+			FolderSeparatorIcon:  " > ",
+			FolderIcon:           "f",
+			HomeIcon:             "~",
+			Cycle:                tc.Cycle,
+			CycleFolderSeparator: tc.ColorSeparator,
 		}
+
+		path := &Path{}
+		path.Init(props, env)
+
 		path.setPaths()
 		path.setStyle()
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
@@ -1363,15 +1367,17 @@ func TestAgnosterLeftPath(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PWSH)
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				properties.Style:    AgnosterLeft,
-				FolderSeparatorIcon: " > ",
-				FolderIcon:          "f",
-				HomeIcon:            "~",
-			},
+
+		props := properties.Map{
+			properties.Style:    AgnosterLeft,
+			FolderSeparatorIcon: " > ",
+			FolderIcon:          "f",
+			HomeIcon:            "~",
 		}
+
+		path := &Path{}
+		path.Init(props, env)
+
 		path.setPaths()
 		path.setStyle()
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
@@ -1421,15 +1427,15 @@ func TestGetPwd(t *testing.T) {
 
 		template.Init(env)
 
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				MappedLocationsEnabled: tc.MappedLocationsEnabled,
-				MappedLocations: map[string]string{
-					abcd: "#",
-				},
+		props := properties.Map{
+			MappedLocationsEnabled: tc.MappedLocationsEnabled,
+			MappedLocations: map[string]string{
+				abcd: "#",
 			},
 		}
+
+		path := &Path{}
+		path.Init(props, env)
 
 		path.setPaths()
 		assert.Equal(t, tc.Expected, path.pwd)
@@ -1457,13 +1463,10 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Shell").Return(shell.GENERIC)
 		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
-
+		env.On("TemplateCache").Return(&cache.Template{
+			Shell: "bash",
+		})
 		template.Init(env)
-
-		path := &Path{
-			env:           env,
-			pathSeparator: "/",
-		}
 
 		props := properties.Map{}
 
@@ -1475,11 +1478,11 @@ func TestGetFolderSeparator(t *testing.T) {
 			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon
 		}
 
-		env.On("TemplateCache").Return(&cache.Template{
-			Shell: "bash",
-		})
+		path := &Path{
+			pathSeparator: "/",
+		}
+		path.Init(props, env)
 
-		path.props = props
 		got := path.getFolderSeparator()
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -1614,7 +1617,10 @@ func TestNormalizePath(t *testing.T) {
 		}
 
 		env.On("PathSeparator").Return(tc.PathSeparator)
-		pt := &Path{env: env}
+
+		pt := &Path{}
+		pt.Init(properties.Map{}, env)
+
 		got := pt.normalize(tc.Input)
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
@@ -1650,19 +1656,19 @@ func TestReplaceMappedLocations(t *testing.T) {
 
 		template.Init(env)
 
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				MappedLocationsEnabled: tc.MappedLocationsEnabled,
-				MappedLocations: map[string]string{
-					abcd:       "#",
-					"/f/g/h/*": "^",
-					"/c/l/k/*": "",
-					"~":        "@",
-					"~/j/*":    "",
-				},
+		props := properties.Map{
+			MappedLocationsEnabled: tc.MappedLocationsEnabled,
+			MappedLocations: map[string]string{
+				abcd:       "#",
+				"/f/g/h/*": "^",
+				"/c/l/k/*": "",
+				"~":        "@",
+				"~/j/*":    "",
 			},
 		}
+
+		path := &Path{}
+		path.Init(props, env)
 
 		path.setPaths()
 		assert.Equal(t, tc.Expected, path.pwd)
@@ -1725,16 +1731,17 @@ func TestSplitPath(t *testing.T) {
 		env.On("HasParentFilePath", ".git", false).Return(tc.GitDir, nil)
 		env.On("GOOS").Return(tc.GOOS)
 
+		props := properties.Map{
+			GitDirFormat: tc.GitDirFormat,
+		}
+
 		path := &Path{
-			env: env,
-			props: properties.Map{
-				GitDirFormat: tc.GitDirFormat,
-			},
 			root:          tc.Root,
 			relative:      tc.Relative,
 			pathSeparator: "/",
 			windowsPath:   tc.GOOS == runtime.WINDOWS,
 		}
+		path.Init(props, env)
 
 		got := path.splitPath()
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -1779,12 +1786,12 @@ func TestGetMaxWidth(t *testing.T) {
 
 		template.Init(env)
 
-		path := &Path{
-			env: env,
-			props: properties.Map{
-				MaxWidth: tc.MaxWidth,
-			},
+		props := properties.Map{
+			MaxWidth: tc.MaxWidth,
 		}
+
+		path := &Path{}
+		path.Init(props, env)
 
 		got := path.getMaxWidth()
 		assert.Equal(t, tc.Expected, got, tc.Case)

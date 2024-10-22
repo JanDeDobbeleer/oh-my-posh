@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,8 +16,8 @@ const (
 )
 
 type Kubectl struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
+
 	KubeContext
 	Context string
 	dirty   bool
@@ -40,11 +39,6 @@ type KubeContext struct {
 
 func (k *Kubectl) Template() string {
 	return " {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} "
-}
-
-func (k *Kubectl) Init(props properties.Properties, env runtime.Environment) {
-	k.props = props
-	k.env = env
 }
 
 func (k *Kubectl) Enabled() bool {

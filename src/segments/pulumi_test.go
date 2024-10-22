@@ -180,13 +180,13 @@ description: A Console App
 		env.On("HasFilesInDir", filepath.Clean("/home/foobar/.pulumi/workspaces"), workspaceFile).Return(len(tc.WorkSpaceFile) > 0)
 		env.On("FileContent", filepath.Clean("/home/foobar/.pulumi/workspaces/"+workspaceFile)).Return(tc.WorkSpaceFile, nil)
 
-		pulumi := &Pulumi{
-			env: env,
-			props: properties.Map{
-				FetchStack: tc.FetchStack,
-				FetchAbout: tc.FetchAbout,
-			},
+		props := properties.Map{
+			FetchStack: tc.FetchStack,
+			FetchAbout: tc.FetchAbout,
 		}
+
+		pulumi := &Pulumi{}
+		pulumi.Init(props, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, pulumi.Enabled(), tc.Case)
 

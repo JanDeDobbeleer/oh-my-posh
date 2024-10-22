@@ -16,12 +16,8 @@ func TestMercurialEnabledToolNotFound(t *testing.T) {
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 
-	hg := &Mercurial{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+	hg := &Mercurial{}
+	hg.Init(properties.Map{}, env)
 
 	assert.False(t, hg.Enabled())
 }
@@ -42,12 +38,8 @@ func TestMercurialEnabledInWorkingDirectory(t *testing.T) {
 	env.On("Home").Return(poshHome)
 	env.On("Getenv", poshGitEnv).Return("")
 
-	hg := &Mercurial{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+	hg := &Mercurial{}
+	hg.Init(properties.Map{}, env)
 
 	assert.True(t, hg.Enabled())
 	assert.Equal(t, fileInfo.Path, hg.workingDir)
@@ -142,6 +134,7 @@ A Added.File
 			ParentFolder: "/dir",
 			IsDir:        true,
 		}
+
 		props := properties.Map{
 			FetchStatus: true,
 		}
@@ -158,12 +151,8 @@ A Added.File
 		env.MockHgCommand(fileInfo.Path, tc.LogOutput, "log", "-r", ".", "--template", hgLogTemplate)
 		env.MockHgCommand(fileInfo.Path, tc.StatusOutput, "status")
 
-		hg := &Mercurial{
-			scm: scm{
-				env:   env,
-				props: props,
-			},
-		}
+		hg := &Mercurial{}
+		hg.Init(props, env)
 
 		if tc.ExpectedWorking != nil {
 			tc.ExpectedWorking.Formats = map[string]string{}

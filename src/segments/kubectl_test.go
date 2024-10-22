@@ -158,14 +158,14 @@ func TestKubectlSegment(t *testing.T) {
 
 		env.On("Home").Return("testhome")
 
-		k := &Kubectl{
-			env: env,
-			props: properties.Map{
-				properties.DisplayError: tc.DisplayError,
-				ParseKubeConfig:         tc.ParseKubeConfig,
-				ContextAliases:          tc.ContextAliases,
-			},
+		props := properties.Map{
+			properties.DisplayError: tc.DisplayError,
+			ParseKubeConfig:         tc.ParseKubeConfig,
+			ContextAliases:          tc.ContextAliases,
 		}
+
+		k := &Kubectl{}
+		k.Init(props, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, k.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {

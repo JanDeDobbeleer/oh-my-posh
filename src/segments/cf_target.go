@@ -5,12 +5,10 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type CfTarget struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	CfTargetDetails
 }
@@ -24,11 +22,6 @@ type CfTargetDetails struct {
 
 func (c *CfTarget) Template() string {
 	return "{{if .Org }}{{ .Org }}{{ end }}{{if .Space }}/{{ .Space }}{{ end }}"
-}
-
-func (c *CfTarget) Init(props properties.Properties, env runtime.Environment) {
-	c.props = props
-	c.env = env
 }
 
 func (c *CfTarget) Enabled() bool {

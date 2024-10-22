@@ -4,12 +4,10 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Time struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	CurrentDate time.Time
 	Format      string
@@ -31,9 +29,4 @@ func (t *Time) Enabled() bool {
 		t.CurrentDate = time.Now()
 	}
 	return true
-}
-
-func (t *Time) Init(props properties.Properties, env runtime.Environment) {
-	t.props = props
-	t.env = env
 }

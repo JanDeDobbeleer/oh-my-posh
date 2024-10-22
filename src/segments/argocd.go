@@ -6,8 +6,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
@@ -33,19 +31,13 @@ type ArgocdConfig struct {
 }
 
 type Argocd struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	ArgocdContext
 }
 
 func (a *Argocd) Template() string {
 	return NameTemplate
-}
-
-func (a *Argocd) Init(props properties.Properties, env runtime.Environment) {
-	a.props = props
-	a.env = env
 }
 
 func (a *Argocd) Enabled() bool {

@@ -1,10 +1,5 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
 const UI5ToolingYamlPattern = "*ui5*.y*ml"
 
 type UI5Tooling struct {
@@ -16,26 +11,20 @@ func (u *UI5Tooling) Template() string {
 	return languageTemplate
 }
 
-func (u *UI5Tooling) Init(props properties.Properties, env runtime.Environment) {
-	u.language = language{
-		env:         env,
-		props:       props,
-		extensions:  []string{UI5ToolingYamlPattern},
-		loadContext: u.loadContext,
-		inContext:   u.inContext,
-		displayMode: props.GetString(DisplayMode, DisplayModeContext),
-		commands: []*cmd{
-			{
-				executable: "ui5",
-				args:       []string{"--version"},
-				regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			},
-		},
-		versionURLTemplate: "https://github.com/SAP/ui5-cli/releases/tag/v{{ .Full }}",
-	}
-}
-
 func (u *UI5Tooling) Enabled() bool {
+	u.extensions = []string{UI5ToolingYamlPattern}
+	u.displayMode = u.props.GetString(DisplayMode, DisplayModeContext)
+	u.commands = []*cmd{
+		{
+			executable: "ui5",
+			args:       []string{"--version"},
+			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+	}
+	u.versionURLTemplate = "https://github.com/SAP/ui5-cli/releases/tag/v{{ .Full }}"
+	u.language.loadContext = u.loadContext
+	u.language.inContext = u.inContext
+
 	return u.language.Enabled()
 }
 

@@ -342,6 +342,7 @@
             "lastfm",
             "lua",
             "mercurial",
+            "mojo",
             "mvn",
             "nbgv",
             "nightscout",
@@ -4514,6 +4515,68 @@
                   },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mojo"
+              }
+            }
+          },
+          "then": {
+            "title": "Mojo Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/mojo",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_virtual_env": {
+                    "type": "boolean",
+                    "title": "Fetch Virtual Env",
+                    "description": "Fetch the name of the virtualenv or not",
+                    "default": true
+                  },
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default",
+                    "description": "Show the name of the virtualenv when it's default",
+                    "default": true
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Mojo workspace",
+                    "default": [
+                      "*.🔥",
+                      "*.mojo",
+                      "mojoproject.toml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
                   }
                 }
               }

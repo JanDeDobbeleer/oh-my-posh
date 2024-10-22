@@ -84,10 +84,8 @@ func TestOWMSegmentSingle(t *testing.T) {
 		env.On("HTTPRequest", testURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
 		env.On("Error", testify_.Anything)
 
-		o := &Owm{
-			props: props,
-			env:   env,
-		}
+		o := &Owm{}
+		o.Init(props, env)
 
 		enabled := o.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
@@ -212,14 +210,14 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		env.On("HTTPRequest", testURL).Return([]byte(weatherResponse), nil)
 
-		o := &Owm{
-			props: properties.Map{
-				APIKey:   "key",
-				Location: "AMSTERDAM,NL",
-				Units:    "metric",
-			},
-			env: env,
+		props := properties.Map{
+			APIKey:   "key",
+			Location: "AMSTERDAM,NL",
+			Units:    "metric",
 		}
+
+		o := &Owm{}
+		o.Init(props, env)
 
 		assert.Nil(t, o.setStatus())
 		assert.Equal(t, expectedString, renderTemplate(env, o.Template(), o), tc.Case)
@@ -234,14 +232,14 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		env.On("HTTPRequest", testURL).Return([]byte(weatherResponse), nil)
 
-		o := &Owm{
-			props: properties.Map{
-				APIKey:   "key",
-				Location: "AMSTERDAM,NL",
-				Units:    "metric",
-			},
-			env: env,
+		props := properties.Map{
+			APIKey:   "key",
+			Location: "AMSTERDAM,NL",
+			Units:    "metric",
 		}
+
+		o := &Owm{}
+		o.Init(props, env)
 
 		assert.Nil(t, o.setStatus())
 		assert.Equal(t, expectedString, renderTemplate(env, "«{{.Weather}} ({{.Temperature}}{{.UnitIcon}})»({{.URL}})", o), tc.Case)

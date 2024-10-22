@@ -93,10 +93,9 @@ func TestHelmSegment(t *testing.T) {
 			DisplayMode: tc.DisplayMode,
 		}
 
-		h := &Helm{
-			env:   env,
-			props: props,
-		}
+		h := &Helm{}
+		h.Init(props, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, h.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, h.Template(), h), tc.Case)

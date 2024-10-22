@@ -7,12 +7,11 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Az struct {
-	props  properties.Properties
-	env    runtime.Environment
+	base
+
 	Origin string
 	AzureSubscription
 }
@@ -73,11 +72,6 @@ type AzurePowerShellSubscription struct {
 
 func (a *Az) Template() string {
 	return NameTemplate
-}
-
-func (a *Az) Init(props properties.Properties, env runtime.Environment) {
-	a.props = props
-	a.env = env
 }
 
 func (a *Az) Enabled() bool {

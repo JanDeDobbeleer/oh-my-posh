@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Wakatime struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	wtData
 }
@@ -63,9 +61,4 @@ func (w *Wakatime) getURL() (string, error) {
 		Context:  w,
 	}
 	return tmpl.Render()
-}
-
-func (w *Wakatime) Init(props properties.Properties, env runtime.Environment) {
-	w.props = props
-	w.env = env
 }

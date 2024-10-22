@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -59,10 +60,12 @@ func TestFirebaseSegment(t *testing.T) {
 		fcPath := filepath.Join("home", ".config", "configstore", "firebase-tools.json")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		env.On("Error", testify_.Anything).Return()
-		f := Firebase{
-			env: env,
-		}
+
+		f := &Firebase{}
+		f.Init(properties.Map{}, env)
+
 		f.Enabled()
+
 		assert.Equal(t, tc.ExpectedEnabled, f.Enabled())
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, f.Template(), f), tc.Case)
@@ -102,9 +105,10 @@ func TestGetFirebaseActiveConfig(t *testing.T) {
 		contentPath := filepath.Join(configPath, "firebase-tools.json")
 		env.On("FileContent", contentPath).Return(tc.ActiveConfig)
 		env.On("Error", testify_.Anything).Return()
-		f := Firebase{
-			env: env,
-		}
+
+		f := &Firebase{}
+		f.Init(properties.Map{}, env)
+
 		got, err := f.getActiveConfig(configPath)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 		if len(tc.ExpectedError) > 0 {

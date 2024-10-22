@@ -4,6 +4,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -58,9 +59,10 @@ func TestGcpSegment(t *testing.T) {
 		cfgpath := path.Join("config", "configurations", "config_production")
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
 		env.On("Error", testify_.Anything).Return()
-		g := &Gcp{
-			env: env,
-		}
+
+		g := &Gcp{}
+		g.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, "{{.Project}} :: {{.Region}} :: {{.Account}}", g), tc.Case)
@@ -101,9 +103,10 @@ func TestGetConfigDirectory(t *testing.T) {
 		env.On("Getenv", "APPDATA").Return(tc.AppData)
 		env.On("Home").Return(tc.Home)
 		env.On("GOOS").Return(tc.GOOS)
-		g := &Gcp{
-			env: env,
-		}
+
+		g := &Gcp{}
+		g.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.Expected, g.getConfigDirectory(), tc.Case)
 	}
 }
@@ -129,9 +132,10 @@ func TestGetActiveConfig(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("FileContent", "active_config").Return(tc.ActiveConfig)
-		g := &Gcp{
-			env: env,
-		}
+
+		g := &Gcp{}
+		g.Init(properties.Map{}, env)
+
 		got, err := g.getActiveConfig("")
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 		if len(tc.ExpectedError) > 0 {

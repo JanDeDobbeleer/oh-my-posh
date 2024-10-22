@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -26,7 +25,8 @@ func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 
 // segment struct, makes templating easier
 type Strava struct {
-	props properties.Properties
+	base
+
 	api   StravaAPI
 	Icon  string
 	Ago   string
@@ -71,6 +71,8 @@ func (s *Strava) Template() string {
 }
 
 func (s *Strava) Enabled() bool {
+	s.initAPI()
+
 	data, err := s.api.GetActivities()
 	if err == nil && len(data) > 0 {
 		s.StravaData = *data[0]
@@ -89,6 +91,28 @@ func (s *Strava) Enabled() bool {
 		return true
 	}
 	return false
+}
+
+func (s *Strava) initAPI() {
+	if s.api != nil {
+		return
+	}
+
+	oauth := &http.OAuthRequest{
+		AccessTokenKey:  StravaAccessTokenKey,
+		RefreshTokenKey: StravaRefreshTokenKey,
+		SegmentName:     "strava",
+		AccessToken:     s.props.GetString(properties.AccessToken, ""),
+		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
+		Request: http.Request{
+			Env:         s.env,
+			HTTPTimeout: s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		},
+	}
+
+	s.api = &stravaAPI{
+		OAuthRequest: *oauth,
+	}
 }
 
 func (s *Strava) getHours() int {
@@ -122,24 +146,4 @@ func (s *Strava) getActivityIcon() string {
 		return s.props.GetString(UnknownActivityIcon, "\ue213")
 	}
 	return s.props.GetString(UnknownActivityIcon, "\ue213")
-}
-
-func (s *Strava) Init(props properties.Properties, env runtime.Environment) {
-	s.props = props
-
-	oauth := &http.OAuthRequest{
-		AccessTokenKey:  StravaAccessTokenKey,
-		RefreshTokenKey: StravaRefreshTokenKey,
-		SegmentName:     "strava",
-		AccessToken:     s.props.GetString(properties.AccessToken, ""),
-		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
-		Request: http.Request{
-			Env:         env,
-			HTTPTimeout: s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
-		},
-	}
-
-	s.api = &stravaAPI{
-		OAuthRequest: *oauth,
-	}
 }

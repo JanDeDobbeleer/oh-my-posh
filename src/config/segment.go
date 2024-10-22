@@ -43,7 +43,6 @@ type Segment struct {
 	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	styleCache             SegmentStyle
-	Text                   string `json:"-" toml:"-"`
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
@@ -124,15 +123,24 @@ func (segment *Segment) Render() {
 		return
 	}
 
-	segment.Text = segment.string()
-	segment.Enabled = len(strings.ReplaceAll(segment.Text, " ", "")) > 0
+	text := segment.string()
+	segment.Enabled = len(strings.ReplaceAll(text, " ", "")) > 0
 
 	if !segment.Enabled {
 		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
 		return
 	}
 
+	segment.writer.SetText(text)
 	segment.setCache()
+}
+
+func (segment *Segment) Text() string {
+	return segment.writer.Text()
+}
+
+func (segment *Segment) SetText(text string) {
+	segment.writer.SetText(text)
 }
 
 func (segment *Segment) ResolveForeground() color.Ansi {
@@ -202,18 +210,9 @@ func (segment *Segment) restoreCache() bool {
 		return false
 	}
 
-	text, OK := segment.env.Session().Get(segment.textCacheKey())
+	data, OK := segment.env.Session().Get(segment.cacheKey())
 	if !OK {
 		return false
-	}
-
-	segment.env.DebugF("restored %s segment from cache", segment.Name())
-	segment.Text = text
-	segment.Enabled = true
-
-	data, OK := segment.env.Session().Get(segment.writerCacheKey())
-	if !OK {
-		return true
 	}
 
 	err := json.Unmarshal([]byte(data), &segment.writer)
@@ -221,6 +220,7 @@ func (segment *Segment) restoreCache() bool {
 		segment.env.Error(err)
 	}
 
+	segment.Enabled = true
 	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
 
 	return true
@@ -231,26 +231,17 @@ func (segment *Segment) setCache() {
 		return
 	}
 
-	segment.env.Session().Set(segment.textCacheKey(), segment.Text, segment.Cache.Duration)
-
 	data, err := json.Marshal(segment.writer)
 	if err != nil {
 		segment.env.Error(err)
 		return
 	}
 
-	segment.env.Session().Set(segment.writerCacheKey(), string(data), segment.Cache.Duration)
+	segment.env.Session().Set(segment.cacheKey(), string(data), segment.Cache.Duration)
 }
 
-func (segment *Segment) textCacheKey() string {
-	return segment.cacheKey("segment_cache_%s")
-}
-
-func (segment *Segment) writerCacheKey() string {
-	return segment.cacheKey("segment_cache_writer_%s")
-}
-
-func (segment *Segment) cacheKey(format string) string {
+func (segment *Segment) cacheKey() string {
+	format := "segment_cache_%s"
 	switch segment.Cache.Strategy {
 	case cache.Session:
 		return fmt.Sprintf(format, segment.Name())

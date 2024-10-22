@@ -42,10 +42,10 @@ func TestSpotifyWindowsNative(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("QueryWindowTitles", "spotify.exe", `^(Spotify.*)|(.*\s-\s.*)$`).Return(tc.Title, tc.Error)
 		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return("", &runtime.NotImplemented{})
-		s := &Spotify{
-			env:   env,
-			props: properties.Map{},
-		}
+
+		s := &Spotify{}
+		s.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, s.Enabled())
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.Template(), s))
@@ -83,10 +83,10 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("QueryWindowTitles", "spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$").Return("", &runtime.NotImplemented{})
 		env.On("QueryWindowTitles", "msedge.exe", "^(Spotify.*)").Return(tc.Title, tc.Error)
-		s := &Spotify{
-			env:   env,
-			props: properties.Map{},
-		}
+
+		s := &Spotify{}
+		s.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, s.Enabled())
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.Template(), s))

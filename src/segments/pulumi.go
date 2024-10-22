@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"gopkg.in/yaml.v3"
 )
 
@@ -24,8 +23,7 @@ const (
 )
 
 type Pulumi struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Stack string
 	Name  string
@@ -50,11 +48,6 @@ type pulumiWorkSpaceFileSpec struct {
 
 func (p *Pulumi) Template() string {
 	return "\U000f0d46 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}"
-}
-
-func (p *Pulumi) Init(props properties.Properties, env runtime.Environment) {
-	p.props = props
-	p.env = env
 }
 
 func (p *Pulumi) Enabled() bool {

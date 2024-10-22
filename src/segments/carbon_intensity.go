@@ -5,12 +5,10 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type CarbonIntensity struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	TrendIcon string
 
@@ -125,9 +123,4 @@ func (d *CarbonIntensity) setStatus() error {
 	}
 
 	return nil
-}
-
-func (d *CarbonIntensity) Init(props properties.Properties, env runtime.Environment) {
-	d.props = props
-	d.env = env
 }

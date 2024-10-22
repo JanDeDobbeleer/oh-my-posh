@@ -142,10 +142,8 @@ func TestSessionSegmentTemplate(t *testing.T) {
 
 		env.On("RunCommand", "who", []string{"am", "i"}).Return(tc.WhoAmI, whoAmIErr)
 
-		session := &Session{
-			env:   env,
-			props: properties.Map{},
-		}
+		session := &Session{}
+		session.Init(properties.Map{}, env)
 
 		_ = session.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, session), tc.Case)

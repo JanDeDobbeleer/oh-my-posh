@@ -59,10 +59,8 @@ func TestUpgrade(t *testing.T) {
 		json := fmt.Sprintf(`{"tag_name":"v%s"}`, tc.LatestVersion)
 		env.On("HTTPRequest", upgrade.RELEASEURL).Return([]byte(json), tc.Error)
 
-		ug := &Upgrade{
-			env:   env,
-			props: properties.Map{},
-		}
+		ug := &Upgrade{}
+		ug.Init(properties.Map{}, env)
 
 		enabled := ug.Enabled()
 

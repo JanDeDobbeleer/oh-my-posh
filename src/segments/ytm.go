@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Ytm struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	MusicPlayer
 }
@@ -28,11 +26,6 @@ func (y *Ytm) Enabled() bool {
 	// If we don't get a response back (error), the user isn't running
 	// YTMDA, or they don't have the RC API enabled.
 	return err == nil
-}
-
-func (y *Ytm) Init(props properties.Properties, env runtime.Environment) {
-	y.props = props
-	y.env = env
 }
 
 type ytmdaStatusResponse struct {

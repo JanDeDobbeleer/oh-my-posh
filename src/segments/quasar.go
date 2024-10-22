@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -25,11 +24,21 @@ type Quasar struct {
 }
 
 func (q *Quasar) Enabled() bool {
+	q.projectFiles = []string{"quasar.config", "quasar.config.js"}
+	q.commands = []*cmd{
+		{
+			executable: "quasar",
+			args:       []string{"--version"},
+			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		},
+	}
+	q.versionURLTemplate = "https://github.com/quasarframework/quasar/releases/tag/quasar-v{{ .Full }}"
+
 	if !q.language.Enabled() {
 		return false
 	}
 
-	if q.language.props.GetBool(FetchDependencies, false) {
+	if q.props.GetBool(FetchDependencies, false) {
 		q.fetchDependencies()
 	}
 
@@ -38,22 +47,6 @@ func (q *Quasar) Enabled() bool {
 
 func (q *Quasar) Template() string {
 	return " \uea6a {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }} "
-}
-
-func (q *Quasar) Init(props properties.Properties, env runtime.Environment) {
-	q.language = language{
-		env:          env,
-		props:        props,
-		projectFiles: []string{"quasar.config", "quasar.config.js"},
-		commands: []*cmd{
-			{
-				executable: "quasar",
-				args:       []string{"--version"},
-				regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
-			},
-		},
-		versionURLTemplate: "https://github.com/quasarframework/quasar/releases/tag/quasar-v{{ .Full }}",
-	}
 }
 
 func (q *Quasar) fetchDependencies() {

@@ -4,14 +4,11 @@ import (
 	"encoding/xml"
 	"path/filepath"
 	"strings"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Umbraco struct {
-	props   properties.Properties
-	env     runtime.Environment
+	base
+
 	Version string
 	Modern  bool
 }
@@ -83,11 +80,6 @@ func (u *Umbraco) Enabled() bool {
 
 func (u *Umbraco) Template() string {
 	return "{{.Version}} "
-}
-
-func (u *Umbraco) Init(props properties.Properties, env runtime.Environment) {
-	u.props = props
-	u.env = env
 }
 
 func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {

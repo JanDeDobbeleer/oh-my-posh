@@ -140,12 +140,9 @@ func TestAzSegment(t *testing.T) {
 			tc.Source = FirstMatch
 		}
 
-		az := &Az{
-			env: env,
-			props: properties.Map{
-				Source: tc.Source,
-			},
-		}
+		az := &Az{}
+		az.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, az.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, az), tc.Case)
 	}

@@ -29,12 +29,10 @@ func TestEnabledGitNotFound(t *testing.T) {
 	env.On("HasCommand", "git").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	g := &Git{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	g := &Git{}
+	g.Init(properties.Map{}, env)
+
 	assert.False(t, g.Enabled())
 }
 
@@ -56,12 +54,10 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("Home").Return(poshHome)
 	env.On("Getenv", poshGitEnv).Return("")
 	env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
-	g := &Git{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	g := &Git{}
+	g.Init(properties.Map{}, env)
+
 	assert.True(t, g.Enabled())
 	assert.Equal(t, fileInfo.Path, g.workingDir)
 }
@@ -138,12 +134,10 @@ func TestEnabledInWorktree(t *testing.T) {
 		env.On("HasFilesInDir", tc.WorkingFolder, tc.WorkingFolderAddon).Return(true)
 		env.On("HasFilesInDir", tc.WorkingFolder, "HEAD").Return(true)
 		env.On("PathSeparator").Return(string(os.PathSeparator))
-		g := &Git{
-			scm: scm{
-				env:   env,
-				props: properties.Map{},
-			},
-		}
+
+		g := &Git{}
+		g.Init(properties.Map{}, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, g.hasWorktree(fileInfo), tc.Case)
 		assert.Equal(t, tc.ExpectedWorkingFolder, g.workingDir, tc.Case)
 		assert.Equal(t, tc.ExpectedRealFolder, g.realDir, tc.Case)
@@ -198,15 +192,15 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)
 		env.MockGitCommand(pwd, tc.Remote, "remote")
 		env.MockGitCommand(pwd, tc.RemoteURL, "remote", "get-url", tc.Remote)
-		g := &Git{
-			scm: scm{
-				env: env,
-				props: properties.Map{
-					FetchBareInfo:     true,
-					FetchUpstreamIcon: tc.FetchRemote,
-				},
-			},
+
+		props := properties.Map{
+			FetchBareInfo:     true,
+			FetchUpstreamIcon: tc.FetchRemote,
 		}
+
+		g := &Git{}
+		g.Init(props, env)
+
 		assert.Equal(t, g.Enabled(), tc.ExpectedEnabled, tc.Case)
 		assert.Equal(t, g.Ref, tc.ExpectedHEAD, tc.Case)
 		assert.Equal(t, g.UpstreamIcon, tc.ExpectedRemote, tc.Case)
@@ -221,13 +215,14 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("IsWsl").Return(false)
 	env.On("RunCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("GOOS").Return("unix")
+
 	g := &Git{
 		scm: scm{
-			env:     env,
-			props:   properties.Map{},
 			command: GITCOMMAND,
 		},
 	}
+	g.Init(properties.Map{}, env)
+
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
 }
@@ -366,23 +361,25 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("HasFilesInDir", "", "sequencer/todo").Return(tc.Sequencer)
 		env.On("FileContent", "/sequencer/todo").Return(tc.Theirs)
 
+		props := properties.Map{
+			BranchIcon:     "branch ",
+			CommitIcon:     "commit ",
+			RebaseIcon:     "rebase ",
+			MergeIcon:      "merge ",
+			CherryPickIcon: "pick ",
+			TagIcon:        "tag ",
+			RevertIcon:     "revert ",
+		}
+
 		g := &Git{
 			scm: scm{
-				env: env,
-				props: properties.Map{
-					BranchIcon:     "branch ",
-					CommitIcon:     "commit ",
-					RebaseIcon:     "rebase ",
-					MergeIcon:      "merge ",
-					CherryPickIcon: "pick ",
-					TagIcon:        "tag ",
-					RevertIcon:     "revert ",
-				},
 				command: GITCOMMAND,
 			},
 			ShortHash: "1234567",
 			Ref:       tc.Ref,
 		}
+		g.Init(props, env)
+
 		g.setGitHEADContext()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
@@ -409,18 +406,21 @@ func TestSetPrettyHEADName(t *testing.T) {
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
 		env.MockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
+
+		props := properties.Map{
+			BranchIcon: "branch ",
+			CommitIcon: "commit ",
+			TagIcon:    "tag ",
+		}
+
 		g := &Git{
 			scm: scm{
-				env: env,
-				props: properties.Map{
-					BranchIcon: "branch ",
-					CommitIcon: "commit ",
-					TagIcon:    "tag ",
-				},
 				command: GITCOMMAND,
 			},
 			ShortHash: tc.ShortHash,
 		}
+		g.Init(props, env)
+
 		g.setPrettyHEADName()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
@@ -579,13 +579,14 @@ func TestSetGitStatus(t *testing.T) {
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
 		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
+
 		g := &Git{
 			scm: scm{
-				env:     env,
-				props:   properties.Map{},
 				command: GITCOMMAND,
 			},
 		}
+		g.Init(properties.Map{}, env)
+
 		if tc.ExpectedWorking == nil {
 			tc.ExpectedWorking = &GitStatus{}
 		}
@@ -620,12 +621,14 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
+
 		g := &Git{
 			scm: scm{
-				env:        env,
 				workingDir: "",
 			},
 		}
+		g.Init(properties.Map{}, env)
+
 		got := g.StashCount()
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -697,14 +700,15 @@ func TestGitUpstream(t *testing.T) {
 				"src.example.com": "EX",
 			},
 		}
+
 		g := &Git{
 			scm: scm{
-				env:     env,
-				props:   props,
 				command: GITCOMMAND,
 			},
 			Upstream: "origin/main",
 		}
+		g.Init(props, env)
+
 		upstreamIcon := g.getUpstreamIcon()
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
@@ -735,15 +739,15 @@ func TestGetBranchStatus(t *testing.T) {
 			BranchIdenticalIcon: "equal",
 			BranchGoneIcon:      "gone",
 		}
+
 		g := &Git{
-			scm: scm{
-				props: props,
-			},
 			Ahead:        tc.Ahead,
 			Behind:       tc.Behind,
 			Upstream:     tc.Upstream,
 			UpstreamGone: tc.UpstreamGone,
 		}
+		g.Init(props, new(mock.Environment))
+
 		g.setBranchStatus()
 		assert.Equal(t, tc.Expected, g.BranchStatus, tc.Case)
 	}
@@ -919,14 +923,17 @@ func TestGitUntrackedMode(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		props := properties.Map{
+			UntrackedModes: tc.UntrackedModes,
+		}
+
 		g := &Git{
 			scm: scm{
-				props: properties.Map{
-					UntrackedModes: tc.UntrackedModes,
-				},
 				realDir: "foo",
 			},
 		}
+		g.Init(props, new(mock.Environment))
+
 		got := g.getUntrackedFilesMode()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
@@ -961,14 +968,17 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		props := properties.Map{
+			IgnoreSubmodules: tc.IgnoreSubmodules,
+		}
+
 		g := &Git{
 			scm: scm{
-				props: properties.Map{
-					IgnoreSubmodules: tc.IgnoreSubmodules,
-				},
 				realDir: "foo",
 			},
 		}
+		g.Init(props, new(mock.Environment))
+
 		got := g.getIgnoreSubmodulesMode()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
@@ -1093,12 +1103,14 @@ func TestGitCommit(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
+
 		g := &Git{
 			scm: scm{
-				env:     env,
-				command: "git",
+				command: GITCOMMAND,
 			},
 		}
+		g.Init(properties.Map{}, env)
+
 		got := g.Commit()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
@@ -1148,11 +1160,10 @@ func TestGitRemotes(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				props:   properties.Map{},
 				realDir: "foo",
-				env:     env,
 			},
 		}
+		g.Init(properties.Map{}, env)
 
 		got := g.Remotes()
 		assert.Equal(t, tc.Expected, len(got), tc.Case)
@@ -1194,13 +1205,12 @@ func TestGitRepoName(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				props:      properties.Map{},
-				env:        env,
 				realDir:    tc.RealDir,
 				workingDir: tc.WorkingDir,
 			},
 			IsWorkTree: tc.IsWorkTree,
 		}
+		g.Init(properties.Map{}, env)
 
 		got := g.repoName()
 		assert.Equal(t, tc.Expected, got, tc.Case)

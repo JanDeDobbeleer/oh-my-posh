@@ -96,9 +96,9 @@ func TestStravaSegment(t *testing.T) {
 		api.On("GetActivities").Return(tc.StravaData, tc.APIError)
 
 		strava := &Strava{
-			api:   api,
-			props: &properties.Map{},
+			api: api,
 		}
+		strava.Init(properties.Map{}, nil)
 
 		enabled := strava.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

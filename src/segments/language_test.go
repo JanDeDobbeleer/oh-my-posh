@@ -64,13 +64,12 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 
 	l := &language{
-		props:              args.properties,
-		env:                env,
 		extensions:         args.extensions,
 		commands:           args.commands,
 		versionURLTemplate: args.versionURLTemplate,
 		matchesVersionFile: args.matchesVersionFile,
 	}
+	l.Init(args.properties, env)
 
 	return l
 }

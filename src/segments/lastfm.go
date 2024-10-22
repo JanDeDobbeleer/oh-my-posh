@@ -6,12 +6,10 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type LastFM struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Artist string
 	Track  string
@@ -119,9 +117,4 @@ func (d *LastFM) setStatus() error {
 	}
 
 	return nil
-}
-
-func (d *LastFM) Init(props properties.Properties, env runtime.Environment) {
-	d.props = props
-	d.env = env
 }

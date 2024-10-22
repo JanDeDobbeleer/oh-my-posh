@@ -120,10 +120,8 @@ func TestNSSegment(t *testing.T) {
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 
-		ns := &Nightscout{
-			props: props,
-			env:   env,
-		}
+		ns := &Nightscout{}
+		ns.Init(props, env)
 
 		enabled := ns.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

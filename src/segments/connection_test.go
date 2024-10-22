@@ -92,12 +92,14 @@ func TestConnection(t *testing.T) {
 		for _, con := range tc.Connections {
 			env.On("Connection", con.Connection.Type).Return(con.Connection, con.Error)
 		}
-		c := &Connection{
-			env: env,
-			props: &properties.Map{
-				Type: tc.ConnectionType,
-			},
+
+		props := &properties.Map{
+			Type: tc.ConnectionType,
 		}
+
+		c := &Connection{}
+		c.Init(props, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, c.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, c.Template(), c), fmt.Sprintf("Failed in case: %s", tc.Case))

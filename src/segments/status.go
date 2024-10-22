@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
@@ -15,8 +14,8 @@ const (
 )
 
 type Status struct {
-	props    properties.Properties
-	env      runtime.Environment
+	base
+
 	template *template.Text
 	String   string
 	Meaning  string
@@ -42,17 +41,12 @@ func (s *Status) Enabled() bool {
 	return s.Error
 }
 
-func (s *Status) Init(props properties.Properties, env runtime.Environment) {
-	s.props = props
-	s.env = env
-
+func (s *Status) formatStatus(status int, pipeStatus string) string {
 	statusTemplate := s.props.GetString(StatusTemplate, "{{ .Code }}")
 	s.template = &template.Text{
 		Template: statusTemplate,
 	}
-}
 
-func (s *Status) formatStatus(status int, pipeStatus string) string {
 	if status != 0 {
 		s.Error = true
 	}

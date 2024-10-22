@@ -63,20 +63,18 @@ func TestLFMSegmentSingle(t *testing.T) {
 		env.On("HTTPRequest", LFMAPIURL).Return([]byte(tc.APIJSONResponse), tc.Error)
 		env.On("Error", testify_.Anything)
 
-		o := &LastFM{
-			props: props,
-			env:   env,
-		}
+		lfm := &LastFM{}
+		lfm.Init(props, env)
 
-		enabled := o.Enabled()
+		enabled := lfm.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
 		if tc.Template == "" {
-			tc.Template = o.Template()
+			tc.Template = lfm.Template()
 		}
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, o), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, lfm), tc.Case)
 	}
 }

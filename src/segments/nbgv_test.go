@@ -63,11 +63,12 @@ func TestNbgv(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("HasCommand", "nbgv").Return(tc.HasNbgv)
 		env.On("RunCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
-		nbgv := &Nbgv{
-			env:   env,
-			props: properties.Map{},
-		}
+
+		nbgv := &Nbgv{}
+		nbgv.Init(properties.Map{}, env)
+
 		enabled := nbgv.Enabled()
+
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if tc.Template == "" {
 			tc.Template = nbgv.Template()

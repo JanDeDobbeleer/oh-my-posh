@@ -2,9 +2,6 @@ package segments
 
 import (
 	"encoding/json"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type gitVersion struct {
@@ -44,8 +41,7 @@ type gitVersion struct {
 }
 
 type GitVersion struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	gitVersion
 }
@@ -69,9 +65,4 @@ func (n *GitVersion) Enabled() bool {
 	err = json.Unmarshal([]byte(response), &n.gitVersion)
 
 	return err == nil
-}
-
-func (n *GitVersion) Init(props properties.Properties, env runtime.Environment) {
-	n.props = props
-	n.env = env
 }

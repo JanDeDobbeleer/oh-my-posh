@@ -50,11 +50,10 @@ func TestSetDir(t *testing.T) {
 			home = "\\usr\\home"
 		}
 		env.On("Home").Return(home)
-		sl := &Sapling{
-			scm: scm{
-				env: env,
-			},
-		}
+
+		sl := &Sapling{}
+		sl.Init(properties.Map{}, env)
+
 		sl.setDir(tc.Path)
 		assert.Equal(t, tc.Expected, sl.Dir, tc.Case)
 	}
@@ -102,13 +101,16 @@ func TestSetCommitContext(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(tc.Output, tc.Error)
+
 		sl := &Sapling{
 			scm: scm{
-				env:     env,
 				command: SAPLINGCOMMAND,
 			},
 		}
+		sl.Init(properties.Map{}, env)
+
 		sl.setCommitContext()
+
 		assert.Equal(t, tc.ExpectedHash, sl.Hash, tc.Case)
 		assert.Equal(t, tc.ExpectedShortHash, sl.ShortHash, tc.Case)
 		assert.Equal(t, tc.ExpectedWhen, sl.When, tc.Case)
@@ -162,14 +164,14 @@ func TestShouldDisplay(t *testing.T) {
 		} else {
 			env.On("HasParentFilePath", ".sl", false).Return(&runtime.FileInfo{}, errors.New("error"))
 		}
-		sl := &Sapling{
-			scm: scm{
-				env: env,
-				props: &properties.Map{
-					properties.ExcludeFolders: []string{"/sapling/repo"},
-				},
-			},
+
+		props := &properties.Map{
+			properties.ExcludeFolders: []string{"/sapling/repo"},
 		}
+
+		sl := &Sapling{}
+		sl.Init(props, env)
+
 		got := sl.shouldDisplay()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 		if tc.Expected {
@@ -232,15 +234,18 @@ func TestSetHeadContext(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(output, nil)
 		env.On("RunCommand", "sl", []string{"status"}).Return(tc.Output, nil)
+
+		props := &properties.Map{
+			FetchStatus: tc.FetchStatus,
+		}
+
 		sl := &Sapling{
 			scm: scm{
-				env: env,
-				props: &properties.Map{
-					FetchStatus: tc.FetchStatus,
-				},
 				command: SAPLINGCOMMAND,
 			},
 		}
+		sl.Init(props, env)
+
 		sl.setHeadContext()
 		got := sl.Working.String()
 		assert.Equal(t, tc.Expected, got, tc.Case)

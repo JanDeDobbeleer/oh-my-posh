@@ -47,10 +47,9 @@ func TestGitversion(t *testing.T) {
 		env.On("Pwd").Return("test-dir")
 		env.On("RunCommand", "gitversion", []string{"-output", "json"}).Return(tc.Response, tc.CommandError)
 
-		gitversion := &GitVersion{
-			env:   env,
-			props: properties.Map{},
-		}
+		gitversion := &GitVersion{}
+		gitversion.Init(properties.Map{}, env)
+
 		if len(tc.Template) == 0 {
 			tc.Template = gitversion.Template()
 		}

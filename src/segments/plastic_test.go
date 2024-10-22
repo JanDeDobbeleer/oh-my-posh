@@ -15,12 +15,10 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 	env.On("HasCommand", "cm").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	p := &Plastic{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	p := &Plastic{}
+	p.Init(properties.Map{}, env)
+
 	assert.False(t, p.Enabled())
 }
 
@@ -36,12 +34,10 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 		IsDir:        true,
 	}
 	env.On("HasParentFilePath", ".plastic", false).Return(fileInfo, nil)
-	p := &Plastic{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	p := &Plastic{}
+	p.Init(properties.Map{}, env)
+
 	assert.True(t, p.Enabled())
 	assert.Equal(t, fileInfo.ParentFolder, p.plasticWorkspaceFolder)
 }
@@ -50,12 +46,10 @@ func setupCmStatusEnv(status, headStatus string) *Plastic {
 	env := new(mock.Environment)
 	env.On("RunCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
 	env.On("RunCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
-	p := &Plastic{
-		scm: scm{
-			env:   env,
-			props: properties.Map{},
-		},
-	}
+
+	p := &Plastic{}
+	p.Init(properties.Map{}, env)
+
 	return p
 }
 

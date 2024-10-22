@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 
 	httplib "net/http"
@@ -136,7 +135,8 @@ func (w *withingsAPI) getWithingsData(endpoint string, formData url.Values) (*Wi
 }
 
 type Withings struct {
-	props      properties.Properties
+	base
+
 	api        WithingsAPI
 	SleepHours string
 	Weight     float64
@@ -153,6 +153,8 @@ func (w *Withings) Template() string {
 }
 
 func (w *Withings) Enabled() bool {
+	w.initAPI()
+
 	var enabled bool
 	if w.getActivities() {
 		enabled = true
@@ -164,6 +166,28 @@ func (w *Withings) Enabled() bool {
 		enabled = true
 	}
 	return enabled
+}
+
+func (w *Withings) initAPI() {
+	if w.api != nil {
+		return
+	}
+
+	oauth := &http.OAuthRequest{
+		AccessTokenKey:  WithingsAccessTokenKey,
+		RefreshTokenKey: WithingsRefreshTokenKey,
+		SegmentName:     "withings",
+		AccessToken:     w.props.GetString(properties.AccessToken, ""),
+		RefreshToken:    w.props.GetString(properties.RefreshToken, ""),
+		Request: http.Request{
+			Env:         w.env,
+			HTTPTimeout: w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		},
+	}
+
+	w.api = &withingsAPI{
+		OAuthRequest: oauth,
+	}
 }
 
 func (w *Withings) getMeasures() bool {
@@ -219,24 +243,4 @@ func (w *Withings) getSleep() bool {
 	w.SleepHours = fmt.Sprintf("%0.1f", sleepHours)
 
 	return true
-}
-
-func (w *Withings) Init(props properties.Properties, env runtime.Environment) {
-	w.props = props
-
-	oauth := &http.OAuthRequest{
-		AccessTokenKey:  WithingsAccessTokenKey,
-		RefreshTokenKey: WithingsRefreshTokenKey,
-		SegmentName:     "withings",
-		AccessToken:     w.props.GetString(properties.AccessToken, ""),
-		RefreshToken:    w.props.GetString(properties.RefreshToken, ""),
-		Request: http.Request{
-			Env:         env,
-			HTTPTimeout: w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
-		},
-	}
-
-	w.api = &withingsAPI{
-		OAuthRequest: oauth,
-	}
 }

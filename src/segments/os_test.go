@@ -103,10 +103,8 @@ func TestOSInfo(t *testing.T) {
 			props[properties.Property(tc.Platform)] = tc.Icon
 		}
 
-		osInfo := &Os{
-			env:   env,
-			props: props,
-		}
+		osInfo := &Os{}
+		osInfo.Init(props, env)
 
 		_ = osInfo.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, osInfo.Template(), osInfo), tc.Case)

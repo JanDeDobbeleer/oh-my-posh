@@ -42,10 +42,11 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 
 		node := &Node{
 			language: language{
-				env:     env,
 				version: nodeVersion,
 			},
 		}
+		node.Init(properties.Map{}, env)
+
 		version, match := node.matchesVersionFile()
 		assert.Equal(t, tc.Expected, match, tc.Case)
 		assert.Equal(t, tc.ExpectedVersion, version, tc.Case)
@@ -80,17 +81,17 @@ func TestNodeInContext(t *testing.T) {
 		env.On("HasFiles", "yarn.lock").Return(tc.hasYarn)
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("HasFiles", "package.json").Return(tc.hasDefault)
-		node := &Node{
-			language: language{
-				env: env,
-				props: properties.Map{
-					PnpmIcon:            "pnpm",
-					YarnIcon:            "yarn",
-					NPMIcon:             "npm",
-					FetchPackageManager: tc.PkgMgrEnabled,
-				},
-			},
+
+		props := properties.Map{
+			PnpmIcon:            "pnpm",
+			YarnIcon:            "yarn",
+			NPMIcon:             "npm",
+			FetchPackageManager: tc.PkgMgrEnabled,
 		}
+
+		node := &Node{}
+		node.Init(props, env)
+
 		node.loadContext()
 		assert.Equal(t, tc.ExpectedString, node.PackageManagerIcon, tc.Case)
 	}

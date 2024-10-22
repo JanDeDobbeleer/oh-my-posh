@@ -81,6 +81,7 @@ func TestMigratePropertyKey(t *testing.T) {
 
 type MockedWriter struct {
 	template string
+	text     string
 }
 
 func (m *MockedWriter) Enabled() bool {
@@ -89,6 +90,14 @@ func (m *MockedWriter) Enabled() bool {
 
 func (m *MockedWriter) Template() string {
 	return m.template
+}
+
+func (m *MockedWriter) Text() string {
+	return m.text
+}
+
+func (m *MockedWriter) SetText(text string) {
+	m.text = text
 }
 
 func (m *MockedWriter) Init(_ properties.Properties, _ runtime.Environment) {}

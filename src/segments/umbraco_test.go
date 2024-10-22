@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -176,9 +177,8 @@ func TestUmbracoSegment(t *testing.T) {
 		env.On("LsDir", umbracoProjectDirectory).Return(dirEntries)
 
 		// Setup the Umbraco segment with the mocked environment & properties
-		umb := &Umbraco{
-			env: env,
-		}
+		umb := &Umbraco{}
+		umb.Init(properties.Map{}, env)
 
 		// Assert the test results
 		// Check if the segment should be enabled and

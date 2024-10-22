@@ -75,6 +75,22 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"version\":\"3.2.1\",\"name\":\"test\"}",
 		},
 		{
+			Case:            "1.0.0 dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "name: test\nversion: 1.0.0",
+		},
+		{
+			Case:            "3.2.1 dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 3.2.1 test",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "name: test\nversion: 3.2.1",
+		},
+		{
 			Case:            "1.0.0 cargo",
 			ExpectedEnabled: true,
 			ExpectedString:  "\uf487 1.0.0 test",
@@ -131,6 +147,14 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"name\":\"test\"}",
 		},
 		{
+			Case:            "No version present dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "test",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "name: test",
+		},
+		{
 			Case:            "No version present cargo",
 			ExpectedEnabled: true,
 			ExpectedString:  "test",
@@ -161,6 +185,14 @@ func TestPackage(t *testing.T) {
 			Name:            "node",
 			File:            "package.json",
 			PackageContents: "{\"version\":\"1.0.0\"}",
+		},
+		{
+			Case:            "No name present dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "version: 1.0.0",
 		},
 		{
 			Case:            "No name present cargo",
@@ -194,6 +226,13 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{}",
 		},
 		{
+			Case:            "Empty project package dart",
+			ExpectedEnabled: true,
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "",
+		},
+		{
 			Case:            "Empty project package cargo",
 			ExpectedEnabled: true,
 			Name:            "cargo",
@@ -219,6 +258,13 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "toml: line 1: unexpected end of table name (table names cannot be empty)",
 			Name:            "cargo",
 			File:            "Cargo.toml",
+			PackageContents: "[",
+		},
+		{
+			Case:            "Invalid yaml",
+			ExpectedString:  "[1:1] sequence was used where mapping is expected\n>  1 | [\n       ^",
+			Name:            "dart",
+			File:            "pubspec.yaml",
 			PackageContents: "[",
 		},
 		{

@@ -14,7 +14,6 @@ func TestAWSSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Profile         string
 		DefaultProfile  string
 		Vault           string
@@ -22,6 +21,7 @@ func TestAWSSegment(t *testing.T) {
 		DefaultRegion   string
 		ConfigFile      string
 		Template        string
+		ExpectedEnabled bool
 		DisplayDefault  bool
 	}{
 		{Case: "enabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
@@ -66,10 +66,8 @@ func TestAWSSegment(t *testing.T) {
 		}
 		env.On("Flags").Return(&runtime.Flags{})
 
-		aws := &Aws{
-			env:   env,
-			props: props,
-		}
+		aws := &Aws{}
+		aws.Init(props, env)
 
 		if tc.Template == "" {
 			tc.Template = aws.Template()

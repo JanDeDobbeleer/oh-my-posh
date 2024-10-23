@@ -15,6 +15,8 @@ type SegmentType string
 type SegmentWriter interface {
 	Enabled() bool
 	Template() string
+	SetText(text string)
+	Text() string
 	Init(props properties.Properties, env runtime.Environment)
 }
 
@@ -113,6 +115,8 @@ const (
 	LUA SegmentType = "lua"
 	// MERCURIAL writes the Mercurial source control information
 	MERCURIAL SegmentType = "mercurial"
+	// MOJO writes the active version of Mojo and the name of the Magic virtual env
+	MOJO SegmentType = "mojo"
 	// MVN writes the active maven version
 	MVN SegmentType = "mvn"
 	// NBA writes NBA game data
@@ -261,6 +265,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	LASTFM:          func() SegmentWriter { return &segments.LastFM{} },
 	LUA:             func() SegmentWriter { return &segments.Lua{} },
 	MERCURIAL:       func() SegmentWriter { return &segments.Mercurial{} },
+	MOJO:            func() SegmentWriter { return &segments.Mojo{} },
 	MVN:             func() SegmentWriter { return &segments.Mvn{} },
 	NBA:             func() SegmentWriter { return &segments.Nba{} },
 	NBGV:            func() SegmentWriter { return &segments.Nbgv{} },
@@ -320,15 +325,16 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 		segment.Properties = make(properties.Map)
 	}
 
-	if f, ok := Segments[segment.Type]; ok {
-		writer := f()
-		wrapper := &properties.Wrapper{
-			Properties: segment.Properties,
-		}
-		writer.Init(wrapper, env)
-		segment.writer = writer
-		return nil
+	f, ok := Segments[segment.Type]
+	if !ok {
+		return errors.New("unable to map writer")
 	}
 
-	return errors.New("unable to map writer")
+	writer := f()
+	wrapper := &properties.Wrapper{
+		Properties: segment.Properties,
+	}
+	writer.Init(wrapper, env)
+	segment.writer = writer
+	return nil
 }

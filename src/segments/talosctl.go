@@ -4,25 +4,17 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"gopkg.in/yaml.v3"
 )
 
 type TalosCTL struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Context string `yaml:"context"`
 }
 
 func (t *TalosCTL) Template() string {
 	return " {{ .Context}} "
-}
-
-func (t *TalosCTL) Init(props properties.Properties, env runtime.Environment) {
-	t.props = props
-	t.env = env
 }
 
 func (t *TalosCTL) Enabled() bool {

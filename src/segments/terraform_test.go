@@ -14,14 +14,14 @@ func TestTerraform(t *testing.T) {
 	cases := []struct {
 		Case              string
 		Template          string
+		WorkspaceName     string
+		ExpectedString    string
 		HasTfCommand      bool
 		HasTfFolder       bool
 		HasTfFiles        bool
 		HasTfVersionFiles bool
 		HasTfStateFile    bool
 		FetchVersion      bool
-		WorkspaceName     string
-		ExpectedString    string
 		ExpectedEnabled   bool
 	}{
 		{
@@ -102,12 +102,14 @@ func TestTerraform(t *testing.T) {
 			content, _ := os.ReadFile("../test/terraform.tfstate")
 			env.On("FileContent", "terraform.tfstate").Return(string(content))
 		}
-		tf := &Terraform{
-			env: env,
-			props: properties.Map{
-				properties.FetchVersion: tc.FetchVersion,
-			},
+
+		props := properties.Map{
+			properties.FetchVersion: tc.FetchVersion,
 		}
+
+		tf := &Terraform{}
+		tf.Init(props, env)
+
 		template := tc.Template
 		if len(template) == 0 {
 			template = tf.Template()

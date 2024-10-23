@@ -20,10 +20,10 @@ const (
 
 func TestHasProperty(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected bool
-		Property properties.Property
 		Props    properties.Map
+		Case     string
+		Property properties.Property
+		Expected bool
 	}{
 		{Case: "Match", Expected: true, Property: Foo, Props: properties.Map{Foo: "bar"}},
 		{Case: "No Match", Expected: false, Property: Foo, Props: properties.Map{Bar: "foo"}},
@@ -40,10 +40,10 @@ func TestHasProperty(t *testing.T) {
 
 func TestMigratePropertyValue(t *testing.T) {
 	cases := []struct {
-		Case     string
 		Expected any
-		Property properties.Property
 		Props    properties.Map
+		Case     string
+		Property properties.Property
 	}{
 		{Case: "Match", Expected: "foo", Property: Foo, Props: properties.Map{Foo: "bar"}},
 		{Case: "No Match", Expected: nil, Property: Foo, Props: properties.Map{Bar: "foo"}},
@@ -59,11 +59,11 @@ func TestMigratePropertyValue(t *testing.T) {
 
 func TestMigratePropertyKey(t *testing.T) {
 	cases := []struct {
-		Case        string
 		Expected    any
+		Props       properties.Map
+		Case        string
 		OldProperty properties.Property
 		NewProperty properties.Property
-		Props       properties.Map
 	}{
 		{Case: "Match", Expected: "bar", OldProperty: Foo, NewProperty: Bar, Props: properties.Map{Foo: "bar"}},
 		{Case: "No match", Expected: nil, OldProperty: Foo, NewProperty: Bar, Props: properties.Map{FooBar: "bar"}},
@@ -81,6 +81,7 @@ func TestMigratePropertyKey(t *testing.T) {
 
 type MockedWriter struct {
 	template string
+	text     string
 }
 
 func (m *MockedWriter) Enabled() bool {
@@ -91,14 +92,22 @@ func (m *MockedWriter) Template() string {
 	return m.template
 }
 
+func (m *MockedWriter) Text() string {
+	return m.text
+}
+
+func (m *MockedWriter) SetText(text string) {
+	m.text = text
+}
+
 func (m *MockedWriter) Init(_ properties.Properties, _ runtime.Environment) {}
 
 func TestIconOverride(t *testing.T) {
 	cases := []struct {
+		Props    properties.Map
 		Case     string
 		Expected string
 		Property properties.Property
-		Props    properties.Map
 	}{
 		{
 			Case:     "Match",
@@ -133,13 +142,13 @@ func TestIconOverride(t *testing.T) {
 
 func TestColorMigration(t *testing.T) {
 	cases := []struct {
+		Props      properties.Map
 		Case       string
 		Expected   string
 		Property   properties.Property
 		Template   string
 		Background bool
 		NoOverride bool
-		Props      properties.Map
 	}{
 		{
 			Case:     "Foreground override",
@@ -191,10 +200,10 @@ func TestColorMigration(t *testing.T) {
 
 func TestSegmentTemplateMigration(t *testing.T) {
 	cases := []struct {
+		Props    properties.Map
 		Case     string
 		Expected string
 		Type     SegmentType
-		Props    properties.Map
 	}{
 		{
 			Case:     "GIT",
@@ -336,10 +345,10 @@ func TestSegmentTemplateMigration(t *testing.T) {
 
 func TestInlineColorOverride(t *testing.T) {
 	cases := []struct {
+		Props    properties.Map
 		Case     string
 		Expected string
 		Property properties.Property
-		Props    properties.Map
 	}{
 		{
 			Case:     "Match",
@@ -374,9 +383,9 @@ func TestInlineColorOverride(t *testing.T) {
 
 func TestMigratePreAndPostfix(t *testing.T) {
 	cases := []struct {
+		Props    properties.Map
 		Case     string
 		Expected string
-		Props    properties.Map
 	}{
 		{
 			Case:     "Pre and Postfix",

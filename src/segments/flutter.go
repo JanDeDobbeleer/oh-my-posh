@@ -1,10 +1,5 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
 type Flutter struct {
 	language
 }
@@ -13,23 +8,17 @@ func (f *Flutter) Template() string {
 	return languageTemplate
 }
 
-func (f *Flutter) Init(props properties.Properties, env runtime.Environment) {
-	f.language = language{
-		env:        env,
-		props:      props,
-		extensions: dartExtensions,
-		folders:    dartFolders,
-		commands: []*cmd{
-			{
-				executable: "flutter",
-				args:       []string{"--version"},
-				regex:      `Flutter (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
-			},
-		},
-		versionURLTemplate: "https://github.com/flutter/flutter/releases/tag/{{ .Major }}.{{ .Minor }}.{{ .Patch }}",
-	}
-}
-
 func (f *Flutter) Enabled() bool {
+	f.extensions = dartExtensions
+	f.folders = dartFolders
+	f.commands = []*cmd{
+		{
+			executable: "flutter",
+			args:       []string{"--version"},
+			regex:      `Flutter (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		},
+	}
+	f.versionURLTemplate = "https://github.com/flutter/flutter/releases/tag/{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+
 	return f.language.Enabled()
 }

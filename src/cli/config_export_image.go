@@ -64,13 +64,12 @@ Exports the config to an image file using customized output options.`,
 		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""
 		cfg.PWD = ""
-		cfg.OSC99 = false
 
 		// add variables to the environment
 		env.Var = cfg.Var
 
 		terminal.Init(shell.GENERIC)
-		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 		terminal.Colors = cfg.MakeColors()
 
 		eng := &prompt.Engine{

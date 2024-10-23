@@ -7,6 +7,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -28,12 +29,12 @@ func TestStravaSegment(t *testing.T) {
 	fourDaysAgo := time.Now().Add(-h)
 
 	cases := []struct {
+		APIError        error
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Template        string
-		APIError        error
 		StravaData      []*StravaData
+		ExpectedEnabled bool
 	}{
 		{
 			Case: "Ride 6",
@@ -85,7 +86,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}}{{.Burp}}",
-			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
+			ExpectedString:  template.IncorrectTemplate,
 			ExpectedEnabled: true,
 		},
 	}
@@ -95,9 +96,9 @@ func TestStravaSegment(t *testing.T) {
 		api.On("GetActivities").Return(tc.StravaData, tc.APIError)
 
 		strava := &Strava{
-			api:   api,
-			props: &properties.Map{},
+			api: api,
 		}
+		strava.Init(properties.Map{}, nil)
 
 		enabled := strava.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

@@ -2,7 +2,6 @@ package segments
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"golang.org/x/mod/modfile"
 )
@@ -17,26 +16,6 @@ const (
 
 func (g *Golang) Template() string {
 	return languageTemplate
-}
-
-func (g *Golang) Init(props properties.Properties, env runtime.Environment) {
-	g.language = language{
-		env:        env,
-		props:      props,
-		extensions: []string{"*.go", "go.mod"},
-		commands: []*cmd{
-			{
-				regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,
-				getVersion: g.getVersion,
-			},
-			{
-				executable: "go",
-				args:       []string{"version"},
-				regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?)))`,
-			},
-		},
-		versionURLTemplate: "https://golang.org/doc/go{{ .Major }}.{{ .Minor }}",
-	}
 }
 
 func (g *Golang) getVersion() (string, error) {
@@ -56,5 +35,19 @@ func (g *Golang) getVersion() (string, error) {
 }
 
 func (g *Golang) Enabled() bool {
+	g.extensions = []string{"*.go", "go.mod"}
+	g.commands = []*cmd{
+		{
+			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,
+			getVersion: g.getVersion,
+		},
+		{
+			executable: "go",
+			args:       []string{"version"},
+			regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?)))`,
+		},
+	}
+	g.versionURLTemplate = "https://golang.org/doc/go{{ .Major }}.{{ .Minor }}"
+
 	return g.language.Enabled()
 }

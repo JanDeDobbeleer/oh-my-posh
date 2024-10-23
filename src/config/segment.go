@@ -1,8 +1,8 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
-	"runtime/debug"
 	"strings"
 	"time"
 
@@ -19,56 +19,53 @@ import (
 // SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
 
-func (s *SegmentStyle) resolve(env runtime.Environment, context any) SegmentStyle {
+func (s *SegmentStyle) resolve(context any) SegmentStyle {
 	txtTemplate := &template.Text{
 		Context: context,
-		Env:     env,
 	}
+
 	txtTemplate.Template = string(*s)
 	value, err := txtTemplate.Render()
+
 	// default to Plain
 	if err != nil || len(value) == 0 {
 		return Plain
 	}
+
 	return SegmentStyle(value)
 }
 
 type Segment struct {
-	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
-	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
-	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
-	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
-	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
-	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
-	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
-	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
+	writer SegmentWriter
+	env    runtime.Environment
+
+	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
+	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
+	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
+	styleCache             SegmentStyle
+	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
 	Template               string         `json:"template,omitempty" toml:"template,omitempty"`
-	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
+	Foreground             color.Ansi     `json:"foreground" toml:"foreground"`
 	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty"`
-	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
+	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
+	Background             color.Ansi     `json:"background" toml:"background"`
 	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
+	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
+	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
+	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
+	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
+	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
-	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
-	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
-	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty"`
+	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	Duration               time.Duration  `json:"-" toml:"-"`
+	NameLength             int            `json:"-" toml:"-"`
+	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
+	Enabled                bool           `json:"-" toml:"-"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
-
-	Enabled bool `json:"-" toml:"-"`
-
-	Text string `json:"-" toml:"-"`
-
-	env        runtime.Environment
-	writer     SegmentWriter
-	styleCache SegmentStyle
-	name       string
-
-	// debug info
-	Duration   time.Duration `json:"-" toml:"-"`
-	NameLength int           `json:"-" toml:"-"`
+	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
 }
 
 func (segment *Segment) Name() string {
@@ -85,18 +82,7 @@ func (segment *Segment) Name() string {
 	return name
 }
 
-func (segment *Segment) SetEnabled(env runtime.Environment) {
-	defer func() {
-		err := recover()
-		if err == nil {
-			return
-		}
-		// display a message explaining omp failed(with the err)
-		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
-		fmt.Println(message)
-		segment.Enabled = true
-	}()
-
+func (segment *Segment) Execute(env runtime.Environment) {
 	// segment timings for debug purposes
 	var start time.Time
 	if env.Flags().Debug {
@@ -114,14 +100,12 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 
 	segment.env.DebugF("segment: %s", segment.Name())
 
-	// validate toggles
-	if toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE); OK && len(toggles) > 0 {
-		list := strings.Split(toggles, ",")
-		for _, toggle := range list {
-			if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
-				return
-			}
-		}
+	if segment.isToggled() {
+		return
+	}
+
+	if segment.restoreCache() {
+		return
 	}
 
 	if shouldHideForWidth(segment.env, segment.MinWidth, segment.MaxWidth) {
@@ -134,37 +118,161 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 	}
 }
 
-func (segment *Segment) setText() {
+func (segment *Segment) Render() {
 	if !segment.Enabled {
 		return
 	}
 
-	segment.Text = segment.string()
-	segment.Enabled = len(strings.ReplaceAll(segment.Text, " ", "")) > 0
+	text := segment.string()
+	segment.Enabled = len(strings.ReplaceAll(text, " ", "")) > 0
 
 	if !segment.Enabled {
 		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
+		return
 	}
+
+	segment.writer.SetText(text)
+	segment.setCache()
 }
 
-func (segment *Segment) string() string {
-	var templatesResult string
-	if !segment.Templates.Empty() {
-		templatesResult = segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
-		if len(segment.Template) == 0 {
-			return templatesResult
+func (segment *Segment) Text() string {
+	return segment.writer.Text()
+}
+
+func (segment *Segment) SetText(text string) {
+	segment.writer.SetText(text)
+}
+
+func (segment *Segment) ResolveForeground() color.Ansi {
+	if len(segment.ForegroundTemplates) != 0 {
+		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
+		segment.Foreground = color.Ansi(match)
+	}
+
+	return segment.Foreground
+}
+
+func (segment *Segment) ResolveBackground() color.Ansi {
+	if len(segment.BackgroundTemplates) != 0 {
+		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
+		segment.Background = color.Ansi(match)
+	}
+
+	return segment.Background
+}
+
+func (segment *Segment) ResolveStyle() SegmentStyle {
+	if len(segment.styleCache) != 0 {
+		return segment.styleCache
+	}
+
+	segment.styleCache = segment.Style.resolve(segment.writer)
+
+	return segment.styleCache
+}
+
+func (segment *Segment) IsPowerline() bool {
+	style := segment.ResolveStyle()
+	return style == Powerline || style == Accordion
+}
+
+func (segment *Segment) HasEmptyDiamondAtEnd() bool {
+	if segment.ResolveStyle() != Diamond {
+		return false
+	}
+
+	return len(segment.TrailingDiamond) == 0
+}
+
+func (segment *Segment) hasCache() bool {
+	return segment.Cache != nil && !segment.Cache.Duration.IsEmpty()
+}
+
+func (segment *Segment) isToggled() bool {
+	toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE)
+	if !OK || len(toggles) == 0 {
+		return false
+	}
+
+	list := strings.Split(toggles, ",")
+	for _, toggle := range list {
+		if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
+			segment.env.DebugF("segment toggled off: %s", segment.Name())
+			return true
 		}
 	}
 
+	return false
+}
+
+func (segment *Segment) restoreCache() bool {
+	if !segment.hasCache() {
+		return false
+	}
+
+	data, OK := segment.env.Session().Get(segment.cacheKey())
+	if !OK {
+		return false
+	}
+
+	err := json.Unmarshal([]byte(data), &segment.writer)
+	if err != nil {
+		segment.env.Error(err)
+	}
+
+	segment.Enabled = true
+	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
+
+	return true
+}
+
+func (segment *Segment) setCache() {
+	if !segment.hasCache() {
+		return
+	}
+
+	data, err := json.Marshal(segment.writer)
+	if err != nil {
+		segment.env.Error(err)
+		return
+	}
+
+	segment.env.Session().Set(segment.cacheKey(), string(data), segment.Cache.Duration)
+}
+
+func (segment *Segment) cacheKey() string {
+	format := "segment_cache_%s"
+	switch segment.Cache.Strategy {
+	case cache.Session:
+		return fmt.Sprintf(format, segment.Name())
+	case cache.Folder:
+		fallthrough
+	default:
+		return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_"))
+	}
+}
+
+func (segment *Segment) folderKey() string {
+	ctx, ok := segment.writer.(cache.Context)
+	if !ok {
+		return segment.env.Pwd()
+	}
+
+	if key, OK := ctx.CacheKey(); OK {
+		return key
+	}
+
+	return segment.env.Pwd()
+}
+
+func (segment *Segment) string() string {
 	if len(segment.Template) == 0 {
 		segment.Template = segment.writer.Template()
 	}
 
 	tmpl := &template.Text{
-		Template:        segment.Template,
-		Context:         segment.writer,
-		Env:             segment.env,
-		TemplatesResult: templatesResult,
+		Template: segment.Template,
+		Context:  segment.writer,
 	}
 
 	text, err := tmpl.Render()
@@ -206,50 +314,9 @@ func (segment *Segment) cwdIncluded() bool {
 func (segment *Segment) cwdExcluded() bool {
 	value, ok := segment.Properties[properties.ExcludeFolders]
 	if !ok {
-		value = segment.Properties[properties.IgnoreFolders]
+		return false
 	}
 
 	list := properties.ParseStringArray(value)
 	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
-}
-
-func (segment *Segment) ResolveForeground() color.Ansi {
-	if len(segment.ForegroundTemplates) != 0 {
-		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground.String())
-		segment.Foreground = color.Ansi(match)
-	}
-
-	return segment.Foreground
-}
-
-func (segment *Segment) ResolveBackground() color.Ansi {
-	if len(segment.BackgroundTemplates) != 0 {
-		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background.String())
-		segment.Background = color.Ansi(match)
-	}
-
-	return segment.Background
-}
-
-func (segment *Segment) ResolveStyle() SegmentStyle {
-	if len(segment.styleCache) != 0 {
-		return segment.styleCache
-	}
-
-	segment.styleCache = segment.Style.resolve(segment.env, segment.writer)
-
-	return segment.styleCache
-}
-
-func (segment *Segment) IsPowerline() bool {
-	style := segment.ResolveStyle()
-	return style == Powerline || style == Accordion
-}
-
-func (segment *Segment) HasEmptyDiamondAtEnd() bool {
-	if segment.ResolveStyle() != Diamond {
-		return false
-	}
-
-	return len(segment.TrailingDiamond) == 0
 }

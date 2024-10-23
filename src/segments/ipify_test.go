@@ -11,10 +11,6 @@ import (
 	testify_ "github.com/stretchr/testify/mock"
 )
 
-const (
-	IPIFYAPIURL = "https://api.ipify.org"
-)
-
 type mockedipAPI struct {
 	testify_.Mock
 }

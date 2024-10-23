@@ -7,13 +7,11 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 // segment struct, makes templating easier
 type Nba struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	NBAData
 }
@@ -107,11 +105,11 @@ type Scoreboard struct {
 }
 
 type Game struct {
-	GameStatus     int    `json:"gameStatus"`
 	GameStatusText string `json:"gameStatusText"`
 	GameTimeUTC    string `json:"gameTimeUTC"`
 	HomeTeam       Team   `json:"homeTeam"`
 	AwayTeam       Team   `json:"awayTeam"`
+	GameStatus     int    `json:"gameStatus"`
 }
 
 type Team struct {
@@ -150,25 +148,6 @@ func (nba *Nba) Enabled() bool {
 	nba.NBAData = *data
 
 	return true
-}
-
-// Returns an empty Game Data struct with the GameStatus set to NotFound
-// Helpful for caching the fact that a game was not found for a team
-func (nba *Nba) getGameNotFoundData() string {
-	return `{
-		"HomeTeam":"",
-		"AwayTeam":"",
-		"Time":"",
-		"GameDate":"",
-		"StartTimeUTC":"",
-		"GameStatus":4,
-		"HomeScore":0,
-		"AwayScore":0,
-		"HomeTeamWins":0,
-		"HomeTeamLosses":0,
-		"AwayTeamWins":0,
-		"AwayTeamLosses":0
-	}`
 }
 
 // parses through a set of games from the score endpoint and looks for props.team in away or home team
@@ -308,86 +287,15 @@ func (nba *Nba) getAvailableGameData(teamName string, httpTimeout int) (*NBAData
 	return nil, err
 }
 
-// Gets the data from the cache if it exists
-func (nba *Nba) getCacheValue(key string) (*NBAData, error) {
-	if val, found := nba.env.Cache().Get(key); found {
-		var nbaData *NBAData
-		err := json.Unmarshal([]byte(val), &nbaData)
-		if err != nil {
-			return nil, err
-		}
-		return nbaData, nil
-	}
-
-	return nil, errors.New("no data in cache")
-}
-
-// Gets the data from the cache for a scheduled game if it exists
-// Checks whether the game should have started and if so, removes the cache entry
-func (nba *Nba) getCachedScheduleValue(key string) (*NBAData, error) {
-	data, err := nba.getCacheValue(key)
-	if err != nil {
-		return nil, errors.New("no data in cache")
-	}
-
-	// check if the game was previously not found and we should wait to check again
-	if data.GameStatus == NotFound {
-		return data, nil
-	}
-
-	// check if the current time is after the start time of the game
-	// if so, we need to refresh the data
-	startTime, err := time.Parse("2006-01-02T15:04:05Z", data.StartTimeUTC)
-	if err != nil {
-		return nil, err
-	}
-
-	if time.Now().UTC().After(startTime) {
-		// remove the cache entry
-		nba.env.Cache().Delete(key)
-		return nil, errors.New("game has already started")
-	}
-
-	return data, nil
-}
-
 func (nba *Nba) getResult() (*NBAData, error) {
 	teamName := nba.props.GetString(TeamName, "")
 
-	cachedScheduleKey := fmt.Sprintf("%s%s", teamName, "schedule")
-	cachedScoreKey := fmt.Sprintf("%s%s", teamName, "score")
-
 	httpTimeout := nba.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-
-	// How often you want to query the API to get live score information, defaults to 2 minutes
-	cacheScoreTimeout := nba.props.GetInt(properties.CacheTimeout, 2)
-
-	// Cache the schedule information for a day so we don't call the API too often
-	cacheScheduleTimeout := nba.props.GetInt(properties.CacheTimeout, 1440)
-
-	// Cache the fact a game was not found for 30 minutes so we don't call the API too often
-	cacheNotFoundTimeout := nba.props.GetInt(properties.CacheTimeout, 30)
-
-	nba.env.Debug("validating cache data for " + teamName)
-
-	if cacheScheduleTimeout > 0 {
-		if data, err := nba.getCachedScheduleValue(cachedScheduleKey); err == nil {
-			return data, nil
-		}
-	}
-
-	if cacheScoreTimeout > 0 {
-		if data, err := nba.getCacheValue(cachedScoreKey); err == nil {
-			return data, nil
-		}
-	}
 
 	nba.env.Debug("fetching available data for " + teamName)
 
 	data, err := nba.getAvailableGameData(teamName, httpTimeout)
 	if err != nil {
-		// cache the fact that we didn't find a game yet for the day for 30m so we don't continuously ping the endpoints
-		nba.env.Cache().Set(cachedScheduleKey, nba.getGameNotFoundData(), cacheNotFoundTimeout)
 		nba.env.Error(errors.Join(err, fmt.Errorf("unable to get data for team %s", teamName)))
 		return nil, err
 	}
@@ -398,23 +306,5 @@ func (nba *Nba) getResult() (*NBAData, error) {
 		return nil, err
 	}
 
-	if cacheScheduleTimeout > 0 && data.GameStatus == Scheduled {
-		// persist data for team in cache
-		cachedData, _ := json.Marshal(data)
-		nba.env.Cache().Set(cachedScheduleKey, string(cachedData), cacheScheduleTimeout)
-	}
-
-	// if the game is in progress or finished, we can cache the score
-	if cacheScoreTimeout > 0 && data.GameStatus == InProgress || data.GameStatus == Finished {
-		// persist data for team in cache
-		cachedData, _ := json.Marshal(data)
-		nba.env.Cache().Set(cachedScoreKey, string(cachedData), cacheScoreTimeout)
-	}
-
 	return data, nil
-}
-
-func (nba *Nba) Init(props properties.Properties, env runtime.Environment) {
-	nba.props = props
-	nba.env = env
 }

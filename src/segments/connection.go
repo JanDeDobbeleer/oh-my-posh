@@ -8,8 +8,7 @@ import (
 )
 
 type Connection struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	runtime.Connection
 }
@@ -34,9 +33,4 @@ func (c *Connection) Enabled() bool {
 		return true
 	}
 	return false
-}
-
-func (c *Connection) Init(props properties.Properties, env runtime.Environment) {
-	c.props = props
-	c.env = env
 }

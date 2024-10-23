@@ -6,12 +6,10 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type LastFM struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	Artist string
 	Track  string
@@ -68,7 +66,6 @@ func (d *LastFM) Template() string {
 }
 
 func (d *LastFM) getResult() (*lfmDataResponse, error) {
-	cacheTimeout := d.props.GetInt(properties.CacheTimeout, 0)
 	response := new(lfmDataResponse)
 
 	apikey := d.props.GetString(APIKey, ".")
@@ -77,30 +74,16 @@ func (d *LastFM) getResult() (*lfmDataResponse, error) {
 
 	url := fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
 
-	if cacheTimeout > 0 {
-		val, found := d.env.Cache().Get(url)
-
-		if found {
-			err := json.Unmarshal([]byte(val), response)
-			if err != nil {
-				return nil, err
-			}
-			return response, nil
-		}
-	}
-
 	body, err := d.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
 		return new(lfmDataResponse), err
 	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return new(lfmDataResponse), err
 	}
 
-	if cacheTimeout > 0 {
-		d.env.Cache().Set(url, string(body), cacheTimeout)
-	}
 	return response, nil
 }
 
@@ -134,9 +117,4 @@ func (d *LastFM) setStatus() error {
 	}
 
 	return nil
-}
-
-func (d *LastFM) Init(props properties.Properties, env runtime.Environment) {
-	d.props = props
-	d.env = env
 }

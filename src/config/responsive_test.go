@@ -10,11 +10,11 @@ import (
 
 func TestShouldHideForWidth(t *testing.T) {
 	cases := []struct {
+		Error    error
 		Case     string
 		MinWidth int
 		MaxWidth int
 		Width    int
-		Error    error
 		Expected bool
 	}{
 		{Case: "No settings"},

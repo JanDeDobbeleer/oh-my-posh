@@ -33,14 +33,14 @@ func (s *mockedWithingsAPI) GetSleep() (*WithingsData, error) {
 
 func TestWithingsSegment(t *testing.T) {
 	cases := []struct {
-		Case            string
-		ExpectedString  string
-		ExpectedEnabled bool
-		Template        string
 		MeasuresError   error
 		ActivitiesError error
 		SleepError      error
 		WithingsData    *WithingsData
+		Case            string
+		ExpectedString  string
+		Template        string
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Error",
@@ -151,9 +151,9 @@ func TestWithingsSegment(t *testing.T) {
 		api.On("GetSleep").Return(tc.WithingsData, tc.SleepError)
 
 		withings := &Withings{
-			api:   api,
-			props: &properties.Map{},
+			api: api,
 		}
+		withings.Init(properties.Map{}, &mock.Environment{})
 
 		enabled := withings.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

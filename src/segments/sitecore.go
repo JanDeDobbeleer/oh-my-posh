@@ -5,7 +5,6 @@ import (
 	"path"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -16,8 +15,7 @@ const (
 )
 
 type Sitecore struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	EndpointName string
 	CmHost       string
@@ -28,8 +26,8 @@ type EndpointConfig struct {
 }
 
 type UserConfig struct {
-	DefaultEndpoint string                    `json:"defaultEndpoint"`
 	Endpoints       map[string]EndpointConfig `json:"endpoints"`
+	DefaultEndpoint string                    `json:"defaultEndpoint"`
 }
 
 func (s *Sitecore) Enabled() bool {
@@ -63,11 +61,6 @@ func (s *Sitecore) Enabled() bool {
 
 func (s *Sitecore) Template() string {
 	return "{{ .EndpointName }} {{ if .CmHost }}({{ .CmHost }}){{ end }}"
-}
-
-func (s *Sitecore) Init(props properties.Properties, env runtime.Environment) {
-	s.props = props
-	s.env = env
 }
 
 func getUserConfig(s *Sitecore) (*UserConfig, error) {

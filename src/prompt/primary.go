@@ -43,6 +43,20 @@ func (e *Engine) Primary() string {
 }
 
 func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
+	// file, err := os.Create("trace.out")
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// defer file.Close()
+
+	// err = trace.Start(file)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// defer trace.Stop()
+
 	if e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
 		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
@@ -97,6 +111,10 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 }
 
 func (e *Engine) needsPrimaryRightPrompt() bool {
+	if e.Env.Flags().Debug {
+		return true
+	}
+
 	switch e.Env.Shell() {
 	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.ZSH:
 		return true

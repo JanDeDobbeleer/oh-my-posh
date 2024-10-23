@@ -5,12 +5,10 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type CarbonIntensity struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	TrendIcon string
 
@@ -22,15 +20,15 @@ type CarbonIntensityResponse struct {
 }
 
 type CarbonIntensityPeriod struct {
+	Intensity *CarbonIntensityData `json:"intensity"`
 	From      string               `json:"from"`
 	To        string               `json:"to"`
-	Intensity *CarbonIntensityData `json:"intensity"`
 }
 
 type CarbonIntensityData struct {
+	Index    Index  `json:"index"`
 	Forecast Number `json:"forecast"`
 	Actual   Number `json:"actual"`
-	Index    Index  `json:"index"`
 }
 
 type Number int
@@ -77,41 +75,19 @@ func (d *CarbonIntensity) Template() string {
 	return " CO₂ {{ .Index.Icon }}{{ .Actual.String }} {{ .TrendIcon }} {{ .Forecast.String }} "
 }
 
-func (d *CarbonIntensity) updateCache(responseBody []byte, url string, cacheTimeoutInMinutes int) {
-	if cacheTimeoutInMinutes > 0 {
-		d.env.Cache().Set(url, string(responseBody), cacheTimeoutInMinutes)
-	}
-}
-
 func (d *CarbonIntensity) getResult() (*CarbonIntensityResponse, error) {
-	cacheTimeoutInMinutes := d.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
-
 	response := new(CarbonIntensityResponse)
 	url := "https://api.carbonintensity.org.uk/intensity"
-
-	if cacheTimeoutInMinutes > 0 {
-		cachedValue, foundInCache := d.env.Cache().Get(url)
-
-		if foundInCache {
-			err := json.Unmarshal([]byte(cachedValue), response)
-			if err == nil {
-				return response, nil
-			}
-			// If there was an error, just fall through to refetching
-		}
-	}
 
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	body, err := d.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
-		d.updateCache(body, url, cacheTimeoutInMinutes)
 		return new(CarbonIntensityResponse), err
 	}
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		d.updateCache(body, url, cacheTimeoutInMinutes)
 		return new(CarbonIntensityResponse), err
 	}
 
@@ -147,9 +123,4 @@ func (d *CarbonIntensity) setStatus() error {
 	}
 
 	return nil
-}
-
-func (d *CarbonIntensity) Init(props properties.Properties, env runtime.Environment) {
-	d.props = props
-	d.env = env
 }

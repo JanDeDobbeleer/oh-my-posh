@@ -1,12 +1,9 @@
 package segments
 
 import (
-	"encoding/json"
-	"fmt"
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"gopkg.in/yaml.v3"
 )
@@ -19,14 +16,11 @@ const (
 )
 
 type Kubectl struct {
-	props properties.Properties
-	env   runtime.Environment
-
-	dirty bool
-
-	Context string
+	base
 
 	KubeContext
+	Context string
+	dirty   bool
 }
 
 type KubeConfig struct {
@@ -47,49 +41,7 @@ func (k *Kubectl) Template() string {
 	return " {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} "
 }
 
-func (k *Kubectl) Init(props properties.Properties, env runtime.Environment) {
-	k.props = props
-	k.env = env
-}
-
-func (k *Kubectl) setCacheValue(timeout int) {
-	if !k.dirty {
-		return
-	}
-
-	cachedData, _ := json.Marshal(k)
-	k.env.Cache().Set(kubectlCacheKey, string(cachedData), timeout)
-}
-
-func (k *Kubectl) restoreCacheValue() error {
-	if val, found := k.env.Cache().Get(kubectlCacheKey); found {
-		err := json.Unmarshal([]byte(val), k)
-		if err != nil {
-			k.env.Error(err)
-			return err
-		}
-
-		return nil
-	}
-
-	return fmt.Errorf("no data in cache")
-}
-
 func (k *Kubectl) Enabled() bool {
-	cacheTimeout := k.props.GetInt(properties.CacheTimeout, 0)
-
-	if cacheTimeout > 0 {
-		if err := k.restoreCacheValue(); err == nil {
-			return true
-		}
-	}
-
-	defer func() {
-		if cacheTimeout > 0 {
-			k.setCacheValue(cacheTimeout)
-		}
-	}()
-
 	parseKubeConfig := k.props.GetBool(ParseKubeConfig, true)
 
 	if parseKubeConfig {

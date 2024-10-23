@@ -19,11 +19,11 @@ const (
 )
 
 type MockDirEntry struct {
-	name     string
-	isDir    bool
-	fileMode fs.FileMode
 	fileInfo fs.FileInfo
 	err      error
+	name     string
+	fileMode fs.FileMode
+	isDir    bool
 }
 
 func (m *MockDirEntry) Name() string {
@@ -75,6 +75,22 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"version\":\"3.2.1\",\"name\":\"test\"}",
 		},
 		{
+			Case:            "1.0.0 dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "name: test\nversion: 1.0.0",
+		},
+		{
+			Case:            "3.2.1 dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 3.2.1 test",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "name: test\nversion: 3.2.1",
+		},
+		{
 			Case:            "1.0.0 cargo",
 			ExpectedEnabled: true,
 			ExpectedString:  "\uf487 1.0.0 test",
@@ -123,12 +139,36 @@ func TestPackage(t *testing.T) {
 			PackageContents: "[project]\nname=\"test\"\nversion=\"3.2.1\"\n",
 		},
 		{
+			Case:            "1.0.0 mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nname=\"test\"\nversion=\"1.0.0\"\n",
+		},
+		{
+			Case:            "3.2.1 mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 3.2.1 test",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nname=\"test\"\nversion=\"3.2.1\"\n",
+		},
+		{
 			Case:            "No version present node.js",
 			ExpectedEnabled: true,
 			ExpectedString:  "test",
 			Name:            "node",
 			File:            "package.json",
 			PackageContents: "{\"name\":\"test\"}",
+		},
+		{
+			Case:            "No version present dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "test",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "name: test",
 		},
 		{
 			Case:            "No version present cargo",
@@ -155,12 +195,28 @@ func TestPackage(t *testing.T) {
 			PackageContents: "[project]\nname=\"test\"\n",
 		},
 		{
+			Case:            "No version present mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "test",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nname=\"test\"\n",
+		},
+		{
 			Case:            "No name present node.js",
 			ExpectedEnabled: true,
 			ExpectedString:  "\uf487 1.0.0",
 			Name:            "node",
 			File:            "package.json",
 			PackageContents: "{\"version\":\"1.0.0\"}",
+		},
+		{
+			Case:            "No name present dart",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "version: 1.0.0",
 		},
 		{
 			Case:            "No name present cargo",
@@ -187,11 +243,26 @@ func TestPackage(t *testing.T) {
 			PackageContents: "[project]\nversion=\"1.0.0\"\n",
 		},
 		{
+			Case:            "No name present mojo",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "[project]\nversion=\"1.0.0\"\n",
+		},
+		{
 			Case:            "Empty project package node.js",
 			ExpectedEnabled: true,
 			Name:            "node",
 			File:            "package.json",
 			PackageContents: "{}",
+		},
+		{
+			Case:            "Empty project package dart",
+			ExpectedEnabled: true,
+			Name:            "dart",
+			File:            "pubspec.yaml",
+			PackageContents: "",
 		},
 		{
 			Case:            "Empty project package cargo",
@@ -208,6 +279,13 @@ func TestPackage(t *testing.T) {
 			PackageContents: "",
 		},
 		{
+			Case:            "Empty project package mojo",
+			ExpectedEnabled: true,
+			Name:            "mojo",
+			File:            "mojoproject.toml",
+			PackageContents: "",
+		},
+		{
 			Case:            "Invalid json",
 			ExpectedString:  "invalid character '}' looking for beginning of value",
 			Name:            "node",
@@ -219,6 +297,13 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "toml: line 1: unexpected end of table name (table names cannot be empty)",
 			Name:            "cargo",
 			File:            "Cargo.toml",
+			PackageContents: "[",
+		},
+		{
+			Case:            "Invalid yaml",
+			ExpectedString:  "[1:1] sequence was used where mapping is expected\n>  1 | [\n       ^",
+			Name:            "dart",
+			File:            "pubspec.yaml",
 			PackageContents: "[",
 		},
 		{
@@ -276,9 +361,9 @@ func TestPackage(t *testing.T) {
 func TestNuspecPackage(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HasFiles        bool
 		FileName        string
 		ExpectedString  string
+		HasFiles        bool
 		ExpectedEnabled bool
 	}{
 		{
@@ -342,9 +427,9 @@ func TestDotnetProject(t *testing.T) {
 	cases := []struct {
 		Case            string
 		FileName        string
-		HasFiles        bool
 		ProjectContents string
 		ExpectedString  string
+		HasFiles        bool
 		ExpectedEnabled bool
 	}{
 		{
@@ -415,8 +500,8 @@ func TestDotnetProject(t *testing.T) {
 func TestPowerShellModuleProject(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HasFiles        bool
 		ExpectedString  string
+		HasFiles        bool
 		ExpectedEnabled bool
 	}{
 		{

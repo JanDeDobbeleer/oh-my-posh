@@ -12,9 +12,8 @@ import (
 )
 
 type Python struct {
-	language
-
 	Venv string
+	language
 }
 
 const (
@@ -29,41 +28,35 @@ func (p *Python) Template() string {
 	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
 }
 
-func (p *Python) Init(props properties.Properties, env runtime.Environment) {
-	p.language = language{
-		env:         env,
-		props:       props,
-		extensions:  []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"},
-		folders:     []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"},
-		loadContext: p.loadContext,
-		inContext:   p.inContext,
-		commands: []*cmd{
-			{
-				getVersion: p.pyenvVersion,
-				regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
-			},
-			{
-				executable: "python",
-				args:       []string{"--version"},
-				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			},
-			{
-				executable: "python3",
-				args:       []string{"--version"},
-				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			},
-			{
-				executable: "py",
-				args:       []string{"--version"},
-				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			},
-		},
-		versionURLTemplate: "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}",
-		displayMode:        props.GetString(DisplayMode, DisplayModeEnvironment),
-	}
-}
-
 func (p *Python) Enabled() bool {
+	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
+	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
+	p.commands = []*cmd{
+		{
+			getVersion: p.pyenvVersion,
+			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		},
+		{
+			executable: "python",
+			args:       []string{"--version"},
+			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+		{
+			executable: "python3",
+			args:       []string{"--version"},
+			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+		{
+			executable: "py",
+			args:       []string{"--version"},
+			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+	}
+	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
+	p.displayMode = p.props.GetString(DisplayMode, DisplayModeEnvironment)
+	p.language.loadContext = p.loadContext
+	p.language.inContext = p.inContext
+
 	return p.language.Enabled()
 }
 

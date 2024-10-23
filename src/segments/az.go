@@ -7,15 +7,13 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Az struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
-	AzureSubscription
 	Origin string
+	AzureSubscription
 }
 
 const (
@@ -28,21 +26,21 @@ const (
 )
 
 type AzureConfig struct {
-	Subscriptions  []*AzureSubscription `json:"subscriptions"`
 	InstallationID string               `json:"installationId"`
+	Subscriptions  []*AzureSubscription `json:"subscriptions"`
 }
 
 type AzureSubscription struct {
+	User              *AzureUser `json:"user"`
 	ID                string     `json:"id"`
 	Name              string     `json:"name"`
 	State             string     `json:"state"`
-	User              *AzureUser `json:"user"`
-	IsDefault         bool       `json:"isDefault"`
 	TenantID          string     `json:"tenantId"`
 	TenantDisplayName string     `json:"tenantDisplayName"`
 	EnvironmentName   string     `json:"environmentName"`
 	HomeTenantID      string     `json:"homeTenantId"`
 	ManagedByTenants  []any      `json:"managedByTenants"`
+	IsDefault         bool       `json:"isDefault"`
 }
 
 type AzureUser struct {
@@ -74,11 +72,6 @@ type AzurePowerShellSubscription struct {
 
 func (a *Az) Template() string {
 	return NameTemplate
-}
-
-func (a *Az) Init(props properties.Properties, env runtime.Environment) {
-	a.props = props
-	a.env = env
 }
 
 func (a *Az) Enabled() bool {

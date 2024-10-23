@@ -2,7 +2,6 @@ package segments
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Haskell struct {
@@ -19,7 +18,7 @@ func (h *Haskell) Template() string {
 	return languageTemplate
 }
 
-func (h *Haskell) Init(props properties.Properties, env runtime.Environment) {
+func (h *Haskell) Enabled() bool {
 	ghcRegex := `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
 	ghcCmd := &cmd{
 		executable: "ghc",
@@ -33,13 +32,9 @@ func (h *Haskell) Init(props properties.Properties, env runtime.Environment) {
 		regex:      ghcRegex,
 	}
 
-	h.language = language{
-		env:                env,
-		props:              props,
-		extensions:         []string{"*.hs", "*.lhs", "stack.yaml", "package.yaml", "*.cabal", "cabal.project"},
-		commands:           []*cmd{ghcCmd},
-		versionURLTemplate: "https://www.haskell.org/ghc/download_ghc_{{ .Major }}_{{ .Minor }}_{{ .Patch }}.html",
-	}
+	h.extensions = []string{"*.hs", "*.lhs", "stack.yaml", "package.yaml", "*.cabal", "cabal.project"}
+	h.commands = []*cmd{ghcCmd}
+	h.versionURLTemplate = "https://www.haskell.org/ghc/download_ghc_{{ .Major }}_{{ .Minor }}_{{ .Patch }}.html"
 
 	switch h.props.GetString(StackGhcMode, "never") {
 	case "always":
@@ -52,8 +47,6 @@ func (h *Haskell) Init(props properties.Properties, env runtime.Environment) {
 			h.StackGhc = true
 		}
 	}
-}
 
-func (h *Haskell) Enabled() bool {
 	return h.language.Enabled()
 }

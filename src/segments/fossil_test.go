@@ -13,12 +13,12 @@ import (
 
 func TestFossilStatus(t *testing.T) {
 	cases := []struct {
+		OutputError      error
 		Case             string
 		Output           string
-		OutputError      error
-		HasCommand       bool
 		ExpectedStatus   string
 		ExpectedBranch   string
+		HasCommand       bool
 		ExpectedDisabled bool
 	}{
 		{
@@ -67,13 +67,12 @@ func TestFossilStatus(t *testing.T) {
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("HasCommand", FOSSILCOMMAND).Return(tc.HasCommand)
 		env.On("RunCommand", FOSSILCOMMAND, []string{"status"}).Return(strings.ReplaceAll(tc.Output, "\t", ""), tc.OutputError)
-		f := &Fossil{
-			scm: scm{
-				env:   env,
-				props: properties.Map{},
-			},
-		}
+
+		f := &Fossil{}
+		f.Init(properties.Map{}, env)
+
 		got := f.Enabled()
+
 		assert.Equal(t, !tc.ExpectedDisabled, got, tc.Case)
 		if tc.ExpectedDisabled {
 			continue

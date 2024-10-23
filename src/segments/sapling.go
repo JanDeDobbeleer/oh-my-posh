@@ -44,17 +44,15 @@ const (
 )
 
 type Sapling struct {
-	scm
-
+	Working     *SaplingStatus
 	ShortHash   string
 	Hash        string
 	When        string
 	Author      string
 	Bookmark    string
 	Description string
-	New         bool
-
-	Working *SaplingStatus
+	scm
+	New bool
 }
 
 func (sl *Sapling) Template() string {
@@ -93,6 +91,15 @@ func (sl *Sapling) shouldDisplay() bool {
 	sl.setDir(slDir.Path)
 
 	return true
+}
+
+func (sl *Sapling) CacheKey() (string, bool) {
+	dir, err := sl.env.HasParentFilePath(".sl", true)
+	if err != nil {
+		return "", false
+	}
+
+	return dir.Path, true
 }
 
 func (sl *Sapling) setDir(dir string) {

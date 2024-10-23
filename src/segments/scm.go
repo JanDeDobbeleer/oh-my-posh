@@ -18,6 +18,7 @@ const (
 
 // ScmStatus represents part of the status of a repository
 type ScmStatus struct {
+	Formats    map[string]string
 	Unmerged   int
 	Deleted    int
 	Added      int
@@ -28,8 +29,6 @@ type ScmStatus struct {
 	Clean      int
 	Missing    int
 	Ignored    int
-
-	Formats map[string]string
 }
 
 func (s *ScmStatus) Changed() bool {
@@ -81,19 +80,17 @@ func (s *ScmStatus) String() string {
 }
 
 type scm struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
+	Dir             string
+	RepoName        string
+	workingDir      string
+	rootDir         string
+	realDir         string
+	command         string
 	IsWslSharedPath bool
 	CommandMissing  bool
-	Dir             string // actual repo root directory
-	RepoName        string
-
-	workingDir     string
-	rootDir        string
-	realDir        string // real directory (can be different from current path when in worktrees)
-	command        string
-	nativeFallback bool
+	nativeFallback  bool
 }
 
 const (
@@ -104,11 +101,6 @@ const (
 	// FullBranchPath displays the full path of a branch
 	FullBranchPath properties.Property = "full_branch_path"
 )
-
-func (s *scm) Init(props properties.Properties, env runtime.Environment) {
-	s.props = props
-	s.env = env
-}
 
 func (s *scm) formatBranch(branch string) string {
 	mappedBranches := s.props.GetKeyValueMap(MappedBranches, make(map[string]string))

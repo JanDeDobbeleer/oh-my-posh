@@ -23,21 +23,21 @@ func TestKubectlSegment(t *testing.T) {
 	lsep := string(filepath.ListSeparator)
 
 	cases := []struct {
-		Case            string
-		Template        string
-		DisplayError    bool
-		KubectlExists   bool
+		Files           map[string]string
+		ContextAliases  map[string]string
+		Cluster         string
 		Kubeconfig      string
-		ParseKubeConfig bool
 		Context         string
 		Namespace       string
 		UserName        string
-		Cluster         string
+		Case            string
+		ExpectedString  string
+		Template        string
+		KubectlExists   bool
+		ParseKubeConfig bool
 		KubectlErr      bool
 		ExpectedEnabled bool
-		ExpectedString  string
-		Files           map[string]string
-		ContextAliases  map[string]string
+		DisplayError    bool
 	}{
 		{
 			Case:            "kubeconfig incomplete",
@@ -158,15 +158,14 @@ func TestKubectlSegment(t *testing.T) {
 
 		env.On("Home").Return("testhome")
 
-		k := &Kubectl{
-			env: env,
-			props: properties.Map{
-				properties.DisplayError: tc.DisplayError,
-				ParseKubeConfig:         tc.ParseKubeConfig,
-				ContextAliases:          tc.ContextAliases,
-				properties.CacheTimeout: 0,
-			},
+		props := properties.Map{
+			properties.DisplayError: tc.DisplayError,
+			ParseKubeConfig:         tc.ParseKubeConfig,
+			ContextAliases:          tc.ContextAliases,
 		}
+
+		k := &Kubectl{}
+		k.Init(props, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, k.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {

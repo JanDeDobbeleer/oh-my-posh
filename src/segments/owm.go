@@ -8,18 +8,16 @@ import (
 	"net/url"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Owm struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
-	Temperature int
 	Weather     string
 	URL         string
 	units       string
 	UnitIcon    string
+	Temperature int
 }
 
 const (
@@ -67,21 +65,7 @@ func (d *Owm) Template() string {
 }
 
 func (d *Owm) getResult() (*owmDataResponse, error) {
-	cacheTimeout := d.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
 	response := new(owmDataResponse)
-
-	if cacheTimeout > 0 {
-		val, found := d.env.Cache().Get(CacheKeyResponse)
-		if found {
-			err := json.Unmarshal([]byte(val), response)
-			if err != nil {
-				return nil, err
-			}
-
-			d.URL, _ = d.env.Cache().Get(CacheKeyURL)
-			return response, nil
-		}
-	}
 
 	apikey := properties.OneOf(d.props, ".", APIKey, "apiKey")
 	if len(apikey) == 0 {
@@ -89,7 +73,6 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 	}
 
 	location := d.props.GetString(Location, "De Bilt,NL")
-
 	location = url.QueryEscape(location)
 
 	if len(apikey) == 0 || len(location) == 0 {
@@ -105,16 +88,12 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 	if err != nil {
 		return new(owmDataResponse), err
 	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return new(owmDataResponse), err
 	}
 
-	if cacheTimeout > 0 {
-		// persist new forecasts in cache
-		d.env.Cache().Set(CacheKeyResponse, string(body), cacheTimeout)
-		d.env.Cache().Set(CacheKeyURL, d.URL, cacheTimeout)
-	}
 	return response, nil
 }
 
@@ -186,9 +165,4 @@ func (d *Owm) setStatus() error {
 		d.UnitIcon = "°K" // <b>K</b>"
 	}
 	return nil
-}
-
-func (d *Owm) Init(props properties.Properties, env runtime.Environment) {
-	d.props = props
-	d.env = env
 }

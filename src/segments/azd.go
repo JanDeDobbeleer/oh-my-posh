@@ -4,30 +4,21 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"strings"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Azd struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	azdConfig
 }
 
 type azdConfig struct {
-	Version            int    `json:"version"`
 	DefaultEnvironment string `json:"defaultEnvironment"`
+	Version            int    `json:"version"`
 }
 
 func (t *Azd) Template() string {
 	return " \uebd8 {{ .DefaultEnvironment }} "
-}
-
-func (t *Azd) Init(props properties.Properties, env runtime.Environment) {
-	t.props = props
-	t.env = env
 }
 
 func (t *Azd) Enabled() bool {

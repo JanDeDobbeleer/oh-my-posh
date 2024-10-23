@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -26,17 +25,16 @@ func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 
 // segment struct, makes templating easier
 type Strava struct {
-	props properties.Properties
+	base
 
+	api   StravaAPI
+	Icon  string
+	Ago   string
+	Error string
+	URL   string
 	StravaData
-	Icon         string
-	Ago          string
 	Hours        int
 	Authenticate bool
-	Error        string
-	URL          string
-
-	api StravaAPI
 }
 
 const (
@@ -54,18 +52,18 @@ const (
 
 // StravaData struct contains the API data
 type StravaData struct {
-	ID                   int       `json:"id"`
-	Type                 string    `json:"type"`
 	StartDate            time.Time `json:"start_date"`
+	Type                 string    `json:"type"`
 	Name                 string    `json:"name"`
+	ID                   int       `json:"id"`
 	Distance             float64   `json:"distance"`
 	Duration             float64   `json:"moving_time"`
-	DeviceWatts          bool      `json:"device_watts"`
 	AverageWatts         float64   `json:"average_watts"`
 	WeightedAverageWatts float64   `json:"weighted_average_watts"`
 	AverageHeartRate     float64   `json:"average_heartrate"`
 	MaxHeartRate         float64   `json:"max_heartrate"`
 	KudosCount           int       `json:"kudos_count"`
+	DeviceWatts          bool      `json:"device_watts"`
 }
 
 func (s *Strava) Template() string {
@@ -73,6 +71,8 @@ func (s *Strava) Template() string {
 }
 
 func (s *Strava) Enabled() bool {
+	s.initAPI()
+
 	data, err := s.api.GetActivities()
 	if err == nil && len(data) > 0 {
 		s.StravaData = *data[0]
@@ -91,6 +91,28 @@ func (s *Strava) Enabled() bool {
 		return true
 	}
 	return false
+}
+
+func (s *Strava) initAPI() {
+	if s.api != nil {
+		return
+	}
+
+	oauth := &http.OAuthRequest{
+		AccessTokenKey:  StravaAccessTokenKey,
+		RefreshTokenKey: StravaRefreshTokenKey,
+		SegmentName:     "strava",
+		AccessToken:     s.props.GetString(properties.AccessToken, ""),
+		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
+		Request: http.Request{
+			Env:         s.env,
+			HTTPTimeout: s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		},
+	}
+
+	s.api = &stravaAPI{
+		OAuthRequest: *oauth,
+	}
 }
 
 func (s *Strava) getHours() int {
@@ -124,25 +146,4 @@ func (s *Strava) getActivityIcon() string {
 		return s.props.GetString(UnknownActivityIcon, "\ue213")
 	}
 	return s.props.GetString(UnknownActivityIcon, "\ue213")
-}
-
-func (s *Strava) Init(props properties.Properties, env runtime.Environment) {
-	s.props = props
-
-	oauth := &http.OAuthRequest{
-		AccessTokenKey:  StravaAccessTokenKey,
-		RefreshTokenKey: StravaRefreshTokenKey,
-		SegmentName:     "strava",
-		AccessToken:     s.props.GetString(properties.AccessToken, ""),
-		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
-		Request: http.Request{
-			Env:          env,
-			CacheTimeout: s.props.GetInt(properties.CacheTimeout, 30),
-			HTTPTimeout:  s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
-		},
-	}
-
-	s.api = &stravaAPI{
-		OAuthRequest: *oauth,
-	}
 }

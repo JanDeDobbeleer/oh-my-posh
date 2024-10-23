@@ -4,17 +4,13 @@ import (
 	"encoding/xml"
 	"path/filepath"
 	"strings"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Umbraco struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
-	Modern  bool
 	Version string
+	Modern  bool
 }
 
 type CSProj struct {
@@ -86,11 +82,6 @@ func (u *Umbraco) Template() string {
 	return "{{.Version}} "
 }
 
-func (u *Umbraco) Init(props properties.Properties, env runtime.Environment) {
-	u.props = props
-	u.env = env
-}
-
 func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
 	if len(configPath) == 0 {
@@ -154,11 +145,10 @@ func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 	for _, appSetting := range webConfigAppSettings.AppSettings {
 		if strings.EqualFold(appSetting.Key, "umbraco.core.configurationstatus") || strings.EqualFold(appSetting.Key, "umbracoConfigurationStatus") {
 			u.Modern = false
+			u.Version = appSetting.Value
 
-			if len(appSetting.Value) == 0 {
+			if len(u.Version) == 0 {
 				u.Version = UNKNOWN
-			} else {
-				u.Version = appSetting.Value
 			}
 
 			return true

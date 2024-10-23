@@ -8,15 +8,17 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Unity struct {
-	props properties.Properties
-	env   runtime.Environment
+	base
 
 	UnityVersion  string
 	CSharpVersion string
+}
+
+func (u *Unity) Template() string {
+	return " \ue721 {{ .UnityVersion }}{{ if .CSharpVersion }} {{ .CSharpVersion }}{{ end }} "
 }
 
 func (u *Unity) Enabled() bool {
@@ -117,10 +119,6 @@ func (u *Unity) GetCSharpVersion() (version string, err error) {
 }
 
 func (u *Unity) GetCSharpVersionFromWeb(shortUnityVersion string) (version string, err error) {
-	if csharpVersion, found := u.env.Cache().Get(shortUnityVersion); found {
-		return csharpVersion, nil
-	}
-
 	url := fmt.Sprintf("https://docs.unity3d.com/%s/Documentation/Manual/CSharpCompiler.html", shortUnityVersion)
 	httpTimeout := u.props.GetInt(properties.HTTPTimeout, 2000)
 
@@ -135,19 +133,8 @@ func (u *Unity) GetCSharpVersionFromWeb(shortUnityVersion string) (version strin
 	matches := regex.FindNamedRegexMatch(pattern, pageContent)
 	if matches != nil && matches["csharpVersion"] != "" {
 		csharpVersion := strings.TrimSuffix(matches["csharpVersion"], ".0")
-		u.env.Cache().Set(shortUnityVersion, csharpVersion, -1)
 		return csharpVersion, nil
 	}
 
-	u.env.Cache().Set(shortUnityVersion, "", -1)
 	return "", nil
-}
-
-func (u *Unity) Template() string {
-	return " \ue721 {{ .UnityVersion }}{{ if .CSharpVersion }} {{ .CSharpVersion }}{{ end }} "
-}
-
-func (u *Unity) Init(props properties.Properties, env runtime.Environment) {
-	u.props = props
-	u.env = env
 }

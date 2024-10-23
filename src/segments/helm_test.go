@@ -15,12 +15,12 @@ import (
 func TestHelmSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HelmExists      bool
-		ExpectedEnabled bool
 		ExpectedString  string
 		Template        string
 		DisplayMode     string
 		ChartFile       string
+		HelmExists      bool
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Helm not installed",
@@ -93,10 +93,9 @@ func TestHelmSegment(t *testing.T) {
 			DisplayMode: tc.DisplayMode,
 		}
 
-		h := &Helm{
-			env:   env,
-			props: props,
-		}
+		h := &Helm{}
+		h.Init(props, env)
+
 		assert.Equal(t, tc.ExpectedEnabled, h.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, h.Template(), h), tc.Case)

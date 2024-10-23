@@ -15,10 +15,10 @@ func TestOSInfo(t *testing.T) {
 		Case              string
 		ExpectedString    string
 		GOOS              string
-		IsWSL             bool
 		Platform          string
-		DisplayDistroName bool
 		Icon              string
+		IsWSL             bool
+		DisplayDistroName bool
 	}{
 		{
 			Case:           "WSL debian - icon",
@@ -90,7 +90,6 @@ func TestOSInfo(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("Platform").Return(tc.Platform)
 		env.On("TemplateCache").Return(&cache.Template{
-			Env: make(map[string]string),
 			WSL: tc.IsWSL,
 		})
 
@@ -104,10 +103,8 @@ func TestOSInfo(t *testing.T) {
 			props[properties.Property(tc.Platform)] = tc.Icon
 		}
 
-		osInfo := &Os{
-			env:   env,
-			props: props,
-		}
+		osInfo := &Os{}
+		osInfo.Init(props, env)
 
 		_ = osInfo.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, osInfo.Template(), osInfo), tc.Case)

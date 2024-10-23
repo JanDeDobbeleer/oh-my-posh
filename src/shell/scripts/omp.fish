@@ -187,7 +187,7 @@ end
 
 function _omp_enter_key_handler
     if commandline --paging-mode
-        commandline --function accept-autosuggestion
+        commandline --function execute
         return
     end
 

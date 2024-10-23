@@ -4,7 +4,6 @@ package runtime
 
 import (
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -146,10 +145,6 @@ func (term *Terminal) ConvertToLinuxPath(path string) string {
 		return linuxPath
 	}
 	return path
-}
-
-func (term *Terminal) LookPath(command string) (string, error) {
-	return exec.LookPath(command)
 }
 
 func (term *Terminal) DirIsWritable(path string) bool {

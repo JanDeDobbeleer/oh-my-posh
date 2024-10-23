@@ -10,6 +10,7 @@ import (
 	httplib "net/http"
 	"net/http/httputil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -388,7 +389,7 @@ func (term *Terminal) CommandPath(command string) string {
 		return path
 	}
 
-	path, err := term.LookPath(command)
+	path, err := exec.LookPath(command)
 	if err == nil {
 		term.cmdCache.Set(command, path)
 		term.Debug(path)

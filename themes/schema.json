@@ -54,12 +54,6 @@
       "description": "Milliseconds to use for http request timeouts",
       "default": 20
     },
-    "cache_version": {
-      "type": "boolean",
-      "title": "Cache Version",
-      "description": "Cache the executable's version or not",
-      "default": false
-    },
     "expires_in": {
       "type": "integer",
       "title": "Expires in",
@@ -571,9 +565,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -771,9 +762,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "icon": {
                     "type": "string",
                     "title": "Icon",
@@ -843,9 +831,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -895,9 +880,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -1055,9 +1037,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -1119,9 +1098,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -1217,9 +1193,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -1513,9 +1486,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "parse_mod_file": {
                     "type": "boolean",
                     "title": "Parse go.mod file",
@@ -1570,9 +1540,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -1633,9 +1600,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -1686,9 +1650,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -1738,9 +1699,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -1788,9 +1746,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -1843,9 +1798,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -1893,9 +1845,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
@@ -1954,9 +1903,6 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
@@ -2004,9 +1950,6 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
@@ -2053,9 +1996,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
@@ -2169,9 +2109,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "fetch_package_manager": {
                     "type": "boolean",
@@ -2625,9 +2562,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -2745,9 +2679,6 @@
                     "title": "Fetch Dependencies",
                     "description": "Fetch the vite and @quasar/app-vite dependency information or not",
                     "default": true
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -3118,9 +3049,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -3341,9 +3269,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -3391,9 +3316,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -3443,9 +3365,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -3491,9 +3410,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
@@ -3853,9 +3769,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "stack_ghc_mode": {
                     "type": "string",
                     "title": "Use Stack GHC",
@@ -3942,9 +3855,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -4025,9 +3935,6 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
@@ -4078,9 +3985,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -4159,9 +4063,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -4259,9 +4160,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "preferred_executable": {
                     "type": "string",
                     "title": "Preferred Executable",
@@ -4321,9 +4219,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -4369,9 +4264,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
@@ -4425,9 +4317,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",
@@ -4662,9 +4551,6 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
-                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",
@@ -4713,9 +4599,6 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
-                  },
-                  "cache_version": {
-                    "$ref": "#/definitions/cache_version"
                   },
                   "extensions": {
                     "type": "array",

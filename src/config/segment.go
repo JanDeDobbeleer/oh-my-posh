@@ -36,13 +36,12 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 }
 
 type Segment struct {
-	writer SegmentWriter
-	env    runtime.Environment
-
+	writer                 SegmentWriter
+	env                    runtime.Environment
 	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
 	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
-	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
-	styleCache             SegmentStyle
+	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
+	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
@@ -51,21 +50,22 @@ type Segment struct {
 	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty"`
 	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
 	Background             color.Ansi     `json:"background" toml:"background"`
-	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
+	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
 	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
-	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
-	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
-	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
-	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
-	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
-	Duration               time.Duration  `json:"-" toml:"-"`
-	NameLength             int            `json:"-" toml:"-"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
-	Enabled                bool           `json:"-" toml:"-"`
-	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
-	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
+	styleCache             SegmentStyle
+	ForegroundTemplates    template.List `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
+	Tips                   []string      `json:"tips,omitempty" toml:"tips,omitempty"`
+	BackgroundTemplates    template.List `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
+	Templates              template.List `json:"templates,omitempty" toml:"templates,omitempty"`
+	MinWidth               int           `json:"min_width,omitempty" toml:"min_width,omitempty"`
+	MaxWidth               int           `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	Duration               time.Duration `json:"-" toml:"-"`
+	NameLength             int           `json:"-" toml:"-"`
+	Interactive            bool          `json:"interactive,omitempty" toml:"interactive,omitempty"`
+	Enabled                bool          `json:"-" toml:"-"`
+	Newline                bool          `json:"newline,omitempty" toml:"newline,omitempty"`
+	InvertPowerline        bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
 }
 
 func (segment *Segment) Name() string {
@@ -110,6 +110,10 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	if shouldHideForWidth(segment.env, segment.MinWidth, segment.MaxWidth) {
 		return
+	}
+
+	if len(segment.Templates) != 0 {
+		segment.Template = strings.Join(segment.Templates, "")
 	}
 
 	if segment.writer.Enabled() {

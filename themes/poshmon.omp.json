@@ -122,6 +122,6 @@
   "console_title_template": "{{ .Folder }}",
   "final_space": true,
   "osc99": true,
-  "version": 2
+  "version": 3
 }
 

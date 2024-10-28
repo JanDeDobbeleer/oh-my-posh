@@ -90,5 +90,5 @@
   ],
   "console_title_template": "{{.UserName}}@{{.HostName}} in {{ .PWD }}",
   "final_space": true,
-  "version": 2
+  "version": 3
 }

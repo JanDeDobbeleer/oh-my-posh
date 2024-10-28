@@ -139,5 +139,5 @@
     "foreground": "#FFD700",
     "template": "{{if .Root}}\u26a1 {{end}}🚀 "
   },
-  "version": 2
+  "version": 3
 }

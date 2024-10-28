@@ -82,5 +82,5 @@
     "foreground": "#FEF5ED",
     "template": "{{ .Shell }}"
   },
-  "version": 2
+  "version": 3
 }

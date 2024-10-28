@@ -98,8 +98,6 @@ const (
 	LanguageExtensions properties.Property = "extensions"
 	// LanguageFolders the list of folders to validate
 	LanguageFolders properties.Property = "folders"
-	// CacheVersion allows caching the version number
-	CacheVersion properties.Property = "cache_version"
 )
 
 func (l *language) Enabled() bool {

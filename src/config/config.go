@@ -17,7 +17,7 @@ const (
 	AUTOUPGRADE   = "autoupgrade"
 	UPGRADENOTICE = "upgradenotice"
 
-	Version = 2
+	Version = 3
 )
 
 // Config holds all the theme for rendering the prompt

@@ -96,5 +96,5 @@
   ],
   "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.Folder | replace \"~\" \"🏠\"}} @ {{.HostName}}",
   "final_space": true,
-  "version": 2
+  "version": 3
 }

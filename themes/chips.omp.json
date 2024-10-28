@@ -82,13 +82,16 @@
           "leading_diamond": "\uE0B6",
           "properties": {
             "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
-            "http_timeout": 2000,
-            "cache_timeout": 5
+            "http_timeout": 2000
           },
           "style": "diamond",
           "template": "{{ if and (.Env.WAKATIME_API_KEY) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_WAKATIME))) (gt .CumulativeTotal.Seconds 0) }}\uFA19 {{ secondsRound .CumulativeTotal.Seconds }}.{{ end }}",
           "trailing_diamond": "\uE0B4 ",
-          "type": "wakatime"
+          "type": "wakatime",
+          "cache": {
+            "duration": "1minute",
+            "strategy": "session"
+          }
         },
         {
           "background_templates": [
@@ -291,5 +294,5 @@
     "foreground": "p:c-secondary-ellipsis",
     "template": " ... "
   },
-  "version": 2
+  "version": 3
 }

@@ -126,5 +126,5 @@
   ],
   "console_title_template": "{{if .Root}}[root] {{end}}{{.Shell}} in <{{.Folder}}>",
   "final_space": true,
-  "version": 2
+  "version": 3
 }

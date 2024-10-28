@@ -143,5 +143,5 @@
   ],
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
   "final_space": true,
-  "version": 2
+  "version": 3
 }

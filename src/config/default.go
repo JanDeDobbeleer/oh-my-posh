@@ -10,12 +10,14 @@ import (
 func Default(env runtime.Environment, warning bool) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+
 	if warning {
 		exitBackgroundTemplate = "p:red"
 		exitTemplate = " CONFIG ERROR "
 	}
+
 	cfg := &Config{
-		Version:    2,
+		Version:    3,
 		FinalSpace: true,
 		Blocks: []*Block{
 			{
@@ -194,6 +196,7 @@ func Default(env runtime.Environment, warning bool) *Config {
 			},
 		},
 	}
+
 	cfg.env = env
 	return cfg
 }

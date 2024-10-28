@@ -66,5 +66,5 @@
   ],
   "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.UserName}} \u2794 📁{{.Folder}}",
   "final_space": true,
-  "version": 2
+  "version": 3
 }

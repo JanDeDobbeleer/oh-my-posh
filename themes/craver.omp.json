@@ -105,5 +105,5 @@
     }
   ],
   "console_title_template": "{{if .Root}}(Admin) {{end}}{{.Folder}}",
-  "version": 2
+  "version": 3
 }

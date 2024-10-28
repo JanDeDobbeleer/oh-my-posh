@@ -224,5 +224,5 @@
   ],
   "console_title_template": "{{if .Root}}Admin: {{end}} {{.Folder}}",
   "final_space": true,
-  "version": 2
+  "version": 3
 }

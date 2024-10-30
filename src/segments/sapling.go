@@ -70,6 +70,8 @@ func (sl *Sapling) Enabled() bool {
 }
 
 func (sl *Sapling) shouldDisplay() bool {
+	sl.command = SAPLINGCOMMAND
+
 	if !sl.hasCommand(SAPLINGCOMMAND) {
 		return false
 	}

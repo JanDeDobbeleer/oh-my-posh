@@ -1,9 +1,13 @@
 package segments
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"path/filepath"
+	runtime_ "runtime"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -70,6 +74,7 @@ type language struct {
 	displayMode        string
 	Error              string
 	versionURLTemplate string
+	name               string
 	commands           []*cmd
 	projectFiles       []string
 	folders            []string
@@ -100,7 +105,14 @@ const (
 	LanguageFolders properties.Property = "folders"
 )
 
+func (l *language) getName() string {
+	_, file, _, _ := runtime_.Caller(2)
+	base := filepath.Base(file)
+	return base[:len(base)-3]
+}
+
 func (l *language) Enabled() bool {
+	l.name = l.getName()
 	// override default extensions if needed
 	l.extensions = l.props.GetStringArray(LanguageExtensions, l.extensions)
 	l.folders = l.props.GetStringArray(LanguageFolders, l.folders)
@@ -194,28 +206,22 @@ func (l *language) hasLanguageFolders() bool {
 func (l *language) setVersion() error {
 	var lastError error
 
+	cacheKey := fmt.Sprintf("version_%s", l.name)
+
+	if versionCache, OK := l.env.Cache().Get(cacheKey); OK {
+		var version version
+		err := json.Unmarshal([]byte(versionCache), &version)
+		if err == nil {
+			l.version = version
+			return nil
+		}
+	}
+
 	for _, command := range l.commands {
-		var versionStr string
-		var err error
-
-		if command.getVersion == nil {
-			if !l.env.HasCommand(command.executable) {
-				lastError = errors.New(noVersion)
-				continue
-			}
-
-			versionStr, err = l.env.RunCommand(command.executable, command.args...)
-			if exitErr, ok := err.(*runtime.CommandError); ok {
-				l.exitCode = exitErr.ExitCode
-				lastError = fmt.Errorf("err executing %s with %s", command.executable, command.args)
-				continue
-			}
-		} else {
-			versionStr, err = command.getVersion()
-			if err != nil || versionStr == "" {
-				lastError = errors.New("cannot get version")
-				continue
-			}
+		versionStr, err := l.runCommand(command)
+		if err != nil {
+			lastError = err
+			continue
 		}
 
 		version, err := command.parse(versionStr)
@@ -232,12 +238,41 @@ func (l *language) setVersion() error {
 		l.buildVersionURL()
 		l.version.Executable = command.executable
 
+		if marchalled, err := json.Marshal(l.version); err == nil {
+			l.env.Cache().Set(cacheKey, string(marchalled), cache.ONEWEEK)
+		}
+
 		return nil
 	}
+
 	if lastError != nil {
 		return lastError
 	}
+
 	return errors.New(l.props.GetString(MissingCommandText, ""))
+}
+
+func (l *language) runCommand(command *cmd) (string, error) {
+	if command.getVersion == nil {
+		if !l.env.HasCommand(command.executable) {
+			return "", errors.New(noVersion)
+		}
+
+		versionStr, err := l.env.RunCommand(command.executable, command.args...)
+		if exitErr, ok := err.(*runtime.CommandError); ok {
+			l.exitCode = exitErr.ExitCode
+			return "", fmt.Errorf("err executing %s with %s", command.executable, command.args)
+		}
+
+		return versionStr, nil
+	}
+
+	versionStr, err := command.getVersion()
+	if err != nil || versionStr == "" {
+		return "", errors.New("cannot get version")
+	}
+
+	return versionStr, nil
 }
 
 func (l *language) loadLanguageContext() {

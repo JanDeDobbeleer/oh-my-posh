@@ -162,6 +162,7 @@ func (g *Git) Template() string {
 }
 
 func (g *Git) Enabled() bool {
+	// g.command = GITCOMMAND
 	g.User = &User{}
 
 	if !g.shouldDisplay() {
@@ -221,11 +222,13 @@ func (g *Git) Commit() *Commit {
 	if g.commit != nil {
 		return g.commit
 	}
+
 	g.commit = &Commit{
 		Author:    &User{},
 		Committer: &User{},
 		Refs:      &Refs{},
 	}
+
 	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
 	splitted := strings.Split(strings.TrimSpace(commitBody), "\n")
 	for _, line := range splitted {
@@ -280,10 +283,12 @@ func (g *Git) StashCount() int {
 	if g.poshgit || g.stashCount != 0 {
 		return g.stashCount
 	}
+
 	stashContent := g.FileContents(g.rootDir, "logs/refs/stash")
 	if stashContent == "" {
 		return 0
 	}
+
 	lines := strings.Split(stashContent, "\n")
 	g.stashCount = len(lines)
 	return g.stashCount
@@ -301,9 +306,11 @@ func (g *Git) Kraken() string {
 		}
 		g.RawUpstreamURL = g.getRemoteURL()
 	}
+
 	if len(g.Hash) == 0 {
 		g.Hash = g.getGitCommandOutput("rev-parse", "HEAD")
 	}
+
 	return fmt.Sprintf("gitkraken://repolink/%s/commit/%s?url=%s", root, g.Hash, url2.QueryEscape(g.RawUpstreamURL))
 }
 

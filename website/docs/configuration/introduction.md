@@ -5,6 +5,8 @@ sidebar_label: 👋 Introduction
 slug: /
 ---
 
+import Config from "@site/src/components/Config.js";
+
 Oh My Posh is a custom prompt engine for any shell that has the ability to adjust
 the prompt string with a function or variable.
 
@@ -20,24 +22,23 @@ Oh My Posh works exactly like that. Blocks are a combination of one or more segm
 
 The basic layout of the config file is as follows.
 
-```json
-{
-    "blocks": []
-}
-```
+<Config
+  data={{
+"blocks": []
+  }}
+/>
 
 A [block][block] has properties that indicate its position and the [segments][segment] it will render.
 
-```json
-{
+<Config
+  data={{
     "blocks": [
         {
-            // positioning metadata (not shown)
             "segments": []
         }
     ]
-}
-```
+  }}
+/>
 
 A [segment][segment] renders a single context like showing the current folder, user information or git status
 when relevant. It can be styled any way you want, resulting in visualizing the prompt you are looking for.

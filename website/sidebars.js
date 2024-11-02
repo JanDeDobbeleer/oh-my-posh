@@ -5,7 +5,6 @@ module.exports = {
       label: "💡 Getting Started",
       collapsed: false,
       items: [
-        "introduction",
         {
           type: "category",
           label: "🚀 Get started",
@@ -32,6 +31,10 @@ module.exports = {
     {
       type: "category",
       label: "⚙️ Configuration",
+      link: {
+        type: 'doc',
+        id: 'configuration/introduction',
+      },
       items: [
         "configuration/general",
         "configuration/block",

@@ -10,8 +10,6 @@ import Config from "@site/src/components/Config.js";
 
 <Config
   data={{
-    $schema:
-      "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
     blocks: [
       {
         type: "prompt",
@@ -64,10 +62,14 @@ When you want to join a right and left aligned block with a repeated set of char
 to be repeated to this property. Add this property to the _right_ aligned block. This supports the use of
 [color overrides][color-overrides].
 
-```json
-"alignment": "right",
-"filler": "."
-```
+<Config
+  data={{
+    block: {
+      alignment: "right",
+      filler: ".",
+    },
+  }}
+/>
 
 ### Overflow
 

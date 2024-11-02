@@ -4,6 +4,8 @@ title: Line error
 sidebar_label: Line error
 ---
 
+import Config from "@site/src/components/Config.js";
+
 :::info
 This feature only works in `powershell` for the time being.
 :::
@@ -25,24 +27,20 @@ You can use go [text/template][go-text-template] templates extended with [sprig]
 
 You need to extend or create a custom theme with your prompt overrides. For example:
 
-```json
-{
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-        ...
-    ],
-    "valid_line": {
-        "background": "transparent",
-        "foreground": "#ffffff",
-        "template": "<#e0def4,#286983>\uf42e </><#286983,transparent>\ue0b4</> "
+<Config
+  data={{
+    valid_line: {
+      background: "transparent",
+      foreground: "#ffffff",
+      template: "<#e0def4,#286983>\uf42e </><#286983,transparent>\ue0b4</> ",
     },
-    "error_line": {
-        "background": "transparent",
-        "foreground": "#ffffff",
-        "template": "<#eb6f92,#286983>\ue009 </><#286983,transparent>\ue0b4</> "
-    }
-}
-```
+    error_line: {
+      background: "transparent",
+      foreground: "#ffffff",
+      template: "<#eb6f92,#286983>\ue009 </><#286983,transparent>\ue0b4</> ",
+    },
+  }}
+/>
 
 ## Properties
 

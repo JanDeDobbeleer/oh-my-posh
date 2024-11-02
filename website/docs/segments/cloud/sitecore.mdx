@@ -4,25 +4,28 @@ title: Sitecore
 sidebar_label: Sitecore
 ---
 
+import Config from "@site/src/components/Config.js";
+
 ## What
 
 Display current [Sitecore] environment. Will not be active when sitecore.json and user.json don't exist.
 
 ## Sample Configuration
 
-```json
-{
-  "type": "sitecore",
-  "style": "plain",
-  "foreground": "#000000",
-  "background": "#FFFFFF",
-  "template": "Env: {{ .EndpointName }}{{ if .CmHost }} CM: {{ .CmHost }}{{ end }}"
-}
-```
+<Config
+  data={{
+    type: "sitecore",
+    style: "plain",
+    foreground: "#000000",
+    background: "#FFFFFF",
+    template:
+      "Env: {{ .EndpointName }}{{ if .CmHost }} CM: {{ .CmHost }}{{ end }}",
+  }}
+/>
 
 ## Properties
 
-| Name              | Type      | Default | Description                                                                     |
+| Name              |   Type    | Default | Description                                                                     |
 | ----------------- | :-------: | :-----: | ------------------------------------------------------------------------------- |
 | `display_default` | `boolean` | `true`  | display the segment or not when the Sitecore environment name matches `default` |
 

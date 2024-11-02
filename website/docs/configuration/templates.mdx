@@ -6,6 +6,7 @@ sidebar_label: Templates
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import Config from "@site/src/components/Config.js";
 
 Every segment has a `template` property to tweak the text that is displayed.
 Under the hood, this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
@@ -114,33 +115,32 @@ $env.SET_POSHCONTEXT = {
 
 ### Example
 
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "version": 2,
-  // highlight-start
-  "var": {
-    "Hello": "hello",
-    "World": "world"
-  },
-  // highlight-end
-  "blocks": [
-    {
-      "type": "prompt",
-      "alignment": "left",
-      "segments": [
-        {
-          "type": "text",
-          "style": "plain",
-          "foreground": "p:white",
-          // highlight-next-line
-          "template": "{{ .Var.Hello }} {{ .Var.World }} "
-        }
-      ]
-    }
-  ]
-}
-```
+<Config
+  data={{
+    version: 2,
+    // highlight-start
+    var: {
+      Hello: "hello",
+      World: "world",
+    },
+    // highlight-end
+    blocks: [
+      {
+        type: "prompt",
+        alignment: "left",
+        segments: [
+          {
+            type: "text",
+            style: "plain",
+            foreground: "p:white",
+            // highlight-next-line
+            template: "{{ .Var.Hello }} {{ .Var.World }} ",
+          },
+        ],
+      },
+    ],
+  }}
+/>
 
 ## Template logic
 
@@ -194,9 +194,12 @@ in your template where `.Segment` is the name of the segment you want to use wit
 If you want to for example use the [git][git] segment's `.UpstreamGone` property in the [status][status] segment, you can
 do so like this:
 
-```json
-"template": " {{ if .Segments.Git.UpstreamGone }}\ueb05{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
-```
+<Config
+  data={{
+    template:
+      " {{ if .Segments.Git.UpstreamGone }}\ueb05{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} ",
+  }}
+/>
 
 :::caution
 For this to work, the segment you refer to needs to be in your config. The above example won't work if
@@ -205,45 +208,48 @@ your config does not contain a git segment as Oh My Posh only populates the prop
 
 :::tip
 If you have two identical segments for a different purpose, you can make use of the `alias` property on the segment
-to distinct between both. For example:
-
-```json
-{
-  "type": "command",
-  // highlight-next-line
-  "alias": "Hello",
-  "style": "plain",
-  "foreground": "#ffffff",
-  "properties": {
-    "command": "echo Hello"
-  }
-},
-{
-  "type": "command",
-  // highlight-next-line
-  "alias": "World",
-  "style": "plain",
-  "foreground": "#ffffff",
-  "properties": {
-    "command": "echo World"
-  }
-},
-{
-  "type": "text",
-  "style": "plain",
-  "foreground": "#ffffff",
-  // highlight-next-line
-  "template": "{{ .Segments.Hello.Output }} {{ .Segments.World.Output }}"
-}
-```
-
+to distinct between both.
 :::
+
+<Config
+  data={{
+    segments: [
+      {
+        type: "command",
+        alias: "Hello",
+        style: "plain",
+        foreground: "#ffffff",
+        properties: {
+          command: "echo Hello",
+        },
+      },
+      {
+        type: "command",
+        alias: "World",
+        style: "plain",
+        foreground: "#ffffff",
+        properties: {
+          command: "echo World",
+        },
+      },
+      {
+        type: "text",
+        style: "plain",
+        foreground: "#ffffff",
+        template: "{{ .Segments.Hello.Output }} {{ .Segments.World.Output }}",
+      },
+    ],
+  }}
+/>
 
 If you want to know if a specific segment is active, you can use the `.Segments.Contains` function, for example:
 
-```json
-"template": "{{ if .Segments.Contains \"Git\" }}\ueb05{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
-```
+<Config
+  data={{
+    template:
+      '{{ if .Segments.Contains "Git" }}\ueb05{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} ',
+  }}
+/>
 
 ## Text decoration
 

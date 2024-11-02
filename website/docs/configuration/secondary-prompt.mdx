@@ -4,6 +4,8 @@ title: Secondary prompt
 sidebar_label: Secondary prompt
 ---
 
+import Config from "@site/src/components/Config.js";
+
 :::info
 This feature only works in `powershell`, `zsh` and `bash` for the time being.
 :::
@@ -17,19 +19,15 @@ Environment variables are available, just like the [`console_title_template`][co
 
 You need to extend or create a custom theme with your secondary prompt override. For example:
 
-```json
-{
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-        ...
-    ],
-    "secondary_prompt": {
-        "background": "transparent",
-        "foreground": "#ffffff",
-        "template": "-> "
-    }
-}
-```
+<Config
+  data={{
+    secondary_prompt: {
+      background: "transparent",
+      foreground: "#ffffff",
+      template: "-> ",
+    },
+  }}
+/>
 
 ## Properties
 

@@ -15,38 +15,41 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "wakatime",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#007acc",
-  "properties": {
-      "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
-      "http_timeout": 500
-  }
-}}/>
+<Config
+  data={{
+    type: "wakatime",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#007acc",
+    properties: {
+      url: "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
+      http_timeout: 500,
+    },
+  }}
+/>
 
 ## Properties
 
-| Name            | Type      | Default | Description                                                                                                                                                                                     |
-| --------------- | :-------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string`  |         | The Wakatime [summaries][wk-summaries] URL, including the API key. Example above.                                                                                                               |
-| `http_timeout`  | `int`     | `20`    | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. If no segment is shown, try increasing this timeout.                                                  |
+| Name           |   Type   | Default | Description                                                                                                                                    |
+| -------------- | :------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`          | `string` |         | The Wakatime [summaries][wk-summaries] URL, including the API key. Example above.                                                              |
+| `http_timeout` |  `int`   |  `20`   | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. If no segment is shown, try increasing this timeout. |
 
 ### Dynamic API Key
 
 If you don't want to include the API key into your configuration, the following modification can be done.
 
-```json
-"properties": {
-  // highlight-next-line
-  "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
-  "http_timeout": 500
-}
-```
+<Config
+  data={{
+    properties: {
+      url: "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
+      http_timeout: 500,
+    },
+  }}
+/>
 
 :::note
 
@@ -68,8 +71,8 @@ Please refer to the [Environment Variable][templates-environment-variables] page
 
 ### Properties
 
-| Name                | Type       | Description                              |
-| ------------------- | ---------- | ---------------------------------------- |
+| Name               | Type       | Description                              |
+| ------------------ | ---------- | ---------------------------------------- |
 | `.CumulativeTotal` | `wtTotals` | object holding total tracked time values |
 
 ### wtTotals Properties

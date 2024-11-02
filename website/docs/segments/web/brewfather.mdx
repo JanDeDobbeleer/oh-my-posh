@@ -136,25 +136,17 @@ If there are no readings available, `.Reading` will be null.
 | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.URL` | `string` | the URL for the batch in the Brewfather app. You can use this to add a hyperlink to the segment if you are using a terminal that supports it. The default template implements this |
 
-Hyperlink formatting example
-
-```json
-{
-  // General format: «text»(link)
-  "template": "«{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}}»({{.URL}})"
-}
-```
-
 ### Advanced Templating
 
 The built in template will provides key useful information. However, you can use the properties about the batch
 to build your own. For reference, the built-in template looks like this:
 
-```json
-{
-  "template": "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}}) {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
-}
-```
+<Config
+  data={{
+    template:
+      '{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}}) {{printf "%.1f" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status "Fermenting")}}: {{printf "%.3f" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}',
+  }}
+/>
 
 ### Unit conversion
 
@@ -180,19 +172,21 @@ _(These use the polynomial conversions from [Wikipedia][wikipedia_gravity_page])
 
 #### Example
 
-```json
-{
-  "template": "{{if .Reading}}{{.SGToBrix .Reading.Gravity}}°Bx, {{.DegCToF .Reading.Temperature}}°F{{end}}"
-}
-```
+<Config
+  data={{
+    template:
+      "{{if .Reading}}{{.SGToBrix .Reading.Gravity}}°Bx, {{.DegCToF .Reading.Temperature}}°F{{end}}",
+  }}
+/>
 
 To display gravity as SG in XXXX format (e.g. "1020" instead of "1.020"), use the `mulf` template function
 
-```json
-{
-  "template": "{{if .Reading}}{{.mulf 1000 .Reading.Gravity}}, {{.DegCToF .Reading.Temperature}}°F{{end}}"
-}
-```
+<Config
+  data={{
+    template:
+      "{{if .Reading}}{{.mulf 1000 .Reading.Gravity}}, {{.DegCToF .Reading.Temperature}}°F{{end}}",
+  }}
+/>
 
 [templates]: /docs/configuration/templates
 [brewfather]: http://brewfather.app

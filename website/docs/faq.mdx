@@ -6,6 +6,7 @@ sidebar_label: 🤔 FAQ
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import Config from "@site/src/components/Config.js";
 
 Before validating anything, make sure you're on the [latest version][latest] of Oh My Posh and your terminal and shell are up-to-date.
 
@@ -100,6 +101,7 @@ but also that one misses certain interesting icons. You can fall back to any the
 or make use of a Nerd Font. Have a look at the [font][font] section for more context in case you're using all the right conditions.
 
 ### Text decoration styles like bold and dimmed don't work
+
 The text decoration styles are based on your terminal emulator's capabilities.
 
 A quick way to check if your terminal supports a specific style escape sequence is to take a look at the `terminfo` database, on Linux.
@@ -118,22 +120,21 @@ the steps [here][export] to export it to a local file so you can adjust the [seg
 
 In the example below, it's assumed that the execution segment's icon `\ueba2` has an unexpected space after it in Windows Terminal.
 
-```json
-{
-  "type": "executiontime",
-  "template": "\ueba2" // unexpected space
-}
-```
+<Config
+  data={{
+    type: "executiontime",
+    template: "\ueba2", // unexpected space
+  }}
+/>
 
 Adjust it by adding `\u2800` immediately after the icon.
 
-```json
-{
-  "type": "executiontime",
-  "template": "\ueba2\u2800" // solved
-}
-```
-
+<Config
+  data={{
+    type: "executiontime",
+    template: "\ueba2\u2800", // solved
+  }}
+/>
 
 ### Jetbrains terminals: Icons do not render
 
@@ -156,6 +157,7 @@ conda config --set changeps1 False
 ```
 
 ### Python venv: Prompt changes on activating virtual environment
+
 Virtual environments created with `venv` add the active environment's name to the prompt automatically.
 To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example files:
 
@@ -235,9 +237,10 @@ The issue is that PowerShell on Windows doesn't yet default to UTF-8. Resolve th
 If the location contains non-ASCII characters, non-UTF-8 PowerShell may provide a wrong path to Oh My Posh, which can break the initialization.
 
 The scenario for non-ASCII location:
+
 - Your computer has a non-ASCII username.
 - Your [config file](./installation/customize.mdx) is under your `$HOME`.
-:::
+  :::
 
 To do so, edit your `$PROFILE`, find the line that initializes Oh My Posh (as highlighted below), and change it to the following:
 
@@ -300,12 +303,13 @@ end
 
 After that, you can use the value in a template. The following replicates the [example in the Fish documentation][fish-mode-prompt]:
 
-```json
-{
-  "type": "text",
-  "template": "{{ if eq .Env.FISH__BIND_MODE \"default\" }}<red>[N]</>{{ else if eq .Env.FISH__BIND_MODE \"insert\" }}<green>[I]</>{{ else if eq .Env.FISH__BIND_MODE \"replace_one\" }}<green>[R]</>{{ else if eq .Env.FISH__BIND_MODE \"visual\"}}<brmagenta>[V]</>{{ else }}<red>[?]</>{{ end }}"
-}
-```
+<Config
+  data={{
+    type: "text",
+    template:
+      '{{ if eq .Env.FISH__BIND_MODE "default" }}<red>[N]</>{{ else if eq .Env.FISH__BIND_MODE "insert" }}<green>[I]</>{{ else if eq .Env.FISH__BIND_MODE "replace_one" }}<green>[R]</>{{ else if eq .Env.FISH__BIND_MODE "visual"}}<brmagenta>[V]</>{{ else }}<red>[?]</>{{ end }}',
+  }}
+/>
 
 ### Fish: Integrate with `Alt+←` and `Alt+→` Bindings to `prevd` and `nextd`
 

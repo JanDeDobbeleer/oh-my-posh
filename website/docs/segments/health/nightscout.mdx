@@ -53,9 +53,12 @@ import Config from "@site/src/components/Config.js";
 
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 
-```json
-"template": "\ue2a1 {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{ .TrendIcon }}"
-```
+<Config
+  data={{
+    template:
+      "\ue2a1 {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{ .TrendIcon }}",
+  }}
+/>
 
 ## Properties
 

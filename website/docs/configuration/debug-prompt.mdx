@@ -4,6 +4,8 @@ title: Debug prompt
 sidebar_label: Debug prompt
 ---
 
+import Config from "@site/src/components/Config.js";
+
 :::info
 This feature only works in `powershell` for the time being.
 :::
@@ -18,19 +20,15 @@ Environment variables are available, just like the [`console_title_template`][co
 
 You need to extend or create a custom theme with your debug prompt override. For example:
 
-```json
-{
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-        ...
-    ],
-    "debug_prompt": {
-        "background": "transparent",
-        "foreground": "#ffffff",
-        "template": "Debugging "
-    }
-}
-```
+<Config
+  data={{
+    debug_prompt: {
+      background: "transparent",
+      foreground: "#ffffff",
+      template: "Debugging ",
+    },
+  }}
+/>
 
 ## Properties
 

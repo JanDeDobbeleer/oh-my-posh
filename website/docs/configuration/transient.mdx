@@ -6,6 +6,7 @@ sidebar_label: Transient prompt
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import Config from "@site/src/components/Config.js";
 
 :::info
 This feature only works in `nu`, `fish`, `zsh`, `powershell` (`ConstrainedLanguage` mode unsupported) and `cmd` for the time being.
@@ -28,19 +29,15 @@ By enabling Transient Prompt, you can replace the prompt with some other content
 
 You need to extend or create a custom theme with your transient prompt. For example:
 
-```json
-{
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-        ...
-    ],
-    "transient_prompt": {
-        "background": "transparent",
-        "foreground": "#ffffff",
-        "template": "{{ .Shell }}> "
-    }
-}
-```
+<Config
+  data={{
+    transient_prompt: {
+      background: "transparent",
+      foreground: "#ffffff",
+      template: "{{ .Shell }}> ",
+    },
+  }}
+/>
 
 ## Properties
 

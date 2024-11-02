@@ -213,9 +213,12 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-PoshGitStatus' -Scope Global -Forc
 
 You can then use the `POSH_GIT_STRING` environment variable in a [text segment][text]:
 
-```json
-"template": "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}"
-```
+<Config
+  data={{
+    template:
+      "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}",
+  }}
+/>
 
 [poshgit]: https://github.com/dahlbyk/posh-git
 [templates]: /docs/configuration/templates

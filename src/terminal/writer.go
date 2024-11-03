@@ -382,10 +382,6 @@ func writeEscapedAnsiString(text string) {
 	builder.WriteString(text)
 }
 
-func getAnsiFromColorString(colorString color.Ansi, isBackground bool) color.Ansi {
-	return Colors.ToAnsi(colorString, isBackground)
-}
-
 func write(s rune) {
 	if isInvisible {
 		return
@@ -430,7 +426,7 @@ func writeSegmentColors() {
 
 	switch {
 	case fg.IsTransparent() && len(BackgroundColor) != 0:
-		background := getAnsiFromColorString(BackgroundColor, false)
+		background := Colors.ToAnsi(BackgroundColor, false)
 		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
 	case fg.IsTransparent() && !bg.IsEmpty():
@@ -496,7 +492,7 @@ func writeArchorOverride(match map[string]string, background color.Ansi, i int) 
 	currentColor.Add(bg, fg)
 
 	if currentColor.Foreground().IsTransparent() && len(BackgroundColor) != 0 {
-		background := getAnsiFromColorString(BackgroundColor, false)
+		background := Colors.ToAnsi(BackgroundColor, false)
 		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background().ToForeground()))
 		return position
@@ -606,12 +602,20 @@ func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
 	background = background.Resolve(CurrentColors, ParentColors)
 	foreground = foreground.Resolve(CurrentColors, ParentColors)
 
+	if bg, err := Colors.Resolve(background); err == nil {
+		background = bg
+	}
+
+	if fg, err := Colors.Resolve(foreground); err == nil {
+		foreground = fg
+	}
+
 	inverted := foreground == color.Transparent && len(background) != 0
 
-	backgroundAnsi := getAnsiFromColorString(background, !inverted)
-	foregroundAnsi := getAnsiFromColorString(foreground, false)
+	background = Colors.ToAnsi(background, !inverted)
+	foreground = Colors.ToAnsi(foreground, false)
 
-	return backgroundAnsi, foregroundAnsi
+	return background, foreground
 }
 
 func trimAnsi(text string) string {

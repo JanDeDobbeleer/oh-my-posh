@@ -21,6 +21,7 @@ var TrueColor = true
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
 type String interface {
 	ToAnsi(colorString Ansi, isBackground bool) Ansi
+	Resolve(colorString Ansi) (Ansi, error)
 }
 
 type Set struct {
@@ -150,12 +151,15 @@ func MakeColors(palette Palette, cacheEnabled bool, accentColor Ansi, env runtim
 	defaultColors := &Defaults{}
 	defaultColors.SetAccentColor(env, accentColor)
 	colors = defaultColors
+
 	if palette != nil {
 		colors = &PaletteColors{ansiColors: colors, palette: palette}
 	}
+
 	if cacheEnabled {
 		colors = &Cached{ansiColors: colors}
 	}
+
 	return
 }
 
@@ -288,6 +292,10 @@ func (d *Defaults) ToAnsi(ansiColor Ansi, isBackground bool) Ansi {
 	return emptyColor
 }
 
+func (d *Defaults) Resolve(colorString Ansi) (Ansi, error) {
+	return colorString, nil
+}
+
 // getAnsiColorFromName returns the color code for a given color name if the name is
 // known ANSI color name.
 func getAnsiColorFromName(colorValue Ansi, isBackground bool) (Ansi, error) {
@@ -325,6 +333,10 @@ func (p *PaletteColors) ToAnsi(colorString Ansi, isBackground bool) Ansi {
 	return ansiColor
 }
 
+func (p *PaletteColors) Resolve(colorString Ansi) (Ansi, error) {
+	return p.palette.ResolveColor(colorString)
+}
+
 // Cached is the AnsiColors Decorator that does simple color lookup caching.
 // ToColor calls are cheap, but not free, and having a simple cache in
 // has measurable positive effect on performance.
@@ -349,4 +361,8 @@ func (c *Cached) ToAnsi(colorString Ansi, isBackground bool) Ansi {
 	ansiColor := c.ansiColors.ToAnsi(colorString, isBackground)
 	c.colorCache[key] = ansiColor
 	return ansiColor
+}
+
+func (c *Cached) Resolve(colorString Ansi) (Ansi, error) {
+	return c.ansiColors.Resolve(colorString)
 }

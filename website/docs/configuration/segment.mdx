@@ -32,6 +32,8 @@ understand how to configure a segment.
   }}
 />
 
+## Settings
+
 | Name                       | Type         | Description                                                                                                                                                                                                                                                                                                                |
 | -------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`                     | `string`     | takes the `string` value referencing which segment logic it needs to run (see [segments][segments] for possible values)                                                                                                                                                                                                    |
@@ -53,7 +55,9 @@ understand how to configure a segment.
 | `alias`                    | `string`     | for use with [cross segment template properties][cstp]                                                                                                                                                                                                                                                                     |
 | `min_width`                | `int`        | if the terminal width is smaller than this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                               |
 | `max_width`                | `int`        | if the terminal width exceeds this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                                       |
-| `cache`                    | `Cache`      | how to cache the segment to avoid fetching information too much, see [Cache][cache] below                                                                                                                                                                                                                                  |
+| `cache`                    | `Cache`      | how to cache the segment to avoid fetching information too much, see [below][cache]                                                                                                                                                                                                                                        |
+| `include_folders`          | `[]string`   | define which folders to include to enable the segment, see [below][include-exclude]                                                                                                                                                                                                                                        |
+| `exclude_folders`          | `[]string`   | define which folders to exclude to disable the segment, see [below][include-exclude]                                                                                                                                                                                                                                       |
 
 :::warning
 In Bash/Zsh, when the property `interactive` is `true` for a segment, the prompt length calculation can be wrong
@@ -142,22 +146,7 @@ regardless of the folder you're in.
 The session strategy will cache the segment based on the current shell session. Use this for segments you want to display at all times
 but don't want to refresh too often.
 
-## Properties
-
-An array of Properties with a value. This is used inside of the segment logic to tweak what the output of the segment will be.
-Segments have the ability to define their own Properties, but there are some shared ones being used by the engine which allow
-you to customize the output even more.
-
-### Shared properties
-
-You can use these on any segment, the engine is responsible for adding them correctly.
-
-| Name              | Type       |
-| ----------------- | ---------- |
-| `include_folders` | `[]string` |
-| `exclude_folders` | `[]string` |
-
-#### Include / Exclude Folders
+## Include / Exclude Folders
 
 Sometimes you might want to have a segment only rendered in certain folders. If `include_folders` is specified,
 the segment will only be rendered when in one of those locations. If `exclude_folders` is specified, the segment
@@ -165,17 +154,13 @@ will not be rendered when in one of the excluded locations.
 
 <Config
   data={{
-    properties: {
-      include_folders: ["/Users/posh/Projects"],
-    },
+    include_folders: ["/Users/posh/Projects"],
   }}
 />
 
 <Config
   data={{
-    properties: {
-      exclude_folders: ["/Users/posh/Projects"],
-    },
+    exclude_folders: ["/Users/posh/Projects"],
   }}
 />
 
@@ -185,9 +170,7 @@ name. The following will match `/Users/posh/Projects/Foo` but not `/home/Users/p
 
 <Config
   data={{
-    properties: {
-      include_folders: ["/Users/posh/Projects.*"],
-    },
+    include_folders: ["/Users/posh/Projects/.*"],
   }}
 />
 
@@ -195,15 +178,12 @@ You can also combine these properties:
 
 <Config
   data={{
-    properties: {
-      include_folders: ["/Users/posh/Projects.*"],
-      exclude_folders: ["/Users/posh/Projects/secret-project.*"],
-    },
+    include_folders: ["/Users/posh/Projects/.*"],
+    exclude_folders: ["/Users/posh/Projects/secret-project.*"],
   }}
 />
 
-#### Notes
-
+:::info
 - Oh My Posh will accept both `/` and `\` as path separators for a folder and will match regardless of which
   is used by the current operating system.
 - Because the strings are evaluated as regular expressions, if you want to use a backslash (`\`) in a Windows
@@ -213,6 +193,7 @@ You can also combine these properties:
 
 This means that for user Bill, who has a user account `Bill` on Windows and `bill` on Linux, `~/Foo` might match
 `C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
+:::
 
 ## Hiding segments
 
@@ -255,3 +236,5 @@ To list the currently toggled segments, use `oh-my-posh get toggles`.
 [templates]: templates.mdx
 [color-templates]: /docs/configuration/colors#color-templates
 [cstp]: templates.mdx#cross-segment-template-properties
+[cache]: #cache
+[include-exclude]: #include--exclude-folders

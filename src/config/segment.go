@@ -40,8 +40,8 @@ type Segment struct {
 	env                    runtime.Environment
 	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
 	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
-	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
-	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
+	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
+	styleCache             SegmentStyle
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
@@ -52,20 +52,22 @@ type Segment struct {
 	Background             color.Ansi     `json:"background" toml:"background"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
-	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
-	styleCache             SegmentStyle
-	ForegroundTemplates    template.List `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
-	Tips                   []string      `json:"tips,omitempty" toml:"tips,omitempty"`
-	BackgroundTemplates    template.List `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
-	Templates              template.List `json:"templates,omitempty" toml:"templates,omitempty"`
-	MinWidth               int           `json:"min_width,omitempty" toml:"min_width,omitempty"`
-	MaxWidth               int           `json:"max_width,omitempty" toml:"max_width,omitempty"`
-	Duration               time.Duration `json:"-" toml:"-"`
-	NameLength             int           `json:"-" toml:"-"`
-	Interactive            bool          `json:"interactive,omitempty" toml:"interactive,omitempty"`
-	Enabled                bool          `json:"-" toml:"-"`
-	Newline                bool          `json:"newline,omitempty" toml:"newline,omitempty"`
-	InvertPowerline        bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
+	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
+	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
+	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
+	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
+	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
+	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
+	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty"`
+	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty"`
+	Duration               time.Duration  `json:"-" toml:"-"`
+	NameLength             int            `json:"-" toml:"-"`
+	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
+	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
+	Enabled                bool           `json:"-" toml:"-"`
+	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
+	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
 }
 
 func (segment *Segment) Name() string {
@@ -299,28 +301,13 @@ func (segment *Segment) shouldIncludeFolder() bool {
 }
 
 func (segment *Segment) cwdIncluded() bool {
-	value, ok := segment.Properties[properties.IncludeFolders]
-	if !ok {
-		// IncludeFolders isn't specified, everything is included
+	if len(segment.IncludeFolders) == 0 {
 		return true
 	}
 
-	list := properties.ParseStringArray(value)
-
-	if len(list) == 0 {
-		// IncludeFolders is an empty array, everything is included
-		return true
-	}
-
-	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
+	return segment.env.DirMatchesOneOf(segment.env.Pwd(), segment.IncludeFolders)
 }
 
 func (segment *Segment) cwdExcluded() bool {
-	value, ok := segment.Properties[properties.ExcludeFolders]
-	if !ok {
-		return false
-	}
-
-	list := properties.ParseStringArray(value)
-	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
+	return segment.env.DirMatchesOneOf(segment.env.Pwd(), segment.ExcludeFolders)
 }

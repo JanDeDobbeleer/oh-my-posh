@@ -2,6 +2,13 @@ package config
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+)
+
+const (
+	includeFolders = properties.Property("include_folders")
+	excludeFolders = properties.Property("exclude_folders")
+	cacheTimeout   = properties.Property("cache_timeout")
 )
 
 func (cfg *Config) Migrate() {
@@ -23,11 +30,46 @@ func (segment *Segment) migrate(version int) {
 
 	// Cache settings
 	delete(segment.Properties, "cache_version")
-	cacheTimeout := segment.Properties.GetInt("cache_timeout", 0)
-	if cacheTimeout != 0 {
-		segment.Cache = &cache.Config{
-			Duration: cache.ToDuration(cacheTimeout * 60),
-			Strategy: cache.Folder,
+	segment.Cache = segment.migrateCache()
+
+	segment.IncludeFolders = segment.migrateFolders(includeFolders)
+	segment.ExcludeFolders = segment.migrateFolders(excludeFolders)
+}
+
+func (segment *Segment) hasProperty(property properties.Property) bool {
+	for key := range segment.Properties {
+		if key == property {
+			return true
 		}
 	}
+	return false
+}
+
+func (segment *Segment) migrateCache() *cache.Config {
+	if !segment.hasProperty(cacheTimeout) {
+		return nil
+	}
+
+	timeout := segment.Properties.GetInt(cacheTimeout, 0)
+	delete(segment.Properties, cacheTimeout)
+
+	if timeout == 0 {
+		return nil
+	}
+
+	return &cache.Config{
+		Duration: cache.ToDuration(timeout * 60),
+		Strategy: cache.Folder,
+	}
+}
+
+func (segment *Segment) migrateFolders(property properties.Property) []string {
+	if !segment.hasProperty(property) {
+		return []string{}
+	}
+
+	array := segment.Properties.GetStringArray(property, []string{})
+	delete(segment.Properties, property)
+
+	return array
 }

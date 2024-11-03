@@ -25,10 +25,6 @@ type Property string
 const (
 	// Style indicates the style to use
 	Style Property = "style"
-	// IncludeFolders indicates folders to be included for the segment logic
-	IncludeFolders Property = "include_folders"
-	// ExcludeFolders indicates folders to be excluded for the segment logic
-	ExcludeFolders Property = "exclude_folders"
 	// FetchVersion decides whether to fetch the version number or not
 	FetchVersion Property = "fetch_version"
 	// AlwaysEnabled decides whether or not to always display the info

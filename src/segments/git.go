@@ -338,10 +338,6 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	if g.shouldIgnoreRootRepository(gitdir.ParentFolder) {
-		return false
-	}
-
 	g.setDir(gitdir.Path)
 
 	if !gitdir.IsDir {

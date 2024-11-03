@@ -450,27 +450,7 @@
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",
           "description": "https://ohmyposh.dev/docs/configuration/segment#properties",
-          "default": {},
-          "properties": {
-            "include_folders": {
-              "type": "array",
-              "title": "If specified, segment will only render in these folders",
-              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
-              "default": [],
-              "items": {
-                "type": "string"
-              }
-            },
-            "exclude_folders": {
-              "type": "array",
-              "title": "Exclude rendering in these folders",
-              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
-              "default": [],
-              "items": {
-                "type": "string"
-              }
-            }
-          }
+          "default": {}
         },
         "interactive": {
           "type": "boolean",
@@ -483,6 +463,24 @@
           "title": "Give the segment an alias for use in templates",
           "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": ""
+        },
+        "include_folders": {
+          "type": "array",
+          "title": "If specified, segment will only render in these folders",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclude_folders": {
+          "type": "array",
+          "title": "Exclude rendering in these folders",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
         },
         "cache": {
           "type": "object",

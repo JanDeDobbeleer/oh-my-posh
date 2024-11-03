@@ -55,10 +55,6 @@ func (p *Plastic) Enabled() bool {
 		return false
 	}
 
-	if p.shouldIgnoreRootRepository(wkdir.ParentFolder) {
-		return false
-	}
-
 	if !wkdir.IsDir {
 		return false
 	}

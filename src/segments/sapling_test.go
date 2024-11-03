@@ -125,7 +125,6 @@ func TestShouldDisplay(t *testing.T) {
 		HasSapling bool
 		InRepo     bool
 		Expected   bool
-		Excluded   bool
 	}{
 		{
 			Case: "Sapling not installed",
@@ -133,12 +132,6 @@ func TestShouldDisplay(t *testing.T) {
 		{
 			Case:       "Sapling installed, not in repo",
 			HasSapling: true,
-		},
-		{
-			Case:       "Sapling installed, in repo but ignored",
-			HasSapling: true,
-			InRepo:     true,
-			Excluded:   true,
 		},
 		{
 			Case:       "Sapling installed, in repo",
@@ -158,19 +151,14 @@ func TestShouldDisplay(t *testing.T) {
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return(runtime.LINUX)
 		env.On("Home").Return("/usr/home/sapling")
-		env.On("DirMatchesOneOf", fileInfo.ParentFolder, []string{"/sapling/repo"}).Return(tc.Excluded)
 		if tc.InRepo {
 			env.On("HasParentFilePath", ".sl", false).Return(fileInfo, nil)
 		} else {
 			env.On("HasParentFilePath", ".sl", false).Return(&runtime.FileInfo{}, errors.New("error"))
 		}
 
-		props := &properties.Map{
-			properties.ExcludeFolders: []string{"/sapling/repo"},
-		}
-
 		sl := &Sapling{}
-		sl.Init(props, env)
+		sl.Init(&properties.Map{}, env)
 
 		got := sl.shouldDisplay()
 		assert.Equal(t, tc.Expected, got, tc.Case)

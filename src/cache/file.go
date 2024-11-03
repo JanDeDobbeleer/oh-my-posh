@@ -67,9 +67,11 @@ func (fc *File) Get(key string) (string, bool) {
 	if !found {
 		return "", false
 	}
+
 	if co, ok := val.(*Entry); ok {
 		return co.Value, true
 	}
+
 	return "", false
 }
 

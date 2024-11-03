@@ -138,14 +138,6 @@ func (s *scm) formatBranch(branch string) string {
 	return string(runes[0:maxLength]) + truncateSymbol
 }
 
-func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
-	excludedFolders := s.props.GetStringArray(properties.ExcludeFolders, []string{})
-	if len(excludedFolders) == 0 {
-		return false
-	}
-	return s.env.DirMatchesOneOf(rootDir, excludedFolders)
-}
-
 func (s *scm) FileContents(folder, file string) string {
 	return strings.Trim(s.env.FileContent(folder+"/"+file), " \r\n")
 }

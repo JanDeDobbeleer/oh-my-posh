@@ -81,10 +81,6 @@ func (sl *Sapling) shouldDisplay() bool {
 		return false
 	}
 
-	if sl.shouldIgnoreRootRepository(slDir.ParentFolder) {
-		return false
-	}
-
 	sl.workingDir = slDir.Path
 	sl.rootDir = slDir.Path
 	// convert the worktree file path to a windows one when in a WSL shared folder

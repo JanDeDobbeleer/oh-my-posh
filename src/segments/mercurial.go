@@ -80,10 +80,6 @@ func (hg *Mercurial) shouldDisplay() bool {
 		return false
 	}
 
-	if hg.shouldIgnoreRootRepository(hgdir.ParentFolder) {
-		return false
-	}
-
 	hg.setDir(hgdir.ParentFolder)
 
 	hg.workingDir = hgdir.Path

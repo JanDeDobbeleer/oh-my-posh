@@ -12,7 +12,7 @@ A really simple configuration could look like this. The default format is `json`
 There's a [schema][schema] available which is kept up-to-date and helps with autocomplete and validation of the configuration.
 
 :::info
-There are a few [themes][themes] available which are basically predefined configs. You can use these as they are, or as a
+There are a few [themes][themes] available which are basically predefined configurations. You can use these as they are, or as a
 starting point to create your own configuration.
 :::
 
@@ -107,7 +107,7 @@ escape characters to see the prompt as it would be shown inside a prompt functio
 :::caution
 The command below will not persist the configuration for your shell but print the prompt in your terminal.
 If you want to use your own configuration permanently, adjust the prompt configuration to use your custom
-theme.
+configuration.
 :::
 
 ```bash
@@ -124,7 +124,7 @@ For example, the following is a valid `--config` flag:
 `--config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'`
 :::
 
-## General Settings
+## Settings
 
 | Name                        | Type             | Default | Description                                                                                                                                                                                                                                                                  |
 | --------------------------- | ---------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -142,9 +142,9 @@ For example, the following is a valid `--config` flag:
 
 ### JSON Schema Validation
 
-As mentioned above, Oh My Posh themes can utilize JSON Schema to validate their contents. Themes should include a link to
+As mentioned above, Oh My Posh configurations can utilize JSON Schema to validate their contents. Configurations should include a link to
 the [external schema document][schema] which prescribes the appropriate structure and contents for various elements. If
-your code editor is configured to use JSON Schema, it will compare your custom theme to the external document, and issue
+your code editor is configured to use JSON Schema, it will compare your configuration to the external document, and issue
 warnings for discrepancies.
 
 For example, given the following code:
@@ -166,7 +166,7 @@ warnings, and ignore them at your peril.
 
 ### Accepted Formats
 
-Oh My Posh supports three file formats for themes: `json`, `yaml`, and `toml`.
+Oh My Posh supports three file formats for configurations: `json`, `yaml`, and `toml`.
 
 Various converters exist to convert between these, although they aren't perfect and will require manual
 adjustment. Notably, the schema implementation for json is as follows:

@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"strconv"
 	"time"
 )
 
@@ -38,5 +37,6 @@ func ToDuration(seconds int) Duration {
 		return INFINITE
 	}
 
-	return Duration(strconv.Itoa(seconds) + "s")
+	duration := time.Duration(seconds) * time.Second
+	return Duration(duration.String())
 }

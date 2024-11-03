@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
@@ -46,11 +45,11 @@ func TestParseTestConfig(t *testing.T) {
 			"foreground": "#ffffff",
 			"background": "#61AFEF",
 			"properties": {
-				"style": "folder",
-				"exclude_folders": [
-					"/super/secret/project"
-				]
-			}
+				"style": "folder"
+			},
+			"exclude_folders": [
+				"/super/secret/project"
+			]
 		}
 		`
 	segment := &Segment{}
@@ -78,11 +77,9 @@ func TestShouldIncludeFolder(t *testing.T) {
 		env.On("DirMatchesOneOf", cwd, []string{"Projects/oh-my-posh"}).Return(tc.Included)
 		env.On("DirMatchesOneOf", cwd, []string{"Projects/nope"}).Return(tc.Excluded)
 		segment := &Segment{
-			Properties: properties.Map{
-				properties.IncludeFolders: []string{"Projects/oh-my-posh"},
-				properties.ExcludeFolders: []string{"Projects/nope"},
-			},
-			env: env,
+			IncludeFolders: []string{"Projects/oh-my-posh"},
+			ExcludeFolders: []string{"Projects/nope"},
+			env:            env,
 		}
 		got := segment.shouldIncludeFolder()
 		assert.Equal(t, tc.Expected, got, tc.Case)

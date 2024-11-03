@@ -78,10 +78,6 @@ func (s *Svn) shouldDisplay() bool {
 		return false
 	}
 
-	if s.shouldIgnoreRootRepository(Svndir.ParentFolder) {
-		return false
-	}
-
 	if Svndir.IsDir {
 		s.workingDir = Svndir.Path
 		s.rootDir = Svndir.Path

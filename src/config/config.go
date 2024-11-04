@@ -14,8 +14,8 @@ const (
 	YAML string = "yaml"
 	TOML string = "toml"
 
-	AUTOUPGRADE   = "autoupgrade"
-	UPGRADENOTICE = "upgradenotice"
+	AUTOUPGRADE   = "upgrade"
+	UPGRADENOTICE = "notice"
 
 	Version = 3
 )

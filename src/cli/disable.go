@@ -2,13 +2,14 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
 // getCmd represents the get command
 var disableCmd = &cobra.Command{
-	Use:       fmt.Sprintf(toggleUse, "disable"),
+	Use:       fmt.Sprintf(toggleUse, "disable", strings.Join(toggleArgs, "|")),
 	Short:     "Disable a feature",
 	Long:      fmt.Sprintf(toggleLong, "Disable", "disable"),
 	ValidArgs: toggleArgs,

@@ -166,6 +166,13 @@ func (e *Engine) getTitleTemplateText() string {
 }
 
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
+	text, length := e.writeBlockSegments(block)
+
+	// do not print anything when we don't have any text
+	if length == 0 {
+		return false
+	}
+
 	defer e.applyPowerShellBleedPatch()
 
 	// do not print a newline to avoid a leading space
@@ -173,13 +180,6 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	// the shell
 	if block.Newline && !cancelNewline {
 		e.writeNewline()
-	}
-
-	text, length := e.writeBlockSegments(block)
-
-	// do not print anything when we don't have any text
-	if length == 0 {
-		return false
 	}
 
 	switch block.Type {

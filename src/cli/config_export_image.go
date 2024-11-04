@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/spf13/cobra"
@@ -71,6 +72,8 @@ Exports the config to an image file using customized output options.`,
 		terminal.Init(shell.GENERIC)
 		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 		terminal.Colors = cfg.MakeColors()
+
+		template.Init(env)
 
 		eng := &prompt.Engine{
 			Config: cfg,

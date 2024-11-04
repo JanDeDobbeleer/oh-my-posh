@@ -58,7 +58,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 
 			env := &runtime.Terminal{
 				CmdFlags: &runtime.Flags{
-					Shell:  shellName,
+					Shell:  args[0],
 					Config: configFlag,
 					Strict: strict,
 					Debug:  debug,

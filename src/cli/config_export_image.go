@@ -60,6 +60,9 @@ Exports the config to an image file using customized output options.`,
 
 		env.Init()
 		defer env.Close()
+
+		template.Init(env)
+
 		cfg := config.Load(env)
 
 		// set sane defaults for things we don't print
@@ -72,8 +75,6 @@ Exports the config to an image file using customized output options.`,
 		terminal.Init(shell.GENERIC)
 		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 		terminal.Colors = cfg.MakeColors()
-
-		template.Init(env)
 
 		eng := &prompt.Engine{
 			Config: cfg,

@@ -76,7 +76,7 @@ jobs:
         uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200
         with:
           distribution: goreleaser
-          version: latest
+          version: v2.3.2
           args: release --clean --skip publish
           workdir: src
         env:

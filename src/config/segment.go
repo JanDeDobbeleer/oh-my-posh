@@ -46,10 +46,10 @@ type Segment struct {
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
 	Template               string         `json:"template,omitempty" toml:"template,omitempty"`
-	Foreground             color.Ansi     `json:"foreground" toml:"foreground"`
+	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty"`
 	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty"`
 	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
-	Background             color.Ansi     `json:"background" toml:"background"`
+	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
 	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`

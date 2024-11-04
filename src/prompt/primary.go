@@ -43,20 +43,6 @@ func (e *Engine) Primary() string {
 }
 
 func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
-	// file, err := os.Create("trace.out")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// defer file.Close()
-
-	// err = trace.Start(file)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// defer trace.Stop()
-
 	if e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
 		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))

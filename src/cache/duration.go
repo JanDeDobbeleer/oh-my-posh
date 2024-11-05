@@ -9,6 +9,8 @@ type Duration string
 const (
 	INFINITE = Duration("infinite")
 	ONEWEEK  = Duration("168h")
+	ONEDAY   = Duration("24h")
+	TWOYEARS = Duration("17520h")
 )
 
 func (d Duration) Seconds() int {

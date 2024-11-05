@@ -91,7 +91,7 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 
 	// add tokens to cache
 	o.Env.Cache().Set(o.AccessTokenKey, tokens.AccessToken, cache.ToDuration(tokens.ExpiresIn))
-	o.Env.Cache().Set(o.RefreshTokenKey, tokens.RefreshToken, "2years")
+	o.Env.Cache().Set(o.RefreshTokenKey, tokens.RefreshToken, cache.TWOYEARS)
 	return tokens.AccessToken, nil
 }
 

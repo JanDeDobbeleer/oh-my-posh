@@ -51,6 +51,14 @@ blocks:
         properties:
           fetch_version: true
         template: " 󰚲 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: aurelia
+        style: powerline
+        powerline_symbol: 
+        background: purple
+        foreground: white
+        properties:
+          fetch_version: true
+        template: " α {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: aws
         style: powerline
         powerline_symbol: 
@@ -252,7 +260,9 @@ palette:
   cyan: "#80FFEA"
   green: "#8AFF80"
   magenta-purple: "#FF80BF"
+  purple: "#DE1F84"
   red: "#FF9580"
+  white: "#FFFFFF"
   white-cursorColor-foreground: "#F8F8F2"
   yellow: "#FFCA80"
 version: 2

@@ -486,20 +486,18 @@
         "cache": {
           "type": "object",
           "title": "Cache settings",
-          "description": "https://ohmyposh.dev/docs/configuration/cache",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#cache",
           "default": {},
           "properties": {
             "duration": {
               "type": "string",
               "title": "Cache duration",
-              "description": "https://ohmyposh.dev/docs/configuration/cache#duration",
-              "default": "^(infinite)|([0-9])+(second|seconds|minute|minutes|hour|hours|day|days|week|weeks|month|months)$",
-              "pattern": "^$"
+              "pattern": "^(infinite)|([0-9])+(s|m|h)$"
             },
             "strategy": {
               "type": "string",
               "title": "Cache strategy",
-              "description": "https://ohmyposh.dev/docs/configuration/cache#strategy",
+              "description": "https://ohmyposh.dev/docs/configuration/segment#strategy",
               "default": "folder",
               "enum": [
                 "folder",

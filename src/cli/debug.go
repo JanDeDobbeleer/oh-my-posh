@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -57,7 +56,7 @@ func createDebugCmd() *cobra.Command {
 			// add variables to the environment
 			env.Var = cfg.Var
 
-			terminal.Init(shell.GENERIC)
+			terminal.Init(args[0])
 			terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 			terminal.Colors = cfg.MakeColors()
 			terminal.Plain = plain

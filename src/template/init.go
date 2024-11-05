@@ -37,6 +37,7 @@ func Init(environment runtime.Environment) {
 		"Root",
 		"PWD",
 		"AbsolutePWD",
+		"PSWD",
 		"Folder",
 		"Shell",
 		"ShellVersion",

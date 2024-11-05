@@ -35,38 +35,35 @@ func TestRenderBlock(t *testing.T) {
 
 func TestCanRenderSegment(t *testing.T) {
 	cases := []struct {
-		Case             string
-		Template         string
-		ExecutedSegments []string
-		Expected         bool
+		Case     string
+		Executed []string
+		Needs    []string
+		Expected bool
 	}{
 		{
 			Case:     "No cross segment dependencies",
 			Expected: true,
-			Template: "Hello",
 		},
 		{
 			Case:     "Cross segment dependencies, nothing executed",
 			Expected: false,
-			Template: "Hello {{ .Segments.Foo.World }} {{ .Segments.Foo.Bar }}",
+			Needs:    []string{"Foo"},
 		},
 		{
 			Case:     "Cross segment dependencies, available",
 			Expected: true,
-			Template: "Hello {{ .Segments.Foo.World }}",
-			ExecutedSegments: []string{
-				"Foo",
-			},
+			Executed: []string{"Foo"},
+			Needs:    []string{"Foo"},
 		},
 	}
 	for _, c := range cases {
 		segment := &config.Segment{
-			Type:     "text",
-			Template: c.Template,
+			Type:  "text",
+			Needs: c.Needs,
 		}
 
 		engine := &Engine{}
-		got := engine.canRenderSegment(segment, c.ExecutedSegments)
+		got := engine.canRenderSegment(segment, c.Executed)
 
 		assert.Equal(t, c.Expected, got, c.Case)
 	}

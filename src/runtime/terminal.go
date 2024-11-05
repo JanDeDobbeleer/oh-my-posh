@@ -591,7 +591,7 @@ func (term *Terminal) saveTemplateCache() {
 
 	templateCache, err := json.Marshal(tmplCache)
 	if err == nil {
-		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), "1day")
+		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), cache.ONEDAY)
 	}
 }
 
@@ -757,7 +757,7 @@ func (term *Terminal) setPromptCount() {
 	// Only update the count if we're generating a primary prompt.
 	if term.CmdFlags.Primary {
 		count++
-		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), "1day")
+		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), cache.ONEDAY)
 	}
 
 	term.CmdFlags.PromptCount = count

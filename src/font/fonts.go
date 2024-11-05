@@ -78,7 +78,7 @@ func setCachedFontData(assets []*Asset) {
 		return
 	}
 
-	environment.Cache().Set(cache.FONTLISTCACHE, string(data), "1day")
+	environment.Cache().Set(cache.FONTLISTCACHE, string(data), cache.ONEDAY)
 }
 
 func CascadiaCode() ([]*Asset, error) {

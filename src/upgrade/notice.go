@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
@@ -83,7 +84,7 @@ func Notice(env runtime.Environment, force bool) (string, bool) {
 		return "", false
 	}
 
-	env.Cache().Set(CACHEKEY, latest, "1week")
+	env.Cache().Set(CACHEKEY, latest, cache.ONEWEEK)
 
 	version := fmt.Sprintf("v%s", build.Version)
 	if latest == version {

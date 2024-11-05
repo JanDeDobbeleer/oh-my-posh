@@ -315,6 +315,7 @@
             "azfunc",
             "argocd",
             "angular",
+            "aurelia",
             "battery",
             "bazel",
             "brewfather",
@@ -3284,6 +3285,54 @@
                     "description": "The extensions to look for when determining if the current directory is an Angular project",
                     "default": [
                       "angular.json"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "aurelia"
+              }
+            }
+          },
+          "then": {
+            "title": "Aurelia Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/aurelia",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is an Aurelia project",
+                    "default": [
+                      "package.json"
                     ],
                     "items": {
                       "type": "string"

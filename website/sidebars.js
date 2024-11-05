@@ -62,6 +62,7 @@ module.exports = {
           items: [
             "segments/cli/angular",
             "segments/cli/argocd",
+            "segments/cli/aurelia",
             "segments/cli/bazel",
             "segments/cli/buf",
             "segments/cli/bun",

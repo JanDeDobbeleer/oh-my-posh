@@ -307,3 +307,42 @@ func (l *language) buildVersionURL() {
 
 	l.version.URL = url
 }
+
+func (l *language) hasNodePackage(name string) bool {
+	packageJSON := l.env.FileContent("package.json")
+
+	var packageData map[string]interface{}
+	if err := json.Unmarshal([]byte(packageJSON), &packageData); err != nil {
+		return false
+	}
+
+	dependencies, ok := packageData["dependencies"].(map[string]interface{})
+	if !ok {
+		return false
+	}
+
+	if _, exists := dependencies[name]; !exists {
+		return false
+	}
+
+	return true
+}
+
+func (l *language) nodePackageVersion(name string) (string, error) {
+	folder := filepath.Join(l.env.Pwd(), "node_modules", name)
+
+	const fileName string = "package.json"
+	if !l.env.HasFilesInDir(folder, fileName) {
+		return "", fmt.Errorf("%s not found in %s", fileName, folder)
+	}
+
+	content := l.env.FileContent(filepath.Join(folder, fileName))
+	var data ProjectData
+	err := json.Unmarshal([]byte(content), &data)
+
+	if err != nil {
+		return "", err
+	}
+
+	return data.Version, nil
+}

@@ -33,6 +33,8 @@ const (
 	ANGULAR SegmentType = "angular"
 	// ARGOCD writes the current argocd context
 	ARGOCD SegmentType = "argocd"
+	// AURELIA writes which aurelia version is currently referenced in package.json
+	AURELIA SegmentType = "aurelia"
 	// AWS writes the active aws context
 	AWS SegmentType = "aws"
 	// AZ writes the Azure subscription info we're currently in
@@ -226,6 +228,7 @@ const (
 var Segments = map[SegmentType]func() SegmentWriter{
 	ANGULAR:         func() SegmentWriter { return &segments.Angular{} },
 	ARGOCD:          func() SegmentWriter { return &segments.Argocd{} },
+	AURELIA:         func() SegmentWriter { return &segments.Aurelia{} },
 	AWS:             func() SegmentWriter { return &segments.Aws{} },
 	AZ:              func() SegmentWriter { return &segments.Az{} },
 	AZD:             func() SegmentWriter { return &segments.Azd{} },

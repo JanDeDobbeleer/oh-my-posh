@@ -1,13 +1,5 @@
 package segments
 
-import (
-	"encoding/json"
-	"fmt"
-	"path/filepath"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
 type Nx struct {
 	language
 }
@@ -30,20 +22,5 @@ func (a *Nx) Enabled() bool {
 }
 
 func (a *Nx) getVersion() (string, error) {
-	return getNodePackageVersion(a.language.env, "nx")
-}
-
-func getNodePackageVersion(env runtime.Environment, nodePackage string) (string, error) {
-	const fileName string = "package.json"
-	folder := filepath.Join(env.Pwd(), "node_modules", nodePackage)
-	if !env.HasFilesInDir(folder, fileName) {
-		return "", fmt.Errorf("%s not found in %s", fileName, folder)
-	}
-	content := env.FileContent(filepath.Join(folder, fileName))
-	var data ProjectData
-	err := json.Unmarshal([]byte(content), &data)
-	if err != nil {
-		return "", err
-	}
-	return data.Version, nil
+	return a.nodePackageVersion("nx")
 }

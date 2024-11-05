@@ -45,14 +45,20 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 	count := len(block.Segments)
 	// store the current index
 	current := 0
+	// keep track of what we already executed
+	executedCount := 0
 	// store the results
 	results := make([]*config.Segment, count)
-	// store the names of executed segments
+	// store the unique names of executed segments
 	executed := make([]string, count)
 
 	for {
 		select {
 		case res := <-out:
+			executedCount++
+
+			finished := executedCount == count
+
 			results[res.index] = res.segment
 
 			name := res.segment.Name()
@@ -63,7 +69,7 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 			segment := results[current]
 
 			for segment != nil {
-				if !e.canRenderSegment(segment, executed) {
+				if !e.canRenderSegment(segment, executed) && !finished {
 					break
 				}
 

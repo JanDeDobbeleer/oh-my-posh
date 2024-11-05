@@ -3,10 +3,8 @@ package prompt
 import (
 	"runtime"
 	"slices"
-	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
@@ -113,12 +111,7 @@ func (e *Engine) writeSegment(index int, block *config.Block, segment *config.Se
 }
 
 func (e *Engine) canRenderSegment(segment *config.Segment, executed []string) bool {
-	if !strings.Contains(segment.Template, ".Segments.") {
-		return true
-	}
-
-	matches := regex.FindNamedRegexMatch(`\.Segments\.(?P<NAME>[a-zA-Z0-9]+)`, segment.Template)
-	for _, name := range matches {
+	for _, name := range segment.Needs {
 		if slices.Contains(executed, name) {
 			continue
 		}

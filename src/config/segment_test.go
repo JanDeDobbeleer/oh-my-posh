@@ -160,3 +160,46 @@ func TestGetColors(t *testing.T) {
 		assert.Equal(t, tc.Expected, fgColor, tc.Case)
 	}
 }
+
+func TestEvaluateNeeds(t *testing.T) {
+	cases := []struct {
+		Segment *Segment
+		Case    string
+		Needs   []string
+	}{
+		{
+			Case: "No needs",
+			Segment: &Segment{
+				Template: "foo",
+			},
+		},
+		{
+			Case: "Template needs",
+			Segment: &Segment{
+				Template: "{{ .Segments.Git.URL }}",
+			},
+			Needs: []string{"Git"},
+		},
+		{
+			Case: "Template & Foreground needs",
+			Segment: &Segment{
+				Template:            "{{ .Segments.Git.URL }}",
+				ForegroundTemplates: []string{"foo", "{{ .Segments.Os.Icon }}"},
+			},
+			Needs: []string{"Git", "Os"},
+		},
+		{
+			Case: "Template & Foreground & Background needs",
+			Segment: &Segment{
+				Template:            "{{ .Segments.Git.URL }}",
+				ForegroundTemplates: []string{"foo", "{{ .Segments.Os.Icon }}"},
+				BackgroundTemplates: []string{"bar", "{{ .Segments.Exit.Icon }}"},
+			},
+			Needs: []string{"Git", "Os", "Exit"},
+		},
+	}
+	for _, tc := range cases {
+		tc.Segment.evaluateNeeds()
+		assert.Equal(t, tc.Needs, tc.Segment.Needs, tc.Case)
+	}
+}

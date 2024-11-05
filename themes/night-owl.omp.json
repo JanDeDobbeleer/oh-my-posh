@@ -107,6 +107,15 @@
           "type": "angular"
         },
         {
+          "background": "#ffffff",
+          "foreground": "#de1f84",
+          "leading_diamond": "\ue0b2",
+          "style": "diamond",
+          "template": "\u03b1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "trailing_diamond": "<transparent,#ffffff>\ue0b2</>",
+          "type": "aurelia"
+        },
+        {
           "background": "#565656",
           "foreground": "#faa029",
           "leading_diamond": "\ue0b2",

@@ -26,6 +26,5 @@ func (a *Angular) Enabled() bool {
 }
 
 func (a *Angular) getVersion() (string, error) {
-	// tested by nx_test.go
-	return getNodePackageVersion(a.language.env, filepath.Join("@angular", "core"))
+	return a.nodePackageVersion(filepath.Join("@angular", "core"))
 }

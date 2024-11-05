@@ -22,6 +22,5 @@ func (r *React) Enabled() bool {
 }
 
 func (r *React) getVersion() (string, error) {
-	// tested by nx_test.go
-	return getNodePackageVersion(r.language.env, "react")
+	return r.nodePackageVersion("react")
 }

@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"path/filepath"
 	"testing"
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
@@ -558,4 +559,39 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, prop
 	}
 
 	return env, props
+}
+
+func TestNodePackageVersion(t *testing.T) {
+	cases := []struct {
+		Case        string
+		PackageJSON string
+		Version     string
+		ShouldFail  bool
+		NoFiles     bool
+	}{
+		{Case: "14.1.5", Version: "14.1.5", PackageJSON: "{ \"name\": \"nx\",\"version\": \"14.1.5\"}"},
+		{Case: "14.0.0", Version: "14.0.0", PackageJSON: "{ \"name\": \"nx\",\"version\": \"14.0.0\"}"},
+		{Case: "no files", NoFiles: true, ShouldFail: true},
+		{Case: "bad data", ShouldFail: true, PackageJSON: "bad data"},
+	}
+
+	for _, tc := range cases {
+		var env = new(mock.Environment)
+		env.On("Pwd").Return("posh")
+		path := filepath.Join("posh", "node_modules", "nx")
+		env.On("HasFilesInDir", path, "package.json").Return(!tc.NoFiles)
+		env.On("FileContent", filepath.Join(path, "package.json")).Return(tc.PackageJSON)
+
+		a := &language{}
+		a.Init(properties.Map{}, env)
+		got, err := a.nodePackageVersion("nx")
+
+		if tc.ShouldFail {
+			assert.Error(t, err, tc.Case)
+			return
+		}
+
+		assert.Nil(t, err, tc.Case)
+		assert.Equal(t, tc.Version, got, tc.Case)
+	}
 }

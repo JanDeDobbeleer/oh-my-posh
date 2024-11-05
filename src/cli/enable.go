@@ -12,23 +12,21 @@ import (
 )
 
 var (
-	toggleUse  = "%s [%s]"
-	toggleLong = `%s a feature
-
-This command is used to %s one of the following features:
-
-- upgradenotice`
+	toggleHelpText = `%s one of the following features:
+`
 	toggleArgs = []string{
 		config.UPGRADENOTICE,
 		config.AUTOUPGRADE,
 	}
+	toggleUse  = fmt.Sprintf("%%s [%s]", strings.Join(toggleArgs, "|"))
+	toggleLong = strings.Join(append([]string{toggleHelpText}, toggleArgs...), "\n- ")
 )
 
 // getCmd represents the get command
 var enableCmd = &cobra.Command{
-	Use:       fmt.Sprintf(toggleUse, "enable", strings.Join(toggleArgs, "|")),
+	Use:       fmt.Sprintf(toggleUse, "enable"),
 	Short:     "Enable a feature",
-	Long:      fmt.Sprintf(toggleLong, "Enable", "enable"),
+	Long:      fmt.Sprintf(toggleLong, "Enable"),
 	ValidArgs: toggleArgs,
 	Args:      NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {

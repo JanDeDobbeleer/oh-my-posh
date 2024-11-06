@@ -143,6 +143,7 @@ module.exports = {
             "segments/languages/rust",
             "segments/languages/swift",
             "segments/languages/vala",
+            "segments/languages/zig",
           ]
         },
         {

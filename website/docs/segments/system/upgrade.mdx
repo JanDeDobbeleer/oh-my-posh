@@ -18,8 +18,17 @@ import Config from "@site/src/components/Config.js";
     style: "plain",
     foreground: "#111111",
     background: "#FFD664",
+    properties: {
+      cache_duration: "168h",
+    },
   }}
 />
+
+## Properties
+
+| Name             |   Type   | Default | Description                                                                                                                                                                                     |
+| ---------------- | :------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_duration` | `string` |   ``    | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s`. The duration is parsed using the [time.ParseDuration] function from the Go standard library |
 
 ## Template ([info][templates])
 
@@ -39,3 +48,4 @@ import Config from "@site/src/components/Config.js";
 | `.Latest`  | `string` | the latest available version number |
 
 [templates]: /docs/configuration/templates
+[time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration

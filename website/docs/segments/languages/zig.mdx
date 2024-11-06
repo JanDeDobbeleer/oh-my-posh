@@ -1,0 +1,64 @@
+---
+id: zig
+title: Zig
+sidebar_label: Zig
+---
+
+## What
+
+Display the currently active [zig][zig] version.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "zig",
+    style: "powerline",
+    powerline_symbol: "\ue0b0",
+    foreground: "#342311",
+    background: "#ffad55",
+    template: " \ue6a9 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+  }}
+/>
+
+## Properties
+
+| Name                   |    Type    |    Default     | Description                                                                                                                                                                                                                          |
+| ---------------------- | :--------: | :------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean`  |    `false`     | display the segment in the HOME folder or not                                                                                                                                                                                        |
+| `fetch_version`        | `boolean`  |     `true`     | fetch the zig version (`zig version`)                                                                                                                                                                                                |
+| `missing_command_text` |  `string`  |                | text to display when the command is missing                                                                                                                                                                                          |
+| `display_mode`         |  `string`  |   `context`    | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
+| `version_url_template` |  `string`  |                | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
+| `extensions`           | `[]string` | `*.zig, *.zon` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
+| `folders`              | `[]string` |                | allows to override the list of folder names to validate                                                                                                                                                                              |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                                           |
+| ---------------- | -------- | ----------------------------------------------------- |
+| `.Full`          | `string` | the full version                                      |
+| `.Major`         | `string` | major number                                          |
+| `.Minor`         | `string` | minor number                                          |
+| `.Patch`         | `string` | patch number                                          |
+| `.Prerelease`    | `string` | prerelease identifier                                 |
+| `.BuildMetadata` | `string` | build identifier                                      |
+| `.URL`           | `string` | URL of the version info / release notes               |
+| `.InProjectDir`  | `bool`   | whether the working directory is within a Zig project |
+| `.Error`         | `string` | error encountered when fetching the version string    |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[zig]: https://ziglang.org/

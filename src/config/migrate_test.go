@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMigrateCache(t *testing.T) {
+func TestTimeoutToCache(t *testing.T) {
 	cases := []struct {
 		Expected *cache.Config
 		Case     string
@@ -27,8 +27,8 @@ func TestMigrateCache(t *testing.T) {
 			},
 		}
 
-		got := segment.migrateCache()
-		assert.Equal(t, tc.Expected, got, tc.Case)
+		segment.timeoutToCache()
+		assert.Equal(t, tc.Expected, segment.Cache, tc.Case)
 	}
 }
 

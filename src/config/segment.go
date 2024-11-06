@@ -3,12 +3,14 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
@@ -40,7 +42,7 @@ type Segment struct {
 	env                    runtime.Environment
 	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
 	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
-	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
+	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
 	styleCache             SegmentStyle
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
@@ -52,18 +54,19 @@ type Segment struct {
 	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
-	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
+	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
-	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
 	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
+	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
 	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
 	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty"`
 	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty"`
-	Duration               time.Duration  `json:"-" toml:"-"`
+	Needs                  []string       `json:"-" toml:"-"`
 	NameLength             int            `json:"-" toml:"-"`
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
+	Duration               time.Duration  `json:"-" toml:"-"`
 	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
 	Enabled                bool           `json:"-" toml:"-"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
@@ -94,6 +97,8 @@ func (segment *Segment) Execute(env runtime.Environment) {
 			segment.Duration = time.Since(start)
 		}()
 	}
+
+	defer segment.evaluateNeeds()
 
 	err := segment.MapSegmentWithWriter(env)
 	if err != nil || !segment.shouldIncludeFolder() {
@@ -310,4 +315,31 @@ func (segment *Segment) cwdIncluded() bool {
 
 func (segment *Segment) cwdExcluded() bool {
 	return segment.env.DirMatchesOneOf(segment.env.Pwd(), segment.ExcludeFolders)
+}
+
+func (segment *Segment) evaluateNeeds() {
+	value := segment.Template
+
+	if len(segment.ForegroundTemplates) != 0 {
+		value += strings.Join(segment.ForegroundTemplates, "")
+	}
+
+	if len(segment.BackgroundTemplates) != 0 {
+		value += strings.Join(segment.BackgroundTemplates, "")
+	}
+
+	if !strings.Contains(value, ".Segments.") {
+		return
+	}
+
+	matches := regex.FindAllNamedRegexMatch(`\.Segments\.(?P<NAME>[a-zA-Z0-9]+)`, value)
+	for _, name := range matches {
+		segmentName := name["NAME"]
+
+		if len(name) == 0 || slices.Contains(segment.Needs, segmentName) {
+			continue
+		}
+
+		segment.Needs = append(segment.Needs, segmentName)
+	}
 }

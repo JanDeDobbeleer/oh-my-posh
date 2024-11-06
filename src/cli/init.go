@@ -51,43 +51,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 				return
 			}
 
-			var startTime time.Time
-			if debug {
-				startTime = time.Now()
-			}
-
-			env := &runtime.Terminal{
-				CmdFlags: &runtime.Flags{
-					Shell:  args[0],
-					Config: configFlag,
-					Strict: strict,
-					Debug:  debug,
-				},
-			}
-
-			env.Init()
-			defer env.Close()
-
-			template.Init(env)
-
-			cfg := config.Load(env)
-
-			feats := cfg.Features()
-
-			var output string
-
-			switch {
-			case printOutput, debug:
-				output = shell.PrintInit(env, feats, &startTime)
-			default:
-				output = shell.Init(env, feats)
-			}
-
-			if silent {
-				return
-			}
-
-			fmt.Print(output)
+			runInit(args[0])
 		},
 	}
 
@@ -98,4 +62,44 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	_ = initCmd.MarkPersistentFlagRequired("config")
 
 	return initCmd
+}
+
+func runInit(sh string) {
+	var startTime time.Time
+	if debug {
+		startTime = time.Now()
+	}
+
+	env := &runtime.Terminal{
+		CmdFlags: &runtime.Flags{
+			Shell:  sh,
+			Config: configFlag,
+			Strict: strict,
+			Debug:  debug,
+		},
+	}
+
+	env.Init()
+	defer env.Close()
+
+	template.Init(env)
+
+	cfg := config.Load(env)
+
+	feats := cfg.Features()
+
+	var output string
+
+	switch {
+	case printOutput, debug:
+		output = shell.PrintInit(env, feats, &startTime)
+	default:
+		output = shell.Init(env, feats)
+	}
+
+	if silent {
+		return
+	}
+
+	fmt.Print(output)
 }

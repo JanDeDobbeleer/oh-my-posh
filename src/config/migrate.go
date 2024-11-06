@@ -30,10 +30,16 @@ func (segment *Segment) migrate(version int) {
 
 	// Cache settings
 	delete(segment.Properties, "cache_version")
-	segment.Cache = segment.migrateCache()
 
 	segment.IncludeFolders = segment.migrateFolders(includeFolders)
 	segment.ExcludeFolders = segment.migrateFolders(excludeFolders)
+
+	switch segment.Type { //nolint:exhaustive
+	case UPGRADE:
+		segment.timeoutToDuration()
+	default:
+		segment.timeoutToCache()
+	}
 }
 
 func (segment *Segment) hasProperty(property properties.Property) bool {
@@ -45,22 +51,33 @@ func (segment *Segment) hasProperty(property properties.Property) bool {
 	return false
 }
 
-func (segment *Segment) migrateCache() *cache.Config {
+func (segment *Segment) timeoutToCache() {
 	if !segment.hasProperty(cacheTimeout) {
-		return nil
+		return
 	}
 
 	timeout := segment.Properties.GetInt(cacheTimeout, 0)
 	delete(segment.Properties, cacheTimeout)
 
 	if timeout == 0 {
-		return nil
+		return
 	}
 
-	return &cache.Config{
+	segment.Cache = &cache.Config{
 		Duration: cache.ToDuration(timeout * 60),
 		Strategy: cache.Folder,
 	}
+}
+
+func (segment *Segment) timeoutToDuration() {
+	timeout := segment.Properties.GetInt(cacheTimeout, 0)
+	delete(segment.Properties, cacheTimeout)
+
+	if timeout == 0 {
+		return
+	}
+
+	segment.Properties[properties.CacheDuration] = cache.ToDuration(timeout * 60)
 }
 
 func (segment *Segment) migrateFolders(property properties.Property) []string {

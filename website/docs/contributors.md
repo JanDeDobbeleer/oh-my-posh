@@ -398,6 +398,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://www.antonin-ruan.fr"><img src="https://avatars.githubusercontent.com/u/43148004?v=4?s=100" width="100px;" alt="Antonin Ruan"/><br /><sub><b>Antonin Ruan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AntoninRuan" title="Code">💻</a> <a href="#design-AntoninRuan" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AntoninRuan" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/00ll00"><img src="https://avatars.githubusercontent.com/u/40747228?v=4?s=100" width="100px;" alt="00ll00"/><br /><sub><b>00ll00</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=00ll00" title="Code">💻</a> <a href="#design-00ll00" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=00ll00" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://devnotes.ernstc.net/"><img src="https://avatars.githubusercontent.com/u/130360?v=4?s=100" width="100px;" alt="Ernesto Cianciotta"/><br /><sub><b>Ernesto Cianciotta</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ernstc" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ernstc" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

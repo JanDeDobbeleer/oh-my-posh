@@ -18,6 +18,10 @@ func (l List) Empty() bool {
 }
 
 func (l List) Resolve(context any, defaultValue string, logic Logic) string {
+	if l.Empty() {
+		return defaultValue
+	}
+
 	switch logic {
 	case FirstMatch:
 		return l.FirstMatch(context, defaultValue)

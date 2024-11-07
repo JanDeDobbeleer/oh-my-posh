@@ -141,6 +141,12 @@
       "description": "Custom glyph/text for specific branches",
       "default": {}
     },
+    "cache_duration": {
+      "type": "string",
+      "title": "Cache duration",
+      "description": "The duration for which the segment will be cached. This is parsed using the `time.ParseDuration` function from the Go standard library (see https://pkg.go.dev/time#ParseDuration for details).",
+      "pattern": "^(infinite|([0-9]+(h|m|s))+)$"
+    },
     "extra_prompt": {
       "type": "object",
       "default": {},
@@ -489,9 +495,7 @@
           "default": {},
           "properties": {
             "duration": {
-              "type": "string",
-              "title": "Cache duration",
-              "pattern": "^(infinite)|([0-9])+(s|m|h)$"
+              "$ref": "#/definitions/cache_duration"
             },
             "strategy": {
               "type": "string",
@@ -3902,7 +3906,17 @@
           },
           "then": {
             "title": "Upgrade Segment",
-            "description": "https://ohmyposh.dev/docs/segments/system/upgrade"
+            "description": "https://ohmyposh.dev/docs/segments/system/upgrade",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  }
+                }
+              }
+            }
           }
         },
         {

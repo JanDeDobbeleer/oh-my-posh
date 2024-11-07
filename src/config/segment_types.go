@@ -108,6 +108,8 @@ const (
 	IPIFY SegmentType = "ipify"
 	// JAVA writes the active java version
 	JAVA SegmentType = "java"
+	// API writes the output of a custom JSON API
+	HTTP SegmentType = "http"
 	// JULIA writes which julia version is currently active
 	JULIA SegmentType = "julia"
 	// KOTLIN writes the active kotlin version
@@ -276,6 +278,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	HELM:            func() SegmentWriter { return &segments.Helm{} },
 	IPIFY:           func() SegmentWriter { return &segments.IPify{} },
 	JAVA:            func() SegmentWriter { return &segments.Java{} },
+	HTTP:            func() SegmentWriter { return &segments.HTTP{} },
 	JULIA:           func() SegmentWriter { return &segments.Julia{} },
 	KOTLIN:          func() SegmentWriter { return &segments.Kotlin{} },
 	KUBECTL:         func() SegmentWriter { return &segments.Kubectl{} },

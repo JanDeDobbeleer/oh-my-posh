@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cli"
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 )
 
 func BenchmarkInit(b *testing.B) {
@@ -23,7 +24,7 @@ func BenchmarkInit(b *testing.B) {
 func BenchmarkPrimary(b *testing.B) {
 	cmd := cli.RootCmd
 	// needs to be a non-existing file as we panic otherwise
-	cmd.SetArgs([]string{"print", "primary", "--pwd", "/Users/jan/Code/oh-my-posh/src", "--shell", "fish", "--silent"})
+	cmd.SetArgs([]string{"print", prompt.PRIMARY, "--pwd", "/Users/jan/Code/oh-my-posh/src", "--shell", "fish", "--silent"})
 	out := bytes.NewBufferString("")
 	cmd.SetOut(out)
 

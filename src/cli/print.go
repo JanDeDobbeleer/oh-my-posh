@@ -42,14 +42,14 @@ func createPrintCmd() *cobra.Command {
 		Short: "Print the prompt/context",
 		Long:  "Print one of the prompts based on the location/use-case.",
 		ValidArgs: []string{
-			"debug",
-			"primary",
-			"secondary",
-			"transient",
-			"right",
-			"tooltip",
-			"valid",
-			"error",
+			prompt.DEBUG,
+			prompt.PRIMARY,
+			prompt.SECONDARY,
+			prompt.TRANSIENT,
+			prompt.RIGHT,
+			prompt.TOOLTIP,
+			prompt.VALID,
+			prompt.ERROR,
 		},
 		Args: NoArgsOrOneValidArg,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -71,7 +71,7 @@ func createPrintCmd() *cobra.Command {
 				Shell:         shellName,
 				ShellVersion:  shellVersion,
 				Plain:         plain,
-				Primary:       args[0] == "primary",
+				Type:          args[0],
 				Cleared:       cleared,
 				NoExitCode:    noStatus,
 				Column:        column,
@@ -83,21 +83,21 @@ func createPrintCmd() *cobra.Command {
 			defer eng.Env.Close()
 
 			switch args[0] {
-			case "debug":
+			case prompt.DEBUG:
 				fmt.Print(eng.ExtraPrompt(prompt.Debug))
-			case "primary":
+			case prompt.PRIMARY:
 				fmt.Print(eng.Primary())
-			case "secondary":
+			case prompt.SECONDARY:
 				fmt.Print(eng.ExtraPrompt(prompt.Secondary))
-			case "transient":
+			case prompt.TRANSIENT:
 				fmt.Print(eng.ExtraPrompt(prompt.Transient))
-			case "right":
+			case prompt.RIGHT:
 				fmt.Print(eng.RPrompt())
-			case "tooltip":
+			case prompt.TOOLTIP:
 				fmt.Print(eng.Tooltip(command))
-			case "valid":
+			case prompt.VALID:
 				fmt.Print(eng.ExtraPrompt(prompt.Valid))
-			case "error":
+			case prompt.ERROR:
 				fmt.Print(eng.ExtraPrompt(prompt.Error))
 			default:
 				_ = cmd.Help()

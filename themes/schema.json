@@ -147,6 +147,11 @@
       "description": "The duration for which the segment will be cached. This is parsed using the `time.ParseDuration` function from the Go standard library (see https://pkg.go.dev/time#ParseDuration for details).",
       "pattern": "^(infinite|([0-9]+(h|m|s))+)$"
     },
+    "filler": {
+      "type": "string",
+      "title": "Filler",
+      "description": "Right aligned filler text, will span the remaining width."
+    },
     "extra_prompt": {
       "type": "object",
       "default": {},
@@ -230,6 +235,10 @@
                   "hide"
                 ],
                 "default": ""
+              },
+              "filler": {
+                "$ref": "#/definitions/filler",
+                "description": "https://ohmyposh.dev/docs/configuration/block#filler"
               }
             }
           }
@@ -4738,19 +4747,21 @@
       "$ref": "#/definitions/extra_prompt",
       "title": "Transient Prompt Setting",
       "description": "https://ohmyposh.dev/docs/configuration/transient",
-      "properties": {
-        "filler": {
-          "type": "string",
-          "title": "Filler",
-          "description": "Right aligned filler text, will span the remaining width"
-        },
-        "newline": {
-          "type": "boolean",
-          "title": "Newline",
-          "description": "Add a newline before the prompt",
-          "default": false
+      "anyOf": [
+        {
+          "properties": {
+            "filler": {
+              "$ref": "#/definitions/filler"
+            },
+            "newline": {
+              "type": "boolean",
+              "title": "Newline",
+              "description": "Add a newline before the prompt",
+              "default": false
+            }
+          }
         }
-      }
+      ]
     },
     "valid_line": {
       "$ref": "#/definitions/extra_prompt",

@@ -154,6 +154,7 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 	}
 
 	// allow for easy color overrides and templates
+	terminal.SetColors("default", "default")
 	terminal.Write("", "", filler)
 	filler, lenFiller := terminal.String()
 	if lenFiller == 0 {

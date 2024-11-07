@@ -119,10 +119,6 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	if len(segment.Templates) != 0 {
-		segment.Template = segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
-	}
-
 	if segment.writer.Enabled() {
 		segment.Enabled = true
 		env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
@@ -277,6 +273,11 @@ func (segment *Segment) folderKey() string {
 }
 
 func (segment *Segment) string() string {
+	result := segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
+	if len(result) != 0 {
+		return result
+	}
+
 	if len(segment.Template) == 0 {
 		segment.Template = segment.writer.Template()
 	}
@@ -326,6 +327,10 @@ func (segment *Segment) evaluateNeeds() {
 
 	if len(segment.BackgroundTemplates) != 0 {
 		value += strings.Join(segment.BackgroundTemplates, "")
+	}
+
+	if len(segment.Templates) != 0 {
+		value += strings.Join(segment.Templates, "")
 	}
 
 	if !strings.Contains(value, ".Segments.") {

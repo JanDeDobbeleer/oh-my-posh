@@ -26,6 +26,17 @@ type Engine struct {
 	Plain                 bool
 }
 
+const (
+	PRIMARY   = "primary"
+	TRANSIENT = "transient"
+	DEBUG     = "debug"
+	SECONDARY = "secondary"
+	RIGHT     = "right"
+	TOOLTIP   = "tooltip"
+	VALID     = "valid"
+	ERROR     = "error"
+)
+
 func (e *Engine) write(text string) {
 	e.prompt.WriteString(text)
 }
@@ -456,6 +467,16 @@ func New(flags *runtime.Flags) *Engine {
 
 	env.Init()
 	cfg := config.Load(env)
+
+	// load the template cache for extra prompts prior to
+	// rendering any template
+	if flags.Type == DEBUG ||
+		flags.Type == SECONDARY ||
+		flags.Type == TRANSIENT ||
+		flags.Type == VALID ||
+		flags.Type == ERROR {
+		env.LoadTemplateCache()
+	}
 
 	template.Init(env)
 

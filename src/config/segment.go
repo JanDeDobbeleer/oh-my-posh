@@ -115,14 +115,11 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	if shouldHideForWidth(segment.env, segment.MinWidth, segment.MaxWidth) {
+	if shouldHideForWidth(env, segment.MinWidth, segment.MaxWidth) {
 		return
 	}
 
-	if segment.writer.Enabled() {
-		segment.Enabled = true
-		env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
-	}
+	segment.Enabled = segment.writer.Enabled()
 }
 
 func (segment *Segment) Render() {
@@ -138,7 +135,8 @@ func (segment *Segment) Render() {
 		return
 	}
 
-	segment.writer.SetText(text)
+	segment.SetText(text)
+	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
 	segment.setCache()
 }
 

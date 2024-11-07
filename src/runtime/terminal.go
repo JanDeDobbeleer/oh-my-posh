@@ -581,7 +581,7 @@ func (term *Terminal) Session() cache.Cache {
 func (term *Terminal) saveTemplateCache() {
 	// only store this when in a primary prompt
 	// and when we have a transient prompt in the config
-	canSave := term.CmdFlags.Primary && term.CmdFlags.HasTransient
+	canSave := term.CmdFlags.Type == PRIMARY && term.CmdFlags.HasTransient
 	if !canSave {
 		return
 	}
@@ -755,7 +755,7 @@ func (term *Terminal) setPromptCount() {
 	}
 
 	// Only update the count if we're generating a primary prompt.
-	if term.CmdFlags.Primary {
+	if term.CmdFlags.Type == PRIMARY {
 		count++
 		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), cache.ONEDAY)
 	}

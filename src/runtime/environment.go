@@ -18,6 +18,8 @@ const (
 	DARWIN  = "darwin"
 	LINUX   = "linux"
 	CMD     = "cmd"
+
+	PRIMARY = "primary"
 )
 
 type Environment interface {
@@ -83,17 +85,17 @@ type Flags struct {
 	Shell         string
 	ShellVersion  string
 	PWD           string
+	Type          string
+	ErrorCode     int
 	PromptCount   int
-	ExecutionTime float64
-	JobCount      int
 	StackCount    int
 	Column        int
 	TerminalWidth int
-	ErrorCode     int
-	Plain         bool
-	Debug         bool
-	Primary       bool
+	ExecutionTime float64
+	JobCount      int
 	HasTransient  bool
+	Debug         bool
+	Plain         bool
 	Strict        bool
 	Cleared       bool
 	NoExitCode    bool

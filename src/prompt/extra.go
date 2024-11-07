@@ -21,8 +21,6 @@ const (
 )
 
 func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
-	// populate env with latest context
-	e.Env.LoadTemplateCache()
 	var prompt *config.Segment
 
 	switch promptType {

@@ -2828,6 +2828,16 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "ernstc",
+      "name": "Ernesto Cianciotta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/130360?v=4",
+      "profile": "https://devnotes.ernstc.net/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

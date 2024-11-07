@@ -26,9 +26,9 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name             |   Type   | Default | Description                                                                                                                                                                                     |
-| ---------------- | :------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cache_duration` | `string` |   ``    | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s`. The duration is parsed using the [time.ParseDuration] function from the Go standard library |
+| Name             |   Type   | Default | Description                                                                                                                                                                           |
+| ---------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_duration` | `string` | `168h`  | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library |
 
 ## Template ([info][templates])
 

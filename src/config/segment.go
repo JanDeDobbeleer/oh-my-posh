@@ -120,7 +120,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 	}
 
 	if len(segment.Templates) != 0 {
-		segment.Template = strings.Join(segment.Templates, "")
+		segment.Template = segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
 	}
 
 	if segment.writer.Enabled() {

@@ -1,0 +1,54 @@
+---
+id: http
+title: HTTP
+sidebar_label: HTTP
+---
+
+## What
+
+HTTP Request is a simple segment to return any json data from any HTTP call.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "http",
+    style: "diamond",
+    foreground: "#ffffff",
+    background: "#c386f1",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\uE0B0",
+    template: "{{ .Result }}",
+    properties: {
+      url: "https://jsonplaceholder.typicode.com/posts/1",
+      method: "GET",
+    },
+  }}
+/>
+
+## Properties
+
+| Name     |   Type   | Default | Description                                         |
+| -------- | :------: | :-----: | --------------------------------------------------- |
+| `url`    | `string` |   ``    | The HTTP URL you want to call, supports [templates] |
+| `method` | `string` |  `GET`  | The HTTP method to use                              |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Body }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                                               |
+| ---------------- | -------- | --------------------------------------------------------- |
+| `.Body.property` | `string` | Replace `.property` with the property you want to display |
+
+[templates]: /docs/configuration/templates

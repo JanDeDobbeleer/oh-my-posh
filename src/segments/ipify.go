@@ -32,8 +32,6 @@ type IPify struct {
 }
 
 const (
-	IpifyURL properties.Property = "url"
-
 	OFFLINE = "OFFLINE"
 )
 

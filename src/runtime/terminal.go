@@ -37,10 +37,10 @@ type Terminal struct {
 	deviceCache  *cache.File
 	sessionCache *cache.File
 	tmplCache    *cache.Template
-	lsDirMap     maps.Concurrent
 	cwd          string
 	host         string
 	networks     []*Connection
+	lsDirMap     maps.Concurrent
 }
 
 func (term *Terminal) Init() {

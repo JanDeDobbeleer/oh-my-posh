@@ -59,6 +59,11 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 
 			results[res.index] = res.segment
 
+			name := res.segment.Name()
+			if !slices.Contains(executed, name) {
+				executed = append(executed, name)
+			}
+
 			segment := results[current]
 
 			for segment != nil {
@@ -75,11 +80,6 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 
 				current++
 				segment = results[current]
-
-				name := res.segment.Name()
-				if !slices.Contains(executed, name) {
-					executed = append(executed, name)
-				}
 			}
 		default:
 			runtime.Gosched()

@@ -157,4 +157,4 @@ transient_prompt:
   background: transparent
   foreground: p:white
   template: " "
-version: 2
+version: 3

@@ -73,7 +73,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_CERTIFICATE: ${{ secrets.CERTIFICATE }}
       - name: Run GoReleaser 🚀
-        uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200
+        uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf
         with:
           distribution: goreleaser
           version: v2.3.2

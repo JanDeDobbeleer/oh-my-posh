@@ -28,6 +28,10 @@ func (segment *Segment) migrate(version int) {
 		return
 	}
 
+	if segment.Properties == nil {
+		segment.Properties = properties.Map{}
+	}
+
 	// Cache settings, the default is now 24h so we have to respect this being disabled previously
 	if !segment.Properties.GetBool("cache_version", false) {
 		segment.Properties[properties.CacheDuration] = cache.NONE

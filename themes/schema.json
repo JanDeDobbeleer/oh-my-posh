@@ -401,7 +401,8 @@
             "withings",
             "xmake",
             "yarn",
-            "ytm"
+            "ytm",
+            "zig"
           ]
         },
         "style": {

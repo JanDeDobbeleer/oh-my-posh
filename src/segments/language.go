@@ -239,7 +239,8 @@ func (l *language) setVersion() error {
 		l.version.Executable = command.executable
 
 		if marchalled, err := json.Marshal(l.version); err == nil {
-			l.env.Cache().Set(cacheKey, string(marchalled), cache.ONEWEEK)
+			duration := l.props.GetString(properties.CacheDuration, string(cache.ONEWEEK))
+			l.env.Cache().Set(cacheKey, string(marchalled), cache.Duration(duration))
 		}
 
 		return nil

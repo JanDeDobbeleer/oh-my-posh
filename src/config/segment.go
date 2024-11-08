@@ -138,8 +138,9 @@ func (segment *Segment) Render() {
 		return
 	}
 
-	segment.writer.SetText(text)
+	segment.SetText(text)
 	segment.setCache()
+	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
 }
 
 func (segment *Segment) Text() string {

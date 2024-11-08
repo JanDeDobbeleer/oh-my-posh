@@ -1,36 +1,58 @@
 package maps
 
-import "sync"
+import (
+	"sync"
+)
 
 func NewConcurrent() *Concurrent {
-	var cm Concurrent
-	return &cm
+	return &Concurrent{
+		data: make(map[string]any),
+	}
 }
 
-type Concurrent sync.Map
+type Concurrent struct {
+	data map[string]any
+	sync.RWMutex
+}
 
 func (cm *Concurrent) Set(key string, value any) {
-	(*sync.Map)(cm).Store(key, value)
+	cm.Lock()
+	defer cm.Unlock()
+
+	if cm.data == nil {
+		cm.data = make(map[string]any)
+	}
+
+	cm.data[key] = value
 }
 
 func (cm *Concurrent) Get(key string) (any, bool) {
-	return (*sync.Map)(cm).Load(key)
+	cm.RLock()
+	defer cm.RUnlock()
+
+	if cm.data == nil {
+		return nil, false
+	}
+
+	value, ok := cm.data[key]
+	return value, ok
 }
 
 func (cm *Concurrent) Delete(key string) {
-	(*sync.Map)(cm).Delete(key)
+	cm.Lock()
+	defer cm.Unlock()
+
+	delete(cm.data, key)
 }
 
 func (cm *Concurrent) Contains(key string) bool {
-	_, ok := (*sync.Map)(cm).Load(key)
+	_, ok := cm.Get(key)
 	return ok
 }
 
 func (cm *Concurrent) ToSimple() Simple {
-	list := make(map[string]any)
-	(*sync.Map)(cm).Range(func(key, value any) bool {
-		list[key.(string)] = value
-		return true
-	})
-	return list
+	cm.RLock()
+	defer cm.RUnlock()
+
+	return cm.data
 }

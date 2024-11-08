@@ -116,10 +116,10 @@ The cache property allows you to control how often a segment is refreshed. This 
 generate or when you want to avoid fetching information too often. The cache property is an object with the following
 properties:
 
-| Name       | Type     | Description                                                                                                                                                                                                                                 |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `duration` | `string` | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s`. The duration is parsed using the [time.ParseDuration](https://golang.org/pkg/time/#ParseDuration) function from the Go standard library |
-| `strategy` | `string` | the strategy to use to identify if we should show the segment's cache value. See below for more information on strategy                                                                                                                     |
+| Name       | Type     | Description                                                                                                                                                                                                                       |
+| ---------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration` | `string` | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s`. The duration is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none` |
+| `strategy` | `string` | the strategy to use to identify if we should show the segment's cache value. See below for more information on strategy                                                                                                           |
 
 <Config
   data={{
@@ -182,6 +182,7 @@ You can also combine these properties:
 />
 
 :::info
+
 - Oh My Posh will accept both `/` and `\` as path separators for a folder and will match regardless of which
   is used by the current operating system.
 - Because the strings are evaluated as regular expressions, if you want to use a backslash (`\`) in a Windows
@@ -236,3 +237,4 @@ To list the currently toggled segments, use `oh-my-posh get toggles`.
 [cstp]: templates.mdx#cross-segment-template-properties
 [cache]: #cache
 [include-exclude]: #include--exclude-folders
+[time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration

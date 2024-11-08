@@ -145,7 +145,7 @@
       "type": "string",
       "title": "Cache duration",
       "description": "The duration for which the segment will be cached. This is parsed using the `time.ParseDuration` function from the Go standard library (see https://pkg.go.dev/time#ParseDuration for details).",
-      "pattern": "^(infinite|([0-9]+(h|m|s))+)$"
+      "pattern": "^(none|infinite|([0-9]+(h|m|s))+)$"
     },
     "filler": {
       "type": "string",

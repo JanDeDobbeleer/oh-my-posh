@@ -77,10 +77,16 @@ func (fc *File) Get(key string) (string, bool) {
 
 // sets the value for the given key with a duration
 func (fc *File) Set(key, value string, duration Duration) {
+	seconds := duration.Seconds()
+
+	if seconds == 0 {
+		return
+	}
+
 	fc.cache.Set(key, &Entry{
 		Value:     value,
 		Timestamp: time.Now().Unix(),
-		TTL:       duration.Seconds(),
+		TTL:       seconds,
 	})
 
 	fc.dirty = true

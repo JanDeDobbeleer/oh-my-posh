@@ -28,7 +28,10 @@ func (segment *Segment) migrate(version int) {
 		return
 	}
 
-	// Cache settings
+	// Cache settings, the default is now 24h so we have to respect this being disabled previously
+	if !segment.Properties.GetBool("cache_version", false) {
+		segment.Properties[properties.CacheDuration] = cache.NONE
+	}
 	delete(segment.Properties, "cache_version")
 
 	segment.IncludeFolders = segment.migrateFolders(includeFolders)

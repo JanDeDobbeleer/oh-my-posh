@@ -41,6 +41,15 @@ on oh-my-posh, a modern and more efficient tool was needed to suit my personal n
 
 [![Ko-Fi][kofi-badge]][kofi] - No coffee, no code.
 
+<!-- markdownlint-disable -->
+<a href="https://polar.sh/oh-my-posh">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://polar.sh/embed/tiers.svg?org=oh-my-posh&darkmode">
+    <img alt="Subscription Tiers on Polar" src="https://polar.sh/embed/tiers.svg?org=oh-my-posh">
+  </picture>
+</a>
+<!-- markdownlint-enable -->
+
 ## Features
 
 * Shell and platform agnostic

@@ -51,6 +51,11 @@ module.exports = {
           position: 'left',
         },
         {
+          href: 'https://polar.sh/oh-my-posh',
+          label: 'Buy',
+          position: 'left',
+        },
+        {
           href: 'https://swag.ohmyposh.dev',
           label: 'Swag',
           position: 'left',
@@ -120,6 +125,10 @@ module.exports = {
             {
               label: 'Sponsor',
               href: 'https://github.com/sponsors/JanDeDobbeleer',
+            },
+            {
+              label: 'Buy',
+              href: 'https://polar.sh/oh-my-posh',
             },
             {
               label: 'GitKraken',

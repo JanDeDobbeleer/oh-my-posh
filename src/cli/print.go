@@ -76,6 +76,7 @@ func createPrintCmd() *cobra.Command {
 				NoExitCode:    noStatus,
 				Column:        column,
 				JobCount:      jobCount,
+				IsPrimary:     args[0] == prompt.PRIMARY,
 				SaveCache:     saveCache,
 			}
 

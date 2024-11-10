@@ -468,21 +468,19 @@ func New(flags *runtime.Flags) *Engine {
 
 	env.Init()
 	cfg := config.Load(env)
+	env.Var = cfg.Var
 
-	// load the template cache for extra prompts prior to
-	// rendering any template
-	if flags.Type == DEBUG ||
-		flags.Type == SECONDARY ||
-		flags.Type == TRANSIENT ||
-		flags.Type == VALID ||
-		flags.Type == ERROR {
-		env.LoadTemplateCache()
-	}
+	// To prevent cross-segment template referencing issues, this should not be moved elsewhere.
+	// Related: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2885#discussioncomment-4497439
+	env.PopulateTemplateCache()
 
 	template.Init(env)
 
-	env.Var = cfg.Var
-	flags.HasTransient = cfg.TransientPrompt != nil
+	flags.HasExtra = cfg.DebugPrompt != nil ||
+		cfg.SecondaryPrompt != nil ||
+		cfg.TransientPrompt != nil ||
+		cfg.ValidLine != nil ||
+		cfg.ErrorLine != nil
 
 	terminal.Init(env.Shell())
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()

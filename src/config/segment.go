@@ -140,6 +140,8 @@ func (segment *Segment) Render() {
 
 	segment.SetText(text)
 	segment.setCache()
+
+	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
 	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
 }
 

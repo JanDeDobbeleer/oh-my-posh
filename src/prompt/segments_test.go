@@ -10,7 +10,9 @@ import (
 )
 
 func TestRenderBlock(t *testing.T) {
-	engine := New(&runtime.Flags{})
+	engine := New(&runtime.Flags{
+		IsPrimary: true,
+	})
 	block := &config.Block{
 		Segments: []*config.Segment{
 			{

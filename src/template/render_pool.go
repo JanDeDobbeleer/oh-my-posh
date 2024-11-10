@@ -20,11 +20,6 @@ type context struct {
 
 func (c *context) init(t *Text) {
 	c.Data = t.Context
-
-	if c.Initialized {
-		return
-	}
-
 	c.Getenv = env.Getenv
 	c.Template = *env.TemplateCache()
 }

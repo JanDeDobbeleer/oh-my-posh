@@ -231,10 +231,6 @@ func (env *Environment) TemplateCache() *cache.Template {
 	return args.Get(0).(*cache.Template)
 }
 
-func (env *Environment) LoadTemplateCache() {
-	_ = env.Called()
-}
-
 func (env *Environment) MockGitCommand(dir, returnValue string, args ...string) {
 	args = append([]string{"-C", dir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	env.On("RunCommand", "git", args).Return(returnValue, nil)

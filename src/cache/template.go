@@ -23,7 +23,6 @@ type Template struct {
 	Jobs          int
 	WSL           bool
 	Root          bool
-	Initialized   bool
 }
 
 func (t *Template) AddSegmentData(key string, value any) {

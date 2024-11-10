@@ -69,7 +69,6 @@ type Environment interface {
 	ConvertToWindowsPath(path string) string
 	Connection(connectionType ConnectionType) (*Connection, error)
 	TemplateCache() *cache.Template
-	LoadTemplateCache()
 	CursorPosition() (row, col int)
 	SystemInfo() (*SystemInfo, error)
 	Debug(message string)
@@ -93,7 +92,8 @@ type Flags struct {
 	TerminalWidth int
 	ExecutionTime float64
 	JobCount      int
-	HasTransient  bool
+	IsPrimary     bool
+	HasExtra      bool
 	Debug         bool
 	Plain         bool
 	Strict        bool

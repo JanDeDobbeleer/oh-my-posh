@@ -37,10 +37,10 @@ type Terminal struct {
 	deviceCache  *cache.File
 	sessionCache *cache.File
 	tmplCache    *cache.Template
+	lsDirMap     maps.Concurrent
 	cwd          string
 	host         string
 	networks     []*Connection
-	lsDirMap     maps.Concurrent
 }
 
 func (term *Terminal) Init() {
@@ -78,7 +78,7 @@ func (term *Terminal) Init() {
 		Commands: maps.NewConcurrent(),
 	}
 
-	term.tmplCache = &cache.Template{}
+	term.tmplCache = new(cache.Template)
 }
 
 func (term *Terminal) ResolveConfigPath() {
@@ -580,8 +580,8 @@ func (term *Terminal) Session() cache.Cache {
 
 func (term *Terminal) saveTemplateCache() {
 	// only store this when in a primary prompt
-	// and when we have a transient prompt in the config
-	canSave := term.CmdFlags.Type == PRIMARY && term.CmdFlags.HasTransient
+	// and when we have any extra prompt in the config
+	canSave := term.CmdFlags.Type == PRIMARY && term.CmdFlags.HasExtra
 	if !canSave {
 		return
 	}
@@ -619,39 +619,14 @@ func (term *Terminal) clearCacheFiles() {
 	}
 }
 
-func (term *Terminal) LoadTemplateCache() {
-	defer term.Trace(time.Now())
-
-	val, OK := term.sessionCache.Get(cache.TEMPLATECACHE)
-	if !OK {
+func (term *Terminal) PopulateTemplateCache() {
+	if !term.CmdFlags.IsPrimary {
+		// Load the template cache for a non-primary prompt before rendering any templates.
+		term.loadTemplateCache()
 		return
 	}
 
-	var tmplCache cache.Template
-
-	err := json.Unmarshal([]byte(val), &tmplCache)
-	if err != nil {
-		term.Error(err)
-		return
-	}
-
-	tmplCache.Segments = tmplCache.SegmentsCache.ToConcurrent()
-	tmplCache.Initialized = true
-
-	term.tmplCache = &tmplCache
-}
-
-func (term *Terminal) Logs() string {
-	return log.String()
-}
-
-func (term *Terminal) TemplateCache() *cache.Template {
-	defer term.Trace(time.Now())
 	tmplCache := term.tmplCache
-
-	if tmplCache.Initialized {
-		return tmplCache
-	}
 
 	tmplCache.Root = term.Root()
 	tmplCache.Shell = term.Shell()
@@ -697,9 +672,33 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	if shlvl, err := strconv.Atoi(val); err == nil {
 		tmplCache.SHLVL = shlvl
 	}
+}
 
-	tmplCache.Initialized = true
-	return tmplCache
+func (term *Terminal) loadTemplateCache() {
+	defer term.Trace(time.Now())
+
+	val, OK := term.sessionCache.Get(cache.TEMPLATECACHE)
+	if !OK {
+		return
+	}
+
+	tmplCache := term.tmplCache
+
+	err := json.Unmarshal([]byte(val), &tmplCache)
+	if err != nil {
+		term.Error(err)
+		return
+	}
+
+	tmplCache.Segments = tmplCache.SegmentsCache.ToConcurrent()
+}
+
+func (term *Terminal) Logs() string {
+	return log.String()
+}
+
+func (term *Terminal) TemplateCache() *cache.Template {
+	return term.tmplCache
 }
 
 func (term *Terminal) DirMatchesOneOf(dir string, regexes []string) (match bool) {

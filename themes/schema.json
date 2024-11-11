@@ -1466,6 +1466,9 @@
                   },
                   "full_branch_path": {
                     "$ref": "#/definitions/full_branch_path"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
                   }
                 }
               }

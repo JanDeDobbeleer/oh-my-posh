@@ -126,7 +126,7 @@
     "native_fallback": {
       "type": "boolean",
       "title": "Native Fallback",
-      "description": "Use the native command when executable is not found",
+      "description": "Try to use the WSL 2 native command in a shared Windows drive if the Windows executable is not found.",
       "default": false
     },
     "full_branch_path": {
@@ -4473,6 +4473,9 @@
                   },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
                   }
                 }
               }

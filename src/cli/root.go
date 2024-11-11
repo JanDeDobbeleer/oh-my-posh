@@ -41,12 +41,12 @@ func Execute() {
 
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "config file path")
+	RootCmd.PersistentFlags().BoolVar(&silent, "silent", false, "do not print anything")
 
 	// Deprecated flags, should be kept to avoid breaking CLI integration.
 	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init")
 	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell")
 
 	// Hide flags that are deprecated or for internal use only.
-	RootCmd.PersistentFlags().BoolVar(&silent, "silent", false, "do not print anything")
-	_ = RootCmd.Flags().MarkHidden("silent")
+	_ = RootCmd.PersistentFlags().MarkHidden("silent")
 }

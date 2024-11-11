@@ -1,17 +1,23 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/spf13/cobra"
 )
 
 var (
-	configFlag string
-	shellName  string
-	silent     bool
-	// Deprecated flags, should be kept to avoid breaking CLI integration.
+	configFlag   string
+	shellName    string
+	printVersion bool
+
+	// for internal use only
+	silent bool
+
+	// deprecated
 	initialize bool
 )
 
@@ -25,6 +31,10 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 	Run: func(cmd *cobra.Command, _ []string) {
 		if initialize {
 			runInit(strings.ToLower(shellName))
+			return
+		}
+		if printVersion {
+			fmt.Println(build.Version)
 			return
 		}
 
@@ -42,6 +52,7 @@ func Execute() {
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "config file path")
 	RootCmd.PersistentFlags().BoolVar(&silent, "silent", false, "do not print anything")
+	RootCmd.Flags().BoolVar(&printVersion, "version", false, "print the version number and exit")
 
 	// Deprecated flags, should be kept to avoid breaking CLI integration.
 	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init")

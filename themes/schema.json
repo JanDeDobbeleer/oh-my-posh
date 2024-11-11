@@ -1101,6 +1101,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -1488,6 +1492,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -1542,6 +1550,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1652,6 +1664,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -1701,6 +1717,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -1748,6 +1768,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1800,6 +1824,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -1850,6 +1878,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1908,6 +1940,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -1954,6 +1990,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -2111,6 +2151,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -2563,6 +2607,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -3051,6 +3099,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -3464,6 +3516,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -3819,6 +3875,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -3998,6 +4058,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -4124,6 +4188,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -4220,6 +4288,10 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
@@ -4278,6 +4350,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4377,6 +4453,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4513,6 +4593,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4724,6 +4808,10 @@
                   },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "168h"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"

@@ -6,6 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -89,9 +90,6 @@ func TestOSInfo(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("Platform").Return(tc.Platform)
-		env.On("TemplateCache").Return(&cache.Template{
-			WSL: tc.IsWSL,
-		})
 
 		props := properties.Map{
 			DisplayDistroName: tc.DisplayDistroName,
@@ -105,6 +103,10 @@ func TestOSInfo(t *testing.T) {
 
 		osInfo := &Os{}
 		osInfo.Init(props, env)
+
+		template.Cache = &cache.Template{
+			WSL: tc.IsWSL,
+		}
 
 		_ = osInfo.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, osInfo.Template(), osInfo), tc.Case)

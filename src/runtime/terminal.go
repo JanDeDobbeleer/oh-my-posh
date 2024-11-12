@@ -2,7 +2,6 @@ package runtime
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -22,8 +21,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
 	disk "github.com/shirou/gopsutil/v3/disk"
 	load "github.com/shirou/gopsutil/v3/load"
@@ -32,19 +31,19 @@ import (
 
 type Terminal struct {
 	CmdFlags     *Flags
-	Var          maps.Simple
 	cmdCache     *cache.Command
 	deviceCache  *cache.File
 	sessionCache *cache.File
-	tmplCache    *cache.Template
 	lsDirMap     maps.Concurrent
 	cwd          string
 	host         string
 	networks     []*Connection
 }
 
-func (term *Terminal) Init() {
+func (term *Terminal) Init(flags *Flags) {
 	defer term.Trace(time.Now())
+
+	term.CmdFlags = flags
 
 	if term.CmdFlags == nil {
 		term.CmdFlags = &Flags{}
@@ -61,9 +60,9 @@ func (term *Terminal) Init() {
 	}
 
 	initCache := func(fileName string) *cache.File {
-		cache := &cache.File{}
-		cache.Init(filepath.Join(term.CachePath(), fileName), term.CmdFlags.SaveCache)
-		return cache
+		fileCache := &cache.File{}
+		fileCache.Init(filepath.Join(cache.Path(), fileName), term.CmdFlags.SaveCache)
+		return fileCache
 	}
 
 	term.deviceCache = initCache(cache.FileName)
@@ -72,67 +71,9 @@ func (term *Terminal) Init() {
 
 	term.setPwd()
 
-	term.ResolveConfigPath()
-
 	term.cmdCache = &cache.Command{
 		Commands: maps.NewConcurrent(),
 	}
-
-	term.tmplCache = new(cache.Template)
-}
-
-func (term *Terminal) ResolveConfigPath() {
-	defer term.Trace(time.Now())
-
-	// if the config flag is set, we'll use that over POSH_THEME
-	// in our internal shell logic, we'll always use the POSH_THEME
-	// due to not using --config to set the configuration
-	hasConfigFlag := len(term.CmdFlags.Config) > 0
-
-	if poshTheme := term.Getenv("POSH_THEME"); len(poshTheme) > 0 && !hasConfigFlag {
-		term.DebugF("config set using POSH_THEME: %s", poshTheme)
-		term.CmdFlags.Config = poshTheme
-		return
-	}
-
-	if len(term.CmdFlags.Config) == 0 {
-		term.Debug("no config set, fallback to default config")
-		return
-	}
-
-	if strings.HasPrefix(term.CmdFlags.Config, "https://") {
-		filePath, err := config.Download(term.CachePath(), term.CmdFlags.Config)
-		if err != nil {
-			term.Error(err)
-			term.CmdFlags.Config = ""
-			return
-		}
-
-		term.CmdFlags.Config = filePath
-		return
-	}
-
-	isCygwin := func() bool {
-		return term.Platform() == WINDOWS && len(term.Getenv("OSTYPE")) > 0
-	}
-
-	// Cygwin path always needs the full path as we're on Windows but not really.
-	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if isCygwin() {
-		term.Debug("cygwin detected, using full path for config")
-		return
-	}
-
-	configFile := ReplaceTildePrefixWithHomeDir(term, term.CmdFlags.Config)
-
-	abs, err := filepath.Abs(configFile)
-	if err != nil {
-		term.Error(err)
-		term.CmdFlags.Config = filepath.Clean(configFile)
-		return
-	}
-
-	term.CmdFlags.Config = abs
 }
 
 func (term *Terminal) Trace(start time.Time, args ...string) {
@@ -179,7 +120,7 @@ func (term *Terminal) setPwd() {
 	}
 
 	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
-		term.cwd = CleanPath(term, term.CmdFlags.PWD)
+		term.cwd = path.Clean(term.CmdFlags.PWD)
 		term.Debug(term.cwd)
 		return
 	}
@@ -277,9 +218,9 @@ func (term *Terminal) HasFolder(folder string) bool {
 	return isDir
 }
 
-func (term *Terminal) ResolveSymlink(path string) (string, error) {
-	defer term.Trace(time.Now(), path)
-	link, err := filepath.EvalSymlinks(path)
+func (term *Terminal) ResolveSymlink(input string) (string, error) {
+	defer term.Trace(time.Now(), input)
+	link, err := filepath.EvalSymlinks(input)
 	if err != nil {
 		term.Error(err)
 		return "", err
@@ -293,33 +234,30 @@ func (term *Terminal) FileContent(file string) string {
 	if !filepath.IsAbs(file) {
 		file = filepath.Join(term.Pwd(), file)
 	}
+
 	content, err := os.ReadFile(file)
 	if err != nil {
 		term.Error(err)
 		return ""
 	}
+
 	fileContent := string(content)
 	term.Debug(fileContent)
+
 	return fileContent
 }
 
-func (term *Terminal) LsDir(path string) []fs.DirEntry {
-	defer term.Trace(time.Now(), path)
-	entries, err := os.ReadDir(path)
+func (term *Terminal) LsDir(input string) []fs.DirEntry {
+	defer term.Trace(time.Now(), input)
+
+	entries, err := os.ReadDir(input)
 	if err != nil {
 		term.Error(err)
 		return nil
 	}
+
 	term.DebugF("%v", entries)
 	return entries
-}
-
-func (term *Terminal) PathSeparator() string {
-	defer term.Trace(time.Now())
-	if term.GOOS() == WINDOWS {
-		return `\`
-	}
-	return "/"
 }
 
 func (term *Terminal) User() string {
@@ -356,6 +294,10 @@ func (term *Terminal) GOOS() string {
 	return runtime.GOOS
 }
 
+func (term *Terminal) Home() string {
+	return path.Home()
+}
+
 func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
 	defer term.Trace(time.Now(), append([]string{command}, args...)...)
 
@@ -384,16 +326,16 @@ func (term *Terminal) RunShellCommand(shell, command string) string {
 
 func (term *Terminal) CommandPath(command string) string {
 	defer term.Trace(time.Now(), command)
-	if path, ok := term.cmdCache.Get(command); ok {
-		term.Debug(path)
-		return path
+	if cmdPath, ok := term.cmdCache.Get(command); ok {
+		term.Debug(cmdPath)
+		return cmdPath
 	}
 
-	path, err := exec.LookPath(command)
+	cmdPath, err := exec.LookPath(command)
 	if err == nil {
-		term.cmdCache.Set(command, path)
-		term.Debug(path)
-		return path
+		term.cmdCache.Set(command, cmdPath)
+		term.Debug(cmdPath)
+		return cmdPath
 	}
 
 	term.Error(err)
@@ -402,9 +344,11 @@ func (term *Terminal) CommandPath(command string) string {
 
 func (term *Terminal) HasCommand(command string) bool {
 	defer term.Trace(time.Now(), command)
-	if path := term.CommandPath(command); path != "" {
+
+	if cmdPath := term.CommandPath(command); cmdPath != "" {
 		return true
 	}
+
 	return false
 }
 
@@ -529,20 +473,20 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*FileInfo, error) {
 	defer term.Trace(time.Now(), parent)
 
-	path := term.Pwd()
+	pwd := term.Pwd()
 	if followSymlinks {
-		if actual, err := term.ResolveSymlink(path); err == nil {
-			path = actual
+		if actual, err := term.ResolveSymlink(pwd); err == nil {
+			pwd = actual
 		}
 	}
 
 	for {
-		fileSystem := os.DirFS(path)
+		fileSystem := os.DirFS(pwd)
 		info, err := fs.Stat(fileSystem, parent)
 		if err == nil {
 			return &FileInfo{
-				ParentFolder: path,
-				Path:         filepath.Join(path, parent),
+				ParentFolder: pwd,
+				Path:         filepath.Join(pwd, parent),
 				IsDir:        info.IsDir(),
 			}, nil
 		}
@@ -551,8 +495,8 @@ func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*Fi
 			return nil, err
 		}
 
-		if dir := filepath.Dir(path); dir != path {
-			path = dir
+		if dir := filepath.Dir(pwd); dir != pwd {
+			pwd = dir
 			continue
 		}
 
@@ -563,6 +507,7 @@ func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*Fi
 
 func (term *Terminal) StackCount() int {
 	defer term.Trace(time.Now())
+
 	if term.CmdFlags.StackCount < 0 {
 		return 0
 	}
@@ -578,26 +523,8 @@ func (term *Terminal) Session() cache.Cache {
 	return term.sessionCache
 }
 
-func (term *Terminal) saveTemplateCache() {
-	// only store this when in a primary prompt
-	// and when we have any extra prompt in the config
-	canSave := term.CmdFlags.Type == PRIMARY && term.CmdFlags.HasExtra
-	if !canSave {
-		return
-	}
-
-	tmplCache := term.TemplateCache()
-	tmplCache.SegmentsCache = tmplCache.Segments.ToSimple()
-
-	templateCache, err := json.Marshal(tmplCache)
-	if err == nil {
-		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), cache.ONEDAY)
-	}
-}
-
 func (term *Terminal) Close() {
 	defer term.Trace(time.Now())
-	term.saveTemplateCache()
 	term.clearCacheFiles()
 	term.deviceCache.Close()
 	term.sessionCache.Close()
@@ -608,7 +535,7 @@ func (term *Terminal) clearCacheFiles() {
 		return
 	}
 
-	deletedFiles, err := cache.Clear(term.CachePath(), false)
+	deletedFiles, err := cache.Clear(cache.Path(), false)
 	if err != nil {
 		term.Error(err)
 		return
@@ -619,86 +546,8 @@ func (term *Terminal) clearCacheFiles() {
 	}
 }
 
-func (term *Terminal) PopulateTemplateCache() {
-	if !term.CmdFlags.IsPrimary {
-		// Load the template cache for a non-primary prompt before rendering any templates.
-		term.loadTemplateCache()
-		return
-	}
-
-	tmplCache := term.tmplCache
-
-	tmplCache.Root = term.Root()
-	tmplCache.Shell = term.Shell()
-	tmplCache.ShellVersion = term.CmdFlags.ShellVersion
-	tmplCache.Code, _ = term.StatusCodes()
-	tmplCache.WSL = term.IsWsl()
-	tmplCache.Segments = maps.NewConcurrent()
-	tmplCache.PromptCount = term.CmdFlags.PromptCount
-	tmplCache.Var = make(map[string]any)
-	tmplCache.Jobs = term.CmdFlags.JobCount
-
-	if term.Var != nil {
-		tmplCache.Var = term.Var
-	}
-
-	pwd := term.Pwd()
-	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(term, pwd)
-
-	tmplCache.AbsolutePWD = pwd
-	if term.IsWsl() {
-		tmplCache.AbsolutePWD, _ = term.RunCommand("wslpath", "-m", pwd)
-	}
-
-	tmplCache.PSWD = term.CmdFlags.PSWD
-
-	tmplCache.Folder = Base(term, pwd)
-	if term.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
-		tmplCache.Folder += `\`
-	}
-
-	tmplCache.UserName = term.User()
-	if host, err := term.Host(); err == nil {
-		tmplCache.HostName = host
-	}
-
-	goos := term.GOOS()
-	tmplCache.OS = goos
-	if goos == LINUX {
-		tmplCache.OS = term.Platform()
-	}
-
-	val := term.Getenv("SHLVL")
-	if shlvl, err := strconv.Atoi(val); err == nil {
-		tmplCache.SHLVL = shlvl
-	}
-}
-
-func (term *Terminal) loadTemplateCache() {
-	defer term.Trace(time.Now())
-
-	val, OK := term.sessionCache.Get(cache.TEMPLATECACHE)
-	if !OK {
-		return
-	}
-
-	tmplCache := term.tmplCache
-
-	err := json.Unmarshal([]byte(val), &tmplCache)
-	if err != nil {
-		term.Error(err)
-		return
-	}
-
-	tmplCache.Segments = tmplCache.SegmentsCache.ToConcurrent()
-}
-
 func (term *Terminal) Logs() string {
 	return log.String()
-}
-
-func (term *Terminal) TemplateCache() *cache.Template {
-	return term.tmplCache
 }
 
 func (term *Terminal) DirMatchesOneOf(dir string, regexes []string) (match bool) {
@@ -795,170 +644,6 @@ func (term *Terminal) SystemInfo() (*SystemInfo, error) {
 		s.Disks = diskIO
 	}
 	return s, nil
-}
-
-func (term *Terminal) CachePath() string {
-	defer term.Trace(time.Now())
-
-	returnOrBuildCachePath := func(path string) (string, bool) {
-		// validate root path
-		if _, err := os.Stat(path); err != nil {
-			return "", false
-		}
-
-		// validate oh-my-posh folder, if non existent, create it
-		cachePath := filepath.Join(path, "oh-my-posh")
-		if _, err := os.Stat(cachePath); err == nil {
-			return cachePath, true
-		}
-
-		if err := os.Mkdir(cachePath, 0o755); err != nil {
-			return "", false
-		}
-
-		return cachePath, true
-	}
-
-	// WINDOWS cache folder, should not exist elsewhere
-	if cachePath, OK := returnOrBuildCachePath(term.Getenv("LOCALAPPDATA")); OK {
-		return cachePath
-	}
-
-	// allow the user to set the cache path using OMP_CACHE_DIR
-	if cachePath, OK := returnOrBuildCachePath(term.Getenv("OMP_CACHE_DIR")); OK {
-		return cachePath
-	}
-
-	// get XDG_CACHE_HOME if present
-	if cachePath, OK := returnOrBuildCachePath(term.Getenv("XDG_CACHE_HOME")); OK {
-		return cachePath
-	}
-
-	// try to create the cache folder in the user's home directory if non-existent
-	dotCache := filepath.Join(term.Home(), ".cache")
-	if _, err := os.Stat(dotCache); err != nil {
-		_ = os.Mkdir(dotCache, 0o755)
-	}
-
-	// HOME cache folder
-	if cachePath, OK := returnOrBuildCachePath(dotCache); OK {
-		return cachePath
-	}
-
-	return term.Home()
-}
-
-func IsPathSeparator(env Environment, c uint8) bool {
-	if c == '/' {
-		return true
-	}
-	if env.GOOS() == WINDOWS && c == '\\' {
-		return true
-	}
-	return false
-}
-
-// Base returns the last element of path.
-// Trailing path separators are removed before extracting the last element.
-// If the path consists entirely of separators, Base returns a single separator.
-func Base(env Environment, path string) string {
-	volumeName := filepath.VolumeName(path)
-	// Strip trailing slashes.
-	for len(path) > 0 && IsPathSeparator(env, path[len(path)-1]) {
-		path = path[0 : len(path)-1]
-	}
-	if len(path) == 0 {
-		return env.PathSeparator()
-	}
-	if volumeName == path {
-		return path
-	}
-	// Throw away volume name
-	path = path[len(filepath.VolumeName(path)):]
-	// Find the last element
-	i := len(path) - 1
-	for i >= 0 && !IsPathSeparator(env, path[i]) {
-		i--
-	}
-	if i >= 0 {
-		path = path[i+1:]
-	}
-	// If empty now, it had only slashes.
-	if len(path) == 0 {
-		return env.PathSeparator()
-	}
-	return path
-}
-
-func CleanPath(env Environment, path string) string {
-	if len(path) == 0 {
-		return path
-	}
-
-	cleaned := path
-	separator := env.PathSeparator()
-
-	// The prefix can be empty for a relative path.
-	var prefix string
-	if IsPathSeparator(env, cleaned[0]) {
-		prefix = separator
-	}
-
-	if env.GOOS() == WINDOWS {
-		// Normalize (forward) slashes to backslashes on Windows.
-		cleaned = strings.ReplaceAll(cleaned, "/", `\`)
-
-		// Clean the prefix for a UNC path, if any.
-		if regex.MatchString(`^\\{2}[^\\]+`, cleaned) {
-			cleaned = strings.TrimPrefix(cleaned, `\\.\UNC\`)
-			if len(cleaned) == 0 {
-				return cleaned
-			}
-			prefix = `\\`
-		}
-
-		// Always use an uppercase drive letter on Windows.
-		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
-		cleaned = driveLetter.ReplaceAllStringFunc(cleaned, strings.ToUpper)
-	}
-
-	sb := new(strings.Builder)
-	sb.WriteString(prefix)
-
-	// Clean slashes.
-	matches := regex.FindAllNamedRegexMatch(fmt.Sprintf(`(?P<element>[^\%s]+)`, separator), cleaned)
-	n := len(matches) - 1
-	for i, m := range matches {
-		sb.WriteString(m["element"])
-		if i != n {
-			sb.WriteString(separator)
-		}
-	}
-
-	return sb.String()
-}
-
-func ReplaceTildePrefixWithHomeDir(env Environment, path string) string {
-	if !strings.HasPrefix(path, "~") {
-		return path
-	}
-	rem := path[1:]
-	if len(rem) == 0 || IsPathSeparator(env, rem[0]) {
-		return env.Home() + rem
-	}
-	return path
-}
-
-func ReplaceHomeDirPrefixWithTilde(env Environment, path string) string {
-	home := env.Home()
-	if !strings.HasPrefix(path, home) {
-		return path
-	}
-	rem := path[len(home):]
-	if len(rem) == 0 || IsPathSeparator(env, rem[0]) {
-		return "~" + rem
-	}
-	return path
 }
 
 func cleanHostName(hostName string) string {

@@ -121,7 +121,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	if segment.writer.Enabled() {
 		segment.Enabled = true
-		env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
+		template.Cache.AddSegmentData(segment.Name(), segment.writer)
 	}
 }
 
@@ -134,7 +134,7 @@ func (segment *Segment) Render() {
 	segment.Enabled = len(strings.ReplaceAll(text, " ", "")) > 0
 
 	if !segment.Enabled {
-		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
+		template.Cache.RemoveSegmentData(segment.Name())
 		return
 	}
 
@@ -142,7 +142,7 @@ func (segment *Segment) Render() {
 	segment.setCache()
 
 	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
-	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
+	template.Cache.AddSegmentData(segment.Name(), segment.writer)
 }
 
 func (segment *Segment) Text() string {
@@ -231,7 +231,7 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	segment.Enabled = true
-	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
+	template.Cache.AddSegmentData(segment.Name(), segment.writer)
 
 	return true
 }

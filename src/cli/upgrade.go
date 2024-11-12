@@ -33,7 +33,7 @@ var upgradeCmd = &cobra.Command{
 		}
 
 		env := &runtime.Terminal{}
-		env.Init()
+		env.Init(nil)
 		defer env.Close()
 
 		terminal.Init(env.Shell())

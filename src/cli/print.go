@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/spf13/cobra"
 )
@@ -81,7 +82,11 @@ func createPrintCmd() *cobra.Command {
 			}
 
 			eng := prompt.New(flags)
-			defer eng.Env.Close()
+
+			defer func() {
+				template.SaveCache()
+				eng.Env.Close()
+			}()
 
 			switch args[0] {
 			case prompt.DEBUG:

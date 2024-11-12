@@ -45,12 +45,12 @@ This command is used to get the value of the following variables:
 			return
 		}
 
-		env := &runtime.Terminal{
-			CmdFlags: &runtime.Flags{
-				Shell: shellName,
-			},
+		flags := &runtime.Flags{
+			Shell: shellName,
 		}
-		env.Init()
+
+		env := &runtime.Terminal{}
+		env.Init(flags)
 		defer env.Close()
 
 		switch args[0] {

@@ -15,13 +15,12 @@ var noticeCmd = &cobra.Command{
 	Long:  "Print the upgrade notice when a new version is available.",
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &runtime.Terminal{
-			CmdFlags: &runtime.Flags{
-				SaveCache: true,
-			},
+		flags := &runtime.Flags{
+			SaveCache: true,
 		}
 
-		env.Init()
+		env := &runtime.Terminal{}
+		env.Init(flags)
 		defer env.Close()
 
 		if notice, hasNotice := upgrade.Notice(env, false); hasNotice {

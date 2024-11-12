@@ -5,11 +5,9 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestRenderTemplate(t *testing.T) {
@@ -238,20 +236,16 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		env.On("Error", testify_.Anything)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
 		env.On("Shell").Return("foo")
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
-			OS: "darwin",
-		})
 
 		for k, v := range tc.Env {
 			env.On("Getenv", k).Return(v)
 		}
 
-		Init(env)
+		Cache = &cache.Template{
+			OS: "darwin",
+		}
+		Init(env, nil)
 
 		tmpl := &Text{
 			Template: tc.Template,
@@ -344,7 +338,7 @@ func TestPatchTemplate(t *testing.T) {
 	env := &mock.Environment{}
 	env.On("Shell").Return("foo")
 
-	Init(env)
+	Init(env, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{
@@ -370,14 +364,12 @@ func TestSegmentContains(t *testing.T) {
 	env := &mock.Environment{}
 	segments := maps.NewConcurrent()
 	segments.Set("Git", "foo")
-	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-	env.On("TemplateCache").Return(&cache.Template{
-		Segments: segments,
-	})
 	env.On("Shell").Return("foo")
-	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
-	Init(env)
+	Cache = &cache.Template{
+		Segments: segments,
+	}
+	Init(env, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{

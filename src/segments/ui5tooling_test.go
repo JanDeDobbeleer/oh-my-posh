@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -93,10 +92,10 @@ func TestUI5Tooling(t *testing.T) {
 			tc.Template = ui5tooling.Template()
 		}
 
+		// this is needed to build the version URL as before renderTemplate, the template is not initialized
 		env.On("Shell").Return("foo")
-		env.On("TemplateCache").Return(&cache.Template{})
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
-		template.Init(env)
+		template.Cache = &cache.Template{}
+		template.Init(env, nil)
 
 		failMsg := fmt.Sprintf("Failed in case: %s", tc.Case)
 		assert.True(t, ui5tooling.Enabled(), failMsg)

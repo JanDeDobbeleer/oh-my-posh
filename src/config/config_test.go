@@ -9,7 +9,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGetPalette(t *testing.T) {
@@ -92,17 +91,14 @@ func TestGetPalette(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		env.On("TemplateCache").Return(&cache.Template{
-			Shell: "bash",
-		})
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Shell").Return("bash")
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
-		template.Init(env)
+		template.Cache = &cache.Template{
+			Shell: "bash",
+		}
+		template.Init(env, nil)
 
 		cfg := &Config{
-			env:      env,
 			Palette:  tc.Palette,
 			Palettes: tc.Palettes,
 		}

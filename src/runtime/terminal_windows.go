@@ -3,12 +3,12 @@ package runtime
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/Azure/go-ansiterm/winterm"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 )
@@ -48,22 +48,6 @@ func (term *Terminal) Root() bool {
 	}
 
 	return member
-}
-
-func (term *Terminal) Home() string {
-	home := os.Getenv("HOME")
-	defer func() {
-		term.Debug(home)
-	}()
-	if len(home) > 0 {
-		return home
-	}
-	// fallback to older implemenations on Windows
-	home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
-	if home == "" {
-		home = os.Getenv("USERPROFILE")
-	}
-	return home
 }
 
 func (term *Terminal) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
@@ -128,8 +112,8 @@ func (term *Terminal) Platform() string {
 // If the path ends in "\", the "(Default)" key in that path is retrieved.
 //
 // Returns a variant type if successful; nil and an error if not.
-func (term *Terminal) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
-	term.Trace(time.Now(), path)
+func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryValue, error) {
+	term.Trace(time.Now(), input)
 
 	// Format:
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
@@ -143,16 +127,16 @@ func (term *Terminal) WindowsRegistryKeyValue(path string) (*WindowsRegistryValu
 	//
 	// If 3 is "" (i.e. the path ends with "\"), then get (Default) key.
 	//
-	rootKey, regPath, found := strings.Cut(path, `\`)
+	rootKey, regPath, found := strings.Cut(input, `\`)
 	if !found {
-		err := fmt.Errorf("Error, malformed registry path: '%s'", path)
+		err := fmt.Errorf("Error, malformed registry path: '%s'", input)
 		term.Error(err)
 		return nil, err
 	}
 
 	var regKey string
 	if !strings.HasSuffix(regPath, `\`) {
-		regKey = Base(term, regPath)
+		regKey = path.Base(regPath)
 		if len(regKey) != 0 {
 			regPath = strings.TrimSuffix(regPath, `\`+regKey)
 		}
@@ -218,17 +202,17 @@ func (term *Terminal) InWSLSharedDrive() bool {
 	return false
 }
 
-func (term *Terminal) ConvertToWindowsPath(path string) string {
-	return strings.ReplaceAll(path, `\`, "/")
+func (term *Terminal) ConvertToWindowsPath(input string) string {
+	return strings.ReplaceAll(input, `\`, "/")
 }
 
-func (term *Terminal) ConvertToLinuxPath(path string) string {
-	return path
+func (term *Terminal) ConvertToLinuxPath(input string) string {
+	return input
 }
 
-func (term *Terminal) DirIsWritable(path string) bool {
+func (term *Terminal) DirIsWritable(input string) bool {
 	defer term.Trace(time.Now())
-	return term.isWriteable(path)
+	return term.isWriteable(input)
 }
 
 func (term *Terminal) Connection(connectionType ConnectionType) (*Connection, error) {

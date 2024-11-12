@@ -50,31 +50,31 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &runtime.Terminal{
-			CmdFlags: &runtime.Flags{
-				Config:        configFlag,
-				Shell:         shell.GENERIC,
-				TerminalWidth: 150,
-			},
+		cfg := config.Load(configFlag, shell.GENERIC, false)
+
+		flags := &runtime.Flags{
+			Config:        configFlag,
+			Shell:         shell.GENERIC,
+			TerminalWidth: 150,
 		}
 
-		env.Init()
-		defer env.Close()
+		env := &runtime.Terminal{}
+		env.Init(flags)
 
-		template.Init(env)
+		template.Init(env, cfg.Var)
 
-		cfg := config.Load(env)
+		defer func() {
+			template.SaveCache()
+			env.Close()
+		}()
 
 		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""
 		cfg.PWD = ""
 
-		// add variables to the environment
-		env.Var = cfg.Var
-
 		terminal.Init(shell.GENERIC)
 		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
-		terminal.Colors = cfg.MakeColors()
+		terminal.Colors = cfg.MakeColors(env)
 
 		eng := &prompt.Engine{
 			Config: cfg,
@@ -90,7 +90,7 @@ Exports the config to an image file using customized output options.`,
 		}
 
 		if outputImage != "" {
-			imageCreator.Path = cleanOutputPath(outputImage, env)
+			imageCreator.Path = cleanOutputPath(outputImage)
 		}
 
 		err := imageCreator.Init(env)

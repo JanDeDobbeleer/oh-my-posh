@@ -18,25 +18,13 @@ func TestSetDir(t *testing.T) {
 		GOOS     string
 	}{
 		{
-			Case:     "In home folder",
-			Expected: "~/sapling",
-			Path:     "/usr/home/sapling/.sl",
-			GOOS:     runtime.LINUX,
-		},
-		{
-			Case:     "Outside home folder",
+			Case:     "Linux",
 			Expected: "/usr/sapling/repo",
 			Path:     "/usr/sapling/repo/.sl",
 			GOOS:     runtime.LINUX,
 		},
 		{
-			Case:     "Windows home folder",
-			Expected: "~\\sapling",
-			Path:     "\\usr\\home\\sapling\\.sl",
-			GOOS:     runtime.WINDOWS,
-		},
-		{
-			Case:     "Windows outside home folder",
+			Case:     "Windows",
 			Expected: "\\usr\\sapling\\repo",
 			Path:     "\\usr\\sapling\\repo\\.sl",
 			GOOS:     runtime.WINDOWS,

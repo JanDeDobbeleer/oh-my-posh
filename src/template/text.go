@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
@@ -15,7 +16,7 @@ type Text struct {
 }
 
 func (t *Text) Render() (string, error) {
-	defer env.Trace(time.Now(), t.Template)
+	defer log.Trace(time.Now(), t.Template)
 
 	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
 		return t.Template, nil

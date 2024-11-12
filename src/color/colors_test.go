@@ -81,13 +81,11 @@ func TestAnsiRender(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{})
 		env.On("Getenv", "TERM_PROGRAM").Return(tc.Term)
 		env.On("Shell").Return("foo")
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
-		template.Init(env)
+		template.Cache = new(cache.Template)
+		template.Init(env, nil)
 
 		ansi := Ansi("{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
 		got := ansi.ResolveTemplate()

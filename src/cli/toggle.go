@@ -20,13 +20,12 @@ var toggleCmd = &cobra.Command{
 			return
 		}
 
-		env := &runtime.Terminal{
-			CmdFlags: &runtime.Flags{
-				SaveCache: true,
-			},
+		flags := &runtime.Flags{
+			SaveCache: true,
 		}
 
-		env.Init()
+		env := &runtime.Terminal{}
+		env.Init(flags)
 		defer env.Close()
 
 		togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)

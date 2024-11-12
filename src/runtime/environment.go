@@ -33,42 +33,39 @@ type Environment interface {
 	Shell() string
 	Platform() string
 	StatusCodes() (int, string)
-	PathSeparator() string
 	HasFiles(pattern string) bool
 	HasFilesInDir(dir, pattern string) bool
 	HasFolder(folder string) bool
-	HasParentFilePath(path string, followSymlinks bool) (fileInfo *FileInfo, err error)
+	HasParentFilePath(input string, followSymlinks bool) (fileInfo *FileInfo, err error)
 	HasFileInParentDirs(pattern string, depth uint) bool
-	ResolveSymlink(path string) (string, error)
+	ResolveSymlink(input string) (string, error)
 	DirMatchesOneOf(dir string, regexes []string) bool
-	DirIsWritable(path string) bool
+	DirIsWritable(input string) bool
 	CommandPath(command string) string
 	HasCommand(command string) bool
 	FileContent(file string) string
-	LsDir(path string) []fs.DirEntry
+	LsDir(input string) []fs.DirEntry
 	RunCommand(command string, args ...string) (string, error)
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
 	Flags() *Flags
 	BatteryState() (*battery.Info, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
-	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
+	WindowsRegistryKeyValue(key string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error)
 	IsWsl() bool
 	IsWsl2() bool
 	IsCygwin() bool
 	StackCount() int
 	TerminalWidth() (int, error)
-	CachePath() string
 	Cache() cache.Cache
 	Session() cache.Cache
 	Close()
 	Logs() string
 	InWSLSharedDrive() bool
-	ConvertToLinuxPath(path string) string
-	ConvertToWindowsPath(path string) string
+	ConvertToLinuxPath(input string) string
+	ConvertToWindowsPath(input string) string
 	Connection(connectionType ConnectionType) (*Connection, error)
-	TemplateCache() *cache.Template
 	CursorPosition() (row, col int)
 	SystemInfo() (*SystemInfo, error)
 	Debug(message string)
@@ -84,6 +81,7 @@ type Flags struct {
 	Shell         string
 	ShellVersion  string
 	PWD           string
+	AbsolutePWD   string
 	Type          string
 	ErrorCode     int
 	PromptCount   int

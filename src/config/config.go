@@ -22,7 +22,6 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	env                     runtime.Environment
 	Palette                 color.Palette   `json:"palette,omitempty" toml:"palette,omitempty"`
 	DebugPrompt             *Segment        `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
 	Var                     map[string]any  `json:"var,omitempty" toml:"var,omitempty"`
@@ -53,9 +52,9 @@ type Config struct {
 	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty"`
 }
 
-func (cfg *Config) MakeColors() color.String {
-	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return color.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
+func (cfg *Config) MakeColors(env runtime.Environment) color.String {
+	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
+	return color.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, env)
 }
 
 func (cfg *Config) getPalette() color.Palette {
@@ -88,7 +87,7 @@ func (cfg *Config) getPalette() color.Palette {
 	return palette
 }
 
-func (cfg *Config) Features() shell.Features {
+func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	var feats shell.Features
 
 	if cfg.TransientPrompt != nil {
@@ -100,12 +99,12 @@ func (cfg *Config) Features() shell.Features {
 	}
 
 	autoUpgrade := cfg.AutoUpgrade
-	if _, OK := cfg.env.Cache().Get(AUTOUPGRADE); OK {
+	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
 		autoUpgrade = true
 	}
 
 	upgradeNotice := cfg.UpgradeNotice
-	if _, OK := cfg.env.Cache().Get(UPGRADENOTICE); OK {
+	if _, OK := env.Cache().Get(UPGRADENOTICE); OK {
 		upgradeNotice = true
 	}
 
@@ -125,7 +124,7 @@ func (cfg *Config) Features() shell.Features {
 		feats = append(feats, shell.Tooltips)
 	}
 
-	if cfg.env.Shell() == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark) {
+	if env.Shell() == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark) {
 		feats = append(feats, shell.PromptMark)
 	}
 

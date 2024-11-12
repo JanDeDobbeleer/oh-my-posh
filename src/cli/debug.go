@@ -36,29 +36,29 @@ func createDebugCmd() *cobra.Command {
 				return
 			}
 
-			env := &runtime.Terminal{
-				CmdFlags: &runtime.Flags{
-					Config: configFlag,
-					Debug:  true,
-					PWD:    pwd,
-					Shell:  args[0],
-					Plain:  plain,
-				},
+			cfg := config.Load(configFlag, args[0], false)
+
+			flags := &runtime.Flags{
+				Config: configFlag,
+				Debug:  true,
+				PWD:    pwd,
+				Shell:  args[0],
+				Plain:  plain,
 			}
 
-			env.Init()
-			defer env.Close()
+			env := &runtime.Terminal{}
+			env.Init(flags)
 
-			template.Init(env)
+			template.Init(env, cfg.Var)
 
-			cfg := config.Load(env)
-
-			// add variables to the environment
-			env.Var = cfg.Var
+			defer func() {
+				template.SaveCache()
+				env.Close()
+			}()
 
 			terminal.Init(args[0])
 			terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
-			terminal.Colors = cfg.MakeColors()
+			terminal.Colors = cfg.MakeColors(env)
 			terminal.Plain = plain
 
 			eng := &prompt.Engine{

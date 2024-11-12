@@ -35,6 +35,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	fontCLI "github.com/jandedobbeleer/oh-my-posh/src/font"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -218,7 +219,7 @@ func (ir *Renderer) setOutputPath(config string) {
 func (ir *Renderer) loadFonts() error {
 	var data []byte
 
-	fontCachePath := filepath.Join(ir.env.CachePath(), "Hack.zip")
+	fontCachePath := filepath.Join(cache.Path(), "Hack.zip")
 	if _, err := stdOS.Stat(fontCachePath); err == nil {
 		data, _ = stdOS.ReadFile(fontCachePath)
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGlob(t *testing.T) {
@@ -23,12 +22,10 @@ func TestGlob(t *testing.T) {
 	}
 
 	env := &mock.Environment{}
-	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-	env.On("TemplateCache").Return(&cache.Template{})
 	env.On("Shell").Return("foo")
-	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
-	Init(env)
+	Cache = new(cache.Template)
+	Init(env, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{

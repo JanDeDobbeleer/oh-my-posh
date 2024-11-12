@@ -7,7 +7,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestUrl(t *testing.T) {
@@ -22,14 +21,11 @@ func TestUrl(t *testing.T) {
 	}
 
 	env := &mock.Environment{}
-	env.On("TemplateCache").Return(&cache.Template{})
-	env.On("Error", testify_.Anything)
-	env.On("Debug", testify_.Anything)
-	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	env.On("Shell").Return("foo")
-	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
-	Init(env)
+	Cache = new(cache.Template)
+
+	Init(env, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{

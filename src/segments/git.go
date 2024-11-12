@@ -11,6 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
 	"gopkg.in/ini.v1"
 )
@@ -365,8 +366,8 @@ func (g *Git) getBareRepoInfo() {
 	// we can still have a pointer to a bare repo
 	if file, err := g.env.HasParentFilePath(".git", true); err == nil && !file.IsDir {
 		content := g.FileContents(file.ParentFolder, ".git")
-		path := strings.TrimPrefix(content, "gitdir: ")
-		g.workingDir = filepath.Join(file.ParentFolder, path)
+		dir := strings.TrimPrefix(content, "gitdir: ")
+		g.workingDir = filepath.Join(file.ParentFolder, dir)
 	}
 
 	head := g.FileContents(g.workingDir, "HEAD")
@@ -384,7 +385,7 @@ func (g *Git) getBareRepoInfo() {
 }
 
 func (g *Git) setDir(dir string) {
-	dir = runtime.ReplaceHomeDirPrefixWithTilde(g.env, dir) // align with template PWD
+	dir = path.ReplaceHomeDirPrefixWithTilde(dir) // align with template PWD
 	if g.env.GOOS() == runtime.WINDOWS {
 		g.Dir = strings.TrimSuffix(dir, `\.git`)
 		return
@@ -516,9 +517,9 @@ func (g *Git) cleanUpstreamURL(url string) string {
 	}
 
 	if len(match) != 0 {
-		path := strings.Trim(match["PATH"], "/")
-		path = strings.TrimSuffix(path, ".git")
-		return fmt.Sprintf("https://%s/%s", match["URL"], path)
+		repoPath := strings.Trim(match["PATH"], "/")
+		repoPath = strings.TrimSuffix(repoPath, ".git")
+		return fmt.Sprintf("https://%s/%s", match["URL"], repoPath)
 	}
 
 	// codecommit::region-identifier-id://repo-name
@@ -923,12 +924,12 @@ func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string
 
 func (g *Git) repoName() string {
 	if !g.IsWorkTree {
-		return runtime.Base(g.env, g.convertToLinuxPath(g.realDir))
+		return path.Base(g.convertToLinuxPath(g.realDir))
 	}
 
 	ind := strings.LastIndex(g.workingDir, ".git/worktrees")
 	if ind > -1 {
-		return runtime.Base(g.env, g.workingDir[:ind])
+		return path.Base(g.workingDir[:ind])
 	}
 
 	return ""

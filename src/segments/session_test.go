@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -127,12 +128,6 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("Getenv", "POSH_SESSION_DEFAULT_USER").Return(tc.DefaultUserName)
 
-		env.On("TemplateCache").Return(&cache.Template{
-			UserName: tc.UserName,
-			HostName: tc.ComputerName,
-			Root:     tc.Root,
-		})
-
 		env.On("Platform").Return(tc.Platform)
 
 		var whoAmIErr error
@@ -144,6 +139,12 @@ func TestSessionSegmentTemplate(t *testing.T) {
 
 		session := &Session{}
 		session.Init(properties.Map{}, env)
+
+		template.Cache = &cache.Template{
+			UserName: tc.UserName,
+			HostName: tc.ComputerName,
+			Root:     tc.Root,
+		}
 
 		_ = session.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, session), tc.Case)

@@ -462,19 +462,12 @@ func (e *Engine) rectifyTerminalWidth(diff int) {
 // given configuration options, and is ready to print any
 // of the prompt components.
 func New(flags *runtime.Flags) *Engine {
-	env := &runtime.Terminal{
-		CmdFlags: flags,
-	}
+	cfg := config.Load(flags.Config, flags.Shell, flags.Migrate)
 
-	env.Init()
-	cfg := config.Load(env)
-	env.Var = cfg.Var
+	env := &runtime.Terminal{}
+	env.Init(flags)
 
-	// To prevent cross-segment template referencing issues, this should not be moved elsewhere.
-	// Related: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2885#discussioncomment-4497439
-	env.PopulateTemplateCache()
-
-	template.Init(env)
+	template.Init(env, cfg.Var)
 
 	flags.HasExtra = cfg.DebugPrompt != nil ||
 		cfg.SecondaryPrompt != nil ||
@@ -484,7 +477,7 @@ func New(flags *runtime.Flags) *Engine {
 
 	terminal.Init(env.Shell())
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
-	terminal.Colors = cfg.MakeColors()
+	terminal.Colors = cfg.MakeColors(env)
 	terminal.Plain = flags.Plain
 
 	eng := &Engine{

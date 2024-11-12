@@ -2,11 +2,13 @@ package segments
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
 )
@@ -161,7 +163,8 @@ description: A Console App
 		env.On("RunCommand", "pulumi", []string{"stack", "ls", "--json"}).Return(tc.Stack, tc.StackError)
 		env.On("RunCommand", "pulumi", []string{"about", "--json"}).Return(tc.About, tc.AboutError)
 
-		env.On("Pwd").Return("/home/foobar/Work/oh-my-posh/pulumi/projects/awesome-project")
+		pwd := "/home/foobar/Work/oh-my-posh/pulumi/projects/awesome-project"
+		env.On("Pwd").Return(pwd)
 		env.On("Home").Return(filepath.Clean("/home/foobar"))
 		env.On("Error", testify_.Anything)
 		env.On("Debug", testify_.Anything)
@@ -173,11 +176,22 @@ description: A Console App
 		env.On("HasFiles", pulumiJSON).Return(len(tc.JSONConfig) > 0)
 		env.On("FileContent", pulumiJSON).Return(tc.JSONConfig, nil)
 
-		env.On("PathSeparator").Return("/")
-
 		env.On("HasFolder", filepath.Clean("/home/foobar/.pulumi/workspaces")).Return(tc.HasWorkspaceFolder)
-		workspaceFile := "oh-my-posh-c62b7b6786c5c5a85896576e46a25d7c9f888e92-workspace.json"
+
+		pulumi := &Pulumi{}
+
+		var fileName string
+		if len(tc.JSONConfig) > 0 {
+			fileName = pulumiJSON
+		} else {
+			fileName = pulumiYAML
+		}
+
+		sha1 := pulumi.sha1HexString(pwd + path.Separator() + fileName)
+		workspaceFile := fmt.Sprintf("oh-my-posh-%s-workspace.json", sha1)
+
 		env.On("HasFilesInDir", filepath.Clean("/home/foobar/.pulumi/workspaces"), workspaceFile).Return(len(tc.WorkSpaceFile) > 0)
+
 		env.On("FileContent", filepath.Clean("/home/foobar/.pulumi/workspaces/"+workspaceFile)).Return(tc.WorkSpaceFile, nil)
 
 		props := properties.Map{
@@ -185,7 +199,6 @@ description: A Console App
 			FetchAbout: tc.FetchAbout,
 		}
 
-		pulumi := &Pulumi{}
 		pulumi.Init(props, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, pulumi.Enabled(), tc.Case)

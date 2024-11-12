@@ -20,10 +20,6 @@ func (term *Terminal) Root() bool {
 	return os.Geteuid() == 0
 }
 
-func (term *Terminal) Home() string {
-	return os.Getenv("HOME")
-}
-
 func (term *Terminal) QueryWindowTitles(_, _ string) (string, error) {
 	return "", &NotImplemented{}
 }
@@ -132,24 +128,24 @@ func (term *Terminal) InWSLSharedDrive() bool {
 	return !strings.HasPrefix(windowsPath, `//wsl.localhost/`) && !strings.HasPrefix(windowsPath, `//wsl$/`)
 }
 
-func (term *Terminal) ConvertToWindowsPath(path string) string {
-	windowsPath, err := term.RunCommand("wslpath", "-m", path)
+func (term *Terminal) ConvertToWindowsPath(input string) string {
+	windowsPath, err := term.RunCommand("wslpath", "-m", input)
 	if err == nil {
 		return windowsPath
 	}
-	return path
+	return input
 }
 
-func (term *Terminal) ConvertToLinuxPath(path string) string {
-	if linuxPath, err := term.RunCommand("wslpath", "-u", path); err == nil {
+func (term *Terminal) ConvertToLinuxPath(input string) string {
+	if linuxPath, err := term.RunCommand("wslpath", "-u", input); err == nil {
 		return linuxPath
 	}
-	return path
+	return input
 }
 
-func (term *Terminal) DirIsWritable(path string) bool {
-	defer term.Trace(time.Now(), path)
-	return unix.Access(path, unix.W_OK) == nil
+func (term *Terminal) DirIsWritable(input string) bool {
+	defer term.Trace(time.Now(), input)
+	return unix.Access(input, unix.W_OK) == nil
 }
 
 func (term *Terminal) Connection(_ ConnectionType) (*Connection, error) {

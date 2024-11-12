@@ -47,8 +47,8 @@ func (env *Environment) HasFolder(folder string) bool {
 	return args.Bool(0)
 }
 
-func (env *Environment) ResolveSymlink(path string) (string, error) {
-	args := env.Called(path)
+func (env *Environment) ResolveSymlink(input string) (string, error) {
+	args := env.Called(input)
 	return args.String(0), args.Error(1)
 }
 
@@ -57,14 +57,9 @@ func (env *Environment) FileContent(file string) string {
 	return args.String(0)
 }
 
-func (env *Environment) LsDir(path string) []fs.DirEntry {
-	args := env.Called(path)
+func (env *Environment) LsDir(input string) []fs.DirEntry {
+	args := env.Called(input)
 	return args.Get(0).([]fs.DirEntry)
-}
-
-func (env *Environment) PathSeparator() string {
-	args := env.Called()
-	return args.String(0)
 }
 
 func (env *Environment) User() string {
@@ -224,11 +219,6 @@ func (env *Environment) ConvertToLinuxPath(_ string) string {
 func (env *Environment) Connection(connectionType runtime.ConnectionType) (*runtime.Connection, error) {
 	args := env.Called(connectionType)
 	return args.Get(0).(*runtime.Connection), args.Error(1)
-}
-
-func (env *Environment) TemplateCache() *cache.Template {
-	args := env.Called()
-	return args.Get(0).(*cache.Template)
 }
 
 func (env *Environment) MockGitCommand(dir, returnValue string, args ...string) {

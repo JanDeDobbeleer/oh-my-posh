@@ -5,11 +5,11 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestStatusWriterEnabled(t *testing.T) {
@@ -27,17 +27,17 @@ func TestStatusWriterEnabled(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("StatusCodes").Return(tc.Status, "")
-		env.On("TemplateCache").Return(&cache.Template{
-			Code: 133,
-		})
-		env.On("Error", testify_.Anything).Return(nil)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
+		env.On("Shell").Return(shell.GENERIC)
 
 		props := properties.Map{}
 		if len(tc.Template) > 0 {
 			props[StatusTemplate] = tc.Template
 		}
+
+		template.Cache = &cache.Template{
+			Code: 133,
+		}
+		template.Init(env, nil)
 
 		s := &Status{}
 		s.Init(props, env)

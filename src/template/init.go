@@ -3,6 +3,7 @@ package template
 import (
 	"sync"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
@@ -23,7 +24,7 @@ var (
 	knownVariables []string
 )
 
-func Init(environment runtime.Environment) {
+func Init(environment runtime.Environment, vars maps.Simple) {
 	env = environment
 	shell = env.Shell()
 
@@ -55,4 +56,10 @@ func Init(environment runtime.Environment) {
 		"Data",
 		"Jobs",
 	}
+
+	if Cache != nil {
+		return
+	}
+
+	loadCache(vars)
 }

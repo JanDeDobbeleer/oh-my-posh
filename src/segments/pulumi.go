@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"gopkg.in/yaml.v3"
 )
 
@@ -135,21 +136,21 @@ func (p *Pulumi) getProjectName() error {
 
 	p.Name = pulumiFileSpec.Name
 
-	sha1HexString := func(value string) string {
-		h := sha1.New()
-
-		_, err := h.Write([]byte(value))
-		if err != nil {
-			p.env.Error(err)
-			return ""
-		}
-
-		return hex.EncodeToString(h.Sum(nil))
-	}
-
-	p.workspaceSHA1 = sha1HexString(p.env.Pwd() + p.env.PathSeparator() + fileName)
+	p.workspaceSHA1 = p.sha1HexString(p.env.Pwd() + path.Separator() + fileName)
 
 	return nil
+}
+
+func (p *Pulumi) sha1HexString(s string) string {
+	h := sha1.New()
+
+	_, err := h.Write([]byte(s))
+	if err != nil {
+		p.env.Error(err)
+		return ""
+	}
+
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 func (p *Pulumi) getPulumiAbout() {

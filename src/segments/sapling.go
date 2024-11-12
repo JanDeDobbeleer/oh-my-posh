@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
 
 // SaplingStatus represents part of the status of a Sapling repository
@@ -85,7 +86,7 @@ func (sl *Sapling) shouldDisplay() bool {
 	sl.rootDir = slDir.Path
 	// convert the worktree file path to a windows one when in a WSL shared folder
 	sl.realDir = strings.TrimSuffix(sl.convertToWindowsPath(slDir.Path), "/.sl")
-	sl.RepoName = runtime.Base(sl.env, sl.convertToLinuxPath(sl.realDir))
+	sl.RepoName = path.Base(sl.convertToLinuxPath(sl.realDir))
 	sl.setDir(slDir.Path)
 
 	return true
@@ -101,11 +102,13 @@ func (sl *Sapling) CacheKey() (string, bool) {
 }
 
 func (sl *Sapling) setDir(dir string) {
-	dir = runtime.ReplaceHomeDirPrefixWithTilde(sl.env, dir) // align with template PWD
+	dir = path.ReplaceHomeDirPrefixWithTilde(dir) // align with template PWD
+
 	if sl.env.GOOS() == runtime.WINDOWS {
 		sl.Dir = strings.TrimSuffix(dir, `\.sl`)
 		return
 	}
+
 	sl.Dir = strings.TrimSuffix(dir, "/.sl")
 }
 

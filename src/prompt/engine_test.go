@@ -6,6 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -13,7 +14,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestCanWriteRPrompt(t *testing.T) {
@@ -64,7 +64,7 @@ func TestPrintPWD(t *testing.T) {
 		{Case: "OSC7", Config: terminal.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{Case: "OSC51", Config: terminal.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
 		{Case: "Template (empty)", Config: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
-		{Case: "Template (non empty)", Config: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
+		{Case: "Template (non empty)", Shell: shell.GENERIC, Config: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{
 			Case:     "OSC99 Cygwin",
 			Pwd:      `C:\Users\user\Documents\GitHub\oh-my-posh`,
@@ -89,16 +89,16 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("User").Return("user")
 		env.On("Shell").Return(tc.Shell)
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("IsCygwin").Return(tc.Cygwin)
 		env.On("Host").Return("host", nil)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
-			Shell: "shell",
-		})
+
+		template.Cache = &cache.Template{
+			Shell:    tc.Shell,
+			Segments: maps.NewConcurrent(),
+		}
+		template.Init(env, nil)
 
 		terminal.Init(shell.GENERIC)
-		template.Init(env)
 
 		engine := &Engine{
 			Env: env,
@@ -121,15 +121,21 @@ func BenchmarkEngineRender(b *testing.B) {
 }
 
 func engineRender() {
+	cfg := config.Load("", shell.GENERIC, false)
+
 	env := &runtime.Terminal{}
-	env.Init()
+	env.Init(nil)
+
 	defer env.Close()
 
-	cfg := config.Load(env)
+	template.Cache = &cache.Template{
+		Segments: maps.NewConcurrent(),
+	}
+	template.Init(env, nil)
 
 	terminal.Init(shell.GENERIC)
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
-	terminal.Colors = cfg.MakeColors()
+	terminal.Colors = cfg.MakeColors(env)
 
 	engine := &Engine{
 		Config: cfg,
@@ -137,12 +143,6 @@ func engineRender() {
 	}
 
 	engine.Primary()
-}
-
-func BenchmarkEngineRenderPalette(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		engineRender()
-	}
 }
 
 func TestGetTitle(t *testing.T) {
@@ -185,21 +185,21 @@ func TestGetTitle(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("Shell").Return(tc.ShellName)
+
+		terminal.Init(shell.GENERIC)
+
+		template.Cache = &cache.Template{
 			Shell:    tc.ShellName,
 			UserName: "MyUser",
 			Root:     tc.Root,
 			HostName: "MyHost",
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
-		})
-		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("Shell").Return(tc.ShellName)
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
-
-		terminal.Init(shell.GENERIC)
-		template.Init(env)
+			Segments: maps.NewConcurrent(),
+		}
+		template.Init(env, nil)
 
 		engine := &Engine{
 			Config: &config.Config{
@@ -249,19 +249,19 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("Shell").Return(tc.ShellName)
+
+		terminal.Init(shell.GENERIC)
+
+		template.Cache = &cache.Template{
 			Shell:    tc.ShellName,
 			UserName: "MyUser",
 			Root:     tc.Root,
 			HostName: "",
-		})
-		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("Shell").Return(tc.ShellName)
-		env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
-
-		terminal.Init(shell.GENERIC)
-		template.Init(env)
+			Segments: maps.NewConcurrent(),
+		}
+		template.Init(env, nil)
 
 		engine := &Engine{
 			Config: &config.Config{

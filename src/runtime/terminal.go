@@ -49,11 +49,6 @@ func (term *Terminal) Init(flags *Flags) {
 		term.CmdFlags = &Flags{}
 	}
 
-	if term.CmdFlags.Debug {
-		log.Enable()
-		log.Debug("debug mode enabled")
-	}
-
 	if term.CmdFlags.Plain {
 		log.Plain()
 		log.Debug("plain mode enabled")

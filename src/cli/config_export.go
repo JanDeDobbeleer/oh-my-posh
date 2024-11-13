@@ -40,7 +40,8 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			os.Exit(2)
 		}
 
-		cfg := config.Load(configFlag, shell.GENERIC, false)
+		configFile := config.Path(configFlag)
+		cfg := config.Load(configFile, shell.GENERIC, false)
 
 		validateExportFormat := func() {
 			format = strings.ToLower(format)

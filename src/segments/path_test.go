@@ -122,8 +122,6 @@ func TestAgnosterPathStyles(t *testing.T) {
 		}
 		env.On("Shell").Return(tc.Shell)
 
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-
 		displayCygpath := tc.Cygwin
 		if displayCygpath {
 			env.On("RunCommand", "cygpath", []string{"-u", tc.Pwd}).Return(tc.Cygpath, tc.CygpathError)
@@ -360,7 +358,6 @@ func TestGetFolderSeparator(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Error", testify_.Anything)
 		env.On("Shell").Return(shell.GENERIC)
 
 		template.Cache = &cache.Template{
@@ -481,7 +478,6 @@ func TestGetMaxWidth(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Error", testify_.Anything).Return(nil)
 		env.On("Getenv", "MAX_WIDTH").Return("120")
 		env.On("Shell").Return(shell.BASH)
 

@@ -8,13 +8,14 @@ import (
 	"time"
 
 	"github.com/Azure/go-ansiterm/winterm"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 )
 
 func (term *Terminal) Root() bool {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -29,7 +30,7 @@ func (term *Terminal) Root() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return false
 	}
 	defer func() {
@@ -43,7 +44,7 @@ func (term *Terminal) Root() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return false
 	}
 
@@ -51,51 +52,51 @@ func (term *Terminal) Root() bool {
 }
 
 func (term *Terminal) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
-	defer term.Trace(time.Now(), windowTitleRegex)
+	defer log.Trace(time.Now(), windowTitleRegex)
 	title, err := queryWindowTitles(processName, windowTitleRegex)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 	}
 	return title, err
 }
 
 func (term *Terminal) IsWsl() bool {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	return false
 }
 
 func (term *Terminal) IsWsl2() bool {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	return false
 }
 
 func (term *Terminal) IsCygwin() bool {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	return len(term.Getenv("OSTYPE")) > 0
 }
 
 func (term *Terminal) TerminalWidth() (int, error) {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	if term.CmdFlags.TerminalWidth > 0 {
-		term.DebugF("terminal width: %d", term.CmdFlags.TerminalWidth)
+		log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
 		return term.CmdFlags.TerminalWidth, nil
 	}
 
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return 0, err
 	}
 
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return 0, err
 	}
 
 	term.CmdFlags.TerminalWidth = int(info.Size.X)
-	term.DebugF("terminal width: %d", term.CmdFlags.TerminalWidth)
+	log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
 	return term.CmdFlags.TerminalWidth, nil
 }
 
@@ -113,7 +114,7 @@ func (term *Terminal) Platform() string {
 //
 // Returns a variant type if successful; nil and an error if not.
 func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryValue, error) {
-	term.Trace(time.Now(), input)
+	log.Trace(time.Now(), input)
 
 	// Format:
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
@@ -130,7 +131,7 @@ func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryVal
 	rootKey, regPath, found := strings.Cut(input, `\`)
 	if !found {
 		err := fmt.Errorf("Error, malformed registry path: '%s'", input)
-		term.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
@@ -156,19 +157,19 @@ func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryVal
 		key = windows.HKEY_USERS
 	default:
 		err := fmt.Errorf("Error, unknown registry key: '%s", rootKey)
-		term.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
 	k, err := registry.OpenKey(key, regPath, registry.READ)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
 	_, valType, err := k.GetValue(regKey, nil)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
@@ -194,7 +195,7 @@ func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryVal
 		return nil, errors.New(errorLogMsg)
 	}
 
-	term.Debug(fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
+	log.Debug(fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
 	return regValue, nil
 }
 
@@ -211,7 +212,7 @@ func (term *Terminal) ConvertToLinuxPath(input string) string {
 }
 
 func (term *Terminal) DirIsWritable(input string) bool {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	return term.isWriteable(input)
 }
 
@@ -230,6 +231,6 @@ func (term *Terminal) Connection(connectionType ConnectionType) (*Connection, er
 		}
 	}
 
-	term.Error(fmt.Errorf("Network type '%s' not found", connectionType))
+	log.Error(fmt.Errorf("Network type '%s' not found", connectionType))
 	return nil, &NotImplemented{}
 }

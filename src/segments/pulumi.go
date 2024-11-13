@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"gopkg.in/yaml.v3"
@@ -58,7 +59,7 @@ func (p *Pulumi) Enabled() bool {
 
 	err := p.getProjectName()
 	if err != nil {
-		p.env.Error(err)
+		log.Error(err)
 		return false
 	}
 
@@ -75,7 +76,7 @@ func (p *Pulumi) Enabled() bool {
 
 func (p *Pulumi) getPulumiStackName() {
 	if len(p.Name) == 0 || len(p.workspaceSHA1) == 0 {
-		p.env.Debug("pulumi project name or workspace sha1 is empty")
+		log.Debug("pulumi project name or workspace sha1 is empty")
 		return
 	}
 
@@ -94,11 +95,11 @@ func (p *Pulumi) getPulumiStackName() {
 	var pulumiWorkspaceSpec pulumiWorkSpaceFileSpec
 	err := json.Unmarshal([]byte(workspaceCacheFileContent), &pulumiWorkspaceSpec)
 	if err != nil {
-		p.env.Error(fmt.Errorf("pulumi workspace file decode error"))
+		log.Error(fmt.Errorf("pulumi workspace file decode error"))
 		return
 	}
 
-	p.env.DebugF("pulumi stack name: %s", pulumiWorkspaceSpec.Stack)
+	log.Debugf("pulumi stack name: %s", pulumiWorkspaceSpec.Stack)
 	p.Stack = pulumiWorkspaceSpec.Stack
 }
 
@@ -130,7 +131,7 @@ func (p *Pulumi) getProjectName() error {
 	}
 
 	if err != nil {
-		p.env.Error(err)
+		log.Error(err)
 		return nil
 	}
 
@@ -146,7 +147,7 @@ func (p *Pulumi) sha1HexString(s string) string {
 
 	_, err := h.Write([]byte(s))
 	if err != nil {
-		p.env.Error(err)
+		log.Error(err)
 		return ""
 	}
 
@@ -155,14 +156,14 @@ func (p *Pulumi) sha1HexString(s string) string {
 
 func (p *Pulumi) getPulumiAbout() {
 	if len(p.Stack) == 0 {
-		p.env.Error(fmt.Errorf("pulumi stack name is empty, use `fetch_stack` property to enable stack fetching"))
+		log.Error(fmt.Errorf("pulumi stack name is empty, use `fetch_stack` property to enable stack fetching"))
 		return
 	}
 
 	aboutOutput, err := p.env.RunCommand("pulumi", "about", "--json")
 
 	if err != nil {
-		p.env.Error(fmt.Errorf("unable to get pulumi about output"))
+		log.Error(fmt.Errorf("unable to get pulumi about output"))
 		return
 	}
 
@@ -172,12 +173,12 @@ func (p *Pulumi) getPulumiAbout() {
 
 	err = json.Unmarshal([]byte(aboutOutput), &about)
 	if err != nil {
-		p.env.Error(fmt.Errorf("pulumi about output decode error"))
+		log.Error(fmt.Errorf("pulumi about output decode error"))
 		return
 	}
 
 	if about.Backend == nil {
-		p.env.Debug("pulumi about backend is not set")
+		log.Debug("pulumi about backend is not set")
 		return
 	}
 

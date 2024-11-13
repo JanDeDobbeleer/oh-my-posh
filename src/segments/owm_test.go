@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -82,7 +81,6 @@ func TestOWMSegmentSingle(t *testing.T) {
 		location := url.QueryEscape(tc.Location)
 		testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
 		env.On("HTTPRequest", testURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
-		env.On("Error", testify_.Anything)
 
 		o := &Owm{}
 		o.Init(props, env)

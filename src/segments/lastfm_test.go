@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -61,7 +60,6 @@ func TestLFMSegmentSingle(t *testing.T) {
 		}
 
 		env.On("HTTPRequest", LFMAPIURL).Return([]byte(tc.APIJSONResponse), tc.Error)
-		env.On("Error", testify_.Anything)
 
 		lfm := &LastFM{}
 		lfm.Init(props, env)

@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestPoshGitSegment(t *testing.T) {
@@ -187,7 +186,6 @@ func TestPoshGitSegment(t *testing.T) {
 		env.On("Getenv", poshGitEnv).Return(tc.PoshGitJSON)
 		env.On("Home").Return("/Users/bill")
 		env.On("GOOS").Return(runtime.LINUX)
-		env.On("Error", testify_.Anything)
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return("github.com/cli", nil)
 

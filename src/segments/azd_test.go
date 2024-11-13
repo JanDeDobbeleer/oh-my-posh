@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestAzdSegment(t *testing.T) {
@@ -36,7 +35,6 @@ func TestAzdSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Debug", testify_.Anything)
 		env.On("Flags").Return(&runtime.Flags{})
 
 		if tc.IsInited {

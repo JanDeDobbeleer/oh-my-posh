@@ -10,8 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
-
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGetAnsiFromColorString(t *testing.T) {
@@ -44,8 +42,6 @@ func TestGetAnsiFromColorString(t *testing.T) {
 
 func TestMakeColors(t *testing.T) {
 	env := &mock.Environment{}
-
-	env.On("Trace", testify_.Anything, testify_.Anything).Return(nil)
 
 	c := &cache_.Cache{}
 	c.On("Get", "accent_color").Return("", true)

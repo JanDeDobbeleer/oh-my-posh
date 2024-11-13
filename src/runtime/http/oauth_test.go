@@ -135,7 +135,6 @@ func TestOauthResult(t *testing.T) {
 		env.On("Cache").Return(cache)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("HTTPRequest", tokenURL).Return([]byte(tc.TokenResponse), tc.Error)
-		env.On("Error", testify_.Anything)
 
 		oauth := &OAuthRequest{
 			AccessTokenKey:  accessTokenKey,

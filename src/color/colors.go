@@ -8,6 +8,7 @@ import (
 
 	"github.com/gookit/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
@@ -164,7 +165,7 @@ func MakeColors(palette Palette, cacheEnabled bool, accentColor Ansi, env runtim
 }
 
 func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
-	defer env.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	// get accent color from session cache first
 	if accent, OK := env.Session().Get("accent_color"); OK {

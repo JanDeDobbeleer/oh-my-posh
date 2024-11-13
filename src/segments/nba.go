@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
@@ -292,17 +293,17 @@ func (nba *Nba) getResult() (*NBAData, error) {
 
 	httpTimeout := nba.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
-	nba.env.Debug("fetching available data for " + teamName)
+	log.Debug("fetching available data for " + teamName)
 
 	data, err := nba.getAvailableGameData(teamName, httpTimeout)
 	if err != nil {
-		nba.env.Error(errors.Join(err, fmt.Errorf("unable to get data for team %s", teamName)))
+		log.Error(errors.Join(err, fmt.Errorf("unable to get data for team %s", teamName)))
 		return nil, err
 	}
 
 	if !data.GameStatus.Valid() {
 		err := fmt.Errorf("%d is not a valid game status", data.GameStatus)
-		nba.env.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 

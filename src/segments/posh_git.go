@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 const (
@@ -46,14 +48,14 @@ func (s *GitStatus) parsePoshGitStatus(p *poshGitStatus) {
 func (g *Git) hasPoshGitStatus() bool {
 	envStatus := g.env.Getenv(poshGitEnv)
 	if len(envStatus) == 0 {
-		g.env.Error(fmt.Errorf("%s environment variable not set, do you have the posh-git module installed?", poshGitEnv))
+		log.Error(fmt.Errorf("%s environment variable not set, do you have the posh-git module installed?", poshGitEnv))
 		return false
 	}
 
 	var posh poshGit
 	err := json.Unmarshal([]byte(envStatus), &posh)
 	if err != nil {
-		g.env.Error(err)
+		log.Error(err)
 		return false
 	}
 

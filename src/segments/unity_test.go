@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	testify_ "github.com/stretchr/testify/mock"
-
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -69,8 +67,6 @@ func TestUnitySegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Error", testify_.Anything).Return()
-		env.On("Debug", testify_.Anything)
 
 		err := errors.New("no match at root level")
 		var projectDir *runtime.FileInfo
@@ -158,8 +154,6 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Error", testify_.Anything).Return()
-		env.On("Debug", testify_.Anything)
 
 		err := errors.New("no match at root level")
 		var projectDir *runtime.FileInfo

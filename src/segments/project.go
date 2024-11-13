@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"golang.org/x/exp/slices"
@@ -256,7 +257,7 @@ func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
 	}
 
 	if len(target) == 0 {
-		n.env.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
+		log.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
 	}
 
 	return &ProjectData{

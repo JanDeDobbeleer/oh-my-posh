@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func getTestData(file string) string {
@@ -80,8 +79,6 @@ func TestNBASegment(t *testing.T) {
 			DaysOffset: tc.DaysOffset,
 		}
 
-		env.On("Error", testify_.Anything)
-		env.On("Debug", testify_.Anything)
 		env.On("HTTPRequest", NBAScoreURL).Return([]byte(tc.JSONResponse), tc.Error)
 
 		// Add all the daysOffset to the http request responses

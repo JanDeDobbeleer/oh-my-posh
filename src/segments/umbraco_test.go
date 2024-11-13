@@ -12,7 +12,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestUmbracoSegment(t *testing.T) {
@@ -137,7 +136,6 @@ func TestUmbracoSegment(t *testing.T) {
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "MyProject.csproj")).Return(sampleCSProj)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "ANonUmbracoProject.csproj")).Return(sampleNonUmbracoCSProj)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "web.config")).Return(sampleWebConfig)
-		env.On("Debug", testify_.Anything)
 
 		if tc.HasUmbracoFolder {
 			fileInfo := &runtime.FileInfo{

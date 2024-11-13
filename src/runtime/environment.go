@@ -3,7 +3,6 @@ package runtime
 import (
 	"io"
 	"io/fs"
-	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
@@ -68,10 +67,6 @@ type Environment interface {
 	Connection(connectionType ConnectionType) (*Connection, error)
 	CursorPosition() (row, col int)
 	SystemInfo() (*SystemInfo, error)
-	Debug(message string)
-	DebugF(format string, a ...any)
-	Error(err error)
-	Trace(start time.Time, args ...string)
 }
 
 type Flags struct {

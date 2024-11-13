@@ -6,6 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -36,10 +37,14 @@ func createDebugCmd() *cobra.Command {
 				return
 			}
 
-			cfg := config.Load(configFlag, args[0], false)
+			log.Enable()
+			log.Debug("debug mode enabled")
+
+			configFile := config.Path(configFlag)
+			cfg := config.Load(configFile, args[0], false)
 
 			flags := &runtime.Flags{
-				Config: configFlag,
+				Config: configFile,
 				Debug:  true,
 				PWD:    pwd,
 				Shell:  args[0],

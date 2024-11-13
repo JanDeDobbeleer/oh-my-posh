@@ -25,8 +25,6 @@ import (
 func Load(configFile, sh string, migrate bool) *Config {
 	defer log.Trace(time.Now())
 
-	configFile = Path(configFile)
-
 	cfg := loadConfig(configFile)
 
 	// only migrate automatically when the switch isn't set

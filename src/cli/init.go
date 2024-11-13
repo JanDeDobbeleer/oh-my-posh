@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -66,15 +67,19 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 
 func runInit(sh string) {
 	var startTime time.Time
+
 	if debug {
 		startTime = time.Now()
+		log.Enable()
+		log.Debug("debug mode enabled")
 	}
 
-	cfg := config.Load(configFlag, sh, false)
+	configFile := config.Path(configFlag)
+	cfg := config.Load(configFile, sh, false)
 
 	flags := &runtime.Flags{
 		Shell:  sh,
-		Config: configFlag,
+		Config: configFile,
 		Strict: strict,
 		Debug:  debug,
 	}

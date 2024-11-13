@@ -4,6 +4,7 @@ import (
 	"errors"
 	"path/filepath"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"gopkg.in/yaml.v3"
 )
 
@@ -21,13 +22,13 @@ func (t *TalosCTL) Enabled() bool {
 	cfgDir := filepath.Join(t.env.Home(), ".talos")
 	configFile, err := t.getActiveConfig(cfgDir)
 	if err != nil {
-		t.env.Error(err)
+		log.Error(err)
 		return false
 	}
 
 	err = yaml.Unmarshal([]byte(configFile), t)
 	if err != nil {
-		t.env.Error(err)
+		log.Error(err)
 		return false
 	}
 

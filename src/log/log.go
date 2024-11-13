@@ -45,6 +45,15 @@ func Debug(message ...string) {
 	printLn(debug, header, strings.Join(message, " "))
 }
 
+func Debugf(format string, args ...interface{}) {
+	if !enabled {
+		return
+	}
+
+	message := fmt.Sprintf(format, args...)
+	Debug(message)
+}
+
 func Error(err error) {
 	if !enabled {
 		return

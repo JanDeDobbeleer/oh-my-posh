@@ -9,7 +9,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -160,7 +159,6 @@ users:
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("FileContent", configFile).Return(tc.Config)
-		env.On("Error", testify_.Anything).Return()
 
 		argocd := &Argocd{
 			base: base{
@@ -257,7 +255,6 @@ servers:
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 		env.On("FileContent", configFile).Return(tc.Config)
-		env.On("Error", testify_.Anything).Return()
 		env.On("Flags").Return(&runtime.Flags{})
 
 		argocd := &Argocd{}

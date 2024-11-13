@@ -9,6 +9,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -105,7 +106,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	segment.env.DebugF("segment: %s", segment.Name())
+	log.Debugf("segment: %s", segment.Name())
 
 	if segment.isToggled() {
 		return
@@ -207,7 +208,7 @@ func (segment *Segment) isToggled() bool {
 	list := strings.Split(toggles, ",")
 	for _, toggle := range list {
 		if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
-			segment.env.DebugF("segment toggled off: %s", segment.Name())
+			log.Debugf("segment toggled off: %s", segment.Name())
 			return true
 		}
 	}
@@ -227,7 +228,7 @@ func (segment *Segment) restoreCache() bool {
 
 	err := json.Unmarshal([]byte(data), &segment.writer)
 	if err != nil {
-		segment.env.Error(err)
+		log.Error(err)
 	}
 
 	segment.Enabled = true
@@ -243,7 +244,7 @@ func (segment *Segment) setCache() {
 
 	data, err := json.Marshal(segment.writer)
 	if err != nil {
-		segment.env.Error(err)
+		log.Error(err)
 		return
 	}
 

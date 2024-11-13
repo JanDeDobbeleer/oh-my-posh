@@ -41,7 +41,7 @@ type Terminal struct {
 }
 
 func (term *Terminal) Init(flags *Flags) {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	term.CmdFlags = flags
 
@@ -76,30 +76,10 @@ func (term *Terminal) Init(flags *Flags) {
 	}
 }
 
-func (term *Terminal) Trace(start time.Time, args ...string) {
-	log.Trace(start, args...)
-}
-
-func (term *Terminal) Debug(message string) {
-	log.Debug(message)
-}
-
-func (term *Terminal) DebugF(format string, a ...any) {
-	if !term.CmdFlags.Debug {
-		return
-	}
-	message := fmt.Sprintf(format, a...)
-	log.Debug(message)
-}
-
-func (term *Terminal) Error(err error) {
-	log.Error(err)
-}
-
 func (term *Terminal) Getenv(key string) string {
-	defer term.Trace(time.Now(), key)
+	defer log.Trace(time.Now(), key)
 	val := os.Getenv(key)
-	term.Debug(val)
+	log.Debug(val)
 	return val
 }
 
@@ -108,7 +88,7 @@ func (term *Terminal) Pwd() string {
 }
 
 func (term *Terminal) setPwd() {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	correctPath := func(pwd string) string {
 		if term.GOOS() != WINDOWS {
@@ -121,18 +101,18 @@ func (term *Terminal) setPwd() {
 
 	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
 		term.cwd = path.Clean(term.CmdFlags.PWD)
-		term.Debug(term.cwd)
+		log.Debug(term.cwd)
 		return
 	}
 
 	dir, err := os.Getwd()
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return
 	}
 
 	term.cwd = correctPath(dir)
-	term.Debug(term.cwd)
+	log.Debug(term.cwd)
 }
 
 func (term *Terminal) HasFiles(pattern string) bool {
@@ -140,7 +120,7 @@ func (term *Terminal) HasFiles(pattern string) bool {
 }
 
 func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
-	defer term.Trace(time.Now(), pattern)
+	defer log.Trace(time.Now(), pattern)
 
 	fileSystem := os.DirFS(dir)
 	var dirEntries []fs.DirEntry
@@ -153,8 +133,8 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 		var err error
 		dirEntries, err = fs.ReadDir(fileSystem, ".")
 		if err != nil {
-			term.Error(err)
-			term.Debug("false")
+			log.Error(err)
+			log.Debug("false")
 			return false
 		}
 
@@ -170,127 +150,127 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 
 		matchFileName, err := filepath.Match(pattern, strings.ToLower(match.Name()))
 		if err != nil {
-			term.Error(err)
-			term.Debug("false")
+			log.Error(err)
+			log.Debug("false")
 			return false
 		}
 
 		if matchFileName {
-			term.Debug("true")
+			log.Debug("true")
 			return true
 		}
 	}
 
-	term.Debug("false")
+	log.Debug("false")
 	return false
 }
 
 func (term *Terminal) HasFileInParentDirs(pattern string, depth uint) bool {
-	defer term.Trace(time.Now(), pattern, fmt.Sprint(depth))
+	defer log.Trace(time.Now(), pattern, fmt.Sprint(depth))
 	currentFolder := term.Pwd()
 
 	for c := 0; c < int(depth); c++ {
 		if term.HasFilesInDir(currentFolder, pattern) {
-			term.Debug("true")
+			log.Debug("true")
 			return true
 		}
 
 		if dir := filepath.Dir(currentFolder); dir != currentFolder {
 			currentFolder = dir
 		} else {
-			term.Debug("false")
+			log.Debug("false")
 			return false
 		}
 	}
-	term.Debug("false")
+	log.Debug("false")
 	return false
 }
 
 func (term *Terminal) HasFolder(folder string) bool {
-	defer term.Trace(time.Now(), folder)
+	defer log.Trace(time.Now(), folder)
 	f, err := os.Stat(folder)
 	if err != nil {
-		term.Debug("false")
+		log.Debug("false")
 		return false
 	}
 	isDir := f.IsDir()
-	term.DebugF("%t", isDir)
+	log.Debugf("%t", isDir)
 	return isDir
 }
 
 func (term *Terminal) ResolveSymlink(input string) (string, error) {
-	defer term.Trace(time.Now(), input)
+	defer log.Trace(time.Now(), input)
 	link, err := filepath.EvalSymlinks(input)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return "", err
 	}
-	term.Debug(link)
+	log.Debug(link)
 	return link, nil
 }
 
 func (term *Terminal) FileContent(file string) string {
-	defer term.Trace(time.Now(), file)
+	defer log.Trace(time.Now(), file)
 	if !filepath.IsAbs(file) {
 		file = filepath.Join(term.Pwd(), file)
 	}
 
 	content, err := os.ReadFile(file)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return ""
 	}
 
 	fileContent := string(content)
-	term.Debug(fileContent)
+	log.Debug(fileContent)
 
 	return fileContent
 }
 
 func (term *Terminal) LsDir(input string) []fs.DirEntry {
-	defer term.Trace(time.Now(), input)
+	defer log.Trace(time.Now(), input)
 
 	entries, err := os.ReadDir(input)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return nil
 	}
 
-	term.DebugF("%v", entries)
+	log.Debugf("%v", entries)
 	return entries
 }
 
 func (term *Terminal) User() string {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	user := os.Getenv("USER")
 	if user == "" {
 		user = os.Getenv("USERNAME")
 	}
-	term.Debug(user)
+	log.Debug(user)
 	return user
 }
 
 func (term *Terminal) Host() (string, error) {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	if len(term.host) != 0 {
 		return term.host, nil
 	}
 
 	hostName, err := os.Hostname()
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return "", err
 	}
 
 	hostName = cleanHostName(hostName)
-	term.Debug(hostName)
+	log.Debug(hostName)
 	term.host = hostName
 
 	return hostName, nil
 }
 
 func (term *Terminal) GOOS() string {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	return runtime.GOOS
 }
 
@@ -299,7 +279,7 @@ func (term *Terminal) Home() string {
 }
 
 func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
-	defer term.Trace(time.Now(), append([]string{command}, args...)...)
+	defer log.Trace(time.Now(), append([]string{command}, args...)...)
 
 	if cacheCommand, ok := term.cmdCache.Get(command); ok {
 		command = cacheCommand
@@ -307,15 +287,15 @@ func (term *Terminal) RunCommand(command string, args ...string) (string, error)
 
 	output, err := cmd.Run(command, args...)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 	}
 
-	term.Debug(output)
+	log.Debug(output)
 	return output, err
 }
 
 func (term *Terminal) RunShellCommand(shell, command string) string {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	if out, err := term.RunCommand(shell, "-c", command); err == nil {
 		return out
@@ -325,25 +305,25 @@ func (term *Terminal) RunShellCommand(shell, command string) string {
 }
 
 func (term *Terminal) CommandPath(command string) string {
-	defer term.Trace(time.Now(), command)
+	defer log.Trace(time.Now(), command)
 	if cmdPath, ok := term.cmdCache.Get(command); ok {
-		term.Debug(cmdPath)
+		log.Debug(cmdPath)
 		return cmdPath
 	}
 
 	cmdPath, err := exec.LookPath(command)
 	if err == nil {
 		term.cmdCache.Set(command, cmdPath)
-		term.Debug(cmdPath)
+		log.Debug(cmdPath)
 		return cmdPath
 	}
 
-	term.Error(err)
+	log.Error(err)
 	return ""
 }
 
 func (term *Terminal) HasCommand(command string) bool {
-	defer term.Trace(time.Now(), command)
+	defer log.Trace(time.Now(), command)
 
 	if cmdPath := term.CommandPath(command); cmdPath != "" {
 		return true
@@ -353,21 +333,21 @@ func (term *Terminal) HasCommand(command string) bool {
 }
 
 func (term *Terminal) StatusCodes() (int, string) {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	if term.CmdFlags.Shell != CMD || !term.CmdFlags.NoExitCode {
 		return term.CmdFlags.ErrorCode, term.CmdFlags.PipeStatus
 	}
 
 	errorCode := term.Getenv("=ExitCode")
-	term.Debug(errorCode)
+	log.Debug(errorCode)
 	term.CmdFlags.ErrorCode, _ = strconv.Atoi(errorCode)
 
 	return term.CmdFlags.ErrorCode, term.CmdFlags.PipeStatus
 }
 
 func (term *Terminal) ExecutionTime() float64 {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	if term.CmdFlags.ExecutionTime < 0 {
 		return 0
 	}
@@ -375,34 +355,34 @@ func (term *Terminal) ExecutionTime() float64 {
 }
 
 func (term *Terminal) Flags() *Flags {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	return term.CmdFlags
 }
 
 func (term *Terminal) Shell() string {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	if len(term.CmdFlags.Shell) != 0 {
 		return term.CmdFlags.Shell
 	}
-	term.Debug("no shell name provided in flags, trying to detect it")
+	log.Debug("no shell name provided in flags, trying to detect it")
 	pid := os.Getppid()
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return UNKNOWN
 	}
-	term.Debug("process name: " + name)
+	log.Debug("process name: " + name)
 	// this is used for when scoop creates a shim, see
 	// https://github.com/jandedobbeleer/oh-my-posh/issues/2806
 	executable, _ := os.Executable()
 	if name == executable {
 		p, _ = p.Parent()
 		name, err = p.Name()
-		term.Debug("parent process name: " + name)
+		log.Debug("parent process name: " + name)
 	}
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return UNKNOWN
 	}
 	// Cache the shell value to speed things up.
@@ -424,7 +404,7 @@ func (term *Terminal) unWrapError(err error) error {
 }
 
 func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error) {
-	defer term.Trace(time.Now(), targetURL)
+	defer log.Trace(time.Now(), targetURL)
 
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
@@ -440,12 +420,12 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 
 	if term.CmdFlags.Debug {
 		dump, _ := httputil.DumpRequestOut(request, true)
-		term.Debug(string(dump))
+		log.Debug(string(dump))
 	}
 
 	response, err := http.HTTPClient.Do(request)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return nil, term.unWrapError(err)
 	}
 
@@ -453,7 +433,7 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
 		err := errors.New(message)
-		term.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
@@ -461,17 +441,17 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
-	term.Debug(string(responseBody))
+	log.Debug(string(responseBody))
 
 	return responseBody, nil
 }
 
 func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*FileInfo, error) {
-	defer term.Trace(time.Now(), parent)
+	defer log.Trace(time.Now(), parent)
 
 	pwd := term.Pwd()
 	if followSymlinks {
@@ -500,13 +480,13 @@ func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*Fi
 			continue
 		}
 
-		term.Error(err)
+		log.Error(err)
 		return nil, errors.New("no match at root level")
 	}
 }
 
 func (term *Terminal) StackCount() int {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	if term.CmdFlags.StackCount < 0 {
 		return 0
@@ -524,7 +504,7 @@ func (term *Terminal) Session() cache.Cache {
 }
 
 func (term *Terminal) Close() {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 	term.clearCacheFiles()
 	term.deviceCache.Close()
 	term.sessionCache.Close()
@@ -537,12 +517,12 @@ func (term *Terminal) clearCacheFiles() {
 
 	deletedFiles, err := cache.Clear(cache.Path(), false)
 	if err != nil {
-		term.Error(err)
+		log.Error(err)
 		return
 	}
 
 	for _, file := range deletedFiles {
-		term.DebugF("removed cache file: %s", file)
+		log.Debugf("removed cache file: %s", file)
 	}
 }
 
@@ -556,7 +536,7 @@ func (term *Terminal) DirMatchesOneOf(dir string, regexes []string) (match bool)
 	// for the time being until we figure out what the actual root cause is
 	defer func() {
 		if err := recover(); err != nil {
-			term.Error(errors.New("panic"))
+			log.Error(errors.New("panic"))
 			match = false
 		}
 	}()
@@ -595,7 +575,7 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 }
 
 func (term *Terminal) setPromptCount() {
-	defer term.Trace(time.Now())
+	defer log.Trace(time.Now())
 
 	var count int
 	if val, found := term.Session().Get(cache.PROMPTCOUNTCACHE); found {

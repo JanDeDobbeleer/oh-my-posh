@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -226,7 +225,6 @@ func TestCarbonIntensitySegmentSingle(t *testing.T) {
 		}
 
 		env.On("HTTPRequest", CARBONINTENSITYURL).Return([]byte(jsonResponse), responseError)
-		env.On("Error", testify_.Anything)
 		env.On("Flags").Return(&runtime.Flags{})
 
 		d := &CarbonIntensity{}

@@ -7,7 +7,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestTalosctlSegment(t *testing.T) {
@@ -44,7 +43,6 @@ func TestTalosctlSegment(t *testing.T) {
 		env.On("Home").Return("home")
 		fcPath := filepath.Join("home", ".talos", "config")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
-		env.On("Error", testify_.Anything).Return()
 
 		talos := TalosCTL{}
 		talos.Init(properties.Map{}, env)
@@ -82,7 +80,6 @@ func TestGetTalosctlActiveConfig(t *testing.T) {
 		configPath := filepath.Join("home", ".talos")
 		contentPath := filepath.Join(configPath, "config")
 		env.On("FileContent", contentPath).Return(tc.ActiveConfig)
-		env.On("Error", testify_.Anything).Return()
 
 		talos := TalosCTL{}
 		talos.Init(properties.Map{}, env)

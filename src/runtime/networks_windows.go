@@ -7,6 +7,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"golang.org/x/sys/windows"
 )
 
@@ -180,7 +181,7 @@ func (term *Terminal) getConnections() []*Connection {
 			continue
 		}
 
-		term.DebugF("Found network interface: %s", alias)
+		log.Debugf("Found network interface: %s", alias)
 
 		network := &Connection{
 			Type:         connectionType,
@@ -201,7 +202,7 @@ func (term *Terminal) getConnections() []*Connection {
 }
 
 func (term *Terminal) wifiNetwork() (*Connection, error) {
-	term.Trace(time.Now())
+	log.Trace(time.Now())
 	// Open handle
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32
@@ -252,7 +253,7 @@ func (term *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, client
 		uintptr(unsafe.Pointer(&wlanAttr)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		term.Error(err)
+		log.Error(err)
 		return &info, err
 	}
 
@@ -261,7 +262,7 @@ func (term *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, client
 	if ssid.uSSIDLength > 0 {
 		info.SSID = string(ssid.ucSSID[0:ssid.uSSIDLength])
 		info.Name = info.SSID
-		term.DebugF("Found wifi interface: %s", info.SSID)
+		log.Debugf("Found wifi interface: %s", info.SSID)
 	}
 
 	info.TransmitRate = uint64(wlanAttr.wlanAssociationAttributes.ulTxRate / 1024)

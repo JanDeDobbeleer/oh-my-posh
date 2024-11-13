@@ -4,19 +4,20 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 func GetAccentColor(env runtime.Environment) (*RGB, error) {
 	output, err := env.RunCommand("defaults", "read", "-g", "AppleAccentColor")
 	if err != nil {
-		env.Error(err)
+		log.Error(err)
 		return nil, errors.New("unable to read accent color")
 	}
 
 	index, err := strconv.Atoi(output)
 	if err != nil {
-		env.Error(err)
+		log.Error(err)
 		return nil, errors.New("unable to parse accent color index")
 	}
 

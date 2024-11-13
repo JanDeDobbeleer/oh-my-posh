@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestPulumi(t *testing.T) {
@@ -166,9 +165,6 @@ description: A Console App
 		pwd := "/home/foobar/Work/oh-my-posh/pulumi/projects/awesome-project"
 		env.On("Pwd").Return(pwd)
 		env.On("Home").Return(filepath.Clean("/home/foobar"))
-		env.On("Error", testify_.Anything)
-		env.On("Debug", testify_.Anything)
-		env.On("DebugF", testify_.Anything, testify_.Anything)
 
 		env.On("HasFiles", pulumiYAML).Return(len(tc.YAMLConfig) > 0)
 		env.On("FileContent", pulumiYAML).Return(tc.YAMLConfig, nil)

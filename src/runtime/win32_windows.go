@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"unsafe"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"golang.org/x/sys/windows"
@@ -223,20 +224,20 @@ func (env *Terminal) isWriteable(folder string) bool {
 
 	if err != nil {
 		// unable to get current user
-		env.Error(err)
+		log.Error(err)
 		return false
 	}
 
 	si, err := windows.GetNamedSecurityInfo(folder, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
-		env.Error(err)
+		log.Error(err)
 		return false
 	}
 
 	dacl, _, err := si.DACL()
 	if err != nil || dacl == nil {
 		// no dacl implies full access
-		env.Debug("no dacl")
+		log.Debug("no dacl")
 		return true
 	}
 
@@ -248,32 +249,32 @@ func (env *Terminal) isWriteable(folder string) bool {
 
 		ret, _, _ := procGetAce.Call(uintptr(unsafe.Pointer(dacl)), uintptr(i), uintptr(unsafe.Pointer(&ace)))
 		if ret == 0 {
-			env.Debug("no ace found")
+			log.Debug("no ace found")
 			return false
 		}
 
 		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
 
 		if !cu.isMemberOf(aceSid) {
-			env.Debug("not current user or in group")
+			log.Debug("not current user or in group")
 			continue
 		}
 
-		env.Debug(fmt.Sprintf("current user is member of %s", aceSid.String()))
+		log.Debug(fmt.Sprintf("current user is member of %s", aceSid.String()))
 
 		// this gets priority over the other access types
 		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
-			env.Debug("ACCESS_DENIED_ACE_TYPE")
+			log.Debug("ACCESS_DENIED_ACE_TYPE")
 			return false
 		}
 
-		env.DebugF("%v", ace.AccessMask.permissions())
+		log.Debugf("%v", ace.AccessMask.permissions())
 		if ace.AccessMask.canWrite() {
-			env.Debug("user has write access")
+			log.Debug("user has write access")
 			return true
 		}
 	}
-	env.Debug("no write access")
+	log.Debug("no write access")
 	return false
 }
 
@@ -299,7 +300,7 @@ func (env *Terminal) Memory() (*Memory, error) {
 	memStat.Length = uint32(unsafe.Sizeof(memStat))
 	r0, _, err := globalMemoryStatusEx.Call(uintptr(unsafe.Pointer(&memStat)))
 	if r0 == 0 {
-		env.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 	return &Memory{

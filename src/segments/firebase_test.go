@@ -7,7 +7,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestFirebaseSegment(t *testing.T) {
@@ -59,7 +58,6 @@ func TestFirebaseSegment(t *testing.T) {
 		env.On("Pwd").Return(tc.ActivePath)
 		fcPath := filepath.Join("home", ".config", "configstore", "firebase-tools.json")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
-		env.On("Error", testify_.Anything).Return()
 
 		f := &Firebase{}
 		f.Init(properties.Map{}, env)
@@ -104,7 +102,6 @@ func TestGetFirebaseActiveConfig(t *testing.T) {
 		configPath := filepath.Join("home", ".config", "configstore")
 		contentPath := filepath.Join(configPath, "firebase-tools.json")
 		env.On("FileContent", contentPath).Return(tc.ActiveConfig)
-		env.On("Error", testify_.Anything).Return()
 
 		f := &Firebase{}
 		f.Init(properties.Map{}, env)

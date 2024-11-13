@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
@@ -24,7 +25,7 @@ func (u *Unity) Template() string {
 func (u *Unity) Enabled() bool {
 	unityVersion, err := u.GetUnityVersion()
 	if err != nil {
-		u.env.Error(err)
+		log.Error(err)
 		return false
 	}
 	if len(unityVersion) == 0 {
@@ -34,7 +35,7 @@ func (u *Unity) Enabled() bool {
 
 	csharpVersion, err := u.GetCSharpVersion()
 	if err != nil {
-		u.env.Error(err)
+		log.Error(err)
 	}
 	u.CSharpVersion = csharpVersion
 
@@ -44,12 +45,12 @@ func (u *Unity) Enabled() bool {
 func (u *Unity) GetUnityVersion() (string, error) {
 	projectDir, err := u.env.HasParentFilePath("ProjectSettings", false)
 	if err != nil {
-		u.env.Debug("no ProjectSettings parent folder found")
+		log.Debug("no ProjectSettings parent folder found")
 		return "", err
 	}
 
 	if !u.env.HasFilesInDir(projectDir.Path, "ProjectVersion.txt") {
-		u.env.Debug("no ProjectVersion.txt file found")
+		log.Debug("no ProjectVersion.txt file found")
 		return "", err
 	}
 
@@ -114,7 +115,7 @@ func (u *Unity) GetCSharpVersion() (version string, err error) {
 		return csharpVersion, nil
 	}
 
-	u.env.Debug(fmt.Sprintf("Unity version %s doesn't exist in the map", shortUnityVersion))
+	log.Debug(fmt.Sprintf("Unity version %s doesn't exist in the map", shortUnityVersion))
 	return u.GetCSharpVersionFromWeb(shortUnityVersion)
 }
 

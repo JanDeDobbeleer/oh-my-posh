@@ -487,7 +487,6 @@ func TestDotnetProject(t *testing.T) {
 			},
 		})
 		env.On("FileContent", tc.FileName).Return(tc.ProjectContents)
-		env.On("Error", testify_.Anything)
 		pkg := &Project{}
 		pkg.Init(properties.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)

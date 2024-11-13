@@ -21,7 +21,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 
 	// console title timing
 	titleStartTime := time.Now()
-	e.Env.Debug("segment: Title")
+	log.Debug("segment: Title")
 	consoleTitle := &config.Segment{
 		Alias:      "ConsoleTitle",
 		NameLength: 12,

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -401,7 +402,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, content)
 
 	if len(matches) == 0 {
-		g.env.Debug("no matches found, directory isn't a worktree")
+		log.Debug("no matches found, directory isn't a worktree")
 		return false
 	}
 

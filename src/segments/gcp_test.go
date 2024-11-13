@@ -9,7 +9,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGcpSegment(t *testing.T) {
@@ -58,7 +57,6 @@ func TestGcpSegment(t *testing.T) {
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		cfgpath := path.Join("config", "configurations", "config_production")
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
-		env.On("Error", testify_.Anything).Return()
 
 		g := &Gcp{}
 		g.Init(properties.Map{}, env)

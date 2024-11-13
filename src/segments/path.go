@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -249,13 +250,13 @@ func (pt *Path) getMaxWidth() int {
 
 	text, err := tmpl.Render()
 	if err != nil {
-		pt.env.Error(err)
+		log.Error(err)
 		return 0
 	}
 
 	value, err := strconv.Atoi(text)
 	if err != nil {
-		pt.env.Error(err)
+		log.Error(err)
 		return 0
 	}
 
@@ -281,7 +282,7 @@ func (pt *Path) getFolderSeparator() string {
 
 	text, err := tmpl.Render()
 	if err != nil {
-		pt.env.Error(err)
+		log.Error(err)
 	}
 
 	if len(text) == 0 {
@@ -574,7 +575,7 @@ func (pt *Path) setMappedLocations() {
 
 		location, err := tmpl.Render()
 		if err != nil {
-			pt.env.Error(err)
+			log.Error(err)
 		}
 
 		if len(location) == 0 {

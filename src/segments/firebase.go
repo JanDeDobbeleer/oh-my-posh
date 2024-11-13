@@ -5,6 +5,8 @@ import (
 	"errors"
 	"path/filepath"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 const (
@@ -29,13 +31,13 @@ func (f *Firebase) Enabled() bool {
 	cfgDir := filepath.Join(f.env.Home(), ".config", "configstore")
 	configFile, err := f.getActiveConfig(cfgDir)
 	if err != nil {
-		f.env.Error(err)
+		log.Error(err)
 		return false
 	}
 
 	data, err := f.getFirebaseData(configFile)
 	if err != nil {
-		f.env.Error(err)
+		log.Error(err)
 		return false
 	}
 

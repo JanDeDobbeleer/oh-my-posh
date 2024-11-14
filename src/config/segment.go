@@ -202,6 +202,7 @@ func (segment *Segment) hasCache() bool {
 func (segment *Segment) isToggled() bool {
 	toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE)
 	if !OK || len(toggles) == 0 {
+		log.Debug("no toggles found")
 		return false
 	}
 
@@ -223,6 +224,7 @@ func (segment *Segment) restoreCache() bool {
 
 	data, OK := segment.env.Session().Get(segment.cacheKey())
 	if !OK {
+		log.Debug("no cache found for segment: ", segment.Name())
 		return false
 	}
 
@@ -233,6 +235,8 @@ func (segment *Segment) restoreCache() bool {
 
 	segment.Enabled = true
 	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+
+	log.Debug("restored segment from cache: ", segment.Name())
 
 	return true
 }

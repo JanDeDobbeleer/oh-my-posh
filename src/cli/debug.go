@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
@@ -24,30 +25,25 @@ func init() {
 
 func createDebugCmd() *cobra.Command {
 	debugCmd := &cobra.Command{
-		Use:       "debug [bash|zsh|fish|powershell|pwsh|cmd|nu|tcsh|elvish|xonsh]",
-		Short:     "Print the prompt in debug mode",
-		Long:      "Print the prompt in debug mode.",
-		ValidArgs: supportedShells,
-		Args:      NoArgsOrOneValidArg,
-		Run: func(cmd *cobra.Command, args []string) {
+		Use:   "debug",
+		Short: "Print the prompt in debug mode",
+		Long:  "Print the prompt in debug mode.",
+		Run: func(_ *cobra.Command, _ []string) {
 			startTime := time.Now()
-
-			if len(args) == 0 {
-				_ = cmd.Help()
-				return
-			}
 
 			log.Enable()
 			log.Debug("debug mode enabled")
 
+			shell := os.Getenv("POSH_SHELL")
+
 			configFile := config.Path(configFlag)
-			cfg := config.Load(configFile, args[0], false)
+			cfg := config.Load(configFile, shell, false)
 
 			flags := &runtime.Flags{
 				Config: configFile,
 				Debug:  true,
 				PWD:    pwd,
-				Shell:  args[0],
+				Shell:  shell,
 				Plain:  plain,
 			}
 
@@ -61,7 +57,7 @@ func createDebugCmd() *cobra.Command {
 				env.Close()
 			}()
 
-			terminal.Init(args[0])
+			terminal.Init(shell)
 			terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 			terminal.Colors = cfg.MakeColors(env)
 			terminal.Plain = plain

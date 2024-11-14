@@ -1,4 +1,5 @@
 export POSH_THEME=::CONFIG::
+export POSH_SHELL='zsh'
 export POSH_SHELL_VERSION=$ZSH_VERSION
 export POSH_SESSION_ID=::SESSION_ID::
 export POWERLINE_COMMAND='oh-my-posh'

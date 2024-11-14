@@ -37,7 +37,7 @@ const (
 
 	upgradeNotice = `
 A new release of Oh My Posh is available: %s → %s
-To upgrade, run: 'oh-my-posh upgrade'
+To upgrade, run: 'oh-my-posh upgrade%s'
 
 To enable automated upgrades, run: 'oh-my-posh enable autoupgrade'.
 `
@@ -91,5 +91,10 @@ func Notice(env runtime.Environment, force bool) (string, bool) {
 		return "", false
 	}
 
-	return fmt.Sprintf(upgradeNotice, version, latest), true
+	var forceUpdate string
+	if IsMajorUpgrade(version, latest) {
+		forceUpdate = " --force"
+	}
+
+	return fmt.Sprintf(upgradeNotice, version, latest, forceUpdate), true
 }

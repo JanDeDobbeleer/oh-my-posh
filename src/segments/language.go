@@ -8,6 +8,7 @@ import (
 	runtime_ "runtime"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -212,6 +213,7 @@ func (l *language) setVersion() error {
 		var version version
 		err := json.Unmarshal([]byte(versionCache), &version)
 		if err == nil {
+			log.Debugf("version cache restored for %s: %s", l.name, version)
 			l.version = version
 			return nil
 		}

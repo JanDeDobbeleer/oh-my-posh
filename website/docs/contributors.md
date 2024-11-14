@@ -400,6 +400,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://devnotes.ernstc.net/"><img src="https://avatars.githubusercontent.com/u/130360?v=4?s=100" width="100px;" alt="Ernesto Cianciotta"/><br /><sub><b>Ernesto Cianciotta</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ernstc" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ernstc" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/eelispeltola"><img src="https://avatars.githubusercontent.com/u/15069074?v=4?s=100" width="100px;" alt="Eelis Peltola"/><br /><sub><b>Eelis Peltola</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=eelispeltola" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

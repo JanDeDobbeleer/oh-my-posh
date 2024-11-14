@@ -62,7 +62,7 @@ func Path(config string) string {
 	hasConfig := len(config) > 0
 
 	if poshTheme := os.Getenv("POSH_THEME"); len(poshTheme) > 0 && !hasConfig {
-		log.Debug("config set using POSH_THEME: %s", poshTheme)
+		log.Debug("config set using POSH_THEME:", poshTheme)
 		return poshTheme
 	}
 

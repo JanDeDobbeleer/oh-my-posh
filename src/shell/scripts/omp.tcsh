@@ -1,5 +1,6 @@
 setenv POWERLINE_COMMAND "oh-my-posh";
 setenv POSH_THEME ::CONFIG::;
+setenv POSH_SHELL "tcsh";
 setenv POSH_SHELL_VERSION "$tcsh";
 setenv POSH_SESSION_ID ::SESSION_ID::;
 setenv OSTYPE "$OSTYPE";

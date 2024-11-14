@@ -1,6 +1,7 @@
 $POWERLINE_COMMAND = "oh-my-posh"
 $POSH_THEME = ::CONFIG::
 $POSH_SESSION_ID = ::SESSION_ID::
+$POSH_SHELL = "xonsh"
 $POSH_SHELL_VERSION = $XONSH_VERSION
 
 _omp_executable = ::OMP::

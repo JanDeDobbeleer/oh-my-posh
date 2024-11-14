@@ -39,6 +39,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:JobCount = 0
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
+    $env:POSH_SHELL = "pwsh"
     $env:POSH_SHELL_VERSION = $script:PSVersion
     $env:POSH_SESSION_ID = ::SESSION_ID::
     $env:CONDA_PROMPT_MODIFIER = $false

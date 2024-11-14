@@ -2,8 +2,9 @@
 ---@diagnostic disable: undefined-field
 ---@diagnostic disable: lowercase-global
 
--- Cache PID
+-- Environment variables
 os.setenv('POSH_SESSION_ID', '::SESSION_ID::')
+os.setenv('POSH_SHELL', 'cmd')
 
 -- Helper functions
 

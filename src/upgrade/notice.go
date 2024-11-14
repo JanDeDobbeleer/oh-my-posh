@@ -39,7 +39,7 @@ const (
 A new release of Oh My Posh is available: %s → %s
 To upgrade, run: 'oh-my-posh upgrade%s'
 
-To enable automated upgrades, run: 'oh-my-posh enable autoupgrade'.
+To enable automated upgrades, run: 'oh-my-posh enable upgrade'.
 `
 )
 

@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -34,16 +35,16 @@ func createDebugCmd() *cobra.Command {
 			log.Enable()
 			log.Debug("debug mode enabled")
 
-			shell := os.Getenv("POSH_SHELL")
+			sh := os.Getenv("POSH_SHELL")
 
 			configFile := config.Path(configFlag)
-			cfg := config.Load(configFile, shell, false)
+			cfg := config.Load(configFile, sh, false)
 
 			flags := &runtime.Flags{
 				Config: configFile,
 				Debug:  true,
 				PWD:    pwd,
-				Shell:  shell,
+				Shell:  sh,
 				Plain:  plain,
 			}
 
@@ -57,7 +58,7 @@ func createDebugCmd() *cobra.Command {
 				env.Close()
 			}()
 
-			terminal.Init(shell)
+			terminal.Init(shell.GENERIC)
 			terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 			terminal.Colors = cfg.MakeColors(env)
 			terminal.Plain = plain

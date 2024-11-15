@@ -18,6 +18,10 @@ func (r *React) Enabled() bool {
 	}
 	r.versionURLTemplate = "https://github.com/facebook/react/releases/tag/v{{.Full}}"
 
+	if !r.hasNodePackage("react") {
+		return false
+	}
+
 	return r.language.Enabled()
 }
 

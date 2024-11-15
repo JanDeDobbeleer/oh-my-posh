@@ -1,0 +1,14 @@
+{
+  "Endpoint": "https://weu.codesigning.azure.net",
+  "CodeSigningAccountName": "oh-my-posh",
+  "CertificateProfileName": "oh-my-posh",
+  "ExcludeCredentials": [
+    "AzureCliCredential",
+    "AzurePowerShellCredential",
+    "ManagedIdentityCredential",
+    "SharedTokenCacheCredential",
+    "VisualStudioCredential",
+    "VisualStudioCodeCredential",
+    "InteractiveBrowserCredential"
+  ]
+}

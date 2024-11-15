@@ -19,8 +19,9 @@ jobs:
     - name: Build installer 📦
       id: build
       env:
-        CERTIFICATE: ${{ secrets.CERTIFICATE }}
-        CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       run: |
         $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
         ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version

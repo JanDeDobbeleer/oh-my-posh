@@ -33,7 +33,7 @@ $content | Out-File -Encoding 'UTF8' $ISSName
 
 # package content
 $installer = "install-$Architecture"
-ISCC.exe /F$installer "/Ssigntool=$signtool sign /v /debug /fd SHA256 /tr 'http://timestamp.acs.microsoft.com' /td SHA256 /dlib $signtoolDlib /dmdf './metadata.json' `$f" $ISSName
+ISCC.exe /F$installer "/Ssigntool=$signtool sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib $signtoolDlib /dmdf ./metadata.json `$f" $ISSName
 # get hash
 $zipHash = Get-FileHash "Output/$installer.exe" -Algorithm SHA256
 $zipHash.Hash | Out-File -Encoding 'UTF8' "Output/$installer.exe.sha256"

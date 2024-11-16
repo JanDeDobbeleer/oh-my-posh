@@ -31,9 +31,17 @@ $content = $content.Replace('<VERSION>', $Version)
 $ISSName = ".oh-my-posh-$Architecture-$Version.iss"
 $content | Out-File -Encoding 'UTF8' $ISSName
 
+# clean paths
+$signtool = $signtool -Replace '\\', '/'
+$signtoolDlib = $signtoolDlib -Replace '\\', '/'
+
 # package content
 $installer = "install-$Architecture"
-ISCC.exe /F$installer "/Ssigntool=$signtool sign /v /debug /fd SHA256 /tr http://timestamp.acs.microsoft.com /td SHA256 /dlib $signtoolDlib /dmdf ./metadata.json `$f" $ISSName
+ISCC.exe /F$installer $ISSName
+
+# sign installer
+& "$signtool" sign /v /debug /fd SHA256 /tr 'http://timestamp.acs.microsoft.com' /td SHA256 /dlib "$signtoolDlib" /dmdf ../../src/metadata.json "./Output/$installer.exe"
+
 # get hash
 $zipHash = Get-FileHash "Output/$installer.exe" -Algorithm SHA256
 $zipHash.Hash | Out-File -Encoding 'UTF8' "Output/$installer.exe.sha256"

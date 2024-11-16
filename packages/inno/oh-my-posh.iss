@@ -13,8 +13,6 @@ UninstallDisplayIcon={app}\bin\oh-my-posh.exe
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ChangesEnvironment=yes
-SignTool=signtool
-SignedUninstaller=yes
 CloseApplications=no
 
 [Files]

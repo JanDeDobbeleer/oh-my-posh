@@ -25,22 +25,22 @@ builds:
     env:
       - CGO_ENABLED=0
     goos:
-      # - linux
+      - linux
       - windows
-      # - darwin
-      # - freebsd
+      - darwin
+      - freebsd
     goarch:
-      # - amd64
+      - amd64
       - arm64
-      # - arm
-      # - "386"
-    # ignore:
-    #   - goos: darwin
-    #     goarch: "386"
-    #   - goos: darwin
-    #     goarch: arm
-    #   - goos: windows
-    #     goarch: arm
+      - arm
+      - "386"
+    ignore:
+      - goos: darwin
+        goarch: "386"
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: arm
     hooks:
       post:
         - pwsh -c "if ('{{ .Path }}'.EndsWith('.exe')) { & '{{ .Env.SIGNTOOL }}' sign /v /debug /fd SHA256 /tr 'http://timestamp.acs.microsoft.com' /td SHA256 /dlib '{{ .Env.SIGNTOOLDLIB }}' /dmdf './metadata.json' '{{ .Path }}' }"
@@ -50,11 +50,11 @@ archives:
     name_template: "posh-{{ .Os }}-{{ .Arch }}"
 checksum:
   name_template: 'checksums.txt'
-# signs:
-#   - cmd: pwsh
-#     args:
-#       - "-c"
-#       - "& '{{ .Env.OPENSSL }}' pkeyutl -sign -inkey '{{ .Env.SHA_SIGNING_KEY_LOCATION }}' -out '${artifact}.sig' -rawin -in '${artifact}'"
-#     artifacts: checksum
+signs:
+  - cmd: pwsh
+    args:
+      - "-c"
+      - "& '{{ .Env.OPENSSL }}' pkeyutl -sign -inkey '{{ .Env.SHA_SIGNING_KEY_LOCATION }}' -out '${artifact}.sig' -rawin -in '${artifact}'"
+    artifacts: checksum
 changelog:
   disable: true

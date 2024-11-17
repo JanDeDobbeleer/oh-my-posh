@@ -61,7 +61,14 @@ func (m *model) Init() tea.Cmd {
 				return
 			}
 
-			program.Send(resultMsg("🚀 Upgrade successful, restart your shell to take full advantage of the new functionality."))
+			message := "🚀 Upgrade successful"
+
+			current := fmt.Sprintf("v%s", build.Version)
+			if current != m.tag {
+				message += ", restart your shell to take full advantage of the new functionality"
+			}
+
+			program.Send(resultMsg(message))
 		}()
 	}()
 

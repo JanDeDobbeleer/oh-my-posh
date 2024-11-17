@@ -1103,7 +1103,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1497,7 +1497,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1556,7 +1556,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1669,7 +1669,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1722,7 +1722,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1774,7 +1774,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1829,7 +1829,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1884,7 +1884,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1945,7 +1945,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1996,7 +1996,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -2157,7 +2157,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -2613,7 +2613,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -3104,7 +3104,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -3521,7 +3521,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -3880,7 +3880,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4034,7 +4034,7 @@
                 "properties": {
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   }
                 }
               }
@@ -4063,7 +4063,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4193,7 +4193,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4293,7 +4293,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4356,7 +4356,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4459,7 +4459,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4599,7 +4599,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -4814,7 +4814,7 @@
                   },
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "168h"
+                    "default": "none"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"

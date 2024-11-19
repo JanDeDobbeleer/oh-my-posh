@@ -1,0 +1,53 @@
+name: MSI
+on:
+  release:
+    types: [published]
+
+jobs:
+  package:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64, x86]
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/inno
+    steps:
+      - name: Checkout code 👋
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Build installer 📦
+        id: build
+        env:
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        run: |
+          $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
+          ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Sign
+      - name: Upload artifacts 🆙
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            console.log('environment', process.versions);
+
+            const fs = require('fs').promises;
+
+            const { repo: { owner, repo }, sha } = context;
+            console.log({ owner, repo, sha });
+
+            for (let file of await fs.readdir('./packages/msi/out')) {
+              if (file.indexOf(".msi") < 0) {
+                continue;
+              }
+
+              console.log('uploading', file);
+
+              await github.rest.repos.uploadReleaseAsset({
+                owner, repo,
+                release_id: ${{ github.event.release.id }},
+                name: file,
+                data: await fs.readFile(`./packages/msi/out/${file}`)
+              });
+            }

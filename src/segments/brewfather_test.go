@@ -73,11 +73,11 @@ func createReading(temp, gravity float64, millis int64) *BatchReading {
 func TestBrewfatherSegment(t *testing.T) {
 	cases := []struct {
 		Error                 error
-		Case                  string
 		BatchResponse         *Batch
-		BatchReadingsResponse []*BatchReading
+		Case                  string
 		ExpectedString        string
 		Template              string
+		BatchReadingsResponse []*BatchReading
 		CacheTimeout          int
 		ExpectedEnabled       bool
 		CacheFoundFail        bool

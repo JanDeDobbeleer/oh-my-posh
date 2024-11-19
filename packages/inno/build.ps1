@@ -5,7 +5,10 @@ Param
     [System.String]$Architecture,
     [parameter(Mandatory = $true)]
     [string]
-    $Version
+    $Version,
+    [parameter(Mandatory = $false)]
+    [string]
+    $SDKVersion = "10.0.22621.0"
 )
 
 $PSDefaultParameterValues['Out-File:Encoding']='UTF8'
@@ -13,9 +16,9 @@ $PSDefaultParameterValues['Out-File:Encoding']='UTF8'
 # setup dependencies
 nuget.exe install Microsoft.Trusted.Signing.Client -Version 1.0.60 -x
 $signtoolDlib = "$PWD/Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll"
-$signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/signtool.exe'
+$signtool = "C:/Program Files (x86)/Windows Kits/10/bin/$SDKVersion/x64/signtool.exe"
 
-New-Item -Path "." -Name "bin" -ItemType Directory
+New-Item -Path "." -Name "bin" -ItemType Directory -ErrorAction SilentlyContinue
 Copy-Item -Path "../../themes" -Destination "./bin" -Recurse
 
 # download the executable

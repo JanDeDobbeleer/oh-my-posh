@@ -1,0 +1,79 @@
+#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+# The Frozen Embers command line theme
+
+version = 2
+final_space = true
+console_title_template = 'Terminal ({{ .Shell }})' 
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  # newline = true # enable with transcient prompt
+	
+	[[blocks.segments]]
+		type = 'text'
+		style = 'plain'
+		template = '<green>amal</> <magenta>ϟ</> '
+
+  [[blocks.segments]]
+    type = 'path'
+    style = 'plain'
+    background = 'transparent'
+    foreground = 'blue'
+    template = '<yellow>[</> <red>{{ .Path }}</> <yellow>]</>'
+
+    [blocks.segments.properties]
+      style = 'folder'
+
+  [[blocks.segments]]
+    type = 'git'
+    style = 'plain'
+    foreground = 'cyan'
+    background = 'transparent'
+    template = ' ({{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }} *{{ end }}{{ if .Working.Untracked }}%{{ end }}{{ if .Working.Deleted }}-{{ end }}{{ if .Working.Added }}+{{ end }}{{ if gt .Behind 0 }} ↓{{ end }}{{ if gt .Ahead 0 }} ↑{{ end }})'
+
+    [blocks.segments.properties]
+      branch_icon = ''
+      commit_icon = '@'
+      fetch_status = true
+
+[[blocks]]
+  type = 'rprompt'
+  overflow = 'hidden'
+
+  [[blocks.segments]]
+    type = 'executiontime'
+    style = 'plain'
+    background = 'transparent'
+    template = '<yellow>{ </><red>{{ .FormattedMs }}</><yellow> }</>'
+
+    [blocks.segments.properties]
+      threshold = 5000
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
+    foreground_templates = [
+      "{{if gt .Code 0}}red{{end}}",
+      "{{if eq .Code 0}}green{{end}}",
+    ]
+    background = 'transparent'
+    template = ' :'
+
+# [transient_prompt] # doesn't work on bash
+#   foreground_templates = [
+#     "{{if gt .Code 0}}red{{end}}",
+#     "{{if eq .Code 0}}green{{end}}",
+#   ]
+#   background = 'transparent'
+#   template = '<magenta>ϟ</> : '
+
+[secondary_prompt]
+  foreground = 'green'
+  background = 'transparent'
+  template = '<magenta>→</> : '

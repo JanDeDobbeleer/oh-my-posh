@@ -31,6 +31,10 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 
 	e.writeSegments(out, block)
 
+	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
+		e.activeSegment.TrailingDiamond = block.TrailingDiamond
+	}
+
 	e.writeSeparator(true)
 
 	e.activeSegment = nil
@@ -72,7 +76,7 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 				}
 
 				segment.Render()
-				e.writeSegment(current, block, segment)
+				e.writeSegment(block, segment)
 
 				if current == count-1 {
 					return
@@ -87,9 +91,9 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 	}
 }
 
-func (e *Engine) writeSegment(index int, block *config.Block, segment *config.Segment) {
+func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) bool {
 	if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
-		return
+		return false
 	}
 
 	if colors, newCycle := cycle.Loop(); colors != nil {
@@ -98,16 +102,14 @@ func (e *Engine) writeSegment(index int, block *config.Block, segment *config.Se
 		segment.Background = colors.Background
 	}
 
-	if index == 0 && len(block.LeadingDiamond) > 0 {
+	if terminal.Len() == 0 && len(block.LeadingDiamond) > 0 {
 		segment.LeadingDiamond = block.LeadingDiamond
-	}
-
-	if index == len(block.Segments)-1 && len(block.TrailingDiamond) > 0 {
-		segment.TrailingDiamond = block.TrailingDiamond
 	}
 
 	e.setActiveSegment(segment)
 	e.renderActiveSegment()
+
+	return true
 }
 
 func (e *Engine) canRenderSegment(segment *config.Segment, executed []string) bool {

@@ -358,6 +358,10 @@ func Write(background, foreground color.Ansi, text string) {
 	currentColor.Pop()
 }
 
+func Len() int {
+	return length
+}
+
 func String() (string, int) {
 	defer func() {
 		length = 0

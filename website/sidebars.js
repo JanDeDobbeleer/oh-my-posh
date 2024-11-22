@@ -127,6 +127,7 @@ module.exports = {
             "segments/languages/dart",
             "segments/languages/dotnet",
             "segments/languages/elixir",
+            "segments/languages/fortran",
             "segments/languages/golang",
             "segments/languages/haskell",
             "segments/languages/java",

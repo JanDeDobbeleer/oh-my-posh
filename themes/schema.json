@@ -339,6 +339,7 @@
             "fossil",
             "gcp",
             "firebase",
+            "fortran",
             "git",
             "gitversion",
             "go",
@@ -1233,6 +1234,60 @@
                     "items": {
                       "type": "string"
                     }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "fortran"
+              }
+            }
+          },
+          "then": {
+            "title": "Fortran Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/fortran",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "none"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Fortran workspace",
+                    "default": [
+                      "fpm.toml",
+                      "*.f", "*.for", "*.fpp", "*.f77", "*.f90", "*.f95", "*.f03", "*.f08",
+                      "*.F", "*.FOR", "*.FPP", "*.F77", "*.F90", "*.F95", "*.F03", "*.F08"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
                   }
                 }
               }

@@ -85,6 +85,8 @@ const (
 	EXIT SegmentType = "exit"
 	// FLUTTER writes the flutter version
 	FLUTTER SegmentType = "flutter"
+	// FORTRAN writes the gfortran version
+	FORTRAN SegmentType = "fortran"
 	// FOSSIL writes the fossil status
 	FOSSIL SegmentType = "fossil"
 	// GCP writes the active GCP context
@@ -254,6 +256,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	ELIXIR:          func() SegmentWriter { return &segments.Elixir{} },
 	EXIT:            func() SegmentWriter { return &segments.Status{} },
 	FLUTTER:         func() SegmentWriter { return &segments.Flutter{} },
+	FORTRAN:         func() SegmentWriter { return &segments.Fortran{} },
 	FOSSIL:          func() SegmentWriter { return &segments.Fossil{} },
 	GCP:             func() SegmentWriter { return &segments.Gcp{} },
 	FIREBASE:        func() SegmentWriter { return &segments.Firebase{} },

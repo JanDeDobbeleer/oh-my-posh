@@ -185,6 +185,8 @@ const (
 	STATUS SegmentType = "status"
 	// STRAVA is a sports activity tracker
 	STRAVA SegmentType = "strava"
+	// Svelte segment
+	SVELTE SegmentType = "svelte"
 	// Subversion segment
 	SVN SegmentType = "svn"
 	// SWIFT writes the active swift version
@@ -193,6 +195,8 @@ const (
 	SYSTEMINFO SegmentType = "sysinfo"
 	// TALOSCTL writes the talosctl context
 	TALOSCTL SegmentType = "talosctl"
+	// Tauri Segment
+	TAURI SegmentType = "tauri"
 	// TERRAFORM writes the terraform workspace we're currently in
 	TERRAFORM SegmentType = "terraform"
 	// TEXT writes a text
@@ -306,10 +310,12 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SPOTIFY:         func() SegmentWriter { return &segments.Spotify{} },
 	STATUS:          func() SegmentWriter { return &segments.Status{} },
 	STRAVA:          func() SegmentWriter { return &segments.Strava{} },
+	SVELTE:          func() SegmentWriter { return &segments.Svelte{} },
 	SVN:             func() SegmentWriter { return &segments.Svn{} },
 	SWIFT:           func() SegmentWriter { return &segments.Swift{} },
 	SYSTEMINFO:      func() SegmentWriter { return &segments.SystemInfo{} },
 	TALOSCTL:        func() SegmentWriter { return &segments.TalosCTL{} },
+	TAURI:           func() SegmentWriter { return &segments.Tauri{} },
 	TERRAFORM:       func() SegmentWriter { return &segments.Terraform{} },
 	TEXT:            func() SegmentWriter { return &segments.Text{} },
 	TIME:            func() SegmentWriter { return &segments.Time{} },

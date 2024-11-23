@@ -9,12 +9,8 @@ Param
     [parameter(Mandatory = $false)]
     [string]
     $SDKVersion = "10.0.22621.0",
-    [parameter(Mandatory = $false)]
-    [boolean]
-    $Download = $true,
-    [parameter(Mandatory = $false)]
-    [boolean]
-    $Sign = $false
+    [switch]$Download,
+    [switch]$Sign
 )
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'UTF8'
@@ -26,8 +22,8 @@ if ($Download) {
     # download the executable
     $file = "posh-windows-$Architecture.exe"
     $name = "oh-my-posh.exe"
-    $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($file)"
-    Invoke-WebRequest $download -Out "./dist/$($name)"
+    $url = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($file)"
+    Invoke-WebRequest $url -Out "./dist/$($name)"
 }
 
 # variables

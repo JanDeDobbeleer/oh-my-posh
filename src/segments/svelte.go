@@ -9,11 +9,7 @@ func (s *Svelte) Template() string {
 }
 
 func (s *Svelte) Enabled() bool {
-	if !s.hasNodePackage("svelte") {
-		return false
-	}
-
-	s.extensions = []string{"package.json"}
+	s.extensions = []string{"svelte.config.js"}
 	s.commands = []*cmd{
 		{
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,

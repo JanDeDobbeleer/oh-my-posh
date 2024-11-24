@@ -116,16 +116,17 @@ func (e *Engine) getNewline() string {
 
 	// Warp terminal will remove a newline character ('\n') from the prompt, so we hack it in.
 	// For Elvish on Windows, we do this to prevent cutting off a right-aligned block.
-	if e.isWarp() || (e.Env.Shell() == shell.ELVISH && e.Env.GOOS() == runtime.WINDOWS) {
+	// For Tcsh, we do this to prevent a newline character from being printed.
+	switch {
+	case e.isWarp():
+		fallthrough
+	case e.Env.Shell() == shell.ELVISH && e.Env.GOOS() == runtime.WINDOWS:
+		fallthrough
+	case e.Env.Shell() == shell.TCSH:
 		return terminal.LineBreak()
+	default:
+		return "\n"
 	}
-
-	// To avoid improper translations in Tcsh, we use an invisible word joiner character (U+2060) to separate a newline from possible preceding escape sequences.
-	if e.Env.Shell() == shell.TCSH {
-		return "\u2060\\n"
-	}
-
-	return "\n"
 }
 
 func (e *Engine) writeNewline() {

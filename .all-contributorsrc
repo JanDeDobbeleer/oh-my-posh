@@ -2867,6 +2867,17 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "Hampter",
+      "name": "Noah Springer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23213489?v=4",
+      "profile": "https://github.com/Hampter",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -30,17 +30,17 @@ https://ohmyposh.dev/docs/installation/linux
 $installer = ''
 $arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture | Select-Object -First 1
 switch ($arch) {
-    0 { $installer = "install-386.exe" } # x86
-    5 { $installer = "install-arm64.exe" } # ARM
+    0 { $installer = "install-x86.msi" } # x86
+    5 { $installer = "install-arm64.msi" } # ARM
     9 {
         if ([Environment]::Is64BitOperatingSystem) {
-            $installer = "install-amd64.exe"
+            $installer = "install-x64.msi"
         }
         else {
-            $installer = "install-386.exe"
+            $installer = "install-x86.msi"
         }
     }
-    12 { $installer = "install-arm64.exe" } # Surface Pro X
+    12 { $installer = "install-arm64.msi" } # Surface Pro X
 }
 
 if ([string]::IsNullOrEmpty($installer)) {
@@ -73,11 +73,11 @@ catch {
 
 Invoke-WebRequest -OutFile $tmp $url
 Write-Host 'Running installer...'
-$installMode = "/CURRENTUSER"
+$installMode = ""
 if ($AllUsers) {
-    $installMode = "/ALLUSERS"
+    $installMode = "ALLUSERS=1"
 }
-& "$tmp" /VERYSILENT $installMode | Out-Null
+& "$tmp" /quiet INSTALLER=script $installMode | Out-Null
 $tmp | Remove-Item
 Write-Host @'
 Done!

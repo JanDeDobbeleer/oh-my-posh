@@ -13,7 +13,6 @@ This guide assumes and advices the use of PowerShell as your shell environment f
 
 ```powershell
 $env:VERSION = "1.3.37"
-$env:INSTALLER= "msi"
 ```
 
 ### Build the installer

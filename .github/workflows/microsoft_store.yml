@@ -29,24 +29,24 @@ jobs:
           product-update: '{
               "packages":[
                   {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-amd64.exe",
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-x64.msi",
                     "languages":["en"],
                     "architectures":["X64"],
-                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
+                    "installerParameters":"/quiet INSTALLER=ws",
                     "isSilentInstall":false
                   },
                   {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-arm64.exe",
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-arm64.msi",
                     "languages":["en"],
                     "architectures":["Arm64"],
-                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
+                    "installerParameters":"/quiet INSTALLER=ws",
                     "isSilentInstall":false
                   },
                   {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-386.exe",
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-x86.msi",
                     "languages":["en"],
                     "architectures":["X86"],
-                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
+                    "installerParameters":"/quiet INSTALLER=ws",
                     "isSilentInstall":false
                   }
               ]

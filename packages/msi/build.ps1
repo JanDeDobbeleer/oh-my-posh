@@ -20,9 +20,14 @@ New-Item -Path "." -Name "out" -ItemType Directory -ErrorAction SilentlyContinue
 
 if ($Download) {
     # download the executable
-    $file = "posh-windows-$Architecture.exe"
+    switch ($Architecture) {
+        'x86' { $file = "posh-windows-386.exe" }
+        'x64' { $file = "posh-windows-amd64.exe" }
+        Default { $file = "posh-windows-$Architecture.exe" }
+    }
+
     $name = "oh-my-posh.exe"
-    $url = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($file)"
+    $url = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$file"
     Invoke-WebRequest $url -Out "./dist/$($name)"
 }
 

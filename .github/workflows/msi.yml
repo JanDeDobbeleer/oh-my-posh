@@ -56,8 +56,11 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     needs: package
+    strategy:
+      matrix:
+        workflow: [winget, microsoft_store, scoop]
     steps:
-      - name: Notify Winget Build 🙋🏾‍♀️
+      - name: Notify 🙋🏾‍♀️
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         with:
           github-token: ${{ secrets.GH_PAT }}
@@ -65,32 +68,7 @@ jobs:
             await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
               owner: 'jandedobbeleer',
               repo: '${{ github.event.repository.name }}',
-              workflow_id: 'winget.yml',
-              ref: 'main',
-              inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
-            })
-      - name: Notify Windows Store Build 👋
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
-              owner: 'jandedobbeleer',
-              repo: '${{ github.event.repository.name }}',
-              workflow_id: 'microsoft_store.yml',
-              ref: 'main',
-              inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
-            })
-      - name: Notify Scoop Build 🤙
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
-              owner: 'jandedobbeleer',
-              repo: '${{ github.event.repository.name }}',
-              workflow_id: 'scoop.yml',
+              workflow_id: '${{ matrix.workflow }}.yml',
               ref: 'main',
               inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', ''), "release": "${{ github.event.release.id }}" }
             })
-

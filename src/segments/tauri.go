@@ -13,7 +13,8 @@ func (t *Tauri) Template() string {
 }
 
 func (t *Tauri) Enabled() bool {
-	t.extensions = []string{"package.json"}
+	t.extensions = []string{"tauri.conf.json"}
+	t.folders = []string{"src-tauri"}
 	t.commands = []*cmd{
 		{
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,

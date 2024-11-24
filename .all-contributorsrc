@@ -2856,6 +2856,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Silzinc",
+      "name": "Silzinc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/128738169?v=4",
+      "profile": "https://github.com/Silzinc",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

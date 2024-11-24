@@ -18,7 +18,7 @@ function Get-HashForArchitecture {
         [string]
         $Version
     )
-    $hash = (new-object Net.WebClient).DownloadString("https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$Version/install-$Architecture.exe.sha256")
+    $hash = (new-object Net.WebClient).DownloadString("https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$Version/install-$Architecture.msi.sha256")
     return $hash.Trim()
 }
 
@@ -52,15 +52,17 @@ function Write-MetaData {
 
 New-Item -Path $PWD -Name $Version -ItemType "directory"
 # Get all files inside the folder and adjust the version/hash
-$HashAmd64 = Get-HashForArchitecture -Architecture 'amd64' -Version $Version
+$HashAmd64 = Get-HashForArchitecture -Architecture 'x64' -Version $Version
 $HashArm64 = Get-HashForArchitecture -Architecture 'arm64' -Version $Version
-$Hash386 = Get-HashForArchitecture -Architecture '386' -Version $Version
+$Hash386 = Get-HashForArchitecture -Architecture 'x86' -Version $Version
 Get-ChildItem '*.yaml' | ForEach-Object -Process {
     Write-MetaData -FileName $_.Name -Version $Version -HashAmd64 $HashAmd64 -HashArm64 $HashArm64 -Hash386 $Hash386
 }
+
 if (-not $Token) {
     return
 }
+
 # Install the latest wingetcreate exe
 # Need to do things this way, see https://github.com/PowerShell/PowerShell/issues/13138
 Import-Module Appx -UseWindowsPowerShell

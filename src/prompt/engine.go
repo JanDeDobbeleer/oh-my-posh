@@ -74,6 +74,11 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 
 	canWrite := availableSpace >= promptBreathingRoom
 
+	// reset the available space when we can't write so we can fill the line
+	if !canWrite {
+		availableSpace = consoleWidth - length
+	}
+
 	return availableSpace, canWrite
 }
 

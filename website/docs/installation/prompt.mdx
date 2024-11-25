@@ -66,6 +66,20 @@ load(io.popen('oh-my-posh init cmd'):read("*a"))()
 
 Once added, restart cmd for the changes to take effect.
 
+:::info
+Clink has builtin support for Oh My Posh. It allows you to set the prompt using the `clink` command.
+
+```bash
+clink config prompt use oh-my-posh
+```
+
+To set the configuration file, use the following command:
+
+```bash
+clink set ohmyposh.theme <path>
+```
+:::
+
 </TabItem>
 <TabItem value="elvish">
 

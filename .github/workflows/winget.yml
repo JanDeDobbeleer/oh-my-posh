@@ -5,6 +5,9 @@ on:
       version:
         description: 'The latest version'
         required: true
+      release:
+        description: 'The release id'
+        required: false
 
 jobs:
   publish:

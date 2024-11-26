@@ -115,8 +115,10 @@ func (e *Engine) pwd() {
 }
 
 func (e *Engine) getNewline() string {
+	newline := "\r\n"
+
 	if e.Plain || e.Env.Flags().Debug {
-		return "\n"
+		return newline
 	}
 
 	// Warp terminal will remove a newline character ('\n') from the prompt, so we hack it in.
@@ -130,7 +132,7 @@ func (e *Engine) getNewline() string {
 	case e.Env.Shell() == shell.TCSH:
 		return terminal.LineBreak()
 	default:
-		return "\n"
+		return newline
 	}
 }
 

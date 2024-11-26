@@ -58,7 +58,7 @@ jobs:
     needs: package
     strategy:
       matrix:
-        workflow: [winget, microsoft_store, scoop]
+        workflow: [winget, microsoft_store]
     steps:
       - name: Notify 🙋🏾‍♀️
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
@@ -70,5 +70,5 @@ jobs:
               repo: '${{ github.event.repository.name }}',
               workflow_id: '${{ matrix.workflow }}.yml',
               ref: 'main',
-              inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', ''), "release": "${{ github.event.release.id }}" }
+              inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
             })

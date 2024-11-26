@@ -54,10 +54,10 @@ Write-Host "Downloading $installer..."
 
 # validate the availability of New-TemporaryFile
 if (Get-Command -Name New-TemporaryFile -ErrorAction SilentlyContinue) {
-    $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'exe' } -PassThru
+    $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'msi' } -PassThru
 }
 else {
-    $tmp = New-Item -Path $env:TEMP -Name ([System.IO.Path]::GetRandomFileName() -replace '\.\w+$', '.exe') -Force -ItemType File
+    $tmp = New-Item -Path $env:TEMP -Name ([System.IO.Path]::GetRandomFileName() -replace '\.\w+$', '.msi') -Force -ItemType File
 }
 $url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/$installer"
 
@@ -73,12 +73,13 @@ catch {
 
 Invoke-WebRequest -OutFile $tmp $url
 Write-Host 'Running installer...'
-$installMode = ""
+
 if ($AllUsers) {
-    $installMode = "ALLUSERS=1"
+    & "$tmp" /quiet INSTALLER=script ALLUSERS=1
+} else {
+    & "$tmp" /quiet INSTALLER=script
 }
-& "$tmp" /quiet INSTALLER=script $installMode | Out-Null
-$tmp | Remove-Item
+
 Write-Host @'
 Done!
 

@@ -359,27 +359,20 @@ func (term *Terminal) Shell() string {
 	if len(term.CmdFlags.Shell) != 0 {
 		return term.CmdFlags.Shell
 	}
+
 	log.Debug("no shell name provided in flags, trying to detect it")
+
 	pid := os.Getppid()
 	p, _ := process.NewProcess(int32(pid))
+
 	name, err := p.Name()
 	if err != nil {
 		log.Error(err)
 		return UNKNOWN
 	}
+
 	log.Debug("process name: " + name)
-	// this is used for when scoop creates a shim, see
-	// https://github.com/jandedobbeleer/oh-my-posh/issues/2806
-	executable, _ := os.Executable()
-	if name == executable {
-		p, _ = p.Parent()
-		name, err = p.Name()
-		log.Debug("parent process name: " + name)
-	}
-	if err != nil {
-		log.Error(err)
-		return UNKNOWN
-	}
+
 	// Cache the shell value to speed things up.
 	term.CmdFlags.Shell = strings.Trim(strings.TrimSuffix(name, ".exe"), " ")
 	return term.CmdFlags.Shell

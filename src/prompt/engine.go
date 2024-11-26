@@ -117,11 +117,6 @@ func (e *Engine) pwd() {
 func (e *Engine) getNewline() string {
 	newline := "\n"
 
-	switch e.Env.Shell() {
-	case shell.PWSH, shell.PWSH5:
-		newline = "\r\n"
-	}
-
 	if e.Plain || e.Env.Flags().Debug {
 		return newline
 	}

@@ -89,7 +89,7 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
 	}
 
-	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
+	if e.Config.ShellIntegration {
 		e.write(terminal.CommandStart())
 	}
 

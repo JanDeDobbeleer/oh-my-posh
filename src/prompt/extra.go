@@ -91,10 +91,6 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 	}
 
-	if promptType == Transient && e.Config.ShellIntegration {
-		str += terminal.CommandStart()
-	}
-
 	switch e.Env.Shell() {
 	case shell.ZSH:
 		if promptType == Transient {

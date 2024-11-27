@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'src/**'
-      - 'packages/**'
-      - '.github/workflows/**'
+      - "src/**"
+      - "packages/**"
+      - ".github/workflows/**"
 
 jobs:
   changelog:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.changelog.outputs.version }}
       body: ${{ steps.changelog.outputs.clean_changelog }}
@@ -29,6 +29,8 @@ jobs:
           output-file: "false"
           skip-commit: "true"
           skip-on-empty: "true"
+          skip-tag: "true"
+
   artifacts:
     needs: changelog
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
@@ -36,38 +38,17 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: ${{ github.workspace }}/src
+        working-directory: ${{ github.workspace }}/build
     steps:
       - name: Checkout code 👋
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Install Go 🗳
         uses: ./.github/workflows/composite/bootstrap-go
-      - name: Tag HEAD 😸
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag ${{ needs.changelog.outputs.tag }}
-      - name: Prerequisites 🔐
-        run: |
-          $PSDefaultParameterValues['Out-File:Encoding']='UTF8'
-
-          $shaSigningKeyLocation = Join-Path -Path $env:RUNNER_TEMP -ChildPath sha_signing_key.pem
-          $env:SIGNING_KEY > $shaSigningKeyLocation
-          Write-Output "SHA_SIGNING_KEY_LOCATION=$shaSigningKeyLocation" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-          # install code signing dlib
-          nuget.exe install Microsoft.Trusted.Signing.Client -Version 1.0.60 -ExcludeVersion -OutputDirectory $env:RUNNER_TEMP
-          Write-Output "SIGNTOOLDLIB=$env:RUNNER_TEMP/Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-          # requires Windows Dev Kit 10.0.22621.0
-          $signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/signtool.exe'
-          Write-Output "SIGNTOOL=$signtool" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-          # openssl
-          $openssl = 'C:/Program Files/Git/usr/bin/openssl.exe'
-          Write-Output "OPENSSL=$openssl" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Pre Build 😸
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          ./pre.ps1 -Version ${{ needs.changelog.outputs.version }}
       - name: Run GoReleaser 🚀
         uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf
         with:
@@ -79,21 +60,85 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      - name: Zip theme files 🤐
+      - name: Post Build 🤐
         run: |
-          $compress = @{
-            Path = "../themes/*.omp.*"
-            CompressionLevel = "Fastest"
-            DestinationPath = "./dist/themes.zip"
-          }
-          Compress-Archive @compress
-      - name: Add hashes 🤫
+          ./post.ps1
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        with:
+          name: build-artifacts
+          path: |
+            src/dist/posh-*
+            src/dist/themes.*
+            src/dist/checksums.*
+  msi:
+    needs:
+      - changelog
+      - artifacts
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x64, arm64, x86]
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/msi
+    steps:
+      - name: Checkout code 👋
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+        with:
+          name: build-artifacts
+          path: dist
+      - name: Install Wix Toolset 🛠
+        run: dotnet tool install --global wix
+      - name: Build installer 📦
+        id: build
+        env:
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
-          Get-ChildItem ./dist -Exclude *.yaml,*.sig | Get-Unique |
-          Foreach-Object {
-            $zipHash = Get-FileHash $_.FullName -Algorithm SHA256
-            $zipHash.Hash | Out-File -Encoding 'UTF8' "./dist/$($_.Name).sha256"
-          }
+          $version = '${{ needs.changelog.outputs.version }}'.TrimStart("v")
+          ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        with:
+          name: msi-artifact-${{ matrix.arch }}
+          path: |
+            packages/msi/out/install-${{ matrix.arch }}.msi
+            packages/msi/out/install-${{ matrix.arch }}.msi.sha256
+  cdn:
+    runs-on: ubuntu-latest
+    needs:
+      - changelog
+      - msi
+    strategy:
+      matrix:
+        arch: [x64, arm64, x86]
+    steps:
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+        with:
+          name: msi-artifact-${{ matrix.arch }}
+      - name: Upload MSI to CDN
+        env:
+          CDN_CONNECTIONSTRING: ${{ secrets.CDN_CONNECTIONSTRING }}
+        run: |
+          az storage blob upload --container-name v${{ needs.changelog.outputs.version }} --file install-${{ matrix.arch }}.msi --connection-string $CDN_CONNECTIONSTRING
+          az storage blob upload --container-name latest --file install-${{ matrix.arch }}.msi --overwrite true --connection-string $CDN_CONNECTIONSTRING
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - changelog
+      - cdn
+    steps:
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+        with:
+          merge-multiple: true
+      - name: Upload version file
+        env:
+          CDN_CONNECTIONSTRING: ${{ secrets.CDN_CONNECTIONSTRING }}
+        run: |
+          echo v${{ needs.changelog.outputs.version }} > version.txt
+          az storage blob upload --container-name latest --file version.txt --overwrite true --connection-string $CDN_CONNECTIONSTRING
       - name: Release 🎓
         uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974
         with:
@@ -102,6 +147,4 @@ jobs:
           fail_on_unmatched_files: true
           token: ${{ secrets.GH_PAT }}
           files: |
-            src/dist/posh-*
-            src/dist/themes.*
-            src/dist/checksums.*
+            *

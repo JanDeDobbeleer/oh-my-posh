@@ -1,10 +1,7 @@
 name: Winget
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'The latest version'
-        required: true
+  release:
+    types: [published]
 
 jobs:
   publish:
@@ -20,4 +17,4 @@ jobs:
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - name: Create manifest and submit PR 📦
       run: |
-        ./build.ps1 -Version "${{ github.event.inputs.version }}" -Token $env:WINGETCREATE_TOKEN
+        ./build.ps1 -Version "${{ github.event.release.tag_name }}" -Token $env:WINGETCREATE_TOKEN

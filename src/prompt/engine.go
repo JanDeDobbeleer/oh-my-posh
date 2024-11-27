@@ -20,9 +20,11 @@ type Engine struct {
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
 	rprompt               string
+	Overflow              config.Overflow
 	prompt                strings.Builder
 	currentLineLength     int
 	rpromptLength         int
+	Padding               int
 	Plain                 bool
 }
 
@@ -157,7 +159,13 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
-	if padLength <= 0 {
+	tmpl := &template.Text{
+		Template: filler,
+		Context:  e,
+	}
+
+	var err error
+	if filler, err = tmpl.Render(); err != nil {
 		return "", false
 	}
 
@@ -218,6 +226,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 
 		// we can't print the right block as there's not enough room available
 		if !OK {
+			e.Overflow = block.Overflow
 			switch block.Overflow {
 			case config.Break:
 				e.writeNewline()
@@ -234,6 +243,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 
 		defer func() {
 			e.currentLineLength = 0
+			e.Overflow = ""
 		}()
 
 		// validate if we have a filler and fill if needed

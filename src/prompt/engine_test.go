@@ -2,9 +2,11 @@ package prompt
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -274,5 +276,114 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		got := terminal.FormatTitle(title)
 
 		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestShouldFill(t *testing.T) {
+	cases := []struct {
+		Case           string
+		Overflow       config.Overflow
+		ExpectedFiller string
+		Block          config.Block
+		Padding        int
+		ExpectedBool   bool
+	}{
+		{
+			Case:           "Plain single character with no padding",
+			Padding:        0,
+			ExpectedFiller: "",
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Hide,
+				Filler:   "-",
+			},
+		},
+		{
+			Case:           "Plain single character with 1 padding",
+			Padding:        1,
+			ExpectedFiller: "-",
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Hide,
+				Filler:   "-",
+			},
+		},
+		{
+			Case:           "Plain single character with lots of padding",
+			Padding:        200,
+			ExpectedFiller: strings.Repeat("-", 200),
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Hide,
+				Filler:   "-",
+			},
+		},
+		{
+			Case:           "Plain multi-character with some padding",
+			Padding:        20,
+			ExpectedFiller: strings.Repeat("-^-", 6) + "  ",
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Hide,
+				Filler:   "-^-",
+			},
+		},
+		{
+			Case:           "Template conditional on overflow with no overflow",
+			Padding:        3,
+			ExpectedFiller: strings.Repeat("X", 3),
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Hide,
+				Filler:   "{{ if .Overflow -}} O {{- else -}} X {{- end }}",
+			},
+		},
+		{
+			Case:           "Template conditional on overflow with an overflow",
+			Overflow:       config.Break,
+			Padding:        3,
+			ExpectedFiller: strings.Repeat("O", 3),
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Hide,
+				Filler:   "{{ if .Overflow -}} O {{- else -}} X {{- end }}",
+			},
+		},
+		{
+			Case:           "Template conditional on overflow break",
+			Overflow:       config.Break,
+			Padding:        3,
+			ExpectedFiller: strings.Repeat("O", 3),
+			ExpectedBool:   true,
+			Block: config.Block{
+				Overflow: config.Break,
+				Filler:   `{{ if eq .Overflow "break" -}} O {{- else -}} X {{- end }}`,
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("Shell").Return(shell.GENERIC)
+
+		engine := &Engine{
+			Env:      env,
+			Overflow: tc.Overflow,
+		}
+
+		template.Cache = &cache.Template{
+			Shell:    shell.GENERIC,
+			Segments: maps.NewConcurrent(),
+		}
+		template.Init(env, nil)
+
+		terminal.Init(shell.GENERIC)
+		terminal.Plain = true
+		terminal.Colors = &color.Defaults{}
+
+		gotFiller, gotBool := engine.shouldFill(tc.Block.Filler, tc.Padding)
+
+		assert.Equal(t, tc.ExpectedFiller, gotFiller, tc.Case)
+		assert.Equal(t, tc.ExpectedBool, gotBool, tc.Case)
 	}
 }

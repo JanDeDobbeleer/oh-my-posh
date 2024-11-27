@@ -1,10 +1,7 @@
 name: Windows Store
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'The latest version'
-        required: true
+  release:
+    types: [published]
 
 jobs:
   microsoft_store:
@@ -27,29 +24,29 @@ jobs:
         with:
           command: update
           product-update: '{
-              "packages":[
-                  {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-x64.msi",
-                    "languages":["en"],
-                    "architectures":["X64"],
-                    "installerParameters":"/quiet INSTALLER=ws",
-                    "isSilentInstall":false
-                  },
-                  {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-arm64.msi",
-                    "languages":["en"],
-                    "architectures":["Arm64"],
-                    "installerParameters":"/quiet INSTALLER=ws",
-                    "isSilentInstall":false
-                  },
-                  {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-x86.msi",
-                    "languages":["en"],
-                    "architectures":["X86"],
-                    "installerParameters":"/quiet INSTALLER=ws",
-                    "isSilentInstall":false
-                  }
-              ]
+            "packages":[
+            {
+            "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${{ github.event.release.tag_name }}/install-x64.msi",
+            "languages":["en"],
+            "architectures":["X64"],
+            "installerParameters":"/quiet INSTALLER=ws",
+            "isSilentInstall":false
+            },
+            {
+            "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${{ github.event.release.tag_name }}/install-arm64.msi",
+            "languages":["en"],
+            "architectures":["Arm64"],
+            "installerParameters":"/quiet INSTALLER=ws",
+            "isSilentInstall":false
+            },
+            {
+            "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${{ github.event.release.tag_name }}/install-x86.msi",
+            "languages":["en"],
+            "architectures":["X86"],
+            "installerParameters":"/quiet INSTALLER=ws",
+            "isSilentInstall":false
+            }
+            ]
             }'
       - name: Publish Submission
         uses: jandedobbeleer/store-submission@submission-status

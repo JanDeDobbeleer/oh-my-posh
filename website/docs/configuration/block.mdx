@@ -71,6 +71,27 @@ to be repeated to this property. Add this property to the _right_ aligned block.
   }}
 />
 
+Filler allows you to specify a template to tweak the text used as filler. This template behaves the same as
+Segment templates, however, fewer properties are available.
+
+| Name        | Type   | Description                                                           |
+| ----------- | ------ | --------------------------------------------------------------------- |
+| `.Overflow` | `text` | if no overflow was needed, this is empty. Otherwise `hide` or `break` |
+| `.Padding`  | `int`  | the computed length of the padding between left and right blocks      |
+
+This can be very useful if you wish to use a filler text when there is no overflow and use
+empty space when the right block is hidden or drawn on a newline due to overflow.
+
+<Config
+  data={{
+    block: {
+      alignment: "right",
+      overflow: "hide",
+      filler: "{{ if .Overflow }} {{ else }}-{{ end }}",
+    },
+  }}
+/>
+
 ### Overflow
 
 - `break`

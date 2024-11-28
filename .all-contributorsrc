@@ -2878,6 +2878,16 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "dusktreader",
+      "name": "Tucker Beck",
+      "avatar_url": "https://avatars.githubusercontent.com/u/713676?v=4",
+      "profile": "https://github.com/dusktreader",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

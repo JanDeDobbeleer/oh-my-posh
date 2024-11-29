@@ -83,6 +83,8 @@ const (
 	EXECUTIONTIME SegmentType = "executiontime"
 	// EXIT writes the last exit code
 	EXIT SegmentType = "exit"
+	// FIREBASE writes the active firebase project
+	FIREBASE SegmentType = "firebase"
 	// FLUTTER writes the flutter version
 	FLUTTER SegmentType = "flutter"
 	// FORTRAN writes the gfortran version
@@ -91,8 +93,6 @@ const (
 	FOSSIL SegmentType = "fossil"
 	// GCP writes the active GCP context
 	GCP SegmentType = "gcp"
-	// FIREBASE writes the active firebase project
-	FIREBASE SegmentType = "firebase"
 	// GIT represents the git status and information
 	GIT SegmentType = "git"
 	// GITVERSION represents the gitversion information
@@ -129,14 +129,14 @@ const (
 	NBGV SegmentType = "nbgv"
 	// NIGHTSCOUT is an open source diabetes system
 	NIGHTSCOUT SegmentType = "nightscout"
+	// NIXSHELL writes the active nix shell details
+	NIXSHELL SegmentType = "nix-shell"
 	// NODE writes which node version is currently active
 	NODE SegmentType = "node"
 	// npm version
 	NPM SegmentType = "npm"
 	// NX writes which Nx version us currently active
 	NX SegmentType = "nx"
-	// NIXSHELL writes the active nix shell details
-	NIXSHELL SegmentType = "nix-shell"
 	// OCAML writes the active Ocaml version
 	OCAML SegmentType = "ocaml"
 	// OS write os specific icon
@@ -248,22 +248,22 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CDS:             func() SegmentWriter { return &segments.Cds{} },
 	CF:              func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:        func() SegmentWriter { return &segments.CfTarget{} },
+	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	CMD:             func() SegmentWriter { return &segments.Cmd{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },
 	CRYSTAL:         func() SegmentWriter { return &segments.Crystal{} },
-	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	DART:            func() SegmentWriter { return &segments.Dart{} },
 	DENO:            func() SegmentWriter { return &segments.Deno{} },
 	DOCKER:          func() SegmentWriter { return &segments.Docker{} },
 	DOTNET:          func() SegmentWriter { return &segments.Dotnet{} },
-	EXECUTIONTIME:   func() SegmentWriter { return &segments.Executiontime{} },
 	ELIXIR:          func() SegmentWriter { return &segments.Elixir{} },
+	EXECUTIONTIME:   func() SegmentWriter { return &segments.Executiontime{} },
 	EXIT:            func() SegmentWriter { return &segments.Status{} },
+	FIREBASE:        func() SegmentWriter { return &segments.Firebase{} },
 	FLUTTER:         func() SegmentWriter { return &segments.Flutter{} },
 	FORTRAN:         func() SegmentWriter { return &segments.Fortran{} },
 	FOSSIL:          func() SegmentWriter { return &segments.Fossil{} },
 	GCP:             func() SegmentWriter { return &segments.Gcp{} },
-	FIREBASE:        func() SegmentWriter { return &segments.Firebase{} },
 	GIT:             func() SegmentWriter { return &segments.Git{} },
 	GITVERSION:      func() SegmentWriter { return &segments.GitVersion{} },
 	GOLANG:          func() SegmentWriter { return &segments.Golang{} },
@@ -282,9 +282,9 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NBA:             func() SegmentWriter { return &segments.Nba{} },
 	NBGV:            func() SegmentWriter { return &segments.Nbgv{} },
 	NIGHTSCOUT:      func() SegmentWriter { return &segments.Nightscout{} },
+	NIXSHELL:        func() SegmentWriter { return &segments.NixShell{} },
 	NODE:            func() SegmentWriter { return &segments.Node{} },
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
-	NIXSHELL:        func() SegmentWriter { return &segments.NixShell{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
 	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },

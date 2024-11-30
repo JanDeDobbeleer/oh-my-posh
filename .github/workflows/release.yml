@@ -106,39 +106,23 @@ jobs:
           path: |
             packages/msi/out/install-${{ matrix.arch }}.msi
             packages/msi/out/install-${{ matrix.arch }}.msi.sha256
-  cdn:
-    runs-on: ubuntu-latest
-    needs:
-      - changelog
-      - msi
-    strategy:
-      matrix:
-        arch: [x64, arm64, x86]
-    steps:
-      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
-        with:
-          name: msi-artifact-${{ matrix.arch }}
-      - name: Upload MSI to CDN
-        env:
-          CDN_CONNECTIONSTRING: ${{ secrets.CDN_CONNECTIONSTRING }}
-        run: |
-          az storage blob upload --container-name v${{ needs.changelog.outputs.version }} --file install-${{ matrix.arch }}.msi --connection-string $CDN_CONNECTIONSTRING
-          az storage blob upload --container-name latest --file install-${{ matrix.arch }}.msi --overwrite true --connection-string $CDN_CONNECTIONSTRING
   release:
     runs-on: ubuntu-latest
     needs:
       - changelog
-      - cdn
+      - artifacts
+      - msi
     steps:
       - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
         with:
           merge-multiple: true
       - name: Upload version file
         env:
-          CDN_CONNECTIONSTRING: ${{ secrets.CDN_CONNECTIONSTRING }}
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.CDN_CONNECTIONSTRING }}
         run: |
           echo v${{ needs.changelog.outputs.version }} > version.txt
-          az storage blob upload --container-name latest --file version.txt --overwrite true --connection-string $CDN_CONNECTIONSTRING
+          az storage blob upload-batch --destination v${{ needs.changelog.outputs.version }} --source .
+          az storage blob upload-batch --destination latest --overwrite true --source .
       - name: Release 🎓
         uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974
         with:

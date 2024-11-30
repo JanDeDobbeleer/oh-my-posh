@@ -59,7 +59,7 @@ if (Get-Command -Name New-TemporaryFile -ErrorAction SilentlyContinue) {
 else {
     $tmp = New-Item -Path $env:TEMP -Name ([System.IO.Path]::GetRandomFileName() -replace '\.\w+$', '.msi') -Force -ItemType File
 }
-$url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/$installer"
+$url = "https://cdn.ohmyposh.dev/releases/latest/$installer"
 
 # check if we can make https requests and download the binary
 try {

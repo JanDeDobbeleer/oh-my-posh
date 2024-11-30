@@ -75,7 +75,7 @@ Invoke-WebRequest -OutFile $tmp $url
 Write-Host 'Running installer...'
 
 if ($AllUsers) {
-    & "$tmp" /quiet INSTALLER=script ALLUSERS=1
+    & "$tmp" INSTALLER=script ALLUSERS=1
 } else {
     & "$tmp" /quiet INSTALLER=script
 }

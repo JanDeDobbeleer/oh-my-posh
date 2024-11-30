@@ -50,6 +50,9 @@ function Write-MetaData {
     $content | Out-File -Encoding 'UTF8' "./$Version/$FileName"
 }
 
+# clean version string
+$Version = $Version.TrimStart('v')
+
 New-Item -Path $PWD -Name $Version -ItemType "directory"
 # Get all files inside the folder and adjust the version/hash
 $HashAmd64 = Get-HashForArchitecture -Architecture 'x64' -Version $Version

@@ -2888,6 +2888,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Pietrucci-Blacher",
+      "name": "Sunshio",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38607067?v=4",
+      "profile": "https://mpb-dev.fr/",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

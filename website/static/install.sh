@@ -155,7 +155,7 @@ install_themes() {
 
     zip_file="${cache_dir}/themes.zip"
 
-    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip"
+    url="https://cdn.ohmyposh.dev/releases/latest/themes.zip"
 
     http_response=$(curl -s -f -L $url -o $zip_file -w "%{http_code}")
 
@@ -191,9 +191,9 @@ install() {
     info "\nℹ️  Installing oh-my-posh for ${target} in ${install_dir}"
 
     executable=${install_dir}/oh-my-posh
-    url=https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-${target}
+    url=https://cdn.ohmyposh.dev/releases/latest/posh-${target}
     if [ "$version" ]; then
-      url=https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${version}/posh-${target}
+      url=https://cdn.ohmyposh.dev/releases/${version}/posh-${target}
     fi
 
     info "⬇️  Downloading oh-my-posh from ${url}"

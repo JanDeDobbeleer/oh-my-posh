@@ -1,9 +1,9 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-	<Package Language="1033" Manufacturer="Jan De Dobbeleer" Name="Oh My Posh" UpgradeCode="b2a6bcaa-bda3-4c7f-8dec-d8665d7a9b69" Version="$(env.VERSION)" UpgradeStrategy="none" Scope="perUserOrMachine">
+	<Package Language="1033" Manufacturer="Jan De Dobbeleer" Name="Oh My Posh" UpgradeCode="b2a6bcaa-bda3-4c7f-8dec-d8665d7a9b69" Version="$(env.VERSION)" Scope="perUserOrMachine">
 		<SummaryInformation Description="https://ohmyposh.dev" />
-        <Icon Id="icon.ico" SourceFile="icon.ico" />
-        <Property Id="ARPPRODUCTICON" Value="icon.ico" />
-        <Property Id="INSTALLER" Value="manual" />
+		<Icon Id="icon.ico" SourceFile="icon.ico" />
+		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
+		<Property Id="INSTALLER" Value="manual" />
 		<MediaTemplate EmbedCab="yes" />
 		<StandardDirectory Id="ProgramFilesFolder">
 			<Directory Id="ParentInstallDir" Name="oh-my-posh">
@@ -15,6 +15,9 @@
 			<ComponentGroupRef Id="Files" />
 			<ComponentGroupRef Id="EnvironmentVariables" />
 		</Feature>
+		<InstallExecuteSequence>
+			<RemoveExistingProducts After="InstallValidate" />
+		</InstallExecuteSequence>
 	</Package>
 	<Fragment>
 		<ComponentGroup Id="Files">

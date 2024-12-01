@@ -1,7 +1,6 @@
 package segments
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -16,8 +15,10 @@ import (
 )
 
 func TestUpgrade(t *testing.T) {
+	ugc := &upgrade.Config{}
+	latest, _ := ugc.Latest()
+
 	cases := []struct {
-		Error           error
 		Case            string
 		CurrentVersion  string
 		LatestVersion   string
@@ -33,33 +34,28 @@ func TestUpgrade(t *testing.T) {
 		},
 		{
 			Case:           "On latest",
-			CurrentVersion: "1.0.1",
-			LatestVersion:  "1.0.1",
-		},
-		{
-			Case:  "Error on update check",
-			Error: errors.New("error"),
+			CurrentVersion: latest,
 		},
 		{
 			Case:            "On previous, from cache",
 			HasCache:        true,
 			CurrentVersion:  "1.0.2",
-			LatestVersion:   "1.0.3",
+			LatestVersion:   latest,
 			CachedVersion:   "1.0.2",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:           "On latest, version changed",
 			HasCache:       true,
-			CurrentVersion: "1.0.2",
-			LatestVersion:  "1.0.2",
+			CurrentVersion: latest,
+			LatestVersion:  latest,
 			CachedVersion:  "1.0.1",
 		},
 		{
 			Case:            "On previous, version changed",
 			HasCache:        true,
 			CurrentVersion:  "1.0.2",
-			LatestVersion:   "1.0.3",
+			LatestVersion:   latest,
 			CachedVersion:   "1.0.1",
 			ExpectedEnabled: true,
 		},
@@ -73,14 +69,12 @@ func TestUpgrade(t *testing.T) {
 		if len(tc.CachedVersion) == 0 {
 			tc.CachedVersion = tc.CurrentVersion
 		}
+
 		cacheData := fmt.Sprintf(`{"latest":"%s", "current": "%s"}`, tc.LatestVersion, tc.CachedVersion)
 		cache.On("Get", UPGRADECACHEKEY).Return(cacheData, tc.HasCache)
 		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
 
 		build.Version = tc.CurrentVersion
-
-		json := fmt.Sprintf(`{"tag_name":"v%s"}`, tc.LatestVersion)
-		env.On("HTTPRequest", upgrade.RELEASEURL).Return([]byte(json), tc.Error)
 
 		ug := &Upgrade{}
 		ug.Init(properties.Map{}, env)

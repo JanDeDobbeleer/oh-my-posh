@@ -1281,8 +1281,22 @@
                     "description": "The extensions to look for when determining if a folder is a Fortran workspace",
                     "default": [
                       "fpm.toml",
-                      "*.f", "*.for", "*.fpp", "*.f77", "*.f90", "*.f95", "*.f03", "*.f08",
-                      "*.F", "*.FOR", "*.FPP", "*.F77", "*.F90", "*.F95", "*.F03", "*.F08"
+                      "*.f",
+                      "*.for",
+                      "*.fpp",
+                      "*.f77",
+                      "*.f90",
+                      "*.f95",
+                      "*.f03",
+                      "*.f08",
+                      "*.F",
+                      "*.FOR",
+                      "*.FPP",
+                      "*.F77",
+                      "*.F90",
+                      "*.F95",
+                      "*.F03",
+                      "*.F08"
                     ],
                     "items": {
                       "type": "string"
@@ -5036,17 +5050,36 @@
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": ""
     },
-    "upgrade_notice": {
-      "type": "boolean",
+    "upgrade": {
+      "type": "object",
       "title": "Enable Upgrade Notice",
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
-      "default": false
-    },
-    "auto_upgrade": {
-      "type": "boolean",
-      "title": "Enable automatic upgrades for Oh My Posh (supports Windows/macOS only)",
-      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
-      "default": false
+      "default": {
+        "source": "cdn",
+        "auto": false,
+        "notice": false
+      },
+      "properties": {
+        "interval": {
+          "$ref": "#/definitions/cache_duration"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "cdn",
+            "github"
+          ],
+          "default": "cdn"
+        },
+        "auto": {
+          "type": "boolean",
+          "default": false
+        },
+        "notice": {
+          "type": "boolean",
+          "default": false
+        }
+      }
     },
     "patch_pwsh_bleed": {
       "type": "boolean",

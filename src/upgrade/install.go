@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-func install(tag string) error {
+func install(cfg *Config) error {
 	setState(validating)
 
 	executable, err := os.Executable()
@@ -28,7 +28,7 @@ func install(tag string) error {
 
 	setState(downloading)
 
-	data, err := downloadAndVerify(tag)
+	data, err := downloadAndVerify(cfg)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func install(tag string) error {
 		_ = hideFile(oldPath)
 	}
 
-	updateRegistry(tag, executable)
+	updateRegistry(cfg.Version, executable)
 
 	return nil
 }

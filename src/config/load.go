@@ -15,6 +15,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	json "github.com/goccy/go-json"
 	yaml "github.com/goccy/go-yaml"
@@ -30,6 +31,19 @@ func Load(configFile, sh string, migrate bool) *Config {
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
 		cfg.BackupAndMigrate()
+	}
+
+	if cfg.Upgrade == nil {
+		cfg.Upgrade = &upgrade.Config{
+			Source:        upgrade.CDN,
+			DisplayNotice: cfg.UpgradeNotice,
+			Auto:          cfg.AutoUpgrade,
+			Interval:      cache.ONEWEEK,
+		}
+	}
+
+	if cfg.Upgrade.Interval.IsEmpty() {
+		cfg.Upgrade.Interval = cache.ONEWEEK
 	}
 
 	if !cfg.ShellIntegration {

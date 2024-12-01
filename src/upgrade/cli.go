@@ -39,40 +39,40 @@ type stateMsg state
 
 type model struct {
 	error   error
+	config  *Config
 	message string
-	tag     string
 	spinner spinner.Model
 	state   state
 }
 
-func initialModel(tag string) *model {
+func initialModel(cfg *Config) *model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-	return &model{spinner: s, tag: tag}
+	return &model{spinner: s, config: cfg}
 }
 
 func (m *model) Init() tea.Cmd {
-	defer func() {
-		go func() {
-			if err := install(m.tag); err != nil {
-				m.error = err
-				program.Send(resultMsg(fmt.Sprintf("❌ upgrade failed: %v", err)))
-				return
-			}
-
-			message := "🚀 Upgrade successful"
-
-			current := fmt.Sprintf("v%s", build.Version)
-			if current != m.tag {
-				message += ", restart your shell to take full advantage of the new functionality"
-			}
-
-			program.Send(resultMsg(message))
-		}()
-	}()
+	go m.start()
 
 	return m.spinner.Tick
+}
+
+func (m *model) start() {
+	if err := install(m.config); err != nil {
+		m.error = err
+		program.Send(resultMsg(fmt.Sprintf("❌ upgrade failed: %v", err)))
+		return
+	}
+
+	message := "🚀 Upgrade successful"
+
+	current := fmt.Sprintf("v%s", build.Version)
+	if current != m.config.Version {
+		message += ", restart your shell to take full advantage of the new functionality"
+	}
+
+	program.Send(resultMsg(message))
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -113,7 +113,7 @@ func (m *model) View() string {
 		message = "Validating current installation"
 	case downloading:
 		m.spinner.Spinner = spinner.Globe
-		message = "Downloading latest version"
+		message = fmt.Sprintf("Downloading latest version from %s", m.config.Source.String())
 	case verifying:
 		m.spinner.Spinner = spinner.Moon
 		message = "Verifying download"
@@ -125,19 +125,19 @@ func (m *model) View() string {
 	return title + textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
 }
 
-func Run(latest string) error {
+func Run(cfg *Config) error {
 	titleStyle := lipgloss.NewStyle().Margin(1, 0, 1, 0)
 	title = "📦 Upgrading Oh My Posh"
 
-	current := build.Version
+	current := fmt.Sprintf("v%s", build.Version)
 	if len(current) == 0 {
 		current = "dev"
 	}
 
-	title = fmt.Sprintf("%s from %s to %s", title, current, latest)
+	title = fmt.Sprintf("%s from %s to %s", title, current, cfg.Version)
 	title = titleStyle.Render(title)
 
-	program = tea.NewProgram(initialModel(latest))
+	program = tea.NewProgram(initialModel(cfg))
 	resultModel, _ := program.Run()
 
 	programModel, OK := resultModel.(*model)

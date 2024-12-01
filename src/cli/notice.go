@@ -2,9 +2,10 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +24,12 @@ var noticeCmd = &cobra.Command{
 		env.Init(flags)
 		defer env.Close()
 
-		if notice, hasNotice := upgrade.Notice(env, false); hasNotice {
+		sh := os.Getenv("POSH_SHELL")
+		configFile := config.Path(configFlag)
+		cfg := config.Load(configFile, sh, false)
+		cfg.Upgrade.Cache = env.Cache()
+
+		if notice, hasNotice := cfg.Upgrade.Notice(); hasNotice {
 			fmt.Println(notice)
 		}
 	},

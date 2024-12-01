@@ -32,7 +32,7 @@ import (
 //go:embed public_key.pem
 var publicKey []byte
 
-func downloadAndVerify(tag string) ([]byte, error) {
+func downloadAndVerify(cfg *Config) ([]byte, error) {
 	extension := ""
 	if stdruntime.GOOS == runtime.WINDOWS {
 		extension = ".exe"
@@ -40,14 +40,14 @@ func downloadAndVerify(tag string) ([]byte, error) {
 
 	asset := fmt.Sprintf("posh-%s-%s%s", stdruntime.GOOS, stdruntime.GOARCH, extension)
 
-	data, err := downloadReleaseAsset(tag, asset)
+	data, err := cfg.DownloadAsset(asset)
 	if err != nil {
 		return nil, err
 	}
 
 	setState(verifying)
 
-	err = verify(tag, asset, data)
+	err = verify(cfg, asset, data)
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +55,13 @@ func downloadAndVerify(tag string) ([]byte, error) {
 	return data, nil
 }
 
-func verify(tag, asset string, binary []byte) error {
-	checksums, err := downloadReleaseAsset(tag, "checksums.txt")
+func verify(cfg *Config, asset string, binary []byte) error {
+	checksums, err := cfg.DownloadAsset("checksums.txt")
 	if err != nil {
 		return err
 	}
 
-	signature, err := downloadReleaseAsset(tag, "checksums.txt.sig")
+	signature, err := cfg.DownloadAsset("checksums.txt.sig")
 	if err != nil {
 		return err
 	}

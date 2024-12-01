@@ -7,6 +7,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
+	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
 
 const (
@@ -30,26 +31,27 @@ type Config struct {
 	SecondaryPrompt         *Segment        `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
 	TransientPrompt         *Segment        `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
 	ErrorLine               *Segment        `json:"error_line,omitempty" toml:"error_line,omitempty"`
-	ConsoleTitleTemplate    string          `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
-	Format                  string          `json:"-" toml:"-"`
+	TerminalBackground      color.Ansi      `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
 	origin                  string
 	PWD                     string                 `json:"pwd,omitempty" toml:"pwd,omitempty"`
 	AccentColor             color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
 	Output                  string                 `json:"-" toml:"-"`
-	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	ConsoleTitleTemplate    string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
+	Format                  string                 `json:"-" toml:"-"`
+	Upgrade                 *upgrade.Config        `json:"upgrade,omitempty" toml:"upgrade,omitempty"`
 	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty"`
 	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
 	Version                 int                    `json:"version" toml:"version"`
-	UpgradeNotice           bool                   `json:"upgrade_notice,omitempty" toml:"upgrade_notice,omitempty"`
-	AutoUpgrade             bool                   `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
+	AutoUpgrade             bool                   `json:"-" toml:"-"`
 	ShellIntegration        bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
 	MigrateGlyphs           bool                   `json:"-" toml:"-"`
 	PatchPwshBleed          bool                   `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
 	EnableCursorPositioning bool                   `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty"`
 	updated                 bool
 	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty"`
+	UpgradeNotice           bool `json:"-" toml:"-"`
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {
@@ -98,12 +100,12 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 		feats = append(feats, shell.FTCSMarks)
 	}
 
-	autoUpgrade := cfg.AutoUpgrade
+	autoUpgrade := cfg.Upgrade.Auto
 	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
 		autoUpgrade = true
 	}
 
-	upgradeNotice := cfg.UpgradeNotice
+	upgradeNotice := cfg.Upgrade.DisplayNotice
 	if _, OK := env.Cache().Get(UPGRADENOTICE); OK {
 		upgradeNotice = true
 	}

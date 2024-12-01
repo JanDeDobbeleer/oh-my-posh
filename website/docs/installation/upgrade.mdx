@@ -6,8 +6,34 @@ sidebar_label: ♻️ Upgrade
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import Config from "@site/src/components/Config.js";
 
-## Manual
+## Configuration
+
+Oh My Posh can display the availability of an update, or auto update itself when
+enabled by adding the following to your configuration.
+
+<Config
+  data={{
+    upgrade: {
+      notice: true,
+      interval: "168h",
+      auto: false,
+      source: "cdn",
+    },
+  }}
+/>
+
+| Name       |   Type    | Default | Description                                                                                                                                                                                                                |
+| ---------- | :-------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `notice`   | `boolean` | `false` | enbale displaying the upgrade notice on shell start, only checks based on `interval`                                                                                                                                       |
+| `auto`     | `boolean` | `false` | automatically update Oh My Posh when an update is found, only checks based on `interval`                                                                                                                                   |
+| `interval` | `string`  |  `24h`  | the duration for which not to check for an update. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library                                      |
+| `source`   | `string`  |  `cdn`  | where to fetch the information from. Accepted values are `cdn` (`https://cdn.ohmyposh.dev/releases/latest/version.txt`) and `github` (`https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/version.txt`) |
+
+## Upgrade
+
+### Manual
 
 While you can always follow the upgrade steps listed under the installation section,
 you can also use the `upgrade` command to update Oh My Posh to the latest version.
@@ -16,7 +42,7 @@ you can also use the `upgrade` command to update Oh My Posh to the latest versio
 oh-my-posh upgrade
 ```
 
-## Automated
+### Automated
 
 <Tabs
   defaultValue="cli"
@@ -35,11 +61,13 @@ oh-my-posh enable upgrade
 </TabItem>
 <TabItem value="config">
 
-import Config from "@site/src/components/Config.js";
-
 <Config
   data={{
-    "auto_upgrade": true
+    upgrade: {
+      interval: "168h",
+      auto: true,
+      source: "cdn",
+    },
   }}
 />
 

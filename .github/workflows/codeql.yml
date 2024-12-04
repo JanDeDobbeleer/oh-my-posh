@@ -24,10 +24,10 @@ jobs:
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@f09c1c0a94de965c15400f5634aa42fac8fb8f88
+      uses: github/codeql-action/init@aa578102511db1f4524ed59b8cc2bae4f6e88195
       with:
         languages: go
     - name: Autobuild
-      uses: github/codeql-action/autobuild@f09c1c0a94de965c15400f5634aa42fac8fb8f88
+      uses: github/codeql-action/autobuild@aa578102511db1f4524ed59b8cc2bae4f6e88195
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@f09c1c0a94de965c15400f5634aa42fac8fb8f88
+      uses: github/codeql-action/analyze@aa578102511db1f4524ed59b8cc2bae4f6e88195

@@ -71,7 +71,5 @@ func install(cfg *Config) error {
 		_ = hideFile(oldPath)
 	}
 
-	updateRegistry(cfg.Version, executable)
-
 	return nil
 }

@@ -1,0 +1,47 @@
+---
+id: distrobox
+title: Distrobox
+sidebar_label: Distrobox
+---
+
+## What
+
+Displays the [Distrobox] container name when inside a Distrobox container environment.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "distrobox",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#f07b3c",
+    template: "{{ .Icon }} {{ .ContainerID }}",
+    properties: {
+      icon: "\uED95"
+    }
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ .Icon }} {{ .ContainerID }}
+```
+
+:::
+
+### Properties
+
+| Name           | Type     | Description                                                |
+| -------------- | -------- | ---------------------------------------------------------- |
+| `icon`         | `string` | the icon to display - defaults to `\uED95`                 |
+| `.ContainerID` | `string` | the name of the active distrobox container                 |
+
+[Distrobox]: https://github.com/89luca89/distrobox
+[templates]: /docs/configuration/templates

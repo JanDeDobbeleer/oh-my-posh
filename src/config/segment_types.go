@@ -73,6 +73,8 @@ const (
 	DART SegmentType = "dart"
 	// DENO writes the active deno version
 	DENO SegmentType = "deno"
+	// DISTROBOX writes the active distrobox container name
+	DISTROBOX SegmentType = "distrobox"
 	// DOCKER writes the docker context
 	DOCKER SegmentType = "docker"
 	// DOTNET writes which dotnet version is currently active
@@ -254,6 +256,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CRYSTAL:         func() SegmentWriter { return &segments.Crystal{} },
 	DART:            func() SegmentWriter { return &segments.Dart{} },
 	DENO:            func() SegmentWriter { return &segments.Deno{} },
+	DISTROBOX:       func() SegmentWriter { return &segments.Distrobox{} },
 	DOCKER:          func() SegmentWriter { return &segments.Docker{} },
 	DOTNET:          func() SegmentWriter { return &segments.Dotnet{} },
 	ELIXIR:          func() SegmentWriter { return &segments.Elixir{} },

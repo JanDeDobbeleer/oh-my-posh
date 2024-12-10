@@ -68,6 +68,7 @@ module.exports = {
             "segments/cli/bun",
             "segments/cli/cmake",
             "segments/cli/deno",
+            "segments/cli/distrobox",
             "segments/cli/docker",
             "segments/cli/firebase",
             "segments/cli/flutter",

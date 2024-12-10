@@ -331,6 +331,7 @@
             "crystal",
             "dart",
             "deno",
+            "distrobox",
             "docker",
             "dotnet",
             "elixir",
@@ -1070,6 +1071,31 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "distrobox"
+              },
+            },
+          },
+          "then": {
+            "title": "Distrobox Segment",
+            "description": "https://ohmyposh.dev/docs/cli/distrobox",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "icon": {
+                    "type": "string",
+                    "title": "Container Icon",
+                    "description": "The icon to display before the container name",
+                    "default": "\uED95"
+                  },
+                },
+              },
+            },
+          },
         },
         {
           "if": {

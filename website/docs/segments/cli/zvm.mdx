@@ -1,0 +1,35 @@
+﻿---
+id: zvm
+title: ZVM
+sidebar_label: ZVM
+---
+
+## What
+
+Display the current Zig version being used by zvm (Zig Version Manager).
+
+## Sample Configuration
+
+
+import Config from '@site/src/components/Config.js';
+
+
+<Config data={{
+    "type": "zvm",
+    "style": "powerline",
+    "powerline_symbol": "\uE0B0",
+    "foreground": "#F7A41D",
+    "background": "#193549",
+    "properties": {
+        "zigicon": "ZVM - "
+    }
+}}/>
+
+## Properties
+
+| Name      | Type     | Description                            |
+| --------- | -------- | -------------------------------------- |
+| `zigicon` | `string` | The icon to display before the version |
+
+
+[ZVM](https://github.com/tristanisham/zvm)

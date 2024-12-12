@@ -10,13 +10,13 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 var (
-	program     *tea.Program
-	environment runtime.Environment
+	program *tea.Program
+	cache   cache_.Cache
 )
 
 const listHeight = 14
@@ -79,6 +79,7 @@ type main struct {
 	spinner  spinner.Model
 	state    state
 	system   bool
+	ttf      bool
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -120,18 +121,18 @@ func downloadFontZip(location string) {
 	program.Send(zipMsg(zipFile))
 }
 
-func installLocalFontZIP(zipFile string, user bool) {
+func installLocalFontZIP(zipFile string, user, ttf bool) {
 	data, err := os.ReadFile(zipFile)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
 	}
 
-	installFontZIP(data, user)
+	installFontZIP(data, user, ttf)
 }
 
-func installFontZIP(zipFile []byte, user bool) {
-	families, err := InstallZIP(zipFile, user)
+func installFontZIP(zipFile []byte, user, ttf bool) {
+	families, err := InstallZIP(zipFile, user, ttf)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
@@ -159,7 +160,7 @@ func (m *main) Init() tea.Cmd {
 
 	defer func() {
 		if isLocalZipFile() {
-			go installLocalFontZIP(m.font, m.system)
+			go installLocalFontZIP(m.font, m.system, m.ttf)
 			return
 		}
 		go getFontsList()
@@ -239,7 +240,7 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case zipMsg:
 		m.state = installFont
 		defer func() {
-			go installFontZIP(msg, m.system)
+			go installFontZIP(msg, m.system, m.ttf)
 		}()
 		m.spinner.Spinner = spinner.Dot
 		return m, m.spinner.Tick
@@ -290,7 +291,7 @@ func (m *main) View() string {
 		var builder strings.Builder
 
 		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.font, terminal.StopProgress()))
-		builder.WriteString("The following font families are now available for configuration:\n")
+		builder.WriteString("The following font families are now available for configuration:\n\n")
 
 		for i, family := range m.families {
 			builder.WriteString(fmt.Sprintf("  • %s", family))
@@ -306,13 +307,14 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run(font string, env runtime.Environment) {
+func Run(font string, ch cache_.Cache, root, ttf bool) {
 	main := &main{
 		font:   font,
-		system: env.Root(),
+		system: root,
+		ttf:    ttf,
 	}
 
-	environment = env
+	cache = ch
 
 	program = tea.NewProgram(main)
 	if _, err := program.Run(); err != nil {

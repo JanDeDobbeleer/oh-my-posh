@@ -32,6 +32,7 @@ import Config from "@site/src/components/Config.js";
 | `leading_diamond`  | `string`  |
 | `trailing_diamond` | `string`  |
 | `segments`         | `array`   |
+| `force`            | `boolean` |
 
 ### Type
 
@@ -113,6 +114,10 @@ with the same trailing diamond, regardless of which segment is enabled or not.
 ### Segments
 
 Array of one or more [segments][segment].
+
+### Force
+
+When set to `true`, the block will always be rendered, even if all segments are empty. Defaults to `false`.
 
 [color-overrides]: /docs/configuration/colors#color-overrides
 [segment]: segment.mdx

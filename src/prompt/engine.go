@@ -196,8 +196,8 @@ func (e *Engine) getTitleTemplateText() string {
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	text, length := e.writeBlockSegments(block)
 
-	// do not print anything when we don't have any text
-	if length == 0 {
+	// do not print anything when we don't have any text unless forced
+	if !block.Force && length == 0 {
 		return false
 	}
 

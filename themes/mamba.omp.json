@@ -5,7 +5,7 @@
       "alignment": "left",
       "segments": [
         {
-          "foreground": "#7E46B6",
+          "foreground": "#f233f5",
           "style": "plain",
           "template": "{{ .UserName }} ",
           "type": "session"
@@ -13,7 +13,7 @@
         {
           "foreground": "#ffffff",
           "style": "plain",
-          "template": "in ",
+          "template": ">> ",
           "type": "text"
         },
         {
@@ -48,7 +48,7 @@
         {
           "foreground": "#D75F00",
           "style": "plain",
-          "template": "λ ",
+          "template": "=> ",
           "type": "text"
         }
       ],

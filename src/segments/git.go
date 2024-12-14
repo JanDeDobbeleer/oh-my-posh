@@ -217,7 +217,9 @@ func (g *Git) CacheKey() (string, bool) {
 		return "", false
 	}
 
-	return dir.Path, true
+	ref := g.FileContents(dir.Path, "HEAD")
+	ref = strings.Replace(ref, "ref: refs/heads/", "", 1)
+	return fmt.Sprintf("%s@%s", dir.Path, ref), true
 }
 
 func (g *Git) Commit() *Commit {

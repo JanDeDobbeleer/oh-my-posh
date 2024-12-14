@@ -407,6 +407,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dusktreader"><img src="https://avatars.githubusercontent.com/u/713676?v=4?s=100" width="100px;" alt="Tucker Beck"/><br /><sub><b>Tucker Beck</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dusktreader" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dusktreader" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://mpb-dev.fr/"><img src="https://avatars.githubusercontent.com/u/38607067?v=4?s=100" width="100px;" alt="Sunshio"/><br /><sub><b>Sunshio</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Pietrucci-Blacher" title="Code">💻</a> <a href="#design-Pietrucci-Blacher" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://pashagolub.github.io/blog"><img src="https://avatars.githubusercontent.com/u/9463113?v=4?s=100" width="100px;" alt="Pavlo Golub"/><br /><sub><b>Pavlo Golub</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=pashagolub" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

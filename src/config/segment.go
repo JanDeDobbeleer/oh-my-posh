@@ -223,9 +223,10 @@ func (segment *Segment) restoreCache() bool {
 		return false
 	}
 
-	data, OK := segment.env.Session().Get(segment.cacheKey())
+	cacheKey := segment.cacheKey()
+	data, OK := segment.env.Session().Get(cacheKey)
 	if !OK {
-		log.Debug("no cache found for segment: ", segment.Name())
+		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), cacheKey)
 		return false
 	}
 

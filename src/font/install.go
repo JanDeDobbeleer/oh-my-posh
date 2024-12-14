@@ -8,6 +8,7 @@ import (
 	"io"
 	"path"
 	stdruntime "runtime"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -20,10 +21,17 @@ func contains[S ~[]E, E comparable](s S, e E) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
-func InstallZIP(data []byte, user bool) ([]string, error) {
+func InstallZIP(data []byte, user, ttf bool) ([]string, error) {
+	// prefer OTF over TTF; otherwise prefer the first font we find
+	extension := ".otf"
+	if ttf {
+		extension = ".ttf"
+	}
+
 	var families []string
 	bytesReader := bytes.NewReader(data)
 
@@ -45,6 +53,7 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 		if err != nil {
 			return families, err
 		}
+
 		defer rc.Close()
 
 		data, err := io.ReadAll(rc)
@@ -59,13 +68,14 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 
 		if _, found := fonts[fontData.Name]; !found {
 			fonts[fontData.Name] = fontData
-		} else {
-			// prefer OTF over TTF; otherwise prefer the first font we find
-			first := strings.ToLower(path.Ext(fonts[fontData.Name].FileName))
-			second := strings.ToLower(path.Ext(fontData.FileName))
-			if first != second && second == ".otf" {
-				fonts[fontData.Name] = fontData
-			}
+			continue
+		}
+
+		// respect the user's preference for TTF or OTF
+		first := strings.ToLower(path.Ext(fonts[fontData.Name].FileName))
+		second := strings.ToLower(path.Ext(fontData.FileName))
+		if first != second && second == extension {
+			fonts[fontData.Name] = fontData
 		}
 	}
 
@@ -74,7 +84,7 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 			return families, err
 		}
 
-		if !contains(families, font.Family) {
+		if found := contains(families, font.Family); !found {
 			families = append(families, font.Family)
 		}
 	}
@@ -83,6 +93,8 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 	if stdruntime.GOOS == runtime.LINUX || stdruntime.GOOS == runtime.DARWIN {
 		_, _ = cmd.Run("fc-cache", "-f")
 	}
+
+	slices.Sort(families)
 
 	return families, nil
 }

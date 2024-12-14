@@ -36,4 +36,5 @@ type Block struct {
 	MaxWidth        int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth        int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
 	Newline         bool           `json:"newline,omitempty" toml:"newline,omitempty"`
+	Force           bool           `json:"force,omitempty" toml:"force,omitempty"`
 }

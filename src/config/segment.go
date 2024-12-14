@@ -72,6 +72,7 @@ type Segment struct {
 	Enabled                bool           `json:"-" toml:"-"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
+	restored               bool           `json:"-" toml:"-"`
 }
 
 func (segment *Segment) Name() string {
@@ -238,11 +239,13 @@ func (segment *Segment) restoreCache() bool {
 
 	log.Debug("restored segment from cache: ", segment.Name())
 
+	segment.restored = true
+
 	return true
 }
 
 func (segment *Segment) setCache() {
-	if !segment.hasCache() {
+	if segment.restored || !segment.hasCache() {
 		return
 	}
 

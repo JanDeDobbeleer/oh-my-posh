@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
@@ -68,6 +69,7 @@ func (p *Python) loadContext() {
 		p.Venv = prompt
 		return
 	}
+
 	venvVars := []string{
 		"VIRTUAL_ENV",
 		"CONDA_ENV_PATH",
@@ -88,9 +90,11 @@ func (p *Python) loadContext() {
 		}
 
 		name := path.Base(venv)
+		log.Debugf("virtual env name: %s", name)
 		if folderNameFallback && slices.Contains(defaultVenvNames, name) {
 			venv = strings.TrimSuffix(venv, name)
 			name = path.Base(venv)
+			log.Debugf("virtual env name (fallback): %s", name)
 		}
 
 		if p.canUseVenvName(name) {
@@ -108,12 +112,15 @@ func (p *Python) canUseVenvName(name string) bool {
 	if p.language.props.GetBool(properties.DisplayDefault, true) {
 		return true
 	}
+
 	invalidNames := [2]string{"system", "base"}
 	for _, a := range invalidNames {
 		if a == name {
+			log.Debugf("virtual env name %s is invalid", name)
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -193,6 +200,7 @@ func (p *Python) pyvenvCfgPrompt() string {
 		if len(lineSplit) != 2 {
 			continue
 		}
+
 		key := strings.TrimSpace(lineSplit[0])
 		if key == "prompt" {
 			value := strings.TrimSpace(lineSplit[1])

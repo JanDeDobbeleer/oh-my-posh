@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -50,11 +50,11 @@ func Fonts() ([]*Asset, error) {
 }
 
 func getCachedFontData() ([]*Asset, error) {
-	if environment == nil {
+	if cache == nil {
 		return nil, errors.New("environment not set")
 	}
 
-	list, OK := environment.Cache().Get(cache.FONTLISTCACHE)
+	list, OK := cache.Get(cache_.FONTLISTCACHE)
 	if !OK {
 		return nil, errors.New("cache not found")
 	}
@@ -69,7 +69,7 @@ func getCachedFontData() ([]*Asset, error) {
 }
 
 func setCachedFontData(assets []*Asset) {
-	if environment == nil {
+	if cache == nil {
 		return
 	}
 
@@ -78,7 +78,7 @@ func setCachedFontData(assets []*Asset) {
 		return
 	}
 
-	environment.Cache().Set(cache.FONTLISTCACHE, string(data), cache.ONEDAY)
+	cache.Set(cache_.FONTLISTCACHE, string(data), cache_.ONEDAY)
 }
 
 func CascadiaCode() ([]*Asset, error) {

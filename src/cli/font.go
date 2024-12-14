@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	// fontCmd can work with fonts
+	ttf bool
+
 	fontCmd = &cobra.Command{
 		Use:   "font [install|configure]",
 		Short: "Manage fonts",
@@ -46,7 +47,7 @@ This command is used to install fonts and configure the font in your terminal.
 
 				terminal.Init(env.Shell())
 
-				font.Run(fontName, env)
+				font.Run(fontName, env.Cache(), env.Root(), ttf)
 
 				return
 			case "configure":
@@ -59,5 +60,6 @@ This command is used to install fonts and configure the font in your terminal.
 )
 
 func init() {
+	fontCmd.Flags().BoolVar(&ttf, "ttf", false, "fetch the TTF version of the font")
 	RootCmd.AddCommand(fontCmd)
 }

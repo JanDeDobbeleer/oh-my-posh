@@ -7,6 +7,10 @@ updates:
     target-branch: "main"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "softprops/action-gh-release"
+        # https://github.com/softprops/action-gh-release/issues/556
+        versions: ["2.2.0"]
 
   # Maintain dependencies for Go modules
   - package-ecosystem: "gomod"

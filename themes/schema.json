@@ -4933,7 +4933,7 @@
                     "type": "string",
                     "title": "Zig Icon",
                     "description": "icon to display before the version",
-                    "default": "ZVM - "
+                    "default": "ZVM"
                   }
                 }
               }

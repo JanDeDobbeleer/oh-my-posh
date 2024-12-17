@@ -72,14 +72,14 @@ const (
 )
 
 type main struct {
-	err      error
-	list     *list.Model
-	font     string
-	families []string
-	spinner  spinner.Model
-	state    state
-	system   bool
-	ttf      bool
+	err       error
+	list      *list.Model
+	font      string
+	zipFolder string
+	families  []string
+	spinner   spinner.Model
+	state     state
+	system    bool
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -121,18 +121,18 @@ func downloadFontZip(location string) {
 	program.Send(zipMsg(zipFile))
 }
 
-func installLocalFontZIP(zipFile string, user, ttf bool) {
-	data, err := os.ReadFile(zipFile)
+func installLocalFontZIP(m *main) {
+	data, err := os.ReadFile(m.font)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
 	}
 
-	installFontZIP(data, user, ttf)
+	installFontZIP(data, m)
 }
 
-func installFontZIP(zipFile []byte, user, ttf bool) {
-	families, err := InstallZIP(zipFile, user, ttf)
+func installFontZIP(zipFile []byte, m *main) {
+	families, err := InstallZIP(zipFile, m)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
@@ -148,21 +148,30 @@ func (m *main) Init() tea.Cmd {
 
 	if len(m.font) != 0 && !isLocalZipFile() {
 		m.state = downloadFont
+
 		if !strings.HasPrefix(m.font, "https") {
-			m.font = fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.font)
+			if strings.HasPrefix(m.font, "CascadiaCode-") {
+				version := strings.TrimPrefix(m.font, "CascadiaCode-")
+				m.font = fmt.Sprintf("https://github.com/microsoft/cascadia-code/releases/download/v%s/%s.zip", version, m.font)
+			} else {
+				m.font = fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.font)
+			}
 		}
+
 		defer func() {
 			go downloadFontZip(m.font)
 		}()
+
 		m.spinner.Spinner = spinner.Globe
 		return m.spinner.Tick
 	}
 
 	defer func() {
 		if isLocalZipFile() {
-			go installLocalFontZIP(m.font, m.system, m.ttf)
+			go installLocalFontZIP(m)
 			return
 		}
+
 		go getFontsList()
 	}()
 
@@ -171,6 +180,7 @@ func (m *main) Init() tea.Cmd {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
 	m.spinner = s
 	m.state = getFonts
+
 	if isLocalZipFile() {
 		m.state = unzipFont
 	}
@@ -240,7 +250,7 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case zipMsg:
 		m.state = installFont
 		defer func() {
-			go installFontZIP(msg, m.system, m.ttf)
+			go installFontZIP(msg, m)
 		}()
 		m.spinner.Spinner = spinner.Dot
 		return m, m.spinner.Tick
@@ -288,6 +298,10 @@ func (m *main) View() string {
 	case quit:
 		return textStyle.Render(fmt.Sprintf("No need to install a new font? That's cool.%s", terminal.StopProgress()))
 	case done:
+		if len(m.families) == 0 {
+			return textStyle.Render(fmt.Sprintf("No matching font families were installed. Try setting --zip-folder to the correct folder when using Cascadia Code or a custom font zip file %s", terminal.StopProgress())) //nolint: lll
+		}
+
 		var builder strings.Builder
 
 		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.font, terminal.StopProgress()))
@@ -307,11 +321,11 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run(font string, ch cache_.Cache, root, ttf bool) {
+func Run(font string, ch cache_.Cache, root bool, zipFolder string) {
 	main := &main{
-		font:   font,
-		system: root,
-		ttf:    ttf,
+		font:      font,
+		system:    root,
+		zipFolder: zipFolder,
 	}
 
 	cache = ch

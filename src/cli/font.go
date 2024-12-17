@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	ttf bool
+	zipFolder string
 
 	fontCmd = &cobra.Command{
 		Use:   "font [install|configure]",
@@ -47,7 +47,7 @@ This command is used to install fonts and configure the font in your terminal.
 
 				terminal.Init(env.Shell())
 
-				font.Run(fontName, env.Cache(), env.Root(), ttf)
+				font.Run(fontName, env.Cache(), env.Root(), zipFolder)
 
 				return
 			case "configure":
@@ -60,6 +60,6 @@ This command is used to install fonts and configure the font in your terminal.
 )
 
 func init() {
-	fontCmd.Flags().BoolVar(&ttf, "ttf", false, "fetch the TTF version of the font")
+	fontCmd.Flags().StringVar(&zipFolder, "zip-folder", "", "the folder inside the zip file to install fonts from")
 	RootCmd.AddCommand(fontCmd)
 }

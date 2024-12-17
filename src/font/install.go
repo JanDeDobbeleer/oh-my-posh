@@ -25,13 +25,7 @@ func contains[S ~[]E, E comparable](s S, e E) bool {
 	return false
 }
 
-func InstallZIP(data []byte, user, ttf bool) ([]string, error) {
-	// prefer OTF over TTF; otherwise prefer the first font we find
-	extension := ".otf"
-	if ttf {
-		extension = ".ttf"
-	}
-
+func InstallZIP(data []byte, m *main) ([]string, error) {
 	var families []string
 	bytesReader := bytes.NewReader(data)
 
@@ -42,46 +36,56 @@ func InstallZIP(data []byte, user, ttf bool) ([]string, error) {
 
 	fonts := make(map[string]*Font)
 
-	for _, zf := range zipReader.File {
+	root := len(m.zipFolder) == 0
+
+	for _, file := range zipReader.File {
 		// prevent zipslip attacks
 		// https://security.snyk.io/research/zip-slip-vulnerability
-		if strings.Contains(zf.Name, "..") {
+		// and only process files which are in the specified folder
+		if strings.Contains(file.Name, "..") || !strings.HasPrefix(file.Name, m.zipFolder) {
 			continue
 		}
 
-		rc, err := zf.Open()
-		if err != nil {
-			return families, err
+		fontFileName := path.Base(file.Name)
+
+		// do not install fonts that are not in the root folder when specified as such
+		if root && fontFileName != file.Name {
+			continue
 		}
 
-		defer rc.Close()
-
-		data, err := io.ReadAll(rc)
-		if err != nil {
-			return families, err
-		}
-
-		fontData, err := newFont(path.Base(zf.Name), data)
+		fontReader, err := file.Open()
 		if err != nil {
 			continue
 		}
 
-		if _, found := fonts[fontData.Name]; !found {
-			fonts[fontData.Name] = fontData
+		defer fontReader.Close()
+
+		fontBytes, err := io.ReadAll(fontReader)
+		if err != nil {
 			continue
 		}
 
-		// respect the user's preference for TTF or OTF
-		first := strings.ToLower(path.Ext(fonts[fontData.Name].FileName))
-		second := strings.ToLower(path.Ext(fontData.FileName))
-		if first != second && second == extension {
-			fonts[fontData.Name] = fontData
+		font, err := newFont(fontFileName, fontBytes)
+		if err != nil {
+			continue
+		}
+
+		if _, found := fonts[font.Name]; !found {
+			fonts[font.Name] = font
+			continue
+		}
+
+		// prefer .ttf files over other file types when we have a duplicate
+		first := strings.ToLower(path.Ext(fonts[font.Name].FileName))
+		second := strings.ToLower(path.Ext(font.FileName))
+		if first != second && second == ".ttf" {
+			fonts[font.Name] = font
 		}
 	}
 
 	for _, font := range fonts {
-		if err = install(font, user); err != nil {
-			return families, err
+		if err = install(font, m.system); err != nil {
+			continue
 		}
 
 		if found := contains(families, font.Family); !found {

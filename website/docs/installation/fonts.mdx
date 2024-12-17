@@ -34,6 +34,7 @@ Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts]:
 :::info
 When running as root/administrator, the fonts will be installed system-wide.
 When running as a regular user, the fonts will be installed in the user's font directory.
+By default, Oh My Posh installs the `.ttf` version of the font in case multiple versions are available.
 :::
 
 ```bash
@@ -46,10 +47,10 @@ This will present a list of Nerd Font libraries, from which you can  select `Mes
 oh-my-posh font install meslo
 ```
 
-By default, Oh My Posh installs the `.otf` version of the font. If you prefer the `.ttf` version, you can specify it with the `--ttf` flag:
+If you have a font that has specific flavors of a font inside sub folders, you can specify the sub folder name:
 
 ```bash
-oh-my-posh font install meslo --ttf
+oh-my-posh font install --zip-folder ttf/static CascadiaCode-2407.24
 ```
 
 </TabItem>

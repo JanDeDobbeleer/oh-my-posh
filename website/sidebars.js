@@ -204,6 +204,7 @@ module.exports = {
             "segments/web/brewfather",
             "segments/web/carbonintensity",
             "segments/web/ipify",
+            "segments/web/http",
             "segments/web/nba",
             "segments/web/owm",
             "segments/web/wakatime",

@@ -213,6 +213,8 @@ const (
 	UPGRADE SegmentType = "upgrade"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
+	// VUE writes the current vite version
+	VITE SegmentType = "vite"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"
 	// WINREG queries the Windows registry.
@@ -324,6 +326,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
 	VALA:            func() SegmentWriter { return &segments.Vala{} },
+	VITE:            func() SegmentWriter { return &segments.Vite{} },
 	WAKATIME:        func() SegmentWriter { return &segments.Wakatime{} },
 	WINREG:          func() SegmentWriter { return &segments.WindowsRegistry{} },
 	WITHINGS:        func() SegmentWriter { return &segments.Withings{} },

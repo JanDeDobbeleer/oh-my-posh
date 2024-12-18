@@ -36,20 +36,19 @@ func InstallZIP(data []byte, m *main) ([]string, error) {
 
 	fonts := make(map[string]*Font)
 
-	root := len(m.zipFolder) == 0
-
 	for _, file := range zipReader.File {
 		// prevent zipslip attacks
 		// https://security.snyk.io/research/zip-slip-vulnerability
-		// and only process files which are in the specified folder
-		if strings.Contains(file.Name, "..") || !strings.HasPrefix(file.Name, m.zipFolder) {
+		// skip folders
+		if strings.Contains(file.Name, "..") || strings.HasSuffix(file.Name, "/") {
 			continue
 		}
 
 		fontFileName := path.Base(file.Name)
+		fontRelativeFileName := strings.TrimPrefix(file.Name, m.zipFolder)
 
-		// do not install fonts that are not in the root folder when specified as such
-		if root && fontFileName != file.Name {
+		// do not install fonts that are not in the specified installation folder
+		if fontFileName != fontRelativeFileName {
 			continue
 		}
 

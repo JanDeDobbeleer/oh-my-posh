@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/font"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -46,6 +47,10 @@ This command is used to install fonts and configure the font in your terminal.
 				defer env.Close()
 
 				terminal.Init(env.Shell())
+
+				if !strings.HasPrefix(zipFolder, "/") {
+					zipFolder += "/"
+				}
 
 				font.Run(fontName, env.Cache(), env.Root(), zipFolder)
 

@@ -409,6 +409,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://pashagolub.github.io/blog"><img src="https://avatars.githubusercontent.com/u/9463113?v=4?s=100" width="100px;" alt="Pavlo Golub"/><br /><sub><b>Pavlo Golub</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=pashagolub" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://heaths.dev"><img src="https://avatars.githubusercontent.com/u/1532486?v=4?s=100" width="100px;" alt="Heath Stewart"/><br /><sub><b>Heath Stewart</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=heaths" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

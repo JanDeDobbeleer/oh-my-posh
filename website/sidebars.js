@@ -89,6 +89,7 @@ module.exports = {
             "segments/cli/ui5tooling",
             "segments/cli/umbraco",
             "segments/cli/unity",
+            "segments/cli/vue",
             "segments/cli/xmake",
             "segments/cli/yarn",
           ]

@@ -14,6 +14,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
+const (
+	CascadiaCodeMS = "CascadiaCode (MS)"
+)
+
 type release struct {
 	Assets []*Asset `json:"assets"`
 }
@@ -36,12 +40,11 @@ func Fonts() ([]*Asset, error) {
 		return nil, err
 	}
 
-	cascadiaCode, err := fetchFontAssets("microsoft/cascadia-code")
-	if err != nil {
-		return assets, nil
+	cascadiaCode, err := CascadiaCode()
+	if err == nil {
+		assets = append(assets, cascadiaCode)
 	}
 
-	assets = append(assets, cascadiaCode...)
 	sort.Slice(assets, func(i, j int) bool { return assets[i].Name < assets[j].Name })
 
 	setCachedFontData(assets)
@@ -81,8 +84,16 @@ func setCachedFontData(assets []*Asset) {
 	cache.Set(cache_.FONTLISTCACHE, string(data), cache_.ONEDAY)
 }
 
-func CascadiaCode() ([]*Asset, error) {
-	return fetchFontAssets("microsoft/cascadia-code")
+func CascadiaCode() (*Asset, error) {
+	assets, err := fetchFontAssets("microsoft/cascadia-code")
+	if err != nil || len(assets) != 1 {
+		return nil, errors.New("no assets found")
+	}
+
+	// patch the name
+	assets[0].Name = CascadiaCodeMS
+
+	return assets[0], nil
 }
 
 func fetchFontAssets(repo string) ([]*Asset, error) {

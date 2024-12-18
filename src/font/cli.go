@@ -150,9 +150,14 @@ func (m *main) Init() tea.Cmd {
 		m.state = downloadFont
 
 		if !strings.HasPrefix(m.font, "https") {
-			if strings.HasPrefix(m.font, "CascadiaCode-") {
-				version := strings.TrimPrefix(m.font, "CascadiaCode-")
-				m.font = fmt.Sprintf("https://github.com/microsoft/cascadia-code/releases/download/v%s/%s.zip", version, m.font)
+			if m.font == CascadiaCodeMS {
+				cascadia, err := CascadiaCode()
+				if err != nil {
+					m.err = err
+					return tea.Quit
+				}
+
+				m.font = cascadia.URL
 			} else {
 				m.font = fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.font)
 			}
@@ -299,7 +304,7 @@ func (m *main) View() string {
 		return textStyle.Render(fmt.Sprintf("No need to install a new font? That's cool.%s", terminal.StopProgress()))
 	case done:
 		if len(m.families) == 0 {
-			return textStyle.Render(fmt.Sprintf("No matching font families were installed. Try setting --zip-folder to the correct folder when using Cascadia Code or a custom font zip file %s", terminal.StopProgress())) //nolint: lll
+			return textStyle.Render(fmt.Sprintf("No matching font families were installed. Try setting --zip-folder to the correct folder when using CascadiaCode (MS) or a custom font zip file. %s", terminal.StopProgress())) //nolint: lll
 		}
 
 		var builder strings.Builder

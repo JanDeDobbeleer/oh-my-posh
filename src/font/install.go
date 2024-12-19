@@ -45,7 +45,7 @@ func InstallZIP(data []byte, m *main) ([]string, error) {
 		}
 
 		fontFileName := path.Base(file.Name)
-		fontRelativeFileName := strings.TrimPrefix(file.Name, m.zipFolder)
+		fontRelativeFileName := strings.TrimPrefix(file.Name, m.Folder)
 
 		// do not install fonts that are not in the specified installation folder
 		if fontFileName != fontRelativeFileName {

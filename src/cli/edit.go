@@ -14,21 +14,22 @@ func editFileWithEditor(file string) int {
 		return 1
 	}
 
-	var args []string
-	if strings.Contains(editor, " ") {
-		strs := strings.Split(editor, " ")
-		editor = strs[0]
-		args = strs[1:]
-	}
+	editor = strings.TrimSpace(editor)
+	args := strings.Split(editor, " ")
 
-	args = append(args, file)
+	editor = args[0]
+	args = append(args[1:], file)
+
 	cmd := exec.Command(editor, args...)
 
-	err := cmd.Run()
-	if err != nil {
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
 		fmt.Println(err.Error())
 		return 1
 	}
 
-	return cmd.ProcessState.ExitCode()
+	return 0
 }

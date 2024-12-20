@@ -72,14 +72,13 @@ const (
 )
 
 type main struct {
-	err       error
-	list      *list.Model
-	font      string
-	zipFolder string
-	families  []string
-	spinner   spinner.Model
-	state     state
-	system    bool
+	err  error
+	list *list.Model
+	Asset
+	families []string
+	spinner  spinner.Model
+	state    state
+	system   bool
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -122,7 +121,7 @@ func downloadFontZip(location string) {
 }
 
 func installLocalFontZIP(m *main) {
-	data, err := os.ReadFile(m.font)
+	data, err := os.ReadFile(m.URL)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
@@ -143,28 +142,48 @@ func installFontZIP(zipFile []byte, m *main) {
 
 func (m *main) Init() tea.Cmd {
 	isLocalZipFile := func() bool {
-		return !strings.HasPrefix(m.font, "https") && strings.HasSuffix(m.font, ".zip")
+		return !strings.HasPrefix(m.URL, "https") && strings.HasSuffix(m.URL, ".zip")
 	}
 
-	if len(m.font) != 0 && !isLocalZipFile() {
+	resolveFontZipURL := func() error {
+		if strings.HasPrefix(m.URL, "https") {
+			return nil
+		}
+
+		fonts, err := Fonts()
+		if err != nil {
+			return err
+		}
+
+		var fontAsset *Asset
+		for _, font := range fonts {
+			if m.URL != font.Name {
+				continue
+			}
+
+			fontAsset = font
+			break
+		}
+
+		if fontAsset == nil {
+			return fmt.Errorf("no matching font found")
+		}
+
+		m.Asset = *fontAsset
+
+		return nil
+	}
+
+	if len(m.URL) != 0 && !isLocalZipFile() {
 		m.state = downloadFont
 
-		if !strings.HasPrefix(m.font, "https") {
-			if m.font == CascadiaCodeMS {
-				cascadia, err := CascadiaCode()
-				if err != nil {
-					m.err = err
-					return tea.Quit
-				}
-
-				m.font = cascadia.URL
-			} else {
-				m.font = fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.font)
-			}
+		if err := resolveFontZipURL(); err != nil {
+			m.err = err
+			return tea.Quit
 		}
 
 		defer func() {
-			go downloadFontZip(m.font)
+			go downloadFontZip(m.URL)
 		}()
 
 		m.spinner.Spinner = spinner.Globe
@@ -214,20 +233,25 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			if len(m.font) != 0 || m.list == nil || m.list.SelectedItem() == nil {
+			if len(m.URL) != 0 || m.list == nil || m.list.SelectedItem() == nil {
 				return m, nil
 			}
+
 			var font *Asset
 			var ok bool
+
 			if font, ok = m.list.SelectedItem().(*Asset); !ok {
 				m.err = fmt.Errorf("no font selected")
 				return m, tea.Quit
 			}
+
 			m.state = downloadFont
-			m.font = font.Name
+			m.Asset = *font
+
 			defer func() {
 				go downloadFontZip(font.URL)
 			}()
+
 			m.spinner.Spinner = spinner.Globe
 			return m, m.spinner.Tick
 
@@ -295,11 +319,11 @@ func (m *main) View() string {
 	case selectFont:
 		return fmt.Sprintf("\n%s%s", m.list.View(), terminal.StopProgress())
 	case downloadFont:
-		return textStyle.Render(fmt.Sprintf("%s Downloading %s%s", m.spinner.View(), m.font, terminal.StartProgress()))
+		return textStyle.Render(fmt.Sprintf("%s Downloading %s%s", m.spinner.View(), m.Name, terminal.StartProgress()))
 	case unzipFont:
-		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.font))
+		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.Name))
 	case installFont:
-		return textStyle.Render(fmt.Sprintf("%s Installing %s", m.spinner.View(), m.font))
+		return textStyle.Render(fmt.Sprintf("%s Installing %s", m.spinner.View(), m.Name))
 	case quit:
 		return textStyle.Render(fmt.Sprintf("No need to install a new font? That's cool.%s", terminal.StopProgress()))
 	case done:
@@ -309,7 +333,7 @@ func (m *main) View() string {
 
 		var builder strings.Builder
 
-		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.font, terminal.StopProgress()))
+		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.Name, terminal.StopProgress()))
 		builder.WriteString("The following font families are now available for configuration:\n\n")
 
 		for i, family := range m.families {
@@ -328,9 +352,12 @@ func (m *main) View() string {
 
 func Run(font string, ch cache_.Cache, root bool, zipFolder string) {
 	main := &main{
-		font:      font,
-		system:    root,
-		zipFolder: zipFolder,
+		system: root,
+		Asset: Asset{
+			Name:   font,
+			URL:    font,
+			Folder: zipFolder,
+		},
 	}
 
 	cache = ch

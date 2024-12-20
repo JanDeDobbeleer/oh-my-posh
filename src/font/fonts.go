@@ -23,9 +23,10 @@ type release struct {
 }
 
 type Asset struct {
-	Name  string `json:"name"`
-	URL   string `json:"browser_download_url"`
-	State string `json:"state"`
+	Name   string `json:"name"`
+	URL    string `json:"browser_download_url"`
+	State  string `json:"state"`
+	Folder string `json:"folder"`
 }
 
 func (a Asset) FilterValue() string { return a.Name }
@@ -42,7 +43,7 @@ func Fonts() ([]*Asset, error) {
 
 	cascadiaCode, err := CascadiaCode()
 	if err == nil {
-		assets = append(assets, cascadiaCode)
+		assets = append(assets, cascadiaCode...)
 	}
 
 	sort.Slice(assets, func(i, j int) bool { return assets[i].Name < assets[j].Name })
@@ -84,16 +85,39 @@ func setCachedFontData(assets []*Asset) {
 	cache.Set(cache_.FONTLISTCACHE, string(data), cache_.ONEDAY)
 }
 
-func CascadiaCode() (*Asset, error) {
+func CascadiaCode() ([]*Asset, error) {
 	assets, err := fetchFontAssets("microsoft/cascadia-code")
 	if err != nil || len(assets) != 1 {
 		return nil, errors.New("no assets found")
 	}
 
-	// patch the name
-	assets[0].Name = CascadiaCodeMS
-
-	return assets[0], nil
+	return []*Asset{
+		{
+			Name:   fmt.Sprintf("%s - TTF", CascadiaCodeMS),
+			URL:    assets[0].URL,
+			Folder: "ttf/",
+		},
+		{
+			Name:   fmt.Sprintf("%s - TTF Static", CascadiaCodeMS),
+			URL:    assets[0].URL,
+			Folder: "ttf/static/",
+		},
+		{
+			Name:   fmt.Sprintf("%s - OTF Static", CascadiaCodeMS),
+			URL:    assets[0].URL,
+			Folder: "otf/static/",
+		},
+		{
+			Name:   fmt.Sprintf("%s - WOFF2", CascadiaCodeMS),
+			URL:    assets[0].URL,
+			Folder: "woff2/static/",
+		},
+		{
+			Name:   fmt.Sprintf("%s - WOFF2 Static", CascadiaCodeMS),
+			URL:    assets[0].URL,
+			Folder: "woff2/static/",
+		},
+	}, nil
 }
 
 func fetchFontAssets(repo string) ([]*Asset, error) {

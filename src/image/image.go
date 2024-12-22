@@ -145,6 +145,8 @@ func (ir *Renderer) Init(env runtime.Environment) error {
 
 	ir.cleanContent()
 
+	font_.SetCache(env.Cache())
+
 	if err := ir.loadFonts(); err != nil {
 		return &ConnectionError{reason: err.Error()}
 	}

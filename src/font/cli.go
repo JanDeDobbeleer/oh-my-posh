@@ -350,6 +350,10 @@ func (m *main) View() string {
 	return ""
 }
 
+func SetCache(c cache_.Cache) {
+	cache = c
+}
+
 func Run(font string, ch cache_.Cache, root bool, zipFolder string) {
 	main := &main{
 		system: root,
@@ -360,7 +364,7 @@ func Run(font string, ch cache_.Cache, root bool, zipFolder string) {
 		},
 	}
 
-	cache = ch
+	SetCache(ch)
 
 	program = tea.NewProgram(main)
 	if _, err := program.Run(); err != nil {

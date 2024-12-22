@@ -129,28 +129,35 @@ const (
 	trueStr = "true"
 )
 
+type Rebase struct {
+	HEAD    string
+	Onto    string
+	Current int
+	Total   int
+}
+
 type Git struct {
 	User           *User
 	Working        *GitStatus
 	Staging        *GitStatus
 	commit         *Commit
-	UpstreamURL    string
-	UpstreamIcon   string
+	Rebase         *Rebase
+	RawUpstreamURL string
 	Ref            string
 	Hash           string
 	ShortHash      string
 	BranchStatus   string
 	Upstream       string
 	HEAD           string
-	RawUpstreamURL string
+	UpstreamIcon   string
+	UpstreamURL    string
 	scm
-	Ahead         int
-	stashCount    int
 	worktreeCount int
+	stashCount    int
 	Behind        int
+	Ahead         int
 	IsWorkTree    bool
 	Merge         bool
-	Rebase        bool
 	CherryPick    bool
 	Revert        bool
 	poshgit       bool
@@ -587,7 +594,7 @@ func (g *Git) setGitStatus() {
 		}
 
 		// map conflicts separately when in a merge or rebase
-		if g.Rebase || g.Merge {
+		if g.Rebase != nil || g.Merge {
 			conflict := "AA"
 			full := status[2:4]
 			if full == conflict {
@@ -698,25 +705,43 @@ func (g *Git) setGitHEADContext() {
 		return origin
 	}
 
+	parseInt := func(file string) int {
+		val, _ := strconv.Atoi(g.FileContents(g.workingDir, file))
+		return val
+	}
+
 	if g.env.HasFolder(g.workingDir + "/rebase-merge") {
-		g.Rebase = true
-		origin := getPrettyNameOrigin("rebase-merge/head-name")
+		head := getPrettyNameOrigin("rebase-merge/head-name")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		onto = g.formatBranch(onto)
-		step := g.FileContents(g.workingDir, "rebase-merge/msgnum")
-		total := g.FileContents(g.workingDir, "rebase-merge/end")
+		current := parseInt("rebase-merge/msgnum")
+		total := parseInt("rebase-merge/end")
 		icon := g.props.GetString(RebaseIcon, "\uE728 ")
-		g.HEAD = fmt.Sprintf("%s%s onto %s%s (%s/%s) at %s", icon, origin, branchIcon, onto, step, total, g.HEAD)
+
+		g.Rebase = &Rebase{
+			HEAD:    head,
+			Onto:    onto,
+			Current: current,
+			Total:   total,
+		}
+
+		g.HEAD = fmt.Sprintf("%s%s onto %s%s (%d/%d) at %s", icon, head, branchIcon, onto, current, total, g.HEAD)
 		return
 	}
 
 	if g.env.HasFolder(g.workingDir + "/rebase-apply") {
-		g.Rebase = true
-		origin := getPrettyNameOrigin("rebase-apply/head-name")
-		step := g.FileContents(g.workingDir, "rebase-apply/next")
-		total := g.FileContents(g.workingDir, "rebase-apply/last")
+		head := getPrettyNameOrigin("rebase-apply/head-name")
+		current := parseInt("rebase-apply/next")
+		total := parseInt("rebase-apply/last")
 		icon := g.props.GetString(RebaseIcon, "\uE728 ")
-		g.HEAD = fmt.Sprintf("%s%s (%s/%s) at %s", icon, origin, step, total, g.HEAD)
+
+		g.Rebase = &Rebase{
+			HEAD:    head,
+			Current: current,
+			Total:   total,
+		}
+
+		g.HEAD = fmt.Sprintf("%s%s (%d/%d) at %s", icon, head, current, total, g.HEAD)
 		return
 	}
 

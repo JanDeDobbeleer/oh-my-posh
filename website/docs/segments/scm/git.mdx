@@ -139,12 +139,12 @@ You can set the following properties to `true` to enable fetching additional inf
 | `.Commit`        | `Commit`  | HEAD commit information (see below)                                                                                              |
 | `.Detached`      | `boolean` | true when the head is detached                                                                                                   |
 | `.Merge`         | `boolean` | true when in a merge                                                                                                             |
-| `.Rebase`        | `boolean` | true when in a rebase                                                                                                            |
+| `.Rebase`        | `Rebase`  | contains the relevant information when in a rebase                                                                               |
 | `.CherryPick`    | `boolean` | true when in a cherry pick                                                                                                       |
 | `.Revert`        | `boolean` | true when in a revert                                                                                                            |
 | `.LatestTag`     | `string`  | the latest tag name                                                                                                              |
 
-### Status
+#### Status
 
 | Name         | Type      | Description                                  |
 | ------------ | --------- | -------------------------------------------- |
@@ -166,7 +166,7 @@ Local changes use the following syntax:
 | `~`  | Modified    |
 | `?`  | Untracked   |
 
-### Commit
+#### Commit
 
 | Name         | Type        | Description                             |
 | ------------ | ----------- | --------------------------------------- |
@@ -177,14 +177,14 @@ Local changes use the following syntax:
 | `.Sha`       | `string`    | the commit SHA1                         |
 | `.Refs`      | `Refs`      | the commit references                   |
 
-### User
+##### User
 
 | Name     | Type     | Description      |
 | -------- | -------- | ---------------- |
 | `.Name`  | `string` | the user's name  |
 | `.Email` | `string` | the user's email |
 
-### Refs
+##### Refs
 
 | Name       | Type       | Description       |
 | ---------- | ---------- | ----------------- |
@@ -197,6 +197,15 @@ As these are arrays of strings, you can join them using the `join` function:
 ```template
 {{ join ", " .Commit.Refs.Tags }}
 ```
+
+#### Rebase
+
+| Name       | Type     | Description                      |
+| ---------- | -------- | -------------------------------- |
+| `.Current` | `int`    | the current rebase step          |
+| `.Total`   | `int`    | the total number of rebase steps |
+| `.HEAD`    | `string` | the current HEAD                 |
+| `.Onto`    | `string` | the branch we're rebasing onto   |
 
 ## posh-git
 

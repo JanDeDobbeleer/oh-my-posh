@@ -590,10 +590,15 @@ func TestSetGitStatus(t *testing.T) {
 		if tc.ExpectedWorking == nil {
 			tc.ExpectedWorking = &GitStatus{}
 		}
+
 		if tc.ExpectedStaging == nil {
 			tc.ExpectedStaging = &GitStatus{}
 		}
-		g.Rebase = tc.Rebase
+
+		if tc.Rebase {
+			g.Rebase = &Rebase{}
+		}
+
 		g.Merge = tc.Merge
 		tc.ExpectedStaging.Formats = map[string]string{}
 		tc.ExpectedWorking.Formats = map[string]string{}

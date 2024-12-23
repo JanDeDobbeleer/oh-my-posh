@@ -157,7 +157,7 @@ func (m *main) Init() tea.Cmd {
 
 		var fontAsset *Asset
 		for _, font := range fonts {
-			if m.URL != font.Name {
+			if !strings.EqualFold(m.URL, font.Name) {
 				continue
 			}
 

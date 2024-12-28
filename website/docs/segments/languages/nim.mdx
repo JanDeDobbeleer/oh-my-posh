@@ -1,0 +1,61 @@
+---
+id: nim
+title: Nim 
+sidebar_label: Nim
+---
+
+## What
+
+Display the currently active Nim version.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "nim",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#f3d400",
+    template: " \ue841 {{ .Full }} ",
+  }}
+/>
+
+## Properties
+
+| Name                   |    Type    |               Default               | Description                                                                                                                                                                                                                          |
+| ---------------------- | :--------: | :---------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean`  |               `false`               | display the segment in the HOME folder or not                                                                                                                                                                                        |
+| `fetch_version`        | `boolean`  |               `true`                | fetch the Nim version (`nim --version`)                                                                                                                                                                                              |
+| `cache_duration`       |  `string`  |               `none`                | the duration for which the version will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none`              |
+| `missing_command_text` |  `string`  |                                     | text to display when the command is missing                                                                                                                                                                                          |
+| `display_mode`         |  `string`  |              `context`              | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
+| `version_url_template` |  `string`  |                                     | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
+| `extensions`           | `[]string` | `*.nim, *.nims`                     | allows to override the default list of file extensions to validate                                                                                                                                                                  |
+| `folders`              | `[]string` |                                     | allows to override the list of folder names to validate                                                                                                                                                                              |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name          | Type     | Description                                        |
+| ------------- | -------- | -------------------------------------------------- |
+| `.Full`       | `string` | the full version                                   |
+| `.Major`      | `string` | major number                                       |
+| `.Minor`      | `string` | minor number                                       |
+| `.Patch`      | `string` | patch number                                       |
+| `.Error`      | `string` | error encountered when fetching the version string |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration

@@ -345,6 +345,7 @@
             "mvn",
             "nbgv",
             "nightscout",
+            "nim",
             "nix-shell",
             "node",
             "npm",
@@ -4716,6 +4717,56 @@
                     "title": "Headers",
                     "description": "A key, value map of Headers to send with the request",
                     "default": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nim"
+              }
+            }
+          },
+          "then": {
+            "title": "Nim Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/nim",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "none"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Nim workspace",
+                    "default": [
+                      "*.nim",
+                      "*.nims"
+                    ]
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
                   }
                 }
               }

@@ -137,6 +137,7 @@ module.exports = {
             "segments/languages/kotlin",
             "segments/languages/lua",
             "segments/languages/mojo",
+            "segments/languages/nim",
             "segments/languages/node",
             "segments/languages/ocaml",
             "segments/languages/perl",

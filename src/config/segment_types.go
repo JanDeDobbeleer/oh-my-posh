@@ -328,6 +328,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
+	V:               func() SegmentWriter { return &segments.V{} },
 	VALA:            func() SegmentWriter { return &segments.Vala{} },
 	WAKATIME:        func() SegmentWriter { return &segments.Wakatime{} },
 	WINREG:          func() SegmentWriter { return &segments.WindowsRegistry{} },

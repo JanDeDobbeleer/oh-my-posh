@@ -147,6 +147,7 @@ module.exports = {
             "segments/languages/ruby",
             "segments/languages/rust",
             "segments/languages/swift",
+            "segments/languages/v",
             "segments/languages/vala",
             "segments/languages/zig",
           ]

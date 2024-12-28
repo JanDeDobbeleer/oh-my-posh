@@ -387,6 +387,7 @@
             "umbraco",
             "unity",
             "upgrade",
+            "v",
             "vala",
             "wakatime",
             "winreg",
@@ -4135,6 +4136,58 @@
                     "description": "The extensions to look for when determining if the current directory is a Vala project",
                     "default": [
                       "*.vala"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "v"
+              }
+            }
+          },
+          "then": {
+            "title": "V Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/v",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "none"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is a V project",
+                    "default": [
+                      "*.v"
                     ],
                     "items": {
                       "type": "string"

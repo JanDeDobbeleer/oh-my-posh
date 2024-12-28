@@ -213,6 +213,8 @@ const (
 	UNITY SegmentType = "unity"
 	// UPGRADE lets you know if you can upgrade Oh My Posh
 	UPGRADE SegmentType = "upgrade"
+	// V writes the active vlang version
+	V SegmentType = "v"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
 	// WAKATIME writes tracked time spend in dev editors

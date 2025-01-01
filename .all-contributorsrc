@@ -2925,6 +2925,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "TristanLeclair",
+      "name": "Tristan Leclair-Vani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60434271?v=4",
+      "profile": "https://tristanleclair.github.io/personal-website/index.html",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

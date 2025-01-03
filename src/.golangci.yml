@@ -23,7 +23,7 @@ linters:
     - noctx
     - nolintlint
     - rowserrcheck
-    - exportloopref
+    - copyloopvar
     - staticcheck
     - typecheck
     - unconvert

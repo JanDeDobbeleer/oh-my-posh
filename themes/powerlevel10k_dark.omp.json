@@ -1,0 +1,151 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#585858",
+          "type": "os",
+          "style": "plain",
+          "template": "╭─"
+        },
+        {
+          "background": "#303030",
+          "foreground": "#00A4EF",
+          "style": "plain",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} <#6c6c6c>\ue0b1</>",
+          "type": "os"
+        },
+        {
+          "background": "#303030",
+          "foreground": "#da26c8",
+          "style": "plain",
+          "template": " \uf0e7 ",
+          "type": "root"
+        },
+        {
+          "background": "#303030",
+          "foreground": "#00afff",
+          "properties": {
+            "enable_hyperlink": true,
+            "style": "powerlevel"
+          },
+          "style": "diamond",
+          "template": " {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "foreground": "#5faf00",
+          "background": "#303030",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#FFEB3B{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}",
+            "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
+            "{{ if gt .Behind 0 }}#B388FB{{ end }}"
+          ],
+          "template": "<#6c6c6c>\ue0b1</> {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}",
+          "properties": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "untracked_modes": {
+              "/Users/user/Projects/oh-my-posh/": "no"
+            },
+            "source": "cli",
+            "mapped_branches": {
+              "feat/*": "🚀 ",
+              "bug/*": "🐛 "
+            }
+          }
+        },
+        {
+          "foreground": "#303030",
+          "style": "plain",
+          "template": "\ue0b0",
+          "type": "text"
+        },
+        {
+          "type": "cmake",
+          "style": "plain",
+          // "powerline_symbol": "",
+          "foreground": "#1E9748",
+          "template": "   cmake {{ .Full }} "
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "#303030",
+          "foreground": "#585858",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#FF5252{{ end }}"
+          ],
+          "leading_diamond": "\ue0b2",
+          "style": "diamond",
+          "template": " {{ if gt .Code 0 }}<#FF5252>{{.Code}}</> ✘{{else}}✔{{ end }} <#6c6c6c>\ue0b3</> ",
+          "type": "session"
+        },
+        {
+          "background": "#303030",
+          "foreground": "#D4E157",
+          "leading_diamond": "\ue0b2",
+          "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} <#6c6c6c>\ue0b3</> ",
+          "type": "session"
+        },
+        {
+          "background": "#303030",
+          "foreground": "#608484",
+          "properties": {
+            "time_format": "3:04:05 PM"
+          },
+          "style": "plain",
+          "template": " <#6c6c6c>at</> {{ .CurrentDate | date .Format }} \uf017 ",
+          "type": "time"
+        },
+        {
+          "background": "transparent",
+          "foreground": "#585858",
+          "type": "os",
+          "style": "plain",
+          "template": "─╮"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#585858",
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "╰─ ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "segments": [
+        {
+          "foreground": "#585858",
+          "style": "plain",
+          "template": "─╯",
+          "type": "text"
+        }
+      ],
+      "type": "rprompt"
+    }
+  ],
+  "console_title_template": "{{ .Shell }} in {{ .Folder }}",
+  "version": 3
+}

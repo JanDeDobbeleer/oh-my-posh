@@ -6,6 +6,10 @@
 os.setenv('POSH_SESSION_ID', '::SESSION_ID::')
 os.setenv('POSH_SHELL', 'cmd')
 
+-- disable all known python virtual environment prompts
+os.setenv('VIRTUAL_ENV_DISABLE_PROMPT', '1')
+os.setenv('PYENV_VIRTUALENV_DISABLE_PROMPT', '1')
+
 -- Helper functions
 
 local function get_priority_number(name, default)

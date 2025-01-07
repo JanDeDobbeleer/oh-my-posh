@@ -7,6 +7,10 @@ export CONDA_PROMPT_MODIFIER=false
 export ZLE_RPROMPT_INDENT=0
 export OSTYPE=$OSTYPE
 
+# disable all known python virtual environment prompts
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
 _omp_executable=::OMP::
 _omp_tooltip_command=''
 

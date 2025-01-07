@@ -6,6 +6,10 @@ export POSH_SESSION_ID=::SESSION_ID::
 export CONDA_PROMPT_MODIFIER=false
 export OSTYPE=$OSTYPE
 
+# disable all known python virtual environment prompts
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
 # global variables
 _omp_start_time=''
 _omp_stack_count=0

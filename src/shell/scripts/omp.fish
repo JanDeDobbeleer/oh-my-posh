@@ -13,6 +13,10 @@ set --global _omp_ftcs_marks 0
 set --global _omp_transient_prompt 0
 set --global _omp_prompt_mark 0
 
+# disable all known python virtual environment prompts
+set --global VIRTUAL_ENV_DISABLE_PROMPT 1
+set --global PYENV_VIRTUALENV_DISABLE_PROMPT 1
+
 # We use this to avoid unnecessary CLI calls for prompt repaint.
 set --global _omp_new_prompt 1
 

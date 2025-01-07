@@ -4,6 +4,10 @@ set-env POSH_SHELL elvish
 set-env POSH_SHELL_VERSION $version
 set-env POWERLINE_COMMAND oh-my-posh
 
+# disable all known python virtual environment prompts
+set-env VIRTUAL_ENV_DISABLE_PROMPT 1
+set-env PYENV_VIRTUALENV_DISABLE_PROMPT 1
+
 var _omp_executable = (external ::OMP::)
 var _omp_status = 0
 var _omp_no_status = 1

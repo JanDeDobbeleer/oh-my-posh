@@ -4,6 +4,10 @@ $POSH_SESSION_ID = ::SESSION_ID::
 $POSH_SHELL = "xonsh"
 $POSH_SHELL_VERSION = $XONSH_VERSION
 
+# disable all known python virtual environment prompts
+$VIRTUAL_ENV_DISABLE_PROMPT = 1
+$PYENV_VIRTUALENV_DISABLE_PROMPT = 1
+
 _omp_executable = ::OMP::
 _omp_history_length = 0
 

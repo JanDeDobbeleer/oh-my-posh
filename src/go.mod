@@ -21,13 +21,13 @@ require (
 	github.com/wayneashleyberry/terminal-dimensions v1.1.0
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/image v0.23.0
-	golang.org/x/sys v0.28.0
+	golang.org/x/sys v0.29.0
 	golang.org/x/text v0.21.0
 	gopkg.in/ini.v1 v1.67.0
 )
 
 require (
-	github.com/ConradIrwin/font v0.0.0-20240627033111-8567075b2bfe
+	github.com/ConradIrwin/font v0.2.1
 	github.com/charmbracelet/bubbles v0.20.0
 	github.com/charmbracelet/bubbletea v1.2.4
 	github.com/charmbracelet/lipgloss v1.0.0

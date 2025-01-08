@@ -4,8 +4,8 @@ dmitri.shuralyov.com/font/woff2 v0.0.0-20180220214647-957792cbbdab h1:Ew70NL+wL6
 dmitri.shuralyov.com/font/woff2 v0.0.0-20180220214647-957792cbbdab/go.mod h1:FvHgTMJanm43G7B3MVSjS/jim5ytVqAJNAOpRhnuHJc=
 github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEKWjV8V+WSxDXJ4NFATAsZjh8iIbsQIg=
 github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
-github.com/ConradIrwin/font v0.2.0 h1:tSykjdWRGxTvahpogi3x9izYghfdn1f9wbou6rnjq6E=
-github.com/ConradIrwin/font v0.2.0/go.mod h1:krTLO7JWu6g8RMxG8sl+T1Hf8W93XQacBKJmqFZ2MFY=
+github.com/ConradIrwin/font v0.2.1 h1:D4tWi7zyRAdVKOtOys5960HnAAfUSRx/syaf+J9JqlI=
+github.com/ConradIrwin/font v0.2.1/go.mod h1:krTLO7JWu6g8RMxG8sl+T1Hf8W93XQacBKJmqFZ2MFY=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver/v3 v3.3.1 h1:QtNSWtVZ3nBfk8mAOu/B6v7FMJ+NHTIgUPi7rj+4nv4=

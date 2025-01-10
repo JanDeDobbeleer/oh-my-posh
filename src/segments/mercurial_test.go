@@ -42,8 +42,8 @@ func TestMercurialEnabledInWorkingDirectory(t *testing.T) {
 	hg.Init(properties.Map{}, env)
 
 	assert.True(t, hg.Enabled())
-	assert.Equal(t, fileInfo.Path, hg.workingDir)
-	assert.Equal(t, fileInfo.Path, hg.realDir)
+	assert.Equal(t, fileInfo.Path, hg.mainSCMDir)
+	assert.Equal(t, fileInfo.Path, hg.repoRootDir)
 }
 
 func TestMercurialGetIdInfo(t *testing.T) {
@@ -159,8 +159,8 @@ A Added.File
 		}
 
 		assert.True(t, hg.Enabled())
-		assert.Equal(t, fileInfo.Path, hg.workingDir)
-		assert.Equal(t, fileInfo.Path, hg.realDir)
+		assert.Equal(t, fileInfo.Path, hg.mainSCMDir)
+		assert.Equal(t, fileInfo.Path, hg.repoRootDir)
 		assert.Equal(t, tc.ExpectedWorking, hg.Working, tc.Case)
 		assert.Equal(t, tc.ExpectedBranch, hg.Branch, tc.Case)
 		assert.Equal(t, tc.ExpectedChangeSetID, hg.ChangeSetID, tc.Case)

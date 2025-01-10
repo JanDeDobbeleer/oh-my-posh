@@ -84,9 +84,9 @@ type scm struct {
 
 	Dir             string
 	RepoName        string
-	workingDir      string
-	rootDir         string
-	realDir         string
+	mainSCMDir      string
+	scmDir          string
+	repoRootDir     string
 	command         string
 	IsWslSharedPath bool
 	CommandMissing  bool

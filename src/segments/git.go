@@ -224,8 +224,15 @@ func (g *Git) CacheKey() (string, bool) {
 		return "", false
 	}
 
-	ref := g.FileContents(dir.Path, "HEAD")
+	if !g.isRepo(dir) {
+		return "", false
+	}
+
+	ref := g.FileContents(g.mainSCMDir, "HEAD")
 	ref = strings.Replace(ref, "ref: refs/heads/", "", 1)
+
+	// Use the repo clone in the cache key so the mapped path is consistent
+	// for primary and worktree repos.
 	return fmt.Sprintf("%s@%s", dir.Path, ref), true
 }
 
@@ -295,7 +302,7 @@ func (g *Git) StashCount() int {
 		return g.stashCount
 	}
 
-	stashContent := g.FileContents(g.rootDir, "logs/refs/stash")
+	stashContent := g.FileContents(g.scmDir, "logs/refs/stash")
 	if stashContent == "" {
 		return 0
 	}
@@ -335,11 +342,11 @@ func (g *Git) shouldDisplay() bool {
 	}
 
 	if g.props.GetBool(FetchBareInfo, false) {
-		g.realDir = g.env.Pwd()
+		g.repoRootDir = g.env.Pwd()
 		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
 		if bare == trueStr {
 			g.IsBare = true
-			g.workingDir = g.realDir
+			g.mainSCMDir = g.repoRootDir
 			return true
 		}
 	}
@@ -349,21 +356,25 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
+	return g.isRepo(gitdir)
+}
+
+func (g *Git) isRepo(gitdir *runtime.FileInfo) bool {
 	g.setDir(gitdir.Path)
 
 	if !gitdir.IsDir {
 		if g.hasWorktree(gitdir) {
-			g.realDir = g.convertToWindowsPath(g.realDir)
+			g.repoRootDir = g.convertToWindowsPath(g.repoRootDir)
 			return true
 		}
 
 		return false
 	}
 
-	g.workingDir = gitdir.Path
-	g.rootDir = gitdir.Path
+	g.mainSCMDir = gitdir.Path
+	g.scmDir = gitdir.Path
 	// convert the worktree file path to a windows one when in a WSL shared folder
-	g.realDir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
+	g.repoRootDir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
 	return true
 }
 
@@ -377,10 +388,10 @@ func (g *Git) getBareRepoInfo() {
 	if file, err := g.env.HasParentFilePath(".git", true); err == nil && !file.IsDir {
 		content := g.FileContents(file.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.workingDir = filepath.Join(file.ParentFolder, dir)
+		g.mainSCMDir = filepath.Join(file.ParentFolder, dir)
 	}
 
-	head := g.FileContents(g.workingDir, "HEAD")
+	head := g.FileContents(g.mainSCMDir, "HEAD")
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
 	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
@@ -405,7 +416,7 @@ func (g *Git) setDir(dir string) {
 }
 
 func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
-	g.rootDir = gitdir.Path
+	g.scmDir = gitdir.Path
 	content := g.env.FileContent(gitdir.Path)
 	content = strings.Trim(content, " \r\n")
 	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, content)
@@ -417,20 +428,20 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 
 	// if we open a worktree file in a WSL shared folder, we have to convert it back
 	// to the mounted path
-	g.workingDir = g.convertToLinuxPath(matches["dir"])
+	g.mainSCMDir = g.convertToLinuxPath(matches["dir"])
 
 	// if we don't do this, we will identify the submodule as a worktree
-	isSubmodule := strings.Contains(g.workingDir, "/modules/")
+	isSubmodule := strings.Contains(g.mainSCMDir, "/modules/")
 
 	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
-	// rootDir needs to become path/.git
-	// realDir needs to become path
-	ind := strings.LastIndex(g.workingDir, "/worktrees/")
+	// scmDir needs to become path/.git
+	// repoRootDir needs to become path
+	ind := strings.LastIndex(g.mainSCMDir, "/worktrees/")
 	if ind > -1 && !isSubmodule {
-		gitDir := filepath.Join(g.workingDir, "gitdir")
-		g.rootDir = g.workingDir[:ind]
+		gitDir := filepath.Join(g.mainSCMDir, "gitdir")
+		g.scmDir = g.mainSCMDir[:ind]
 		gitDirContent := g.env.FileContent(gitDir)
-		g.realDir = strings.TrimSuffix(gitDirContent, ".git\n")
+		g.repoRootDir = strings.TrimSuffix(gitDirContent, ".git\n")
 		g.IsWorkTree = true
 		return true
 	}
@@ -438,33 +449,33 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
 	// we need the parent folder to detect where the real .git folder is
 	if isSubmodule {
-		g.rootDir = resolveGitPath(gitdir.ParentFolder, g.workingDir)
+		g.scmDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
 		// between worktree and a module path containing the word 'worktree,' however.
-		ind = strings.LastIndex(g.rootDir, "/worktrees/")
-		if ind > -1 && g.env.HasFilesInDir(g.rootDir, "gitdir") {
-			gitDir := filepath.Join(g.rootDir, "gitdir")
+		ind = strings.LastIndex(g.scmDir, "/worktrees/")
+		if ind > -1 && g.env.HasFilesInDir(g.scmDir, "gitdir") {
+			gitDir := filepath.Join(g.scmDir, "gitdir")
 			realGitFolder := g.env.FileContent(gitDir)
-			g.realDir = strings.TrimSuffix(realGitFolder, ".git\n")
-			g.rootDir = g.rootDir[:ind]
-			g.workingDir = g.rootDir
+			g.repoRootDir = strings.TrimSuffix(realGitFolder, ".git\n")
+			g.scmDir = g.scmDir[:ind]
+			g.mainSCMDir = g.scmDir
 			g.IsWorkTree = true
 			return true
 		}
 
-		g.realDir = g.rootDir
-		g.workingDir = g.rootDir
+		g.repoRootDir = g.scmDir
+		g.mainSCMDir = g.scmDir
 		return true
 	}
 
 	// check for separate git folder(--separate-git-dir)
 	// check if the folder contains a HEAD file
-	if g.env.HasFilesInDir(g.workingDir, "HEAD") {
-		gitFolder := strings.TrimSuffix(g.rootDir, ".git")
-		g.rootDir = g.workingDir
-		g.workingDir = gitFolder
-		g.realDir = gitFolder
+	if g.env.HasFilesInDir(g.mainSCMDir, "HEAD") {
+		gitFolder := strings.TrimSuffix(g.scmDir, ".git")
+		g.scmDir = g.mainSCMDir
+		g.mainSCMDir = gitFolder
+		g.repoRootDir = gitFolder
 		return true
 	}
 
@@ -473,7 +484,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 
 func (g *Git) shouldIgnoreStatus() bool {
 	list := g.props.GetStringArray(IgnoreStatus, []string{})
-	return g.env.DirMatchesOneOf(g.realDir, list)
+	return g.env.DirMatchesOneOf(g.repoRootDir, list)
 }
 
 func (g *Git) setBranchStatus() {
@@ -668,7 +679,7 @@ func (g *Git) setGitStatus() {
 }
 
 func (g *Git) getGitCommandOutput(args ...string) string {
-	args = append([]string{"-C", g.realDir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"-C", g.repoRootDir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, err := g.env.RunCommand(g.command, args...)
 	if err != nil {
 		return ""
@@ -695,7 +706,7 @@ func (g *Git) setGitHEADContext() {
 
 	getPrettyNameOrigin := func(file string) string {
 		var origin string
-		head := g.FileContents(g.workingDir, file)
+		head := g.FileContents(g.mainSCMDir, file)
 		if head == "detached HEAD" {
 			origin = formatDetached()
 		} else {
@@ -706,11 +717,11 @@ func (g *Git) setGitHEADContext() {
 	}
 
 	parseInt := func(file string) int {
-		val, _ := strconv.Atoi(g.FileContents(g.workingDir, file))
+		val, _ := strconv.Atoi(g.FileContents(g.mainSCMDir, file))
 		return val
 	}
 
-	if g.env.HasFolder(g.workingDir + "/rebase-merge") {
+	if g.env.HasFolder(g.mainSCMDir + "/rebase-merge") {
 		head := getPrettyNameOrigin("rebase-merge/head-name")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		onto = g.formatBranch(onto)
@@ -729,7 +740,7 @@ func (g *Git) setGitHEADContext() {
 		return
 	}
 
-	if g.env.HasFolder(g.workingDir + "/rebase-apply") {
+	if g.env.HasFolder(g.mainSCMDir + "/rebase-apply") {
 		head := getPrettyNameOrigin("rebase-apply/head-name")
 		current := parseInt("rebase-apply/next")
 		total := parseInt("rebase-apply/last")
@@ -751,7 +762,7 @@ func (g *Git) setGitHEADContext() {
 	if g.hasGitFile("MERGE_MSG") {
 		g.Merge = true
 		icon := g.props.GetString(MergeIcon, "\uE727 ")
-		mergeContext := g.FileContents(g.workingDir, "MERGE_MSG")
+		mergeContext := g.FileContents(g.mainSCMDir, "MERGE_MSG")
 		matches := regex.FindNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
 		// head := g.getGitRefFileSymbolicName("ORIG_HEAD")
 		if matches != nil && matches["theirs"] != "" {
@@ -779,7 +790,7 @@ func (g *Git) setGitHEADContext() {
 	// the todo file.
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		g.CherryPick = true
-		sha := g.FileContents(g.workingDir, "CHERRY_PICK_HEAD")
+		sha := g.FileContents(g.mainSCMDir, "CHERRY_PICK_HEAD")
 		cherry := g.props.GetString(CherryPickIcon, "\uE29B ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 		return
@@ -787,14 +798,14 @@ func (g *Git) setGitHEADContext() {
 
 	if g.hasGitFile("REVERT_HEAD") {
 		g.Revert = true
-		sha := g.FileContents(g.workingDir, "REVERT_HEAD")
+		sha := g.FileContents(g.mainSCMDir, "REVERT_HEAD")
 		revert := g.props.GetString(RevertIcon, "\uF0E2 ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
 
 	if g.hasGitFile("sequencer/todo") {
-		todo := g.FileContents(g.workingDir, "sequencer/todo")
+		todo := g.FileContents(g.mainSCMDir, "sequencer/todo")
 		matches := regex.FindNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
 		if matches != nil && matches["sha"] != "" {
 			action := matches["action"]
@@ -825,18 +836,18 @@ func (g *Git) formatSHA(sha string) string {
 }
 
 func (g *Git) hasGitFile(file string) bool {
-	return g.env.HasFilesInDir(g.workingDir, file)
+	return g.env.HasFilesInDir(g.mainSCMDir, file)
 }
 
 func (g *Git) getGitRefFileSymbolicName(refFile string) string {
-	ref := g.FileContents(g.workingDir, refFile)
+	ref := g.FileContents(g.mainSCMDir, refFile)
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *Git) setPrettyHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
 	if len(g.ShortHash) == 0 {
-		HEADRef := g.FileContents(g.workingDir, "HEAD")
+		HEADRef := g.FileContents(g.mainSCMDir, "HEAD")
 		g.Detached = !strings.HasPrefix(HEADRef, "ref:")
 		if strings.HasPrefix(HEADRef, BRANCHPREFIX) {
 			branchName := strings.TrimPrefix(HEADRef, BRANCHPREFIX)
@@ -873,10 +884,10 @@ func (g *Git) WorktreeCount() int {
 	if g.worktreeCount > 0 {
 		return g.worktreeCount
 	}
-	if !g.env.HasFolder(g.rootDir + "/worktrees") {
+	if !g.env.HasFolder(g.scmDir + "/worktrees") {
 		return 0
 	}
-	worktreeFolders := g.env.LsDir(g.rootDir + "/worktrees")
+	worktreeFolders := g.env.LsDir(g.scmDir + "/worktrees")
 	var count int
 	for _, folder := range worktreeFolders {
 		if folder.IsDir() {
@@ -891,7 +902,7 @@ func (g *Git) getRemoteURL() string {
 	if len(upstream) == 0 {
 		upstream = "origin"
 	}
-	cfg, err := ini.Load(g.rootDir + "/config")
+	cfg, err := ini.Load(g.scmDir + "/config")
 	if err != nil {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
@@ -905,7 +916,7 @@ func (g *Git) getRemoteURL() string {
 func (g *Git) Remotes() map[string]string {
 	var remotes = make(map[string]string)
 
-	location := filepath.Join(g.rootDir, "config")
+	location := filepath.Join(g.scmDir, "config")
 	config := g.env.FileContent(location)
 	cfg, err := ini.Load([]byte(config))
 	if err != nil {
@@ -941,7 +952,7 @@ func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string
 		mode = val
 	}
 	// get the specific repo mode
-	if val := repoModes[g.realDir]; len(val) != 0 {
+	if val := repoModes[g.repoRootDir]; len(val) != 0 {
 		mode = val
 	}
 	if len(mode) == 0 {
@@ -952,12 +963,12 @@ func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string
 
 func (g *Git) repoName() string {
 	if !g.IsWorkTree {
-		return path.Base(g.convertToLinuxPath(g.realDir))
+		return path.Base(g.convertToLinuxPath(g.repoRootDir))
 	}
 
-	ind := strings.LastIndex(g.workingDir, ".git/worktrees")
+	ind := strings.LastIndex(g.mainSCMDir, ".git/worktrees")
 	if ind > -1 {
-		return path.Base(g.workingDir[:ind])
+		return path.Base(g.mainSCMDir[:ind])
 	}
 
 	return ""

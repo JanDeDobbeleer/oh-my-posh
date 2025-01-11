@@ -380,7 +380,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
                 if ($global:_ompFTCSMarks -and $executingCommand) {
                     # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
-                    Write-Host "$([char]0x1b)]133;C`a" -NoNewline
+                    Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
                 }
             }
         }

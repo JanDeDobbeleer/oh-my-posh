@@ -100,23 +100,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 		feats = append(feats, shell.FTCSMarks)
 	}
 
-	autoUpgrade := cfg.Upgrade.Auto
-	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
-		autoUpgrade = true
-	}
-
-	upgradeNotice := cfg.Upgrade.DisplayNotice
-	if _, OK := env.Cache().Get(UPGRADENOTICE); OK {
-		upgradeNotice = true
-	}
-
-	if upgradeNotice && !autoUpgrade {
-		feats = append(feats, shell.Notice)
-	}
-
-	if autoUpgrade {
-		feats = append(feats, shell.Upgrade)
-	}
+	feats = append(feats, cfg.UpgradeFeatures(env)...)
 
 	if cfg.ErrorLine != nil || cfg.ValidLine != nil {
 		feats = append(feats, shell.LineError)
@@ -154,6 +138,37 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 				}
 			}
 		}
+	}
+
+	return feats
+}
+
+func (cfg *Config) UpgradeFeatures(env runtime.Environment) shell.Features {
+	feats := shell.Features{}
+
+	if _, OK := env.Cache().Get(upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
+		return feats
+	}
+
+	// always reset the cache key so we respect the interval no matter what the outcome
+	env.Cache().Set(upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
+
+	autoUpgrade := cfg.Upgrade.Auto
+	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
+		autoUpgrade = true
+	}
+
+	upgradeNotice := cfg.Upgrade.DisplayNotice
+	if _, OK := env.Cache().Get(UPGRADENOTICE); OK {
+		upgradeNotice = true
+	}
+
+	if upgradeNotice && !autoUpgrade {
+		feats = append(feats, shell.Notice)
+	}
+
+	if autoUpgrade {
+		feats = append(feats, shell.Upgrade)
 	}
 
 	return feats

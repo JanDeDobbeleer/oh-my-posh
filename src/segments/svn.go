@@ -79,21 +79,21 @@ func (s *Svn) shouldDisplay() bool {
 	}
 
 	if Svndir.IsDir {
-		s.workingDir = Svndir.Path
-		s.rootDir = Svndir.Path
+		s.mainSCMDir = Svndir.Path
+		s.scmDir = Svndir.Path
 		// convert the worktree file path to a windows one when in a WSL shared folder
-		s.realDir = strings.TrimSuffix(s.convertToWindowsPath(Svndir.Path), "/.svn")
+		s.repoRootDir = strings.TrimSuffix(s.convertToWindowsPath(Svndir.Path), "/.svn")
 		return true
 	}
 
 	// handle worktree
-	s.rootDir = Svndir.Path
+	s.scmDir = Svndir.Path
 	dirPointer := strings.Trim(s.env.FileContent(Svndir.Path), " \r\n")
 	matches := regex.FindNamedRegexMatch(`^Svndir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
 		// if we open a worktree file in a WSL shared folder, we have to convert it back
 		// to the mounted path
-		s.workingDir = s.convertToLinuxPath(matches["dir"])
+		s.mainSCMDir = s.convertToLinuxPath(matches["dir"])
 	}
 	return false
 }
@@ -141,7 +141,7 @@ func (s *Svn) Repo() string {
 }
 
 func (s *Svn) getSvnCommandOutput(command string, args ...string) string {
-	args = append([]string{command, s.realDir}, args...)
+	args = append([]string{command, s.repoRootDir}, args...)
 	val, err := s.env.RunCommand(s.command, args...)
 	if err != nil {
 		return ""

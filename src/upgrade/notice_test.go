@@ -24,7 +24,7 @@ func TestCanUpgrade(t *testing.T) {
 		{Case: "Up to date", CurrentVersion: latest},
 		{Case: "Outdated Linux", Expected: true, CurrentVersion: "3.0.0"},
 		{Case: "Outdated Darwin", Expected: true, CurrentVersion: "3.0.0"},
-		{Case: "Cached", Cache: true},
+		{Case: "Cached", Cache: true, CurrentVersion: latest},
 		{Case: "Windows Store", Installer: "ws"},
 	}
 

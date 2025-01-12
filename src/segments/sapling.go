@@ -82,11 +82,11 @@ func (sl *Sapling) shouldDisplay() bool {
 		return false
 	}
 
-	sl.workingDir = slDir.Path
-	sl.rootDir = slDir.Path
+	sl.mainSCMDir = slDir.Path
+	sl.scmDir = slDir.Path
 	// convert the worktree file path to a windows one when in a WSL shared folder
-	sl.realDir = strings.TrimSuffix(sl.convertToWindowsPath(slDir.Path), "/.sl")
-	sl.RepoName = path.Base(sl.convertToLinuxPath(sl.realDir))
+	sl.repoRootDir = strings.TrimSuffix(sl.convertToWindowsPath(slDir.Path), "/.sl")
+	sl.RepoName = path.Base(sl.convertToLinuxPath(sl.repoRootDir))
 	sl.setDir(slDir.Path)
 
 	return true

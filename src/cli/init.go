@@ -78,10 +78,11 @@ func runInit(sh string) {
 	cfg := config.Load(configFile, sh, false)
 
 	flags := &runtime.Flags{
-		Shell:  sh,
-		Config: configFile,
-		Strict: strict,
-		Debug:  debug,
+		Shell:     sh,
+		Config:    configFile,
+		Strict:    strict,
+		Debug:     debug,
+		SaveCache: true,
 	}
 
 	env := &runtime.Terminal{}

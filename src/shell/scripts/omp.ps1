@@ -3,6 +3,10 @@ if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
 
+# disable all known python virtual environment prompts
+$env:VIRTUAL_ENV_DISABLE_PROMPT = 1
+$env:PYENV_VIRTUALENV_DISABLE_PROMPT = 1
+
 # Helper functions which need to be defined before the module is loaded
 # See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2300
 function global:Get-PoshStackCount {
@@ -66,7 +70,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             # ref-1: https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.argumentlist?view=net-6.0
             # ref-2: https://docs.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-7.2#net-framework-vs-net-core
             $Arguments | ForEach-Object -Process { $StartInfo.ArgumentList.Add($_) }
-        } else {
+        }
+        else {
             # escape arguments manually in lower versions, refer to https://docs.microsoft.com/en-us/previous-versions/17w5ykft(v=vs.85)
             $escapedArgs = $Arguments | ForEach-Object {
                 # escape N consecutive backslash(es), which are followed by a double quote, to 2N consecutive ones
@@ -154,7 +159,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $script:TransientPrompt = $true
             [Console]::OutputEncoding = [Text.Encoding]::UTF8
             [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-        } finally {
+        }
+        finally {
             [Console]::OutputEncoding = $previousOutputEncoding
         }
     }
@@ -184,14 +190,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($global:_ompAzure) {
             try {
                 $env:POSH_AZURE_SUBSCRIPTION = Get-AzContext | ConvertTo-Json
-            } catch {}
+            }
+            catch {}
         }
 
         if ($global:_ompPoshGit) {
             try {
                 $global:GitStatus = Get-GitStatus
                 $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
-            } catch {}
+            }
+            catch {}
         }
     }
 
@@ -216,7 +224,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $invocationInfo = try {
             # retrieve info of the most recent error
             $global:Error[0] | Where-Object { $_ -ne $null } | Select-Object -ExpandProperty InvocationInfo
-        } catch { $null }
+        }
+        catch { $null }
 
         # check if the last command caused the last error
         if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
@@ -260,7 +269,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
             $script:OriginalLastExecutionStatus = $global:NVS_ORIGINAL_LASTEXECUTIONSTATUS
-        } else {
+        }
+        else {
             $script:OriginalLastExecutionStatus = $?
         }
         # store the orignal last exit code
@@ -346,7 +356,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 # Workaround to prevent the text after cursor from disappearing when the tooltip is printed.
                 [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
                 [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
-            } finally {}
+            }
+            finally {}
         }
     }
 
@@ -364,11 +375,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     $script:TooltipCommand = ''
                     Set-TransientPrompt
                 }
-            } finally {
+            }
+            finally {
                 [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
                 if ($global:_ompFTCSMarks -and $executingCommand) {
                     # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
-                    Write-Host "$([char]0x1b)]133;C`a" -NoNewline
+                    Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
                 }
             }
         }
@@ -382,7 +394,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     $script:TooltipCommand = ''
                     Set-TransientPrompt
                 }
-            } finally {
+            }
+            finally {
                 [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine()
             }
         }
@@ -479,7 +492,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $themes = Get-ChildItem -Path "$Path/*" -Include '*.omp.json' | Sort-Object Name
         if ($List -eq $true) {
             $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-FileHyperlink -Uri $_.FullName } } | Format-Table -HideTableHeaders
-        } else {
+        }
+        else {
             $nonFSWD = Get-NonFSWD
             $stackCount = Get-PoshStackCount
             $terminalWidth = Get-TerminalWidth

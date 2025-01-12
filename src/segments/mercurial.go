@@ -83,10 +83,10 @@ func (hg *Mercurial) shouldDisplay() bool {
 
 	hg.setDir(hgdir.ParentFolder)
 
-	hg.workingDir = hgdir.Path
-	hg.rootDir = hgdir.Path
+	hg.mainSCMDir = hgdir.Path
+	hg.scmDir = hgdir.Path
 	// convert the worktree file path to a windows one when in a WSL shared folder
-	hg.realDir = strings.TrimSuffix(hg.convertToWindowsPath(hgdir.Path), "/.hg")
+	hg.repoRootDir = strings.TrimSuffix(hg.convertToWindowsPath(hgdir.Path), "/.hg")
 	return true
 }
 
@@ -165,7 +165,7 @@ func RemoveAtIndex(s []string, index int) []string {
 }
 
 func (hg *Mercurial) getHgCommandOutput(command string, args ...string) string {
-	args = append([]string{"-R", hg.realDir, command}, args...)
+	args = append([]string{"-R", hg.repoRootDir, command}, args...)
 	val, err := hg.env.RunCommand(hg.command, args...)
 	if err != nil {
 		return ""

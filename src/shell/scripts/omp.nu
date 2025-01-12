@@ -10,6 +10,10 @@ $env.POSH_SESSION_ID = (echo ::SESSION_ID::)
 $env.POSH_SHELL = "nu"
 $env.POSH_SHELL_VERSION = (version | get version)
 
+# disable all known python virtual environment prompts
+$env.VIRTUAL_ENV_DISABLE_PROMPT = 1
+$env.PYENV_VIRTUALENV_DISABLE_PROMPT = 1
+
 let _omp_executable: string = (echo ::OMP::)
 
 # PROMPTS

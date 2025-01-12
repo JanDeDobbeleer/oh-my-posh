@@ -44,8 +44,8 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 	s.Init(properties.Map{}, env)
 
 	assert.True(t, s.Enabled())
-	assert.Equal(t, fileInfo.Path, s.workingDir)
-	assert.Equal(t, fileInfo.Path, s.realDir)
+	assert.Equal(t, fileInfo.Path, s.mainSCMDir)
+	assert.Equal(t, fileInfo.Path, s.repoRootDir)
 }
 
 func TestSvnTemplateString(t *testing.T) {

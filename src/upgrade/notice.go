@@ -31,11 +31,6 @@ func (cfg *Config) Notice() (string, bool) {
 		return "", false
 	}
 
-	// do not check when last validation was < 1 week ago
-	if _, OK := cfg.Cache.Get(CACHEKEY); OK && !cfg.Force {
-		return "", false
-	}
-
 	if !http.IsConnected() {
 		return "", false
 	}
@@ -44,8 +39,6 @@ func (cfg *Config) Notice() (string, bool) {
 	if err != nil {
 		return "", false
 	}
-
-	cfg.Cache.Set(CACHEKEY, latest, cfg.Interval)
 
 	if latest == build.Version {
 		return "", false

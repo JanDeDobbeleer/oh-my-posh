@@ -5,12 +5,12 @@ import (
 	"encoding/xml"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"golang.org/x/exp/slices"
 
 	yaml "github.com/goccy/go-yaml"
 	toml "github.com/pelletier/go-toml/v2"

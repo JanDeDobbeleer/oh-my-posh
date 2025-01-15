@@ -9,7 +9,7 @@ func (b *Bun) Template() string {
 }
 
 func (b *Bun) Enabled() bool {
-	b.extensions = []string{"bun.lockb"}
+	b.extensions = []string{"bun.lockb", "bunfig.toml"}
 	b.commands = []*cmd{
 		{
 			executable: "bun",

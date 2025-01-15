@@ -900,7 +900,8 @@
                     "title": "Extensions",
                     "description": "The extensions to look for when determining if a folder is a Bun workspace",
                     "default": [
-                      "bun.lockb"
+                      "bun.lockb",
+                      "bunfig.toml"
                     ],
                     "items": {
                       "type": "string"

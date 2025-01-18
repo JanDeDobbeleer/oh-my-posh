@@ -79,21 +79,22 @@
       ],
       "type": "prompt"
     },
-    {
+        {
       "alignment": "right",
       "segments": [
         {
-          "background": "#4c1f5e",
-          "foreground": "#E4F34A",
-          "leading_diamond": " \ue0b6",
+          "background": "#170B3B",
+          "foreground": "#efdcf9",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "fetch_version": false
+              "display_mode": "environment",
+              "fetch_virtual_env": true,
+              "home_enabled": true
           },
-          "style": "diamond",
-          "template": "\ue235{{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}",
-          "trailing_diamond": "\ue0b4",
+          "style": "powerline",
+          "template": " \ue235 {{ if .Venv }}({{ .Venv }}){{ end }} ",
           "type": "python"
-        },
+      },
         {
           "background": "#4c1f5e",
           "foreground": "#7FD5EA",

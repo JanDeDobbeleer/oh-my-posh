@@ -129,6 +129,8 @@ const (
 	NBGV SegmentType = "nbgv"
 	// NIGHTSCOUT is an open source diabetes system
 	NIGHTSCOUT SegmentType = "nightscout"
+	// NIM writes the active nim version
+	NIM SegmentType = "nim"
 	// NIXSHELL writes the active nix shell details
 	NIXSHELL SegmentType = "nix-shell"
 	// NODE writes which node version is currently active
@@ -211,6 +213,8 @@ const (
 	UNITY SegmentType = "unity"
 	// UPGRADE lets you know if you can upgrade Oh My Posh
 	UPGRADE SegmentType = "upgrade"
+	// V writes the active vlang version
+	V SegmentType = "v"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
 	// WAKATIME writes tracked time spend in dev editors
@@ -283,6 +287,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NBGV:            func() SegmentWriter { return &segments.Nbgv{} },
 	NIGHTSCOUT:      func() SegmentWriter { return &segments.Nightscout{} },
 	NIXSHELL:        func() SegmentWriter { return &segments.NixShell{} },
+	NIM:             func() SegmentWriter { return &segments.Nim{} },
 	NODE:            func() SegmentWriter { return &segments.Node{} },
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
@@ -323,6 +328,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
+	V:               func() SegmentWriter { return &segments.V{} },
 	VALA:            func() SegmentWriter { return &segments.Vala{} },
 	WAKATIME:        func() SegmentWriter { return &segments.Wakatime{} },
 	WINREG:          func() SegmentWriter { return &segments.WindowsRegistry{} },

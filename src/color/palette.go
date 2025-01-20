@@ -11,7 +11,7 @@ type Palette map[Ansi]Ansi
 const (
 	paletteKeyPrefix         = "p:"
 	paletteKeyError          = "palette: requested color %s does not exist in palette of colors %s"
-	paletteMaxRecursionDepth = 3 // allows 3 or less recusive resolutions
+	paletteMaxRecursionDepth = 3 // allows 3 or less recursive resolutions
 	paletteRecursiveKeyError = "palette: recursive resolution of color %s returned palette reference %s and reached recursion depth %d"
 )
 

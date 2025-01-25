@@ -577,13 +577,13 @@ func (g *Git) getUpstreamIcon() string {
 		Icon    properties.Property
 		Default string
 	}{
-		"github":           {GithubIcon, "\uF408 "},
-		"gitlab":           {GitlabIcon, "\uF296 "},
-		"bitbucket":        {BitbucketIcon, "\uF171 "},
-		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8 "},
-		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8 "},
-		"codecommit":       {CodeCommit, "\uF270 "},
-		"codeberg":         {CodebergIcon, "\uF330 "},
+		"github":           {GithubIcon, "\uF408"},
+		"gitlab":           {GitlabIcon, "\uF296"},
+		"bitbucket":        {BitbucketIcon, "\uF171"},
+		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8"},
+		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8"},
+		"codecommit":       {CodeCommit, "\uF270"},
+		"codeberg":         {CodebergIcon, "\uF330"},
 	}
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {

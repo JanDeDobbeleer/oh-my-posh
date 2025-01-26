@@ -441,7 +441,7 @@ func writeSegmentColors() {
 			writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
 		}
 
-		if !fg.IsEmpty() {
+		if !fg.IsEmpty() && !fg.IsTransparent() {
 			writeEscapedAnsiString(fmt.Sprintf(colorise, fg))
 		}
 	}

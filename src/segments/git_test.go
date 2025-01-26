@@ -177,7 +177,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 			FetchRemote:     true,
 			Remote:          "origin",
 			RemoteURL:       "git@github.com:JanDeDobbeleer/oh-my-posh.git",
-			ExpectedRemote:  "\uf408 ",
+			ExpectedRemote:  "\uf408",
 		},
 	}
 	for _, tc := range cases {
@@ -201,9 +201,9 @@ func TestEnabledInBareRepo(t *testing.T) {
 		g := &Git{}
 		g.Init(props, env)
 
-		assert.Equal(t, g.Enabled(), tc.ExpectedEnabled, tc.Case)
-		assert.Equal(t, g.Ref, tc.ExpectedHEAD, tc.Case)
-		assert.Equal(t, g.UpstreamIcon, tc.ExpectedRemote, tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedHEAD, g.Ref, tc.Case)
+		assert.Equal(t, tc.ExpectedRemote, g.UpstreamIcon, tc.Case)
 	}
 }
 

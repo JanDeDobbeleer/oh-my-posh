@@ -412,6 +412,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://heaths.dev"><img src="https://avatars.githubusercontent.com/u/1532486?v=4?s=100" width="100px;" alt="Heath Stewart"/><br /><sub><b>Heath Stewart</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=heaths" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://xelph.me"><img src="https://avatars.githubusercontent.com/u/29693543?v=4?s=100" width="100px;" alt="Xelph"/><br /><sub><b>Xelph</b></sub></a><br /><a href="#design-HypheX" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://tristanleclair.github.io/personal-website/index.html"><img src="https://avatars.githubusercontent.com/u/60434271?v=4?s=100" width="100px;" alt="Tristan Leclair-Vani"/><br /><sub><b>Tristan Leclair-Vani</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=TristanLeclair" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/vil02"><img src="https://avatars.githubusercontent.com/u/65706193?v=4?s=100" width="100px;" alt="Piotr Idzik"/><br /><sub><b>Piotr Idzik</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=vil02" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

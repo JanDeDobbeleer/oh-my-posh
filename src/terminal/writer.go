@@ -422,7 +422,7 @@ func writeSegmentColors() {
 		fg = currentColor.Foreground()
 	}
 
-	// ignore processing fully tranparent colors
+	// ignore processing fully transparent colors
 	isInvisible = fg.IsTransparent() && bg.IsTransparent()
 	if isInvisible {
 		return
@@ -479,7 +479,7 @@ func writeArchorOverride(match map[string]string, background color.Ansi, i int) 
 
 	bg, fg := asAnsiColors(bgColor, fgColor)
 
-	// ignore processing fully tranparent colors
+	// ignore processing fully transparent colors
 	isInvisible = fg.IsTransparent() && bg.IsTransparent()
 	if isInvisible {
 		return position

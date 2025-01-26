@@ -105,7 +105,7 @@ func shouldUpdate(cachePath, url string) (string, bool) {
 
 	_, err = os.Stat(configPath)
 	if err != nil {
-		log.Debug("configfile ", configPath, " doest not exist, updating config")
+		log.Debug("configfile ", configPath, " does not exist, updating config")
 		return configPath, true
 	}
 

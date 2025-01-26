@@ -2935,6 +2935,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "vil02",
+      "name": "Piotr Idzik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65706193?v=4",
+      "profile": "https://github.com/vil02",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

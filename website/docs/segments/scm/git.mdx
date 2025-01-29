@@ -39,6 +39,9 @@ import Config from "@site/src/components/Config.js";
         "feat/*": "🚀 ",
         "bug/*": "🐛 ",
       },
+      branch_patterns: [
+        ".* [A-Z0-9]+-[0-9]+"
+      ],
     },
   }}
 />
@@ -63,6 +66,7 @@ You can set the following properties to `true` to enable fetching additional inf
 | `status_formats`      | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides.                                                                     |
 | `source`              |      `string`       |  `cli`  | <ul><li>`cli`: fetch the information using the git CLI</li><li>`pwsh`: fetch the information from the [posh-git][poshgit] PowerShell Module</li></ul>                                                                                                                                                                                 |
 | `mapped_branches`     |      `object`       |         | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching                                                                                                                                                                                                                              |
+| `branch_patterns`     |      `array`        |         | regular expressions and match index (that must be positive) in the format `"pattern:matchIdx"` to match against the branch name. The match index `0` (default, when omitted) is the full match, 1 is the first capture group, etc.<ul><li>Applied after `mapped_branches`</li><li>Pattern order matters</li></ul> |
 | `full_branch_path`    |       `bool`        | `true`  | display the full branch path instead of only the last part (e.g. `feature/branch` instead of `branch`)                                                                                                                                                                                                                                |
 
 ### Icons

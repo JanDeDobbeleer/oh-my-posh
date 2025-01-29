@@ -121,6 +121,8 @@ const (
 	IgnoreSubmodules properties.Property = "ignore_submodules"
 	// MappedBranches allows overriding certain branches with an icon/text
 	MappedBranches properties.Property = "mapped_branches"
+	// BranchPatterns allows for a custom regexes to be used to extract parts of the branch name
+	BranchPatterns properties.Property = "branch_patterns"
 
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"

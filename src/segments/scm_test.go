@@ -228,3 +228,109 @@ func TestFormatBranch(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestBranchPatterns(t *testing.T) {
+	cases := []struct {
+		Case           string
+		Input          string
+		BranchPatterns []string
+		MappedBranches map[string]string
+		Expected       string
+	}{
+		{
+			Case:     "No patterns",
+			Input:    "main",
+			Expected: "main",
+		},
+		{
+			Case:  "No match",
+			Input: "main",
+			BranchPatterns: []string{
+				"feature/(.*)",
+			},
+			Expected: "main",
+		},
+		{
+			Case:  "Match",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"feature/(.*)",
+			},
+			Expected: "feature/my-new-feature",
+		},
+		{
+			Case:  "Match with index omitted",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"feature/(.*):",
+			},
+			Expected: "feature/my-new-feature",
+		},
+		{
+			Case:  "Match with index",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"feature/(.*):1",
+			},
+			Expected: "my-new-feature",
+		},
+		{
+			Case:  "Index not a number",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"feature/(.*):not-a-number",
+			},
+			Expected: "feature/my-new-feature",
+		},
+		{
+			Case:  "Match with index out of bounds",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"feature/(.*):2",
+			},
+			Expected: "feature/my-new-feature",
+		},
+		{
+			Case:  "Match with negative index",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"feature/(.*):-2",
+			},
+			Expected: "feature/my-new-feature",
+		},
+		{
+			Case:  "Match with multiple patterns",
+			Input: "feature/my-new-feature",
+			BranchPatterns: []string{
+				"no-match/(.*):1",
+				"(.*)/(.*):2",
+			},
+			Expected: "my-new-feature",
+		},
+		{
+			Case:     "Branch mapping, with BranchMaxLength",
+			Input:    "feat/PROJECT-123-with-long-name",
+			Expected: "🚀 PROJECT-123",
+			BranchPatterns: []string{
+				".* [A-Z0-9]+-[0-9]+",
+			},
+			MappedBranches: map[string]string{
+				"feat/*": "🚀 ",
+				"bug/*":  "🐛 ",
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		props := properties.Map{
+			BranchPatterns: tc.BranchPatterns,
+			MappedBranches: tc.MappedBranches,
+		}
+
+		g := &Git{}
+		g.Init(props, nil)
+
+		got := g.formatBranch(tc.Input)
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}

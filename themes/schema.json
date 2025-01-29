@@ -141,6 +141,15 @@
       "description": "Custom glyph/text for specific branches",
       "default": {}
     },
+    "branch_patterns": {
+      "type": "array",
+      "title": "Branch Patterns",
+      "description": "Regular expressions and match index (in the format \"pattern:matchIdx\") to match against the branch name. The match index 0 (default, when omitted) is the full match, 1 is the first capture group, etc.",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
     "cache_duration": {
       "type": "string",
       "title": "Cache duration",

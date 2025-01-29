@@ -2,6 +2,8 @@ package segments
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -14,7 +16,14 @@ const (
 	NativeFallback properties.Property = "native_fallback"
 	// Override the built-in status formats
 	StatusFormats properties.Property = "status_formats"
+	// Regex patterns to extract fields from the branch name pattern property
+	BranchPatternRegex string = `^(.*?)(?::([-+]?\d+)?)?$`
+	// Default group for branch pattern, when none is provided
+	BranchPatternDefaultGroup int = 0
 )
+
+// BranchPattern regex to extract fields
+var /* const */ BranchPatternRegexExtractor = regexp.MustCompile(BranchPatternRegex)
 
 // ScmStatus represents part of the status of a repository
 type ScmStatus struct {
@@ -102,6 +111,30 @@ const (
 	FullBranchPath properties.Property = "full_branch_path"
 )
 
+func extractBranchPatternFields(str string) (string, int) {
+	matches := BranchPatternRegexExtractor.FindStringSubmatch(str)
+
+	if len(matches) > 0 {
+		regex := matches[1]
+		var number int
+		var err error
+
+		if matches[2] != "" {
+			number, err = strconv.Atoi(matches[2])
+
+			if err != nil {
+				fmt.Printf("Error converting number: %v\n", err)
+			}
+		} else {
+			number = BranchPatternDefaultGroup // Default value if no number is provided
+		}
+
+		return regex, number
+	}
+
+	return "", 0
+}
+
 func (s *scm) formatBranch(branch string) string {
 	mappedBranches := s.props.GetKeyValueMap(MappedBranches, make(map[string]string))
 	for key, value := range mappedBranches {
@@ -117,6 +150,23 @@ func (s *scm) formatBranch(branch string) string {
 
 		branch = strings.Replace(branch, key, value, 1)
 		break
+	}
+
+	branchPatterns := s.props.GetStringArray(BranchPatterns, []string{})
+	for _, str := range branchPatterns {
+		pattern, matchIdx := extractBranchPatternFields(str)
+
+		if pattern == "" || matchIdx < 0 {
+			continue
+		}
+
+		re := regexp.MustCompile(pattern)
+		matches := re.FindStringSubmatch(branch)
+
+		if len(matches) > matchIdx {
+			branch = matches[matchIdx]
+			break
+		}
 	}
 
 	fullBranchPath := s.props.GetBool(FullBranchPath, true)

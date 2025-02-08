@@ -57,17 +57,18 @@ type Segment struct {
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
 	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
-	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
+	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
 	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
 	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty"`
 	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty"`
 	Needs                  []string       `json:"-" toml:"-"`
-	NameLength             int            `json:"-" toml:"-"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
+	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	Timeout                time.Duration  `json:"timeout,omitempty" toml:"timeout,omitempty"`
 	Duration               time.Duration  `json:"-" toml:"-"`
+	NameLength             int            `json:"-" toml:"-"`
 	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
 	Enabled                bool           `json:"-" toml:"-"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
@@ -121,8 +122,25 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	if segment.writer.Enabled() {
-		segment.Enabled = true
+	if segment.Timeout == 0 {
+		segment.Enabled = segment.writer.Enabled()
+	} else {
+		done := make(chan bool)
+		go func() {
+			segment.Enabled = segment.writer.Enabled()
+			done <- true
+		}()
+
+		select {
+		case <-done:
+			// Completed before timeout
+		case <-time.After(segment.Timeout * time.Millisecond):
+			log.Debugf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
+			return
+		}
+	}
+
+	if segment.Enabled {
 		template.Cache.AddSegmentData(segment.Name(), segment.writer)
 	}
 }

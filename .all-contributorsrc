@@ -2944,6 +2944,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "wiyco",
+      "name": "wiyco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72733890?v=4",
+      "profile": "https://wiyco.dev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

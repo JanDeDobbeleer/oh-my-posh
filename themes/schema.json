@@ -111,28 +111,16 @@
         "type": "string"
       }
     },
-    "branch_max_length": {
-      "type": "integer",
-      "title": "Branch max length",
-      "description": "the max length for the displayed branch name where 0 implies full length",
-      "default": 0
-    },
-    "truncate_symbol": {
-      "type": "string",
-      "title": "Truncate Symbol",
-      "description": "Icon/text to use to indicate that the branch name has been truncated",
-      "default": ""
-    },
     "native_fallback": {
       "type": "boolean",
       "title": "Native Fallback",
       "description": "Try to use the WSL 2 native command in a shared Windows drive if the Windows executable is not found.",
       "default": false
     },
-    "full_branch_path": {
-      "type": "boolean",
-      "title": "Full branch path",
-      "description": "display the full branch path instead of only the last part (e.g. feature/branch instead of branch)",
+    "branch_template": {
+      "type": "string",
+      "title": "Branch template",
+      "description": "the temaplate to use for the branch name, supports {{ .Branch }} for the branch name",
       "default": true
     },
     "mapped_branches": {
@@ -1491,12 +1479,6 @@
                     "description": "Icon/text to display when the upstream is not known/mapped",
                     "default": "\uE5FB"
                   },
-                  "branch_max_length": {
-                    "type": "integer",
-                    "title": "Branch max length",
-                    "description": "the max length for the displayed branch name where 0 implies full length",
-                    "default": 0
-                  },
                   "untracked_modes": {
                     "type": "object",
                     "title": "Untracked files mode",
@@ -1536,8 +1518,8 @@
                   "mapped_branches": {
                     "$ref": "#/definitions/mapped_branches"
                   },
-                  "full_branch_path": {
-                    "$ref": "#/definitions/full_branch_path"
+                  "branch_template": {
+                    "$ref": "#/definitions/branch_template"
                   },
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
@@ -3758,14 +3740,8 @@
                     "description": "Icon/text to display before the seletor label",
                     "default": "\uF412"
                   },
-                  "truncate_symbol": {
-                    "$ref": "#/definitions/truncate_symbol"
-                  },
-                  "branch_max_length": {
-                    "$ref": "#/definitions/branch_max_length"
-                  },
-                  "full_branch_path": {
-                    "$ref": "#/definitions/full_branch_path"
+                  "branch_template": {
+                    "$ref": "#/definitions/branch_template"
                   },
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"

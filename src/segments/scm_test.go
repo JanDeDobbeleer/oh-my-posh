@@ -3,9 +3,12 @@ package segments
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -145,13 +148,11 @@ func TestHasCommand(t *testing.T) {
 
 func TestFormatBranch(t *testing.T) {
 	cases := []struct {
-		MappedBranches   map[string]string
-		Case             string
-		Expected         string
-		Input            string
-		TruncateSymbol   string
-		BranchMaxLength  int
-		NoFullBranchPath bool
+		MappedBranches map[string]string
+		Case           string
+		Expected       string
+		Input          string
+		BranchTemplate string
 	}{
 		{
 			Case:     "No settings",
@@ -159,38 +160,34 @@ func TestFormatBranch(t *testing.T) {
 			Expected: "main",
 		},
 		{
-			Case:            "BranchMaxLength higher than branch name",
-			Input:           "main",
-			Expected:        "main",
-			BranchMaxLength: 10,
+			Case:           "BranchMaxLength higher than branch name",
+			Input:          "main",
+			Expected:       "main",
+			BranchTemplate: "{{ trunc 5 .Branch }}",
 		},
 		{
-			Case:            "BranchMaxLength lower than branch name",
-			Input:           "feature/test-this-branch",
-			Expected:        "featu",
-			BranchMaxLength: 5,
+			Case:           "BranchMaxLength lower than branch name",
+			Input:          "feature/test-this-branch",
+			Expected:       "featu",
+			BranchTemplate: "{{ trunc 5 .Branch }}",
 		},
 		{
-			Case:            "BranchMaxLength lower than branch name, with truncate symbol",
-			Input:           "feature/test-this-branch",
-			Expected:        "feat…",
-			BranchMaxLength: 5,
-			TruncateSymbol:  "…",
+			Case:           "BranchMaxLength lower than branch name, with truncate symbol",
+			Input:          "feature/test-this-branch",
+			Expected:       "feat…",
+			BranchTemplate: "{{ truncE 5 .Branch }}",
 		},
 		{
-			Case:             "BranchMaxLength lower than branch name, with truncate symbol and no FullBranchPath",
-			Input:            "feature/test-this-branch",
-			Expected:         "test…",
-			BranchMaxLength:  5,
-			TruncateSymbol:   "…",
-			NoFullBranchPath: true,
+			Case:           "BranchMaxLength lower than branch name, with truncate symbol and no FullBranchPath",
+			Input:          "feature/test-this-branch",
+			Expected:       "test…",
+			BranchTemplate: "{{ truncE 5 (base .Branch) }}",
 		},
 		{
-			Case:            "BranchMaxLength lower to branch name, with truncate symbol",
-			Input:           "feat",
-			Expected:        "feat",
-			BranchMaxLength: 5,
-			TruncateSymbol:  "…",
+			Case:           "BranchMaxLength lower to branch name, with truncate symbol",
+			Input:          "feat",
+			Expected:       "feat",
+			BranchTemplate: "{{ trunc 5 .Branch }}",
 		},
 		{
 			Case:     "Branch mapping, no BranchMaxLength",
@@ -202,10 +199,10 @@ func TestFormatBranch(t *testing.T) {
 			},
 		},
 		{
-			Case:            "Branch mapping, with BranchMaxLength",
-			Input:           "feat/my-new-feature",
-			Expected:        "🚀 my-",
-			BranchMaxLength: 5,
+			Case:           "Branch mapping, with BranchMaxLength",
+			Input:          "feat/my-new-feature",
+			Expected:       "🚀 my-",
+			BranchTemplate: "{{ trunc 5 .Branch }}",
 			MappedBranches: map[string]string{
 				"feat/*": "🚀 ",
 				"bug/*":  "🐛 ",
@@ -215,14 +212,17 @@ func TestFormatBranch(t *testing.T) {
 
 	for _, tc := range cases {
 		props := properties.Map{
-			MappedBranches:  tc.MappedBranches,
-			BranchMaxLength: tc.BranchMaxLength,
-			TruncateSymbol:  tc.TruncateSymbol,
-			FullBranchPath:  !tc.NoFullBranchPath,
+			MappedBranches: tc.MappedBranches,
+			BranchTemplate: tc.BranchTemplate,
 		}
 
 		g := &Git{}
 		g.Init(props, nil)
+
+		env := new(mock.Environment)
+		env.On("Shell").Return(shell.BASH)
+		template.Cache = new(cache.Template)
+		template.Init(env, nil)
 
 		got := g.formatBranch(tc.Input)
 		assert.Equal(t, tc.Expected, got, tc.Case)

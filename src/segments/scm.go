@@ -3,10 +3,10 @@ package segments
 import (
 	"fmt"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 const (
@@ -94,12 +94,8 @@ type scm struct {
 }
 
 const (
-	// BranchMaxLength truncates the length of the branch name
-	BranchMaxLength properties.Property = "branch_max_length"
-	// TruncateSymbol appends the set symbol to a truncated branch name
-	TruncateSymbol properties.Property = "truncate_symbol"
-	// FullBranchPath displays the full path of a branch
-	FullBranchPath properties.Property = "full_branch_path"
+	// BranchTemplate allows to specify a template for the branch name
+	BranchTemplate properties.Property = "branch_template"
 )
 
 func (s *scm) formatBranch(branch string) string {
@@ -119,23 +115,22 @@ func (s *scm) formatBranch(branch string) string {
 		break
 	}
 
-	fullBranchPath := s.props.GetBool(FullBranchPath, true)
-	if !fullBranchPath && strings.Contains(branch, "/") {
-		index := strings.LastIndex(branch, "/")
-		branch = branch[index+1:]
-	}
-
-	maxLength := s.props.GetInt(BranchMaxLength, 0)
-	if maxLength == 0 || len(branch) <= maxLength {
+	branchTemplate := s.props.GetString(BranchTemplate, "")
+	if branchTemplate == "" {
 		return branch
 	}
 
-	truncateSymbol := s.props.GetString(TruncateSymbol, "")
-	lenTruncateSymbol := utf8.RuneCountInString(truncateSymbol)
-	maxLength -= lenTruncateSymbol
+	tmpl := &template.Text{
+		Template: branchTemplate,
+		Context:  struct{ Branch string }{Branch: branch},
+	}
 
-	runes := []rune(branch)
-	return string(runes[0:maxLength]) + truncateSymbol
+	text, err := tmpl.Render()
+	if err != nil {
+		return branch
+	}
+
+	return text
 }
 
 func (s *scm) FileContents(folder, file string) string {

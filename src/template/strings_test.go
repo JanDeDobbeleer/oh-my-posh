@@ -36,3 +36,73 @@ func TestTrunc(t *testing.T) {
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }
+
+func TestTruncE(t *testing.T) {
+	cases := []struct {
+		name      string
+		length    any
+		input     string
+		expected  string
+		wantPanic bool
+	}{
+		{
+			name:     "normal truncation",
+			length:   5,
+			input:    "hello world",
+			expected: "hell…",
+		},
+		{
+			name:     "no truncation needed",
+			length:   20,
+			input:    "short",
+			expected: "short",
+		},
+		{
+			name:     "negative length",
+			length:   -3,
+			input:    "hello world",
+			expected: "…ld",
+		},
+		{
+			name:     "zero length",
+			length:   0,
+			input:    "hello",
+			expected: "…",
+		},
+		{
+			name:     "unicode characters",
+			length:   4,
+			input:    "你好世界",
+			expected: "你好世…",
+		},
+		{
+			name:     "empty string",
+			length:   5,
+			input:    "",
+			expected: "",
+		},
+		{
+			name:      "invalid length type",
+			length:    "invalid",
+			input:     "hello",
+			wantPanic: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.wantPanic {
+				defer func() {
+					if r := recover(); r == nil {
+						t.Error("expected panic but got none")
+					}
+				}()
+			}
+
+			result := truncE(tc.length, tc.input)
+			if result != tc.expected {
+				t.Errorf("expected %q but got %q", tc.expected, result)
+			}
+		})
+	}
+}

@@ -61,7 +61,7 @@ func Default(warning bool) *Config {
 							"{{ if gt .Ahead 0 }}p:white{{ end }}",
 						},
 						Properties: properties.Map{
-							segments.BranchMaxLength:   25,
+							segments.BranchTemplate:    "{{ trunc 25 .Branch }}",
 							segments.FetchStatus:       true,
 							segments.FetchUpstreamIcon: true,
 						},

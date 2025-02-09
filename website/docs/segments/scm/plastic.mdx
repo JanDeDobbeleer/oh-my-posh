@@ -31,8 +31,6 @@ import Config from "@site/src/components/Config.js";
       "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}",
     properties: {
       fetch_status: true,
-      branch_max_length: 25,
-      truncate_symbol: "\u2026",
     },
   }}
 />
@@ -59,13 +57,11 @@ You can set the following property to `true` to enable fetching additional infor
 
 #### Branch
 
-| Name                |   Type   | Default  | Description                                                                                              |
-| ------------------- | :------: | :------: | -------------------------------------------------------------------------------------------------------- |
-| `branch_icon`       | `string` | `\uE0A0` | the icon to use in front of the git branch name                                                          |
-| `full_branch_path`  |  `bool`  |  `true`  | display the full branch path instead of only the last part (e.g. `feature/branch` instead of `branch`)   |
-| `branch_max_length` |  `int`   |   `0`    | the max length for the displayed branch name where `0` implies full length                               |
-| `truncate_symbol`   | `string` |          | the icon to display when a branch name is truncated                                                      |
-| `mapped_branches`   | `object` |          | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching |
+| Name              |   Type   | Default  | Description                                                                                                              |
+| ----------------- | :------: | :------: | ------------------------------------------------------------------------------------------------------------------------ |
+| `branch_icon`     | `string` | `\uE0A0` | the icon to use in front of the git branch name                                                                          |
+| `mapped_branches` | `object` |          | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching                 |
+| `branch_template` | `string` |          | a [template][templates] to format that branch name. You can use `{{ .Branch }}` as reference to the roiginal branch name |
 
 #### Selector
 

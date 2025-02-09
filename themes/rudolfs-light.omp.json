@@ -33,7 +33,7 @@
             "{{ if or (gt .Ahead 0) (gt .Behind 0) }}#0A703E{{ end }}"
           ],
           "properties": {
-            "branch_max_length": 30,
+            "branch_template": "{{ trunc 30 .Branch }}",
             "fetch_status": true,
             "fetch_upstream_icon": true
           },

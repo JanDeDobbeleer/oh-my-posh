@@ -24,7 +24,7 @@ jobs:
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
     - name: Golang CI
-      uses: golangci/golangci-lint-action@e60da84bfae8c7920a47be973d75e15710aa8bd7
+      uses: golangci/golangci-lint-action@2e788936b09dd82dc280e845628a40d2ba6b204c
       with:
         working-directory: src
     - name: Fieldalignment

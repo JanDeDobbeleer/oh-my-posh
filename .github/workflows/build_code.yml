@@ -21,7 +21,7 @@ jobs:
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
     - name: Run GoReleaser 🚀
-      uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf
+      uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3
       with:
         distribution: goreleaser
         version: v2.3.2

@@ -21,6 +21,7 @@ func funcMap() template.FuncMap {
 		"reason":       GetReasonFromStatus,
 		"hresult":      hresult,
 		"trunc":        trunc,
+		"truncE":       truncE,
 		"readFile":     readFile,
 		"stat":         stat,
 		"dir":          filepath.Dir,

@@ -21,7 +21,7 @@ func (g *Golang) Template() string {
 }
 
 func (g *Golang) Enabled() bool {
-	g.extensions = []string{"*.go", "go.mod", "go.sum", "go.work"}
+	g.extensions = []string{"*.go", "go.mod", "go.sum", "go.work", "go.work.sum"}
 	g.commands = []*cmd{
 		{
 			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,

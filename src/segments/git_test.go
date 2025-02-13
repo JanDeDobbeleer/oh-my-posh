@@ -59,7 +59,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	g.Init(properties.Map{}, env)
 
 	assert.True(t, g.Enabled())
-	assert.Equal(t, fileInfo.Path, g.workingDir)
+	assert.Equal(t, fileInfo.Path, g.mainSCMDir)
 }
 
 func TestResolveEmptyGitPath(t *testing.T) {
@@ -139,9 +139,9 @@ func TestEnabledInWorktree(t *testing.T) {
 		g.Init(properties.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, g.hasWorktree(fileInfo), tc.Case)
-		assert.Equal(t, tc.ExpectedWorkingFolder, g.workingDir, tc.Case)
-		assert.Equal(t, tc.ExpectedRealFolder, g.realDir, tc.Case)
-		assert.Equal(t, tc.ExpectedRootFolder, g.rootDir, tc.Case)
+		assert.Equal(t, tc.ExpectedWorkingFolder, g.mainSCMDir, tc.Case)
+		assert.Equal(t, tc.ExpectedRealFolder, g.repoRootDir, tc.Case)
+		assert.Equal(t, tc.ExpectedRootFolder, g.scmDir, tc.Case)
 	}
 }
 
@@ -177,7 +177,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 			FetchRemote:     true,
 			Remote:          "origin",
 			RemoteURL:       "git@github.com:JanDeDobbeleer/oh-my-posh.git",
-			ExpectedRemote:  "\uf408 ",
+			ExpectedRemote:  "\uf408",
 		},
 	}
 	for _, tc := range cases {
@@ -201,9 +201,9 @@ func TestEnabledInBareRepo(t *testing.T) {
 		g := &Git{}
 		g.Init(props, env)
 
-		assert.Equal(t, g.Enabled(), tc.ExpectedEnabled, tc.Case)
-		assert.Equal(t, g.Ref, tc.ExpectedHEAD, tc.Case)
-		assert.Equal(t, g.UpstreamIcon, tc.ExpectedRemote, tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedHEAD, g.Ref, tc.Case)
+		assert.Equal(t, tc.ExpectedRemote, g.UpstreamIcon, tc.Case)
 	}
 }
 
@@ -629,7 +629,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				workingDir: "",
+				mainSCMDir: "",
 			},
 		}
 		g.Init(properties.Map{}, env)
@@ -934,7 +934,7 @@ func TestGitUntrackedMode(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				realDir: "foo",
+				repoRootDir: "foo",
 			},
 		}
 		g.Init(props, new(mock.Environment))
@@ -979,7 +979,7 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				realDir: "foo",
+				repoRootDir: "foo",
 			},
 		}
 		g.Init(props, new(mock.Environment))
@@ -1165,7 +1165,7 @@ func TestGitRemotes(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				realDir: "foo",
+				repoRootDir: "foo",
 			},
 		}
 		g.Init(properties.Map{}, env)
@@ -1210,8 +1210,8 @@ func TestGitRepoName(t *testing.T) {
 
 		g := &Git{
 			scm: scm{
-				realDir:    tc.RealDir,
-				workingDir: tc.WorkingDir,
+				repoRootDir: tc.RealDir,
+				mainSCMDir:  tc.WorkingDir,
 			},
 			IsWorkTree: tc.IsWorkTree,
 		}

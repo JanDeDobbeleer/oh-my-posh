@@ -2896,7 +2896,8 @@
       "profile": "https://mpb-dev.fr/",
       "contributions": [
         "code",
-        "design"
+        "design",
+        "doc"
       ]
     },
     {
@@ -2932,6 +2933,26 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/60434271?v=4",
       "profile": "https://tristanleclair.github.io/personal-website/index.html",
       "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "vil02",
+      "name": "Piotr Idzik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65706193?v=4",
+      "profile": "https://github.com/vil02",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "wiyco",
+      "name": "wiyco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72733890?v=4",
+      "profile": "https://wiyco.dev",
+      "contributions": [
+        "code",
+        "design",
         "doc"
       ]
     }

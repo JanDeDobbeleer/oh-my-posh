@@ -5,6 +5,10 @@ setenv POSH_SHELL_VERSION "$tcsh";
 setenv POSH_SESSION_ID ::SESSION_ID::;
 setenv OSTYPE "$OSTYPE";
 
+# disable all known python virtual environment prompts
+setenv VIRTUAL_ENV_DISABLE_PROMPT 1;
+setenv PYENV_VIRTUALENV_DISABLE_PROMPT 1;
+
 if ( ! $?_omp_enabled ) alias precmd '
   set _omp_status = $status;
   set _omp_execution_time = -1;

@@ -12,12 +12,15 @@ import (
 
 func TestGolang(t *testing.T) {
 	cases := []struct {
-		Case                  string
-		ExpectedString        string
-		Version               string
-		ParseModFile          bool
-		HasModFileInParentDir bool
-		InvalidModfile        bool
+		Case                     string
+		ExpectedString           string
+		Version                  string
+		ParseModFile             bool
+		HasModFileInParentDir    bool
+		InvalidModfile           bool
+		ParseGoWorkFile          bool
+		HasGoWorkFileInParentDir bool
+		InvalidGoWorkFile        bool
 	}{
 		{Case: "Go 1.15", ExpectedString: "1.15.8", Version: "go version go1.15.8 darwin/amd64"},
 		{Case: "Go 1.16", ExpectedString: "1.16", Version: "go version go1.16 darwin/amd64"},
@@ -30,6 +33,30 @@ func TestGolang(t *testing.T) {
 			InvalidModfile:        true,
 			ExpectedString:        "1.16",
 			Version:               "go version go1.16 darwin/amd64",
+		},
+		{Case: "go.work file", ParseGoWorkFile: true, HasGoWorkFileInParentDir: true, ExpectedString: "1.21"},
+		{
+			Case:                     "invalid go.work file fallback",
+			ParseGoWorkFile:          true,
+			HasGoWorkFileInParentDir: true,
+			InvalidGoWorkFile:        true,
+			ExpectedString:           "1.16",
+			Version:                  "go version go1.16 darwin/amd64",
+		},
+		{
+			Case:                     "go.work file with go.mod file uses go.mod's version",
+			ParseModFile:             true,
+			HasModFileInParentDir:    true,
+			ParseGoWorkFile:          true,
+			HasGoWorkFileInParentDir: true,
+			ExpectedString:           "1.22.3",
+		},
+		{
+			Case:            "missing both go.mod and go.work file fallback",
+			ParseModFile:    true,
+			ParseGoWorkFile: true,
+			ExpectedString:  "1.16",
+			Version:         "go version go1.16 darwin/amd64",
 		},
 	}
 	for _, tc := range cases {
@@ -55,6 +82,27 @@ func TestGolang(t *testing.T) {
 			var content string
 			if tc.InvalidModfile {
 				content = "invalid go.mod file"
+			} else {
+				tmp, _ := os.ReadFile(fileInfo.Path)
+				content = string(tmp)
+			}
+			env.On("FileContent", fileInfo.Path).Return(content)
+		}
+		if tc.ParseGoWorkFile {
+			props[ParseGoWorkFile] = tc.ParseGoWorkFile
+			fileInfo := &runtime.FileInfo{
+				Path:         "../test/go.work",
+				ParentFolder: "./",
+				IsDir:        false,
+			}
+			var err error
+			if !tc.HasGoWorkFileInParentDir {
+				err = errors.New("no match")
+			}
+			env.On("HasParentFilePath", "go.work", false).Return(fileInfo, err)
+			var content string
+			if tc.InvalidGoWorkFile {
+				content = "invalid go.work file"
 			} else {
 				tmp, _ := os.ReadFile(fileInfo.Path)
 				content = string(tmp)

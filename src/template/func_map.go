@@ -14,6 +14,7 @@ func funcMap() template.FuncMap {
 		"path":         filePath,
 		"glob":         glob,
 		"matchP":       matchP,
+		"findP":        findP,
 		"replaceP":     replaceP,
 		"gt":           gt,
 		"lt":           lt,

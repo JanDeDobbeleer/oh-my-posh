@@ -116,7 +116,7 @@ func (s *scm) formatBranch(branch string) string {
 	}
 
 	branchTemplate := s.props.GetString(BranchTemplate, "")
-	if branchTemplate == "" {
+	if len(branchTemplate) == 0 {
 		return branch
 	}
 

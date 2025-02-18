@@ -89,9 +89,14 @@ func (term *Terminal) setPwd() {
 		if term.GOOS() != WINDOWS {
 			return pwd
 		}
+
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
-		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
+		driveLetter, err := regex.GetCompiledRegex(`^[a-z]:`)
+		if err == nil {
+			return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
+		}
+
+		return pwd
 	}
 
 	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {

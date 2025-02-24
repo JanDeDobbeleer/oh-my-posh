@@ -7,6 +7,6 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "axios": "^1.6.2"
+    "axios": "^1.7.9"
   }
 }

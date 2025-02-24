@@ -60,4 +60,7 @@ func init() {
 
 	// Hide flags that are deprecated or for internal use only.
 	_ = RootCmd.PersistentFlags().MarkHidden("silent")
+
+	// Disable completions
+	RootCmd.CompletionOptions.DisableDefaultCmd = true
 }

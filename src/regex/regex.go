@@ -3,6 +3,8 @@ package regex
 import (
 	"regexp"
 	"sync"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 var (
@@ -14,50 +16,67 @@ const (
 	LINK = `(?P<STR>\x1b]8;;(.+)\x1b\\(?P<TEXT>.+)\x1b]8;;\x1b\\)`
 )
 
-func GetCompiledRegex(pattern string) *regexp.Regexp {
+func GetCompiledRegex(pattern string) (*regexp.Regexp, error) {
 	// try in cache first
 	regexCacheLock.RLock()
 	re := regexCache[pattern]
 	regexCacheLock.RUnlock()
 	if re != nil {
-		return re
+		return re, nil
 	}
 
 	// should we panic or return the error?
-	re = regexp.MustCompile(pattern)
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
 
 	// lock for concurrent access and save the compiled expression in cache
 	regexCacheLock.Lock()
 	regexCache[pattern] = re
 	regexCacheLock.Unlock()
 
-	return re
+	return re, nil
 }
 
 func FindNamedRegexMatch(pattern, text string) map[string]string {
-	// error ignored because mustCompile will cause a panic
-	re := GetCompiledRegex(pattern)
-	match := re.FindStringSubmatch(text)
 	result := make(map[string]string)
+
+	re, err := GetCompiledRegex(pattern)
+	if err != nil {
+		return result
+	}
+
+	match := re.FindStringSubmatch(text)
 	if len(match) == 0 {
 		return result
 	}
+
 	for i, name := range re.SubexpNames() {
 		if i == 0 {
 			continue
 		}
 		result[name] = match[i]
 	}
+
 	return result
 }
 
 func FindAllNamedRegexMatch(pattern, text string) []map[string]string {
-	re := GetCompiledRegex(pattern)
-	match := re.FindAllStringSubmatch(text, -1)
 	var results []map[string]string
+
+	re, err := GetCompiledRegex(pattern)
+	if err != nil {
+		return results
+	}
+
+	match := re.FindAllStringSubmatch(text, -1)
+
 	if len(match) == 0 {
 		return results
 	}
+
 	for _, set := range match {
 		result := make(map[string]string)
 		for i, name := range re.SubexpNames() {
@@ -69,15 +88,43 @@ func FindAllNamedRegexMatch(pattern, text string) []map[string]string {
 		}
 		results = append(results, result)
 	}
+
 	return results
 }
 
 func ReplaceAllString(pattern, text, replaceText string) string {
-	re := GetCompiledRegex(pattern)
+	re, err := GetCompiledRegex(pattern)
+	if err != nil {
+		return text
+	}
+
 	return re.ReplaceAllString(text, replaceText)
 }
 
 func MatchString(pattern, text string) bool {
-	re := GetCompiledRegex(pattern)
+	re, err := GetCompiledRegex(pattern)
+	if err != nil {
+		return false
+	}
+
 	return re.MatchString(text)
+}
+
+func FindStringMatch(pattern, text string, index int) string {
+	re, err := GetCompiledRegex(pattern)
+	if err != nil {
+		return text
+	}
+
+	matches := re.FindStringSubmatch(text)
+	if len(matches) <= index {
+		return text
+	}
+
+	match := matches[index]
+	if len(match) == 0 {
+		return text
+	}
+
+	return match
 }

@@ -75,8 +75,10 @@ func Clean(input string) string {
 		}
 
 		// Always use an uppercase drive letter on Windows.
-		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
-		cleaned = driveLetter.ReplaceAllStringFunc(cleaned, strings.ToUpper)
+		driveLetter, err := regex.GetCompiledRegex(`^[a-z]:`)
+		if err == nil {
+			cleaned = driveLetter.ReplaceAllStringFunc(cleaned, strings.ToUpper)
+		}
 	}
 
 	sb := new(strings.Builder)

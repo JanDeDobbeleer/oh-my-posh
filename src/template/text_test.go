@@ -14,6 +14,7 @@ func TestRenderTemplate(t *testing.T) {
 	type Me struct {
 		Name string
 	}
+
 	cases := []struct {
 		Context     any
 		Case        string
@@ -161,6 +162,11 @@ func TestRenderTemplate(t *testing.T) {
 			Context:  tc.Context,
 		}
 
+		env := new(mock.Environment)
+		env.On("Shell").Return("foo")
+		Cache = new(cache.Template)
+		Init(env, nil)
+
 		text, err := tmpl.Render()
 		if tc.ShouldError {
 			assert.Error(t, err)
@@ -204,7 +210,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		},
 		{Case: "no env var", Expected: "hello world", Template: "{{.Text}} world", Context: struct{ Text string }{Text: "hello"}},
 		{Case: "map", Expected: "hello world", Template: "{{.Text}} world", Context: map[string]any{"Text": "hello"}},
-		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}},
+		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}, ShouldError: true},
 		{
 			Case:     "Struct with duplicate property",
 			Expected: "posh",
@@ -335,20 +341,48 @@ func TestPatchTemplate(t *testing.T) {
 		},
 	}
 
-	env := &mock.Environment{}
+	env := new(mock.Environment)
 	env.On("Shell").Return("foo")
-
+	Cache = new(cache.Template)
 	Init(env, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
-			Context:  map[string]any{"OS": "posh"},
+			Context: map[string]any{
+				"OS":         true,
+				"World":      true,
+				"WorldTrend": "chaos",
+				"Working":    true,
+				"Staging":    true,
+				"CPU":        true,
+			},
 		}
 
 		tmpl.patchTemplate()
 		assert.Equal(t, tc.Expected, tmpl.Template, tc.Case)
 	}
+}
+
+type Foo struct{}
+
+func (f *Foo) Hello() string {
+	return "hello"
+}
+
+func TestPatchTemplateStruct(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Shell").Return("foo")
+	Cache = new(cache.Template)
+	Init(env, nil)
+
+	tmpl := &Text{
+		Template: "{{ .Hello }}",
+		Context:  Foo{},
+	}
+
+	tmpl.patchTemplate()
+	assert.Equal(t, "{{ .Data.Hello }}", tmpl.Template)
 }
 
 func TestSegmentContains(t *testing.T) {

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 type Text struct {
@@ -31,29 +30,6 @@ func (t *Text) Render() (string, error) {
 }
 
 func (t *Text) patchTemplate() {
-	isKnownVariable := func(variable string) bool {
-		variable = strings.TrimPrefix(variable, ".")
-		splitted := strings.Split(variable, ".")
-
-		if len(splitted) == 0 {
-			return true
-		}
-
-		variable = splitted[0]
-		// check if alphanumeric
-		if !regex.MatchString(`^[a-zA-Z0-9]+$`, variable) {
-			return true
-		}
-
-		for _, b := range knownVariables {
-			if variable == b {
-				return true
-			}
-		}
-
-		return false
-	}
-
 	fields := make(fields)
 	fields.init(t.Context)
 
@@ -70,10 +46,12 @@ func (t *Text) patchTemplate() {
 				inTemplate = false
 			}
 		}
+
 		if !inTemplate {
 			result += string(char)
 			continue
 		}
+
 		switch char {
 		case '.':
 			var lastChar rune
@@ -96,9 +74,6 @@ func (t *Text) patchTemplate() {
 			}
 
 			switch {
-			case !isKnownVariable(property):
-				// end of a variable, needs to be appended
-				result += ".Data" + property
 			case strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains"):
 				// as we can't provide a clean way to access the list
 				// of segments, we need to replace the property with
@@ -149,10 +124,48 @@ func (f *fields) init(data any) {
 	val := reflect.TypeOf(data)
 	switch val.Kind() { //nolint:exhaustive
 	case reflect.Struct:
+		name := val.Name()
+
+		// ignore the base struct
+		if name == "base" {
+			return
+		}
+
+		// check if we already know the fields of this struct
+		if kf, OK := knownFields.Get(name); OK {
+			for key := range kf.(fields) {
+				(*f)[key] = true
+			}
+			return
+		}
+
+		// Get struct fields and check embedded types
 		fieldsNum := val.NumField()
 		for i := 0; i < fieldsNum; i++ {
-			(*f)[val.Field(i).Name] = true
+			field := val.Field(i)
+			(*f)[field.Name] = true
+
+			// If this is an embedded field, get its methods too
+			if !field.Anonymous {
+				continue
+			}
+
+			embeddedType := field.Type
+
+			// Recursively check if the embedded type is also a struct
+			if embeddedType.Kind() == reflect.Struct {
+				f.init(reflect.New(embeddedType).Elem().Interface())
+			}
 		}
+
+		// Get pointer methods
+		ptrType := reflect.PointerTo(val)
+		methodsNum := ptrType.NumMethod()
+		for i := 0; i < methodsNum; i++ {
+			(*f)[ptrType.Method(i).Name] = true
+		}
+
+		knownFields.Set(name, *f)
 	case reflect.Map:
 		m, ok := data.(map[string]any)
 		if !ok {
@@ -168,6 +181,11 @@ func (f *fields) init(data any) {
 
 func (f fields) hasField(field string) bool {
 	field = strings.TrimPrefix(field, ".")
+
+	// get the first part of the field
+	splitted := strings.Split(field, ".")
+	field = splitted[0]
+
 	_, ok := f[field]
 	return ok
 }

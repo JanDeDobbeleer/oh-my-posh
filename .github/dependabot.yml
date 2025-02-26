@@ -7,6 +7,10 @@ updates:
     target-branch: "main"
     schedule:
       interval: "daily"
+    groups:
+      all:
+        patterns:
+        - "*"
     ignore:
       - dependency-name: "softprops/action-gh-release"
         # https://github.com/softprops/action-gh-release/issues/556
@@ -18,3 +22,10 @@ updates:
     target-branch: "main"
     schedule:
       interval: "daily"
+    groups:
+      minor-patch:
+        patterns:
+        - "*"
+        update-types:
+        - "minor"
+        - "patch"

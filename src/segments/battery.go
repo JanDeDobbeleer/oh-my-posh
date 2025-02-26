@@ -7,10 +7,9 @@ import (
 
 type Battery struct {
 	base
-
-	*battery.Info
 	Error string
 	Icon  string
+	battery.Info
 }
 
 const (
@@ -34,15 +33,16 @@ func (b *Battery) Enabled() bool {
 		return false
 	}
 
-	var err error
-	b.Info, err = b.env.BatteryState()
+	info, err := b.env.BatteryState()
 
 	if !b.enabledWhileError(err) {
 		return false
 	}
 
+	b.Info = *info
+
 	// case on computer without batteries(no error, empty array)
-	if err == nil && b.Info == nil {
+	if err == nil && b.Info.Percentage == 0 {
 		return false
 	}
 

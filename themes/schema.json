@@ -1568,6 +1568,12 @@
                     "description": "Parse go.mod file instead of calling out to go to improve performance.",
                     "default": false
                   },
+                  "parse_go_work_file": {
+                    "type": "boolean",
+                    "title": "Parse go.work file",
+                    "description": "Parse go.work file instead of calling out to go to improve performance.",
+                    "default": false
+                  },
                   "extensions": {
                     "type": "array",
                     "title": "Extensions",

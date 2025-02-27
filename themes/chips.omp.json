@@ -66,7 +66,7 @@
             "threshold": 1
           },
           "style": "diamond",
-          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PRIMARY_EXEC_TIME)) }}\uFA1E {{ .FormattedMs }}.{{ end }}",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PRIMARY_EXEC_TIME)) }}\udb81\udd1f {{ .FormattedMs }}.{{ end }}",
           "trailing_diamond": "\uE0B4 ",
           "type": "executiontime"
         },
@@ -125,7 +125,7 @@
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
           "style": "diamond",
-          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}{{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if le .Percentage 15 }}\uF579{{ else if and (ge .Percentage 16) (le .Percentage 30) }}\uF57A{{ else if and (ge .Percentage 31) (le .Percentage 45) }}\uF57C{{ else if and (ge .Percentage 46) (le .Percentage 55)}}\uF57D{{ else if and (ge .Percentage 56) (le .Percentage 70) }}\uF57E{{ else if and (ge .Percentage 71) (le .Percentage 80) }}\uF580{{ else if and (ge .Percentage 81) (le .Percentage 95) }}\uF581{{ else }}\uF578{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
+          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}{{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if le .Percentage 15 }}\udb80\udc7a{{ else if and (ge .Percentage 16) (le .Percentage 30) }}\udb80\udc7b{{ else if and (ge .Percentage 31) (le .Percentage 45) }}\udb80\udc7d{{ else if and (ge .Percentage 46) (le .Percentage 55)}}\udb80\udc7e{{ else if and (ge .Percentage 56) (le .Percentage 70) }}\udb80\udc7f{{ else if and (ge .Percentage 71) (le .Percentage 80) }}\udb80\udc82{{ else if and (ge .Percentage 81) (le .Percentage 95) }}\udb80\udc82{{ else }}\udb80\udc79{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
           "trailing_diamond": "\uE0B4",
           "type": "battery"
         }
@@ -287,7 +287,7 @@
     "c-wakatime-overtime": "#FF8A80"
   },
   "transient_prompt": {
-    "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_TRANSIENT)) }}<{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uE0B6</><p:c-badge-text,{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uF55D \uE0B1 {{ if .Segments.Executiontime.Ms }}{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_TRANSIENT_EXEC_TIME)) }}\uFA1E {{ .Segments.Executiontime.FormattedMs }} \uE621 {{ end }}{{ end }}<b>{{ if eq .Code 0 }}OK{{ else if eq .Code 1 }}FAIL{{ else if eq .Code 130 }}TERM{{ else }}Code{{ end }} ({{ .Code }})</b></><{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uE0B4</> {{ end }}\u276F "
+    "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_TRANSIENT)) }}<{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uE0B6</><p:c-badge-text,{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\udb80\udc5e \uE0B1 {{ if .Segments.Executiontime.Ms }}{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_TRANSIENT_EXEC_TIME)) }}\udb81\udd1f {{ .Segments.Executiontime.FormattedMs }} \uE621 {{ end }}{{ end }}<b>{{ if eq .Code 0 }}OK{{ else if eq .Code 1 }}FAIL{{ else if eq .Code 130 }}TERM{{ else }}Code{{ end }} ({{ .Code }})</b></><{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uE0B4</> {{ end }}\u276F "
   },
   "secondary_prompt": {
     "background": "transparent",

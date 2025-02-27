@@ -19,42 +19,20 @@ const (
 )
 
 var (
-	shell          string
-	env            runtime.Environment
-	knownVariables []string
+	shell       string
+	env         runtime.Environment
+	knownFields *maps.Concurrent
 )
 
 func Init(environment runtime.Environment, vars maps.Simple) {
 	env = environment
 	shell = env.Shell()
+	knownFields = maps.NewConcurrent()
 
 	renderPool = sync.Pool{
 		New: func() any {
 			return newTextPoolObject()
 		},
-	}
-
-	knownVariables = []string{
-		"Root",
-		"PWD",
-		"AbsolutePWD",
-		"PSWD",
-		"Folder",
-		"Shell",
-		"ShellVersion",
-		"UserName",
-		"HostName",
-		"Code",
-		"Env",
-		"OS",
-		"WSL",
-		"PromptCount",
-		"Segments",
-		"SHLVL",
-		"Templates",
-		"Var",
-		"Data",
-		"Jobs",
 	}
 
 	if Cache != nil {

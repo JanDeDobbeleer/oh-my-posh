@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
@@ -36,6 +37,7 @@ func loadCache(vars maps.Simple) {
 	Cache.PromptCount = env.Flags().PromptCount
 	Cache.Var = make(map[string]any)
 	Cache.Jobs = env.Flags().JobCount
+	Cache.Version = build.Version
 
 	if vars != nil {
 		Cache.Var = vars

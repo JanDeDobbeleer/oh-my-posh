@@ -10,10 +10,13 @@
       "args": [
         "prompt",
         "print",
-        "primary",
+        "right",
         "--shell=pwsh",
         "--terminal-width=200"
-      ]
+      ],
+      "env": {
+        "POSH_THEME": "C:\\Users\\jande\\.posh.omp.jsonc"
+      }
     },
     {
       "name": "Tooltip",

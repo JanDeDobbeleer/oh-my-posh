@@ -9,3 +9,7 @@ func matchP(pattern, text string) bool {
 func replaceP(pattern, text, replaceText string) string {
 	return regex.ReplaceAllString(pattern, text, replaceText)
 }
+
+func findP(pattern, text string, index int) string {
+	return regex.FindStringMatch(pattern, text, index)
+}

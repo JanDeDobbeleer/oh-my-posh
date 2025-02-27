@@ -6,20 +6,21 @@
     "start": "cross-env NODE_ENV=development docusaurus start --poll 1000",
     "build": "docusaurus build",
     "serve": "docusaurus serve",
-    "themes": "node export_themes.js"
+    "themes": "node export_themes.js",
+    "clear": "docusaurus clear"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.5.1",
-    "@docusaurus/preset-classic": "^3.5.1",
-    "@docusaurus/theme-search-algolia": "^3.5.1",
+    "@docusaurus/core": "^3.7.0",
+    "@docusaurus/preset-classic": "^3.7.0",
+    "@docusaurus/theme-search-algolia": "^3.7.0",
     "@iarna/toml": "^2.2.5",
-    "@mdx-js/react": "^3.0.1",
+    "@mdx-js/react": "^3.1.0",
     "classnames": "^2.5.1",
-    "query-string": "9.0.0",
+    "query-string": "9.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.1",
-    "yaml": "^2.4.5"
+    "yaml": "^2.7.0"
   },
   "resolutions": {
     "trim": "^0.0.3",

@@ -416,6 +416,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://wiyco.dev"><img src="https://avatars.githubusercontent.com/u/72733890?v=4?s=100" width="100px;" alt="wiyco"/><br /><sub><b>wiyco</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=wiyco" title="Code">💻</a> <a href="#design-wiyco" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=wiyco" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/abhro"><img src="https://avatars.githubusercontent.com/u/5664668?v=4?s=100" width="100px;" alt="abhro"/><br /><sub><b>abhro</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=abhro" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://sharepointgurus.net"><img src="https://avatars.githubusercontent.com/u/25376734?v=4?s=100" width="100px;" alt="Ivan Wilson"/><br /><sub><b>Ivan Wilson</b></sub></a><br /><a href="#design-spg-iwilson" title="Design">🎨</a></td>
+    </tr>
   </tbody>
 </table>
 

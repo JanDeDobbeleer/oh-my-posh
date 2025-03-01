@@ -418,6 +418,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://sharepointgurus.net"><img src="https://avatars.githubusercontent.com/u/25376734?v=4?s=100" width="100px;" alt="Ivan Wilson"/><br /><sub><b>Ivan Wilson</b></sub></a><br /><a href="#design-spg-iwilson" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mdanish-kh"><img src="https://avatars.githubusercontent.com/u/88161975?v=4?s=100" width="100px;" alt="Muhammad Danish"/><br /><sub><b>Muhammad Danish</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mdanish-kh" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

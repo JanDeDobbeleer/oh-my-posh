@@ -2982,6 +2982,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "BoscoDomingo",
+      "name": "Bosco Domingo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46006784?v=4",
+      "profile": "https://dub.sh/boscodomingo",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

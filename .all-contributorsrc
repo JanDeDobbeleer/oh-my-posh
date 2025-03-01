@@ -2964,6 +2964,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "spg-iwilson",
+      "name": "Ivan Wilson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25376734?v=4",
+      "profile": "https://sharepointgurus.net",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,0 +1,199 @@
+{
+  "type": "text",
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#8826e9",
+          "foreground": "#ffffff",
+          "leading_diamond": "\u256d\u2500\ue0b2",
+          "powerline_symbol": "\ue0b0",
+          "style": "diamond",
+          "template": " \uedc5 ",
+          "type": "session",
+          "trailing_diamond": "\ue0b0"
+        },
+        {
+          "foreground": "#ffffff",
+          "style": "plain",
+          "template": "<#C591E8>\u276f</><#69FF94>\u276f</> ",
+          "type": "text"
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "display_mode": "context"
+          },
+          "foreground": "#011627",
+          "background": "#22d257",
+          "template": " \ue73c {{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }} "
+        },
+        {
+          "properties": {
+            "root_icon": "\uf292"
+          },
+          "style": "diamond",
+          "template": "\uf0e7",
+          "type": "root"
+        },
+        {
+          "foreground": "#7eb8da",
+          "properties": {
+            "time_format": "Monday at 3:04:05 PM"
+          },
+          "style": "diamond",
+          "template": "[<#ffffff>\uf073</> {{ .CurrentDate | date .Format }}] ",
+          "type": "time"
+        },
+        {
+          "foreground": "#98C379",
+          "properties": {
+            "fetch_version": true
+          },
+          "style": "plain",
+          "template": "<#ffffff>via</> \ue781 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+          "type": "node"
+        },
+        {
+          "foreground": "#0fc469",
+          "properties": {
+            "branch_icon": "\u276f \ue725 ",
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "branch_ahead_icon": "\u2191",
+            "branch_behind_icon": "\u2193",
+            "branch_gone": "\u2262",
+            "branch_identical_icon": "\u2261",
+            "cherry_pick_icon": "\u2713 ",
+            "commit_icon": "\u25b7 ",
+            "fetch_stash_count": true,
+            "merge_icon": "\u25f4 ",
+            "no_commits_icon": "[no commits]",
+            "rebase_icon": "\u2c62 ",
+            "tag_icon": "\u25b6 "
+          },
+          "style": "plain",
+          "template": "<#F3EFF5>on</> {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ",
+          "type": "git"
+        },
+        {
+          "foreground": "#eda5ff",
+          "style": "plain",
+          "template": "[{{ .Profile }}{{if .Region}}@{{ .Region }}{{ end }}]",
+          "type": "aws"
+        },
+        {
+          "foreground": "#ffa5d8",
+          "style": "plain",
+          "template": "[{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}]",
+          "type": "kubectl"
+        },
+        {
+          "foreground": "#ffa5a5",
+          "style": "plain",
+          "template": "[\uf0e7]",
+          "type": "root"
+        },
+        {
+          "foreground": "#9966ff",
+          "properties": {
+            "style": "austin",
+            "threshold": 0
+          },
+          "style": "plain",
+          "template": "\u27e8{{ .FormattedMs }}\u27e9 <#eaeaea></>",
+          "type": "executiontime"
+        },
+        {
+          "foreground": "green",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}red{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "{{ if gt .Code 0 }}\uea76{{else}}\uf42e{{ end }} ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#2597ac",
+          "style": "diamond",
+          "template": "[<#ffffff>\udb83\udee0</> CPU: {{ round .PhysicalPercentUsed .Precision }}%]",
+          "type": "sysinfo"
+        },
+        {
+          "foreground_templates": [
+            "{{if eq \"Charging\" .State.String}}#b8e994{{end}}",
+            "{{if eq \"Discharging\" .State.String}}#fff34e{{end}}",
+            "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
+          ],
+          "foreground": "#ffffff",
+          "invert_powerline": true,
+          "properties": {
+            "charged_icon": "\ueb2d ",
+            "charging_icon": "\uf241 ",
+            "discharging_icon": "\uf242 "
+          },
+          "style": "powerline",
+          "template": "[{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}%]",
+          "type": "battery"
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#7eb8da",
+          "properties": {
+            "style": "full"
+          },
+          "style": "plain",
+          "template": "\u2516[<#98bfad>{{ .Path }}</>]",
+          "type": "path"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#8047d0",
+          "style": "diamond",
+          "template": "[<#ffffff>\ue266</> RAM:{{ round .PhysicalPercentUsed .Precision }}% ({{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1073741824.0) }}/{{ (div .PhysicalTotalMemory 1073741824.0)}}GB)]",
+          "type": "sysinfo"
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#7eb8da",
+          "style": "plain",
+          "template": "\u2514\u2500\udb83\ude95",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 3
+}

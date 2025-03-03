@@ -3001,6 +3001,16 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "JamesAndrewJackson13",
+      "name": "James Jackson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27647566?v=4",
+      "profile": "https://github.com/JamesAndrewJackson13",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

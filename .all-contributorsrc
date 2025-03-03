@@ -2991,6 +2991,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Edu4rdSHL",
+      "name": "Eduard Tolosa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32582878?v=4",
+      "profile": "https://edu4rdshl.dev",
+      "contributions": [
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

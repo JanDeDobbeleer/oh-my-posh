@@ -231,6 +231,8 @@ const (
 	YTM SegmentType = "ytm"
 	// ZIG writes the active zig version
 	ZIG SegmentType = "zig"
+	// ZVM writes the active zig version used in the zvm environment
+	ZVM SegmentType = "zvm"
 )
 
 // Segments contains all available prompt segment writers.
@@ -337,6 +339,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	YARN:            func() SegmentWriter { return &segments.Yarn{} },
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
 	ZIG:             func() SegmentWriter { return &segments.Zig{} },
+	ZVM:             func() SegmentWriter { return &segments.Zvm{} },
 }
 
 func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {

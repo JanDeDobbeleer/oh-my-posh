@@ -24,6 +24,11 @@ enabled by adding the following to your configuration.
   }}
 />
 
+:::info
+Auto upgrade will never upgrade major versions. This is to avoid introducing breaking changes
+without explicit user acknowledgement.
+:::
+
 | Name       |   Type    | Default | Description                                                                                                                                                                                                                |
 | ---------- | :-------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `notice`   | `boolean` | `false` | enable displaying the upgrade notice on shell start, only checks based on `interval`                                                                                                                                       |

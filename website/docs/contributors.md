@@ -420,6 +420,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://sharepointgurus.net"><img src="https://avatars.githubusercontent.com/u/25376734?v=4?s=100" width="100px;" alt="Ivan Wilson"/><br /><sub><b>Ivan Wilson</b></sub></a><br /><a href="#design-spg-iwilson" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mdanish-kh"><img src="https://avatars.githubusercontent.com/u/88161975?v=4?s=100" width="100px;" alt="Muhammad Danish"/><br /><sub><b>Muhammad Danish</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mdanish-kh" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://dub.sh/boscodomingo"><img src="https://avatars.githubusercontent.com/u/46006784?v=4?s=100" width="100px;" alt="Bosco Domingo"/><br /><sub><b>Bosco Domingo</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=BoscoDomingo" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://edu4rdshl.dev"><img src="https://avatars.githubusercontent.com/u/32582878?v=4?s=100" width="100px;" alt="Eduard Tolosa"/><br /><sub><b>Eduard Tolosa</b></sub></a><br /><a href="#design-Edu4rdSHL" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Edu4rdSHL" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

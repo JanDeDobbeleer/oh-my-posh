@@ -138,8 +138,7 @@ func (p *Python) pyenvVersion() (string, error) {
 	}
 
 	pyEnvRoot := p.env.Getenv("PYENV_ROOT")
-	// TODO:  pyenv-win has this at $PYENV_ROOT/pyenv-win/shims
-	if cmdPath != filepath.Join(pyEnvRoot, "shims", "python") {
+	if !strings.HasPrefix(cmdPath, pyEnvRoot) {
 		return "", fmt.Errorf("executable at %s is not a pyenv shim", cmdPath)
 	}
 

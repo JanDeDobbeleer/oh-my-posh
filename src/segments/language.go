@@ -222,12 +222,14 @@ func (l *language) setVersion() error {
 	for _, command := range l.commands {
 		versionStr, err := l.runCommand(command)
 		if err != nil {
+			log.Error(err)
 			lastError = err
 			continue
 		}
 
 		version, err := command.parse(versionStr)
 		if err != nil {
+			log.Error(err)
 			lastError = fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
 			continue
 		}
@@ -271,8 +273,12 @@ func (l *language) runCommand(command *cmd) (string, error) {
 	}
 
 	versionStr, err := command.getVersion()
-	if err != nil || versionStr == "" {
-		return "", errors.New("cannot get version")
+	if err != nil {
+		return "", err
+	}
+
+	if len(versionStr) == 0 {
+		return "", errors.New("no version found")
 	}
 
 	return versionStr, nil

@@ -22,7 +22,7 @@ import (
 	toml "github.com/pelletier/go-toml/v2"
 )
 
-// LoadConfig returns the default configuration including possible user overrides
+// Load returns the default configuration including possible user overrides
 func Load(configFile, sh string, migrate bool) *Config {
 	defer log.Trace(time.Now())
 

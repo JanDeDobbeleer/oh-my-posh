@@ -90,7 +90,7 @@ func (p *PaletteRecursiveKeyError) Error() string {
 	return errorStr
 }
 
-// maybeResolveColor wraps resolveColor and silences possible errors, returning
+// MaybeResolveColor wraps resolveColor and silences possible errors, returning
 // Transparent color by default, as a Block does not know how to handle color errors.
 func (p Palette) MaybeResolveColor(colorName Ansi) Ansi {
 	color, err := p.ResolveColor(colorName)

@@ -3011,6 +3011,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Mr-Vipi",
+      "name": "Jul Guga",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58825526?v=4",
+      "profile": "https://github.com/Mr-Vipi",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

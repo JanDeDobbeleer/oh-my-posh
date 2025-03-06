@@ -3020,6 +3020,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "tiaoxizhan",
+      "name": "tiaoxizhan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/178074436?v=4",
+      "profile": "http://txzhan.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

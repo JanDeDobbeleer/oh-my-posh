@@ -69,18 +69,34 @@ func String() string {
 }
 
 func funcSpec() (string, int) {
-	pc, file, line, OK := runtime.Caller(3)
-	if !OK {
+	pcs := make([]uintptr, 4)
+	n := runtime.Callers(3, pcs)
+	if n == 0 {
 		return "", 0
 	}
 
-	fn := runtime.FuncForPC(pc).Name()
-	fn = fn[strings.LastIndex(fn, ".")+1:]
-	file = filepath.Base(file)
+	frames := runtime.CallersFrames(pcs[:n])
+	var frame runtime.Frame
+	more := true
 
-	if strings.HasPrefix(fn, "func") {
-		return file, line
+	// Loop through frames until we're out of log.go
+	for more {
+		frame, more = frames.Next()
+		if strings.Contains(frame.File, "log.go") {
+			continue
+		}
+
+		// Found first non-log.go frame
+		fn := frame.Function
+		fn = fn[strings.LastIndex(fn, ".")+1:]
+		file := filepath.Base(frame.File)
+
+		if strings.HasPrefix(fn, "func") {
+			return file, frame.Line
+		}
+
+		return fmt.Sprintf("%s:%s", file, fn), frame.Line
 	}
 
-	return fmt.Sprintf("%s:%s", file, fn), line
+	return "", 0
 }

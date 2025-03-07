@@ -25,7 +25,7 @@ func (w *Wrapper) GetBool(property Property, defaultValue bool) bool {
 
 func (w *Wrapper) GetString(property Property, defaultValue string) string {
 	value := w.Properties.GetString(property, defaultValue)
-	log.Debug(value)
+	log.Debug(fmt.Sprintf("%s: %s", property, value))
 	return value
 }
 

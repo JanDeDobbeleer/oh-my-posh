@@ -425,6 +425,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mr-Vipi"><img src="https://avatars.githubusercontent.com/u/58825526?v=4?s=100" width="100px;" alt="Jul Guga"/><br /><sub><b>Jul Guga</b></sub></a><br /><a href="#design-Mr-Vipi" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://txzhan.io"><img src="https://avatars.githubusercontent.com/u/178074436?v=4?s=100" width="100px;" alt="tiaoxizhan"/><br /><sub><b>tiaoxizhan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=tiaoxizhan" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/chrisant996"><img src="https://avatars.githubusercontent.com/u/17440311?v=4?s=100" width="100px;" alt="Chris Antos"/><br /><sub><b>Chris Antos</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=chrisant996" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

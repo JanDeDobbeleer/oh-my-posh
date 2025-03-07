@@ -65,6 +65,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"endeavouros":         "\uF322",
 		"fedora":              "\uF30a",
 		"gentoo":              "\uF30d",
+		"kali":                "\uf327",
 		"mageia":              "\uF310",
 		"manjaro":             "\uF312",
 		"mint":                "\uF30e",

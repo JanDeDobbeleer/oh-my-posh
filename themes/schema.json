@@ -284,7 +284,7 @@
     },
     "segment": {
       "type": "object",
-      "title": "A segment",
+      "title": "Segment",
       "description": "https://ohmyposh.dev/docs/configuration/segment",
       "default": {},
       "required": [

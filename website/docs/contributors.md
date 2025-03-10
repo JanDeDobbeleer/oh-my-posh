@@ -427,6 +427,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chrisant996"><img src="https://avatars.githubusercontent.com/u/17440311?v=4?s=100" width="100px;" alt="Chris Antos"/><br /><sub><b>Chris Antos</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=chrisant996" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://robertbleattler.com"><img src="https://avatars.githubusercontent.com/u/40604784?v=4?s=100" width="100px;" alt="Robert Bleattler"/><br /><sub><b>Robert Bleattler</b></sub></a><br /><a href="#design-rbleattler" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

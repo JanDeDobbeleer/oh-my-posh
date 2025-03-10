@@ -194,9 +194,13 @@ func (term *Terminal) getConnections() []*Connection {
 		networks = append(networks, network)
 	}
 
-	if wifi, err := term.wifiNetwork(); err == nil {
+	wifi, err := term.wifiNetwork()
+	if err == nil {
 		networks = append(networks, wifi)
+		return networks
 	}
+
+	log.Error(err)
 
 	return networks
 }
@@ -225,9 +229,10 @@ func (term *Terminal) wifiNetwork() (*Connection, error) {
 	// use first interface that is connected
 	numberOfInterfaces := int(interfaceList.dwNumberOfItems)
 	infoSize := unsafe.Sizeof(interfaceList.InterfaceInfo[0])
-	for i := 0; i < numberOfInterfaces; i++ {
+	for i := range numberOfInterfaces {
 		network := (*WLAN_INTERFACE_INFO)(unsafe.Pointer(uintptr(unsafe.Pointer(&interfaceList.InterfaceInfo[0])) + uintptr(i)*infoSize))
 		if network.isState != 1 {
+			log.Debug("Skipping non-connected wifi interface")
 			continue
 		}
 
@@ -253,7 +258,6 @@ func (term *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, client
 		uintptr(unsafe.Pointer(&wlanAttr)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		log.Error(err)
 		return &info, err
 	}
 

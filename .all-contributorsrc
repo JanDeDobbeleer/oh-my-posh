@@ -3038,6 +3038,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "rbleattler",
+      "name": "Robert Bleattler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40604784?v=4",
+      "profile": "https://robertbleattler.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

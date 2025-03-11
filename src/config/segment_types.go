@@ -16,6 +16,7 @@ type SegmentWriter interface {
 	Enabled() bool
 	Template() string
 	SetText(text string)
+	SetIndex(index int)
 	Text() string
 	Init(props properties.Properties, env runtime.Environment)
 }

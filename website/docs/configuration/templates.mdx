@@ -18,24 +18,32 @@ These properties can be used anywhere, in any segment. If a segment contains a p
 the segment property value will be used instead. In case you want to use the global property, you can prefix
 it with `.$` to reference it directly.
 
-| Name            | Type      | Description                                                       |
-| --------------- | --------- | ----------------------------------------------------------------- |
-| `.Root`         | `boolean` | is the current user root/admin or not                             |
-| `.PWD`          | `string`  | the current working directory (`~` for `$HOME`)                   |
-| `.AbsolutePWD`  | `string`  | the current working directory (unaltered)                         |
-| `.PSWD       `  | `string`  | the current non-filesystem working directory in PowerShell        |
-| `.Folder`       | `string`  | the current working folder                                        |
-| `.Shell`        | `string`  | the current shell name                                            |
-| `.ShellVersion` | `string`  | the current shell version                                         |
-| `.SHLVL`        | `int`     | the current shell level                                           |
-| `.UserName`     | `string`  | the current user name                                             |
-| `.HostName`     | `string`  | the host name                                                     |
-| `.Code`         | `int`     | the last exit code                                                |
-| `.OS`           | `string`  | the operating system                                              |
-| `.WSL`          | `boolean` | in WSL yes/no                                                     |
-| `.Templates`    | `string`  | the [templates][templates] result                                 |
-| `.PromptCount`  | `int`     | the prompt counter, increments with 1 for every prompt invocation |
-| `.Version`      | `string`  | the Oh My Posh version                                            |
+| Name            | Type                  | Description                                                       |
+| --------------- | --------------------- | ----------------------------------------------------------------- |
+| `.Root`         | `boolean`             | is the current user root/admin or not                             |
+| `.PWD`          | `string`              | the current working directory (`~` for `$HOME`)                   |
+| `.AbsolutePWD`  | `string`              | the current working directory (unaltered)                         |
+| `.PSWD       `  | `string`              | the current non-filesystem working directory in PowerShell        |
+| `.Folder`       | `string`              | the current working folder                                        |
+| `.Shell`        | `string`              | the current shell name                                            |
+| `.ShellVersion` | `string`              | the current shell version                                         |
+| `.SHLVL`        | `int`                 | the current shell level                                           |
+| `.UserName`     | `string`              | the current user name                                             |
+| `.HostName`     | `string`              | the host name                                                     |
+| `.Code`         | `int`                 | the last exit code                                                |
+| `.OS`           | `string`              | the operating system                                              |
+| `.WSL`          | `boolean`             | in WSL yes/no                                                     |
+| `.Templates`    | `string`              | the [templates][templates] result                                 |
+| `.PromptCount`  | `int`                 | the prompt counter, increments with 1 for every prompt invocation |
+| `.Version`      | `string`              | the Oh My Posh version                                            |
+| `.Segment`      | [`Segment`](#segment) | the current segment's metadata                                    |
+
+### Segment
+
+| Name             | Type     | Description                               |
+| ---------------- | -------- | ----------------------------------------- |
+| `.Segment.Index` | `int`    | the current segment's index (as rendered) |
+| `.Segment.Text`  | `string` | the segment's rendered text               |
 
 ## Environment variables
 

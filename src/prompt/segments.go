@@ -53,6 +53,8 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 	results := make([]*config.Segment, count)
 	// store the unique names of executed segments
 	executed := make([]string, count)
+	// store the actual redered index
+	segmentIndex := 0
 
 	for {
 		select {
@@ -75,7 +77,10 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 					break
 				}
 
-				segment.Render()
+				if segment.Render(segmentIndex) {
+					segmentIndex++
+				}
+
 				e.writeSegment(block, segment)
 
 				if current == count-1 {

@@ -145,17 +145,19 @@ func (segment *Segment) Execute(env runtime.Environment) {
 	}
 }
 
-func (segment *Segment) Render() {
+func (segment *Segment) Render(index int) bool {
 	if !segment.Enabled {
-		return
+		return false
 	}
+
+	segment.writer.SetIndex(index)
 
 	text := segment.string()
 	segment.Enabled = len(strings.ReplaceAll(text, " ", "")) > 0
 
 	if !segment.Enabled {
 		template.Cache.RemoveSegmentData(segment.Name())
-		return
+		return false
 	}
 
 	segment.SetText(text)
@@ -163,6 +165,8 @@ func (segment *Segment) Render() {
 
 	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
 	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+
+	return true
 }
 
 func (segment *Segment) Text() string {

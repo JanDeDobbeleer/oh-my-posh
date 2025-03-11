@@ -126,11 +126,6 @@ func (f *fields) init(data any) {
 	case reflect.Struct:
 		name := val.Name()
 
-		// ignore the base struct
-		if name == "base" {
-			return
-		}
-
 		// check if we already know the fields of this struct
 		if kf, OK := knownFields.Get(name); OK {
 			for key := range kf.(fields) {

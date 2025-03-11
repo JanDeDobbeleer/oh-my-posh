@@ -78,8 +78,15 @@ func (t *Text) patchTemplate() {
 				// as we can't provide a clean way to access the list
 				// of segments, we need to replace the property with
 				// the list of segments so they can be accessed directly
-				property = strings.Replace(property, ".Segments", ".Segments.ToSimple", 1)
+				parts := strings.Split(property, ".")
+				if len(parts) > 3 {
+					property = fmt.Sprintf(`(.Segments.MustGet "%s").%s`, parts[2], strings.Join(parts[3:], "."))
+				} else {
+					property = fmt.Sprintf(`(.Segments.MustGet "%s")`, parts[2])
+				}
 				result += property
+				// property = strings.Replace(property, ".Segments", ".Segments.ToSimple", 1)
+				// result += property
 			case strings.HasPrefix(property, ".Env."):
 				// we need to replace the property with the getEnv function
 				// so we can access the environment variables directly
@@ -112,6 +119,8 @@ func (t *Text) patchTemplate() {
 
 	// return the result and remaining unresolved property
 	t.Template = result + property
+
+	log.Debug(t.Template)
 }
 
 type fields map[string]bool

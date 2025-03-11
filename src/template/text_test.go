@@ -336,7 +336,7 @@ func TestPatchTemplate(t *testing.T) {
 		},
 		{
 			Case:     "Replace a direct call to .Segments with .Segments.List",
-			Expected: `{{.Segments.ToSimple.Git.Repo}}`,
+			Expected: `{{(.Segments.MustGet "Git").Repo}}`,
 			Template: `{{.Segments.Git.Repo}}`,
 		},
 	}

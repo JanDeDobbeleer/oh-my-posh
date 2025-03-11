@@ -1,0 +1,121 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "enable_cursor_positioning": true,
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "shell",
+          "style": "plain",
+          "foreground": "#E06C75",
+          "properties": {
+            "mapped_shell_names": {
+              "pwsh": "Shell",
+              "powershell": "Shell",
+              "cmd": "Cmd",
+              "bash": "Bash"
+            }
+          },
+          "template": "\ue795 {{ .Name }}"
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#F3C267",
+          "foreground_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#FF9248{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ff4500{{ end }}",
+            "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
+            "{{ if gt .Behind 0 }}#B388FF{{ end }}"
+          ],
+          "properties": {
+            "branch_max_length": 25,
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "template": "   {{ .HEAD | replace \"\" \"\" }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} "
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "#b8ff75",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#E06C75{{ end }}"
+          ],
+          "template": " x{{ reason .Code }}"
+        },
+        {
+          "type": "executiontime",
+          "style": "diamond",
+          "foreground": "#b8ff75",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#E06C75{{ end }}"
+          ],
+          "properties": {
+            "style": "roundrock",
+            "always_enabled": true
+          },
+          "template": " {{ .FormattedMs }} "
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#61AFEF",
+          "properties": {
+            "style": "full"
+          },
+          "template": "\ue5ff {{ .Path }}"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#E06C75",
+          "template": "\u0021"
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "foreground": "#b8ff75",
+          "template": " {{ .Full }} "
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#E06C75",
+          "template": "\u276f"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "transient_prompt": {
+    "foreground": "#E06C75",
+    "template": "\u276f "
+  },
+  "version": 3
+}
+

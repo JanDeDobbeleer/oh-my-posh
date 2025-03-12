@@ -5,12 +5,7 @@ sidebar_label: 🎨 Themes
 ---
 
 Oh My Posh comes with many themes included out-of-the-box. Below are some screenshots of the more common themes.
-For the full updated list of themes, [view the themes][themes] in Github. If you are using PowerShell, you can
-display every available theme using the following PowerShell cmdlet.
-
-```powershell
-Get-PoshThemes
-```
+For the full updated list of themes, [view the themes][themes] in Github.
 
 Once you're ready to swap to a theme, follow the steps described in [🚀 Get started > Customize][installation-customize].
 

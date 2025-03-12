@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -93,33 +94,40 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	var feats shell.Features
 
 	if cfg.TransientPrompt != nil {
+		log.Debug("transient prompt enabled")
 		feats = append(feats, shell.Transient)
 	}
 
 	if cfg.ShellIntegration {
+		log.Debug("shell integration enabled")
 		feats = append(feats, shell.FTCSMarks)
 	}
 
 	feats = append(feats, cfg.UpgradeFeatures(env)...)
 
 	if cfg.ErrorLine != nil || cfg.ValidLine != nil {
+		log.Debug("error or valid line enabled")
 		feats = append(feats, shell.LineError)
 	}
 
 	if len(cfg.Tooltips) > 0 {
+		log.Debug("tooltips enabled")
 		feats = append(feats, shell.Tooltips)
 	}
 
 	if env.Shell() == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark) {
+		log.Debug("prompt mark enabled")
 		feats = append(feats, shell.PromptMark)
 	}
 
 	for i, block := range cfg.Blocks {
 		if (i == 0 && block.Newline) && cfg.EnableCursorPositioning {
+			log.Debug("cursor positioning enabled")
 			feats = append(feats, shell.CursorPositioning)
 		}
 
 		if block.Type == RPrompt {
+			log.Debug("rprompt enabled")
 			feats = append(feats, shell.RPrompt)
 		}
 
@@ -127,6 +135,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 			if segment.Type == AZ {
 				source := segment.Properties.GetString(segments.Source, segments.FirstMatch)
 				if source == segments.Pwsh || source == segments.FirstMatch {
+					log.Debug("azure enabled")
 					feats = append(feats, shell.Azure)
 				}
 			}
@@ -134,6 +143,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 			if segment.Type == GIT {
 				source := segment.Properties.GetString(segments.Source, segments.Cli)
 				if source == segments.Pwsh {
+					log.Debug("posh-git enabled")
 					feats = append(feats, shell.PoshGit)
 				}
 			}
@@ -147,6 +157,7 @@ func (cfg *Config) UpgradeFeatures(env runtime.Environment) shell.Features {
 	feats := shell.Features{}
 
 	if _, OK := env.Cache().Get(upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
+		log.Debug("upgrade cache key found and not forced, skipping upgrade")
 		return feats
 	}
 
@@ -155,21 +166,27 @@ func (cfg *Config) UpgradeFeatures(env runtime.Environment) shell.Features {
 
 	autoUpgrade := cfg.Upgrade.Auto
 	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
+		log.Debug("auto upgrade key found")
 		autoUpgrade = true
 	}
 
 	upgradeNotice := cfg.Upgrade.DisplayNotice
 	if _, OK := env.Cache().Get(UPGRADENOTICE); OK {
+		log.Debug("upgrade notice key found")
 		upgradeNotice = true
 	}
 
 	if upgradeNotice && !autoUpgrade {
+		log.Debug("notice enabled, no auto upgrade")
 		feats = append(feats, shell.Notice)
 	}
 
 	if autoUpgrade {
+		log.Debug("auto upgrade enabled")
 		feats = append(feats, shell.Upgrade)
 	}
+
+	log.Debugf("upgrade features: %v", feats)
 
 	return feats
 }

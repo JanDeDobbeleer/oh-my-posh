@@ -136,7 +136,7 @@ func (f *fields) init(data any) {
 		name := val.Name()
 
 		// check if we already know the fields of this struct
-		if kf, OK := knownFields.Get(name); OK {
+		if kf, OK := knownFields.Load(name); OK {
 			for key := range kf.(fields) {
 				(*f)[key] = true
 			}
@@ -169,7 +169,7 @@ func (f *fields) init(data any) {
 			(*f)[ptrType.Method(i).Name] = true
 		}
 
-		knownFields.Set(name, *f)
+		knownFields.Store(name, *f)
 	case reflect.Map:
 		m, ok := data.(map[string]any)
 		if !ok {

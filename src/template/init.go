@@ -21,13 +21,13 @@ const (
 var (
 	shell       string
 	env         runtime.Environment
-	knownFields *maps.Concurrent
+	knownFields sync.Map
 )
 
 func Init(environment runtime.Environment, vars maps.Simple) {
 	env = environment
 	shell = env.Shell()
-	knownFields = maps.NewConcurrent()
+	knownFields = sync.Map{}
 
 	renderPool = sync.Pool{
 		New: func() any {

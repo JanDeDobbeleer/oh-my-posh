@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
@@ -125,7 +126,7 @@ func (t *Text) patchTemplate() {
 
 type fields map[string]bool
 
-func (f *fields) init(data any) {
+func (f fields) init(data any) {
 	if data == nil {
 		return
 	}
@@ -138,16 +139,16 @@ func (f *fields) init(data any) {
 		// check if we already know the fields of this struct
 		if kf, OK := knownFields.Load(name); OK {
 			for key := range kf.(fields) {
-				(*f)[key] = true
+				f.add(key)
 			}
 			return
 		}
 
 		// Get struct fields and check embedded types
 		fieldsNum := val.NumField()
-		for i := 0; i < fieldsNum; i++ {
+		for i := range fieldsNum {
 			field := val.Field(i)
-			(*f)[field.Name] = true
+			f.add(field.Name)
 
 			// If this is an embedded field, get its methods too
 			if !field.Anonymous {
@@ -165,21 +166,32 @@ func (f *fields) init(data any) {
 		// Get pointer methods
 		ptrType := reflect.PointerTo(val)
 		methodsNum := ptrType.NumMethod()
-		for i := 0; i < methodsNum; i++ {
-			(*f)[ptrType.Method(i).Name] = true
+		for i := range methodsNum {
+			f.add(ptrType.Method(i).Name)
 		}
 
-		knownFields.Store(name, *f)
+		knownFields.Store(name, f)
 	case reflect.Map:
 		m, ok := data.(map[string]any)
 		if !ok {
 			return
 		}
 		for key := range m {
-			(*f)[key] = true
+			f.add(key)
 		}
 	case reflect.Ptr:
 		f.init(reflect.ValueOf(data).Elem().Interface())
+	}
+}
+
+func (f fields) add(field string) {
+	if len(field) == 0 {
+		return
+	}
+
+	r := []rune(field)[0]
+	if unicode.IsUpper(r) {
+		f[field] = true
 	}
 }
 

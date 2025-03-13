@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 
@@ -31,7 +32,7 @@ func (t *Text) Render() (string, error) {
 }
 
 func (t *Text) patchTemplate() {
-	fields := make(fields)
+	fields := &fields{}
 	fields.init(t.Context)
 
 	var result, property string
@@ -124,11 +125,18 @@ func (t *Text) patchTemplate() {
 	log.Debug(t.Template)
 }
 
-type fields map[string]bool
+type fields struct {
+	values map[string]bool
+	sync.RWMutex
+}
 
-func (f fields) init(data any) {
+func (f *fields) init(data any) {
 	if data == nil {
 		return
+	}
+
+	if f.values == nil {
+		f.values = make(map[string]bool)
 	}
 
 	val := reflect.TypeOf(data)
@@ -138,9 +146,7 @@ func (f fields) init(data any) {
 
 		// check if we already know the fields of this struct
 		if kf, OK := knownFields.Load(name); OK {
-			for key := range kf.(fields) {
-				f.add(key)
-			}
+			f.append(kf)
 			return
 		}
 
@@ -184,24 +190,55 @@ func (f fields) init(data any) {
 	}
 }
 
-func (f fields) add(field string) {
+func (f *fields) append(values any) {
+	if values == nil {
+		return
+	}
+
+	fields, ok := values.(*fields)
+	if !ok {
+		return
+	}
+
+	f.Lock()
+	fields.RLock()
+
+	defer func() {
+		f.Unlock()
+		fields.RUnlock()
+	}()
+
+	for key := range fields.values {
+		f.values[key] = true
+	}
+}
+
+func (f *fields) add(field string) {
 	if len(field) == 0 {
 		return
 	}
 
 	r := []rune(field)[0]
-	if unicode.IsUpper(r) {
-		f[field] = true
+	if !unicode.IsUpper(r) {
+		return
 	}
+
+	f.Lock()
+	defer f.Unlock()
+
+	f.values[field] = true
 }
 
-func (f fields) hasField(field string) bool {
+func (f *fields) hasField(field string) bool {
 	field = strings.TrimPrefix(field, ".")
 
 	// get the first part of the field
 	splitted := strings.Split(field, ".")
 	field = splitted[0]
 
-	_, ok := f[field]
+	f.RLock()
+	defer f.RUnlock()
+
+	_, ok := f.values[field]
 	return ok
 }

@@ -353,6 +353,10 @@ func (pt *Path) getAgnosterLeftPath() string {
 	}
 
 	var elements []string
+	if len(folders) == 0 {
+		return pt.colorizePath(root, elements)
+	}
+
 	elements = append(elements, folders[0].Name)
 	for i, n := 1, len(folders); i < n; i++ {
 		if folders[i].Display {

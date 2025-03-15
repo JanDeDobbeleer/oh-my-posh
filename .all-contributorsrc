@@ -3047,6 +3047,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "d3v2a",
+      "name": "dev2a",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1815655?v=4",
+      "profile": "https://artis-auxilium.fr/fr",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

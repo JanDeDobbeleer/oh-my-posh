@@ -40,6 +40,7 @@ func (fc *File) Init(cacheFilePath string, persist bool) {
 
 	for key, co := range list {
 		if co.Expired() {
+			log.Debug("skipping expired cache key:", key)
 			continue
 		}
 

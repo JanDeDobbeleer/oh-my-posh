@@ -1,7 +1,6 @@
 version: 2
 updates:
 
-  # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "main"
@@ -16,7 +15,6 @@ updates:
         # https://github.com/softprops/action-gh-release/issues/556
         versions: ["2.2.0"]
 
-  # Maintain dependencies for Go modules
   - package-ecosystem: "gomod"
     directory: "/src"
     target-branch: "main"
@@ -29,3 +27,10 @@ updates:
         update-types:
         - "minor"
         - "patch"
+
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"

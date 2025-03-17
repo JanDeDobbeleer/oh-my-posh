@@ -121,7 +121,7 @@
       "type": "string",
       "title": "Branch template",
       "description": "the temaplate to use for the branch name, supports {{ .Branch }} for the branch name",
-      "default": true
+      "default": ""
     },
     "mapped_branches": {
       "type": "object",

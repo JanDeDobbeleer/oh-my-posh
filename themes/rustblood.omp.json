@@ -1,0 +1,71 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#ffffff",
+    "template": "<#CB4B16>{{ .PWD }}></> "
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "template": "<#CB4B16>[</>{{ .HEAD }}<#CB4B16>]</>",
+          "foreground": "#ffffff",
+          "type": "git",
+          "style": "plain",
+          "properties": {
+            "branch_icon": ""
+          }
+        },
+        {
+          "template": "{{if and (.HEAD) (gt .StashCount 0)}}<#CB4B16>[</>stash<#CB4B16>]</>{{ end }}",
+          "foreground": "#FF0000",
+          "type": "git",
+          "style": "plain",
+          "properties": {
+            "branch_icon": "",
+            "mapped_branches": {
+              "master": "",
+              "main": ""
+            }
+          }
+        },
+        {
+          "foreground": "#FF0000",
+          "template": "{{ if ne .Code 0 }}<#CB4B16>[</>{{ .Code }}<#CB4B16>]</>{{ end }}",
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#ffffff",
+          "template": "<#CB4B16>[</>{{ .CurrentDate | date .Format }}<#CB4B16>]</>",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "plain",
+          "type": "time"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "style": "full"
+          },
+          "template": "<#CB4B16>{{ path .Path .Location }}></>",
+          "foreground": "#ffffff",
+          "type": "path",
+          "style": "plain"
+        }
+      ],
+      "newline": true
+    }
+  ],
+  "version": 3,
+  "final_space": true
+}

@@ -236,6 +236,16 @@ func (pt *Path) setStyle() {
 	default:
 		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
+
+	// make sure we resolve all templates
+	tmpl := &template.Text{
+		Template: pt.Path,
+		Context:  pt,
+	}
+
+	if text, err := tmpl.Render(); err == nil {
+		pt.Path = text
+	}
 }
 
 func (pt *Path) getMaxWidth() int {

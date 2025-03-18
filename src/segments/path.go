@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -370,21 +371,28 @@ func (pt *Path) getAgnosterLeftPath() string {
 	return pt.colorizePath(root, elements)
 }
 
+func (pt *Path) findFirstLetterOrNumber(text string) (letter string, index int) {
+	for i, char := range text {
+		if unicode.IsLetter(char) || unicode.IsNumber(char) {
+			return string(char), i
+		}
+	}
+
+	return text, 0
+}
+
 func (pt *Path) getRelevantLetter(folder *Folder) string {
 	if folder.Display {
 		return folder.Name
 	}
 
-	// check if there is at least a letter we can use
-	matches := regex.FindNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder.Name)
-	if matches == nil || len(matches["letter"]) == 0 {
-		// no letter found, keep the folder unchanged
-		return folder.Name
+	letter, index := pt.findFirstLetterOrNumber(folder.Name)
+	if index == 0 {
+		return letter
 	}
-	letter := matches["letter"]
+
 	// handle non-letter characters before the first found letter
-	letter = folder.Name[0:strings.Index(folder.Name, letter)] + letter
-	return letter
+	return folder.Name[0:index] + letter
 }
 
 func (pt *Path) getLetterPath() string {

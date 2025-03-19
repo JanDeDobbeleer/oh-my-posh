@@ -4,7 +4,6 @@ properties:
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install Visual Studio Code
-        allowPrerelease: false
       settings:
         id: Microsoft.VisualStudioCode
         source: winget
@@ -12,7 +11,6 @@ properties:
       id: golang
       directives:
         description: Install Golang
-        allowPrerelease: false
       settings:
         id: GoLang.Go
         source: winget
@@ -20,14 +18,13 @@ properties:
       dependsOn: [golang]
       directives:
         description: Install golangci-lint
-        allowPrerelease: false
       settings:
         id: GolangCI.golangci-lint
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
         description: Install NodeJS
-        allowPrerelease: false
+        securityContext: elevated
       settings:
         id: OpenJS.NodeJS
         source: winget

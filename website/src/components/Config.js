@@ -9,6 +9,24 @@ function Config(props) {
 
   const {data} = props;
 
+  const patchTomlData = () => {
+    if (data?.properties) {
+      const properties = data.properties;
+      delete data.properties;
+
+      return {
+        ...data,
+        blocks: {
+          segments: {
+            properties: properties
+          }
+        }
+      };
+    }
+
+    return data;
+  };
+
   return (
     <Tabs
         defaultValue="json"
@@ -31,7 +49,7 @@ function Config(props) {
       </TabItem>
       <TabItem value="toml">
         <CodeBlock className="language-toml">
-          {TOML.stringify(data)}
+          {TOML.stringify(patchTomlData())}
         </CodeBlock>
       </TabItem>
     </Tabs>

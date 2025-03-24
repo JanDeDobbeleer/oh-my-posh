@@ -21,6 +21,7 @@ function isValidTheme(theme) {
 }
 
 let themeConfigOverrrides = new Map();
+themeConfigOverrrides.set('maghribi.omp.json', newThemeConfig(40, 40, 'wevilb', '#151515'));
 themeConfigOverrrides.set('amro.omp.json', newThemeConfig('AmRo', '#1C2029'));
 themeConfigOverrrides.set('chips.omp.json', newThemeConfig('CodexLink | v1.2.4, Single Width (07/11/2023) | https://github.com/CodexLink/chips.omp.json'));
 themeConfigOverrrides.set('craver.omp.json', newThemeConfig('Nick Craver', '#282c34'));

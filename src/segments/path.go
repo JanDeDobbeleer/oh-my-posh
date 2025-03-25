@@ -114,6 +114,8 @@ const (
 	GitDirFormat properties.Property = "gitdir_format"
 	// DisplayCygpath transforms the path to a cygpath format
 	DisplayCygpath properties.Property = "display_cygpath"
+	// DisplayRoot indicates if the linux root slash should be displayed
+	DisplayRoot properties.Property = "display_root"
 )
 
 func (pt *Path) Template() string {
@@ -304,15 +306,10 @@ func (pt *Path) getFolderSeparator() string {
 }
 
 func (pt *Path) getMixedPath() string {
-	root := pt.root
-	folders := pt.Folders
 	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	var elements []string
 
@@ -330,14 +327,9 @@ func (pt *Path) getMixedPath() string {
 }
 
 func (pt *Path) getAgnosterPath() string {
-	root := pt.root
-	folders := pt.Folders
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	var elements []string
 
@@ -354,14 +346,9 @@ func (pt *Path) getAgnosterPath() string {
 }
 
 func (pt *Path) getAgnosterLeftPath() string {
-	root := pt.root
-	folders := pt.Folders
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	var elements []string
 	if len(folders) == 0 {
@@ -406,13 +393,7 @@ func (pt *Path) getRelevantLetter(folder *Folder) string {
 }
 
 func (pt *Path) getLetterPath() string {
-	root := pt.root
-	folders := pt.Folders
-
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	root = pt.getRelevantLetter(&Folder{Name: root})
 
@@ -431,14 +412,11 @@ func (pt *Path) getLetterPath() string {
 }
 
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
-	root := pt.root
-	folders := pt.Folders
+	dr := pt.props.GetBool(DisplayRoot, false)
+	log.Debugf("%t", dr)
 	separator := pt.getFolderSeparator()
 
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	folderNames := folders.List()
 
@@ -499,25 +477,13 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 }
 
 func (pt *Path) getAgnosterFullPath() string {
-	root := pt.root
-	folders := pt.Folders
-
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	return pt.colorizePath(root, folders.List())
 }
 
 func (pt *Path) getAgnosterShortPath() string {
-	root := pt.root
-	folders := pt.Folders
-
-	if pt.isRootFS(root) {
-		root = folders[0].Name
-		folders = folders[1:]
-	}
+	root, folders := pt.getPaths()
 
 	maxDepth := pt.props.GetInt(MaxDepth, 1)
 	if maxDepth < 1 {
@@ -724,8 +690,25 @@ func (pt *Path) parsePath(inputPath string) (string, string) {
 	return root, relative
 }
 
-func (pt *Path) isRootFS(inputPath string) bool {
-	return len(inputPath) == 1 && path.IsSeparator(inputPath[0])
+func (pt *Path) getPaths() (string, Folders) {
+	root := pt.root
+	folders := pt.Folders
+
+	isRootFS := func(inputPath string) bool {
+		displayRoot := pt.props.GetBool(DisplayRoot, false)
+		if displayRoot {
+			return false
+		}
+
+		return len(inputPath) == 1 && path.IsSeparator(inputPath[0])
+	}
+
+	if isRootFS(root) {
+		root = folders[0].Name
+		folders = folders[1:]
+	}
+
+	return root, folders
 }
 
 func (pt *Path) endWithSeparator(inputPath string) bool {

@@ -62,7 +62,7 @@ func (p *Python) Enabled() bool {
 }
 
 func (p *Python) loadContext() {
-	if !p.language.props.GetBool(FetchVirtualEnv, true) {
+	if !p.props.GetBool(FetchVirtualEnv, true) {
 		return
 	}
 	if prompt := p.pyvenvCfgPrompt(); len(prompt) > 0 {
@@ -76,15 +76,15 @@ func (p *Python) loadContext() {
 		"CONDA_DEFAULT_ENV",
 	}
 
-	folderNameFallback := p.language.props.GetBool(FolderNameFallback, true)
-	defaultVenvNames := p.language.props.GetStringArray(DefaultVenvNames, []string{
+	folderNameFallback := p.props.GetBool(FolderNameFallback, true)
+	defaultVenvNames := p.props.GetStringArray(DefaultVenvNames, []string{
 		".venv",
 		"venv",
 	})
 
 	var venv string
 	for _, venvVar := range venvVars {
-		venv = p.language.env.Getenv(venvVar)
+		venv = p.env.Getenv(venvVar)
 		if len(venv) == 0 {
 			continue
 		}
@@ -109,7 +109,7 @@ func (p *Python) inContext() bool {
 }
 
 func (p *Python) canUseVenvName(name string) bool {
-	if p.language.props.GetBool(properties.DisplayDefault, true) {
+	if p.props.GetBool(properties.DisplayDefault, true) {
 		return true
 	}
 
@@ -175,9 +175,9 @@ func (p *Python) pyenvVersion() (string, error) {
 }
 
 func (p *Python) pyvenvCfgPrompt() string {
-	cmdPath := p.language.env.CommandPath("python")
+	cmdPath := p.env.CommandPath("python")
 	if len(cmdPath) == 0 {
-		cmdPath = p.language.env.CommandPath("python3")
+		cmdPath = p.env.CommandPath("python3")
 	}
 
 	if len(cmdPath) == 0 {
@@ -185,11 +185,11 @@ func (p *Python) pyvenvCfgPrompt() string {
 	}
 
 	pyvenvDir := filepath.Dir(cmdPath)
-	if !p.language.env.HasFilesInDir(pyvenvDir, "pyvenv.cfg") {
+	if !p.env.HasFilesInDir(pyvenvDir, "pyvenv.cfg") {
 		pyvenvDir = filepath.Dir(pyvenvDir)
 	}
 
-	if !p.language.env.HasFilesInDir(pyvenvDir, "pyvenv.cfg") {
+	if !p.env.HasFilesInDir(pyvenvDir, "pyvenv.cfg") {
 		return ""
 	}
 

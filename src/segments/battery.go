@@ -42,11 +42,11 @@ func (b *Battery) Enabled() bool {
 	b.Info = *info
 
 	// case on computer without batteries(no error, empty array)
-	if err == nil && b.Info.Percentage == 0 {
+	if err == nil && b.Percentage == 0 {
 		return false
 	}
 
-	switch b.Info.State {
+	switch b.State {
 	case battery.Discharging:
 		b.Icon = b.props.GetString(DischargingIcon, "")
 	case battery.NotCharging:

@@ -513,7 +513,7 @@ func (ir *Renderer) SavePNG() error {
 	}
 
 	// Apply the actual text into the prepared content area of the window
-	var x, y float64 = xOffset + paddingX, yOffset + paddingY + titleOffset + ir.fontHeight()
+	var x, y = xOffset + paddingX, yOffset + paddingY + titleOffset + ir.fontHeight()
 
 	for len(ir.AnsiString) != 0 {
 		if !ir.shouldPrint() {

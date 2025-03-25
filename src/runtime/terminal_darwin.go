@@ -34,7 +34,7 @@ func mapMostLogicalState(state string) battery.State {
 func (term *Terminal) parseBatteryOutput(output string) (*battery.Info, error) {
 	matches := regex.FindNamedRegexMatch(`(?P<PERCENTAGE>[0-9]{1,3})%; (?P<STATE>[a-zA-Z\s]+);`, output)
 	if len(matches) != 2 {
-		err := errors.New("Unable to find battery state based on output")
+		err := errors.New("unable to find battery state based on output")
 		log.Error(err)
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (term *Terminal) parseBatteryOutput(output string) (*battery.Info, error) {
 	var err error
 	if percentage, err = strconv.Atoi(matches["PERCENTAGE"]); err != nil {
 		log.Error(err)
-		return nil, errors.New("Unable to parse battery percentage")
+		return nil, errors.New("unable to parse battery percentage")
 	}
 	return &battery.Info{
 		Percentage: percentage,
@@ -58,7 +58,7 @@ func (term *Terminal) BatteryState() (*battery.Info, error) {
 		return nil, err
 	}
 	if !strings.Contains(output, "Battery") {
-		return nil, errors.New("No battery found")
+		return nil, errors.New("no battery found")
 	}
 	return term.parseBatteryOutput(output)
 }

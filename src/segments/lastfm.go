@@ -95,7 +95,7 @@ func (d *LastFM) setStatus() error {
 	}
 
 	if len(q.TracksInfo.Tracks) == 0 {
-		return errors.New("No data found")
+		return errors.New("no data found")
 	}
 
 	track := q.TracksInfo.Tracks[0]
@@ -104,10 +104,7 @@ func (d *LastFM) setStatus() error {
 	d.Track = track.Name
 	d.Full = fmt.Sprintf("%s - %s", d.Artist, d.Track)
 
-	isPlaying := false
-	if track.Info != nil && track.Info.IsPlaying != nil && *track.Info.IsPlaying == "true" {
-		isPlaying = true
-	}
+	isPlaying := track.Info != nil && track.Info.IsPlaying != nil && *track.Info.IsPlaying == "true"
 
 	if isPlaying {
 		d.Icon = d.props.GetString(PlayingIcon, "\uE602 ")

@@ -23,7 +23,7 @@ package battery
 
 import "fmt"
 
-var ErrNotFound = fmt.Errorf("Not found")
+var ErrNotFound = fmt.Errorf("not found")
 
 type Errors []error
 

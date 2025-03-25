@@ -66,7 +66,7 @@ func (u *Unity) GetUnityVersion() (string, error) {
 		version := strings.TrimPrefix(line, versionPrefix)
 		version = strings.TrimSpace(version)
 		if len(version) == 0 {
-			return "", errors.New("Empty m_EditorVersion")
+			return "", errors.New("empty m_EditorVersion")
 		}
 		fIndex := strings.Index(version, "f")
 		if fIndex > 0 {

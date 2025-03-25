@@ -24,7 +24,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Error",
 			Path:            "HKLLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\ProductName",
-			Err:             errors.New("No match"),
+			Err:             errors.New("no match"),
 			ExpectedSuccess: false,
 		},
 		{
@@ -38,7 +38,7 @@ func TestWinReg(t *testing.T) {
 			CaseDescription: "Fallback value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
 			Fallback:        "cortana",
-			Err:             errors.New("No match"),
+			Err:             errors.New("no match"),
 			ExpectedSuccess: true,
 			ExpectedValue:   "cortana",
 		},

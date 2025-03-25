@@ -421,7 +421,7 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
-	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.version.URL)
+	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.URL)
 }
 
 func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
@@ -508,7 +508,7 @@ func TestLanguageInnerHyperlink(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
-	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.version.URL)
+	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.URL)
 }
 
 func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
@@ -531,7 +531,7 @@ func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
-	assert.Equal(t, "https://custom/url/template/1.3", lang.version.URL)
+	assert.Equal(t, "https://custom/url/template/1.3", lang.URL)
 }
 
 type mockedLanguageParams struct {

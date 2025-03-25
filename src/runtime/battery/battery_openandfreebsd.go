@@ -27,7 +27,7 @@ func mapMostLogicalState(state string) State {
 func parseBatteryOutput(apm_percentage string, apm_status string) (*Info, error) {
 	percentage, err := strconv.Atoi(strings.TrimSpace(apm_percentage))
 	if err != nil {
-		return nil, errors.New("Unable to parse battery percentage")
+		return nil, errors.New("unable to parse battery percentage")
 	}
 
 	if percentage == 100 {

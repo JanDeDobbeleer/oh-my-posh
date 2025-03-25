@@ -30,14 +30,18 @@ func (n *Nbgv) Enabled() bool {
 	if !n.env.HasCommand(nbgv) {
 		return false
 	}
+
 	response, err := n.env.RunCommand(nbgv, "get-version", "--format=json")
 	if err != nil {
 		return false
 	}
+
 	n.VersionInfo = VersionInfo{}
 	err = json.Unmarshal([]byte(response), &n.VersionInfo)
+
 	if err != nil {
 		return false
 	}
-	return n.VersionInfo.VersionFileFound
+
+	return n.VersionFileFound
 }

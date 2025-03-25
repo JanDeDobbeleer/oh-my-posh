@@ -52,17 +52,18 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name                  | Type      | Description                                                                |
-| --------------------- | --------- | -------------------------------------------------------------------------- |
-| `.Full`               | `string`  | the full version                                                           |
-| `.Major`              | `string`  | major number                                                               |
-| `.Minor`              | `string`  | minor number                                                               |
-| `.Patch`              | `string`  | patch number                                                               |
-| `.URL`                | `string`  | URL of the version info / release notes                                    |
-| `.Error`              | `string`  | error encountered when fetching the version string                         |
-| `.PackageManagerIcon` | `string`  | the PNPM, Yarn, or NPM icon when setting `fetch_package_manager` to `true` |
-| `.Mismatch`           | `boolean` | true if the version in `.nvmrc` is not equal to `.Full`                    |
-| `.Expected`           | `string`  | the expected version set in `.nvmrc`                                       |
+| Name                  | Type      | Description                                                                                       |
+| --------------------- | --------- | ------------------------------------------------------------------------------------------------- |
+| `.Full`               | `string`  | the full version                                                                                  |
+| `.Major`              | `string`  | major number                                                                                      |
+| `.Minor`              | `string`  | minor number                                                                                      |
+| `.Patch`              | `string`  | patch number                                                                                      |
+| `.URL`                | `string`  | URL of the version info / release notes                                                           |
+| `.Error`              | `string`  | error encountered when fetching the version string                                                |
+| `.PackageManagerName` | `string`  | the package manager name (`npm`, `yarn` or `pnpm`) when setting `fetch_package_manager` to `true` |
+| `.PackageManagerIcon` | `string`  | the PNPM, Yarn, or NPM icon when setting `fetch_package_manager` to `true`                        |
+| `.Mismatch`           | `boolean` | true if the version in `.nvmrc` is not equal to `.Full`                                           |
+| `.Expected`           | `string`  | the expected version set in `.nvmrc`                                                              |
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

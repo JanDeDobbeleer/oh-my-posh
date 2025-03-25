@@ -10,6 +10,8 @@ import (
 
 type Node struct {
 	PackageManagerIcon string
+	PackageManagerName string
+
 	language
 }
 
@@ -48,15 +50,21 @@ func (n *Node) loadContext() {
 	if !n.language.props.GetBool(FetchPackageManager, false) {
 		return
 	}
+
 	if n.language.env.HasFiles("pnpm-lock.yaml") {
+		n.PackageManagerName = "pnpm"
 		n.PackageManagerIcon = n.language.props.GetString(PnpmIcon, "\U000F02C1")
 		return
 	}
+
 	if n.language.env.HasFiles("yarn.lock") {
+		n.PackageManagerName = "yarn"
 		n.PackageManagerIcon = n.language.props.GetString(YarnIcon, "\U000F011B")
 		return
 	}
+
 	if n.language.env.HasFiles("package-lock.json") || n.language.env.HasFiles("package.json") {
+		n.PackageManagerName = "npm"
 		n.PackageManagerIcon = n.language.props.GetString(NPMIcon, "\uE71E")
 	}
 }

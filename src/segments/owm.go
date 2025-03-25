@@ -113,12 +113,12 @@ func (d *Owm) setStatus() error {
 	}
 
 	if len(q.Data) == 0 {
-		return errors.New("No data found")
+		return errors.New("no data found")
 	}
 
 	id := q.Data[0].TypeID
 
-	d.Temperature = int(math.Round(q.temperature.Value))
+	d.Temperature = int(math.Round(q.Value))
 	icon := ""
 	switch id {
 	case "01n":

@@ -86,7 +86,7 @@ var guidDeviceBattery = guid{
 
 func uint32ToFloat64(num uint32) (float64, error) {
 	if num == 0xffffffff { // BATTERY_UNKNOWN_CAPACITY
-		return 0, errors.New("Unknown value received")
+		return 0, errors.New("unknown value received")
 	}
 	return float64(num), nil
 }

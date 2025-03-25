@@ -50,12 +50,12 @@ func (q *Quasar) Template() string {
 }
 
 func (q *Quasar) fetchDependencies() {
-	if !q.language.env.HasFilesInDir(q.projectRoot.ParentFolder, "package-lock.json") {
+	if !q.env.HasFilesInDir(q.projectRoot.ParentFolder, "package-lock.json") {
 		return
 	}
 
 	packageFilePath := filepath.Join(q.projectRoot.ParentFolder, "package-lock.json")
-	content := q.language.env.FileContent(packageFilePath)
+	content := q.env.FileContent(packageFilePath)
 
 	var objmap map[string]json.RawMessage
 	if err := json.Unmarshal([]byte(content), &objmap); err != nil {

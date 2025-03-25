@@ -31,14 +31,13 @@ func mapMostLogicalState(state string) State {
 func parseBatteryOutput(output string) (*Info, error) {
 	matches := regex.FindNamedRegexMatch(`(?P<PERCENTAGE>[0-9]{1,3})%; (?P<STATE>[a-zA-Z\s]+);`, output)
 	if len(matches) != 2 {
-		msg := "Unable to find battery state based on output"
-		return nil, errors.New(msg)
+		return nil, errors.New("unable to find battery state based on output")
 	}
 
 	var percentage int
 	var err error
 	if percentage, err = strconv.Atoi(matches["PERCENTAGE"]); err != nil {
-		return nil, errors.New("Unable to parse battery percentage")
+		return nil, errors.New("unable to parse battery percentage")
 	}
 
 	// sometimes it reports discharging when at 100, so let's force it to Full

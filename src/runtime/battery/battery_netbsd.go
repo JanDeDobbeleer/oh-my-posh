@@ -15,7 +15,7 @@ func Get() (*Info, error) {
 	}
 	percentage, err := strconv.Atoi(strings.TrimSpace(output))
 	if err != nil {
-		return nil, errors.New("Unable to parse battery percentage")
+		return nil, errors.New("unable to parse battery percentage")
 	}
 	return &Info{
 		Percentage: percentage,

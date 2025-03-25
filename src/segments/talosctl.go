@@ -43,7 +43,7 @@ func (t *TalosCTL) getActiveConfig(cfgDir string) (string, error) {
 	activeConfigFile := filepath.Join(cfgDir, "config")
 	activeConfigData := t.env.FileContent(activeConfigFile)
 	if len(activeConfigData) == 0 {
-		return "", errors.New("NO ACTIVE CONFIG FOUND")
+		return "", errors.New("no active config found")
 	}
 	return activeConfigData, nil
 }

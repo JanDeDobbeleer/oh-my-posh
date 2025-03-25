@@ -70,7 +70,7 @@ func TestGetTalosctlActiveConfig(t *testing.T) {
 		{
 			Case:          "no active config",
 			ActiveConfig:  "",
-			ExpectedError: "NO ACTIVE CONFIG FOUND",
+			ExpectedError: "no active config found",
 		},
 	}
 

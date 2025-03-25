@@ -58,7 +58,7 @@
           }
         },
         "terminal.integrated.defaultProfile.linux": "pwsh",
-        "terminal.integrated.defaultProfile.windows": "pwsh",
+        "terminal.integrated.defaultProfile.windows": "PowerShell",
         "terminal.integrated.defaultProfile.osx": "pwsh",
         "terminal.integrated.shellIntegration.enabled": false,
         "tasks.statusbar.default.hide": true

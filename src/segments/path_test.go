@@ -100,6 +100,7 @@ type testAgnosterPathStyleCase struct {
 	MaxWidth            int
 	HideRootLocation    bool
 	Cygwin              bool
+	DisplayRoot         bool
 }
 
 func TestAgnosterPathStyles(t *testing.T) {
@@ -135,6 +136,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			MaxWidth:            tc.MaxWidth,
 			HideRootLocation:    tc.HideRootLocation,
 			DisplayCygpath:      displayCygpath,
+			DisplayRoot:         tc.DisplayRoot,
 		}
 
 		path := &Path{}

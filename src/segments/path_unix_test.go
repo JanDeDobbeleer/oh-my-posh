@@ -87,6 +87,15 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		PathSeparator:       "/",
 		FolderSeparatorIcon: " > ",
 	},
+	{
+		Style:               Unique,
+		Expected:            "/a > c > ef",
+		HomePath:            homeDir,
+		Pwd:                 "/ab/cd/ef",
+		PathSeparator:       "/",
+		FolderSeparatorIcon: " > ",
+		DisplayRoot:         true,
+	},
 
 	{
 		Style:               Powerlevel,
@@ -114,6 +123,16 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		PathSeparator:       "/",
 		FolderSeparatorIcon: "/",
 		MaxWidth:            50,
+	},
+	{
+		Style:               Powerlevel,
+		Expected:            "/var/cache/pacman",
+		HomePath:            homeDir,
+		Pwd:                 "/var/cache/pacman",
+		PathSeparator:       "/",
+		FolderSeparatorIcon: "/",
+		MaxWidth:            50,
+		DisplayRoot:         true,
 	},
 
 	{

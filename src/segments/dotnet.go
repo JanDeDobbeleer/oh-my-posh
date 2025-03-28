@@ -42,6 +42,6 @@ func (d *Dotnet) Enabled() bool {
 	if !enabled {
 		return false
 	}
-	d.Unsupported = d.language.exitCode == constants.DotnetExitCode
+	d.Unsupported = d.exitCode == constants.DotnetExitCode
 	return true
 }

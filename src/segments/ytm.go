@@ -73,14 +73,14 @@ func (y *Ytm) setStatus() error {
 	}
 	y.Status = playing
 	y.Icon = y.props.GetString(PlayingIcon, "\uE602 ")
-	if !q.player.HasSong {
+	if !q.HasSong {
 		y.Status = stopped
 		y.Icon = y.props.GetString(StoppedIcon, "\uF04D ")
-	} else if q.player.IsPaused {
+	} else if q.IsPaused {
 		y.Status = paused
 		y.Icon = y.props.GetString(PausedIcon, "\uF8E3 ")
 	}
-	y.Artist = q.track.Author
-	y.Track = q.track.Title
+	y.Artist = q.Author
+	y.Track = q.Title
 	return nil
 }

@@ -240,7 +240,7 @@ func (l *language) setVersion() error {
 		}
 
 		l.buildVersionURL()
-		l.version.Executable = command.executable
+		l.Executable = command.executable
 
 		if marchalled, err := json.Marshal(l.version); err == nil {
 			duration := l.props.GetString(properties.CacheDuration, string(cache.NONE))
@@ -314,7 +314,7 @@ func (l *language) buildVersionURL() {
 		return
 	}
 
-	l.version.URL = url
+	l.URL = url
 }
 
 func (l *language) hasNodePackage(name string) bool {

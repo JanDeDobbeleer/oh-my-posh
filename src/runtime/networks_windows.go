@@ -239,7 +239,7 @@ func (term *Terminal) wifiNetwork() (*Connection, error) {
 		return term.parseNetworkInterface(network, phClientHandle)
 	}
 
-	return nil, errors.New("Not connected")
+	return nil, errors.New("not connected")
 }
 
 func (term *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*Connection, error) {

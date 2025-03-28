@@ -95,8 +95,8 @@ func (bf *Brewfather) Enabled() bool {
 	}
 	bf.Batch = *data
 
-	if bf.Batch.Reading != nil {
-		readingDate := time.UnixMilli(bf.Batch.Reading.Time)
+	if bf.Reading != nil {
+		readingDate := time.UnixMilli(bf.Reading.Time)
 		bf.ReadingAge = int(time.Since(readingDate).Hours())
 	} else {
 		bf.ReadingAge = -1
@@ -105,10 +105,10 @@ func (bf *Brewfather) Enabled() bool {
 	bf.TemperatureTrendIcon = bf.getTrendIcon(bf.TemperatureTrend)
 	bf.StatusIcon = bf.getBatchStatusIcon(data.Status)
 
-	fermStartDate := time.UnixMilli(bf.Batch.FermentStartDate)
-	bottlingDate := time.UnixMilli(bf.Batch.BottlingDate)
+	fermStartDate := time.UnixMilli(bf.FermentStartDate)
+	bottlingDate := time.UnixMilli(bf.BottlingDate)
 
-	switch bf.Batch.Status {
+	switch bf.Status {
 	case BFStatusFermenting:
 		// in the fermenter now, so relative to today.
 		bf.DaysFermenting = uint(time.Since(fermStartDate).Hours() / 24)

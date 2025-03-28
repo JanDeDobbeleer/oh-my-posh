@@ -121,7 +121,7 @@ func (n *Project) Enabled() bool {
 				continue
 			}
 			n.ProjectData = *data
-			n.ProjectData.Type = item.Name
+			n.Type = item.Name
 			return true
 		}
 	}

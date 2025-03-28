@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	stdOS "os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -128,7 +127,7 @@ func loadConfig(configFile string) *Config {
 	cfg.origin = configFile
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 
-	data, err := stdOS.ReadFile(configFile)
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Error(err)
 		return Default(true)

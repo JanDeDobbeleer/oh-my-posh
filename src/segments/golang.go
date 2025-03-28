@@ -54,12 +54,12 @@ func (g *Golang) getVersion() (string, error) {
 }
 
 func (g *Golang) parseModFile() (string, error) {
-	gomod, err := g.language.env.HasParentFilePath("go.mod", false)
+	gomod, err := g.env.HasParentFilePath("go.mod", false)
 	if err != nil {
 		return "", err
 	}
 
-	contents := g.language.env.FileContent(gomod.Path)
+	contents := g.env.FileContent(gomod.Path)
 	file, err := modfile.Parse(gomod.Path, []byte(contents), nil)
 	if err != nil {
 		return "", err
@@ -74,12 +74,12 @@ func (g *Golang) parseModFile() (string, error) {
 }
 
 func (g *Golang) parseWorkFile() (string, error) {
-	goWork, err := g.language.env.HasParentFilePath("go.work", false)
+	goWork, err := g.env.HasParentFilePath("go.work", false)
 	if err != nil {
 		return "", err
 	}
 
-	contents := g.language.env.FileContent(goWork.Path)
+	contents := g.env.FileContent(goWork.Path)
 	version := regex.FindStringMatch(`go (\d(\.\d{1,2})?(\.\d{1,2})?)`, contents, 1)
 	if len(version) > 0 {
 		return version, nil

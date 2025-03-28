@@ -47,30 +47,30 @@ func (n *Node) Enabled() bool {
 }
 
 func (n *Node) loadContext() {
-	if !n.language.props.GetBool(FetchPackageManager, false) {
+	if !n.props.GetBool(FetchPackageManager, false) {
 		return
 	}
 
-	if n.language.env.HasFiles("pnpm-lock.yaml") {
+	if n.env.HasFiles("pnpm-lock.yaml") {
 		n.PackageManagerName = "pnpm"
-		n.PackageManagerIcon = n.language.props.GetString(PnpmIcon, "\U000F02C1")
+		n.PackageManagerIcon = n.props.GetString(PnpmIcon, "\U000F02C1")
 		return
 	}
 
-	if n.language.env.HasFiles("yarn.lock") {
+	if n.env.HasFiles("yarn.lock") {
 		n.PackageManagerName = "yarn"
-		n.PackageManagerIcon = n.language.props.GetString(YarnIcon, "\U000F011B")
+		n.PackageManagerIcon = n.props.GetString(YarnIcon, "\U000F011B")
 		return
 	}
 
-	if n.language.env.HasFiles("package-lock.json") || n.language.env.HasFiles("package.json") {
+	if n.env.HasFiles("package-lock.json") || n.env.HasFiles("package.json") {
 		n.PackageManagerName = "npm"
-		n.PackageManagerIcon = n.language.props.GetString(NPMIcon, "\uE71E")
+		n.PackageManagerIcon = n.props.GetString(NPMIcon, "\uE71E")
 	}
 }
 
 func (n *Node) matchesVersionFile() (string, bool) {
-	fileVersion := n.language.env.FileContent(".nvmrc")
+	fileVersion := n.env.FileContent(".nvmrc")
 	if len(fileVersion) == 0 {
 		return "", true
 	}
@@ -104,9 +104,9 @@ func (n *Node) matchesVersionFile() (string, bool) {
 
 	re := fmt.Sprintf(
 		`(?im)^v?%s(\.?%s)?(\.?%s)?$`,
-		n.language.version.Major,
-		n.language.version.Minor,
-		n.language.version.Patch,
+		n.Major,
+		n.Minor,
+		n.Patch,
 	)
 
 	version := strings.TrimSpace(fileVersion)

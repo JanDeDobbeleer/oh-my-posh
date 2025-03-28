@@ -1,45 +1,61 @@
+version: "2"
 run:
-  timeout: 10m
   allow-parallel-runners: true
 linters:
-  disable-all: true
+  default: none
   enable:
     - bodyclose
+    - copyloopvar
     - dupl
     - errcheck
     - exhaustive
     - goconst
     - gocritic
     - gocyclo
-    - gofmt
-    - goimports
-    - revive
     - goprintffuncname
-    - gosimple
     - govet
     - ineffassign
+    - lll
     - misspell
     - nakedret
     - noctx
     - nolintlint
+    - revive
     - rowserrcheck
-    - copyloopvar
     - staticcheck
-    - typecheck
     - unconvert
     - unparam
     - unused
     - whitespace
-    - lll
-linters-settings:
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      # - experimental
-      - opinionated
-      - performance
-      - style
-    disabled-tags:
-      - experimental
-  lll:
-    line-length: 180
+  settings:
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - opinionated
+        - performance
+        - style
+      disabled-tags:
+        - experimental
+    lll:
+      line-length: 180
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

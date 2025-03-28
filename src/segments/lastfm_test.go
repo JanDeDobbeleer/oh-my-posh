@@ -53,7 +53,7 @@ func TestLFMSegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		var props properties.Map = properties.Map{
+		props := properties.Map{
 			APIKey:                 "key",
 			Username:               "KibbeWater",
 			properties.HTTPTimeout: 20000,

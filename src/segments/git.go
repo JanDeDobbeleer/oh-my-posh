@@ -430,6 +430,11 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	// to the mounted path
 	g.mainSCMDir = g.convertToLinuxPath(matches["dir"])
 
+	// convert to absolute path
+	if strings.HasPrefix(g.mainSCMDir, "..") {
+		g.mainSCMDir = filepath.Join(gitdir.ParentFolder, g.mainSCMDir)
+	}
+
 	// if we don't do this, we will identify the submodule as a worktree
 	isSubmodule := strings.Contains(g.mainSCMDir, "/modules/")
 

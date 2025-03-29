@@ -74,6 +74,9 @@ var upgradeCmd = &cobra.Command{
 		cfg := config.Load(configFile, sh, false)
 		cfg.Upgrade.Cache = env.Cache()
 
+		// always reset the cache key so we respect the interval no matter what the outcome
+		defer env.Cache().Set(upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
+
 		latest, err := cfg.Upgrade.Latest()
 		if err != nil {
 			log.Debug("failed to get latest version")

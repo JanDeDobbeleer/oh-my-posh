@@ -61,7 +61,8 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 		}
 
 		timestamp := time.Now().Format("20060102T150405.000")
-		filename := fmt.Sprintf("%s-%s-%s.log", timestamp, cmd.Name(), strings.Join(args, "-"))
+		cli := append([]string{cmd.Name()}, args...)
+		filename := fmt.Sprintf("%s-%s.log", timestamp, strings.Join(cli, "-"))
 
 		home, err := os.UserHomeDir()
 		if err != nil {

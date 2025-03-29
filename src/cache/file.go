@@ -66,13 +66,16 @@ func (fc *File) Close() {
 func (fc *File) Get(key string) (string, bool) {
 	val, found := fc.cache.Get(key)
 	if !found {
+		log.Debug("cache key not found:", key)
 		return "", false
 	}
 
 	if co, ok := val.(*Entry); ok {
+		log.Debug("getting cache key:", key, "with value:", co.Value)
 		return co.Value, true
 	}
 
+	log.Debug("unable to parse cache key:", key)
 	return "", false
 }
 
@@ -83,6 +86,8 @@ func (fc *File) Set(key, value string, duration Duration) {
 	if seconds == 0 {
 		return
 	}
+
+	log.Debug("setting cache key:", key, "with duration:", string(duration))
 
 	fc.cache.Set(key, &Entry{
 		Value:     value,
@@ -95,6 +100,7 @@ func (fc *File) Set(key, value string, duration Duration) {
 
 // delete the key from the cache
 func (fc *File) Delete(key string) {
+	log.Debug("deleting cache key:", key)
 	fc.cache.Delete(key)
 	fc.dirty = true
 }

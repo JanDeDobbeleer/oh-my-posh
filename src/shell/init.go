@@ -145,6 +145,8 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 
 	shellScript := features.Lines(shell).String(init)
 
+	log.Debug(shellScript)
+
 	if !env.Flags().Debug {
 		return shellScript
 	}
@@ -152,9 +154,6 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	var builder strings.Builder
 
 	builder.WriteString(fmt.Sprintf("\n%s %s\n", log.Text("Init duration:").Green().Bold().Plain(), time.Since(*startTime)))
-
-	builder.WriteString(log.Text("\nScript:\n\n").Green().Bold().Plain().String())
-	builder.WriteString(shellScript)
 
 	builder.WriteString(log.Text("\n\nLogs:\n\n").Green().Bold().Plain().String())
 	builder.WriteString(env.Logs())

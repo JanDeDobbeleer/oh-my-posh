@@ -186,7 +186,5 @@ func (cfg *Config) UpgradeFeatures(env runtime.Environment) shell.Features {
 		feats = append(feats, shell.Upgrade)
 	}
 
-	log.Debugf("upgrade features: %v", feats)
-
 	return feats
 }

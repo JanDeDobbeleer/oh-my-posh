@@ -26,7 +26,6 @@ func install(cfg *Config) error {
 	newPath := filepath.Join(targetDir, fmt.Sprintf(".%s.new", fileName))
 	fp, err := os.OpenFile(newPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0775)
 	if err != nil {
-		log.Debug("failed to open new file")
 		log.Error(err)
 		return errors.New("we do not have permissions to update")
 	}
@@ -78,7 +77,6 @@ func install(cfg *Config) error {
 
 	// hide the old executable if we can't remove it
 	if removeErr != nil {
-		log.Debug("failed to remove old file, hiding it")
 		log.Error(removeErr)
 		// hide the old executable
 		_ = hideFile(oldPath)

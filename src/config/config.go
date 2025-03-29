@@ -161,9 +161,6 @@ func (cfg *Config) UpgradeFeatures(env runtime.Environment) shell.Features {
 		return feats
 	}
 
-	// always reset the cache key so we respect the interval no matter what the outcome
-	env.Cache().Set(upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
-
 	autoUpgrade := cfg.Upgrade.Auto
 	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
 		log.Debug("auto upgrade key found")

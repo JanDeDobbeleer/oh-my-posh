@@ -8,6 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 var (
@@ -61,6 +62,7 @@ func (m *model) Init() tea.Cmd {
 func (m *model) start() {
 	if err := install(m.config); err != nil {
 		m.error = err
+		log.Debug("failed to install")
 		program.Send(resultMsg(fmt.Sprintf("❌ upgrade failed: %v", err)))
 		return
 	}
@@ -69,6 +71,7 @@ func (m *model) start() {
 
 	current := fmt.Sprintf("v%s", build.Version)
 	if current != m.config.Version {
+		log.Debug("new version installed, user needs to restart shell")
 		message += ", restart your shell to take full advantage of the new functionality"
 	}
 
@@ -142,6 +145,7 @@ func Run(cfg *Config) error {
 
 	programModel, OK := resultModel.(*model)
 	if !OK {
+		log.Debug("failed to cast model")
 		return nil
 	}
 

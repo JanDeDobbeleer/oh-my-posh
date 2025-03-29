@@ -11,7 +11,8 @@ import (
 var (
 	enabled bool
 	plain   bool
-	log     strings.Builder
+
+	log strings.Builder
 )
 
 func Enable() {

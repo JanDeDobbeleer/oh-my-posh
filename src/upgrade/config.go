@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -42,12 +43,21 @@ func (s Source) String() string {
 func (cfg *Config) Latest() (string, error) {
 	cfg.Version = "latest"
 	v, err := cfg.DownloadAsset("version.txt")
+	if err != nil {
+		log.Debugf("failed to get latest version for source: %s", cfg.Source)
+		return "", err
+	}
+
 	version := strings.TrimSpace(string(v))
-	return strings.TrimPrefix(version, "v"), err
+	version = strings.TrimPrefix(version, "v")
+	log.Debugf("latest version: %s", version)
+
+	return version, err
 }
 
 func (cfg *Config) DownloadAsset(asset string) ([]byte, error) {
 	if len(cfg.Source) == 0 {
+		log.Debug("no source specified, defaulting to github")
 		cfg.Source = GitHub
 	}
 
@@ -74,6 +84,7 @@ func (cfg *Config) DownloadAsset(asset string) ([]byte, error) {
 func (cfg *Config) Download(url string) ([]byte, error) {
 	req, err := httplib.NewRequestWithContext(context.Background(), "GET", url, nil)
 	if err != nil {
+		log.Debugf("failed to create request for url: %s", url)
 		return nil, err
 	}
 
@@ -82,6 +93,7 @@ func (cfg *Config) Download(url string) ([]byte, error) {
 
 	resp, err := http.HTTPClient.Do(req)
 	if err != nil {
+		log.Debugf("failed to execute HTTP request: %s", url)
 		return nil, err
 	}
 
@@ -93,6 +105,7 @@ func (cfg *Config) Download(url string) ([]byte, error) {
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Debugf("failed to read response body: %s", url)
 		return nil, err
 	}
 

@@ -3056,6 +3056,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "luisegarduno",
+      "name": "Luis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30121656?v=4",
+      "profile": "http://gardunos.tech",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

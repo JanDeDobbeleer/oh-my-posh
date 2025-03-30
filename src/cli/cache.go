@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -48,7 +47,7 @@ You can do the following:
 			}
 		case "edit":
 			cacheFilePath := filepath.Join(cache.Path(), cache.FileName)
-			os.Exit(editFileWithEditor(cacheFilePath))
+			exitcode = editFileWithEditor(cacheFilePath)
 		}
 	},
 }

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/font"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -52,7 +53,10 @@ This command is used to install fonts and configure the font in your terminal.
 					zipFolder += "/"
 				}
 
-				font.Run(fontName, env.Cache(), env.Root(), zipFolder)
+				if err := font.Run(fontName, env.Cache(), env.Root(), zipFolder); err != nil {
+					log.Error(err)
+					exitcode = 70
+				}
 
 				return
 			case "configure":

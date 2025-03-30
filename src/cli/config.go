@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
@@ -32,7 +31,7 @@ You can export, migrate or edit the config (via the editor specified in the envi
 		switch args[0] {
 		case "edit":
 			path := config.Path((configFlag))
-			os.Exit(editFileWithEditor(path))
+			exitcode = editFileWithEditor(path)
 		case "get":
 			// only here for backwards compatibility
 			fmt.Print(time.Now().UnixNano() / 1000000)

@@ -354,7 +354,7 @@ func SetCache(c cache_.Cache) {
 	cache = c
 }
 
-func Run(font string, ch cache_.Cache, root bool, zipFolder string) {
+func Run(font string, ch cache_.Cache, root bool, zipFolder string) error {
 	main := &main{
 		system: root,
 		Asset: Asset{
@@ -367,8 +367,6 @@ func Run(font string, ch cache_.Cache, root bool, zipFolder string) {
 	SetCache(ch)
 
 	program = tea.NewProgram(main)
-	if _, err := program.Run(); err != nil {
-		print("Error running program: %v", err)
-		os.Exit(70)
-	}
+	_, err := program.Run()
+	return err
 }

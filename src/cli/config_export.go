@@ -1,8 +1,8 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -37,13 +37,14 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 		if len(output) == 0 && len(format) == 0 {
 			// usage error
 			fmt.Println("neither output path nor export format is specified")
-			os.Exit(2)
+			exitcode = 2
+			return
 		}
 
 		configFile := config.Path(configFlag)
 		cfg := config.Load(configFile, shell.GENERIC, false)
 
-		validateExportFormat := func() {
+		validateExportFormat := func() error {
 			format = strings.ToLower(format)
 			switch format {
 			case "json", "jsonc":
@@ -56,12 +57,17 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 				formats := []string{"json", "jsonc", "toml", "tml", "yaml", "yml"}
 				// usage error
 				fmt.Printf("export format must be one of these: %s\n", strings.Join(formats, ", "))
-				os.Exit(2)
+				exitcode = 2
+				return errors.New("invalide export format")
 			}
+
+			return nil
 		}
 
 		if len(format) != 0 {
-			validateExportFormat()
+			if err := validateExportFormat(); err != nil {
+				return
+			}
 		}
 
 		if len(output) == 0 {
@@ -73,7 +79,9 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 
 		if len(format) == 0 {
 			format = strings.TrimPrefix(filepath.Ext(output), ".")
-			validateExportFormat()
+			if err := validateExportFormat(); err != nil {
+				return
+			}
 		}
 
 		cfg.Write(format)

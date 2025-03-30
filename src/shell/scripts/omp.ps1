@@ -227,8 +227,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
         catch { $null }
 
-        # check if the last command caused the last error
-        if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
+        # Check if the error occurred in the current command scope
+        if ($null -ne $invocationInfo -and
+            $invocationInfo.HistoryId -eq $lastHistory.Id) {
             $script:ErrorCode = 1
             return
         }

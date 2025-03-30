@@ -17,6 +17,7 @@ var (
 	shellName    string
 	printVersion bool
 	trace        bool
+	exitcode     int
 
 	// for internal use only
 	silent bool
@@ -56,6 +57,12 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 		log.Plain()
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		defer func() {
+			if exitcode != 0 {
+				os.Exit(exitcode)
+			}
+		}()
+
 		if !trace {
 			return
 		}

@@ -51,6 +51,7 @@ func (fc *File) Init(cacheFilePath string, persist bool) {
 
 func (fc *File) Close() {
 	if !fc.persist || !fc.dirty {
+		log.Debug("not persisting cache")
 		return
 	}
 

@@ -17,7 +17,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var force bool
+var (
+	force bool
+)
 
 // noticeCmd represents the get command
 var upgradeCmd = &cobra.Command{
@@ -48,9 +50,24 @@ var upgradeCmd = &cobra.Command{
 		sh := os.Getenv("POSH_SHELL")
 
 		env := &runtime.Terminal{}
-		env.Init(&runtime.Flags{Debug: debug})
+		env.Init(&runtime.Flags{
+			Debug:     debug,
+			SaveCache: true,
+		})
+
+		terminal.Init(sh)
+		fmt.Print(terminal.StartProgress())
+
+		configFile := config.Path(configFlag)
+		cfg := config.Load(configFile, sh, false)
+		cfg.Upgrade.Cache = env.Cache()
 
 		defer func() {
+			fmt.Print(terminal.StopProgress())
+
+			// always reset the cache key so we respect the interval no matter what the outcome
+			env.Cache().Set(upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
+
 			env.Close()
 
 			if !debug {
@@ -67,22 +84,13 @@ var upgradeCmd = &cobra.Command{
 			fmt.Println(builder.String())
 		}()
 
-		terminal.Init(sh)
-		fmt.Print(terminal.StartProgress())
-
-		configFile := config.Path(configFlag)
-		cfg := config.Load(configFile, sh, false)
-		cfg.Upgrade.Cache = env.Cache()
-
-		// always reset the cache key so we respect the interval no matter what the outcome
-		defer env.Cache().Set(upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
-
 		latest, err := cfg.Upgrade.Latest()
 		if err != nil {
 			log.Debug("failed to get latest version")
 			log.Error(err)
-			fmt.Printf("\n❌ %s\n\n%s", err, terminal.StopProgress())
-			os.Exit(1)
+			fmt.Printf("\n❌ %s\n\n", err)
+
+			exitcode = 1
 			return
 		}
 
@@ -90,37 +98,34 @@ var upgradeCmd = &cobra.Command{
 
 		if force {
 			log.Debug("forced upgrade")
-			executeUpgrade(cfg.Upgrade)
+			exitcode = executeUpgrade(cfg.Upgrade)
 			return
 		}
 
 		if upgrade.IsMajorUpgrade(build.Version, latest) {
 			log.Debug("major upgrade available")
-			message := terminal.StopProgress()
-			message += fmt.Sprintf("\n🚨 major upgrade available: v%s -> v%s, use oh-my-posh upgrade --force to upgrade\n\n", build.Version, latest)
+			message := fmt.Sprintf("\n🚨 major upgrade available: v%s -> v%s, use oh-my-posh upgrade --force to upgrade\n\n", build.Version, latest)
 			fmt.Print(message)
 			return
 		}
 
 		if build.Version != latest {
-			executeUpgrade(cfg.Upgrade)
+			exitcode = executeUpgrade(cfg.Upgrade)
 			return
 		}
-
-		fmt.Print(terminal.StopProgress())
 	},
 }
 
-func executeUpgrade(cfg *upgrade.Config) {
+func executeUpgrade(cfg *upgrade.Config) int {
 	err := upgrade.Run(cfg)
-	fmt.Print(terminal.StopProgress())
 	if err == nil {
-		return
+		return 0
 	}
 
 	log.Debug("failed to upgrade")
 	log.Error(err)
-	os.Exit(1)
+
+	return 1
 }
 
 func init() {

@@ -17,8 +17,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	json "github.com/goccy/go-json"
-	yaml "github.com/goccy/go-yaml"
 	toml "github.com/pelletier/go-toml/v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Load returns the default configuration including possible user overrides

@@ -11,5 +11,6 @@ func replaceP(pattern, text, replaceText string) string {
 }
 
 func findP(pattern, text string, index int) string {
-	return regex.FindStringMatch(pattern, text, index)
+	match, _ := regex.FindStringMatch(pattern, text, index)
+	return match
 }

@@ -80,7 +80,7 @@ func (g *Golang) parseWorkFile() (string, error) {
 	}
 
 	contents := g.env.FileContent(goWork.Path)
-	version := regex.FindStringMatch(`go (\d(\.\d{1,2})?(\.\d{1,2})?)`, contents, 1)
+	version, _ := regex.FindStringMatch(`go (\d(\.\d{1,2})?(\.\d{1,2})?)`, contents, 1)
 	if len(version) > 0 {
 		return version, nil
 	}

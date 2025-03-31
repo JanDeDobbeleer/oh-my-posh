@@ -13,21 +13,21 @@ var testParentCases = []testParentCase{
 		HomePath:      homeDirWindows,
 		Pwd:           homeDirWindows,
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows drive root",
 		HomePath:      homeDirWindows,
 		Pwd:           "C:",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows drive root with a trailing separator",
 		HomePath:      homeDirWindows,
 		Pwd:           "C:\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows drive root + 1",
@@ -35,14 +35,14 @@ var testParentCases = []testParentCase{
 		HomePath:      homeDirWindows,
 		Pwd:           "C:\\test",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "PSDrive root",
 		HomePath:      homeDirWindows,
 		Pwd:           "HKLM:",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 }
 
@@ -53,7 +53,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:\\ab\\ab\\abcd",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -62,7 +62,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:\\",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -71,7 +71,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:\\something\\.whatever\\man",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -80,7 +80,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows + "\\something\\man",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -89,7 +89,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:\\Users\\foo\\foobar\\man",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -101,7 +101,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		Shell:               shell.BASH,
 		Cygwin:              true,
 		Cygpath:             "/c/Users/foo/foobar/man",
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -112,7 +112,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		GOOS:                runtime.WINDOWS,
 		Shell:               shell.BASH,
 		CygpathError:        errors.New("oh no"),
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -121,7 +121,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "\\\\localhost\\c$\\some",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -130,7 +130,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "\\\\localhost\\c$",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -139,7 +139,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows + fooBarMan,
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            2,
 		HideRootLocation:    true,
@@ -150,7 +150,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 	},
 	{
@@ -159,7 +159,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:\\usr\\foo\\bar\\man",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            2,
 	},
@@ -169,7 +169,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 "C:\\usr\\foo\\bar\\man",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            3,
 	},
@@ -179,7 +179,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows + fooBarMan,
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            2,
 	},
@@ -189,7 +189,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows + fooBarMan,
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            3,
 	},
@@ -199,7 +199,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows,
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            1,
 		HideRootLocation:    true,
@@ -210,7 +210,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows + "\\foo",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            1,
 		HideRootLocation:    true,
@@ -221,7 +221,7 @@ var testAgnosterPathStyleCases = []testAgnosterPathStyleCase{
 		HomePath:            homeDirWindows,
 		Pwd:                 homeDirWindows + "\\foo",
 		GOOS:                runtime.WINDOWS,
-		PathSeparator:       "\\",
+		PathSeparator:       `\`,
 		FolderSeparatorIcon: " > ",
 		MaxDepth:            2,
 		HideRootLocation:    true,
@@ -235,7 +235,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "HKLM:\\SOFTWARE\\magnetic:TOAST\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows outside home",
@@ -243,7 +243,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\Program Files\\Go\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows oustide home",
@@ -251,7 +251,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           homeDirWindows + "\\Documents\\Bill\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows inside home zero levels",
@@ -259,7 +259,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows inside home one level",
@@ -267,7 +267,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\Program Files\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower case drive letter",
@@ -275,7 +275,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\Windows\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower case drive letter (other)",
@@ -283,7 +283,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "P:\\Other\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower word drive",
@@ -291,7 +291,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "some:\\some\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower word drive (ending with c)",
@@ -299,7 +299,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "src:\\source\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower word drive (arbitrary cases)",
@@ -307,7 +307,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "sRc:\\source\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows registry drive",
@@ -315,7 +315,7 @@ var testAgnosterPathCases = []testAgnosterPathCase{
 		Home:          homeDirWindows,
 		PWD:           "HKLM:\\SOFTWARE\\magnetic:test\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 }
 
@@ -326,7 +326,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           homeDirWindows + "\\Documents\\Bill\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows outside home",
@@ -334,7 +334,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\Program Files\\Go\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows inside home zero levels",
@@ -342,7 +342,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows inside home one level",
@@ -350,7 +350,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\Program Files\\location",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower case drive letter",
@@ -358,7 +358,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "C:\\Windows\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower case drive letter (other)",
@@ -366,7 +366,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "P:\\Other\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower word drive",
@@ -374,7 +374,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "some:\\some\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower word drive (ending with c)",
@@ -382,7 +382,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "src:\\source\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows lower word drive (arbitrary cases)",
@@ -390,7 +390,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "sRc:\\source\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows registry drive",
@@ -398,7 +398,7 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "HKLM:\\SOFTWARE\\magnetic:test\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 	{
 		Case:          "Windows registry drive case sensitive",
@@ -406,21 +406,23 @@ var testAgnosterLeftPathCases = []testAgnosterLeftPathCase{
 		Home:          homeDirWindows,
 		PWD:           "HKLM:\\SOFTWARE\\magnetic:TOAST\\",
 		GOOS:          runtime.WINDOWS,
-		PathSeparator: "\\",
+		PathSeparator: `\`,
 	},
 }
 
 var testFullAndFolderPathCases = []testFullAndFolderPathCase{
-	{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: runtime.WINDOWS},
-	{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: "\\\\localhost\\d$", Expected: "\\\\localhost\\d$", PathSeparator: "\\", GOOS: runtime.WINDOWS},
-	{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: runtime.WINDOWS},
-	{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: runtime.WINDOWS},
-	{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: "\\", GOOS: runtime.WINDOWS},
-	{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\posh", Expected: "C:\\Users\\posh", PathSeparator: "\\", GOOS: runtime.WINDOWS},
+	{Style: FolderType, FolderSeparatorIcon: `\`, Pwd: "C:\\", Expected: "C:\\", PathSeparator: `\`, GOOS: runtime.WINDOWS},
+	{Style: FolderType, FolderSeparatorIcon: `\`, Pwd: "\\\\localhost\\d$", Expected: "\\\\localhost\\d$", PathSeparator: `\`, GOOS: runtime.WINDOWS},
+	{Style: FolderType, FolderSeparatorIcon: `\`, Pwd: homeDirWindows, Expected: "~", PathSeparator: `\`, GOOS: runtime.WINDOWS},
+	{Style: Full, FolderSeparatorIcon: `\`, Pwd: homeDirWindows, Expected: "~", PathSeparator: `\`, GOOS: runtime.WINDOWS},
+	{Style: Full, FolderSeparatorIcon: `\`, Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: `\`, GOOS: runtime.WINDOWS},
+	{Style: Full, FolderSeparatorIcon: `\`, Pwd: "C:\\Users\\posh", Expected: "C:\\Users\\posh", PathSeparator: `\`, GOOS: runtime.WINDOWS},
 }
 
 var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocationsCase{
-	{Pwd: "\\a\\b\\c\\d", MappedLocations: map[string]string{"\\a\\b": "#"}, GOOS: runtime.WINDOWS, PathSeparator: "\\", Expected: "#\\c\\d"},
+	{Pwd: `\a\b\c\d`, MappedLocations: map[string]string{`\a\b`: "#"}, GOOS: runtime.WINDOWS, PathSeparator: `\`, Expected: `#\c\d`},
+	{Pwd: `\a\b\1234\d\e`, MappedLocations: map[string]string{`re:(\\a\\b\\[0-9]+\\d).*`: "#"}, GOOS: runtime.WINDOWS, PathSeparator: `\`, Expected: `#\e`},
+	{Pwd: `\a\b\1234\f\e`, MappedLocations: map[string]string{`re:(\\a\\b\\[0-9]+\\d).*`: "#"}, GOOS: runtime.WINDOWS, PathSeparator: `\`, Expected: `\a\b\1234\f\e`},
 }
 
 var testSplitPathCases = []testSplitPathCase{

@@ -16,6 +16,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
+const (
+	regexPrefix = "re:"
+)
+
 type Folder struct {
 	Name    string
 	Path    string
@@ -570,12 +574,16 @@ func (pt *Path) setMappedLocations() {
 			continue
 		}
 
+		if !strings.HasPrefix(location, regexPrefix) {
+			location = pt.normalize(location)
+		}
+
 		// When two templates resolve to the same key, the values are compared in ascending order and the latter is taken.
-		if v, exist := mappedLocations[pt.normalize(location)]; exist && value <= v {
+		if v, exist := mappedLocations[location]; exist && value <= v {
 			continue
 		}
 
-		mappedLocations[pt.normalize(location)] = value
+		mappedLocations[location] = value
 	}
 
 	pt.mappedLocations = mappedLocations
@@ -610,7 +618,19 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 	}
 
 	for _, key := range keys {
+		if strings.HasPrefix(key, regexPrefix) {
+			match, OK := regex.FindStringMatch(key[len(regexPrefix):], inputPath, 1)
+			if !OK {
+				continue
+			}
+
+			// Replace the first match with the mapped location.
+			inputPath = strings.Replace(inputPath, match, pt.mappedLocations[key], 1)
+			return pt.parsePath(inputPath)
+		}
+
 		keyRoot, keyRelative := pt.parsePath(key)
+
 		matchSubFolders := strings.HasSuffix(keyRelative, pt.pathSeparator+"*")
 
 		if matchSubFolders {

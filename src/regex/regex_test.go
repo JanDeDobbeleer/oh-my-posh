@@ -66,7 +66,7 @@ func TestFindStringMatch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		got := FindStringMatch(tc.Pattern, tc.Text, tc.Index)
+		got, _ := FindStringMatch(tc.Pattern, tc.Text, tc.Index)
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

@@ -110,21 +110,21 @@ func MatchString(pattern, text string) bool {
 	return re.MatchString(text)
 }
 
-func FindStringMatch(pattern, text string, index int) string {
+func FindStringMatch(pattern, text string, index int) (string, bool) {
 	re, err := GetCompiledRegex(pattern)
 	if err != nil {
-		return text
+		return text, false
 	}
 
 	matches := re.FindStringSubmatch(text)
 	if len(matches) <= index {
-		return text
+		return text, false
 	}
 
 	match := matches[index]
 	if len(match) == 0 {
-		return text
+		return text, false
 	}
 
-	return match
+	return match, true
 }

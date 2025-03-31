@@ -420,9 +420,34 @@ var testFullAndFolderPathCases = []testFullAndFolderPathCase{
 }
 
 var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocationsCase{
-	{Pwd: `\a\b\c\d`, MappedLocations: map[string]string{`\a\b`: "#"}, GOOS: runtime.WINDOWS, PathSeparator: `\`, Expected: `#\c\d`},
-	{Pwd: `\a\b\1234\d\e`, MappedLocations: map[string]string{`re:(\\a\\b\\[0-9]+\\d).*`: "#"}, GOOS: runtime.WINDOWS, PathSeparator: `\`, Expected: `#\e`},
-	{Pwd: `\a\b\1234\f\e`, MappedLocations: map[string]string{`re:(\\a\\b\\[0-9]+\\d).*`: "#"}, GOOS: runtime.WINDOWS, PathSeparator: `\`, Expected: `\a\b\1234\f\e`},
+	{
+		Pwd:             `\a\b\c\d`,
+		MappedLocations: map[string]string{`\a\b`: "#"},
+		GOOS:            runtime.WINDOWS,
+		PathSeparator:   `\`,
+		Expected:        `#\c\d`,
+	},
+	{
+		Pwd:             `\a\b\1234\d\e`,
+		MappedLocations: map[string]string{`re:(/a/b/[0-9]+/d).*`: "#"},
+		GOOS:            runtime.WINDOWS,
+		PathSeparator:   `\`,
+		Expected:        `#\e`,
+	},
+	{
+		Pwd:             `\a\b\1234\f\e`,
+		MappedLocations: map[string]string{`re:(/a/b/[0-9]+/d).*`: "#"},
+		GOOS:            runtime.WINDOWS,
+		PathSeparator:   `\`,
+		Expected:        `\a\b\1234\f\e`,
+	},
+	{
+		Pwd:             `C:\Users\taylo\Documents\GitHub\project`,
+		MappedLocations: map[string]string{`re:(.*Users/taylo/Documents/GitHub).*`: "github"},
+		GOOS:            runtime.WINDOWS,
+		PathSeparator:   `\`,
+		Expected:        `github\project`,
+	},
 }
 
 var testSplitPathCases = []testSplitPathCase{

@@ -88,8 +88,8 @@ For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do t
   user Bill, who has a user account `Bill` on Windows and `bill` on Linux, `~/Foo` might match
   `C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
 - For more complicated cases, you can use the `re:` prefix to use a regular expression with a capture group for matching.
-  For example, `"re:(C:\\[0-9]+\\Foo).*": "#"` will match `C:\123\Foo\Bar` and replace it with `#\Bar`. The regex is not
-  cross platform out of the box, unlike the first statement for non-regex matches.
+  For example, `"re:(C:/[0-9]+/Foo).*": "#"` will match `C:\123\Foo\Bar` and replace it with `#\Bar`. The path used for matching
+  will always use `/`, regardless of the operating system, allowing cross platform matching.
 
 ## Style
 

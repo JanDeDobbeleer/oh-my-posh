@@ -617,17 +617,33 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 		return strings.NewReplacer("<", "<<>", ">", "<>>").Replace(path)
 	}
 
-	for _, key := range keys {
-		if strings.HasPrefix(key, regexPrefix) {
-			input := strings.ReplaceAll(inputPath, `\`, `/`)
-			match, OK := regex.FindStringMatch(key[len(regexPrefix):], input, 1)
-			if !OK {
-				continue
-			}
+	handleRegex := func(key string) (string, bool) {
+		if !strings.HasPrefix(key, regexPrefix) {
+			return "", false
+		}
 
-			// Replace the first match with the mapped location.
-			input = strings.Replace(input, match, pt.mappedLocations[key], 1)
-			input = path.Clean(input)
+		input := strings.ReplaceAll(inputPath, `\`, `/`)
+		pattern := key[len(regexPrefix):]
+
+		// Add (?i) at the start of the pattern for case-insensitive matching on Windows
+		if pt.windowsPath || (pt.env.IsWsl() && strings.HasPrefix(input, "/mnt/")) {
+			pattern = "(?i)" + pattern
+		}
+
+		match, OK := regex.FindStringMatch(pattern, input, 1)
+		if !OK {
+			return "", false
+		}
+
+		// Replace the first match with the mapped location.
+		input = strings.Replace(input, match, pt.mappedLocations[key], 1)
+		input = path.Clean(input)
+
+		return input, true
+	}
+
+	for _, key := range keys {
+		if input, OK := handleRegex(key); OK {
 			return pt.parsePath(input)
 		}
 

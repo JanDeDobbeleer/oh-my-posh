@@ -442,7 +442,7 @@ var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocations
 		Expected:        `\a\b\1234\f\e`,
 	},
 	{
-		Pwd:             `C:\Users\taylo\Documents\GitHub\project`,
+		Pwd:             `C:\Users\taylo\Documents\github\project`,
 		MappedLocations: map[string]string{`re:(.*Users/taylo/Documents/GitHub).*`: "github"},
 		GOOS:            runtime.WINDOWS,
 		PathSeparator:   `\`,

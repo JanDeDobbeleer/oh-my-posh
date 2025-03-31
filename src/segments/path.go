@@ -619,14 +619,16 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 
 	for _, key := range keys {
 		if strings.HasPrefix(key, regexPrefix) {
-			match, OK := regex.FindStringMatch(key[len(regexPrefix):], inputPath, 1)
+			input := strings.ReplaceAll(inputPath, `\`, `/`)
+			match, OK := regex.FindStringMatch(key[len(regexPrefix):], input, 1)
 			if !OK {
 				continue
 			}
 
 			// Replace the first match with the mapped location.
-			inputPath = strings.Replace(inputPath, match, pt.mappedLocations[key], 1)
-			return pt.parsePath(inputPath)
+			input = strings.Replace(input, match, pt.mappedLocations[key], 1)
+			input = path.Clean(input)
+			return pt.parsePath(input)
 		}
 
 		keyRoot, keyRelative := pt.parsePath(key)

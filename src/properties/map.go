@@ -210,6 +210,14 @@ func parseKeyValueArray(param any) map[string]string {
 			}
 		}
 		return keyValueArray
+	case Map:
+		keyValueArray := make(map[string]string)
+		for key, value := range v {
+			val := value.(string)
+			keyString := fmt.Sprintf("%v", key)
+			keyValueArray[keyString] = val
+		}
+		return keyValueArray
 	case map[string]string:
 		return v
 	}

@@ -13,13 +13,13 @@ import (
 )
 
 type Config struct {
-	Cache         cache.Cache    `json:"-" toml:"-"`
-	Source        Source         `json:"source" toml:"source"`
-	Interval      cache.Duration `json:"interval" toml:"interval"`
-	Version       string         `json:"-" toml:"-"`
-	Auto          bool           `json:"auto" toml:"auto"`
-	DisplayNotice bool           `json:"notice" toml:"notice"`
-	Force         bool           `json:"-" toml:"-"`
+	Cache         cache.Cache    `json:"-" toml:"-" yaml:"-"`
+	Source        Source         `json:"source" toml:"source" yaml:"source"`
+	Interval      cache.Duration `json:"interval" toml:"interval" yaml:"interval"`
+	Version       string         `json:"-" toml:"-" yaml:"-"`
+	Auto          bool           `json:"auto" toml:"auto" yaml:"auto"`
+	DisplayNotice bool           `json:"notice" toml:"notice" yaml:"notice"`
+	Force         bool           `json:"-" toml:"-" yaml:"-"`
 }
 
 type Source string

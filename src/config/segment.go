@@ -41,39 +41,39 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 type Segment struct {
 	writer                 SegmentWriter
 	env                    runtime.Environment
-	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty"`
-	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty"`
-	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty"`
+	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty" yaml:"properties,omitempty"`
+	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
+	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
 	name                   string
-	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
-	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
-	Template               string         `json:"template,omitempty" toml:"template,omitempty"`
-	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty"`
-	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty"`
-	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
-	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
-	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
-	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty"`
-	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty"`
-	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
-	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
-	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty"`
-	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
-	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty"`
-	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty"`
-	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty"`
-	Needs                  []string       `json:"-" toml:"-"`
-	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
-	Timeout                time.Duration  `json:"timeout,omitempty" toml:"timeout,omitempty"`
-	Duration               time.Duration  `json:"-" toml:"-"`
-	NameLength             int            `json:"-" toml:"-"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty"`
-	Enabled                bool           `json:"-" toml:"-"`
-	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
-	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
-	restored               bool           `json:"-" toml:"-"`
+	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
+	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty" yaml:"trailing_diamond,omitempty"`
+	Template               string         `json:"template,omitempty" toml:"template,omitempty" yaml:"template,omitempty"`
+	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty" yaml:"foreground,omitempty"`
+	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty" yaml:"templates_logic,omitempty"`
+	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty" yaml:"powerline_symbol,omitempty"`
+	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty" yaml:"background,omitempty"`
+	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty" yaml:"filler,omitempty"`
+	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty" yaml:"type,omitempty"`
+	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty" yaml:"style,omitempty"`
+	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty" yaml:"leading_powerline_symbol,omitempty"`
+	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
+	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty" yaml:"tips,omitempty"`
+	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty" yaml:"background_templates,omitempty"`
+	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty" yaml:"templates,omitempty"`
+	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty" yaml:"exclude_folders,omitempty"`
+	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty" yaml:"include_folders,omitempty"`
+	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
+	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
+	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	Timeout                time.Duration  `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	Duration               time.Duration  `json:"-" toml:"-" yaml:"-"`
+	NameLength             int            `json:"-" toml:"-" yaml:"-"`
+	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
+	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	restored               bool           `json:"-" toml:"-" yaml:"-"`
 }
 
 func (segment *Segment) Name() string {

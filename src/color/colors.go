@@ -26,8 +26,8 @@ type String interface {
 }
 
 type Set struct {
-	Background Ansi `json:"background" toml:"background"`
-	Foreground Ansi `json:"foreground" toml:"foreground"`
+	Background Ansi `json:"background" toml:"background" yaml:"background"`
+	Foreground Ansi `json:"foreground" toml:"foreground" yaml:"foreground"`
 }
 
 func (c *Set) String() string {

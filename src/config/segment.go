@@ -73,6 +73,7 @@ type Segment struct {
 	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	restored               bool           `json:"-" toml:"-" yaml:"-"`
 }
 
@@ -153,7 +154,7 @@ func (segment *Segment) Render(index int) bool {
 	segment.writer.SetIndex(index)
 
 	text := segment.string()
-	segment.Enabled = len(strings.ReplaceAll(text, " ", "")) > 0
+	segment.Enabled = segment.Force || len(strings.ReplaceAll(text, " ", "")) > 0
 
 	if !segment.Enabled {
 		template.Cache.RemoveSegmentData(segment.Name())

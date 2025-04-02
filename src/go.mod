@@ -32,7 +32,6 @@ require (
 	github.com/charmbracelet/bubbletea v1.3.4
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/goccy/go-json v0.10.5
-	github.com/goccy/go-yaml v1.17.1
 	github.com/gookit/goutil v0.6.18
 	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/mattn/go-runewidth v0.0.16

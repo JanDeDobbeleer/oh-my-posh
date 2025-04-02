@@ -19,10 +19,11 @@ type Az struct {
 const (
 	Source properties.Property = "source"
 
-	Pwsh       = "pwsh"
-	Cli        = "cli"
-	FirstMatch = "first_match"
-	azureEnv   = "POSH_AZURE_SUBSCRIPTION"
+	Pwsh         = "pwsh"
+	Cli          = "cli"
+	FirstMatch   = "first_match"
+	ReverseMatch = "reverse_match"
+	azureEnv     = "POSH_AZURE_SUBSCRIPTION"
 )
 
 type AzureConfig struct {
@@ -79,6 +80,8 @@ func (a *Az) Enabled() bool {
 	switch source {
 	case FirstMatch:
 		return a.getCLISubscription() || a.getModuleSubscription()
+	case ReverseMatch:
+		return a.getModuleSubscription() || a.getCLISubscription()
 	case Pwsh:
 		return a.getModuleSubscription()
 	case Cli:

@@ -12,8 +12,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
-	yaml "github.com/goccy/go-yaml"
 	toml "github.com/pelletier/go-toml/v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 type ProjectItem struct {

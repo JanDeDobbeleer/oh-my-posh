@@ -430,40 +430,24 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	// to the mounted path
 	g.mainSCMDir = g.convertToLinuxPath(matches["dir"])
 
-	// convert to absolute path
-	if strings.HasPrefix(g.mainSCMDir, "..") {
-		g.mainSCMDir = filepath.Join(gitdir.ParentFolder, g.mainSCMDir)
-	}
-
-	// if we don't do this, we will identify the submodule as a worktree
-	isSubmodule := strings.Contains(g.mainSCMDir, "/modules/")
-
 	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
 	// scmDir needs to become path/.git
 	// repoRootDir needs to become path
-	ind := strings.LastIndex(g.mainSCMDir, "/worktrees/")
-	if ind > -1 && !isSubmodule {
-		gitDir := filepath.Join(g.mainSCMDir, "gitdir")
-		g.scmDir = g.mainSCMDir[:ind]
-		gitDirContent := g.env.FileContent(gitDir)
-		g.repoRootDir = strings.TrimSuffix(gitDirContent, ".git\n")
-		g.IsWorkTree = true
-		return true
-	}
+	worktreeIndex := strings.LastIndex(g.mainSCMDir, "/worktrees/")
 
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
 	// we need the parent folder to detect where the real .git folder is
-	if isSubmodule {
+	if strings.Contains(g.mainSCMDir, "/modules/") {
 		g.scmDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
 		// between worktree and a module path containing the word 'worktree,' however.
-		ind = strings.LastIndex(g.scmDir, "/worktrees/")
-		if ind > -1 && g.env.HasFilesInDir(g.scmDir, "gitdir") {
+		worktreeIndex = strings.LastIndex(g.scmDir, "/worktrees/")
+		if worktreeIndex > -1 && g.env.HasFilesInDir(g.scmDir, "gitdir") {
 			gitDir := filepath.Join(g.scmDir, "gitdir")
 			realGitFolder := g.env.FileContent(gitDir)
 			g.repoRootDir = strings.TrimSuffix(realGitFolder, ".git\n")
-			g.scmDir = g.scmDir[:ind]
+			g.scmDir = g.scmDir[:worktreeIndex]
 			g.mainSCMDir = g.scmDir
 			g.IsWorkTree = true
 			return true
@@ -471,6 +455,20 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 
 		g.repoRootDir = g.scmDir
 		g.mainSCMDir = g.scmDir
+		return true
+	}
+
+	// convert to absolute path for worktrees only
+	if strings.HasPrefix(g.mainSCMDir, "..") {
+		g.mainSCMDir = filepath.Join(gitdir.ParentFolder, g.mainSCMDir)
+	}
+
+	if worktreeIndex > -1 {
+		gitDir := filepath.Join(g.mainSCMDir, "gitdir")
+		g.scmDir = g.mainSCMDir[:worktreeIndex]
+		gitDirContent := g.env.FileContent(gitDir)
+		g.repoRootDir = strings.TrimSuffix(gitDirContent, ".git\n")
+		g.IsWorkTree = true
 		return true
 	}
 
@@ -568,6 +566,7 @@ func (g *Git) getUpstreamIcon() string {
 	if len(g.RawUpstreamURL) == 0 {
 		return ""
 	}
+
 	g.UpstreamURL = g.cleanUpstreamURL(g.RawUpstreamURL)
 
 	// allow overrides first

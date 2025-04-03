@@ -230,8 +230,8 @@ func (segment *Segment) isToggled() bool {
 		return false
 	}
 
-	list := strings.Split(toggles, ",")
-	for _, toggle := range list {
+	list := strings.SplitSeq(toggles, ",")
+	for toggle := range list {
 		if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
 			log.Debugf("segment toggled off: %s", segment.Name())
 			return true

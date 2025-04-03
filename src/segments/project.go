@@ -283,9 +283,9 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 	}
 
 	data := &ProjectData{}
-	lines := strings.Split(content, "\n")
+	lines := strings.SplitSeq(content, "\n")
 
-	for _, line := range lines {
+	for line := range lines {
 		splitted := strings.SplitN(line, "=", 2)
 		if len(splitted) < 2 {
 			continue

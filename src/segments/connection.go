@@ -23,8 +23,8 @@ func (c *Connection) Template() string {
 
 func (c *Connection) Enabled() bool {
 	types := c.props.GetString(Type, "wifi|ethernet")
-	connectionTypes := strings.Split(types, "|")
-	for _, connectionType := range connectionTypes {
+	connectionTypes := strings.SplitSeq(types, "|")
+	for connectionType := range connectionTypes {
 		network, err := c.env.Connection(runtime.ConnectionType(connectionType))
 		if err != nil {
 			continue

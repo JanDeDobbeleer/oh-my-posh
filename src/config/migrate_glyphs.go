@@ -45,9 +45,9 @@ func getGlyphCodePoints() (codePoints, error) {
 		return codePoints, err
 	}
 
-	lines := strings.Split(string(bytes), "\n")
+	lines := strings.SplitSeq(string(bytes), "\n")
 
-	for _, line := range lines {
+	for line := range lines {
 		fields := strings.Split(line, ",")
 		if len(fields) < 2 {
 			continue

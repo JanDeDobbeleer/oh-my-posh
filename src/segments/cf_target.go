@@ -54,8 +54,8 @@ func (c *CfTarget) setCFTargetStatus() bool {
 		return false
 	}
 
-	lines := strings.Split(output, "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(output, "\n")
+	for line := range lines {
 		splitted := strings.SplitN(line, ":", 2)
 		if len(splitted) < 2 {
 			continue

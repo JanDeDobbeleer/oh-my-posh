@@ -194,7 +194,7 @@ func (p *Python) pyvenvCfgPrompt() string {
 	}
 
 	pyvenvCfg := p.env.FileContent(filepath.Join(pyvenvDir, "pyvenv.cfg"))
-	for _, line := range strings.Split(pyvenvCfg, "\n") {
+	for line := range strings.SplitSeq(pyvenvCfg, "\n") {
 		lineSplit := strings.SplitN(line, "=", 2)
 		if len(lineSplit) != 2 {
 			continue

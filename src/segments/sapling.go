@@ -127,8 +127,8 @@ func (sl *Sapling) setHeadContext() {
 	if len(changes) == 0 {
 		return
 	}
-	lines := strings.Split(changes, "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(changes, "\n")
+	for line := range lines {
 		line = strings.TrimSpace(line)
 		if len(line) == 0 {
 			continue
@@ -144,8 +144,8 @@ func (sl *Sapling) setCommitContext() {
 		sl.New = true
 		return
 	}
-	splitted := strings.Split(strings.TrimSpace(body), "\n")
-	for _, line := range splitted {
+	splitted := strings.SplitSeq(strings.TrimSpace(body), "\n")
+	for line := range splitted {
 		line = strings.TrimSpace(line)
 		if len(line) <= 3 {
 			continue

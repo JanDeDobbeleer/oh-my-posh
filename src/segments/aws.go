@@ -62,9 +62,9 @@ func (a *Aws) getConfigFileInfo() {
 	if a.Profile != "" {
 		configSection = fmt.Sprintf("[profile %s]", a.Profile)
 	}
-	configLines := strings.Split(config, "\n")
+	configLines := strings.SplitSeq(config, "\n")
 	var sectionActive bool
-	for _, line := range configLines {
+	for line := range configLines {
 		if strings.HasPrefix(line, configSection) {
 			sectionActive = true
 			continue

@@ -248,8 +248,8 @@ func (g *Git) Commit() *Commit {
 	}
 
 	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
-	splitted := strings.Split(strings.TrimSpace(commitBody), "\n")
-	for _, line := range splitted {
+	splitted := strings.SplitSeq(strings.TrimSpace(commitBody), "\n")
+	for line := range splitted {
 		line = strings.TrimSpace(line)
 		if len(line) <= 3 {
 			continue
@@ -274,8 +274,8 @@ func (g *Git) Commit() *Commit {
 		case "ha:":
 			g.commit.Sha = line
 		case "rf:":
-			refs := strings.Split(line, ", ")
-			for _, ref := range refs {
+			refs := strings.SplitSeq(line, ", ")
+			for ref := range refs {
 				ref = strings.TrimSpace(ref)
 				switch {
 				case strings.HasSuffix(ref, "HEAD"):
@@ -646,7 +646,7 @@ func (g *Git) setGitStatus() {
 	}
 
 	output := g.getGitCommandOutput(args...)
-	for _, line := range strings.Split(output, "\n") {
+	for line := range strings.SplitSeq(output, "\n") {
 		if strings.HasPrefix(line, HASH) && len(line) >= len(HASH)+7 {
 			g.ShortHash = line[len(HASH) : len(HASH)+7]
 			g.Hash = line[len(HASH):]

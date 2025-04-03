@@ -655,7 +655,6 @@
                     "description": "https://ohmyposh.dev/docs/segments/cloud/az#properties",
                     "default": "first_match",
                     "enum": [
-                      "first_match",
                       "cli",
                       "pwsh"
                     ]

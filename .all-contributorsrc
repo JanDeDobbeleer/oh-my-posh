@@ -3065,6 +3065,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "tleepa",
+      "name": "Leepa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7734919?v=4",
+      "profile": "https://github.com/tleepa",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -118,8 +118,8 @@ func (s *Svn) setSvnStatus() {
 	if len(changes) == 0 {
 		return
 	}
-	lines := strings.Split(changes, "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(changes, "\n")
+	for line := range lines {
 		if len(line) == 0 {
 			continue
 		}

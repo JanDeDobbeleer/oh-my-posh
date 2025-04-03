@@ -57,9 +57,9 @@ func (u *Unity) GetUnityVersion() (string, error) {
 	versionFilePath := filepath.Join(projectDir.Path, "ProjectVersion.txt")
 	versionFileText := u.env.FileContent(versionFilePath)
 
-	lines := strings.Split(versionFileText, "\n")
+	lines := strings.SplitSeq(versionFileText, "\n")
 	versionPrefix := "m_EditorVersion: "
-	for _, line := range lines {
+	for line := range lines {
 		if !strings.HasPrefix(line, versionPrefix) {
 			continue
 		}

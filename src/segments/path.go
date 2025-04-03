@@ -842,7 +842,7 @@ func (pt *Path) splitPath() Folders {
 		return folders
 	}
 
-	elements := strings.Split(pt.relative, pt.pathSeparator)
+	elements := strings.SplitSeq(pt.relative, pt.pathSeparator)
 	folderFormatMap := pt.makeFolderFormatMap()
 	currentPath := pt.root
 
@@ -852,7 +852,7 @@ func (pt *Path) splitPath() Folders {
 
 	var display bool
 
-	for _, element := range elements {
+	for element := range elements {
 		currentPath += element
 
 		if format := folderFormatMap[currentPath]; len(format) != 0 {

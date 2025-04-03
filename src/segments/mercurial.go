@@ -143,9 +143,9 @@ func (hg *Mercurial) setMercurialStatus() {
 		return
 	}
 
-	statusLines := strings.Split(statusString, "\n")
+	statusLines := strings.SplitSeq(statusString, "\n")
 
-	for _, status := range statusLines {
+	for status := range statusLines {
 		hg.Working.add(status[:1])
 	}
 }

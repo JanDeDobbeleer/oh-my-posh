@@ -407,7 +407,7 @@ Nerd Font glyphs will return 1, since most are double width
 func (ir *Renderer) additionalWidth() int {
 	longest := 0
 	var longestLine string
-	for _, line := range strings.Split(ir.AnsiString, "\n") {
+	for line := range strings.SplitSeq(ir.AnsiString, "\n") {
 		length := ir.lenWithoutANSI(line)
 		if length > longest {
 			longestLine = line

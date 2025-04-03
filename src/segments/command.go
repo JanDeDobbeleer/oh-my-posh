@@ -55,8 +55,8 @@ func (c *Cmd) runCommand(shell, command string) bool {
 	}
 
 	if strings.Contains(command, "||") {
-		commands := strings.Split(command, "||")
-		for _, cmd := range commands {
+		commands := strings.SplitSeq(command, "||")
+		for cmd := range commands {
 			output := c.env.RunShellCommand(shell, strings.TrimSpace(cmd))
 			if len(output) != 0 {
 				c.Output = output
@@ -67,8 +67,8 @@ func (c *Cmd) runCommand(shell, command string) bool {
 
 	if strings.Contains(command, "&&") {
 		var output string
-		commands := strings.Split(command, "&&")
-		for _, cmd := range commands {
+		commands := strings.SplitSeq(command, "&&")
+		for cmd := range commands {
 			output += c.env.RunShellCommand(shell, strings.TrimSpace(cmd))
 		}
 		c.Output = output

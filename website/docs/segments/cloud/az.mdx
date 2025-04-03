@@ -28,9 +28,9 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name     |   Type   |    Default    | Description                                                                                                                                                                                                                                               |
-| -------- | :------: | :-----------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `source` | `string` | `first_match` | <ul><li>`first_match`: try the CLI config first, then the PowerShell module. The first to resolve is displayed</li><li>`cli`: fetch the information from the CLI config</li><li>`pwsh`: fetch the information from the PowerShell Module config</li></ul> |
+| Name     |   Type   |          Default           | Description                                                                                                                                                                                                                                                                                      |
+| -------- | :------: | :------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `source` | `string` | <code>cli&#124;pwsh</code> | sources to get subscription information from. Can be any of the following values, joined by <code>&#124;</code> to loop multiple sources for context. <ul><li>`cli`: fetch the information from the CLI config</li><li>`pwsh`: fetch the information from the PowerShell Module config</li></ul> |
 
 ## Template ([info][templates])
 

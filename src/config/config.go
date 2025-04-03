@@ -1,6 +1,8 @@
 package config
 
 import (
+	"strings"
+
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -134,7 +136,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 		for _, segment := range block.Segments {
 			if segment.Type == AZ {
 				source := segment.Properties.GetString(segments.Source, segments.FirstMatch)
-				if source == segments.Pwsh || source == segments.FirstMatch {
+				if strings.Contains(source, segments.Pwsh) {
 					log.Debug("azure enabled")
 					feats = append(feats, shell.Azure)
 				}

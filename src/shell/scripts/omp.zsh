@@ -59,6 +59,7 @@ function _omp_preexec() {
 function _omp_precmd() {
   _omp_status=$?
   _omp_pipestatus=(${pipestatus[@]})
+  _omp_job_count=${#jobstates}
   _omp_stack_count=${#dirstack[@]}
   _omp_execution_time=-1
   _omp_no_status=true
@@ -126,6 +127,7 @@ function _omp_get_prompt() {
     --pipestatus="${_omp_pipestatus[*]}" \
     --no-status=$_omp_no_status \
     --execution-time=$_omp_execution_time \
+    --job-count=$_omp_job_count \
     --stack-count=$_omp_stack_count \
     ${args[@]}
 }

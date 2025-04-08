@@ -111,7 +111,6 @@ func NewRGBColor(ansiColor string) *RGB {
 
 type Renderer struct {
 	italic                 font.Face
-	env                    runtime.Environment
 	bold                   font.Face
 	regular                font.Face
 	defaultForegroundColor *RGB
@@ -139,8 +138,6 @@ type Renderer struct {
 }
 
 func (ir *Renderer) Init(env runtime.Environment) error {
-	ir.env = env
-
 	ir.setOutputPath(env.Flags().Config)
 
 	ir.cleanContent()
@@ -376,7 +373,7 @@ func (ir *Renderer) cleanContent() {
 	}
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, saveCursorAnsi, "_")
 
-	// replace rprompt with adding and mark right aligned blocks with a pointer
+	// replace rprompt with padding and mark right aligned blocks with a pointer
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1000C", strings.Repeat(" ", ir.RPromptOffset))
 
 	// add watermarks

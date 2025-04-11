@@ -392,7 +392,7 @@ func (e *Engine) writeSeparator(final bool) {
 		bgColor = color.Background
 	}
 
-	if e.activeSegment.InvertPowerline {
+	if e.activeSegment.InvertPowerline || e.previousActiveSegment.InvertPowerline {
 		terminal.Write(e.getPowerlineColor(), bgColor, symbol)
 		return
 	}

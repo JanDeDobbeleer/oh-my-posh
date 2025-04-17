@@ -199,7 +199,7 @@ func (w *Withings) getMeasures() bool {
 	if len(data.Body.MeasureGroups) == 0 || len(data.Body.MeasureGroups[0].Measures) == 0 {
 		return false
 	}
-	measure := data.Body.MeasureGroups[0].Measures[0]
+	measure := data.Body.MeasureGroups[len(data.Body.MeasureGroups)-1].Measures[0]
 	weight := measure.Value
 	w.Weight = float64(weight) / math.Pow(10, math.Abs(float64(measure.Unit)))
 	return true

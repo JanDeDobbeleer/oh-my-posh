@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	runtime_ "runtime"
 
+	"slices"
+
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -175,12 +177,7 @@ func (l *language) Enabled() bool {
 }
 
 func (l *language) hasLanguageFiles() bool {
-	for _, extension := range l.extensions {
-		if l.env.HasFiles(extension) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(l.extensions, l.env.HasFiles)
 }
 
 func (l *language) hasProjectFiles() bool {

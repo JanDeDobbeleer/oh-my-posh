@@ -10,16 +10,26 @@ Display the current Docker context. Will not be active when using the default co
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "docker",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#000000",
-  "background": "#0B59E7",
-  "template": " \uf308 {{ .Context }} "
-}}/>
+<Config
+  data={{
+    type: "docker",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#000000",
+    background: "#0B59E7",
+    template: " \uf308 {{ .Context }} ",
+  }}
+/>
+
+## Properties
+
+| Name            |    Type    |                        Default                        | Description                                                                                                                                                              |
+| --------------- | :--------: | :---------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `display_mode`  |  `string`  |                       `context`                       | <ul><li>`files`: the segment is only displayed when a file `extensions` listed is present</li><li>`context`: displays the segment when a Docker context active</li></ul> |
+| `fetch_context` | `boolean`  |                        `true`                         | also fetch the current active Docker context when in the `files` display mode                                                                                            |
+| `extensions`    | `[]string` | `docker-compose.yml, docker-compose.yaml, Dockerfile` | allows to override the default list of file extensions to validate                                                                                                       |
 
 ## Template ([info][templates])
 

@@ -13,6 +13,11 @@ func (f *Flutter) Enabled() bool {
 	f.folders = dartFolders
 	f.commands = []*cmd{
 		{
+			executable: "fvm",
+			args:       []string{"flutter", "--version"},
+			regex:      `Flutter (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		},
+		{
 			executable: "flutter",
 			args:       []string{"--version"},
 			regex:      `Flutter (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,

@@ -158,27 +158,27 @@ func TestUpgradeFeatures(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		cache := &cache_.Cache{}
-		env.On("Cache").Return(cache)
+		c := &cache_.Cache{}
+		env.On("Cache").Return(c)
 
 		if tc.UpgradeCacheKeyExists {
-			cache.On("Get", upgrade.CACHEKEY).Return("", true)
+			c.On("Get", upgrade.CACHEKEY).Return("", true)
 		} else {
-			cache.On("Get", upgrade.CACHEKEY).Return("", false)
+			c.On("Get", upgrade.CACHEKEY).Return("", false)
 		}
 
-		cache.On("Set", upgrade.CACHEKEY, "", mock_.Anything).Return()
+		c.On("Set", upgrade.CACHEKEY, "", mock_.Anything).Return()
 
 		if tc.AutoUpgradeKey {
-			cache.On("Get", AUTOUPGRADE).Return("", true)
+			c.On("Get", AUTOUPGRADE).Return("", true)
 		} else {
-			cache.On("Get", AUTOUPGRADE).Return("", false)
+			c.On("Get", AUTOUPGRADE).Return("", false)
 		}
 
 		if tc.NoticeKey {
-			cache.On("Get", UPGRADENOTICE).Return("", true)
+			c.On("Get", UPGRADENOTICE).Return("", true)
 		} else {
-			cache.On("Get", UPGRADENOTICE).Return("", false)
+			c.On("Get", UPGRADENOTICE).Return("", false)
 		}
 
 		cfg := &Config{

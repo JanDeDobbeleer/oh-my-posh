@@ -7,9 +7,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
+	mock_ "github.com/stretchr/testify/mock"
 )
 
-func TestDockerSegment(t *testing.T) {
+func TestDockerContext(t *testing.T) {
 	type envVar struct {
 		name  string
 		value string
@@ -56,5 +57,34 @@ func TestDockerSegment(t *testing.T) {
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.Expected, renderTemplate(env, "{{ .Context }}", docker), tc.Case)
 		}
+	}
+}
+
+func TestDockerFiles(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedEnabled bool
+		HasFiles        bool
+	}{
+		{Case: "docker-compose.yml", ExpectedEnabled: true, HasFiles: true},
+		{Case: "docker-compose.yaml", ExpectedEnabled: true, HasFiles: true},
+		{Case: "Dockerfile", ExpectedEnabled: true, HasFiles: true},
+		{Case: "docker-compose.yml - not found", ExpectedEnabled: false, HasFiles: false},
+	}
+
+	for _, tc := range cases {
+		docker := &Docker{}
+		env := new(mock.Environment)
+		props := properties.Map{
+			DisplayMode:  DisplayModeFiles,
+			FetchContext: false,
+		}
+
+		docker.Init(props, env)
+
+		env.On("HasFiles", tc.Case).Return(true)
+		env.On("HasFiles", mock_.Anything).Return(false)
+
+		assert.Equal(t, tc.ExpectedEnabled, docker.Enabled(), tc.Case)
 	}
 }

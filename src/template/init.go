@@ -24,7 +24,7 @@ var (
 	knownFields sync.Map
 )
 
-func Init(environment runtime.Environment, vars maps.Simple) {
+func Init(environment runtime.Environment, vars maps.Simple, aliases *maps.Config) {
 	env = environment
 	shell = env.Shell()
 	knownFields = sync.Map{}
@@ -39,5 +39,5 @@ func Init(environment runtime.Environment, vars maps.Simple) {
 		return
 	}
 
-	loadCache(vars)
+	loadCache(vars, aliases)
 }

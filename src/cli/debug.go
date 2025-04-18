@@ -51,7 +51,7 @@ func createDebugCmd() *cobra.Command {
 			env := &runtime.Terminal{}
 			env.Init(flags)
 
-			template.Init(env, cfg.Var)
+			template.Init(env, cfg.Var, cfg.Maps)
 
 			defer func() {
 				template.SaveCache()

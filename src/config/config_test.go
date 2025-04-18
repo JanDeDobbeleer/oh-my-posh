@@ -100,7 +100,7 @@ func TestGetPalette(t *testing.T) {
 		template.Cache = &cache.Template{
 			Shell: "bash",
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		cfg := &Config{
 			Palette:  tc.Palette,

@@ -8,8 +8,7 @@ import (
 type Session struct {
 	base
 
-	DefaultUserName string
-	SSHSession      bool
+	SSHSession bool
 }
 
 func (s *Session) Enabled() bool {

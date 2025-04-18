@@ -95,7 +95,7 @@ func TestUI5Tooling(t *testing.T) {
 		// this is needed to build the version URL as before renderTemplate, the template is not initialized
 		env.On("Shell").Return("foo")
 		template.Cache = &cache.Template{}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		failMsg := fmt.Sprintf("Failed in case: %s", tc.Case)
 		assert.True(t, ui5tooling.Enabled(), failMsg)

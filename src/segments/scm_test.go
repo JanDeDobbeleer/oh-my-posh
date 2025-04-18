@@ -222,7 +222,7 @@ func TestFormatBranch(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("Shell").Return(shell.BASH)
 		template.Cache = new(cache.Template)
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		got := g.formatBranch(tc.Input)
 		assert.Equal(t, tc.Expected, got, tc.Case)

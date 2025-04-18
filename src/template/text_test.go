@@ -165,7 +165,7 @@ func TestRenderTemplate(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("Shell").Return("foo")
 		Cache = new(cache.Template)
-		Init(env, nil)
+		Init(env, nil, nil)
 
 		text, err := tmpl.Render()
 		if tc.ShouldError {
@@ -251,7 +251,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		Cache = &cache.Template{
 			OS: "darwin",
 		}
-		Init(env, nil)
+		Init(env, nil, nil)
 
 		tmpl := &Text{
 			Template: tc.Template,
@@ -344,7 +344,7 @@ func TestPatchTemplate(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("Shell").Return("foo")
 	Cache = new(cache.Template)
-	Init(env, nil)
+	Init(env, nil, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{
@@ -374,7 +374,7 @@ func TestPatchTemplateStruct(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("Shell").Return("foo")
 	Cache = new(cache.Template)
-	Init(env, nil)
+	Init(env, nil, nil)
 
 	tmpl := &Text{
 		Template: "{{ .Hello }}",
@@ -403,7 +403,7 @@ func TestSegmentContains(t *testing.T) {
 	Cache = &cache.Template{
 		Segments: segments,
 	}
-	Init(env, nil)
+	Init(env, nil, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{

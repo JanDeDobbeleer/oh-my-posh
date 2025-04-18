@@ -15,16 +15,15 @@ import (
 
 func TestSessionSegmentTemplate(t *testing.T) {
 	cases := []struct {
-		Case            string
-		ExpectedString  string
-		UserName        string
-		DefaultUserName string
-		ComputerName    string
-		Template        string
-		WhoAmI          string
-		Platform        string
-		SSHSession      bool
-		Root            bool
+		Case           string
+		ExpectedString string
+		UserName       string
+		ComputerName   string
+		Template       string
+		WhoAmI         string
+		Platform       string
+		SSHSession     bool
+		Root           bool
 	}{
 		{
 			Case:           "user and computer",
@@ -73,26 +72,6 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			Root:           true,
 		},
 		{
-			Case:            "default user not equal",
-			ExpectedString:  "john",
-			UserName:        "john",
-			DefaultUserName: "jack",
-			SSHSession:      true,
-			ComputerName:    "remote",
-			Root:            true,
-			Template:        "{{if ne .Env.POSH_SESSION_DEFAULT_USER .UserName}}{{.UserName}}{{end}}",
-		},
-		{
-			Case:            "default user equal",
-			ExpectedString:  "",
-			UserName:        "john",
-			DefaultUserName: "john",
-			SSHSession:      true,
-			ComputerName:    "remote",
-			Root:            true,
-			Template:        "{{if ne .Env.POSH_SESSION_DEFAULT_USER .UserName}}{{.UserName}}{{end}}",
-		},
-		{
 			Case:           "user with ssh using who am i",
 			ExpectedString: "john on remote",
 			UserName:       "john",
@@ -126,7 +105,6 @@ func TestSessionSegmentTemplate(t *testing.T) {
 
 		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("Getenv", "POSH_SESSION_DEFAULT_USER").Return(tc.DefaultUserName)
 
 		env.On("Platform").Return(tc.Platform)
 

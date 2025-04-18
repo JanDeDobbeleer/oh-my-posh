@@ -18,7 +18,7 @@ var (
 	Cache *cache.Template
 )
 
-func loadCache(vars maps.Simple) {
+func loadCache(vars maps.Simple, aliases *maps.Config) {
 	if !env.Flags().IsPrimary {
 		// Load the template cache for a non-primary prompt before rendering any templates.
 		if OK := restoreCache(env); OK {
@@ -29,7 +29,7 @@ func loadCache(vars maps.Simple) {
 	Cache = new(cache.Template)
 
 	Cache.Root = env.Root()
-	Cache.Shell = env.Shell()
+	Cache.Shell = aliases.GetShellName(env.Shell())
 	Cache.ShellVersion = env.Flags().ShellVersion
 	Cache.Code, _ = env.StatusCodes()
 	Cache.WSL = env.IsWsl()
@@ -59,9 +59,9 @@ func loadCache(vars maps.Simple) {
 		Cache.Folder += `\`
 	}
 
-	Cache.UserName = env.User()
+	Cache.UserName = aliases.GetUserName(env.User())
 	if host, err := env.Host(); err == nil {
-		Cache.HostName = host
+		Cache.HostName = aliases.GetHostName(host)
 	}
 
 	goos := env.GOOS()

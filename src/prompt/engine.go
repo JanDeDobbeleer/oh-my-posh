@@ -486,7 +486,7 @@ func New(flags *runtime.Flags) *Engine {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
-	template.Init(env, cfg.Var)
+	template.Init(env, cfg.Var, cfg.Maps)
 
 	flags.HasExtra = cfg.DebugPrompt != nil ||
 		cfg.SecondaryPrompt != nil ||

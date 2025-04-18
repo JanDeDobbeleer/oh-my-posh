@@ -520,7 +520,8 @@
           }
         }
       },
-      "allOf": [{
+      "allOf": [
+        {
           "if": {
             "properties": {
               "type": {
@@ -1541,7 +1542,22 @@
           },
           "then": {
             "title": "Docker Segment",
-            "description": "https://ohmyposh.dev/docs/segments/cli/docker"
+            "description": "https://ohmyposh.dev/docs/segments/cli/docker",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_context": {
+                    "type": "boolean",
+                    "title": "Fetch Context",
+                    "description": "Fetch the Docker context",
+                    "default": true
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -5110,7 +5126,8 @@
               }
             }
           }
-        }]
+        }
+      ]
     }
   },
   "required": [

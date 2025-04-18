@@ -140,6 +140,12 @@
       "title": "Filler",
       "description": "Right aligned filler text, will span the remaining width."
     },
+    "alias": {
+      "type": "object",
+      "title": "Aliases",
+      "description": "Custom value replacement for template parts",
+      "default": {}
+    },
     "extra_prompt": {
       "type": "object",
       "default": {},
@@ -5323,6 +5329,25 @@
       "title": "Config variables to use in templates (can be any value)",
       "description": "https://ohmyposh.dev/docs/configuration/templates#config-variables",
       "default": {}
+    },
+    "aliases": {
+      "type": "object",
+      "title": "Aliases",
+      "description": "https://ohmyposh.dev/docs/configuration/aliases",
+      "default": {},
+      "items": {
+        "properties": {
+          "user_name": {
+            "$ref": "#/definitions/alias"
+          },
+          "host_name": {
+            "$ref": "#/definitions/alias"
+          },
+          "shell_name": {
+            "$ref": "#/definitions/alias"
+          }
+        }
+      }
     }
   }
 }

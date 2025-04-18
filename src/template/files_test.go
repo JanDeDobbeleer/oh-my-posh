@@ -25,7 +25,7 @@ func TestGlob(t *testing.T) {
 	env.On("Shell").Return("foo")
 
 	Cache = new(cache.Template)
-	Init(env, nil)
+	Init(env, nil, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{

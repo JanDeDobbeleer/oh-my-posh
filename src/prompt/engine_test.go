@@ -98,7 +98,7 @@ func TestPrintPWD(t *testing.T) {
 			Shell:    tc.Shell,
 			Segments: maps.NewConcurrent(),
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		terminal.Init(shell.GENERIC)
 
@@ -133,7 +133,7 @@ func engineRender() {
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent(),
 	}
-	template.Init(env, nil)
+	template.Init(env, nil, nil)
 
 	terminal.Init(shell.GENERIC)
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
@@ -201,7 +201,7 @@ func TestGetTitle(t *testing.T) {
 			Folder:   "vagrant",
 			Segments: maps.NewConcurrent(),
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		engine := &Engine{
 			Config: &config.Config{
@@ -263,7 +263,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			HostName: "",
 			Segments: maps.NewConcurrent(),
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		engine := &Engine{
 			Config: &config.Config{
@@ -375,7 +375,7 @@ func TestShouldFill(t *testing.T) {
 			Shell:    shell.GENERIC,
 			Segments: maps.NewConcurrent(),
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		terminal.Init(shell.GENERIC)
 		terminal.Plain = true

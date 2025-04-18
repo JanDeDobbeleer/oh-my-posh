@@ -37,7 +37,7 @@ func TestStatusWriterEnabled(t *testing.T) {
 		template.Cache = &cache.Template{
 			Code: 133,
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		s := &Status{}
 		s.Init(props, env)

@@ -30,7 +30,7 @@ func renderTemplateNoTrimSpace(env *mock.Environment, segmentTemplate string, co
 	if template.Cache == nil {
 		template.Cache = &cache.Template{}
 	}
-	template.Init(env, nil)
+	template.Init(env, nil, nil)
 
 	tmpl := &template.Text{
 		Template: segmentTemplate,
@@ -243,7 +243,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		env.On("Getenv", "HOME").Return(homeDir)
 
 		template.Cache = new(cache.Template)
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		props := properties.Map{
 			properties.Style:       Full,
@@ -365,7 +365,7 @@ func TestGetFolderSeparator(t *testing.T) {
 		template.Cache = &cache.Template{
 			Shell: "bash",
 		}
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		props := properties.Map{}
 
@@ -484,7 +484,7 @@ func TestGetMaxWidth(t *testing.T) {
 		env.On("Shell").Return(shell.BASH)
 
 		template.Cache = new(cache.Template)
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		props := properties.Map{
 			MaxWidth: tc.MaxWidth,

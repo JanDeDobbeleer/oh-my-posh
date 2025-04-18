@@ -81,7 +81,7 @@ func TestAnsiRender(t *testing.T) {
 		env.On("Shell").Return("foo")
 
 		template.Cache = new(cache.Template)
-		template.Init(env, nil)
+		template.Init(env, nil, nil)
 
 		ansi := Ansi("{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
 		got := ansi.ResolveTemplate()

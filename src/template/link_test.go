@@ -25,7 +25,7 @@ func TestUrl(t *testing.T) {
 
 	Cache = new(cache.Template)
 
-	Init(env, nil)
+	Init(env, nil, nil)
 
 	for _, tc := range cases {
 		tmpl := &Text{

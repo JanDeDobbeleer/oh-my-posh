@@ -138,7 +138,7 @@ func (p *Python) pyenvVersion() (string, error) {
 	}
 
 	pyEnvRoot := p.env.Getenv("PYENV_ROOT")
-	if !strings.HasPrefix(cmdPath, pyEnvRoot) {
+	if len(pyEnvRoot) == 0 || !strings.HasPrefix(cmdPath, pyEnvRoot) {
 		return "", fmt.Errorf("executable at %s is not a pyenv shim", cmdPath)
 	}
 

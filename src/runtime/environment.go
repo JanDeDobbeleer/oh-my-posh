@@ -96,6 +96,7 @@ type Flags struct {
 	Init          bool
 	Migrate       bool
 	Eval          bool
+	Escape        bool
 }
 
 type CommandError struct {

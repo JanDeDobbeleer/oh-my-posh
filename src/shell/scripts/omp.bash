@@ -33,6 +33,31 @@ _omp_secondary_prompt=$(
         --shell-version="$BASH_VERSION"
 )
 
+# set transient and right when we have ble.sh by validating
+# the existence of BLE_SESSION_ID
+if [[ -n $BLE_SESSION_ID ]]; then
+    bleopt prompt_ps1_transient=always
+    bleopt prompt_ps1_final='$(
+        "$_omp_executable" print transient \
+            --shell=bash \
+            --shell-version="$BASH_VERSION" \
+            --escape=false
+    )'
+    bleopt prompt_rps1='$(
+        "$_omp_executable" print right \
+            --save-cache \
+            --shell=bash \
+            --shell-version="$BASH_VERSION" \
+            --status="$_omp_status" \
+            --pipestatus="${_omp_pipestatus[*]}" \
+            --no-status="$_omp_no_status" \
+            --execution-time="$_omp_execution_time" \
+            --stack-count="$_omp_stack_count" \
+            --terminal-width="${COLUMNS-0}" \
+            --escape=false
+    )'
+fi
+
 function _omp_set_cursor_position() {
     # not supported in Midnight Commander
     # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415

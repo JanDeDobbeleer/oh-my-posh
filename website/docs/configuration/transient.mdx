@@ -9,11 +9,11 @@ import TabItem from "@theme/TabItem";
 import Config from "@site/src/components/Config.js";
 
 :::info
-This feature only works in `nu`, `fish`, `zsh`, `powershell` (`ConstrainedLanguage` mode unsupported) and `cmd` for the time being.
+This feature only works in `nu`, `fish`, `zsh`, `powershell` (`ConstrainedLanguage` mode unsupported), bash (with [ble.sh]) and `cmd` for the time being.
 :::
 
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
-You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
+You can use go [text/template][go-text-template] templates extended with [sprig] to enrich the text.
 All [template][templates] functionality is available, even reusing [cross segment template properties][cstp] from
 the previous primary prompt run.
 
@@ -60,6 +60,7 @@ transient prompt configuration. For `cmd`, you can run the command below once to
 clink set prompt.transient always
 ```
 
+[ble.sh]: https://github.com/akinomyoga/ble.sh
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/
 [console-title]: /docs/configuration/title#console-title-template

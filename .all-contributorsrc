@@ -3085,6 +3085,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "lechwolowski",
+      "name": "Lech Wołowski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33866950?v=4",
+      "profile": "https://github.com/lechwolowski",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -494,7 +494,13 @@ func New(flags *runtime.Flags) *Engine {
 		cfg.ValidLine != nil ||
 		cfg.ErrorLine != nil
 
-	terminal.Init(env.Shell())
+	// when we print using https://github.com/akinomyoga/ble.sh, this needs to be unescaped for certain prompts
+	sh := env.Shell()
+	if sh == shell.BASH && !flags.Escape {
+		sh = shell.GENERIC
+	}
+
+	terminal.Init(sh)
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors(env)
 	terminal.Plain = flags.Plain

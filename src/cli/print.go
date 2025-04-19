@@ -28,6 +28,7 @@ var (
 	plain        bool
 	noStatus     bool
 	column       int
+	escape       bool
 )
 
 // printCmd represents the prompt command
@@ -79,6 +80,7 @@ func createPrintCmd() *cobra.Command {
 				JobCount:      jobCount,
 				IsPrimary:     args[0] == prompt.PRIMARY,
 				SaveCache:     saveCache,
+				Escape:        escape,
 			}
 
 			eng := prompt.New(flags)
@@ -128,6 +130,7 @@ func createPrintCmd() *cobra.Command {
 	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
 	printCmd.Flags().IntVar(&jobCount, "job-count", 0, "number of background jobs")
 	printCmd.Flags().BoolVar(&saveCache, "save-cache", false, "save updated cache to file")
+	printCmd.Flags().BoolVar(&escape, "escape", true, "escape the ANSI sequences for the shell")
 
 	// Hide flags that are for internal use only.
 	_ = printCmd.Flags().MarkHidden("save-cache")

@@ -1,12 +1,26 @@
 package segments
 
 import (
+	"encoding/json"
+
 	"github.com/jandedobbeleer/oh-my-posh/src/constants"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+)
+
+type globalJSON struct {
+	Sdk struct {
+		Version string `json:"version"`
+	} `json:"sdk"`
+}
+
+const (
+	// FetchSDKVersion fetches the SDK version in global.json
+	FetchSDKVersion properties.Property = "fetch_sdk_version"
 )
 
 type Dotnet struct {
+	SDKVersion string
 	language
-
 	Unsupported bool
 }
 
@@ -42,6 +56,24 @@ func (d *Dotnet) Enabled() bool {
 	if !enabled {
 		return false
 	}
+
 	d.Unsupported = d.exitCode == constants.DotnetExitCode
+
+	if !d.props.GetBool(FetchSDKVersion, false) {
+		return true
+	}
+
+	file, err := d.env.HasParentFilePath("global.json", false)
+	if err != nil {
+		return true
+	}
+
+	content := d.env.FileContent(file.Path)
+
+	var globalJSON globalJSON
+	if err := json.Unmarshal([]byte(content), &globalJSON); err == nil {
+		d.SDKVersion = globalJSON.Sdk.Version
+	}
+
 	return true
 }

@@ -35,6 +35,7 @@ import Config from "@site/src/components/Config.js";
 | `version_url_template` |  `string`  |                                                                                            | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
 | `extensions`           | `[]string` | `*.cs, *.csx, *.vb, *.fs, *.fsx, *.sln, *.slnf, *.csproj, *.fsproj, *.vbproj, global.json` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                                                                                            | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `fetch_sdk_version`    | `boolean`  |                                          `false`                                           | fetch the SDK version in `global.json` when present                                                                                                                                                                                  |
 
 ## Template ([info][templates])
 
@@ -48,16 +49,17 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name             | Type     | Description                                        |
-| ---------------- | -------- | -------------------------------------------------- |
-| `.Full`          | `string` | the full version                                   |
-| `.Major`         | `string` | major number                                       |
-| `.Minor`         | `string` | minor number                                       |
-| `.Patch`         | `string` | patch number                                       |
-| `.Prerelease`    | `string` | prerelease info text                               |
-| `.BuildMetadata` | `string` | build metadata                                     |
-| `.URL`           | `string` | URL of the version info / release notes            |
-| `.Error`         | `string` | error encountered when fetching the version string |
+| Name             | Type     | Description                                                         |
+| ---------------- | -------- | ------------------------------------------------------------------- |
+| `.Full`          | `string` | the full version                                                    |
+| `.Major`         | `string` | major number                                                        |
+| `.Minor`         | `string` | minor number                                                        |
+| `.Patch`         | `string` | patch number                                                        |
+| `.Prerelease`    | `string` | prerelease info text                                                |
+| `.BuildMetadata` | `string` | build metadata                                                      |
+| `.URL`           | `string` | URL of the version info / release notes                             |
+| `.SDKVersion`    | `string` | the SDK version in `global.json` when `fetch_sdk_version` is `true` |
+| `.Error`         | `string` | error encountered when fetching the version string                  |
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

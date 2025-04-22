@@ -434,6 +434,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://blog.raylu.net"><img src="https://avatars.githubusercontent.com/u/90059?v=4?s=100" width="100px;" alt="raylu"/><br /><sub><b>raylu</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=raylu" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=raylu" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lechwolowski"><img src="https://avatars.githubusercontent.com/u/33866950?v=4?s=100" width="100px;" alt="Lech Wołowski"/><br /><sub><b>Lech Wołowski</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=lechwolowski" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/OwlBurst"><img src="https://avatars.githubusercontent.com/u/158167545?v=4?s=100" width="100px;" alt="Owl Burst"/><br /><sub><b>Owl Burst</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=OwlBurst" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -102,7 +102,7 @@
     {
       "alignment": "left",
       "newline": true,
-      "leading_diamond": "<#7eb8da>\u2523</>",
+      "leading_diamond": "<#7eb8da>\u2517</>",
       "segments": [
         {
           "foreground": "#7eb8da",
@@ -123,18 +123,10 @@
           "style": "plain",
           "template": "[<#ffffff>{{ .UpstreamIcon }} </>{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <#ffffff>\uf044</> {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#ffffff>\uf046</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} <#ffffff>\ueb4b</> {{ .StashCount }}{{ end }}]",
           "type": "git"
-        }
-      ],
-      "type": "prompt"
-    },
-    {
-      "alignment": "left",
-      "newline": true,
-      "leading_diamond": "<#7eb8da>\u2514\u2500</>",
-      "segments": [
+        },
         {
           "style": "diamond",
-            "template": "<#ffff00>[#]</>",
+          "template": "<#ffff00>[#]</>",
           "type": "root"
         },
         {

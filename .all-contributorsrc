@@ -3094,6 +3094,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "OwlBurst",
+      "name": "Owl Burst",
+      "avatar_url": "https://avatars.githubusercontent.com/u/158167545?v=4",
+      "profile": "https://github.com/OwlBurst",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

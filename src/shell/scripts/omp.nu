@@ -40,6 +40,7 @@ def --wrapped _omp_get_prompt [
             $"--no-status=($no_status)"
             $"--execution-time=($execution_time)"
             $"--terminal-width=((term size).columns)"
+            $"--job-count=(job list | length)"
             ...$args
     )
 }

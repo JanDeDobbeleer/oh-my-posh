@@ -436,6 +436,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/OwlBurst"><img src="https://avatars.githubusercontent.com/u/158167545?v=4?s=100" width="100px;" alt="Owl Burst"/><br /><sub><b>Owl Burst</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=OwlBurst" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://rubixdev.de"><img src="https://avatars.githubusercontent.com/u/35602040?v=4?s=100" width="100px;" alt="Silas Groh"/><br /><sub><b>Silas Groh</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=RubixDev" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=RubixDev" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

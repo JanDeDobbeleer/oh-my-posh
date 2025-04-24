@@ -3113,6 +3113,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "mwiedemeyer",
+      "name": "Marco Wiedemeyer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4295189?v=4",
+      "profile": "https://mwiede.me/blog",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

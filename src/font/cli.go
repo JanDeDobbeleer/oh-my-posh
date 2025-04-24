@@ -7,10 +7,12 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
+	progress_ "github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
@@ -72,11 +74,12 @@ const (
 )
 
 type main struct {
-	err  error
-	list *list.Model
+	err      error
+	list     *list.Model
+	spinner  *spinner.Model
+	progress *progress.Model
 	Asset
 	families []string
-	spinner  spinner.Model
 	state    state
 	system   bool
 }
@@ -174,6 +177,8 @@ func (m *main) Init() tea.Cmd {
 		return nil
 	}
 
+	m.progress = progress.NewModel()
+
 	if len(m.URL) != 0 && !isLocalZipFile() {
 		m.state = downloadFont
 
@@ -202,7 +207,7 @@ func (m *main) Init() tea.Cmd {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-	m.spinner = s
+	m.spinner = &s
 	m.state = getFonts
 
 	if isLocalZipFile() {
@@ -276,6 +281,12 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
+	case progress.Message:
+		return m, m.progress.SetPercent(float64(msg))
+
+	case progress_.FrameMsg:
+		return m, m.progress.Update(msg)
+
 	case zipMsg:
 		m.state = installFont
 		defer func() {
@@ -294,8 +305,8 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 
 	default:
-		var cmd tea.Cmd
-		m.spinner, cmd = m.spinner.Update(msg)
+		s, cmd := m.spinner.Update(msg)
+		m.spinner = &s
 		return m, cmd
 	}
 
@@ -319,7 +330,7 @@ func (m *main) View() string {
 	case selectFont:
 		return fmt.Sprintf("\n%s%s", m.list.View(), terminal.StopProgress())
 	case downloadFont:
-		return textStyle.Render(fmt.Sprintf("%s Downloading %s%s", m.spinner.View(), m.Name, terminal.StartProgress()))
+		return textStyle.Render(fmt.Sprintf("Downloading %s...%s\n%s", m.Name, terminal.StartProgress(), m.progress.View()))
 	case unzipFont:
 		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.Name))
 	case installFont:

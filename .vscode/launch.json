@@ -176,7 +176,8 @@
       "program": "${workspaceRoot}/src",
       "args": [
         "font",
-        "install"
+        "install",
+        "AnonymousPro"
       ]
     },
     {

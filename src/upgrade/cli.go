@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	progress_ "github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/progress"
 )
 
 var (
@@ -39,18 +41,22 @@ func setState(message state) {
 type stateMsg state
 
 type model struct {
-	error   error
-	config  *Config
-	message string
-	spinner spinner.Model
-	state   state
+	error    error
+	config   *Config
+	spinner  *spinner.Model
+	progress *progress.Model
+	message  string
+	state    state
 }
 
 func initialModel(cfg *Config) *model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-	return &model{spinner: s, config: cfg}
+
+	p := progress.NewModel()
+
+	return &model{spinner: &s, config: cfg, progress: p}
 }
 
 func (m *model) Init() tea.Cmd {
@@ -96,9 +102,15 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.state = state(msg)
 		return m, nil
 
+	case progress.Message:
+		return m, m.progress.SetPercent(float64(msg))
+
+	case progress_.FrameMsg:
+		return m, m.progress.Update(msg)
+
 	default:
-		var cmd tea.Cmd
-		m.spinner, cmd = m.spinner.Update(msg)
+		s, cmd := m.spinner.Update(msg)
+		m.spinner = &s
 		return m, cmd
 	}
 }
@@ -115,8 +127,8 @@ func (m *model) View() string {
 	case validating:
 		message = "Validating current installation"
 	case downloading:
-		m.spinner.Spinner = spinner.Globe
-		message = fmt.Sprintf("Downloading latest version from %s", m.config.Source.String())
+		message = fmt.Sprintf("🌐 Downloading latest version from %s...\n%s", m.config.Source.String(), m.progress.View())
+		return title + textStyle.Render(message)
 	case verifying:
 		m.spinner.Spinner = spinner.Moon
 		message = "Verifying download"

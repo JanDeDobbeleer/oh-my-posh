@@ -115,6 +115,7 @@ func fetchFontAssets(repo string) ([]*Asset, error) {
 	}
 
 	defer response.Body.Close()
+
 	var release release
 	err = json.NewDecoder(response.Body).Decode(&release)
 	if err != nil {

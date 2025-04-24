@@ -3124,6 +3124,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "0-0-1-0-1-0-1-0",
+      "name": "0-0-1-0-1-0-1-0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43226073?v=4",
+      "profile": "https://github.com/0-0-1-0-1-0-1-0",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

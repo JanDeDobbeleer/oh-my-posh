@@ -1,8 +1,5 @@
 package font
 
-// A simple program demonstrating the spinner component from the Bubbles
-// component library.
-
 import (
 	"context"
 	"errors"
@@ -15,6 +12,7 @@ import (
 	"path/filepath"
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -84,7 +82,9 @@ func getRemoteFile(location string) (data []byte, err error) {
 		return data, fmt.Errorf("failed to download zip file: %s\n→ %s", resp.Status, location)
 	}
 
-	data, err = io.ReadAll(resp.Body)
+	reader := progress.NewReader(resp.Body, resp.ContentLength, program)
+
+	data, err = io.ReadAll(reader)
 	if err != nil {
 		return
 	}

@@ -3103,6 +3103,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "RubixDev",
+      "name": "Silas Groh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35602040?v=4",
+      "profile": "http://rubixdev.de",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

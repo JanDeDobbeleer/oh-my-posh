@@ -88,7 +88,7 @@ var upgradeCmd = &cobra.Command{
 		if err != nil {
 			log.Debug("failed to get latest version")
 			log.Error(err)
-			fmt.Printf("\n❌ %s\n\n", err)
+			fmt.Printf("\n  ❌ %s\n\n", err)
 
 			exitcode = 1
 			return
@@ -104,7 +104,7 @@ var upgradeCmd = &cobra.Command{
 
 		if upgrade.IsMajorUpgrade(build.Version, latest) {
 			log.Debug("major upgrade available")
-			message := fmt.Sprintf("\n🚨 major upgrade available: v%s -> v%s, use oh-my-posh upgrade --force to upgrade\n\n", build.Version, latest)
+			message := fmt.Sprintf("\n  🚨 major upgrade available: v%s -> v%s, use oh-my-posh upgrade --force to upgrade\n\n", build.Version, latest)
 			fmt.Print(message)
 			return
 		}

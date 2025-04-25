@@ -24,12 +24,11 @@ var (
 const listHeight = 14
 
 var (
-	titleStyle        = lipgloss.NewStyle().MarginLeft(2)
-	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
+	itemStyle         = lipgloss.NewStyle().PaddingLeft(3)
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
-	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
-	helpStyle         = lipgloss.NewStyle().PaddingLeft(4).PaddingBottom(1)
-	textStyle         = lipgloss.NewStyle().Margin(1, 0, 2, 4)
+	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(3)
+	helpStyle         = lipgloss.NewStyle().PaddingLeft(3).PaddingBottom(1)
+	textStyle         = lipgloss.NewStyle().Margin(1, 0, 2, 2)
 )
 
 type loadMsg []*Asset
@@ -56,7 +55,7 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	fn := itemStyle.Render
 	if index == m.Index() {
 		fn = func(s ...string) string {
-			return selectedItemStyle.Render("> " + strings.Join(s, " "))
+			return selectedItemStyle.Render("•" + strings.Join(s, " "))
 		}
 	}
 
@@ -96,7 +95,6 @@ func (m *main) buildFontList(nerdFonts []*Asset) {
 	l.Title = "Select font"
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
-	l.Styles.Title = titleStyle
 	l.Styles.PaginationStyle = paginationStyle
 	l.Styles.HelpStyle = helpStyle
 
@@ -330,7 +328,7 @@ func (m *main) View() string {
 	case selectFont:
 		return fmt.Sprintf("\n%s%s", m.list.View(), terminal.StopProgress())
 	case downloadFont:
-		return textStyle.Render(fmt.Sprintf("Downloading %s...%s\n%s", m.Name, terminal.StartProgress(), m.progress.View()))
+		return textStyle.Render(fmt.Sprintf("Downloading %s...\n%s", m.Name, m.progress.View()))
 	case unzipFont:
 		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.Name))
 	case installFont:

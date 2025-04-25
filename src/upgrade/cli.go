@@ -15,8 +15,7 @@ import (
 
 var (
 	program   *tea.Program
-	textStyle = lipgloss.NewStyle().Margin(1, 0, 2, 0)
-	title     string
+	textStyle = lipgloss.NewStyle().Margin(1, 0, 2, 2)
 )
 
 type resultMsg string
@@ -69,7 +68,7 @@ func (m *model) start() {
 	if err := install(m.config); err != nil {
 		m.error = err
 		log.Debug("failed to install")
-		program.Send(resultMsg(fmt.Sprintf("❌ upgrade failed: %v", err)))
+		program.Send(resultMsg(fmt.Sprintf(" ❌ upgrade failed: %v", err)))
 		return
 	}
 
@@ -117,7 +116,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *model) View() string {
 	if len(m.message) > 0 {
-		return title + textStyle.Render(m.message)
+		return textStyle.Render(m.message)
 	}
 
 	var message string
@@ -127,8 +126,8 @@ func (m *model) View() string {
 	case validating:
 		message = "Validating current installation"
 	case downloading:
-		message = fmt.Sprintf("🌐 Downloading latest version from %s...\n%s", m.config.Source.String(), m.progress.View())
-		return title + textStyle.Render(message)
+		message = fmt.Sprintf("Downloading %s from %s...\n%s", m.config.Version, m.config.Source.String(), m.progress.View())
+		return textStyle.Render(message)
 	case verifying:
 		m.spinner.Spinner = spinner.Moon
 		message = "Verifying download"
@@ -137,21 +136,10 @@ func (m *model) View() string {
 		message = "Installing"
 	}
 
-	return title + textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
+	return textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
 }
 
 func Run(cfg *Config) error {
-	titleStyle := lipgloss.NewStyle().Margin(1, 0, 1, 0)
-	title = "📦 Upgrading Oh My Posh"
-
-	current := fmt.Sprintf("v%s", build.Version)
-	if len(current) == 0 {
-		current = "dev"
-	}
-
-	title = fmt.Sprintf("%s from %s to %s", title, current, cfg.Version)
-	title = titleStyle.Render(title)
-
 	program = tea.NewProgram(initialModel(cfg))
 	resultModel, _ := program.Run()
 

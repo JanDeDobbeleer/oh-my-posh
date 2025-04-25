@@ -89,6 +89,7 @@ const (
 	empty = "<>"
 
 	startProgress = "\x1b]9;4;3;0\x07"
+	setProgress   = "\x1b]9;4;4;%d\x07"
 	endProgress   = "\x1b]9;4;0;0\x07"
 
 	WindowsTerminal = "Windows Terminal"
@@ -250,6 +251,14 @@ func StartProgress() string {
 	}
 
 	return startProgress
+}
+
+func SetProgress(percentage int) string {
+	if Program != WindowsTerminal {
+		return ""
+	}
+
+	return fmt.Sprintf(setProgress, percentage)
 }
 
 func StopProgress() string {

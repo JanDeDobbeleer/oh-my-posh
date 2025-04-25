@@ -3,6 +3,7 @@ package progress
 import (
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 type Message float64
@@ -21,4 +22,8 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	m.Model = model.(progress.Model)
 
 	return cmd
+}
+
+func (m *Model) View() string {
+	return m.Model.View() + terminal.SetProgress(int(m.Percent()*100))
 }

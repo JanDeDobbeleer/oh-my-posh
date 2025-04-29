@@ -53,8 +53,8 @@ github.com/dsnet/compress v0.0.1/go.mod h1:Aw8dCMJ7RioblQeTqt88akK31OvO8Dhf5Jflh
 github.com/dsnet/golib v0.0.0-20171103203638-1ea166775780/go.mod h1:Lj+Z9rebOhdfkVLjJ8T6VcRQv3SXugXy999NBtR9aFY=
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6baUTXGLOoWe4PQhGxaX0KpnayAqC48p4=
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
-github.com/esimov/stackblur-go v1.1.0 h1:fwnZJC/7sHFzu4CDMgdJ1QxMN/q3k5MGILuoU4hH6oQ=
-github.com/esimov/stackblur-go v1.1.0/go.mod h1:7PcTPCHHKStxbZvBkUlQJjRclqjnXtQ0NoORZt1AlHE=
+github.com/esimov/stackblur-go v1.1.1 h1:jZhuCbyFBp34SxkMwCuuNQ+d42w+CE/WOlcJLOlPEag=
+github.com/esimov/stackblur-go v1.1.1/go.mod h1:m0T0MjHYbo4Lib/R33XDUMbLBwyGf1/K48ZdqtXUYDA=
 github.com/fogleman/gg v1.3.0 h1:/7zJX8F6AaYQc57WQCyN9cAIz+4bCJGO9B+dyW29am8=
 github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=

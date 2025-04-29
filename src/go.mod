@@ -8,7 +8,7 @@ require (
 	github.com/alecthomas/assert v1.0.0
 	github.com/alecthomas/colour v0.1.0 // indirect
 	github.com/alecthomas/repr v0.4.0 // indirect
-	github.com/esimov/stackblur-go v1.1.0
+	github.com/esimov/stackblur-go v1.1.1
 	github.com/fogleman/gg v1.3.0
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.5.4

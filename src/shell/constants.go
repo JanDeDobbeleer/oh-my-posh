@@ -9,7 +9,6 @@ const (
 	CMD     = "cmd"
 	NU      = "nu"
 	GENERIC = "shell"
-	TCSH    = "tcsh"
 	ELVISH  = "elvish"
 	XONSH   = "xonsh"
 )

@@ -22,7 +22,9 @@ const (
 	YarnIcon properties.Property = "yarn_icon"
 	// NPMIcon illustrates NPM is used
 	NPMIcon properties.Property = "npm_icon"
-	// FetchPackageManager shows if NPM, PNPM, or Yarn is used
+	// BunIcon illustrates Bun is used
+	BunIcon properties.Property = "bun_icon"
+	// FetchPackageManager shows if Bun, NPM, PNPM, or Yarn is used
 	FetchPackageManager properties.Property = "fetch_package_manager"
 )
 
@@ -51,21 +53,50 @@ func (n *Node) loadContext() {
 		return
 	}
 
-	if n.env.HasFiles("pnpm-lock.yaml") {
-		n.PackageManagerName = "pnpm"
-		n.PackageManagerIcon = n.props.GetString(PnpmIcon, "\U000F02C1")
-		return
+	packageManagerDefinitions := []struct {
+		fileName     string
+		name         string
+		iconProperty properties.Property
+		defaultIcon  string
+	}{
+		{
+			fileName:     "pnpm-lock.yaml",
+			name:         "pnpm",
+			iconProperty: PnpmIcon,
+			defaultIcon:  "\U000F02C1",
+		},
+		{
+			fileName:     "yarn.lock",
+			name:         "yarn",
+			iconProperty: YarnIcon,
+			defaultIcon:  "\U000F011B",
+		},
+		{
+			fileName:     "package-lock.json",
+			name:         "npm",
+			iconProperty: NPMIcon,
+			defaultIcon:  "\uE71E",
+		},
+		{
+			fileName:     "package.json",
+			name:         "npm",
+			iconProperty: NPMIcon,
+			defaultIcon:  "\uE71E",
+		},
+		{
+			fileName:     "bun.lockb",
+			name:         "bun",
+			iconProperty: BunIcon,
+			defaultIcon:  "\ue76f",
+		},
 	}
 
-	if n.env.HasFiles("yarn.lock") {
-		n.PackageManagerName = "yarn"
-		n.PackageManagerIcon = n.props.GetString(YarnIcon, "\U000F011B")
-		return
-	}
-
-	if n.env.HasFiles("package-lock.json") || n.env.HasFiles("package.json") {
-		n.PackageManagerName = "npm"
-		n.PackageManagerIcon = n.props.GetString(NPMIcon, "\uE71E")
+	for _, pm := range packageManagerDefinitions {
+		if n.env.HasFiles(pm.fileName) {
+			n.PackageManagerName = pm.name
+			n.PackageManagerIcon = n.props.GetString(pm.iconProperty, pm.defaultIcon)
+			return
+		}
 	}
 }
 

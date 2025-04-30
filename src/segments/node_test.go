@@ -61,6 +61,7 @@ func TestNodeInContext(t *testing.T) {
 		hasYarn        bool
 		hasNPM         bool
 		hasDefault     bool
+		hasBun         bool
 		PkgMgrEnabled  bool
 	}{
 		{Case: "no package manager file", ExpectedString: "", PkgMgrEnabled: true},
@@ -73,6 +74,7 @@ func TestNodeInContext(t *testing.T) {
 		{Case: "pnpm and npm", hasPNPM: true, hasNPM: true, ExpectedString: "pnpm", PkgMgrEnabled: true},
 		{Case: "yarn and npm", hasYarn: true, hasNPM: true, ExpectedString: "yarn", PkgMgrEnabled: true},
 		{Case: "pnpm, yarn, and npm", hasPNPM: true, hasYarn: true, hasNPM: true, ExpectedString: "pnpm", PkgMgrEnabled: true},
+		{Case: "bun", hasBun: true, ExpectedString: "bun", PkgMgrEnabled: true},
 	}
 
 	for _, tc := range cases {
@@ -81,11 +83,13 @@ func TestNodeInContext(t *testing.T) {
 		env.On("HasFiles", "yarn.lock").Return(tc.hasYarn)
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("HasFiles", "package.json").Return(tc.hasDefault)
+		env.On("HasFiles", "bun.lockb").Return(tc.hasBun)
 
 		props := properties.Map{
 			PnpmIcon:            "pnpm",
 			YarnIcon:            "yarn",
 			NPMIcon:             "npm",
+			BunIcon:             "bun",
 			FetchPackageManager: tc.PkgMgrEnabled,
 		}
 

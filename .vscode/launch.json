@@ -13,10 +13,7 @@
         "primary",
         "--shell=pwsh",
         "--terminal-width=200"
-      ],
-      "env": {
-        "POSH_THEME": "C:/Users/jande/.test.omp.yaml"
-      }
+      ]
     },
     {
       "name": "Tooltip",

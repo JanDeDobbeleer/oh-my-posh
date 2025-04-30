@@ -26,6 +26,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
+	"image"
 	"io"
 	"math"
 	stdOS "os"
@@ -479,8 +480,11 @@ func (ir *Renderer) SavePNG() error {
 	bc.SetHexColor(ir.shadowBaseColor)
 	bc.Fill()
 
+	dst := image.NewNRGBA(bc.Image().Bounds())
+
 	// var done = make(chan struct{}, ir.shadowRadius)
-	shadow, err := stackblur.Process(
+	err := stackblur.Process(
+		dst,
 		bc.Image(),
 		uint32(ir.shadowRadius),
 	)
@@ -490,7 +494,7 @@ func (ir *Renderer) SavePNG() error {
 	}
 
 	// <-done
-	dc.DrawImage(shadow, 0, 0)
+	dc.DrawImage(dst, 0, 0)
 
 	// Draw rounded rectangle with outline and three button to produce the
 	// impression of a window with controls and a content area

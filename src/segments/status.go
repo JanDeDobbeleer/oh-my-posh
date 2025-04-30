@@ -19,7 +19,6 @@ type Status struct {
 	template *template.Text
 	String   string
 	Meaning  string
-	Code     int
 	Error    bool
 }
 
@@ -52,7 +51,6 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 	}
 
 	if len(pipeStatus) == 0 {
-		s.Code = status
 		s.template.Context = s
 		if text, err := s.template.Render(); err == nil {
 			return text
@@ -63,6 +61,13 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 	StatusSeparator := s.props.GetString(StatusSeparator, "|")
 
 	var builder strings.Builder
+
+	// use an anaonymous struct to avoid
+	// confusion with the template context
+	// that already has a .Code global property
+	var context struct {
+		Code int
+	}
 
 	splitted := strings.Split(pipeStatus, " ")
 	for i, codeStr := range splitted {
@@ -83,8 +88,9 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 			s.Error = true
 		}
 
-		s.Code = code
-		s.template.Context = s
+		context.Code = code
+
+		s.template.Context = context
 		text, err := s.template.Render()
 		if err != nil {
 			write(codeStr)

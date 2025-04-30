@@ -906,14 +906,18 @@ func (g *Git) getRemoteURL() string {
 	if len(upstream) == 0 {
 		upstream = "origin"
 	}
+
 	cfg, err := ini.Load(g.scmDir + "/config")
 	if err != nil {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
+
 	url := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
 	if len(url) != 0 {
+		log.Debug("remote url found in config:", url)
 		return url
 	}
+
 	return g.getGitCommandOutput("remote", "get-url", upstream)
 }
 

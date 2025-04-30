@@ -534,10 +534,10 @@ func (g *Git) cleanUpstreamURL(url string) string {
 	}
 
 	// ssh://user@host.xz:1234/path/to/repo.git/
-	match = regex.FindNamedRegexMatch(`(ssh|ftp|git|rsync)://(.*@)?(?P<URL>[a-z0-9.]+)(:[0-9]{4})?/(?P<PATH>.*).git`, url)
+	match = regex.FindNamedRegexMatch(`(ssh|ftp|git|rsync)://(.*@)?(?P<URL>[a-z0-9.-]+)(:[0-9]{4})?/(?P<PATH>.*).git`, url)
 	if len(match) == 0 {
 		// host.xz:/path/to/repo.git/
-		match = regex.FindNamedRegexMatch(`^(?P<URL>[a-z0-9./]+):(?P<PATH>[a-z0-9./]+)$`, url)
+		match = regex.FindNamedRegexMatch(`^(?P<URL>[a-z0-9.-]+):(?P<PATH>[\w.\-~/@]+)$`, url)
 	}
 
 	if len(match) != 0 {

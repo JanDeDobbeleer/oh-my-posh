@@ -685,6 +685,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Codeberg", Expected: "CB", Upstream: "codeberg.org:user/repo.git"},
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
+		{Case: "GitHub with dash", Expected: "GH", Upstream: "github.com:pixel48/custom-reg"},
 	}
 	for _, tc := range cases {
 		env := &mock.Environment{}

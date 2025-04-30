@@ -34,8 +34,6 @@ func (f Features) Lines(shell string) Lines {
 			code = feature.Bash()
 		case ELVISH:
 			code = feature.Elvish()
-		case TCSH:
-			code = feature.Tcsh()
 		case FISH:
 			code = feature.Fish()
 		case CMD:

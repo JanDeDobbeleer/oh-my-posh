@@ -1,0 +1,144 @@
+package io
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+)
+
+var scriptPathCache string
+
+func Exists(env runtime.Environment) (string, bool) {
+	if env.Flags().Debug {
+		return "", false
+	}
+
+	path, err := scriptPath(env)
+	if err != nil {
+		return "", false
+	}
+
+	_, err = os.Stat(path)
+	if err != nil {
+		return "", false
+	}
+
+	// check if we have the same context
+	if hash, _ := env.Cache().Get(cacheKey(env)); hash != scriptName(env) {
+		return "", false
+	}
+
+	return path, true
+}
+
+func Write(env runtime.Environment, script string) (string, error) {
+	path, err := scriptPath(env)
+	if err != nil {
+		return "", err
+	}
+
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = f.WriteString(script)
+	if err != nil {
+		return "", err
+	}
+
+	_ = f.Close()
+
+	env.Cache().Set(cacheKey(env), scriptName(env), cache.INFINITE)
+
+	defer purgeInitFiles(env)
+
+	return path, nil
+}
+
+func cacheKey(env runtime.Environment) string {
+	return fmt.Sprintf("INITVERSION%s", strings.ToUpper(env.Flags().Shell))
+}
+
+func fileName(env runtime.Environment) string {
+	return fmt.Sprintf("init.%s.%s", build.Version, env.Flags().ConfigHash)
+}
+
+func scriptName(env runtime.Environment) string {
+	extension := env.Flags().Shell
+
+	switch env.Flags().Shell {
+	case "pwsh", "powershell":
+		extension = "ps1"
+	case "cmd":
+		extension = "lua"
+	case "bash":
+		extension = "sh"
+	case "elvish":
+		extension = "elv"
+	case "xonsh":
+		extension = "xsh"
+	}
+
+	return fmt.Sprintf("%s.%s", fileName(env), extension)
+}
+
+func scriptPath(env runtime.Environment) (string, error) {
+	if len(scriptPathCache) != 0 {
+		return scriptPathCache, nil
+	}
+
+	if env.Flags().Shell != "nu" {
+		scriptPathCache = filepath.Join(cache.Path(), scriptName(env))
+		return scriptPathCache, nil
+	}
+
+	path, err := env.RunCommand("nu", "-c", "$nu.user-autoload-dirs | get 0")
+	if err != nil || len(path) == 0 {
+		log.Debug("failed to get nu user autoload dirs")
+		return "", err
+	}
+
+	// create the path if non-existent
+	_, err = os.Stat(path)
+	if err == nil {
+		scriptPathCache = filepath.Join(path, scriptName(env))
+		return scriptPathCache, nil
+	}
+
+	parent := filepath.Dir(path)
+	if err := os.Mkdir(parent, 0o755); err != nil {
+		return "", err
+	}
+
+	scriptPathCache = filepath.Join(path, scriptName(env))
+	return scriptPathCache, nil
+}
+
+func purgeInitFiles(env runtime.Environment) {
+	current := fileName(env)
+	files, err := os.ReadDir(cache.Path())
+	if err != nil {
+		return
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		if !strings.HasPrefix(file.Name(), "init.") || strings.HasPrefix(file.Name(), current) {
+			continue
+		}
+
+		if err := os.Remove(filepath.Join(cache.Path(), file.Name())); err != nil {
+			log.Debugf("failed to remove file %s: %s", file.Name(), err)
+		}
+	}
+}

@@ -25,7 +25,6 @@ var (
 		"pwsh",
 		"cmd",
 		"nu",
-		"tcsh",
 		"elvish",
 		"xonsh",
 	}
@@ -39,7 +38,7 @@ func init() {
 
 func createInitCmd() *cobra.Command {
 	initCmd := &cobra.Command{
-		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|tcsh|elvish|xonsh]",
+		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|elvish|xonsh]",
 		Short: "Initialize your shell and config",
 		Long: `Initialize your shell and config.
 
@@ -75,15 +74,16 @@ func runInit(sh string) {
 	}
 
 	configFile := config.Path(configFlag)
-	cfg := config.Load(configFile, sh, false)
+	cfg, hash := config.Load(configFile, sh, false)
 
 	flags := &runtime.Flags{
-		Shell:     sh,
-		Config:    configFile,
-		Strict:    strict,
-		Debug:     debug,
-		SaveCache: true,
-		Init:      true,
+		Shell:      sh,
+		Config:     configFile,
+		Strict:     strict,
+		Debug:      debug,
+		SaveCache:  true,
+		Init:       true,
+		ConfigHash: hash,
 	}
 
 	env := &runtime.Terminal{}

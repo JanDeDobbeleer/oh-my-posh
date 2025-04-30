@@ -69,23 +69,25 @@ func Init(env runtime.Environment, feats Features) string {
 		executable = quotePwshOrElvishStr(executable)
 
 		return fmt.Sprintf(command, executable, shell, config, additionalParams)
-	case ZSH, BASH, FISH, CMD, TCSH, XONSH:
+	case ZSH, BASH, FISH, CMD, XONSH, NU:
 		return PrintInit(env, feats, nil)
-	case NU:
-		createNuInit(env, feats)
-		return ""
 	default:
 		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, shell)
 	}
 }
 
 func PrintInit(env runtime.Environment, features Features, startTime *time.Time) string {
+	shell := env.Flags().Shell
+
+	if scriptPath, OK := hasScript(env); OK {
+		return sourceInit(env, shell, scriptPath)
+	}
+
 	executable, err := getExecutablePath(env)
 	if err != nil {
 		return noExe
 	}
 
-	shell := env.Flags().Shell
 	configFile := env.Flags().Config
 	sessionID := uuid.NewString()
 	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
@@ -123,11 +125,6 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		configFile = quoteNuStr(configFile)
 		sessionID = quoteNuStr(sessionID)
 		script = nuInit
-	case TCSH:
-		executable = quoteCshStr(executable)
-		configFile = quoteCshStr(configFile)
-		sessionID = quoteCshStr(sessionID)
-		script = tcshInit
 	case ELVISH:
 		executable = quotePwshOrElvishStr(executable)
 		configFile = quotePwshOrElvishStr(configFile)
@@ -153,10 +150,21 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 
 	log.Debug(shellScript)
 
-	if !env.Flags().Debug {
-		return shellScript
+	scriptPath, err := writeScript(env, shellScript)
+	if err != nil {
+		return fmt.Sprintf("echo \"Failed to write init script: %s\"", err.Error())
 	}
 
+	if env.Flags().Debug {
+		script := sourceInit(env, shell, scriptPath)
+		log.Debug("init script:", script)
+		return printDebug(env, startTime)
+	}
+
+	return sourceInit(env, shell, scriptPath)
+}
+
+func printDebug(env runtime.Environment, startTime *time.Time) string {
 	var builder strings.Builder
 
 	builder.WriteString(fmt.Sprintf("\n%s %s\n", log.Text("Init duration:").Green().Bold().Plain(), time.Since(*startTime)))
@@ -165,4 +173,33 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	builder.WriteString(env.Logs())
 
 	return builder.String()
+}
+
+func sourceInit(env runtime.Environment, shell, scriptPath string) string {
+	if env.IsCygwin() {
+		var err error
+		scriptPath, err = env.RunCommand("cygpath", "-u", scriptPath)
+		if err != nil {
+			return fmt.Sprintf("echo \"Failed to convert Cygwin path due to %s\"", err.Error())
+		}
+	}
+
+	switch shell {
+	case PWSH, PWSH5:
+		return scriptPath
+	case ZSH, BASH:
+		return fmt.Sprintf("source '%s'", scriptPath)
+	case FISH, XONSH:
+		return fmt.Sprintf("source %s", scriptPath)
+	case NU:
+		// as we write to autoload, no need to source anything
+		return ""
+	case ELVISH:
+		return fmt.Sprintf("eval (slurp < %s)", scriptPath)
+	case CMD:
+		scriptPath = strings.ReplaceAll(scriptPath, `\`, `\\`)
+		return fmt.Sprintf(`load(io.open('%s', "r"):read("*a"))()`, scriptPath)
+	default:
+		return fmt.Sprintf("echo \"No source command available for %s\"", shell)
+	}
 }

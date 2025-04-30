@@ -186,7 +186,7 @@ func ClearAfter() string {
 func FormatTitle(title string) string {
 	switch Shell {
 	// These shells don't support setting the console title.
-	case shell.ELVISH, shell.XONSH, shell.TCSH:
+	case shell.ELVISH, shell.XONSH:
 		return ""
 	case shell.BASH, shell.ZSH:
 		title = trimAnsi(title)

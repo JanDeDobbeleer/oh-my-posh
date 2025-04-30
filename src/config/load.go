@@ -3,9 +3,11 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -22,10 +24,10 @@ import (
 )
 
 // Load returns the default configuration including possible user overrides
-func Load(configFile, sh string, migrate bool) *Config {
+func Load(configFile, sh string, migrate bool) (*Config, string) {
 	defer log.Trace(time.Now())
 
-	cfg := loadConfig(configFile)
+	cfg, hash := loadConfig(configFile)
 
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
@@ -46,7 +48,7 @@ func Load(configFile, sh string, migrate bool) *Config {
 	}
 
 	if !cfg.ShellIntegration {
-		return cfg
+		return cfg, hash
 	}
 
 	// bash  - ok
@@ -57,13 +59,12 @@ func Load(configFile, sh string, migrate bool) *Config {
 	// nu    - built-in (and bugged) feature - nushell/nushell#5585, https://www.nushell.sh/blog/2022-08-16-nushell-0_67.html#shell-integration-fdncred-and-tyriar
 	// elv   - broken OSC sequences
 	// xonsh - broken OSC sequences
-	// tcsh  - overall broken, FTCS_COMMAND_EXECUTED could be added to POSH_POSTCMD in the future
 	switch sh {
-	case shell.ELVISH, shell.XONSH, shell.TCSH, shell.NU:
+	case shell.ELVISH, shell.XONSH, shell.NU:
 		cfg.ShellIntegration = false
 	}
 
-	return cfg
+	return cfg, hash
 }
 
 func Path(config string) string {
@@ -115,12 +116,14 @@ func Path(config string) string {
 	return abs
 }
 
-func loadConfig(configFile string) *Config {
+func loadConfig(configFile string) (*Config, string) {
 	defer log.Trace(time.Now())
+
+	const defaultHash = "default"
 
 	if len(configFile) == 0 {
 		log.Debug("no config file specified, using default")
-		return Default(false)
+		return Default(false), defaultHash
 	}
 
 	var cfg Config
@@ -130,7 +133,7 @@ func loadConfig(configFile string) *Config {
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Error(err)
-		return Default(true)
+		return Default(true), defaultHash
 	}
 
 	switch cfg.Format {
@@ -154,8 +157,13 @@ func loadConfig(configFile string) *Config {
 
 	if err != nil {
 		log.Error(err)
-		return Default(true)
+		return Default(true), defaultHash
 	}
 
-	return &cfg
+	// Calculate FNV-1a hash of the raw config data
+	hasher := fnv.New64a()
+	hasher.Write(data)
+	hash := strconv.FormatUint(hasher.Sum64(), 16)
+
+	return &cfg, hash
 }

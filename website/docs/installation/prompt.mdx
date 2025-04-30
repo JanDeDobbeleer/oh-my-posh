@@ -25,7 +25,6 @@ oh-my-posh get shell
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
     { label: 'powershell', value: 'powershell', },
-    { label: 'tcsh', value: 'tcsh', },
     { label: 'xonsh', value: 'xonsh', },
     { label: 'zsh', value: 'zsh', },
   ]
@@ -121,29 +120,10 @@ exec fish
 Oh My Posh requires Nushell v0.93.0 or higher.
 :::
 
-Add the following snippet as the last line to the Nushell env file (`$nu.env-path`):
+Add the following snippet as the last line to the Nushell config file (`$nu.config-path`):
 
 ```bash
 oh-my-posh init nu
-```
-
-This saves the initialization script to `~/.oh-my-posh.nu`.
-Now, edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
-
-```bash
-source ~/.oh-my-posh.nu
-```
-
-If you want to save the initialization script elsewhere, you can change the first line to something like this:
-
-```bash
-oh-my-posh init nu --print | save /mylocation/myscript.nu --force
-```
-
-And change the `source` line to:
-
-```bash
-source /mylocation/myscript.nu
 ```
 
 Once added, restart Nushell for the changes to take effect.
@@ -189,21 +169,6 @@ Once added, reload your profile for the changes to take effect.
 
 ```powershell
 . $PROFILE
-```
-
-</TabItem>
-<TabItem value="tcsh">
-
-Add the following snippet as the last line to `~/.tcshrc`:
-
-```bash
-eval "`oh-my-posh init tcsh`"
-```
-
-Note that the surrounding quotes are required. Once added, reload your profile for the changes to take effect.
-
-```bash
-exec tcsh
 ```
 
 </TabItem>

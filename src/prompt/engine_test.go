@@ -123,7 +123,7 @@ func BenchmarkEngineRender(b *testing.B) {
 }
 
 func engineRender() {
-	cfg := config.Load("", shell.GENERIC, false)
+	cfg, _ := config.Load("", shell.GENERIC, false)
 
 	env := &runtime.Terminal{}
 	env.Init(nil)

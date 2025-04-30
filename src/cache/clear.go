@@ -27,7 +27,7 @@ func Clear(cachePath string, force bool) ([]string, error) {
 			continue
 		}
 
-		if !strings.HasPrefix(file.Name(), FileName) {
+		if !strings.HasPrefix(file.Name(), FileName) && !strings.HasPrefix(file.Name(), "init.") {
 			continue
 		}
 

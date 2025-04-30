@@ -2279,6 +2279,40 @@
           "if": {
             "properties": {
               "type": {
+                "const": "http"
+              }
+            }
+          },
+          "then": {
+            "title": "HTTP segment",
+            "description": "https://ohmyposh.dev/docs/segments/web/http",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The HTTP URL you want to call, supports templates",
+                    "default": ""
+                  },
+                  "method" : {
+                    "type": "string",
+                    "title": "HTTP Method",
+                    "description": "The HTTP method to use",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "ipify"
               }
             }
@@ -4941,338 +4975,8 @@
             }
           },
           "then": {
-            "title": "Plastic SCM Segment",
-            "description": "https://ohmyposh.dev/docs/segments/scm/plastic",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not",
-                    "default": false
-                  },
-                  "status_formats": {
-                    "$ref": "#/definitions/status_formats"
-                  },
-                  "branch_icon": {
-                    "type": "string",
-                    "title": "Branch Icon",
-                    "description": "The icon to use in front of the selector branch name",
-                    "default": "\uE0A0 "
-                  },
-                  "commit_icon": {
-                    "type": "string",
-                    "title": "Commit Icon",
-                    "description": "Icon/text to display before the selector changeset",
-                    "default": "\uF417"
-                  },
-                  "tag_icon": {
-                    "type": "string",
-                    "title": "Tag Icon",
-                    "description": "Icon/text to display before the seletor label",
-                    "default": "\uF412"
-                  },
-                  "truncate_symbol": {
-                    "$ref": "#/definitions/truncate_symbol"
-                  },
-                  "branch_max_length": {
-                    "$ref": "#/definitions/branch_max_length"
-                  },
-                  "full_branch_path": {
-                    "$ref": "#/definitions/full_branch_path"
-                  },
-                  "native_fallback": {
-                    "$ref": "#/definitions/native_fallback"
-                  },
-                  "mapped_branches": {
-                    "$ref": "#/definitions/mapped_branches"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "brewfather"
-              }
-            }
-          },
-          "then": {
-            "title": "Brewfather Batch Status",
-            "description": "https://ohmyposh.dev/docs/segments/web/brewfather",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "user_id": {
-                    "type": "string",
-                    "title": "Brewfather UserID (required)",
-                    "description": "Provided by Brewfather's Generate API Key settings option",
-                    "default": ""
-                  },
-                  "api_key": {
-                    "type": "string",
-                    "title": "Brewfather API Key (required)",
-                    "description": "Provided by Brewfather's Generate API Key settings option",
-                    "default": ""
-                  },
-                  "batch_id": {
-                    "type": "string",
-                    "title": "ID of the batch in Brewfather (required)",
-                    "description": "At the end of the URL when viewing the batch on the Brewfather site",
-                    "default": ""
-                  },
-                  "day_icon": {
-                    "type": "string",
-                    "title": "Icon to use to indicate days",
-                    "description": "Appended to a number to indicate days, e.g. 25d",
-                    "default": "d"
-                  },
-                  "http_timeout": {
-                    "$ref": "#/definitions/http_timeout"
-                  },
-                  "doubleup_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, very high positive change",
-                    "description": "Delta between this and prior temperature reading is very high (> 4C by default), available intemplate as .TemperatureTrend",
-                    "default": "↑↑"
-                  },
-                  "singleup_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, high positive change",
-                    "description": "Delta between this and prior temperature reading is high (2C < delta < 4C by default), available intemplate as .TemperatureTrend",
-                    "default": "↑"
-                  },
-                  "fortyfiveup_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, positive change",
-                    "description": "Delta between this and prior temperature reading is positive (0.5C < delta < 2C by default), available intemplate as .TemperatureTrend",
-                    "default": "↗"
-                  },
-                  "flat_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, flat/small change",
-                    "description": "Delta between this and prior temperature and this temperature reading (< +-0.5C change), available intemplate as .TemperatureTrend",
-                    "default": "→"
-                  },
-                  "fortyfivedown_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, v. negative change",
-                    "description": "Delta between this and prior temperature reading is negative (-0.5C > delta > -2C by default), available intemplate as .TemperatureTrend",
-                    "default": "↘"
-                  },
-                  "singledown_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, high negative change",
-                    "description": "Delta between this and prior temperature reading is large negative (-2C > delta > -4C by default), available intemplate as .TemperatureTrend",
-                    "default": "↓"
-                  },
-                  "doubledown_icon": {
-                    "type": "string",
-                    "title": "Temperature trend icon, very high negative change",
-                    "description": "Delta between this and prior temperature reading is very large negative (> -4C by default), available intemplate as .TemperatureTrend",
-                    "default": "↓↓"
-                  },
-                  "planning_status_icon": {
-                    "type": "string",
-                    "title": "Icon for batch in planning",
-                    "description": "Available in template as .StatusIcon",
-                    "default": "\uF8EA"
-                  },
-                  "brewing_status_icon": {
-                    "type": "string",
-                    "title": "Icon for batch being brewed",
-                    "description": "Available in template as .StatusIcon",
-                    "default": "\uF7DE"
-                  },
-                  "fermenting_status_icon": {
-                    "type": "string",
-                    "title": "Icon for batch fermenting",
-                    "description": "Available in template as .StatusIcon",
-                    "default": "\uF499"
-                  },
-                  "conditioning_status_icon": {
-                    "type": "string",
-                    "title": "Icon for batch conditioning",
-                    "description": "Available in template as .StatusIcon",
-                    "default": "\uE372"
-                  },
-                  "completed_status_icon": {
-                    "type": "string",
-                    "title": "Icon for completed batch",
-                    "description": "Available in template as .StatusIcon",
-                    "default": "\uF7A5"
-                  },
-                  "archived_status_icon": {
-                    "type": "string",
-                    "title": "Icon for archived batch",
-                    "description": "Available in template as .StatusIcon",
-                    "default": "\uF187"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "ipify"
-              }
-            }
-          },
-          "then": {
-            "title": "Display your external IP Address",
-            "description": "https://ohmyposh.dev/docs/segments/web/ipify",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "title": "URL",
-                    "description": "The Ipify API URL",
-                    "default": "https://api.ipify.org"
-                  },
-                  "http_timeout": {
-                    "$ref": "#/definitions/http_timeout"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "http"
-              }
-            }
-          },
-          "then": {
-            "title": "Display your any JSON property from any API",
-            "description": "https://ohmyposh.dev/docs/segments/web/http",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "title": "URL",
-                    "description": "The HTTP URL",
-                    "default": ""
-                  },
-                  "method": {
-                    "type": "string",
-                    "title": "HTTP method",
-                    "description": "The HTTP method",
-                    "default": "GET"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "haskell"
-              }
-            }
-          },
-          "then": {
-            "title": "Haskell Segment",
-            "description": "https://ohmyposh.dev/docs/segments/languages/haskell",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "home_enabled": {
-                    "$ref": "#/definitions/home_enabled"
-                  },
-                  "fetch_version": {
-                    "$ref": "#/definitions/fetch_version"
-                  },
-                  "display_mode": {
-                    "$ref": "#/definitions/display_mode"
-                  },
-                  "missing_command_text": {
-                    "$ref": "#/definitions/missing_command_text"
-                  },
-                  "version_url_template": {
-                    "$ref": "#/definitions/version_url_template"
-                  },
-                  "stack_ghc_mode": {
-                    "type": "string",
-                    "title": "Use Stack GHC",
-                    "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc",
-                    "enum": [
-                      "always",
-                      "package",
-                      "never"
-                    ],
-                    "default": "never"
-                  },
-                  "extensions": {
-                    "type": "array",
-                    "title": "Extensions",
-                    "description": "The extensions to look for when determining if the current directory is a Haskell project",
-                    "default": [
-                      "*.hs",
-                      "*.lhs",
-                      "stack.yaml",
-                      "package.yaml",
-                      "*.cabal",
-                      "cabal.project"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "folders": {
-                    "$ref": "#/definitions/folders"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "helm"
-              }
-            }
-          },
-          "then": {
-            "title": "Helm segment",
-            "description": "https://ohmyposh.dev/docs/segments/cli/helm",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "display_mode": {
-                    "$ref": "#/definitions/display_mode"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "ui5tooling"
-              }
-            }
-          },
-          "then": {
-            "title": "UI5 tooling CLI segment",
-            "description": "https://ohmyposh.dev/docs/segments/cli/ui5tooling",
+            "title": "XMake Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/xmake",
             "properties": {
               "properties": {
                 "properties": {

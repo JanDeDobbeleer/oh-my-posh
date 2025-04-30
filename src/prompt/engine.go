@@ -130,8 +130,6 @@ func (e *Engine) getNewline() string {
 	case e.isWarp():
 		fallthrough
 	case e.Env.Shell() == shell.ELVISH && e.Env.GOOS() == runtime.WINDOWS:
-		fallthrough
-	case e.Env.Shell() == shell.TCSH:
 		return terminal.LineBreak()
 	default:
 		return newline
@@ -481,7 +479,7 @@ func (e *Engine) rectifyTerminalWidth(diff int) {
 // of the prompt components.
 func New(flags *runtime.Flags) *Engine {
 	flags.Config = config.Path(flags.Config)
-	cfg := config.Load(flags.Config, flags.Shell, flags.Migrate)
+	cfg, _ := config.Load(flags.Config, flags.Shell, flags.Migrate)
 
 	env := &runtime.Terminal{}
 	env.Init(flags)
@@ -518,10 +516,9 @@ func New(flags *runtime.Flags) *Engine {
 		if eng.Env.GOOS() == runtime.WINDOWS {
 			eng.rectifyTerminalWidth(-1)
 		}
-	case shell.TCSH, shell.ELVISH:
-		// In Tcsh, newlines in a prompt are badly translated.
+	case shell.ELVISH:
+		// In Elvish, newlines in a prompt are badly translated
 		// No silver bullet here. We have to reduce the terminal width by 1 so a right-aligned block will not be broken.
-		// In Elvish, the behavior is similar to that in Xonsh, but we do this for all platforms.
 		eng.rectifyTerminalWidth(-1)
 	case shell.PWSH, shell.PWSH5:
 		// when in PowerShell, and force patching the bleed bug

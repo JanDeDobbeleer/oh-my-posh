@@ -1,0 +1,65 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "template": "\u2554",
+          "foreground": "#047857",
+          "type": "text",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "folder_icon": "...",
+            "folder_separator_icon": "<#86F7D5> \ue0b1 </>",
+            "home_icon": "\ueb06",
+            "style": "agnoster_short"
+          },
+          "leading_diamond": "<#43535E,transparent>\ue0b6</>",
+          "trailing_diamond": "\ue0b0",
+          "template": " {{ .Path }} ",
+          "foreground": "#86f7d5",
+          "background": "#43535e",
+          "type": "path",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "time_format": "<b> <#66B2B2>♥</> <#D6DEEB>3:04PM</> <#79DFE1>|</> 2 Jan, Monday</b>"
+          },
+          "template": "{{ .CurrentDate | date .Format }}",
+          "foreground": "#94eece",
+          "type": "time",
+          "style": "plain"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "template": "\u255a\u2550\u2550",
+          "foreground": "#047857",
+          "type": "text",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "always_enabled": true
+          },
+          "template": "\ue285 ",
+          "foreground": "#e0f8ff",
+          "type": "status",
+          "style": "accordion",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"]
+        }
+      ],
+      "newline": true
+    }
+  ],
+  "version": 3
+}

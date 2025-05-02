@@ -19,7 +19,37 @@ func (f Feature) Bash() Code {
 		return unixUpgrade
 	case Notice:
 		return unixNotice
-	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, Transient:
+	case RPrompt:
+		if !bashBLEsession {
+			return ""
+		}
+
+		return `bleopt prompt_rps1='$(
+	"$_omp_executable" print right \
+		--save-cache \
+		--shell=bash \
+		--shell-version="$BASH_VERSION" \
+		--status="$_omp_status" \
+		--pipestatus="${_omp_pipestatus[*]}" \
+		--no-status="$_omp_no_status" \
+		--execution-time="$_omp_execution_time" \
+		--stack-count="$_omp_stack_count" \
+		--terminal-width="${COLUMNS-0}" \
+		--escape=false
+)'`
+	case Transient:
+		if !bashBLEsession {
+			return ""
+		}
+
+		return `bleopt prompt_ps1_transient=always
+bleopt prompt_ps1_final='$(
+    "$_omp_executable" print transient \
+        --shell=bash \
+        --shell-version="$BASH_VERSION" \
+        --escape=false
+)'`
+	case PromptMark, PoshGit, Azure, LineError, Jobs, Tooltips:
 		fallthrough
 	default:
 		return ""

@@ -16,6 +16,11 @@ const (
 	noExe = "echo \"Unable to find Oh My Posh executable\""
 )
 
+var (
+	// identify ble.sh by validating the existence of BLE_SESSION_ID
+	bashBLEsession bool
+)
+
 func getExecutablePath(env runtime.Environment) (string, error) {
 	executable, err := os.Executable()
 	if err != nil {
@@ -83,6 +88,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	shell := env.Flags().Shell
 	configFile := env.Flags().Config
 	sessionID := uuid.NewString()
+	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
 
 	var script string
 

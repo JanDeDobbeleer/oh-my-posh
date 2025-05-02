@@ -411,7 +411,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {
         $ExecutionContext.SessionState.Module.OnRemove += {
-            Remove-Item Function:Get-PoshStackCount
+            Remove-Item Function:Get-PoshStackCount -ErrorAction SilentlyContinue
+
             $Function:prompt = $script:OriginalPromptFunction
 
             (Get-PSReadLineOption).ContinuationPrompt = $script:OriginalContinuationPrompt

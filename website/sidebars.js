@@ -169,6 +169,7 @@ module.exports = {
           items: [
             "segments/scm/fossil",
             "segments/scm/git",
+            "segments/scm/jujutsu",
             "segments/scm/mercurial",
             "segments/scm/plastic",
             "segments/scm/sapling",

@@ -59,7 +59,7 @@ var upgradeCmd = &cobra.Command{
 		fmt.Print(terminal.StartProgress())
 
 		configFile := config.Path(configFlag)
-		cfg := config.Load(configFile, sh, false)
+		cfg, _ := config.Load(configFile, sh, false)
 		cfg.Upgrade.Cache = env.Cache()
 
 		defer func() {

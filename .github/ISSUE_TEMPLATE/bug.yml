@@ -54,7 +54,6 @@ body:
         - nu
         - powershell
         - xonsh
-        - tcsh
         - zsh
         - other (please specify)
   - type: textarea

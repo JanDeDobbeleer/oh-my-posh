@@ -1,6 +1,8 @@
 package build
 
+import "time"
+
 var (
-	Date    string
-	Version string
+	Date    = time.Now().UTC().String()
+	Version = "dev"
 )

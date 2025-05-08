@@ -231,6 +231,11 @@ func (env *Environment) MockHgCommand(dir, returnValue string, args ...string) {
 	env.On("RunCommand", "hg", args).Return(returnValue, nil)
 }
 
+func (env *Environment) MockJjCommand(dir, returnValue string, args ...string) {
+	args = append([]string{"--repository", dir, "--ignore-working-copy", "--no-pager", "--color", "never"}, args...)
+	env.On("RunCommand", "jj", args).Return(returnValue, nil)
+}
+
 func (env *Environment) MockSvnCommand(dir, returnValue string, args ...string) {
 	args = append([]string{"-C", dir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	env.On("RunCommand", "svn", args).Return(returnValue, nil)

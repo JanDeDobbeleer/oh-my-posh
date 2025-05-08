@@ -342,6 +342,7 @@
             "http",
             "ipify",
             "java",
+            "jujutsu",
             "julia",
             "kotlin",
             "kubectl",
@@ -2392,6 +2393,37 @@
                   },
                   "folders": {
                     "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "jujutsu"
+              }
+            }
+          },
+          "then": {
+            "title": "Jujutsu Segment",
+            "description": "https://ohmyposh.dev/docs/segments/scm/jujutsu",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the changes in the working copy",
+                    "default": false
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
                   }
                 }
               }

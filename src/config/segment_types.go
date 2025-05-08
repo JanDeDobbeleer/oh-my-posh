@@ -110,6 +110,8 @@ const (
 	JAVA SegmentType = "java"
 	// API writes the output of a custom JSON API
 	HTTP SegmentType = "http"
+	// JUJUTSU writes Jujutsu source control information
+	JUJUTSU SegmentType = "jujutsu"
 	// JULIA writes which julia version is currently active
 	JULIA SegmentType = "julia"
 	// KOTLIN writes the active kotlin version
@@ -120,7 +122,7 @@ const (
 	LASTFM SegmentType = "lastfm"
 	// LUA writes the active lua version
 	LUA SegmentType = "lua"
-	// MERCURIAL writes the Mercurial source control information
+	// MERCURIAL writes Mercurial source control information
 	MERCURIAL SegmentType = "mercurial"
 	// MOJO writes the active version of Mojo and the name of the Magic virtual env
 	MOJO SegmentType = "mojo"
@@ -279,6 +281,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	IPIFY:           func() SegmentWriter { return &segments.IPify{} },
 	JAVA:            func() SegmentWriter { return &segments.Java{} },
 	HTTP:            func() SegmentWriter { return &segments.HTTP{} },
+	JUJUTSU:         func() SegmentWriter { return &segments.Jujutsu{} },
 	JULIA:           func() SegmentWriter { return &segments.Julia{} },
 	KOTLIN:          func() SegmentWriter { return &segments.Kotlin{} },
 	KUBECTL:         func() SegmentWriter { return &segments.Kubectl{} },

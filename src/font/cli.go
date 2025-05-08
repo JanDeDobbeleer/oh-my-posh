@@ -177,6 +177,9 @@ func (m *main) Init() tea.Cmd {
 
 	m.progress = progress.NewModel()
 
+	s := spinner.New()
+	m.spinner = &s
+
 	if len(m.URL) != 0 && !isLocalZipFile() {
 		m.state = downloadFont
 
@@ -202,10 +205,8 @@ func (m *main) Init() tea.Cmd {
 		go getFontsList()
 	}()
 
-	s := spinner.New()
-	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-	m.spinner = &s
+	m.spinner.Spinner = spinner.Dot
+	m.spinner.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
 	m.state = getFonts
 
 	if isLocalZipFile() {

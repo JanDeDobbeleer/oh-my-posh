@@ -4,7 +4,6 @@ package segments
 
 import (
 	"strings"
-	"os/exec"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
@@ -50,21 +49,14 @@ func (s *Spotify) runLinuxScriptCommand(command string) string {
 func (s *Spotify) enabledWsl() bool {
 	psCommand := `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; (Get-Process Spotify -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -ne ""} | Select-Object -First 1).MainWindowTitle`
 
-	cmd := exec.Command("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", psCommand)
-	
-	var outb, errb strings.Builder
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-	err := cmd.Run()
-
-	stdoutString := outb.String()
+	windowName, err := s.env.RunCommand("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", psCommand)
 
 	if err != nil {
 		s.Status = stopped
 
 		return false
 	}
-	title := strings.TrimSpace(stdoutString)
+	title := strings.TrimSpace(windowName)
 
 	if title == "" || !strings.Contains(title, " - ") {
 		s.Status = stopped

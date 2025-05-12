@@ -47,40 +47,40 @@ func (s *Spotify) runLinuxScriptCommand(command string) string {
 
 // Implementation for WSL - moved from spotify_wsl.go
 func (s *Spotify) enabledWsl() bool {
-	tlist, err := s.env.RunCommand("tasklist.exe", "/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH")
-	if err != nil || strings.HasPrefix(tlist, "INFO") {
+	psCommand := `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; (Get-Process Spotify -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -ne ""} | Select-Object -First 1).MainWindowTitle`
+
+	windowName, err := s.env.RunCommand("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", psCommand)
+
+	if err != nil {
+		s.Status = stopped
+
+		return false
+	}
+	title := strings.TrimSpace(windowName)
+
+	if title == "" || !strings.Contains(title, " - ") {
+		s.Status = stopped
+
 		return false
 	}
 
-	records := strings.Split(tlist, "\n")
-	if len(records) == 0 {
+	infos := strings.SplitN(title, " - ", 2)
+	if len(infos) < 2 {
+		s.Status = stopped
+
+		return false
+	}
+	
+	s.Artist = strings.TrimSpace(infos[0])
+	s.Track = strings.TrimSpace(infos[1])
+
+	if s.Artist == "" || s.Track == "" {
+		s.Status = stopped
+
 		return false
 	}
 
-	for _, record := range records {
-		record = strings.TrimSpace(record)
-		fields := strings.Split(record, ",")
-		if len(fields) == 0 {
-			continue
-		}
-
-		// last elemant is the title
-		title := fields[len(fields)-1]
-		// trim leading and trailing quotes from the field
-		title = strings.TrimPrefix(title, `"`)
-		title = strings.TrimSuffix(title, `"`)
-		if !strings.Contains(title, " - ") {
-			continue
-		}
-
-		infos := strings.Split(title, " - ")
-		s.Artist = infos[0]
-		s.Track = strings.Join(infos[1:], " - ")
-		s.Status = playing
-		s.resolveIcon()
-
-		return true
-	}
-
-	return false
+	s.Status = playing
+	s.resolveIcon()
+	return true
 }

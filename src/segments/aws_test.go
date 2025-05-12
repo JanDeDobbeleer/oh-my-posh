@@ -48,6 +48,14 @@ func TestAWSSegment(t *testing.T) {
 			Region:          "eu-west",
 			Template:        "profile: {{.Profile}}{{if .Region}} in {{.Region}}{{end}}",
 		},
+		{
+			Case:            "template: enabled with region alias that has compound cardinal direction",
+			ExpectedString:  "profile: company in apne3",
+			ExpectedEnabled: true,
+			Profile:         "company",
+			Region:          "ap-northeast-3",
+			Template:        "profile: {{.Profile}}{{if .Region}} in {{.RegionAlias}}{{end}}",
+		},
 		{Case: "template: invalid", ExpectedString: "{{ .Burp", ExpectedEnabled: true, Profile: "c", Template: "{{ .Burp"},
 	}
 

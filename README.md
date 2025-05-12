@@ -18,6 +18,22 @@
 
 ![Number of GitHub Downloads badge](https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads)
 
+<!-- markdownlint-disable -->
+<div align="center" markdown="1">
+   <sup>Special thanks to:</sup>
+   <br>
+   <br>
+   <a href="https://www.warp.dev/oh-my-posh">
+      <img alt="Warp sponsorship" width="400" src="https://github.com/user-attachments/assets/c21102f7-bab9-4344-a731-0cf6b341cab2">
+   </a>
+
+### [Warp, the intelligent terminal for developers](https://www.warp.dev/oh-my-posh)
+[Available for MacOS, Linux, & Windows](https://www.warp.dev/oh-my-posh)<br>
+
+</div>
+<hr>
+<!-- markdownlint-enable -->
+
 This repo was made with love using GitKraken.
 
 [![GitKraken shield][kraken]][kraken-ref]

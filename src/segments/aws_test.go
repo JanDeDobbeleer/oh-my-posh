@@ -19,19 +19,20 @@ func TestAWSSegment(t *testing.T) {
 		Vault           string
 		Region          string
 		DefaultRegion   string
+		RegionAlias     string
 		ConfigFile      string
 		Template        string
 		ExpectedEnabled bool
 		DisplayDefault  bool
 	}{
-		{Case: "enabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
-		{Case: "disabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: false, DisplayDefault: false},
+		{Case: "enabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", RegionAlias: "euw", ExpectedEnabled: true, DisplayDefault: true},
+		{Case: "disabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", RegionAlias: "euw", ExpectedEnabled: false, DisplayDefault: false},
 		{Case: "disabled", ExpectedString: "", ExpectedEnabled: false},
-		{Case: "enabled with default user", ExpectedString: "default@eu-west", Profile: "default", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
-		{Case: "enabled with default profile", ExpectedString: "default@eu-west", DefaultProfile: "default", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
-		{Case: "disabled with default user", ExpectedString: "default", Profile: "default", Region: "eu-west", ExpectedEnabled: false, DisplayDefault: false},
+		{Case: "enabled with default user", ExpectedString: "default@eu-west", Profile: "default", Region: "eu-west", RegionAlias: "euw", ExpectedEnabled: true, DisplayDefault: true},
+		{Case: "enabled with default profile", ExpectedString: "default@eu-west", DefaultProfile: "default", Region: "eu-west", RegionAlias: "euw", ExpectedEnabled: true, DisplayDefault: true},
+		{Case: "disabled with default user", ExpectedString: "default", Profile: "default", Region: "eu-west", RegionAlias: "euw", ExpectedEnabled: false, DisplayDefault: false},
 		{Case: "enabled no region", ExpectedString: "company", ExpectedEnabled: true, Profile: "company"},
-		{Case: "enabled with region", ExpectedString: "company@eu-west", ExpectedEnabled: true, Profile: "company", Region: "eu-west", DefaultRegion: "us-west"},
+		{Case: "enabled with region", ExpectedString: "company@eu-west", ExpectedEnabled: true, Profile: "company", Region: "eu-west", RegionAlias: "euw", DefaultRegion: "us-west"},
 		{Case: "enabled with default region", ExpectedString: "company@us-west", ExpectedEnabled: true, Profile: "company", DefaultRegion: "us-west"},
 		{
 			Case:            "template: enabled no region",
@@ -46,6 +47,16 @@ func TestAWSSegment(t *testing.T) {
 			ExpectedEnabled: true,
 			Profile:         "company",
 			Region:          "eu-west",
+			RegionAlias:     "euw",
+			Template:        "profile: {{.Profile}}{{if .Region}} in {{.Region}}{{end}}",
+		},
+		{
+			Case:            "template: enabled with region alias that has compound cardinal direction",
+			ExpectedString:  "profile: company in ap-northeast-3",
+			ExpectedEnabled: true,
+			Profile:         "company",
+			Region:          "ap-northeast-3",
+			RegionAlias:     "apne3",
 			Template:        "profile: {{.Profile}}{{if .Region}} in {{.Region}}{{end}}",
 		},
 		{Case: "template: invalid", ExpectedString: "{{ .Burp", ExpectedEnabled: true, Profile: "c", Template: "{{ .Burp"},

@@ -208,7 +208,9 @@ local function display_cached_prompt()
 end
 
 local function command_executed_mark(input)
-    no_exit_code = string.gsub(input, '^%s*(.-)%s*$', '%1') == ''
+    if string.gsub(input, '^%s*(.-)%s*$', '%1') ~= '' then
+        no_exit_code = false
+    end
     if ftcs_marks_enabled then
         clink.print('\x1b]133;C\007', NONL)
     end

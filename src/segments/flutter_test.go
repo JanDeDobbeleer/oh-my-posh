@@ -22,9 +22,13 @@ func TestFlutter(t *testing.T) {
 			versionOutput: tc.Version,
 			extension:     "*.dart",
 		}
+
 		env, props := getMockedLanguageEnv(params)
+		env.On("HasCommand", "fvm").Return(false)
+
 		d := &Flutter{}
 		d.Init(props, env)
+
 		assert.True(t, d.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, d.Template(), d), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}

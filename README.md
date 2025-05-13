@@ -21,6 +21,22 @@
     <a href="https://ohmyposh.dev/docs/installation/windows">Installation</a> • <a href="#-support-the-project">Sponsorship</a> • <a href="https://ohmyposh.dev/docs/faq">FAQ</a>
   </p>
 
+   <!-- markdownlint-disable -->
+  <div markdown="1">
+     <sup>Special thanks to:</sup>
+     <br>
+     <br>
+     <a href="https://www.warp.dev/oh-my-posh">
+        <img alt="Warp sponsorship" width="400" src="https://github.com/user-attachments/assets/c21102f7-bab9-4344-a731-0cf6b341cab2">
+     </a>
+
+  ### [Warp, the intelligent terminal for developers](https://www.warp.dev/oh-my-posh)
+  [Available for MacOS, Linux, & Windows](https://www.warp.dev/oh-my-posh)<br>
+
+  </div>
+  <hr>
+  <!-- markdownlint-enable -->
+
   <h2>
     The most customisable and low-latency cross platform/shell prompt renderer!
   </h2>

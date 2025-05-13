@@ -67,9 +67,9 @@ module.exports = {
           position: 'right',
         },
         {
-          href: 'https://www.gitkraken.com/invite/nQmDPR9D',
-          className: 'header-gk-link',
-          'aria-label': 'GitKraken',
+          href: 'https://www.warp.dev/oh-my-posh',
+          className: 'header-affiliate-link',
+          'aria-label': 'Warp',
           position: 'right',
         },
         {
@@ -131,8 +131,8 @@ module.exports = {
               href: 'https://polar.sh/oh-my-posh',
             },
             {
-              label: 'GitKraken',
-              href: 'https://www.gitkraken.com/invite/nQmDPR9D',
+              label: 'Warp',
+              href: 'https://www.warp.dev/oh-my-posh',
             },
             {
               label: 'Docusaurus',

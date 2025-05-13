@@ -1,107 +1,136 @@
-<!-- markdownlint-disable -->
-<p align="center">
-  <img
-    width="400"
-    src="https://raw.githubusercontent.com/jandedobbeleer/oh-my-posh/main/website/static/img/logo.png"
-    alt="Oh My Posh logo – Prompt theme engine for any shell"
-  />
-</p>
-<!-- markdownlint-enable -->
+<div align="center">
+  <!-- markdownlint-disable -->
+  <p>
+    <img
+      width="400"
+      src="https://raw.githubusercontent.com/jandedobbeleer/oh-my-posh/main/website/static/img/logo.png"
+      alt="Oh My Posh – Prompt Theme Engine for Any Shell"
+    />
+  </p>
 
-![MIT license badge](https://img.shields.io/github/license/JanDeDobbeleer/oh-my-posh.svg)
+  <!-- markdownlint-enable -->
+  <p>
+    <a href="https://github.com/JanDeDobbeleer/oh-my-posh/actions"><img src="https://img.shields.io/github/actions/workflow/status/jandedobbeleer/oh-my-posh/release.yml?branch=main" alt="Build Status"/></a>
+    <a href="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest"><img src="https://img.shields.io/github/v/release/jandedobbeleer/oh-my-posh?label=Release" alt="Latest Release"/></a>
+    <a href="https://github.com/JanDeDobbeleer/oh-my-posh/releases"><img src="https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads" alt="GitHub Downloads"/></a>
+    <a href="https://ohmyposh.dev"><img src="https://img.shields.io/badge/Docs-ohmyposh.dev-blue" alt="Documentation"/></a>
+    <a href="https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/LICENSE"><img src="https://img.shields.io/github/license/JanDeDobbeleer/oh-my-posh.svg" alt="MIT License"/></a>
+  </p>
 
-![Build Status badge](https://img.shields.io/github/actions/workflow/status/jandedobbeleer/oh-my-posh/release.yml?branch=main)
+  <p>
+    <a href="https://ohmyposh.dev/docs/installation/windows">Installation</a> • <a href="#-support-the-project">Sponsorship</a> • <a href="https://ohmyposh.dev/docs/faq">FAQ</a>
+  </p>
 
-[![Release version number badge][release-badge]][release]
+   <!-- markdownlint-disable -->
+  <div markdown="1">
+     <sup>Special thanks to:</sup>
+     <br>
+     <br>
+     <a href="https://www.warp.dev/oh-my-posh">
+        <img alt="Warp sponsorship" width="400" src="https://github.com/user-attachments/assets/c21102f7-bab9-4344-a731-0cf6b341cab2">
+     </a>
 
-[![Documentation link badge ohmyposh.dev][docs-badge]][docs]
+  ### [Warp, the intelligent terminal for developers](https://www.warp.dev/oh-my-posh)
+  [Available for MacOS, Linux, & Windows](https://www.warp.dev/oh-my-posh)<br>
 
-![Number of GitHub Downloads badge](https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads)
+  </div>
+  <hr>
+  <!-- markdownlint-enable -->
 
-<!-- markdownlint-disable -->
-<div align="center" markdown="1">
-   <sup>Special thanks to:</sup>
-   <br>
-   <br>
-   <a href="https://www.warp.dev/oh-my-posh">
-      <img alt="Warp sponsorship" width="400" src="https://github.com/user-attachments/assets/c21102f7-bab9-4344-a731-0cf6b341cab2">
-   </a>
+  <h2>
+    The most customisable and low-latency cross platform/shell prompt renderer!
+  </h2>
 
-### [Warp, the intelligent terminal for developers](https://www.warp.dev/oh-my-posh)
-[Available for MacOS, Linux, & Windows](https://www.warp.dev/oh-my-posh)<br>
-
+  <p>
+    Initially derived from <a href="https://github.com/JanDeDobbeleer/oh-my-posh2">oh-my-posh2</a>, this modern iteration has evolved into a standalone, platform-agnostic CLI tool built for speed, flexibility, and developer delight.
+  </p>
 </div>
-<hr>
-<!-- markdownlint-enable -->
 
-This repo was made with love using GitKraken.
+## ✨ Key Features
 
-[![GitKraken shield][kraken]][kraken-ref]
-<!-- markdownlint-disable first-header-h1 -->
+- **Cross-Shell Compatibility**: Works with PowerShell, Bash, Zsh, Fish, NuShell, and more.
+- **Platform Agnostic**: Supports Windows, Linux, and macOS.
+- **Highly Configurable**: Easily customize your prompt with JSON, YAML, or TOML.
+- **Prompt Segmentation**: Left, right, and transient prompts with full logic control.
+- **Performance-Oriented**: Lightweight and fast with minimal latency.
+- **Rich Segment Ecosystem**: Built-in support for Git, Kubernetes, AWS, Azure, battery, time, and more.
+- **Community-Driven Themes**: Choose from or share your own community-contributed themes.
 
-## Join the community
+## 📚 Documentation
 
-![Mastodon badge](https://img.shields.io/mastodon/follow/110275292073181892?domain=https%3A%2F%2Fhachyderm.io&label=Mastodon&style=social)
+For the best experience, visit [**ohmyposh.dev**][docs] — the official hub for everything you need to customize and optimize your terminal prompt.
 
-![Discord badge](https://img.shields.io/discord/1023597603331526656)
+Whether you're just getting started or fine-tuning a complex setup, the site offers:
 
-What started as the offspring of [oh-my-posh2](https://github.com/JanDeDobbeleer/oh-my-posh2) for PowerShell
-resulted in a cross platform, highly customizable and extensible prompt theme engine. After 4 years of working
-on oh-my-posh, a modern and more efficient tool was needed to suit my personal needs.
+- **Step-by-step installation guides** for every major shell.
+- A **comprehensive configuration reference**.
+- An **interactive theme builder** to preview and design visually.
+- **Performance tuning tips** and best practices.
 
-## :heart: Support :heart:
+## 💬 Community & Support
 
-[![Swag][swag-badge]][swag] - Show your love with a t-shirt!
+[![Mastodon][mastodon-badge]][mastodon] [![Discord][discord-badge]][discord]
 
-[![GitHub][github-badge]][github-sponsors] - One time support, or a recurring donation?
+## 💖 Support the Project
 
-[![Ko-Fi][kofi-badge]][kofi] - No coffee, no code.
+Help keep Oh My Posh thriving!
 
-<!-- markdownlint-disable -->
-<a href="https://polar.sh/oh-my-posh">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://polar.sh/embed/tiers.svg?org=oh-my-posh&darkmode">
-    <img alt="Subscription Tiers on Polar" src="https://polar.sh/embed/tiers.svg?org=oh-my-posh">
-  </picture>
-</a>
-<!-- markdownlint-enable -->
+[![GitHub Sponsors][github-badge]][github-sponsors] – One time support, or a recurring donation?
 
-## Features
+[![Ko-Fi][kofi-badge]][kofi] – Fuel development with a coffee
 
-* Shell and platform agnostic
-* Easily configurable
-* The **most** configurable prompt utility
-* Fast
-* Secondary prompt
-* Right prompt
-* Transient prompt
+[![Swag][swag-badge]][swag] – Show your love with a t-shirt!
 
-## Documentation
+[![Polar][polar-badge]][polar]
 
-[![Documentation][docs-badge]][docs]
+## ⭐ Reviews & Mentions
 
-## Reviews
+- [TameWizard Review (2023)][review]
 
-* [Repo review](https://repo-reviews.github.io//reviews/2023-06-21_TameWizard_JanDeDobbeleer_oh-my-posh) by [TameWizard](https://github.com/TameWizard)
+## 🙏 Acknowledgements
 
-## Thanks
+Special thanks to the developers and tools that supported the development of Oh My Posh:
 
-* [Chris Benti](https://github.com/chrisbenti/PS-Config) providing the first influence to start oh-my-posh
-* [Keith Dahlby](https://github.com/dahlbyk/posh-git) for creating posh-git and making life more enjoyable
-* [Robby Russell](https://github.com/ohmyzsh/ohmyzsh) for creating oh-my-zsh, without him this would probably not be here
-* [Janne Mareike Koschinski](https://github.com/justjanne) for providing information on how to get certain information
-using Go (and the amazing [README](https://github.com/justjanne/powerline-go))
-* [Starship](https://github.com/starship/starship/blob/master/src/init/mod.rs) for doing great things
+- [Chris Benti][benti] for sparking the initial inspiration behind the creation of oh-my-posh.
+- [Keith Dahlby][dahlbyk] for developing posh-git and greatly enhancing the PowerShell experience.
+- [Robby Russell][robby] for founding oh-my-zsh, without which oh-my-posh would not have been possible.
+- [Janne Mareike Koschinski][janne] for providing invaluable insights into extracting system information with Go.
+- [Starship][starship] for their incredible contributions to the prompt utility ecosystem.
 
-[kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken
-[kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
-[swag-badge]: https://img.shields.io/badge/Swag-Get%20some!-blue
-[swag]: https://swag.ohmyposh.dev
+## 📄 License
+
+Copyright © 2025 [Jan De Dobbeleer][jdd].
+
+This project is maintained by [Jan De Dobbeleer][jdd] and [contributors][contributors].
+
+Licensed under the [MIT License][license].
+
+---
+
+<p align="center">
+  Made with ❤️ using <a href="https://www.gitkraken.com/invite/nQmDPR9D">GitKraken</a>, the legendary Git client
+</p>
+
+<!-- Reference links -->
+[docs]: https://ohmyposh.dev
+[mastodon]: https://hachyderm.io/@jandedobbeleer
+[mastodon-badge]: https://img.shields.io/mastodon/follow/110275292073181892?domain=https%3A%2F%2Fhachyderm.io&label=Mastodon&style=social
+[discord]: https://discord.gg/ohmyposh
+[discord-badge]: https://img.shields.io/discord/1023597603331526656
 [github-badge]: https://img.shields.io/badge/-Sponsor-fafbfc?logo=GitHub%20Sponsors
 [github-sponsors]: https://github.com/sponsors/JanDeDobbeleer
 [kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
 [kofi]: https://ko-fi.com/jandedobbeleer
-[docs-badge]: https://img.shields.io/badge/Docs-ohmyposh.dev-blue
-[docs]: https://ohmyposh.dev
-[release-badge]: https://img.shields.io/github/v/release/jandedobbeleer/oh-my-posh?label=Release
-[release]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
+[swag-badge]: https://img.shields.io/badge/Swag-Get%20some!-blue
+[swag]: https://swag.ohmyposh.dev
+[polar-badge]: https://polar.sh/embed/tiers.svg?org=oh-my-posh
+[polar]: https://polar.sh/oh-my-posh
+[review]: https://repo-reviews.github.io//reviews/2023-06-21_TameWizard_JanDeDobbeleer_oh-my-posh
+[benti]: https://github.com/chrisbenti/PS-Config
+[dahlbyk]: https://github.com/dahlbyk/posh-git
+[robby]: https://github.com/ohmyzsh/ohmyzsh
+[janne]: https://github.com/justjanne
+[starship]: https://github.com/starship/starship/blob/master/src/init/mod.rs
+[jdd]: https://github.com/jandedobbeleer
+[contributors]: https://github.com/JanDeDobbeleer/oh-my-posh/graphs/contributors
+[license]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/LICENSE

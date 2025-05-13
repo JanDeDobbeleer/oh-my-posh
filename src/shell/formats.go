@@ -54,7 +54,7 @@ func GetFormats(shell string) *Formats {
 				'\\': `\\`,
 			},
 		}
-	case ZSH, TCSH:
+	case ZSH:
 		formats = &Formats{
 			Escape:                "%%{%s%%}",
 			Linechange:            "%%{\x1b[%d%s%%}",
@@ -99,11 +99,6 @@ func GetFormats(shell string) *Formats {
 			ITermCurrentDir: "\x1b]1337;CurrentDir=%s\x07",
 			ITermRemoteHost: "\x1b]1337;RemoteHost=%s@%s\x07",
 		}
-	}
-
-	if shell == TCSH {
-		formats.EscapeSequences['\\'] = `\\`
-		formats.EscapeSequences['!'] = `\!`
 	}
 
 	return formats

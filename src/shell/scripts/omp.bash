@@ -142,8 +142,6 @@ function _omp_hook() {
 }
 
 function _omp_install_hook() {
-    [[ $TERM = linux ]] && return
-
     local cmd
     for cmd in "${PROMPT_COMMAND[@]}"; do
         if [[ $cmd = _omp_hook ]]; then

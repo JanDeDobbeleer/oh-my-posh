@@ -10,7 +10,7 @@ can be a good starting point.
 
 1. Ensure any dependencies or build artifacts are removed/ignored before creating a commit.
 2. Commits follow the [conventional commits][cc] guidelines.
-(You can [look up the supported *types*][cc-types] along with an explanation [here][cc-types])
+(You can [look up the supported *types*][cc-types] along with an explanation [in the documentation][cc-types])
 3. Update the documentation with details of changes to the functionality, this includes new segments
    or core functionality.
 4. Pull Requests are merged once all checks pass and a project maintainer has approved it.

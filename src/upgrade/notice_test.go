@@ -12,7 +12,7 @@ import (
 
 func TestCanUpgrade(t *testing.T) {
 	ugc := &Config{}
-	latest, _ := ugc.Latest()
+	latest, _ := ugc.FetchLatest()
 
 	cases := []struct {
 		Case           string

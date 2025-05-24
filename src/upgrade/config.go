@@ -17,7 +17,7 @@ type Config struct {
 	Cache         cache.Cache    `json:"-" toml:"-" yaml:"-"`
 	Source        Source         `json:"source" toml:"source" yaml:"source"`
 	Interval      cache.Duration `json:"interval" toml:"interval" yaml:"interval"`
-	Version       string         `json:"-" toml:"-" yaml:"-"`
+	Latest        string         `json:"-" toml:"-" yaml:"-"`
 	Auto          bool           `json:"auto" toml:"auto" yaml:"auto"`
 	DisplayNotice bool           `json:"notice" toml:"notice" yaml:"notice"`
 	Force         bool           `json:"-" toml:"-" yaml:"-"`
@@ -41,8 +41,8 @@ func (s Source) String() string {
 	}
 }
 
-func (cfg *Config) Latest() (string, error) {
-	cfg.Version = "latest"
+func (cfg *Config) FetchLatest() (string, error) {
+	cfg.Latest = "latest"
 	v, err := cfg.DownloadAsset("version.txt")
 	if err != nil {
 		log.Debugf("failed to get latest version for source: %s", cfg.Source)
@@ -50,6 +50,8 @@ func (cfg *Config) Latest() (string, error) {
 	}
 
 	version := strings.TrimSpace(string(v))
+	cfg.Latest = version
+
 	version = strings.TrimPrefix(version, "v")
 	log.Debugf("latest version: %s", version)
 
@@ -66,18 +68,18 @@ func (cfg *Config) DownloadAsset(asset string) ([]byte, error) {
 	case GitHub:
 		var url string
 
-		switch cfg.Version {
+		switch cfg.Latest {
 		case "latest":
 			url = fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/%s", asset)
 		default:
-			url = fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/%s/%s", cfg.Version, asset)
+			url = fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/%s/%s", cfg.Latest, asset)
 		}
 
 		return cfg.Download(url)
 	case CDN:
 		fallthrough
 	default:
-		url := fmt.Sprintf("https://cdn.ohmyposh.dev/releases/%s/%s", cfg.Version, asset)
+		url := fmt.Sprintf("https://cdn.ohmyposh.dev/releases/%s/%s", cfg.Latest, asset)
 		return cfg.Download(url)
 	}
 }

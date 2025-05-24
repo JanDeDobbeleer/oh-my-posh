@@ -84,7 +84,7 @@ var upgradeCmd = &cobra.Command{
 			fmt.Println(builder.String())
 		}()
 
-		latest, err := cfg.Upgrade.Latest()
+		latest, err := cfg.Upgrade.FetchLatest()
 		if err != nil {
 			log.Debug("failed to get latest version")
 			log.Error(err)
@@ -93,8 +93,6 @@ var upgradeCmd = &cobra.Command{
 			exitcode = 1
 			return
 		}
-
-		cfg.Upgrade.Version = fmt.Sprintf("v%s", latest)
 
 		if force {
 			log.Debug("forced upgrade")

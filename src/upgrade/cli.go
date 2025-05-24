@@ -72,10 +72,10 @@ func (m *model) start() {
 		return
 	}
 
-	message := "🚀 Upgrade successful"
-
 	current := fmt.Sprintf("v%s", build.Version)
-	if current != m.config.Version {
+	message := fmt.Sprintf("🚀 Upgraded from %s to %s", current, m.config.Latest)
+
+	if current != m.config.Latest {
 		log.Debug("new version installed, user needs to restart shell")
 		message += ", restart your shell to take full advantage of the new functionality"
 	}
@@ -126,7 +126,7 @@ func (m *model) View() string {
 	case validating:
 		message = "Validating current installation"
 	case downloading:
-		message = fmt.Sprintf("Downloading %s from %s...\n%s", m.config.Version, m.config.Source.String(), m.progress.View())
+		message = fmt.Sprintf("Downloading %s from %s...\n%s", m.config.Latest, m.config.Source.String(), m.progress.View())
 		return textStyle.Render(message)
 	case verifying:
 		m.spinner.Spinner = spinner.Moon

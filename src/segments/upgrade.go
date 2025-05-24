@@ -76,7 +76,7 @@ func (u *Upgrade) checkUpdate(current string) (*UpgradeCache, error) {
 		Interval: cache.Duration(duration),
 	}
 
-	latest, err := cfg.Latest()
+	latest, err := cfg.FetchLatest()
 	if err != nil {
 		return nil, err
 	}

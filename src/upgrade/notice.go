@@ -35,7 +35,7 @@ func (cfg *Config) Notice() (string, bool) {
 		return "", false
 	}
 
-	latest, err := cfg.Latest()
+	latest, err := cfg.FetchLatest()
 	if err != nil {
 		return "", false
 	}

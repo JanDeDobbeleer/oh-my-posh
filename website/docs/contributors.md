@@ -441,6 +441,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0-0-1-0-1-0-1-0"><img src="https://avatars.githubusercontent.com/u/43226073?v=4?s=100" width="100px;" alt="0-0-1-0-1-0-1-0"/><br /><sub><b>0-0-1-0-1-0-1-0</b></sub></a><br /><a href="#design-0-0-1-0-1-0-1-0" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/player131007"><img src="https://avatars.githubusercontent.com/u/77326303?v=4?s=100" width="100px;" alt="player131007"/><br /><sub><b>player131007</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=player131007" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kaien07"><img src="https://avatars.githubusercontent.com/u/160471571?v=4?s=100" width="100px;" alt="kaien07"/><br /><sub><b>kaien07</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kaien07" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/BusHero"><img src="https://avatars.githubusercontent.com/u/24370515?v=4?s=100" width="100px;" alt="Cervac Petru"/><br /><sub><b>Cervac Petru</b></sub></a><br /><a href="#design-BusHero" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

@@ -78,6 +78,12 @@ func (n *Node) loadContext() {
 			defaultIcon:  "\ue76f",
 		},
 		{
+			fileName:     "bun.lock",
+			name:         "bun",
+			iconProperty: BunIcon,
+			defaultIcon:  "\ue76f",
+		},
+		{
 			fileName:     "package-lock.json",
 			name:         "npm",
 			iconProperty: NPMIcon,

@@ -445,6 +445,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Marukome0743"><img src="https://avatars.githubusercontent.com/u/146040408?v=4?s=100" width="100px;" alt="マルコメ"/><br /><sub><b>マルコメ</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Marukome0743" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mreinhardt"><img src="https://avatars.githubusercontent.com/u/582461?v=4?s=100" width="100px;" alt="Michael Reinhardt"/><br /><sub><b>Michael Reinhardt</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mreinhardt" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mreinhardt" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

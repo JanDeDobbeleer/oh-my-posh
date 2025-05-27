@@ -443,6 +443,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kaien07"><img src="https://avatars.githubusercontent.com/u/160471571?v=4?s=100" width="100px;" alt="kaien07"/><br /><sub><b>kaien07</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kaien07" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BusHero"><img src="https://avatars.githubusercontent.com/u/24370515?v=4?s=100" width="100px;" alt="Cervac Petru"/><br /><sub><b>Cervac Petru</b></sub></a><br /><a href="#design-BusHero" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Marukome0743"><img src="https://avatars.githubusercontent.com/u/146040408?v=4?s=100" width="100px;" alt="マルコメ"/><br /><sub><b>マルコメ</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Marukome0743" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

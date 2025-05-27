@@ -1,6 +1,7 @@
 package config
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -54,9 +55,10 @@ type Config struct {
 	MigrateGlyphs           bool                   `json:"-" toml:"-" yaml:"-"`
 	PatchPwshBleed          bool                   `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty" yaml:"patch_pwsh_bleed,omitempty"`
 	EnableCursorPositioning bool                   `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty" yaml:"enable_cursor_positioning,omitempty"`
+	Async                   bool                   `json:"async,omitempty" toml:"async,omitempty" yaml:"async,omitempty"`
+	FinalSpace              bool                   `json:"final_space,omitempty" toml:"final_space,omitempty" yaml:"final_space,omitempty"`
+	UpgradeNotice           bool                   `json:"-" toml:"-" yaml:"-"`
 	updated                 bool
-	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty" yaml:"final_space,omitempty"`
-	UpgradeNotice           bool `json:"-" toml:"-" yaml:"-"`
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {
@@ -96,6 +98,13 @@ func (cfg *Config) getPalette() color.Palette {
 
 func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	var feats shell.Features
+
+	asyncShells := []string{shell.BASH, shell.ZSH, shell.FISH, shell.PWSH, shell.PWSH5}
+
+	if cfg.Async && slices.Contains(asyncShells, env.Shell()) {
+		log.Debug("async enabled")
+		feats = append(feats, shell.Async)
+	}
 
 	if cfg.TransientPrompt != nil {
 		log.Debug("transient prompt enabled")

@@ -1,7 +1,8 @@
----
+f---
 id: general
 title: General
 sidebar_label: General
+
 ---
 
 import Tabs from "@theme/Tabs";
@@ -139,6 +140,7 @@ For example, the following is a valid `--config` flag:
 | `upgrade`                   | `Upgrade`        |         | enable auto upgrade or the upgrade notice. See [Upgrade]                                                                                                                                                                                                                     |
 | `iterm_features`            | `[]string`       | `false` | enable iTerm2 specific features:<ul><li>`prompt_mark`: add the `iterm2_prompt_mark` [function][iterm2-si] for supported shells</li><li>`current_dir`: expose the current directory for iTerm2</li><li>`remote_host`: expose the current remote and user for iTerm2</li></ul> |
 | `maps`                      | [`Maps`](#maps)  |         | a list of custom text mappings                                                                                                                                                                                                                                               |
+| `async`                     | `boolean`        | `false` | load the prompt async. Will either load the standard prompt, or allow you to start typing right away. Supperted for `pwsh`, `powershell`, `zsh`, `bash` and `fish`                                                                                                           |
 
 ### Maps
 

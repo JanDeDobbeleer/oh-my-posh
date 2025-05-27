@@ -15,6 +15,7 @@ const (
 	PromptMark
 	RPrompt
 	CursorPositioning
+	Async
 )
 
 type Features []Feature

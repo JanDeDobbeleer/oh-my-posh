@@ -29,7 +29,7 @@ func (f Feature) Pwsh() Code {
 		return "& $global:_ompExecutable upgrade"
 	case Notice:
 		return "& $global:_ompExecutable notice"
-	case PromptMark, RPrompt, CursorPositioning:
+	case PromptMark, RPrompt, CursorPositioning, Async:
 		fallthrough
 	default:
 		return ""

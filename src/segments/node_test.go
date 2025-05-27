@@ -84,6 +84,7 @@ func TestNodeInContext(t *testing.T) {
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("HasFiles", "package.json").Return(tc.hasDefault)
 		env.On("HasFiles", "bun.lockb").Return(tc.hasBun)
+		env.On("HasFiles", "bun.lock").Return(tc.hasBun)
 
 		props := properties.Map{
 			PnpmIcon:            "pnpm",

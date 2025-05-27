@@ -3170,6 +3170,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mreinhardt",
+      "name": "Michael Reinhardt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/582461?v=4",
+      "profile": "https://github.com/mreinhardt",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

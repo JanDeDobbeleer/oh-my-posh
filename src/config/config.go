@@ -116,7 +116,10 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 		feats = append(feats, shell.FTCSMarks)
 	}
 
-	feats = append(feats, cfg.UpgradeFeatures(env)...)
+	// do not enable upgrade features when async is enabled
+	if !slices.Contains(feats, shell.Async) {
+		feats = append(feats, cfg.upgradeFeatures(env)...)
+	}
 
 	if cfg.ErrorLine != nil || cfg.ValidLine != nil {
 		log.Debug("error or valid line enabled")
@@ -166,7 +169,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	return feats
 }
 
-func (cfg *Config) UpgradeFeatures(env runtime.Environment) shell.Features {
+func (cfg *Config) upgradeFeatures(env runtime.Environment) shell.Features {
 	feats := shell.Features{}
 
 	if _, OK := env.Cache().Get(upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {

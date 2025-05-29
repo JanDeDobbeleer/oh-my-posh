@@ -43,7 +43,7 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 		return "", err
 	}
 
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
 		return "", err
 	}
@@ -115,7 +115,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 	// create the path if non-existent
 	_, err = os.Stat(path)
 	if err != nil {
-		err = os.Mkdir(path, 0o755)
+		err = os.MkdirAll(path, 0o700)
 	}
 
 	if err != nil {

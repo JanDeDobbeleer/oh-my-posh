@@ -8,6 +8,7 @@ on:
       - "src/**"
       - "packages/**"
       - ".github/workflows/**"
+  workflow_dispatch:
 
 jobs:
   changelog:

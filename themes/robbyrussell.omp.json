@@ -16,7 +16,7 @@
             "style": "folder"
           },
           "style": "plain",
-          "template": " {{ .Path }} ",
+          "template": " {{ .Path }}",
           "type": "path"
         },
         {
@@ -25,7 +25,7 @@
             "branch_icon": ""
           },
           "style": "plain",
-          "template": "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
+          "template": " <#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
           "type": "git"
         },
         {

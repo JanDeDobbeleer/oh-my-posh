@@ -29,6 +29,11 @@ Auto upgrade will never upgrade major versions. This is to avoid introducing bre
 without explicit user acknowledgement.
 :::
 
+:::warning
+Upgrade features are never enabled when you have `async` loading enabled in your configuration
+and the shell you're using supports it.
+:::
+
 | Name       |   Type    | Default | Description                                                                                                                                                                                                                |
 | ---------- | :-------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `notice`   | `boolean` | `false` | enable displaying the upgrade notice on shell start, only checks based on `interval`                                                                                                                                       |

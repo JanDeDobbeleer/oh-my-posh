@@ -189,7 +189,7 @@ func TestUpgradeFeatures(t *testing.T) {
 			},
 		}
 
-		got := cfg.UpgradeFeatures(env)
+		got := cfg.upgradeFeatures(env)
 		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
 	}
 }

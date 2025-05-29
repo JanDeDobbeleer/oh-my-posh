@@ -2,6 +2,7 @@ package segments
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -100,18 +101,35 @@ const (
 
 func (s *scm) formatBranch(branch string) string {
 	mappedBranches := s.props.GetKeyValueMap(MappedBranches, make(map[string]string))
-	for key, value := range mappedBranches {
-		matchSubFolders := strings.HasSuffix(key, "*")
 
-		if matchSubFolders && len(key) > 1 {
-			key = key[0 : len(key)-1] // remove trailing /* or \*
+	// sort the keys alphabetically
+	keys := make([]string, 0, len(mappedBranches))
+	for k := range mappedBranches {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	const wildcard = "*"
+
+	for _, key := range keys {
+		if key == wildcard {
+			branch = mappedBranches[key]
+			break
 		}
 
-		if !strings.HasPrefix(branch, key) {
+		matchSubFolders := strings.HasSuffix(key, wildcard)
+		subfolderKey := strings.TrimSuffix(key, wildcard)
+
+		if matchSubFolders && strings.HasPrefix(branch, subfolderKey) {
+			branch = strings.Replace(branch, subfolderKey, mappedBranches[key], 1)
+			break
+		}
+
+		if matchSubFolders || branch != key {
 			continue
 		}
 
-		branch = strings.Replace(branch, key, value, 1)
+		branch = strings.Replace(branch, key, mappedBranches[key], 1)
 		break
 	}
 

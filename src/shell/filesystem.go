@@ -57,7 +57,10 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 
 	env.Cache().Set(cacheKey(env), scriptName(env), cache.INFINITE)
 
-	defer purgeScripts(env)
+	defer func() {
+		parent := filepath.Dir(path)
+		purgeScripts(env, parent)
+	}()
 
 	return path, nil
 }
@@ -128,10 +131,12 @@ func scriptPath(env runtime.Environment) (string, error) {
 	return scriptPathCache, nil
 }
 
-func purgeScripts(env runtime.Environment) {
+func purgeScripts(env runtime.Environment, path string) {
 	current := fileName(env)
-	files, err := os.ReadDir(cache.Path())
+
+	files, err := os.ReadDir(path)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -144,8 +149,11 @@ func purgeScripts(env runtime.Environment) {
 			continue
 		}
 
-		if err := os.Remove(filepath.Join(cache.Path(), file.Name())); err != nil {
+		if err := os.Remove(filepath.Join(path, file.Name())); err != nil {
 			log.Debugf("failed to remove file %s: %s", file.Name(), err)
+			continue
 		}
+
+		log.Debugf("removed old init script: %s", file.Name())
 	}
 }

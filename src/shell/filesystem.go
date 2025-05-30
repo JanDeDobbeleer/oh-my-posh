@@ -45,11 +45,17 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
+	defer func() {
+		_ = f.Close()
+	}()
+
 	_, err = f.WriteString(script)
 	if err != nil {
+		log.Error(err)
 		return "", err
 	}
 
@@ -99,6 +105,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 
 	if env.Flags().Shell != NU {
 		scriptPathCache = filepath.Join(cache.Path(), scriptName(env))
+		log.Debug("autoload path for non-nu shell:", scriptPathCache)
 		return scriptPathCache, nil
 	}
 
@@ -106,18 +113,22 @@ func scriptPath(env runtime.Environment) (string, error) {
 
 	if dir, OK := env.Cache().Get(autoloadDir); OK {
 		scriptPathCache = filepath.Join(dir, scriptName(env))
+		log.Debug("autoload path for nu from cache:", dir)
 		return scriptPathCache, nil
 	}
 
 	path, err := env.RunCommand("nu", "-c", "$nu.data-dir | path join vendor autoload")
 	if err != nil || len(path) == 0 {
-		log.Debug("failed to get nu user autoload dirs")
+		log.Error(err)
 		return "", err
 	}
+
+	log.Debug("autoload path for nu:", path)
 
 	// create the path if non-existent
 	_, err = os.Stat(path)
 	if err != nil {
+		log.Debug("autoload path does not exist, creating")
 		err = os.MkdirAll(path, 0o700)
 	}
 
@@ -128,6 +139,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 
 	env.Cache().Set(autoloadDir, path, cache.INFINITE)
 	scriptPathCache = filepath.Join(path, scriptName(env))
+	log.Debug("script path for nu:", scriptPathCache)
 	return scriptPathCache, nil
 }
 
@@ -150,10 +162,10 @@ func purgeScripts(env runtime.Environment, path string) {
 		}
 
 		if err := os.Remove(filepath.Join(path, file.Name())); err != nil {
-			log.Debugf("failed to remove file %s: %s", file.Name(), err)
+			log.Debugf("failed to remove init script %s: %s", file.Name(), err)
 			continue
 		}
 
-		log.Debugf("removed old init script: %s", file.Name())
+		log.Debug("removed init script:", file.Name())
 	}
 }

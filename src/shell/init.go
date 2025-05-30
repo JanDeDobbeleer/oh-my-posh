@@ -149,13 +149,16 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		return fmt.Sprintf("echo \"Failed to write init script: %s\"", err.Error())
 	}
 
-	if env.Flags().Debug {
-		script := sourceInit(env, shell, scriptPath, async)
-		log.Debug("init script:", script)
-		return printDebug(env, startTime)
+	if !env.Flags().Debug {
+		return sourceInit(env, shell, scriptPath, async)
 	}
 
-	return sourceInit(env, shell, scriptPath, async)
+	sourceScript := sourceInit(env, shell, scriptPath, async)
+	if len(sourceScript) != 0 {
+		log.Debug("init source script:", script)
+	}
+
+	return printDebug(env, startTime)
 }
 
 func printDebug(env runtime.Environment, startTime *time.Time) string {
@@ -179,6 +182,7 @@ func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) s
 		var err error
 		scriptPath, err = env.RunCommand("cygpath", "-u", scriptPath)
 		if err != nil {
+			log.Error(err)
 			return fmt.Sprintf("echo \"Failed to convert Cygwin path due to %s\"", err.Error())
 		}
 	}

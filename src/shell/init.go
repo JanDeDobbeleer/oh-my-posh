@@ -189,17 +189,13 @@ func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) s
 
 	switch shell {
 	case PWSH, PWSH5:
-		return scriptPath
-	case ZSH:
-		return fmt.Sprintf("source '%s'", scriptPath)
-	case BASH:
-		return fmt.Sprintf("source '%s'", scriptPath)
+		return fmt.Sprintf(`& "%s"`, scriptPath)
+	case ZSH, BASH, XONSH:
+		return fmt.Sprintf(`source '%s'`, scriptPath)
 	case FISH:
-		return fmt.Sprintf("source %s", scriptPath)
+		return fmt.Sprintf(`source "%s"`, scriptPath)
 	case ELVISH:
-		return fmt.Sprintf("eval (slurp < %s)", scriptPath)
-	case XONSH:
-		return fmt.Sprintf("source %s", scriptPath)
+		return fmt.Sprintf(`eval (slurp < '%s')`, scriptPath)
 	case CMD:
 		scriptPath = strings.ReplaceAll(scriptPath, `\`, `\\`)
 		return fmt.Sprintf(`load(io.open('%s', "r"):read("*a"))()`, scriptPath)
@@ -211,13 +207,13 @@ func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) s
 func sourceInitAsync(shell, scriptPath string) string {
 	switch shell {
 	case PWSH, PWSH5:
-		return fmt.Sprintf(`function prompt() { %s }`, scriptPath)
+		return fmt.Sprintf(`function prompt() { & "%s" }`, scriptPath)
 	case ZSH:
 		return fmt.Sprintf(`precmd() { source '%s' }`, scriptPath)
 	case BASH:
 		return fmt.Sprintf(`PROMPT_COMMAND='source "%s"'`, scriptPath)
 	case FISH:
-		return fmt.Sprintf(`function fish_prompt; source %s; end`, scriptPath)
+		return fmt.Sprintf(`function fish_prompt; source "%s"; end`, scriptPath)
 	default:
 		return ""
 	}

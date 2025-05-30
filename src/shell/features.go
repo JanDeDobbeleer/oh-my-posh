@@ -1,5 +1,10 @@
 package shell
 
+import (
+	"strconv"
+	"strings"
+)
+
 type Feature byte
 
 const (
@@ -51,4 +56,14 @@ func (f Features) Lines(shell string) Lines {
 	}
 
 	return lines
+}
+
+func (f Features) Hash() string {
+	var sb strings.Builder
+
+	for _, feature := range f {
+		sb.WriteString(strconv.Itoa(int(feature)))
+	}
+
+	return sb.String()
 }

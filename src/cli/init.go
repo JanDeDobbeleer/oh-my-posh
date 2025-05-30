@@ -77,13 +77,12 @@ func runInit(sh string) {
 	cfg, hash := config.Load(configFile, sh, false)
 
 	flags := &runtime.Flags{
-		Shell:      sh,
-		Config:     configFile,
-		Strict:     strict,
-		Debug:      debug,
-		SaveCache:  true,
-		Init:       true,
-		ConfigHash: hash,
+		Shell:     sh,
+		Config:    configFile,
+		Strict:    strict,
+		Debug:     debug,
+		SaveCache: true,
+		Init:      true,
 	}
 
 	env := &runtime.Terminal{}
@@ -97,6 +96,7 @@ func runInit(sh string) {
 	}()
 
 	feats := cfg.Features(env)
+	flags.ConfigHash = fmt.Sprintf("%s.%s", hash, feats.Hash())
 
 	var output string
 

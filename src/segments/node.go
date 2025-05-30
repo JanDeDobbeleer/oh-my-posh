@@ -101,7 +101,7 @@ func (n *Node) loadContext() {
 		if n.env.HasFiles(pm.fileName) {
 			n.PackageManagerName = pm.name
 			n.PackageManagerIcon = n.props.GetString(pm.iconProperty, pm.defaultIcon)
-			return
+			break
 		}
 	}
 }

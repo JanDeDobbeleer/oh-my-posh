@@ -143,12 +143,24 @@ function _omp_hook() {
 
 function _omp_install_hook() {
     local cmd
+    local prompt_command
+
     for cmd in "${PROMPT_COMMAND[@]}"; do
+        # skip initializing when we're already initialized
         if [[ $cmd = _omp_hook ]]; then
             return
         fi
+
+        # check if the command starts with source, if so, do not add it again
+        # this is done to avoid issues with sourcing the same file multiple times
+        if [[ $cmd = source* ]]; then
+            continue
+        fi
+
+        prompt_command+=("$cmd")
     done
-    PROMPT_COMMAND=(_omp_hook "${PROMPT_COMMAND[@]}")
+
+    PROMPT_COMMAND=(_omp_hook "${prompt_command[@]}")
 }
 
 _omp_install_hook

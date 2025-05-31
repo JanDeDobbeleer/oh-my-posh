@@ -26,6 +26,17 @@ const (
 	Version = 3
 )
 
+type Action string
+
+func (a Action) IsDefault() bool {
+	return a != Prepend && a != Extend
+}
+
+const (
+	Prepend Action = "prepend"
+	Extend  Action = "extend"
+)
+
 // Config holds all the theme for rendering the prompt
 type Config struct {
 	Palette                 color.Palette   `json:"palette,omitempty" toml:"palette,omitempty" yaml:"palette,omitempty"`
@@ -46,6 +57,7 @@ type Config struct {
 	origin                  string
 	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty" yaml:"terminal_background,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty" yaml:"tooltips,omitempty"`
+	ToolTipsAction          Action                 `json:"tooltips_action,omitempty" toml:"tooltips_action,omitempty" yaml:"tooltips_action,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty" yaml:"blocks,omitempty"`
 	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty" yaml:"iterm_features,omitempty"`
 	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`

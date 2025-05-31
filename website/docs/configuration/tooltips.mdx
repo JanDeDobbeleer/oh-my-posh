@@ -21,27 +21,31 @@ the segment should be rendered.
 
 You need to extend or create a custom theme with your tooltips. For example:
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "blocks": [],
-  "tooltips": [
-    {
-      "type": "git",
-      "tips": ["git", "g"],
-      "style": "diamond",
-      "foreground": "#193549",
-      "background": "#fffb38",
-      "leading_diamond": "\ue0b6",
-      "trailing_diamond": "\ue0b4",
-      "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
-      "properties": {
-        "fetch_status": true,
-        "fetch_upstream_icon": true
-      }
-    }
-  ]
-}}/>
+<Config
+  data={{
+    blocks: [],
+    tooltips_action: "replace",
+    tooltips: [
+      {
+        type: "git",
+        tips: ["git", "g"],
+        style: "diamond",
+        foreground: "#193549",
+        background: "#fffb38",
+        leading_diamond: "\ue0b6",
+        trailing_diamond: "\ue0b4",
+        template:
+          "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
+        properties: {
+          fetch_status: true,
+          fetch_upstream_icon: true,
+        },
+      },
+    ],
+  }}
+/>
 
 This configuration will render a right-aligned git segment when you type `git` or `g` followed by a space.
 A tip should not include any spaces. Keep in mind that this is a blocking call, meaning that if the segment renders slow,
@@ -51,24 +55,45 @@ Note that you can also define multiple tooltips for the same tip to compose tool
 this configuration will render the AWS profile as well as the Azure subscription information when you type `terraform`
 followed by a space.
 
-<Config data={{
-  "blocks": [],
-  "tooltips": [
-    {
-      "type": "aws",
-      "tips": ["aws", "terraform"],
-      "style": "plain",
-      "foreground": "#e0af68",
-      "template": "\uf0e0f {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
-    },
-    {
-      "type": "az",
-      "tips": ["az", "terraform"],
-      "style": "plain",
-      "foreground": "#b4f9f8",
-      "template": "\uebd8 {{ .Name }}"
-    }
-  ]
-}}/>
+<Config
+  data={{
+    blocks: [],
+    tooltips: [
+      {
+        type: "aws",
+        tips: ["aws", "terraform"],
+        style: "plain",
+        foreground: "#e0af68",
+        template: "\uf0e0f {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
+      },
+      {
+        type: "az",
+        tips: ["az", "terraform"],
+        style: "plain",
+        foreground: "#b4f9f8",
+        template: "\uebd8 {{ .Name }}",
+      },
+    ],
+  }}
+/>
+
+### Tooltips action
+
+You can configure the tooltips to display in extension to the current rprompt (if any) or replace it (default behavior).
+You can do this by setting the `tooltips_action` property in your configuration. The possible values are:
+
+- `replace`: Replaces the current rprompt with the tooltips. This is the default behavior.
+- `extend`: Appends the tooltips to the current rprompt.
+- `prepend`: Prepends the tooltips to the current rprompt.
+
+You can set this property in your configuration like so:
+
+<Config
+  data={{
+    blocks: [],
+    tooltips_action: "extend",
+    tooltips: [],
+  }}
+/>
 
 [clink]: https://chrisant996.github.io/clink/

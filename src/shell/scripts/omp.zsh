@@ -129,6 +129,7 @@ function _omp_get_prompt() {
     --execution-time=$_omp_execution_time \
     --job-count=$_omp_job_count \
     --stack-count=$_omp_stack_count \
+    --terminal-width="${COLUMNS-0}" \
     ${args[@]}
 }
 

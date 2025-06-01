@@ -79,17 +79,17 @@ type Flags struct {
 	AbsolutePWD   string
 	Type          string
 	ConfigHash    string
-	JobCount      int
-	StackCount    int
+	SessionID     string
+	PromptCount   int
 	Column        int
 	TerminalWidth int
 	ExecutionTime float64
-	PromptCount   int
+	StackCount    int
 	ErrorCode     int
-	Plain         bool
-	Debug         bool
-	HasExtra      bool
+	JobCount      int
 	Strict        bool
+	HasExtra      bool
+	Debug         bool
 	Cleared       bool
 	NoExitCode    bool
 	SaveCache     bool
@@ -98,6 +98,7 @@ type Flags struct {
 	Eval          bool
 	Escape        bool
 	IsPrimary     bool
+	Plain         bool
 }
 
 type CommandError struct {

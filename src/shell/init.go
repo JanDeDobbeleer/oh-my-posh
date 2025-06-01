@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
@@ -83,10 +82,10 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	}
 
 	configFile := env.Flags().Config
-	sessionID := uuid.NewString()
 	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
 
 	var script string
+	sessionID := env.Flags().SessionID
 
 	switch shell {
 	case PWSH, PWSH5:

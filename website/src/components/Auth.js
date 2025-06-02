@@ -1,5 +1,5 @@
 import React from 'react';
-import {useLocation} from "react-router-dom";
+import {useLocation} from "react-router";
 import CodeBlock from '@theme/CodeBlock';
 import queryString from 'query-string';
 

@@ -10,21 +10,17 @@
     "clear": "docusaurus clear"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.7.0",
-    "@docusaurus/preset-classic": "^3.7.0",
-    "@docusaurus/theme-search-algolia": "^3.7.0",
+    "@docusaurus/core": "^3.8.0",
+    "@docusaurus/preset-classic": "^3.8.0",
+    "@docusaurus/theme-search-algolia": "^3.8.0",
     "@iarna/toml": "^2.2.5",
     "@mdx-js/react": "^3.1.0",
     "classnames": "^2.5.1",
-    "query-string": "9.1.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1",
-    "yaml": "^2.7.0"
-  },
-  "resolutions": {
-    "trim": "^0.0.3",
-    "got": "^11.8.5"
+    "query-string": "9.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.6.1",
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

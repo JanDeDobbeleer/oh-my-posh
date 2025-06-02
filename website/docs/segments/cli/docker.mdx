@@ -25,11 +25,11 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name            |    Type    |                        Default                        | Description                                                                                                                                                              |
-| --------------- | :--------: | :---------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `display_mode`  |  `string`  |                       `context`                       | <ul><li>`files`: the segment is only displayed when a file `extensions` listed is present</li><li>`context`: displays the segment when a Docker context active</li></ul> |
-| `fetch_context` | `boolean`  |                        `true`                         | also fetch the current active Docker context when in the `files` display mode                                                                                            |
-| `extensions`    | `[]string` | `docker-compose.yml, docker-compose.yaml, Dockerfile` | allows to override the default list of file extensions to validate                                                                                                       |
+| Name            |    Type    |                                      Default                                     | Description                                                                                                                                                              |
+| --------------- | :--------: | :------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `display_mode`  |  `string`  |                                     `context`                                    | <ul><li>`files`: the segment is only displayed when a file `extensions` listed is present</li><li>`context`: displays the segment when a Docker context active</li></ul> |
+| `fetch_context` | `boolean`  |                                      `true`                                      | also fetch the current active Docker context when in the `files` display mode                                                                                            |
+| `extensions`    | `[]string` | `compose.yml, compose.yaml, docker-compose.yml, docker-compose.yaml, Dockerfile` | allows to override the default list of file extensions to validate                                                                                                       |
 
 ## Template ([info][templates])
 

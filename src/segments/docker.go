@@ -47,6 +47,8 @@ func (d *Docker) configFiles() []string {
 
 func (d *Docker) Enabled() bool {
 	extensions := []string{
+		"compose.yml",
+		"compose.yaml",
 		"docker-compose.yml",
 		"docker-compose.yaml",
 		"Dockerfile",

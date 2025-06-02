@@ -66,6 +66,8 @@ func TestDockerFiles(t *testing.T) {
 		ExpectedEnabled bool
 		HasFiles        bool
 	}{
+		{Case: "compose.yml", ExpectedEnabled: true, HasFiles: true},
+		{Case: "compose.yaml", ExpectedEnabled: true, HasFiles: true},
 		{Case: "docker-compose.yml", ExpectedEnabled: true, HasFiles: true},
 		{Case: "docker-compose.yaml", ExpectedEnabled: true, HasFiles: true},
 		{Case: "Dockerfile", ExpectedEnabled: true, HasFiles: true},

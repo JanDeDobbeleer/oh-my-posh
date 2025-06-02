@@ -39,7 +39,6 @@ module.exports = {
         "configuration/general",
         "configuration/block",
         "configuration/segment",
-        "configuration/sample",
         "configuration/title",
         "configuration/colors",
         "configuration/templates",
@@ -48,6 +47,7 @@ module.exports = {
         "configuration/transient",
         "configuration/line-error",
         "configuration/tooltips",
+        "configuration/sample",
       ],
     },
     {

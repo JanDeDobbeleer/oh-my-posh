@@ -26,6 +26,11 @@ module.exports = {
     prism: {
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml', 'json', 'yaml'],
     },
+    docs: {
+        sidebar: {
+          hideable: true,
+        },
+    },
     navbar: {
       title: 'Oh My Posh',
       logo: {

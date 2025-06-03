@@ -1,10 +1,9 @@
 package prompt
 
 import (
+	"slices"
 	"strconv"
 	"strings"
-
-	"slices"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -73,12 +72,12 @@ func (e *Engine) handleToolTipAction(text string, length int) (string, int) {
 		return text, length
 	}
 
-	rprompt, OK := e.Env.Cache().Get(RPromptKey)
+	rprompt, OK := e.Env.Session().Get(RPromptKey)
 	if !OK {
 		return text, length
 	}
 
-	rpromptLengthStr, OK := e.Env.Cache().Get(RPromptLengthKey)
+	rpromptLengthStr, OK := e.Env.Session().Get(RPromptLengthKey)
 	if !OK {
 		return text, length
 	}

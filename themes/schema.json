@@ -140,7 +140,7 @@
       "title": "Filler",
       "description": "Right aligned filler text, will span the remaining width."
     },
-    "alias": {
+    "aliases": {
       "type": "object",
       "title": "Aliases",
       "description": "Custom value replacement for template parts",
@@ -5414,24 +5414,40 @@
       "description": "https://ohmyposh.dev/docs/configuration/templates#config-variables",
       "default": {}
     },
-    "aliases": {
+    "maps": {
       "type": "object",
-      "title": "Aliases",
-      "description": "https://ohmyposh.dev/docs/configuration/aliases",
+      "title": "Custom text mappings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#maps",
       "default": {},
       "items": {
         "properties": {
           "user_name": {
-            "$ref": "#/definitions/alias"
+            "$ref": "#/definitions/aliases"
           },
           "host_name": {
-            "$ref": "#/definitions/alias"
+            "$ref": "#/definitions/aliases"
           },
           "shell_name": {
-            "$ref": "#/definitions/alias"
+            "$ref": "#/definitions/aliases"
           }
         }
       }
+    },
+    "async": {
+      "type": "boolean",
+      "title": "Async loading",
+      "default": false
+    },
+    "tooltips_action": {
+      "type": "string",
+      "title": "Tooltips action",
+      "description": "https://ohmyposh.dev/docs/configuration/tooltips#tooltips-action",
+      "enum": [
+        "replace",
+        "extend",
+        "prepend"
+      ],
+      "default": "replace"
     }
   }
 }

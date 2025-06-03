@@ -2,8 +2,10 @@ package prompt
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -13,6 +15,13 @@ func (e *Engine) Primary() string {
 	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
 
 	e.writePrimaryPrompt(needsPrimaryRightPrompt)
+
+	defer func() {
+		if needsPrimaryRightPrompt {
+			e.Env.Session().Set(RPromptKey, e.rprompt, cache.INFINITE)
+			e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
+		}
+	}()
 
 	switch e.Env.Shell() {
 	case shell.ZSH:

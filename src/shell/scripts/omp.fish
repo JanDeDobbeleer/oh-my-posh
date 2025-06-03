@@ -2,7 +2,6 @@ set --export POSH_THEME ::CONFIG::
 set --export POSH_SHELL fish
 set --export POSH_SHELL_VERSION $FISH_VERSION
 set --export POWERLINE_COMMAND oh-my-posh
-set --export POSH_SESSION_ID ::SESSION_ID::
 set --export CONDA_PROMPT_MODIFIER false
 
 set --global _omp_tooltip_command ''

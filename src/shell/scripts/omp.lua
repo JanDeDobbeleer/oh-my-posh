@@ -3,7 +3,6 @@
 ---@diagnostic disable: lowercase-global
 
 -- Environment variables
-os.setenv('POSH_SESSION_ID', '::SESSION_ID::')
 os.setenv('POSH_SHELL', 'cmd')
 
 -- disable all known python virtual environment prompts

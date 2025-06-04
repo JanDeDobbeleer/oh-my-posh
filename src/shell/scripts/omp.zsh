@@ -13,6 +13,8 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 _omp_executable=::OMP::
 _omp_tooltip_command=''
 
+export POSH_SESSION_ID=$("$_omp_executable" get uuid)
+
 # switches to enable/disable features
 _omp_cursor_positioning=0
 _omp_ftcs_marks=0

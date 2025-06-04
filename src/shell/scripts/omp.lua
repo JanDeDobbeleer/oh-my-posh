@@ -110,6 +110,10 @@ local function run_posh_command(command)
     return output
 end
 
+-- SESSION ID
+
+os.setenv('POSH_SESSION_ID', run_posh_command('get uuid'))
+
 -- Duration functions
 
 local function os_clock_millis()

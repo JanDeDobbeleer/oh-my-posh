@@ -24,6 +24,8 @@ $global:_ompPoshGit = $false
 $global:_ompAzure = $false
 $global:_ompExecutable = ::OMP::
 
+$env:POSH_SESSION_ID = (& $global:_ompExecutable get uuid)
+
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.
     $script:ConstrainedLanguageMode = $ExecutionContext.SessionState.LanguageMode -eq "ConstrainedLanguage"
@@ -128,28 +130,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             return 0
         }
         $terminalWidth
-    }
-
-    function Get-FileHyperlink {
-        param(
-            [Parameter(Mandatory, ValuefromPipeline = $True)]
-            [string]$Uri,
-            [Parameter(ValuefromPipeline = $True)]
-            [string]$Name
-        )
-
-        if (!$Name) {
-            # if name not set, uri is used as the name of the hyperlink
-            $Name = $Uri
-        }
-
-        if ($null -ne $env:WSL_DISTRO_NAME) {
-            # wsl conversion if needed
-            $Uri = &wslpath -m $Uri
-        }
-
-        # return an ANSI formatted hyperlink
-        return "`e]8;;file://$Uri`e\$Name`e]8;;`e\"
     }
 
     function Set-TransientPrompt {

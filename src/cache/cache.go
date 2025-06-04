@@ -3,10 +3,7 @@ package cache
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"time"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 type Cache interface {
@@ -31,14 +28,13 @@ const (
 	FileName = "omp.cache"
 )
 
-func SessionFileName() string {
-	pid := os.Getenv("POSH_SESSION_ID")
-	if len(pid) == 0 {
-		log.Debug("POSH_SESSION_ID not set, using PID")
-		pid = strconv.Itoa(os.Getppid())
+func SessionFileName() (string, error) {
+	sessionID := os.Getenv("POSH_SESSION_ID")
+	if len(sessionID) == 0 {
+		return "", fmt.Errorf("environment variable POSH_SESSION_ID is not set")
 	}
 
-	return fmt.Sprintf("%s.%s", FileName, pid)
+	return fmt.Sprintf("%s.%s", FileName, sessionID), nil
 }
 
 const (

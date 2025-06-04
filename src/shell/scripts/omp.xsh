@@ -10,6 +10,8 @@ $PYENV_VIRTUALENV_DISABLE_PROMPT = 1
 _omp_executable = ::OMP::
 _omp_history_length = 0
 
+$POSH_SESSION_ID = $(@(_omp_executable) get uuid)
+
 def _omp_get_context():
     global _omp_history_length
     status = 0

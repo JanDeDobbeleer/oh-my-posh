@@ -2,10 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -78,11 +76,6 @@ func runInit(sh string) {
 	configFile := config.Path(configFlag)
 	cfg, hash := config.Load(configFile, sh, false)
 
-	// set session ID here so we can reuse the same logic
-	// to initialize the caches everywhere
-	sessionID := uuid.NewString()
-	os.Setenv("POSH_SESSION_ID", sessionID)
-
 	flags := &runtime.Flags{
 		Shell:     sh,
 		Config:    configFile,
@@ -90,7 +83,6 @@ func runInit(sh string) {
 		Debug:     debug,
 		SaveCache: true,
 		Init:      true,
-		SessionID: sessionID,
 	}
 
 	env := &runtime.Terminal{}

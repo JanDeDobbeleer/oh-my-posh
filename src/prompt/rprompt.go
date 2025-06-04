@@ -44,8 +44,10 @@ func (e *Engine) RPrompt() string {
 		text += " "
 	}
 
-	e.Env.Session().Set(RPromptKey, text, cache.INFINITE)
-	e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
+	if !e.Config.ToolTipsAction.IsDefault() {
+		e.Env.Session().Set(RPromptKey, text, cache.INFINITE)
+		e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
+	}
 
 	return text
 }

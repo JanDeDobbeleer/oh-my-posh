@@ -16,13 +16,6 @@ func (e *Engine) Primary() string {
 
 	e.writePrimaryPrompt(needsPrimaryRightPrompt)
 
-	defer func() {
-		if needsPrimaryRightPrompt {
-			e.Env.Session().Set(RPromptKey, e.rprompt, cache.INFINITE)
-			e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
-		}
-	}()
-
 	switch e.Env.Shell() {
 	case shell.ZSH:
 		if !e.Env.Flags().Eval {
@@ -81,6 +74,13 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 		if e.renderBlock(block, cancelNewline) {
 			didRender = true
 		}
+
+		if e.Config.ToolTipsAction.IsDefault() {
+			continue
+		}
+
+		e.Env.Session().Set(RPromptKey, e.rprompt, cache.INFINITE)
+		e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
 	}
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {

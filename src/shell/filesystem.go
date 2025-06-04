@@ -15,7 +15,7 @@ import (
 var scriptPathCache string
 
 func hasScript(env runtime.Environment) (string, bool) {
-	if env.Flags().Debug {
+	if env.Flags().Debug || env.Flags().Eval {
 		return "", false
 	}
 

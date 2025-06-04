@@ -58,6 +58,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
+	initCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 
 	_ = initCmd.MarkPersistentFlagRequired("config")
 
@@ -83,6 +84,7 @@ func runInit(sh string) {
 		Debug:     debug,
 		SaveCache: true,
 		Init:      true,
+		Eval:      eval,
 	}
 
 	env := &runtime.Terminal{}

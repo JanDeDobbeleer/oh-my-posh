@@ -154,15 +154,15 @@ Add the following snippet as the last line to your PowerShell profile script:
 oh-my-posh init pwsh | Invoke-Expression
 ```
 
-:::tip Antivirus software
-If adding an exception to your Antivirus software still blocks Oh My Posh for Windows, you can try using the below
-alternate line in your PowerShell profile. This is a drop-in replacement to the above call with Invoke-Expression.
-Tested with PowerShell 7.2.4 with Bitdefender Antivirus installed and requires NO exceptions for oh-my-posh.exe.
-Bitdefender blocks the calls to Invoke-Expression as malicious code and this alternate line skips the double calls:
+:::tip Execution policy
+In case the execution policy disables executing unsigned scripts on your system, you can fallback to evaluating
+the script instead. Use the `--eval` flag to do so:
 
 ```powershell
-& ([ScriptBlock]::Create((oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" --print) -join "`n"))
+oh-my-posh init pwsh --eval | Invoke-Expression
 ```
+
+Be aware this will make initializing the shell slower.
 :::
 
 Once added, reload your profile for the changes to take effect.

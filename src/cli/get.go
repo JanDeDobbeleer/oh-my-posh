@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -15,7 +16,7 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get [shell|millis|accent|toggles|width]",
+	Use:   "get [shell|millis|accent|toggles|width|uuid]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
 
@@ -25,13 +26,15 @@ This command is used to get the value of the following variables:
 - millis
 - accent
 - toggles
-- width`,
+- width
+- uuid`,
 	ValidArgs: []string{
 		"millis",
 		"shell",
 		"accent",
 		"toggles",
 		"width",
+		"uuid",
 	},
 	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -55,7 +58,7 @@ This command is used to get the value of the following variables:
 
 		switch args[0] {
 		case "shell":
-			fmt.Println(env.Shell())
+			fmt.Print(env.Shell())
 		case "accent":
 			rgb, err := color.GetAccentColor(env)
 			if err != nil {
@@ -63,7 +66,7 @@ This command is used to get the value of the following variables:
 				return
 			}
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
-			fmt.Println("#" + accent.Hex())
+			fmt.Print("#" + accent.Hex())
 		case "toggles":
 			togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)
 			var toggles []string
@@ -84,7 +87,9 @@ This command is used to get the value of the following variables:
 				fmt.Println("error getting terminal width:", err.Error())
 				return
 			}
-			fmt.Println(width)
+			fmt.Print(width)
+		case "uuid":
+			fmt.Print(uuid.NewString())
 		default:
 			_ = cmd.Help()
 		}

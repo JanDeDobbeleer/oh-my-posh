@@ -73,7 +73,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	async := slices.Contains(features, Async)
 
 	if scriptPath, OK := hasScript(env); OK {
-		return initCommand(env, shell, scriptPath, async)
+		return sourceInit(env, shell, scriptPath, async)
 	}
 
 	executable, err := getExecutablePath(env)
@@ -138,7 +138,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		return fmt.Sprintf("echo \"Failed to write init script: %s\"", err.Error())
 	}
 
-	sourceCommand := initCommand(env, shell, scriptPath, async)
+	sourceCommand := sourceInit(env, shell, scriptPath, async)
 
 	if !env.Flags().Debug {
 		return sourceCommand
@@ -160,28 +160,6 @@ func printDebug(env runtime.Environment, startTime *time.Time) string {
 	builder.WriteString(env.Logs())
 
 	return builder.String()
-}
-
-func initCommand(env runtime.Environment, shell, scriptPath string, async bool) string {
-	command := sourceInit(env, shell, scriptPath, async)
-	sessionID := env.Flags().SessionID
-
-	switch shell {
-	case PWSH, PWSH5:
-		command += fmt.Sprintf("; $env:POSH_SESSION_ID = '%s'", sessionID)
-	case ZSH, BASH:
-		command += fmt.Sprintf("; export POSH_SESSION_ID='%s'", sessionID)
-	case FISH:
-		command += fmt.Sprintf("; set --export POSH_SESSION_ID %s", sessionID)
-	case CMD:
-		command += fmt.Sprintf("; os.setenv('POSH_SESSION_ID', '%s')", sessionID)
-	case ELVISH:
-		command += fmt.Sprintf("; set-env POSH_SESSION_ID %s", sessionID)
-	case XONSH:
-		command += fmt.Sprintf("; $POSH_SESSION_ID = '%s'", sessionID)
-	}
-
-	return command
 }
 
 func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) string {

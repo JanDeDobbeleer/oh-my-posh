@@ -79,7 +79,6 @@ type Flags struct {
 	AbsolutePWD   string
 	Type          string
 	ConfigHash    string
-	SessionID     string
 	PromptCount   int
 	Column        int
 	TerminalWidth int

@@ -347,6 +347,13 @@ func (g *Git) shouldDisplay() bool {
 		if bare == trueStr {
 			g.IsBare = true
 			g.mainSCMDir = g.repoRootDir
+			g.scmDir = g.repoRootDir
+
+			gitdir, err := g.env.HasParentFilePath(".git", true)
+			if err == nil {
+				g.scmDir = gitdir.Path
+			}
+
 			return true
 		}
 	}
@@ -888,9 +895,11 @@ func (g *Git) WorktreeCount() int {
 	if g.worktreeCount > 0 {
 		return g.worktreeCount
 	}
+
 	if !g.env.HasFolder(g.scmDir + "/worktrees") {
 		return 0
 	}
+
 	worktreeFolders := g.env.LsDir(g.scmDir + "/worktrees")
 	var count int
 	for _, folder := range worktreeFolders {
@@ -898,6 +907,7 @@ func (g *Git) WorktreeCount() int {
 			count++
 		}
 	}
+
 	return count
 }
 

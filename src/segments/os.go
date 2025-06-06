@@ -33,15 +33,7 @@ func (oi *Os) Enabled() bool {
 		oi.Icon = oi.props.GetString(Windows, "\uE62A")
 	case runtime.DARWIN:
 		oi.Icon = oi.props.GetString(MacOS, "\uF179")
-	case runtime.LINUX:
-		pf := oi.env.Platform()
-		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
-		if displayDistroName {
-			oi.Icon = oi.props.GetString(properties.Property(pf), pf)
-			break
-		}
-		oi.Icon = oi.getDistroIcon(pf)
-	case runtime.FREEBSD:
+	case runtime.LINUX, runtime.FREEBSD:
 		pf := oi.env.Platform()
 		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
 		if displayDistroName {
@@ -72,7 +64,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"elementary":          "\uF309",
 		"endeavouros":         "\uF322",
 		"fedora":              "\uF30a",
-		"freebsd":             "󰣠",
+		"freebsd":             "\U000f08e0",
 		"gentoo":              "\uF30d",
 		"kali":                "\uf327",
 		"mageia":              "\uF310",

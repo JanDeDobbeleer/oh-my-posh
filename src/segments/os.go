@@ -41,6 +41,14 @@ func (oi *Os) Enabled() bool {
 			break
 		}
 		oi.Icon = oi.getDistroIcon(pf)
+	case runtime.FREEBSD:
+		pf := oi.env.Platform()
+		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
+		if displayDistroName {
+			oi.Icon = oi.props.GetString(properties.Property(pf), pf)
+			break
+		}
+		oi.Icon = oi.getDistroIcon(pf)
 	default:
 		oi.Icon = goos
 	}
@@ -64,6 +72,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"elementary":          "\uF309",
 		"endeavouros":         "\uF322",
 		"fedora":              "\uF30a",
+		"freebsd":             "󰣠",
 		"gentoo":              "\uF30d",
 		"kali":                "\uf327",
 		"mageia":              "\uF310",

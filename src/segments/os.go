@@ -79,6 +79,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"sabayon":             "\uF317",
 		"slackware":           "\uF319",
 		"ubuntu":              "\uF31b",
+		"neon":                "\uf331",
 	}
 
 	if icon, ok := iconMap[distro]; ok {

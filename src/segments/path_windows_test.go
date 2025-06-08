@@ -548,4 +548,13 @@ var testNormalizePathCases = []testNormalizePathCase{
 		PathSeparator: `\`,
 		Expected:      "\\\\localhost\\c$\\some",
 	},
+	{
+		Case:          "Windows: display Cygwin path",
+		Input:         fooBarMan,
+		HomeDir:       homeDirWindows,
+		GOOS:          runtime.WINDOWS,
+		PathSeparator: `\`,
+		Expected:      "/foo/bar/man",
+		Cygwin:        true,
+	},
 }

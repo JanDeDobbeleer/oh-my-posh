@@ -770,6 +770,10 @@ func (pt *Path) normalize(inputPath string) string {
 		normalized = strings.ToLower(normalized)
 	}
 
+	if pt.cygPath {
+		return strings.ReplaceAll(normalized, `\`, "/")
+	}
+
 	return normalized
 }
 

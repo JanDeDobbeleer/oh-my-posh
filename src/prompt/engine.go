@@ -124,16 +124,11 @@ func (e *Engine) getNewline() string {
 	}
 
 	// Warp terminal will remove a newline character ('\n') from the prompt, so we hack it in.
-	// For Elvish on Windows, we do this to prevent cutting off a right-aligned block.
-	// For Tcsh, we do this to prevent a newline character from being printed.
-	switch {
-	case e.isWarp():
-		fallthrough
-	case e.Env.Shell() == shell.ELVISH && e.Env.GOOS() == runtime.WINDOWS:
+	if e.isWarp() {
 		return terminal.LineBreak()
-	default:
-		return newline
 	}
+
+	return newline
 }
 
 func (e *Engine) writeNewline() {
@@ -511,15 +506,19 @@ func New(flags *runtime.Flags) *Engine {
 
 	switch env.Shell() {
 	case shell.XONSH:
-		// In Xonsh, the behavior of wrapping at the end of a prompt line is inconsistent across platforms.
-		// On Windows, it wraps before the rightmost cell on the terminal screen, that is, the rightmost cell is never available for a prompt line.
-		if eng.Env.GOOS() == runtime.WINDOWS {
+		// In Xonsh, the behavior of wrapping at the end of a prompt line is inconsistent across different operating systems.
+		// On Windows, it wraps before the last cell on the terminal screen, that is, the last cell is never available for a prompt line.
+		if env.GOOS() == runtime.WINDOWS {
 			eng.rectifyTerminalWidth(-1)
 		}
 	case shell.ELVISH:
-		// In Elvish, newlines in a prompt are badly translated
-		// No silver bullet here. We have to reduce the terminal width by 1 so a right-aligned block will not be broken.
-		eng.rectifyTerminalWidth(-1)
+		// In Elvish, the case is similar to that in Xonsh.
+		// However, on Windows, we have to reduce the terminal width by 1 again to ensure that newlines are displayed correctly.
+		diff := -1
+		if env.GOOS() == runtime.WINDOWS {
+			diff = -2
+		}
+		eng.rectifyTerminalWidth(diff)
 	case shell.PWSH, shell.PWSH5:
 		// when in PowerShell, and force patching the bleed bug
 		// we need to reduce the terminal width by 1 so the last

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -36,6 +37,10 @@ func (f Folders) List() []string {
 	}
 
 	return list
+}
+
+func (f Folders) Last() *Folder {
+	return f[len(f)-1]
 }
 
 type Path struct {
@@ -161,7 +166,10 @@ func (pt *Path) setPaths() {
 
 	pt.cygPath = displayCygpath()
 	pt.windowsPath = pt.env.GOOS() == runtime.WINDOWS && !pt.cygPath
-	pt.pathSeparator = path.Separator()
+
+	if len(pt.pathSeparator) == 0 {
+		pt.pathSeparator = path.Separator()
+	}
 
 	pt.pwd = pt.env.Pwd()
 	if (pt.env.Shell() == shell.PWSH || pt.env.Shell() == shell.PWSH5) && len(pt.env.Flags().PSWD) != 0 {
@@ -219,7 +227,8 @@ func (pt *Path) setStyle() {
 
 	switch style := pt.props.GetString(properties.Style, Agnoster); style {
 	case Agnoster:
-		pt.Path = pt.getAgnosterPath()
+		maxWidth := pt.getMaxWidth()
+		pt.Path = pt.getAgnosterPath(maxWidth)
 	case AgnosterFull:
 		pt.Path = pt.getAgnosterFullPath()
 	case AgnosterShort:
@@ -330,7 +339,11 @@ func (pt *Path) getMixedPath() string {
 	return pt.colorizePath(root, elements)
 }
 
-func (pt *Path) getAgnosterPath() string {
+func (pt *Path) getAgnosterPath(maxWidth int) string {
+	if maxWidth > 0 {
+		return pt.getAgnosterMaxWidth(maxWidth)
+	}
+
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
 	root, folders := pt.getPaths()
@@ -480,6 +493,43 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	return pt.colorizePath(root, elements)
 }
 
+func (pt *Path) getAgnosterMaxWidth(maxWidth int) string {
+	separator := pt.getFolderSeparator()
+	folderIcon := pt.props.GetString(FolderIcon, "..")
+
+	root, folders := pt.getPaths()
+	folderNames := append([]string{root}, folders.List()...)
+
+	// this assumes that the root is never a single character
+	// except when it really is / on unix systems
+	if len(root) == 1 {
+		maxWidth++ // add one for the separator
+	}
+
+	if len(folderNames) == 0 {
+		return pt.colorizePath(root, nil)
+	}
+
+	fullPath := strings.Join(folderNames, separator)
+
+	for i := 0; i < len(folderNames)-1 && utf8.RuneCountInString(fullPath) > maxWidth; i++ {
+		folderNames[i] = folderIcon
+		fullPath = strings.Join(folderNames, separator)
+	}
+
+	for len(folderNames) > 1 && utf8.RuneCountInString(fullPath) > maxWidth {
+		// remove every folder until the path is short enough
+		folderNames = folderNames[1:]
+		fullPath = strings.Join(folderNames, separator)
+	}
+
+	if len(folderNames) == 1 {
+		return pt.colorizePath(template.TruncE(maxWidth, folderNames[0]), nil)
+	}
+
+	return pt.colorizePath(folderNames[0], folderNames[1:])
+}
+
 func (pt *Path) getAgnosterFullPath() string {
 	root, folders := pt.getPaths()
 
@@ -489,10 +539,7 @@ func (pt *Path) getAgnosterFullPath() string {
 func (pt *Path) getAgnosterShortPath() string {
 	root, folders := pt.getPaths()
 
-	maxDepth := pt.props.GetInt(MaxDepth, 1)
-	if maxDepth < 1 {
-		maxDepth = 1
-	}
+	maxDepth := max(pt.props.GetInt(MaxDepth, 1), 1)
 
 	pathDepth := len(folders)
 	hideRootLocation := pt.props.GetBool(HideRootLocation, false)

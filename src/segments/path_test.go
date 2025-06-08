@@ -498,3 +498,172 @@ func TestGetMaxWidth(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestAgnosterMaxWidth(t *testing.T) {
+	cases := []struct {
+		name        string
+		pwd         string
+		folderIcon  string
+		separator   string
+		expected    string
+		goos        string
+		maxWidth    int
+		displayRoot bool
+	}{
+		{
+			name:        "path shorter than maxWidth",
+			pwd:         "/foob/user/docs",
+			maxWidth:    20,
+			displayRoot: false,
+			separator:   "/",
+			folderIcon:  `..`,
+			expected:    "foob/user/docs",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "path shorter than maxWidth, Windows",
+			pwd:         `C:\Users\john\Documents`,
+			maxWidth:    20,
+			displayRoot: true,
+			folderIcon:  `..`,
+			separator:   `\`,
+			expected:    `..\..\john\Documents`,
+			goos:        runtime.WINDOWS,
+		},
+		{
+			name:        "path shorter than maxWidth, wth root",
+			pwd:         "/foob/user/docs",
+			maxWidth:    20,
+			displayRoot: true,
+			folderIcon:  `..`,
+			separator:   "/",
+			expected:    "/foob/user/docs",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "path exactly maxWidth",
+			pwd:         "/foob/user/docs",
+			maxWidth:    15,
+			displayRoot: true,
+			folderIcon:  `..`,
+			separator:   "/",
+			expected:    "/foob/user/docs",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "path longer than maxWidth with folder icons",
+			pwd:         "/foob/user/documents/projects",
+			maxWidth:    15,
+			displayRoot: false,
+			folderIcon:  "..",
+			separator:   "/",
+			expected:    "../../projects",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "very long path requiring multiple folder replacements",
+			pwd:         "/foob/user/documents/projects/myproject/src/main",
+			maxWidth:    21,
+			displayRoot: false,
+			folderIcon:  "..",
+			separator:   "/",
+			expected:    "../../../../../main",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "path requiring final folder truncation",
+			pwd:         "/foob/verylongfoldername",
+			maxWidth:    15,
+			displayRoot: false,
+			separator:   "/",
+			expected:    "verylongfolder…",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "Windows path with custom separator",
+			pwd:         `C:\Users\john\Documents`,
+			maxWidth:    15,
+			displayRoot: false,
+			folderIcon:  "…",
+			separator:   `\`,
+			expected:    `…\…\…\Documents`,
+			goos:        runtime.WINDOWS,
+		},
+		{
+			name:        "single folder path",
+			pwd:         "/foob",
+			maxWidth:    10,
+			displayRoot: false,
+			separator:   "/",
+			expected:    "foob",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "empty relative path",
+			pwd:         "/",
+			maxWidth:    10,
+			displayRoot: true,
+			separator:   "/",
+			expected:    "/",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "custom folder icon",
+			pwd:         "/foob/user/documents/projects",
+			maxWidth:    15,
+			displayRoot: false,
+			folderIcon:  "⋯",
+			separator:   "/",
+			expected:    "⋯/⋯/⋯/projects",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "maxwidth is smaller than folder name",
+			pwd:         "/foob/user/documents/projects",
+			maxWidth:    2,
+			displayRoot: false,
+			folderIcon:  "⋯",
+			separator:   "/",
+			expected:    "p…",
+			goos:        runtime.LINUX,
+		},
+		{
+			name:        "maxwidth is 0",
+			pwd:         "/foob/user/documents/projects",
+			maxWidth:    0,
+			displayRoot: false,
+			folderIcon:  "⋯",
+			separator:   "/",
+			expected:    "…",
+			goos:        runtime.LINUX,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			env := &mock.Environment{}
+			env.On("Pwd").Return(tc.pwd)
+			env.On("Home").Return("/home")
+			env.On("GOOS").Return(tc.goos)
+			env.On("Shell").Return(shell.BASH)
+
+			path := &Path{
+				base: base{
+					env: env,
+					props: properties.Map{
+						DisplayRoot:         tc.displayRoot,
+						FolderIcon:          tc.folderIcon,
+						FolderSeparatorIcon: tc.separator,
+					},
+				},
+				pathSeparator: tc.separator,
+			}
+
+			// Set up the path state
+			path.setPaths()
+
+			got := path.getAgnosterMaxWidth(tc.maxWidth)
+			assert.Equal(t, tc.expected, got, tc.name)
+		})
+	}
+}

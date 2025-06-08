@@ -99,7 +99,7 @@ func TestTruncE(t *testing.T) {
 				}()
 			}
 
-			result := truncE(tc.length, tc.input)
+			result := TruncE(tc.length, tc.input)
 			if result != tc.expected {
 				t.Errorf("expected %q but got %q", tc.expected, result)
 			}

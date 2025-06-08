@@ -394,6 +394,7 @@ type testNormalizePathCase struct {
 	GOOS          string
 	PathSeparator string
 	Expected      string
+	Cygwin        bool
 }
 
 func TestNormalizePath(t *testing.T) {
@@ -408,7 +409,7 @@ func TestNormalizePath(t *testing.T) {
 
 		env.On("PathSeparator").Return(tc.PathSeparator)
 
-		pt := &Path{}
+		pt := &Path{cygPath: tc.Cygwin}
 		pt.Init(properties.Map{}, env)
 
 		got := pt.normalize(tc.Input)

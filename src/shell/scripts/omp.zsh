@@ -166,7 +166,13 @@ function _omp_zle-line-init() {
   local -i ret=$?
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-  eval "$(_omp_get_prompt transient --eval)"
+  # We need this workaround because when the `filler` is set,
+  # there will be a redundant blank line below the transient prompt if the input is empty.
+  if [[ -z $BUFFER ]]; then
+    local options="--terminal-width=$((${COLUMNS-0} - 1))"
+  fi
+
+  eval "$(_omp_get_prompt transient --eval $options)"
   zle .reset-prompt
 
   if ((ret)); then

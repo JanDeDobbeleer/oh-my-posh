@@ -17,9 +17,10 @@ const (
 type Gcp struct {
 	base
 
-	Account string
-	Project string
-	Region  string
+	Account      string
+	Project      string
+	Region       string
+	ActiveConfig string
 }
 
 func (g *Gcp) Template() string {
@@ -34,6 +35,7 @@ func (g *Gcp) Enabled() bool {
 		return false
 	}
 
+	g.ActiveConfig = cfgName
 	cfgPath := path.Join(cfgDir, "configurations", "config_"+cfgName)
 	cfg := g.env.FileContent(cfgPath)
 

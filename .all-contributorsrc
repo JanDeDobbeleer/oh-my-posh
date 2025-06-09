@@ -3199,6 +3199,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "plamendelchev",
+      "name": "Plamen Delchev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25668366?v=4",
+      "profile": "https://github.com/plamendelchev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

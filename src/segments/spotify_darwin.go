@@ -5,11 +5,9 @@ package segments
 import "strings"
 
 func (s *Spotify) Enabled() bool {
-	/*
-		Batching commands to reduce latency. Each individual call to `osascript` creates additional delays.
-	  Using '|' as a delimiter in the batched command since it's unlikely
-		to appear in track or artist names, making it safe for splitting the output
-	*/
+	// Batching commands to reduce latency. Each individual call to `osascript` creates additional delays.
+	// Using '|' as a delimiter in the batched command since it's unlikely
+	// to appear in track or artist names, making it safe for splitting the output
 	batchedCommand := `
 	if application "Spotify" is running then
 		tell application "Spotify"
@@ -30,15 +28,14 @@ func (s *Spotify) Enabled() bool {
 	batchedOutput := s.runAppleScriptCommand(batchedCommand)
 
 	outputStrings := strings.SplitN(batchedOutput, "|", 4)
-
-	if outputStrings[0] == "false" || outputStrings[0] == "" || len(outputStrings) != 4 {
+	if outputStrings[0] == "false" || len(outputStrings[0]) == 0 || len(outputStrings) != 4 {
 		s.Status = stopped
 		return false
 	}
+
 	s.Status = outputStrings[1]
 
 	// Check if running
-
 	if len(s.Status) == 0 {
 		s.Status = stopped
 		return false
@@ -47,9 +44,9 @@ func (s *Spotify) Enabled() bool {
 	if s.Status == stopped {
 		return false
 	}
+
 	s.Artist = outputStrings[2]
 	s.Track = outputStrings[3]
-
 	s.resolveIcon()
 
 	return true

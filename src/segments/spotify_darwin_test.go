@@ -14,29 +14,40 @@ import (
 
 func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 	cases := []struct {
-		Error    error
-		Running  string
-		Expected string
-		Status   string
-		Artist   string
-		Track    string
+		Error       error
+		BatchedCase string
+		Expected    string
+		Enabled     bool
 	}{
-		{Running: "false", Expected: ""},
-		{Running: "false", Expected: "", Error: errors.New("oops")},
-		{Running: "true", Expected: "\ue602 Candlemass - Spellbreaker", Status: "playing", Artist: "Candlemass", Track: "Spellbreaker"},
-		{Running: "true", Expected: "\uF8E3 Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
+		{BatchedCase: "false|||", Expected: "", Enabled: false},
+		{BatchedCase: "false||", Expected: "", Error: errors.New("oops"), Enabled: false},
+		{BatchedCase: "true|playing|Candlemass|Spellbreaker", Expected: "\ue602 Candlemass - Spellbreaker", Enabled: true},
+		{BatchedCase: "true|paused|Candlemass|Spellbreaker", Expected: "\uF8E3 Candlemass - Spellbreaker", Enabled: true},
 	}
+	batchedCommand := `
+	if application "Spotify" is running then
+		tell application "Spotify"
+			set playerState to player state as string
+			set artistName to ""
+			set trackName to ""
+			if playerState is not "stopped" then
+				set artistName to artist of current track as string
+				set trackName to name of current track as string
+			end if
+			return "true|" & playerState & "|" & artistName & "|" & trackName
+		end tell
+	else
+		return "false|||"
+	end if
+	`
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("RunCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(tc.Running, tc.Error)
-		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(tc.Status, nil)
-		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(tc.Artist, nil)
-		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(tc.Track, nil)
+		env.On("RunCommand", "osascript", []string{"-e", batchedCommand}).Return(tc.BatchedCase, tc.Error)
 
 		s := &Spotify{}
 		s.Init(properties.Map{}, env)
 
-		assert.Equal(t, tc.Running == "true", s.Enabled())
+		assert.Equal(t, tc.Enabled, s.Enabled())
 		assert.Equal(t, tc.Expected, renderTemplate(env, s.Template(), s))
 	}
 }

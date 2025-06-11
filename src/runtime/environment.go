@@ -99,6 +99,7 @@ type Flags struct {
 	Escape        bool
 	IsPrimary     bool
 	Plain         bool
+	Force         bool
 }
 
 type CommandError struct {

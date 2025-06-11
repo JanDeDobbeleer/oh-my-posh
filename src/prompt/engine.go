@@ -38,6 +38,7 @@ const (
 	TOOLTIP   = "tooltip"
 	VALID     = "valid"
 	ERROR     = "error"
+	PREVIEW   = "preview"
 )
 
 func (e *Engine) write(text string) {
@@ -503,7 +504,7 @@ func New(flags *runtime.Flags) *Engine {
 		Config:      cfg,
 		Env:         env,
 		Plain:       flags.Plain,
-		forceRender: len(env.Getenv("POSH_FORCE_RENDER")) > 0,
+		forceRender: flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
 	}
 
 	switch env.Shell() {

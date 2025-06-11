@@ -2,6 +2,10 @@
 
 Note we have a code of conduct, please follow it in all your interactions with the project.
 
+**Note:** Theme aditions are no longer accepted due to the ever growing set. We do however
+accept showcasing your custom theme in the [themes discussion section here][themes-discussion]
+or the [themes channel on Discord][discord-link].
+
 Ensure you've read through the [documentation][docs] so you understand the core concepts of the
 project. If you're looking to get familiar with go, following the getting started [guide][guide]
 can be a good starting point.
@@ -50,11 +54,13 @@ If the compile succeeds, `oh-my-posh --version` should reply:
 Should you somehow mess up your devcontainer's OMP install catastrophically, remember that
 if you do `Codespaces: Rebuild Container` again, you'll be back to the latest stable release.
 
-[docs]: https://ohmyposh.dev/docs
-[guide]: https://ohmyposh.dev/docs/contributing/started
-[cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
-[cc-types]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/.commitlintrc.yml#L23-L33
-[codespaces-badge]: https://github.com/codespaces/badge.svg
-[codespaces-link]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=175405157
-[devcontainer-ext]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
-[timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+[themes-discussion]: [https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes]
+[discord-link]: [https://discord.com/channels/1023597603331526656/1055533233309233252]
+[docs]: <https://ohmyposh.dev/docs>
+[guide]: <https://ohmyposh.dev/docs/contributing/started>
+[cc]: <https://www.conventionalcommits.org/en/v1.0.0/#summary>
+[cc-types]: <https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/.commitlintrc.yml#L23-L33>
+[codespaces-badge]: <https://github.com/codespaces/badge.svg>
+[codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=175405157>
+[devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
+[timezones]: <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>

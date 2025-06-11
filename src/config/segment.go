@@ -146,9 +146,13 @@ func (segment *Segment) Execute(env runtime.Environment) {
 	}
 }
 
-func (segment *Segment) Render(index int) bool {
-	if !segment.Enabled {
+func (segment *Segment) Render(index int, force bool) bool {
+	if !segment.Enabled && !force {
 		return false
+	}
+
+	if force {
+		segment.Force = true
 	}
 
 	segment.writer.SetIndex(index)

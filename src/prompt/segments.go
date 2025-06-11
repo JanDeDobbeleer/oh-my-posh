@@ -77,7 +77,7 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 					break
 				}
 
-				if segment.Render(segmentIndex) {
+				if segment.Render(segmentIndex, e.forceRender) {
 					segmentIndex++
 				}
 

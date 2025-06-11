@@ -20,7 +20,7 @@ func trunc(length any, s string) string {
 	return string(runes[0:c])
 }
 
-func truncE(length any, s string) string {
+func TruncE(length any, s string) string {
 	c, err := toInt(length)
 	if err != nil {
 		panic(err)

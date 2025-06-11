@@ -17,9 +17,10 @@ const (
 type Gcp struct {
 	base
 
-	Account string
-	Project string
-	Region  string
+	Account      string
+	Project      string
+	Region       string
+	ActiveConfig string
 }
 
 func (g *Gcp) Template() string {
@@ -28,14 +29,15 @@ func (g *Gcp) Template() string {
 
 func (g *Gcp) Enabled() bool {
 	cfgDir := g.getConfigDirectory()
-	configFile, err := g.getActiveConfig(cfgDir)
+	cfgName, err := g.getActiveConfig(cfgDir)
 	if err != nil {
 		log.Error(err)
 		return false
 	}
 
-	cfgpath := path.Join(cfgDir, "configurations", "config_"+configFile)
-	cfg := g.env.FileContent(cfgpath)
+	g.ActiveConfig = cfgName
+	cfgPath := path.Join(cfgDir, "configurations", "config_"+cfgName)
+	cfg := g.env.FileContent(cfgPath)
 
 	if len(cfg) == 0 {
 		log.Error(errors.New("config file is empty"))
@@ -56,12 +58,18 @@ func (g *Gcp) Enabled() bool {
 }
 
 func (g *Gcp) getActiveConfig(cfgDir string) (string, error) {
+	activeCfg := g.env.Getenv("CLOUDSDK_ACTIVE_CONFIG_NAME")
+	if len(activeCfg) != 0 {
+		return activeCfg, nil
+	}
+
 	ap := path.Join(cfgDir, "active_config")
-	fileContent := g.env.FileContent(ap)
-	if len(fileContent) == 0 {
+	activeCfg = g.env.FileContent(ap)
+	if len(activeCfg) == 0 {
 		return "", errors.New(GCPNOACTIVECONFIG)
 	}
-	return fileContent, nil
+
+	return activeCfg, nil
 }
 
 func (g *Gcp) getConfigDirectory() string {

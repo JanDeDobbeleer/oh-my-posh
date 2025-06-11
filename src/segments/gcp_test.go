@@ -16,6 +16,7 @@ func TestGcpSegment(t *testing.T) {
 		Case            string
 		CfgData         string
 		ActiveConfig    string
+		EnvActiveConfig string
 		ExpectedString  string
 		ExpectedEnabled bool
 	}{
@@ -48,14 +49,40 @@ func TestGcpSegment(t *testing.T) {
 			CfgData:         "{bad}",
 			ExpectedEnabled: false,
 		},
+		{
+			Case:            "use CLOUDSDK_ACTIVE_CONFIG_NAME",
+			EnvActiveConfig: "myconfig",
+			ExpectedEnabled: true,
+			CfgData: `
+			[core]
+			account = user@example.com
+			project = cloud-proj
+
+			[compute]
+			region = us-west1
+			`,
+			ExpectedString: "cloud-proj :: us-west1 :: user@example.com",
+		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("Getenv", "CLOUDSDK_CONFIG").Return("config")
-		fcPath := path.Join("config", "active_config")
-		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
-		cfgpath := path.Join("config", "configurations", "config_production")
+		env.On("Getenv", "CLOUDSDK_ACTIVE_CONFIG_NAME").Return(tc.EnvActiveConfig)
+
+		// Only use fallback file if env var is not set
+		if tc.EnvActiveConfig == "" {
+			fcPath := path.Join("config", "active_config")
+			env.On("FileContent", fcPath).Return(tc.ActiveConfig)
+		}
+
+		// Resolve active config name
+		activeConfig := tc.EnvActiveConfig
+		if activeConfig == "" {
+			activeConfig = tc.ActiveConfig
+		}
+
+		cfgpath := path.Join("config", "configurations", "config_"+activeConfig)
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
 
 		g := &Gcp{}
@@ -111,25 +138,36 @@ func TestGetConfigDirectory(t *testing.T) {
 
 func TestGetActiveConfig(t *testing.T) {
 	cases := []struct {
-		Case           string
-		ActiveConfig   string
-		ExpectedString string
-		ExpectedError  string
+		Case                    string
+		EnvActiveConfigName     string
+		FileActiveConfigContent string
+		ExpectedString          string
+		ExpectedError           string
 	}{
 		{
-			Case:          "No active config",
-			ExpectedError: GCPNOACTIVECONFIG,
+			Case:                "CLOUDSDK_ACTIVE_CONFIG_NAME set",
+			EnvActiveConfigName: "envconfig",
+			ExpectedString:      "envconfig",
 		},
 		{
-			Case:           "No active config",
-			ActiveConfig:   "production",
-			ExpectedString: "production",
+			Case:                    "Fallback to file content",
+			FileActiveConfigContent: "fileconfig",
+			ExpectedString:          "fileconfig",
+		},
+		{
+			Case:          "No config anywhere",
+			ExpectedError: GCPNOACTIVECONFIG,
 		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("FileContent", "active_config").Return(tc.ActiveConfig)
+		env.On("Getenv", "CLOUDSDK_ACTIVE_CONFIG_NAME").Return(tc.EnvActiveConfigName)
+
+		// If env var not set, mock file fallback
+		if tc.EnvActiveConfigName == "" {
+			env.On("FileContent", path.Join("", "active_config")).Return(tc.FileActiveConfigContent)
+		}
 
 		g := &Gcp{}
 		g.Init(properties.Map{}, env)

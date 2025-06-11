@@ -3190,6 +3190,34 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "b-simjoo",
+      "name": "Behnam Simjoo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/117530839?v=4",
+      "profile": "http://bsimjoo.pcworms.ir",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "plamendelchev",
+      "name": "Plamen Delchev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25668366?v=4",
+      "profile": "https://github.com/plamendelchev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "beaualbritton",
+      "name": "beau albritton",
+      "avatar_url": "https://avatars.githubusercontent.com/u/112587801?v=4",
+      "profile": "https://github.com/beaualbritton",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

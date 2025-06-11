@@ -43,7 +43,7 @@ func Test_loadFonts(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	fileName := "3270NerdFontMono-Regular.ttf"
+	fileName := "OcodoMonoNerdFont-Light.ttf"
 	fontFilePath := filepath.Join(pkgDir, "testdata", fileName)
 
 	testCases := []struct {

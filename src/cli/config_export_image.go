@@ -47,7 +47,28 @@ Exports the config to an image file ~/mytheme.png.
 
 > oh-my-posh config export image --config ~/myconfig.omp.json --author "John Doe"
 
-Exports the config to an image file using customized output options.`,
+Exports the config to an image file using customized output options.
+
+Using an alternative NerdFont:
+
+Hack NerdFont is used by default for the image rendering.
+You can specify an alternative font by setting the following
+environment vars:
+
+    POSH_FONT_REGULAR
+    POSH_FONT_BOLD
+    POSH_FONT_ITALIC
+
+All three must be set use the same font path/filename for all of them
+if you only want to use one font. OpenType will handle them as well as it can.
+
+example (assuming OcodoMonoNerdFont-Light.ttf is in current dir):
+
+    $env:POSH_FONT_REGULAR = "OcodoMonoNerdFont-Light.ttf"
+    $env:POSH_FONT_BOLD = "OcodoMonoNerdFont-Light.ttf"
+    $env:POSH_FONT_ITALIC = "OcodoMonoNerdFont-Light.ttf"
+    oh-my-posh config export image --config my-theme.omp.yaml
+`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
 		configFile := config.Path(configFlag)

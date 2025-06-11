@@ -1,0 +1,347 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+$schema: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+version: 3
+
+# Upgrade settings. Change to preferred,
+upgrade:
+  notice: true
+  auto: false
+  interval: 25h32m42s
+  source: github
+
+# Shell and integration settings. Set/change if needed.
+#terminal_background: black
+#accent_color: blue
+shell_integration: true
+pwd: osc99 # others: osc7, osc51
+#enable_cursor_positioning: false
+#patch_pwsh_bleed: false
+#iterm_features:
+#  - prompt_mark
+#  - current_dir
+#  - remote_host
+
+var:
+  # String to use for filler between left and right aligned blocks
+  FillerStr:  "\u2550"
+  # Unfortunately templates don't work in diamon/powerline elements.
+  # So here are some config lines to copy/paste for the diamond/powerline chars.
+  LeftCTri:   "\ue0b2"   #    left and right "center point" triangles
+  RightCTri:  "\ue0b0"   # 
+  # leading_diamond: "\ue0b2"
+  # trailing_diamond: "\ue0b0"
+  # powerline_symbol: "\ue0b0"
+  LeftCir:    "\ue0b6"   # 
+  RightCir:   "\ue0b4"   # 
+  # leading_diamond: "\ue0b6"
+  # trailing_diamond: "\ue0b4"
+  # powerline_symbol: "\ue0b4"
+  LeftBTri:   "\ue0ba"   #    left and right "bottom point" triangles
+  RightBTri:  "\ue0b8"   # 
+  LeftTTri:   "\ue0be"   #    left and right "top point" triangles
+  RightTTri:  "\ue0bc"   # 
+  #
+  EmQuad:     "\u2001"   #     Unicode Em Quad space
+  FullBlock:  "\u2588"   # █   Full size block
+  #
+  UserIcon:   "<p:usericon-fg>\uf007</> "
+  HostIcon:   " <p:hosticon-fg>\uf108</>  "
+  ExTimeIcon: " <p:icon-fg>\uf252</> "
+  OkIcon:     "<p:valid-fg>\uf00c</> "
+  ErrIcon:    "<p:error-fg>\ueaf2</> "
+  WarnIcon:   "\uf071"
+  NoWrite:    "<p:error-fg>\uf468</>" # 
+
+
+palette:
+  default-fg: "#ffffff"
+  divider-bg: "#a99a30"
+  valid-fg: "#00bb00"
+  error-fg: "#ff0000"
+  filler-fg: "#000000"
+  darker1-bg: "#8e6500"
+  darker2-bg: "#674500"
+  darker3-bg: "#553311"
+  icon-fg: "#dded77"
+  upgrade-fg: "#ffff00"
+  upgrade-bg: "#770000"
+  #root-fg: "#990000"
+  #root-bg: "#dddd00"
+  usericon-fg: "#ffcfaf"
+  user-fg: p:default-fg
+  user-bg: p:darker2-bg
+  hosticon-fg: "#000000"
+  host-fg: p:default-fg
+  host-bg: p:darker1-bg
+  exstatus-fg: p:time-fg
+  exstatus-bg: p:darker2-bg
+  extime-fg: p:exstatus-fg
+  extime-bg: p:darker1-bg
+  timeicon-fg: "#dded77"
+  time-fg: "#33ff33"
+  time-bg: "#194819"
+  proj-fg: "#caaaff"
+  proj-bg: "#49288f"
+  git-fg: "#eeeeff"
+  git-bg: p:darker2-bg
+  tt-fg: "#444400"
+  tt-bg: "#00dd22"
+  path-fg: "#FFFFFF"
+  path-bg: "#434300"
+
+blocks:
+
+# BLOCK: Top left-aligned block
+- type: prompt
+  alignment: left
+  segments:
+
+  # This ensures the left side is square to the terminal.
+  - type: text
+    style: diamond
+    template: "{{.Var.EmQuad}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+  # Upgrade notification
+  - type: upgrade
+    style: diamond
+    leading_diamond: "\ue0b6"
+    trailing_diamond: "\ue0b4"
+    foreground: p:upgrade-fg
+    background: p:upgrade-bg
+
+  # Username/host
+  - type: session
+    style: diamond
+    leading_diamond: "\ue0b6"
+    template: "{{.Var.UserIcon}}{{.UserName}} "
+    foreground: p:user-fg
+    background: p:user-bg
+  - type: session
+    style: diamond
+    trailing_diamond: "\ue0b4"
+    template: "{{.Var.HostIcon}}{{.HostName}} "
+    foreground: p:host-fg
+    background: p:host-bg
+
+  # spacer
+  - type: text
+    style: diamond
+    template: "{{.Var.EmQuad}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+  # Command exit status and execution time
+  - type: status
+    style: diamond
+    leading_diamond: "\ue0b6"
+    #trailing_diamond: "\ue0b4"
+    properties:
+      always_enabled: true
+    templates:
+      - "{{ if eq .Code 0 }}{{.Var.OkIcon}}{{ else }}{{.Var.ErrIcon}}exit({{ .Code }}) {{ end }}"
+    foreground: p:exstatus-fg
+    background: p:exstatus-bg
+  - type: executiontime
+    style: diamond
+    #leading_diamond: "\ue0b6"
+    trailing_diamond: "\ue0b4"
+    properties:
+      style: austin
+      always_enabled: true
+    template: "{{.Var.ExTimeIcon}}{{.FormattedMs}}"
+    foreground: p:extime-fg
+    background: p:extime-bg
+
+  # filler spacer
+  - type: text
+    style: diamond
+    template: "{{.Var.FillerStr}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+# BLOCK: Top Right-aligned block
+- type: prompt
+  alignment: right
+  newline: false
+  force: true
+  filler: "<p:filler-fg,p:divider-bg>{{.Var.FillerStr}}</>"
+  segments:
+
+  # filler spacer
+  - type: text
+    style: diamond
+    template: "{{.Var.FillerStr}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+  # Battery
+  - type: battery
+    style: diamond
+    leading_diamond: "\ue0b6"
+    trailing_diamond: "\ue0b4"
+    properties:
+      discharging_icon: "󰶹"
+      charging_icon: "󱐋"
+      charged_icon: ""
+    foreground_templates:
+      - '{{ if eq "Charging" .State.String }}#33ffff{{ end }}'
+      - '{{ if lt .Percentage 20 }}#ffff88{{ end }}'
+      - '{{ if eq "Discharging" .State.String }}#ffff33{{ end }}'
+      - '{{ if eq "Full" .State.String }}#00ff00{{ end }}'
+    background_templates:
+      - '{{ if eq "Charging" .State.String }}#{{ printf "%02x%02x%02x" ( mul 2.5 ( sub 100 .Percentage ) ) ( .Percentage ) ( add 50 .Percentage ) }}{{ end }}'
+      - '{{ if eq "Discharging" .State.String }}#{{ printf "%02x%02x00" ( mul 2 ( sub 100 .Percentage ) ) ( add 10 .Percentage ) }}{{ end }}'
+      - '{{ if eq "Full" .State.String }}p:darker2-bg{{ end }}'
+    templates:
+      - '{{ if .Error }}{{ .Error }}{{ end }}'
+      - '{{ if lt .Percentage 11}}<f>󰁺</f>{{else if lt .Percentage 21}}󰁻{{else if lt .Percentage 31}}󰁼{{else if lt .Percentage 41}}󰁽{{else if lt .Percentage 51}}󰁾{{else if lt .Percentage 61}}󰁾{{else if lt .Percentage 71}}󰂀{{else if lt .Percentage 81}}󰂁{{else if lt .Percentage 91}}󰂂{{else}}󰁹{{end}}'
+      - '{{ if lt .Percentage 75 }} {{ .Icon }} {{ .Percentage }}{{ end }}'
+      - '{{ if le .Percentage 7 }}<#ff0000><f><b> {{.Var.WarnIcon}}</b></f></>{{ end }}'
+    foreground: p:divider-fg
+    background: p:divider-bg
+
+  # spacer
+  - type: text
+    style: diamond
+    template: "{{.Var.EmQuad}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+  # clock/date/time
+  - type: time
+    min_width: 80
+    style: diamond
+    leading_diamond: "\ue0b6"
+    trailing_diamond: "\ue0b4"
+    properties:
+      time_format: Mon 3:04:05 PM
+    template: "<p:timeicon-fg>\uf073</> {{ .CurrentDate | date .Format }} "
+    foreground: p:time-fg
+    background: p:time-bg
+
+  # spacer
+  - type: text
+    style: diamond
+    template: "{{.Var.EmQuad}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+  # project
+  - type: project
+    min_width: 100
+    style: diamond
+    leading_diamond: "\ue0b2"
+    trailing_diamond: "\ue0b0"
+    foreground: p:proj-fg
+    background: p:proj-bg
+    templates:
+      - "{{ if .Error }}{{ .Error }}{{ else }}{{ if .Target }} {{ .Target }}{{ end }}{{ end }} "
+
+  # spacer
+  - type: text
+    style: diamond
+    template: "{{.Var.EmQuad}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+  - type: git
+    style: diamond
+    leading_diamond: "\ue0b6"
+    trailing_diamond: "\ue0b4"
+    properties:
+      fetch_stash_count: true
+      fetch_status: true
+      fetch_upstream_icon: true
+    templates:
+      - "<p:icon-fg>{{ .UpstreamIcon }}</>{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}"
+      - "{{ if .Working.Changed }} <p:icon-fg>\uf044</> {{ .Working.String }}{{ end }}"
+      - "{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}"
+      - "{{ if .Staging.Changed }} <p:icon-fg>\uf046</> {{ .Staging.String }}{{ end }}"
+      - "{{ if gt .StashCount 0 }} <p:icon-fg>\ueb4b</> {{ .StashCount }}{{ end }}"
+    foreground: p:git-fg
+    background: p:git-bg
+
+  # This ensures the right side is square to the terminal.
+  - type: text
+    style: diamond
+    template: "{{.Var.EmQuad}}"
+    foreground: p:filler-fg
+    background: p:divider-bg
+
+# BLOCK: bottom left
+- type: prompt
+  alignment: left
+  newline: true
+  segments:
+
+  - type: path
+    style: diamond
+    trailing_diamond: "\ue0b0"
+    properties:
+      style: agnoster_full
+      cycle:
+        - "#ccccff"
+        - "#ccffcc"
+        - "#ffcccc"
+    templates:
+      - "{{ .Path }}{{ if not .Writable }}{{.Var.NoWrite}}{{ else }} {{ end }}"
+    foreground: p:path-fg
+    background: transparent
+
+  - type: text
+    style: plain
+    template: "{{ if .Root }}<r>#</r>{{ else }}>{{ end }}"
+    foreground: p:path-fg
+    background: transparent
+
+final_space: true
+
+secondary_prompt:
+  template: ">>> "
+  foreground: p:path-fg
+
+valid_line:
+  foreground: "#ffffff"
+  background: transparent
+  template: " <p:valid-fg>\uf05d</> >"
+error_line:
+  foreground: "#ffffff"
+  background: transparent
+  template: " <p:error-fg>\uf00d</> >"
+
+debug_prompt:
+  template: "<p:divider-bg,transparent>\ue0b6</> [DBG] <p:divider-bg,transparent>\ue0b4</>"
+  background: p:divider-bg
+  foreground: "#000000"
+
+
+tooltips:
+  - type: git
+    tips:
+      - git
+      - gh
+    style: diamond
+    leading_diamond: 
+    trailing_diamond: 
+    properties:
+      fetch_user: true
+      fetch_upstream_icon: true
+      source: "pwsh"
+    template: "{{ .UpstreamIcon }}{{ .User.Name }}"
+    foreground: p:tt-fg
+    background: p:tt-bg
+  - type: dotnet
+    tips:
+      - dotnet
+      - dot
+    style: diamond
+    leading_diamond: 
+    trailing_diamond: 
+    properties:
+      fetch_version: true
+      display_mode: "always"
+    template: ".NET SDK {{ .Major }}.{{ .Minor }}.{{ .Patch }}"
+    foreground: "#ffff99"
+    background: "#3210fd"

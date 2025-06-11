@@ -7,10 +7,9 @@ sidebar_label: 🧩 Customize
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem"
 
-The standard initialization sets Oh My Posh' default theme. This configuration is embedded
-and thus kept up-to-date with Oh My Posh.
+The standard initialization sets Oh My Posh' default, built-in theme.
 
-To set a new config/theme you need to change the `--config` option of the `oh-my-posh init <shell>`
+To set a new configugration or theme you need to change the `--config` option of the `oh-my-posh init <shell>`
 line in your `profile` or `.<shell>rc` script (see [prompt][prompt]) and point it to the location of a
 predefined [theme][themes] or custom configuration.
 
@@ -269,10 +268,24 @@ oh-my-posh config export --output ~/.mytheme.omp.json
 ```
 
 :::caution
-Be careful not to adjust the theme files in their original location as they're updated together with Oh My Posh
+Do not adjust the theme files in their original location as they're updated together with Oh My Posh
 which will remove your customizations. Always copy, or export them and save the new configuration outside of the
 Oh My Posh internal themes folder.
 :::
+
+#### Previewing changes
+
+If you want to preview your changes, you can use the following command to render every configured prompt.
+
+```bash
+oh-my-posh print preview
+```
+
+Use the `--force` flag in case you want to render all segments, regardless of the current context.
+
+```bash
+oh-my-posh print preview --force
+```
 
 ### Read the docs
 

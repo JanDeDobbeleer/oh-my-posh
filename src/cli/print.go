@@ -40,7 +40,7 @@ func init() {
 
 func createPrintCmd() *cobra.Command {
 	printCmd := &cobra.Command{
-		Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error]",
+		Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error|preview]",
 		Short: "Print the prompt/context",
 		Long:  "Print one of the prompts based on the location/use-case.",
 		ValidArgs: []string{
@@ -52,6 +52,7 @@ func createPrintCmd() *cobra.Command {
 			prompt.TOOLTIP,
 			prompt.VALID,
 			prompt.ERROR,
+			prompt.PREVIEW,
 		},
 		Args: NoArgsOrOneValidArg,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -81,6 +82,7 @@ func createPrintCmd() *cobra.Command {
 				IsPrimary:     args[0] == prompt.PRIMARY,
 				SaveCache:     saveCache,
 				Escape:        escape,
+				Force:         force,
 			}
 
 			eng := prompt.New(flags)
@@ -107,6 +109,8 @@ func createPrintCmd() *cobra.Command {
 				fmt.Print(eng.ExtraPrompt(prompt.Valid))
 			case prompt.ERROR:
 				fmt.Print(eng.ExtraPrompt(prompt.Error))
+			case prompt.PREVIEW:
+				fmt.Print(eng.Preview())
 			default:
 				_ = cmd.Help()
 			}
@@ -131,6 +135,7 @@ func createPrintCmd() *cobra.Command {
 	printCmd.Flags().IntVar(&jobCount, "job-count", 0, "number of background jobs")
 	printCmd.Flags().BoolVar(&saveCache, "save-cache", false, "save updated cache to file")
 	printCmd.Flags().BoolVar(&escape, "escape", true, "escape the ANSI sequences for the shell")
+	printCmd.Flags().BoolVarP(&force, "force", "f", false, "force rendering the segments")
 
 	// Hide flags that are for internal use only.
 	_ = printCmd.Flags().MarkHidden("save-cache")

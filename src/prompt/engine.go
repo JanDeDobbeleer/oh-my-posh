@@ -26,6 +26,7 @@ type Engine struct {
 	rpromptLength         int
 	Padding               int
 	Plain                 bool
+	forceRender           bool
 }
 
 const (
@@ -499,9 +500,10 @@ func New(flags *runtime.Flags) *Engine {
 	terminal.Plain = flags.Plain
 
 	eng := &Engine{
-		Config: cfg,
-		Env:    env,
-		Plain:  flags.Plain,
+		Config:      cfg,
+		Env:         env,
+		Plain:       flags.Plain,
+		forceRender: len(env.Getenv("POSH_FORCE_RENDER")) > 0,
 	}
 
 	switch env.Shell() {

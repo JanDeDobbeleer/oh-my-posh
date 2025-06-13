@@ -29,6 +29,7 @@ import (
 	"image"
 	"io"
 	"math"
+	"os"
 	stdOS "os"
 	"path/filepath"
 	"slices"
@@ -217,79 +218,137 @@ func (ir *Renderer) setOutputPath(config string) {
 }
 
 func (ir *Renderer) loadFonts() error {
+	useEnvFonts := false
+
+	// Get POSH_FONT env vars
+	// => v.3 Nerd Font
+	poshFontRegular := os.Getenv("POSH_FONT_REGULAR")
+	poshFontBold := os.Getenv("POSH_FONT_BOLD")
+	poshFontItalic := os.Getenv("POSH_FONT_ITALIC")
+
+	// Setup requirements for any font
 	var data []byte
-
-	fontCachePath := filepath.Join(cache.Path(), "Hack.zip")
-	if _, err := stdOS.Stat(fontCachePath); err == nil {
-		data, _ = stdOS.ReadFile(fontCachePath)
-	}
-
-	// Download font if not cached
-	if data == nil {
-		url := "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip"
-		var err error
-
-		data, err = font_.Download(url)
-		if err != nil {
-			return err
-		}
-
-		err = stdOS.WriteFile(fontCachePath, data, 0644)
-		if err != nil {
-			return err
-		}
-	}
-
-	bytesReader := bytes.NewReader(data)
-	zipReader, err := zip.NewReader(bytesReader, int64(bytesReader.Len()))
-	if err != nil {
-		return err
-	}
-
 	fontFaceOptions := &opentype.FaceOptions{Size: 2.0 * 12, DPI: 144}
 
-	parseFont := func(file *zip.File) (font.Face, error) {
-		rc, err := file.Open()
-		if err != nil {
-			return nil, err
-		}
-
-		defer rc.Close()
-
-		data, err := io.ReadAll(rc)
-		if err != nil {
-			return nil, err
-		}
-
-		font, err := opentype.Parse(data)
-		if err != nil {
-			return nil, err
-		}
-
-		fontFace, err := opentype.NewFace(font, fontFaceOptions)
-		if err != nil {
-			return nil, err
-		}
-		return fontFace, nil
+	if poshFontRegular != "" && poshFontBold != "" && poshFontItalic != "" {
+		useEnvFonts = true
 	}
 
-	for _, file := range zipReader.File {
-		switch file.Name {
-		case "HackNerdFont-Regular.ttf":
-			if regular, err := parseFont(file); err == nil {
-				ir.regular = regular
+	if useEnvFonts {
+		// Quick font parser to ensure
+		// - fileName must be a valid pathname
+		// - name contains NerdFont
+		// - valid font according to opentype
+		parseFont := func(fileName string) (font.Face, error) {
+			is_nerdName := strings.Contains(fileName, "NerdFont")
+			if !is_nerdName {
+				return nil, fmt.Errorf("filename [%s] should contain NerdFont", fileName)
 			}
-		case "HackNerdFont-Bold.ttf":
-			if bold, err := parseFont(file); err == nil {
-				ir.bold = bold
+
+			data, err := stdOS.ReadFile(fileName)
+
+			if err != nil {
+				return nil, fmt.Errorf("[%s] not found or could not be read: %s", fileName, err)
 			}
-		case "HackNerdFont-Italic.ttf":
-			if italic, err := parseFont(file); err == nil {
-				ir.italic = italic
+
+			font, err := opentype.Parse(data)
+			if err != nil {
+				return nil, fmt.Errorf("font [%s] could not be parsed", fileName)
+			}
+
+			fontFace, err := opentype.NewFace(font, fontFaceOptions)
+			if err != nil {
+				return nil, fmt.Errorf("[%s] font face could not be opened", fileName)
+			}
+			return fontFace, nil
+		}
+
+		if _, err := parseFont(poshFontRegular); err != nil {
+			return fmt.Errorf("failed to load regular font: %w", err)
+		}
+		if _, err := parseFont(poshFontBold); err != nil {
+			return fmt.Errorf("failed to load bold font: %w", err)
+		}
+		if _, err := parseFont(poshFontItalic); err != nil {
+			return fmt.Errorf("failed to load italic font: %w", err)
+		}
+
+		ir.regular, _ = parseFont(poshFontRegular)
+		ir.bold, _ = parseFont(poshFontBold)
+		ir.italic, _ = parseFont(poshFontItalic)
+
+	} else {
+		// use Hack if not providing POSH_FONT_... env vars
+
+		fontCachePath := filepath.Join(cache.Path(), "Hack.zip")
+		if _, err := stdOS.Stat(fontCachePath); err == nil {
+			data, _ = stdOS.ReadFile(fontCachePath)
+		}
+
+		// Download font if not cached
+		if data == nil {
+			url := "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip"
+			var err error
+
+			data, err = font_.Download(url)
+			if err != nil {
+				return err
+			}
+
+			err = stdOS.WriteFile(fontCachePath, data, 0644)
+			if err != nil {
+				return err
+			}
+		}
+
+		bytesReader := bytes.NewReader(data)
+		zipReader, err := zip.NewReader(bytesReader, int64(bytesReader.Len()))
+		if err != nil {
+			return err
+		}
+
+		parseFont := func(file *zip.File) (font.Face, error) {
+			rc, err := file.Open()
+			if err != nil {
+				return nil, err
+			}
+
+			defer rc.Close()
+
+			data, err := io.ReadAll(rc)
+			if err != nil {
+				return nil, err
+			}
+
+			font, err := opentype.Parse(data)
+			if err != nil {
+				return nil, err
+			}
+
+			fontFace, err := opentype.NewFace(font, fontFaceOptions)
+			if err != nil {
+				return nil, err
+			}
+			return fontFace, nil
+		}
+
+		for _, file := range zipReader.File {
+			switch file.Name {
+			case "HackNerdFont-Regular.ttf":
+				if regular, err := parseFont(file); err == nil {
+					ir.regular = regular
+				}
+			case "HackNerdFont-Bold.ttf":
+				if bold, err := parseFont(file); err == nil {
+					ir.bold = bold
+				}
+			case "HackNerdFont-Italic.ttf":
+				if italic, err := parseFont(file); err == nil {
+					ir.italic = italic
+				}
 			}
 		}
 	}
-
 	return nil
 }
 

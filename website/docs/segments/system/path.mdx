@@ -51,6 +51,8 @@ import Config from "@site/src/components/Config.js";
 | `gitdir_format`             |  `string`  |            | format to use for a git root directory                                                                           |
 | `display_cygpath`           | `boolean`  |  `false`   | display the Cygwin style path using `cygpath -u $PWD`                                                            |
 | `display_root`              | `boolean`  |  `false`   | display the root `/` on Unix systems                                                                             |
+| `dir_length`                |  `number`  |    `1`     | the length of the directory name to display when using `fish`                                                    |
+| `full_length_dirs`          |  `number`  |    `1`     | indicates how many full length directory names should be displayed when using `fish`                             |
 
 ## Mapped Locations
 
@@ -117,6 +119,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - `letter`
 - `unique`
 - `powerlevel`
+- `fish`
 
 ### Agnoster
 
@@ -148,12 +151,12 @@ Display the name of the current folder.
 
 ### Mixed
 
-Works like `Agnoster`, but for any intermediate folder name that is short enough, it will be displayed as-is.
+Works like `agnoster`, but for any intermediate folder name that is short enough, it will be displayed as-is.
 The maximum length for the folders to display is governed by the `mixed_threshold` property.
 
 ### Letter
 
-Works like `Agnoster Full`, but will write every folder name using the first letter only, except when the folder name
+Works like `agnoster_full`, but will write every folder name using the first letter only, except when the folder name
 starts with a symbol or icon. Specially, the last (current) folder name is always displayed in full.
 
 - `folder` will be shortened to `f`
@@ -163,7 +166,7 @@ starts with a symbol or icon. Specially, the last (current) folder name is alway
 
 ### Unique
 
-Works like `Letter`, but will make sure every folder name is the shortest unique value.
+Works like `letter`, but will make sure every folder name is the shortest unique value.
 
 The uniqueness refers to the displayed path, so `C:\dev\dev\dev\development` will be displayed as
 `C\d\de\dev\development` (instead of `C\d\d\d\development` for `Letter`). Uniqueness does **not** refer to other
@@ -172,7 +175,12 @@ folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, 
 
 ### Powerlevel
 
-Works like `Unique`, but will stop shortening when `max_width` is reached.
+Works like `unique`, but will stop shortening when `max_width` is reached.
+
+### Fish
+
+Works like `letter`, but will display the first `dir_length` characters of each folder name, except for the last
+number of folders specified by `full_length_dirs`, which will be displayed in full. Inspired by the Fish shell PWD.
 
 ## Template ([info][templates])
 

@@ -228,7 +228,7 @@ func (g *Git) CacheKey() (string, bool) {
 		return "", false
 	}
 
-	ref := g.FileContents(g.mainSCMDir, "HEAD")
+	ref := g.fileContent(g.mainSCMDir, "HEAD")
 	ref = strings.Replace(ref, "ref: refs/heads/", "", 1)
 
 	// Use the repo clone in the cache key so the mapped path is consistent
@@ -302,7 +302,7 @@ func (g *Git) StashCount() int {
 		return g.stashCount
 	}
 
-	stashContent := g.FileContents(g.scmDir, "logs/refs/stash")
+	stashContent := g.fileContent(g.scmDir, "logs/refs/stash")
 	if stashContent == "" {
 		return 0
 	}
@@ -392,12 +392,12 @@ func (g *Git) getBareRepoInfo() {
 
 	// we can have a pointer to a bare repo
 	if err == nil && !file.IsDir {
-		content := g.FileContents(file.ParentFolder, ".git")
+		content := g.fileContent(file.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
 		g.mainSCMDir = filepath.Join(file.ParentFolder, dir)
 	}
 
-	head := g.FileContents(g.mainSCMDir, "HEAD")
+	head := g.fileContent(g.mainSCMDir, "HEAD")
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
 	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
@@ -716,7 +716,7 @@ func (g *Git) setGitHEADContext() {
 
 	getPrettyNameOrigin := func(file string) string {
 		var origin string
-		head := g.FileContents(g.mainSCMDir, file)
+		head := g.fileContent(g.mainSCMDir, file)
 		if head == "detached HEAD" {
 			origin = formatDetached()
 		} else {
@@ -727,7 +727,7 @@ func (g *Git) setGitHEADContext() {
 	}
 
 	parseInt := func(file string) int {
-		val, _ := strconv.Atoi(g.FileContents(g.mainSCMDir, file))
+		val, _ := strconv.Atoi(g.fileContent(g.mainSCMDir, file))
 		return val
 	}
 
@@ -772,7 +772,7 @@ func (g *Git) setGitHEADContext() {
 	if g.hasGitFile("MERGE_MSG") {
 		g.Merge = true
 		icon := g.props.GetString(MergeIcon, "\uE727 ")
-		mergeContext := g.FileContents(g.mainSCMDir, "MERGE_MSG")
+		mergeContext := g.fileContent(g.mainSCMDir, "MERGE_MSG")
 		matches := regex.FindNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
 		// head := g.getGitRefFileSymbolicName("ORIG_HEAD")
 		if matches != nil && matches["theirs"] != "" {
@@ -800,7 +800,7 @@ func (g *Git) setGitHEADContext() {
 	// the todo file.
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		g.CherryPick = true
-		sha := g.FileContents(g.mainSCMDir, "CHERRY_PICK_HEAD")
+		sha := g.fileContent(g.mainSCMDir, "CHERRY_PICK_HEAD")
 		cherry := g.props.GetString(CherryPickIcon, "\uE29B ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 		return
@@ -808,14 +808,14 @@ func (g *Git) setGitHEADContext() {
 
 	if g.hasGitFile("REVERT_HEAD") {
 		g.Revert = true
-		sha := g.FileContents(g.mainSCMDir, "REVERT_HEAD")
+		sha := g.fileContent(g.mainSCMDir, "REVERT_HEAD")
 		revert := g.props.GetString(RevertIcon, "\uF0E2 ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
 
 	if g.hasGitFile("sequencer/todo") {
-		todo := g.FileContents(g.mainSCMDir, "sequencer/todo")
+		todo := g.fileContent(g.mainSCMDir, "sequencer/todo")
 		matches := regex.FindNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
 		if matches != nil && matches["sha"] != "" {
 			action := matches["action"]
@@ -850,14 +850,14 @@ func (g *Git) hasGitFile(file string) bool {
 }
 
 func (g *Git) getGitRefFileSymbolicName(refFile string) string {
-	ref := g.FileContents(g.mainSCMDir, refFile)
+	ref := g.fileContent(g.mainSCMDir, refFile)
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *Git) setPrettyHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
 	if len(g.ShortHash) == 0 {
-		HEADRef := g.FileContents(g.mainSCMDir, "HEAD")
+		HEADRef := g.fileContent(g.mainSCMDir, "HEAD")
 		g.Detached = !strings.HasPrefix(HEADRef, "ref:")
 		if strings.HasPrefix(HEADRef, BRANCHPREFIX) {
 			branchName := strings.TrimPrefix(HEADRef, BRANCHPREFIX)

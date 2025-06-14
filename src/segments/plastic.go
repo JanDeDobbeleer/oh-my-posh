@@ -142,7 +142,7 @@ func (p *Plastic) getHeadChangeset() int {
 
 func (p *Plastic) setSelector() {
 	var ref string
-	selector := p.FileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
+	selector := p.fileContent(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
 
 	// changeset
 	ref = p.parseChangesetSelector(selector)

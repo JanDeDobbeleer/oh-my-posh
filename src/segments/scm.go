@@ -151,7 +151,7 @@ func (s *scm) formatBranch(branch string) string {
 	return text
 }
 
-func (s *scm) FileContents(folder, file string) string {
+func (s *scm) fileContent(folder, file string) string {
 	return strings.Trim(s.env.FileContent(folder+"/"+file), " \r\n")
 }
 

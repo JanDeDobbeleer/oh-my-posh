@@ -3394,7 +3394,8 @@
                       "mixed",
                       "letter",
                       "unique",
-                      "powerlevel"
+                      "powerlevel",
+                      "fish"
                     ],
                     "default": "agnoster"
                   },
@@ -3485,6 +3486,18 @@
                     "title": "Display the Cygwin (Linux) style path",
                     "description": "Display the Cygwin (Linux) style path using cygpath -u $PWD.",
                     "default": false
+                  },
+                  "dir_length": {
+                    "type": "integer",
+                    "title": "Directory Length",
+                    "description": "The length of the directory name to display in fish style.",
+                    "default": 1
+                  },
+                  "full_length_dirs": {
+                    "type": "integer",
+                    "title": "Full Length Dirs",
+                    "description": "Indicates how many full length directory names should be displayed in fish style.",
+                    "default": 1
                   }
                 }
               }

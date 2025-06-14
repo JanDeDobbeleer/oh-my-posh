@@ -125,6 +125,12 @@ const (
 	DisplayCygpath properties.Property = "display_cygpath"
 	// DisplayRoot indicates if the linux root slash should be displayed
 	DisplayRoot properties.Property = "display_root"
+	// Fish displays the path in a fish-like style
+	Fish string = "fish"
+	// DirLength the length of the directory name to display in fish style
+	DirLength properties.Property = "dir_length"
+	// FullLengthDirs indicates how many full length directory names should be displayed in fish style
+	FullLengthDirs properties.Property = "full_length_dirs"
 )
 
 func (pt *Path) Template() string {
@@ -248,6 +254,8 @@ func (pt *Path) setStyle() {
 	case Powerlevel:
 		maxWidth := pt.getMaxWidth()
 		pt.Path = pt.getUniqueLettersPath(maxWidth)
+	case Fish:
+		pt.Path = pt.getFishPath()
 	default:
 		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -426,6 +434,34 @@ func (pt *Path) getLetterPath() string {
 	}
 
 	return pt.colorizePath(root, elements)
+}
+
+func (pt *Path) getFishPath() string {
+	root, folders := pt.getPaths()
+	folders = append(Folders{&Folder{Name: root, Display: false}}, folders...)
+
+	dirLength := pt.props.GetInt(DirLength, 1)
+	fullLengthDirs := max(pt.props.GetInt(FullLengthDirs, 1), 1)
+
+	folderCount := len(folders)
+	stopAt := folderCount - fullLengthDirs
+
+	var elements []string
+	for i := range folderCount {
+		name := folders[i].Name
+		if folders[i].Display || dirLength <= 0 || len(name) < dirLength || i >= stopAt {
+			elements = append(elements, name)
+			continue
+		}
+
+		elements = append(elements, name[:dirLength])
+	}
+
+	if len(elements) == 1 {
+		return pt.colorizePath(elements[0], nil)
+	}
+
+	return pt.colorizePath(elements[0], elements[1:])
 }
 
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
@@ -788,7 +824,7 @@ func (pt *Path) getPaths() (string, Folders) {
 		return len(inputPath) == 1 && path.IsSeparator(inputPath[0])
 	}
 
-	if isRootFS(root) {
+	if isRootFS(root) && len(folders) > 0 {
 		root = folders[0].Name
 		folders = folders[1:]
 	}

@@ -48,18 +48,19 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name           | Type      | Description                                |
-| -------------- | --------- | ------------------------------------------ |
-| `.RepoName`    | `string`  | the repo folder name                       |
-| `.Working`     | `Status`  | changes in the worktree (see below)        |
-| `.Description` | `string`  | the first line of the commit's description |
-| `.Author`      | `string`  | the author of the commit                   |
-| `.Hash`        | `string`  | the full hash of the commit                |
-| `.ShortHash`   | `string`  | the short hash of the commit               |
-| `.When`        | `string`  | the commit's relative time indication      |
-| `.Bookmark`    | `string`  | the commit's bookmark (if any)             |
-| `.Dir`         | `string`  | the repository's root directory            |
-| `.New`         | `boolean` | true when there are no commits in the repo |
+| Name           | Type      | Description                                          |
+| -------------- | --------- | ---------------------------------------------------- |
+| `.RepoName`    | `string`  | the repo folder name                                 |
+| `.Working`     | `Status`  | changes in the worktree (see below)                  |
+| `.Description` | `string`  | the first line of the commit's description           |
+| `.Author`      | `string`  | the author of the commit                             |
+| `.Hash`        | `string`  | the full hash of the commit                          |
+| `.ShortHash`   | `string`  | the short hash of the commit                         |
+| `.When`        | `string`  | the commit's relative time indication                |
+| `.Bookmark`    | `string`  | the commit's bookmark (if any)                       |
+| `.Dir`         | `string`  | the repository's root directory                      |
+| `.RelativeDir` | `string`  | the current directory relative to the root directory |
+| `.New`         | `boolean` | true when there are no commits in the repo           |
 
 ### Status
 

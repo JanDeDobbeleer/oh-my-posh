@@ -667,3 +667,162 @@ func TestAgnosterMaxWidth(t *testing.T) {
 		})
 	}
 }
+
+func TestFishPath(t *testing.T) {
+	cases := []struct {
+		name           string
+		pwd            string
+		separator      string
+		goos           string
+		expected       string
+		dirLength      int
+		fullLengthDirs int
+	}{
+		{
+			name:           "default settings",
+			pwd:            "/home/user/documents/projects",
+			dirLength:      1,
+			fullLengthDirs: 1,
+			expected:       "h/u/d/projects",
+			separator:      "/",
+		},
+		{
+			name:           "dir length 2",
+			pwd:            "/home/user/documents/projects",
+			dirLength:      2,
+			fullLengthDirs: 1,
+			expected:       "ho/us/do/projects",
+			separator:      "/",
+		},
+		{
+			name:           "full length dirs 2",
+			pwd:            "/home/user/documents/projects/myproject",
+			dirLength:      1,
+			fullLengthDirs: 2,
+			expected:       "h/u/d/projects/myproject",
+			separator:      "/",
+		},
+		{
+			name:           "dir length 3, full length dirs 2",
+			pwd:            "/home/user/documents/projects/myproject",
+			dirLength:      3,
+			fullLengthDirs: 2,
+			expected:       "hom/use/doc/projects/myproject",
+			separator:      "/",
+		},
+		{
+			name:           "full length dirs 2 - Windows",
+			pwd:            `C:\Users\Jan\Documents\Projects\Myproject`,
+			dirLength:      1,
+			fullLengthDirs: 2,
+			expected:       `C\U\J\D\Projects\Myproject`,
+			separator:      `\`,
+		},
+		{
+			name:           "dir length 3, full length dirs 2 - Windows",
+			pwd:            `C:\Users\Jan\Documents\Projects\Myproject`,
+			dirLength:      3,
+			fullLengthDirs: 2,
+			expected:       `C:\Use\Jan\Doc\Projects\Myproject`,
+			separator:      `\`,
+		},
+		{
+			name:           "single folder",
+			pwd:            "/home",
+			dirLength:      1,
+			fullLengthDirs: 1,
+			expected:       "home",
+			separator:      "/",
+		},
+		{
+			name:           "two folders with full length dirs 1",
+			pwd:            "/home/user",
+			dirLength:      1,
+			fullLengthDirs: 1,
+			expected:       "h/user",
+			separator:      "/",
+		},
+		{
+			name:           "root only",
+			pwd:            "/",
+			dirLength:      1,
+			fullLengthDirs: 1,
+			expected:       "/",
+			separator:      "/",
+		},
+		{
+			name:           "dir length 0 should disable shortening",
+			pwd:            "/home/user/documents",
+			dirLength:      0,
+			fullLengthDirs: 1,
+			expected:       "home/user/documents",
+			separator:      "/",
+		},
+		{
+			name:           "dir length negative should disable shortening",
+			pwd:            "/home/user/documents",
+			dirLength:      -1,
+			fullLengthDirs: 1,
+			expected:       "home/user/documents",
+			separator:      "/",
+		},
+		{
+			name:           "full length dirs 0 should fallback to 1",
+			pwd:            "/home/user/documents",
+			dirLength:      1,
+			fullLengthDirs: 0,
+			expected:       "h/u/documents",
+			separator:      "/",
+		},
+		{
+			name:           "full length dirs negative should fallback to 1",
+			pwd:            "/home/user/documents",
+			dirLength:      1,
+			fullLengthDirs: -1,
+			expected:       "h/u/documents",
+			separator:      "/",
+		},
+		{
+			name:           "full length dirs greater than total folders",
+			pwd:            "/home/user",
+			dirLength:      1,
+			fullLengthDirs: 5,
+			expected:       "home/user",
+			separator:      "/",
+		},
+		{
+			name:           "dir length greater than folder name",
+			pwd:            "/a/b/c",
+			dirLength:      10,
+			fullLengthDirs: 1,
+			expected:       "a/b/c",
+			separator:      "/",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			env := &mock.Environment{}
+			env.On("Pwd").Return(tc.pwd)
+			env.On("Home").Return("/foob")
+			env.On("GOOS").Return(tc.goos)
+			env.On("Shell").Return(shell.BASH)
+
+			path := &Path{
+				base: base{
+					env: env,
+					props: properties.Map{
+						DirLength:      tc.dirLength,
+						FullLengthDirs: tc.fullLengthDirs,
+					},
+				},
+				pathSeparator: tc.separator,
+			}
+
+			path.setPaths()
+			result := path.getFishPath()
+
+			assert.Equal(t, result, tc.expected, tc.name)
+		})
+	}
+}

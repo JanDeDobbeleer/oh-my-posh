@@ -2,9 +2,11 @@ package segments
 
 import (
 	"fmt"
+	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -98,6 +100,27 @@ const (
 	// BranchTemplate allows to specify a template for the branch name
 	BranchTemplate properties.Property = "branch_template"
 )
+
+func (s *scm) RelativeDir() string {
+	if len(s.Dir) == 0 {
+		return ""
+	}
+
+	pwd := s.env.Pwd()
+	log.Debug("scm.Dir:", s.Dir, "pwd:", pwd)
+
+	rel, err := filepath.Rel(s.Dir, pwd)
+	if err != nil {
+		log.Error(err)
+	}
+
+	if rel == "." || len(rel) == 0 {
+		log.Debug("scm.Dir is the same as the current working directory, returning empty string")
+		return ""
+	}
+
+	return rel
+}
 
 func (s *scm) formatBranch(branch string) string {
 	mappedBranches := s.props.GetKeyValueMap(MappedBranches, make(map[string]string))

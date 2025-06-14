@@ -5,7 +5,7 @@ sidebar_label: 🧩 Customize
 ---
 
 import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem"
+import TabItem from "@theme/TabItem";
 
 The standard initialization sets Oh My Posh' default, built-in theme.
 
@@ -122,36 +122,15 @@ Once altered, reload your config for the changes to take effect.
 <TabItem value="nu">
 
 :::caution
-Oh My Posh requires Nushell v0.93.0 or higher.
+Oh My Posh requires Nushell `v0.104.0` or higher.
 :::
 
-Adjust the Oh My Posh init line in the Nushell env file (`$nu.env-path`) by adding the `--config` flag
+Adjust the Oh My Posh init line in the Nushell config file (`$nu.config-path`) by adding the `--config` flag
 with the location of your configuration.
 
 ```bash
 oh-my-posh init nu --config ~/jandedobbeleer.omp.json
 ```
-
-This saves the initialization script to `~/.oh-my-posh.nu`.
-Now, edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
-
-```bash
-source ~/.oh-my-posh.nu
-```
-
-If you want to save the initialization script elsewhere, you can change the first line to something like this:
-
-```bash
-oh-my-posh init nu --config ~/jandedobbeleer.omp.json --print | save /mylocation/myscript.nu --force
-```
-
-And change the `source` line to:
-
-```bash
-source /mylocation/myscript.nu
-```
-
-Once altered, restart Nushell for the changes to take effect.
 
 </TabItem>
 <TabItem value="powershell">

@@ -133,6 +133,7 @@ You can set the following properties to `true` to enable fetching additional inf
 | `.IsWorkTree`    | `boolean` | if in a worktree repo or not                                                                                                     |
 | `.IsBare`        | `boolean` | if in a bare repo or not, only set when `fetch_bare_info` is set to `true`                                                       |
 | `.Dir`           | `string`  | the repository's root directory                                                                                                  |
+| `.RelativeDir`   | `string`  | the current directory relative to the root directory                                                                             |
 | `.Kraken`        | `string`  | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
 | `.Commit`        | `Commit`  | HEAD commit information (see below)                                                                                              |
 | `.Detached`      | `boolean` | true when the head is detached                                                                                                   |

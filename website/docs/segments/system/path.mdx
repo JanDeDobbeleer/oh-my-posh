@@ -194,14 +194,15 @@ number of folders specified by `full_length_dirs`, which will be displayed in fu
 
 ### Properties
 
-| Name          | Type      | Description                                                                                                                                                            |
-| ------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.Path`       | `string`  | the current directory (based on the `style` property)                                                                                                                  |
-| `.Parent`     | `string`  | the current directory's parent folder which ends with a path separator (designed for use with style `folder`, it is empty if `.Path` contains only one single element) |
-| `.RootDir`    | `boolean` | true if we're at the root directory (no parent)                                                                                                                        |
-| `.Location`   | `string`  | the current directory (raw value)                                                                                                                                      |
-| `.StackCount` | `int`     | the stack count                                                                                                                                                        |
-| `.Writable`   | `boolean` | is the current directory writable by the user or not                                                                                                                   |
+| Name          | Type       | Description                                                                                                                                                            |
+| ------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.Path`       | `string`   | the current directory (based on the `style` property)                                                                                                                  |
+| `.Parent`     | `string`   | the current directory's parent folder which ends with a path separator (designed for use with style `folder`, it is empty if `.Path` contains only one single element) |
+| `.RootDir`    | `boolean`  | true if we're at the root directory (no parent)                                                                                                                        |
+| `.Location`   | `string`   | the current directory (raw value)                                                                                                                                      |
+| `.StackCount` | `int`      | the stack count                                                                                                                                                        |
+| `.Writable`   | `boolean`  | is the current directory writable by the user or not                                                                                                                   |
+| `.Format`     | `function` | format any path based on the segment's settings (e.g. `{{ .Format .Segments.Git.RelativeDir }}`)                                                                       |
 
 [templates]: /docs/configuration/templates
 [regexp]: https://pkg.go.dev/regexp/syntax

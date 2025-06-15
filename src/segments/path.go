@@ -218,6 +218,21 @@ func (pt *Path) Parent() string {
 	return sb.String()
 }
 
+func (pt *Path) Format(inputPath string) string {
+	separator := path.Separator()
+
+	elements := strings.Split(inputPath, separator)
+	if len(elements) == 0 {
+		return inputPath
+	}
+
+	if len(elements) == 1 {
+		return pt.colorizePath(elements[0], nil)
+	}
+
+	return pt.colorizePath(elements[0], elements[1:])
+}
+
 func (pt *Path) setStyle() {
 	if len(pt.relative) == 0 {
 		root := pt.root
@@ -875,9 +890,11 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 		if skipColorize || len(element) == 0 {
 			return element
 		}
+
 		defer func() {
 			cycle = append(cycle[1:], cycle[0])
 		}()
+
 		return fmt.Sprintf("<%s>%s</>", cycle[0], element)
 	}
 

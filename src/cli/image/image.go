@@ -34,13 +34,11 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	font_ "github.com/jandedobbeleer/oh-my-posh/src/cli/font"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -131,8 +129,6 @@ type Renderer struct {
 	shadowOffsetY   float64
 	rows            int
 	lineSpacing     float64
-	RPromptOffset   int
-	CursorPadding   int
 	columns         int
 	padding         float64
 	shadowRadius    uint8
@@ -146,10 +142,27 @@ func (ir *Renderer) Init(env runtime.Environment) error {
 	font_.SetCache(env.Cache())
 
 	if err := ir.loadFonts(); err != nil {
-		return &ConnectionError{reason: err.Error()}
+		return err
 	}
 
 	ir.initDefaults()
+
+	return nil
+}
+
+func (ir *Renderer) loadFonts() error {
+	if !ir.Fonts.IsValid() {
+		return ir.loadDefaultFonts()
+	}
+
+	fonts, err := ir.Fonts.Load()
+	if err != nil {
+		return err
+	}
+
+	ir.regular = fonts[regular]
+	ir.bold = fonts[bold]
+	ir.italic = fonts[italic]
 
 	return nil
 }
@@ -225,7 +238,7 @@ func (ir *Renderer) setOutputPath(config string) {
 	ir.Path = fmt.Sprintf("%s.png", path)
 }
 
-func (ir *Renderer) loadFonts() error {
+func (ir *Renderer) loadDefaultFonts() error {
 	var data []byte
 
 	fontCachePath := filepath.Join(cache.Path(), "Hack.zip")
@@ -240,7 +253,7 @@ func (ir *Renderer) loadFonts() error {
 
 		data, err = font_.Download(url)
 		if err != nil {
-			return err
+			return &ConnectionError{reason: err.Error()}
 		}
 
 		err = stdOS.WriteFile(fontCachePath, data, 0644)
@@ -383,9 +396,6 @@ func (ir *Renderer) cleanContent() {
 	}
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, saveCursorAnsi, "_")
 
-	// replace rprompt with padding and mark right aligned blocks with a pointer
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1000C", strings.Repeat(" ", ir.RPromptOffset))
-
 	// add watermarks
 	ir.AnsiString += "\n\n\x1b[1mohmyposh.dev\x1b[22m"
 	if len(ir.Author) > 0 {
@@ -395,63 +405,73 @@ func (ir *Renderer) cleanContent() {
 }
 
 func (ir *Renderer) measureContent() (width, height float64) {
-	linewidth := 145
-	linewidth += ir.additionalWidth()
+	// Use actual rendering logic for accurate width measurement
+	// This simulates the exact same process as the actual drawing to ensure
+	// the canvas width perfectly matches the rendered content width
+	var maxX float64
+	var x float64
+
+	// Save original ansi string and style state
+	originalAnsi := ir.AnsiString
+	originalStyle := ir.style
+	ir.style = ""
 
 	tmpDrawer := &font.Drawer{Face: ir.regular}
-	advance := tmpDrawer.MeasureString(strings.Repeat(" ", linewidth))
-	width = float64(advance >> 6)
-	// height, lines times font height and line spacing
-	height = float64(len(strings.Split(ir.AnsiString, "\n"))) * ir.fontHeight() * ir.lineSpacing
-	return width, height
-}
 
-/*
-additionalWidth returns the number of additional characters of width to allocate when drawing
-for characters that are 2 wide. A standard character will return 0
-Nerd Font glyphs will return 1, since most are double width
-*/
-func (ir *Renderer) additionalWidth() int {
-	longest := 0
-	var longestLine string
-	for line := range strings.SplitSeq(ir.AnsiString, "\n") {
-		length := ir.lenWithoutANSI(line)
-		if length > longest {
-			longestLine = line
-			longest = length
+	for ir.AnsiString != "" {
+		if !ir.processAnsiSequence() {
+			continue
+		}
+
+		runes := []rune(ir.AnsiString)
+		if len(runes) == 0 {
+			continue
+		}
+
+		str := string(runes[0:1])
+		ir.AnsiString = string(runes[1:])
+
+		// Use appropriate font face for measurement
+		var face font.Face
+		switch ir.style {
+		case bold:
+			face = ir.bold
+		case italic:
+			face = ir.italic
+		default:
+			face = ir.regular
+		}
+
+		tmpDrawer.Face = face
+		advance := tmpDrawer.MeasureString(str)
+		w := float64(advance >> 6)
+
+		// Add additional width for Nerd Font glyphs
+		w += (w * float64(ir.runeAdditionalWidth(runes[0])))
+
+		if str == "\n" {
+			x = 0
+			continue
+		}
+
+		x += w
+		if x > maxX {
+			maxX = x
 		}
 	}
 
-	var additionalWidth int
-	for _, rune := range longestLine {
-		additionalWidth += ir.runeAdditionalWidth(rune)
-	}
+	// Restore original state
+	ir.AnsiString = originalAnsi
+	ir.style = originalStyle
 
-	return additionalWidth
-}
+	// Ensure we have a minimum width for very short content
+	minWidth := tmpDrawer.MeasureString(strings.Repeat(" ", 80))
+	width = math.Max(maxX, float64(minWidth>>6))
 
-func (ir *Renderer) lenWithoutANSI(text string) int {
-	if text == "" {
-		return 0
-	}
-	// replace hyperlinks(file/http/https)
-	regexStr := ir.ansiSequenceRegexMap[link]
-	matches := regex.FindAllNamedRegexMatch(regexStr, text)
-	for _, match := range matches {
-		text = strings.ReplaceAll(text, match[str], match[url])
-	}
-	// replace console title
-	regexStr = ir.ansiSequenceRegexMap[consoleTitle]
-	matches = regex.FindAllNamedRegexMatch(regexStr, text)
-	for _, match := range matches {
-		text = strings.ReplaceAll(text, match[str], "")
-	}
-	stripped := regex.ReplaceAllString(terminal.AnsiRegex, text, "")
-	length := utf8.RuneCountInString(stripped)
-	for _, rune := range stripped {
-		length += ir.runeAdditionalWidth(rune)
-	}
-	return length
+	// height, lines times font height and line spacing
+	lines := strings.Split(originalAnsi, "\n")
+	height = float64(len(lines)) * ir.fontHeight() * ir.lineSpacing
+	return width, height
 }
 
 func (ir *Renderer) SavePNG() error {
@@ -466,8 +486,11 @@ func (ir *Renderer) SavePNG() error {
 	contentWidth, contentHeight := ir.measureContent()
 
 	// Make sure the output window is big enough in case no content or very few
-	// content will be rendered
-	contentWidth = math.Max(contentWidth, 3*distance+3*radius)
+	// content will be rendered. Also account for potential font variations.
+	minRequiredWidth := 3*distance + 3*radius
+	// Add extra buffer for wider fonts (20% more than minimum)
+	minRequiredWidth *= 1.2
+	contentWidth = math.Max(contentWidth, minRequiredWidth)
 
 	marginX, marginY := ir.margin, ir.margin
 	paddingX, paddingY := ir.padding, ir.padding

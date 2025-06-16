@@ -15,12 +15,10 @@ import (
 )
 
 var (
-	author string
-	// cursorPadding int
-	// rPromptOffset int
+	author            string
+	colorSettingsFile string
 	bgColor           string
 	outputImage       string
-	colorSettingsFile string
 )
 
 // imageCmd represents the image command
@@ -31,11 +29,9 @@ var imageCmd = &cobra.Command{
 
 You can tweak the output by using additional flags:
 
-- author: displays the author below the prompt
 - cursor-padding: the padding of the prompt cursor
 - rprompt-offset: the offset of the right prompt
-- background-color: the background color of the image
-- color-settings: JSON file with color overrides for ANSI color names
+- settings: JSON file with overrides
 
 Example usage:
 

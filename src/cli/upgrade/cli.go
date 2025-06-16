@@ -20,6 +20,8 @@ var (
 
 type resultMsg string
 
+type stateMsg state
+
 type state int
 
 const (
@@ -36,8 +38,6 @@ func setState(message state) {
 
 	program.Send(stateMsg(message))
 }
-
-type stateMsg state
 
 type model struct {
 	error    error

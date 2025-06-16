@@ -8,36 +8,59 @@ sidebar_label: YouTube Music
 
 Shows the currently playing song in the [YouTube Music Desktop App](https://github.com/ytmdesktop/ytmdesktop).
 
-**NOTE**: You **must** enable Remote Control in YTMDA for this segment to work: `Settings > Integrations > Remote Control`
+## Setup
 
-It is fine if `Protect remote control with password` is automatically enabled. This segment does not require the
-Remote Control password.
+You need to enable the Companion API in the YouTube Music Desktop App settings.
+To do this, open the app, go to `Settings > Integration` and enable the following:
+
+- Companion server
+- Enable companion authentication
+
+From the CLI, run the following command to set the authentication token:
+
+```bash
+oh-my-posh auth ytmda
+```
+
+If done correctly, you should now be able to add the `ytm` segment to your prompt.
+
+:::warning rate limiting
+The YouTube Music Desktop App has a pretty strict rate limit. Therefore it is recommended
+to set the `cache` property in your configuration. If you don't, the segment will not be able
+to display correctly.
+:::
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "ytm",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#FF0000",
-  "properties": {
-    "playing_icon": "\uE602 ",
-    "paused_icon": "\uF8E3 ",
-    "stopped_icon": "\uF04D "
-  }
-}}/>
+<Config
+  data={{
+    type: "ytm",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#FF0000",
+    properties: {
+      playing_icon: "\uf04b ",
+      paused_icon: "\uf04c ",
+      stopped_icon: "\uf04d ",
+    },
+    cache: {
+      duration: "5s",
+      strategy: "session",
+    },
+  }}
+/>
 
 ## Properties
 
-| Name           | Type     | Default                  | Description                      |
-| -------------- | :------: | :----------------------: | -------------------------------- |
-| `playing_icon` | `string` | `\uE602 `                | text/icon to show when playing   |
-| `paused_icon`  | `string` | `\uF8E3 `                | text/icon to show when paused    |
-| `stopped_icon` | `string` | `\uF04D `                | text/icon to show when stopped   |
-| `api_url`      | `string` | `http://127.0.0.1:13091` | the YTMDA Remote Control API URL |
+| Name           |   Type   |  Default  | Description                                    |
+| -------------- | :------: | :-------: | ---------------------------------------------- |
+| `playing_icon` | `string` | `\uE602 ` | text/icon to show when playing                 |
+| `paused_icon`  | `string` | `\uF8E3 ` | text/icon to show when paused                  |
+| `stopped_icon` | `string` | `\uF04D ` | text/icon to show when stopped                 |
+| `http_timeout` |  `int`   |  `5000`   | in milliseconds - the timeout for http request |
 
 ## Template ([info][templates])
 

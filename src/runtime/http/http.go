@@ -24,3 +24,11 @@ var (
 
 	HTTPClient httpClient = &http.Client{Transport: defaultTransport}
 )
+
+type Error struct {
+	StatusCode int
+}
+
+func (e *Error) Error() string {
+	return http.StatusText(e.StatusCode)
+}

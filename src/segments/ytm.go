@@ -2,17 +2,17 @@ package segments
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	httplib "net/http"
-	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
-const YTMDATOKEN = "ytmda_token"
+const (
+	ytmdaStatusURL = auth.YTMDABASEURL + "/state"
+)
 
 type Ytm struct {
 	base
@@ -26,26 +26,28 @@ func (y *Ytm) Template() string {
 
 func (y *Ytm) Enabled() bool {
 	err := y.setStatus()
-	// If we don't get a response back (error), the user isn't running
-	// YTMDA, or they don't have the Companion API enabled.
+	if err != nil {
+		log.Error(err)
+	}
+
 	return err == nil
 }
 
 type ytmdaStatusResponse struct {
-	Player struct {
-		TrackState int  `json:"trackState"`
-		AdPlaying  bool `json:"adPlaying"`
-	} `json:"player"`
 	Video struct {
 		Author string `json:"author"`
 		Title  string `json:"title"`
 	} `json:"video"`
+	Player struct {
+		TrackState int  `json:"trackState"`
+		AdPlaying  bool `json:"adPlaying"`
+	} `json:"player"`
 }
 
 func (y *Ytm) setStatus() error {
-	token, err := y.getToken()
-	if err != nil {
-		return err
+	token, OK := y.env.Cache().Get(auth.YTMDATOKEN)
+	if !OK || len(token) == 0 {
+		return errors.New("YTMDA token not found, please authenticate using `oh-my-posh auth ytmda`")
 	}
 
 	status, err := y.requestStatus(token)
@@ -76,85 +78,19 @@ func (y *Ytm) setStatus() error {
 	return nil
 }
 
-func (y *Ytm) getToken() (string, error) {
-	if token, OK := y.env.Cache().Get(YTMDATOKEN); OK && len(token) > 0 {
-		return token, nil
-	}
-
-	code, err := y.requestCode()
-	if err != nil {
-		return "", err
-	}
-
-	token, err := y.requestToken(code)
-	if err != nil {
-		return "", err
-	}
-
-	y.env.Cache().Set(YTMDATOKEN, token, cache.INFINITE)
-
-	return token, nil
-}
-
-const baseURL = "http://localhost:9863/api/v1"
-
-func (y *Ytm) requestCode() (string, error) {
-	url := baseURL + "/auth/requestcode"
-	body := fmt.Sprintf(`{"appId": "ohmyposh", "appName": "oh-my-posh", "appVersion": "%s"}`, strings.TrimPrefix(build.Version, "v"))
-
-	type codeResponse struct {
-		Code string `json:"code"`
-	}
-
-	result, err := ytdmaRequest[codeResponse](httplib.MethodPost, url, body, y.env)
-
-	return result.Code, err
-}
-
-func (y *Ytm) requestToken(code string) (string, error) {
-	url := baseURL + "/auth/request"
-	body := fmt.Sprintf(`{"appId": "ohmyposh", "code": "%s"}`, code)
-
-	type tokenResponse struct {
-		Token string `json:"token"`
-	}
-
-	result, err := ytdmaRequest[tokenResponse](httplib.MethodPost, url, body, y.env)
-
-	return result.Token, err
-}
-
 func (y *Ytm) requestStatus(token string) (*ytmdaStatusResponse, error) {
-	url := baseURL + "/state"
-
-	setAuth := func(request *httplib.Request) {
+	setHeaders := func(request *httplib.Request) {
 		request.Header.Set("Authorization", token)
-	}
-
-	response, err := ytdmaRequest[ytmdaStatusResponse](httplib.MethodGet, url, "", y.env, setAuth)
-
-	return &response, err
-}
-
-func ytdmaRequest[a any](method, url, body string, env runtime.Environment, requestModifiers ...http.RequestModifier) (a, error) {
-	if requestModifiers == nil {
-		requestModifiers = []http.RequestModifier{}
-	}
-
-	modifyRequest := func(request *httplib.Request) {
-		request.Method = method
 		request.Header.Set("Content-Type", "application/json")
 	}
 
-	requestModifiers = append(requestModifiers, modifyRequest)
-
-	var result a
-
-	response, err := env.HTTPRequest(url, strings.NewReader(body), 50000, requestModifiers...)
+	httpTimeout := y.props.GetInt(properties.HTTPTimeout, 5000)
+	response, err := y.env.HTTPRequest(ytmdaStatusURL, nil, httpTimeout, setHeaders)
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
+	var result ytmdaStatusResponse
 	err = json.Unmarshal(response, &result)
-	return result, err
+	return &result, err
 }

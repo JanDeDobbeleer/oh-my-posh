@@ -6,9 +6,9 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/alecthomas/assert"
 	testify_ "github.com/stretchr/testify/mock"

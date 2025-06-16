@@ -8,10 +8,10 @@ import (
 )
 
 func TestVerify(t *testing.T) {
-	checksum, err := os.ReadFile("../test/signing/checksums.txt")
+	checksum, err := os.ReadFile("../../test/signing/checksums.txt")
 	assert.NoError(t, err)
 
-	signature, err := os.ReadFile("../test/signing/checksums.txt.sig")
+	signature, err := os.ReadFile("../../test/signing/checksums.txt.sig")
 	assert.NoError(t, err)
 
 	OK := validateSignature(checksum, signature)
@@ -19,10 +19,10 @@ func TestVerify(t *testing.T) {
 }
 
 func TestVerifyFail(t *testing.T) {
-	checksum, err := os.ReadFile("../test/signing/checksums.txt")
+	checksum, err := os.ReadFile("../../test/signing/checksums.txt")
 	assert.NoError(t, err)
 
-	signature, err := os.ReadFile("../test/signing/checksums.txt.invalid.sig")
+	signature, err := os.ReadFile("../../test/signing/checksums.txt.invalid.sig")
 	assert.NoError(t, err)
 
 	OK := validateSignature(checksum, signature)

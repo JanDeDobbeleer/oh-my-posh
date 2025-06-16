@@ -15,12 +15,8 @@ func bootstrapYTMDATest(json string, err error) *Ytm {
 	env := new(mock.Environment)
 	env.On("HTTPRequest", url+"/query").Return([]byte(json), err)
 
-	props := properties.Map{
-		APIURL: url,
-	}
-
 	ytm := &Ytm{}
-	ytm.Init(props, env)
+	ytm.Init(properties.Map{}, env)
 
 	return ytm
 }

@@ -37,7 +37,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	font_ "github.com/jandedobbeleer/oh-my-posh/src/font"
+	font_ "github.com/jandedobbeleer/oh-my-posh/src/cli/font"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"

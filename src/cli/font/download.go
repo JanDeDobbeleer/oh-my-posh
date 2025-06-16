@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/progress"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 

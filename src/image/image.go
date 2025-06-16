@@ -124,23 +124,21 @@ type Renderer struct {
 	Author                 string
 	shadowBaseColor        string
 	style                  string
-
-	BgColor       string
-	shadowOffsetX float64
-	padding       float64
-	margin        float64
-	factor        float64
-	shadowOffsetY float64
-	rows          int
-	lineSpacing   float64
-	RPromptOffset int
-	CursorPadding int
-	columns       int
-	shadowRadius  uint8
-
-	FontRegularPath string
-	FontBoldPath    string
-	FontItalicPath  string
+	BgColor                string
+	shadowOffsetX          float64
+	padding                float64
+	margin                 float64
+	factor                 float64
+	shadowOffsetY          float64
+	rows                   int
+	lineSpacing            float64
+	RPromptOffset          int
+	CursorPadding          int
+	columns                int
+	shadowRadius           uint8
+	FontRegularPath        string
+	FontBoldPath           string
+	FontItalicPath         string
 }
 
 func (ir *Renderer) Init(env runtime.Environment) error {

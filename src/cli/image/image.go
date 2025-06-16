@@ -146,10 +146,27 @@ func (ir *Renderer) Init(env runtime.Environment) error {
 	font_.SetCache(env.Cache())
 
 	if err := ir.loadFonts(); err != nil {
-		return &ConnectionError{reason: err.Error()}
+		return err
 	}
 
 	ir.initDefaults()
+
+	return nil
+}
+
+func (ir *Renderer) loadFonts() error {
+	if !ir.Fonts.IsValid() {
+		return ir.loadDefaultFonts()
+	}
+
+	fonts, err := ir.Fonts.Load()
+	if err != nil {
+		return err
+	}
+
+	ir.regular = fonts[regular]
+	ir.bold = fonts[bold]
+	ir.italic = fonts[italic]
 
 	return nil
 }
@@ -225,7 +242,7 @@ func (ir *Renderer) setOutputPath(config string) {
 	ir.Path = fmt.Sprintf("%s.png", path)
 }
 
-func (ir *Renderer) loadFonts() error {
+func (ir *Renderer) loadDefaultFonts() error {
 	var data []byte
 
 	fontCachePath := filepath.Join(cache.Path(), "Hack.zip")
@@ -240,7 +257,7 @@ func (ir *Renderer) loadFonts() error {
 
 		data, err = font_.Download(url)
 		if err != nil {
-			return err
+			return &ConnectionError{reason: err.Error()}
 		}
 
 		err = stdOS.WriteFile(fontCachePath, data, 0644)

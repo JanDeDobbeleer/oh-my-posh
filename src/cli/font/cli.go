@@ -12,7 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/progress"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 

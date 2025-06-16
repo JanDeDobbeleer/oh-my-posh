@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
@@ -12,7 +13,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
 
 const (

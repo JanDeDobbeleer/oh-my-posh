@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/image"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/image"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"

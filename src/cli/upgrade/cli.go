@@ -9,8 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/progress"
 )
 
 var (

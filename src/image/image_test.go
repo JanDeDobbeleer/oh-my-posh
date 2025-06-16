@@ -34,3 +34,22 @@ func TestSetOutputPath(t *testing.T) {
 		assert.Equal(t, tc.Expected, image.Path, tc.Case)
 	}
 }
+
+func TestIsNerdFont(t *testing.T) {
+	cases := []struct {
+		Name     string
+		Path     string
+		Expected bool
+	}{
+		{Name: "NerdFont in name", Path: "HackNerdFont-Regular.ttf", Expected: true},
+		{Name: "No NerdFont in name", Path: "Arial.ttf", Expected: false},
+		{Name: "Empty path", Path: "", Expected: false},
+		{Name: "Path with only directory", Path: "/a/b/c/", Expected: false},
+		{Name: "Nerd Font in directory but not filename", Path: "/NerdFont/CoolFont.otf", Expected: false},
+	}
+
+	for _, tc := range cases {
+		actual := isNerdFont(tc.Path)
+		assert.Equal(t, tc.Expected, actual, tc.Name)
+	}
+}

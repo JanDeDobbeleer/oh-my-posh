@@ -178,6 +178,17 @@
       ]
     },
     {
+      "name": "Auth YTMDA",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "auth",
+        "ytmda"
+      ]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Theme export",

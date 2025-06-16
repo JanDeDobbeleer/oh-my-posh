@@ -24,5 +24,18 @@ There are a couple of additional flags you can use to tweak the image rendering:
 - `--author`: the name of the creator, added after `ohmyposh.dev`
 - `--background-color`: the hex background color to use (e.g. `#222222`)
 - `--output`: the file to export to (e.g. `mytheme.png`)
+- `--font`: path to a regular NerdFont .ttf or .otf file (filename must include "NerdFont"). This font will also be used for bold and italic styles if `--font-bold` and/or `--font-italic` are not specified.
+- `--font-regular`: alias for `--font`.
+- `--font-bold`: (optional) path to a bold NerdFont .ttf or .otf file (filename must include "NerdFont").
+- `--font-italic`: (optional) path to an italic NerdFont .ttf or .otf file (filename must include "NerdFont").
+
+:::info
+**Font Handling Details:**
+
+*   **Font Collections:** If `--font` (or `--font-regular`) points to a `.ttc` or `.otc` font collection, the first font in the collection will be used as the regular font.
+*   **Style Fallbacks:** If `--font-bold` is not provided, the font specified by `--font` will be used for bold text. Similarly, if `--font-italic` is not provided, the font from `--font` will be used for italic text.
+*   **Bundled Fallback:** Oh My Posh will fall back to a bundled Nerd Font (Hack) if no custom fonts are specified or if the specified custom fonts cannot be loaded.
+*   **NerdFont Requirement:** Custom fonts provided via `--font`, `--font-bold`, or `--font-italic` **must** be NerdFonts to ensure proper icon display. The font filename must also contain the case-sensitive substring "NerdFont" (e.g., `MyAwesomeNerdFont-Regular.ttf`). If a non-NerdFont or a font with a non-compliant filename is specified, Oh My Posh will attempt to fall back to the bundled Nerd Font.
+:::
 
 For all options, and additional examples, use `oh-my-posh config export image --help`

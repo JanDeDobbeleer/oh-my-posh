@@ -124,18 +124,23 @@ type Renderer struct {
 	Author                 string
 	shadowBaseColor        string
 	style                  string
-	BgColor                string
-	shadowOffsetX          float64
-	padding                float64
-	margin                 float64
-	factor                 float64
-	shadowOffsetY          float64
-	rows                   int
-	lineSpacing            float64
-	RPromptOffset          int
-	CursorPadding          int
-	columns                int
-	shadowRadius           uint8
+
+	BgColor       string
+	shadowOffsetX float64
+	padding       float64
+	margin        float64
+	factor        float64
+	shadowOffsetY float64
+	rows          int
+	lineSpacing   float64
+	RPromptOffset int
+	CursorPadding int
+	columns       int
+	shadowRadius  uint8
+
+	FontRegularPath string
+	FontBoldPath    string
+	FontItalicPath  string
 }
 
 func (ir *Renderer) Init(env runtime.Environment) error {
@@ -216,9 +221,114 @@ func (ir *Renderer) setOutputPath(config string) {
 	ir.Path = fmt.Sprintf("%s.png", path)
 }
 
-func (ir *Renderer) loadFonts() error {
-	var data []byte
+// isNerdFont checks if the filename suggests it is a NerdFont.
+func isNerdFont(fontPath string) bool {
+	if strings.Contains(filepath.Base(fontPath), "NerdFont") {
+		return true
+	}
+	return false
+}
 
+func (ir *Renderer) loadSingleFont(fontPath string, fontFaceOptions *opentype.FaceOptions) (font.Face, *opentype.Font, error) {
+	if fontPath == "" {
+		return nil, nil, nil // No path provided, not an error for optional fonts
+	}
+
+	var data []byte
+	data, err := stdOS.ReadFile(fontPath)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read font file %s: %w", fontPath, err)
+	}
+
+	parsedFont, err := opentype.Parse(data)
+	if err != nil {
+		collection, collectionErr := opentype.ParseCollection(data)
+		if collectionErr != nil {
+			return nil, nil, fmt.Errorf("failed to parse font/collection %s: %w (font error: %v)", fontPath, collectionErr, err)
+		}
+		if collection.NumFonts() > 0 {
+			parsedFont, err = collection.Font(0) // Use the first font from collection
+			if err != nil {
+				return nil, nil, fmt.Errorf("failed to get first font from collection %s: %w", fontPath, err)
+			}
+		} else {
+			return nil, nil, fmt.Errorf("font collection %s is empty", fontPath)
+		}
+	}
+
+	isNerd := isNerdFont(fontPath)
+	if !isNerd {
+		fmt.Fprintf(stdOS.Stderr, "Warning: Font %s (or first font in collection) does not appear to be a NerdFont. Some icons may not render correctly.\n", fontPath)
+	}
+
+	face, err := opentype.NewFace(parsedFont, fontFaceOptions)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create font face for %s: %w", fontPath, err)
+	}
+
+	return face, parsedFont, nil
+}
+
+func (ir *Renderer) loadFonts() error { //nolint:gocognit
+	fontFaceOptions := &opentype.FaceOptions{Size: 2.0 * 12, DPI: 144}
+	var err error
+	customRegularFontLoaded := false
+
+	// Attempt to load the primary regular font
+	if ir.FontRegularPath != "" {
+		var face font.Face
+		face, _, err = ir.loadSingleFont(ir.FontRegularPath, fontFaceOptions)
+		if err != nil {
+			// Log error for regular font, but proceed to try bundled if it's critical
+			fmt.Fprintf(stdOS.Stderr, "Warning: Failed to load or validate regular font %s: %v. Will attempt to use bundled font.\n", ir.FontRegularPath, err)
+			ir.regular = nil // Ensure it's nil
+		} else {
+			ir.regular = face
+			customRegularFontLoaded = true
+		}
+	}
+
+	// Load explicit bold if path is given
+	if ir.FontBoldPath != "" {
+		face, _, boldErr := ir.loadSingleFont(ir.FontBoldPath, fontFaceOptions)
+		if boldErr != nil {
+			fmt.Fprintf(stdOS.Stderr, "Warning: Failed to load or validate bold font %s: %v. Bold style might not be available.\n", ir.FontBoldPath, boldErr)
+			ir.bold = nil
+		} else {
+			ir.bold = face
+		}
+	}
+
+	// Load explicit italic if path is given
+	if ir.FontItalicPath != "" {
+		face, _, italicErr := ir.loadSingleFont(ir.FontItalicPath, fontFaceOptions)
+		if italicErr != nil {
+			fmt.Fprintf(stdOS.Stderr, "Warning: Failed to load or validate italic font %s: %v. Italic style might not be available.\n", ir.FontItalicPath, italicErr)
+			ir.italic = nil
+		} else {
+			ir.italic = face
+		}
+	}
+
+	// If custom regular font was loaded,
+	// silently set fallbacks for bold/italic if they weren't provided
+	if customRegularFontLoaded && ir.regular != nil {
+		if ir.bold == nil {
+			ir.bold = ir.regular
+		}
+		if ir.italic == nil {
+			ir.italic = ir.regular
+		}
+	} else {
+		// When no fonts are specified fallback to the bundled font
+		return ir.loadBundledFonts(fontFaceOptions)
+	}
+
+	return nil
+}
+
+func (ir *Renderer) loadBundledFonts(fontFaceOptions *opentype.FaceOptions) error {
+	var data []byte
 	fontCachePath := filepath.Join(cache.Path(), "Hack.zip")
 	if _, err := stdOS.Stat(fontCachePath); err == nil {
 		data, _ = stdOS.ReadFile(fontCachePath)
@@ -227,67 +337,74 @@ func (ir *Renderer) loadFonts() error {
 	// Download font if not cached
 	if data == nil {
 		url := "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip"
-		var err error
-
-		data, err = font_.Download(url)
-		if err != nil {
-			return err
+		var downloadErr error
+		data, downloadErr = font_.Download(url)
+		if downloadErr != nil {
+			return fmt.Errorf("failed to download bundled font: %w", downloadErr)
 		}
-
-		err = stdOS.WriteFile(fontCachePath, data, 0644)
-		if err != nil {
-			return err
+		writeErr := stdOS.WriteFile(fontCachePath, data, 0644)
+		if writeErr != nil {
+			fmt.Fprintf(stdOS.Stderr, "Warning: failed to cache bundled font: %v\n", writeErr)
 		}
 	}
 
 	bytesReader := bytes.NewReader(data)
 	zipReader, err := zip.NewReader(bytesReader, int64(bytesReader.Len()))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read bundled font zip: %w", err)
 	}
 
-	fontFaceOptions := &opentype.FaceOptions{Size: 2.0 * 12, DPI: 144}
-
-	parseFont := func(file *zip.File) (font.Face, error) {
+	var regularFace, boldFace, italicFace font.Face
+	parseFontFromZip := func(file *zip.File) (font.Face, error) {
 		rc, err := file.Open()
 		if err != nil {
 			return nil, err
 		}
-
 		defer rc.Close()
 
-		data, err := io.ReadAll(rc)
+		fontData, err := io.ReadAll(rc)
 		if err != nil {
 			return nil, err
 		}
 
-		font, err := opentype.Parse(data)
+		parsedFont, err := opentype.Parse(fontData)
 		if err != nil {
 			return nil, err
 		}
-
-		fontFace, err := opentype.NewFace(font, fontFaceOptions)
-		if err != nil {
-			return nil, err
-		}
-		return fontFace, nil
+		return opentype.NewFace(parsedFont, fontFaceOptions)
 	}
+
+	var regularErr, boldErr, italicErr error
 
 	for _, file := range zipReader.File {
 		switch file.Name {
 		case "HackNerdFont-Regular.ttf":
-			if regular, err := parseFont(file); err == nil {
-				ir.regular = regular
-			}
+			regularFace, regularErr = parseFontFromZip(file)
 		case "HackNerdFont-Bold.ttf":
-			if bold, err := parseFont(file); err == nil {
-				ir.bold = bold
-			}
+			boldFace, boldErr = parseFontFromZip(file)
 		case "HackNerdFont-Italic.ttf":
-			if italic, err := parseFont(file); err == nil {
-				ir.italic = italic
-			}
+			italicFace, italicErr = parseFontFromZip(file)
 		}
+	}
+
+	// Additional safety / fast fail for Hack.zip issues.
+	if regularErr != nil {
+		return fmt.Errorf("failed to load bundled regular font: %w", regularErr)
+	}
+	ir.regular = regularFace
+
+	if boldErr != nil {
+		fmt.Fprintf(stdOS.Stderr, "Warning: failed to load bundled bold font: %v. Using regular for bold.\n", boldErr)
+		ir.bold = ir.regular
+	} else {
+		ir.bold = boldFace
+	}
+
+	if italicErr != nil {
+		fmt.Fprintf(stdOS.Stderr, "Warning: failed to load bundled italic font: %v. Using regular for italic.\n", italicErr)
+		ir.italic = ir.regular
+	} else {
+		ir.italic = italicFace
 	}
 
 	return nil

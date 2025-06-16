@@ -427,8 +427,9 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 
 	// anything inside the range [200, 299] is considered a success
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
-		err := errors.New(message)
+		err := &http.Error{
+			StatusCode: response.StatusCode,
+		}
 		log.Error(err)
 		return nil, err
 	}

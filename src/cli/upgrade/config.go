@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 

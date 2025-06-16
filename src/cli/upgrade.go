@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 	"github.com/spf13/cobra"
 )
 

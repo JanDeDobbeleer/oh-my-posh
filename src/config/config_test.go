@@ -5,11 +5,11 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/stretchr/testify/assert"
 	mock_ "github.com/stretchr/testify/mock"

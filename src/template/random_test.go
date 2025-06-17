@@ -9,7 +9,7 @@ import (
 
 func TestRandom(t *testing.T) {
 	cases := []struct {
-		Input       interface{}
+		Input       any
 		Case        string
 		ShouldError bool
 	}{
@@ -41,7 +41,7 @@ func TestRandom(t *testing.T) {
 		},
 		{
 			Case: "interface with multiple types",
-			Input: []interface{}{
+			Input: []any{
 				"a",
 				1,
 				true,

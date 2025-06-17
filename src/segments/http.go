@@ -12,7 +12,7 @@ import (
 type HTTP struct {
 	base
 
-	Body map[string]interface{}
+	Body map[string]any
 }
 
 const (
@@ -48,7 +48,7 @@ func (h *HTTP) Enabled() bool {
 	return true
 }
 
-func (h *HTTP) getResult(url, method string) (map[string]interface{}, error) {
+func (h *HTTP) getResult(url, method string) (map[string]any, error) {
 	setMethod := func(request *http.Request) {
 		request.Method = method
 	}
@@ -58,7 +58,7 @@ func (h *HTTP) getResult(url, method string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	err = json.Unmarshal(resultBody, &result)
 	if err != nil {
 		return nil, err

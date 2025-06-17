@@ -2,6 +2,7 @@ package segments
 
 import (
 	"path/filepath"
+	"slices"
 	"testing"
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
@@ -33,12 +34,7 @@ type languageArgs struct {
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
-	for _, element := range list {
-		if element == value {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(list, value)
 }
 
 func bootStrapLanguageTest(args *languageArgs) *language {

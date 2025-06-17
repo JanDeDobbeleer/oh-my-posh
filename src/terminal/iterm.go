@@ -19,13 +19,7 @@ const (
 type ITermFeatures []iTermFeature
 
 func (f ITermFeatures) Contains(feature iTermFeature) bool {
-	for _, item := range f {
-		if item == feature {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(f, feature)
 }
 
 func RenderItermFeatures(features ITermFeatures, sh, pwd, user, host string) string {

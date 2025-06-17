@@ -16,7 +16,7 @@ func BenchmarkInit(b *testing.B) {
 	out := bytes.NewBufferString("")
 	cmd.SetOut(out)
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = cmd.Execute()
 	}
 }
@@ -28,7 +28,7 @@ func BenchmarkPrimary(b *testing.B) {
 	out := bytes.NewBufferString("")
 	cmd.SetOut(out)
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = cmd.Execute()
 	}
 

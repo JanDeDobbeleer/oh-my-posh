@@ -117,7 +117,7 @@ func TestPrintPWD(t *testing.T) {
 }
 
 func BenchmarkEngineRender(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		engineRender()
 	}
 }

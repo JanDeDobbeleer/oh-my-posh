@@ -46,7 +46,7 @@ func Debug(message ...string) {
 	printLn(debug, header, strings.Join(message, " "))
 }
 
-func Debugf(format string, args ...interface{}) {
+func Debugf(format string, args ...any) {
 	if !enabled {
 		return
 	}

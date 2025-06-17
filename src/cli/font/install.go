@@ -16,13 +16,7 @@ import (
 )
 
 func contains[S ~[]E, E comparable](s S, e E) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(s, e)
 }
 
 func InstallZIP(data []byte, m *main) ([]string, error) {

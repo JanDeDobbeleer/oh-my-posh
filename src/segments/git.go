@@ -859,8 +859,8 @@ func (g *Git) setPrettyHEADName() {
 	if len(g.ShortHash) == 0 {
 		HEADRef := g.fileContent(g.mainSCMDir, "HEAD")
 		g.Detached = !strings.HasPrefix(HEADRef, "ref:")
-		if strings.HasPrefix(HEADRef, BRANCHPREFIX) {
-			branchName := strings.TrimPrefix(HEADRef, BRANCHPREFIX)
+		if after, ok := strings.CutPrefix(HEADRef, BRANCHPREFIX); ok {
+			branchName := after
 			g.Ref = branchName
 			g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
 			return

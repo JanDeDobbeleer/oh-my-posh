@@ -192,12 +192,7 @@ func (l *language) hasProjectFiles() bool {
 }
 
 func (l *language) hasLanguageFolders() bool {
-	for _, folder := range l.folders {
-		if l.env.HasFolder(folder) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(l.folders, l.env.HasFolder)
 }
 
 // setVersion parses the version string returned by the command
@@ -317,12 +312,12 @@ func (l *language) buildVersionURL() {
 func (l *language) hasNodePackage(name string) bool {
 	packageJSON := l.env.FileContent("package.json")
 
-	var packageData map[string]interface{}
+	var packageData map[string]any
 	if err := json.Unmarshal([]byte(packageJSON), &packageData); err != nil {
 		return false
 	}
 
-	dependencies, ok := packageData["dependencies"].(map[string]interface{})
+	dependencies, ok := packageData["dependencies"].(map[string]any)
 	if !ok {
 		return false
 	}

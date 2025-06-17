@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-func random(list interface{}) (string, error) {
+func random(list any) (string, error) {
 	v := reflect.ValueOf(list)
 
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {

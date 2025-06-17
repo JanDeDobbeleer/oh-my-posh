@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"path/filepath"
+	"slices"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
@@ -59,10 +60,8 @@ func (tf *Terraform) inContext(fetchVersion bool) bool {
 	}
 
 	files := []string{".tf", ".tfplan", ".tfstate"}
-	for _, file := range files {
-		if tf.env.HasFiles(file) {
-			return true
-		}
+	if slices.ContainsFunc(files, tf.env.HasFiles) {
+		return true
 	}
 
 	if !fetchVersion {
@@ -70,13 +69,7 @@ func (tf *Terraform) inContext(fetchVersion bool) bool {
 	}
 
 	versionFiles := []string{"versions.tf", "main.tf", "terraform.tfstate"}
-	for _, file := range versionFiles {
-		if tf.env.HasFiles(file) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(versionFiles, tf.env.HasFiles)
 }
 
 func (tf *Terraform) setVersionFromTfFiles() error {

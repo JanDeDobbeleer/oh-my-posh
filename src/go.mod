@@ -27,6 +27,7 @@ require (
 )
 
 require (
+	dario.cat/mergo v1.0.2
 	github.com/ConradIrwin/font v0.2.1
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.5
@@ -58,7 +59,6 @@ require (
 )
 
 require (
-	dario.cat/mergo v1.0.2 // indirect
 	dmitri.shuralyov.com/font/woff2 v0.0.0-20180220214647-957792cbbdab // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect

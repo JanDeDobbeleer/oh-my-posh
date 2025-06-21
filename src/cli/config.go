@@ -2,9 +2,8 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"time"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/config"
 
 	"github.com/spf13/cobra"
 )
@@ -30,8 +29,7 @@ You can export, migrate or edit the config (via the editor specified in the envi
 		}
 		switch args[0] {
 		case "edit":
-			path := config.Path((configFlag))
-			exitcode = editFileWithEditor(path)
+			exitcode = editFileWithEditor(os.Getenv("POSH_THEME"))
 		case "get":
 			// only here for backwards compatibility
 			fmt.Print(time.Now().UnixNano() / 1000000)

@@ -40,11 +40,10 @@ Migrates the ~/myconfig.omp.json config file to TOML and writes the result to yo
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		configFile := config.Path(configFlag)
-		cfg, _ := config.Load(configFile, shell.GENERIC, true)
+		cfg, _ := config.Load(configFlag, shell.GENERIC, true)
 
 		flags := &runtime.Flags{
-			Config:  configFile,
+			Config:  cfg.Source,
 			Migrate: true,
 		}
 

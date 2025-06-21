@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"os"
@@ -23,11 +24,21 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
+const (
+	defaultHash = "default"
+)
+
 // Load returns the default configuration including possible user overrides
 func Load(configFile, sh string, migrate bool) (*Config, string) {
 	defer log.Trace(time.Now())
 
-	cfg, hash := loadConfig(configFile)
+	configFile, err := filePath(configFile)
+	if err != nil {
+		log.Error(err)
+		return Default(true), defaultHash
+	}
+
+	cfg, hash := readConfig(configFile)
 
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
@@ -45,6 +56,14 @@ func Load(configFile, sh string, migrate bool) (*Config, string) {
 
 	if cfg.Upgrade.Interval.IsEmpty() {
 		cfg.Upgrade.Interval = cache.ONEWEEK
+	}
+
+	cfg.Source = configFile
+
+	if cfg.extended {
+		fileName := fmt.Sprintf("%s.omp.json", hash)
+		cfg.Source = filepath.Join(cache.Path(), fileName)
+		cfg.Write(JSON)
 	}
 
 	if !cfg.ShellIntegration {
@@ -67,7 +86,7 @@ func Load(configFile, sh string, migrate bool) (*Config, string) {
 	return cfg, hash
 }
 
-func Path(config string) string {
+func filePath(config string) (string, error) {
 	defer log.Trace(time.Now())
 
 	// if the config flag is set, we'll use that over POSH_THEME
@@ -77,21 +96,21 @@ func Path(config string) string {
 
 	if poshTheme := os.Getenv("POSH_THEME"); len(poshTheme) > 0 && !hasConfig {
 		log.Debug("config set using POSH_THEME:", poshTheme)
-		return poshTheme
+		return poshTheme, nil
 	}
 
-	if len(config) == 0 {
-		return ""
+	if !hasConfig {
+		return "", errors.New("no config file specified")
 	}
 
 	if strings.HasPrefix(config, "https://") {
 		filePath, err := Download(cache.Path(), config)
 		if err != nil {
 			log.Error(err)
-			return ""
+			return "", err
 		}
 
-		return filePath
+		return filePath, nil
 	}
 
 	isCygwin := func() bool {
@@ -102,7 +121,7 @@ func Path(config string) string {
 	// Doing filepath actions will convert it to a Windows path and break the init script.
 	if isCygwin() {
 		log.Debug("cygwin detected, using full path for config")
-		return config
+		return config, nil
 	}
 
 	configFile := path.ReplaceTildePrefixWithHomeDir(config)
@@ -110,16 +129,14 @@ func Path(config string) string {
 	abs, err := filepath.Abs(configFile)
 	if err != nil {
 		log.Error(err)
-		return filepath.Clean(configFile)
+		return filepath.Clean(configFile), nil
 	}
 
-	return abs
+	return abs, nil
 }
 
-func loadConfig(configFile string) (*Config, string) {
+func readConfig(configFile string) (*Config, string) {
 	defer log.Trace(time.Now())
-
-	const defaultHash = "default"
 
 	if len(configFile) == 0 {
 		log.Debug("no config file specified, using default")
@@ -127,7 +144,7 @@ func loadConfig(configFile string) (*Config, string) {
 	}
 
 	var cfg Config
-	cfg.origin = configFile
+	cfg.Source = configFile
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 
 	data, err := os.ReadFile(configFile)
@@ -166,5 +183,21 @@ func loadConfig(configFile string) (*Config, string) {
 	hasher.Write(data)
 	hash := strconv.FormatUint(hasher.Sum64(), 16)
 
-	return &cfg, hash
+	if len(cfg.Extends) == 0 {
+		return &cfg, hash
+	}
+
+	basePath, err := filePath(cfg.Extends)
+	if err != nil {
+		log.Error(err)
+		return &cfg, hash
+	}
+
+	base, baseHash := readConfig(basePath)
+	err = base.merge(&cfg)
+	if err != nil {
+		log.Error(err)
+	}
+
+	return base, fmt.Sprintf("%s.%s", hash, baseHash)
 }

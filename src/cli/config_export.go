@@ -41,8 +41,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			return
 		}
 
-		configFile := config.Path(configFlag)
-		cfg, _ := config.Load(configFile, shell.GENERIC, false)
+		cfg, _ := config.Load(configFlag, shell.GENERIC, false)
 
 		validateExportFormat := func() error {
 			format = strings.ToLower(format)
@@ -75,7 +74,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			return
 		}
 
-		cfg.Output = cleanOutputPath(output)
+		cfg.Source = cleanOutputPath(output)
 
 		if len(format) == 0 {
 			format = strings.TrimPrefix(filepath.Ext(output), ".")

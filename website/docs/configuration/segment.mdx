@@ -57,6 +57,7 @@ understand how to configure a segment.
 | `include_folders`          | `[]string`   | define which folders to include to enable the segment, see [below][include-exclude]                                                                                                                                                                                                                                        |
 | `exclude_folders`          | `[]string`   | define which folders to exclude to disable the segment, see [below][include-exclude]                                                                                                                                                                                                                                       |
 | `force`                    | `boolean`    | when true, the segment is always rendered, even when it's only whitespace - defaults to `false`                                                                                                                                                                                                                            |
+| `index`                    | `int`        | used to [override] a specific segment (1-based)                                                                                                                                                                                                                                                                            |
 
 :::warning
 In Bash/Zsh, when the property `interactive` is `true` for a segment, the prompt length calculation can be wrong
@@ -201,6 +202,11 @@ This means that for user Bill, who has a user account `Bill` on Windows and `bil
 `C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
 :::
 
+## Index
+
+The index of the segment in the configuration. This is used to [override] a specific segment in a base configuration.
+This is a 1-based index, so the first segment has an index of `1`.
+
 ## Hiding segments
 
 ### Conditionally
@@ -245,3 +251,4 @@ To list the currently toggled segments, use `oh-my-posh get toggles`.
 [cache]: #cache
 [include-exclude]: #include--exclude-folders
 [time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration
+[override]: /docs/configuration/general#extends

@@ -33,6 +33,7 @@ import Config from "@site/src/components/Config.js";
 | `trailing_diamond` | `string`  |
 | `segments`         | `array`   |
 | `force`            | `boolean` |
+| `index`            | `int`     |
 
 ### Type
 
@@ -119,6 +120,12 @@ Array of one or more [segments][segment].
 
 When set to `true`, the block will always be rendered, even if all segments are empty. Defaults to `false`.
 
+### Index
+
+The index of the block in the configuration. This is used to [override] a specific block in a base configuration.
+This is a 1-based index, so the first block has an index of `1`.
+
 [ble.sh]: https://github.com/akinomyoga/ble.sh
 [color-overrides]: /docs/configuration/colors#color-overrides
 [segment]: segment.mdx
+[override]: /docs/configuration/general#extends

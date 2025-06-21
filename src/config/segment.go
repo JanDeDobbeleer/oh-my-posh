@@ -75,6 +75,7 @@ type Segment struct {
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
 	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	restored               bool           `json:"-" toml:"-" yaml:"-"`
+	Index                  int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
 }
 
 func (segment *Segment) Name() string {
@@ -386,4 +387,12 @@ func (segment *Segment) evaluateNeeds() {
 
 		segment.Needs = append(segment.Needs, segmentName)
 	}
+}
+
+func (segment *Segment) key() any {
+	if segment.Index > 0 {
+		return segment.Index - 1
+	}
+
+	return segment.Name()
 }

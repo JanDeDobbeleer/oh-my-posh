@@ -18,7 +18,7 @@ $env:SIGNING_KEY > $shaSigningKeyLocation
 Write-Output "SHA_SIGNING_KEY_LOCATION=$shaSigningKeyLocation" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
 # install code signing dlib
-nuget.exe install Microsoft.Trusted.Signing.Client -Version 1.0.60 -ExcludeVersion -OutputDirectory $env:RUNNER_TEMP
+nuget.exe install Microsoft.Trusted.Signing.Client -Version 1.0.92 -ExcludeVersion -OutputDirectory $env:RUNNER_TEMP
 Write-Output "SIGNTOOLDLIB=$env:RUNNER_TEMP/Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
 # requires Windows Dev Kit 10.0.22621.0

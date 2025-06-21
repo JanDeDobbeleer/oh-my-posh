@@ -39,7 +39,7 @@ wix build -arch $Architecture -out $installer .\oh-my-posh.wxs
 
 if ($Sign) {
     # setup dependencies
-    nuget.exe install Microsoft.Trusted.Signing.Client -Version 1.0.60 -x
+    nuget.exe install Microsoft.Trusted.Signing.Client -Version 1.0.92 -x
     $signtoolDlib = "$PWD/Microsoft.Trusted.Signing.Client/bin/x64/Azure.CodeSigning.Dlib.dll"
     $signtool = "C:/Program Files (x86)/Windows Kits/10/bin/$SDKVersion/x64/signtool.exe"
 

@@ -12,8 +12,8 @@ import (
 )
 
 func (cfg *Config) Backup() {
-	dst := cfg.origin + ".bak"
-	source, err := os.Open(cfg.origin)
+	dst := cfg.Source + ".bak"
+	source, err := os.Open(cfg.Source)
 	if err != nil {
 		return
 	}
@@ -84,12 +84,7 @@ func (cfg *Config) Write(format string) {
 		return
 	}
 
-	destination := cfg.Output
-	if len(destination) == 0 {
-		destination = cfg.origin
-	}
-
-	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(cfg.Source, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return
 	}

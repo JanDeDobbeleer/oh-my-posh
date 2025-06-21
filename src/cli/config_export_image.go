@@ -50,11 +50,10 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		configFile := config.Path(configFlag)
-		cfg, _ := config.Load(configFile, shell.GENERIC, false)
+		cfg, _ := config.Load(configFlag, shell.GENERIC, false)
 
 		flags := &runtime.Flags{
-			Config:        configFile,
+			Config:        cfg.Source,
 			Shell:         shell.GENERIC,
 			TerminalWidth: 150,
 		}

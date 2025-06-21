@@ -141,6 +141,7 @@ For example, the following is a valid `--config` flag:
 | `maps`                      | [`Maps`](#maps)  |         | a list of custom text mappings                                                                                                                                                                                                                                               |
 | `async`                     | `boolean`        | `false` | load the prompt async. Will either load the standard prompt, or allow you to start typing right away. Supperted for `pwsh`, `powershell`, `zsh`, `bash` and `fish`                                                                                                           |
 | `version`                   | `int`            | `3`     | the config version, currently at `3`                                                                                                                                                                                                                                         |
+| `extends`                   | `string`         |         | the configuration to [extend] from                                                                                                                                                                                                                                           |
 
 ### Maps
 
@@ -165,6 +166,20 @@ import Config from "@site/src/components/Config.js";
     },
   }}
 />
+
+### Extends
+
+The `extends` key allows you to extend an existing configuration. This is useful when you want to build upon a base configuration without
+duplicating all the settings like a [theme][themes]. The value should be a path to another configuration file, which can be either local or remote.
+
+Replacing values is done by repeating the value in the new configuration. For example, if you want to change the `accent_color` in a base configuration,
+you can do so by specifying the `accent_color` key in your new configuration. The new value will override the one in the base configuration.
+
+To override segments and blocks, specify the block using the same `type` and `alignment` as the base configuration. You can then add or modify the segments
+within that block. Segments are matched by their `alias` or `type`, so you can add new segments or modify existing ones without affecting the rest of the configuration.
+
+For more advanced use cases, you can also specify the index of the `block` or `segment` you want to override. This allows you to override `blocks` or `segments` at
+specific positions in the configuration. Be aware that the index is **1-based**, so the first `block` or `segment` has an index of `1`.
 
 ### JSON Schema Validation
 
@@ -221,3 +236,4 @@ Converters won't catch this change, so you will need to adjust manually.
 [pwsh-bleed]: https://github.com/PowerShell/PowerShell/pull/19019
 [iterm2-si]: https://iterm2.com/documentation-shell-integration.html
 [Upgrade]: /docs/installation/upgrade
+[extend]: /docs/configuration/general#extends

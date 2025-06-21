@@ -5473,6 +5473,12 @@
       "title": "Version",
       "description": "https://ohmyposh.dev/docs/configuration/general",
       "default": 3
+    },
+    "extends": {
+      "type": "string",
+      "title": "Extends",
+      "description": "https://ohmyposh.dev/docs/configuration/general#extends",
+      "default": ""
     }
   }
 }

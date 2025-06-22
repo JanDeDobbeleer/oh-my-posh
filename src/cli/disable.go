@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
+// disableCmd represents the disable command
 var disableCmd = &cobra.Command{
 	Use:       fmt.Sprintf(toggleUse, "disable"),
 	Short:     "Disable a feature",

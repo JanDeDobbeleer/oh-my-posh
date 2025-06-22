@@ -49,11 +49,6 @@ func (term *Terminal) Init(flags *Flags) {
 		term.CmdFlags = &Flags{}
 	}
 
-	if term.CmdFlags.Plain {
-		log.Plain()
-		log.Debug("plain mode enabled")
-	}
-
 	initCache := func(fileName string) *cache.File {
 		fileCache := &cache.File{}
 		fileCache.Init(filepath.Join(cache.Path(), fileName), term.CmdFlags.SaveCache)

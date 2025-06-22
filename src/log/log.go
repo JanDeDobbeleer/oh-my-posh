@@ -10,17 +10,16 @@ import (
 
 var (
 	enabled bool
-	plain   bool
+	raw     bool
 
 	log strings.Builder
 )
 
-func Enable() {
+func Enable(plain bool) {
 	enabled = true
-}
+	raw = plain
 
-func Plain() {
-	plain = true
+	Debugf("logging enabled, raw mode: %t", plain)
 }
 
 func Trace(start time.Time, args ...string) {

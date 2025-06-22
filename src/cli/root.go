@@ -53,8 +53,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 		trace = true
 
-		log.Enable()
-		log.Plain()
+		log.Enable(true)
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		defer func() {

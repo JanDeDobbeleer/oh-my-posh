@@ -32,8 +32,7 @@ func createDebugCmd() *cobra.Command {
 		Run: func(_ *cobra.Command, _ []string) {
 			startTime := time.Now()
 
-			log.Enable()
-			log.Debug("debug mode enabled")
+			log.Enable(plain)
 
 			sh := os.Getenv("POSH_SHELL")
 

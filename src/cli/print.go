@@ -31,7 +31,7 @@ var (
 	escape       bool
 )
 
-// printCmd represents the prompt command
+// printCmd represents the print command
 var printCmd = createPrintCmd()
 
 func init() {

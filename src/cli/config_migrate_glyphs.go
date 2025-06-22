@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// migrateCmd represents the migrate command
+// migrateGlyphsCmd represents the glyphs command
 var migrateGlyphsCmd = &cobra.Command{
 	Use:   "glyphs",
 	Short: "Migrate the nerd font glyphs in your config",

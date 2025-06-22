@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// versionCmd represents the version command
+// toggleCmd represents the toggle command
 var toggleCmd = &cobra.Command{
 	Use:   "toggle",
 	Short: "Toggle a segment on/off",

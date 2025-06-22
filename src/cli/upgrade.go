@@ -21,7 +21,7 @@ var (
 	force bool
 )
 
-// noticeCmd represents the get command
+// upgradeCmd represents the upgrade command
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
 	Short: "Upgrade when a new version is available.",

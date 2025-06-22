@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// debugCmd represents the prompt command
+// debugCmd represents the debug command
 var debugCmd = createDebugCmd()
 
 func init() {

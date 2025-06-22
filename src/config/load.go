@@ -161,6 +161,7 @@ func loadConfig(configFile string) (*Config, string) {
 	}
 
 	// Calculate FNV-1a hash of the raw config data
+	data = append(data, []byte(configFile)...) // Include the file path in the hash to enable file modification detection
 	hasher := fnv.New64a()
 	hasher.Write(data)
 	hash := strconv.FormatUint(hasher.Sum64(), 16)

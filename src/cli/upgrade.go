@@ -32,8 +32,7 @@ var upgradeCmd = &cobra.Command{
 
 		if debug {
 			startTime = time.Now()
-			log.Enable()
-			log.Debug("debug mode enabled")
+			log.Enable(plain)
 		}
 
 		supportedPlatforms := []string{

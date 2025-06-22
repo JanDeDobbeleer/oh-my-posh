@@ -70,8 +70,7 @@ func runInit(sh string) {
 
 	if debug {
 		startTime = time.Now()
-		log.Enable()
-		log.Debug("debug mode enabled")
+		log.Enable(plain)
 	}
 
 	configFile := config.Path(configFlag)

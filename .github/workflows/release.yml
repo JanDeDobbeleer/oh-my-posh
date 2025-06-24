@@ -107,6 +107,8 @@ jobs:
           path: |
             packages/msi/out/install-${{ matrix.arch }}.msi
             packages/msi/out/install-${{ matrix.arch }}.msi.sha256
+            packages/msi/out/install-${{ matrix.arch }}.msix
+            packages/msi/out/install-${{ matrix.arch }}.msix.sha256
   release:
     runs-on: ubuntu-latest
     needs:

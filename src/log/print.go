@@ -44,6 +44,13 @@ func (t Text) Yellow() Text {
 	return "\x1b[38;2;156;231;201m" + t
 }
 
+func (t Text) Orange() Text {
+	if raw {
+		return t
+	}
+	return "\x1b[38;2;253;184;109m" + t
+}
+
 func (t Text) Bold() Text {
 	if raw {
 		return t

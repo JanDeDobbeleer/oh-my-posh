@@ -79,29 +79,6 @@ $XmlDocument.Package.Identity.ProcessorArchitecture = $Architecture
 
 $XmlDocument.Save($manifest)
 
-Write-Host "Creating mapping file"
-
-$mapping = @"
-[ResourceMetadata]
-"ResourceDimensions"                    "language-en-us"
-"ResourceId"                            "English"
-
-[Files]
-"./dist/oh-my-posh.exe" "oh-my-posh.exe"
-"./icons/icon.png" "/icons/icon.png"
-"./icons/44.png" "/icons/44.png"
-"@.Trim()
-
-$stringBuilder = New-Object -TypeName System.Text.StringBuilder
-$stringBuilder.Append($mapping) | Out-Null
-
-# Add all theme files to the mapping and add to $mapping
-Get-ChildItem -Path "../../themes" -Recurse -File -Filter "*.omp.*" | ForEach-Object {
-    $stringBuilder.Append("`n`"../../themes/$($_.Name)`" `"/themes/$($_.Name)`"") | Out-Null
-}
-
-$stringBuilder.ToString() | Out-File -FilePath $mappingTxt
-
 $makeappx = "C:/Program Files (x86)/Windows Kits/10/bin/$SDKVersion/x64/makeappx.exe"
 
 & "$makeappx" pack /p $installerMSIX /v /o /m $manifest /f $mappingTxt

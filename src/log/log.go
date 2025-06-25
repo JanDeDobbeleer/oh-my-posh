@@ -29,7 +29,23 @@ func Trace(start time.Time, args ...string) {
 
 	elapsed := time.Since(start)
 	fn, _ := funcSpec()
-	header := fmt.Sprintf("%s(%s) - %s", fn, strings.Join(args, " "), Text(elapsed.String()).Yellow().Plain())
+
+	// Color-code elapsed time based on duration
+	var coloredElapsed Text
+	ms := elapsed.Milliseconds()
+
+	switch {
+	case ms < 1:
+		coloredElapsed = Text(elapsed.String()).Green().Plain()
+	case ms >= 1 && ms < 10:
+		coloredElapsed = Text(elapsed.String()).Yellow().Plain()
+	case ms >= 10 && ms < 100:
+		coloredElapsed = Text(elapsed.String()).Orange().Plain()
+	default: // >= 100ms
+		coloredElapsed = Text(elapsed.String()).Red().Plain()
+	}
+
+	header := fmt.Sprintf("%s(%s) - %s", fn, strings.Join(args, " "), coloredElapsed)
 
 	printLn(trace, header)
 }

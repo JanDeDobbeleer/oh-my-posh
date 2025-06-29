@@ -73,12 +73,11 @@ func runInit(sh string) {
 		log.Enable(plain)
 	}
 
-	configFile := config.Path(configFlag)
-	cfg, hash := config.Load(configFile, sh, false)
+	cfg, hash := config.Load(configFlag, sh, false)
 
 	flags := &runtime.Flags{
 		Shell:     sh,
-		Config:    configFile,
+		Config:    cfg.Source,
 		Strict:    strict,
 		Debug:     debug,
 		SaveCache: true,

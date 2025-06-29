@@ -36,11 +36,10 @@ func createDebugCmd() *cobra.Command {
 
 			sh := os.Getenv("POSH_SHELL")
 
-			configFile := config.Path(configFlag)
-			cfg, _ := config.Load(configFile, sh, false)
+			cfg, _ := config.Load(configFlag, sh, false)
 
 			flags := &runtime.Flags{
-				Config: configFile,
+				Config: cfg.Source,
 				Debug:  true,
 				PWD:    pwd,
 				Shell:  sh,

@@ -11,6 +11,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
 )
@@ -78,6 +79,7 @@ func InstallZIP(data []byte, m *main) ([]string, error) {
 
 	for _, font := range fonts {
 		if err = install(font, m.system); err != nil {
+			log.Error(err)
 			continue
 		}
 

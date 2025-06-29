@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"unsafe"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -28,6 +29,8 @@ func install(font *Font, admin bool) error {
 		fontsDir = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts")
 	}
 
+	log.Debugf("installing font %s to %s", font.FileName, fontsDir)
+
 	// check if the Fonts folder exists, if not, create it
 	if _, err := os.Stat(fontsDir); os.IsNotExist(err) {
 		if err = os.MkdirAll(fontsDir, 0755); err != nil {
@@ -35,18 +38,25 @@ func install(font *Font, admin bool) error {
 		}
 	}
 
+	log.Debug("fonts directory exists, proceeding with installation")
+
 	fullPath := filepath.Join(fontsDir, font.FileName)
 	// validate if the font is already installed, remove it in case it is
 	if _, err := os.Stat(fullPath); err == nil {
+		log.Debugf("font %s already exists, removing it", fullPath)
 		if err = os.Remove(fullPath); err != nil {
 			return fmt.Errorf("unable to remove existing font file: %s", err.Error())
 		}
 	}
 
+	log.Debugf("writing font file to %s", fullPath)
+
 	err := os.WriteFile(fullPath, font.Data, 0644)
 	if err != nil {
 		return fmt.Errorf("unable to write font file: %s", err.Error())
 	}
+
+	log.Debug("font file written successfully, proceeding with registry entry")
 
 	// Add registry entry
 	var reg = registry.LOCAL_MACHINE
@@ -56,14 +66,18 @@ func install(font *Font, admin bool) error {
 		regValue = fullPath
 	}
 
+	log.Debugf("opening registry key %s for writing", registryKeyString(reg))
+
 	k, err := registry.OpenKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts`, registry.WRITE)
 	if err != nil {
+		log.Error(err)
 		// If this fails, remove the font file as well.
 		if nexterr := os.Remove(fullPath); nexterr != nil {
+			log.Error(nexterr)
 			return errors.New("unable to delete font file after registry key open error")
 		}
 
-		return fmt.Errorf("unable to open registry key: %s", err.Error())
+		return fmt.Errorf("unable to open registry key: %s", registryKeyString(reg))
 	}
 
 	defer k.Close()
@@ -71,15 +85,27 @@ func install(font *Font, admin bool) error {
 	fontName := fmt.Sprintf("%v (TrueType)", font.Name)
 	var alreadyInstalled, newFontType bool
 
+	log.Debugf("validating if font %s is already installed", fontName)
+
 	// check if we already had this key set
 	oldFullPath, _, err := k.GetStringValue(fontName)
 	if err == nil {
+		log.Debugf("font %s is already installed with path %s", fontName, oldFullPath)
 		alreadyInstalled = true
 		newFontType = oldFullPath != fullPath
 	}
 
+	if !alreadyInstalled {
+		log.Debug("font is not registered, adding to registry")
+		if err := k.SetStringValue(fontName, fullPath); err != nil {
+			return err
+		}
+		log.Debug("font registry entry added successfully")
+	}
+
 	// do not call AddFontResourceW if the font was already installed
 	if alreadyInstalled && !newFontType {
+		log.Debugf("font %s is already installed, skipping AddFontResourceW", fontName)
 		return nil
 	}
 
@@ -88,6 +114,7 @@ func install(font *Font, admin bool) error {
 
 	// remove the old font resource in case we have a new font type with the same name
 	if newFontType {
+		log.Debug("removing old font resource before adding new one")
 		fontPtr, err := syscall.UTF16PtrFromString(oldFullPath)
 		if err == nil {
 			removeFontResourceW := gdi32.NewProc("RemoveFontResourceW")
@@ -96,6 +123,7 @@ func install(font *Font, admin bool) error {
 	}
 
 	if err = k.SetStringValue(fontName, regValue); err != nil {
+		log.Error(err)
 		// If this fails, remove the font file as well.
 		if nexterr := os.Remove(fullPath); nexterr != nil {
 			return errors.New("unable to delete font file after registry key set error")
@@ -114,5 +142,18 @@ func install(font *Font, admin bool) error {
 		return errors.New("unable to add font resource using AddFontResourceW")
 	}
 
+	log.Debug("font resource added successfully")
+
 	return nil
+}
+
+func registryKeyString(key registry.Key) string {
+	switch key { //nolint:exhaustive
+	case registry.CURRENT_USER:
+		return "HKEY_CURRENT_USER"
+	case registry.LOCAL_MACHINE:
+		return "HKEY_LOCAL_MACHINE"
+	default:
+		return fmt.Sprintf("Unknown registry key: %d", key)
+	}
 }

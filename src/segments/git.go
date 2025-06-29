@@ -171,8 +171,9 @@ func (g *Git) Template() string {
 }
 
 func (g *Git) Enabled() bool {
-	// g.command = GITCOMMAND
 	g.User = &User{}
+	g.Working = &GitStatus{}
+	g.Staging = &GitStatus{}
 
 	if !g.shouldDisplay() {
 		return false
@@ -185,9 +186,6 @@ func (g *Git) Enabled() bool {
 
 	g.RepoName = g.repoName()
 
-	g.Working = &GitStatus{}
-	g.Staging = &GitStatus{}
-
 	if g.IsBare {
 		g.getBareRepoInfo()
 		return true
@@ -199,7 +197,7 @@ func (g *Git) Enabled() bool {
 	}
 
 	displayStatus := g.props.GetBool(FetchStatus, false)
-	if g.shouldIgnoreStatus() {
+	if displayStatus && g.shouldIgnoreStatus() {
 		displayStatus = false
 	}
 
@@ -208,7 +206,7 @@ func (g *Git) Enabled() bool {
 		g.setGitHEADContext()
 		g.setBranchStatus()
 	} else {
-		g.setPrettyHEADName()
+		g.setHEADName()
 	}
 
 	if g.props.GetBool(FetchUpstreamIcon, false) {
@@ -337,22 +335,16 @@ func (g *Git) LatestTag() string {
 }
 
 func (g *Git) shouldDisplay() bool {
-	if !g.hasCommand(GITCOMMAND) {
+	gitdir, err := g.env.HasParentFilePath(".git", true)
+	if err != nil {
 		return false
 	}
 
 	if g.props.GetBool(FetchBareInfo, false) {
-		g.repoRootDir = g.env.Pwd()
-		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
-		if bare == trueStr {
-			g.IsBare = true
-			g.mainSCMDir = g.repoRootDir
-			return true
-		}
+		g.IsBare = g.isBareRepo(gitdir)
 	}
 
-	gitdir, err := g.env.HasParentFilePath(".git", true)
-	if err != nil {
+	if !g.hasCommand(GITCOMMAND) {
 		return false
 	}
 
@@ -383,20 +375,41 @@ func (g *Git) setUser() {
 	g.User.Email = g.getGitCommandOutput("config", "user.email")
 }
 
-func (g *Git) getBareRepoInfo() {
-	file, err := g.env.HasParentFilePath(".git", true)
+func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
+	defer log.Trace(time.Now())
 
-	if err == nil && file.IsDir {
-		g.mainSCMDir = file.Path
-	}
-
-	// we can have a pointer to a bare repo
-	if err == nil && !file.IsDir {
-		content := g.fileContent(file.ParentFolder, ".git")
+	if gitDir.IsDir {
+		g.mainSCMDir = gitDir.Path
+	} else {
+		content := g.fileContent(gitDir.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.mainSCMDir = filepath.Join(file.ParentFolder, dir)
+		g.mainSCMDir = filepath.Join(gitDir.ParentFolder, dir)
 	}
 
+	configData := g.fileContent(g.mainSCMDir, "config")
+	if len(configData) == 0 {
+		log.Debug("Git config file not found, not a bare repo")
+		return false
+	}
+
+	cfg, err := ini.Load([]byte(configData))
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	coreSection := cfg.Section("core")
+	if coreSection == nil {
+		log.Debug("Git core section not found, not a bare repo")
+		return false
+	}
+
+	bare := coreSection.Key("bare").String()
+
+	return bare == trueStr
+}
+
+func (g *Git) getBareRepoInfo() {
 	head := g.fileContent(g.mainSCMDir, "HEAD")
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
@@ -689,11 +702,16 @@ func (g *Git) setGitStatus() {
 }
 
 func (g *Git) getGitCommandOutput(args ...string) string {
+	if len(g.command) == 0 {
+		return ""
+	}
+
 	args = append([]string{"-C", g.repoRootDir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, err := g.env.RunCommand(g.command, args...)
 	if err != nil {
 		return ""
 	}
+
 	return val
 }
 
@@ -701,7 +719,7 @@ func (g *Git) setGitHEADContext() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.Detached = true
-		g.setPrettyHEADName()
+		g.setHEADName()
 	} else {
 		head := g.formatBranch(g.Ref)
 		g.HEAD = fmt.Sprintf("%s%s", branchIcon, head)
@@ -854,7 +872,7 @@ func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
-func (g *Git) setPrettyHEADName() {
+func (g *Git) setHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
 	if len(g.ShortHash) == 0 {
 		HEADRef := g.fileContent(g.mainSCMDir, "HEAD")

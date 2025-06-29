@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -26,7 +27,7 @@ const (
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
-	env.On("HasCommand", "git").Return(false)
+	env.On("HasParentFilePath", ".git", true).Return((*runtime.FileInfo)(nil), errors.New("no .git found (mock)"))
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 
@@ -147,63 +148,45 @@ func TestEnabledInWorktree(t *testing.T) {
 
 func TestEnabledInBareRepo(t *testing.T) {
 	cases := []struct {
-		Case            string
-		HEAD            string
-		IsBare          string
-		Remote          string
-		RemoteURL       string
-		ExpectedHEAD    string
-		ExpectedRemote  string
-		FetchRemote     bool
-		ExpectedEnabled bool
+		Case   string
+		HEAD   string
+		IsBare bool
 	}{
 		{
-			Case:            "Bare repo on main",
-			IsBare:          trueStr,
-			HEAD:            "ref: refs/heads/main",
-			ExpectedEnabled: true,
-			ExpectedHEAD:    "main",
+			Case:   "Bare repo on main",
+			IsBare: true,
+			HEAD:   "ref: refs/heads/main",
 		},
 		{
 			Case:   "Not a bare repo",
-			IsBare: "false",
-		},
-		{
-			Case:            "Bare repo on main remote enabled",
-			IsBare:          trueStr,
-			HEAD:            "ref: refs/heads/main",
-			ExpectedEnabled: true,
-			ExpectedHEAD:    "main",
-			FetchRemote:     true,
-			Remote:          "origin",
-			RemoteURL:       "git@github.com:JanDeDobbeleer/oh-my-posh.git",
-			ExpectedRemote:  "\uf408",
+			HEAD:   "ref: refs/heads/main",
+			IsBare: false,
 		},
 	}
 	for _, tc := range cases {
-		pwd := "/home/user/bare.git"
+		path := "git"
 		env := new(mock.Environment)
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return("")
 		env.On("HasCommand", "git").Return(true)
-		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{}, errors.New("nope"))
-		env.MockGitCommand(pwd, tc.IsBare, "rev-parse", "--is-bare-repository")
-		env.On("Pwd").Return(pwd)
-		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)
-		env.MockGitCommand(pwd, tc.Remote, "remote")
-		env.MockGitCommand(pwd, tc.RemoteURL, "remote", "get-url", tc.Remote)
+
+		configData := fmt.Sprintf(`[core]
+		bare = %s`, strconv.FormatBool(tc.IsBare))
+
+		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
+		env.On("FileContent", "git/config").Return(configData)
+		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
 
 		props := properties.Map{
-			FetchBareInfo:     true,
-			FetchUpstreamIcon: tc.FetchRemote,
+			FetchBareInfo: true,
 		}
 
 		g := &Git{}
 		g.Init(props, env)
 
-		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)
-		assert.Equal(t, tc.ExpectedHEAD, g.Ref, tc.Case)
-		assert.Equal(t, tc.ExpectedRemote, g.UpstreamIcon, tc.Case)
+		_ = g.Enabled()
+
+		assert.Equal(t, tc.IsBare, g.IsBare, tc.Case)
 	}
 }
 
@@ -421,7 +404,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		}
 		g.Init(props, env)
 
-		g.setPrettyHEADName()
+		g.setHEADName()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
 }

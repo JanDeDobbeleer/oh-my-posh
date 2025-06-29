@@ -26,7 +26,7 @@ const (
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
-	env.On("HasCommand", "git").Return(false)
+	env.On("HasParentFilePath", ".git", true).Return((*runtime.FileInfo)(nil), errors.New("no .git found (mock)"))
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 

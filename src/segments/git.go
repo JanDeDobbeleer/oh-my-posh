@@ -337,6 +337,11 @@ func (g *Git) LatestTag() string {
 }
 
 func (g *Git) shouldDisplay() bool {
+	gitdir, err := g.env.HasParentFilePath(".git", true)
+	if err != nil {
+		return false
+	}
+
 	if !g.hasCommand(GITCOMMAND) {
 		return false
 	}
@@ -349,11 +354,6 @@ func (g *Git) shouldDisplay() bool {
 			g.mainSCMDir = g.repoRootDir
 			return true
 		}
-	}
-
-	gitdir, err := g.env.HasParentFilePath(".git", true)
-	if err != nil {
-		return false
 	}
 
 	return g.isRepo(gitdir)

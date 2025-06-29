@@ -337,23 +337,29 @@ func (g *Git) LatestTag() string {
 }
 
 func (g *Git) shouldDisplay() bool {
-	gitdir, err := g.env.HasParentFilePath(".git", true)
-	if err != nil {
-		return false
-	}
-
-	if !g.hasCommand(GITCOMMAND) {
-		return false
-	}
-
 	if g.props.GetBool(FetchBareInfo, false) {
 		g.repoRootDir = g.env.Pwd()
+
+		if !g.hasCommand(GITCOMMAND) {
+			return false
+		}
+
 		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
 		if bare == trueStr {
 			g.IsBare = true
 			g.mainSCMDir = g.repoRootDir
 			return true
 		}
+	}
+
+	gitdir, err := g.env.HasParentFilePath(".git", true)
+	if err != nil {
+		return false
+	}
+
+	// g.hasCommand may have already run previously due to bareinfo check
+	if g.command == "" && !g.hasCommand(GITCOMMAND) {
+		return false
 	}
 
 	return g.isRepo(gitdir)

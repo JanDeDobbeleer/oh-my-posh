@@ -3,6 +3,8 @@ package segments
 import (
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
@@ -11,6 +13,8 @@ const (
 	JUJUTSUCOMMAND = "jj"
 
 	jjLogTemplate = `change_id.shortest() ++ "\n" ++ diff.summary()`
+
+	IgnoreWorkingCopy properties.Property = "ignore_working_copy"
 )
 
 type JujutsuStatus struct {
@@ -37,18 +41,19 @@ type Jujutsu struct {
 }
 
 func (jj *Jujutsu) Template() string {
-	return "jj {{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}"
+	return " \uf1fa{{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} "
 }
 
 func (jj *Jujutsu) Enabled() bool {
-	if !jj.shouldDisplay() {
+	displayStatus := jj.props.GetBool(FetchStatus, false)
+
+	if !jj.shouldDisplay(displayStatus) {
 		return false
 	}
 
 	statusFormats := jj.props.GetKeyValueMap(StatusFormats, map[string]string{})
 	jj.Working = &JujutsuStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
-	displayStatus := jj.props.GetBool(FetchStatus, false)
 	if displayStatus {
 		jj.setJujutsuStatus()
 	}
@@ -65,13 +70,15 @@ func (jj *Jujutsu) CacheKey() (string, bool) {
 	return dir.Path, true
 }
 
-func (jj *Jujutsu) shouldDisplay() bool {
-	if !jj.hasCommand(JUJUTSUCOMMAND) {
+func (jj *Jujutsu) shouldDisplay(displayStatus bool) bool {
+	jjdir, err := jj.env.HasParentFilePath(".jj", false)
+	if err != nil {
+		log.Debug("Jujutsu directory not found")
 		return false
 	}
 
-	jjdir, err := jj.env.HasParentFilePath(".jj", false)
-	if err != nil {
+	if displayStatus && !jj.hasCommand(JUJUTSUCOMMAND) {
+		log.Debug("Jujutsu command not found, skipping segment")
 		return false
 	}
 
@@ -113,6 +120,14 @@ func (jj *Jujutsu) setJujutsuStatus() {
 }
 
 func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (string, error) {
-	args = append([]string{"--repository", jj.repoRootDir, "--ignore-working-copy", "--no-pager", "--color", "never", command}, args...)
-	return jj.env.RunCommand(jj.command, args...)
+	cli := []string{"--repository", jj.repoRootDir, "--no-pager", "--color", "never"}
+
+	if jj.props.GetBool(IgnoreWorkingCopy, true) {
+		cli = append(cli, "--ignore-working-copy")
+	}
+
+	cli = append(cli, command)
+	cli = append(cli, args...)
+
+	return jj.env.RunCommand(jj.command, cli...)
 }

@@ -2419,6 +2419,12 @@
                     "description": "Display the changes in the working copy",
                     "default": false
                   },
+                  "ignore_working_copy": {
+                    "type": "boolean",
+                    "title": "Ignore Working Copy",
+                    "description": "Don't snapshot the working copy, and don't update it",
+                    "default": true
+                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
                   },

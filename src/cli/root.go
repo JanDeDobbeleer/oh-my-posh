@@ -54,6 +54,8 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 		trace = true
 
 		log.Enable(true)
+
+		log.Debug("oh-my-posh version", build.Version)
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		defer func() {

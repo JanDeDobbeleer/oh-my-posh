@@ -232,7 +232,7 @@ func (env *Environment) MockHgCommand(dir, returnValue string, args ...string) {
 }
 
 func (env *Environment) MockJjCommand(dir, returnValue string, args ...string) {
-	args = append([]string{"--repository", dir, "--ignore-working-copy", "--no-pager", "--color", "never"}, args...)
+	args = append([]string{"--repository", dir, "--no-pager", "--color", "never", "--ignore-working-copy"}, args...)
 	env.On("RunCommand", "jj", args).Return(returnValue, nil)
 }
 

@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -12,7 +13,7 @@ import (
 func TestJujutsuEnabledToolNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
-	env.On("HasCommand", "jj").Return(false)
+	env.On("HasParentFilePath", ".jj", false).Return(&runtime.FileInfo{}, errors.New("not found"))
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 

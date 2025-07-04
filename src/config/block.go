@@ -1,5 +1,7 @@
 package config
 
+import "fmt"
+
 // BlockType type of block
 type BlockType string
 
@@ -37,4 +39,8 @@ type Block struct {
 	MinWidth        int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
 	Newline         bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
 	Force           bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+}
+
+func (b *Block) key() string {
+	return fmt.Sprintf("%s-%s", b.Type, b.Alignment)
 }

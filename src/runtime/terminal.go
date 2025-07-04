@@ -1,6 +1,6 @@
-package runtime
+ runtime
 
-import (
+ (
 	"context"
 	"errors"
 	"fmt"
@@ -29,34 +29,34 @@ import (
 	process "github.com/shirou/gopsutil/v3/process"
 )
 
-type Terminal struct {
+ Terminal  {
 	CmdFlags     *Flags
 	cmdCache     *cache.Command
 	deviceCache  *cache.File
 	sessionCache *cache.File
 	lsDirMap     maps.Concurrent
-	cwd          string
-	host         string
+	cwd          
+	host         
 	networks     []*Connection
 }
 
-func (term *Terminal) Init(flags *Flags) {
-	defer log.Trace(time.Now())
+ (term *Terminal) Init(flags *Flags) {
+	 log.Trace(time.Now())
 
 	term.CmdFlags = flags
 
-	if term.CmdFlags == nil {
+	 term.CmdFlags == nil {
 		term.CmdFlags = &Flags{}
 	}
 
-	initCache := func(fileName string) *cache.File {
+	initCache :=     (fileName      ) *cache.File {
 		fileCache := &cache.File{}
 		fileCache.Init(filepath.Join(cache.Path(), fileName), term.CmdFlags.SaveCache)
-		return fileCache
+		       fileCache
 	}
 
 	term.deviceCache = initCache(cache.FileName)
-	if fileName, err := cache.SessionFileName(); err == nil {
+	   fileName, err := cache.SessionFileName(); err == nil {
 		term.sessionCache = initCache(fileName)
 	}
 
@@ -69,71 +69,71 @@ func (term *Terminal) Init(flags *Flags) {
 	}
 }
 
-func (term *Terminal) Getenv(key string) string {
-	defer log.Trace(time.Now(), key)
+   v (term *Terminal) Getenv(key        )       {
+	       log.Trace(time.Now(), key)
 	val := os.Getenv(key)
 	log.Debug(val)
-	return val
+	      val
 }
 
-func (term *Terminal) Pwd() string {
-	return term.cwd
+     (term *Terminal) Pwd()        {
+	       term.cwd
 }
 
-func (term *Terminal) setPwd() {
-	defer log.Trace(time.Now())
+      (term *Terminal) setPwd() {
+	      log.Trace(time.Now())
 
-	correctPath := func(pwd string) string {
-		if term.GOOS() != WINDOWS {
-			return pwd
+	correctPath :=     (pwd      )       {
+		   term.GOOS() != WINDOWS {
+			      pwd
 		}
 
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
 		driveLetter, err := regex.GetCompiledRegex(`^[a-z]:`)
-		if err == nil {
-			return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
+		   err == nil {
+			       driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 		}
 
-		return pwd
+		        pwd
 	}
 
-	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
+	   term.CmdFlags != nil && term.CmdFlags.PWD != "" {
 		term.cwd = path.Clean(term.CmdFlags.PWD)
 		log.Debug(term.cwd)
-		return
+		
 	}
 
 	dir, err := os.Getwd()
-	if err != nil {
+	   err != nil {
 		log.Error(err)
-		return
+		
 	}
 
 	term.cwd = correctPath(dir)
 	log.Debug(term.cwd)
 }
 
-func (term *Terminal) HasFiles(pattern string) bool {
-	return term.HasFilesInDir(term.Pwd(), pattern)
+     (term *Terminal) HasFiles(pattern       )      {
+	      term.HasFilesInDir(term.Pwd(), pattern)
 }
 
-func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
-	defer log.Trace(time.Now(), pattern)
+     (term *Terminal) HasFilesInDir(dir, pattern        )       {
+	      log.Trace(time.Now(), pattern)
 
 	fileSystem := os.DirFS(dir)
-	var dirEntries []fs.DirEntry
+	    dirEntries []fs.DirEntry
 
-	if files, OK := term.lsDirMap.Get(dir); OK {
+	    files, OK := term.lsDirMap.Get(dir); OK {
 		dirEntries, _ = files.([]fs.DirEntry)
 	}
 
-	if len(dirEntries) == 0 {
-		var err error
+	   len(dirEntries) == 0 {
+		    err
 		dirEntries, err = fs.ReadDir(fileSystem, ".")
-		if err != nil {
+		   err != nil {
 			log.Error(err)
 			log.Debug("false")
-			return false
+			        false
 		}
 
 		term.lsDirMap.Set(dir, dirEntries)
@@ -141,190 +141,189 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 
 	pattern = strings.ToLower(pattern)
 
-	for _, match := range dirEntries {
-		if match.IsDir() {
-			continue
+	    _, match :=         dirEntries {
+		   match.IsDir() {
+			
 		}
 
 		matchFileName, err := filepath.Match(pattern, strings.ToLower(match.Name()))
-		if err != nil {
+		   err != nil {
 			log.Error(err)
 			log.Debug("false")
-			return false
+			      false
 		}
 
-		if matchFileName {
+		   matchFileName {
 			log.Debug("true")
-			return true
+			       true
 		}
 	}
 
 	log.Debug("false")
-	return false
+	        false
 }
 
-func (term *Terminal) HasFileInParentDirs(pattern string, depth uint) bool {
-	defer log.Trace(time.Now(), pattern, fmt.Sprint(depth))
+     (term *Terminal) HasFileInParentDirs(pattern        , depth      )       {
+	 log.Trace(time.Now(), pattern, fmt.Sprint(depth))
 	currentFolder := term.Pwd()
 
-	for c := 0; c < int(depth); c++ {
-		if term.HasFilesInDir(currentFolder, pattern) {
+	    c := 0; c <     (depth); c++ {
+		    term.HasFilesInDir(currentFolder, pattern) {
 			log.Debug("true")
-			return true
+			       true
 		}
 
-		if dir := filepath.Dir(currentFolder); dir != currentFolder {
+		   dir := filepath.Dir(currentFolder); dir != currentFolder {
 			currentFolder = dir
-		} else {
+		}      {
 			log.Debug("false")
-			return false
+			      false
 		}
 	}
 	log.Debug("false")
-	return false
+	        false
 }
 
-func (term *Terminal) HasFolder(folder string) bool {
-	defer log.Trace(time.Now(), folder)
+      (term *Terminal) HasFolder(folder       )      {
+	     log.Trace(time.Now(), folder)
 	f, err := os.Stat(folder)
-	if err != nil {
+	  err != nil {
 		log.Debug("false")
-		return false
+		    false
 	}
 	isDir := f.IsDir()
 	log.Debugf("%t", isDir)
-	return isDir
+	       isDir
 }
 
-func (term *Terminal) ResolveSymlink(input string) (string, error) {
-	defer log.Trace(time.Now(), input)
+      (term *Terminal) ResolveSymlink(input       ) (       ,      ) {
+	 log.Trace(time.Now(), input)
 	link, err := filepath.EvalSymlinks(input)
-	if err != nil {
+	   err != nil {
 		log.Error(err)
-		return "", err
+		        "", err
 	}
 	log.Debug(link)
-	return link, nil
+	      link, nil
 }
 
-func (term *Terminal) FileContent(file string) string {
-	defer log.Trace(time.Now(), file)
-	if !filepath.IsAbs(file) {
+      (term *Terminal) FileContent(file       )        {
+	  log.Trace(time.Now(), file)
+	 !filepath.IsAbs(file) {
 		file = filepath.Join(term.Pwd(), file)
 	}
 
 	content, err := os.ReadFile(file)
-	if err != nil {
+	   err != nil {
 		log.Error(err)
-		return ""
+		      ""
 	}
 
-	fileContent := string(content)
+	fileContent :=       (content)
 	log.Debug(fileContent)
 
-	return fileContent
+	        fileContent
 }
 
-func (term *Terminal) LsDir(input string) []fs.DirEntry {
-	defer log.Trace(time.Now(), input)
+     (term *Terminal) LsDir(input      ) []fs.DirEntry {
+	     log.Trace(time.Now(), input)
 
 	entries, err := os.ReadDir(input)
-	if err != nil {
+	   err != nil {
 		log.Error(err)
-		return nil
+		         nil
 	}
 
 	log.Debugf("%v", entries)
-	return entries
+	        entries
 }
 
-func (term *Terminal) User() string {
-	defer log.Trace(time.Now())
+     (term *Terminal) User()       {
+	     log.Trace(time.Now())
 	user := os.Getenv("USER")
-	if user == "" {
+	   user == "" {
 		user = os.Getenv("USERNAME")
 	}
 	log.Debug(user)
-	return user
+	        user
 }
 
-func (term *Terminal) Host() (string, error) {
-	defer log.Trace(time.Now())
-	if len(term.host) != 0 {
-		return term.host, nil
+     (term *Terminal) Host() (       ,     ) {
+	      log.Trace(time.Now())
+	   len(term.host) != 0 {
+		       term.host, nil
 	}
 
 	hostName, err := os.Hostname()
-	if err != nil {
+	   err != nil {
 		log.Error(err)
-		return "", err
+		        "", err
 	}
 
 	hostName = cleanHostName(hostName)
 	log.Debug(hostName)
 	term.host = hostName
 
-	return hostName, nil
+	        hostName, nil
 }
 
-func (term *Terminal) GOOS() string {
-	defer log.Trace(time.Now())
-	return runtime.GOOS
+      (term *Terminal) GOOS()       {
+	      log.Trace(time.Now())
+	       runtime.GOOS
 }
 
-func (term *Terminal) Home() string {
-	return path.Home()
+       (term *Terminal) Home()      {
+	       path.Home()
 }
 
-func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
-	defer log.Trace(time.Now(), append([]string{command}, args...)...)
-
-	if cacheCommand, ok := term.cmdCache.Get(command); ok {
+     (term *Terminal) RunCommand(command        , args ...       ) (       ,      ) {
+	     log.Trace(time.Now(), append([]     {command}, args...)...)
+	   cacheCommand, ok := term.cmdCache.Get(command); ok {
 		command = cacheCommand
 	}
 
 	output, err := cmd.Run(command, args...)
-	if err != nil {
+	   err != nil {
 		log.Error(err)
 	}
 
 	log.Debug(output)
-	return output, err
+	        output, err
 }
 
-func (term *Terminal) RunShellCommand(shell, command string) string {
-	defer log.Trace(time.Now())
+     (term *Terminal) RunShellCommand(shell, command string) string {
+	      log.Trace(time.Now())
 
-	if out, err := term.RunCommand(shell, "-c", command); err == nil {
-		return out
+	   out, err := term.RunCommand(shell, "-c", command); err == nil {
+		      out
 	}
 
-	return ""
+	       ""
 }
 
-func (term *Terminal) CommandPath(command string) string {
-	defer log.Trace(time.Now(), command)
-	if cmdPath, ok := term.cmdCache.Get(command); ok {
+     (term *Terminal) CommandPath(command string) string {
+	      log.Trace(time.Now(), command)
+	   cmdPath, ok := term.cmdCache.Get(command); ok {
 		log.Debug(cmdPath)
-		return cmdPath
+		        cmdPath
 	}
 
 	cmdPath, err := exec.LookPath(command)
-	if err == nil {
+	   err == nil {
 		term.cmdCache.Set(command, cmdPath)
 		log.Debug(cmdPath)
-		return cmdPath
+		        cmdPath
 	}
 
 	log.Error(err)
-	return ""
+	       ""
 }
 
-func (term *Terminal) HasCommand(command string) bool {
-	defer log.Trace(time.Now(), command)
+      (term *Terminal) HasCommand(command string) bool {
+	      log.Trace(time.Now(), command)
 
-	if cmdPath := term.CommandPath(command); cmdPath != "" {
-		return true
+	   cmdPath := term.CommandPath(command); cmdPath != "" {
+		     true
 	}
 
 	return false

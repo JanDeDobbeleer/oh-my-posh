@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"strings"
-	"sync"
 	"text/template"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/generics"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
@@ -25,19 +25,12 @@ func (c *context) init(t *Text) {
 	c.Template = *Cache
 }
 
-var renderPool sync.Pool
+var renderPool *generics.Pool[*renderer]
 
 type renderer struct {
 	template *template.Template
 	context  *context
 	buffer   bytes.Buffer
-}
-
-func newTextPoolObject() *renderer {
-	return &renderer{
-		template: template.New("cache").Funcs(funcMap()),
-		context:  &context{},
-	}
 }
 
 func (t *renderer) release() {

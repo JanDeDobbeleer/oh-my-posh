@@ -25,7 +25,7 @@ func (t *Text) Render() (string, error) {
 
 	t.patchTemplate()
 
-	renderer := renderPool.Get().(*renderer)
+	renderer := renderPool.Get()
 	defer renderer.release()
 
 	return renderer.execute(t)

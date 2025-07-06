@@ -1,9 +1,13 @@
 package template
 
-import "unicode/utf8"
+import (
+	"unicode/utf8"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/generics"
+)
 
 func trunc(length any, s string) string {
-	c, err := toInt(length)
+	c, err := generics.ToInt[int](length)
 	if err != nil {
 		panic(err)
 	}
@@ -21,7 +25,7 @@ func trunc(length any, s string) string {
 }
 
 func TruncE(length any, s string) string {
-	c, err := toInt(length)
+	c, err := generics.ToInt[int](length)
 	if err != nil {
 		panic(err)
 	}

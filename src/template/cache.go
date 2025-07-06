@@ -18,7 +18,7 @@ var (
 	Cache *cache.Template
 )
 
-func loadCache(vars maps.Simple, aliases *maps.Config) {
+func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	if !env.Flags().IsPrimary {
 		// Load the template cache for a non-primary prompt before rendering any templates.
 		if OK := restoreCache(env); OK {
@@ -33,7 +33,7 @@ func loadCache(vars maps.Simple, aliases *maps.Config) {
 	Cache.ShellVersion = env.Flags().ShellVersion
 	Cache.Code, _ = env.StatusCodes()
 	Cache.WSL = env.IsWsl()
-	Cache.Segments = maps.NewConcurrent()
+	Cache.Segments = maps.NewConcurrent[any]()
 	Cache.PromptCount = env.Flags().PromptCount
 	Cache.Var = make(map[string]any)
 	Cache.Jobs = env.Flags().JobCount

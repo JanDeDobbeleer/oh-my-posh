@@ -396,7 +396,7 @@ func TestSegmentContains(t *testing.T) {
 	}
 
 	env := &mock.Environment{}
-	segments := maps.NewConcurrent()
+	segments := maps.NewConcurrent[any]()
 	segments.Set("Git", "foo")
 	env.On("Shell").Return("foo")
 

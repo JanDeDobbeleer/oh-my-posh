@@ -5,7 +5,7 @@ import (
 )
 
 type Command struct {
-	Commands *maps.Concurrent
+	Commands *maps.Concurrent[string]
 }
 
 func (c *Command) Set(command, path string) {
@@ -17,6 +17,6 @@ func (c *Command) Get(command string) (string, bool) {
 	if !found {
 		return "", false
 	}
-	command, ok := cacheCommand.(string)
-	return command, ok
+
+	return cacheCommand, true
 }

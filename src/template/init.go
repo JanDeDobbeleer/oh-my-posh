@@ -26,7 +26,7 @@ var (
 	knownFields sync.Map
 )
 
-func Init(environment runtime.Environment, vars maps.Simple, aliases *maps.Config) {
+func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.Config) {
 	env = environment
 	shell = env.Shell()
 	knownFields = sync.Map{}

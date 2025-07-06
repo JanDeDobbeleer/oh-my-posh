@@ -5,9 +5,9 @@ import (
 )
 
 type Template struct {
-	SegmentsCache maps.Simple
-	Segments      *maps.Concurrent
-	Var           maps.Simple
+	SegmentsCache maps.Simple[any]
+	Segments      *maps.Concurrent[any]
+	Var           maps.Simple[any]
 	PWD           string
 	Folder        string
 	PSWD          string

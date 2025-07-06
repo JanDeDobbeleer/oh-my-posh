@@ -7,49 +7,59 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-func NewConcurrent() *Concurrent {
-	var cm Concurrent
-	return &cm
+func NewConcurrent[V any]() *Concurrent[V] {
+	return &Concurrent[V]{}
 }
 
-type Concurrent sync.Map
-
-func (cm *Concurrent) Set(key string, value any) {
-	(*sync.Map)(cm).Store(key, value)
+// Concurrent is a generic type-safe concurrent map
+type Concurrent[V any] struct {
+	m sync.Map
 }
 
-func (cm *Concurrent) Get(key string) (any, bool) {
-	return (*sync.Map)(cm).Load(key)
+func (cm *Concurrent[V]) Set(key string, value V) {
+	cm.m.Store(key, value)
 }
 
-func (cm *Concurrent) MustGet(key string) any {
-	val, OK := (*sync.Map)(cm).Load(key)
-	if !OK {
-		log.Error(fmt.Errorf("key %s not found", key))
+func (cm *Concurrent[V]) Get(key string) (V, bool) {
+	val, ok := cm.m.Load(key)
+	if !ok {
+		var zero V
+		return zero, false
 	}
 
-	return val
+	return val.(V), true
 }
 
-func (cm *Concurrent) Delete(key string) {
-	(*sync.Map)(cm).Delete(key)
+func (cm *Concurrent[V]) MustGet(key string) V {
+	val, ok := cm.m.Load(key)
+	if !ok {
+		log.Error(fmt.Errorf("key %s not found", key))
+		var zero V
+		return zero
+	}
+
+	return val.(V)
 }
 
-func (cm *Concurrent) Contains(key string) bool {
-	_, ok := (*sync.Map)(cm).Load(key)
+func (cm *Concurrent[V]) Delete(key string) {
+	cm.m.Delete(key)
+}
+
+func (cm *Concurrent[V]) Contains(key string) bool {
+	_, ok := cm.m.Load(key)
 	return ok
 }
 
-func (cm *Concurrent) ToSimple() Simple {
-	list := make(map[string]any)
-	(*sync.Map)(cm).Range(func(key, value any) bool {
-		if value == nil {
-			return false
-		}
+func (cm *Concurrent[V]) ToSimple() Simple[V] {
+	result := make(Simple[V])
 
-		list[key.(string)] = value
+	cm.m.Range(func(key, value any) bool {
+		if value == nil {
+			return true
+		}
+		result[key.(string)] = value.(V)
 		return true
 	})
 
-	return list
+	return result
 }

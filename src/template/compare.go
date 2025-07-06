@@ -1,12 +1,9 @@
 package template
 
-import (
-	"errors"
-	"strconv"
-)
+import "github.com/jandedobbeleer/oh-my-posh/src/generics"
 
 func toIntOrZero(e any) int {
-	if value, err := toInt(e); err == nil {
+	if value, err := generics.ToInt[int](e); err == nil {
 		return value
 	}
 
@@ -14,31 +11,12 @@ func toIntOrZero(e any) int {
 }
 
 func toInt(integer any) (int, error) {
-	switch seconds := integer.(type) {
-	default:
-		return 0, errors.New("invalid integer type")
-	case string:
-		return strconv.Atoi(seconds)
-	case int:
-		return seconds, nil
-	case int64:
-		return int(seconds), nil
-	case uint64:
-		return int(seconds), nil
-	case float64:
-		return int(seconds), nil
-	}
+	return generics.ToInt[int](integer)
 }
 
 func toFloat64(e any) float64 {
-	if val, OK := e.(float64); OK {
+	if val, err := generics.ToFloat[float64](e); err == nil {
 		return val
-	}
-	if val, OK := e.(int); OK {
-		return float64(val)
-	}
-	if val, OK := e.(int64); OK {
-		return float64(val)
 	}
 	return 0
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/generics"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
@@ -96,15 +97,16 @@ func (m Map) GetFloat64(property Property, defaultValue float64) float64 {
 		return defaultValue
 	}
 
+	// Direct type conversions for common numeric types
 	switch v := val.(type) {
+	case float64:
+		return v
 	case int:
 		return float64(v)
 	case int64:
 		return float64(v)
 	case uint64:
 		return float64(v)
-	case float64:
-		return v
 	default:
 		return defaultValue
 	}
@@ -116,6 +118,7 @@ func (m Map) GetInt(property Property, defaultValue int) int {
 		return defaultValue
 	}
 
+	// Direct type conversions for common numeric types
 	switch v := val.(type) {
 	case int:
 		return v
@@ -124,11 +127,7 @@ func (m Map) GetInt(property Property, defaultValue int) int {
 	case uint64:
 		return int(v)
 	case float64:
-		intValue, ok := val.(float64)
-		if !ok {
-			return defaultValue
-		}
-		return int(intValue)
+		return int(v)
 	default:
 		return defaultValue
 	}
@@ -166,18 +165,7 @@ func (m Map) Get(property Property, defaultValue any) any {
 }
 
 func ParseStringArray(param any) []string {
-	switch v := param.(type) {
-	default:
-		return []string{}
-	case []any:
-		list := make([]string, len(v))
-		for i, v := range v {
-			list[i] = fmt.Sprint(v)
-		}
-		return list
-	case []string:
-		return v
-	}
+	return generics.ParseStringSlice(param)
 }
 
 func parseKeyValueArray(param any) map[string]string {

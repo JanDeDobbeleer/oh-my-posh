@@ -17,20 +17,24 @@ type Segment struct {
 	Index int    `json:"Index"`
 }
 
-func (s *base) Text() string {
-	return s.Segment.Text
+func (b *base) Text() string {
+	return b.Segment.Text
 }
 
-func (s *base) SetText(text string) {
-	s.Segment.Text = text
+func (b *base) SetText(text string) {
+	b.Segment.Text = text
 }
 
-func (s *base) SetIndex(index int) {
-	s.Segment.Index = index
+func (b *base) SetIndex(index int) {
+	b.Segment.Index = index
 }
 
-func (s *base) Init(props properties.Properties, env runtime.Environment) {
-	s.Segment = &Segment{}
-	s.props = props
-	s.env = env
+func (b *base) Init(props properties.Properties, env runtime.Environment) {
+	b.Segment = &Segment{}
+	b.props = props
+	b.env = env
+}
+
+func (b *base) CacheKey() (string, bool) {
+	return "", false
 }

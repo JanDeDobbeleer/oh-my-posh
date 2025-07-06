@@ -19,6 +19,7 @@ type SegmentWriter interface {
 	SetIndex(index int)
 	Text() string
 	Init(props properties.Properties, env runtime.Environment)
+	CacheKey() (string, bool)
 }
 
 const (

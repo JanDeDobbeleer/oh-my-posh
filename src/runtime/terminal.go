@@ -34,7 +34,7 @@ type Terminal struct {
 	cmdCache     *cache.Command
 	deviceCache  *cache.File
 	sessionCache *cache.File
-	lsDirMap     maps.Concurrent
+	lsDirMap     *maps.Concurrent[[]fs.DirEntry]
 	cwd          string
 	host         string
 	networks     []*Connection
@@ -48,6 +48,8 @@ func (term *Terminal) Init(flags *Flags) {
 	if term.CmdFlags == nil {
 		term.CmdFlags = &Flags{}
 	}
+
+	term.lsDirMap = maps.NewConcurrent[[]fs.DirEntry]()
 
 	initCache := func(fileName string) *cache.File {
 		fileCache := &cache.File{}
@@ -65,7 +67,7 @@ func (term *Terminal) Init(flags *Flags) {
 	term.setPwd()
 
 	term.cmdCache = &cache.Command{
-		Commands: maps.NewConcurrent(),
+		Commands: maps.NewConcurrent[string](),
 	}
 }
 
@@ -124,7 +126,7 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 	var dirEntries []fs.DirEntry
 
 	if files, OK := term.lsDirMap.Get(dir); OK {
-		dirEntries, _ = files.([]fs.DirEntry)
+		dirEntries = files
 	}
 
 	if len(dirEntries) == 0 {

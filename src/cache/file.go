@@ -10,7 +10,7 @@ import (
 )
 
 type File struct {
-	cache         *maps.Concurrent
+	cache         *maps.Concurrent[any]
 	cacheFilePath string
 	dirty         bool
 	persist       bool
@@ -19,7 +19,7 @@ type File struct {
 func (fc *File) Init(cacheFilePath string, persist bool) {
 	defer log.Trace(time.Now(), cacheFilePath)
 
-	fc.cache = maps.NewConcurrent()
+	fc.cache = maps.NewConcurrent[any]()
 	fc.cacheFilePath = cacheFilePath
 	fc.persist = persist
 

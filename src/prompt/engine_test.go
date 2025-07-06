@@ -96,7 +96,7 @@ func TestPrintPWD(t *testing.T) {
 
 		template.Cache = &cache.Template{
 			Shell:    tc.Shell,
-			Segments: maps.NewConcurrent(),
+			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
 
@@ -131,7 +131,7 @@ func engineRender() {
 	defer env.Close()
 
 	template.Cache = &cache.Template{
-		Segments: maps.NewConcurrent(),
+		Segments: maps.NewConcurrent[any](),
 	}
 	template.Init(env, nil, nil)
 
@@ -199,7 +199,7 @@ func TestGetTitle(t *testing.T) {
 			HostName: "MyHost",
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
-			Segments: maps.NewConcurrent(),
+			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
 
@@ -261,7 +261,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			UserName: "MyUser",
 			Root:     tc.Root,
 			HostName: "",
-			Segments: maps.NewConcurrent(),
+			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
 
@@ -373,7 +373,7 @@ func TestShouldFill(t *testing.T) {
 
 		template.Cache = &cache.Template{
 			Shell:    shell.GENERIC,
-			Segments: maps.NewConcurrent(),
+			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
 

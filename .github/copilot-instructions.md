@@ -16,6 +16,7 @@
 - Validate inputs at the beginning of functions
 - Use guard clauses to handle edge cases early
 - Do not use if/else but prefer switch statements for multiple conditions, or early returns for simple conditions
+- Never create exported functions which aren't used in the codebase.
 
 ### Testing
 
@@ -33,5 +34,6 @@
 - Wrap all primitives and Strings in structs or types.
 - First class collections.
 - One dot per line.
+- Start error strings with a lowercase letter.
 
 

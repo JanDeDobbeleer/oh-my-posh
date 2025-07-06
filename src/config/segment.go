@@ -300,16 +300,12 @@ func (segment *Segment) cacheKey() string {
 }
 
 func (segment *Segment) folderKey() string {
-	ctx, ok := segment.writer.(cache.Context)
+	key, ok := segment.writer.CacheKey()
 	if !ok {
 		return segment.env.Pwd()
 	}
 
-	if key, OK := ctx.CacheKey(); OK {
-		return key
-	}
-
-	return segment.env.Pwd()
+	return key
 }
 
 func (segment *Segment) string() string {

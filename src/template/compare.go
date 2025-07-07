@@ -3,7 +3,7 @@ package template
 import "github.com/jandedobbeleer/oh-my-posh/src/generics"
 
 func toIntOrZero(e any) int {
-	if value, err := generics.ToInt[int](e); err == nil {
+	if value, err := generics.TryParseInt[int](e); err == nil {
 		return value
 	}
 
@@ -11,11 +11,11 @@ func toIntOrZero(e any) int {
 }
 
 func toInt(integer any) (int, error) {
-	return generics.ToInt[int](integer)
+	return generics.TryParseInt[int](integer)
 }
 
 func toFloat64(e any) float64 {
-	if val, err := generics.ToFloat[float64](e); err == nil {
+	if val, err := generics.TryParseFloat[float64](e); err == nil {
 		return val
 	}
 	return 0

@@ -8,6 +8,7 @@ import (
 
 	"github.com/gookit/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/generics"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -232,11 +233,6 @@ var (
 	}
 )
 
-const (
-	foregroundIndex = 0
-	backgroundIndex = 1
-)
-
 func (d *Defaults) ToAnsi(ansiColor Ansi, isBackground bool) Ansi {
 	if len(ansiColor) == 0 {
 		return emptyColor
@@ -301,11 +297,7 @@ func (d *Defaults) Resolve(colorString Ansi) (Ansi, error) {
 // known ANSI color name.
 func getAnsiColorFromName(colorValue Ansi, isBackground bool) (Ansi, error) {
 	if colorCodes, found := ansiColorCodes[colorValue]; found {
-		if isBackground {
-			return colorCodes[backgroundIndex], nil
-		}
-
-		return colorCodes[foregroundIndex], nil
+		return colorCodes[generics.ToInt[int](isBackground)], nil
 	}
 
 	return "", fmt.Errorf("color name %s does not exist", colorValue)
@@ -355,10 +347,12 @@ func (c *Cached) ToAnsi(colorString Ansi, isBackground bool) Ansi {
 	if c.colorCache == nil {
 		c.colorCache = make(map[cachedColorKey]Ansi)
 	}
+
 	key := cachedColorKey{colorString, isBackground}
 	if ansiColor, hit := c.colorCache[key]; hit {
 		return ansiColor
 	}
+
 	ansiColor := c.ansiColors.ToAnsi(colorString, isBackground)
 	c.colorCache[key] = ansiColor
 	return ansiColor

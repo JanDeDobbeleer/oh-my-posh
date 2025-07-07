@@ -32,6 +32,11 @@ const (
 func Load(configFile, sh string, migrate bool) (*Config, string) {
 	defer log.Trace(time.Now())
 
+	if len(configFile) == 0 {
+		log.Debug("no config file specified, using default")
+		return Default(false), defaultHash
+	}
+
 	configFile, err := filePath(configFile)
 	if err != nil {
 		log.Error(err)

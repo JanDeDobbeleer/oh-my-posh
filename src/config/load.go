@@ -32,15 +32,11 @@ const (
 func Load(configFile, sh string, migrate bool) (*Config, string) {
 	defer log.Trace(time.Now())
 
-	if len(configFile) == 0 {
-		log.Debug("no config file specified, using default")
-		return Default(false), defaultHash
-	}
-
 	configFile, err := filePath(configFile)
 	if err != nil {
 		log.Error(err)
-		return Default(true), defaultHash
+		warning := !errors.Is(err, ErrNoConfig)
+		return Default(warning), defaultHash
 	}
 
 	cfg, hash := readConfig(configFile)
@@ -91,6 +87,9 @@ func Load(configFile, sh string, migrate bool) (*Config, string) {
 	return cfg, hash
 }
 
+// custom no config error
+var ErrNoConfig = errors.New("no config file specified")
+
 func filePath(config string) (string, error) {
 	defer log.Trace(time.Now())
 
@@ -105,7 +104,7 @@ func filePath(config string) (string, error) {
 	}
 
 	if !hasConfig {
-		return "", errors.New("no config file specified")
+		return "", ErrNoConfig
 	}
 
 	if strings.HasPrefix(config, "https://") {

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
@@ -193,6 +195,12 @@ func Default(warning bool) *Config {
 				},
 				Tips: []string{"az"},
 			},
+		},
+		Upgrade: &upgrade.Config{
+			Source:        upgrade.CDN,
+			DisplayNotice: true,
+			Auto:          true,
+			Interval:      cache.ONEWEEK,
 		},
 	}
 

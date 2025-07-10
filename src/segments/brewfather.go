@@ -189,17 +189,17 @@ func (bf *Brewfather) getBatchStatusIcon(batchStatus string) string {
 
 func (bf *Brewfather) getResult() (*Batch, error) {
 	userID := bf.props.GetString(BFUserID, "")
-	if len(userID) == 0 {
+	if userID == "" {
 		return nil, errors.New("missing Brewfather user id (user_id)")
 	}
 
 	apiKey := bf.props.GetString(APIKey, "")
-	if len(apiKey) == 0 {
+	if apiKey == "" {
 		return nil, errors.New("missing Brewfather api key (api_key)")
 	}
 
 	batchID := bf.props.GetString(BFBatchID, "")
-	if len(batchID) == 0 {
+	if batchID == "" {
 		return nil, errors.New("missing Brewfather batch id (batch_id)")
 	}
 

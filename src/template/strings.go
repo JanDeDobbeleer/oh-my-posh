@@ -7,7 +7,7 @@ import (
 )
 
 func trunc(length any, s string) string {
-	c, err := generics.ToInt[int](length)
+	c, err := generics.TryParseInt[int](length)
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +25,7 @@ func trunc(length any, s string) string {
 }
 
 func TruncE(length any, s string) string {
-	c, err := generics.ToInt[int](length)
+	c, err := generics.TryParseInt[int](length)
 	if err != nil {
 		panic(err)
 	}

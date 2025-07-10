@@ -67,7 +67,7 @@ func TestCdsSegment(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 
-		if len(tc.DisplayMode) == 0 {
+		if tc.DisplayMode == "" {
 			tc.DisplayMode = DisplayModeContext
 		}
 		props[DisplayMode] = tc.DisplayMode

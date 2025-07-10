@@ -84,7 +84,7 @@ func TestPrintPWD(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		if len(tc.Pwd) == 0 {
+		if tc.Pwd == "" {
 			tc.Pwd = "pwd"
 		}
 

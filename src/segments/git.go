@@ -316,14 +316,14 @@ func (g *Git) Kraken() string {
 		root = strings.Split(root, "\n")[0]
 	}
 
-	if len(g.RawUpstreamURL) == 0 {
-		if len(g.Upstream) == 0 {
+	if g.RawUpstreamURL == "" {
+		if g.Upstream == "" {
 			g.Upstream = "origin"
 		}
 		g.RawUpstreamURL = g.getRemoteURL()
 	}
 
-	if len(g.Hash) == 0 {
+	if g.Hash == "" {
 		g.Hash = g.getGitCommandOutput("rev-parse", "HEAD")
 	}
 
@@ -387,7 +387,7 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 	}
 
 	configData := g.fileContent(g.mainSCMDir, "config")
-	if len(configData) == 0 {
+	if configData == "" {
 		log.Debug("Git config file not found, not a bare repo")
 		return false
 	}
@@ -582,7 +582,7 @@ func (g *Git) cleanUpstreamURL(url string) string {
 
 func (g *Git) getUpstreamIcon() string {
 	g.RawUpstreamURL = g.getRemoteURL()
-	if len(g.RawUpstreamURL) == 0 {
+	if g.RawUpstreamURL == "" {
 		return ""
 	}
 
@@ -702,7 +702,7 @@ func (g *Git) setGitStatus() {
 }
 
 func (g *Git) getGitCommandOutput(args ...string) string {
-	if len(g.command) == 0 {
+	if g.command == "" {
 		return ""
 	}
 
@@ -874,7 +874,7 @@ func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 
 func (g *Git) setHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
-	if len(g.ShortHash) == 0 {
+	if g.ShortHash == "" {
 		HEADRef := g.fileContent(g.mainSCMDir, "HEAD")
 		g.Detached = !strings.HasPrefix(HEADRef, "ref:")
 		if after, ok := strings.CutPrefix(HEADRef, BRANCHPREFIX); ok {
@@ -900,7 +900,7 @@ func (g *Git) setHEADName() {
 	}
 
 	// fallback to commit
-	if len(g.ShortHash) == 0 {
+	if g.ShortHash == "" {
 		g.HEAD = g.props.GetString(NoCommitsIcon, "\uF594 ")
 		return
 	}
@@ -932,7 +932,7 @@ func (g *Git) WorktreeCount() int {
 
 func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
-	if len(upstream) == 0 {
+	if upstream == "" {
 		upstream = "origin"
 	}
 
@@ -992,7 +992,7 @@ func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string
 	if val := repoModes[g.repoRootDir]; len(val) != 0 {
 		mode = val
 	}
-	if len(mode) == 0 {
+	if mode == "" {
 		return ""
 	}
 	return fmt.Sprintf("%s%s", gitSwitch, mode)

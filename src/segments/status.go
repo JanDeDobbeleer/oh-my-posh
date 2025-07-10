@@ -50,7 +50,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 		s.Error = true
 	}
 
-	if len(pipeStatus) == 0 {
+	if pipeStatus == "" {
 		s.template.Context = s
 		if text, err := s.template.Render(); err == nil {
 			return text

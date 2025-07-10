@@ -37,14 +37,14 @@ func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 			case ParentForeground:
 				keyword = parentColor.Foreground
 			default:
-				if len(keyword) == 0 {
+				if keyword == "" {
 					return Transparent
 				}
 				return keyword
 			}
 		}
 
-		if len(keyword) == 0 {
+		if keyword == "" {
 			return Transparent
 		}
 

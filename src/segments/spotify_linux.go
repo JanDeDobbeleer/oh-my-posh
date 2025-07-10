@@ -17,7 +17,7 @@ func (s *Spotify) Enabled() bool {
 	// Standard Linux implementation
 	running := s.runLinuxScriptCommand(" string:PlaybackStatus | awk -F '\"' '/string/ {print tolower($2)}'")
 
-	if strings.HasPrefix(running, "Error") || len(running) == 0 {
+	if strings.HasPrefix(running, "Error") || running == "" {
 		return false
 	}
 
@@ -55,7 +55,7 @@ func (s *Spotify) enabledWsl() bool {
 	}
 
 	title := strings.TrimSpace(windowName)
-	if len(title) == 0 || !strings.Contains(title, " - ") {
+	if title == "" || !strings.Contains(title, " - ") {
 		s.Status = stopped
 		return false
 	}
@@ -69,7 +69,7 @@ func (s *Spotify) enabledWsl() bool {
 	s.Artist = strings.TrimSpace(infos[0])
 	s.Track = strings.TrimSpace(infos[1])
 
-	if len(s.Artist) == 0 || len(s.Track) == 0 {
+	if s.Artist == "" || s.Track == "" {
 		s.Status = stopped
 		return false
 	}

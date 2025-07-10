@@ -111,7 +111,7 @@ func TestTerraform(t *testing.T) {
 		tf.Init(props, env)
 
 		template := tc.Template
-		if len(template) == 0 {
+		if template == "" {
 			template = tf.Template()
 		}
 		assert.Equal(t, tc.ExpectedEnabled, tf.Enabled(), tc.Case)

@@ -46,7 +46,7 @@ func (a *Aws) Enabled() bool {
 		return true
 	}
 
-	if len(a.Profile) == 0 && len(a.Region) != 0 && displayDefaultUser {
+	if a.Profile == "" && len(a.Region) != 0 && displayDefaultUser {
 		a.Profile = defaultUser
 		return true
 	}
@@ -61,7 +61,7 @@ func (a *Aws) Enabled() bool {
 
 func (a *Aws) getConfigFileInfo() {
 	configPath := a.env.Getenv("AWS_CONFIG_FILE")
-	if len(configPath) == 0 {
+	if configPath == "" {
 		configPath = fmt.Sprintf("%s/.aws/config", a.env.Home())
 	}
 
@@ -88,13 +88,13 @@ func (a *Aws) getConfigFileInfo() {
 		}
 	}
 
-	if len(a.Profile) == 0 && len(a.Region) != 0 {
+	if a.Profile == "" && len(a.Region) != 0 {
 		a.Profile = defaultUser
 	}
 }
 
 func (a *Aws) RegionAlias() string {
-	if len(a.Region) == 0 {
+	if a.Region == "" {
 		return ""
 	}
 

@@ -19,7 +19,7 @@ func Home() string {
 	// fallback to older implemenations on Windows
 	home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 
-	if len(home) == 0 {
+	if home == "" {
 		home = os.Getenv("USERPROFILE")
 	}
 

@@ -264,7 +264,7 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		target = values["TFM"]
 	}
 
-	if len(target) == 0 {
+	if target == "" {
 		log.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
 	}
 
@@ -286,7 +286,7 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 		}
 	}
 
-	if len(content) == 0 {
+	if content == "" {
 		return nil
 	}
 

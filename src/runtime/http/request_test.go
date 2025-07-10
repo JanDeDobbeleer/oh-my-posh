@@ -68,7 +68,7 @@ func TestRequestResult(t *testing.T) {
 
 		got, err := Do[*data](request, url, nil)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)
-		if len(tc.ExpectedErrorMessage) == 0 {
+		if tc.ExpectedErrorMessage == "" {
 			assert.Nil(t, err, tc.Case)
 		} else {
 			assert.Equal(t, tc.ExpectedErrorMessage, err.Error(), tc.Case)

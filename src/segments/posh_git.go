@@ -47,7 +47,7 @@ func (s *GitStatus) parsePoshGitStatus(p *poshGitStatus) {
 
 func (g *Git) hasPoshGitStatus() bool {
 	envStatus := g.env.Getenv(poshGitEnv)
-	if len(envStatus) == 0 {
+	if envStatus == "" {
 		log.Error(fmt.Errorf("%s environment variable not set, do you have the posh-git module installed?", poshGitEnv))
 		return false
 	}
@@ -68,7 +68,7 @@ func (g *Git) hasPoshGitStatus() bool {
 	g.stashCount = posh.StashCount
 	g.Ahead = posh.AheadBy
 	g.Behind = posh.BehindBy
-	g.UpstreamGone = len(posh.Upstream) == 0
+	g.UpstreamGone = posh.Upstream == ""
 	g.Upstream = posh.Upstream
 
 	g.setBranchStatus()

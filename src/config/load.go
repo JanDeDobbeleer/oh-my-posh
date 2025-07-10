@@ -142,7 +142,7 @@ func filePath(config string) (string, error) {
 func readConfig(configFile string) (*Config, string) {
 	defer log.Trace(time.Now())
 
-	if len(configFile) == 0 {
+	if configFile == "" {
 		log.Debug("no config file specified, using default")
 		return Default(false), defaultHash
 	}
@@ -187,7 +187,7 @@ func readConfig(configFile string) (*Config, string) {
 	hasher.Write(data)
 	hash := strconv.FormatUint(hasher.Sum64(), 16)
 
-	if len(cfg.Extends) == 0 {
+	if cfg.Extends == "" {
 		return &cfg, hash
 	}
 

@@ -118,7 +118,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 	}
 
 	path, err := env.RunCommand("nu", "-c", "$nu.data-dir | path join vendor autoload")
-	if err != nil || len(path) == 0 {
+	if err != nil || path == "" {
 		log.Error(err)
 		return "", err
 	}

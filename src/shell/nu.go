@@ -25,7 +25,7 @@ func (f Feature) Nu() Code {
 }
 
 func quoteNuStr(str string) string {
-	if len(str) == 0 {
+	if str == "" {
 		return "''"
 	}
 

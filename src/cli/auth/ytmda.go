@@ -65,7 +65,7 @@ func (y *Ytmda) Authenticate() {
 		return
 	}
 
-	if len(token) == 0 {
+	if token == "" {
 		y.err = fmt.Errorf("received empty token")
 		setState(done)
 		return

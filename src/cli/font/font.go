@@ -62,13 +62,13 @@ func newFont(fileName string, data []byte) (*Font, error) {
 	font.Name = font.Metadata[sfnt.NameFull]
 	font.Family = font.Metadata[sfnt.NamePreferredFamily]
 
-	if len(font.Family) == 0 {
+	if font.Family == "" {
 		if v, ok := font.Metadata[sfnt.NameFontFamily]; ok {
 			font.Family = v
 		}
 	}
 
-	if len(font.Name) == 0 {
+	if font.Name == "" {
 		font.Name = fileName
 	}
 

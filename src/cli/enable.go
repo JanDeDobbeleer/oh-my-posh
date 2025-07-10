@@ -52,7 +52,7 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	env.Init(flags)
 	defer env.Close()
 
-	if len(feature) == 0 {
+	if feature == "" {
 		_ = cmd.Help()
 		return
 	}

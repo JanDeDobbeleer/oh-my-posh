@@ -49,8 +49,10 @@ When using oh-my-posh inside the WSL, make sure to follow the [Linux][linux] ins
 Open a PowerShell prompt and run the following command:
 
 ```powershell
-winget install JanDeDobbeleer.OhMyPosh -s winget
+winget install JanDeDobbeleer.OhMyPosh --source winget --scope user --force
 ```
+
+Replace `--scope user` with `--scope machine` if you want to install it for all users on the machine.
 
 </TabItem>
 <TabItem value="manual">
@@ -122,8 +124,10 @@ Exclusions should be added with the full path to the executable, you can get it 
 Open a PowerShell prompt and run the following command:
 
 ```powershell
-winget upgrade JanDeDobbeleer.OhMyPosh -s winget
+winget upgrade JanDeDobbeleer.OhMyPosh --source winget --scope user --force
 ```
+
+Replace `--scope user` with `--scope machine` if you want to upgrade it for all users on the machine.
 
 </TabItem>
 <TabItem value="manual">

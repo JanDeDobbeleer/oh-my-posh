@@ -109,7 +109,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("Platform").Return(tc.Platform)
 
 		var whoAmIErr error
-		if len(tc.WhoAmI) == 0 {
+		if tc.WhoAmI == "" {
 			whoAmIErr = fmt.Errorf("who am i error")
 		}
 

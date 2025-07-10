@@ -23,7 +23,7 @@ func (f Feature) Xonsh() Code {
 }
 
 func quotePythonStr(str string) string {
-	if len(str) == 0 {
+	if str == "" {
 		return "''"
 	}
 

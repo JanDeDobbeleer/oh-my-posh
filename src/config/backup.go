@@ -79,7 +79,7 @@ func (cfg *Config) BackupAndMigrate() {
 
 func (cfg *Config) Write(format string) {
 	content := cfg.Export(format)
-	if len(content) == 0 {
+	if content == "" {
 		// we are unable to perform the export
 		return
 	}

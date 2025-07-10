@@ -47,7 +47,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 	},
 	PersistentPreRun: func(_ *cobra.Command, _ []string) {
 		traceEnv := os.Getenv("POSH_TRACE")
-		if len(traceEnv) == 0 {
+		if traceEnv == "" {
 			return
 		}
 

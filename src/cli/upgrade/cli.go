@@ -153,7 +153,7 @@ func Run(cfg *Config) error {
 }
 
 func IsMajorUpgrade(current, latest string) bool {
-	if len(current) == 0 {
+	if current == "" {
 		return false
 	}
 

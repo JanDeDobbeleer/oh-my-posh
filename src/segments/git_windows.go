@@ -4,7 +4,7 @@ import "path/filepath"
 
 // resolveGitPath resolves path relative to base.
 func resolveGitPath(base, path string) string {
-	if len(path) == 0 {
+	if path == "" {
 		return base
 	}
 

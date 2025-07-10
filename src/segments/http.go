@@ -25,7 +25,7 @@ func (h *HTTP) Template() string {
 
 func (h *HTTP) Enabled() bool {
 	url := h.props.GetString(URL, "")
-	if len(url) == 0 {
+	if url == "" {
 		return false
 	}
 

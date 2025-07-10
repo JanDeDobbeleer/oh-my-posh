@@ -18,8 +18,9 @@ var (
 	author string
 	// cursorPadding int
 	// rPromptOffset int
-	bgColor     string
-	outputImage string
+	bgColor           string
+	outputImage       string
+	colorSettingsFile string
 )
 
 // imageCmd represents the image command
@@ -34,6 +35,7 @@ You can tweak the output by using additional flags:
 - cursor-padding: the padding of the prompt cursor
 - rprompt-offset: the offset of the right prompt
 - background-color: the background color of the image
+- color-settings: JSON file with color overrides for ANSI color names
 
 Example usage:
 
@@ -45,9 +47,9 @@ Exports the config to an image file called myconfig.png in the current working d
 
 Exports the config to an image file ~/mytheme.png.
 
-> oh-my-posh config export image --config ~/myconfig.omp.json --author "John Doe"
+> oh-my-posh config export image --config ~/myconfig.omp.json --settings ~/.image.settings.json
 
-Exports the config to an image file using customized output options.`,
+Exports the config to an image file using customized output settings.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
 		cfg, _ := config.Load(configFlag, shell.GENERIC, false)
@@ -81,19 +83,31 @@ Exports the config to an image file using customized output options.`,
 			Env:    env,
 		}
 
+		settings, err := image.LoadSettings(colorSettingsFile)
+		if err != nil {
+			settings = &image.Settings{
+				Colors:          image.NewColors(),
+				Author:          author,
+				BackgroundColor: bgColor,
+			}
+		}
+
+		if settings.Colors == nil {
+			settings.Colors = image.NewColors()
+		}
+
 		primaryPrompt := eng.Primary()
 
 		imageCreator := &image.Renderer{
 			AnsiString: primaryPrompt,
-			Author:     author,
-			BgColor:    bgColor,
+			Settings:   *settings,
 		}
 
 		if outputImage != "" {
 			imageCreator.Path = cleanOutputPath(outputImage)
 		}
 
-		err := imageCreator.Init(env)
+		err = imageCreator.Init(env)
 		if err != nil {
 			fmt.Print(err.Error())
 			return
@@ -110,5 +124,11 @@ func init() {
 	imageCmd.Flags().StringVar(&author, "author", "", "config author")
 	imageCmd.Flags().StringVar(&bgColor, "background-color", "", "image background color")
 	imageCmd.Flags().StringVarP(&outputImage, "output", "o", "", "image file (.png) to export to")
+	imageCmd.Flags().StringVar(&colorSettingsFile, "settings", "", "color settings file to override ANSI color codes and metadata")
+
+	// deprecated flags
+	_ = imageCmd.Flags().MarkHidden("author")
+	_ = imageCmd.Flags().MarkHidden("background-color")
+
 	exportCmd.AddCommand(imageCmd)
 }

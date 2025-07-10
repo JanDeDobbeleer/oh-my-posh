@@ -118,7 +118,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 
-		if len(tc.Shell) == 0 {
+		if tc.Shell == "" {
 			tc.Shell = shell.PWSH
 		}
 		env.On("Shell").Return(tc.Shell)
@@ -166,7 +166,7 @@ type testFullAndFolderPathCase struct {
 func TestFullAndFolderPath(t *testing.T) {
 	for _, tc := range testFullAndFolderPathCases {
 		env := new(mock.Environment)
-		if len(tc.PathSeparator) == 0 {
+		if tc.PathSeparator == "" {
 			tc.PathSeparator = "/"
 		}
 		env.On("PathSeparator").Return(tc.PathSeparator)
@@ -184,7 +184,7 @@ func TestFullAndFolderPath(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.GENERIC)
-		if len(tc.Template) == 0 {
+		if tc.Template == "" {
 			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
 		}
 		props := properties.Map{
@@ -223,13 +223,13 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		env.On("Home").Return(homeDir)
 		env.On("Pwd").Return(tc.Pwd)
 
-		if len(tc.GOOS) == 0 {
+		if tc.GOOS == "" {
 			tc.GOOS = runtime.DARWIN
 		}
 
 		env.On("GOOS").Return(tc.GOOS)
 
-		if len(tc.PathSeparator) == 0 {
+		if tc.PathSeparator == "" {
 			tc.PathSeparator = "/"
 		}
 
@@ -403,7 +403,7 @@ func TestNormalizePath(t *testing.T) {
 		env.On("Home").Return(tc.HomeDir)
 		env.On("GOOS").Return(tc.GOOS)
 
-		if len(tc.PathSeparator) == 0 {
+		if tc.PathSeparator == "" {
 			tc.PathSeparator = "/"
 		}
 

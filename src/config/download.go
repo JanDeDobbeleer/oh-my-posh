@@ -51,7 +51,7 @@ func Download(cachePath, url string) (string, error) {
 		return "", err
 	}
 
-	if len(configPath) == 0 {
+	if configPath == "" {
 		configPath = formatConfigPath(url, response.Header.Get("Etag"), cachePath)
 		log.Debug("config path not set yet, using ", configPath)
 	}
@@ -96,7 +96,7 @@ func shouldUpdate(cachePath, url string) (string, bool) {
 	defer response.Body.Close()
 
 	etag := response.Header.Get("Etag")
-	if len(etag) == 0 {
+	if etag == "" {
 		log.Debug("no etag found, updating config")
 		return "", true
 	}

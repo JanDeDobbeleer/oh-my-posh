@@ -85,7 +85,7 @@ func (p *Python) loadContext() {
 	var venv string
 	for _, venvVar := range venvVars {
 		venv = p.env.Getenv(venvVar)
-		if len(venv) == 0 {
+		if venv == "" {
 			continue
 		}
 
@@ -129,16 +129,16 @@ func (p *Python) pyenvVersion() (string, error) {
 	// Is our Python executable at $PYENV_ROOT/bin/python ?
 	// Should p.env expose command paths?
 	cmdPath := p.env.CommandPath("python")
-	if len(cmdPath) == 0 {
+	if cmdPath == "" {
 		cmdPath = p.env.CommandPath("python3")
 	}
 
-	if len(cmdPath) == 0 {
+	if cmdPath == "" {
 		return "", errors.New("no python executable found")
 	}
 
 	pyEnvRoot := p.env.Getenv("PYENV_ROOT")
-	if len(pyEnvRoot) == 0 || !strings.HasPrefix(cmdPath, pyEnvRoot) {
+	if pyEnvRoot == "" || !strings.HasPrefix(cmdPath, pyEnvRoot) {
 		return "", fmt.Errorf("executable at %s is not a pyenv shim", cmdPath)
 	}
 
@@ -149,7 +149,7 @@ func (p *Python) pyenvVersion() (string, error) {
 	}
 
 	versionString := strings.Split(cmdOutput, ":")[0]
-	if len(versionString) == 0 {
+	if versionString == "" {
 		return "", errors.New("no pyenv version-name found")
 	}
 
@@ -176,11 +176,11 @@ func (p *Python) pyenvVersion() (string, error) {
 
 func (p *Python) pyvenvCfgPrompt() string {
 	cmdPath := p.env.CommandPath("python")
-	if len(cmdPath) == 0 {
+	if cmdPath == "" {
 		cmdPath = p.env.CommandPath("python3")
 	}
 
-	if len(cmdPath) == 0 {
+	if cmdPath == "" {
 		return ""
 	}
 

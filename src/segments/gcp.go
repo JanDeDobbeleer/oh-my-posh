@@ -39,7 +39,7 @@ func (g *Gcp) Enabled() bool {
 	cfgPath := path.Join(cfgDir, "configurations", "config_"+cfgName)
 	cfg := g.env.FileContent(cfgPath)
 
-	if len(cfg) == 0 {
+	if cfg == "" {
 		log.Error(errors.New("config file is empty"))
 		return false
 	}
@@ -65,7 +65,7 @@ func (g *Gcp) getActiveConfig(cfgDir string) (string, error) {
 
 	ap := path.Join(cfgDir, "active_config")
 	activeCfg = g.env.FileContent(ap)
-	if len(activeCfg) == 0 {
+	if activeCfg == "" {
 		return "", errors.New(GCPNOACTIVECONFIG)
 	}
 

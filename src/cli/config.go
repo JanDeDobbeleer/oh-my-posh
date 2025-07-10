@@ -27,6 +27,7 @@ You can export, migrate or edit the config (via the editor specified in the envi
 			_ = cmd.Help()
 			return
 		}
+
 		switch args[0] {
 		case "edit":
 			exitcode = editFileWithEditor(os.Getenv("POSH_THEME"))

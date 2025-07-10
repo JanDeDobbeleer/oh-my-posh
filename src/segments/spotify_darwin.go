@@ -28,7 +28,7 @@ func (s *Spotify) Enabled() bool {
 	batchedOutput := s.runAppleScriptCommand(batchedCommand)
 
 	outputStrings := strings.SplitN(batchedOutput, "|", 4)
-	if outputStrings[0] == "false" || len(outputStrings[0]) == 0 || len(outputStrings) != 4 {
+	if outputStrings[0] == "false" || outputStrings[0] == "" || len(outputStrings) != 4 {
 		s.Status = stopped
 		return false
 	}
@@ -36,7 +36,7 @@ func (s *Spotify) Enabled() bool {
 	s.Status = outputStrings[1]
 
 	// Check if running
-	if len(s.Status) == 0 {
+	if s.Status == "" {
 		s.Status = stopped
 		return false
 	}

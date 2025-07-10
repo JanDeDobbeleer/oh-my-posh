@@ -32,7 +32,7 @@ func (d Duration) Seconds() int {
 }
 
 func (d Duration) IsEmpty() bool {
-	return len(d) == 0
+	return d == ""
 }
 
 func ToDuration(seconds int) Duration {

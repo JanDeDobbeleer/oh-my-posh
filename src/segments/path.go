@@ -910,7 +910,14 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 		return fmt.Sprintf("<%s>%s</>", cycle[0], folderSeparator)
 	}
 
-	sb := new(strings.Builder)
+	// Pre-calculate total capacity needed
+	totalLen := len(root)
+	for _, el := range elements {
+		totalLen += len(el) + 20 // estimate for color codes
+	}
+
+	sb := strings.Builder{}
+	sb.Grow(totalLen)
 
 	formattedRoot := fmt.Sprintf(leftFormat, root)
 	sb.WriteString(colorizeElement(formattedRoot))

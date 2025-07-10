@@ -46,7 +46,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 		defer env.Close()
 
 		cfg.MigrateGlyphs = true
-		if len(format) == 0 {
+		if format == "" {
 			format = cfg.Format
 		}
 

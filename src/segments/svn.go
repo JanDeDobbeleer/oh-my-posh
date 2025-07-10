@@ -115,12 +115,12 @@ func (s *Svn) setSvnStatus() {
 	}
 
 	changes := s.getSvnCommandOutput("status")
-	if len(changes) == 0 {
+	if changes == "" {
 		return
 	}
 	lines := strings.SplitSeq(changes, "\n")
 	for line := range lines {
-		if len(line) == 0 {
+		if line == "" {
 			continue
 		}
 		// element is the element from someSlice for where we are

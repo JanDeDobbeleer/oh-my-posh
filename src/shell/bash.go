@@ -57,7 +57,7 @@ bleopt prompt_ps1_final='$(
 }
 
 func QuotePosixStr(str string) string {
-	if len(str) == 0 {
+	if str == "" {
 		return "''"
 	}
 

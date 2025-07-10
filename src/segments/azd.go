@@ -34,7 +34,7 @@ func (t *Azd) Enabled() bool {
 		}
 	}
 
-	if len(parentFilePath) == 0 {
+	if parentFilePath == "" {
 		log.Debug("no .azure folder found in parent directories")
 		return false
 	}
@@ -56,7 +56,7 @@ func (t *Azd) Enabled() bool {
 }
 
 func (t *Azd) TryReadConfigJSON(file string) bool {
-	if len(file) == 0 {
+	if file == "" {
 		return false
 	}
 

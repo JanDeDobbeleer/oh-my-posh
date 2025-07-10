@@ -70,7 +70,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Cache path:").Green().Bold().Plain(), cache.Path()))
 
 	cfg := e.Env.Flags().Config
-	if len(cfg) == 0 {
+	if cfg == "" {
 		cfg = "no --config set, using default built-in configuration"
 	}
 

@@ -51,7 +51,7 @@ func (f *Fossil) Enabled() bool {
 	lines := strings.SplitSeq(output, "\n")
 
 	for line := range lines {
-		if len(line) == 0 {
+		if line == "" {
 			continue
 		}
 		context := strings.SplitN(line, " ", 2)

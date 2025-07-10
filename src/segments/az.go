@@ -113,7 +113,7 @@ func (a *Az) getCLISubscription() bool {
 		return false
 	}
 	content := a.FileContentWithoutBom(cfg)
-	if len(content) == 0 {
+	if content == "" {
 		return false
 	}
 	var config AzureConfig
@@ -132,7 +132,7 @@ func (a *Az) getCLISubscription() bool {
 
 func (a *Az) getModuleSubscription() bool {
 	envSubscription := a.env.Getenv(azureEnv)
-	if len(envSubscription) == 0 {
+	if envSubscription == "" {
 		return false
 	}
 

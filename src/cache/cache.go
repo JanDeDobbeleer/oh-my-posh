@@ -26,7 +26,7 @@ const (
 
 func SessionFileName() (string, error) {
 	sessionID := os.Getenv("POSH_SESSION_ID")
-	if len(sessionID) == 0 {
+	if sessionID == "" {
 		return "", fmt.Errorf("environment variable POSH_SESSION_ID is not set")
 	}
 

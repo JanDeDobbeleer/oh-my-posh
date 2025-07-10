@@ -50,7 +50,7 @@ func TestGitversion(t *testing.T) {
 		gitversion := &GitVersion{}
 		gitversion.Init(properties.Map{}, env)
 
-		if len(tc.Template) == 0 {
+		if tc.Template == "" {
 			tc.Template = gitversion.Template()
 		}
 

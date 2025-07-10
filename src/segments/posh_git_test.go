@@ -200,7 +200,7 @@ func TestPoshGitSegment(t *testing.T) {
 		}
 		g.Init(props, env)
 
-		if len(tc.Template) == 0 {
+		if tc.Template == "" {
 			tc.Template = g.Template()
 		}
 

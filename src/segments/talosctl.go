@@ -32,7 +32,7 @@ func (t *TalosCTL) Enabled() bool {
 		return false
 	}
 
-	if len(t.Context) == 0 {
+	if t.Context == "" {
 		return false
 	}
 
@@ -42,7 +42,7 @@ func (t *TalosCTL) Enabled() bool {
 func (t *TalosCTL) getActiveConfig(cfgDir string) (string, error) {
 	activeConfigFile := filepath.Join(cfgDir, "config")
 	activeConfigData := t.env.FileContent(activeConfigFile)
-	if len(activeConfigData) == 0 {
+	if activeConfigData == "" {
 		return "", errors.New("no active config found")
 	}
 	return activeConfigData, nil

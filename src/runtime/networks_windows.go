@@ -177,7 +177,7 @@ func (term *Terminal) getConnections() []*Connection {
 		}
 
 		// skip connections which aren't relevant
-		if len(connectionType) == 0 {
+		if connectionType == "" {
 			continue
 		}
 

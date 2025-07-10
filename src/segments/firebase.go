@@ -59,7 +59,7 @@ func (f *Firebase) Enabled() bool {
 func (f *Firebase) getActiveConfig(cfgDir string) (string, error) {
 	activeConfigFile := filepath.Join(cfgDir, "firebase-tools.json")
 	activeConfigData := f.env.FileContent(activeConfigFile)
-	if len(activeConfigData) == 0 {
+	if activeConfigData == "" {
 		return "", errors.New(FIREBASENOACTIVECONFIG)
 	}
 	return activeConfigData, nil

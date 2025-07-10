@@ -139,7 +139,7 @@ func (pt *Path) Template() string {
 
 func (pt *Path) Enabled() bool {
 	pt.setPaths()
-	if len(pt.pwd) == 0 {
+	if pt.pwd == "" {
 		return false
 	}
 
@@ -173,7 +173,7 @@ func (pt *Path) setPaths() {
 	pt.cygPath = displayCygpath()
 	pt.windowsPath = pt.env.GOOS() == runtime.WINDOWS && !pt.cygPath
 
-	if len(pt.pathSeparator) == 0 {
+	if pt.pathSeparator == "" {
 		pt.pathSeparator = path.Separator()
 	}
 
@@ -182,7 +182,7 @@ func (pt *Path) setPaths() {
 		pt.pwd = pt.env.Flags().PSWD
 	}
 
-	if len(pt.pwd) == 0 {
+	if pt.pwd == "" {
 		return
 	}
 
@@ -192,7 +192,7 @@ func (pt *Path) setPaths() {
 }
 
 func (pt *Path) Parent() string {
-	if len(pt.pwd) == 0 {
+	if pt.pwd == "" {
 		return ""
 	}
 
@@ -234,7 +234,7 @@ func (pt *Path) Format(inputPath string) string {
 }
 
 func (pt *Path) setStyle() {
-	if len(pt.relative) == 0 {
+	if pt.relative == "" {
 		root := pt.root
 
 		// Only append a separator to a non-filesystem PSDrive root or a Windows drive root.
@@ -288,7 +288,7 @@ func (pt *Path) setStyle() {
 
 func (pt *Path) getMaxWidth() int {
 	width := pt.props.GetString(MaxWidth, "")
-	if len(width) == 0 {
+	if width == "" {
 		return 0
 	}
 
@@ -314,10 +314,10 @@ func (pt *Path) getMaxWidth() int {
 
 func (pt *Path) getFolderSeparator() string {
 	separatorTemplate := pt.props.GetString(FolderSeparatorTemplate, "")
-	if len(separatorTemplate) == 0 {
+	if separatorTemplate == "" {
 		separator := pt.props.GetString(FolderSeparatorIcon, pt.pathSeparator)
 		// if empty, use the default separator
-		if len(separator) == 0 {
+		if separator == "" {
 			return pt.pathSeparator
 		}
 
@@ -334,7 +334,7 @@ func (pt *Path) getFolderSeparator() string {
 		log.Error(err)
 	}
 
-	if len(text) == 0 {
+	if text == "" {
 		return pt.pathSeparator
 	}
 
@@ -625,7 +625,7 @@ func (pt *Path) getFolderPath() string {
 
 func (pt *Path) join(root, relative string) string {
 	// this is a full replacement of the parent
-	if len(root) == 0 {
+	if root == "" {
 		return relative
 	}
 
@@ -654,7 +654,7 @@ func (pt *Path) setMappedLocations() {
 	// mapped locations can override predefined locations
 	keyValues := pt.props.GetKeyValueMap(MappedLocations, make(map[string]string))
 	for key, value := range keyValues {
-		if len(key) == 0 {
+		if key == "" {
 			continue
 		}
 
@@ -668,7 +668,7 @@ func (pt *Path) setMappedLocations() {
 			log.Error(err)
 		}
 
-		if len(location) == 0 {
+		if location == "" {
 			continue
 		}
 
@@ -689,7 +689,7 @@ func (pt *Path) setMappedLocations() {
 
 func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 	root, relative := pt.parsePath(inputPath)
-	if len(relative) == 0 {
+	if relative == "" {
 		pt.RootDir = true
 	}
 
@@ -762,12 +762,12 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 		overflow := relative[len(keyRelative):]
 
 		// exactly match the full path
-		if len(overflow) == 0 {
+		if overflow == "" {
 			return value, ""
 		}
 
 		// only match the root
-		if len(keyRelative) == 0 {
+		if keyRelative == "" {
 			return value, strings.Trim(escape(relative), pt.pathSeparator)
 		}
 
@@ -784,7 +784,7 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 func (pt *Path) parsePath(inputPath string) (string, string) {
 	var root, relative string
 
-	if len(inputPath) == 0 {
+	if inputPath == "" {
 		return root, relative
 	}
 
@@ -848,7 +848,7 @@ func (pt *Path) getPaths() (string, Folders) {
 }
 
 func (pt *Path) endWithSeparator(inputPath string) bool {
-	if len(inputPath) == 0 {
+	if inputPath == "" {
 		return false
 	}
 
@@ -887,7 +887,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	rightFormat := pt.props.GetString(RightFormat, edgeFormat)
 
 	colorizeElement := func(element string) string {
-		if skipColorize || len(element) == 0 {
+		if skipColorize || element == "" {
 			return element
 		}
 
@@ -920,7 +920,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	}
 
 	for i, element := range elements {
-		if len(element) == 0 {
+		if element == "" {
 			continue
 		}
 
@@ -942,7 +942,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 func (pt *Path) splitPath() Folders {
 	folders := Folders{}
 
-	if len(pt.relative) == 0 {
+	if pt.relative == "" {
 		return folders
 	}
 

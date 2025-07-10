@@ -66,7 +66,7 @@ func TestUpgrade(t *testing.T) {
 		cache := &cache_.Cache{}
 
 		env.On("Cache").Return(cache)
-		if len(tc.CachedVersion) == 0 {
+		if tc.CachedVersion == "" {
 			tc.CachedVersion = tc.CurrentVersion
 		}
 

@@ -71,16 +71,16 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 	response := new(owmDataResponse)
 
 	apikey := properties.OneOf(d.props, d.env.Getenv(OWMAPIKey), APIKey, "apiKey")
-	if len(apikey) == 0 {
+	if apikey == "" {
 		apikey = "."
 	}
 
-	if len(apikey) == 0 {
+	if apikey == "" {
 		return nil, errors.New("no api key found")
 	}
 
 	location := d.props.GetString(Location, d.env.Getenv(OWMLocationKey))
-	if len(location) == 0 {
+	if location == "" {
 		return nil, errors.New("no location found")
 	}
 

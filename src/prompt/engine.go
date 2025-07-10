@@ -248,14 +248,11 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 			return true
 		}
 
-		var prompt string
-
 		if space > 0 {
-			prompt += strings.Repeat(" ", space)
+			e.write(strings.Repeat(" ", space))
 		}
 
-		prompt += text
-		e.write(prompt)
+		e.write(text)
 	case config.RPrompt:
 		e.rprompt = text
 		e.rpromptLength = length

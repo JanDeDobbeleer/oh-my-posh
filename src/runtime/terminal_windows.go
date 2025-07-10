@@ -222,6 +222,7 @@ func (term *Terminal) Connection(connectionType ConnectionType) (*Connection, er
 		if len(networks) == 0 {
 			return nil, errors.New("no connections found")
 		}
+
 		term.networks = networks
 	}
 

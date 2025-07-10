@@ -108,7 +108,7 @@ func (n *Node) loadContext() {
 
 func (n *Node) matchesVersionFile() (string, bool) {
 	fileVersion := n.env.FileContent(".nvmrc")
-	if len(fileVersion) == 0 {
+	if fileVersion == "" {
 		return "", true
 	}
 

@@ -37,7 +37,7 @@ func (f Feature) Pwsh() Code {
 }
 
 func quotePwshOrElvishStr(str string) string {
-	if len(str) == 0 {
+	if str == "" {
 		return "''"
 	}
 

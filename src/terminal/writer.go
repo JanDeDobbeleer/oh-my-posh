@@ -270,7 +270,7 @@ func StopProgress() string {
 }
 
 func Write(background, foreground color.Ansi, text string) {
-	if len(text) == 0 {
+	if text == "" {
 		return
 	}
 
@@ -604,11 +604,11 @@ func endColorOverride(position int) int {
 }
 
 func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
-	if len(background) == 0 {
+	if background == "" {
 		background = color.Background
 	}
 
-	if len(foreground) == 0 {
+	if foreground == "" {
 		foreground = color.Foreground
 	}
 
@@ -632,7 +632,7 @@ func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
 }
 
 func trimAnsi(text string) string {
-	if len(text) == 0 || !strings.Contains(text, "\x1b") {
+	if text == "" || !strings.Contains(text, "\x1b") {
 		return text
 	}
 	return regex.ReplaceAllString(AnsiRegex, text, "")

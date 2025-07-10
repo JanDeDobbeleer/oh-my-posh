@@ -68,15 +68,18 @@ This command is used to get the value of the following variables:
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
 			fmt.Print("#" + accent.Hex())
 		case "toggles":
-			togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)
 			var toggles []string
+
+			togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)
 			if len(togglesCache) != 0 {
 				toggles = strings.Split(togglesCache, ",")
 			}
+
 			if len(toggles) == 0 {
 				fmt.Println("No segments are toggled off")
 				return
 			}
+
 			fmt.Println("Toggled off segments:")
 			for _, toggle := range toggles {
 				fmt.Println("- " + toggle)
@@ -87,6 +90,7 @@ This command is used to get the value of the following variables:
 				fmt.Println("error getting terminal width:", err.Error())
 				return
 			}
+
 			fmt.Print(width)
 		case "uuid":
 			fmt.Print(uuid.NewString())

@@ -102,7 +102,7 @@ const (
 )
 
 func (s *scm) RelativeDir() string {
-	if len(s.Dir) == 0 {
+	if s.Dir == "" {
 		return ""
 	}
 
@@ -114,7 +114,7 @@ func (s *scm) RelativeDir() string {
 		log.Error(err)
 	}
 
-	if rel == "." || len(rel) == 0 {
+	if rel == "." || rel == "" {
 		log.Debug("scm.Dir is the same as the current working directory, returning empty string")
 		return ""
 	}
@@ -157,7 +157,7 @@ func (s *scm) formatBranch(branch string) string {
 	}
 
 	branchTemplate := s.props.GetString(BranchTemplate, "")
-	if len(branchTemplate) == 0 {
+	if branchTemplate == "" {
 		return branch
 	}
 

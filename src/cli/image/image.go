@@ -208,7 +208,7 @@ func (ir *Renderer) setOutputPath(config string) {
 		return
 	}
 
-	if len(config) == 0 {
+	if config == "" {
 		ir.Path = "prompt.png"
 		return
 	}
@@ -218,7 +218,7 @@ func (ir *Renderer) setOutputPath(config string) {
 	match := regex.FindNamedRegexMatch(`(\.?)(?P<STR>.*)\.(json|yaml|yml|toml|jsonc)`, config)
 	path := strings.TrimRight(match[str], ".omp")
 
-	if len(path) == 0 {
+	if path == "" {
 		path = "prompt"
 	}
 
@@ -431,7 +431,7 @@ func (ir *Renderer) additionalWidth() int {
 }
 
 func (ir *Renderer) lenWithoutANSI(text string) int {
-	if len(text) == 0 {
+	if text == "" {
 		return 0
 	}
 	// replace hyperlinks(file/http/https)

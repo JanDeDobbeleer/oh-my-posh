@@ -59,7 +59,7 @@ func (cfg *Config) FetchLatest() (string, error) {
 }
 
 func (cfg *Config) DownloadAsset(asset string) ([]byte, error) {
-	if len(cfg.Source) == 0 {
+	if cfg.Source == "" {
 		log.Debug("no source specified, defaulting to github")
 		cfg.Source = GitHub
 	}

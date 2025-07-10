@@ -9,7 +9,7 @@ import (
 
 func editFileWithEditor(file string) int {
 	editor := strings.TrimSpace(os.Getenv("EDITOR"))
-	if len(editor) == 0 {
+	if editor == "" {
 		fmt.Println(`no editor specified in the environment variable "EDITOR"`)
 		return 1
 	}

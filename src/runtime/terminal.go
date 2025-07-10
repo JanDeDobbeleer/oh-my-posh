@@ -552,7 +552,7 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 		normalized := strings.ReplaceAll(element, "\\\\", "/")
 		if strings.HasPrefix(normalized, "~") {
 			rem := normalized[1:]
-			if len(rem) == 0 || rem[0] == '/' {
+			if rem == "" || rem[0] == '/' {
 				normalized = home + rem
 			}
 		}

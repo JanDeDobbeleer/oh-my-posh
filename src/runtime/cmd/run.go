@@ -25,7 +25,7 @@ func Run(command string, args ...string) (string, error) {
 	}
 	// some silly commands return 0 and the output is in stderr instead of stdout
 	result := out.String()
-	if len(result) == 0 {
+	if result == "" {
 		result = err.String()
 	}
 	output := strings.TrimSpace(result)

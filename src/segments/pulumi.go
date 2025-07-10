@@ -75,7 +75,7 @@ func (p *Pulumi) Enabled() bool {
 }
 
 func (p *Pulumi) getPulumiStackName() {
-	if len(p.Name) == 0 || len(p.workspaceSHA1) == 0 {
+	if p.Name == "" || p.workspaceSHA1 == "" {
 		log.Debug("pulumi project name or workspace sha1 is empty")
 		return
 	}
@@ -112,7 +112,7 @@ func (p *Pulumi) getProjectName() error {
 		}
 	}
 
-	if len(kind) == 0 {
+	if kind == "" {
 		return fmt.Errorf("no pulumi spec file found")
 	}
 
@@ -155,7 +155,7 @@ func (p *Pulumi) sha1HexString(s string) string {
 }
 
 func (p *Pulumi) getPulumiAbout() {
-	if len(p.Stack) == 0 {
+	if p.Stack == "" {
 		log.Error(fmt.Errorf("pulumi stack name is empty, use `fetch_stack` property to enable stack fetching"))
 		return
 	}

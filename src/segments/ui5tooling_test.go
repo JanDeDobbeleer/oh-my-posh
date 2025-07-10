@@ -73,7 +73,7 @@ func TestUI5Tooling(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 
-		if len(tc.DisplayMode) == 0 {
+		if tc.DisplayMode == "" {
 			tc.DisplayMode = DisplayModeContext
 		}
 
@@ -88,7 +88,7 @@ func TestUI5Tooling(t *testing.T) {
 			t.Fail()
 		}
 
-		if len(tc.Template) == 0 {
+		if tc.Template == "" {
 			tc.Template = ui5tooling.Template()
 		}
 

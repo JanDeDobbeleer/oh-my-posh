@@ -33,7 +33,7 @@ func NewColors() Colors {
 }
 
 func LoadSettings(filePath string) (*Settings, error) {
-	if len(filePath) == 0 {
+	if filePath == "" {
 		return nil, fmt.Errorf("color settings file path is empty")
 	}
 
@@ -77,7 +77,7 @@ func (color HexColor) RGB() (*RGB, error) {
 }
 
 func (colors Colors) RGBFromColorName(colorName string) (*RGB, error) {
-	if colors == nil || len(colorName) == 0 {
+	if colors == nil || colorName == "" {
 		return nil, fmt.Errorf("colors map or colorName is empty")
 	}
 

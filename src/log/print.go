@@ -97,7 +97,7 @@ func parseArgs(args ...string) Text {
 	}
 
 	// display empty return values as NO DATA
-	if len(args[1]) == 0 {
+	if args[1] == "" {
 		text := Text(" \u2192").Yellow()
 		text += Text(" NO DATA\n").Red().Plain()
 		return text

@@ -52,7 +52,7 @@ func (e *Engine) string() string {
 }
 
 func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
-	if rprompt && (len(e.rprompt) == 0) {
+	if rprompt && (e.rprompt == "") {
 		return 0, false
 	}
 
@@ -88,7 +88,7 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 
 func (e *Engine) pwd() {
 	// only print when relevant
-	if len(e.Config.PWD) == 0 {
+	if e.Config.PWD == "" {
 		return
 	}
 
@@ -109,7 +109,7 @@ func (e *Engine) pwd() {
 	}
 
 	pwdType, err := tmpl.Render()
-	if err != nil || len(pwdType) == 0 {
+	if err != nil || pwdType == "" {
 		return
 	}
 
@@ -150,7 +150,7 @@ func (e *Engine) isIterm() bool {
 }
 
 func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
-	if len(filler) == 0 {
+	if filler == "" {
 		return "", false
 	}
 
@@ -329,7 +329,7 @@ func (e *Engine) writeSeparator(final bool) {
 		e.adjustTrailingDiamondColorOverrides()
 	}
 
-	if isPreviousDiamond && isCurrentDiamond && len(e.activeSegment.LeadingDiamond) == 0 {
+	if isPreviousDiamond && isCurrentDiamond && e.activeSegment.LeadingDiamond == "" {
 		terminal.Write(color.Background, color.ParentBackground, e.previousActiveSegment.TrailingDiamond)
 		return
 	}
@@ -345,7 +345,7 @@ func (e *Engine) writeSeparator(final bool) {
 			return false
 		}
 
-		if isPowerline && len(e.activeSegment.LeadingPowerlineSymbol) == 0 {
+		if isPowerline && e.activeSegment.LeadingPowerlineSymbol == "" {
 			return false
 		}
 
@@ -374,7 +374,7 @@ func (e *Engine) writeSeparator(final bool) {
 	}
 
 	symbol := resolvePowerlineSymbol()
-	if len(symbol) == 0 {
+	if symbol == "" {
 		return
 	}
 
@@ -383,7 +383,7 @@ func (e *Engine) writeSeparator(final bool) {
 		bgColor = color.Transparent
 	}
 
-	if e.activeSegment.ResolveStyle() == config.Diamond && len(e.activeSegment.LeadingDiamond) == 0 {
+	if e.activeSegment.ResolveStyle() == config.Diamond && e.activeSegment.LeadingDiamond == "" {
 		bgColor = color.Background
 	}
 
@@ -400,11 +400,11 @@ func (e *Engine) getPowerlineColor() color.Ansi {
 		return color.Transparent
 	}
 
-	if e.previousActiveSegment.ResolveStyle() == config.Diamond && len(e.previousActiveSegment.TrailingDiamond) == 0 {
+	if e.previousActiveSegment.ResolveStyle() == config.Diamond && e.previousActiveSegment.TrailingDiamond == "" {
 		return e.previousActiveSegment.ResolveBackground()
 	}
 
-	if e.activeSegment.ResolveStyle() == config.Diamond && len(e.activeSegment.LeadingDiamond) == 0 {
+	if e.activeSegment.ResolveStyle() == config.Diamond && e.activeSegment.LeadingDiamond == "" {
 		return e.previousActiveSegment.ResolveBackground()
 	}
 
@@ -421,7 +421,7 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 	// this will still break when using parentBackground and parentForeground as keywords
 	// in a trailing diamond, but let's fix that when it happens as it requires either a rewrite
 	// of the logic for diamonds or storing grandparents as well like one happy family.
-	if e.previousActiveSegment == nil || len(e.previousActiveSegment.TrailingDiamond) == 0 {
+	if e.previousActiveSegment == nil || e.previousActiveSegment.TrailingDiamond == "" {
 		return
 	}
 

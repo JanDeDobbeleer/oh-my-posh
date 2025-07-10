@@ -84,7 +84,7 @@ func (c *CfTarget) getCFTargetCommandOutput() (string, error) {
 		return "", err
 	}
 
-	if len(output) == 0 {
+	if output == "" {
 		return "", errors.New("cf command output is empty")
 	}
 

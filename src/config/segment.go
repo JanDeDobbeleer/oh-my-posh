@@ -31,7 +31,7 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 	value, err := txtTemplate.Render()
 
 	// default to Plain
-	if err != nil || len(value) == 0 {
+	if err != nil || value == "" {
 		return Plain
 	}
 
@@ -84,7 +84,7 @@ func (segment *Segment) Name() string {
 	}
 
 	name := segment.Alias
-	if len(name) == 0 {
+	if name == "" {
 		name = c.Title(language.English).String(string(segment.Type))
 	}
 
@@ -221,7 +221,7 @@ func (segment *Segment) HasEmptyDiamondAtEnd() bool {
 		return false
 	}
 
-	return len(segment.TrailingDiamond) == 0
+	return segment.TrailingDiamond == ""
 }
 
 func (segment *Segment) hasCache() bool {
@@ -314,7 +314,7 @@ func (segment *Segment) string() string {
 		return result
 	}
 
-	if len(segment.Template) == 0 {
+	if segment.Template == "" {
 		segment.Template = segment.writer.Template()
 	}
 

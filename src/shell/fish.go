@@ -31,7 +31,7 @@ func (f Feature) Fish() Code {
 }
 
 func quoteFishStr(str string) string {
-	if len(str) == 0 {
+	if str == "" {
 		return "''"
 	}
 

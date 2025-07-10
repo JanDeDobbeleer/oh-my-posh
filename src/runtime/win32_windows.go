@@ -106,7 +106,7 @@ func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	// it returns 0(error occurred) instead of 1(success)
 	// In our case, title will equal "" or the title of the window anyway
 	err := enumWindows(cb, 0)
-	if len(title) == 0 {
+	if title == "" {
 		var message string
 		if err != nil {
 			message = err.Error()

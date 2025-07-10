@@ -136,7 +136,7 @@ func (l *language) Enabled() bool {
 
 	if !enabled {
 		// set default mode when not set
-		if len(l.displayMode) == 0 {
+		if l.displayMode == "" {
 			l.displayMode = l.props.GetString(DisplayMode, DisplayModeFiles)
 		}
 
@@ -269,7 +269,7 @@ func (l *language) runCommand(command *cmd) (string, error) {
 		return "", err
 	}
 
-	if len(versionStr) == 0 {
+	if versionStr == "" {
 		return "", errors.New("no version found")
 	}
 
@@ -292,7 +292,7 @@ func (l *language) inLanguageContext() bool {
 
 func (l *language) buildVersionURL() {
 	versionURLTemplate := l.props.GetString(properties.VersionURLTemplate, l.versionURLTemplate)
-	if len(versionURLTemplate) == 0 {
+	if versionURLTemplate == "" {
 		return
 	}
 

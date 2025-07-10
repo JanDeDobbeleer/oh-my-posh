@@ -34,7 +34,7 @@ Exports the config file "~/myconfig.omp.json" in TOML format and prints the resu
 Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		if len(output) == 0 && len(format) == 0 {
+		if output == "" && format == "" {
 			// usage error
 			fmt.Println("neither output path nor export format is specified")
 			exitcode = 2
@@ -69,14 +69,14 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			}
 		}
 
-		if len(output) == 0 {
+		if output == "" {
 			fmt.Print(cfg.Export(format))
 			return
 		}
 
 		cfg.Source = cleanOutputPath(output)
 
-		if len(format) == 0 {
+		if format == "" {
 			format = strings.TrimPrefix(filepath.Ext(output), ".")
 			if err := validateExportFormat(); err != nil {
 				return

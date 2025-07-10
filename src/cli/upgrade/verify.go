@@ -128,7 +128,7 @@ func validateChecksum(asset string, sha256sums, binary []byte) error {
 		break
 	}
 
-	if len(assetChecksum) == 0 {
+	if assetChecksum == "" {
 		log.Debug("failed to find checksum for asset")
 		return fmt.Errorf("failed to find checksum for asset")
 	}

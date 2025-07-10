@@ -186,7 +186,7 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 		return
 	}
 
-	if len(defaultColor) == 0 {
+	if defaultColor == "" {
 		return
 	}
 
@@ -234,7 +234,7 @@ var (
 )
 
 func (d *Defaults) ToAnsi(ansiColor Ansi, isBackground bool) Ansi {
-	if len(ansiColor) == 0 {
+	if ansiColor == "" {
 		return emptyColor
 	}
 

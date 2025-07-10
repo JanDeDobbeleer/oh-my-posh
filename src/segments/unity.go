@@ -28,7 +28,7 @@ func (u *Unity) Enabled() bool {
 		log.Error(err)
 		return false
 	}
-	if len(unityVersion) == 0 {
+	if unityVersion == "" {
 		return false
 	}
 	u.UnityVersion = unityVersion
@@ -65,7 +65,7 @@ func (u *Unity) GetUnityVersion() (string, error) {
 		}
 		version := strings.TrimPrefix(line, versionPrefix)
 		version = strings.TrimSpace(version)
-		if len(version) == 0 {
+		if version == "" {
 			return "", errors.New("empty m_EditorVersion")
 		}
 		fIndex := strings.Index(version, "f")

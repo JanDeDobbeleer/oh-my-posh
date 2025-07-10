@@ -92,7 +92,7 @@ func (d *Docker) fetchContext() bool {
 	// Return the current context if it is not empty and not `default`
 	for _, f := range d.configFiles() {
 		data := d.env.FileContent(f)
-		if len(data) == 0 {
+		if data == "" {
 			continue
 		}
 

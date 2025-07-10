@@ -30,7 +30,7 @@ func (f Feature) Cmd() Code {
 }
 
 func escapeLuaStr(str string) string {
-	if len(str) == 0 {
+	if str == "" {
 		return str
 	}
 	// We only replace a minimal set of special characters with corresponding escape sequences, without adding surrounding quotes.

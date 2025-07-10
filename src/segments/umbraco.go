@@ -41,7 +41,7 @@ func (u *Umbraco) Enabled() bool {
 		}
 	}
 
-	if len(location) == 0 {
+	if location == "" {
 		log.Debug("no umbraco folder found in parent directories")
 		return false
 	}
@@ -86,7 +86,7 @@ func (u *Umbraco) Template() string {
 
 func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
-	if len(configPath) == 0 {
+	if configPath == "" {
 		log.Debug("no configPath provided")
 		return false
 	}
@@ -122,7 +122,7 @@ func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 
 func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
-	if len(configPath) == 0 {
+	if configPath == "" {
 		log.Debug("no configPath provided")
 		return false
 	}
@@ -149,7 +149,7 @@ func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 			u.Modern = false
 			u.Version = appSetting.Value
 
-			if len(u.Version) == 0 {
+			if u.Version == "" {
 				u.Version = UNKNOWN
 			}
 

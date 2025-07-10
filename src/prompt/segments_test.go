@@ -31,14 +31,14 @@ func TestRenderBlock(t *testing.T) {
 	}
 
 	prompt, length := engine.writeBlockSegments(block)
-	assert.NotEmpty(t, prompt)
+	assert.Equal(t, "\x1b[44m\x1b[31mHello\x1b[0m\x1b[44m\x1b[31mWorld\x1b[0m", prompt)
 	assert.Equal(t, 10, length)
 }
 
 func TestCanRenderSegment(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Executed []string
+		Executed map[string]bool
 		Needs    []string
 		Expected bool
 	}{
@@ -54,8 +54,10 @@ func TestCanRenderSegment(t *testing.T) {
 		{
 			Case:     "Cross segment dependencies, available",
 			Expected: true,
-			Executed: []string{"Foo"},
-			Needs:    []string{"Foo"},
+			Executed: map[string]bool{
+				"Foo": true,
+			},
+			Needs: []string{"Foo"},
 		},
 	}
 	for _, c := range cases {

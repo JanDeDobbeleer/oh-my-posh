@@ -53,7 +53,7 @@ Exports the config to an image file using customized output settings.`,
 		flags := &runtime.Flags{
 			Config:        cfg.Source,
 			Shell:         shell.GENERIC,
-			TerminalWidth: 150,
+			TerminalWidth: 120,
 		}
 
 		env := &runtime.Terminal{}

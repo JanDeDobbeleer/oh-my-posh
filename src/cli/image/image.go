@@ -392,9 +392,10 @@ func (ir *Renderer) cleanContent() {
 	// cursor indication
 	saveCursorAnsi := "\x1b7"
 	if !strings.Contains(ir.AnsiString, saveCursorAnsi) {
-		ir.AnsiString += "_"
+		ir.AnsiString += ir.Cursor
 	}
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, saveCursorAnsi, "_")
+
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, saveCursorAnsi, ir.Cursor)
 
 	// add watermarks
 	ir.AnsiString += "\n\n\x1b[1mohmyposh.dev\x1b[22m"

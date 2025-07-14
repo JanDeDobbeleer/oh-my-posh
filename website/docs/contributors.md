@@ -452,6 +452,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/beaualbritton"><img src="https://avatars.githubusercontent.com/u/112587801?v=4?s=100" width="100px;" alt="beau albritton"/><br /><sub><b>beau albritton</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=beaualbritton" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://note-of-me.top"><img src="https://avatars.githubusercontent.com/u/29329988?v=4?s=100" width="100px;" alt="Cierra-Runis"/><br /><sub><b>Cierra-Runis</b></sub></a><br /><a href="#design-Cierra-Runis" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jasonm23"><img src="https://avatars.githubusercontent.com/u/71587?v=4?s=100" width="100px;" alt="Jason Milkins"/><br /><sub><b>Jason Milkins</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jasonm23" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

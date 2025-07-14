@@ -570,7 +570,7 @@ func (ir *Renderer) SavePNG() error {
 			dc.SetFontFace(ir.regular)
 		}
 
-		w, h := dc.MeasureString(str)
+		w, _ := dc.MeasureString(str)
 		// The gg library unfortunately returns a single character width for *all* glyphs in a font.
 		// So if we know the glyph to occupy n additional characters in width, allocate that area
 		// e.g. this will double the space for Nerd Fonts, but some could even be 3 or 4 wide
@@ -579,10 +579,15 @@ func (ir *Renderer) SavePNG() error {
 
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
-			// The background for a character needs love to align to the font we're using
-			// Not all fonts are rendered the same height or starting position,
-			// so we're shifting the background rectangles vertically to correct
-			dc.DrawRectangle(x, y-h+3, w, h+9)
+			// Use consistent line height for all background rectangles
+			fontLineHeight := ir.fontHeight() * ir.lineSpacing
+
+			// Center all characters (including powerline glyphs) within the line height
+			// Position background to align properly with text baseline and ensure consistent height
+			bgY := y - fontLineHeight*0.75 // Adjusted for better centering with text
+			bgHeight := fontLineHeight
+
+			dc.DrawRectangle(x, bgY, w, bgHeight)
 			dc.Fill()
 		}
 		if ir.foregroundColor != nil {
@@ -593,7 +598,7 @@ func (ir *Renderer) SavePNG() error {
 
 		if str == "\n" {
 			x = xOffset + paddingX
-			y += h * ir.lineSpacing
+			y += ir.fontHeight() * ir.lineSpacing // Use consistent line height instead of character height
 			continue
 		}
 

@@ -476,12 +476,12 @@ func (ir *Renderer) measureContent() (width, height float64) {
 }
 
 func (ir *Renderer) SavePNG() error {
-	var f = func(value float64) float64 { return ir.factor * value }
+	var scale = func(value float64) float64 { return ir.factor * value }
 
 	var (
-		corner   = f(6)
-		radius   = f(9)
-		distance = f(25)
+		corner   = scale(6)
+		radius   = scale(9)
+		distance = scale(25)
 	)
 
 	contentWidth, contentHeight := ir.measureContent()
@@ -498,7 +498,7 @@ func (ir *Renderer) SavePNG() error {
 
 	xOffset := marginX
 	yOffset := marginY
-	titleOffset := f(40)
+	titleOffset := scale(40)
 
 	width := contentWidth + 2*marginX + 2*paddingX
 	height := contentHeight + 2*marginY + 2*paddingY + titleOffset
@@ -537,11 +537,11 @@ func (ir *Renderer) SavePNG() error {
 
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)
 	dc.SetHexColor("#404040")
-	dc.SetLineWidth(f(1))
+	dc.SetLineWidth(scale(1))
 	dc.Stroke()
 
 	for i, color := range []string{red, yellow, green} {
-		dc.DrawCircle(xOffset+paddingX+float64(i)*distance+f(4), yOffset+paddingY+f(4), radius)
+		dc.DrawCircle(xOffset+paddingX+float64(i)*distance+scale(4), yOffset+paddingY+scale(4), radius)
 		dc.SetHexColor(color)
 		dc.Fill()
 	}
@@ -590,6 +590,7 @@ func (ir *Renderer) SavePNG() error {
 			dc.DrawRectangle(x, bgY, w, bgHeight)
 			dc.Fill()
 		}
+
 		if ir.foregroundColor != nil {
 			dc.SetRGB255(ir.foregroundColor.r, ir.foregroundColor.g, ir.foregroundColor.b)
 		} else {
@@ -605,14 +606,14 @@ func (ir *Renderer) SavePNG() error {
 		dc.DrawString(str, x, y)
 
 		if ir.style == underline {
-			dc.DrawLine(x, y+f(4), x+w, y+f(4))
-			dc.SetLineWidth(f(1))
+			dc.DrawLine(x, y+scale(4), x+w, y+scale(4))
+			dc.SetLineWidth(scale(1))
 			dc.Stroke()
 		}
 
 		if ir.style == overline {
-			dc.DrawLine(x, y-f(22), x+w, y-f(22))
-			dc.SetLineWidth(f(1))
+			dc.DrawLine(x, y-scale(22), x+w, y-scale(22))
+			dc.SetLineWidth(scale(1))
 			dc.Stroke()
 		}
 

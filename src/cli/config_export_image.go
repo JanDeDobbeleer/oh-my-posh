@@ -92,6 +92,10 @@ Exports the config to an image file using customized output settings.`,
 			settings.Colors = image.NewColors()
 		}
 
+		if settings.Cursor == "" {
+			settings.Cursor = "_"
+		}
+
 		primaryPrompt := eng.Primary()
 
 		imageCreator := &image.Renderer{

@@ -25,6 +25,7 @@ type Settings struct {
 	Author          string `json:"author"`
 	BackgroundColor string `json:"background_color"`
 	Fonts           *Fonts `json:"fonts"`
+	Cursor          string `json:"cursor,omitempty"`
 }
 
 type Colors map[string]HexColor

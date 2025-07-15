@@ -215,14 +215,14 @@ func readConfig(configFile string) (*Config, string) {
 func isTheme(config string) (string, bool) {
 	themes := map[string]string{
 		"1_shell":                  "1_shell.omp.json",
-		"M365Princess":             "M365Princess.omp.json",
+		"m365princess":             "M365Princess.omp.json",
 		"agnoster":                 "agnoster.omp.json",
 		"agnoster.minimal":         "agnoster.minimal.omp.json",
 		"agnosterplus":             "agnosterplus.omp.json",
 		"aliens":                   "aliens.omp.json",
 		"amro":                     "amro.omp.json",
 		"atomic":                   "atomic.omp.json",
-		"atomicBit":                "atomicBit.omp.json",
+		"atomicbit":                "atomicBit.omp.json",
 		"avit":                     "avit.omp.json",
 		"blue-owl":                 "blue-owl.omp.json",
 		"blueish":                  "blueish.omp.json",
@@ -340,6 +340,7 @@ func isTheme(config string) (string, bool) {
 		"zash":                     "zash.omp.json",
 	}
 
+	config = strings.ToLower(config)
 	if theme, ok := themes[config]; ok {
 		log.Debug("theme found:", config)
 		url := fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/tags/v%s/themes/%s", build.Version, theme)

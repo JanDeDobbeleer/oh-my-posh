@@ -6,7 +6,7 @@
     "start": "cross-env NODE_ENV=development docusaurus start --poll 1000",
     "build": "docusaurus build",
     "serve": "docusaurus serve",
-    "themes": "node export_themes.js",
+    "themes": "node export_themes.mjs",
     "clear": "docusaurus clear"
   },
   "dependencies": {

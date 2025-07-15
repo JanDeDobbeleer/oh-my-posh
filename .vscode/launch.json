@@ -193,7 +193,7 @@
       "request": "launch",
       "name": "Theme export",
       "cwd": "${workspaceFolder}/website",
-      "program": "${workspaceRoot}/website/export_themes.js",
+      "program": "${workspaceRoot}/website/export_themes.mjs",
       "console": "integratedTerminal"
     },
     {

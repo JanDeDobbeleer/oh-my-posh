@@ -58,7 +58,6 @@ var upgradeCmd = &cobra.Command{
 		fmt.Print(terminal.StartProgress())
 
 		cfg, _ := config.Load(configFlag, sh, false)
-		cfg.Upgrade.Cache = env.Cache()
 
 		defer func() {
 			fmt.Print(terminal.StopProgress())

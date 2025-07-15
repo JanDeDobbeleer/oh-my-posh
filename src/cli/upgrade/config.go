@@ -14,7 +14,6 @@ import (
 )
 
 type Config struct {
-	Cache         cache.Cache    `json:"-" toml:"-" yaml:"-"`
 	Source        Source         `json:"source" toml:"source" yaml:"source"`
 	Interval      cache.Duration `json:"interval" toml:"interval" yaml:"interval"`
 	Latest        string         `json:"-" toml:"-" yaml:"-"`

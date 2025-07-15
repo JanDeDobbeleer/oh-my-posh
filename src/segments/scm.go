@@ -102,20 +102,20 @@ const (
 )
 
 func (s *scm) RelativeDir() string {
-	if s.Dir == "" {
+	if s.repoRootDir == "" {
 		return ""
 	}
 
 	pwd := s.env.Pwd()
-	log.Debug("scm.Dir:", s.Dir, "pwd:", pwd)
+	log.Debug("repo root dir:", s.repoRootDir, "pwd:", pwd)
 
-	rel, err := filepath.Rel(s.Dir, pwd)
+	rel, err := filepath.Rel(s.repoRootDir, pwd)
 	if err != nil {
 		log.Error(err)
 	}
 
 	if rel == "." || rel == "" {
-		log.Debug("scm.Dir is the same as the current working directory, returning empty string")
+		log.Debug("repo root dir is the same as the current working directory, returning empty string")
 		return ""
 	}
 

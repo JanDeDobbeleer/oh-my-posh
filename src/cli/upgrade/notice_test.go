@@ -5,9 +5,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestCanUpgrade(t *testing.T) {
@@ -30,10 +28,6 @@ func TestCanUpgrade(t *testing.T) {
 
 	for _, tc := range cases {
 		build.Version = tc.CurrentVersion
-		c := &cache_.Cache{}
-		c.On("Get", CACHEKEY).Return("", tc.Cache)
-		c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
-		ugc.Cache = c
 
 		if len(tc.Installer) > 0 {
 			os.Setenv("POSH_INSTALLER", tc.Installer)

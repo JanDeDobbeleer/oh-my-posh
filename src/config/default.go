@@ -197,10 +197,8 @@ func Default(warning bool) *Config {
 			},
 		},
 		Upgrade: &upgrade.Config{
-			Source:        upgrade.CDN,
-			DisplayNotice: true,
-			Auto:          true,
-			Interval:      cache.ONEWEEK,
+			Source:   upgrade.CDN,
+			Interval: cache.ONEWEEK,
 		},
 	}
 

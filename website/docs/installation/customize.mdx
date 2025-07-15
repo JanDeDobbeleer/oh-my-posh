@@ -10,15 +10,20 @@ import TabItem from "@theme/TabItem";
 The standard initialization sets Oh My Posh' default, built-in theme.
 
 To set a new configugration or theme you need to change the `--config` option of the `oh-my-posh init <shell>`
-line in your `profile` or `.<shell>rc` script (see [prompt][prompt]) and point it to the location of a
-predefined [theme][themes] or custom configuration.
+line in your `profile` or `.<shell>rc` script (see [prompt][prompt]).
 
-There are two possible values the `--config` flag can handle:
+These are the three possible values the `--config` flag can handle:
+
+- a pointer to a theme, without the extensions
+
+  ```powershell
+  --config 'jandedobbeleer'
+  ```
 
 - a path to a local configuration file
 
   ```powershell
-  --config 'C:/Users/Posh/jandedobbeleer.omp.json'
+  --config 'C:/Users/Posh/myconfig.omp.json'
   ```
 
 - a URL pointing to a remote config
@@ -199,40 +204,6 @@ Windows user's home folder.
 Inside the WSL, you can find your Windows user's home folder here: `/mnt/c/Users/<WINDOWSUSERNAME>`.
 :::
 
-### Themes
-
-The Windows and homebrew installers also bundle the **predefined configurations** ([themes][themes]). You can use the
-following way to reference them directly. This will keep them up-to-date and compatible with future updates.
-
-<Tabs
-  defaultValue="windows"
-  groupId="shell"
-  values={[
-    { label: 'windows', value: 'windows', },
-    { label: 'homebrew', value: 'homebrew', },
-  ]
-}>
-<TabItem value="windows">
-
-For example, to use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`powershell`):
-
-```powershell
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
-```
-
-</TabItem>
-<TabItem value="homebrew">
-
-When using homebrew, all themes are installed alongside Oh My Posh in `$(brew --prefix oh-my-posh)/themes`.
-To use any of the themes, use the following syntax (`zsh`):
-
-```bash
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
-```
-
-</TabItem>
-</Tabs>
-
 ### Custom configuration
 
 Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there's a segment you
@@ -243,14 +214,8 @@ You can export the current theme (default, or set via `--config`) to the format 
 which can be used to tweak and store as your own custom configuration.
 
 ```bash
-oh-my-posh config export --output ~/.mytheme.omp.json
+oh-my-posh config export --config jandedobbeleer --output ~/.mytheme.omp.json
 ```
-
-:::caution
-Do not adjust the theme files in their original location as they're updated together with Oh My Posh
-which will remove your customizations. Always copy, or export them and save the new configuration outside of the
-Oh My Posh internal themes folder.
-:::
 
 #### Previewing changes
 

@@ -122,11 +122,22 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 			current++
 		}
 	}
+
+	// render all remaining segments where the needs can't be resolved
+	for current < executedCount {
+		segment := results[current]
+		if segment.Render(segmentIndex, e.forceRender) {
+			segmentIndex++
+		}
+
+		e.writeSegment(block, segment)
+		current++
+	}
 }
 
-func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) bool {
+func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) {
 	if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
-		return false
+		return
 	}
 
 	if colors, newCycle := cycle.Loop(); colors != nil {
@@ -141,8 +152,6 @@ func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) bool
 
 	e.setActiveSegment(segment)
 	e.renderActiveSegment()
-
-	return true
 }
 
 // canRenderSegment now uses map for O(1) lookups instead of O(n) slice search

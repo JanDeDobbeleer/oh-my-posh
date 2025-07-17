@@ -147,8 +147,8 @@ function _omp_render_tooltip() {
     return
   fi
 
-  _omp_tooltip_command="$tooltip_command"
-  local tooltip=$(_omp_get_prompt tooltip --command="$tooltip_command")
+  _omp_tooltip_command="${tooltip_command}"
+  local tooltip=$(_omp_get_prompt tooltip --command="${tooltip_command}")
   if [[ -z $tooltip ]]; then
     return
   fi

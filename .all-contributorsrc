@@ -3236,6 +3236,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "arjunrbery",
+      "name": "arjunrbery",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20059577?v=4",
+      "profile": "http://www.arb.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

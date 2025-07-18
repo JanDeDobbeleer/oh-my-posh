@@ -454,6 +454,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jasonm23"><img src="https://avatars.githubusercontent.com/u/71587?v=4?s=100" width="100px;" alt="Jason Milkins"/><br /><sub><b>Jason Milkins</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jasonm23" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.arb.dev"><img src="https://avatars.githubusercontent.com/u/20059577?v=4?s=100" width="100px;" alt="arjunrbery"/><br /><sub><b>arjunrbery</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=arjunrbery" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

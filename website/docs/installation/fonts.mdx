@@ -70,7 +70,8 @@ Make sure to **configure your terminal** to use the font you have installed. The
     values={[
         { label: 'Windows Terminal', value: 'wt' },
         { label: 'Visual Studio Code', value: 'code' },
-        { label: 'Visual Studio', value: 'vs' }
+        { label: 'Visual Studio', value: 'vs' },
+        { label: 'Apple Terminal', value: 'apple' }
     ]
 }>
 <TabItem value="wt">
@@ -115,6 +116,19 @@ in `Tools > Options > Fonts and Colors > Terminal` and selecting a font like `Me
 OTF fonts do not appear in Visual Studio's Terminal settings, only TTF fonts. See [here][vs-otf] for more information.
 :::
 
+</TabItem>
+<TabItem value="apple">
+
+When using Apple Terminal, you will need to configure the settings based on the profile you are using. This can be done by opening the settings in `Profiles > Select the appropriate profile from the left panel > Text > Font` and select a font like `MesloLGM Nerd Font`.
+
+This can also be configured via a terminal command. Example in case of `MesloLGM Nerd Font Mono` Nerd Font on the Basic profile for Apple Terminal:
+
+```bash
+osascript -e 'tell application "Terminal" to set font of settings set "Basic" to "MesloLGL Nerd Font Mono"'
+```
+:::warning
+The command has only been tested on macOS Sequoia 15.5 24F74.
+:::
 </TabItem>
 </Tabs>
 

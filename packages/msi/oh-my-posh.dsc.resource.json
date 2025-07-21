@@ -1,0 +1,59 @@
+{
+  "$schema": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/bundled/resource/manifest.json",
+  "description": "Allows management of settings state via the DSC v3 command line interface protocol.",
+  "export": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "dsc",
+      "export"
+    ]
+  },
+  "get": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "dsc",
+      "get"
+    ]
+  },
+  "schema": {
+    "command": {
+      "executable": "oh-my-posh",
+      "args": [
+        "dsc",
+        "schema"
+      ]
+    }
+  },
+  "set": {
+    "executable": "oh-my-posh",
+    "implementsPretest": true,
+    "return": "stateAndDiff",
+    "args": [
+      "dsc",
+      "set",
+      {
+        "jsonInputArg": "--schema",
+        "mandatory": true
+      }
+    ]
+  },
+  "test": {
+    "executable": "oh-my-posh",
+    "return": "stateAndDiff",
+    "args": [
+      "dsc",
+      "test",
+      {
+        "jsonInputArg": "--schema",
+        "mandatory": true
+      }
+    ]
+  },
+  "tags": [
+    "OhMyPosh"
+  ],
+  "type": "OhMyPosh/Settings",
+  "version": "1.10.0"
+}

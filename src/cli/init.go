@@ -2,14 +2,19 @@ package cli
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 var (
@@ -51,7 +56,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 				return
 			}
 
-			runInit(args[0])
+			runInit(args[0], getFullCommand(cmd, args))
 		},
 	}
 
@@ -65,7 +70,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	return initCmd
 }
 
-func runInit(sh string) {
+func runInit(sh, command string) {
 	var startTime time.Time
 
 	if debug {
@@ -107,9 +112,47 @@ func runInit(sh string) {
 		output = shell.Init(env, feats)
 	}
 
+	state := dsc.Get(env.Cache())
+	state.Shells.Add(sh, command)
+	state.Configurations.Add(configFlag)
+	dsc.Update(env.Cache(), state)
+
 	if silent {
 		return
 	}
 
 	fmt.Print(output)
+}
+
+func getFullCommand(cmd *cobra.Command, args []string) string {
+	// Start with the command path
+	cmdPath := cmd.CommandPath()
+
+	// Add arguments
+	if len(args) > 0 {
+		cmdPath += " " + strings.Join(args, " ")
+	}
+
+	// Add flags that were actually set
+	cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+		if !flag.Changed {
+			return
+		}
+
+		if flag.Value.Type() == "bool" && flag.Value.String() == "true" {
+			cmdPath += fmt.Sprintf(" --%s", flag.Name)
+			return
+		}
+
+		if flag.Name == "config" {
+			configPath := filepath.Clean(flag.Value.String())
+			configPath = strings.ReplaceAll(configPath, path.Home(), "~")
+			cmdPath += fmt.Sprintf(" --%s=%s", flag.Name, configPath)
+			return
+		}
+
+		cmdPath += fmt.Sprintf(" --%s=%s", flag.Name, flag.Value.String())
+	})
+
+	return cmdPath
 }

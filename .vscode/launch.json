@@ -189,6 +189,18 @@
       ]
     },
     {
+      "name": "DSC schema",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "font",
+        "dsc",
+        "schema"
+      ]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Theme export",

@@ -57,6 +57,12 @@ jobs:
           npm install
           npm run themes
           cd ..
+      - name: Copy schemas 📄
+        run: |
+          export PATH="$PWD/src/bin:$PATH"
+          oh-my-posh config dsc schema > website/static/dsc.configuration.schema.json
+          oh-my-posh font dsc schema > website/static/dsc.font.schema.json
+          oh-my-posh shell dsc schema > website/static/dsc.shell.schema.json
       - name: Build Docs And Deploy 🚀
         id: builddeploy
         uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9

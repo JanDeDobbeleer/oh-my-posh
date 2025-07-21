@@ -13,11 +13,38 @@ import (
 
 // Font describes a font file and the various metadata associated with it.
 type Font struct {
-	Name     string
-	Family   string
-	FileName string
-	Metadata map[sfnt.NameID]string
-	Data     []byte
+	Name     string                 `json:"name,omitempty" jsonschema:"title=Font name,description=The name of the font"`
+	Family   string                 `json:"-"`
+	FileName string                 `json:"-"`
+	Metadata map[sfnt.NameID]string `json:"-"`
+	Data     []byte                 `json:"-"`
+}
+
+func (f *Font) Apply() error {
+	asset, err := ResolveFontAsset(f.Name)
+	if err != nil {
+		return err
+	}
+
+	zipFile, err := Download(asset.URL)
+	if err != nil {
+		return err
+	}
+
+	_, err = InstallZIP(zipFile, asset.Folder)
+	return err
+}
+
+func (f *Font) Equal(font *Font) bool {
+	if font == nil {
+		return false
+	}
+
+	return f.Name == font.Name
+}
+
+func (f *Font) Resolve() (*Font, bool) {
+	return nil, false
 }
 
 // fontExtensions is a list of file extensions that denote fonts.

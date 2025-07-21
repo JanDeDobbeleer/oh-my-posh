@@ -6,3 +6,6 @@
 "./dist/oh-my-posh.exe" "oh-my-posh.exe"
 "./icons/icon.png" "/icons/icon.png"
 "./icons/44.png" "/icons/44.png"
+"./oh-my-posh.config.dsc.resource.json" "./oh-my-posh.config.dsc.resource.json"
+"./oh-my-posh.shell.dsc.resource.json" "./oh-my-posh.shell.dsc.resource.json"
+"./oh-my-posh.font.dsc.resource.json" "./oh-my-posh.font.dsc.resource.json"

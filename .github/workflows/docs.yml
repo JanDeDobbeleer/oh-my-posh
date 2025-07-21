@@ -7,6 +7,7 @@ on:
     paths:
       - "website/**"
       - "themes/**"
+      - "src/cli/dsc/schema.json"
   workflow_dispatch:
 
 permissions:
@@ -57,6 +58,10 @@ jobs:
           npm install
           npm run themes
           cd ..
+      - name: Copy schemas 📄
+        run: |
+          cp src/cli/dsc/schema.json website/static/dsc.schema.json
+          cp themes/schema.json website/static/schema.json
       - name: Build Docs And Deploy 🚀
         id: builddeploy
         uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9

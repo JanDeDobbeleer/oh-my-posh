@@ -31,7 +31,38 @@ type Asset struct {
 
 func (a Asset) FilterValue() string { return a.Name }
 
-func Fonts() ([]*Asset, error) {
+func IsLocalZipFile(name string) bool {
+	return !strings.HasPrefix(name, "https") && strings.HasSuffix(name, ".zip")
+}
+
+func ResolveFontAsset(font string) (*Asset, error) {
+	if strings.HasPrefix(font, "https") {
+		return &Asset{URL: font}, nil
+	}
+
+	fonts, err := fonts()
+	if err != nil {
+		return nil, err
+	}
+
+	var asset *Asset
+	for _, f := range fonts {
+		if !strings.EqualFold(font, f.Name) {
+			continue
+		}
+
+		asset = f
+		break
+	}
+
+	if asset == nil {
+		return nil, fmt.Errorf("no matching font found")
+	}
+
+	return asset, nil
+}
+
+func fonts() ([]*Asset, error) {
 	if assets, err := getCachedFontData(); err == nil {
 		return assets, nil
 	}

@@ -65,7 +65,6 @@ const (
 	bg                  = "BG"
 	bc                  = "BC" // for base 16 colors
 	str                 = "STR"
-	url                 = "URL"
 	text                = "TEXT"
 	invertedColor       = "inverted"
 	invertedColorSingle = "invertedsingle"

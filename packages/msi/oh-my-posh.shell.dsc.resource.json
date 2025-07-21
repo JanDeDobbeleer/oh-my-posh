@@ -1,0 +1,58 @@
+{
+  "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.vscode.json",
+  "description": "Allows configuring the Oh My Posh shell integration.",
+  "export": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "shell",
+      "dsc",
+      "export"
+    ]
+  },
+  "get": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "shell",
+      "dsc",
+      "get"
+    ]
+  },
+  "schema": {
+    "command": {
+      "executable": "oh-my-posh",
+      "args": [
+        "shell",
+        "dsc",
+        "schema"
+      ]
+    }
+  },
+  "set": {
+    "executable": "oh-my-posh",
+    "implementsPretest": true,
+    "return": "stateAndDiff",
+    "args": [
+      "shell",
+      "dsc",
+      "set",
+      {
+        "jsonInputArg": "--schema",
+        "mandatory": true
+      }
+    ]
+  },
+  "tags": [
+    "OhMyPosh",
+    "linux",
+    "macos",
+    "windows",
+    "shell",
+    "powershell",
+    "terminal",
+    "theming"
+  ],
+  "type": "OhMyPosh/Shell",
+  "version": "0.1.0"
+}

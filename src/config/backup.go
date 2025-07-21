@@ -54,7 +54,7 @@ func (cfg *Config) Export(format string) string {
 		_ = jsonEncoder.Encode(cfg)
 		prefix := "{\n  \"$schema\": \"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\","
 		data := strings.Replace(result.String(), "{", prefix, 1)
-		return escapeGlyphs(data, cfg.MigrateGlyphs)
+		return EscapeGlyphs(data, cfg.MigrateGlyphs)
 	case TOML:
 		tomlEncoder := toml.NewEncoder(&result)
 		tomlEncoder.SetIndentTables(true)

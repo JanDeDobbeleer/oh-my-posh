@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Oh My Posh DSC State",
+  "description": "State configuration for Oh My Posh DSC (Desired State Configuration)",
+  "properties": {
+    "configurations": {
+      "type": "array",
+      "title": "Configuration List",
+      "description": "List of Oh My Posh configurations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Configuration Path",
+            "description": "Absolute file path to the Oh My Posh configuration file, may use ~ for home directory"
+          },
+          "format": {
+            "type": "string",
+            "title": "Configuration Format",
+            "description": "Format of the configuration file",
+            "enum": [
+              "json",
+              "yaml",
+              "toml"
+            ]
+          },
+          "data": {
+            "title": "Configuration Data",
+            "description": "The actual Oh My Posh configuration object",
+            "$ref": "https://ohmyposh.dev/schema.json"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "shells": {
+      "type": "array",
+      "title": "Shell List",
+      "description": "List of installed shells using Oh My Posh",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Shell Name",
+            "description": "Name of the shell"
+          },
+          "command": {
+            "type": "string",
+            "title": "Shell Command",
+            "description": "Command used to initialize the shell"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "fonts": {
+      "type": "array",
+      "title": "Font List",
+      "description": "List of installed fonts using Oh My Posh",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Font Name",
+            "description": "Name of the font"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,14 +1,25 @@
 package http
 
 import (
+	"context"
 	"net"
 	"time"
 )
 
-// if we can connect to ohmyposh within 200ms, we are connected
-// otherwise, let's consider being offline
+// IsConnected checks if we can connect to ohmyposh within 200ms
+// If we can connect, we are connected; otherwise, let's consider being offline
 func IsConnected() bool {
 	timeout := 200 * time.Millisecond
-	_, err := net.DialTimeout("tcp", "ohmyposh.dev:80", timeout)
-	return err == nil
+	dialer := &net.Dialer{
+		Timeout: timeout,
+	}
+
+	ctx := context.Background()
+	conn, err := dialer.DialContext(ctx, "tcp", "ohmyposh.dev:80")
+	if err != nil {
+		return false
+	}
+
+	conn.Close()
+	return true
 }

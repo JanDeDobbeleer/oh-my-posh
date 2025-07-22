@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -16,12 +17,13 @@ func editFileWithEditor(file string) int {
 
 	editor = strings.TrimSpace(editor)
 	args := strings.Split(editor, " ")
-
 	editor = args[0]
 	args = append(args[1:], file)
 
-	cmd := exec.Command(editor, args...)
+	ctx := context.Background()
+	cmd := exec.CommandContext(ctx, editor, args...)
 
+	cmd.Stdin = os.Stdin
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

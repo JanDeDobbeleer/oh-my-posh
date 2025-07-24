@@ -52,7 +52,6 @@
           "background": "#272727",
           "foreground": "#00ff0d",
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true
           },
           "style": "plain",

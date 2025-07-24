@@ -28,7 +28,6 @@
           "leading_diamond": "<transparent,background>\uE0B0</>",
           "trailing_diamond": "\ue0b4",
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true
           },
           "style": "diamond",

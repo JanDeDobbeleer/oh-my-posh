@@ -168,7 +168,6 @@
           "background": "p:background-color",
           "foreground": "p:git-text",
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true
           },
           "style": "powerline",

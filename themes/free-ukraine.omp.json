@@ -47,7 +47,6 @@
           "foreground": "#ffd700",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -66,7 +65,6 @@
           "foreground": "#0057b7",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "fetch_stash_count": false,
             "fetch_status": false,
             "fetch_upstream_icon": false
           },

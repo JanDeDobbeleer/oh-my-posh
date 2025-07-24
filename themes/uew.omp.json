@@ -19,7 +19,6 @@
             "foreground": "#BFA8BF",
             "properties": {
               "branch_icon": "\ue725 ",
-              "fetch_stash_count": true,
               "fetch_status": true,
               "fetch_upstream_icon": true,
               "fetch_worktree_count": true

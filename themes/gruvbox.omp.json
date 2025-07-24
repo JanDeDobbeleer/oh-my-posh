@@ -35,7 +35,6 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "branch_template": "{{ trunc 25 .Branch }}",
-            "fetch_stash_count": true,
             "fetch_status": true,
             "branch_icon": "\uE0A0 ",
             "branch_identical_icon": "\u25CF"

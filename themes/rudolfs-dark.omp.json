@@ -43,7 +43,6 @@
           "foreground": "#ffffff",
           "properties": {
             "branch_template": "{{ trunc 30 .Branch }}",
-            "fetch_stash_count": false,
             "fetch_status": true,
             "fetch_upstream_icon": true
           },

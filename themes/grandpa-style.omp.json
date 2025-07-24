@@ -42,7 +42,6 @@
           "foreground": "#000000",
           "leading_diamond": "<parentBackground,background>\ue0b0</>",
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true
           },
           "style": "diamond",

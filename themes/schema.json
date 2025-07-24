@@ -1920,12 +1920,6 @@
                     "description": "Display the local changes or not",
                     "default": true
                   },
-                  "fetch_stash_count": {
-                    "type": "boolean",
-                    "title": "Display Stash Count",
-                    "description": "Display the stash count or not",
-                    "default": false
-                  },
                   "fetch_worktree_count": {
                     "type": "boolean",
                     "title": "Display Worktree Count",

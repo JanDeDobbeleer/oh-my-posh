@@ -116,7 +116,6 @@
         {
           "foreground": "#ffa5d8",
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true
           },

@@ -64,8 +64,6 @@ const (
 	FetchStatus properties.Property = "fetch_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
 	IgnoreStatus properties.Property = "ignore_status"
-	// FetchStashCount fetches the stash count
-	FetchStashCount properties.Property = "fetch_stash_count"
 	// FetchWorktreeCount fetches the worktree count
 	FetchWorktreeCount properties.Property = "fetch_worktree_count"
 	// FetchUpstreamIcon fetches the upstream icon

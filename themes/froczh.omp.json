@@ -46,7 +46,6 @@
                     "foreground": "#000000",
                     "powerline_symbol": "\ue0b0",
                     "properties": {
-                        "fetch_stash_count": true,
                         "fetch_status": true
                     },
                     "style": "powerline",

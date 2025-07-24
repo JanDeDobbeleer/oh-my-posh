@@ -22,8 +22,7 @@
         {
           "foreground": "#ff94df",
           "properties": {
-            "branch_icon": " <#ff94df><b>\ue0a0 </b></>",
-            "fetch_stash_count": true
+            "branch_icon": " <#ff94df><b>\ue0a0 </b></>"
           },
           "style": "plain",
           "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",

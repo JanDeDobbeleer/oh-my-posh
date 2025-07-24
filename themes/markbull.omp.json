@@ -58,7 +58,6 @@
             "branch_icon": "\ue0a0 ",
             "branch_identical_icon": "\uf4c4 ",
             "commit_icon": "\uf417 ",
-            "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
             "fetch_worktree_count": true,

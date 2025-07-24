@@ -63,7 +63,6 @@
           ],
           "properties": {
             "branch_template": "{{ trunc 25 .Branch }}",
-            "fetch_stash_count": true,
             "fetch_status": true,
             "branch_icon": "\uf418 ",
             "branch_identical_icon": "\uf444",

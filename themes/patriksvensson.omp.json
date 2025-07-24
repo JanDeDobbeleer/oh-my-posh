@@ -33,7 +33,6 @@
             "{{ if gt .Behind 0 }}green{{ end }}"
           ],
           "properties": {
-            "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
             "github_icon": "\uf408 "

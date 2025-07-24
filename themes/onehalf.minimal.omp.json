@@ -38,7 +38,6 @@
           "properties": {
             "branch_icon": "",
             "fetch_status": true,
-            "fetch_stash_count": true,
             "fetch_worktree_count": true
           },
           "style": "plain",

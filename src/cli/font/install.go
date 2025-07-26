@@ -20,7 +20,7 @@ func contains[S ~[]E, E comparable](s S, e E) bool {
 	return slices.Contains(s, e)
 }
 
-func InstallZIP(data []byte, folder string, system bool) ([]string, error) {
+func InstallZIP(data []byte, folder string) ([]string, error) {
 	var families []string
 	bytesReader := bytes.NewReader(data)
 
@@ -78,7 +78,7 @@ func InstallZIP(data []byte, folder string, system bool) ([]string, error) {
 	}
 
 	for _, font := range fonts {
-		if err = install(font, system); err != nil {
+		if err = install(font); err != nil {
 			log.Error(err)
 			continue
 		}

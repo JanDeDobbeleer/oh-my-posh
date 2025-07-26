@@ -54,15 +54,10 @@ This command is used to install fonts and configure the font in your terminal.
 					zipFolder += "/"
 				}
 
-				fontName, err := font.Run(fontName, env.Cache(), env.Root(), zipFolder)
+				fontName, err := font.Run(fontName, env.Cache(), zipFolder)
 				if err != nil {
 					log.Error(err)
 					exitcode = 70
-					return
-				}
-
-				if env.Root() {
-					// do not update the DSC cache if we are running as root
 					return
 				}
 

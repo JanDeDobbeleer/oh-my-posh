@@ -80,7 +80,6 @@ type main struct {
 	Asset
 	families []string
 	state    state
-	system   bool
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -132,7 +131,7 @@ func installLocalFontZIP(m *main) {
 }
 
 func installFontZIP(zipFile []byte, m *main) {
-	families, err := InstallZIP(zipFile, m)
+	families, err := InstallZIP(zipFile, m.Folder)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
@@ -142,54 +141,24 @@ func installFontZIP(zipFile []byte, m *main) {
 }
 
 func (m *main) Init() tea.Cmd {
-	isLocalZipFile := func() bool {
-		return !strings.HasPrefix(m.URL, "https") && strings.HasSuffix(m.URL, ".zip")
-	}
-
-	resolveFontZipURL := func() error {
-		if strings.HasPrefix(m.URL, "https") {
-			return nil
-		}
-
-		fonts, err := Fonts()
-		if err != nil {
-			return err
-		}
-
-		var fontAsset *Asset
-		for _, font := range fonts {
-			if !strings.EqualFold(m.URL, font.Name) {
-				continue
-			}
-
-			fontAsset = font
-			break
-		}
-
-		if fontAsset == nil {
-			return fmt.Errorf("no matching font found")
-		}
-
-		m.Asset = *fontAsset
-
-		return nil
-	}
-
 	m.progress = progress.NewModel()
 
 	s := spinner.New()
 	m.spinner = &s
 
-	if len(m.URL) != 0 && !isLocalZipFile() {
+	if len(m.URL) != 0 && !IsLocalZipFile(m.URL) {
 		m.state = downloadFont
 
-		if err := resolveFontZipURL(); err != nil {
+		asset, err := ResolveFontAsset(m.URL)
+		if err != nil {
 			m.err = err
 			return tea.Quit
 		}
 
+		m.Asset = *asset
+
 		defer func() {
-			go downloadFontZip(m.URL)
+			go downloadFontZip(asset.URL)
 		}()
 
 		m.spinner.Spinner = spinner.Globe
@@ -197,7 +166,7 @@ func (m *main) Init() tea.Cmd {
 	}
 
 	defer func() {
-		if isLocalZipFile() {
+		if IsLocalZipFile(m.URL) {
 			go installLocalFontZIP(m)
 			return
 		}
@@ -209,7 +178,7 @@ func (m *main) Init() tea.Cmd {
 	m.spinner.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
 	m.state = getFonts
 
-	if isLocalZipFile() {
+	if IsLocalZipFile(m.URL) {
 		m.state = unzipFont
 	}
 
@@ -364,9 +333,8 @@ func SetCache(c cache_.Cache) {
 	cache = c
 }
 
-func Run(font string, ch cache_.Cache, root bool, zipFolder string) error {
+func Run(font string, ch cache_.Cache, zipFolder string) (string, error) {
 	main := &main{
-		system: root,
 		Asset: Asset{
 			Name:   font,
 			URL:    font,
@@ -378,5 +346,5 @@ func Run(font string, ch cache_.Cache, root bool, zipFolder string) error {
 
 	program = tea.NewProgram(main)
 	_, err := program.Run()
-	return err
+	return main.Name, err
 }

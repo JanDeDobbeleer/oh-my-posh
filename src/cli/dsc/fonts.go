@@ -72,6 +72,6 @@ func (f *Font) Apply() error {
 		return err
 	}
 
-	_, err = font.InstallZIP(zipFile, asset.Folder, false)
+	_, err = font.InstallZIP(zipFile, asset.Folder)
 	return err
 }

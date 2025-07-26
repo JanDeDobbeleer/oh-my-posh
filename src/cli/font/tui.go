@@ -80,7 +80,6 @@ type main struct {
 	Asset
 	families []string
 	state    state
-	system   bool
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -132,7 +131,7 @@ func installLocalFontZIP(m *main) {
 }
 
 func installFontZIP(zipFile []byte, m *main) {
-	families, err := InstallZIP(zipFile, m.Folder, m.system)
+	families, err := InstallZIP(zipFile, m.Folder)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
@@ -334,9 +333,8 @@ func SetCache(c cache_.Cache) {
 	cache = c
 }
 
-func Run(font string, ch cache_.Cache, root bool, zipFolder string) (string, error) {
+func Run(font string, ch cache_.Cache, zipFolder string) (string, error) {
 	main := &main{
-		system: root,
 		Asset: Asset{
 			Name:   font,
 			URL:    font,

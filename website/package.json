@@ -16,10 +16,8 @@
     "@iarna/toml": "^2.2.5",
     "@mdx-js/react": "^3.1.0",
     "classnames": "^2.5.1",
-    "query-string": "9.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.6.1",
     "yaml": "^2.8.0"
   },
   "devDependencies": {

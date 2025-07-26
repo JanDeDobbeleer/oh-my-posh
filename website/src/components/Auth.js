@@ -1,19 +1,18 @@
 import React from 'react';
-import {useLocation} from "react-router";
+import {useLocation} from '@docusaurus/router';
 import CodeBlock from '@theme/CodeBlock';
-import queryString from 'query-string';
 
 function Auth() {
   const search = useLocation().search;
-  const params = queryString.parse(search);
+  const params = new URLSearchParams(search);
 
-  if (params.error) {
-    let buff = Buffer.from(params.error, 'base64');
+  if (params.get('error')) {
+    let buff = Buffer.from(params.get('error'), 'base64');
     let text = buff.toString('ascii');
     return (
       <div>
         <p>
-          Error on authenticating with the <code>{params.segment}</code> API, please provide the following error message
+          Error on authenticating with the <code>{params.get('segment')}</code> API, please provide the following error message
           in a <a href='https://github.com/JanDeDobbeleer/oh-my-posh/issues/new/choose'>ticket</a> in
           case this was unexpected.
         </p>
@@ -26,13 +25,13 @@ function Auth() {
 
   const config = `
   {
-    "type": "${params.segment}",
+    "type": "${params.get('segment')}",
     ...
     "properties": {
       // highlight-start
-      "access_token": "${params.access_token}",
-      "refresh_token": "${params.refresh_token}",
-      "expires_in": ${params.expires_in}
+      "access_token": "${params.get('access_token')}",
+      "refresh_token": "${params.get('refresh_token')}",
+      "expires_in": ${params.get('expires_in')}
       // highlight-end
     }
   }

@@ -9,7 +9,7 @@ import (
 //go:embed scripts/omp.nu
 var nuInit string
 
-func (f Feature) Nu() Code {
+func (f Features) Nu() Code {
 	switch f {
 	case Transient:
 		return `$env.TRANSIENT_PROMPT_COMMAND = {|| _omp_get_prompt transient }`

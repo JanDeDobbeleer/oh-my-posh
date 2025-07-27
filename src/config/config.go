@@ -116,48 +116,48 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 
 	if cfg.Async && slices.Contains(asyncShells, env.Shell()) {
 		log.Debug("async enabled")
-		feats = append(feats, shell.Async)
+		feats |= shell.Async
 	}
 
 	if cfg.TransientPrompt != nil {
 		log.Debug("transient prompt enabled")
-		feats = append(feats, shell.Transient)
+		feats |= shell.Transient
 	}
 
 	if cfg.ShellIntegration {
 		log.Debug("shell integration enabled")
-		feats = append(feats, shell.FTCSMarks)
+		feats |= shell.FTCSMarks
 	}
 
 	// do not enable upgrade features when async is enabled
-	if !slices.Contains(feats, shell.Async) {
-		feats = append(feats, cfg.upgradeFeatures(env)...)
+	if feats&shell.Async == 0 {
+		feats |= cfg.upgradeFeatures(env)
 	}
 
 	if cfg.ErrorLine != nil || cfg.ValidLine != nil {
 		log.Debug("error or valid line enabled")
-		feats = append(feats, shell.LineError)
+		feats |= shell.LineError
 	}
 
 	if len(cfg.Tooltips) > 0 {
 		log.Debug("tooltips enabled")
-		feats = append(feats, shell.Tooltips)
+		feats |= shell.Tooltips
 	}
 
 	if env.Shell() == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark) {
 		log.Debug("prompt mark enabled")
-		feats = append(feats, shell.PromptMark)
+		feats |= shell.PromptMark
 	}
 
 	for i, block := range cfg.Blocks {
 		if (i == 0 && block.Newline) && cfg.EnableCursorPositioning {
 			log.Debug("cursor positioning enabled")
-			feats = append(feats, shell.CursorPositioning)
+			feats |= shell.CursorPositioning
 		}
 
 		if block.Type == RPrompt {
 			log.Debug("rprompt enabled")
-			feats = append(feats, shell.RPrompt)
+			feats |= shell.RPrompt
 		}
 
 		for _, segment := range block.Segments {
@@ -165,7 +165,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 				source := segment.Properties.GetString(segments.Source, segments.FirstMatch)
 				if strings.Contains(source, segments.Pwsh) {
 					log.Debug("azure enabled")
-					feats = append(feats, shell.Azure)
+					feats |= shell.Azure
 				}
 			}
 
@@ -173,7 +173,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 				source := segment.Properties.GetString(segments.Source, segments.Cli)
 				if source == segments.Pwsh {
 					log.Debug("posh-git enabled")
-					feats = append(feats, shell.PoshGit)
+					feats |= shell.PoshGit
 				}
 			}
 		}
@@ -183,7 +183,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 }
 
 func (cfg *Config) upgradeFeatures(env runtime.Environment) shell.Features {
-	feats := shell.Features{}
+	var feats shell.Features
 
 	if _, OK := env.Cache().Get(upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
 		log.Debug("upgrade cache key found and not forced, skipping upgrade")
@@ -204,12 +204,12 @@ func (cfg *Config) upgradeFeatures(env runtime.Environment) shell.Features {
 
 	if upgradeNotice && !autoUpgrade {
 		log.Debug("notice enabled, no auto upgrade")
-		feats = append(feats, shell.Notice)
+		feats |= shell.Notice
 	}
 
 	if autoUpgrade {
 		log.Debug("auto upgrade enabled")
-		feats = append(feats, shell.Upgrade)
+		feats |= shell.Upgrade
 	}
 
 	return feats

@@ -8,7 +8,7 @@ import (
 //go:embed scripts/omp.lua
 var cmdInit string
 
-func (f Feature) Cmd() Code {
+func (f Features) Cmd() Code {
 	switch f {
 	case Transient:
 		return "transient_enabled = true"

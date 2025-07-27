@@ -3,7 +3,6 @@ package shell
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 	"time"
 
@@ -82,7 +81,7 @@ func Init(env runtime.Environment, feats Features) string {
 
 func PrintInit(env runtime.Environment, features Features, startTime *time.Time) string {
 	shell := env.Flags().Shell
-	async := slices.Contains(features, Async)
+	async := features&Async != 0
 
 	if scriptPath, OK := hasScript(env); OK {
 		return sourceInit(env, shell, scriptPath, async)

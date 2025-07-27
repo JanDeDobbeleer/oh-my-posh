@@ -7,7 +7,7 @@ import (
 //go:embed scripts/omp.elv
 var elvishInit string
 
-func (f Feature) Elvish() Code {
+func (f Features) Elvish() Code {
 	switch f {
 	case Upgrade:
 		return "$_omp_executable upgrade"

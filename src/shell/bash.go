@@ -9,7 +9,7 @@ import (
 //go:embed scripts/omp.bash
 var bashInit string
 
-func (f Feature) Bash() Code {
+func (f Features) Bash() Code {
 	switch f {
 	case CursorPositioning:
 		return unixCursorPositioning

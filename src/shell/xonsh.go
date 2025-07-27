@@ -9,7 +9,7 @@ import (
 //go:embed scripts/omp.xsh
 var xonshInit string
 
-func (f Feature) Xonsh() Code {
+func (f Features) Xonsh() Code {
 	switch f {
 	case Upgrade:
 		return "@(_omp_executable) upgrade"

@@ -9,7 +9,7 @@ import (
 //go:embed scripts/omp.ps1
 var pwshInit string
 
-func (f Feature) Pwsh() Code {
+func (f Features) Pwsh() Code {
 	switch f {
 	case Tooltips:
 		return "Enable-PoshTooltips"

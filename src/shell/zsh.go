@@ -7,7 +7,7 @@ import (
 //go:embed scripts/omp.zsh
 var zshInit string
 
-func (f Feature) Zsh() Code {
+func (f Features) Zsh() Code {
 	switch f {
 	case CursorPositioning:
 		return unixCursorPositioning

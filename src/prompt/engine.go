@@ -16,15 +16,16 @@ var cycle *color.Cycle = &color.Cycle{}
 
 type Engine struct {
 	Env                   runtime.Environment
+	templateCache         *template.Text
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
 	rprompt               string
 	Overflow              config.Overflow
 	prompt                strings.Builder
-	currentLineLength     int
 	rpromptLength         int
 	Padding               int
+	currentLineLength     int
 	Plain                 bool
 	forceRender           bool
 }
@@ -41,7 +42,22 @@ const (
 	PREVIEW   = "preview"
 )
 
+func (e *Engine) templateText(text string, context any) *template.Text {
+	if e.templateCache == nil {
+		e.templateCache = &template.Text{}
+	}
+
+	e.templateCache.Template = text
+	e.templateCache.Context = context
+
+	return e.templateCache
+}
+
 func (e *Engine) write(text string) {
+	// Grow capacity proactively if needed
+	if e.prompt.Cap() < e.prompt.Len()+len(text) {
+		e.prompt.Grow(len(text) * 2) // Grow by double the needed size to reduce future allocations
+	}
 	e.prompt.WriteString(text)
 }
 
@@ -104,10 +120,7 @@ func (e *Engine) pwd() {
 	}
 
 	// Allow template logic to define when to enable the PWD (when supported)
-	tmpl := &template.Text{
-		Template: e.Config.PWD,
-	}
-
+	tmpl := e.templateText(e.Config.PWD, nil)
 	pwdType, err := tmpl.Render()
 	if err != nil || pwdType == "" {
 		return
@@ -154,11 +167,7 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
-	tmpl := &template.Text{
-		Template: filler,
-		Context:  e,
-	}
-
+	tmpl := e.templateText(filler, e)
 	var err error
 	if filler, err = tmpl.Render(); err != nil {
 		return "", false
@@ -179,12 +188,11 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 }
 
 func (e *Engine) getTitleTemplateText() string {
-	tmpl := &template.Text{
-		Template: e.Config.ConsoleTitleTemplate,
-	}
+	tmpl := e.templateText(e.Config.ConsoleTitleTemplate, nil)
 	if text, err := tmpl.Render(); err == nil {
 		return text
 	}
+
 	return ""
 }
 
@@ -422,11 +430,16 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 		return
 	}
 
-	if !strings.Contains(e.previousActiveSegment.TrailingDiamond, string(color.Background)) && !strings.Contains(e.previousActiveSegment.TrailingDiamond, string(color.Foreground)) {
+	trailingDiamond := e.previousActiveSegment.TrailingDiamond
+	// Optimize: check both conditions in a single pass
+	hasBg := strings.Contains(trailingDiamond, string(color.Background))
+	hasFg := strings.Contains(trailingDiamond, string(color.Foreground))
+
+	if !hasBg && !hasFg {
 		return
 	}
 
-	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, e.previousActiveSegment.TrailingDiamond)
+	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, trailingDiamond)
 	if len(match) == 0 {
 		return
 	}
@@ -502,6 +515,9 @@ func New(flags *runtime.Flags) *Engine {
 		Plain:       flags.Plain,
 		forceRender: flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
 	}
+
+	// Pre-allocate prompt builder capacity to reduce allocations during rendering
+	eng.prompt.Grow(512) // Start with 512 bytes capacity, will grow as needed
 
 	switch env.Shell() {
 	case shell.XONSH:

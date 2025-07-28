@@ -96,6 +96,7 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 	current := 0
 	executedCount := 0
 	results := make([]*config.Segment, count)
+	// Pre-allocate map with known capacity to reduce allocations
 	executed := make(map[string]bool, count)
 	segmentIndex := 0
 

@@ -10,8 +10,7 @@ module.exports = {
   projectName: 'oh-my-posh',
   onBrokenLinks: 'ignore',
   plugins: [
-    path.resolve(__dirname, 'plugins', 'appinsights'),
-    'docusaurus-node-polyfills'
+    path.resolve(__dirname, 'plugins', 'appinsights')
   ],
   stylesheets: [
     "https://rsms.me/inter/inter.css",

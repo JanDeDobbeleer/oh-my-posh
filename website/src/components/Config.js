@@ -3,7 +3,7 @@ import CodeBlock from '@theme/CodeBlock';
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import YAML from 'yaml';
-import TOML from '@iarna/toml';
+import TOML from 'smol-toml';
 
 function Config(props) {
 

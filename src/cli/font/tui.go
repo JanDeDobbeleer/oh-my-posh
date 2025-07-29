@@ -14,6 +14,7 @@ import (
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 var (
@@ -341,20 +342,20 @@ func (m *main) View() string {
 			return textStyle.Render(fmt.Sprintf("No matching font families were installed. Try setting --zip-folder to the correct folder when using CascadiaCode (MS) or a custom font zip file. %s", terminal.StopProgress())) //nolint: lll
 		}
 
-		var builder strings.Builder
+		sb := text.NewBuilder()
 
-		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.Name, terminal.StopProgress()))
-		builder.WriteString("The following font families are now available for configuration:\n\n")
+		sb.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.Name, terminal.StopProgress()))
+		sb.WriteString("The following font families are now available for configuration:\n\n")
 
 		for i, family := range m.families {
-			builder.WriteString(fmt.Sprintf("  • %s", family))
+			sb.WriteString(fmt.Sprintf("  • %s", family))
 
 			if i < len(m.families)-1 {
-				builder.WriteString("\n")
+				sb.WriteString("\n")
 			}
 		}
 
-		return textStyle.Render(builder.String())
+		return textStyle.Render(sb.String())
 	}
 
 	return ""

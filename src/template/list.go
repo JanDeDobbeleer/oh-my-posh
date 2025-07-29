@@ -2,6 +2,8 @@ package template
 
 import (
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 type Logic string
@@ -40,7 +42,8 @@ func (l List) Join(context any) string {
 	txtTemplate := New("", context)
 	defer txtTemplate.Release()
 
-	var buffer strings.Builder
+	buffer := text.NewBuilder()
+
 	for _, tmpl := range l {
 		txtTemplate.template = tmpl
 		value, err := txtTemplate.Render()

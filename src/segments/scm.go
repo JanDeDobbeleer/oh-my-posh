@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -48,7 +49,7 @@ func (s *ScmStatus) Changed() bool {
 }
 
 func (s *ScmStatus) String() string {
-	var status strings.Builder
+	status := text.NewBuilder()
 
 	if s.Formats == nil {
 		s.Formats = make(map[string]string)
@@ -164,12 +165,12 @@ func (s *scm) formatBranch(branch string) string {
 	tmpl := template.New(branchTemplate, struct{ Branch string }{Branch: branch})
 	defer tmpl.Release()
 
-	text, err := tmpl.Render()
+	txt, err := tmpl.Render()
 	if err != nil {
 		return branch
 	}
 
-	return text
+	return txt
 }
 
 func (s *scm) fileContent(folder, file string) string {

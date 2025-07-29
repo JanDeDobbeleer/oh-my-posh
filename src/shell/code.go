@@ -1,6 +1,10 @@
 package shell
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
+)
 
 type Code string
 
@@ -18,7 +22,7 @@ func (c Code) Indent(spaces int) Code {
 type Lines []Code
 
 func (l Lines) String(script string) string {
-	var builder strings.Builder
+	builder := text.NewBuilder()
 
 	builder.WriteString(script)
 	builder.WriteString("\n")

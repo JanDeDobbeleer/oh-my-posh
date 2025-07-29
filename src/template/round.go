@@ -3,6 +3,8 @@ package template
 import (
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 func secondsRound(seconds any) string {
@@ -26,7 +28,8 @@ func secondsRound(seconds any) string {
 		month  = 2629800
 		year   = 31560000
 	)
-	var builder strings.Builder
+	builder := text.NewBuilder()
+
 	writePart := func(unit int, name string) {
 		if s >= unit {
 			builder.WriteString(" ")

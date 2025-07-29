@@ -41,18 +41,18 @@ const (
 	PREVIEW   = "preview"
 )
 
-func (e *Engine) write(text string) {
+func (e *Engine) write(txt string) {
 	// Grow capacity proactively if needed
-	if e.prompt.Cap() < e.prompt.Len()+len(text) {
-		e.prompt.Grow(len(text) * 2) // Grow by double the needed size to reduce future allocations
+	if e.prompt.Cap() < e.prompt.Len()+len(txt) {
+		e.prompt.Grow(len(txt) * 2) // Grow by double the needed size to reduce future allocations
 	}
-	e.prompt.WriteString(text)
+	e.prompt.WriteString(txt)
 }
 
 func (e *Engine) string() string {
-	text := e.prompt.String()
+	txt := e.prompt.String()
 	e.prompt.Reset()
-	return text
+	return txt
 }
 
 func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
@@ -174,23 +174,23 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 
 	repeat := padLength / lenFiller
 	unfilled := padLength % lenFiller
-	text := strings.Repeat(filler, repeat) + strings.Repeat(" ", unfilled)
-	return text, true
+	txt := strings.Repeat(filler, repeat) + strings.Repeat(" ", unfilled)
+	return txt, true
 }
 
 func (e *Engine) getTitleTemplateText() string {
 	tmpl := template.New(e.Config.ConsoleTitleTemplate, nil)
 	defer tmpl.Release()
 
-	if text, err := tmpl.Render(); err == nil {
-		return text
+	if txt, err := tmpl.Render(); err == nil {
+		return txt
 	}
 
 	return ""
 }
 
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
-	text, length := e.writeBlockSegments(block)
+	txt, length := e.writeBlockSegments(block)
 
 	// do not print anything when we don't have any text unless forced
 	if !block.Force && length == 0 {
@@ -210,7 +210,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	case config.Prompt:
 		if block.Alignment == config.Left {
 			e.currentLineLength += length
-			e.write(text)
+			e.write(txt)
 			return true
 		}
 
@@ -245,7 +245,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		// validate if we have a filler and fill if needed
 		if padText, OK := e.shouldFill(block.Filler, space); OK {
 			e.write(padText)
-			e.write(text)
+			e.write(txt)
 			return true
 		}
 
@@ -253,9 +253,9 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 			e.write(strings.Repeat(" ", space))
 		}
 
-		e.write(text)
+		e.write(txt)
 	case config.RPrompt:
-		e.rprompt = text
+		e.rprompt = txt
 		e.rpromptLength = length
 	}
 
@@ -507,6 +507,7 @@ func New(flags *runtime.Flags) *Engine {
 		Env:         env,
 		Plain:       flags.Plain,
 		forceRender: flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
+		prompt:      strings.Builder{},
 	}
 
 	// Pre-allocate prompt builder capacity to reduce allocations during rendering

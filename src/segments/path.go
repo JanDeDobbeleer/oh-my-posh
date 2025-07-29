@@ -278,10 +278,7 @@ func (pt *Path) setStyle() {
 	}
 
 	// make sure we resolve all templates
-	tmpl := template.New(pt.Path, pt)
-	defer tmpl.Release()
-
-	if txt, err := tmpl.Render(); err == nil {
+	if txt, err := template.Render(pt.Path, pt); err == nil {
 		pt.Path = txt
 	}
 }
@@ -292,10 +289,7 @@ func (pt *Path) getMaxWidth() int {
 		return 0
 	}
 
-	tmpl := template.New(width, pt)
-	defer tmpl.Release()
-
-	txt, err := tmpl.Render()
+	txt, err := template.Render(width, pt)
 	if err != nil {
 		log.Error(err)
 		return 0
@@ -322,10 +316,7 @@ func (pt *Path) getFolderSeparator() string {
 		return separator
 	}
 
-	tmpl := template.New(separatorTemplate, pt)
-	defer tmpl.Release()
-
-	txt, err := tmpl.Render()
+	txt, err := template.Render(separatorTemplate, pt)
 	if err != nil {
 		log.Error(err)
 	}
@@ -654,10 +645,7 @@ func (pt *Path) setMappedLocations() {
 			continue
 		}
 
-		tmpl := template.New(key, pt)
-		defer tmpl.Release()
-
-		location, err := tmpl.Render()
+		location, err := template.Render(key, pt)
 		if err != nil {
 			log.Error(err)
 		}

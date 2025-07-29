@@ -25,15 +25,12 @@ func TestRoundSeconds(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tmpl := New(tc.Template, nil)
-
-		text, err := tmpl.Render()
+		text, err := Render(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
 		}
 
 		assert.Equal(t, tc.Expected, text, tc.Case)
-		tmpl.Release()
 	}
 }

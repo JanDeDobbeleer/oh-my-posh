@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"strings"
 	"sync"
-	"time"
 	"unicode"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -17,7 +16,7 @@ type Text struct {
 }
 
 // New returns a Text instance from the pool with the given template and context
-func New(template string, context any) *Text {
+func get(template string, context any) *Text {
 	if textPool == nil {
 		// Fallback if pool is not initialized yet
 		return &Text{context: context, template: template}
@@ -30,17 +29,9 @@ func New(template string, context any) *Text {
 	return text
 }
 
-// Release resets the Text instance and returns it to the pool
-func (t *Text) Release() {
-	t.context = nil
-	t.template = ""
-	if textPool != nil {
-		textPool.Put(t)
-	}
-}
-
-func (t *Text) Render() (string, error) {
-	defer log.Trace(time.Now(), t.template)
+func Render(template string, context any) (string, error) {
+	t := get(template, context)
+	defer t.release()
 
 	if !strings.Contains(t.template, "{{") || !strings.Contains(t.template, "}}") {
 		return t.template, nil
@@ -52,6 +43,16 @@ func (t *Text) Render() (string, error) {
 	defer renderer.release()
 
 	return renderer.execute(t)
+}
+
+// Release resets the Text instance and returns it to the pool
+func (t *Text) release() {
+	t.context = nil
+	t.template = ""
+
+	if textPool != nil {
+		textPool.Put(t)
+	}
 }
 
 func (t *Text) patchTemplate() {

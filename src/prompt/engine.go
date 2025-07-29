@@ -108,9 +108,7 @@ func (e *Engine) pwd() {
 	}
 
 	// Allow template logic to define when to enable the PWD (when supported)
-	tmpl := template.New(e.Config.PWD, nil)
-	defer tmpl.Release()
-	pwdType, err := tmpl.Render()
+	pwdType, err := template.Render(e.Config.PWD, nil)
 	if err != nil || pwdType == "" {
 		return
 	}
@@ -156,11 +154,8 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
-	tmpl := template.New(filler, e)
-	defer tmpl.Release()
-
 	var err error
-	if filler, err = tmpl.Render(); err != nil {
+	if filler, err = template.Render(filler, e); err != nil {
 		return "", false
 	}
 
@@ -179,10 +174,7 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 }
 
 func (e *Engine) getTitleTemplateText() string {
-	tmpl := template.New(e.Config.ConsoleTitleTemplate, nil)
-	defer tmpl.Release()
-
-	if txt, err := tmpl.Render(); err == nil {
+	if txt, err := template.Render(e.Config.ConsoleTitleTemplate, nil); err == nil {
 		return txt
 	}
 

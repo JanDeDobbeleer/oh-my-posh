@@ -162,10 +162,7 @@ func (s *scm) formatBranch(branch string) string {
 		return branch
 	}
 
-	tmpl := template.New(branchTemplate, struct{ Branch string }{Branch: branch})
-	defer tmpl.Release()
-
-	txt, err := tmpl.Render()
+	txt, err := template.Render(branchTemplate, struct{ Branch string }{Branch: branch})
 	if err != nil {
 		return branch
 	}

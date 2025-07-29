@@ -25,7 +25,9 @@ func (c *context) init(t *Text) {
 	c.Template = *Cache
 }
 
-var renderPool *generics.Pool[*renderer]
+var (
+	renderPool *generics.Pool[*renderer]
+)
 
 type renderer struct {
 	template *template.Template

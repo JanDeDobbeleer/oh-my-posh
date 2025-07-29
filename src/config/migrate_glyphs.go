@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 type ConnectionError struct {
@@ -110,11 +111,11 @@ func escapeGlyphs(s string, migrate bool) string {
 		}
 	}
 
-	var builder strings.Builder
+	sb := text.NewBuilder()
 	for _, r := range s {
 		// exclude regular characters and emojis
 		if shouldExclude(r) {
-			builder.WriteRune(r)
+			sb.WriteRune(r)
 			continue
 		}
 
@@ -129,12 +130,13 @@ func escapeGlyphs(s string, migrate bool) string {
 			one := 0xd800 + (((r - 0x10000) >> 10) & 0x3ff)
 			two := 0xdc00 + ((r - 0x10000) & 0x3ff)
 			quoted := fmt.Sprintf("\\u%04x\\u%04x", one, two)
-			builder.WriteString(quoted)
+			sb.WriteString(quoted)
 			continue
 		}
 
 		quoted := fmt.Sprintf("\\u%04x", r)
-		builder.WriteString(quoted)
+		sb.WriteString(quoted)
 	}
-	return builder.String()
+
+	return sb.String()
 }

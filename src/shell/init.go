@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -167,7 +168,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 }
 
 func printDebug(env runtime.Environment, startTime *time.Time) string {
-	var builder strings.Builder
+	builder := text.NewBuilder()
 
 	builder.WriteString(fmt.Sprintf("\n%s %s\n", log.Text("Init duration:").Green().Bold().Plain(), time.Since(*startTime)))
 

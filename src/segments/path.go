@@ -15,6 +15,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -202,7 +203,8 @@ func (pt *Path) Parent() string {
 		return ""
 	}
 
-	sb := new(strings.Builder)
+	sb := text.NewBuilder()
+
 	folderSeparator := pt.getFolderSeparator()
 
 	sb.WriteString(pt.root)
@@ -279,8 +281,8 @@ func (pt *Path) setStyle() {
 	tmpl := template.New(pt.Path, pt)
 	defer tmpl.Release()
 
-	if text, err := tmpl.Render(); err == nil {
-		pt.Path = text
+	if txt, err := tmpl.Render(); err == nil {
+		pt.Path = txt
 	}
 }
 
@@ -293,13 +295,13 @@ func (pt *Path) getMaxWidth() int {
 	tmpl := template.New(width, pt)
 	defer tmpl.Release()
 
-	text, err := tmpl.Render()
+	txt, err := tmpl.Render()
 	if err != nil {
 		log.Error(err)
 		return 0
 	}
 
-	value, err := strconv.Atoi(text)
+	value, err := strconv.Atoi(txt)
 	if err != nil {
 		log.Error(err)
 		return 0
@@ -323,16 +325,16 @@ func (pt *Path) getFolderSeparator() string {
 	tmpl := template.New(separatorTemplate, pt)
 	defer tmpl.Release()
 
-	text, err := tmpl.Render()
+	txt, err := tmpl.Render()
 	if err != nil {
 		log.Error(err)
 	}
 
-	if text == "" {
+	if txt == "" {
 		return pt.pathSeparator
 	}
 
-	return text
+	return txt
 }
 
 func (pt *Path) getMixedPath() string {
@@ -402,14 +404,14 @@ func (pt *Path) getAgnosterLeftPath() string {
 	return pt.colorizePath(root, elements)
 }
 
-func (pt *Path) findFirstLetterOrNumber(text string) (letter string, index int) {
-	for i, char := range text {
+func (pt *Path) findFirstLetterOrNumber(txt string) (letter string, index int) {
+	for i, char := range txt {
 		if unicode.IsLetter(char) || unicode.IsNumber(char) {
 			return string(char), i
 		}
 	}
 
-	return text, 0
+	return txt, 0
 }
 
 func (pt *Path) getRelevantLetter(folder *Folder) string {
@@ -908,7 +910,8 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 		totalLen += len(el) + 20 // estimate for color codes
 	}
 
-	sb := strings.Builder{}
+	sb := text.NewBuilder()
+
 	sb.Grow(totalLen)
 
 	formattedRoot := fmt.Sprintf(leftFormat, root)

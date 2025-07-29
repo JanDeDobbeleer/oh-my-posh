@@ -2,13 +2,13 @@ package prompt
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 func (e *Engine) Preview() string {
-	var builder strings.Builder
+	builder := text.NewBuilder()
 
 	printPrompt := func(title, prompt string) {
 		builder.WriteString(log.Text(fmt.Sprintf("\n%s:\n\n", title)).Bold().Plain().String())

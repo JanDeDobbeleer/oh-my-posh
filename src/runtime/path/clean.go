@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 // Base returns the last element of path.
@@ -81,7 +82,8 @@ func Clean(input string) string {
 		}
 	}
 
-	sb := new(strings.Builder)
+	sb := text.NewBuilder()
+
 	sb.WriteString(prefix)
 
 	// Clean slashes.

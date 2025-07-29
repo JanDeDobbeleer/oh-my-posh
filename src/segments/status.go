@@ -6,6 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -50,8 +51,8 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 		tmpl := template.New(statusTemplate, s)
 		defer tmpl.Release()
 
-		if text, err := tmpl.Render(); err == nil {
-			return text
+		if txt, err := tmpl.Render(); err == nil {
+			return txt
 		}
 
 		return strconv.Itoa(status)
@@ -59,7 +60,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 
 	StatusSeparator := s.props.GetString(StatusSeparator, "|")
 
-	var builder strings.Builder
+	builder := text.NewBuilder()
 
 	// use an anaonymous struct to avoid
 	// confusion with the template context
@@ -70,11 +71,11 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 
 	splitted := strings.Split(pipeStatus, " ")
 	for i, codeStr := range splitted {
-		write := func(text string) {
+		write := func(txt string) {
 			if i > 0 {
 				builder.WriteString(StatusSeparator)
 			}
-			builder.WriteString(text)
+			builder.WriteString(txt)
 		}
 
 		code, err := strconv.Atoi(codeStr)
@@ -92,13 +93,13 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 		tmpl := template.New(statusTemplate, context)
 		defer tmpl.Release()
 
-		text, err := tmpl.Render()
+		txt, err := tmpl.Render()
 		if err != nil {
 			write(codeStr)
 			continue
 		}
 
-		write(text)
+		write(txt)
 	}
 
 	return builder.String()

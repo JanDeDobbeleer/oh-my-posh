@@ -84,9 +84,8 @@ func (cfg *Config) getPalette() color.Palette {
 		return cfg.Palette
 	}
 
-	tmpl := &template.Text{
-		Template: cfg.Palettes.Template,
-	}
+	tmpl := template.New(cfg.Palettes.Template, nil)
+	defer tmpl.Release()
 
 	key, err := tmpl.Render()
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
@@ -55,7 +56,9 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 	}
 
-	tmpl := e.templateText(getTemplate(prompt.Template), nil)
+	tmpl := template.New(getTemplate(prompt.Template), nil)
+	defer tmpl.Release()
+
 	promptText, err := tmpl.Render()
 	if err != nil {
 		promptText = err.Error()

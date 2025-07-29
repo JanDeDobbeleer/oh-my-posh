@@ -20,7 +20,7 @@ type context struct {
 }
 
 func (c *context) init(t *Text) {
-	c.Data = t.Context
+	c.Data = t.context
 	c.Getenv = env.Getenv
 	c.Template = *Cache
 }
@@ -41,7 +41,7 @@ func (t *renderer) release() {
 }
 
 func (t *renderer) execute(text *Text) (string, error) {
-	tmpl, err := t.template.Parse(text.Template)
+	tmpl, err := t.template.Parse(text.template)
 	if err != nil {
 		log.Error(err)
 		return "", errors.New(InvalidTemplate)

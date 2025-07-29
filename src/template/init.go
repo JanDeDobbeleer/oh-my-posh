@@ -24,6 +24,7 @@ var (
 	shell       string
 	env         runtime.Environment
 	knownFields sync.Map
+	textPool    *generics.Pool[*Text]
 )
 
 func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.Config) {
@@ -36,6 +37,10 @@ func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.
 			template: template.New("cache").Funcs(funcMap()),
 			context:  &context{},
 		}
+	})
+
+	textPool = generics.NewPool(func() *Text {
+		return &Text{}
 	})
 
 	if Cache != nil {

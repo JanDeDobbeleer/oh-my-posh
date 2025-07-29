@@ -23,11 +23,9 @@ import (
 type SegmentStyle string
 
 func (s *SegmentStyle) resolve(context any) SegmentStyle {
-	txtTemplate := &template.Text{
-		Context: context,
-	}
+	txtTemplate := template.New(string(*s), context)
+	defer txtTemplate.Release()
 
-	txtTemplate.Template = string(*s)
 	value, err := txtTemplate.Render()
 
 	// default to Plain
@@ -318,10 +316,8 @@ func (segment *Segment) string() string {
 		segment.Template = segment.writer.Template()
 	}
 
-	tmpl := &template.Text{
-		Template: segment.Template,
-		Context:  segment.writer,
-	}
+	tmpl := template.New(segment.Template, segment.writer)
+	defer tmpl.Release()
 
 	text, err := tmpl.Render()
 	if err != nil {

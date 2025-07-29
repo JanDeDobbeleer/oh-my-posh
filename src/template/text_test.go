@@ -157,10 +157,8 @@ func TestRenderTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  tc.Context,
-		}
+		tmpl := New(tc.Template, tc.Context)
+		defer tmpl.Release()
 
 		env := new(mock.Environment)
 		env.On("Shell").Return("foo")
@@ -253,10 +251,8 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		}
 		Init(env, nil, nil)
 
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  tc.Context,
-		}
+		tmpl := New(tc.Template, tc.Context)
+		defer tmpl.Release()
 
 		text, err := tmpl.Render()
 		if tc.ShouldError {
@@ -347,20 +343,20 @@ func TestPatchTemplate(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context: map[string]any{
-				"OS":         true,
-				"World":      true,
-				"WorldTrend": "chaos",
-				"Working":    true,
-				"Staging":    true,
-				"CPU":        true,
-			},
+		context := map[string]any{
+			"OS":         true,
+			"World":      true,
+			"WorldTrend": "chaos",
+			"Working":    true,
+			"Staging":    true,
+			"CPU":        true,
 		}
 
+		tmpl := New(tc.Template, context)
+
 		tmpl.patchTemplate()
-		assert.Equal(t, tc.Expected, tmpl.Template, tc.Case)
+		assert.Equal(t, tc.Expected, tmpl.template, tc.Case)
+		tmpl.Release()
 	}
 }
 
@@ -376,13 +372,11 @@ func TestPatchTemplateStruct(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(env, nil, nil)
 
-	tmpl := &Text{
-		Template: "{{ .Hello }}",
-		Context:  Foo{},
-	}
+	tmpl := New("{{ .Hello }}", Foo{})
 
 	tmpl.patchTemplate()
-	assert.Equal(t, "{{ .Data.Hello }}", tmpl.Template)
+	assert.Equal(t, "{{ .Data.Hello }}", tmpl.template)
+	tmpl.Release()
 }
 
 func TestSegmentContains(t *testing.T) {
@@ -406,10 +400,8 @@ func TestSegmentContains(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  nil,
-		}
+		tmpl := New(tc.Template, nil)
+		defer tmpl.Release()
 
 		text, _ := tmpl.Render()
 		assert.Equal(t, tc.Expected, text, tc.Case)

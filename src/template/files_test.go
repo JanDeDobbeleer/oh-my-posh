@@ -28,10 +28,7 @@ func TestGlob(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  nil,
-		}
+		tmpl := New(tc.Template, nil)
 
 		text, err := tmpl.Render()
 		if tc.ShouldError {
@@ -40,5 +37,6 @@ func TestGlob(t *testing.T) {
 		}
 
 		assert.Equal(t, tc.Expected, text, tc.Case)
+		tmpl.Release()
 	}
 }

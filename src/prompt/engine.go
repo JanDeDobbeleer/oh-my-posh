@@ -235,7 +235,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 				e.writeNewline()
 			case config.Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block.Filler, space+length); OK {
+				if padText, OK := e.shouldFill(block.Filler, space+length-e.currentLineLength); OK {
 					e.write(padText)
 				}
 

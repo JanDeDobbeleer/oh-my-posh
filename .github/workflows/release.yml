@@ -10,6 +10,9 @@ on:
       - ".github/workflows/**"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+
 jobs:
   changelog:
     runs-on: ubuntu-latest

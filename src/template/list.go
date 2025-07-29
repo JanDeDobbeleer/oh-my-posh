@@ -37,13 +37,12 @@ func (l List) Join(context any) string {
 		return ""
 	}
 
-	txtTemplate := &Text{
-		Context: context,
-	}
+	txtTemplate := New("", context)
+	defer txtTemplate.Release()
 
 	var buffer strings.Builder
 	for _, tmpl := range l {
-		txtTemplate.Template = tmpl
+		txtTemplate.template = tmpl
 		value, err := txtTemplate.Render()
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue
@@ -60,12 +59,11 @@ func (l List) FirstMatch(context any, defaultValue string) string {
 		return defaultValue
 	}
 
-	txtTemplate := &Text{
-		Context: context,
-	}
+	txtTemplate := New("", context)
+	defer txtTemplate.Release()
 
 	for _, tmpl := range l {
-		txtTemplate.Template = tmpl
+		txtTemplate.template = tmpl
 		value, err := txtTemplate.Render()
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue

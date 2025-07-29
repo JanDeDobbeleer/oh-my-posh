@@ -22,10 +22,7 @@ func TestTrunc(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  nil,
-		}
+		tmpl := New(tc.Template, nil)
 
 		text, err := tmpl.Render()
 		if tc.ShouldError {
@@ -34,6 +31,7 @@ func TestTrunc(t *testing.T) {
 		}
 
 		assert.Equal(t, tc.Expected, text, tc.Case)
+		tmpl.Release()
 	}
 }
 

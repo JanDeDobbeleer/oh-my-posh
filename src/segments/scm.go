@@ -161,10 +161,8 @@ func (s *scm) formatBranch(branch string) string {
 		return branch
 	}
 
-	tmpl := &template.Text{
-		Template: branchTemplate,
-		Context:  struct{ Branch string }{Branch: branch},
-	}
+	tmpl := template.New(branchTemplate, struct{ Branch string }{Branch: branch})
+	defer tmpl.Release()
 
 	text, err := tmpl.Render()
 	if err != nil {

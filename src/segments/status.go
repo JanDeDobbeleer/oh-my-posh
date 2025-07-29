@@ -16,10 +16,9 @@ const (
 type Status struct {
 	base
 
-	template *template.Text
-	String   string
-	Meaning  string
-	Error    bool
+	String  string
+	Meaning string
+	Error   bool
 }
 
 func (s *Status) Template() string {
@@ -42,19 +41,19 @@ func (s *Status) Enabled() bool {
 
 func (s *Status) formatStatus(status int, pipeStatus string) string {
 	statusTemplate := s.props.GetString(StatusTemplate, "{{ .Code }}")
-	s.template = &template.Text{
-		Template: statusTemplate,
-	}
 
 	if status != 0 {
 		s.Error = true
 	}
 
 	if pipeStatus == "" {
-		s.template.Context = s
-		if text, err := s.template.Render(); err == nil {
+		tmpl := template.New(statusTemplate, s)
+		defer tmpl.Release()
+
+		if text, err := tmpl.Render(); err == nil {
 			return text
 		}
+
 		return strconv.Itoa(status)
 	}
 
@@ -90,8 +89,10 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 
 		context.Code = code
 
-		s.template.Context = context
-		text, err := s.template.Render()
+		tmpl := template.New(statusTemplate, context)
+		defer tmpl.Release()
+
+		text, err := tmpl.Render()
 		if err != nil {
 			write(codeStr)
 			continue

@@ -21,9 +21,7 @@
       "problemMatcher": "$go",
       "args": [
         "build",
-        "-v",
-        "-ldflags",
-        "\"-s -w -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Version=development-$(git --no-pager log -1 --pretty=%h-%s)' -extldflags '-static'\""
+        "-v"
       ]
     },
     {

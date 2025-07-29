@@ -16,7 +16,6 @@ var cycle *color.Cycle = &color.Cycle{}
 
 type Engine struct {
 	Env                   runtime.Environment
-	templateCache         *template.Text
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
@@ -41,17 +40,6 @@ const (
 	ERROR     = "error"
 	PREVIEW   = "preview"
 )
-
-func (e *Engine) templateText(text string, context any) *template.Text {
-	if e.templateCache == nil {
-		e.templateCache = &template.Text{}
-	}
-
-	e.templateCache.Template = text
-	e.templateCache.Context = context
-
-	return e.templateCache
-}
 
 func (e *Engine) write(text string) {
 	// Grow capacity proactively if needed
@@ -120,7 +108,8 @@ func (e *Engine) pwd() {
 	}
 
 	// Allow template logic to define when to enable the PWD (when supported)
-	tmpl := e.templateText(e.Config.PWD, nil)
+	tmpl := template.New(e.Config.PWD, nil)
+	defer tmpl.Release()
 	pwdType, err := tmpl.Render()
 	if err != nil || pwdType == "" {
 		return
@@ -167,7 +156,9 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
-	tmpl := e.templateText(filler, e)
+	tmpl := template.New(filler, e)
+	defer tmpl.Release()
+
 	var err error
 	if filler, err = tmpl.Render(); err != nil {
 		return "", false
@@ -188,7 +179,9 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 }
 
 func (e *Engine) getTitleTemplateText() string {
-	tmpl := e.templateText(e.Config.ConsoleTitleTemplate, nil)
+	tmpl := template.New(e.Config.ConsoleTitleTemplate, nil)
+	defer tmpl.Release()
+
 	if text, err := tmpl.Render(); err == nil {
 		return text
 	}

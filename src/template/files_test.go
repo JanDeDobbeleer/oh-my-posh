@@ -28,15 +28,12 @@ func TestGlob(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		tmpl := New(tc.Template, nil)
-
-		text, err := tmpl.Render()
+		text, err := Render(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
 		}
 
 		assert.Equal(t, tc.Expected, text, tc.Case)
-		tmpl.Release()
 	}
 }

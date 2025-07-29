@@ -157,15 +157,12 @@ func TestRenderTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tmpl := New(tc.Template, tc.Context)
-		defer tmpl.Release()
-
 		env := new(mock.Environment)
 		env.On("Shell").Return("foo")
 		Cache = new(cache.Template)
 		Init(env, nil, nil)
 
-		text, err := tmpl.Render()
+		text, err := Render(tc.Template, tc.Context)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
@@ -251,10 +248,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		}
 		Init(env, nil, nil)
 
-		tmpl := New(tc.Template, tc.Context)
-		defer tmpl.Release()
-
-		text, err := tmpl.Render()
+		text, err := Render(tc.Template, tc.Context)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
@@ -352,11 +346,13 @@ func TestPatchTemplate(t *testing.T) {
 			"CPU":        true,
 		}
 
-		tmpl := New(tc.Template, context)
+		tmpl := Text{
+			template: tc.Template,
+			context:  context,
+		}
 
 		tmpl.patchTemplate()
 		assert.Equal(t, tc.Expected, tmpl.template, tc.Case)
-		tmpl.Release()
 	}
 }
 
@@ -372,11 +368,13 @@ func TestPatchTemplateStruct(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(env, nil, nil)
 
-	tmpl := New("{{ .Hello }}", Foo{})
+	tmpl := Text{
+		template: "{{ .Hello }}",
+		context:  Foo{},
+	}
 
 	tmpl.patchTemplate()
 	assert.Equal(t, "{{ .Data.Hello }}", tmpl.template)
-	tmpl.Release()
 }
 
 func TestSegmentContains(t *testing.T) {
@@ -400,10 +398,7 @@ func TestSegmentContains(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		tmpl := New(tc.Template, nil)
-		defer tmpl.Release()
-
-		text, _ := tmpl.Render()
+		text, _ := Render(tc.Template, nil)
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }

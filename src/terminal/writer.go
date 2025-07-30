@@ -15,7 +15,6 @@ import (
 
 func init() {
 	runewidth.DefaultCondition.EastAsianWidth = false
-	builder = text.NewBuilder()
 }
 
 type style struct {
@@ -48,7 +47,7 @@ var (
 	Plain       bool
 	Interactive bool
 
-	builder *text.StringBuilder
+	builder strings.Builder
 	length  int
 
 	foregroundColor color.Ansi

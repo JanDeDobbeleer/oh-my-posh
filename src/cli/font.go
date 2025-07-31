@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/font"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -53,10 +54,16 @@ This command is used to install fonts and configure the font in your terminal.
 					zipFolder += "/"
 				}
 
-				if err := font.Run(fontName, env.Cache(), env.Root(), zipFolder); err != nil {
+				fontName, err := font.Run(fontName, env.Cache(), zipFolder)
+				if err != nil {
 					log.Error(err)
 					exitcode = 70
+					return
 				}
+
+				state := dsc.Get(env.Cache())
+				state.Fonts.Add(fontName)
+				dsc.Update(env.Cache(), state)
 
 				return
 			case "configure":

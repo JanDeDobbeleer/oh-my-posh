@@ -70,7 +70,7 @@ func getGlyphCodePoints() (codePoints, error) {
 	return codePoints, nil
 }
 
-func escapeGlyphs(s string, migrate bool) string {
+func EscapeGlyphs(s string, migrate bool) string {
 	shouldExclude := func(r rune) bool {
 		if r < 0x1000 { // Basic Multilingual Plane
 			return true

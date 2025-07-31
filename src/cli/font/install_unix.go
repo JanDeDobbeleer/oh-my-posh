@@ -15,7 +15,7 @@ var (
 	systemFontsDir = "/usr/share/fonts"
 )
 
-func install(font *Font, _ bool) error {
+func install(font *Font) error {
 	// If we're running as root, install the font system-wide.
 	targetDir := fontsDir
 	if os.Geteuid() == 0 {

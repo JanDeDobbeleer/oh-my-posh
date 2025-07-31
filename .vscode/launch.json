@@ -189,6 +189,17 @@
       ]
     },
     {
+      "name": "DSC get",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "config",
+        "get"
+      ]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Theme export",

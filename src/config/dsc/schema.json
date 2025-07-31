@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Oh My Posh Configuration DSC",
+  "description": "Desired State Configuration for Oh My Posh Configuration files",
+  "properties": {
+    "configurations": {
+      "type": "array",
+      "title": "Configuration List",
+      "description": "List of Oh My Posh configurations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Configuration Path",
+            "description": "Absolute file path to the Oh My Posh configuration file, may use ~ for home directory"
+          },
+          "format": {
+            "type": "string",
+            "title": "Configuration Format",
+            "description": "Format of the configuration file",
+            "enum": [
+              "json",
+              "yaml",
+              "toml"
+            ]
+          },
+          "data": {
+            "title": "Configuration Data",
+            "description": "The actual Oh My Posh configuration object",
+            "$ref": "https://ohmyposh.dev/schema.json"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

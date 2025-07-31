@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	configDSC "github.com/jandedobbeleer/oh-my-posh/src/config/dsc"
+	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
@@ -70,7 +71,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	return initCmd
 }
 
-func runInit(sh, command string) {
+func runInit(sh, _ string) {
 	var startTime time.Time
 
 	if debug {
@@ -112,10 +113,11 @@ func runInit(sh, command string) {
 		output = shell.Init(env, feats)
 	}
 
-	state := dsc.Get(env.Cache())
-	state.Shells.Add(sh, command)
-	state.Configurations.Add(configFlag)
-	dsc.Update(env.Cache(), state)
+	configs := dsc.Get[*configDSC.State](env.Cache())
+	// TODO: get shells and add that as well
+	// state.Shells.Add(sh, command)
+	configs.Add(configFlag)
+	dsc.Save(env.Cache(), configs)
 
 	if silent {
 		return

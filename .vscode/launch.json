@@ -189,19 +189,15 @@
       ]
     },
     {
-      "name": "DSC set",
+      "name": "DSC get",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "dsc",
-        "set",
-        "--state { \"$schema\": \"https://ohmyposh.dev/dsc.schema.json\", \"fonts\": [{\"name\": \"AnonymousPro\",\"system\": false}] }"
-      ],
-      "env": {
-        "POSH_TRACE": "1"
-      }
+        "config",
+        "get"
+      ]
     },
     {
       "type": "node",

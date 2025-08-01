@@ -1,17 +1,17 @@
 {
   "recommendations": [
-    "ms-azuretools.vscode-azurefunctions",
-    "golang.go",
-    "github.vscode-pull-request-github",
-    "esbenp.prettier-vscode",
-    "davidanson.vscode-markdownlint",
-    "yzhang.markdown-all-in-one",
-    "tamasfe.even-better-toml",
-    "redhat.vscode-yaml",
-    "ms-vscode.powershell",
-    "sumneko.lua",
     "bmalehorn.vscode-fish",
+    "davidanson.vscode-markdownlint",
     "elves.elvish",
-    "jnoortheen.xonsh"
+    "esbenp.prettier-vscode",
+    "github.vscode-pull-request-github",
+    "golang.go",
+    "jnoortheen.xonsh",
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-vscode.powershell",
+    "redhat.vscode-yaml",
+    "sumneko.lua",
+    "tamasfe.even-better-toml",
+    "yzhang.markdown-all-in-one"
   ]
 }

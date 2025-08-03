@@ -3,6 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"slices"
@@ -11,15 +12,18 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"golang.org/x/mod/modfile"
 
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "gopkg.in/yaml.v3"
 )
 
 type ProjectItem struct {
-	Fetcher func(item ProjectItem) *ProjectData
-	Name    string
-	Files   []string
+	Fetcher    func(item ProjectItem) *ProjectData
+	Name       string
+	OtherFiles bool
+	Files      []string
 }
 
 type ProjectData struct {
@@ -112,6 +116,12 @@ func (n *Project) Enabled() bool {
 			Files:   []string{"*.psd1"},
 			Fetcher: n.getPowerShellModuleData,
 		},
+		{
+			Name:       "golang",
+			Files:      []string{"go.mod", "go.work"},
+			Fetcher:    n.getGoProjectData,
+			OtherFiles: true,
+		},
 	}
 
 	for _, item := range n.projects {
@@ -119,7 +129,7 @@ func (n *Project) Enabled() bool {
 		property := properties.Property(fmt.Sprintf("%s_files", item.Name))
 		item.Files = n.props.GetStringArray(property, item.Files)
 
-		if !n.hasProjectFile(item) {
+		if !item.OtherFiles && !n.hasProjectFile(item) {
 			continue
 		}
 
@@ -311,6 +321,65 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 	}
 
 	return data
+}
+
+func (n *Project) getGoProjectData(item ProjectItem) *ProjectData {
+	var content string
+	var match *runtime.FileInfo
+	var err error
+
+	if item.Name != "golang" {
+		return nil
+	}
+
+	for _, file := range item.Files {
+		match, err = n.env.HasParentFilePath(file, true)
+		if err != nil {
+			if errors.Is(err, runtime.ErrNoMatchAtRootLevel) {
+				// couldn't find the file in any parent directory, move on to the next file
+				continue
+			}
+
+			n.Error = err.Error()
+			return nil
+		}
+
+		if match != nil {
+			break
+		}
+	}
+
+	if match == nil {
+		return nil
+	}
+
+	content = n.env.FileContent(match.Path)
+
+	if content == "" {
+		return nil
+	}
+
+	var data ProjectData
+	if strings.HasSuffix(match.Path, "go.work") {
+		f, err := modfile.ParseWork(match.Path, []byte(content), nil)
+		if err != nil {
+			n.Error = err.Error()
+			return nil
+		}
+
+		data.Target = f.Go.Version
+
+		return &data
+	}
+
+	f, err := modfile.Parse(match.Path, []byte(content), nil)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	data.Target = f.Go.Version
+	return &data
 }
 
 func (n *Project) getProjectData(item ProjectItem) *ProjectData {

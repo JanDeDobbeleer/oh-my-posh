@@ -444,6 +444,14 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 	return responseBody, nil
 }
 
+type ErrorTeminal string
+
+const ErrNoMatchAtRootLevel = ErrorTeminal("no match at root level")
+
+func (e ErrorTeminal) Error() string {
+	return string(e)
+}
+
 func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*FileInfo, error) {
 	defer log.Trace(time.Now(), parent)
 
@@ -475,7 +483,7 @@ func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*Fi
 		}
 
 		log.Error(err)
-		return nil, errors.New("no match at root level")
+		return nil, ErrNoMatchAtRootLevel
 	}
 }
 

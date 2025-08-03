@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/alecthomas/assert"
@@ -15,7 +16,8 @@ import (
 )
 
 const (
-	hasFiles = "HasFiles"
+	hasFiles          = "HasFiles"
+	hasParentFilePath = "HasParentFilePath"
 )
 
 type MockDirEntry struct {
@@ -341,6 +343,23 @@ func TestPackage(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
+
+		env.On(hasParentFilePath, testify_.Anything, testify_.Anything).Run(func(_ testify_.Arguments) {
+			for _, c := range env.ExpectedCalls {
+				if c.Method != hasParentFilePath {
+					continue
+				}
+
+				if c.Method == hasParentFilePath {
+					if tc.File != "" {
+						c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{ParentFolder: "/", Path: tc.File, IsDir: false}, nil}
+					} else {
+						c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{}, runtime.ErrNoMatchAtRootLevel}
+					}
+				}
+			}
+		})
+
 		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
 			for _, c := range env.ExpectedCalls {
 				if c.Method == hasFiles {
@@ -406,6 +425,23 @@ func TestNuspecPackage(t *testing.T) {
 				c.ReturnArguments = testify_.Arguments{false}
 			}
 		})
+
+		env.On(hasParentFilePath, testify_.Anything, testify_.Anything).Run(func(_ testify_.Arguments) {
+			for _, c := range env.ExpectedCalls {
+				if c.Method != hasParentFilePath {
+					continue
+				}
+
+				if c.Method == hasParentFilePath {
+					if tc.FileName != "" {
+						c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{ParentFolder: "/", Path: tc.FileName, IsDir: false}, nil}
+					} else {
+						c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{}, runtime.ErrNoMatchAtRootLevel}
+					}
+				}
+			}
+		})
+
 		env.On("Pwd").Return("posh")
 		env.On("LsDir", "posh").Return([]fs.DirEntry{
 			&MockDirEntry{
@@ -420,6 +456,81 @@ func TestNuspecPackage(t *testing.T) {
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
 		}
+	}
+}
+
+func TestGoProject(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedString  string
+		Name            string
+		FileName        string
+		FileContents    string
+		ExpectedEnabled bool
+	}{
+		// {
+		// 	Case:            "Golang go.work",
+		// 	ExpectedEnabled: true,
+		// 	ExpectedString:  "\uf4de 1.24.4",
+		// 	Name:            "golang",
+		// 	FileName:        "go.work",
+		// 	FileContents:    "go 1.24.4\n\nuse (\n\tsomething\n)",
+		// },
+		// {
+		// 	Case:            "Golang go.mod",
+		// 	ExpectedEnabled: true,
+		// 	ExpectedString:  "\uf4de 1.24.4",
+		// 	Name:            "golang",
+		// 	FileName:        "go.mod",
+		// 	FileContents:    "module github.com/jandedobbeleer/oh-my-posh/src\n\ngo 1.24.4",
+		// },
+		{
+			Case:            "Golang nothing",
+			ExpectedEnabled: false,
+			ExpectedString:  "",
+			Name:            "golang",
+			FileName:        "",
+			FileContents:    "",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+
+			env.On(hasParentFilePath, testify_.Anything, testify_.Anything).Run(func(_ testify_.Arguments) {
+				for _, c := range env.ExpectedCalls {
+					if c.Method != hasParentFilePath {
+						continue
+					}
+
+					if c.Method == hasParentFilePath {
+						if tc.FileName != "" {
+							c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{ParentFolder: "/", Path: tc.FileName, IsDir: false}, nil}
+						} else {
+							c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{}, runtime.ErrNoMatchAtRootLevel}
+						}
+					}
+				}
+			})
+
+			env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
+				for _, c := range env.ExpectedCalls {
+					if c.Method == hasFiles {
+						c.ReturnArguments = testify_.Arguments{args.Get(0).(string) == tc.FileName}
+					}
+				}
+			})
+
+			env.On("Pwd").Return("posh")
+			env.On("FileContent", tc.FileName).Return(tc.FileContents)
+
+			pkg := &Project{}
+			pkg.Init(properties.Map{}, env)
+			assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
+			if tc.ExpectedEnabled {
+				assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
+			}
+		})
 	}
 }
 
@@ -480,6 +591,23 @@ func TestDotnetProject(t *testing.T) {
 				}
 			}
 		})
+
+		env.On(hasParentFilePath, testify_.Anything, testify_.Anything).Run(func(_ testify_.Arguments) {
+			for _, c := range env.ExpectedCalls {
+				if c.Method != hasParentFilePath {
+					continue
+				}
+
+				if c.Method == hasParentFilePath {
+					if tc.FileName != "" {
+						c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{ParentFolder: "/", Path: "/" + tc.FileName, IsDir: false}, nil}
+					} else {
+						c.ReturnArguments = testify_.Arguments{&runtime.FileInfo{}, runtime.ErrNoMatchAtRootLevel}
+					}
+				}
+			}
+		})
+
 		env.On("Pwd").Return("posh")
 		env.On("LsDir", "posh").Return([]fs.DirEntry{
 			&MockDirEntry{

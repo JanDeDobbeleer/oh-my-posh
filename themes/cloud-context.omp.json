@@ -184,7 +184,7 @@
       "segments": [
         {
           "background": "p:error-background",
-          "foreground": "p:backgrond-color",
+          "foreground": "p:background-color",
           "style": "diamond",
           "leading_diamond": "\ue0c7",
           "trailing_diamond": "\ue0c6",

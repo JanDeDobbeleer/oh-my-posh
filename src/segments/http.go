@@ -31,11 +31,7 @@ func (h *HTTP) Enabled() bool {
 
 	method := h.props.GetString(METHOD, "GET")
 
-	tmpl := &template.Text{
-		Template: url,
-	}
-
-	if resolved, err := tmpl.Render(); err == nil {
+	if resolved, err := template.Render(url, nil); err == nil {
 		url = resolved
 	}
 

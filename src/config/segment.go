@@ -23,12 +23,7 @@ import (
 type SegmentStyle string
 
 func (s *SegmentStyle) resolve(context any) SegmentStyle {
-	txtTemplate := &template.Text{
-		Context: context,
-	}
-
-	txtTemplate.Template = string(*s)
-	value, err := txtTemplate.Render()
+	value, err := template.Render(string(*s), context)
 
 	// default to Plain
 	if err != nil || value == "" {
@@ -318,12 +313,7 @@ func (segment *Segment) string() string {
 		segment.Template = segment.writer.Template()
 	}
 
-	tmpl := &template.Text{
-		Template: segment.Template,
-		Context:  segment.writer,
-	}
-
-	text, err := tmpl.Render()
+	text, err := template.Render(segment.Template, segment.writer)
 	if err != nil {
 		return err.Error()
 	}

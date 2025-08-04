@@ -22,9 +22,9 @@ type Engine struct {
 	rprompt               string
 	Overflow              config.Overflow
 	prompt                strings.Builder
-	currentLineLength     int
 	rpromptLength         int
 	Padding               int
+	currentLineLength     int
 	Plain                 bool
 	forceRender           bool
 }
@@ -41,14 +41,18 @@ const (
 	PREVIEW   = "preview"
 )
 
-func (e *Engine) write(text string) {
-	e.prompt.WriteString(text)
+func (e *Engine) write(txt string) {
+	// Grow capacity proactively if needed
+	if e.prompt.Cap() < e.prompt.Len()+len(txt) {
+		e.prompt.Grow(len(txt) * 2) // Grow by double the needed size to reduce future allocations
+	}
+	e.prompt.WriteString(txt)
 }
 
 func (e *Engine) string() string {
-	text := e.prompt.String()
+	txt := e.prompt.String()
 	e.prompt.Reset()
-	return text
+	return txt
 }
 
 func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
@@ -104,11 +108,7 @@ func (e *Engine) pwd() {
 	}
 
 	// Allow template logic to define when to enable the PWD (when supported)
-	tmpl := &template.Text{
-		Template: e.Config.PWD,
-	}
-
-	pwdType, err := tmpl.Render()
+	pwdType, err := template.Render(e.Config.PWD, nil)
 	if err != nil || pwdType == "" {
 		return
 	}
@@ -154,13 +154,8 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
-	tmpl := &template.Text{
-		Template: filler,
-		Context:  e,
-	}
-
 	var err error
-	if filler, err = tmpl.Render(); err != nil {
+	if filler, err = template.Render(filler, e); err != nil {
 		return "", false
 	}
 
@@ -174,22 +169,20 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 
 	repeat := padLength / lenFiller
 	unfilled := padLength % lenFiller
-	text := strings.Repeat(filler, repeat) + strings.Repeat(" ", unfilled)
-	return text, true
+	txt := strings.Repeat(filler, repeat) + strings.Repeat(" ", unfilled)
+	return txt, true
 }
 
 func (e *Engine) getTitleTemplateText() string {
-	tmpl := &template.Text{
-		Template: e.Config.ConsoleTitleTemplate,
+	if txt, err := template.Render(e.Config.ConsoleTitleTemplate, nil); err == nil {
+		return txt
 	}
-	if text, err := tmpl.Render(); err == nil {
-		return text
-	}
+
 	return ""
 }
 
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
-	text, length := e.writeBlockSegments(block)
+	txt, length := e.writeBlockSegments(block)
 
 	// do not print anything when we don't have any text unless forced
 	if !block.Force && length == 0 {
@@ -209,7 +202,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	case config.Prompt:
 		if block.Alignment == config.Left {
 			e.currentLineLength += length
-			e.write(text)
+			e.write(txt)
 			return true
 		}
 
@@ -227,7 +220,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 				e.writeNewline()
 			case config.Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block.Filler, space+length); OK {
+				if padText, OK := e.shouldFill(block.Filler, space+length-e.currentLineLength); OK {
 					e.write(padText)
 				}
 
@@ -244,7 +237,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		// validate if we have a filler and fill if needed
 		if padText, OK := e.shouldFill(block.Filler, space); OK {
 			e.write(padText)
-			e.write(text)
+			e.write(txt)
 			return true
 		}
 
@@ -252,9 +245,9 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 			e.write(strings.Repeat(" ", space))
 		}
 
-		e.write(text)
+		e.write(txt)
 	case config.RPrompt:
-		e.rprompt = text
+		e.rprompt = txt
 		e.rpromptLength = length
 	}
 
@@ -422,11 +415,16 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 		return
 	}
 
-	if !strings.Contains(e.previousActiveSegment.TrailingDiamond, string(color.Background)) && !strings.Contains(e.previousActiveSegment.TrailingDiamond, string(color.Foreground)) {
+	trailingDiamond := e.previousActiveSegment.TrailingDiamond
+	// Optimize: check both conditions in a single pass
+	hasBg := strings.Contains(trailingDiamond, string(color.Background))
+	hasFg := strings.Contains(trailingDiamond, string(color.Foreground))
+
+	if !hasBg && !hasFg {
 		return
 	}
 
-	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, e.previousActiveSegment.TrailingDiamond)
+	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, trailingDiamond)
 	if len(match) == 0 {
 		return
 	}
@@ -501,7 +499,11 @@ func New(flags *runtime.Flags) *Engine {
 		Env:         env,
 		Plain:       flags.Plain,
 		forceRender: flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
+		prompt:      strings.Builder{},
 	}
+
+	// Pre-allocate prompt builder capacity to reduce allocations during rendering
+	eng.prompt.Grow(512) // Start with 512 bytes capacity, will grow as needed
 
 	switch env.Shell() {
 	case shell.XONSH:

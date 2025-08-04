@@ -296,12 +296,7 @@ func (l *language) buildVersionURL() {
 		return
 	}
 
-	tmpl := &template.Text{
-		Template: versionURLTemplate,
-		Context:  l.version,
-	}
-
-	url, err := tmpl.Render()
+	url, err := template.Render(versionURLTemplate, l.version)
 	if err != nil {
 		return
 	}

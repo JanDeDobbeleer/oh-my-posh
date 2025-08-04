@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -190,27 +191,28 @@ func FormatTitle(title string) string {
 		return ""
 	case shell.BASH, shell.ZSH:
 		title = trimAnsi(title)
-		s := new(strings.Builder)
+
+		sb := text.NewBuilder()
 
 		// We have to do this to prevent the shell from misidentifying escape sequences.
 		for _, char := range title {
 			escaped, shouldEscape := formats.EscapeSequences[char]
 			if shouldEscape {
-				s.WriteString(escaped)
+				sb.WriteString(escaped)
 				continue
 			}
 
-			s.WriteRune(char)
+			sb.WriteRune(char)
 		}
 
-		return fmt.Sprintf(formats.Title, s.String())
+		return fmt.Sprintf(formats.Title, sb.String())
 	default:
 		return fmt.Sprintf(formats.Title, trimAnsi(title))
 	}
 }
 
-func EscapeText(text string) string {
-	return fmt.Sprintf(formats.Escape, text)
+func EscapeText(txt string) string {
+	return fmt.Sprintf(formats.Escape, txt)
 }
 
 func SaveCursorPosition() string {
@@ -269,8 +271,8 @@ func StopProgress() string {
 	return endProgress
 }
 
-func Write(background, foreground color.Ansi, text string) {
-	if text == "" {
+func Write(background, foreground color.Ansi, txt string) {
+	if txt == "" {
 		return
 	}
 
@@ -282,7 +284,7 @@ func Write(background, foreground color.Ansi, text string) {
 	}
 
 	// validate if we start with a color override
-	match := regex.FindNamedRegexMatch(AnchorRegex, text)
+	match := regex.FindNamedRegexMatch(AnchorRegex, txt)
 	if len(match) != 0 && match[ANCHOR] != hyperLinkStart {
 		colorOverride := true
 		for _, style := range knownStyles {
@@ -307,8 +309,8 @@ func Write(background, foreground color.Ansi, text string) {
 		builder.WriteString(formats.HyperlinkStart)
 	}
 
-	text = text[len(match[ANCHOR]):]
-	runes = []rune(text)
+	txt = txt[len(match[ANCHOR]):]
+	runes = []rune(txt)
 	hyperlinkTextPosition := 0
 
 	for i := 0; i < len(runes); i++ {
@@ -320,8 +322,8 @@ func Write(background, foreground color.Ansi, text string) {
 		}
 
 		// color/end overrides first
-		text = string(runes[i:])
-		match = regex.FindNamedRegexMatch(AnchorRegex, text)
+		txt = string(runes[i:])
+		match = regex.FindNamedRegexMatch(AnchorRegex, txt)
 		if len(match) > 0 {
 			// check for hyperlinks first
 			switch match[ANCHOR] {
@@ -383,16 +385,16 @@ func String() (string, int) {
 	return builder.String(), length
 }
 
-func writeEscapedAnsiString(text string) {
+func writeEscapedAnsiString(txt string) {
 	if Plain {
 		return
 	}
 
 	if len(formats.Escape) != 0 {
-		text = fmt.Sprintf(formats.Escape, text)
+		txt = fmt.Sprintf(formats.Escape, txt)
 	}
 
-	builder.WriteString(text)
+	builder.WriteString(txt)
 }
 
 func write(s rune) {
@@ -631,9 +633,9 @@ func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
 	return background, foreground
 }
 
-func trimAnsi(text string) string {
-	if text == "" || !strings.Contains(text, "\x1b") {
-		return text
+func trimAnsi(txt string) string {
+	if txt == "" || !strings.Contains(txt, "\x1b") {
+		return txt
 	}
-	return regex.ReplaceAllString(AnsiRegex, text, "")
+	return regex.ReplaceAllString(AnsiRegex, txt, "")
 }

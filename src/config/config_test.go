@@ -125,34 +125,34 @@ func TestUpgradeFeatures(t *testing.T) {
 		{
 			Case:                  "cache exists, no force",
 			UpgradeCacheKeyExists: true,
-			ExpectedFeats:         shell.Features{},
+			ExpectedFeats:         0,
 		},
 		{
 			Case:          "auto upgrade enabled",
 			AutoUpgrade:   true,
-			ExpectedFeats: shell.Features{shell.Upgrade},
+			ExpectedFeats: shell.Upgrade,
 		},
 		{
 			Case:           "auto upgrade via cache",
 			AutoUpgradeKey: true,
-			ExpectedFeats:  shell.Features{shell.Upgrade},
+			ExpectedFeats:  shell.Upgrade,
 		},
 		{
 			Case:          "notice enabled, no auto upgrade",
 			DisplayNotice: true,
-			ExpectedFeats: shell.Features{shell.Notice},
+			ExpectedFeats: shell.Notice,
 		},
 		{
 			Case:          "notice via cache, no auto upgrade",
 			NoticeKey:     true,
-			ExpectedFeats: shell.Features{shell.Notice},
+			ExpectedFeats: shell.Notice,
 		},
 		{
 			Case:                  "force upgrade ignores cache",
 			UpgradeCacheKeyExists: true,
 			Force:                 true,
 			AutoUpgrade:           true,
-			ExpectedFeats:         shell.Features{shell.Upgrade},
+			ExpectedFeats:         shell.Upgrade,
 		},
 	}
 

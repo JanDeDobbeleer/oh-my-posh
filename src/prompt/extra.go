@@ -56,11 +56,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 	}
 
-	tmpl := &template.Text{
-		Template: getTemplate(prompt.Template),
-	}
-
-	promptText, err := tmpl.Render()
+	promptText, err := template.Render(getTemplate(prompt.Template), nil)
 	if err != nil {
 		promptText = err.Error()
 	}

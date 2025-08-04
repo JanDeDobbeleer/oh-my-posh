@@ -2,6 +2,8 @@ package template
 
 import (
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 type Logic string
@@ -37,14 +39,10 @@ func (l List) Join(context any) string {
 		return ""
 	}
 
-	txtTemplate := &Text{
-		Context: context,
-	}
+	buffer := text.NewBuilder()
 
-	var buffer strings.Builder
 	for _, tmpl := range l {
-		txtTemplate.Template = tmpl
-		value, err := txtTemplate.Render()
+		value, err := Render(tmpl, context)
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue
 		}
@@ -60,13 +58,8 @@ func (l List) FirstMatch(context any, defaultValue string) string {
 		return defaultValue
 	}
 
-	txtTemplate := &Text{
-		Context: context,
-	}
-
 	for _, tmpl := range l {
-		txtTemplate.Template = tmpl
-		value, err := txtTemplate.Render()
+		value, err := Render(tmpl, context)
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue
 		}

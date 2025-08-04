@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
@@ -48,7 +49,7 @@ func Clear(cachePath string, force bool) ([]string, error) {
 			continue
 		}
 
-		if info.ModTime().AddDate(0, 0, 7).After(info.ModTime()) {
+		if info.ModTime().After(time.Now().AddDate(0, 0, -7)) {
 			continue
 		}
 
@@ -102,7 +103,7 @@ func deleteLogs(force bool) []string {
 			continue
 		}
 
-		if info.ModTime().AddDate(0, 0, 7).After(info.ModTime()) {
+		if info.ModTime().After(time.Now().AddDate(0, 0, -7)) {
 			continue
 		}
 

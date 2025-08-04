@@ -3,13 +3,13 @@ package shell
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -82,7 +82,7 @@ func Init(env runtime.Environment, feats Features) string {
 
 func PrintInit(env runtime.Environment, features Features, startTime *time.Time) string {
 	shell := env.Flags().Shell
-	async := slices.Contains(features, Async)
+	async := features&Async != 0
 
 	if scriptPath, OK := hasScript(env); OK {
 		return sourceInit(env, shell, scriptPath, async)
@@ -168,7 +168,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 }
 
 func printDebug(env runtime.Environment, startTime *time.Time) string {
-	var builder strings.Builder
+	builder := text.NewBuilder()
 
 	builder.WriteString(fmt.Sprintf("\n%s %s\n", log.Text("Init duration:").Green().Bold().Plain(), time.Since(*startTime)))
 

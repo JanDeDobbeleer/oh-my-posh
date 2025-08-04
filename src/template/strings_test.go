@@ -22,12 +22,7 @@ func TestTrunc(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  nil,
-		}
-
-		text, err := tmpl.Render()
+		text, err := Render(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue

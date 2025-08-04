@@ -5,22 +5,36 @@ import (
 	"reflect"
 	"strings"
 	"sync"
-	"time"
 	"unicode"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 type Text struct {
-	Context  Data
-	Template string
+	context  Data
+	template string
 }
 
-func (t *Text) Render() (string, error) {
-	defer log.Trace(time.Now(), t.Template)
+// New returns a Text instance from the pool with the given template and context
+func get(template string, context any) *Text {
+	if textPool == nil {
+		// Fallback if pool is not initialized yet
+		return &Text{context: context, template: template}
+	}
 
-	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
-		return t.Template, nil
+	text := textPool.Get()
+	text.template = template
+	text.context = context
+
+	return text
+}
+
+func Render(template string, context any) (string, error) {
+	t := get(template, context)
+	defer t.release()
+
+	if !strings.Contains(t.template, "{{") || !strings.Contains(t.template, "}}") {
+		return t.template, nil
 	}
 
 	t.patchTemplate()
@@ -31,20 +45,30 @@ func (t *Text) Render() (string, error) {
 	return renderer.execute(t)
 }
 
+// Release resets the Text instance and returns it to the pool
+func (t *Text) release() {
+	t.context = nil
+	t.template = ""
+
+	if textPool != nil {
+		textPool.Put(t)
+	}
+}
+
 func (t *Text) patchTemplate() {
 	fields := &fields{}
-	fields.init(t.Context)
+	fields.init(t.context)
 
 	var result, property string
 	var inProperty, inTemplate bool
-	for i, char := range t.Template {
+	for i, char := range t.template {
 		// define start or end of template
 		if !inTemplate && char == '{' {
-			if i-1 >= 0 && rune(t.Template[i-1]) == '{' {
+			if i-1 >= 0 && rune(t.template[i-1]) == '{' {
 				inTemplate = true
 			}
 		} else if inTemplate && char == '}' {
-			if i-1 >= 0 && rune(t.Template[i-1]) == '}' {
+			if i-1 >= 0 && rune(t.template[i-1]) == '}' {
 				inTemplate = false
 			}
 		}
@@ -120,9 +144,9 @@ func (t *Text) patchTemplate() {
 	}
 
 	// return the result and remaining unresolved property
-	t.Template = result + property
+	t.template = result + property
 
-	log.Debug(t.Template)
+	log.Debug(t.template)
 }
 
 type fields struct {

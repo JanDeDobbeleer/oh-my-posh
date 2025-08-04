@@ -88,7 +88,7 @@ func (tf *Terraform) setVersionFromTfFiles() error {
 
 		var config TerraFormConfig
 		diags = gohcl.DecodeBody(hclFile.Body, nil, &config)
-		if diags != nil {
+		if diags != nil || config.Terraform == nil {
 			continue
 		}
 

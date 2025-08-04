@@ -132,12 +132,7 @@ func (c Ansi) ResolveTemplate() Ansi {
 		return emptyColor
 	}
 
-	tmpl := &template.Text{
-		Template: string(c),
-		Context:  nil,
-	}
-
-	text, err := tmpl.Render()
+	text, err := template.Render(string(c), nil)
 	if err != nil {
 		return Transparent
 	}

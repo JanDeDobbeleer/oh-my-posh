@@ -5,7 +5,6 @@ import (
 	"os"
 	stdruntime "runtime"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
@@ -14,6 +13,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 	"github.com/spf13/cobra"
 )
 
@@ -71,14 +71,14 @@ var upgradeCmd = &cobra.Command{
 				return
 			}
 
-			var builder strings.Builder
+			sb := text.NewBuilder()
 
-			builder.WriteString(fmt.Sprintf("%s %s\n", log.Text("Upgrade duration:").Green().Bold().Plain(), time.Since(startTime)))
+			sb.WriteString(fmt.Sprintf("%s %s\n", log.Text("Upgrade duration:").Green().Bold().Plain(), time.Since(startTime)))
 
-			builder.WriteString(log.Text("\nLogs:\n\n").Green().Bold().Plain().String())
-			builder.WriteString(env.Logs())
+			sb.WriteString(log.Text("\nLogs:\n\n").Green().Bold().Plain().String())
+			sb.WriteString(env.Logs())
 
-			fmt.Println(builder.String())
+			fmt.Println(sb.String())
 		}()
 
 		latest, err := cfg.Upgrade.FetchLatest()

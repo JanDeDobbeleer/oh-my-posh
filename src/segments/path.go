@@ -15,6 +15,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -202,7 +203,8 @@ func (pt *Path) Parent() string {
 		return ""
 	}
 
-	sb := new(strings.Builder)
+	sb := text.NewBuilder()
+
 	folderSeparator := pt.getFolderSeparator()
 
 	sb.WriteString(pt.root)
@@ -276,13 +278,8 @@ func (pt *Path) setStyle() {
 	}
 
 	// make sure we resolve all templates
-	tmpl := &template.Text{
-		Template: pt.Path,
-		Context:  pt,
-	}
-
-	if text, err := tmpl.Render(); err == nil {
-		pt.Path = text
+	if txt, err := template.Render(pt.Path, pt); err == nil {
+		pt.Path = txt
 	}
 }
 
@@ -292,18 +289,13 @@ func (pt *Path) getMaxWidth() int {
 		return 0
 	}
 
-	tmpl := &template.Text{
-		Template: width,
-		Context:  pt,
-	}
-
-	text, err := tmpl.Render()
+	txt, err := template.Render(width, pt)
 	if err != nil {
 		log.Error(err)
 		return 0
 	}
 
-	value, err := strconv.Atoi(text)
+	value, err := strconv.Atoi(txt)
 	if err != nil {
 		log.Error(err)
 		return 0
@@ -324,21 +316,16 @@ func (pt *Path) getFolderSeparator() string {
 		return separator
 	}
 
-	tmpl := &template.Text{
-		Template: separatorTemplate,
-		Context:  pt,
-	}
-
-	text, err := tmpl.Render()
+	txt, err := template.Render(separatorTemplate, pt)
 	if err != nil {
 		log.Error(err)
 	}
 
-	if text == "" {
+	if txt == "" {
 		return pt.pathSeparator
 	}
 
-	return text
+	return txt
 }
 
 func (pt *Path) getMixedPath() string {
@@ -408,14 +395,14 @@ func (pt *Path) getAgnosterLeftPath() string {
 	return pt.colorizePath(root, elements)
 }
 
-func (pt *Path) findFirstLetterOrNumber(text string) (letter string, index int) {
-	for i, char := range text {
+func (pt *Path) findFirstLetterOrNumber(txt string) (letter string, index int) {
+	for i, char := range txt {
 		if unicode.IsLetter(char) || unicode.IsNumber(char) {
 			return string(char), i
 		}
 	}
 
-	return text, 0
+	return txt, 0
 }
 
 func (pt *Path) getRelevantLetter(folder *Folder) string {
@@ -658,12 +645,7 @@ func (pt *Path) setMappedLocations() {
 			continue
 		}
 
-		tmpl := &template.Text{
-			Template: key,
-			Context:  pt,
-		}
-
-		location, err := tmpl.Render()
+		location, err := template.Render(key, pt)
 		if err != nil {
 			log.Error(err)
 		}
@@ -916,7 +898,8 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 		totalLen += len(el) + 20 // estimate for color codes
 	}
 
-	sb := strings.Builder{}
+	sb := text.NewBuilder()
+
 	sb.Grow(totalLen)
 
 	formattedRoot := fmt.Sprintf(leftFormat, root)

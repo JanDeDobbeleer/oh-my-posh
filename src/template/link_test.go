@@ -28,12 +28,7 @@ func TestUrl(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  nil,
-		}
-
-		text, err := tmpl.Render()
+		text, err := Render(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
@@ -53,12 +48,8 @@ func TestPath(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tmpl := &Text{
-			Template: tc.Template,
-			Context:  nil,
-		}
+		text, _ := Render(tc.Template, nil)
 
-		text, _ := tmpl.Render()
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }

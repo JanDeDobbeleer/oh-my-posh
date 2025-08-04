@@ -9,7 +9,7 @@ import (
 //go:embed scripts/omp.fish
 var fishInit string
 
-func (f Feature) Fish() Code {
+func (f Features) Fish() Code {
 	switch f {
 	case Transient:
 		return "set --global _omp_transient_prompt 1"

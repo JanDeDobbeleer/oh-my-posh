@@ -18,10 +18,6 @@ import (
 const (
 	homeDir        = "/home/someone"
 	homeDirWindows = "C:\\Users\\someone"
-	fooBarMan      = "\\foo\\bar\\man"
-	abc            = "/abc"
-	abcd           = "/a/b/c/d"
-	cdefg          = "/c/d/e/f/g"
 )
 
 func renderTemplateNoTrimSpace(env *mock.Environment, segmentTemplate string, context any) string {

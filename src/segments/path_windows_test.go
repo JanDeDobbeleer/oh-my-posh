@@ -7,6 +7,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
+const (
+	fooBarMan = "\\foo\\bar\\man"
+)
+
 var testParentCases = []testParentCase{
 	{
 		Case:          "Windows Home folder",

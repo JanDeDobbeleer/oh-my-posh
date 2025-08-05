@@ -14,6 +14,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	abc   = "/abc"
+	abcd  = "/a/b/c/d"
+	cdefg = "/c/d/e/f/g"
+)
+
 var testParentCases = []testParentCase{
 	{
 		Case:          "Inside Home folder",

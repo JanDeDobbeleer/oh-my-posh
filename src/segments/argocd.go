@@ -13,7 +13,6 @@ import (
 
 const (
 	argocdOptsEnv     = "ARGOCD_OPTS"
-	argocdInvalidFlag = "invalid flag"
 	argocdInvalidYaml = "invalid yaml"
 	argocdNoCurrent   = "no current context"
 

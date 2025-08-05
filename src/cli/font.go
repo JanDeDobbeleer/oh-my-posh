@@ -53,7 +53,7 @@ This command is used to install fonts and configure the font in your terminal.
 					zipFolder += "/"
 				}
 
-				if err := font.Run(fontName, env.Cache(), env.Root(), zipFolder); err != nil {
+				if err := font.Run(fontName, env.Cache(), zipFolder); err != nil {
 					log.Error(err)
 					exitcode = 70
 				}

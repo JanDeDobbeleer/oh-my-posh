@@ -19,15 +19,12 @@ const (
 	HWND_BROADCAST = 0xFFFF //nolint:revive
 )
 
-func install(font *Font, admin bool) error {
+func install(font *Font) error {
 	// To install a font on Windows:
 	//  - Copy the file to the fonts directory
 	//  - Add registry entry
 	//  - Call AddFontResourceW to set the font
-	fontsDir := filepath.Join(os.Getenv("WINDIR"), "Fonts")
-	if !admin {
-		fontsDir = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts")
-	}
+	fontsDir := filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts", "Oh My Posh")
 
 	log.Debugf("installing font %s to %s", font.FileName, fontsDir)
 
@@ -59,16 +56,12 @@ func install(font *Font, admin bool) error {
 	log.Debug("font file written successfully, proceeding with registry entry")
 
 	// Add registry entry
-	var reg = registry.LOCAL_MACHINE
-	var regValue = font.FileName
-	if !admin {
-		reg = registry.CURRENT_USER
-		regValue = fullPath
-	}
+	reg := registry.CURRENT_USER
+	regValue := fullPath
 
-	log.Debugf("opening registry key %s for writing", registryKeyString(reg))
+	log.Debug("opening HKEY_CURRENT_USER for writing")
 
-	k, err := registry.OpenKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts`, registry.WRITE)
+	k, _, err := registry.CreateKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts\Oh My Posh`, registry.WRITE)
 	if err != nil {
 		log.Error(err)
 		// If this fails, remove the font file as well.
@@ -77,7 +70,7 @@ func install(font *Font, admin bool) error {
 			return errors.New("unable to delete font file after registry key open error")
 		}
 
-		return fmt.Errorf("unable to open registry key: %s", registryKeyString(reg))
+		return errors.New("unable to open HKEY_CURRENT_USER")
 	}
 
 	defer k.Close()
@@ -145,15 +138,4 @@ func install(font *Font, admin bool) error {
 	log.Debug("font resource added successfully")
 
 	return nil
-}
-
-func registryKeyString(key registry.Key) string {
-	switch key { //nolint:exhaustive
-	case registry.CURRENT_USER:
-		return "HKEY_CURRENT_USER"
-	case registry.LOCAL_MACHINE:
-		return "HKEY_LOCAL_MACHINE"
-	default:
-		return fmt.Sprintf("Unknown registry key: %d", key)
-	}
 }

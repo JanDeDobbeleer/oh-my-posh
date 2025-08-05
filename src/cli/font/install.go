@@ -20,7 +20,7 @@ func contains[S ~[]E, E comparable](s S, e E) bool {
 	return slices.Contains(s, e)
 }
 
-func InstallZIP(data []byte, m *main) ([]string, error) {
+func InstallZIP(data []byte, folder string) ([]string, error) {
 	var families []string
 	bytesReader := bytes.NewReader(data)
 
@@ -40,7 +40,7 @@ func InstallZIP(data []byte, m *main) ([]string, error) {
 		}
 
 		fontFileName := path.Base(file.Name)
-		fontRelativeFileName := strings.TrimPrefix(file.Name, m.Folder)
+		fontRelativeFileName := strings.TrimPrefix(file.Name, folder)
 
 		// do not install fonts that are not in the specified installation folder
 		if fontFileName != fontRelativeFileName {
@@ -78,7 +78,7 @@ func InstallZIP(data []byte, m *main) ([]string, error) {
 	}
 
 	for _, font := range fonts {
-		if err = install(font, m.system); err != nil {
+		if err = install(font); err != nil {
 			log.Error(err)
 			continue
 		}

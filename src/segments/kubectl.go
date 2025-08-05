@@ -12,7 +12,6 @@ import (
 const (
 	ParseKubeConfig properties.Property = "parse_kubeconfig"
 	ContextAliases  properties.Property = "context_aliases"
-	kubectlCacheKey                     = "kubectl"
 )
 
 type Kubectl struct {

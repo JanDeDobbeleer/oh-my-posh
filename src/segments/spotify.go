@@ -27,10 +27,9 @@ const (
 	// AdIcon indicates an advertisement is playing
 	AdIcon properties.Property = "ad_icon"
 
-	playing     = "playing"
-	stopped     = "stopped"
-	paused      = "paused"
-	advertising = "advertising"
+	playing = "playing"
+	stopped = "stopped"
+	paused  = "paused"
 )
 
 func (s *Spotify) Template() string {

@@ -19,10 +19,9 @@ type Python struct {
 
 const (
 	// FetchVirtualEnv fetches the virtual env
-	FetchVirtualEnv      properties.Property = "fetch_virtual_env"
-	UsePythonVersionFile properties.Property = "use_python_version_file"
-	FolderNameFallback   properties.Property = "folder_name_fallback"
-	DefaultVenvNames     properties.Property = "default_venv_names"
+	FetchVirtualEnv    properties.Property = "fetch_virtual_env"
+	FolderNameFallback properties.Property = "folder_name_fallback"
+	DefaultVenvNames   properties.Property = "default_venv_names"
 )
 
 func (p *Python) Template() string {
@@ -32,11 +31,22 @@ func (p *Python) Template() string {
 func (p *Python) Enabled() bool {
 	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
 	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
-	p.commands = []*cmd{
+
+	p.extraCommands = []*cmd{
 		{
+			feature:    "uv",
+			executable: "uv",
+			args:       []string{"run", "python", "--version"},
+			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
+		{
+			feature:    "pyenv",
 			getVersion: p.pyenvVersion,
 			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 		},
+	}
+
+	p.commands = []*cmd{
 		{
 			executable: "python",
 			args:       []string{"--version"},
@@ -53,6 +63,7 @@ func (p *Python) Enabled() bool {
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
+
 	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
 	p.displayMode = p.props.GetString(DisplayMode, DisplayModeEnvironment)
 	p.language.loadContext = p.loadContext

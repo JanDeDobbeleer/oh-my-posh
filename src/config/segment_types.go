@@ -20,6 +20,7 @@ type SegmentWriter interface {
 	Text() string
 	Init(props properties.Properties, env runtime.Environment)
 	CacheKey() (string, bool)
+	SetFeatures(features properties.Features)
 }
 
 const (
@@ -366,6 +367,7 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 
 	writer.Init(wrapper, env)
 	segment.writer = writer
+	writer.SetFeatures(segment.Features)
 
 	return nil
 }

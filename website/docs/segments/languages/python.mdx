@@ -40,6 +40,7 @@ import Config from "@site/src/components/Config.js";
 | `folders`              | `[]string` |                                           | allows to override the list of folder names to validate                                                                                                                                                                                                                                                                 |
 | `folder_name_fallback` | `boolean`  |                  `true`                   | instead of `default_venv_names` (case sensitive), use the parent folder name as the virtual environment's name or not                                                                                                                                                                                                   |
 | `default_venv_names`   | `[]string` |               `.venv, venv`               | allows to override the list of environment's name replaced when `folder_name_fallback` is `true`                                                                                                                                                                                                                        |
+| `features`             | `[]string` |                                           | a list of additional features to enable. Supports `uv` only at the time.                                                                                                                                                                                                                                                |
 
 ## Template ([info][templates])
 
@@ -55,7 +56,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name     | Type     | Description                                        |
 | -------- | -------- | -------------------------------------------------- |
-| `.Venv`  | `string` | the virtual environment name (if present)          |
+| `.Venv`  | `string` | the virtual environment name (if active)           |
 | `.Full`  | `string` | the full version                                   |
 | `.Major` | `string` | major number                                       |
 | `.Minor` | `string` | minor number                                       |

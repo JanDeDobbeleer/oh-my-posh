@@ -5,9 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type PlasticStatus struct {
@@ -34,11 +32,6 @@ type Plastic struct {
 	scm
 	Behind       bool
 	MergePending bool
-}
-
-func (p *Plastic) Init(props properties.Properties, env runtime.Environment) {
-	p.props = props
-	p.env = env
 }
 
 func (p *Plastic) Template() string {

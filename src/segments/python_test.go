@@ -111,7 +111,6 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("ResolveSymlink", testify_.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 
 		props[properties.FetchVersion] = tc.FetchVersion
-		props[UsePythonVersionFile] = true
 		props[DisplayMode] = DisplayModeAlways
 
 		python := &Python{}

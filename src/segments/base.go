@@ -6,8 +6,9 @@ import (
 )
 
 type base struct {
-	props properties.Properties
-	env   runtime.Environment
+	props    properties.Properties
+	env      runtime.Environment
+	features properties.Features
 
 	Segment *Segment `json:"Segment"`
 }
@@ -37,4 +38,8 @@ func (b *base) Init(props properties.Properties, env runtime.Environment) {
 
 func (b *base) CacheKey() (string, bool) {
 	return "", false
+}
+
+func (b *base) SetFeatures(features properties.Features) {
+	b.features = features
 }

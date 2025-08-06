@@ -46,6 +46,7 @@ type cmd struct {
 	executable         string
 	regex              string
 	versionURLTemplate string
+	feature            string
 	args               []string
 }
 
@@ -79,6 +80,7 @@ type language struct {
 	versionURLTemplate string
 	name               string
 	commands           []*cmd
+	extraCommands      []*cmd
 	projectFiles       []string
 	folders            []string
 	extensions         []string
@@ -208,6 +210,16 @@ func (l *language) setVersion() error {
 			log.Debugf("version cache restored for %s: %s", l.name, version)
 			l.version = version
 			return nil
+		}
+	}
+
+	// add enabled extra commands through features
+	for _, feature := range l.features {
+		for _, extraCommand := range l.extraCommands {
+			if extraCommand.feature == feature {
+				// prepend the command
+				l.commands = append([]*cmd{extraCommand}, l.commands...)
+			}
 		}
 	}
 

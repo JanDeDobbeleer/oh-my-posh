@@ -52,10 +52,11 @@ jj {{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
 
 ### Properties
 
-| Name        | Type     | Description                                           |
-| ----------- | -------- | ----------------------------------------------------- |
-| `.Working`  | `Status` | changes in the working copy (see below)               |
-| `.ChangeID` | `string` | The shortest unique prefix of the working copy change |
+| Name            | Type     | Description                                                                                               |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| `.Working`      | `Status` | changes in the working copy (see below)                                                                   |
+| `.ChangeID`     | `string` | the shortest unique prefix of the working copy change                                                     |
+| `.ChangeIDFull` | `string` | the full 32 char change ID of the working copy (use `substr 0 8 .ChangeIDFull` to get the default output) |
 
 ### Status
 

@@ -12,7 +12,7 @@ import (
 const (
 	JUJUTSUCOMMAND = "jj"
 
-	jjLogTemplate = `change_id.shortest() ++ "\n" ++ diff.summary()`
+	jjLogTemplate = `separate("\n", change_id.shortest(), change_id, diff.summary())`
 
 	IgnoreWorkingCopy properties.Property = "ignore_working_copy"
 )
@@ -35,8 +35,9 @@ func (s *JujutsuStatus) add(code byte) {
 }
 
 type Jujutsu struct {
-	Working  *JujutsuStatus
-	ChangeID string
+	Working      *JujutsuStatus
+	ChangeID     string
+	ChangeIDFull string
 	scm
 }
 
@@ -111,8 +112,9 @@ func (jj *Jujutsu) setJujutsuStatus() {
 
 	lines := strings.Split(statusString, "\n")
 	jj.ChangeID = lines[0]
+	jj.ChangeIDFull = lines[1]
 
-	for _, line := range lines[1:] {
+	for _, line := range lines[2:] {
 		if len(line) > 0 {
 			jj.Working.add(line[0])
 		}

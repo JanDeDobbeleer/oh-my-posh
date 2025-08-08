@@ -48,7 +48,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 	},
 	PersistentPreRun: func(_ *cobra.Command, _ []string) {
 		traceEnv := os.Getenv("POSH_TRACE")
-		if traceEnv == "" {
+		if traceEnv == "" && !trace {
 			return
 		}
 
@@ -101,6 +101,7 @@ func Execute() {
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "config file path")
 	RootCmd.PersistentFlags().BoolVar(&silent, "silent", false, "do not print anything")
+	RootCmd.PersistentFlags().BoolVar(&trace, "trace", false, "enable tracing")
 	RootCmd.Flags().BoolVar(&printVersion, "version", false, "print the version number and exit")
 
 	// Deprecated flags, should be kept to avoid breaking CLI integration.

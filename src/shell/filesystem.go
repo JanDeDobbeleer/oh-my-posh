@@ -105,7 +105,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 
 	if env.Flags().Shell != NU {
 		scriptPathCache = filepath.Join(cache.Path(), scriptName(env))
-		log.Debug("autoload path for non-nu shell:", scriptPathCache)
+		log.Debug("init script path for non-nu shell:", scriptPathCache)
 		return scriptPathCache, nil
 	}
 

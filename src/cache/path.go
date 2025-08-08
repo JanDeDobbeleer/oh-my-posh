@@ -9,8 +9,14 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
 
+var cachePath string
+
 func Path() string {
 	defer log.Trace(time.Now())
+
+	if cachePath != "" {
+		return cachePath
+	}
 
 	returnOrBuildCachePath := func(input string) (string, bool) {
 		// validate root path
@@ -31,18 +37,19 @@ func Path() string {
 		return cachePath, true
 	}
 
+	var OK bool
 	// allow the user to set the cache path using OMP_CACHE_DIR
-	if cachePath, OK := returnOrBuildCachePath(os.Getenv("OMP_CACHE_DIR")); OK {
+	if cachePath, OK = returnOrBuildCachePath(os.Getenv("OMP_CACHE_DIR")); OK {
 		return cachePath
 	}
 
 	// WINDOWS cache folder, should not exist elsewhere
-	if cachePath, OK := returnOrBuildCachePath(os.Getenv("LOCALAPPDATA")); OK {
+	if cachePath, OK = returnOrBuildCachePath(os.Getenv("LOCALAPPDATA")); OK {
 		return cachePath
 	}
 
 	// get XDG_CACHE_HOME if present
-	if cachePath, OK := returnOrBuildCachePath(os.Getenv("XDG_CACHE_HOME")); OK {
+	if cachePath, OK = returnOrBuildCachePath(os.Getenv("XDG_CACHE_HOME")); OK {
 		return cachePath
 	}
 
@@ -53,9 +60,10 @@ func Path() string {
 	}
 
 	// HOME cache folder
-	if cachePath, OK := returnOrBuildCachePath(dotCache); OK {
+	if cachePath, OK = returnOrBuildCachePath(dotCache); OK {
 		return cachePath
 	}
 
-	return path.Home()
+	cachePath = path.Home()
+	return cachePath
 }

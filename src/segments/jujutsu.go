@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -12,9 +13,8 @@ import (
 const (
 	JUJUTSUCOMMAND = "jj"
 
-	jjLogTemplate = `separate("\n", change_id.shortest(), change_id, diff.summary())`
-
 	IgnoreWorkingCopy properties.Property = "ignore_working_copy"
+	ChangeIDMinLen    properties.Property = "change_id_min_len"
 )
 
 type JujutsuStatus struct {
@@ -35,9 +35,8 @@ func (s *JujutsuStatus) add(code byte) {
 }
 
 type Jujutsu struct {
-	Working      *JujutsuStatus
-	ChangeID     string
-	ChangeIDFull string
+	Working  *JujutsuStatus
+	ChangeID string
 	scm
 }
 
@@ -104,21 +103,24 @@ func (jj *Jujutsu) setDir(dir string) {
 }
 
 func (jj *Jujutsu) setJujutsuStatus() {
-	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
-	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
+	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "@", "--no-graph", "-T", jj.logTemplate())
 	if err != nil {
 		return
 	}
 
 	lines := strings.Split(statusString, "\n")
 	jj.ChangeID = lines[0]
-	jj.ChangeIDFull = lines[1]
 
-	for _, line := range lines[2:] {
+	for _, line := range lines[1:] {
 		if len(line) > 0 {
 			jj.Working.add(line[0])
 		}
 	}
+}
+
+func (jj *Jujutsu) logTemplate() string {
+	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
+	return fmt.Sprintf(`change_id.shortest(%d) ++ "\n" ++ diff.summary()`, jj.props.GetInt(ChangeIDMinLen, 0))
 }
 
 func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (string, error) {

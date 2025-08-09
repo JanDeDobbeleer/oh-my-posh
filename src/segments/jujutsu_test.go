@@ -45,17 +45,15 @@ func TestJujutsuEnabledInWorkingDirectory(t *testing.T) {
 
 func TestJujutsuGetIdInfo(t *testing.T) {
 	cases := []struct {
-		ExpectedWorking      *JujutsuStatus
-		Case                 string
-		LogOutput            string
-		ExpectedChangeID     string
-		ExpectedChangeIDFull string
+		ExpectedWorking  *JujutsuStatus
+		Case             string
+		LogOutput        string
+		ExpectedChangeID string
 	}{
 		{
-			Case:                 "nochanges",
-			LogOutput:            "a\nazzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\n\n",
-			ExpectedChangeID:     "a",
-			ExpectedChangeIDFull: "azzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+			Case:             "nochanges",
+			LogOutput:        "a\n\n",
+			ExpectedChangeID: "a",
 			ExpectedWorking: &JujutsuStatus{ScmStatus{
 				Deleted:  0,
 				Added:    0,
@@ -66,15 +64,13 @@ func TestJujutsuGetIdInfo(t *testing.T) {
 		{
 			Case: "changed",
 			LogOutput: `b
-bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 D deleted_file
 A added_file
 C {copied_file => new_file}
 M modified_file
 R {renamed_file => new_file}
 `,
-			ExpectedChangeID:     "b",
-			ExpectedChangeIDFull: "bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+			ExpectedChangeID: "b",
 			ExpectedWorking: &JujutsuStatus{ScmStatus{
 				Deleted:  1,
 				Added:    2,
@@ -104,10 +100,10 @@ R {renamed_file => new_file}
 		env.On("PathSeparator").Return("/")
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", poshGitEnv).Return("")
-		env.MockJjCommand(fileInfo.Path, tc.LogOutput, "log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
 
 		jj := &Jujutsu{}
 		jj.Init(props, env)
+		env.MockJjCommand(fileInfo.Path, tc.LogOutput, "log", "-r", "@", "--no-graph", "-T", jj.logTemplate())
 
 		if tc.ExpectedWorking != nil {
 			tc.ExpectedWorking.Formats = map[string]string{}
@@ -118,6 +114,5 @@ R {renamed_file => new_file}
 		assert.Equal(t, fileInfo.Path, jj.repoRootDir)
 		assert.Equal(t, tc.ExpectedWorking, jj.Working, tc.Case)
 		assert.Equal(t, tc.ExpectedChangeID, jj.ChangeID, tc.Case)
-		assert.Equal(t, tc.ExpectedChangeIDFull, jj.ChangeIDFull, tc.Case)
 	}
 }

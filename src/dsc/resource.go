@@ -12,12 +12,11 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-// CompressJSON takes a JSON string and returns it in compressed format
 func CompressJSON(jsonStr string) string {
 	var buf bytes.Buffer
 	err := json.Compact(&buf, []byte(jsonStr))
 	if err != nil {
-		return jsonStr // return original if compression fails
+		return jsonStr
 	}
 	return buf.String()
 }

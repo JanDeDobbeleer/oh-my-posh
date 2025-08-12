@@ -130,3 +130,66 @@ func (c *Configuration) Resolve() (*Configuration, bool) {
 
 	return parent, true
 }
+
+func (s *Resource) Manifest() string {
+	manifest := `{
+  "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json",
+  "description": "Allows configuring the Oh My Posh config files.",
+  "export": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "config",
+      "dsc",
+      "export"
+    ]
+  },
+  "get": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "config",
+      "dsc",
+      "get"
+    ]
+  },
+  "schema": {
+    "command": {
+      "executable": "oh-my-posh",
+      "args": [
+        "config",
+        "dsc",
+        "schema"
+      ]
+    }
+  },
+  "set": {
+    "executable": "oh-my-posh",
+    "implementsPretest": true,
+    "return": "stateAndDiff",
+    "args": [
+      "config",
+      "dsc",
+      "set",
+      {
+        "jsonInputArg": "--schema",
+        "mandatory": true
+      }
+    ]
+  },
+  "tags": [
+    "OhMyPosh",
+    "linux",
+    "macos",
+    "windows",
+    "shell",
+    "powershell",
+    "terminal",
+    "theming",
+    "configuration"
+  ],
+  "type": "OhMyPosh/Config",
+  "version": "0.1.0"
+}`
+	return dsc.CompressJSON(manifest)
+}

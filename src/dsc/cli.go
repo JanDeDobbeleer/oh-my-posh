@@ -18,6 +18,7 @@ type resource interface {
 	Resolve()
 	ToJSON() string
 	Schema() string
+	Manifest() string
 	Apply(schema string) error
 	Test(input string) error
 }
@@ -27,7 +28,7 @@ func Command(r resource) *cobra.Command {
 		Use:       "dsc",
 		Short:     "Manage Oh My Posh DSC (Desired State Configuration)",
 		Long:      "Manage Oh My Posh DSC (Desired State Configuration).",
-		ValidArgs: []string{"get", "set", "test", "schema", "export"},
+		ValidArgs: []string{"get", "set", "test", "schema", "export", "manifest"},
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()
@@ -55,6 +56,8 @@ func Command(r resource) *cobra.Command {
 				err = r.Apply(state)
 			case "schema":
 				fmt.Print(r.Schema())
+			case "manifest":
+				fmt.Print(r.Manifest())
 			case "test":
 				if state == "" {
 					err = newError("please provide a state configuration to test")

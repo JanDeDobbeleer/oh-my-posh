@@ -17,10 +17,78 @@ const (
 	initCommandRegex = `oh-my-posh(?:\.exe)?\s+init`
 )
 
-func DSC() *dsc.Resource[*Shell] {
-	return &dsc.Resource[*Shell]{
-		JSONSchemaURL: "https://ohmyposh.dev/dsc.shell.schema.json",
+func DSC() *Resource {
+	return &Resource{
+		Resource: dsc.Resource[*Shell]{
+			JSONSchemaURL: "https://ohmyposh.dev/dsc.shell.schema.json",
+		},
 	}
+}
+
+type Resource struct {
+	dsc.Resource[*Shell]
+}
+
+func (r *Resource) Manifest() string {
+	manifest := `{
+  "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json",
+  "description": "Allows configuring the Oh My Posh shell integration.",
+  "export": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "shell",
+      "dsc",
+      "export"
+    ]
+  },
+  "get": {
+    "executable": "oh-my-posh",
+    "input": "stdin",
+    "args": [
+      "shell",
+      "dsc",
+      "get"
+    ]
+  },
+  "schema": {
+    "command": {
+      "executable": "oh-my-posh",
+      "args": [
+        "shell",
+        "dsc",
+        "schema"
+      ]
+    }
+  },
+  "set": {
+    "executable": "oh-my-posh",
+    "implementsPretest": true,
+    "return": "stateAndDiff",
+    "args": [
+      "shell",
+      "dsc",
+      "set",
+      {
+        "jsonInputArg": "--schema",
+        "mandatory": true
+      }
+    ]
+  },
+  "tags": [
+    "OhMyPosh",
+    "linux",
+    "macos",
+    "windows",
+    "shell",
+    "powershell",
+    "terminal",
+    "theming"
+  ],
+  "type": "OhMyPosh/Shell",
+  "version": "0.1.0"
+}`
+	return dsc.CompressJSON(manifest)
 }
 
 type Shell struct {

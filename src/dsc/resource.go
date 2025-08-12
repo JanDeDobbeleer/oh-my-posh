@@ -12,6 +12,16 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
+// CompressJSON takes a JSON string and returns it in compressed format
+func CompressJSON(jsonStr string) string {
+	var buf bytes.Buffer
+	err := json.Compact(&buf, []byte(jsonStr))
+	if err != nil {
+		return jsonStr // return original if compression fails
+	}
+	return buf.String()
+}
+
 type Resource[T State[T]] struct {
 	Cache         cache.Cache `json:"-"`
 	JSONSchemaURL string      `json:"$schema,omitempty"`
@@ -141,7 +151,10 @@ func (resource *Resource[T]) ToJSON() string {
 	var result bytes.Buffer
 	jsonEncoder := json.NewEncoder(&result)
 	jsonEncoder.SetEscapeHTML(false)
-	jsonEncoder.SetIndent("", "  ")
 	_ = jsonEncoder.Encode(resource)
 	return result.String()
+}
+
+func (resource *Resource[T]) Manifest() string {
+	return "{}"
 }

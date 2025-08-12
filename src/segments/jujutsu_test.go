@@ -2,8 +2,10 @@ package segments
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -43,76 +45,176 @@ func TestJujutsuEnabledInWorkingDirectory(t *testing.T) {
 	assert.Equal(t, fileInfo.Path, jj.repoRootDir)
 }
 
-func TestJujutsuGetIdInfo(t *testing.T) {
+// genJJOutput is a test helper to generate the output for specific JJ templates seperated by NUL characters.
+func genJJOutput(jj *Jujutsu, outputMap map[string]string) string {
+	jjTemplates := jj.jjTemplates()
+
+	tmplIndexes := make(map[string]int)
+	for i, tmpl := range jjTemplates {
+		tmplIndexes[tmpl.template] = i
+	}
+
+	outputs := make([]string, len(jjTemplates))
+	for tmplString, output := range outputMap {
+		tmplIndex, ok := tmplIndexes[tmplString]
+		if !ok {
+			continue
+		}
+		outputs[tmplIndex] = output
+	}
+	return strings.Join(outputs, "\x00")
+}
+
+func TestJujutsuOutyt(t *testing.T) {
 	cases := []struct {
-		ExpectedWorking  *JujutsuStatus
-		Case             string
-		LogOutput        string
-		ExpectedChangeID string
+		Case      string
+		CmdOutput map[string]string
+
+		ExpectedScmStatus       ScmStatus
+		ExpectedChangeID        JujutsuID
+		ExpectedCommitID        JujutsuID
+		ExpectedLocalBookmarks  []string
+		ExpectedRemoteBookmarks []string
+		ExpectedDescription     string
+		ExpectedConflict        bool
+		ExpectedImmutable       bool
+		ExpectedEmpty           bool
+		ExpectedDivergent       bool
+		ExpectedHidden          bool
+		ExpectedMine            bool
+		ExpectedAuthorID        User
+		ExpectedCommitterID     User
 	}{
 		{
-			Case:             "nochanges",
-			LogOutput:        "a\n\n",
-			ExpectedChangeID: "a",
-			ExpectedWorking: &JujutsuStatus{ScmStatus{
-				Deleted:  0,
-				Added:    0,
-				Modified: 0,
-				Moved:    0,
-			}},
-		},
-		{
-			Case: "changed",
-			LogOutput: `b
-D deleted_file
+			Case: "working_status",
+			CmdOutput: map[string]string{
+				"diff.summary()": `D deleted_file
 A added_file
 C {copied_file => new_file}
 M modified_file
 R {renamed_file => new_file}
 `,
-			ExpectedChangeID: "b",
-			ExpectedWorking: &JujutsuStatus{ScmStatus{
+			},
+			ExpectedScmStatus: ScmStatus{
 				Deleted:  1,
 				Added:    2,
 				Modified: 1,
 				Moved:    1,
-			}},
+			},
+		},
+		{
+			Case: "change_id",
+			CmdOutput: map[string]string{
+				"change_id":                      "snwyymunypszptwmpnqqktoukulnrslv",
+				"change_id.shortest(8).prefix()": "s",
+				"change_id.shortest(8).rest()":   "nwyymun",
+			},
+			ExpectedChangeID: JujutsuID{
+				Full:     "snwyymunypszptwmpnqqktoukulnrslv",
+				Shortest: "s",
+				Rest:     "nwyymun",
+			},
+		},
+		{
+			Case: "commit_id",
+			CmdOutput: map[string]string{
+				"commit_id":                      "26dbb0c48661c8b827a868fb10b2dd3666811e3a",
+				"commit_id.shortest(8).prefix()": "26",
+				"commit_id.shortest(8).rest()":   "dbb0c4",
+			},
+			ExpectedCommitID: JujutsuID{
+				Full:     "26dbb0c48661c8b827a868fb10b2dd3666811e3a",
+				Shortest: "26",
+				Rest:     "dbb0c4",
+			},
+		},
+		{
+			Case: "bookmarks",
+			CmdOutput: map[string]string{
+				"local_bookmarks.join('\n')":  "main\nfeature-branch",
+				"remote_bookmarks.join('\n')": "origin/main\norigin/feature-branch",
+			},
+			ExpectedLocalBookmarks:  []string{"main", "feature-branch"},
+			ExpectedRemoteBookmarks: []string{"origin/main", "origin/feature-branch"},
+		},
+		{
+			Case: "booleans",
+			CmdOutput: map[string]string{
+				"divergent": "true",
+				"hidden":    "false",
+				"immutable": "true",
+				"empty":     "false",
+				"mine":      "true",
+			},
+			ExpectedDivergent: true,
+			ExpectedHidden:    false,
+			ExpectedImmutable: true,
+			ExpectedEmpty:     false,
+			ExpectedMine:      true,
+		},
+		{
+			Case: "author/commiter",
+			CmdOutput: map[string]string{
+				"author().name":    "John Doe",
+				"author().email":   "john@example.com",
+				"commiter().name":  "Jane Doe",
+				"commiter().email": "jane@example.com",
+			},
+			ExpectedAuthorID:    User{Name: "John Doe", Email: "john@example.com"},
+			ExpectedCommitterID: User{Name: "Jane Doe", Email: "jane@example.com"},
 		},
 	}
 
 	for _, tc := range cases {
-		fileInfo := &runtime.FileInfo{
-			Path:         "/dir/hello",
-			ParentFolder: "/dir",
-			IsDir:        true,
-		}
+		t.Run(tc.Case, func(t *testing.T) {
+			fileInfo := &runtime.FileInfo{
+				Path:         "/dir/hello",
+				ParentFolder: "/dir",
+				IsDir:        true,
+			}
 
-		props := properties.Map{
-			FetchStatus: true,
-		}
+			props := properties.Map{
+				FetchStatus:    true,
+				MinChangeIDLen: "8",
+				MinCommitIDLen: "8",
+			}
 
-		env := new(mock.Environment)
-		env.On("InWSLSharedDrive").Return(false)
-		env.On("HasCommand", "jj").Return(true)
-		env.On("GOOS").Return("")
-		env.On("IsWsl").Return(false)
-		env.On("HasParentFilePath", ".jj", false).Return(fileInfo, nil)
-		env.On("PathSeparator").Return("/")
-		env.On("Home").Return(poshHome)
-		env.On("Getenv", poshGitEnv).Return("")
-		env.MockJjCommand(fileInfo.Path, tc.LogOutput, "log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
+			env := new(mock.Environment)
+			env.On("InWSLSharedDrive").Return(false)
+			env.On("HasCommand", "jj").Return(true)
+			env.On("GOOS").Return("")
+			env.On("IsWsl").Return(false)
+			env.On("HasParentFilePath", ".jj", false).Return(fileInfo, nil)
+			env.On("PathSeparator").Return("/")
+			env.On("Home").Return(poshHome)
+			env.On("Getenv", poshGitEnv).Return("")
 
-		jj := &Jujutsu{}
-		jj.Init(props, env)
+			jj := &Jujutsu{}
+			jj.Init(props, env)
+			templates := jj.jjTemplates()
+			jjTmplString := logTemplate(templates)
+			log.Debugf("Using Jujutsu log template: %s", jjTmplString)
+			cmdOutput := genJJOutput(jj, tc.CmdOutput)
+			env.MockJjCommand(fileInfo.Path, cmdOutput, "log", "-r", "@", "--no-graph", "-T", jjTmplString)
 
-		if tc.ExpectedWorking != nil {
-			tc.ExpectedWorking.Formats = map[string]string{}
-		}
-
-		assert.True(t, jj.Enabled())
-		assert.Equal(t, fileInfo.Path, jj.mainSCMDir)
-		assert.Equal(t, fileInfo.Path, jj.repoRootDir)
-		assert.Equal(t, tc.ExpectedWorking, jj.Working, tc.Case)
-		assert.Equal(t, tc.ExpectedChangeID, jj.ChangeID, tc.Case)
+			assert.True(t, jj.Enabled(), tc.Case)
+			assert.Equal(t, fileInfo.Path, jj.mainSCMDir)
+			assert.Equal(t, fileInfo.Path, jj.repoRootDir)
+			assert.Equal(t, tc.ExpectedScmStatus, jj.Working.ScmStatus, tc.Case)
+			assert.Equal(t, tc.ExpectedChangeID, jj.ChangeID, tc.Case)
+			assert.Equal(t, tc.ExpectedCommitID, jj.CommitID, tc.Case)
+			assert.Equal(t, tc.ExpectedLocalBookmarks, jj.LocalBookmarks, tc.Case)
+			assert.Equal(t, tc.ExpectedRemoteBookmarks, jj.RemoteBookmarks, tc.Case)
+			assert.Equal(t, tc.ExpectedDescription, jj.Description, tc.Case)
+			assert.Equal(t, tc.ExpectedConflict, jj.Conflict, tc.Case)
+			assert.Equal(t, tc.ExpectedImmutable, jj.Immutable, tc.Case)
+			assert.Equal(t, tc.ExpectedEmpty, jj.Empty, tc.Case)
+			assert.Equal(t, tc.ExpectedDivergent, jj.Divergent, tc.Case)
+			assert.Equal(t, tc.ExpectedHidden, jj.Hidden, tc.Case)
+			assert.Equal(t, tc.ExpectedMine, jj.Mine, tc.Case)
+			assert.Equal(t, tc.ExpectedAuthorID, jj.AuthorID, tc.Case)
+			assert.Equal(t, tc.ExpectedCommitterID, jj.CommitterID, tc.Case)
+		})
 	}
+
 }

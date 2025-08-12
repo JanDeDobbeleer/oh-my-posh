@@ -42,29 +42,25 @@ func TestJujutsuEnabledInWorkingDirectory(t *testing.T) {
 	assert.Equal(t, fileInfo.Path, jj.mainSCMDir)
 	assert.Equal(t, fileInfo.Path, jj.repoRootDir)
 }
-
 func TestJujutsuGetIdInfo(t *testing.T) {
 	cases := []struct {
-		ExpectedWorking  *JujutsuStatus
-		Case             string
-		LogOutput        string
-		ExpectedChangeID string
+		Case               string
+		CmdOutput          string
+		LogTemplates       map[string]string
+		ExpectedChangeID   string
+		ExpectedWorking    *JujutsuStatus
+		ExpectedLogResults map[string]string
 	}{
 		{
-			Case:             "nochanges",
-			LogOutput:        "a\n\n",
-			ExpectedChangeID: "a",
-			ExpectedWorking: &JujutsuStatus{ScmStatus{
-				Deleted:  0,
-				Added:    0,
-				Modified: 0,
-				Moved:    0,
-			}},
+			Case:               "nochanges",
+			CmdOutput:          "a\n",
+			ExpectedChangeID:   "a",
+			ExpectedWorking:    &JujutsuStatus{ScmStatus{}},
+			ExpectedLogResults: map[string]string{},
 		},
 		{
 			Case: "changed",
-			LogOutput: `b
-D deleted_file
+			CmdOutput: "b\x00" + `D deleted_file
 A added_file
 C {copied_file => new_file}
 M modified_file
@@ -77,6 +73,21 @@ R {renamed_file => new_file}
 				Modified: 1,
 				Moved:    1,
 			}},
+			ExpectedLogResults: map[string]string{},
+		},
+		{
+			Case:      "customTemplates",
+			CmdOutput: "kk\x00\x00kk\x00utnvqz",
+			LogTemplates: map[string]string{
+				"change_id_prefix": "change_id.shortest(8).prefix()",
+				"change_id_rest":   "change_id.shortest(8).rest()",
+			},
+			ExpectedChangeID: "kk",
+			ExpectedWorking:  &JujutsuStatus{ScmStatus{}},
+			ExpectedLogResults: map[string]string{
+				"change_id_prefix": "kk",
+				"change_id_rest":   "utnvqz",
+			},
 		},
 	}
 
@@ -87,8 +98,13 @@ R {renamed_file => new_file}
 			IsDir:        true,
 		}
 
+		if tc.LogTemplates == nil {
+			tc.LogTemplates = make(map[string]string)
+		}
+
 		props := properties.Map{
-			FetchStatus: true,
+			FetchStatus:  true,
+			LogTemplates: tc.LogTemplates,
 		}
 
 		env := new(mock.Environment)
@@ -100,10 +116,11 @@ R {renamed_file => new_file}
 		env.On("PathSeparator").Return("/")
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", poshGitEnv).Return("")
-		env.MockJjCommand(fileInfo.Path, tc.LogOutput, "log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
 
 		jj := &Jujutsu{}
 		jj.Init(props, env)
+		logTemplate, _ := jj.logTemplate()
+		env.MockJjCommand(fileInfo.Path, tc.CmdOutput, "log", "-r", "@", "--no-graph", "-T", logTemplate)
 
 		if tc.ExpectedWorking != nil {
 			tc.ExpectedWorking.Formats = map[string]string{}
@@ -114,5 +131,6 @@ R {renamed_file => new_file}
 		assert.Equal(t, fileInfo.Path, jj.repoRootDir)
 		assert.Equal(t, tc.ExpectedWorking, jj.Working, tc.Case)
 		assert.Equal(t, tc.ExpectedChangeID, jj.ChangeID, tc.Case)
+		assert.Equal(t, tc.ExpectedLogResults, jj.LogResults, tc.Case)
 	}
 }

@@ -141,7 +141,6 @@ func (resource *Resource[T]) ToJSON() string {
 	var result bytes.Buffer
 	jsonEncoder := json.NewEncoder(&result)
 	jsonEncoder.SetEscapeHTML(false)
-	jsonEncoder.SetIndent("", "  ")
 	_ = jsonEncoder.Encode(resource)
 	return result.String()
 }

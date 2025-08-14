@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "path",
+          "foreground": "#87FF00",
+          "style": "plain",
+          "template": "{{ .Path }} "
+        },
+        {
+          "type": "text",
+          "foreground": "#eb6b34",
+          "style": "plain",
+          "template": "λ "
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 3
+}

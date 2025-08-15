@@ -54,7 +54,7 @@ jobs:
         run: |
           ./pre.ps1 -Version ${{ needs.changelog.outputs.version }}
       - name: Run GoReleaser 🚀
-        uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a
         with:
           distribution: goreleaser
           version: v2.3.2

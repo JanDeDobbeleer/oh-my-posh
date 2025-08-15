@@ -1,6 +1,8 @@
 package segments
 
 import (
+	"maps"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -12,9 +14,11 @@ import (
 const (
 	JUJUTSUCOMMAND = "jj"
 
-	jjLogTemplate = `change_id.shortest() ++ "\n" ++ diff.summary()`
-
 	IgnoreWorkingCopy properties.Property = "ignore_working_copy"
+	LogTemplates      properties.Property = "log_templates"
+
+	changeIDKey    = "__change_id"
+	diffSummaryKey = "__diff_summary"
 )
 
 type JujutsuStatus struct {
@@ -35,8 +39,9 @@ func (s *JujutsuStatus) add(code byte) {
 }
 
 type Jujutsu struct {
-	Working  *JujutsuStatus
-	ChangeID string
+	Working    *JujutsuStatus
+	ChangeID   string
+	LogResults map[string]string
 	scm
 }
 
@@ -102,21 +107,52 @@ func (jj *Jujutsu) setDir(dir string) {
 	jj.Dir = strings.TrimSuffix(dir, "/.jj")
 }
 
+// logTemplate will create a jj log template string with each template separated
+// by a newline.  Returns the template string and the keys in the order they
+// were specified.
+func (jj *Jujutsu) logTemplate() (string, []string) {
+	tmpls := jj.props.GetKeyValueMap(LogTemplates, make(map[string]string))
+	tmpls[changeIDKey] = "change_id.shortest()"
+	tmpls[diffSummaryKey] = "diff.summary()"
+
+	keys := slices.Sorted(maps.Keys(tmpls))
+	var sb strings.Builder
+	for i, key := range keys {
+		sb.WriteString(tmpls[key])
+		if i < len(keys)-1 {
+			sb.WriteString(` ++ "\0" ++ `)
+		}
+	}
+
+	return sb.String(), keys
+}
+
 func (jj *Jujutsu) setJujutsuStatus() {
-	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
-	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
+	logTemplate, keys := jj.logTemplate()
+	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "@", "--no-graph", "-T", logTemplate)
 	if err != nil {
 		return
 	}
+	statusString = strings.TrimSuffix(statusString, "\n")
 
-	lines := strings.Split(statusString, "\n")
-	jj.ChangeID = lines[0]
-
-	for _, line := range lines[1:] {
-		if len(line) > 0 {
-			jj.Working.add(line[0])
+	results := make(map[string]string)
+	for i, result := range strings.Split(statusString, string(rune(0))) {
+		// Take care of internal use-cases first
+		switch keys[i] {
+		case changeIDKey:
+			jj.ChangeID = result
+			continue
+		case diffSummaryKey:
+			for _, line := range strings.Split(result, "\n") {
+				if len(line) > 0 {
+					jj.Working.add(line[0])
+				}
+			}
+			continue
 		}
+		results[keys[i]] = result
 	}
+	jj.LogResults = results
 }
 
 func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (string, error) {

@@ -100,10 +100,10 @@ R {renamed_file => new_file}
 		env.On("PathSeparator").Return("/")
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", poshGitEnv).Return("")
-		env.MockJjCommand(fileInfo.Path, tc.LogOutput, "log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
 
 		jj := &Jujutsu{}
 		jj.Init(props, env)
+		env.MockJjCommand(fileInfo.Path, tc.LogOutput, "log", "-r", "@", "--no-graph", "-T", jj.logTemplate())
 
 		if tc.ExpectedWorking != nil {
 			tc.ExpectedWorking.Formats = map[string]string{}

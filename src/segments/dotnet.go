@@ -35,6 +35,7 @@ func (d *Dotnet) Enabled() bool {
 		"*.vb",
 		"*.sln",
 		"*.slnf",
+		"*.slnx",
 		"*.csproj",
 		"*.vbproj",
 		"*.fs",

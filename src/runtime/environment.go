@@ -8,7 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 
-	disk "github.com/shirou/gopsutil/v3/disk"
+	disk "github.com/shirou/gopsutil/v4/disk"
 )
 
 const (

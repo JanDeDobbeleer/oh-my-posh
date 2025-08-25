@@ -10,8 +10,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/shirou/gopsutil/v3/host"
-	mem "github.com/shirou/gopsutil/v3/mem"
+	"github.com/shirou/gopsutil/v4/host"
+	mem "github.com/shirou/gopsutil/v4/mem"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 	"golang.org/x/sys/unix"
 )

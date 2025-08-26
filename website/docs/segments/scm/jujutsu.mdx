@@ -33,31 +33,47 @@ import Config from "@site/src/components/Config.js";
 As doing Jujutsu (jj) calls can slow down the prompt experience, we do not fetch information by default.
 Set `status_formats` to `true` to enable fetching additional information (and populate the template).
 
-| Name                  |        Type         | Default | Description                                                                                                                                                                                                                                                      |
-| --------------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`        |      `boolean`      | `false` | fetch the local changes                                                                                                                                                                                                                                          |
-| `ignore_working_copy` |      `boolean`      | `true`  | don't snapshot the working copy, and don't update it                                                                                                                                                                                                             |
-| `native_fallback`     |      `boolean`      | `false` | when set to `true` and `jj.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native `jj` executable to fetch data. Not all information can be displayed in this case                                                        |
-| `status_formats`      | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides |
+| Name                  |        Type         | Default | Description                                                                                                                                                                                                                                                        |
+| --------------------- | :-----------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fetch_status`        |      `boolean`      | `false` | fetch the local changes                                                                                                                                                                                                                                            |
+| `ignore_working_copy` |      `boolean`      | `true`  | don't snapshot the working copy, and don't update it                                                                                                                                                                                                               |
+| `native_fallback`     |      `boolean`      | `false` | when set to `true` and `jj.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native `jj` executable to fetch data. Not all information can be displayed in this case                                                          |
+| `status_formats`      | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides   |
+| `min_change_id_len`   |      `integer`      |   `8`   | The minimum length for the change_id in Jujutsu.  This affects `.ChangeID.Short` and .ChangeID.Rest` only (`.ChangeID.Full` will always be the full)                                                                                                               |
+| `min_commit_id_len`   |      `integer`      |   `8`   | The minimum length for the commit_id in Jujutsu.  This affects `.CommitID.Short` and .CommitID.Rest` only (`.CommitID.Full` will always be the full)                                                                                                               |
+
 
 ## Template ([info][templates])
 
 :::note default template
 
 ```template
-jj {{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
+\uf1fa {{ .ChangeID }}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
 ```
 
 :::
 
 ### Properties
 
-| Name        | Type     | Description                                           |
-| ----------- | -------- | ----------------------------------------------------- |
-| `.Working`  | `Status` | changes in the working copy (see below)               |
-| `.ChangeID` | `string` | The shortest unique prefix of the working copy change |
+| Name               | Type        | Description                                                |
+| ------------------ | ----------- | ---------------------------------------------------------- |
+| `.Working`         | `Status`    | changes in the working copy (see below)                    |
+| `.ChangeID`        | `JujutsuID` | The current change_id                                      |
+| `.CommitID`        | `JujutsuID` | The current commit_id                                      |
+| `.LocalBookmarks`  | `[]string`  | List of all local bookmarks                                |
+| `.RemoteBookmarks` | `[]string`  | List of all remote bookmarks                               |
+| `.Description`     | `boolean`   | Current change description                                 |
+| `.Conflict`        | `boolean`   | True if the current change conflicts with it's parent      |
+| `.Immutable`       | `boolean`   | True if the current change is marked as immutable          |
+| `.Empty`           | `boolean`   | True if the current change is without and changes          |
+| `.Divergent`       | `boolean`   | True if the current change is marked as immutable          |
+| `.Hidden`          | `boolean`   | True if the current change is hidden                       |
+| `.Mine`            | `boolean`   | True if the current change is authored by the current user |
+| `.AuthorID`        | `User`      | The current change's author                                |
+| `.CommiterID`      | `User`      | The current change's commiter                              |
 
-### Status
+
+#### Status
 
 | Name        | Type      | Description                                  |
 | ----------- | --------- | -------------------------------------------- |
@@ -76,5 +92,23 @@ Local changes use the following syntax:
 | `-`  | Deleted     |
 | `+`  | Added       |
 | `>`  | Moved       |
+
+
+#### JujutsuID
+
+| Name        | Type      | Description                                                                                                                 |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `.Full`     | `string`  | The full change/commit id                                                                                                   |
+| `.Shortest` | `string`  | The shortest unique change/commit id. This combined with `.Rest` will add up to the `min_change_id_len`/`min_commit_id_len` |
+| `.Rest`     | `string`  | The *rest* of the short change/commit id minus the unique prefix.  Seperated out to allow coloring                          |
+
+
+#### User
+
+| Name     | Type     | Description      |
+| -------- | -------- | ---------------- |
+| `.Name`  | `string` | the user's name  |
+| `.Email` | `string` | the user's email |
+
 
 [templates]: /docs/config-templates

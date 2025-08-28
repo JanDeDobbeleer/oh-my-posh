@@ -470,7 +470,7 @@ func (e *Engine) rectifyTerminalWidth(diff int) {
 // given configuration options, and is ready to print any
 // of the prompt components.
 func New(flags *runtime.Flags) *Engine {
-	cfg, _ := config.Load(flags.Config, flags.Shell, flags.Migrate)
+	cfg, _ := config.Load(flags.Config, flags.Migrate)
 
 	env := &runtime.Terminal{}
 	env.Init(flags)

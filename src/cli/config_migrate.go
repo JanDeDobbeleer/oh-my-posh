@@ -5,7 +5,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -40,7 +39,7 @@ Migrates the ~/myconfig.omp.json config file to TOML and writes the result to yo
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		cfg, _ := config.Load(configFlag, shell.GENERIC, true)
+		cfg, _ := config.Load(configFlag, true)
 
 		flags := &runtime.Flags{
 			Config:  cfg.Source,

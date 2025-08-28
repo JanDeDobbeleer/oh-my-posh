@@ -8,7 +8,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -41,7 +40,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			return
 		}
 
-		cfg, _ := config.Load(configFlag, shell.GENERIC, false)
+		cfg, _ := config.Load(configFlag, false)
 
 		validateExportFormat := func() error {
 			format = strings.ToLower(format)

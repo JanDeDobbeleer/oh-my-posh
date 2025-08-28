@@ -36,7 +36,7 @@ func createDebugCmd() *cobra.Command {
 
 			sh := os.Getenv("POSH_SHELL")
 
-			cfg, _ := config.Load(configFlag, sh, false)
+			cfg, _ := config.Load(configFlag, false)
 
 			flags := &runtime.Flags{
 				Config: cfg.Source,

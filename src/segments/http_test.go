@@ -16,6 +16,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 		name        string
 		url         string
 		method      string
+		timeout     int
 		response    string
 		shouldError bool
 	}{
@@ -47,14 +48,22 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			method:      "GET",
 			shouldError: false,
 		},
+		{
+			name:        "Timeout test",
+			url:         "https://apifastmock.com/mock/SsGLwD_ht5I2_9NebQH0N5NaOaRMwMkww4eU37UC9s8fHBzBIcYERO5MSzH6LUWGevCemFq5LWgP8bG7aalV_Q0VYUFEakiqZ8xyHwszmnmqzRkZ5UGm9cjvjITfUNCB8K15SzW021Dm3yipsANIMNTO4QGGYdvNRcgx89w",
+			method:      "GET",
+			shouldError: false,
+			timeout:     1,
+		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			env := new(mock.Environment)
 			props := properties.Map{
-				URL:    tc.url,
-				METHOD: tc.method,
+				URL:     tc.url,
+				METHOD:  tc.method,
+				TIMEOUT: tc.timeout,
 			}
 
 			env.On("HTTPRequest", tc.url).Return([]byte(tc.response), func() error {

@@ -24,16 +24,18 @@ import Config from "@site/src/components/Config.js";
     properties: {
       url: "https://jsonplaceholder.typicode.com/posts/1",
       method: "GET",
+      timeout: 10000,
     },
   }}
 />
 
 ## Properties
 
-| Name     |   Type   | Default | Description                                         |
-| -------- | :------: | :-----: | --------------------------------------------------- |
-| `url`    | `string` |   ``    | The HTTP URL you want to call, supports [templates] |
-| `method` | `string` |  `GET`  | The HTTP method to use                              |
+| Name      |   Type   | Default | Description                                         |
+| --------- | :------: | :-----: | --------------------------------------------------- |
+| `url`     | `string` |   ``    | The HTTP URL you want to call, supports [templates] |
+| `method`  | `string` |  `GET`  | The HTTP method to use                              |
+| `timeout` |  `int`   | `10000` | The HTTP timeout                              |
 
 ## Template ([info][templates])
 

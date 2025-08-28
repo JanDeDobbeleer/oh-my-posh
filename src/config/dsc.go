@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
 type Resource struct {
@@ -108,7 +107,7 @@ func (c *Configuration) Resolve() (*Configuration, bool) {
 	c.resolved = true
 
 	// we use pwsh as that will never omit any feature
-	data, _ := Load(c.Source, shell.PWSH, false)
+	data, _ := Load(c.Source, false)
 	if data == nil {
 		log.Debug("No configuration data found")
 		return nil, false

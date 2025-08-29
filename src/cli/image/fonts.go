@@ -31,7 +31,7 @@ func (f *Fonts) IsValid() bool {
 }
 
 func (f *Fonts) Load() (map[string]font.Face, error) {
-	defer log.Trace(time.Now(), "Load fonts")
+	defer log.Trace(time.Now())
 
 	result := make(map[string]font.Face)
 

@@ -21,8 +21,13 @@ const (
 	YAML string = "yaml"
 	TOML string = "toml"
 
+	TML   string = "tml"
+	YML   string = "yml"
+	JSONC string = "jsonc"
+
 	AUTOUPGRADE   = "upgrade"
 	UPGRADENOTICE = "notice"
+	RELOAD        = "reload"
 
 	Version = 3
 )

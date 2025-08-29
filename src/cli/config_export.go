@@ -45,14 +45,14 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 		validateExportFormat := func() error {
 			format = strings.ToLower(format)
 			switch format {
-			case "json", "jsonc":
+			case config.JSON, config.JSONC:
 				format = config.JSON
-			case "toml", "tml":
+			case config.TOML, config.TML:
 				format = config.TOML
-			case "yaml", "yml":
+			case config.YAML, config.YML:
 				format = config.YAML
 			default:
-				formats := []string{"json", "jsonc", "toml", "tml", "yaml", "yml"}
+				formats := []string{config.JSON, config.JSONC, config.TOML, config.TML, config.YAML, config.YML}
 				// usage error
 				fmt.Printf("export format must be one of these: %s\n", strings.Join(formats, ", "))
 				exitcode = 2

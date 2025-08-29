@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
@@ -139,6 +140,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		"::OMP::", executable,
 		"::CONFIG::", configFile,
 		"::SHELL::", shell,
+		"::SESSION_ID::", cache.SessionID(),
 	).Replace(script)
 
 	shellScript := features.Lines(shell).String(init)

@@ -17,6 +17,7 @@ var (
 	toggleArgs = []string{
 		config.UPGRADENOTICE,
 		config.AUTOUPGRADE,
+		config.RELOAD,
 	}
 	toggleUse  = fmt.Sprintf("%%s [%s]", strings.Join(toggleArgs, "|"))
 	toggleLong = strings.Join(append([]string{toggleHelpText}, toggleArgs...), "\n- ")

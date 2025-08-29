@@ -112,7 +112,7 @@ end
 
 -- SESSION ID
 
-os.setenv('POSH_SESSION_ID', run_posh_command('get uuid'))
+os.setenv('POSH_SESSION_ID', '::SESSION_ID::')
 
 -- Duration functions
 

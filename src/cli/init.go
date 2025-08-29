@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -70,10 +69,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 }
 
 func runInit(sh, command string) {
-	var startTime time.Time
-
 	if debug {
-		startTime = time.Now()
 		log.Enable(plain)
 	}
 
@@ -95,6 +91,7 @@ func runInit(sh, command string) {
 	template.Init(env, cfg.Var, cfg.Maps)
 
 	defer func() {
+		cfg.Store(env.Session())
 		template.SaveCache()
 		env.Close()
 	}()

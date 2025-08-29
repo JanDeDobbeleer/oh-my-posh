@@ -28,7 +28,7 @@ func platformCachePath() (string, bool) {
 }
 
 func PackageFamilyName() (string, bool) {
-	log.Trace(time.Now(), "PackageFamilyName")
+	defer log.Trace(time.Now())
 
 	kernel32 := syscall.NewLazyDLL("kernel32.dll")
 	procGetCurrentPackageFamilyName := kernel32.NewProc("GetCurrentPackageFamilyName")

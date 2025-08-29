@@ -1607,6 +1607,7 @@
                       "*.fsx",
                       "*.sln",
                       "*.slnf",
+                      "*.slnx",
                       "*.csproj",
                       "*.fsproj",
                       "*.vbproj",

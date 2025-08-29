@@ -58,9 +58,7 @@ func (term *Terminal) Init(flags *Flags) {
 	}
 
 	term.deviceCache = initCache(cache.FileName)
-	if fileName, err := cache.SessionFileName(); err == nil {
-		term.sessionCache = initCache(fileName)
-	}
+	term.sessionCache = initCache(cache.SessionFileName())
 
 	term.setPromptCount()
 

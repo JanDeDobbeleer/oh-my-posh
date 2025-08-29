@@ -24,7 +24,7 @@ $global:_ompPoshGit = $false
 $global:_ompAzure = $false
 $global:_ompExecutable = ::OMP::
 
-$env:POSH_SESSION_ID = (& $global:_ompExecutable get uuid)
+$env:POSH_SESSION_ID = "::SESSION_ID::"
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.

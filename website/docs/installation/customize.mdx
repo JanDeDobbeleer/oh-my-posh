@@ -217,6 +217,22 @@ which can be used to tweak and store as your own custom configuration.
 oh-my-posh config export --config jandedobbeleer --output ~/.mytheme.omp.json
 ```
 
+### Live reloading
+
+By default, the configuration is cached for performance reasons. If you make changes to your configuration file
+and want to see those changes reflected in your prompt without restarting your shell, you can use the following
+command to enable live reload.
+
+```bash
+oh-my-posh enable reload
+```
+
+You can disable live reload with:
+
+```bash
+oh-my-posh disable reload
+```
+
 #### Previewing changes
 
 If you want to preview your changes, you can use the following command to render every configured prompt.

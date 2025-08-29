@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
@@ -18,7 +17,10 @@ import (
 )
 
 // debugCmd represents the debug command
-var debugCmd = createDebugCmd()
+var (
+	debugCmd  = createDebugCmd()
+	startTime = time.Now()
+)
 
 func init() {
 	RootCmd.AddCommand(debugCmd)
@@ -34,20 +36,18 @@ func createDebugCmd() *cobra.Command {
 
 			log.Enable(plain)
 
-			sh := os.Getenv("POSH_SHELL")
-
-			cfg, _ := config.Load(configFlag, false)
-
 			flags := &runtime.Flags{
-				Config: cfg.Source,
-				Debug:  true,
-				PWD:    pwd,
-				Shell:  sh,
-				Plain:  plain,
+				Debug: true,
+				PWD:   pwd,
+				Shell: shell.GENERIC,
+				Plain: plain,
 			}
 
 			env := &runtime.Terminal{}
 			env.Init(flags)
+
+			_, reload := env.Cache().Get(config.RELOAD)
+			cfg := config.Get(env.Session(), configFlag, reload)
 
 			template.Init(env, cfg.Var, cfg.Maps)
 

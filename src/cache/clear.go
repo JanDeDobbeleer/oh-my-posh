@@ -18,6 +18,12 @@ func Clear(cachePath string, force bool) ([]string, error) {
 
 	var removed []string
 
+	canDelete := func(fileName string) bool {
+		return strings.HasPrefix(fileName, FileName) ||
+			strings.HasPrefix(fileName, "init.") ||
+			strings.HasSuffix(fileName, ".gob")
+	}
+
 	deleteFile := func(file string) {
 		path := filepath.Join(cachePath, file)
 		if err := os.Remove(path); err == nil {
@@ -30,7 +36,7 @@ func Clear(cachePath string, force bool) ([]string, error) {
 			continue
 		}
 
-		if !strings.HasPrefix(file.Name(), FileName) && !strings.HasPrefix(file.Name(), "init.") {
+		if !canDelete(file.Name()) {
 			continue
 		}
 

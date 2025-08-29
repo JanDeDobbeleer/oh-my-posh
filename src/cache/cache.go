@@ -3,7 +3,10 @@ package cache
 import (
 	"fmt"
 	"os"
+	"sync"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Cache interface {
@@ -24,13 +27,24 @@ const (
 	FileName = "omp.cache"
 )
 
-func SessionFileName() (string, error) {
-	sessionID := os.Getenv("POSH_SESSION_ID")
-	if sessionID == "" {
-		return "", fmt.Errorf("environment variable POSH_SESSION_ID is not set")
-	}
+var (
+	sessionID string
+	once      sync.Once
+)
 
-	return fmt.Sprintf("%s.%s", FileName, sessionID), nil
+func SessionID() string {
+	once.Do(func() {
+		sessionID = os.Getenv("POSH_SESSION_ID")
+		if sessionID == "" {
+			sessionID = uuid.NewString()
+		}
+	})
+
+	return sessionID
+}
+
+func SessionFileName() string {
+	return fmt.Sprintf("%s.%s", FileName, SessionID())
 }
 
 const (

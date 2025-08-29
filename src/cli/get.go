@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -16,7 +15,7 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get [shell|millis|accent|toggles|width|uuid]",
+	Use:   "get [shell|millis|accent|toggles|width]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
 
@@ -26,15 +25,13 @@ This command is used to get the value of the following variables:
 - millis
 - accent
 - toggles
-- width
-- uuid`,
+- width`,
 	ValidArgs: []string{
 		"millis",
 		"shell",
 		"accent",
 		"toggles",
 		"width",
-		"uuid",
 	},
 	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -92,8 +89,6 @@ This command is used to get the value of the following variables:
 			}
 
 			fmt.Print(width)
-		case "uuid":
-			fmt.Print(uuid.NewString())
 		default:
 			_ = cmd.Help()
 		}

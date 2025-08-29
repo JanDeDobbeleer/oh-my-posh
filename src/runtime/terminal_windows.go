@@ -114,7 +114,7 @@ func (term *Terminal) Platform() string {
 //
 // Returns a variant type if successful; nil and an error if not.
 func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryValue, error) {
-	log.Trace(time.Now(), input)
+	defer log.Trace(time.Now(), input)
 
 	// Format:
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"

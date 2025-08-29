@@ -206,7 +206,7 @@ func (term *Terminal) getConnections() []*Connection {
 }
 
 func (term *Terminal) wifiNetwork() (*Connection, error) {
-	log.Trace(time.Now())
+	defer log.Trace(time.Now())
 	// Open handle
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32

@@ -25,13 +25,6 @@ import (
 
 const (
 	defaultHash = "default"
-	yamlExt     = "yaml"
-	ymlExt      = "yml"
-	jsonExt     = "json"
-	jsoncExt    = "jsonc"
-	tomlExt     = "toml"
-	tmlExt      = "tml"
-	httpsPrefix = "https://"
 )
 
 // custom no config error
@@ -83,7 +76,7 @@ func filePath(config string) (string, error) {
 		config = url
 	}
 
-	if strings.HasPrefix(config, httpsPrefix) {
+	if strings.HasPrefix(config, "https://") {
 		filePath, err := Download(cache.Path(), config)
 		if err != nil {
 			log.Error(err)
@@ -130,10 +123,10 @@ func readConfig(configFile string) (*Config, string) {
 	}
 
 	switch cfg.Format {
-	case ymlExt, yamlExt:
+	case YAML, YML:
 		cfg.Format = YAML
 		err = yaml.Unmarshal(data, &cfg)
-	case jsoncExt, jsonExt:
+	case JSONC, JSON:
 		cfg.Format = JSON
 
 		str := jsonutil.StripComments(string(data))
@@ -141,7 +134,7 @@ func readConfig(configFile string) (*Config, string) {
 
 		decoder := json.NewDecoder(bytes.NewReader(data))
 		err = decoder.Decode(&cfg)
-	case tomlExt, tmlExt:
+	case TOML, TML:
 		cfg.Format = TOML
 		err = toml.Unmarshal(data, &cfg)
 	default:

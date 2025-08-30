@@ -16,24 +16,29 @@ var scriptPathCache string
 
 func hasScript(env runtime.Environment) (string, bool) {
 	if env.Flags().Debug || env.Flags().Eval {
+		log.Debug("in debug or eval mode, no script path will be used")
 		return "", false
 	}
 
 	path, err := scriptPath(env)
 	if err != nil {
+		log.Debug("failed to get script path")
 		return "", false
 	}
 
 	_, err = os.Stat(path)
 	if err != nil {
+		log.Debug("script path does not exist")
 		return "", false
 	}
 
 	// check if we have the same context
-	if hash, _ := env.Cache().Get(cacheKey(env)); hash != scriptName(env) {
+	if val, _ := env.Cache().Get(cacheKey(env.Flags().Shell)); val != cacheValue(env) {
+		log.Debug("script context has changed")
 		return "", false
 	}
 
+	log.Debug("script context is unchanged")
 	return path, true
 }
 
@@ -59,43 +64,39 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 		return "", err
 	}
 
-	_ = f.Close()
-
-	env.Cache().Set(cacheKey(env), scriptName(env), cache.INFINITE)
-
 	defer func() {
-		parent := filepath.Dir(path)
-		purgeScripts(env, parent)
+		_ = f.Sync()
+		_ = f.Close()
 	}()
+
+	env.Cache().Set(cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)
 
 	return path, nil
 }
 
-func cacheKey(env runtime.Environment) string {
-	return fmt.Sprintf("INITVERSION%s", strings.ToUpper(env.Flags().Shell))
+func cacheKey(sh string) string {
+	return fmt.Sprintf("INITVERSION%s", strings.ToUpper(sh))
 }
 
-func fileName(env runtime.Environment) string {
-	return fmt.Sprintf("init.%s.%s", build.Version, env.Flags().ConfigHash)
+func cacheValue(env runtime.Environment) string {
+	return env.Flags().ConfigHash + build.Version
 }
 
-func scriptName(env runtime.Environment) string {
-	extension := env.Flags().Shell
-
-	switch env.Flags().Shell {
+func scriptName(sh string) string {
+	switch sh {
 	case PWSH, PWSH5:
-		extension = "ps1"
+		sh = "ps1"
 	case CMD:
-		extension = "lua"
+		sh = "lua"
 	case BASH:
-		extension = "sh"
+		sh = "sh"
 	case ELVISH:
-		extension = "elv"
+		sh = "elv"
 	case XONSH:
-		extension = "xsh"
+		sh = "xsh"
 	}
 
-	return fmt.Sprintf("%s.%s", fileName(env), extension)
+	return fmt.Sprintf("init.%s", sh)
 }
 
 func scriptPath(env runtime.Environment) (string, error) {
@@ -104,7 +105,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 	}
 
 	if env.Flags().Shell != NU {
-		scriptPathCache = filepath.Join(cache.Path(), scriptName(env))
+		scriptPathCache = filepath.Join(cache.Path(), scriptName(env.Flags().Shell))
 		log.Debug("init script path for non-nu shell:", scriptPathCache)
 		return scriptPathCache, nil
 	}
@@ -112,7 +113,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 	const autoloadDir = "NUAUTOLOADDIR"
 
 	if dir, OK := env.Cache().Get(autoloadDir); OK {
-		scriptPathCache = filepath.Join(dir, scriptName(env))
+		scriptPathCache = filepath.Join(dir, scriptName(env.Flags().Shell))
 		log.Debug("autoload path for nu from cache:", dir)
 		return scriptPathCache, nil
 	}
@@ -138,34 +139,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 	}
 
 	env.Cache().Set(autoloadDir, path, cache.INFINITE)
-	scriptPathCache = filepath.Join(path, scriptName(env))
+	scriptPathCache = filepath.Join(path, scriptName(env.Flags().Shell))
 	log.Debug("script path for nu:", scriptPathCache)
 	return scriptPathCache, nil
-}
-
-func purgeScripts(env runtime.Environment, path string) {
-	current := fileName(env)
-
-	files, err := os.ReadDir(path)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-
-		if !strings.HasPrefix(file.Name(), "init.") || strings.HasPrefix(file.Name(), current) {
-			continue
-		}
-
-		if err := os.Remove(filepath.Join(path, file.Name())); err != nil {
-			log.Debugf("failed to remove init script %s: %s", file.Name(), err)
-			continue
-		}
-
-		log.Debug("removed init script:", file.Name())
-	}
 }

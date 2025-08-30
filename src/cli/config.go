@@ -27,6 +27,7 @@ You can export, migrate or edit the config (via the editor specified in the envi
 
 		switch args[0] {
 		case "edit":
+			// TODO: fetch the config from the session cache
 			exitcode = editFileWithEditor(os.Getenv("POSH_THEME"))
 		default:
 			_ = cmd.Help()

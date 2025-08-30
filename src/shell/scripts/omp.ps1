@@ -49,11 +49,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $env:POSH_SHELL_VERSION = $script:PSVersion
     $env:CONDA_PROMPT_MODIFIER = $false
 
-    # set the default theme
-    if (::CONFIG:: -and (Test-Path -LiteralPath ::CONFIG::)) {
-        $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
-    }
-
     function Invoke-Utf8Posh {
         param([string[]]$Arguments = @())
 

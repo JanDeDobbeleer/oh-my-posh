@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"hash/fnv"
 	"os"
 	"path/filepath"
 	runtimelib "runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -24,24 +22,19 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-const (
-	defaultHash = "default"
-)
-
 // custom no config error
 var ErrNoConfig = errors.New("no config file specified")
 
-func Load(configFile string, migrate bool) (*Config, string) {
+func Load(configFile string, migrate bool) *Config {
 	defer log.Trace(time.Now())
 
-	configFile, err := filePath(configFile)
-	if err != nil {
-		log.Error(err)
-		warning := !errors.Is(err, ErrNoConfig)
-		return Default(warning), defaultHash
+	if configFile == "" {
+		return Default(false)
 	}
 
-	cfg, hash := readConfig(configFile)
+	configFile = resolveConfigLocation(configFile)
+
+	cfg := readConfig(configFile)
 
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
@@ -49,8 +42,6 @@ func Load(configFile string, migrate bool) (*Config, string) {
 	}
 
 	cfg.Source = configFile
-
-	processExtendedConfig(cfg, hash)
 
 	if cfg.Upgrade == nil {
 		cfg.Upgrade = &upgrade.Config{
@@ -65,46 +56,26 @@ func Load(configFile string, migrate bool) (*Config, string) {
 		cfg.Upgrade.Interval = cache.ONEWEEK
 	}
 
-	return cfg, hash
+	return cfg
 }
 
-func filePath(config string) (string, error) {
+func resolveConfigLocation(config string) string {
 	defer log.Trace(time.Now())
 
-	// if the config flag is set, we'll use that over POSH_THEME
-	// in our internal shell logic, we'll always use the POSH_THEME
-	// due to not using --config to set the configuration
-	hasConfig := config != ""
-
-	if poshTheme := os.Getenv("POSH_THEME"); poshTheme != "" && !hasConfig {
-		log.Debug("config set using POSH_THEME:", poshTheme)
-		return poshTheme, nil
-	}
-
-	if !hasConfig {
-		return "", ErrNoConfig
+	if strings.HasPrefix(config, "https://") {
+		return config
 	}
 
 	if url, OK := isTheme(config); OK {
 		log.Debug("theme detected, using theme file")
-		config = url
-	}
-
-	if strings.HasPrefix(config, "https://") {
-		filePath, err := Download(cache.Path(), config)
-		if err != nil {
-			log.Error(err)
-			return "", err
-		}
-
-		return filePath, nil
+		return url
 	}
 
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
 	if isCygwin() {
 		log.Debug("cygwin detected, using full path for config")
-		return config, nil
+		return config
 	}
 
 	configFile := path.ReplaceTildePrefixWithHomeDir(config)
@@ -112,28 +83,36 @@ func filePath(config string) (string, error) {
 	abs, err := filepath.Abs(configFile)
 	if err != nil {
 		log.Error(err)
-		return filepath.Clean(configFile), nil
+		return filepath.Clean(configFile)
 	}
 
-	return abs, nil
+	return abs
 }
 
-func readConfig(configFile string) (*Config, string) {
+func readConfig(configFile string) *Config {
 	defer log.Trace(time.Now())
 
 	if configFile == "" {
 		log.Debug("no config file specified, using default")
-		return Default(false), defaultHash
+		return Default(false)
 	}
 
 	var cfg Config
 	cfg.Source = configFile
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 
-	data, err := os.ReadFile(configFile)
+	getData := func(configFile string) ([]byte, error) {
+		if strings.HasPrefix(configFile, "https://") {
+			return download(configFile)
+		}
+
+		return os.ReadFile(configFile)
+	}
+
+	data, err := getData(configFile)
 	if err != nil {
 		log.Error(err)
-		return Default(true), defaultHash
+		return Default(true)
 	}
 
 	switch cfg.Format {
@@ -157,48 +136,27 @@ func readConfig(configFile string) (*Config, string) {
 
 	if err != nil {
 		log.Error(err)
-		return Default(true), defaultHash
+		return Default(true)
 	}
-
-	// Calculate FNV-1a hash of the raw config data
-	hasher := fnv.New64a()
-	hasher.Write(data)
-	hasher.Write([]byte(configFile)) // Include the file path in the hash to enable file modification detection
-	hash := strconv.FormatUint(hasher.Sum64(), 16)
 
 	if cfg.Extends == "" {
-		return &cfg, hash
+		return &cfg
 	}
 
-	basePath, err := filePath(cfg.Extends)
-	if err != nil {
-		log.Error(err)
-		return &cfg, hash
-	}
+	basePath := resolveConfigLocation(cfg.Extends)
 
-	base, baseHash := readConfig(basePath)
+	base := readConfig(basePath)
 	err = base.merge(&cfg)
 	if err != nil {
 		log.Error(err)
 	}
 
-	return base, fmt.Sprintf("%s.%s", hash, baseHash)
+	return base
 }
 
 // isCygwin checks if we're running in Cygwin environment
 func isCygwin() bool {
 	return runtimelib.GOOS == "windows" && len(os.Getenv("OSTYPE")) > 0
-}
-
-// processExtendedConfig writes extended config to cache if needed
-func processExtendedConfig(cfg *Config, hash string) {
-	if !cfg.extended {
-		return
-	}
-
-	fileName := fmt.Sprintf("%s.omp.json", hash)
-	cfg.Source = filepath.Join(cache.Path(), fileName)
-	cfg.Write(JSON)
 }
 
 func isTheme(config string) (string, bool) {

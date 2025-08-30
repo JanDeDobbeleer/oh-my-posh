@@ -1,4 +1,3 @@
-set-env POSH_THEME ::CONFIG::
 set-env POSH_SHELL elvish
 set-env POSH_SHELL_VERSION $version
 set-env POWERLINE_COMMAND oh-my-posh

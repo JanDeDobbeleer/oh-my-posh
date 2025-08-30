@@ -37,32 +37,37 @@ const (
 func (cfg *Config) Store(session cache.Cache) {
 	defer log.Trace(time.Now())
 
+	session.Set(key, cfg.Base64(), cache.INFINITE)
+}
+
+func (cfg *Config) Base64() string {
+	defer log.Trace(time.Now())
+
+	if cfg.base64 != "" {
+		return cfg.base64
+	}
+
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 	err := encoder.Encode(cfg)
 	if err != nil {
 		log.Error(err)
-		return
+		return ""
 	}
 
-	// Encode the binary gob data as base64 string
 	gobBase64 := base64.StdEncoding.EncodeToString(buffer.Bytes())
-	session.Set(key, gobBase64, cache.INFINITE)
+	cfg.base64 = gobBase64
+
+	return gobBase64
 }
 
-func Get(session cache.Cache, configFile string, edit bool) *Config {
+func Get(session cache.Cache, configFile string, reload bool) *Config {
 	defer log.Trace(time.Now())
-
-	if edit {
-		log.Debug("edit mode enabled")
-		cfg, _ := Load(configFile, false)
-		return cfg
-	}
 
 	gobBase64, found := session.Get(key)
 	if !found {
 		log.Debug("no cached config found")
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
 		return cfg
 	}
 
@@ -70,7 +75,7 @@ func Get(session cache.Cache, configFile string, edit bool) *Config {
 	gobData, err := base64.StdEncoding.DecodeString(gobBase64)
 	if err != nil {
 		log.Error(err)
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
 		return cfg
 	}
 
@@ -79,7 +84,13 @@ func Get(session cache.Cache, configFile string, edit bool) *Config {
 	err = decoder.Decode(&cfg)
 	if err != nil {
 		log.Error(err)
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
+		return cfg
+	}
+
+	if reload {
+		log.Debug("edit mode enabled")
+		cfg := Load(cfg.Source, false)
 		return cfg
 	}
 

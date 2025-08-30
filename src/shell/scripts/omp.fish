@@ -1,4 +1,3 @@
-set --export --global POSH_THEME ::CONFIG::
 set --export --global POSH_SHELL fish
 set --export --global POSH_SHELL_VERSION $FISH_VERSION
 set --export --global POWERLINE_COMMAND oh-my-posh

@@ -3274,6 +3274,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mikelolasagasti",
+      "name": "Mikel Olasagasti Uranga",
+      "avatar_url": "https://avatars.githubusercontent.com/u/773148?v=4",
+      "profile": "https://mikel.olasagasti.info",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

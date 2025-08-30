@@ -73,7 +73,7 @@ func runInit(sh, command string) {
 		log.Enable(plain)
 	}
 
-	cfg, hash := config.Load(configFlag, false)
+	cfg := config.Load(configFlag, false)
 
 	flags := &runtime.Flags{
 		Shell:     sh,
@@ -97,7 +97,6 @@ func runInit(sh, command string) {
 	}()
 
 	feats := cfg.Features(env)
-	flags.ConfigHash = fmt.Sprintf("%s.%s", hash, feats.Hash())
 
 	var output string
 

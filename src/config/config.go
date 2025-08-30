@@ -4,7 +4,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -191,19 +190,6 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 
 func (cfg *Config) upgradeFeatures(env runtime.Environment) shell.Features {
 	var feats shell.Features
-
-	if cfg.Upgrade == nil {
-		cfg.Upgrade = &upgrade.Config{
-			Source:        upgrade.CDN,
-			DisplayNotice: cfg.UpgradeNotice,
-			Auto:          cfg.AutoUpgrade,
-			Interval:      cache.ONEWEEK,
-		}
-	}
-
-	if cfg.Upgrade.Interval.IsEmpty() {
-		cfg.Upgrade.Interval = cache.ONEWEEK
-	}
 
 	if _, OK := env.Cache().Get(upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
 		log.Debug("upgrade cache key found and not forced, skipping upgrade")

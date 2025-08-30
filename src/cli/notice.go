@@ -23,7 +23,7 @@ var noticeCmd = &cobra.Command{
 		env.Init(flags)
 		defer env.Close()
 
-		cfg, _ := config.Load(configFlag, false)
+		cfg := config.Load(configFlag, false)
 
 		if notice, hasNotice := cfg.Upgrade.Notice(); hasNotice {
 			fmt.Println(notice)

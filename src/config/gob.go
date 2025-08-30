@@ -55,14 +55,14 @@ func Get(session cache.Cache, configFile string, edit bool) *Config {
 
 	if edit {
 		log.Debug("edit mode enabled")
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
 		return cfg
 	}
 
 	gobBase64, found := session.Get(key)
 	if !found {
 		log.Debug("no cached config found")
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
 		return cfg
 	}
 
@@ -70,7 +70,7 @@ func Get(session cache.Cache, configFile string, edit bool) *Config {
 	gobData, err := base64.StdEncoding.DecodeString(gobBase64)
 	if err != nil {
 		log.Error(err)
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
 		return cfg
 	}
 
@@ -79,7 +79,7 @@ func Get(session cache.Cache, configFile string, edit bool) *Config {
 	err = decoder.Decode(&cfg)
 	if err != nil {
 		log.Error(err)
-		cfg, _ := Load(configFile, false)
+		cfg := Load(configFile, false)
 		return cfg
 	}
 

@@ -65,7 +65,7 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 
 	defer func() {
 		parent := filepath.Dir(path)
-		purgeScripts(env, parent)
+		purgeScripts(parent)
 	}()
 
 	return path, nil
@@ -75,8 +75,8 @@ func cacheKey(env runtime.Environment) string {
 	return fmt.Sprintf("INITVERSION%s", strings.ToUpper(env.Flags().Shell))
 }
 
-func fileName(env runtime.Environment) string {
-	return fmt.Sprintf("init.%s.%s", build.Version, env.Flags().ConfigHash)
+func fileName() string {
+	return fmt.Sprintf("init.%s", build.Version)
 }
 
 func scriptName(env runtime.Environment) string {
@@ -95,7 +95,7 @@ func scriptName(env runtime.Environment) string {
 		extension = "xsh"
 	}
 
-	return fmt.Sprintf("%s.%s", fileName(env), extension)
+	return fmt.Sprintf("%s.%s", fileName(), extension)
 }
 
 func scriptPath(env runtime.Environment) (string, error) {
@@ -143,8 +143,8 @@ func scriptPath(env runtime.Environment) (string, error) {
 	return scriptPathCache, nil
 }
 
-func purgeScripts(env runtime.Environment, path string) {
-	current := fileName(env)
+func purgeScripts(path string) {
+	current := fileName()
 
 	files, err := os.ReadDir(path)
 	if err != nil {

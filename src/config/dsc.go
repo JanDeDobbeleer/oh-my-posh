@@ -107,7 +107,7 @@ func (c *Configuration) Resolve() (*Configuration, bool) {
 	c.resolved = true
 
 	// we use pwsh as that will never omit any feature
-	data, _ := Load(c.Source, false)
+	data := Load(c.Source, false)
 	if data == nil {
 		log.Debug("No configuration data found")
 		return nil, false

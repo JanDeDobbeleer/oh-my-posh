@@ -79,7 +79,6 @@ type Flags struct {
 	PWD           string
 	AbsolutePWD   string
 	Type          string
-	ConfigHash    string
 	PromptCount   int
 	Column        int
 	TerminalWidth int

@@ -43,8 +43,8 @@ func SessionID() string {
 	return sessionID
 }
 
-func SessionFileName() string {
-	return fmt.Sprintf("%s.%s", FileName, SessionID())
+func SessionFileName(sh string) string {
+	return fmt.Sprintf("%s.%s.%s", sh, SessionID(), FileName)
 }
 
 const (

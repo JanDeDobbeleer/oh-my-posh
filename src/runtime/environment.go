@@ -74,12 +74,12 @@ type Flags struct {
 	PSWD          string
 	PipeStatus    string
 	Config        string
+	ConfigHash    string
 	Shell         string
 	ShellVersion  string
 	PWD           string
 	AbsolutePWD   string
 	Type          string
-	ConfigHash    string
 	PromptCount   int
 	Column        int
 	TerminalWidth int

@@ -43,11 +43,9 @@ func getExecutablePath(env runtime.Environment) (string, error) {
 }
 
 func Init(env runtime.Environment, feats Features) string {
-	shell := env.Flags().Shell
-
-	switch shell {
+	switch env.Flags().Shell {
 	case ELVISH, PWSH, PWSH5:
-		if shell != ELVISH && !env.Flags().Eval {
+		if env.Flags().Shell != ELVISH && !env.Flags().Eval {
 			return PrintInit(env, feats, nil)
 		}
 
@@ -66,27 +64,26 @@ func Init(env runtime.Environment, feats Features) string {
 
 		var command string
 
-		switch shell {
+		switch env.Flags().Shell {
 		case PWSH, PWSH5:
 			command = "(@(& %s init %s --config=%s --print --eval%s) -join \"`n\") | Invoke-Expression"
 		case ELVISH:
 			command = "eval ((external %s) init %s --config=%s --print%s | slurp)"
 		}
 
-		return fmt.Sprintf(command, executable, shell, config, additionalParams)
+		return fmt.Sprintf(command, executable, env.Flags().Shell, config, additionalParams)
 	case ZSH, BASH, FISH, CMD, XONSH, NU:
 		return PrintInit(env, feats, nil)
 	default:
-		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, shell)
+		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, env.Flags().Shell)
 	}
 }
 
 func PrintInit(env runtime.Environment, features Features, startTime *time.Time) string {
-	shell := env.Flags().Shell
 	async := features&Async != 0
 
 	if scriptPath, OK := hasScript(env); OK {
-		return sourceInit(env, shell, scriptPath, async)
+		return sourceInit(env, scriptPath, async)
 	}
 
 	executable, err := getExecutablePath(env)
@@ -94,56 +91,46 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		return noExe
 	}
 
-	configFile := env.Flags().Config
 	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
 
 	var script string
 
-	switch shell {
+	switch env.Flags().Shell {
 	case PWSH, PWSH5:
 		executable = quotePwshOrElvishStr(executable)
-		configFile = quotePwshOrElvishStr(configFile)
 		script = pwshInit
 	case ZSH:
 		executable = QuotePosixStr(executable)
-		configFile = QuotePosixStr(configFile)
 		script = zshInit
 	case BASH:
 		executable = QuotePosixStr(executable)
-		configFile = QuotePosixStr(configFile)
 		script = bashInit
 	case FISH:
 		executable = quoteFishStr(executable)
-		configFile = quoteFishStr(configFile)
 		script = fishInit
 	case CMD:
 		executable = escapeLuaStr(executable)
-		configFile = escapeLuaStr(configFile)
 		script = cmdInit
 	case NU:
 		executable = quoteNuStr(executable)
-		configFile = quoteNuStr(configFile)
 		script = nuInit
 	case ELVISH:
 		executable = quotePwshOrElvishStr(executable)
-		configFile = quotePwshOrElvishStr(configFile)
 		script = elvishInit
 	case XONSH:
 		executable = quotePythonStr(executable)
-		configFile = quotePythonStr(configFile)
 		script = xonshInit
 	default:
-		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
+		return fmt.Sprintf("echo \"No initialization script available for %s\"", env.Flags().Shell)
 	}
 
 	init := strings.NewReplacer(
 		"::OMP::", executable,
-		"::CONFIG::", configFile,
-		"::SHELL::", shell,
+		"::SHELL::", env.Flags().Shell,
 		"::SESSION_ID::", cache.SessionID(),
 	).Replace(script)
 
-	shellScript := features.Lines(shell).String(init)
+	shellScript := features.Lines(env.Flags().Shell).String(init)
 
 	if env.Flags().Eval {
 		return shellScript
@@ -156,7 +143,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 		return fmt.Sprintf("echo \"Failed to write init script: %s\"", err.Error())
 	}
 
-	sourceCommand := sourceInit(env, shell, scriptPath, async)
+	sourceCommand := sourceInit(env, scriptPath, async)
 
 	if !env.Flags().Debug {
 		return sourceCommand
@@ -180,9 +167,9 @@ func printDebug(env runtime.Environment, startTime *time.Time) string {
 	return builder.String()
 }
 
-func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) string {
+func sourceInit(env runtime.Environment, scriptPath string, async bool) string {
 	// nushell stores to autoload, no need to return anything
-	if shell == NU {
+	if env.Flags().Shell == NU {
 		return ""
 	}
 
@@ -196,10 +183,10 @@ func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) s
 	}
 
 	if async {
-		return sourceInitAsync(shell, scriptPath)
+		return sourceInitAsync(env.Flags().Shell, scriptPath)
 	}
 
-	switch shell {
+	switch env.Flags().Shell {
 	case PWSH, PWSH5:
 		return fmt.Sprintf("& %s", quotePwshOrElvishStr(scriptPath))
 	case ZSH, BASH:
@@ -213,7 +200,7 @@ func sourceInit(env runtime.Environment, shell, scriptPath string, async bool) s
 	case CMD:
 		return fmt.Sprintf(`load(io.open('%s', "r"):read("*a"))()`, escapeLuaStr(scriptPath))
 	default:
-		return fmt.Sprintf("echo \"No source command available for %s\"", shell)
+		return fmt.Sprintf("echo \"No source command available for %s\"", env.Flags().Shell)
 	}
 }
 

@@ -1,8 +1,6 @@
 package shell
 
-import (
-	"strconv"
-)
+import "fmt"
 
 type Features uint
 
@@ -85,6 +83,6 @@ func (f Features) Lines(shell string) Lines {
 	return lines
 }
 
-func (f Features) Hash() string {
-	return strconv.FormatUint(uint64(f), 10)
+func (f Features) String() string {
+	return fmt.Sprintf("%b", uint(f))
 }

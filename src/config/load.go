@@ -15,6 +15,7 @@ import (
 	"github.com/gookit/goutil/jsonutil"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
@@ -50,6 +51,19 @@ func Load(configFile string, migrate bool) (*Config, string) {
 	cfg.Source = configFile
 
 	processExtendedConfig(cfg, hash)
+
+	if cfg.Upgrade == nil {
+		cfg.Upgrade = &upgrade.Config{
+			Source:        upgrade.CDN,
+			DisplayNotice: cfg.UpgradeNotice,
+			Auto:          cfg.AutoUpgrade,
+			Interval:      cache.ONEWEEK,
+		}
+	}
+
+	if cfg.Upgrade.Interval.IsEmpty() {
+		cfg.Upgrade.Interval = cache.ONEWEEK
+	}
 
 	return cfg, hash
 }

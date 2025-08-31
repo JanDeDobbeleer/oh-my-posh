@@ -36,15 +36,13 @@ You can do the following:
 		case "path":
 			fmt.Println(cache.Path())
 		case "clear":
-			deletedFiles, err := cache.Clear(cache.Path(), true)
+			err := cache.Clear(true)
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 
-			for _, file := range deletedFiles {
-				fmt.Println("removed cache file:", file)
-			}
+			fmt.Println("cache cleared")
 		case "edit":
 			cacheFilePath := filepath.Join(cache.Path(), cache.FileName)
 			exitcode = editFileWithEditor(cacheFilePath)

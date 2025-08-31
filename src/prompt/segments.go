@@ -66,14 +66,12 @@ func (e *Engine) writeSegmentsWithPool(segments []*config.Segment, out chan resu
 
 	// Start worker pool
 	for range workerPoolSize {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			for task := range tasks {
 				task.segment.Execute(e.Env)
 				out <- task
 			}
-		}()
+		})
 	}
 
 	// Send tasks to workers

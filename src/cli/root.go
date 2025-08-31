@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/spf13/cobra"
 )
@@ -73,13 +74,8 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 		cli := append([]string{cmd.Name()}, args...)
 		filename := fmt.Sprintf("%s-%s.log", timestamp, strings.Join(cli, "-"))
 
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return
-		}
-
-		logPath := filepath.Join(home, ".oh-my-posh")
-		err = os.MkdirAll(logPath, 0755)
+		logPath := filepath.Join(cache.Path(), "logs")
+		err := os.MkdirAll(logPath, 0755)
 		if err != nil {
 			return
 		}

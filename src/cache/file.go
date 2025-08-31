@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"encoding/json"
+	"encoding/gob"
 	"os"
 	"time"
 
@@ -9,8 +9,12 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
 
+func init() {
+	gob.Register(&Entry{})
+}
+
 type File struct {
-	cache         *maps.Concurrent[any]
+	cache         *maps.Concurrent[*Entry]
 	cacheFilePath string
 	dirty         bool
 	persist       bool
@@ -19,22 +23,30 @@ type File struct {
 func (fc *File) Init(cacheFilePath string, persist bool) {
 	defer log.Trace(time.Now(), cacheFilePath)
 
-	fc.cache = maps.NewConcurrent[any]()
+	fc.cache = maps.NewConcurrent[*Entry]()
 	fc.cacheFilePath = cacheFilePath
 	fc.persist = persist
 
 	log.Debug("loading cache file:", fc.cacheFilePath)
 
-	content, err := os.ReadFile(fc.cacheFilePath)
+	file, err := os.Open(fc.cacheFilePath)
 	if err != nil {
 		// set to dirty so we create it on close
-		fc.dirty = true
 		log.Error(err)
+		fc.dirty = true
 		return
 	}
 
-	var list map[string]*Entry
-	if err := json.Unmarshal(content, &list); err != nil {
+	defer file.Close()
+
+	var list maps.Simple[*Entry]
+
+	dec := gob.NewDecoder(file)
+	if err := dec.Decode(&list); err != nil {
+		log.Error(err)
+		// If gob decoding fails, the cache file might be from the old JSON format
+		// Set dirty to true so we recreate it in gob format
+		fc.dirty = true
 		return
 	}
 
@@ -55,10 +67,21 @@ func (fc *File) Close() {
 		return
 	}
 
+	defer log.Trace(time.Now(), fc.cacheFilePath)
+
 	cache := fc.cache.ToSimple()
 
-	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
-		_ = os.WriteFile(fc.cacheFilePath, dump, 0o644)
+	file, err := os.Create(fc.cacheFilePath)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	defer file.Close()
+
+	enc := gob.NewEncoder(file)
+	if err := enc.Encode(cache); err != nil {
+		log.Error(err)
 	}
 }
 
@@ -70,19 +93,14 @@ func (fc *File) Get(key string) (string, bool) {
 		return "", false
 	}
 
-	val, found := fc.cache.Get(key)
+	entry, found := fc.cache.Get(key)
 	if !found {
 		log.Debug("cache key not found:", key)
 		return "", false
 	}
 
-	if co, ok := val.(*Entry); ok {
-		log.Debug("getting cache key:", key, "with value:", co.Value)
-		return co.Value, true
-	}
-
-	log.Debug("unable to parse cache key:", key)
-	return "", false
+	log.Debug("found cache key:", key)
+	return entry.Value, true
 }
 
 // sets the value for the given key with a duration

@@ -2,6 +2,7 @@ package segments
 
 type Text struct {
 	base
+	Dummy int
 }
 
 func (t *Text) Template() string {

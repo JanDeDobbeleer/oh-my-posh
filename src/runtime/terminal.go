@@ -507,14 +507,8 @@ func (term *Terminal) clearCacheFiles() {
 		return
 	}
 
-	deletedFiles, err := cache.Clear(cache.Path(), false)
-	if err != nil {
+	if err := cache.Clear(false); err != nil {
 		log.Error(err)
-		return
-	}
-
-	for _, file := range deletedFiles {
-		log.Debugf("removed cache file: %s", file)
 	}
 }
 

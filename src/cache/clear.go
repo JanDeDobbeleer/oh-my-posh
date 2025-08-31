@@ -9,25 +9,33 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-func Clear(cachePath string, force bool) ([]string, error) {
-	// get all files in the cache directory that start with omp.cache and delete them
-	files, err := os.ReadDir(cachePath)
-	if err != nil {
-		return []string{}, err
+func Clear(force bool) error {
+	defer log.Trace(time.Now())
+
+	if force {
+		return os.RemoveAll(Path())
 	}
 
-	var removed []string
+	// get all files in the cache directory that start with omp.cache and delete them
+	files, err := os.ReadDir(Path())
+	if err != nil {
+		return err
+	}
+
+	// get all log files as well
+	if logFiles, err := os.ReadDir(filepath.Join(Path(), "logs")); err == nil {
+		files = append(files, logFiles...)
+	}
 
 	canDelete := func(fileName string) bool {
-		return strings.HasPrefix(fileName, FileName) ||
-			strings.HasPrefix(fileName, "init.") ||
-			strings.HasSuffix(fileName, ".gob")
+		return strings.EqualFold(fileName, FileName) ||
+			strings.HasPrefix(fileName, "init.")
 	}
 
 	deleteFile := func(file string) {
-		path := filepath.Join(cachePath, file)
+		path := filepath.Join(Path(), file)
 		if err := os.Remove(path); err == nil {
-			removed = append(removed, path)
+			log.Debugf("removed cache file: %s", path)
 		}
 	}
 
@@ -40,16 +48,6 @@ func Clear(cachePath string, force bool) ([]string, error) {
 			continue
 		}
 
-		if force {
-			deleteFile(file.Name())
-			continue
-		}
-
-		// don't delete the system cache file unless forced
-		if file.Name() == FileName {
-			continue
-		}
-
 		info, err := file.Info()
 		if err != nil {
 			continue
@@ -62,59 +60,5 @@ func Clear(cachePath string, force bool) ([]string, error) {
 		deleteFile(file.Name())
 	}
 
-	deletedLogs := deleteLogs(force)
-	if len(deletedLogs) > 0 {
-		removed = append(removed, deletedLogs...)
-	}
-
-	return removed, nil
-}
-
-func deleteLogs(force bool) []string {
-	var removed []string
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Error(err)
-		return removed
-	}
-
-	logPath := filepath.Join(home, ".oh-my-posh")
-
-	deleteFile := func(file string) {
-		path := filepath.Join(logPath, file)
-		if err := os.Remove(path); err == nil {
-			removed = append(removed, path)
-		}
-	}
-
-	logFiles, err := os.ReadDir(logPath)
-	if err != nil {
-		log.Error(err)
-		return removed
-	}
-
-	for _, file := range logFiles {
-		if file.IsDir() || !strings.HasSuffix(file.Name(), ".log") {
-			continue
-		}
-
-		if force {
-			deleteFile(file.Name())
-			continue
-		}
-
-		info, err := file.Info()
-		if err != nil {
-			continue
-		}
-
-		if info.ModTime().After(time.Now().AddDate(0, 0, -7)) {
-			continue
-		}
-
-		deleteFile(file.Name())
-	}
-
-	return removed
+	return nil
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
@@ -19,7 +18,6 @@ import (
 
 var (
 	program *tea.Program
-	cache   cache_.Cache
 )
 
 const listHeight = 14
@@ -330,11 +328,7 @@ func (m *main) View() string {
 	return ""
 }
 
-func SetCache(c cache_.Cache) {
-	cache = c
-}
-
-func Run(font string, ch cache_.Cache, zipFolder string) (string, error) {
+func Run(font string, zipFolder string) (string, error) {
 	main := &main{
 		Asset: Asset{
 			Name:   font,
@@ -342,8 +336,6 @@ func Run(font string, ch cache_.Cache, zipFolder string) (string, error) {
 			Folder: zipFolder,
 		},
 	}
-
-	SetCache(ch)
 
 	program = tea.NewProgram(main)
 	_, err := program.Run()

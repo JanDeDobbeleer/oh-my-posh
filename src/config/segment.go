@@ -37,7 +37,7 @@ type Segment struct {
 	writer                 SegmentWriter
 	env                    runtime.Environment
 	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty" yaml:"properties,omitempty"`
-	Cache                  *cache.Config  `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
+	Cache                  *Cache         `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
 	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
 	name                   string
@@ -224,7 +224,7 @@ func (segment *Segment) hasCache() bool {
 }
 
 func (segment *Segment) isToggled() bool {
-	toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE)
+	toggles, OK := cache.Get[string](cache.Session, cache.TOGGLECACHE)
 	if !OK || len(toggles) == 0 {
 		log.Debug("no toggles found")
 		return false
@@ -247,7 +247,7 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	cacheKey := segment.cacheKey()
-	data, OK := segment.env.Session().Get(cacheKey)
+	data, OK := cache.Get[string](cache.Session, cacheKey)
 	if !OK {
 		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), cacheKey)
 		return false
@@ -279,15 +279,18 @@ func (segment *Segment) setCache() {
 		return
 	}
 
-	segment.env.Session().Set(segment.cacheKey(), string(data), segment.Cache.Duration)
+	// TODO: check if we can make segmentwriter a generic Type indicator
+	// that way we can actually get the value straight from cache.Get
+	// and marchalling is obsolete
+	cache.Set(cache.Session, segment.cacheKey(), string(data), segment.Cache.Duration)
 }
 
 func (segment *Segment) cacheKey() string {
 	format := "segment_cache_%s"
 	switch segment.Cache.Strategy {
-	case cache.Session:
+	case Session:
 		return fmt.Sprintf(format, segment.Name())
-	case cache.Folder:
+	case Folder:
 		fallthrough
 	default:
 		return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_"))

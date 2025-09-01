@@ -4,6 +4,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -138,7 +139,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 
 	// do not enable upgrade features when async is enabled
 	if feats&shell.Async == 0 {
-		feats |= cfg.upgradeFeatures(env)
+		feats |= cfg.upgradeFeatures()
 	}
 
 	if cfg.ErrorLine != nil || cfg.ValidLine != nil {
@@ -189,22 +190,22 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	return feats
 }
 
-func (cfg *Config) upgradeFeatures(env runtime.Environment) shell.Features {
+func (cfg *Config) upgradeFeatures() shell.Features {
 	var feats shell.Features
 
-	if _, OK := env.Cache().Get(upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
+	if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
 		log.Debug("upgrade cache key found and not forced, skipping upgrade")
 		return feats
 	}
 
 	autoUpgrade := cfg.Upgrade.Auto
-	if _, OK := env.Cache().Get(AUTOUPGRADE); OK {
+	if _, OK := cache.Get[string](cache.Device, AUTOUPGRADE); OK {
 		log.Debug("auto upgrade key found")
 		autoUpgrade = true
 	}
 
 	upgradeNotice := cfg.Upgrade.DisplayNotice
-	if _, OK := env.Cache().Get(UPGRADENOTICE); OK {
+	if _, OK := cache.Get[string](cache.Device, UPGRADENOTICE); OK {
 		log.Debug("upgrade notice key found")
 		upgradeNotice = true
 	}

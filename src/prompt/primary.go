@@ -2,7 +2,6 @@ package prompt
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -79,8 +78,8 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 			continue
 		}
 
-		e.Env.Session().Set(RPromptKey, e.rprompt, cache.INFINITE)
-		e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
+		cache.Set(cache.Session, RPromptKey, e.rprompt, cache.INFINITE)
+		cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {

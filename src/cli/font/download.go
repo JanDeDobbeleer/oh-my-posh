@@ -11,13 +11,13 @@ import (
 	"path"
 	"path/filepath"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 func Download(fontURL string) ([]byte, error) {
-	if zipPath, OK := cache.Get(fontURL); OK {
+	if zipPath, OK := cache.Get[string](cache.Device, fontURL); OK {
 		if b, err := os.ReadFile(zipPath); err == nil {
 			return b, nil
 		}
@@ -55,7 +55,7 @@ func Download(fontURL string) ([]byte, error) {
 		return b, nil
 	}
 
-	cache.Set(fontURL, zipPath, cache_.ONEDAY)
+	cache.Set(cache.Device, fontURL, zipPath, cache.ONEDAY)
 
 	return b, nil
 }

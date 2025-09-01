@@ -5,13 +5,11 @@ import (
 	"slices"
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -57,11 +55,6 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
-
-	cache := &cache_.Cache{}
-	cache.On("Get", mock_.Anything).Return("", false)
-	cache.On("Set", mock_.Anything, mock_.Anything, mock_.Anything).Return(nil)
-	env.On("Cache").Return(cache)
 
 	if args.properties == nil {
 		args.properties = properties.Map{}
@@ -544,11 +537,6 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, prop
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
-
-	cache := &cache_.Cache{}
-	cache.On("Get", mock_.Anything).Return("", false)
-	cache.On("Set", mock_.Anything, mock_.Anything, mock_.Anything).Return(nil)
-	env.On("Cache").Return(cache)
 
 	props := properties.Map{
 		properties.FetchVersion: true,

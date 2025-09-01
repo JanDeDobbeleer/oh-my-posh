@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -80,16 +81,18 @@ func createPrintCmd() *cobra.Command {
 				Column:        column,
 				JobCount:      jobCount,
 				IsPrimary:     args[0] == prompt.PRIMARY,
-				SaveCache:     saveCache,
 				Escape:        escape,
 				Force:         force,
 			}
+
+			cache.Init(shellName, saveCache)
 
 			eng := prompt.New(flags)
 
 			defer func() {
 				template.SaveCache()
 				eng.Env.Close()
+				cache.Close()
 			}()
 
 			switch args[0] {

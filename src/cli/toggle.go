@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/spf13/cobra"
 )
 
@@ -20,15 +21,17 @@ var toggleCmd = &cobra.Command{
 			return
 		}
 
-		flags := &runtime.Flags{
-			SaveCache: true,
-		}
-
 		env := &runtime.Terminal{}
-		env.Init(flags)
-		defer env.Close()
+		env.Init(&runtime.Flags{})
 
-		togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)
+		cache.Init(shell.GENERIC, true)
+
+		defer func() {
+			env.Close()
+			cache.Close()
+		}()
+
+		togglesCache, _ := cache.Get[string](cache.Session, cache.TOGGLECACHE)
 		var currentToggles []string
 		if len(togglesCache) != 0 {
 			currentToggles = strings.Split(togglesCache, ",")
@@ -58,7 +61,7 @@ var toggleCmd = &cobra.Command{
 			newToggles = append(newToggles, segment)
 		}
 
-		env.Session().Set(cache.TOGGLECACHE, strings.Join(newToggles, ","), cache.INFINITE)
+		cache.Set(cache.Session, cache.TOGGLECACHE, strings.Join(newToggles, ","), cache.INFINITE)
 	},
 }
 

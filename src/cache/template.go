@@ -5,8 +5,12 @@ import (
 )
 
 type Template struct {
+	Segments *maps.Concurrent[any]
+	SimpleTemplate
+}
+
+type SimpleTemplate struct {
 	SegmentsCache maps.Simple[any]
-	Segments      *maps.Concurrent[any]
 	Var           maps.Simple[any]
 	PWD           string
 	Folder        string

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	runtime_ "github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -77,14 +76,12 @@ func TestYtdma_Authenticate(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			env := &runtime_.Environment{}
-			mockCache := &cache_.Cache{}
-			env.On("Cache").Return(mockCache)
 
 			env.On("HTTPRequest", codeURL).Return([]byte(tc.requestCodeResponse), tc.requestCodeError)
 			env.On("HTTPRequest", tokenURL).Return([]byte(tc.requestTokenResponse), tc.requestTokenError)
 
 			if tc.shouldSetToken {
-				mockCache.On("Set", YTMDATOKEN, tc.expectedToken, cache.INFINITE).Once()
+				cache.Set(cache.Device, YTMDATOKEN, tc.expectedToken, cache.INFINITE)
 			}
 
 			ytmda := &Ytmda{
@@ -102,7 +99,7 @@ func TestYtdma_Authenticate(t *testing.T) {
 				assert.Nil(t, ytmda.err)
 			}
 
-			mockCache.AssertExpectations(t)
+			cache.DeleteAll(cache.Device)
 		})
 	}
 }

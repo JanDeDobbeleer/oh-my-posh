@@ -1,26 +1,15 @@
 package cache
 
 import (
-	"fmt"
-	"os"
+	"encoding/gob"
 	"sync"
 	"time"
-
-	"github.com/google/uuid"
 )
 
-type Cache interface {
-	Init(filePath string, persist bool)
-	Close()
-	// Gets the value for a given key.
-	// Returns the value and a boolean indicating if the key was found.
-	// In case the duration expired, the function returns false.
-	Get(key string) (string, bool)
-	// Sets a value for a given key.
-	// The duration indicates how many minutes to cache the value.
-	Set(key, value string, duration Duration)
-	// Deletes a key from the cache.
-	Delete(key string)
+func init() {
+	gob.Register(&Entry[any]{})
+	gob.Register(Template{})
+	gob.Register(SimpleTemplate{})
 }
 
 const (
@@ -32,21 +21,6 @@ var (
 	once      sync.Once
 )
 
-func SessionID() string {
-	once.Do(func() {
-		sessionID = os.Getenv("POSH_SESSION_ID")
-		if sessionID == "" {
-			sessionID = uuid.NewString()
-		}
-	})
-
-	return sessionID
-}
-
-func SessionFileName(sh string) string {
-	return fmt.Sprintf("%s.%s.%s", sh, SessionID(), FileName)
-}
-
 const (
 	TEMPLATECACHE    = "template_cache"
 	TOGGLECACHE      = "toggle_cache"
@@ -55,13 +29,13 @@ const (
 	FONTLISTCACHE    = "font_list_cache"
 )
 
-type Entry struct {
-	Value     string `json:"value"`
-	Timestamp int64  `json:"timestamp"`
-	TTL       int    `json:"ttl"`
+type Entry[T any] struct {
+	Value     T
+	Timestamp int64
+	TTL       int
 }
 
-func (c *Entry) Expired() bool {
+func (c *Entry[T]) Expired() bool {
 	if c.TTL < 0 {
 		return false
 	}

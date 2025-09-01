@@ -1,8 +1,6 @@
 package prompt
 
 import (
-	"strconv"
-
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -45,8 +43,8 @@ func (e *Engine) RPrompt() string {
 	}
 
 	if !e.Config.ToolTipsAction.IsDefault() {
-		e.Env.Session().Set(RPromptKey, text, cache.INFINITE)
-		e.Env.Session().Set(RPromptLengthKey, strconv.Itoa(e.rpromptLength), cache.INFINITE)
+		cache.Set(cache.Session, RPromptKey, text, cache.INFINITE)
+		cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
 
 	return text

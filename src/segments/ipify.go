@@ -70,7 +70,6 @@ func (i *IPify) initAPI() {
 	}
 
 	request := &http.Request{
-		Env:         i.env,
 		HTTPTimeout: i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
 	}
 

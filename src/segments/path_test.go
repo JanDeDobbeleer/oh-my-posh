@@ -354,7 +354,9 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("Shell").Return(shell.GENERIC)
 
 		template.Cache = &cache.Template{
-			Shell: "bash",
+			SimpleTemplate: cache.SimpleTemplate{
+				Shell: "bash",
+			},
 		}
 		template.Init(env, nil, nil)
 

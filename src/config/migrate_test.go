@@ -3,7 +3,6 @@ package config
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
@@ -11,13 +10,13 @@ import (
 
 func TestTimeoutToCache(t *testing.T) {
 	cases := []struct {
-		Expected *cache.Config
+		Expected *Cache
 		Case     string
 		Timeout  int
 	}{
 		{Case: "No timeout set"},
 		{Case: "Timeout set to 0", Timeout: 0},
-		{Case: "Timeout set to 10", Timeout: 10, Expected: &cache.Config{Duration: "10m0s", Strategy: cache.Folder}},
+		{Case: "Timeout set to 10", Timeout: 10, Expected: &Cache{Duration: "10m0s", Strategy: Folder}},
 	}
 
 	for _, tc := range cases {

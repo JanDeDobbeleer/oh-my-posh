@@ -30,14 +30,12 @@ import (
 )
 
 type Terminal struct {
-	CmdFlags     *Flags
-	cmdCache     *cache.Command
-	deviceCache  *cache.File
-	sessionCache *cache.File
-	lsDirMap     *maps.Concurrent[[]fs.DirEntry]
-	cwd          string
-	host         string
-	networks     []*Connection
+	CmdFlags *Flags
+	cmdCache *cache.Command
+	lsDirMap *maps.Concurrent[[]fs.DirEntry]
+	cwd      string
+	host     string
+	networks []*Connection
 }
 
 func (term *Terminal) Init(flags *Flags) {
@@ -50,15 +48,6 @@ func (term *Terminal) Init(flags *Flags) {
 	}
 
 	term.lsDirMap = maps.NewConcurrent[[]fs.DirEntry]()
-
-	initCache := func(fileName string) *cache.File {
-		fileCache := &cache.File{}
-		fileCache.Init(filepath.Join(cache.Path(), fileName), term.CmdFlags.SaveCache)
-		return fileCache
-	}
-
-	term.deviceCache = initCache(cache.FileName)
-	term.sessionCache = initCache(cache.SessionFileName(flags.Shell))
 
 	term.setPromptCount()
 
@@ -487,19 +476,9 @@ func (term *Terminal) StackCount() int {
 	return term.CmdFlags.StackCount
 }
 
-func (term *Terminal) Cache() cache.Cache {
-	return term.deviceCache
-}
-
-func (term *Terminal) Session() cache.Cache {
-	return term.sessionCache
-}
-
 func (term *Terminal) Close() {
 	defer log.Trace(time.Now())
 	term.clearCacheFiles()
-	term.deviceCache.Close()
-	term.sessionCache.Close()
 }
 
 func (term *Terminal) clearCacheFiles() {
@@ -564,14 +543,14 @@ func (term *Terminal) setPromptCount() {
 	defer log.Trace(time.Now())
 
 	var count int
-	if val, found := term.Session().Get(cache.PROMPTCOUNTCACHE); found {
-		count, _ = strconv.Atoi(val)
+	if val, found := cache.Get[int](cache.Session, cache.PROMPTCOUNTCACHE); found {
+		count = val
 	}
 
 	// Only update the count if we're generating a primary prompt.
 	if term.CmdFlags.Type == PRIMARY {
 		count++
-		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), cache.ONEDAY)
+		cache.Set(cache.Session, cache.PROMPTCOUNTCACHE, count, cache.ONEDAY)
 	}
 
 	term.CmdFlags.PromptCount = count

@@ -201,14 +201,9 @@ func (l *language) setVersion() error {
 
 	cacheKey := fmt.Sprintf("version_%s", l.name)
 
-	if versionCache, OK := l.env.Cache().Get(cacheKey); OK {
-		var version version
-		err := json.Unmarshal([]byte(versionCache), &version)
-		if err == nil {
-			log.Debugf("version cache restored for %s: %s", l.name, version)
-			l.version = version
-			return nil
-		}
+	if versionCache, OK := cache.Get[version](cache.Device, cacheKey); OK {
+		l.version = versionCache
+		return nil
 	}
 
 	for _, command := range l.commands {
@@ -234,10 +229,8 @@ func (l *language) setVersion() error {
 		l.buildVersionURL()
 		l.Executable = command.executable
 
-		if marchalled, err := json.Marshal(l.version); err == nil {
-			duration := l.props.GetString(properties.CacheDuration, string(cache.NONE))
-			l.env.Cache().Set(cacheKey, string(marchalled), cache.Duration(duration))
-		}
+		duration := l.props.GetString(properties.CacheDuration, string(cache.NONE))
+		cache.Set(cache.Device, cacheKey, l.version, cache.Duration(duration))
 
 		return nil
 	}

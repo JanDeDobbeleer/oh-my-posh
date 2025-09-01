@@ -1,7 +1,6 @@
 package template
 
 import (
-	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
@@ -21,7 +20,7 @@ var (
 func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	if !env.Flags().IsPrimary {
 		// Load the template cache for a non-primary prompt before rendering any templates.
-		if OK := restoreCache(env); OK {
+		if OK := restoreCache(); OK {
 			return
 		}
 	}
@@ -76,22 +75,15 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	}
 }
 
-func restoreCache(env runtime.Environment) bool {
+func restoreCache() bool {
 	defer log.Trace(time.Now())
 
-	val, OK := env.Session().Get(cache.TEMPLATECACHE)
+	val, OK := cache.Get[*cache.SimpleTemplate](cache.Session, cache.TEMPLATECACHE)
 	if !OK {
 		return false
 	}
 
-	var tmplCache cache.Template
-	err := json.Unmarshal([]byte(val), &tmplCache)
-	if err != nil {
-		log.Error(err)
-		return false
-	}
-
-	Cache = &tmplCache
+	Cache.SimpleTemplate = *val
 	Cache.Segments = Cache.SegmentsCache.ToConcurrent()
 
 	return true
@@ -107,8 +99,5 @@ func SaveCache() {
 
 	Cache.SegmentsCache = Cache.Segments.ToSimple()
 
-	templateCache, err := json.Marshal(Cache)
-	if err == nil {
-		env.Session().Set(cache.TEMPLATECACHE, string(templateCache), cache.ONEDAY)
-	}
+	cache.Set(cache.Session, cache.TEMPLATECACHE, &Cache.SimpleTemplate, cache.ONEDAY)
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	httplib "net/http"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -45,7 +46,7 @@ type ytmdaStatusResponse struct {
 }
 
 func (y *Ytm) setStatus() error {
-	token, OK := y.env.Cache().Get(auth.YTMDATOKEN)
+	token, OK := cache.Get[string](cache.Device, auth.YTMDATOKEN)
 	if !OK || token == "" {
 		return errors.New("YTMDA token not found, please authenticate using `oh-my-posh auth ytmda`")
 	}

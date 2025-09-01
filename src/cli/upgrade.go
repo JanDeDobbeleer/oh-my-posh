@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -50,9 +51,10 @@ var upgradeCmd = &cobra.Command{
 
 		env := &runtime.Terminal{}
 		env.Init(&runtime.Flags{
-			Debug:     debug,
-			SaveCache: true,
+			Debug: debug,
 		})
+
+		cache.Init(sh, true)
 
 		terminal.Init(sh)
 		fmt.Print(terminal.StartProgress())
@@ -63,9 +65,11 @@ var upgradeCmd = &cobra.Command{
 			fmt.Print(terminal.StopProgress())
 
 			// always reset the cache key so we respect the interval no matter what the outcome
-			env.Cache().Set(upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
+			cache.Set(cache.Device, upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
 
 			env.Close()
+
+			cache.Close()
 
 			if !debug {
 				return

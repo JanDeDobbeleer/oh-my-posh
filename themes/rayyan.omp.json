@@ -1,0 +1,72 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "style": "plain",
+          "template": "<#69FF94>\u276f</><#69FF94>\u276f</> ",
+          "type": "text"
+        },
+        {
+          "properties": {
+            "style": "folder"
+          },
+          "style": "plain",
+          "template": "<#FFFFFF>[<#FFFFFF><#ffba51>{{ .Path }}<#ffba51><#FFFFFF>]<#FFFFFF>",
+          "type": "path"
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "template": "<#FFFFFF> >> <#FFFFFF><#FFFFFF>[<#FFFFFF><#47a2ed>{{ .HEAD }}<#47a2ed><#FFFFFF>]<#FFFFFF>{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}",
+          "properties": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "untracked_modes": {},
+            "source": "cli",
+            "mapped_branches": {
+              "feat/*": "🚀 ",
+              "bug/*": "🐛 "
+            }
+          }
+        },
+        {
+          "style": "plain",
+          "template": " \uf119 ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "properties": {
+            "command": "git log --pretty=format:%cr -1 || date +%I:%M",
+            "shell": "bash"
+          },
+          "style": "plain",
+          "template": "<#FFFFFF> {{ .Output }} <#FFFFFF>",
+          "type": "command"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "style": "plain",
+          "template": "<#FFFFFF>- <#FFFFFF>",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 3
+}

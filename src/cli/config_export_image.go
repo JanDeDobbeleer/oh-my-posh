@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/image"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
@@ -59,11 +60,14 @@ Exports the config to an image file using customized output settings.`,
 		env := &runtime.Terminal{}
 		env.Init(flags)
 
+		cache.Init(shellName, false)
+
 		template.Init(env, cfg.Var, cfg.Maps)
 
 		defer func() {
 			template.SaveCache()
 			env.Close()
+			cache.Close()
 		}()
 
 		// set sane defaults for things we don't print

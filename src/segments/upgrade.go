@@ -1,7 +1,6 @@
 package segments
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
@@ -34,7 +33,7 @@ func (u *Upgrade) Template() string {
 
 func (u *Upgrade) Enabled() bool {
 	u.Current = build.Version
-	latest, err := u.cachedLatest(u.Current)
+	latest, err := u.cachedLatest()
 	if err != nil {
 		latest, err = u.checkUpdate(u.Current)
 	}
@@ -48,23 +47,13 @@ func (u *Upgrade) Enabled() bool {
 	return true
 }
 
-func (u *Upgrade) cachedLatest(current string) (*UpgradeCache, error) {
-	data, ok := u.env.Cache().Get(UPGRADECACHEKEY)
+func (u *Upgrade) cachedLatest() (*UpgradeCache, error) {
+	data, ok := cache.Get[*UpgradeCache](cache.Device, UPGRADECACHEKEY)
 	if !ok {
 		return nil, errors.New("no cache data")
 	}
 
-	var cacheJSON UpgradeCache
-	err := json.Unmarshal([]byte(data), &cacheJSON)
-	if err != nil {
-		return nil, err // invalid cache data
-	}
-
-	if current != cacheJSON.Current {
-		return nil, errors.New("version changed, run the check again")
-	}
-
-	return &cacheJSON, nil
+	return data, nil
 }
 
 func (u *Upgrade) checkUpdate(current string) (*UpgradeCache, error) {
@@ -86,12 +75,7 @@ func (u *Upgrade) checkUpdate(current string) (*UpgradeCache, error) {
 		Current: current,
 	}
 
-	cacheJSON, err := json.Marshal(cacheData)
-	if err != nil {
-		return nil, err
-	}
-
-	u.env.Cache().Set(UPGRADECACHEKEY, string(cacheJSON), cache.Duration(duration))
+	cache.Set(cache.Device, UPGRADECACHEKEY, cacheData, cache.Duration(duration))
 
 	return cacheData, nil
 }

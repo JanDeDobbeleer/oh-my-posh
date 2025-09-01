@@ -3,6 +3,7 @@ package prompt
 import (
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
@@ -473,8 +474,8 @@ func New(flags *runtime.Flags) *Engine {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
-	_, reload := env.Cache().Get(config.RELOAD)
-	cfg := config.Get(env.Session(), flags.Config, reload)
+	_, reload := cache.Get[bool](cache.Session, config.RELOAD)
+	cfg := config.Get(flags.Config, reload)
 
 	template.Init(env, cfg.Var, cfg.Maps)
 

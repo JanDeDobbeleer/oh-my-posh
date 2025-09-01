@@ -2,6 +2,7 @@ package dsc
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -13,7 +14,7 @@ var (
 )
 
 type resource interface {
-	Load(c cache.Cache)
+	Load()
 	Save()
 	Resolve()
 	ToJSON() string
@@ -36,13 +37,19 @@ func Command(r resource) *cobra.Command {
 
 			env := &runtime.Terminal{}
 			env.Init(&runtime.Flags{})
-			defer env.Close()
+
+			cache.Init(os.Getenv("POSH_SHELL"), false)
+
+			defer func() {
+				env.Close()
+				cache.Close()
+			}()
 
 			var err error
 
 			switch args[0] {
 			case "get", "export":
-				r.Load(env.Cache())
+				r.Load()
 				r.Resolve()
 				fmt.Print(r.ToJSON())
 			case "set":
@@ -51,7 +58,7 @@ func Command(r resource) *cobra.Command {
 					break
 				}
 
-				r.Load(env.Cache())
+				r.Load()
 				err = r.Apply(state)
 			case "schema":
 				fmt.Print(r.Schema())
@@ -61,7 +68,7 @@ func Command(r resource) *cobra.Command {
 					break
 				}
 
-				r.Load(env.Cache())
+				r.Load()
 				err = r.Test(state)
 			default:
 				_ = cmd.Help()

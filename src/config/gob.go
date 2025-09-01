@@ -8,36 +8,17 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
-
-func init() {
-	// Register types that can appear in any values for gob encoding/decoding
-	// This is necessary for properties.Map which contains map[Property]any
-	gob.Register([]any{})
-	gob.Register(map[string]any{})
-	gob.Register(map[any]any{})
-	gob.Register([]string{})
-	gob.Register(map[string]string{})
-	gob.Register([]int{})
-	gob.Register([]float64{})
-	gob.Register([]bool{})
-	gob.Register(int64(0))
-	gob.Register(uint64(0))
-	gob.Register(float32(0))
-	gob.Register(properties.Map{})
-	gob.Register(properties.Property(""))
-	gob.Register(map[properties.Property]any{})
-}
 
 const (
 	key = "CONFIG_GOB"
 )
 
-func (cfg *Config) Store(session cache.Cache) {
+func (cfg *Config) Store() {
 	defer log.Trace(time.Now())
 
-	session.Set(key, cfg.Base64(), cache.INFINITE)
+	// TODO: Save this as a Config and no longer parse, we can deep equal to see if we need to reload
+	cache.Set(cache.Session, key, cfg.Base64(), cache.INFINITE)
 }
 
 func (cfg *Config) Base64() string {
@@ -61,10 +42,10 @@ func (cfg *Config) Base64() string {
 	return gobBase64
 }
 
-func Get(session cache.Cache, configFile string, reload bool) *Config {
+func Get(configFile string, reload bool) *Config {
 	defer log.Trace(time.Now())
 
-	gobBase64, found := session.Get(key)
+	gobBase64, found := cache.Get[string](cache.Session, key)
 	if !found {
 		log.Debug("no cached config found")
 		cfg := Load(configFile, false)
@@ -79,20 +60,20 @@ func Get(session cache.Cache, configFile string, reload bool) *Config {
 		return cfg
 	}
 
-	var cfg Config
+	cfg := &Config{}
 	decoder := gob.NewDecoder(bytes.NewReader(gobData))
-	err = decoder.Decode(&cfg)
+	err = decoder.Decode(cfg)
 	if err != nil {
 		log.Error(err)
-		cfg := Load(configFile, false)
+		cfg = Load(configFile, false)
 		return cfg
 	}
 
 	if reload {
 		log.Debug("edit mode enabled")
-		cfg := Load(cfg.Source, false)
+		cfg = Load(cfg.Source, false)
 		return cfg
 	}
 
-	return &cfg
+	return cfg
 }

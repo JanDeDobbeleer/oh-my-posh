@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 type data struct {
@@ -124,15 +123,16 @@ func TestOauthResult(t *testing.T) {
 		url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
 		tokenURL := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=test&token=%s", tc.RefreshToken)
 
-		cache := &mock.Cache{}
+		if tc.AccessTokenFromCache {
+			cache.Set(cache.Device, accessTokenKey, tc.AccessToken, cache.INFINITE)
+		}
 
-		cache.On("Get", accessTokenKey).Return(tc.AccessToken, tc.AccessTokenFromCache)
-		cache.On("Get", refreshTokenKey).Return(tc.RefreshToken, tc.RefreshTokenFromCache)
-		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
+		if tc.RefreshTokenFromCache {
+			cache.Set(cache.Device, refreshTokenKey, tc.RefreshToken, cache.INFINITE)
+		}
 
 		env := &MockedEnvironment{}
 
-		env.On("Cache").Return(cache)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("HTTPRequest", tokenURL).Return([]byte(tc.TokenResponse), tc.Error)
 
@@ -156,5 +156,7 @@ func TestOauthResult(t *testing.T) {
 		} else {
 			assert.Equal(t, tc.ExpectedErrorMessage, err.Error(), tc.Case)
 		}
+
+		cache.DeleteAll(cache.Device)
 	}
 }

@@ -2,9 +2,9 @@ package prompt
 
 import (
 	"slices"
-	"strconv"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -72,18 +72,13 @@ func (e *Engine) handleToolTipAction(text string, length int) (string, int) {
 		return text, length
 	}
 
-	rprompt, OK := e.Env.Session().Get(RPromptKey)
+	rprompt, OK := cache.Get[string](cache.Session, RPromptKey)
 	if !OK {
 		return text, length
 	}
 
-	rpromptLengthStr, OK := e.Env.Session().Get(RPromptLengthKey)
+	rpromptLength, OK := cache.Get[int](cache.Session, RPromptLengthKey)
 	if !OK {
-		return text, length
-	}
-
-	rpromptLength, err := strconv.Atoi(rpromptLengthStr)
-	if err != nil {
 		return text, length
 	}
 

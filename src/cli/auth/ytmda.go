@@ -71,7 +71,7 @@ func (y *Ytmda) Authenticate() {
 		return
 	}
 
-	y.env.Cache().Set(YTMDATOKEN, token, cache.INFINITE)
+	cache.Set(cache.Session, YTMDATOKEN, token, cache.INFINITE)
 
 	setState(done)
 }

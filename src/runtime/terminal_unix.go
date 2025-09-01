@@ -28,18 +28,16 @@ func (term *Terminal) QueryWindowTitles(_, _ string) (string, error) {
 func (term *Terminal) IsWsl() bool {
 	defer log.Trace(time.Now())
 	const key = "is_wsl"
-	if val, found := term.Cache().Get(key); found {
-		log.Debug(val)
-		return val == "true"
+	if val, found := cache.Get[bool](cache.Device, key); found {
+		return val
 	}
 
 	var val bool
 	defer func() {
-		term.Cache().Set(key, strconv.FormatBool(val), cache.INFINITE)
+		cache.Set(cache.Device, key, val, cache.INFINITE)
 	}()
 
 	val = term.HasCommand("wslpath")
-	log.Debug(strconv.FormatBool(val))
 
 	return val
 }
@@ -88,14 +86,13 @@ func (term *Terminal) TerminalWidth() (int, error) {
 
 func (term *Terminal) Platform() string {
 	const key = "environment_platform"
-	if val, found := term.Cache().Get(key); found {
-		log.Debug(val)
+	if val, found := cache.Get[string](cache.Device, key); found {
 		return val
 	}
 
 	var platform string
 	defer func() {
-		term.Cache().Set(key, platform, cache.INFINITE)
+		cache.Set(cache.Device, key, platform, cache.INFINITE)
 	}()
 
 	if wsl := term.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {

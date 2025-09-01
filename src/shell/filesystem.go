@@ -33,7 +33,7 @@ func hasScript(env runtime.Environment) (string, bool) {
 	}
 
 	// check if we have the same context
-	if val, _ := env.Cache().Get(cacheKey(env.Flags().Shell)); val != cacheValue(env) {
+	if val, _ := cache.Get[string](cache.Device, cacheKey(env.Flags().Shell)); val != cacheValue(env) {
 		log.Debug("script context has changed")
 		return "", false
 	}
@@ -69,7 +69,7 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 		_ = f.Close()
 	}()
 
-	env.Cache().Set(cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)
+	cache.Set(cache.Device, cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)
 
 	return path, nil
 }
@@ -112,7 +112,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 
 	const autoloadDir = "NUAUTOLOADDIR"
 
-	if dir, OK := env.Cache().Get(autoloadDir); OK {
+	if dir, OK := cache.Get[string](cache.Device, autoloadDir); OK {
 		scriptPathCache = filepath.Join(dir, scriptName(env.Flags().Shell))
 		log.Debug("autoload path for nu from cache:", dir)
 		return scriptPathCache, nil
@@ -138,7 +138,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 		return "", err
 	}
 
-	env.Cache().Set(autoloadDir, path, cache.INFINITE)
+	cache.Set(cache.Device, autoloadDir, path, cache.INFINITE)
 	scriptPathCache = filepath.Join(path, scriptName(env.Flags().Shell))
 	log.Debug("script path for nu:", scriptPathCache)
 	return scriptPathCache, nil

@@ -105,7 +105,9 @@ func TestOSInfo(t *testing.T) {
 		osInfo.Init(props, env)
 
 		template.Cache = &cache.Template{
-			WSL: tc.IsWSL,
+			SimpleTemplate: cache.SimpleTemplate{
+				WSL: tc.IsWSL,
+			},
 		}
 
 		_ = osInfo.Enabled()

@@ -70,9 +70,9 @@ func (segment *Segment) timeoutToCache() {
 		return
 	}
 
-	segment.Cache = &cache.Config{
+	segment.Cache = &Cache{
 		Duration: cache.ToDuration(timeout * 60),
-		Strategy: cache.Folder,
+		Strategy: Folder,
 	}
 }
 

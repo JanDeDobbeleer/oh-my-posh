@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -81,7 +82,6 @@ func runInit(sh, command string) {
 		ConfigHash: cfg.Base64(),
 		Strict:     strict,
 		Debug:      debug,
-		SaveCache:  true,
 		Init:       true,
 		Eval:       eval,
 	}
@@ -89,12 +89,15 @@ func runInit(sh, command string) {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
+	cache.Init(sh, true)
+
 	template.Init(env, cfg.Var, cfg.Maps)
 
 	defer func() {
-		cfg.Store(env.Session())
+		cfg.Store()
 		template.SaveCache()
 		env.Close()
+		cache.Close()
 	}()
 
 	feats := cfg.Features(env)
@@ -110,12 +113,12 @@ func runInit(sh, command string) {
 
 	if !debug {
 		configDSC := config.DSC()
-		configDSC.Load(env.Cache())
+		configDSC.Load()
 		configDSC.Add(configFlag)
 		configDSC.Save()
 
 		shellDSC := shell.DSC()
-		shellDSC.Load(env.Cache())
+		shellDSC.Load()
 		shellDSC.Add(&shell.Shell{
 			Command: command,
 			Name:    sh,

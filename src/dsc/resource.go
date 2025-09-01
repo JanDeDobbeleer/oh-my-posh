@@ -13,9 +13,8 @@ import (
 )
 
 type Resource[T State[T]] struct {
-	Cache         cache.Cache `json:"-"`
-	JSONSchemaURL string      `json:"$schema,omitempty"`
-	States        []T         `json:"states,omitempty" jsonschema:"title=states,description=The different states of the resource"`
+	JSONSchemaURL string `json:"$schema,omitempty"`
+	States        []T    `json:"states,omitempty" jsonschema:"title=states,description=The different states of the resource"`
 }
 
 type State[T any] interface {
@@ -24,35 +23,18 @@ type State[T any] interface {
 	Resolve() (T, bool)
 }
 
-func (resource *Resource[T]) SetCache(c cache.Cache) {
-	resource.Cache = c
-}
-
-func (resource *Resource[T]) Load(c cache.Cache) {
-	resource.Cache = c
-
-	cached, ok := resource.Cache.Get(resource.cacheKey())
+func (resource *Resource[T]) Load() {
+	states, ok := cache.Get[[]T](cache.Device, resource.cacheKey())
 	if !ok {
+		log.Debug("no states found in cache")
 		return
 	}
 
-	var items []T
-	if err := json.Unmarshal([]byte(cached), &items); err != nil {
-		log.Error(err)
-		return
-	}
-
-	resource.States = items
+	resource.States = states
 }
 
 func (resource *Resource[T]) Save() {
-	data, err := json.Marshal(resource.States)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-
-	resource.Cache.Set(resource.cacheKey(), string(data), cache.INFINITE)
+	cache.Set(cache.Device, resource.cacheKey(), resource.States, cache.INFINITE)
 }
 
 func (resource *Resource[T]) Add(item T) {

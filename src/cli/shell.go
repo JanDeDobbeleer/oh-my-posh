@@ -33,6 +33,7 @@ This command retrieves the name of the current shell being used.`,
 
 		env := &runtime.Terminal{}
 		env.Init(flags)
+
 		defer env.Close()
 
 		switch args[0] {

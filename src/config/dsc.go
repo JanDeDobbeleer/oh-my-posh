@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/gob"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,6 +12,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
+
+func init() {
+	gob.Register([]*Configuration{})
+}
 
 type Resource struct {
 	dsc.Resource[*Configuration]

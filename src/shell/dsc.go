@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"encoding/gob"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,6 +13,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
+
+func init() {
+	gob.Register([]*Shell{})
+}
 
 const (
 	initCommandRegex = `oh-my-posh(?:\.exe)?\s+init`

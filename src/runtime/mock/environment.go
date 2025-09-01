@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
@@ -180,16 +179,6 @@ func (env *Environment) TerminalWidth() (int, error) {
 func (env *Environment) CachePath() string {
 	args := env.Called()
 	return args.String(0)
-}
-
-func (env *Environment) Cache() cache.Cache {
-	args := env.Called()
-	return args.Get(0).(cache.Cache)
-}
-
-func (env *Environment) Session() cache.Cache {
-	args := env.Called()
-	return args.Get(0).(cache.Cache)
 }
 
 func (env *Environment) Close() {

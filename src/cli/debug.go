@@ -2,9 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
@@ -46,14 +48,17 @@ func createDebugCmd() *cobra.Command {
 			env := &runtime.Terminal{}
 			env.Init(flags)
 
-			_, reload := env.Cache().Get(config.RELOAD)
-			cfg := config.Get(env.Session(), configFlag, reload)
+			cache.Init(os.Getenv("POSH_SHELL"), false)
+
+			_, reload := cache.Get[bool](cache.Session, config.RELOAD)
+			cfg := config.Get(flags.Config, reload)
 
 			template.Init(env, cfg.Var, cfg.Maps)
 
 			defer func() {
 				template.SaveCache()
 				env.Close()
+				cache.Close()
 			}()
 
 			terminal.Init(shell.GENERIC)

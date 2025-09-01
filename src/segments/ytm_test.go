@@ -3,7 +3,7 @@ package segments
 import (
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -83,9 +83,9 @@ func TestYTM(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("HTTPRequest", ytmdaStatusURL).Return([]byte(tc.JSONResponse), tc.HTTPError)
 
-		cache := new(cache_.Cache)
-		env.On("Cache").Return(cache)
-		cache.On("Get", auth.YTMDATOKEN).Return("test_token", tc.HasToken)
+		if tc.HasToken {
+			cache.Set(cache.Device, auth.YTMDATOKEN, "test_token", cache.INFINITE)
+		}
 
 		props := properties.Map{
 			StoppedIcon: "Stopped ",
@@ -98,6 +98,8 @@ func TestYTM(t *testing.T) {
 		ytm.Init(props, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, ytm.Enabled(), tc.Case)
+		cache.DeleteAll(cache.Device)
+
 		if !tc.ExpectedEnabled {
 			continue
 		}

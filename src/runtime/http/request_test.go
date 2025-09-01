@@ -5,19 +5,12 @@ import (
 	"net"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
 )
 
 type MockedEnvironment struct {
 	testify_.Mock
-}
-
-func (env *MockedEnvironment) Cache() cache.Cache {
-	args := env.Called()
-	return args.Get(0).(cache.Cache)
 }
 
 func (env *MockedEnvironment) HTTPRequest(url string, _ io.Reader, _ int, _ ...RequestModifier) ([]byte, error) {

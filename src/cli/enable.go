@@ -45,13 +45,18 @@ func init() {
 
 func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	flags := &runtime.Flags{
-		Shell:     shellName,
-		SaveCache: true,
+		Shell: shellName,
 	}
 
 	env := &runtime.Terminal{}
 	env.Init(flags)
-	defer env.Close()
+
+	cache.Init(shellName, true)
+
+	defer func() {
+		env.Close()
+		cache.Close()
+	}()
 
 	if feature == "" {
 		_ = cmd.Help()
@@ -59,9 +64,9 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	}
 
 	if enable {
-		env.Cache().Set(feature, "true", cache.INFINITE)
+		cache.Set(cache.Device, feature, "true", cache.INFINITE)
 		return
 	}
 
-	env.Cache().Delete(feature)
+	cache.Delete(cache.Device, feature)
 }

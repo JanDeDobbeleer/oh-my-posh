@@ -4,7 +4,6 @@ import (
 	"io"
 	"io/fs"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 
@@ -58,8 +57,6 @@ type Environment interface {
 	IsCygwin() bool
 	StackCount() int
 	TerminalWidth() (int, error)
-	Cache() cache.Cache
-	Session() cache.Cache
 	Close()
 	Logs() string
 	InWSLSharedDrive() bool
@@ -92,7 +89,6 @@ type Flags struct {
 	Debug         bool
 	Cleared       bool
 	NoExitCode    bool
-	SaveCache     bool
 	Init          bool
 	Migrate       bool
 	Eval          bool

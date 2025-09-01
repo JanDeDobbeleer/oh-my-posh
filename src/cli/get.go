@@ -51,7 +51,13 @@ This command is used to get the value of the following variables:
 
 		env := &runtime.Terminal{}
 		env.Init(flags)
-		defer env.Close()
+
+		cache.Init(shellName, true)
+
+		defer func() {
+			env.Close()
+			cache.Close()
+		}()
 
 		switch args[0] {
 		case "shell":
@@ -67,7 +73,7 @@ This command is used to get the value of the following variables:
 		case "toggles":
 			var toggles []string
 
-			togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)
+			togglesCache, _ := cache.Get[string](cache.Session, cache.TOGGLECACHE)
 			if len(togglesCache) != 0 {
 				toggles = strings.Split(togglesCache, ",")
 			}

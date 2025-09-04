@@ -24,20 +24,6 @@ Installers:
   UpgradeBehavior: install
   InstallerSwitches:
      Custom: INSTALLER=winget
-- Architecture: x86
-  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-x86.msi
-  InstallerSha256: <HASH-386>
-  Scope: machine
-  UpgradeBehavior: install
-  InstallerSwitches:
-     Custom: INSTALLER=winget ALLUSERS=1
-- Architecture: x86
-  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-x86.msi
-  InstallerSha256: <HASH-386>
-  Scope: user
-  UpgradeBehavior: install
-  InstallerSwitches:
-     Custom: INSTALLER=winget
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.msi
   InstallerSha256: <HASH-ARM64>

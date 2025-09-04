@@ -1,5 +1,3 @@
-//go:build windows && !386
-
 package constants
 
 const (

@@ -30,14 +30,13 @@ https://ohmyposh.dev/docs/installation/linux
 $installer = ''
 $arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture | Select-Object -First 1
 switch ($arch) {
-    0 { $installer = "install-x86.msi" } # x86
     5 { $installer = "install-arm64.msi" } # ARM
     9 {
         if ([Environment]::Is64BitOperatingSystem) {
             $installer = "install-x64.msi"
         }
         else {
-            $installer = "install-x86.msi"
+            Write-Error "The installer for system architecture ($arch) is not available."
         }
     }
     12 { $installer = "install-arm64.msi" } # Surface Pro X

@@ -38,13 +38,6 @@ jobs:
             "architectures":["Arm64"],
             "installerParameters":"/quiet INSTALLER=ws",
             "isSilentInstall":false
-            },
-            {
-            "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${{ github.event.release.tag_name }}/install-x86.msi",
-            "languages":["en"],
-            "architectures":["X86"],
-            "installerParameters":"/quiet INSTALLER=ws",
-            "isSilentInstall":false
             }
             ]
             }'

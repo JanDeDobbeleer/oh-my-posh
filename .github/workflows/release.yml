@@ -81,7 +81,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: [x64, arm64, x86]
+        arch: [x64, arm64]
     defaults:
       run:
         shell: pwsh

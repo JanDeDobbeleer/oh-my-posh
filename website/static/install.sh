@@ -48,7 +48,7 @@ while getopts ":hd:t:v:" option; do
    esac
 done
 
-SUPPORTED_TARGETS="linux-386 linux-amd64 linux-arm linux-arm64 darwin-amd64 darwin-arm64 freebsd-386 freebsd-amd64 freebsd-arm freebsd-arm64"
+SUPPORTED_TARGETS="linux-amd64 linux-arm linux-arm64 darwin-amd64 darwin-arm64 freebsd-amd64 freebsd-arm freebsd-arm64"
 
 validate_dependency() {
     if ! command -v $1 >/dev/null; then
@@ -224,7 +224,6 @@ detect_arch() {
     armv*) arch="arm" ;;
     arm64) arch="arm64" ;;
     aarch64) arch="arm64" ;;
-    i686) arch="386" ;;
   esac
 
   if [ "${arch}" = "arm64" ] && [ "$(getconf LONG_BIT)" -eq 32 ]; then

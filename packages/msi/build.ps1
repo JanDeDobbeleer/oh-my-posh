@@ -1,7 +1,7 @@
 Param
 (
     [parameter(Mandatory = $true)]
-    [ValidateSet('x64', 'arm64', 'x86')]
+    [ValidateSet('x64', 'arm64')]
     [System.String]$Architecture,
     [parameter(Mandatory = $true)]
     [string]
@@ -27,7 +27,6 @@ New-Item -Path "." -Name "out" -ItemType Directory -ErrorAction SilentlyContinue
 
 if ($Copy) {
     switch ($Architecture) {
-        'x86' { $file = "posh-windows-386.exe" }
         'x64' { $file = "posh-windows-amd64.exe" }
         Default { $file = "posh-windows-$Architecture.exe" }
     }

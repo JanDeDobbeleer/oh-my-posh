@@ -2,20 +2,18 @@ package cache
 
 import (
 	"encoding/gob"
-	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/file"
 )
 
 type store struct {
-	cache         *maps.Concurrent[*Entry[any]]
-	cacheFilePath string
-	dirty         bool
-	persist       bool
+	cache    *maps.Concurrent[*Entry[any]]
+	filePath string
+	dirty    bool
+	persist  bool
 }
 
 var (
@@ -39,7 +37,7 @@ func (s Store) new() *store {
 
 // getStore returns the appropriate store based on the Store identifier
 func (s Store) get() *store {
-	switch s {
+	switch s { //nolint:exhaustive
 	case Device:
 		if device == nil {
 			device = s.new()
@@ -56,17 +54,15 @@ func (s Store) get() *store {
 }
 
 // Init initializes a store with the given file path
-func (s Store) init(cacheFilePath string, persist bool) {
-	defer log.Trace(time.Now(), string(s), cacheFilePath)
+func (s Store) init(filePath string, persist bool) {
+	defer log.Trace(time.Now(), string(s), filePath)
 
 	store := s.get()
 	store.cache = maps.NewConcurrent[*Entry[any]]()
-	store.cacheFilePath = cacheFilePath
+	store.filePath = filepath.Join(Path(), filePath)
 	store.persist = persist
 
-	path := filepath.Join(Path(), store.cacheFilePath)
-
-	file, err := file.Open(path)
+	reader, err := openFile(store.filePath)
 	if err != nil {
 		// set to dirty so we create it on close
 		log.Error(err)
@@ -74,11 +70,11 @@ func (s Store) init(cacheFilePath string, persist bool) {
 		return
 	}
 
-	defer file.Close()
+	defer reader.Close()
 
 	var list maps.Simple[*Entry[any]]
 
-	dec := gob.NewDecoder(file)
+	dec := gob.NewDecoder(reader)
 	if err := dec.Decode(&list); err != nil {
 		log.Error(err)
 		// If gob decoding fails, the cache file might be from the old format
@@ -109,7 +105,7 @@ func (s Store) close() {
 
 	cache := store.cache.ToSimple()
 
-	file, err := os.Create(filepath.Join(Path(), store.cacheFilePath))
+	file, err := openFile(store.filePath)
 	if err != nil {
 		log.Error(err)
 		return

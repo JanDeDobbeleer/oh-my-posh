@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/gob"
 	"slices"
 	"strings"
 
@@ -15,6 +16,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
+
+func init() {
+	gob.Register(&Config{})
+}
 
 const (
 	JSON string = "json"
@@ -45,25 +50,24 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Palette                 color.Palette   `json:"palette,omitempty" toml:"palette,omitempty" yaml:"palette,omitempty"`
-	DebugPrompt             *Segment        `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty" yaml:"debug_prompt,omitempty"`
-	Var                     map[string]any  `json:"var,omitempty" toml:"var,omitempty" yaml:"var,omitempty"`
-	Palettes                *color.Palettes `json:"palettes,omitempty" toml:"palettes,omitempty" yaml:"palettes,omitempty"`
-	ValidLine               *Segment        `json:"valid_line,omitempty" toml:"valid_line,omitempty" yaml:"valid_line,omitempty"`
-	SecondaryPrompt         *Segment        `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty" yaml:"secondary_prompt,omitempty"`
-	TransientPrompt         *Segment        `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty" yaml:"transient_prompt,omitempty"`
-	ErrorLine               *Segment        `json:"error_line,omitempty" toml:"error_line,omitempty" yaml:"error_line,omitempty"`
-	Maps                    *maps.Config    `json:"maps,omitempty" toml:"maps,omitempty" yaml:"maps,omitempty"`
-	Upgrade                 *upgrade.Config `json:"upgrade,omitempty" toml:"upgrade,omitempty" yaml:"upgrade,omitempty"`
-	Extends                 string          `json:"extends,omitempty" toml:"extends,omitempty" yaml:"extends,omitempty"`
-	AccentColor             color.Ansi      `json:"accent_color,omitempty" toml:"accent_color,omitempty" yaml:"accent_color,omitempty"`
-	ConsoleTitleTemplate    string          `json:"console_title_template,omitempty" toml:"console_title_template,omitempty" yaml:"console_title_template,omitempty"`
-	PWD                     string          `json:"pwd,omitempty" toml:"pwd,omitempty" yaml:"pwd,omitempty"`
-	Source                  string          `json:"-" toml:"-" yaml:"-"`
-	Format                  string          `json:"-" toml:"-" yaml:"-"`
-	TerminalBackground      color.Ansi      `json:"terminal_background,omitempty" toml:"terminal_background,omitempty" yaml:"terminal_background,omitempty"`
-	ToolTipsAction          Action          `json:"tooltips_action,omitempty" toml:"tooltips_action,omitempty" yaml:"tooltips_action,omitempty"`
-	base64                  string
+	Palette                 color.Palette          `json:"palette,omitempty" toml:"palette,omitempty" yaml:"palette,omitempty"`
+	DebugPrompt             *Segment               `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty" yaml:"debug_prompt,omitempty"`
+	Var                     map[string]any         `json:"var,omitempty" toml:"var,omitempty" yaml:"var,omitempty"`
+	Palettes                *color.Palettes        `json:"palettes,omitempty" toml:"palettes,omitempty" yaml:"palettes,omitempty"`
+	ValidLine               *Segment               `json:"valid_line,omitempty" toml:"valid_line,omitempty" yaml:"valid_line,omitempty"`
+	SecondaryPrompt         *Segment               `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty" yaml:"secondary_prompt,omitempty"`
+	TransientPrompt         *Segment               `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty" yaml:"transient_prompt,omitempty"`
+	ErrorLine               *Segment               `json:"error_line,omitempty" toml:"error_line,omitempty" yaml:"error_line,omitempty"`
+	Maps                    *maps.Config           `json:"maps,omitempty" toml:"maps,omitempty" yaml:"maps,omitempty"`
+	Upgrade                 *upgrade.Config        `json:"upgrade,omitempty" toml:"upgrade,omitempty" yaml:"upgrade,omitempty"`
+	Extends                 string                 `json:"extends,omitempty" toml:"extends,omitempty" yaml:"extends,omitempty"`
+	AccentColor             color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty" yaml:"accent_color,omitempty"`
+	ConsoleTitleTemplate    string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty" yaml:"console_title_template,omitempty"`
+	PWD                     string                 `json:"pwd,omitempty" toml:"pwd,omitempty" yaml:"pwd,omitempty"`
+	Source                  string                 `json:"-" toml:"-" yaml:"-"`
+	Format                  string                 `json:"-" toml:"-" yaml:"-"`
+	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty" yaml:"terminal_background,omitempty"`
+	ToolTipsAction          Action                 `json:"tooltips_action,omitempty" toml:"tooltips_action,omitempty" yaml:"tooltips_action,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty" yaml:"tooltips,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty" yaml:"blocks,omitempty"`
 	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty" yaml:"iterm_features,omitempty"`

@@ -17,8 +17,6 @@ _omp_status=0
 _omp_pipestatus=0
 _omp_executable=::OMP::
 
-export POSH_SESSION_ID=::SESSION_ID::
-
 # switches to enable/disable features
 _omp_cursor_positioning=0
 _omp_ftcs_marks=0

@@ -109,10 +109,6 @@ local function run_posh_command(command)
     return output
 end
 
--- SESSION ID
-
-os.setenv('POSH_SESSION_ID', '::SESSION_ID::')
-
 -- Duration functions
 
 local function os_clock_millis()

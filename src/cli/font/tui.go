@@ -328,7 +328,7 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run(font string, zipFolder string) (string, error) {
+func Run(font, zipFolder string) (string, error) {
 	main := &main{
 		Asset: Asset{
 			Name:   font,

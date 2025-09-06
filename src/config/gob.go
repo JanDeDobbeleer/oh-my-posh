@@ -11,15 +11,15 @@ import (
 )
 
 const (
-	config_key        = "CONFIG"
-	config_source_key = "CONFIG_SOURCE"
+	configKey       = "CONFIG"
+	configSourceKey = "CONFIG_SOURCE"
 )
 
 func (cfg *Config) Store() {
 	defer log.Trace(time.Now())
 
-	cache.Set(cache.Session, config_source_key, cfg.Source, cache.INFINITE)
-	cache.Set(cache.Session, config_key, cfg, cache.INFINITE)
+	cache.Set(cache.Session, configSourceKey, cfg.Source, cache.INFINITE)
+	cache.Set(cache.Session, configKey, cfg, cache.INFINITE)
 }
 
 func Get(configFile string, reload bool) *Config {
@@ -27,12 +27,12 @@ func Get(configFile string, reload bool) *Config {
 
 	if reload {
 		log.Debug("reload mode enabled")
-		if source, OK := cache.Get[string](cache.Session, config_source_key); OK {
+		if source, OK := cache.Get[string](cache.Session, configSourceKey); OK {
 			return Load(source, false)
 		}
 	}
 
-	cfg, found := cache.Get[*Config](cache.Session, config_key)
+	cfg, found := cache.Get[*Config](cache.Session, configKey)
 	if !found {
 		log.Debug("no cached config found")
 		return Load(configFile, false)

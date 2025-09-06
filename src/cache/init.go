@@ -3,11 +3,15 @@ package cache
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 func SessionID() string {
+	defer log.Trace(time.Now())
+
 	once.Do(func() {
 		sessionID = os.Getenv("POSH_SESSION_ID")
 		if sessionID == "" {

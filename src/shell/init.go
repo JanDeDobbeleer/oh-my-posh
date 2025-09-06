@@ -127,7 +127,6 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	init := strings.NewReplacer(
 		"::OMP::", executable,
 		"::SHELL::", env.Flags().Shell,
-		"::SESSION_ID::", cache.SessionID(),
 	).Replace(script)
 
 	shellScript := features.Lines(env.Flags().Shell).String(init)
@@ -182,26 +181,30 @@ func sourceInit(env runtime.Environment, scriptPath string, async bool) string {
 		}
 	}
 
+	script := sessionScript(env.Flags().Shell)
+
 	if async {
-		return sourceInitAsync(env.Flags().Shell, scriptPath)
+		return script + sourceInitAsync(env.Flags().Shell, scriptPath)
 	}
 
 	switch env.Flags().Shell {
 	case PWSH, PWSH5:
-		return fmt.Sprintf("& %s", quotePwshOrElvishStr(scriptPath))
+		script += fmt.Sprintf("& %s", quotePwshOrElvishStr(scriptPath))
 	case ZSH, BASH:
-		return fmt.Sprintf("source %s", QuotePosixStr(scriptPath))
+		script += fmt.Sprintf("source %s", QuotePosixStr(scriptPath))
 	case XONSH:
-		return fmt.Sprintf("source %s", quotePythonStr(scriptPath))
+		script += fmt.Sprintf("source %s", quotePythonStr(scriptPath))
 	case FISH:
-		return fmt.Sprintf("source %s", quoteFishStr(scriptPath))
+		script += fmt.Sprintf("source %s", quoteFishStr(scriptPath))
 	case ELVISH:
-		return fmt.Sprintf("eval (slurp < %s)", quotePwshOrElvishStr(scriptPath))
+		script += fmt.Sprintf("eval (slurp < %s)", quotePwshOrElvishStr(scriptPath))
 	case CMD:
-		return fmt.Sprintf(`load(io.open('%s', "r"):read("*a"))()`, escapeLuaStr(scriptPath))
+		script += fmt.Sprintf(`load(io.open('%s', "r"):read("*a"))()`, escapeLuaStr(scriptPath))
 	default:
 		return fmt.Sprintf("echo \"No source command available for %s\"", env.Flags().Shell)
 	}
+
+	return script
 }
 
 func sourceInitAsync(shell, scriptPath string) string {
@@ -218,4 +221,24 @@ func sourceInitAsync(shell, scriptPath string) string {
 	default:
 		return ""
 	}
+}
+
+func sessionScript(shell string) string {
+	switch shell {
+	case PWSH, PWSH5:
+		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\";", cache.SessionID())
+	case ZSH, BASH:
+		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\";", cache.SessionID())
+	case XONSH:
+		return fmt.Sprintf("$POSH_SESSION_ID = \"%s\";", cache.SessionID())
+	case FISH:
+		return fmt.Sprintf("set --export --global POSH_SESSION_ID \"%s\";", cache.SessionID())
+	case ELVISH:
+		return fmt.Sprintf("set-env POSH_SESSION_ID \"%s\";", cache.SessionID())
+	case CMD:
+		return fmt.Sprintf(`os.setenv('POSH_SESSION_ID', '%s');`, cache.SessionID())
+	case NU:
+		return fmt.Sprintf("$env.POSH_SESSION_ID = \"%s\";", cache.SessionID())
+	}
+	return ""
 }

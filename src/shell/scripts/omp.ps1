@@ -24,8 +24,6 @@ $global:_ompPoshGit = $false
 $global:_ompAzure = $false
 $global:_ompExecutable = ::OMP::
 
-$env:POSH_SESSION_ID = "::SESSION_ID::"
-
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.
     $script:ConstrainedLanguageMode = $ExecutionContext.SessionState.LanguageMode -eq "ConstrainedLanguage"

@@ -475,7 +475,7 @@ func New(flags *runtime.Flags) *Engine {
 	env.Init(flags)
 
 	_, reload := cache.Get[bool](cache.Session, config.RELOAD)
-	cfg := config.Get(flags.Config, reload)
+	cfg := config.Get(flags.ConfigPath, reload)
 
 	template.Init(env, cfg.Var, cfg.Maps)
 

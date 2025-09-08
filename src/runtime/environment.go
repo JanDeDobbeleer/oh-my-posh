@@ -70,7 +70,7 @@ type Environment interface {
 type Flags struct {
 	PSWD          string
 	PipeStatus    string
-	Config        string
+	ConfigPath    string
 	ConfigHash    string
 	Shell         string
 	ShellVersion  string

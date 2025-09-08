@@ -63,7 +63,7 @@ func createPrintCmd() *cobra.Command {
 			}
 
 			flags := &runtime.Flags{
-				Config:        configFlag,
+				ConfigPath:    configFlag,
 				PWD:           pwd,
 				PSWD:          pswd,
 				ErrorCode:     status,

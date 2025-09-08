@@ -52,7 +52,7 @@ Exports the config to an image file using customized output settings.`,
 		cfg := config.Load(configFlag, false)
 
 		flags := &runtime.Flags{
-			Config:        cfg.Source,
+			ConfigPath:    cfg.Source,
 			Shell:         shell.GENERIC,
 			TerminalWidth: 120,
 		}

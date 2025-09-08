@@ -57,8 +57,6 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 		log.Enable(true)
 
-		log.Debug("timestamp", time.Now().Format("02-01-2006 15:04:05.000"))
-
 		log.Debug("oh-my-posh version", build.Version)
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
@@ -79,7 +77,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 		cli := append([]string{cmd.Name()}, args...)
 
-		filename := fmt.Sprintf("%s%s.log", prefix, strings.Join(cli, "-"))
+		filename := fmt.Sprintf("%s-%s%s.log", time.Now().Format("02012006T150405.000"), prefix, strings.Join(cli, "-"))
 
 		logPath := filepath.Join(cache.Path(), "logs")
 		err := os.MkdirAll(logPath, 0755)

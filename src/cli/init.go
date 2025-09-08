@@ -78,7 +78,7 @@ func runInit(sh, command string) {
 
 	flags := &runtime.Flags{
 		Shell:      sh,
-		Config:     cfg.Source,
+		ConfigPath: cfg.Source,
 		ConfigHash: cfg.Base64(),
 		Strict:     strict,
 		Debug:      debug,

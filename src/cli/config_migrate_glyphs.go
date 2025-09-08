@@ -37,7 +37,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 		cfg := config.Load(configFlag, false)
 
 		flags := &runtime.Flags{
-			Config: cfg.Source,
+			ConfigPath: cfg.Source,
 		}
 
 		env := &runtime.Terminal{}

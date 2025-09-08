@@ -69,7 +69,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Run duration:").Green().Bold().Plain(), time.Since(startTime)))
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Cache path:").Green().Bold().Plain(), cache.Path()))
 
-	cfg := e.Env.Flags().Config
+	cfg := e.Env.Flags().ConfigPath
 	if cfg == "" {
 		cfg = "no --config set, using default built-in configuration"
 	}

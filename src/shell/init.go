@@ -59,7 +59,7 @@ func Init(env runtime.Environment, feats Features) string {
 			additionalParams += " --strict"
 		}
 
-		config := quotePwshOrElvishStr(env.Flags().Config)
+		config := quotePwshOrElvishStr(env.Flags().ConfigPath)
 		executable = quotePwshOrElvishStr(executable)
 
 		var command string
@@ -127,6 +127,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	init := strings.NewReplacer(
 		"::OMP::", executable,
 		"::SHELL::", env.Flags().Shell,
+		"::SESSION_ID::", cache.SessionID(),
 	).Replace(script)
 
 	shellScript := features.Lines(env.Flags().Shell).String(init)
@@ -237,8 +238,6 @@ func sessionScript(shell string) string {
 		return fmt.Sprintf("set-env POSH_SESSION_ID \"%s\";", cache.SessionID())
 	case CMD:
 		return fmt.Sprintf(`os.setenv('POSH_SESSION_ID', '%s');`, cache.SessionID())
-	case NU:
-		return fmt.Sprintf("$env.POSH_SESSION_ID = \"%s\";", cache.SessionID())
 	}
 	return ""
 }

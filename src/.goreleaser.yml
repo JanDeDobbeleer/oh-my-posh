@@ -6,6 +6,8 @@ before:
     - go mod tidy
     - go install github.com/tc-hib/go-winres@latest
     - go-winres make --product-version=git-tag --file-version=git-tag --arch="amd64,arm64"
+env:
+  - GOEXPERIMENT=greenteagc,jsonv2
 builds:
   -
     binary: "posh-{{ .Os }}-{{ .Arch }}"

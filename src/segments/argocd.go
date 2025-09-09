@@ -64,7 +64,7 @@ func (a *Argocd) getConfigFromOpts() string {
 	// don't exit/panic when encountering invalid flags
 	flags := pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
 	// ignore other valid and invalid flags
-	flags.ParseErrorsWhitelist.UnknownFlags = true
+	flags.ParseErrorsAllowlist.UnknownFlags = true
 	// only care about config
 	flags.String("config", "", "get config from opts")
 

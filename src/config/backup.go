@@ -2,11 +2,11 @@ package config
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"os"
 	"strings"
 
-	json "github.com/goccy/go-json"
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "gopkg.in/yaml.v3"
 )

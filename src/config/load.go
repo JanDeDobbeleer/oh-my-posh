@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -17,7 +18,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
-	json "github.com/goccy/go-json"
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "gopkg.in/yaml.v3"
 )

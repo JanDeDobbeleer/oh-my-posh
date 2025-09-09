@@ -30,7 +30,6 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.8
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/goccy/go-json v0.10.5
 	github.com/gookit/goutil v0.7.1
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/invopop/jsonschema v0.13.0

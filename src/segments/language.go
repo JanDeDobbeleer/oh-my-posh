@@ -29,7 +29,7 @@ type inContext func() bool
 type getVersion func() (string, error)
 type matchesVersionFile func() (string, bool)
 
-type version struct {
+type Version struct {
 	Full          string
 	Major         string
 	Minor         string
@@ -49,13 +49,13 @@ type cmd struct {
 	args               []string
 }
 
-func (c *cmd) parse(versionInfo string) (*version, error) {
+func (c *cmd) parse(versionInfo string) (*Version, error) {
 	values := regex.FindNamedRegexMatch(c.regex, versionInfo)
 	if len(values) == 0 {
 		return nil, errors.New("cannot parse version string")
 	}
 
-	version := &version{
+	version := &Version{
 		Full:          values["version"],
 		Major:         values["major"],
 		Minor:         values["minor"],
@@ -73,7 +73,7 @@ type language struct {
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
-	version
+	Version
 	displayMode        string
 	Error              string
 	versionURLTemplate string
@@ -201,8 +201,8 @@ func (l *language) setVersion() error {
 
 	cacheKey := fmt.Sprintf("version_%s", l.name)
 
-	if versionCache, OK := cache.Get[version](cache.Device, cacheKey); OK {
-		l.version = versionCache
+	if versionCache, OK := cache.Get[Version](cache.Device, cacheKey); OK {
+		l.Version = versionCache
 		return nil
 	}
 
@@ -221,7 +221,7 @@ func (l *language) setVersion() error {
 			continue
 		}
 
-		l.version = *version
+		l.Version = *version
 		if command.versionURLTemplate != "" {
 			l.versionURLTemplate = command.versionURLTemplate
 		}
@@ -230,7 +230,7 @@ func (l *language) setVersion() error {
 		l.Executable = command.executable
 
 		duration := l.props.GetString(properties.CacheDuration, string(cache.NONE))
-		cache.Set(cache.Device, cacheKey, l.version, cache.Duration(duration))
+		cache.Set(cache.Device, cacheKey, l.Version, cache.Duration(duration))
 
 		return nil
 	}
@@ -289,7 +289,7 @@ func (l *language) buildVersionURL() {
 		return
 	}
 
-	url, err := template.Render(versionURLTemplate, l.version)
+	url, err := template.Render(versionURLTemplate, l.Version)
 	if err != nil {
 		return
 	}

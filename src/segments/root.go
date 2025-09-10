@@ -2,6 +2,7 @@ package segments
 
 type Root struct {
 	base
+	Dummy int
 }
 
 func (rt *Root) Template() string {

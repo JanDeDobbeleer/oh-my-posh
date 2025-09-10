@@ -76,7 +76,6 @@ func createDebugCmd() *cobra.Command {
 	}
 
 	debugCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
-	debugCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 
 	// Deprecated flags, should be kept to avoid breaking CLI integration.
 	debugCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")

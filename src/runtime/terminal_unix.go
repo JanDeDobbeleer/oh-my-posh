@@ -162,14 +162,17 @@ func (term *Terminal) Memory() (*Memory, error) {
 		log.Error(err)
 		return nil, err
 	}
+
 	m.PhysicalTotalMemory = memStat.Total
 	m.PhysicalAvailableMemory = memStat.Available
 	m.PhysicalFreeMemory = memStat.Free
 	m.PhysicalPercentUsed = memStat.UsedPercent
+
 	swapStat, err := mem.SwapMemory()
 	if err != nil {
 		log.Error(err)
 	}
+
 	m.SwapTotalMemory = swapStat.Total
 	m.SwapFreeMemory = swapStat.Free
 	m.SwapPercentUsed = swapStat.UsedPercent

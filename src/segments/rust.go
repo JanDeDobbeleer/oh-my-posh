@@ -1,6 +1,7 @@
 package segments
 
 type Rust struct {
+	Dummy struct{}
 	language
 }
 

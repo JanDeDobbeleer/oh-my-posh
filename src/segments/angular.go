@@ -5,6 +5,7 @@ import (
 )
 
 type Angular struct {
+	Dummy struct{}
 	language
 }
 

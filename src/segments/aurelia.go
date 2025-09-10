@@ -1,6 +1,7 @@
 package segments
 
 type Aurelia struct {
+	Dummy struct{}
 	language
 }
 

@@ -1,6 +1,7 @@
 package segments
 
 type Elixir struct {
+	Dummy struct{}
 	language
 }
 

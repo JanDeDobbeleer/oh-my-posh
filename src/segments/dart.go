@@ -6,6 +6,7 @@ var (
 )
 
 type Dart struct {
+	Dummy struct{}
 	language
 }
 

@@ -1,6 +1,7 @@
 package segments
 
 type Pnpm struct {
+	Dummy struct{}
 	language
 }
 

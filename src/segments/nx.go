@@ -1,6 +1,7 @@
 package segments
 
 type Nx struct {
+	Dummy struct{}
 	language
 }
 

@@ -41,6 +41,7 @@ type gitVersion struct {
 }
 
 type GitVersion struct {
+	Dummy struct{}
 	base
 
 	gitVersion

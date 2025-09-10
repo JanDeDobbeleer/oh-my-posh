@@ -5,6 +5,7 @@ import (
 )
 
 type Lua struct {
+	Dummy struct{}
 	language
 }
 

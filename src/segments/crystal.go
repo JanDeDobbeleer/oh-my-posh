@@ -1,6 +1,7 @@
 package segments
 
 type Crystal struct {
+	Dummy struct{}
 	language
 }
 

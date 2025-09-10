@@ -1,6 +1,7 @@
 package segments
 
 type XMake struct {
+	Dummy struct{}
 	language
 }
 

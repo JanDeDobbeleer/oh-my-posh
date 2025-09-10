@@ -1,6 +1,7 @@
 package segments
 
 type Mvn struct {
+	Dummy struct{}
 	language
 }
 

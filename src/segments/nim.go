@@ -1,6 +1,7 @@
 package segments
 
 type Nim struct {
+	Dummy struct{}
 	language
 }
 

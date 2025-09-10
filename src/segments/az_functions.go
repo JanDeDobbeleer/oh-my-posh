@@ -1,6 +1,7 @@
 package segments
 
 type AzFunc struct {
+	Dummy struct{}
 	language
 }
 

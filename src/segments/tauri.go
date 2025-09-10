@@ -5,6 +5,7 @@ import (
 )
 
 type Tauri struct {
+	Dummy struct{}
 	language
 }
 

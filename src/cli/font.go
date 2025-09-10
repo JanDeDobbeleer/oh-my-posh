@@ -49,7 +49,6 @@ This command is used to install fonts and configure the font in your terminal.
 				cache.Init(sh, true)
 
 				defer func() {
-					env.Close()
 					cache.Close()
 				}()
 

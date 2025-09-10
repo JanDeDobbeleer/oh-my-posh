@@ -66,7 +66,6 @@ Exports the config to an image file using customized output settings.`,
 
 		defer func() {
 			template.SaveCache()
-			env.Close()
 			cache.Close()
 		}()
 

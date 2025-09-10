@@ -43,8 +43,6 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 		env := &runtime.Terminal{}
 		env.Init(flags)
 
-		defer env.Close()
-
 		cfg.MigrateGlyphs = true
 		if format == "" {
 			format = cfg.Format

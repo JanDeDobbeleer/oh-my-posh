@@ -57,7 +57,6 @@ type Environment interface {
 	IsCygwin() bool
 	StackCount() int
 	TerminalWidth() (int, error)
-	Close()
 	Logs() string
 	InWSLSharedDrive() bool
 	ConvertToLinuxPath(input string) string

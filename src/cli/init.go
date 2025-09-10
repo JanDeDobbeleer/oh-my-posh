@@ -96,7 +96,9 @@ func runInit(sh, command string) {
 	defer func() {
 		cfg.Store()
 		template.SaveCache()
-		env.Close()
+		if err := cache.Clear(false, shell.InitScriptName(env.Flags())); err != nil {
+			log.Error(err)
+		}
 		cache.Close()
 	}()
 

@@ -476,21 +476,6 @@ func (term *Terminal) StackCount() int {
 	return term.CmdFlags.StackCount
 }
 
-func (term *Terminal) Close() {
-	defer log.Trace(time.Now())
-	term.clearCacheFiles()
-}
-
-func (term *Terminal) clearCacheFiles() {
-	if !term.CmdFlags.Init {
-		return
-	}
-
-	if err := cache.Clear(false); err != nil {
-		log.Error(err)
-	}
-}
-
 func (term *Terminal) Logs() string {
 	return log.String()
 }

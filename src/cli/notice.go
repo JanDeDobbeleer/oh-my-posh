@@ -23,7 +23,6 @@ var noticeCmd = &cobra.Command{
 		cache.Init(shell.GENERIC, true)
 
 		defer func() {
-			env.Close()
 			cache.Close()
 		}()
 

@@ -55,7 +55,6 @@ This command is used to get the value of the following variables:
 		cache.Init(shellName, true)
 
 		defer func() {
-			env.Close()
 			cache.Close()
 		}()
 

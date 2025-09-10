@@ -1,6 +1,7 @@
 package segments
 
 type Bun struct {
+	Dummy struct{}
 	language
 }
 

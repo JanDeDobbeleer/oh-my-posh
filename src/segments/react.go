@@ -1,6 +1,7 @@
 package segments
 
 type React struct {
+	Dummy struct{}
 	language
 }
 

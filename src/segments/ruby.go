@@ -1,6 +1,7 @@
 package segments
 
 type Ruby struct {
+	Dummy struct{}
 	language
 }
 

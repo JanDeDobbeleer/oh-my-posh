@@ -8,6 +8,7 @@ import (
 )
 
 type Wakatime struct {
+	Dummy struct{}
 	base
 
 	wtData

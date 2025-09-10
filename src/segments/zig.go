@@ -1,6 +1,7 @@
 package segments
 
 type Zig struct {
+	Dummy struct{}
 	language
 }
 

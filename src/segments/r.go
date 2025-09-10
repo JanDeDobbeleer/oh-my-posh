@@ -1,6 +1,7 @@
 package segments
 
 type R struct {
+	Dummy struct{}
 	language
 }
 

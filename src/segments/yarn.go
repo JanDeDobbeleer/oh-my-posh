@@ -1,6 +1,7 @@
 package segments
 
 type Yarn struct {
+	Dummy struct{}
 	language
 }
 

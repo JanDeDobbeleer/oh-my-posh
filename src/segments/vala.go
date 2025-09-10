@@ -1,6 +1,7 @@
 package segments
 
 type Vala struct {
+	Dummy struct{}
 	language
 }
 

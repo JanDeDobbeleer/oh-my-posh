@@ -162,11 +162,11 @@ func TestUpgradeFeatures(t *testing.T) {
 		}
 
 		if tc.AutoUpgradeKey {
-			cache.Set(cache.Device, AUTOUPGRADE, "", cache.INFINITE)
+			cache.Set(cache.Device, AUTOUPGRADE, true, cache.INFINITE)
 		}
 
 		if tc.NoticeKey {
-			cache.Set(cache.Device, UPGRADENOTICE, "", cache.INFINITE)
+			cache.Set(cache.Device, UPGRADENOTICE, true, cache.INFINITE)
 		}
 
 		cfg := &Config{

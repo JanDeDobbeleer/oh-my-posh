@@ -9,8 +9,8 @@ import (
 )
 
 type Azd struct {
+	Dummy struct{}
 	base
-
 	azdConfig
 }
 

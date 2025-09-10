@@ -1,6 +1,7 @@
 package segments
 
 type Deno struct {
+	Dummy struct{}
 	language
 }
 

@@ -5,6 +5,7 @@ import (
 )
 
 type Java struct {
+	Dummy struct{}
 	language
 }
 

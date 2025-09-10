@@ -1,6 +1,7 @@
 package segments
 
 type Swift struct {
+	Dummy struct{}
 	language
 }
 

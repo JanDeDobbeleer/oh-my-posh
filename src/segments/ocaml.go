@@ -1,6 +1,7 @@
 package segments
 
 type OCaml struct {
+	Dummy struct{}
 	language
 }
 

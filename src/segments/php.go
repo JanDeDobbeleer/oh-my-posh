@@ -1,6 +1,7 @@
 package segments
 
 type Php struct {
+	Dummy struct{}
 	language
 }
 

@@ -84,6 +84,7 @@ func runInit(sh, command string) {
 		Debug:      debug,
 		Init:       true,
 		Eval:       eval,
+		Plain:      plain,
 	}
 
 	env := &runtime.Terminal{}

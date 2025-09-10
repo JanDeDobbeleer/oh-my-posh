@@ -10,7 +10,7 @@ import (
 )
 
 func TestNodeMatchesVersionFile(t *testing.T) {
-	nodeVersion := version{
+	nodeVersion := Version{
 		Full:  "22.17.0",
 		Major: "22",
 		Minor: "17",
@@ -42,7 +42,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 
 		node := &Node{
 			language: language{
-				version: nodeVersion,
+				Version: nodeVersion,
 			},
 		}
 		node.Init(properties.Map{}, env)

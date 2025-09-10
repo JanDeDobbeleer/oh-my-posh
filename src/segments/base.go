@@ -9,12 +9,12 @@ type base struct {
 	props properties.Properties
 	env   runtime.Environment
 
-	Segment *Segment `json:"Segment"`
+	Segment *Segment
 }
 
 type Segment struct {
-	Text  string `json:"Text"`
-	Index int    `json:"Index"`
+	Text  string
+	Index int
 }
 
 func (b *base) Text() string {

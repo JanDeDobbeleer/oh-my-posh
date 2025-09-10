@@ -1,6 +1,7 @@
 package segments
 
 type V struct {
+	Dummy struct{}
 	language
 }
 

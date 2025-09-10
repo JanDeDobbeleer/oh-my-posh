@@ -1,6 +1,7 @@
 package segments
 
 type Svelte struct {
+	Dummy struct{}
 	language
 }
 

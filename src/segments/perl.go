@@ -1,6 +1,7 @@
 package segments
 
 type Perl struct {
+	Dummy struct{}
 	language
 }
 

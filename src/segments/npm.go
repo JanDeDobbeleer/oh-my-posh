@@ -1,6 +1,7 @@
 package segments
 
 type Npm struct {
+	Dummy struct{}
 	language
 }
 

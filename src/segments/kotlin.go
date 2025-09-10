@@ -1,6 +1,7 @@
 package segments
 
 type Kotlin struct {
+	Dummy struct{}
 	language
 }
 

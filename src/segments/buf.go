@@ -1,6 +1,7 @@
 package segments
 
 type Buf struct {
+	Dummy struct{}
 	language
 }
 

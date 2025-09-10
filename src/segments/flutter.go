@@ -1,6 +1,7 @@
 package segments
 
 type Flutter struct {
+	Dummy struct{}
 	language
 }
 

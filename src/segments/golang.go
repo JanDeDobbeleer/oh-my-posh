@@ -7,6 +7,7 @@ import (
 )
 
 type Golang struct {
+	Dummy struct{}
 	language
 }
 

@@ -1,6 +1,7 @@
 package segments
 
 type Julia struct {
+	Dummy struct{}
 	language
 }
 

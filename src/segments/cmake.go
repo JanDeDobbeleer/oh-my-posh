@@ -1,6 +1,7 @@
 package segments
 
 type Cmake struct {
+	Dummy struct{}
 	language
 }
 

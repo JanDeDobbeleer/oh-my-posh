@@ -50,7 +50,7 @@ func createDebugCmd() *cobra.Command {
 
 			cache.Init(os.Getenv("POSH_SHELL"), false)
 
-			_, reload := cache.Get[bool](cache.Session, config.RELOAD)
+			_, reload := cache.Get[bool](cache.Device, config.RELOAD)
 			cfg := config.Get(flags.ConfigPath, reload)
 
 			template.Init(env, cfg.Var, cfg.Maps)

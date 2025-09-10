@@ -63,7 +63,7 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	}
 
 	if enable {
-		cache.Set(cache.Device, feature, "true", cache.INFINITE)
+		cache.Set(cache.Device, feature, true, cache.INFINITE)
 		return
 	}
 

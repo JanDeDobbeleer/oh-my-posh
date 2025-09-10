@@ -474,7 +474,7 @@ func New(flags *runtime.Flags) *Engine {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
-	_, reload := cache.Get[bool](cache.Session, config.RELOAD)
+	_, reload := cache.Get[bool](cache.Device, config.RELOAD)
 	cfg := config.Get(flags.ConfigPath, reload)
 
 	template.Init(env, cfg.Var, cfg.Maps)

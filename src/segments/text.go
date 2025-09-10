@@ -1,8 +1,8 @@
 package segments
 
 type Text struct {
+	Dummy struct{}
 	base
-	Dummy int
 }
 
 func (t *Text) Template() string {

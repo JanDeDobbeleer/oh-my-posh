@@ -19,7 +19,7 @@ func (cfg *Config) Store() {
 	defer log.Trace(time.Now())
 
 	cache.Set(cache.Session, configSourceKey, cfg.Source, cache.INFINITE)
-	cache.Set(cache.Session, configKey, cfg, cache.INFINITE)
+	cache.Set(cache.Session, configKey, cfg.Base64(), cache.INFINITE)
 }
 
 func Get(configFile string, reload bool) *Config {
@@ -32,17 +32,27 @@ func Get(configFile string, reload bool) *Config {
 		}
 	}
 
-	cfg, found := cache.Get[*Config](cache.Session, configKey)
+	base64String, found := cache.Get[string](cache.Session, configKey)
 	if !found {
 		log.Debug("no cached config found")
 		return Load(configFile, false)
 	}
 
-	return cfg
+	var cfg Config
+	if err := cfg.Restore(base64String); err != nil {
+		log.Debug("failed to restore config from cache")
+		return Load(configFile, false)
+	}
+
+	return &cfg
 }
 
 func (cfg *Config) Base64() string {
 	defer log.Trace(time.Now())
+
+	if cfg.base64 != "" {
+		return cfg.base64
+	}
 
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
@@ -52,5 +62,29 @@ func (cfg *Config) Base64() string {
 		return ""
 	}
 
-	return base64.StdEncoding.EncodeToString(buffer.Bytes())
+	cfg.base64 = base64.StdEncoding.EncodeToString(buffer.Bytes())
+	return cfg.base64
+}
+
+func (cfg *Config) Restore(base64String string) error {
+	defer log.Trace(time.Now())
+
+	data, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	var buffer bytes.Buffer
+	buffer.Write(data)
+	decoder := gob.NewDecoder(&buffer)
+	err = decoder.Decode(cfg)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	cfg.base64 = base64String
+
+	return nil
 }

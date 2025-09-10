@@ -130,8 +130,6 @@ func engineRender() {
 	env := &runtime.Terminal{}
 	env.Init(nil)
 
-	defer env.Close()
-
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
 	}

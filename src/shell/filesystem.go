@@ -85,7 +85,7 @@ func cacheValue(env runtime.Environment) string {
 	return env.Flags().ConfigHash + build.Version
 }
 
-func scriptName(flags *runtime.Flags) string {
+func InitScriptName(flags *runtime.Flags) string {
 	sh := flags.Shell
 	switch flags.Shell {
 	case PWSH, PWSH5:
@@ -117,7 +117,7 @@ func scriptPath(env runtime.Environment) (string, error) {
 	}
 
 	if env.Flags().Shell != NU {
-		scriptPathCache = filepath.Join(cache.Path(), scriptName(env.Flags()))
+		scriptPathCache = filepath.Join(cache.Path(), InitScriptName(env.Flags()))
 		log.Debug("init script path for non-nu shell:", scriptPathCache)
 		return scriptPathCache, nil
 	}

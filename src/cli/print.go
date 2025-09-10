@@ -91,7 +91,6 @@ func createPrintCmd() *cobra.Command {
 
 			defer func() {
 				template.SaveCache()
-				eng.Env.Close()
 				cache.Close()
 			}()
 

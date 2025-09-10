@@ -67,8 +67,6 @@ var upgradeCmd = &cobra.Command{
 			// always reset the cache key so we respect the interval no matter what the outcome
 			cache.Set(cache.Device, upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
 
-			env.Close()
-
 			cache.Close()
 
 			if !debug {

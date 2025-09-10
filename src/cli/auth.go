@@ -37,7 +37,6 @@ Available services:
 		cache.Init(shellName, true)
 
 		defer func() {
-			env.Close()
 			cache.Close()
 		}()
 

@@ -2,7 +2,9 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
@@ -34,6 +36,15 @@ Migrates the ~/myconfig.omp.json config file's glyphs and writes the result to y
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
+		cache.Init(os.Getenv("POSH_SHELL"), false)
+
+		err := setConfigFlag()
+		if err != nil {
+			exitcode = 666
+			fmt.Println(err.Error())
+			return
+		}
+
 		cfg := config.Load(configFlag, false)
 
 		flags := &runtime.Flags{

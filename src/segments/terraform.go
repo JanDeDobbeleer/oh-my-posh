@@ -32,7 +32,7 @@ type TerraformBlock struct {
 }
 
 func (tf *Terraform) Enabled() bool {
-	cmd := "terraform"
+	cmd := tf.props.GetString(Command, "terraform")
 	fetchVersion := tf.props.GetBool(properties.FetchVersion, false)
 
 	if !tf.env.HasCommand(cmd) || !tf.inContext(fetchVersion) {

@@ -10,22 +10,25 @@ Display the currently active Terraform Workspace name.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "terraform",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#000000",
-  "background": "#ebcc34",
-  "template": "{{.WorkspaceName}}"
-}}/>
+<Config
+  data={{
+    type: "terraform",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#000000",
+    background: "#ebcc34",
+    template: "{{.WorkspaceName}}",
+  }}
+/>
 
 ## Properties
 
-| Name            | Type      | Default | Description                                                                        |
-| --------------- | :-------: | :-----: | ---------------------------------------------------------------------------------- |
-| `fetch_version` | `boolean` | `false` | fetch the version information from `versions.tf`, `main.tf` or `terraform.tfstate` |
+| Name            |   Type    |   Default   | Description                                                                        |
+| --------------- | :-------: | :---------: | ---------------------------------------------------------------------------------- |
+| `fetch_version` | `boolean` |   `false`   | fetch the version information from `versions.tf`, `main.tf` or `terraform.tfstate` |
+| `command`       | `string`  | `terraform` | the command(s) to run, allows support for `tofu`                                   |
 
 ## Template ([info][templates])
 

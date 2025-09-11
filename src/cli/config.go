@@ -29,7 +29,7 @@ You can export, migrate or edit the config (via the editor specified in the envi
 
 		switch args[0] {
 		case "edit":
-			cache.Init(os.Getenv("POSH_SHELL"), false)
+			cache.Init(os.Getenv("POSH_SHELL"))
 			if configPath, OK := cache.Get[string](cache.Session, config.SourceKey); OK {
 				exitcode = editFileWithEditor(configPath)
 				return

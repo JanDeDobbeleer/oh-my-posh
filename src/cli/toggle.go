@@ -24,7 +24,7 @@ var toggleCmd = &cobra.Command{
 		env := &runtime.Terminal{}
 		env.Init(&runtime.Flags{})
 
-		cache.Init(shell.GENERIC, true)
+		cache.Init(shell.GENERIC, cache.Persist)
 
 		defer func() {
 			cache.Close()

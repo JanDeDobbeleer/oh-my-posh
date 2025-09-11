@@ -54,7 +54,7 @@ var upgradeCmd = &cobra.Command{
 			Debug: debug,
 		})
 
-		cache.Init(sh, true)
+		cache.Init(sh, cache.Persist)
 
 		terminal.Init(sh)
 		fmt.Print(terminal.StartProgress())

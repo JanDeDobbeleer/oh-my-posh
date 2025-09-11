@@ -90,7 +90,7 @@ func runInit(sh, command string) {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
-	cache.Init(sh, true)
+	cache.Init(sh, cache.NewSession, cache.Persist)
 
 	template.Init(env, cfg.Var, cfg.Maps)
 

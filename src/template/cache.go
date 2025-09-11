@@ -78,12 +78,13 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 func restoreCache() bool {
 	defer log.Trace(time.Now())
 
-	val, OK := cache.Get[*cache.SimpleTemplate](cache.Session, cache.TEMPLATECACHE)
+	val, OK := cache.Get[cache.SimpleTemplate](cache.Session, cache.TEMPLATECACHE)
 	if !OK {
 		return false
 	}
 
-	Cache.SimpleTemplate = *val
+	Cache = new(cache.Template)
+	Cache.SimpleTemplate = val
 	Cache.Segments = Cache.SegmentsCache.ToConcurrent()
 
 	return true

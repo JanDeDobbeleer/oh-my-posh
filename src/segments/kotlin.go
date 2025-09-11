@@ -1,8 +1,7 @@
 package segments
 
 type Kotlin struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (k *Kotlin) Template() string {
@@ -20,5 +19,5 @@ func (k *Kotlin) Enabled() bool {
 	}
 	k.versionURLTemplate = "https://github.com/JetBrains/kotlin/releases/tag/v{{ .Full }}"
 
-	return k.language.Enabled()
+	return k.Language.Enabled()
 }

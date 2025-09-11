@@ -25,17 +25,17 @@ const (
 )
 
 type Pulumi struct {
-	base
+	Base
 
 	Stack string
 	Name  string
 
 	workspaceSHA1 string
 
-	backend
+	Backend
 }
 
-type backend struct {
+type Backend struct {
 	URL  string `json:"url"`
 	User string `json:"user"`
 }
@@ -168,7 +168,7 @@ func (p *Pulumi) getPulumiAbout() {
 	}
 
 	var about struct {
-		Backend *backend `json:"backend"`
+		Backend *Backend `json:"backend"`
 	}
 
 	err = json.Unmarshal([]byte(aboutOutput), &about)
@@ -182,5 +182,5 @@ func (p *Pulumi) getPulumiAbout() {
 		return
 	}
 
-	p.backend = *about.Backend
+	p.Backend = *about.Backend
 }

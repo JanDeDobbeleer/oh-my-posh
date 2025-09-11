@@ -91,7 +91,7 @@ func TestSetCommitContext(t *testing.T) {
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(tc.Output, tc.Error)
 
 		sl := &Sapling{
-			scm: scm{
+			Scm: Scm{
 				command: SAPLINGCOMMAND,
 			},
 		}
@@ -216,7 +216,7 @@ func TestSetHeadContext(t *testing.T) {
 		}
 
 		sl := &Sapling{
-			scm: scm{
+			Scm: Scm{
 				command: SAPLINGCOMMAND,
 			},
 		}

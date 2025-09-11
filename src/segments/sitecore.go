@@ -16,7 +16,7 @@ const (
 )
 
 type Sitecore struct {
-	base
+	Base
 
 	EndpointName string
 	CmHost       string

@@ -15,7 +15,7 @@ const (
 )
 
 type Status struct {
-	base
+	Base
 
 	String  string
 	Meaning string

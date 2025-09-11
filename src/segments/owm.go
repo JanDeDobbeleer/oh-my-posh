@@ -12,7 +12,7 @@ import (
 )
 
 type Owm struct {
-	base
+	Base
 
 	Weather     string
 	URL         string

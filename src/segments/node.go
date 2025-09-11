@@ -12,7 +12,7 @@ type Node struct {
 	PackageManagerIcon string
 	PackageManagerName string
 
-	language
+	Language
 }
 
 const (
@@ -42,10 +42,10 @@ func (n *Node) Enabled() bool {
 		},
 	}
 	n.versionURLTemplate = "https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}"
-	n.language.matchesVersionFile = n.matchesVersionFile
-	n.language.loadContext = n.loadContext
+	n.Language.matchesVersionFile = n.matchesVersionFile
+	n.Language.loadContext = n.loadContext
 
-	return n.language.Enabled()
+	return n.Language.Enabled()
 }
 
 func (n *Node) loadContext() {

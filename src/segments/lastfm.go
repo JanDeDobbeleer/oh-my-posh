@@ -10,7 +10,7 @@ import (
 )
 
 type LastFM struct {
-	base
+	Base
 
 	Artist string
 	Track  string

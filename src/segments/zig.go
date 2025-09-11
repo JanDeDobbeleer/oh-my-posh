@@ -1,8 +1,7 @@
 package segments
 
 type Zig struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (zig *Zig) Template() string {
@@ -22,7 +21,7 @@ func (zig *Zig) Enabled() bool {
 
 	zig.versionURLTemplate = "https://ziglang.org/download/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/release-notes.html"
 
-	return zig.language.Enabled()
+	return zig.Language.Enabled()
 }
 
 func (zig *Zig) InProjectDir() bool {

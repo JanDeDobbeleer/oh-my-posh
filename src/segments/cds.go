@@ -1,7 +1,7 @@
 package segments
 
 type Cds struct {
-	language
+	Language
 	HasDependency bool
 }
 
@@ -18,11 +18,11 @@ func (c *Cds) Enabled() bool {
 			regex:      `@sap/cds: (?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
-	c.language.loadContext = c.loadContext
-	c.language.inContext = c.inContext
+	c.Language.loadContext = c.loadContext
+	c.Language.inContext = c.inContext
 	c.displayMode = c.props.GetString(DisplayMode, DisplayModeContext)
 
-	return c.language.Enabled()
+	return c.Language.Enabled()
 }
 
 func (c *Cds) loadContext() {

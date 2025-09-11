@@ -5,8 +5,7 @@ import (
 )
 
 type Java struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (j *Java) Template() string {
@@ -16,7 +15,7 @@ func (j *Java) Template() string {
 func (j *Java) Enabled() bool {
 	j.init()
 
-	return j.language.Enabled()
+	return j.Language.Enabled()
 }
 
 func (j *Java) init() {

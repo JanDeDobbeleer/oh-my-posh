@@ -36,7 +36,7 @@ func TestArgocdGetConfigFromOpts(t *testing.T) {
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
-			base: base{
+			Base: Base{
 				env:   env,
 				props: properties.Map{},
 			},
@@ -64,7 +64,7 @@ func TestArgocdGetConfigPath(t *testing.T) {
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
-			base: base{
+			Base: Base{
 				env:   env,
 				props: properties.Map{},
 			},
@@ -161,7 +161,7 @@ users:
 		env.On("FileContent", configFile).Return(tc.Config)
 
 		argocd := &Argocd{
-			base: base{
+			Base: Base{
 				env:   env,
 				props: properties.Map{},
 			},

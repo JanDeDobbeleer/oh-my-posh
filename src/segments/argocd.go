@@ -31,7 +31,7 @@ type ArgocdConfig struct {
 }
 
 type Argocd struct {
-	base
+	Base
 
 	ArgocdContext
 }

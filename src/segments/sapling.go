@@ -52,7 +52,7 @@ type Sapling struct {
 	Author      string
 	Bookmark    string
 	Description string
-	scm
+	Scm
 	New bool
 }
 

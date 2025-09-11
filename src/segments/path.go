@@ -45,7 +45,7 @@ func (f Folders) Last() *Folder {
 }
 
 type Path struct {
-	base
+	Base
 
 	mappedLocations map[string]string
 	root            string

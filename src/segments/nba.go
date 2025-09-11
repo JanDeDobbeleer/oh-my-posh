@@ -12,7 +12,7 @@ import (
 
 // segment struct, makes templating easier
 type Nba struct {
-	base
+	Base
 
 	NBAData
 }

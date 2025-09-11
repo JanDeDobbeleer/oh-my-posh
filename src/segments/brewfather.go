@@ -15,7 +15,7 @@ import (
 
 // segment struct, makes templating easier
 type Brewfather struct {
-	base
+	Base
 
 	DaysBottledOrFermented *uint
 	TemperatureTrendIcon   string

@@ -6,7 +6,7 @@ import (
 
 type Bazel struct {
 	Icon string
-	language
+	Language
 }
 
 const (
@@ -33,5 +33,5 @@ func (b *Bazel) Enabled() bool {
 
 	b.Icon = b.props.GetString(Icon, "\ue63a")
 
-	return b.language.Enabled()
+	return b.Language.Enabled()
 }

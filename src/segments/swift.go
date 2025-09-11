@@ -1,8 +1,7 @@
 package segments
 
 type Swift struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (s *Swift) Template() string {
@@ -20,5 +19,5 @@ func (s *Swift) Enabled() bool {
 	}
 	s.versionURLTemplate = "https://github.com/apple/swift/releases/tag/swift-{{ .Full }}-RELEASE"
 
-	return s.language.Enabled()
+	return s.Language.Enabled()
 }

@@ -15,7 +15,7 @@ type UpgradeCache struct {
 }
 
 type Upgrade struct {
-	base
+	Base
 
 	// deprecated
 	Version string

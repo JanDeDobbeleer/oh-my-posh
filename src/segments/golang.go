@@ -7,8 +7,7 @@ import (
 )
 
 type Golang struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 const (
@@ -35,7 +34,7 @@ func (g *Golang) Enabled() bool {
 	}
 	g.versionURLTemplate = "https://golang.org/doc/go{{ .Major }}.{{ .Minor }}"
 
-	return g.language.Enabled()
+	return g.Language.Enabled()
 }
 
 // getVersion returns the version of the Go language

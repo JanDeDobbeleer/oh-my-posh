@@ -19,7 +19,7 @@ type DockerConfig struct {
 }
 
 type Docker struct {
-	base
+	Base
 
 	Context string
 }

@@ -10,7 +10,7 @@ import (
 )
 
 type Az struct {
-	base
+	Base
 
 	Origin string
 	AzureSubscription

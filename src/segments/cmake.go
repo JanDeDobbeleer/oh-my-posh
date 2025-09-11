@@ -1,8 +1,7 @@
 package segments
 
 type Cmake struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (c *Cmake) Template() string {
@@ -20,5 +19,5 @@ func (c *Cmake) Enabled() bool {
 	}
 	c.versionURLTemplate = "https://cmake.org/cmake/help/v{{ .Major }}.{{ .Minor }}"
 
-	return c.language.Enabled()
+	return c.Language.Enabled()
 }

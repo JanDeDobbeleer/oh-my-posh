@@ -5,7 +5,7 @@ import (
 )
 
 type Spotify struct {
-	base
+	Base
 
 	MusicPlayer
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type CfTarget struct {
-	base
+	Base
 
 	CfTargetDetails
 }

@@ -135,7 +135,7 @@ func (w *withingsAPI) getWithingsData(endpoint string, formData url.Values) (*Wi
 }
 
 type Withings struct {
-	base
+	Base
 
 	api        WithingsAPI
 	SleepHours string

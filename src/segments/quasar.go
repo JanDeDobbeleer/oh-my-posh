@@ -19,7 +19,7 @@ type Package struct {
 type Quasar struct {
 	Vite    *Package
 	AppVite *Package
-	language
+	Language
 	HasVite bool
 }
 
@@ -34,7 +34,7 @@ func (q *Quasar) Enabled() bool {
 	}
 	q.versionURLTemplate = "https://github.com/quasarframework/quasar/releases/tag/quasar-v{{ .Full }}"
 
-	if !q.language.Enabled() {
+	if !q.Language.Enabled() {
 		return false
 	}
 

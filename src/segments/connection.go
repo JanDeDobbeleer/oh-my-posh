@@ -8,7 +8,7 @@ import (
 )
 
 type Connection struct {
-	base
+	Base
 
 	runtime.Connection
 }

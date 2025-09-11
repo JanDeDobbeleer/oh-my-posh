@@ -7,7 +7,7 @@ import (
 )
 
 type Shell struct {
-	base
+	Base
 
 	Name    string
 	Version string

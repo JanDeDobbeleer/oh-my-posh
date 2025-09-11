@@ -6,7 +6,7 @@ import (
 )
 
 type Session struct {
-	base
+	Base
 
 	SSHSession bool
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type Time struct {
-	base
+	Base
 
 	CurrentDate time.Time
 	Format      string

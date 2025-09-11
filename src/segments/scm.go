@@ -83,8 +83,8 @@ func (s *ScmStatus) String() string {
 	return strings.TrimSpace(status.String())
 }
 
-type scm struct {
-	base
+type Scm struct {
+	Base
 
 	Dir             string
 	RepoName        string
@@ -102,7 +102,7 @@ const (
 	BranchTemplate properties.Property = "branch_template"
 )
 
-func (s *scm) RelativeDir() string {
+func (s *Scm) RelativeDir() string {
 	if s.repoRootDir == "" {
 		return ""
 	}
@@ -123,7 +123,7 @@ func (s *scm) RelativeDir() string {
 	return rel
 }
 
-func (s *scm) formatBranch(branch string) string {
+func (s *Scm) formatBranch(branch string) string {
 	mappedBranches := s.props.GetKeyValueMap(MappedBranches, make(map[string]string))
 
 	// sort the keys alphabetically
@@ -170,11 +170,11 @@ func (s *scm) formatBranch(branch string) string {
 	return txt
 }
 
-func (s *scm) fileContent(folder, file string) string {
+func (s *Scm) fileContent(folder, file string) string {
 	return strings.Trim(s.env.FileContent(folder+"/"+file), " \r\n")
 }
 
-func (s *scm) convertToWindowsPath(path string) string {
+func (s *Scm) convertToWindowsPath(path string) string {
 	// only convert when in Windows, or when in a WSL shared folder and not using the native fallback
 	if s.env.GOOS() == runtime.WINDOWS || (s.IsWslSharedPath && !s.nativeFallback) {
 		return s.env.ConvertToWindowsPath(path)
@@ -183,7 +183,7 @@ func (s *scm) convertToWindowsPath(path string) string {
 	return path
 }
 
-func (s *scm) convertToLinuxPath(path string) string {
+func (s *Scm) convertToLinuxPath(path string) string {
 	if !s.IsWslSharedPath {
 		return path
 	}
@@ -191,7 +191,7 @@ func (s *scm) convertToLinuxPath(path string) string {
 	return s.env.ConvertToLinuxPath(path)
 }
 
-func (s *scm) hasCommand(command string) bool {
+func (s *Scm) hasCommand(command string) bool {
 	if len(s.command) > 0 {
 		return true
 	}

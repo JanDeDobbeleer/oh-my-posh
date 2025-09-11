@@ -41,7 +41,7 @@ const (
 type Svn struct {
 	Working *SvnStatus
 	Branch  string
-	scm
+	Scm
 	BaseRev int
 }
 

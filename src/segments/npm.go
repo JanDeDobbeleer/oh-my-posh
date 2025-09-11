@@ -1,8 +1,7 @@
 package segments
 
 type Npm struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (n *Npm) Enabled() bool {
@@ -16,7 +15,7 @@ func (n *Npm) Enabled() bool {
 	}
 	n.versionURLTemplate = "https://github.com/npm/cli/releases/tag/v{{ .Full }}"
 
-	return n.language.Enabled()
+	return n.Language.Enabled()
 }
 
 func (n *Npm) Template() string {

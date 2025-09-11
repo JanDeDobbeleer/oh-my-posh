@@ -25,7 +25,7 @@ func (i *ipAPI) Get() (*ipData, error) {
 }
 
 type IPify struct {
-	base
+	Base
 
 	api IPAPI
 	IP  string

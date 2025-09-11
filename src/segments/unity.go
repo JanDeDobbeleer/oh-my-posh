@@ -12,7 +12,7 @@ import (
 )
 
 type Unity struct {
-	base
+	Base
 
 	UnityVersion  string
 	CSharpVersion string

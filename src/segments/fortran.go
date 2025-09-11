@@ -1,8 +1,7 @@
 package segments
 
 type Fortran struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (f *Fortran) Template() string {
@@ -27,5 +26,5 @@ func (f *Fortran) Enabled() bool {
 		},
 	}
 
-	return f.language.Enabled()
+	return f.Language.Enabled()
 }

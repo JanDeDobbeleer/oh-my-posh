@@ -10,7 +10,7 @@ const (
 )
 
 type NixShell struct {
-	base
+	Base
 
 	Type string
 }

@@ -9,12 +9,11 @@ import (
 )
 
 type Azd struct {
-	Dummy struct{}
-	base
-	azdConfig
+	Base
+	AzdConfig
 }
 
-type azdConfig struct {
+type AzdConfig struct {
 	DefaultEnvironment string `json:"defaultEnvironment"`
 	Version            int    `json:"version"`
 }
@@ -61,11 +60,11 @@ func (t *Azd) TryReadConfigJSON(file string) bool {
 	}
 
 	content := t.env.FileContent(file)
-	var config azdConfig
+	var config AzdConfig
 	if err := json.Unmarshal([]byte(content), &config); err != nil {
 		return false
 	}
 
-	t.azdConfig = config
+	t.AzdConfig = config
 	return true
 }

@@ -194,7 +194,7 @@ func TestPoshGitSegment(t *testing.T) {
 		}
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				command: GITCOMMAND,
 			},
 		}

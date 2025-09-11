@@ -13,7 +13,7 @@ import (
 )
 
 type Terraform struct {
-	base
+	Base
 
 	TerraformBlock
 	WorkspaceName string

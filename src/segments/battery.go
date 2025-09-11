@@ -6,7 +6,7 @@ import (
 )
 
 type Battery struct {
-	base
+	Base
 	Error string
 	Icon  string
 	battery.Info

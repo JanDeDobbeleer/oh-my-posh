@@ -5,8 +5,7 @@ import (
 )
 
 type Tauri struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (t *Tauri) Template() string {
@@ -24,7 +23,7 @@ func (t *Tauri) Enabled() bool {
 	}
 	t.versionURLTemplate = "https://github.com/tauri-apps/tauri/releases/tag/tauri-v{{.Full}}"
 
-	return t.language.Enabled()
+	return t.Language.Enabled()
 }
 
 func (t *Tauri) getVersion() (string, error) {

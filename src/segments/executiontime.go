@@ -11,7 +11,7 @@ import (
 )
 
 type Executiontime struct {
-	base
+	Base
 
 	FormattedMs string
 	Ms          int64

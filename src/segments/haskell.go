@@ -5,7 +5,7 @@ import (
 )
 
 type Haskell struct {
-	language
+	Language
 
 	StackGhc bool
 }
@@ -48,5 +48,5 @@ func (h *Haskell) Enabled() bool {
 		}
 	}
 
-	return h.language.Enabled()
+	return h.Language.Enabled()
 }

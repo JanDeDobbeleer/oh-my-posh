@@ -9,7 +9,7 @@ import (
 )
 
 type CarbonIntensity struct {
-	base
+	Base
 
 	TrendIcon string
 

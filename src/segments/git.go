@@ -149,7 +149,7 @@ type Git struct {
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string
-	scm
+	Scm
 	worktreeCount int
 	stashCount    int
 	Behind        int

@@ -136,7 +136,7 @@ func TestHasCommand(t *testing.T) {
 			NativeFallback: tc.NativeFallback,
 		}
 
-		s := &scm{
+		s := &Scm{
 			command: tc.Command,
 		}
 		s.Init(props, env)

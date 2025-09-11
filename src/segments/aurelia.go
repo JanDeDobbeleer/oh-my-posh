@@ -1,8 +1,7 @@
 package segments
 
 type Aurelia struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (a *Aurelia) Template() string {
@@ -23,7 +22,7 @@ func (a *Aurelia) Enabled() bool {
 		return false
 	}
 
-	return a.language.Enabled()
+	return a.Language.Enabled()
 }
 
 func (a *Aurelia) getVersion() (string, error) {

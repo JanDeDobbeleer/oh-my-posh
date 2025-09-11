@@ -2,6 +2,7 @@ package cache
 
 import (
 	"encoding/gob"
+	"fmt"
 	"path/filepath"
 	"time"
 
@@ -150,7 +151,7 @@ func Get[T any](s Store, key string) (T, bool) {
 		return typed, true
 	}
 
-	log.Debug("type mismatch for cache key:", key, "in store:", string(s))
+	log.Error(fmt.Errorf("type mismatch for cache key: %s in store: %s. Got %T, expected %T", key, string(s), entry.Value, zero))
 	return zero, false
 }
 

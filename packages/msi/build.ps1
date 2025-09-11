@@ -8,7 +8,7 @@ Param
     $Version,
     [parameter(Mandatory = $false)]
     [string]
-    $SDKVersion = "10.0.22621.0",
+    $SDKVersion = "10.0.26100.0",
     [switch]$Sign,
     [switch]$Copy
 )

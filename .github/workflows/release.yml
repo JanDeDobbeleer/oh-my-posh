@@ -52,7 +52,7 @@ jobs:
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         run: |
-          ./pre.ps1 -Version ${{ needs.changelog.outputs.version }}
+          ./pre.ps1 -Version ${{ needs.changelog.outputs.version }} -SDKVersion "10.0.26100.0"
       - name: Run GoReleaser 🚀
         uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a
         with:
@@ -103,7 +103,7 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
           $version = '${{ needs.changelog.outputs.version }}'.TrimStart("v")
-          ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign
+          ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign -SDKVersion "10.0.26100.0"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: msi-artifact-${{ matrix.arch }}

@@ -1,4 +1,4 @@
-# remove any existing dynamic module of OMP
+﻿# remove any existing dynamic module of OMP
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
@@ -359,6 +359,27 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             }
         }
 
+        if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+            Set-PSReadLineKeyHandler -ViMode Command -Key Enter -BriefDescription 'OhMyPoshViEnterKeyHandler' -ScriptBlock {
+                try {
+                    $parseErrors = $null
+                    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
+                    $executingCommand = $parseErrors.Count -eq 0
+                    if ($executingCommand) {
+                        $script:TooltipCommand = ''
+                        Set-TransientPrompt
+                    }
+                }
+                finally {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::ViAcceptLine()
+                    if ($global:_ompFTCSMarks -and $executingCommand) {
+                        # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
+                        Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
+                    }
+                }
+            }
+        }
+
         Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
             try {
                 $start = $null
@@ -371,6 +392,23 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             }
             finally {
                 [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine()
+            }
+        }
+
+        if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+            Set-PSReadLineKeyHandler -ViMode Command -Key Ctrl+c -BriefDescription 'OhMyPoshViCtrlCKeyHandler' -ScriptBlock {
+                try {
+                    $start = $null
+                    [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
+                    # only render a transient prompt when no text is selected
+                    if ($start -eq -1) {
+                        $script:TooltipCommand = ''
+                        Set-TransientPrompt
+                    }
+                }
+                finally {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::CancelLine()
+                }
             }
         }
     }
@@ -397,10 +435,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
             if ((Get-PSReadLineKeyHandler Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
                 Set-PSReadLineKeyHandler Enter -Function AcceptLine
+                if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+                    Set-PSReadLineKeyHandler -ViMode Command -Key Enter -Function ViAcceptLine
+                }
             }
 
             if ((Get-PSReadLineKeyHandler Ctrl+c).Function -eq 'OhMyPoshCtrlCKeyHandler') {
                 Set-PSReadLineKeyHandler Ctrl+c -Function CopyOrCancelLine
+                if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+                    Set-PSReadLineKeyHandler -ViMode Command -Key Ctrl+c -Function CancelLine
+                }
             }
         }
     }

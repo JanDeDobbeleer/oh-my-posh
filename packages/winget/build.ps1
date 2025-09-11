@@ -65,11 +65,6 @@ if (-not $Token) {
 # Need to do things this way, see https://github.com/PowerShell/PowerShell/issues/13138
 Import-Module Appx -UseWindowsPowerShell
 
-# Download and install C++ Runtime framework package.
-$vcLibsBundleFile = "$env:TEMP\Microsoft.VCLibs.Desktop.appx"
-Invoke-WebRequest https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile $vcLibsBundleFile
-Add-AppxPackage $vcLibsBundleFile
-
 # Download Winget-Create msixbundle, install, and execute update.
 $appxBundleFile = "$env:TEMP\wingetcreate.msixbundle"
 Invoke-WebRequest https://aka.ms/wingetcreate/latest/msixbundle -OutFile $appxBundleFile

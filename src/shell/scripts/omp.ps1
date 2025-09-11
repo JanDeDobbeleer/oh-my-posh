@@ -1,4 +1,4 @@
-# remove any existing dynamic module of OMP
+﻿# remove any existing dynamic module of OMP
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
@@ -340,38 +340,64 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             return
         }
 
-        Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
-            try {
-                $parseErrors = $null
-                [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
-                $executingCommand = $parseErrors.Count -eq 0
-                if ($executingCommand) {
-                    $script:TooltipCommand = ''
-                    Set-TransientPrompt
+        # Helper function to create Enter key handler script block
+        function New-EnterKeyHandler {
+            param(
+                [scriptblock]$AcceptLineFunction
+            )
+            return {
+                try {
+                    $parseErrors = $null
+                    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
+                    $executingCommand = $parseErrors.Count -eq 0
+                    if ($executingCommand) {
+                        Set-Variable -Name TooltipCommand -Value '' -Scope Script
+                        Set-TransientPrompt
+                    }
                 }
-            }
-            finally {
-                [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-                if ($global:_ompFTCSMarks -and $executingCommand) {
-                    # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
-                    Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
+                finally {
+                    & $AcceptLineFunction
+                    if ($global:_ompFTCSMarks -and $executingCommand) {
+                        # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
+                        Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
+                    }
                 }
-            }
+            }.GetNewClosure()
         }
 
-        Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
-            try {
-                $start = $null
-                [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
-                # only render a transient prompt when no text is selected
-                if ($start -eq -1) {
-                    $script:TooltipCommand = ''
-                    Set-TransientPrompt
+        # Helper function to create Ctrl+C key handler script block
+        function New-CtrlCKeyHandler {
+            param(
+                [scriptblock]$CancelFunction
+            )
+            return {
+                try {
+                    $start = $null
+                    [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
+                    # only render a transient prompt when no text is selected
+                    if ($start -eq -1) {
+                        Set-Variable -Name TooltipCommand -Value '' -Scope Script
+                        Set-TransientPrompt
+                    }
                 }
-            }
-            finally {
-                [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine()
-            }
+                finally {
+                    & $CancelFunction
+                }
+            }.GetNewClosure()
+        }
+
+        # Register Enter key handlers
+        Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock (New-EnterKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() })
+
+        if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+            Set-PSReadLineKeyHandler -ViMode Command -Key Enter -BriefDescription 'OhMyPoshViEnterKeyHandler' -ScriptBlock (New-EnterKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::ViAcceptLine() })
+        }
+
+        # Register Ctrl+C key handlers
+        Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock (New-CtrlCKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine() })
+
+        if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+            Set-PSReadLineKeyHandler -ViMode Command -Key Ctrl+c -BriefDescription 'OhMyPoshViCtrlCKeyHandler' -ScriptBlock (New-CtrlCKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::CancelLine() })
         }
     }
 
@@ -397,10 +423,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
             if ((Get-PSReadLineKeyHandler Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
                 Set-PSReadLineKeyHandler Enter -Function AcceptLine
+                if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+                    Set-PSReadLineKeyHandler -ViMode Command -Key Enter -Function ViAcceptLine
+                }
             }
 
             if ((Get-PSReadLineKeyHandler Ctrl+c).Function -eq 'OhMyPoshCtrlCKeyHandler') {
                 Set-PSReadLineKeyHandler Ctrl+c -Function CopyOrCancelLine
+                if ((Get-PSReadLineOption).EditMode -eq "Vi") {
+                    Set-PSReadLineKeyHandler -ViMode Command -Key Ctrl+c -Function CancelLine
+                }
             }
         }
     }
@@ -410,6 +442,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "Enable-PoshTooltips"
         "Enable-PoshTransientPrompt"
         "Enable-PoshLineError"
+        "Set-TransientPrompt"
         "prompt"
     )
 } | Import-Module -Global

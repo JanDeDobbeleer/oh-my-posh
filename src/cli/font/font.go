@@ -4,12 +4,18 @@ package font
 
 import (
 	"bytes"
+	"encoding/gob"
 	"fmt"
 	"path"
 	"strings"
 
 	"github.com/ConradIrwin/font/sfnt"
 )
+
+func init() {
+	gob.Register([]*Font{})
+	gob.Register([]*Asset{})
+}
 
 // Font describes a font file and the various metadata associated with it.
 type Font struct {

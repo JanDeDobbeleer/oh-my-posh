@@ -1,15 +1,9 @@
 package font
 
 import (
-	"encoding/gob"
-
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
-
-func init() {
-	gob.Register([]*Font{})
-}
 
 type Resource struct {
 	dsc.Resource[*Font]

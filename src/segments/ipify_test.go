@@ -5,6 +5,8 @@ import (
 	"net"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -53,10 +55,16 @@ func TestIpifySegment(t *testing.T) {
 
 		ipify := &IPify{
 			api: api,
+			Base: Base{
+				env:   &mock.Environment{},
+				props: properties.Map{},
+			},
 		}
 
 		enabled := ipify.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+
+		cache.DeleteAll(cache.Device)
 
 		if !enabled {
 			continue

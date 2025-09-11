@@ -51,7 +51,7 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
-	cache.Init(shellName, true)
+	cache.Init(shellName, cache.Persist)
 
 	defer func() {
 		cache.Close()

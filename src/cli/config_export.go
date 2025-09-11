@@ -42,7 +42,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			return
 		}
 
-		cache.Init(os.Getenv("POSH_SHELL"), false)
+		cache.Init(os.Getenv("POSH_SHELL"))
 
 		err := setConfigFlag()
 		if err != nil {

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/image"
@@ -49,6 +50,15 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output settings.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
+		cache.Init(os.Getenv("POSH_SHELL"), false)
+
+		err := setConfigFlag()
+		if err != nil {
+			exitcode = 666
+			fmt.Println(err.Error())
+			return
+		}
+
 		cfg := config.Load(configFlag, false)
 
 		flags := &runtime.Flags{
@@ -59,8 +69,6 @@ Exports the config to an image file using customized output settings.`,
 
 		env := &runtime.Terminal{}
 		env.Init(flags)
-
-		cache.Init(shellName, false)
 
 		template.Init(env, cfg.Var, cfg.Maps)
 
@@ -134,4 +142,18 @@ func init() {
 	_ = imageCmd.Flags().MarkHidden("background-color")
 
 	exportCmd.AddCommand(imageCmd)
+}
+
+func setConfigFlag() error {
+	if configFlag != "" {
+		return nil
+	}
+
+	configPath, OK := cache.Get[string](cache.Session, config.SourceKey)
+	if !OK {
+		return fmt.Errorf("no config found in session cache, please provide a config using the --config flag")
+	}
+
+	configFlag = configPath
+	return nil
 }

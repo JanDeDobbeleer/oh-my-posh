@@ -35,7 +35,7 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 	return slices.Contains(list, value)
 }
 
-func bootStrapLanguageTest(args *languageArgs) *language {
+func bootStrapLanguageTest(args *languageArgs) *Language {
 	env := new(mock.Environment)
 
 	for _, command := range args.commands {
@@ -60,7 +60,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		args.properties = properties.Map{}
 	}
 
-	l := &language{
+	l := &Language{
 		extensions:         args.extensions,
 		commands:           args.commands,
 		versionURLTemplate: args.versionURLTemplate,
@@ -566,7 +566,7 @@ func TestNodePackageVersion(t *testing.T) {
 		env.On("HasFilesInDir", path, "package.json").Return(!tc.NoFiles)
 		env.On("FileContent", filepath.Join(path, "package.json")).Return(tc.PackageJSON)
 
-		a := &language{}
+		a := &Language{}
 		a.Init(properties.Map{}, env)
 		got, err := a.nodePackageVersion("nx")
 

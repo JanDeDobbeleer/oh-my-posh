@@ -1,8 +1,7 @@
 package segments
 
 type Rust struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (r *Rust) Template() string {
@@ -19,5 +18,5 @@ func (r *Rust) Enabled() bool {
 		},
 	}
 
-	return r.language.Enabled()
+	return r.Language.Enabled()
 }

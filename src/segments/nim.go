@@ -1,8 +1,7 @@
 package segments
 
 type Nim struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (n *Nim) Template() string {
@@ -19,5 +18,5 @@ func (n *Nim) Enabled() bool {
 			regex:      `Nim Compiler Version (?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+))`,
 		},
 	}
-	return n.language.Enabled()
+	return n.Language.Enabled()
 }

@@ -37,7 +37,7 @@ func (s *JujutsuStatus) add(code byte) {
 type Jujutsu struct {
 	Working  *JujutsuStatus
 	ChangeID string
-	scm
+	Scm
 }
 
 func (jj *Jujutsu) Template() string {

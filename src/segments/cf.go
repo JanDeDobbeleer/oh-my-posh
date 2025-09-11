@@ -1,8 +1,7 @@
 package segments
 
 type Cf struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (c *Cf) Template() string {
@@ -21,5 +20,5 @@ func (c *Cf) Enabled() bool {
 	c.displayMode = c.props.GetString(DisplayMode, DisplayModeFiles)
 	c.versionURLTemplate = "https://github.com/cloudfoundry/cli/releases/tag/v{{ .Full }}"
 
-	return c.language.Enabled()
+	return c.Language.Enabled()
 }

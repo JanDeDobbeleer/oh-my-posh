@@ -1,8 +1,7 @@
 package segments
 
 type Ruby struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (r *Ruby) Template() string {
@@ -39,7 +38,7 @@ func (r *Ruby) Enabled() bool {
 		},
 	}
 
-	enabled := r.language.Enabled()
+	enabled := r.Language.Enabled()
 
 	// this happens when no version is set
 	if r.Full == "______" {

@@ -53,7 +53,7 @@ type NuSpec struct {
 }
 
 type Project struct {
-	base
+	Base
 
 	ProjectData
 	Error    string

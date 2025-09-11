@@ -20,7 +20,7 @@ const (
 
 type Dotnet struct {
 	SDKVersion string
-	language
+	Language
 	Unsupported bool
 }
 
@@ -53,7 +53,7 @@ func (d *Dotnet) Enabled() bool {
 	}
 	d.versionURLTemplate = "https://github.com/dotnet/core/blob/master/release-notes/{{ .Major }}.{{ .Minor }}/{{ .Major }}.{{ .Minor }}.{{ substr 0 1 .Patch }}/{{ .Major }}.{{ .Minor }}.{{ substr 0 1 .Patch }}.md" //nolint: lll
 
-	enabled := d.language.Enabled()
+	enabled := d.Language.Enabled()
 	if !enabled {
 		return false
 	}

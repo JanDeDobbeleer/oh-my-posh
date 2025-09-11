@@ -1,8 +1,7 @@
 package segments
 
 type Buf struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (b *Buf) Template() string {
@@ -20,5 +19,5 @@ func (b *Buf) Enabled() bool {
 	}
 	b.versionURLTemplate = "https://github.com/bufbuild/buf/releases/tag/v{{.Full}}"
 
-	return b.language.Enabled()
+	return b.Language.Enabled()
 }

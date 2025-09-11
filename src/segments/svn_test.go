@@ -243,7 +243,7 @@ R       Moved.File`,
 		}
 
 		s := &Svn{
-			scm: scm{
+			Scm: Scm{
 				command: SVNCOMMAND,
 			},
 		}
@@ -293,7 +293,7 @@ func TestRepo(t *testing.T) {
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "repos-root-url"}).Return(tc.Repo, nil)
 
 		s := &Svn{
-			scm: scm{
+			Scm: Scm{
 				command: SVNCOMMAND,
 			},
 		}

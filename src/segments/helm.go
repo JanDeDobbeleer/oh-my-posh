@@ -1,7 +1,7 @@
 package segments
 
 type Helm struct {
-	base
+	Base
 
 	Version string
 }

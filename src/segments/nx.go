@@ -1,8 +1,7 @@
 package segments
 
 type Nx struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (a *Nx) Template() string {
@@ -19,7 +18,7 @@ func (a *Nx) Enabled() bool {
 	}
 	a.versionURLTemplate = "https://github.com/nrwl/nx/releases/tag/{{.Full}}"
 
-	return a.language.Enabled()
+	return a.Language.Enabled()
 }
 
 func (a *Nx) getVersion() (string, error) {

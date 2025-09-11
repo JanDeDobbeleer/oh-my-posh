@@ -1,8 +1,7 @@
 package segments
 
 type Elixir struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (e *Elixir) Template() string {
@@ -25,5 +24,5 @@ func (e *Elixir) Enabled() bool {
 	}
 	e.versionURLTemplate = "https://github.com/elixir-lang/elixir/releases/tag/v{{ .Full }}"
 
-	return e.language.Enabled()
+	return e.Language.Enabled()
 }

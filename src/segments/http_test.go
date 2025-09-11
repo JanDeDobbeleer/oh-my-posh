@@ -65,7 +65,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			}())
 
 			cs := &HTTP{
-				base: base{
+				Base: Base{
 					env:   env,
 					props: props,
 				},

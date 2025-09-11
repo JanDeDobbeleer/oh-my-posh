@@ -6,7 +6,7 @@ import (
 )
 
 type WindowsRegistry struct {
-	base
+	Base
 
 	Value string
 }

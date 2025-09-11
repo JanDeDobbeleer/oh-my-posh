@@ -1,8 +1,7 @@
 package segments
 
 type Pnpm struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (n *Pnpm) Enabled() bool {
@@ -16,7 +15,7 @@ func (n *Pnpm) Enabled() bool {
 	}
 	n.versionURLTemplate = "https://github.com/pnpm/pnpm/releases/tag/v{{ .Full }}"
 
-	return n.language.Enabled()
+	return n.Language.Enabled()
 }
 
 func (n *Pnpm) Template() string {

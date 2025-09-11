@@ -5,7 +5,7 @@ import (
 )
 
 type Nbgv struct {
-	base
+	Base
 
 	VersionInfo
 }

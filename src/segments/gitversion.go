@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 )
 
-type gitVersion struct {
+type GitVersionInfo struct {
 	NuGetVersionV2                  string `json:"NuGetVersionV2"`
 	FullSemVer                      string `json:"FullSemVer"`
 	CommitDate                      string `json:"CommitDate"`
@@ -41,10 +41,9 @@ type gitVersion struct {
 }
 
 type GitVersion struct {
-	Dummy struct{}
-	base
+	Base
 
-	gitVersion
+	GitVersionInfo
 }
 
 func (n *GitVersion) Template() string {
@@ -62,8 +61,8 @@ func (n *GitVersion) Enabled() bool {
 		return false
 	}
 
-	n.gitVersion = gitVersion{}
-	err = json.Unmarshal([]byte(response), &n.gitVersion)
+	n.GitVersionInfo = GitVersionInfo{}
+	err = json.Unmarshal([]byte(response), &n.GitVersionInfo)
 
 	return err == nil
 }

@@ -16,7 +16,7 @@ const (
 )
 
 type Ytm struct {
-	base
+	Base
 
 	MusicPlayer
 }

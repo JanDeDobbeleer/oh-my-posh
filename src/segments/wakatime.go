@@ -8,10 +8,9 @@ import (
 )
 
 type Wakatime struct {
-	Dummy struct{}
-	base
+	Base
 
-	wtData
+	WtData
 }
 
 type wtTotals struct {
@@ -19,7 +18,7 @@ type wtTotals struct {
 	Seconds float64 `json:"seconds"`
 }
 
-type wtData struct {
+type WtData struct {
 	Start           string   `json:"start"`
 	End             string   `json:"end"`
 	CumulativeTotal wtTotals `json:"cumulative_total"`
@@ -47,7 +46,7 @@ func (w *Wakatime) setAPIData() error {
 		return err
 	}
 
-	err = json.Unmarshal(body, &w.wtData)
+	err = json.Unmarshal(body, &w.WtData)
 	if err != nil {
 		return err
 	}

@@ -9,7 +9,7 @@ import (
 )
 
 type TalosCTL struct {
-	base
+	Base
 
 	Context string `yaml:"context"`
 }

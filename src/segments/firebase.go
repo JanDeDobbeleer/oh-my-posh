@@ -14,7 +14,7 @@ const (
 )
 
 type Firebase struct {
-	base
+	Base
 
 	Project string
 }

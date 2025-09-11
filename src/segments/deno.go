@@ -1,8 +1,7 @@
 package segments
 
 type Deno struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (d *Deno) Template() string {
@@ -20,5 +19,5 @@ func (d *Deno) Enabled() bool {
 	}
 	d.versionURLTemplate = "https://github.com/denoland/deno/releases/tag/v{{.Full}}"
 
-	return d.language.Enabled()
+	return d.Language.Enabled()
 }

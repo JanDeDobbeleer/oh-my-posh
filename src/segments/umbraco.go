@@ -9,7 +9,7 @@ import (
 )
 
 type Umbraco struct {
-	base
+	Base
 
 	Version string
 	Modern  bool

@@ -6,7 +6,7 @@ import (
 )
 
 type Os struct {
-	base
+	Base
 
 	Icon string
 }

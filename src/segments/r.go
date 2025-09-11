@@ -1,8 +1,7 @@
 package segments
 
 type R struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (r *R) Template() string {
@@ -31,5 +30,5 @@ func (r *R) Enabled() bool {
 	}
 	r.versionURLTemplate = "https://www.r-project.org/"
 
-	return r.language.Enabled()
+	return r.Language.Enabled()
 }

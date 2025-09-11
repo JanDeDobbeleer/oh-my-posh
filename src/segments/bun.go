@@ -1,8 +1,7 @@
 package segments
 
 type Bun struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (b *Bun) Template() string {
@@ -20,5 +19,5 @@ func (b *Bun) Enabled() bool {
 	}
 	b.versionURLTemplate = "https://github.com/oven-sh/bun/releases/tag/bun-v{{.Full}}"
 
-	return b.language.Enabled()
+	return b.Language.Enabled()
 }

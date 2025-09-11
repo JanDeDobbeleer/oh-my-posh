@@ -31,7 +31,7 @@ type Plastic struct {
 	Status                 *PlasticStatus
 	Selector               string
 	plasticWorkspaceFolder string
-	scm
+	Scm
 	Behind       bool
 	MergePending bool
 }

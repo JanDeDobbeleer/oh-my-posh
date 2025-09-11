@@ -6,8 +6,7 @@ var (
 )
 
 type Dart struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (d *Dart) Template() string {
@@ -31,5 +30,5 @@ func (d *Dart) Enabled() bool {
 	}
 	d.versionURLTemplate = "https://dart.dev/guides/language/evolution#dart-{{ .Major }}{{ .Minor }}"
 
-	return d.language.Enabled()
+	return d.Language.Enabled()
 }

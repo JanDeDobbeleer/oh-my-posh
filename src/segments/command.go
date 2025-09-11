@@ -7,7 +7,7 @@ import (
 )
 
 type Cmd struct {
-	base
+	Base
 
 	Output string
 }

@@ -14,7 +14,7 @@ import (
 
 type Python struct {
 	Venv string
-	language
+	Language
 }
 
 const (
@@ -55,10 +55,10 @@ func (p *Python) Enabled() bool {
 	}
 	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
 	p.displayMode = p.props.GetString(DisplayMode, DisplayModeEnvironment)
-	p.language.loadContext = p.loadContext
-	p.language.inContext = p.inContext
+	p.Language.loadContext = p.loadContext
+	p.Language.inContext = p.inContext
 
-	return p.language.Enabled()
+	return p.Language.Enabled()
 }
 
 func (p *Python) loadContext() {

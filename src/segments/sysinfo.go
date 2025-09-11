@@ -6,7 +6,7 @@ import (
 )
 
 type SystemInfo struct {
-	base
+	Base
 
 	runtime.SystemInfo
 	Precision int

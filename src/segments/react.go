@@ -1,8 +1,7 @@
 package segments
 
 type React struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (r *React) Template() string {
@@ -23,7 +22,7 @@ func (r *React) Enabled() bool {
 		return false
 	}
 
-	return r.language.Enabled()
+	return r.Language.Enabled()
 }
 
 func (r *React) getVersion() (string, error) {

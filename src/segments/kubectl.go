@@ -15,7 +15,7 @@ const (
 )
 
 type Kubectl struct {
-	base
+	Base
 
 	KubeContext
 	Context string

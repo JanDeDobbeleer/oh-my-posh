@@ -9,7 +9,7 @@ import (
 )
 
 type Aws struct {
-	base
+	Base
 
 	Profile string
 	Region  string

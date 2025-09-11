@@ -200,7 +200,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("GOOS").Return("unix")
 
 	g := &Git{
-		scm: scm{
+		Scm: Scm{
 			command: GITCOMMAND,
 		},
 	}
@@ -355,7 +355,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		}
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				command: GITCOMMAND,
 			},
 			ShortHash: "1234567",
@@ -397,7 +397,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		}
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				command: GITCOMMAND,
 			},
 			ShortHash: tc.ShortHash,
@@ -564,7 +564,7 @@ func TestSetGitStatus(t *testing.T) {
 		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				command: GITCOMMAND,
 			},
 		}
@@ -611,7 +611,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				mainSCMDir: "",
 			},
 		}
@@ -691,7 +691,7 @@ func TestGitUpstream(t *testing.T) {
 		}
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				command: GITCOMMAND,
 			},
 			Upstream: "origin/main",
@@ -917,7 +917,7 @@ func TestGitUntrackedMode(t *testing.T) {
 		}
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				repoRootDir: "foo",
 			},
 		}
@@ -962,7 +962,7 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 		}
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				repoRootDir: "foo",
 			},
 		}
@@ -1094,7 +1094,7 @@ func TestGitCommit(t *testing.T) {
 		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				command: GITCOMMAND,
 			},
 		}
@@ -1148,7 +1148,7 @@ func TestGitRemotes(t *testing.T) {
 		env.On("FileContent", "config").Return(tc.Config)
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				repoRootDir: "foo",
 			},
 		}
@@ -1193,7 +1193,7 @@ func TestGitRepoName(t *testing.T) {
 		env.On("GOOS").Return(runtime.LINUX)
 
 		g := &Git{
-			scm: scm{
+			Scm: Scm{
 				repoRootDir: tc.RealDir,
 				mainSCMDir:  tc.WorkingDir,
 			},

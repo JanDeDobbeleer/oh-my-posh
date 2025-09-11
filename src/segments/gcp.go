@@ -15,7 +15,7 @@ const (
 )
 
 type Gcp struct {
-	base
+	Base
 
 	Account      string
 	Project      string

@@ -11,7 +11,7 @@ import (
 
 // segment struct, makes templating easier
 type Nightscout struct {
-	base
+	Base
 
 	TrendIcon string
 	NightscoutData

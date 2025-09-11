@@ -5,8 +5,7 @@ import (
 )
 
 type Lua struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 const (
@@ -39,5 +38,5 @@ func (l *Lua) Enabled() bool {
 		l.commands = []*cmd{l.commands[1], l.commands[0]}
 	}
 
-	return l.language.Enabled()
+	return l.Language.Enabled()
 }

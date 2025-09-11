@@ -10,7 +10,7 @@ import (
 )
 
 type HTTP struct {
-	base
+	Base
 
 	Body map[string]any
 }

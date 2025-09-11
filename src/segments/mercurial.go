@@ -36,7 +36,7 @@ type Mercurial struct {
 	ChangeSetID       string
 	ChangeSetIDShort  string
 	Branch            string
-	scm
+	Scm
 	Bookmarks []string
 	Tags      []string
 	IsTip     bool

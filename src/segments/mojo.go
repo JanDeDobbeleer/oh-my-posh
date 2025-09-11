@@ -8,7 +8,7 @@ import (
 
 type Mojo struct {
 	Venv string
-	language
+	Language
 }
 
 func (m *Mojo) Template() string {
@@ -25,10 +25,10 @@ func (m *Mojo) Enabled() bool {
 		},
 	}
 	m.displayMode = m.props.GetString(DisplayMode, DisplayModeEnvironment)
-	m.language.loadContext = m.loadContext
-	m.language.inContext = m.inContext
+	m.Language.loadContext = m.loadContext
+	m.Language.inContext = m.inContext
 
-	return m.language.Enabled()
+	return m.Language.Enabled()
 }
 
 func (m *Mojo) loadContext() {

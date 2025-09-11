@@ -1,8 +1,7 @@
 package segments
 
 type Php struct {
-	Dummy struct{}
-	language
+	Language
 }
 
 func (p *Php) Template() string {
@@ -20,5 +19,5 @@ func (p *Php) Enabled() bool {
 	}
 	p.versionURLTemplate = "https://www.php.net/ChangeLog-{{ .Major }}.php#PHP_{{ .Major }}_{{ .Minor }}"
 
-	return p.language.Enabled()
+	return p.Language.Enabled()
 }

@@ -25,7 +25,7 @@ func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 
 // segment struct, makes templating easier
 type Strava struct {
-	base
+	Base
 
 	api   StravaAPI
 	Icon  string

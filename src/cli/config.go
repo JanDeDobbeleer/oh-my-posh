@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/spf13/cobra"
@@ -28,7 +30,14 @@ You can export, migrate or edit the config (via the editor specified in the envi
 		switch args[0] {
 		case "edit":
 			// TODO: fetch the config from the session cache
-			exitcode = editFileWithEditor(os.Getenv("POSH_THEME"))
+			cache.Init(os.Getenv("POSH_SHELL"), false)
+			if configPath, OK := cache.Get[string](cache.Session, config.SourceKey); OK {
+				exitcode = editFileWithEditor(configPath)
+				return
+			}
+
+			fmt.Println("no config found in session cache")
+			exitcode = 666
 		default:
 			_ = cmd.Help()
 		}

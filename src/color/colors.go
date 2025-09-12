@@ -16,7 +16,11 @@ import (
 )
 
 func init() {
-	gob.Register(Set{})
+	gob.Register(&Set{})
+	gob.Register(Ansi(""))
+	gob.Register(&Palette{})
+	gob.Register(&Palettes{})
+	gob.Register(&Cycle{})
 }
 
 var TrueColor = true

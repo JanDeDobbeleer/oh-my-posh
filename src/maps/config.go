@@ -1,5 +1,14 @@
 package maps
 
+import (
+	"encoding/gob"
+)
+
+func init() {
+	gob.Register(&Config{})
+	gob.Register(&Map{})
+}
+
 type Config struct {
 	UserName  *Map `json:"user_name,omitempty" toml:"user_name,omitempty" yaml:"user_name,omitempty"`
 	HostName  *Map `json:"host_name,omitempty" toml:"host_name,omitempty" yaml:"host_name,omitempty"`

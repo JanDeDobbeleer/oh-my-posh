@@ -49,29 +49,13 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 		return "", err
 	}
 
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
-	if err != nil {
-		log.Error(err)
-		return "", err
-	}
-
-	defer func() {
-		_ = f.Close()
-	}()
-
-	_, err = f.WriteString(script)
+	err = os.WriteFile(path, []byte(script), 0o644)
 	if err != nil {
 		log.Error(err)
 		return "", err
 	}
 
 	log.Debug("init script written successfully")
-
-	defer func() {
-		_ = f.Sync()
-		_ = f.Close()
-	}()
-
 	cache.Set(cache.Device, cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)
 
 	return path, nil
@@ -82,7 +66,7 @@ func cacheKey(sh string) string {
 }
 
 func cacheValue(env runtime.Environment) string {
-	return env.Flags().ConfigHash + build.Version
+	return fmt.Sprintf("%d%s", env.Flags().ConfigHash, build.Version)
 }
 
 func InitScriptName(flags *runtime.Flags) string {

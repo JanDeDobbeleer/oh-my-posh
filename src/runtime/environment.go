@@ -67,24 +67,24 @@ type Environment interface {
 }
 
 type Flags struct {
-	PSWD          string
+	Type          string
 	PipeStatus    string
 	ConfigPath    string
-	ConfigHash    string
+	PSWD          string
 	Shell         string
 	ShellVersion  string
 	PWD           string
 	AbsolutePWD   string
-	Type          string
+	ErrorCode     int
 	PromptCount   int
 	Column        int
 	TerminalWidth int
 	ExecutionTime float64
 	StackCount    int
-	ErrorCode     int
+	ConfigHash    uint64
 	JobCount      int
-	Strict        bool
 	HasExtra      bool
+	Strict        bool
 	Debug         bool
 	Cleared       bool
 	NoExitCode    bool

@@ -18,6 +18,7 @@ func Default(warning bool) *Config {
 	}
 
 	cfg := &Config{
+		hash:       1234567890, // placeholder hash value
 		Version:    3,
 		FinalSpace: true,
 		Blocks: []*Block{

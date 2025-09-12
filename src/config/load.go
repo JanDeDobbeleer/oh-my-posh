@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"hash/fnv"
 	"os"
 	"path/filepath"
 	runtimelib "runtime"
@@ -34,7 +35,7 @@ func Load(configFile string, migrate bool) *Config {
 
 	configFile = resolveConfigLocation(configFile)
 
-	cfg := readConfig(configFile)
+	cfg := parseConfigFile(configFile)
 
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
@@ -89,12 +90,48 @@ func resolveConfigLocation(config string) string {
 	return abs
 }
 
-func readConfig(configFile string) *Config {
+type hashWriter interface {
+	Write(p []byte) (n int, err error)
+}
+
+func parseConfigFile(configFile string) *Config {
+	defer log.Trace(time.Now())
+
+	h := fnv.New64a()
+
+	cfg, err := readConfig(configFile, h)
+	if err != nil {
+		log.Error(err)
+		return Default(true)
+	}
+
+	for cfg.Extends != "" {
+		base, err := readConfig(cfg.Extends, h)
+		if err != nil {
+			log.Error(err)
+			break
+		}
+
+		err = base.merge(cfg)
+		if err != nil {
+			log.Error(err)
+			break
+		}
+
+		cfg = base
+	}
+
+	cfg.hash = h.Sum64()
+
+	return cfg
+}
+
+func readConfig(configFile string, h hashWriter) (*Config, error) {
 	defer log.Trace(time.Now())
 
 	if configFile == "" {
 		log.Debug("no config file specified, using default")
-		return Default(false)
+		return Default(false), nil
 	}
 
 	var cfg Config
@@ -111,8 +148,7 @@ func readConfig(configFile string) *Config {
 
 	data, err := getData(configFile)
 	if err != nil {
-		log.Error(err)
-		return Default(true)
+		return nil, err
 	}
 
 	switch cfg.Format {
@@ -135,23 +171,15 @@ func readConfig(configFile string) *Config {
 	}
 
 	if err != nil {
-		log.Error(err)
-		return Default(true)
+		return nil, err
 	}
 
-	if cfg.Extends == "" {
-		return &cfg
-	}
-
-	basePath := resolveConfigLocation(cfg.Extends)
-
-	base := readConfig(basePath)
-	err = base.merge(&cfg)
+	_, err = h.Write(data)
 	if err != nil {
 		log.Error(err)
 	}
 
-	return base
+	return &cfg, nil
 }
 
 // isCygwin checks if we're running in Cygwin environment

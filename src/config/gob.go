@@ -50,10 +50,6 @@ func Get(configFile string, reload bool) *Config {
 func (cfg *Config) Base64() string {
 	defer log.Trace(time.Now())
 
-	if cfg.base64 != "" {
-		return cfg.base64
-	}
-
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 	err := encoder.Encode(cfg)
@@ -62,8 +58,7 @@ func (cfg *Config) Base64() string {
 		return ""
 	}
 
-	cfg.base64 = base64.StdEncoding.EncodeToString(buffer.Bytes())
-	return cfg.base64
+	return base64.StdEncoding.EncodeToString(buffer.Bytes())
 }
 
 func (cfg *Config) Restore(base64String string) error {
@@ -83,8 +78,6 @@ func (cfg *Config) Restore(base64String string) error {
 		log.Error(err)
 		return err
 	}
-
-	cfg.base64 = base64String
 
 	return nil
 }

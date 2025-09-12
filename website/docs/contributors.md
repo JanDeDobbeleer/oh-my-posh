@@ -461,6 +461,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://mikel.olasagasti.info"><img src="https://avatars.githubusercontent.com/u/773148?v=4?s=100" width="100px;" alt="Mikel Olasagasti Uranga"/><br /><sub><b>Mikel Olasagasti Uranga</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mikelolasagasti" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mkvlrn"><img src="https://avatars.githubusercontent.com/u/186238078?v=4?s=100" width="100px;" alt="mkvlrn"/><br /><sub><b>mkvlrn</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mkvlrn" title="Code">💻</a> <a href="#design-mkvlrn" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mkvlrn" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://iandunn.name"><img src="https://avatars.githubusercontent.com/u/484068?v=4?s=100" width="100px;" alt="Ian Dunn"/><br /><sub><b>Ian Dunn</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=iandunn" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

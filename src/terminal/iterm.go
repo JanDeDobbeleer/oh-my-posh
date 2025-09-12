@@ -1,12 +1,17 @@
 package terminal
 
 import (
+	"encoding/gob"
 	"fmt"
 	"slices"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
+
+func init() {
+	gob.Register(&ITermFeatures{})
+}
 
 type iTermFeature string
 

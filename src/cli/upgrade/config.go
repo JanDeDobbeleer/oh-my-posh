@@ -2,6 +2,7 @@ package upgrade
 
 import (
 	"context"
+	"encoding/gob"
 	"fmt"
 	"io"
 	httplib "net/http"
@@ -12,6 +13,11 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
+
+func init() {
+	gob.Register(&Config{})
+	gob.Register(Source(""))
+}
 
 type Config struct {
 	Source        Source         `json:"source" toml:"source" yaml:"source"`

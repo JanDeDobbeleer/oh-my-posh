@@ -97,6 +97,12 @@ type hashWriter interface {
 func parseConfigFile(configFile string) *Config {
 	defer log.Trace(time.Now())
 
+	configDSC := DSC()
+	configDSC.Load()
+	configDSC.Add(configFile)
+
+	defer configDSC.Save()
+
 	h := fnv.New64a()
 
 	cfg, err := readConfig(configFile, h)
@@ -105,12 +111,17 @@ func parseConfigFile(configFile string) *Config {
 		return Default(true)
 	}
 
+	parentFolder := filepath.Dir(configFile)
+
 	for cfg.Extends != "" {
+		cfg.Extends = resolveFilepath(cfg.Extends, parentFolder)
 		base, err := readConfig(cfg.Extends, h)
 		if err != nil {
 			log.Error(err)
 			break
 		}
+
+		configDSC.Add(cfg.Extends)
 
 		err = base.merge(cfg)
 		if err != nil {
@@ -124,6 +135,20 @@ func parseConfigFile(configFile string) *Config {
 	cfg.hash = h.Sum64()
 
 	return cfg
+}
+
+func resolveFilepath(configFile, parentFolder string) string {
+	if strings.HasPrefix(configFile, "https://") {
+		return configFile
+	}
+
+	configFile = path.ReplaceTildePrefixWithHomeDir(configFile)
+
+	if filepath.IsAbs(configFile) {
+		return configFile
+	}
+
+	return filepath.Join(parentFolder, configFile)
 }
 
 func readConfig(configFile string, h hashWriter) (*Config, error) {

@@ -114,20 +114,13 @@ func runInit(sh, command string) {
 		output = shell.Init(env, feats)
 	}
 
-	if !debug {
-		configDSC := config.DSC()
-		configDSC.Load()
-		configDSC.Add(configFlag)
-		configDSC.Save()
-
-		shellDSC := shell.DSC()
-		shellDSC.Load()
-		shellDSC.Add(&shell.Shell{
-			Command: command,
-			Name:    sh,
-		})
-		shellDSC.Save()
-	}
+	shellDSC := shell.DSC()
+	shellDSC.Load()
+	shellDSC.Add(&shell.Shell{
+		Command: command,
+		Name:    sh,
+	})
+	shellDSC.Save()
 
 	if silent {
 		return

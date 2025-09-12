@@ -21,7 +21,7 @@ func init() {
 	gob.Register(uint64(0))
 	gob.Register(float32(0))
 	gob.Register(Map{})
-	gob.Register(Property(""))
+	gob.Register((*Property)(nil))
 	gob.Register(map[Property]any{})
 }
 

@@ -16,7 +16,7 @@ import (
 
 func init() {
 	gob.Register(&Config{})
-	gob.Register(Source(""))
+	gob.Register((*Source)(nil))
 }
 
 type Config struct {

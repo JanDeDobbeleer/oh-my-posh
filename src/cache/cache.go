@@ -9,7 +9,7 @@ func init() {
 	gob.Register(&Entry[any]{})
 	gob.Register(Template{})
 	gob.Register(SimpleTemplate{})
-	gob.Register(Duration(""))
+	gob.Register((*Duration)(nil))
 }
 
 const (

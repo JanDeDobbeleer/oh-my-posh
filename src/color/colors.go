@@ -17,7 +17,7 @@ import (
 
 func init() {
 	gob.Register(&Set{})
-	gob.Register(Ansi(""))
+	gob.Register((*Ansi)(nil))
 	gob.Register(&Palette{})
 	gob.Register(&Palettes{})
 	gob.Register(&Cycle{})

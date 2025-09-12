@@ -52,7 +52,7 @@ This command is used to get the value of the following variables:
 		env := &runtime.Terminal{}
 		env.Init(flags)
 
-		cache.Init(shellName, true)
+		cache.Init(shellName, cache.Persist)
 
 		defer func() {
 			cache.Close()

@@ -2,7 +2,6 @@ package cache
 
 import (
 	"encoding/gob"
-	"sync"
 	"time"
 )
 
@@ -14,11 +13,6 @@ func init() {
 
 const (
 	FileName = "omp.cache"
-)
-
-var (
-	sessionID string
-	once      sync.Once
 )
 
 const (

@@ -85,7 +85,12 @@ func createPrintCmd() *cobra.Command {
 				Force:         force,
 			}
 
-			cache.Init(shellName, saveCache)
+			options := []cache.Option{}
+			if saveCache {
+				options = append(options, cache.Persist)
+			}
+
+			cache.Init(shellName, options...)
 
 			eng := prompt.New(flags)
 

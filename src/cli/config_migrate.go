@@ -41,7 +41,7 @@ Migrates the ~/myconfig.omp.json config file to TOML and writes the result to yo
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		cache.Init(os.Getenv("POSH_SHELL"), false)
+		cache.Init(os.Getenv("POSH_SHELL"))
 
 		err := setConfigFlag()
 		if err != nil {

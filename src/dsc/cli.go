@@ -38,7 +38,7 @@ func Command(r resource) *cobra.Command {
 			env := &runtime.Terminal{}
 			env.Init(&runtime.Flags{})
 
-			cache.Init(os.Getenv("POSH_SHELL"), false)
+			cache.Init(os.Getenv("POSH_SHELL"))
 
 			defer func() {
 				cache.Close()

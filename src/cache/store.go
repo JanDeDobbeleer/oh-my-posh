@@ -20,7 +20,6 @@ type store struct {
 var (
 	session *store
 	device  *store
-	Persist = false
 )
 
 type Store string

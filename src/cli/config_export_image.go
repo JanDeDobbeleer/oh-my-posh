@@ -50,7 +50,7 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output settings.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		cache.Init(os.Getenv("POSH_SHELL"), false)
+		cache.Init(os.Getenv("POSH_SHELL"))
 
 		err := setConfigFlag()
 		if err != nil {

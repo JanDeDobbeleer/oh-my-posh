@@ -3294,6 +3294,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "iandunn",
+      "name": "Ian Dunn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/484068?v=4",
+      "profile": "https://iandunn.name",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

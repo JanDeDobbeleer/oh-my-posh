@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   title: 'Oh My Posh',
-  tagline: 'A prompt theme engine for any shell.',
+  tagline: 'The most customizable and fastest prompt engine for any shell.',
   url: 'https://ohmyposh.dev',
   baseUrl: '/',
   favicon: 'img/favicons.svg',

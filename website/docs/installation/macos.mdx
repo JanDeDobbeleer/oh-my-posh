@@ -42,6 +42,18 @@ sudo port install oh-my-posh
 
 Oh My Posh will be installed at `/opt/local/bin/oh-my-posh`.
 
+Updating is done via:
+
+```bash
+sudo port selfupdate
+sudo port upgrade oh-my-posh
+```
+
+More details on the [ports page] for Oh My Posh.
+
+</TabItem>
+</Tabs>
+
 ## Troubleshooting
 
 :::tip
@@ -53,18 +65,6 @@ grep -qxF "$(brew --prefix)/bin/bash" /etc/shells || sudo bash -c 'echo "$(brew 
 chsh -s "$(brew --prefix)/bin/bash" $USER
 ```
 :::
-
-## Updating
-
-```bash
-sudo port selfupdate
-sudo port upgrade oh-my-posh
-```
-
-More details on the [ports page] for Oh My Posh.
-
-</TabItem>
-</Tabs>
 
 <Next />
 

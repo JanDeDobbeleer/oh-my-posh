@@ -72,6 +72,9 @@ func resolveConfigLocation(config string) string {
 		return url
 	}
 
+	// Clean the config path so it works regardless of the OS
+	config = filepath.ToSlash(config)
+
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
 	if isCygwin() {

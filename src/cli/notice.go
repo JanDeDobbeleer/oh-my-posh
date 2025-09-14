@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/spf13/cobra"
 )
 
@@ -20,13 +20,13 @@ var noticeCmd = &cobra.Command{
 		env := &runtime.Terminal{}
 		env.Init(&runtime.Flags{})
 
-		cache.Init(shell.GENERIC, cache.Persist)
+		cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
 
 		defer func() {
 			cache.Close()
 		}()
 
-		cfg := config.Load(configFlag, false)
+		cfg := config.Get(configFlag, false)
 
 		if notice, hasNotice := cfg.Upgrade.Notice(); hasNotice {
 			fmt.Println(notice)

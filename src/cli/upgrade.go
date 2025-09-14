@@ -59,7 +59,7 @@ var upgradeCmd = &cobra.Command{
 		terminal.Init(sh)
 		fmt.Print(terminal.StartProgress())
 
-		cfg := config.Load(configFlag, false)
+		cfg := config.Get(configFlag, false)
 
 		defer func() {
 			fmt.Print(terminal.StopProgress())
@@ -93,6 +93,8 @@ var upgradeCmd = &cobra.Command{
 			return
 		}
 
+		log.Debugf("current version: v%s, latest version: v%s", build.Version, latest)
+
 		if force {
 			log.Debug("forced upgrade")
 			exitcode = executeUpgrade(cfg.Upgrade)
@@ -107,9 +109,12 @@ var upgradeCmd = &cobra.Command{
 		}
 
 		if build.Version != latest {
+			log.Debug("upgrade available")
 			exitcode = executeUpgrade(cfg.Upgrade)
 			return
 		}
+
+		log.Debug("already on the latest version")
 	},
 }
 

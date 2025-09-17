@@ -118,7 +118,7 @@ func parseConfigFile(configFile string) *Config {
 	parentFolder := filepath.Dir(configFile)
 
 	for cfg.Extends != "" {
-		cfg.Extends = resolveFilepath(cfg.Extends, parentFolder)
+		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
 		base, err := readConfig(cfg.Extends, h)
 		if err != nil {
 			log.Error(err)
@@ -141,7 +141,11 @@ func parseConfigFile(configFile string) *Config {
 	return cfg
 }
 
-func resolveFilepath(configFile, parentFolder string) string {
+func resolvePath(configFile, parentFolder string) string {
+	if url, OK := isTheme(configFile); OK {
+		return url
+	}
+
 	if strings.HasPrefix(configFile, "https://") {
 		return configFile
 	}

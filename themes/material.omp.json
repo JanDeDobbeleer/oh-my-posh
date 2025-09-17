@@ -19,6 +19,20 @@
           "template": " {{ .Path }} ",
           "type": "path"
         },
+ {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#69FF94",
+          "properties": {
+            "display_mode": "environment",
+            "home_enabled": true,
+            "fetch_virtual_env": true,
+            "fetch_version": false,
+            "folder_name_fallback": false
+          },
+          "template": " ({{ .Venv }}) "
+        },
+
         {
           "foreground": "#D0666F",
           "properties": {

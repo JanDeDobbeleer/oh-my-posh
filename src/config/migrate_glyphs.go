@@ -1,13 +1,9 @@
 package config
 
 import (
-	"context"
 	"fmt"
-	"io"
-	httplib "net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
@@ -26,24 +22,9 @@ type codePoints map[uint64]uint64
 func getGlyphCodePoints() (codePoints, error) {
 	var codePoints = make(codePoints)
 
-	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(5000))
-	defer cncl()
-
-	request, err := httplib.NewRequestWithContext(ctx, httplib.MethodGet, "https://ohmyposh.dev/codepoints.csv", nil)
+	bytes, err := http.Download("https://ohmyposh.dev/codepoints.csv", false)
 	if err != nil {
 		return codePoints, &ConnectionError{reason: err.Error()}
-	}
-
-	response, err := http.HTTPClient.Do(request)
-	if err != nil {
-		return codePoints, err
-	}
-
-	defer response.Body.Close()
-
-	bytes, err := io.ReadAll(response.Body)
-	if err != nil {
-		return codePoints, err
 	}
 
 	lines := strings.SplitSeq(string(bytes), "\n")

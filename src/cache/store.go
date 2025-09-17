@@ -85,11 +85,11 @@ func (s Store) init(filePath string, persist bool) {
 
 	for key, entry := range list {
 		if entry.Expired() {
-			log.Debug("skipping expired cache key:", key, "in store:", string(s))
+			log.Debugf("(%s) skipping expired key: %s", string(s), key)
 			continue
 		}
 
-		log.Debug("loading cache key:", key, "in store:", string(s))
+		log.Debugf("(%s) loading %s", string(s), key)
 		store.cache.Set(key, entry)
 	}
 }
@@ -99,7 +99,7 @@ func (s Store) close() {
 
 	store := s.get()
 	if store == nil || !store.persist || !store.dirty {
-		log.Debug("not persisting cache for store:", string(s))
+		log.Debugf("(%s) not persisting", string(s))
 		return
 	}
 
@@ -126,31 +126,30 @@ func Get[T any](s Store, key string) (T, bool) {
 
 	store := s.get()
 	if store == nil {
-		log.Debug("store is nil for:", string(s))
+		log.Debugf("(%s) store is nil", string(s))
 		return zero, false
 	}
 
 	entry, found := store.cache.Get(key)
 	if !found {
-		log.Debug("cache key not found:", key, "in store:", string(s))
+		log.Debugf("(%s) key not found: %s", string(s), key)
 		return zero, false
 	}
 
 	if entry.Expired() {
-		log.Debug("cache key expired:", key, "in store:", string(s))
+		log.Debugf("(%s) key expired: %s", string(s), key)
 		store.cache.Delete(key)
 		store.dirty = true
 		return zero, false
 	}
 
-	log.Debug("found cache key:", key, "in store:", string(s))
-
 	// Type assertion to get the typed value
 	if typed, ok := entry.Value.(T); ok {
+		log.Debugf("(%s) found entry: %s - %v", string(s), key, typed)
 		return typed, true
 	}
 
-	log.Error(fmt.Errorf("type mismatch for cache key: %s in store: %s. Got %T, expected %T", key, string(s), entry.Value, zero))
+	log.Error(fmt.Errorf("(%s) type mismatch for key: %s. Got %T, expected %T", string(s), key, entry.Value, zero))
 	return zero, false
 }
 
@@ -160,7 +159,7 @@ func Set[T any](s Store, key string, value T, duration Duration) {
 
 	store := s.get()
 	if store == nil {
-		log.Debug("store is nil for:", string(s))
+		log.Debugf("(%s) store is nil", string(s))
 		return
 	}
 
@@ -169,7 +168,7 @@ func Set[T any](s Store, key string, value T, duration Duration) {
 		return
 	}
 
-	log.Debug("setting cache key:", key, "in store:", string(s), "with duration:", string(duration))
+	log.Debugf("(%s) setting entry: %s - %v with duration: %s", string(s), key, value, string(duration))
 
 	store.cache.Set(key, &Entry[any]{
 		Value:     value,
@@ -186,11 +185,11 @@ func Delete(s Store, key string) {
 
 	store := s.get()
 	if store == nil {
-		log.Debug("store is nil for:", string(s))
+		log.Debugf("(%s) store is nil", string(s))
 		return
 	}
 
-	log.Debug("deleting cache key:", key, "from store:", string(s))
+	log.Debugf("(%s) deleting key: %s", string(s), key)
 	store.cache.Delete(key)
 	store.dirty = true
 }
@@ -200,7 +199,7 @@ func DeleteAll(s Store) {
 
 	store := s.get()
 	if store == nil {
-		log.Debug("store is nil for:", string(s))
+		log.Debugf("(%s) store is nil", string(s))
 		return
 	}
 

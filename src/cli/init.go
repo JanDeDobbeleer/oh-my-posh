@@ -74,6 +74,8 @@ func runInit(sh, command string) {
 		log.Enable(plain)
 	}
 
+	cache.Init(sh, cache.NewSession, cache.Persist)
+
 	cfg := config.Load(configFlag, false)
 
 	flags := &runtime.Flags{
@@ -89,8 +91,6 @@ func runInit(sh, command string) {
 
 	env := &runtime.Terminal{}
 	env.Init(flags)
-
-	cache.Init(sh, cache.NewSession, cache.Persist)
 
 	template.Init(env, cfg.Var, cfg.Maps)
 

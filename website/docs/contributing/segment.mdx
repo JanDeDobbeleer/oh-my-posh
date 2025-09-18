@@ -20,8 +20,7 @@ import (
 )
 
 type New struct {
-    props   properties.Properties
-    env     runtime.Environment
+    Base
 
     Text string
 }
@@ -32,18 +31,12 @@ const (
 )
 
 func (n *New) Enabled() bool {
+    n.Text = n.props.GetString(NewProp, "\uEFF1")
     return true
 }
 
 func (n *New) Template() string {
     return " {{.Text}} world "
-}
-
-func (n *New) Init(props properties.Properties, env runtime.Environment) {
-    n.props = props
-    n.env = env
-
-    n.Text = n.props.GetString(NewProp, "Hello")
 }
 ```
 

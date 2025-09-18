@@ -19,4 +19,8 @@
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.projectSubpath": "docs/api",
   "azureFunctions.preDeployTask": "npm prune (functions)"
+  ,
+  "markdownlint.ignore": [
+    "**/agents.md"
+  ]
 }

@@ -1,11 +1,11 @@
 package cli
 
 import (
+	"os"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +24,7 @@ var toggleCmd = &cobra.Command{
 		env := &runtime.Terminal{}
 		env.Init(&runtime.Flags{})
 
-		cache.Init(shell.GENERIC, cache.Persist)
+		cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
 
 		defer func() {
 			cache.Close()

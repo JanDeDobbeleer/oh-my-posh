@@ -277,6 +277,38 @@ and [Google's Go Style Guide](https://google.github.io/styleguide/go/).
 - Write meaningful commit messages
 - Review diffs before committing
 
+### Post-Edit Code Quality Commands
+
+After making any Go code changes, run the following commands to ensure code quality and consistency:
+
+1. **Field Alignment**: Optimize struct field ordering for memory efficiency
+
+   ```bash
+   fieldalignment --fix "./..."
+   ```
+
+2. **Code Modernization**: Apply modern Go best practices
+
+   ```bash
+   modernize --fix "./..."
+   ```
+
+3. **Dependency Management**: Clean up and organize module dependencies
+
+   ```bash
+   go mod tidy
+   ```
+
+4. **Formatting and Linting**: Ensure code follows standards
+
+   ```bash
+   gofmt -w .
+   golangci-lint run
+   ```
+
+These commands should be run in sequence after any Go code modifications to maintain
+code quality, performance, and consistency across the codebase.
+
 ## Common Pitfalls to Avoid
 
 - Not checking errors

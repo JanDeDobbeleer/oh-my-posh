@@ -173,8 +173,8 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 	defer log.Trace(time.Now())
 
 	// get accent color from session cache first
-	if accent, OK := cache.Get[Set](cache.Device, "accent_color"); OK {
-		d.accent = &accent
+	if accent, OK := cache.Get[*Set](cache.Device, "accent_color"); OK {
+		d.accent = accent
 		return
 	}
 

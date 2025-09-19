@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -12,9 +13,8 @@ import (
 const (
 	JUJUTSUCOMMAND = "jj"
 
-	jjLogTemplate = `change_id.shortest() ++ "\n" ++ diff.summary()`
-
 	IgnoreWorkingCopy properties.Property = "ignore_working_copy"
+	ChangeIDMinLen    properties.Property = "change_id_min_len"
 )
 
 type JujutsuStatus struct {
@@ -103,8 +103,7 @@ func (jj *Jujutsu) setDir(dir string) {
 }
 
 func (jj *Jujutsu) setJujutsuStatus() {
-	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
-	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "@", "--no-graph", "-T", jjLogTemplate)
+	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "@", "--no-graph", "-T", jj.logTemplate())
 	if err != nil {
 		return
 	}
@@ -117,6 +116,11 @@ func (jj *Jujutsu) setJujutsuStatus() {
 			jj.Working.add(line[0])
 		}
 	}
+}
+
+func (jj *Jujutsu) logTemplate() string {
+	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
+	return fmt.Sprintf(`change_id.shortest(%d) ++ "\n" ++ diff.summary()`, jj.props.GetInt(ChangeIDMinLen, 0))
 }
 
 func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (string, error) {

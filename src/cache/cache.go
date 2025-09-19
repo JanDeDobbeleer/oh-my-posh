@@ -13,7 +13,7 @@ func init() {
 }
 
 const (
-	FileName = "omp.cache"
+	DeviceStore = "omp.cache"
 )
 
 const (

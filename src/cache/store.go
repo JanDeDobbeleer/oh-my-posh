@@ -25,8 +25,9 @@ var (
 type Store string
 
 const (
-	Session Store = "session"
-	Device  Store = "device"
+	Session Store  = "session"
+	Device  Store  = "device"
+	TTL     string = "ttl"
 )
 
 func (s Store) new() *store {

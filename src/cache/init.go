@@ -34,9 +34,9 @@ func Init(shell string, options ...Option) {
 		opt()
 	}
 
-	sessionFileName := fmt.Sprintf("%s.%s.%s", shell, SessionID(), FileName)
+	sessionFileName := fmt.Sprintf("%s.%s.%s", shell, SessionID(), DeviceStore)
 	Session.init(sessionFileName, persist)
-	Device.init(FileName, persist)
+	Device.init(DeviceStore, persist)
 }
 
 func SessionID() string {

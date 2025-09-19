@@ -204,15 +204,15 @@ func (cfg *Config) upgradeFeatures() shell.Features {
 	}
 
 	autoUpgrade := cfg.Upgrade.Auto
-	if _, OK := cache.Get[bool](cache.Device, AUTOUPGRADE); OK {
-		log.Debug("auto upgrade key found")
-		autoUpgrade = true
+	if val, OK := cache.Get[bool](cache.Device, AUTOUPGRADE); OK {
+		log.Debug("auto upgrade key found, overriding config")
+		autoUpgrade = val
 	}
 
 	upgradeNotice := cfg.Upgrade.DisplayNotice
-	if _, OK := cache.Get[bool](cache.Device, UPGRADENOTICE); OK {
-		log.Debug("upgrade notice key found")
-		upgradeNotice = true
+	if val, OK := cache.Get[bool](cache.Device, UPGRADENOTICE); OK {
+		log.Debug("upgrade notice key found, overriding config")
+		upgradeNotice = val
 	}
 
 	if upgradeNotice && !autoUpgrade {

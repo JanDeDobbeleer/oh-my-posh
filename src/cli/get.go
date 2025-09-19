@@ -32,6 +32,7 @@ This command is used to get the value of the following variables:
 		"accent",
 		"toggles",
 		"width",
+		cache.TTL,
 	},
 	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -94,6 +95,8 @@ This command is used to get the value of the following variables:
 			}
 
 			fmt.Print(width)
+		case cache.TTL:
+			fmt.Print(cache.GetTTL())
 		default:
 			_ = cmd.Help()
 		}

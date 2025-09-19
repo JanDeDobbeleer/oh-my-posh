@@ -2,7 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"path/filepath"
+	"os"
+	"strconv"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 
@@ -11,7 +12,7 @@ import (
 
 // getCmd represents the get command
 var getCache = &cobra.Command{
-	Use:   "cache [path|clear|edit]",
+	Use:   "cache [path|clear|ttl]",
 	Short: "Interact with the oh-my-posh cache",
 	Long: `Interact with the oh-my-posh cache.
 
@@ -19,13 +20,13 @@ You can do the following:
 
 - path: list cache path
 - clear: remove all cache values
-- edit: edit cache values`,
+- ttl: get cache TTL in days`,
 	ValidArgs: []string{
 		"path",
 		"clear",
-		"edit",
+		cache.TTL,
 	},
-	Args: NoArgsOrOneValidArg,
+	Args: cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
@@ -43,9 +44,24 @@ You can do the following:
 			}
 
 			fmt.Println("cache cleared")
-		case "edit":
-			cacheFilePath := filepath.Join(cache.Path(), cache.FileName)
-			exitcode = editFileWithEditor(cacheFilePath)
+		case cache.TTL:
+			// get the second argument as int
+			if len(args) < 2 {
+				fmt.Println("please provide a TTL value in days")
+				exitcode = 2
+				return
+			}
+
+			ttl, err := strconv.Atoi(args[1])
+			if err != nil {
+				fmt.Println("error parsing TTL:", err.Error())
+				exitcode = 2
+				return
+			}
+
+			cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
+			cache.Set(cache.Device, cache.TTL, ttl, cache.INFINITE)
+			cache.Close()
 		}
 	},
 }

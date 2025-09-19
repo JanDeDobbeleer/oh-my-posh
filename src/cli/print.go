@@ -6,6 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/spf13/cobra"
@@ -60,6 +61,10 @@ func createPrintCmd() *cobra.Command {
 			if len(args) == 0 {
 				_ = cmd.Help()
 				return
+			}
+
+			if shellName == "" {
+				shellName = shell.GENERIC
 			}
 
 			flags := &runtime.Flags{

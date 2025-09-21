@@ -74,7 +74,7 @@ func runInit(sh, command string) {
 		log.Enable(plain)
 	}
 
-	cache.Init(sh, cache.NewSession, cache.Persist)
+	initCache(sh)
 
 	cfg := config.Load(configFlag, false)
 
@@ -160,4 +160,13 @@ func getFullCommand(cmd *cobra.Command, args []string) string {
 	})
 
 	return cmdPath
+}
+
+func initCache(sh string) {
+	if !printOutput && eval && (sh == shell.PWSH || sh == shell.PWSH5) {
+		cache.Init(sh)
+		return
+	}
+
+	cache.Init(sh, cache.NewSession, cache.Persist)
 }

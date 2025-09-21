@@ -133,7 +133,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	shellScript := features.Lines(env.Flags().Shell).String(init)
 
 	if env.Flags().Eval {
-		return shellScript
+		return fmt.Sprintf("%s\n%s", sessionScript(env.Flags().Shell), shellScript)
 	}
 
 	log.Debug(shellScript)

@@ -1205,3 +1205,80 @@ func TestGitRepoName(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestDisableWithJJEnabled(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("GOOS").Return("")
+	env.On("IsWsl").Return(false)
+	// Mock .jj directory exists
+	env.On("HasParentFilePath", ".jj", false).Return(&runtime.FileInfo{Path: "/dir/.jj", IsDir: true}, nil)
+
+	g := &Git{}
+	props := properties.Map{
+		DisableWithJJ: true,
+	}
+	g.Init(props, env)
+
+	assert.False(t, g.Enabled())
+}
+
+func TestDisableWithJJDisabled(t *testing.T) {
+	fileInfo := &runtime.FileInfo{
+		Path:         "/dir/.git",
+		ParentFolder: "/dir",
+		IsDir:        true,
+	}
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("HasCommand", "git").Return(true)
+	env.On("GOOS").Return("")
+	env.On("FileContent", "/dir/.git/HEAD").Return("")
+	env.MockGitCommand("/dir", "", "describe", "--tags", "--exact-match") // Use repo root, not .git dir
+	env.On("IsWsl").Return(false)
+	// Mock .jj directory exists
+	env.On("HasParentFilePath", ".jj", false).Return(&runtime.FileInfo{Path: "/dir/.jj", IsDir: true}, nil)
+	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+	env.On("PathSeparator").Return("/")
+	env.On("Home").Return(poshHome)
+	env.On("Getenv", poshGitEnv).Return("")
+	env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
+
+	g := &Git{}
+	props := properties.Map{
+		DisableWithJJ: false, // Property is disabled
+	}
+	g.Init(props, env)
+
+	assert.True(t, g.Enabled()) // Should still be enabled since disable_with_jj is false
+}
+
+func TestDisableWithJJNoJJDirectory(t *testing.T) {
+	fileInfo := &runtime.FileInfo{
+		Path:         "/dir/.git",
+		ParentFolder: "/dir",
+		IsDir:        true,
+	}
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("HasCommand", "git").Return(true)
+	env.On("GOOS").Return("")
+	env.On("FileContent", "/dir/.git/HEAD").Return("")
+	env.MockGitCommand("/dir", "", "describe", "--tags", "--exact-match") // Use repo root, not .git dir
+	env.On("IsWsl").Return(false)
+	// Mock .jj directory does not exist
+	env.On("HasParentFilePath", ".jj", false).Return((*runtime.FileInfo)(nil), errors.New("no .jj found"))
+	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+	env.On("PathSeparator").Return("/")
+	env.On("Home").Return(poshHome)
+	env.On("Getenv", poshGitEnv).Return("")
+	env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
+
+	g := &Git{}
+	props := properties.Map{
+		DisableWithJJ: true, // Property is enabled but no .jj directory
+	}
+	g.Init(props, env)
+
+	assert.True(t, g.Enabled()) // Should be enabled since .jj directory doesn't exist
+}

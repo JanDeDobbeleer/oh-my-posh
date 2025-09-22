@@ -60,6 +60,8 @@ func (s *GitStatus) add(code string) {
 }
 
 const (
+	// DisableWithJJ disables the git segment when there's a .jj directory in the parent file path
+	DisableWithJJ properties.Property = "disable_with_jj"
 	// FetchStatus fetches the status of the repository
 	FetchStatus properties.Property = "fetch_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
@@ -333,6 +335,13 @@ func (g *Git) LatestTag() string {
 }
 
 func (g *Git) shouldDisplay() bool {
+	// Check if disable_with_jj is enabled and .jj directory exists
+	if g.props.GetBool(DisableWithJJ, false) {
+		if _, err := g.env.HasParentFilePath(".jj", false); err == nil {
+			return false
+		}
+	}
+
 	gitdir, err := g.env.HasParentFilePath(".git", true)
 	if err != nil {
 		return false

@@ -40,7 +40,7 @@ func (resource *Resource[T]) Save() {
 func (resource *Resource[T]) Add(item T) {
 	for _, existingItem := range resource.States {
 		if existingItem.Equal(item) {
-			log.Debug("Item already exists")
+			log.Debug("item already exists")
 			return
 		}
 	}

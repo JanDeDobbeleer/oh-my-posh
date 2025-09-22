@@ -57,7 +57,7 @@ func (f Features) Lines(shell string) Lines {
 		var code Code
 
 		switch shell {
-		case PWSH, PWSH5:
+		case PWSH:
 			code = feature.Pwsh()
 		case ZSH:
 			code = feature.Zsh()

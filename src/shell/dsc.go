@@ -97,7 +97,7 @@ func (s *Shell) getShellConfigPath() (string, error) {
 	case FISH:
 		configDir := filepath.Join(home, ".config", "fish")
 		return filepath.Join(configDir, "config.fish"), nil
-	case PWSH, PWSH5:
+	case PWSH:
 		return cmd.Run(s.Name, "-NoProfile", "-Command", "$PROFILE")
 	case NU:
 		return cmd.Run("nu", "-c", "$nu.config-path")
@@ -192,7 +192,7 @@ func (s *Shell) shellCommand() string {
 		return fmt.Sprintf(`eval "$(%s)"`, s.Command)
 	case FISH:
 		return s.Command + " | source"
-	case PWSH, PWSH5:
+	case PWSH:
 		return s.Command + " | Invoke-Expression"
 	case ELVISH:
 		return fmt.Sprintf(`eval (%s)`, s.Command)

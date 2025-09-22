@@ -120,7 +120,7 @@ func (cfg *Config) getPalette() color.Palette {
 func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	var feats shell.Features
 
-	asyncShells := []string{shell.BASH, shell.ZSH, shell.FISH, shell.PWSH, shell.PWSH5}
+	asyncShells := []string{shell.BASH, shell.ZSH, shell.FISH, shell.PWSH}
 
 	if cfg.Async && slices.Contains(asyncShells, env.Shell()) {
 		log.Debug("async enabled")

@@ -110,7 +110,7 @@ func (e *Engine) needsPrimaryRightPrompt() bool {
 	}
 
 	switch e.Env.Shell() {
-	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.ZSH:
+	case shell.PWSH, shell.GENERIC, shell.ZSH:
 		return true
 	default:
 		return false

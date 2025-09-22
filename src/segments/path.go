@@ -179,7 +179,7 @@ func (pt *Path) setPaths() {
 	}
 
 	pt.pwd = pt.env.Pwd()
-	if (pt.env.Shell() == shell.PWSH || pt.env.Shell() == shell.PWSH5) && len(pt.env.Flags().PSWD) != 0 {
+	if pt.env.Shell() == shell.PWSH && len(pt.env.Flags().PSWD) != 0 {
 		pt.pwd = pt.env.Flags().PSWD
 	}
 

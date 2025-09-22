@@ -74,6 +74,10 @@ func runInit(sh, command string) {
 		log.Enable(plain)
 	}
 
+	if sh == "powershell" {
+		sh = shell.PWSH
+	}
+
 	initCache(sh)
 
 	cfg := config.Load(configFlag, false)
@@ -163,7 +167,7 @@ func getFullCommand(cmd *cobra.Command, args []string) string {
 }
 
 func initCache(sh string) {
-	if !printOutput && eval && (sh == shell.PWSH || sh == shell.PWSH5) {
+	if !printOutput && eval && sh == shell.PWSH {
 		cache.Init(sh)
 		return
 	}

@@ -36,14 +36,14 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:NoExitCode = $true
     $script:ErrorCode = 0
     $script:ExecutionTime = 0
-    $script:ShellName = "::SHELL::"
+    $script:ShellName = "pwsh"
     $script:PSVersion = $PSVersionTable.PSVersion.ToString()
     $script:TransientPrompt = $false
     $script:TooltipCommand = ''
     $script:JobCount = 0
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
-    $env:POSH_SHELL = "::SHELL::"
+    $env:POSH_SHELL = "pwsh"
     $env:POSH_SHELL_VERSION = $script:PSVersion
     $env:CONDA_PROMPT_MODIFIER = $false
 

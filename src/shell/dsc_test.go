@@ -398,14 +398,6 @@ func TestShellCommand(t *testing.T) {
 			expected: "oh-my-posh init pwsh | Invoke-Expression",
 		},
 		{
-			name: "powershell shell command",
-			shell: &Shell{
-				Name:    "powershell",
-				Command: "oh-my-posh init powershell",
-			},
-			expected: "oh-my-posh init powershell | Invoke-Expression",
-		},
-		{
 			name: "elvish shell command",
 			shell: &Shell{
 				Name:    "elvish",

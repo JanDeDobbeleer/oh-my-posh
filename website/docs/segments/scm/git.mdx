@@ -64,6 +64,7 @@ You can set the following properties to `true` to enable fetching additional inf
 | `source`              |      `string`       |  `cli`  | <ul><li>`cli`: fetch the information using the git CLI</li><li>`pwsh`: fetch the information from the [posh-git][poshgit] PowerShell Module</li></ul>                                                                                                                                                                                 |
 | `mapped_branches`     |      `object`       |         | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching                                                                                                                                                                                                                              |
 | `branch_template`     |      `string`       |         | a [template][templates] to format that branch name. You can use `{{ .Branch }}` as reference to the original branch name                                                                                                                                                                                                              |
+| `disable_with_jj`     |      `boolean`      | `false` | disable the git segment in case of a [Jujutsu] collocated repository                                                                                                                                                                                                                                                                  |
 
 ### Icons
 
@@ -236,3 +237,4 @@ You can then use the `POSH_GIT_STRING` environment variable in a [text segment][
 [kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
 [text]: /docs/segments/system/text
 [exclude_folders]: /docs/configuration/segment#include--exclude-folders
+[Jujutsu]: https://jj-vcs.github.io/jj/latest/

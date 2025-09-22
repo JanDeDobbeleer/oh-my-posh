@@ -47,7 +47,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 		_ = cmd.Help()
 	},
-	PersistentPreRun: func(_ *cobra.Command, _ []string) {
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		traceEnv := os.Getenv("POSH_TRACE")
 		if traceEnv == "" && !trace {
 			return
@@ -57,7 +57,8 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 		log.Enable(true)
 
-		log.Debug("oh-my-posh version", build.Version)
+		log.Debug("version:", build.Version)
+		log.Debug("command:", getFullCommand(cmd, args))
 	},
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		defer func() {

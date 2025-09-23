@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -206,4 +207,47 @@ func DeleteAll(s Store) {
 
 	store.cache = maps.NewConcurrent[*Entry[any]]()
 	store.dirty = true
+}
+
+func Print(s Store) string {
+	defer log.Trace(time.Now(), string(s))
+
+	store := s.get()
+	if store == nil {
+		return fmt.Sprintf("Store %s is nil", string(s))
+	}
+
+	cache := store.cache.ToSimple()
+	if len(cache) == 0 {
+		return fmt.Sprintf("Store %s is empty", string(s))
+	}
+
+	var builder strings.Builder
+
+	for key, entry := range cache {
+		builder.WriteString("\n")
+
+		if entry.Expired() {
+			builder.WriteString(fmt.Sprintf("Key: %s [EXPIRED]\n", key))
+			builder.WriteString("\n")
+			continue
+		}
+
+		var ttlInfo string
+		if entry.TTL < 0 {
+			ttlInfo = "never expires"
+		}
+		if entry.TTL >= 0 {
+			expiresAt := time.Unix(entry.Timestamp+int64(entry.TTL), 0)
+			ttlInfo = fmt.Sprintf("expires at %s", expiresAt.Format("2006-01-02 15:04:05"))
+		}
+
+		builder.WriteString(fmt.Sprintf("Key: %s\n", key))
+		builder.WriteString(fmt.Sprintf("  Value: %s\n", fmt.Sprintf("%#v", entry.Value)))
+		builder.WriteString(fmt.Sprintf("  Type: %T\n", entry.Value))
+		builder.WriteString(fmt.Sprintf("  Created: %s\n", time.Unix(entry.Timestamp, 0).Format("2006-01-02 15:04:05")))
+		builder.WriteString(fmt.Sprintf("  TTL: %s\n", ttlInfo))
+	}
+
+	return builder.String()
 }

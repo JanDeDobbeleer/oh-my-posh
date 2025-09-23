@@ -36,16 +36,7 @@ func Download(url string, isCacheEnabled bool) ([]byte, error) {
 		request.Header.Set("If-None-Match", etag)
 	}
 
-	response, err := HTTPClient.Do(request)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-
-	defer response.Body.Close()
-
-	if response.StatusCode == httplib.StatusNotModified {
-		log.Debug("resource not modified, using cached version")
+	cachedData := func() ([]byte, error) {
 		cachedData, OK := cache.Get[[]byte](cache.Device, dataKey(url))
 		if OK {
 			return cachedData, nil
@@ -54,10 +45,23 @@ func Download(url string, isCacheEnabled bool) ([]byte, error) {
 		return nil, fmt.Errorf("resource not modified but no cached data found")
 	}
 
+	response, err := HTTPClient.Do(request)
+	if err != nil {
+		log.Error(err)
+		return cachedData()
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode == httplib.StatusNotModified {
+		log.Debug("resource not modified, using cached version")
+		return cachedData()
+	}
+
 	if response.StatusCode != httplib.StatusOK {
 		err := fmt.Errorf("status code: %d", response.StatusCode)
 		log.Error(err)
-		return nil, err
+		return cachedData()
 	}
 
 	etag = response.Header.Get("ETag")
@@ -68,7 +72,7 @@ func Download(url string, isCacheEnabled bool) ([]byte, error) {
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Error(err)
-		return nil, err
+		return cachedData()
 	}
 
 	if isCacheEnabled {

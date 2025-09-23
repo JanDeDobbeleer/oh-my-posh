@@ -10,9 +10,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	session bool
+)
+
 // getCmd represents the get command
 var getCache = &cobra.Command{
-	Use:   "cache [path|clear|ttl]",
+	Use:   "cache [path|clear|ttl|show]",
 	Short: "Interact with the oh-my-posh cache",
 	Long: `Interact with the oh-my-posh cache.
 
@@ -25,6 +29,7 @@ You can do the following:
 		"path",
 		"clear",
 		cache.TTL,
+		"show",
 	},
 	Args: cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -62,10 +67,19 @@ You can do the following:
 			cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
 			cache.Set(cache.Device, cache.TTL, ttl, cache.INFINITE)
 			cache.Close()
+		case "show":
+			cache.Init(os.Getenv("POSH_SHELL"))
+			store := cache.Device
+			if session {
+				store = cache.Session
+			}
+
+			fmt.Println(cache.Print(store))
 		}
 	},
 }
 
 func init() {
+	getCache.Flags().BoolVarP(&session, "session", "s", false, "show the session cache")
 	RootCmd.AddCommand(getCache)
 }

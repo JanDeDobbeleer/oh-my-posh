@@ -20,7 +20,7 @@ and [Google's Go Style Guide](https://google.github.io/styleguide/go/).
 - Make the zero value useful
 - Document exported types, functions, methods, and packages
 - Use Go modules for dependency management
-- Prefer early returns to reduce nesting; use `else` sparingly when it improves clarity.
+- **AVOID `else` statements - use early returns, continue, or break instead**
 - Avoid wrapping primitives without a clear semantic benefit; define new types only when they add meaning.
 - Use typed slices/maps and document element semantics when not obvious.
 - Start error strings with a lowercase letter.
@@ -92,6 +92,73 @@ and [Google's Go Style Guide](https://google.github.io/styleguide/go/).
 - Do not format the errors, let the `log` package handle it
 - For complex function calls, use `defer log.Trace(time.Now(), args)`
     where args are the function arguments at the start of the function.
+
+### Control Flow
+
+- **NEVER use `else` statements** - they create unnecessary nesting and reduce readability
+- Use early returns to handle error cases and edge conditions first
+- Use `continue` in loops to skip to the next iteration instead of nesting
+- Use `break` to exit loops early instead of complex conditional logic
+- Keep the main logic (happy path) left-aligned with minimal indentation
+
+**❌ BAD - Don't do this:**
+
+```go
+func processEntry(entry *Entry) string {
+    if entry.Expired() {
+        return "expired"
+    } else {
+        if entry.TTL < 0 {
+            return "never expires"
+        } else {
+            return fmt.Sprintf("expires at %s", time.Unix(entry.Timestamp, 0))
+        }
+    }
+}
+```
+
+**✅ GOOD - Do this instead:**
+
+```go
+func processEntry(entry *Entry) string {
+    if entry.Expired() {
+        return "expired"
+    }
+
+    if entry.TTL < 0 {
+        return "never expires"
+    }
+
+    return fmt.Sprintf("expires at %s", time.Unix(entry.Timestamp, 0))
+}
+```
+
+**❌ BAD - Nested loop logic:**
+
+```go
+for _, item := range items {
+    if item.IsValid() {
+        if item.ShouldProcess() {
+            // complex processing logic
+        }
+    }
+}
+```
+
+**✅ GOOD - Early continue:**
+
+```go
+for _, item := range items {
+    if !item.IsValid() {
+        continue
+    }
+    if !item.ShouldProcess() {
+        continue
+    }
+
+    // complex processing logic (happy path)
+}
+```
 
 ## Architecture and Project Structure
 

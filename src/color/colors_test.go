@@ -42,7 +42,7 @@ func TestGetAnsiFromColorString(t *testing.T) {
 func TestMakeColors(t *testing.T) {
 	env := &mock.Environment{}
 
-	cache.Set(cache.Device, "accent_color", &Set{}, cache.INFINITE)
+	cache.Set(cache.Device, accentColor, &Set{}, cache.INFINITE)
 	defer cache.DeleteAll(cache.Device)
 
 	env.On("WindowsRegistryKeyValue", `HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`).Return(&runtime.WindowsRegistryValue{}, errors.New("err"))

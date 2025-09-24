@@ -10,7 +10,7 @@ import (
 
 // Configuration constants
 const (
-	maxStringSize = 1024 * 1024 // 1MB maximum string size
+	maxStringSize = 25 * 1024 // 25KB maximum string size
 )
 
 // Windows API constants

@@ -16,6 +16,14 @@ When editing Markdown (`*.md`, `*.mdx`):
 - Read `.instructions/markdown.md` and announce once per task that you are following it.
 - Use proper headings (`##`, `###`), fenced code blocks with language, and keep lines within the configured limit.
 
+## PowerShell
+
+When editing PowerShell files (`*.ps1`, `*.psm1`, `*.psd1`):
+
+- Read `.instructions/powershell.md` and announce once per task that you are following it.
+- Follow PowerShell best practices for naming, formatting, and error handling.
+- Include comment-based help for public functions and ensure proper parameter validation.
+
 ## Commit and Pull Requests Guidelines
 
 - Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) for PR titles and commit messages.

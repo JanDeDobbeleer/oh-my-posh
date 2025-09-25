@@ -3,6 +3,8 @@ package upgrade
 import (
 	"syscall"
 	"unsafe"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 )
 
 func hideFile(path string) error {
@@ -21,4 +23,9 @@ func hideFile(path string) error {
 	}
 
 	return nil
+}
+
+func IsPackagedInstallation() bool {
+	_, ok := cache.PackageFamilyName()
+	return ok
 }

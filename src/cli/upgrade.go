@@ -36,6 +36,13 @@ var upgradeCmd = &cobra.Command{
 			log.Enable(plain)
 		}
 
+		if upgrade.IsPackagedInstallation() {
+			msg := "upgrade is not supported when installed as a MSIX package"
+			log.Debug(msg)
+			fmt.Printf("\n  ❌ %s\n\n", msg)
+			return
+		}
+
 		supportedPlatforms := []string{
 			runtime.WINDOWS,
 			runtime.DARWIN,

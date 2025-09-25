@@ -4,11 +4,6 @@ ReleaseDate: <DATE>
 Platform:
 - Windows.Desktop
 MinimumOSVersion: 10.0.0.0
-InstallerType: msi
-InstallModes:
-- interactive
-- silent
-- silentWithProgress
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-x64.msi
@@ -24,6 +19,12 @@ Installers:
   UpgradeBehavior: install
   InstallerSwitches:
      Custom: INSTALLER=winget
+- Architecture: x64
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-x64.msix
+  InstallerSha256: <HASH-AMD64-MSIX>
+  SignatureSha256: <SIG-AMD64-MSIX>
+  InstallerType: msix
+  UpgradeBehavior: install
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.msi
   InstallerSha256: <HASH-ARM64>
@@ -38,5 +39,11 @@ Installers:
   UpgradeBehavior: install
   InstallerSwitches:
      Custom: INSTALLER=winget
+- Architecture: arm64
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.msix
+  InstallerSha256: <HASH-ARM64-MSIX>
+  SignatureSha256: <SIG-ARM64-MSIX>
+  InstallerType: msix
+  UpgradeBehavior: install
 ManifestType: installer
-ManifestVersion: 1.6.0
+ManifestVersion: 1.10.0

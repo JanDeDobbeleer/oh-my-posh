@@ -231,3 +231,28 @@ func (cfg *Config) upgradeFeatures() shell.Features {
 func (cfg *Config) Hash() uint64 {
 	return cfg.hash
 }
+
+// toggleSegments processes all segments in all blocks and adds segments
+// with Toggled == true to the toggle cache, effectively toggling them off.
+func (cfg *Config) toggleSegments() {
+	currentToggleSet, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+	if currentToggleSet == nil {
+		currentToggleSet = make(map[string]bool)
+	}
+
+	for _, block := range cfg.Blocks {
+		for _, segment := range block.Segments {
+			if segment.Toggled {
+				segmentName := segment.Alias
+				if segmentName == "" {
+					segmentName = string(segment.Type)
+				}
+
+				currentToggleSet[segmentName] = true
+			}
+		}
+	}
+
+	// Update cache with the map directly
+	cache.Set(cache.Session, cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
+}

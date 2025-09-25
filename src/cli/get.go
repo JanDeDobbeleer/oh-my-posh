@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -71,20 +70,14 @@ This command is used to get the value of the following variables:
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
 			fmt.Print("#" + accent.Hex())
 		case "toggles":
-			var toggles []string
-
-			togglesCache, _ := cache.Get[string](cache.Session, cache.TOGGLECACHE)
-			if len(togglesCache) != 0 {
-				toggles = strings.Split(togglesCache, ",")
-			}
-
-			if len(toggles) == 0 {
+			togglesMap, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+			if len(togglesMap) == 0 {
 				fmt.Println("No segments are toggled off")
 				return
 			}
 
 			fmt.Println("Toggled off segments:")
-			for _, toggle := range toggles {
+			for toggle := range togglesMap {
 				fmt.Println("- " + toggle)
 			}
 		case "width":

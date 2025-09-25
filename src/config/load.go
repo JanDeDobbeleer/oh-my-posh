@@ -38,6 +38,8 @@ func Load(configFile string, migrate bool) *Config {
 
 	cfg := parseConfigFile(configFile)
 
+	cfg.toggleSegments()
+
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
 		cfg.BackupAndMigrate()

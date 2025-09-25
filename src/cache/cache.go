@@ -10,6 +10,7 @@ func init() {
 	gob.Register(Template{})
 	gob.Register(SimpleTemplate{})
 	gob.Register((*Duration)(nil))
+	gob.Register(map[string]bool{})
 }
 
 const (

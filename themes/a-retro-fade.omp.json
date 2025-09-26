@@ -1,0 +1,162 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "a": "#004900",
+    "b": "#006900",
+    "c": "#008900",
+    "d": "#00A900",
+    "title-green": "#00A900",
+    "data-green": "#00E900",
+    "git-changed": "#ffc1f1",
+    "git-both": "#ffaaff",
+    "git-ahead": "#B388FF",
+    "git-behind": "#B388FB",
+    "git-working": "#B388FB",
+    "git-staging": "#9356fc",
+    "git-stash": "#7526ff",
+    "error": "#FF0000"
+  },
+  "blocks": [
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "text",
+          "alias": "Open",
+          "style": "accordion",
+          "template": "<p:a>·</><p:b>-</><p:c>=</><p:d>[</> "
+        },
+        {
+          "style": "plain",
+          "type": "time",
+          "foreground": "p:data-green",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "template": "{{ .CurrentDate | date .Format }}"
+        },
+        {
+          "type": "text",
+          "alias": "Close",
+          "style": "plain",
+          "template": " <p:d>]</><p:c>=</><p:b>-</><p:a>·</>"
+        },
+        {
+          "style": "plain",
+          "type": "executiontime",
+          "foreground": "p:data-green",
+          "properties": {
+            "threshold": 0
+          },
+          "template": " {{ .Segments.Open.Text }}{{ .FormattedMs }}"
+        },
+        {
+          "style": "plain",
+          "type": "status",
+          "foreground": "p:data-green",
+          "properties": {
+            "always_enabled": true
+          },
+          "template": " <p:title-green>code:</> {{ if .Error }}<p:error>{{ else }}<p:data-green>{{ end }}{{.String}}</>{{ .Segments.Close.Text }}"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "newline": true,
+      "segments": [
+        {
+          "style": "plain",
+          "type": "dotnet",
+          "foreground": "p:data-green",
+          "properties": {
+            "display_mode": "always"
+          },
+          "template": "{{ .Segments.Open.Text }}\uE77F v{{ .Full }}"
+        },
+        {
+          "style": "plain",
+          "type": "node",
+          "foreground": "p:data-green",
+          "properties": {
+            "display_mode": "always"
+          },
+          "template": " <p:d>|</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }}{{ else }}{{ end }} v{{ .Full }}"          
+        },
+        {
+          "style": "plain",
+          "type": "python",
+          "foreground": "p:data-green",
+          "properties": {
+            "display_mode": "always"
+          },
+          "template": " <p:d>|</> \ue235 v{{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}{{ .Segments.Close.Text }}"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "newline": true,
+      "segments": [
+        {
+          "style": "plain",
+          "type": "az",
+          "foreground": "p:data-green",
+          "template": "{{ .Segments.Open.Text }}\uebd8 {{ .Name }}"
+        },
+        {
+          "style": "plain",
+          "type": "kubectl",
+          "foreground": "p:data-green",
+          "template": " <p:d>|</> \udb84\udcfe {{.Context}}{{ .Segments.Close.Text }}"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "style": "plain",
+          "type": "git",
+          "foreground": "p:data-green",
+          "foreground_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-changed{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-both{{ end }}",
+            "{{ if gt .Ahead 0 }}p:git-ahead{{ end }}",
+            "{{ if gt .Behind 0 }}p:git-behind{{ end }}"
+          ],
+          "template": "{{ .Segments.Open.Text }}<p:data-green>{{ url .UpstreamIcon .UpstreamURL }} {{ .HEAD }}</> {{ .BranchStatus }} <p:git-working> {{ .Working.String }}</> <p:git-staging> {{ .Staging.String }}</> <p:git-stash> {{ .StashCount }}</>{{ .Segments.Close.Text }}",
+          "properties": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          }
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "style": "plain",
+          "type": "path",
+          "foreground": "p:data-green",
+          "properties": {
+            "style": "agnoster_full",
+            "folder_icon": "\uf07b",
+            "home_icon": "\uf46d"
+          },
+          "template": "{{ .Segments.Open.Text }}{{ path .Path .Location }}>"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 3
+}

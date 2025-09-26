@@ -33,7 +33,7 @@ require (
 	github.com/gookit/goutil v0.7.1
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/invopop/jsonschema v0.13.0
-	github.com/mattn/go-runewidth v0.0.16
+	github.com/mattn/go-runewidth v0.0.17
 	github.com/pelletier/go-toml/v2 v2.2.4
 	github.com/shirou/gopsutil/v4 v4.25.8
 	github.com/spf13/cobra v1.10.1

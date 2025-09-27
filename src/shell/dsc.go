@@ -23,9 +23,7 @@ const (
 )
 
 func DSC() *dsc.Resource[*Shell] {
-	return &dsc.Resource[*Shell]{
-		JSONSchemaURL: "https://ohmyposh.dev/dsc.shell.schema.json",
-	}
+	return &dsc.Resource[*Shell]{}
 }
 
 type Shell struct {

@@ -23,9 +23,7 @@ type Resource struct {
 
 func DSC() *Resource {
 	return &Resource{
-		Resource: dsc.Resource[*Configuration]{
-			JSONSchemaURL: "https://ohmyposh.dev/dsc.configuration.schema.json",
-		},
+		Resource: dsc.Resource[*Configuration]{},
 	}
 }
 

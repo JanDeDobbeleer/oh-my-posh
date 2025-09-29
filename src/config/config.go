@@ -198,11 +198,6 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 func (cfg *Config) upgradeFeatures() shell.Features {
 	var feats shell.Features
 
-	if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
-		log.Debug("upgrade cache key found and not forced, skipping upgrade")
-		return feats
-	}
-
 	autoUpgrade := cfg.Upgrade.Auto
 	if val, OK := cache.Get[bool](cache.Device, AUTOUPGRADE); OK {
 		log.Debug("auto upgrade key found, overriding config")

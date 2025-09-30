@@ -120,7 +120,7 @@ func (cfg *Config) getPalette() color.Palette {
 func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	var feats shell.Features
 
-	asyncShells := []string{shell.BASH, shell.ZSH, shell.FISH, shell.PWSH, shell.PWSH5}
+	asyncShells := []string{shell.BASH, shell.ZSH, shell.FISH, shell.PWSH}
 
 	if cfg.Async && slices.Contains(asyncShells, env.Shell()) {
 		log.Debug("async enabled")
@@ -198,21 +198,16 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 func (cfg *Config) upgradeFeatures() shell.Features {
 	var feats shell.Features
 
-	if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && !cfg.Upgrade.Force {
-		log.Debug("upgrade cache key found and not forced, skipping upgrade")
-		return feats
-	}
-
 	autoUpgrade := cfg.Upgrade.Auto
-	if _, OK := cache.Get[bool](cache.Device, AUTOUPGRADE); OK {
-		log.Debug("auto upgrade key found")
-		autoUpgrade = true
+	if val, OK := cache.Get[bool](cache.Device, AUTOUPGRADE); OK {
+		log.Debug("auto upgrade key found, overriding config")
+		autoUpgrade = val
 	}
 
 	upgradeNotice := cfg.Upgrade.DisplayNotice
-	if _, OK := cache.Get[bool](cache.Device, UPGRADENOTICE); OK {
-		log.Debug("upgrade notice key found")
-		upgradeNotice = true
+	if val, OK := cache.Get[bool](cache.Device, UPGRADENOTICE); OK {
+		log.Debug("upgrade notice key found, overriding config")
+		upgradeNotice = val
 	}
 
 	if upgradeNotice && !autoUpgrade {
@@ -230,4 +225,29 @@ func (cfg *Config) upgradeFeatures() shell.Features {
 
 func (cfg *Config) Hash() uint64 {
 	return cfg.hash
+}
+
+// toggleSegments processes all segments in all blocks and adds segments
+// with Toggled == true to the toggle cache, effectively toggling them off.
+func (cfg *Config) toggleSegments() {
+	currentToggleSet, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+	if currentToggleSet == nil {
+		currentToggleSet = make(map[string]bool)
+	}
+
+	for _, block := range cfg.Blocks {
+		for _, segment := range block.Segments {
+			if segment.Toggled {
+				segmentName := segment.Alias
+				if segmentName == "" {
+					segmentName = string(segment.Type)
+				}
+
+				currentToggleSet[segmentName] = true
+			}
+		}
+	}
+
+	// Update cache with the map directly
+	cache.Set(cache.Session, cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
 }

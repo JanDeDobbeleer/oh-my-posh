@@ -11,9 +11,7 @@ type Resource struct {
 
 func DSC() *Resource {
 	return &Resource{
-		Resource: dsc.Resource[*Font]{
-			JSONSchemaURL: "https://ohmyposh.dev/dsc.font.schema.json",
-		},
+		Resource: dsc.Resource[*Font]{},
 	}
 }
 

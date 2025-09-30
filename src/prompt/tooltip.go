@@ -48,7 +48,7 @@ func (e *Engine) Tooltip(tip string) string {
 	text, length = e.handleToolTipAction(text, length)
 
 	switch e.Env.Shell() {
-	case shell.PWSH, shell.PWSH5:
+	case shell.PWSH:
 		e.rprompt = text
 		e.currentLineLength = e.Env.Flags().Column
 

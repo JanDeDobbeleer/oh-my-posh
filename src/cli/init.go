@@ -74,6 +74,12 @@ func runInit(sh, command string) {
 		log.Enable(plain)
 	}
 
+	if sh == "powershell" {
+		sh = shell.PWSH
+	}
+
+	initCache(sh)
+
 	cfg := config.Load(configFlag, false)
 
 	flags := &runtime.Flags{
@@ -89,8 +95,6 @@ func runInit(sh, command string) {
 
 	env := &runtime.Terminal{}
 	env.Init(flags)
-
-	cache.Init(sh, cache.NewSession, cache.Persist)
 
 	template.Init(env, cfg.Var, cfg.Maps)
 
@@ -160,4 +164,13 @@ func getFullCommand(cmd *cobra.Command, args []string) string {
 	})
 
 	return cmdPath
+}
+
+func initCache(sh string) {
+	if !printOutput && eval && sh == shell.PWSH {
+		cache.Init(sh)
+		return
+	}
+
+	cache.Init(sh, cache.NewSession, cache.Persist)
 }

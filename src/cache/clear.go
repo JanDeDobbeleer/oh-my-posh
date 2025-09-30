@@ -34,36 +34,51 @@ func Clear(force bool, excludedFiles ...string) error {
 		files = append(files, logFiles...)
 	}
 
-	canDelete := func(fileName string) bool {
+	shouldSkip := func(fileName string) bool {
 		if slices.Contains(excludedFiles, fileName) {
-			return false
+			return true
 		}
 
-		return strings.EqualFold(fileName, FileName) || strings.HasPrefix(fileName, "init.")
+		return strings.EqualFold(fileName, DeviceStore) || strings.HasPrefix(fileName, "init.")
+	}
+
+	if len(excludedFiles) > 0 {
+		log.Debug("excluding files from deletion:", strings.Join(excludedFiles, ", "))
 	}
 
 	deleteFile := func(file string) {
 		path := filepath.Join(Path(), file)
-		if err := os.Remove(path); err == nil {
-			log.Debugf("removed cache file: %s", path)
+		err := os.Remove(path)
+		if err != nil {
+			log.Error(err)
+			return
 		}
+
+		log.Debugf("removed cache file: %s", path)
 	}
+
+	cacheTTL := GetTTL()
+
+	log.Debugf("removing cache files older than %d days", cacheTTL)
 
 	for _, file := range files {
 		if file.IsDir() {
 			continue
 		}
 
-		if !canDelete(file.Name()) {
+		if shouldSkip(file.Name()) {
+			log.Debug("skipping excluded file:", file.Name())
 			continue
 		}
 
-		info, err := file.Info()
+		cacheFileInfo, err := file.Info()
 		if err != nil {
+			log.Debug("skipping file, cannot get info:", file.Name())
 			continue
 		}
 
-		if info.ModTime().After(time.Now().AddDate(0, 0, -7)) {
+		if cacheFileInfo.ModTime().After(time.Now().AddDate(0, 0, -cacheTTL)) {
+			log.Debug("skipping recently used file:", file.Name())
 			continue
 		}
 
@@ -71,4 +86,13 @@ func Clear(force bool, excludedFiles ...string) error {
 	}
 
 	return nil
+}
+
+func GetTTL() int {
+	cacheTTL, OK := Get[int](Device, TTL)
+	if !OK || cacheTTL <= 0 {
+		cacheTTL = 7
+	}
+
+	return cacheTTL
 }

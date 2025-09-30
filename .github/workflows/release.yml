@@ -109,9 +109,7 @@ jobs:
           name: msi-artifact-${{ matrix.arch }}
           path: |
             packages/msi/out/install-${{ matrix.arch }}.msi
-            packages/msi/out/install-${{ matrix.arch }}.msi.sha256
             packages/msi/out/install-${{ matrix.arch }}.msix
-            packages/msi/out/install-${{ matrix.arch }}.msix.sha256
   release:
     runs-on: ubuntu-latest
     needs:
@@ -138,3 +136,44 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           files: |
             *
+  winget:
+    runs-on: windows-latest
+    needs:
+      - changelog
+      - release
+    env:
+      WINGETCREATE_TOKEN: ${{ secrets.WINGETCREATE_TOKEN }}
+    steps:
+    - name: Create manifest and submit PR 📦
+      shell: pwsh
+      run: |
+        Write-Host "Preparing to submit to WinGet repository..." -ForegroundColor Green
+
+        # Install the latest wingetcreate exe
+        # Need to do things this way, see https://github.com/PowerShell/PowerShell/issues/13138
+        Write-Verbose "Importing Appx module using Windows PowerShell compatibility"
+        Import-Module Appx -UseWindowsPowerShell -ErrorAction Stop
+
+        # Download and install Winget-Create msixbundle
+        $appxBundleFile = Join-Path -Path $env:TEMP -ChildPath "wingetcreate.msixbundle"
+        Write-Verbose "Downloading wingetcreate to: $appxBundleFile"
+
+        Invoke-WebRequest -Uri "https://aka.ms/wingetcreate/latest/msixbundle" -OutFile $appxBundleFile -ErrorAction Stop
+        Add-AppxPackage -Path $appxBundleFile -ErrorAction Stop
+
+        Write-Verbose "Successfully installed wingetcreate"
+
+        # Submit the PR to WinGet repository
+        Write-Host "Submitting pull request to WinGet repository..." -ForegroundColor Green
+
+        $version = "${{ needs.changelog.outputs.tag }}"
+        $version = $version.TrimStart('v')
+
+        $urls = @(
+            "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-x64.msi|x64",
+            "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-x64.msix|x64",
+            "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-arm64.msi|arm64",
+            "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-arm64.msix|arm64"
+        )
+
+        wingetcreate update JanDeDobbeleer.OhMyPosh --version $version --token $env:WINGETCREATE_TOKEN --submit --urls $urls

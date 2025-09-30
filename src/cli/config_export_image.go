@@ -80,6 +80,7 @@ Exports the config to an image file using customized output settings.`,
 		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""
 		cfg.PWD = ""
+		cfg.ShellIntegration = false
 
 		terminal.Init(shell.GENERIC)
 		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()

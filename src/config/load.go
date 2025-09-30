@@ -17,6 +17,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
 	toml "github.com/pelletier/go-toml/v2"
@@ -36,6 +37,8 @@ func Load(configFile string, migrate bool) *Config {
 	configFile = resolveConfigLocation(configFile)
 
 	cfg := parseConfigFile(configFile)
+
+	cfg.toggleSegments()
 
 	// only migrate automatically when the switch isn't set
 	if !migrate && cfg.Version < Version {
@@ -117,7 +120,7 @@ func parseConfigFile(configFile string) *Config {
 	parentFolder := filepath.Dir(configFile)
 
 	for cfg.Extends != "" {
-		cfg.Extends = resolveFilepath(cfg.Extends, parentFolder)
+		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
 		base, err := readConfig(cfg.Extends, h)
 		if err != nil {
 			log.Error(err)
@@ -140,7 +143,11 @@ func parseConfigFile(configFile string) *Config {
 	return cfg
 }
 
-func resolveFilepath(configFile, parentFolder string) string {
+func resolvePath(configFile, parentFolder string) string {
+	if url, OK := isTheme(configFile); OK {
+		return url
+	}
+
 	if strings.HasPrefix(configFile, "https://") {
 		return configFile
 	}
@@ -165,14 +172,6 @@ func readConfig(configFile string, h hashWriter) (*Config, error) {
 	var cfg Config
 	cfg.Source = configFile
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
-
-	getData := func(configFile string) ([]byte, error) {
-		if strings.HasPrefix(configFile, "https://") {
-			return download(configFile)
-		}
-
-		return os.ReadFile(configFile)
-	}
 
 	data, err := getData(configFile)
 	if err != nil {
@@ -208,6 +207,14 @@ func readConfig(configFile string, h hashWriter) (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+func getData(configFile string) ([]byte, error) {
+	if !strings.HasPrefix(configFile, "https://") {
+		return os.ReadFile(configFile)
+	}
+
+	return http.Download(configFile, true)
 }
 
 // isCygwin checks if we're running in Cygwin environment

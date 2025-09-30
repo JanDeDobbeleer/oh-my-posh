@@ -260,7 +260,7 @@ func (e *Engine) applyPowerShellBleedPatch() {
 	// to avoid the background being printed on the next line
 	// when at the end of the buffer.
 	// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
-	if e.Env.Shell() != shell.PWSH && e.Env.Shell() != shell.PWSH5 {
+	if e.Env.Shell() != shell.PWSH {
 		return
 	}
 
@@ -522,7 +522,7 @@ func New(flags *runtime.Flags) *Engine {
 			diff = -2
 		}
 		eng.rectifyTerminalWidth(diff)
-	case shell.PWSH, shell.PWSH5:
+	case shell.PWSH:
 		// when in PowerShell, and force patching the bleed bug
 		// we need to reduce the terminal width by 1 so the last
 		// character isn't cut off by the ANSI escape sequences

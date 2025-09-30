@@ -10,10 +10,11 @@ func init() {
 	gob.Register(Template{})
 	gob.Register(SimpleTemplate{})
 	gob.Register((*Duration)(nil))
+	gob.Register(map[string]bool{})
 }
 
 const (
-	FileName = "omp.cache"
+	DeviceStore = "omp.cache"
 )
 
 const (

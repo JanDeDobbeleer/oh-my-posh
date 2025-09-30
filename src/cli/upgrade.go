@@ -36,6 +36,13 @@ var upgradeCmd = &cobra.Command{
 			log.Enable(plain)
 		}
 
+		if upgrade.IsPackagedInstallation() {
+			msg := "upgrade is not supported when installed as a MSIX package"
+			log.Debug(msg)
+			fmt.Printf("\n  ❌ %s\n\n", msg)
+			return
+		}
+
 		supportedPlatforms := []string{
 			runtime.WINDOWS,
 			runtime.DARWIN,
@@ -56,6 +63,11 @@ var upgradeCmd = &cobra.Command{
 
 		cache.Init(sh, cache.Persist)
 
+		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK {
+			log.Debug("upgrade check already performed recently, skipping")
+			return
+		}
+
 		terminal.Init(sh)
 		fmt.Print(terminal.StartProgress())
 
@@ -65,7 +77,7 @@ var upgradeCmd = &cobra.Command{
 			fmt.Print(terminal.StopProgress())
 
 			// always reset the cache key so we respect the interval no matter what the outcome
-			cache.Set(cache.Device, upgrade.CACHEKEY, "", cfg.Upgrade.Interval)
+			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
 
 			cache.Close()
 

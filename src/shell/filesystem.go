@@ -72,7 +72,7 @@ func cacheValue(env runtime.Environment) string {
 func InitScriptName(flags *runtime.Flags) string {
 	sh := flags.Shell
 	switch flags.Shell {
-	case PWSH, PWSH5:
+	case PWSH:
 		sh = "ps1"
 	case CMD:
 		sh = "lua"

@@ -44,7 +44,7 @@ func getExecutablePath(env runtime.Environment) (string, error) {
 
 func Init(env runtime.Environment, feats Features) string {
 	switch env.Flags().Shell {
-	case ELVISH, PWSH, PWSH5:
+	case ELVISH, PWSH:
 		if env.Flags().Shell != ELVISH && !env.Flags().Eval {
 			return PrintInit(env, feats, nil)
 		}
@@ -65,7 +65,7 @@ func Init(env runtime.Environment, feats Features) string {
 		var command string
 
 		switch env.Flags().Shell {
-		case PWSH, PWSH5:
+		case PWSH:
 			command = "(@(& %s init %s --config=%s --print --eval%s) -join \"`n\") | Invoke-Expression"
 		case ELVISH:
 			command = "eval ((external %s) init %s --config=%s --print%s | slurp)"
@@ -96,7 +96,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	var script string
 
 	switch env.Flags().Shell {
-	case PWSH, PWSH5:
+	case PWSH:
 		executable = quotePwshOrElvishStr(executable)
 		script = pwshInit
 	case ZSH:
@@ -126,14 +126,13 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 
 	init := strings.NewReplacer(
 		"::OMP::", executable,
-		"::SHELL::", env.Flags().Shell,
 		"::SESSION_ID::", cache.SessionID(),
 	).Replace(script)
 
 	shellScript := features.Lines(env.Flags().Shell).String(init)
 
 	if env.Flags().Eval {
-		return shellScript
+		return fmt.Sprintf("%s\n%s", sessionScript(env.Flags().Shell), shellScript)
 	}
 
 	log.Debug(shellScript)
@@ -189,7 +188,7 @@ func sourceInit(env runtime.Environment, scriptPath string, async bool) string {
 	}
 
 	switch env.Flags().Shell {
-	case PWSH, PWSH5:
+	case PWSH:
 		script += fmt.Sprintf("& %s", quotePwshOrElvishStr(scriptPath))
 	case ZSH, BASH:
 		script += fmt.Sprintf("source %s", QuotePosixStr(scriptPath))
@@ -210,7 +209,7 @@ func sourceInit(env runtime.Environment, scriptPath string, async bool) string {
 
 func sourceInitAsync(shell, scriptPath string) string {
 	switch shell {
-	case PWSH, PWSH5:
+	case PWSH:
 		return fmt.Sprintf("function prompt() { & %s }", quotePwshOrElvishStr(scriptPath))
 	case ZSH:
 		return fmt.Sprintf("precmd() { source %s }", QuotePosixStr(scriptPath))
@@ -226,7 +225,7 @@ func sourceInitAsync(shell, scriptPath string) string {
 
 func sessionScript(shell string) string {
 	switch shell {
-	case PWSH, PWSH5:
+	case PWSH:
 		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\";", cache.SessionID())
 	case ZSH, BASH:
 		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\";", cache.SessionID())

@@ -23,6 +23,10 @@ func init() {
 	gob.Register(&Cycle{})
 }
 
+const (
+	accentColor = "accent_color"
+)
+
 var TrueColor = true
 
 // String is the interface that wraps ToColor method.
@@ -173,8 +177,8 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 	defer log.Trace(time.Now())
 
 	// get accent color from session cache first
-	if accent, OK := cache.Get[Set](cache.Device, "accent_color"); OK {
-		d.accent = &accent
+	if accent, OK := cache.Get[*Set](cache.Device, accentColor); OK {
+		d.accent = accent
 		return
 	}
 
@@ -200,7 +204,7 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 		Background: Ansi(background.String()),
 	}
 
-	cache.Set(cache.Device, "accent_color", d.accent, cache.INFINITE)
+	cache.Set(cache.Device, accentColor, d.accent, cache.INFINITE)
 }
 
 type RGB struct {

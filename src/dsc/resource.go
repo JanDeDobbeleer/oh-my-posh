@@ -13,8 +13,7 @@ import (
 )
 
 type Resource[T State[T]] struct {
-	JSONSchemaURL string `json:"$schema,omitempty"`
-	States        []T    `json:"states,omitempty" jsonschema:"title=states,description=The different states of the resource"`
+	States []T `json:"states,omitempty" jsonschema:"title=states,description=The different states of the resource"`
 }
 
 type State[T any] interface {
@@ -40,7 +39,7 @@ func (resource *Resource[T]) Save() {
 func (resource *Resource[T]) Add(item T) {
 	for _, existingItem := range resource.States {
 		if existingItem.Equal(item) {
-			log.Debug("Item already exists")
+			log.Debug("item already exists")
 			return
 		}
 	}
@@ -108,7 +107,7 @@ func (resource *Resource[T]) Schema() string {
 func (resource *Resource[T]) getItemTypeName() string {
 	var zero T
 	t := reflect.TypeOf(zero)
-	if t.Kind() == reflect.Ptr {
+	if t.Kind() == reflect.Pointer {
 		return strings.ToLower(t.Elem().Name())
 	}
 

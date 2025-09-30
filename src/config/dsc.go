@@ -23,9 +23,7 @@ type Resource struct {
 
 func DSC() *Resource {
 	return &Resource{
-		Resource: dsc.Resource[*Configuration]{
-			JSONSchemaURL: "https://ohmyposh.dev/dsc.configuration.schema.json",
-		},
+		Resource: dsc.Resource[*Configuration]{},
 	}
 }
 
@@ -38,7 +36,7 @@ type Configuration struct {
 
 func (s *Resource) Add(configPath string) {
 	if configPath == "" || strings.HasPrefix(configPath, "http") {
-		log.Debug("Invalid configuration path:", configPath)
+		log.Debug("local configuration not provided or remote configuration, skipping")
 		return
 	}
 

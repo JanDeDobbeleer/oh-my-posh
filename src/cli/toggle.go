@@ -1,11 +1,11 @@
 package cli
 
 import (
+	"os"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/spf13/cobra"
 )
 
@@ -24,25 +24,19 @@ var toggleCmd = &cobra.Command{
 		env := &runtime.Terminal{}
 		env.Init(&runtime.Flags{})
 
-		cache.Init(shell.GENERIC, cache.Persist)
+		cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
 
 		defer func() {
 			cache.Close()
 		}()
 
-		togglesCache, _ := cache.Get[string](cache.Session, cache.TOGGLECACHE)
-		var currentToggles []string
-		if len(togglesCache) != 0 {
-			currentToggles = strings.Split(togglesCache, ",")
+		// Get current toggles from cache as a map
+		currentToggleSet, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+		if currentToggleSet == nil {
+			currentToggleSet = make(map[string]bool)
 		}
 
 		segmentsToToggle := parseSegments(args)
-
-		// Get current toggles as a set for efficient operations
-		currentToggleSet := make(map[string]bool)
-		for _, toggle := range currentToggles {
-			currentToggleSet[toggle] = true
-		}
 
 		// Toggle segments: remove if present, add if not present
 		for _, segment := range segmentsToToggle {
@@ -54,13 +48,8 @@ var toggleCmd = &cobra.Command{
 			currentToggleSet[segment] = true
 		}
 
-		// Convert back to slice
-		newToggles := make([]string, 0, len(currentToggleSet))
-		for segment := range currentToggleSet {
-			newToggles = append(newToggles, segment)
-		}
-
-		cache.Set(cache.Session, cache.TOGGLECACHE, strings.Join(newToggles, ","), cache.INFINITE)
+		// Store the map directly in cache
+		cache.Set(cache.Session, cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
 	},
 }
 

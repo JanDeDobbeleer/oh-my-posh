@@ -8,7 +8,6 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "prompt",
         "print",
         "primary",
         "--shell=pwsh",

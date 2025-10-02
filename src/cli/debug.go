@@ -50,8 +50,7 @@ func createDebugCmd() *cobra.Command {
 
 			cache.Init(os.Getenv("POSH_SHELL"))
 
-			_, reload := cache.Get[bool](cache.Device, config.RELOAD)
-			cfg := config.Get(flags.ConfigPath, reload)
+			cfg := getDebugConfig(configFlag)
 
 			template.Init(env, cfg.Var, cfg.Maps)
 
@@ -84,4 +83,13 @@ func createDebugCmd() *cobra.Command {
 	_ = debugCmd.Flags().MarkHidden("shell")
 
 	return debugCmd
+}
+
+func getDebugConfig(configpath string) *config.Config {
+	if len(configpath) != 0 {
+		return config.Load(configpath, false)
+	}
+
+	_, reload := cache.Get[bool](cache.Device, config.RELOAD)
+	return config.Get(configpath, reload)
 }

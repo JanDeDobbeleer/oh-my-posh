@@ -80,6 +80,14 @@ func Error(err error) {
 	printLn(bug, header, err.Error())
 }
 
+func Errorf(format string, args ...any) {
+	if !enabled {
+		return
+	}
+
+	Error(fmt.Errorf(format, args...))
+}
+
 func String() string {
 	return log.String()
 }

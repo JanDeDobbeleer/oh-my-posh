@@ -24,7 +24,8 @@ your terminal emulator to use it.
     defaultValue="oh-my-posh"
     values={[
         { label: 'Oh My Posh', value: 'oh-my-posh' },
-        { label: 'homebrew', value: 'homebrew' }
+        { label: 'homebrew', value: 'homebrew' },
+        { label: 'PowerShell', value: 'powershell' }
     ]
 }>
 <TabItem value="oh-my-posh">
@@ -56,6 +57,24 @@ If you're using Homebrew, you can search for and install Nerd Fonts directly:
 brew search nerd-font
 
 brew install --cask font-fira-code-nerd-font
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+If you're using PowerShell, you can use the [NerdFonts][nerdfonts-ps] module to install Nerd Fonts:
+
+```powershell
+Install-PSResource -Name NerdFonts
+Import-Module -Name NerdFonts
+
+Install-NerdFont -Name FiraCode   # Tab completion works on name
+```
+
+To install for all users, elevated permissions are required:
+
+```powershell
+Install-NerdFont -Name FiraCode -Scope AllUsers
 ```
 
 </TabItem>
@@ -140,6 +159,7 @@ The `minimal` themes do not make use of Nerd Font icons.
 [Creating your own theme][configuration] is always an option too 😊
 
 [nerdfonts]: https://www.nerdfonts.com/
+[nerdfonts-ps]: https://psmodule.io/NerdFonts
 [configuration]: /docs/installation/customize
 [wt-issue-8993]: https://github.com/microsoft/terminal/issues/8993
 [vs-otf]: https://stackoverflow.com/questions/75252606/is-it-possible-to-use-nerd-fonts-as-the-font-for-terminals-in-visual-studio

@@ -12,7 +12,7 @@ var fishInit string
 func (f Features) Fish() Code {
 	switch f {
 	case Transient:
-		return "set --global _omp_transient_prompt 1"
+		return "set --global fish_transient_prompt 1"
 	case FTCSMarks:
 		return "set --global _omp_ftcs_marks 1"
 	case PromptMark:

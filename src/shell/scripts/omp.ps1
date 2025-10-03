@@ -250,6 +250,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # store the orignal last exit code
         $script:OriginalLastExitCode = $global:LASTEXITCODE
 
+        # Reset tooltip command.
+        $script:TooltipCommand = ''
+
         Set-PoshPromptType
 
         if ($script:PromptType -ne 'transient') {
@@ -351,7 +354,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
                     $executingCommand = $parseErrors.Count -eq 0
                     if ($executingCommand) {
-                        Set-Variable -Name TooltipCommand -Value '' -Scope Script
                         Set-TransientPrompt
                     }
                 }
@@ -376,7 +378,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
                     # only render a transient prompt when no text is selected
                     if ($start -eq -1) {
-                        Set-Variable -Name TooltipCommand -Value '' -Scope Script
                         Set-TransientPrompt
                     }
                 }
@@ -446,4 +447,3 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "prompt"
     )
 } | Import-Module -Global
-

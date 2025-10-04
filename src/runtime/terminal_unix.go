@@ -166,7 +166,14 @@ func (term *Terminal) Memory() (*Memory, error) {
 	m.PhysicalTotalMemory = memStat.Total
 	m.PhysicalAvailableMemory = memStat.Available
 	m.PhysicalFreeMemory = memStat.Free
-	m.PhysicalPercentUsed = memStat.UsedPercent
+
+	if memStat.Total > 0 {
+		used := float64(memStat.Total) - float64(memStat.Available)
+		if used < 0 {
+			used = 0
+		}
+		m.PhysicalPercentUsed = used / float64(memStat.Total) * 100
+	}
 
 	swapStat, err := mem.SwapMemory()
 	if err != nil {

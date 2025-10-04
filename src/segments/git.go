@@ -64,6 +64,8 @@ const (
 	DisableWithJJ properties.Property = "disable_with_jj"
 	// FetchStatus fetches the status of the repository
 	FetchStatus properties.Property = "fetch_status"
+	// FetchPushStatus fetches the push-remote status
+	FetchPushStatus properties.Property = "fetch_push_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
 	IgnoreStatus properties.Property = "ignore_status"
 	// FetchWorktreeCount fetches the worktree count
@@ -158,6 +160,7 @@ type Git struct {
 	Ahead         int
 	PushAhead     int
 	PushBehind    int
+	gitConfig     *ini.File
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool
@@ -207,7 +210,9 @@ func (g *Git) Enabled() bool {
 		g.setGitStatus()
 		g.setGitHEADContext()
 		g.setBranchStatus()
-		g.setPushStatus()
+		if g.props.GetBool(FetchPushStatus, false) {
+			g.setPushStatus()
+		}
 	} else {
 		g.setHEADName()
 	}
@@ -573,8 +578,8 @@ func (g *Git) getPushRemote() string {
 		return ""
 	}
 
-	cfg, err := ini.Load(filepath.Join(g.scmDir, "config"))
-	if err != nil {
+	cfg := g.getGitConfig()
+	if cfg == nil {
 		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
 		if pushRemote == "" {
 			pushRemote = upstream
@@ -592,6 +597,20 @@ func (g *Git) getPushRemote() string {
 	}
 
 	return pushRemote + "/" + branch
+}
+
+func (g *Git) getGitConfig() *ini.File {
+	if g.gitConfig != nil {
+		return g.gitConfig
+	}
+
+	cfg, err := ini.Load(filepath.Join(g.scmDir, "config"))
+	if err != nil {
+		return nil
+	}
+
+	g.gitConfig = cfg
+	return g.gitConfig
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {

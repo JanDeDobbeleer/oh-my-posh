@@ -573,7 +573,7 @@ func (g *Git) getPushRemote() string {
 		return ""
 	}
 
-	cfg, err := ini.Load(g.scmDir + "/config")
+	cfg, err := ini.Load(filepath.Join(g.scmDir, "config"))
 	if err != nil {
 		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
 		if pushRemote == "" {

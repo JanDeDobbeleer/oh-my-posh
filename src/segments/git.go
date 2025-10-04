@@ -156,6 +156,8 @@ type Git struct {
 	stashCount    int
 	Behind        int
 	Ahead         int
+	PushAhead     int
+	PushBehind    int
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool
@@ -205,6 +207,7 @@ func (g *Git) Enabled() bool {
 		g.setGitStatus()
 		g.setGitHEADContext()
 		g.setBranchStatus()
+		g.setPushStatus()
 	} else {
 		g.setHEADName()
 	}
@@ -536,6 +539,59 @@ func (g *Git) setBranchStatus() {
 		return ""
 	}
 	g.BranchStatus = getBranchStatus()
+}
+
+func (g *Git) setPushStatus() {
+	if g.Ref == "" || g.Ref == DETACHED {
+		return
+	}
+
+	pushRemote := g.getPushRemote()
+	if pushRemote == "" {
+		return
+	}
+
+	ahead := g.getGitCommandOutput("rev-list", "--count", pushRemote+"..HEAD")
+	if ahead != "" {
+		g.PushAhead, _ = strconv.Atoi(strings.TrimSpace(ahead))
+	}
+
+	behind := g.getGitCommandOutput("rev-list", "--count", "HEAD.."+pushRemote)
+	if behind != "" {
+		g.PushBehind, _ = strconv.Atoi(strings.TrimSpace(behind))
+	}
+}
+
+func (g *Git) getPushRemote() string {
+	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
+	if upstream == "" {
+		upstream = "origin"
+	}
+
+	branch := g.Ref
+	if branch == "" {
+		return ""
+	}
+
+	cfg, err := ini.Load(g.scmDir + "/config")
+	if err != nil {
+		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
+		if pushRemote == "" {
+			pushRemote = upstream
+		}
+		return strings.TrimSpace(pushRemote) + "/" + branch
+	}
+
+	branchSection := cfg.Section("branch \"" + branch + "\"")
+	pushRemote := branchSection.Key("pushRemote").String()
+	if pushRemote == "" {
+		pushRemote = cfg.Section("remote").Key("pushDefault").String()
+	}
+	if pushRemote == "" {
+		pushRemote = upstream
+	}
+
+	return pushRemote + "/" + branch
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {

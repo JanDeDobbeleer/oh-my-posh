@@ -64,6 +64,8 @@ const (
 	DisableWithJJ properties.Property = "disable_with_jj"
 	// FetchStatus fetches the status of the repository
 	FetchStatus properties.Property = "fetch_status"
+	// FetchPushStatus fetches the push-remote status
+	FetchPushStatus properties.Property = "fetch_push_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
 	IgnoreStatus properties.Property = "ignore_status"
 	// FetchWorktreeCount fetches the worktree count
@@ -156,6 +158,9 @@ type Git struct {
 	stashCount    int
 	Behind        int
 	Ahead         int
+	PushAhead     int
+	PushBehind    int
+	gitConfig     *ini.File
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool
@@ -205,6 +210,9 @@ func (g *Git) Enabled() bool {
 		g.setGitStatus()
 		g.setGitHEADContext()
 		g.setBranchStatus()
+		if g.props.GetBool(FetchPushStatus, false) {
+			g.setPushStatus()
+		}
 	} else {
 		g.setHEADName()
 	}
@@ -536,6 +544,76 @@ func (g *Git) setBranchStatus() {
 		return ""
 	}
 	g.BranchStatus = getBranchStatus()
+}
+
+func (g *Git) setPushStatus() {
+	if g.Ref == "" || g.Ref == DETACHED {
+		return
+	}
+
+	pushRemote := g.getPushRemote()
+	if pushRemote == "" {
+		return
+	}
+
+	ahead := g.getGitCommandOutput("rev-list", "--count", pushRemote+"..HEAD")
+	if ahead != "" {
+		g.PushAhead, _ = strconv.Atoi(strings.TrimSpace(ahead))
+	}
+
+	behind := g.getGitCommandOutput("rev-list", "--count", "HEAD.."+pushRemote)
+	if behind != "" {
+		g.PushBehind, _ = strconv.Atoi(strings.TrimSpace(behind))
+	}
+}
+
+func (g *Git) getPushRemote() string {
+	upstream := g.Upstream
+	if idx := strings.Index(upstream, "/"); idx != -1 {
+		upstream = upstream[:idx]
+	}
+	if upstream == "" {
+		upstream = "origin"
+	}
+
+	branch := g.Ref
+	if branch == "" {
+		return ""
+	}
+
+	cfg := g.getGitConfig()
+	if cfg == nil {
+		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
+		if pushRemote == "" {
+			pushRemote = upstream
+		}
+		return strings.TrimSpace(pushRemote) + "/" + branch
+	}
+
+	branchSection := cfg.Section("branch \"" + branch + "\"")
+	pushRemote := branchSection.Key("pushRemote").String()
+	if pushRemote == "" {
+		pushRemote = cfg.Section("remote").Key("pushDefault").String()
+	}
+	if pushRemote == "" {
+		pushRemote = upstream
+	}
+
+	return pushRemote + "/" + branch
+}
+
+func (g *Git) getGitConfig() *ini.File {
+	if g.gitConfig != nil {
+		return g.gitConfig
+	}
+
+	cfg, err := ini.Load(filepath.Join(g.scmDir, "config"))
+	if err != nil {
+		return nil
+	}
+
+	g.gitConfig = cfg
+	return g.gitConfig
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {

@@ -1282,3 +1282,68 @@ func TestDisableWithJJNoJJDirectory(t *testing.T) {
 
 	assert.True(t, g.Enabled()) // Should be enabled since .jj directory doesn't exist
 }
+
+func TestPushStatusAheadAndBehind(t *testing.T) {
+	cases := []struct {
+		Case               string
+		PushAheadCount     string
+		PushBehindCount    string
+		ExpectedPushAhead  int
+		ExpectedPushBehind int
+	}{
+		{
+			Case:               "ahead and behind",
+			PushAheadCount:     "3",
+			PushBehindCount:    "5",
+			ExpectedPushAhead:  3,
+			ExpectedPushBehind: 5,
+		},
+		{
+			Case:               "only ahead",
+			PushAheadCount:     "2",
+			PushBehindCount:    "0",
+			ExpectedPushAhead:  2,
+			ExpectedPushBehind: 0,
+		},
+		{
+			Case:               "only behind",
+			PushAheadCount:     "0",
+			PushBehindCount:    "7",
+			ExpectedPushAhead:  0,
+			ExpectedPushBehind: 7,
+		},
+		{
+			Case:               "up to date",
+			PushAheadCount:     "0",
+			PushBehindCount:    "0",
+			ExpectedPushAhead:  0,
+			ExpectedPushBehind: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "config", "--get", "remote.pushDefault"}).Return("", nil)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "rev-list", "--count", "origin/main..HEAD"}).Return(tc.PushAheadCount, nil)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "rev-list", "--count", "HEAD..origin/main"}).Return(tc.PushBehindCount, nil)
+		env.On("FileContent", "/dir/.git/config").Return("")
+
+		g := &Git{
+			Scm: Scm{
+				command:     "git",
+				repoRootDir: "/dir",
+				scmDir:      "/dir/.git",
+			},
+			Ref:      "main",
+			Upstream: "origin/main",
+		}
+		g.Init(properties.Map{}, env)
+
+		g.setPushStatus()
+		assert.Equal(t, tc.ExpectedPushAhead, g.PushAhead, tc.Case)
+		assert.Equal(t, tc.ExpectedPushBehind, g.PushBehind, tc.Case)
+	}
+}

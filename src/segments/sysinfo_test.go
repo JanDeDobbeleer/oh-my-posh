@@ -74,6 +74,17 @@ func TestSysInfo(t *testing.T) {
 				},
 			},
 		},
+		{
+			Case:           "accurate memory percentage",
+			ExpectedString: "36.96",
+			SysInfo: runtime.SystemInfo{
+				Memory: runtime.Memory{
+					PhysicalPercentUsed: 36.96,
+				},
+			},
+			Precision: 2,
+			Template:  "{{ round .PhysicalPercentUsed .Precision }}",
+		},
 	}
 
 	for _, tc := range cases {

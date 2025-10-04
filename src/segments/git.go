@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -64,6 +65,8 @@ const (
 	DisableWithJJ properties.Property = "disable_with_jj"
 	// FetchStatus fetches the status of the repository
 	FetchStatus properties.Property = "fetch_status"
+	// FetchPushStatus fetches the push-remote status
+	FetchPushStatus properties.Property = "fetch_push_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
 	IgnoreStatus properties.Property = "ignore_status"
 	// FetchWorktreeCount fetches the worktree count
@@ -127,6 +130,7 @@ const (
 	GITCOMMAND   = "git"
 
 	trueStr = "true"
+	origin  = "origin"
 )
 
 type Rebase struct {
@@ -137,25 +141,30 @@ type Rebase struct {
 }
 
 type Git struct {
-	User           *User
+	configErr      error
+	config         *ini.File
 	Working        *GitStatus
 	Staging        *GitStatus
 	commit         *Commit
 	Rebase         *Rebase
-	RawUpstreamURL string
-	Ref            string
-	Hash           string
+	User           *User
 	ShortHash      string
+	Hash           string
 	BranchStatus   string
 	Upstream       string
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string
+	Ref            string
+	RawUpstreamURL string
 	Scm
-	worktreeCount int
 	stashCount    int
-	Behind        int
 	Ahead         int
+	PushAhead     int
+	PushBehind    int
+	Behind        int
+	worktreeCount int
+	configOnce    sync.Once
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool
@@ -202,9 +211,10 @@ func (g *Git) Enabled() bool {
 	}
 
 	if displayStatus {
-		g.setGitStatus()
-		g.setGitHEADContext()
+		g.setStatus()
+		g.setHEADStatus()
 		g.setBranchStatus()
+		g.setPushStatus()
 	} else {
 		g.setHEADName()
 	}
@@ -318,7 +328,7 @@ func (g *Git) Kraken() string {
 
 	if g.RawUpstreamURL == "" {
 		if g.Upstream == "" {
-			g.Upstream = "origin"
+			g.Upstream = origin
 		}
 		g.RawUpstreamURL = g.getRemoteURL()
 	}
@@ -393,13 +403,7 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 		g.mainSCMDir = filepath.Join(gitDir.ParentFolder, dir)
 	}
 
-	configData := g.fileContent(g.mainSCMDir, "config")
-	if configData == "" {
-		log.Debug("Git config file not found, not a bare repo")
-		return false
-	}
-
-	cfg, err := ini.Load([]byte(configData))
+	cfg, err := g.getGitConfig()
 	if err != nil {
 		log.Error(err)
 		return false
@@ -538,6 +542,91 @@ func (g *Git) setBranchStatus() {
 	g.BranchStatus = getBranchStatus()
 }
 
+func (g *Git) setPushStatus() {
+	if !g.props.GetBool(FetchPushStatus, false) {
+		return
+	}
+
+	if g.Ref == "" || g.Ref == DETACHED {
+		return
+	}
+
+	pushRemote := g.getPushRemote()
+	if pushRemote == "" {
+		return
+	}
+
+	ahead := g.getGitCommandOutput("rev-list", "--count", pushRemote+"..HEAD")
+	if ahead != "" {
+		g.PushAhead, _ = strconv.Atoi(strings.TrimSpace(ahead))
+	}
+
+	behind := g.getGitCommandOutput("rev-list", "--count", "HEAD.."+pushRemote)
+	if behind != "" {
+		g.PushBehind, _ = strconv.Atoi(strings.TrimSpace(behind))
+	}
+}
+
+func (g *Git) getPushRemote() string {
+	upstream := g.Upstream
+	if idx := strings.Index(upstream, "/"); idx != -1 {
+		upstream = upstream[:idx]
+	}
+
+	if upstream == "" {
+		upstream = origin
+	}
+
+	branch := g.Ref
+	if branch == "" {
+		return ""
+	}
+
+	cfg, err := g.getGitConfig()
+	if err != nil {
+		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
+		if pushRemote == "" {
+			pushRemote = upstream
+		}
+
+		return strings.TrimSpace(pushRemote) + "/" + branch
+	}
+
+	sectionName := fmt.Sprintf(`branch "%s"`, branch)
+	section := cfg.Section(sectionName)
+	pushRemote := section.Key("pushRemote").String()
+	if pushRemote == "" {
+		pushRemote = cfg.Section("remote").Key("pushDefault").String()
+	}
+
+	if pushRemote == "" {
+		pushRemote = upstream
+	}
+
+	return pushRemote + "/" + branch
+}
+
+func (g *Git) getGitConfig() (*ini.File, error) {
+	g.configOnce.Do(func() {
+		configData := g.fileContent(g.mainSCMDir, "config")
+		if configData == "" {
+			log.Debug("git config file not found")
+			g.configErr = fmt.Errorf("git config file not found")
+			return
+		}
+
+		cfg, err := ini.Load(configData)
+		if err != nil {
+			g.configErr = err
+			return
+		}
+
+		g.config = cfg
+	})
+
+	return g.config, g.configErr
+}
+
 func (g *Git) cleanUpstreamURL(url string) string {
 	// Azure DevOps
 	if strings.Contains(url, "dev.azure.com") {
@@ -623,7 +712,7 @@ func (g *Git) getUpstreamIcon() string {
 	return g.props.GetString(GitIcon, "\uE5FB ")
 }
 
-func (g *Git) setGitStatus() {
+func (g *Git) setStatus() {
 	addToStatus := func(status string) {
 		const UNTRACKED = "?"
 		if strings.HasPrefix(status, UNTRACKED) {
@@ -722,7 +811,7 @@ func (g *Git) getGitCommandOutput(args ...string) string {
 	return val
 }
 
-func (g *Git) setGitHEADContext() {
+func (g *Git) setHEADStatus() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.Detached = true
@@ -940,10 +1029,10 @@ func (g *Git) WorktreeCount() int {
 func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	if upstream == "" {
-		upstream = "origin"
+		upstream = origin
 	}
 
-	cfg, err := ini.Load(g.scmDir + "/config")
+	cfg, err := g.getGitConfig()
 	if err != nil {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
@@ -960,9 +1049,7 @@ func (g *Git) getRemoteURL() string {
 func (g *Git) Remotes() map[string]string {
 	var remotes = make(map[string]string)
 
-	location := filepath.Join(g.scmDir, "config")
-	config := g.env.FileContent(location)
-	cfg, err := ini.Load([]byte(config))
+	cfg, err := g.getGitConfig()
 	if err != nil {
 		return remotes
 	}

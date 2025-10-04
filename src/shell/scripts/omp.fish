@@ -4,7 +4,6 @@ set --export --global POWERLINE_COMMAND oh-my-posh
 set --export --global CONDA_PROMPT_MODIFIER false
 
 set --global _omp_tooltip_command ''
-set --global _omp_current_rprompt ''
 set --global _omp_executable ::OMP::
 set --global _omp_ftcs_marks 0
 set --global _omp_prompt_mark 0
@@ -12,9 +11,6 @@ set --global _omp_prompt_mark 0
 # disable all known python virtual environment prompts
 set --global VIRTUAL_ENV_DISABLE_PROMPT 1
 set --global PYENV_VIRTUALENV_DISABLE_PROMPT 1
-
-# We use this to avoid unnecessary CLI calls for prompt repaint.
-set --global _omp_new_prompt 1
 
 # template function for context loading
 function set_poshcontext
@@ -46,15 +42,10 @@ function fish_prompt
     # clear from cursor to end of screen as
     # commandline --function repaint does not do this
     # see https://github.com/fish-shell/fish-shell/issues/8418
-    printf \e\[0J
+    # printf \e\[0J
 
     if contains -- --final-rendering $argv
-        _omp_get_prompt transient
-        return
-    end
-
-    if test "$_omp_new_prompt" = 0
-        echo -n "$_omp_current_prompt"
+        echo -n (_omp_get_prompt transient)
         return
     end
 
@@ -97,23 +88,11 @@ function fish_prompt
         iterm2_prompt_mark
     end
 
-    # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
-    set --global _omp_current_prompt (_omp_get_prompt primary --cleared=$omp_cleared | string join \n | string collect)
-
-    echo -n "$_omp_current_prompt"
+    echo -n (_omp_get_prompt primary --cleared=$omp_cleared | string join \n | string collect)
 end
 
 function fish_right_prompt
-    # Repaint an existing right prompt.
-    if test "$_omp_new_prompt" = 0
-        echo -n "$_omp_current_rprompt"
-        return
-    end
-
-    set _omp_new_prompt 0
-    set --global _omp_current_rprompt (_omp_get_prompt right | string join '')
-
-    echo -n "$_omp_current_rprompt"
+    echo -n (_omp_get_prompt right | string join '')
 end
 
 function _omp_postexec --on-event fish_postexec
@@ -157,10 +136,4 @@ end
 function enable_poshtooltips
     bind \x20 _omp_space_key_handler -M default
     bind \x20 _omp_space_key_handler -M insert
-end
-
-# This can be called by user whenever re-rendering is required.
-function omp_repaint_prompt
-    set _omp_new_prompt 1
-    commandline --function repaint
 end

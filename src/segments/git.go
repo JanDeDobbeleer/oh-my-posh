@@ -568,7 +568,10 @@ func (g *Git) setPushStatus() {
 }
 
 func (g *Git) getPushRemote() string {
-	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
+	upstream := g.Upstream
+	if idx := strings.Index(upstream, "/"); idx != -1 {
+		upstream = upstream[:idx]
+	}
 	if upstream == "" {
 		upstream = "origin"
 	}

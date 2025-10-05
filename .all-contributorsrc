@@ -3313,6 +3313,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "MariusStorhaug",
+      "name": "Marius Storhaug",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17722253?v=4",
+      "profile": "https://github.com/PSModule",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

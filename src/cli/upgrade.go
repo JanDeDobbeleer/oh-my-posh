@@ -63,7 +63,7 @@ var upgradeCmd = &cobra.Command{
 
 		cache.Init(sh, cache.Persist)
 
-		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK {
+		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && !force {
 			log.Debug("upgrade check already performed recently, skipping")
 			return
 		}

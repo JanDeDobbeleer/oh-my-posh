@@ -363,7 +363,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		}
 		g.Init(props, env)
 
-		g.setGitHEADContext()
+		g.setHEADStatus()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
 }
@@ -585,7 +585,7 @@ func TestSetGitStatus(t *testing.T) {
 		g.Merge = tc.Merge
 		tc.ExpectedStaging.Formats = map[string]string{}
 		tc.ExpectedWorking.Formats = map[string]string{}
-		g.setGitStatus()
+		g.setStatus()
 		assert.Equal(t, tc.ExpectedStaging, g.Staging, tc.Case)
 		assert.Equal(t, tc.ExpectedWorking, g.Working, tc.Case)
 		assert.Equal(t, tc.ExpectedHash, g.ShortHash, tc.Case)
@@ -674,7 +674,7 @@ func TestGitUpstream(t *testing.T) {
 		env := &mock.Environment{}
 		env.On("IsWsl").Return(false)
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
-			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
+			"-c", "color.status=false", "remote", "get-url", origin}).Return(tc.Upstream, nil)
 		env.On("GOOS").Return("unix")
 		props := properties.Map{
 			GithubIcon:      "GH",

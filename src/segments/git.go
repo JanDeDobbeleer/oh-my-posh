@@ -130,6 +130,7 @@ const (
 	GITCOMMAND   = "git"
 
 	trueStr = "true"
+	origin  = "origin"
 )
 
 type Rebase struct {
@@ -210,12 +211,10 @@ func (g *Git) Enabled() bool {
 	}
 
 	if displayStatus {
-		g.setGitStatus()
-		g.setGitHEADContext()
+		g.setStatus()
+		g.setHEADStatus()
 		g.setBranchStatus()
-		if g.props.GetBool(FetchPushStatus, false) {
-			g.setPushStatus()
-		}
+		g.setPushStatus()
 	} else {
 		g.setHEADName()
 	}
@@ -329,7 +328,7 @@ func (g *Git) Kraken() string {
 
 	if g.RawUpstreamURL == "" {
 		if g.Upstream == "" {
-			g.Upstream = "origin"
+			g.Upstream = origin
 		}
 		g.RawUpstreamURL = g.getRemoteURL()
 	}
@@ -544,6 +543,10 @@ func (g *Git) setBranchStatus() {
 }
 
 func (g *Git) setPushStatus() {
+	if !g.props.GetBool(FetchPushStatus, false) {
+		return
+	}
+
 	if g.Ref == "" || g.Ref == DETACHED {
 		return
 	}
@@ -570,7 +573,7 @@ func (g *Git) getPushRemote() string {
 		upstream = upstream[:idx]
 	}
 	if upstream == "" {
-		upstream = "origin"
+		upstream = origin
 	}
 
 	branch := g.Ref
@@ -706,7 +709,7 @@ func (g *Git) getUpstreamIcon() string {
 	return g.props.GetString(GitIcon, "\uE5FB ")
 }
 
-func (g *Git) setGitStatus() {
+func (g *Git) setStatus() {
 	addToStatus := func(status string) {
 		const UNTRACKED = "?"
 		if strings.HasPrefix(status, UNTRACKED) {
@@ -805,7 +808,7 @@ func (g *Git) getGitCommandOutput(args ...string) string {
 	return val
 }
 
-func (g *Git) setGitHEADContext() {
+func (g *Git) setHEADStatus() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.Detached = true
@@ -1023,7 +1026,7 @@ func (g *Git) WorktreeCount() int {
 func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	if upstream == "" {
-		upstream = "origin"
+		upstream = origin
 	}
 
 	cfg, err := g.getGitConfig()

@@ -187,7 +187,7 @@ func TestPoshGitSegment(t *testing.T) {
 		env.On("Home").Return("/Users/bill")
 		env.On("GOOS").Return(runtime.LINUX)
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
-			"-c", "color.status=false", "remote", "get-url", "origin"}).Return("github.com/cli", nil)
+			"-c", "color.status=false", "remote", "get-url", origin}).Return("github.com/cli", nil)
 
 		props := &properties.Map{
 			FetchUpstreamIcon: tc.FetchUpstreamIcon,

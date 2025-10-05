@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -161,6 +162,8 @@ type Git struct {
 	PushAhead     int
 	PushBehind    int
 	gitConfig     *ini.File
+	gitConfigOnce sync.Once
+	gitConfigErr  error
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool
@@ -401,13 +404,7 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 		g.mainSCMDir = filepath.Join(gitDir.ParentFolder, dir)
 	}
 
-	configData := g.fileContent(g.mainSCMDir, "config")
-	if configData == "" {
-		log.Debug("Git config file not found, not a bare repo")
-		return false
-	}
-
-	cfg, err := ini.Load([]byte(configData))
+	cfg, err := g.getGitConfig()
 	if err != nil {
 		log.Error(err)
 		return false
@@ -581,12 +578,13 @@ func (g *Git) getPushRemote() string {
 		return ""
 	}
 
-	cfg := g.getGitConfig()
-	if cfg == nil {
+	cfg, err := g.getGitConfig()
+	if err != nil {
 		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
 		if pushRemote == "" {
 			pushRemote = upstream
 		}
+
 		return strings.TrimSpace(pushRemote) + "/" + branch
 	}
 
@@ -602,18 +600,25 @@ func (g *Git) getPushRemote() string {
 	return pushRemote + "/" + branch
 }
 
-func (g *Git) getGitConfig() *ini.File {
-	if g.gitConfig != nil {
-		return g.gitConfig
-	}
+func (g *Git) getGitConfig() (*ini.File, error) {
+	g.gitConfigOnce.Do(func() {
+		configData := g.fileContent(g.mainSCMDir, "config")
+		if configData == "" {
+			log.Debug("git config file not found")
+			g.gitConfigErr = fmt.Errorf("git config file not found")
+			return
+		}
 
-	cfg, err := ini.Load(filepath.Join(g.scmDir, "config"))
-	if err != nil {
-		return nil
-	}
+		cfg, err := ini.Load(configData)
+		if err != nil {
+			g.gitConfigErr = err
+			return
+		}
 
-	g.gitConfig = cfg
-	return g.gitConfig
+		g.gitConfig = cfg
+	})
+
+	return g.gitConfig, g.gitConfigErr
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {
@@ -1021,7 +1026,7 @@ func (g *Git) getRemoteURL() string {
 		upstream = "origin"
 	}
 
-	cfg, err := ini.Load(g.scmDir + "/config")
+	cfg, err := g.getGitConfig()
 	if err != nil {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
@@ -1038,9 +1043,7 @@ func (g *Git) getRemoteURL() string {
 func (g *Git) Remotes() map[string]string {
 	var remotes = make(map[string]string)
 
-	location := filepath.Join(g.scmDir, "config")
-	config := g.env.FileContent(location)
-	cfg, err := ini.Load([]byte(config))
+	cfg, err := g.getGitConfig()
 	if err != nil {
 		return remotes
 	}

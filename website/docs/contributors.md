@@ -463,6 +463,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://iandunn.name"><img src="https://avatars.githubusercontent.com/u/484068?v=4?s=100" width="100px;" alt="Ian Dunn"/><br /><sub><b>Ian Dunn</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=iandunn" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sanki92"><img src="https://avatars.githubusercontent.com/u/70330866?v=4?s=100" width="100px;" alt="Sankalp Tripathi"/><br /><sub><b>Sankalp Tripathi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sanki92" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sanki92" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

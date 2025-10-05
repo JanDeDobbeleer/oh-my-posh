@@ -7,12 +7,14 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"gopkg.in/ini.v1"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -174,7 +176,6 @@ func TestEnabledInBareRepo(t *testing.T) {
 		bare = %s`, strconv.FormatBool(tc.IsBare))
 
 		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
-		env.On("FileContent", "git/config").Return(configData)
 		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
 
 		props := properties.Map{
@@ -183,6 +184,11 @@ func TestEnabledInBareRepo(t *testing.T) {
 
 		g := &Git{}
 		g.Init(props, env)
+
+		g.configOnce = sync.Once{}
+		g.configOnce.Do(func() {
+			g.config, g.configErr = ini.Load([]byte(configData))
+		})
 
 		_ = g.Enabled()
 
@@ -698,6 +704,11 @@ func TestGitUpstream(t *testing.T) {
 		}
 		g.Init(props, env)
 
+		g.configOnce = sync.Once{}
+		g.configOnce.Do(func() {
+			g.configErr = errors.New("no config")
+		})
+
 		upstreamIcon := g.getUpstreamIcon()
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
@@ -1145,7 +1156,6 @@ func TestGitRemotes(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("FileContent", "config").Return(tc.Config)
 
 		g := &Git{
 			Scm: Scm{
@@ -1153,6 +1163,11 @@ func TestGitRemotes(t *testing.T) {
 			},
 		}
 		g.Init(properties.Map{}, env)
+
+		g.configOnce = sync.Once{}
+		g.configOnce.Do(func() {
+			g.config, g.configErr = ini.Load([]byte(tc.Config))
+		})
 
 		got := g.Remotes()
 		assert.Equal(t, tc.Expected, len(got), tc.Case)
@@ -1290,6 +1305,7 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		PushBehindCount    string
 		ExpectedPushAhead  int
 		ExpectedPushBehind int
+		Config             string
 	}{
 		{
 			Case:               "ahead and behind",
@@ -1319,6 +1335,18 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 			ExpectedPushAhead:  0,
 			ExpectedPushBehind: 0,
 		},
+		{
+			Case:               "remote from config",
+			PushAheadCount:     "2",
+			PushBehindCount:    "0",
+			ExpectedPushAhead:  2,
+			ExpectedPushBehind: 0,
+			Config: `
+			[branch "main"]
+				remote = origin
+				merge = refs/heads/main
+			`,
+		},
 	}
 
 	for _, tc := range cases {
@@ -1340,9 +1368,25 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 			Ref:      "main",
 			Upstream: "origin/main",
 		}
-		g.Init(properties.Map{}, env)
+
+		props := properties.Map{
+			FetchPushStatus: true,
+		}
+
+		g.Init(props, env)
+
+		g.configOnce = sync.Once{}
+		g.configOnce.Do(func() {
+			if len(tc.Config) > 0 {
+				g.config, g.configErr = ini.Load([]byte(tc.Config))
+				return
+			}
+
+			g.configErr = errors.New("no config")
+		})
 
 		g.setPushStatus()
+
 		assert.Equal(t, tc.ExpectedPushAhead, g.PushAhead, tc.Case)
 		assert.Equal(t, tc.ExpectedPushBehind, g.PushBehind, tc.Case)
 	}

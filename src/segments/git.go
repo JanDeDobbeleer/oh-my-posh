@@ -162,9 +162,9 @@ type Git struct {
 	Ahead         int
 	PushAhead     int
 	PushBehind    int
-	gitConfig     *ini.File
-	gitConfigOnce sync.Once
-	gitConfigErr  error
+	configOnce    sync.Once
+	config        *ini.File
+	configErr     error
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool
@@ -572,6 +572,7 @@ func (g *Git) getPushRemote() string {
 	if idx := strings.Index(upstream, "/"); idx != -1 {
 		upstream = upstream[:idx]
 	}
+
 	if upstream == "" {
 		upstream = origin
 	}
@@ -591,11 +592,13 @@ func (g *Git) getPushRemote() string {
 		return strings.TrimSpace(pushRemote) + "/" + branch
 	}
 
-	branchSection := cfg.Section("branch \"" + branch + "\"")
-	pushRemote := branchSection.Key("pushRemote").String()
+	sectionName := fmt.Sprintf(`branch "%s"`, branch)
+	section := cfg.Section(sectionName)
+	pushRemote := section.Key("pushRemote").String()
 	if pushRemote == "" {
 		pushRemote = cfg.Section("remote").Key("pushDefault").String()
 	}
+
 	if pushRemote == "" {
 		pushRemote = upstream
 	}
@@ -604,24 +607,24 @@ func (g *Git) getPushRemote() string {
 }
 
 func (g *Git) getGitConfig() (*ini.File, error) {
-	g.gitConfigOnce.Do(func() {
+	g.configOnce.Do(func() {
 		configData := g.fileContent(g.mainSCMDir, "config")
 		if configData == "" {
 			log.Debug("git config file not found")
-			g.gitConfigErr = fmt.Errorf("git config file not found")
+			g.configErr = fmt.Errorf("git config file not found")
 			return
 		}
 
 		cfg, err := ini.Load(configData)
 		if err != nil {
-			g.gitConfigErr = err
+			g.configErr = err
 			return
 		}
 
-		g.gitConfig = cfg
+		g.config = cfg
 	})
 
-	return g.gitConfig, g.gitConfigErr
+	return g.config, g.configErr
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {

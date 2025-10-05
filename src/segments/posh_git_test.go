@@ -1,6 +1,8 @@
 package segments
 
 import (
+	"errors"
+	"sync"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -199,6 +201,11 @@ func TestPoshGitSegment(t *testing.T) {
 			},
 		}
 		g.Init(props, env)
+
+		g.configOnce = sync.Once{}
+		g.configOnce.Do(func() {
+			g.configErr = errors.New("no config")
+		})
 
 		if tc.Template == "" {
 			tc.Template = g.Template()

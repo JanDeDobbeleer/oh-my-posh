@@ -1303,9 +1303,9 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		Case               string
 		PushAheadCount     string
 		PushBehindCount    string
+		Config             string
 		ExpectedPushAhead  int
 		ExpectedPushBehind int
-		Config             string
 	}{
 		{
 			Case:               "ahead and behind",

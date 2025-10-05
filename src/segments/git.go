@@ -141,30 +141,30 @@ type Rebase struct {
 }
 
 type Git struct {
-	User           *User
+	configErr      error
+	config         *ini.File
 	Working        *GitStatus
 	Staging        *GitStatus
 	commit         *Commit
 	Rebase         *Rebase
-	RawUpstreamURL string
-	Ref            string
-	Hash           string
+	User           *User
 	ShortHash      string
+	Hash           string
 	BranchStatus   string
 	Upstream       string
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string
+	Ref            string
+	RawUpstreamURL string
 	Scm
-	worktreeCount int
 	stashCount    int
-	Behind        int
 	Ahead         int
 	PushAhead     int
 	PushBehind    int
+	Behind        int
+	worktreeCount int
 	configOnce    sync.Once
-	config        *ini.File
-	configErr     error
 	IsWorkTree    bool
 	Merge         bool
 	CherryPick    bool

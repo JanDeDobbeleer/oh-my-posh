@@ -3303,6 +3303,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "sanki92",
+      "name": "Sankalp Tripathi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70330866?v=4",
+      "profile": "https://github.com/sanki92",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

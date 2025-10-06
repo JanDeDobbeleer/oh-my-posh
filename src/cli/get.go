@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -46,21 +47,16 @@ This command is used to get the value of the following variables:
 		}
 
 		flags := &runtime.Flags{
-			Shell: shellName,
+			Shell: os.Getenv("POSH_SHELL"),
 		}
 
 		env := &runtime.Terminal{}
 		env.Init(flags)
 
-		cache.Init(shellName, cache.Persist)
-
-		defer func() {
-			cache.Close()
-		}()
-
 		switch args[0] {
 		case "shell":
 			fmt.Print(env.Shell())
+			return
 		case "accent":
 			rgb, err := color.GetAccentColor(env)
 			if err != nil {
@@ -69,6 +65,25 @@ This command is used to get the value of the following variables:
 			}
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
 			fmt.Print("#" + accent.Hex())
+			return
+		case "width":
+			width, err := env.TerminalWidth()
+			if err != nil {
+				fmt.Println("error getting terminal width:", err.Error())
+				return
+			}
+
+			fmt.Print(width)
+			return
+		}
+
+		cache.Init(env.Shell(), cache.Persist)
+
+		defer func() {
+			cache.Close()
+		}()
+
+		switch args[0] {
 		case "toggles":
 			togglesMap, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
 			if len(togglesMap) == 0 {
@@ -80,14 +95,6 @@ This command is used to get the value of the following variables:
 			for toggle := range togglesMap {
 				fmt.Println("- " + toggle)
 			}
-		case "width":
-			width, err := env.TerminalWidth()
-			if err != nil {
-				fmt.Println("error getting terminal width:", err.Error())
-				return
-			}
-
-			fmt.Print(width)
 		case cache.TTL:
 			fmt.Print(cache.GetTTL())
 		default:
@@ -98,5 +105,4 @@ This command is used to get the value of the following variables:
 
 func init() {
 	RootCmd.AddCommand(getCmd)
-	getCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
 }

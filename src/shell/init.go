@@ -58,6 +58,9 @@ func Init(env runtime.Environment, feats Features) string {
 		if env.Flags().Strict {
 			additionalParams += " --strict"
 		}
+		if env.Flags().Eval {
+			additionalParams += " --eval"
+		}
 
 		config := quotePwshOrElvishStr(env.Flags().ConfigPath)
 		executable = quotePwshOrElvishStr(executable)
@@ -66,7 +69,7 @@ func Init(env runtime.Environment, feats Features) string {
 
 		switch env.Flags().Shell {
 		case PWSH:
-			command = "(@(& %s init %s --config=%s --print --eval%s) -join \"`n\") | Invoke-Expression"
+			command = "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
 		case ELVISH:
 			command = "eval ((external %s) init %s --config=%s --print%s | slurp)"
 		}

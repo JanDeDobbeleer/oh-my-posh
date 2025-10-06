@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -28,7 +29,7 @@ This command retrieves the name of the current shell being used.`,
 		}
 
 		flags := &runtime.Flags{
-			Shell: shellName,
+			Shell: os.Getenv("POSH_SHELL"),
 		}
 
 		env := &runtime.Terminal{}

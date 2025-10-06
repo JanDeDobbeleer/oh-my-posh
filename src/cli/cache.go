@@ -14,8 +14,8 @@ var (
 	session bool
 )
 
-// getCmd represents the get command
-var getCache = &cobra.Command{
+// cacheCmd represents the cache command
+var cacheCmd = &cobra.Command{
 	Use:   "cache [path|clear|ttl|show]",
 	Short: "Interact with the oh-my-posh cache",
 	Long: `Interact with the oh-my-posh cache.
@@ -24,7 +24,8 @@ You can do the following:
 
 - path: list cache path
 - clear: remove all cache values
-- ttl: get cache TTL in days`,
+- ttl: get cache TTL in days
+- show: print a detailed list of all cached values`,
 	ValidArgs: []string{
 		"path",
 		"clear",
@@ -80,6 +81,6 @@ You can do the following:
 }
 
 func init() {
-	getCache.Flags().BoolVarP(&session, "session", "s", false, "show the session cache")
-	RootCmd.AddCommand(getCache)
+	cacheCmd.Flags().BoolVarP(&session, "session", "s", false, "show the session cache")
+	RootCmd.AddCommand(cacheCmd)
 }

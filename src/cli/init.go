@@ -167,7 +167,7 @@ func getFullCommand(cmd *cobra.Command, args []string) string {
 }
 
 func initCache(sh string) {
-	if !printOutput && (sh == shell.PWSH || sh == shell.ELVISH) {
+	if !printOutput && eval && (sh == shell.PWSH || sh == shell.ELVISH) {
 		cache.Init(sh)
 		return
 	}

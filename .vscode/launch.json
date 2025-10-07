@@ -21,7 +21,6 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "prompt",
         "print",
         "tooltip",
         "--command=git",
@@ -35,7 +34,6 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "prompt",
         "print",
         "transient",
         "--shell=pwsh",
@@ -59,7 +57,6 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "prompt",
         "debug"
       ]
     },
@@ -70,7 +67,6 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "prompt",
         "init",
         "cmd",
         "--print"

@@ -55,9 +55,11 @@ func Init(env runtime.Environment, feats Features) string {
 		}
 
 		var additionalParams string
+
 		if env.Flags().Strict {
 			additionalParams += " --strict"
 		}
+
 		if env.Flags().Eval {
 			additionalParams += " --eval"
 		}

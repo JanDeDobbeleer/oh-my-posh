@@ -4,6 +4,8 @@ import (
 	"errors"
 	"reflect"
 	"slices"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 type matcher interface {
@@ -78,6 +80,7 @@ func (cfg *Config) merge(override *Config) error {
 		for k := range cfg.Blocks[i].Segments {
 			overrideSegment, exists := overrideSegmentMap.hasMatch(k, cfg.Blocks[i].Segments[k])
 			if !exists {
+				log.Debugf("No matching segment found for %s in block %s", cfg.Blocks[i].Segments[k].Type, cfg.Blocks[i].Type)
 				continue
 			}
 
@@ -87,6 +90,7 @@ func (cfg *Config) merge(override *Config) error {
 			baseSegment := cfg.Blocks[i].Segments[k]
 
 			if baseSegment.Type != overrideSegment.Type {
+				log.Debugf("Replacing segment %s with %s in block %s", baseSegment.Type, overrideSegment.Type, cfg.Blocks[i].Type)
 				cfg.Blocks[i].Segments[k] = overrideSegment
 				continue
 			}
@@ -95,6 +99,12 @@ func (cfg *Config) merge(override *Config) error {
 			if err != nil {
 				return err
 			}
+		}
+
+		// add any remaining segments that were not matched
+		for _, segment := range overrideSegmentMap {
+			log.Debugf("Adding segment %s to block %s", segment.Type, cfg.Blocks[i].Type)
+			cfg.Blocks[i].Segments = append(cfg.Blocks[i].Segments, segment)
 		}
 	}
 

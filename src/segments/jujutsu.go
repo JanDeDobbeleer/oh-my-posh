@@ -70,6 +70,16 @@ func (jj *Jujutsu) CacheKey() (string, bool) {
 	return dir.Path, true
 }
 
+func (jj *Jujutsu) ClosestBookmarks() string {
+	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
+	if err != nil {
+		return ""
+	}
+
+	lines := strings.Split(statusString, "\n")
+	return lines[0]
+}
+
 func (jj *Jujutsu) shouldDisplay(displayStatus bool) bool {
 	jjdir, err := jj.env.HasParentFilePath(".jj", false)
 	if err != nil {

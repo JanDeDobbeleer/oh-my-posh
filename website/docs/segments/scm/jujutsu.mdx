@@ -46,17 +46,18 @@ Set `status_formats` to `true` to enable fetching additional information (and po
 :::note default template
 
 ```template
-jj {{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
+ \uf1fa{{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
 ```
 
 :::
 
 ### Properties
 
-| Name        | Type     | Description                                                                                  |
-| ----------- | -------- | -------------------------------------------------------------------------------------------- |
-| `.Working`  | `Status` | changes in the working copy (see below)                                                      |
-| `.ChangeID` | `string` | The shortest unique prefix of the working copy change that's at least change_id_min_len long |
+| Name                | Type     | Description                                                                                  |
+| ------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `.Working`          | `Status` | changes in the working copy (see below)                                                      |
+| `.ChangeID`         | `string` | The shortest unique prefix of the working copy change that's at least change_id_min_len long |
+| `.ClosestBookmarks` | `string` | Closest bookmark(s) on ancestors                                                             |
 
 ### Status
 

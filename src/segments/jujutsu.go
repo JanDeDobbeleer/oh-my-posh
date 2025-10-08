@@ -37,11 +37,12 @@ func (s *JujutsuStatus) add(code byte) {
 type Jujutsu struct {
 	Working  *JujutsuStatus
 	ChangeID string
+	ClosestBookmarks string
 	Scm
 }
 
 func (jj *Jujutsu) Template() string {
-	return " \uf1fa{{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} "
+	return " \uf1fa{{.ChangeID}} \ue0a0{{.ClosestBookmarks}} {{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} "
 }
 
 func (jj *Jujutsu) Enabled() bool {
@@ -116,6 +117,13 @@ func (jj *Jujutsu) setJujutsuStatus() {
 			jj.Working.add(line[0])
 		}
 	}
+
+	statusString, err = jj.getJujutsuCommandOutput("log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
+	if err != nil {
+		return
+	}
+	lines = strings.Split(statusString, "\n")
+	jj.ClosestBookmarks = lines[0]
 }
 
 func (jj *Jujutsu) logTemplate() string {

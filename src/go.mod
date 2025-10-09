@@ -19,9 +19,9 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/wayneashleyberry/terminal-dimensions v1.1.0
 	golang.org/x/crypto v0.42.0 // indirect
-	golang.org/x/image v0.31.0
-	golang.org/x/sys v0.36.0
-	golang.org/x/text v0.29.0
+	golang.org/x/image v0.32.0
+	golang.org/x/sys v0.37.0
+	golang.org/x/text v0.30.0
 	gopkg.in/ini.v1 v1.67.0
 )
 
@@ -38,7 +38,7 @@ require (
 	github.com/shirou/gopsutil/v4 v4.25.9
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/pflag v1.0.10
-	golang.org/x/mod v0.28.0
+	golang.org/x/mod v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -94,7 +94,7 @@ require (
 	github.com/zclconf/go-cty v1.17.0 // indirect
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/tools v0.36.0 // indirect
+	golang.org/x/tools v0.37.0 // indirect
 )
 
 replace github.com/atotto/clipboard v0.1.4 => github.com/jandedobbeleer/clipboard v0.1.4-1

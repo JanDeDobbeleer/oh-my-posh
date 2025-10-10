@@ -35,10 +35,23 @@ func (s *JujutsuStatus) add(code byte) {
 }
 
 type Jujutsu struct {
-	Working  *JujutsuStatus
-	ChangeID string
-	ClosestBookmarks string
+	Working          *JujutsuStatus
+	ChangeID         string
+	closestBookmarks string
 	Scm
+}
+
+func (jj *Jujutsu) ClosestBookmarks() string {
+	if jj.closestBookmarks == "" {
+		statusString, err := jj.getJujutsuCommandOutput("log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
+		if err != nil {
+			return ""
+		}
+		lines := strings.Split(statusString, "\n")
+		jj.closestBookmarks = lines[0]
+	}
+
+	return jj.closestBookmarks
 }
 
 func (jj *Jujutsu) Template() string {
@@ -118,12 +131,6 @@ func (jj *Jujutsu) setJujutsuStatus() {
 		}
 	}
 
-	statusString, err = jj.getJujutsuCommandOutput("log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
-	if err != nil {
-		return
-	}
-	lines = strings.Split(statusString, "\n")
-	jj.ClosestBookmarks = lines[0]
 }
 
 func (jj *Jujutsu) logTemplate() string {

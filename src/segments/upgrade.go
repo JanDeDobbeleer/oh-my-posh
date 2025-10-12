@@ -33,21 +33,21 @@ func (u *Upgrade) Template() string {
 
 func (u *Upgrade) Enabled() bool {
 	u.Current = build.Version
-	latest, err := u.cachedLatest()
-	if err != nil {
-		latest, err = u.checkUpdate(u.Current)
+	upgradeCache, err := u.upgradeCache()
+	if err != nil || upgradeCache.Current != u.Current {
+		upgradeCache, err = u.checkUpdate(u.Current)
 	}
 
-	if err != nil || u.Current == latest.Latest {
+	if err != nil || u.Current == upgradeCache.Latest {
 		return false
 	}
 
-	u.UpgradeCache = *latest
+	u.UpgradeCache = *upgradeCache
 	u.Version = u.Latest
 	return true
 }
 
-func (u *Upgrade) cachedLatest() (*UpgradeCache, error) {
+func (u *Upgrade) upgradeCache() (*UpgradeCache, error) {
 	data, ok := cache.Get[*UpgradeCache](cache.Device, UPGRADECACHEKEY)
 	if !ok {
 		return nil, errors.New("no cache data")

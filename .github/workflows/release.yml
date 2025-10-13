@@ -128,7 +128,7 @@ jobs:
           az storage blob upload-batch --destination v${{ needs.changelog.outputs.version }} --source .
           az storage blob upload-batch --destination latest --overwrite true --source .
       - name: Release 🎓
-        uses: softprops/action-gh-release@aec2ec56f94eb8180ceec724245f64ef008b89f5
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}

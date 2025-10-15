@@ -4,13 +4,19 @@ set --export --global POWERLINE_COMMAND oh-my-posh
 set --export --global CONDA_PROMPT_MODIFIER false
 
 set --global _omp_tooltip_command ''
+set --global _omp_current_rprompt ''
+set --global _omp_transient 0
 set --global _omp_executable ::OMP::
 set --global _omp_ftcs_marks 0
+set --global _omp_transient_prompt 0
 set --global _omp_prompt_mark 0
 
 # disable all known python virtual environment prompts
 set --global VIRTUAL_ENV_DISABLE_PROMPT 1
 set --global PYENV_VIRTUALENV_DISABLE_PROMPT 1
+
+# We use this to avoid unnecessary CLI calls for prompt repaint.
+set --global _omp_new_prompt 1
 
 # template function for context loading
 function set_poshcontext
@@ -38,17 +44,18 @@ end
 function fish_prompt
     set --local omp_status_temp $status
     set --local omp_pipestatus_temp $pipestatus
-
     # clear from cursor to end of screen as
     # commandline --function repaint does not do this
     # see https://github.com/fish-shell/fish-shell/issues/8418
-    # printf \e\[0J
-
-    if contains -- --final-rendering $argv
-        echo -n (_omp_get_prompt transient)
+    printf \e\[0J
+    if test "$_omp_transient" = 1
+        _omp_get_prompt transient
         return
     end
-
+    if test "$_omp_new_prompt" = 0
+        echo -n "$_omp_current_prompt"
+        return
+    end
     set --global _omp_status $omp_status_temp
     set --global _omp_pipestatus $omp_pipestatus_temp
     set --global _omp_no_status false
@@ -88,11 +95,28 @@ function fish_prompt
         iterm2_prompt_mark
     end
 
-    echo -n (_omp_get_prompt primary --cleared=$omp_cleared | string join \n | string collect)
+    # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
+    set --global _omp_current_prompt (_omp_get_prompt primary --cleared=$omp_cleared | string join \n | string collect)
+
+    echo -n "$_omp_current_prompt"
 end
 
 function fish_right_prompt
-    echo -n (_omp_get_prompt right | string join '')
+    if test "$_omp_transient" = 1
+        set --global _omp_transient 0
+        return
+    end
+
+    # Repaint an existing right prompt.
+    if test "$_omp_new_prompt" = 0
+        echo -n "$_omp_current_rprompt"
+        return
+    end
+
+    set --global _omp_new_prompt 0
+    set --global _omp_current_rprompt (_omp_get_prompt right | string join '')
+
+    echo -n "$_omp_current_rprompt"
 end
 
 function _omp_postexec --on-event fish_postexec
@@ -105,6 +129,30 @@ function _omp_preexec --on-event fish_preexec
     if test $_omp_ftcs_marks = 1
         echo -ne "\e]133;C\a"
     end
+end
+
+# perform cleanup so a new initialization in current session works
+if bind \r --user 2>/dev/null | string match -qe _omp_enter_key_handler
+    bind -e \r -M default
+    bind -e \r -M insert
+    bind -e \r -M visual
+end
+
+if bind \n --user 2>/dev/null | string match -qe _omp_enter_key_handler
+    bind -e \n -M default
+    bind -e \n -M insert
+    bind -e \n -M visual
+end
+
+if bind \cc --user 2>/dev/null | string match -qe _omp_ctrl_c_key_handler
+    bind -e \cc -M default
+    bind -e \cc -M insert
+    bind -e \cc -M visual
+end
+
+if bind \x20 --user 2>/dev/null | string match -qe _omp_space_key_handler
+    bind -e \x20 -M default
+    bind -e \x20 -M insert
 end
 
 # tooltip
@@ -136,4 +184,64 @@ end
 function enable_poshtooltips
     bind \x20 _omp_space_key_handler -M default
     bind \x20 _omp_space_key_handler -M insert
+end
+
+# transient prompt
+
+function _omp_enter_key_handler
+    if commandline --paging-mode
+        commandline --function execute
+        return
+    end
+
+    if commandline --is-valid || test -z (commandline --current-buffer | string trim -l | string collect)
+        set --global _omp_new_prompt 1
+        set --global _omp_tooltip_command ''
+
+        if test $_omp_transient_prompt = 1
+            set --global _omp_transient 1
+            commandline --function repaint
+        end
+    end
+
+    commandline --function execute
+end
+
+function _omp_ctrl_c_key_handler
+    if test -z (commandline --current-buffer | string collect)
+        return
+    end
+
+    # Render a transient prompt on Ctrl-C with non-empty command line buffer.
+    set --global _omp_new_prompt 1
+    set --global _omp_tooltip_command ''
+
+    if test $_omp_transient_prompt = 1
+        set --global _omp_transient 1
+        commandline --function repaint
+    end
+
+    commandline --function cancel-commandline
+    commandline --function repaint
+end
+
+bind \r _omp_enter_key_handler -M default
+bind \r _omp_enter_key_handler -M insert
+bind \r _omp_enter_key_handler -M visual
+bind \n _omp_enter_key_handler -M default
+bind \n _omp_enter_key_handler -M insert
+bind \n _omp_enter_key_handler -M visual
+bind \cc _omp_ctrl_c_key_handler -M default
+bind \cc _omp_ctrl_c_key_handler -M insert
+bind \cc _omp_ctrl_c_key_handler -M visual
+
+# legacy functions
+function enable_poshtransientprompt
+    return
+end
+
+# This can be called by user whenever re-rendering is required.
+function omp_repaint_prompt
+    set --global _omp_new_prompt 1
+    commandline --function repaint
 end

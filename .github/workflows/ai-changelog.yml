@@ -1,0 +1,239 @@
+name: Enhance release changelog with AI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to test (e.g., v19.0.0)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run mode - generate changelog but do not update release'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write  # Update release body
+  models: read     # Access GitHub Models API
+
+jobs:
+  enhance:
+    name: Generate enhanced changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (with tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Gather release context
+        id: ctx
+        shell: bash
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          # Determine if this is a manual dispatch or release event
+          if [[ -n "$INPUT_TAG" ]]; then
+            # Manual dispatch: fetch release info for the specified tag
+            CURRENT_TAG="$INPUT_TAG"
+            RELEASE_JSON=$(gh api repos/${{ github.repository }}/releases/tags/$CURRENT_TAG || echo '{}')
+            RELEASE_ID=$(printf "%s" "$RELEASE_JSON" | jq -r '.id // "0"')
+            HTML_URL=$(printf "%s" "$RELEASE_JSON" | jq -r '.html_url // ""')
+            EXISTING_BODY=$(printf "%s" "$RELEASE_JSON" | jq -r '.body // ""')
+          else
+            # Release event: parse from event payload
+            CURRENT_TAG=$(jq -r '.release.tag_name' "$GITHUB_EVENT_PATH")
+            RELEASE_ID=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")
+            HTML_URL=$(jq -r '.release.html_url' "$GITHUB_EVENT_PATH")
+            EXISTING_BODY=$(jq -r '.release.body // ""' "$GITHUB_EVENT_PATH")
+          fi
+          # Persist to a file for later steps to source
+          {
+            echo "CURRENT_TAG=$CURRENT_TAG"
+            echo "RELEASE_ID=$RELEASE_ID"
+            echo "HTML_URL=$HTML_URL"
+            echo "DRY_RUN=${DRY_RUN:-false}"
+          } > ctx.env
+          # Save existing body as a file to avoid env escaping issues
+          printf "%s" "$EXISTING_BODY" > existing_notes.md
+
+      - name: Determine diff range
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          set -a; source ctx.env; set +a
+          # Try to find the previous tag using git describe
+          if PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null); then
+            BASE="$PREV_TAG"
+          else
+            # Fallback to initial commit
+            BASE="$(git rev-list --max-parents=0 HEAD | tail -n 1)"
+          fi
+          echo "base_ref=$BASE" >> "$GITHUB_OUTPUT"
+          echo "curr_ref=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
+          echo "compare_url=https://github.com/${{ github.repository }}/compare/${BASE}...${CURRENT_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Collect commits and changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.diff.outputs.base_ref }}"
+          HEAD="${{ steps.diff.outputs.curr_ref }}"
+          git log --no-merges --pretty=format:'%s' "${BASE}..${HEAD}" | head -n 500 > commits_subjects.txt || true
+          git log --no-merges --pretty=format:'- %s%n%b%n' "${BASE}..${HEAD}" | head -n 2000 > commits_detailed.txt || true
+          git diff --name-status "${BASE}..${HEAD}" | head -n 1000 > files_changed.txt || true
+          git shortlog -sne "${BASE}..${HEAD}" | sed -E 's/^ *[0-9]+\t//g' | head -n 200 > contributors.txt || true
+
+      - name: Generate enhanced changelog with AI
+        id: ai
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          set -a; source ctx.env; set +a
+          MODEL="openai/gpt-4o-mini"
+          SYSTEM_PROMPT=$(cat << 'PROMPT'
+          You are a release notes editor for the open-source project "oh-my-posh", a cross-shell prompt theme engine written in Go.
+          Write a clear, human-friendly Markdown changelog for this release. Use concise language and organize with headings.
+          Goals:
+          - Summarize highlights up front with context and impact.
+          - Group changes using conventional commit types (Features, Fixes, Performance, Docs, Refactor, Revert, Build/CI, Chore), but merge minor types into a short 'Other' where appropriate.
+          - Call out breaking changes and required migrations with explicit before/after examples or commands.
+          - Add practical usage notes or snippets to help users adopt new features or changes.
+          - Mention notable themes/config segments affected when you can infer from commits/file paths.
+          - Credit contributors.
+          - Provide 'Full diff' and 'Thanks' footer.
+          Requirements:
+          - Output valid Markdown only, no front matter, no HTML.
+          - Keep to ~300-800 words unless there are many breaking changes.
+          - Prefer code blocks for examples with proper language tags (bash, json, yaml, toml, powershell).
+          - Do not invent features not present in the commits/diff.
+          PROMPT
+          )
+          # Build the user content
+          REPO="${{ github.repository }}"
+          COMPARE_URL="${{ steps.diff.outputs.compare_url }}"
+          CURR="$CURRENT_TAG"
+          if PREV=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null); then :; else PREV="<none>"; fi
+          EXISTING=$(cat existing_notes.md || true)
+          SUBJECTS="$(cat commits_subjects.txt || true)"
+          DETAILS="$(cat commits_detailed.txt || true)"
+          FILES="$(cat files_changed.txt || true)"
+          CONTRIBUTORS="$(cat contributors.txt || true)"
+          USER_CONTENT=$(cat << EOF
+          Repository: ${REPO}
+          Release: ${CURR}
+          Previous: ${PREV:-<none>}
+          Release URL: ${HTML_URL}
+          Compare URL: ${COMPARE_URL}
+
+          Existing release notes (from conventional commits):
+          ---
+          ${EXISTING}
+          ---
+
+          Conventional commits (subjects):
+          ---
+          ${SUBJECTS}
+          ---
+
+          Commits (details):
+          ---
+          ${DETAILS}
+          ---
+
+          Changed files:
+          ---
+          ${FILES}
+          ---
+
+          Contributors:
+          ---
+          ${CONTRIBUTORS}
+          ---
+          EOF
+          )
+          OUTPUT_MD=""
+          set +e
+          RESP=$(curl -sS -f -X POST "https://models.github.ai/inference/chat/completions" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg model "$MODEL" --arg sys "$SYSTEM_PROMPT" --arg user "$USER_CONTENT" '{model:$model, messages: [{role:"system",content:$sys},{role:"user",content:$user}], temperature: 0.2, max_tokens: 4000}')")
+          if [ $? -eq 0 ]; then
+            OUTPUT_MD=$(printf "%s" "$RESP" | jq -r '.choices[0].message.content // empty')
+          fi
+          set -e
+          if [[ -z "$OUTPUT_MD" ]]; then
+            echo "AI generation failed or no output produced."
+            echo "enhanced_body=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Wrap with markers for idempotent updates and include compare link
+          {
+            echo "<!-- AI-ENHANCED-CHANGELOG:START -->"
+            echo ""
+            echo "$OUTPUT_MD"
+            echo ""
+            echo "_Full diff: ${COMPARE_URL}_"
+            echo ""
+            echo "<!-- AI-ENHANCED-CHANGELOG:END -->"
+          } > enhanced_changelog.md
+          echo "enhanced_body<<'EOF'" >> "$GITHUB_OUTPUT"
+          cat enhanced_changelog.md >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Update release body
+        if: ${{ steps.ai.outputs.enhanced_body != '' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          set -a; source ctx.env; set +a
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "🧪 Dry run mode enabled - skipping release update"
+            echo "The generated changelog would be applied to release ID: ${RELEASE_ID}"
+            exit 0
+          fi
+          # Fetch current release body
+          gh api repos/${{ github.repository }}/releases/${RELEASE_ID} | jq -r '.body // ""' > current_body.md
+          # Remove previous AI section if present
+          awk '/<!-- AI-ENHANCED-CHANGELOG:START -->/{flag=1; next} /<!-- AI-ENHANCED-CHANGELOG:END -->/{flag=0; next} !flag { print }' current_body.md > clean_body.md
+          # Compose new body: AI section + previous body (cleaned)
+          cat enhanced_changelog.md > merged.md
+          echo "" >> merged.md
+          cat clean_body.md >> merged.md
+          PAYLOAD=$(jq -Rs '{body: .}' < merged.md)
+          gh api -X PATCH repos/${{ github.repository }}/releases/${RELEASE_ID} -H "Content-Type: application/json" -d "$PAYLOAD"
+
+      - name: Summary
+        if: ${{ steps.ai.outputs.enhanced_body != '' }}
+        shell: bash
+        run: |
+          set -a; source ctx.env; set +a
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "## 🧪 Dry Run - Enhanced Changelog Preview" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Release would not be modified.** Below is the generated changelog:" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ Enhanced Changelog Generated" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Release body has been updated with AI-enhanced changelog:" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat enhanced_changelog.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Skipped notice
+        if: ${{ steps.ai.outputs.enhanced_body == '' }}
+        run: |
+          echo "❌ AI changelog generation skipped or failed. Ensure GitHub Models access is enabled for this repo." >> $GITHUB_STEP_SUMMARY

@@ -109,11 +109,13 @@ jobs:
           echo "  ✅ Detailed commits: $(wc -l < commits_detailed.txt) lines"
           git diff --name-status "${BASE}..${HEAD}" | head -n 1000 > files_changed.txt || true
           echo "  ✅ Changed files: $(wc -l < files_changed.txt) files"
-          # Extract contributors as "Name <email>" then strip email and create GitHub profile links
+          # Extract contributors, exclude Jan De Dobbeleer and bots, format as GitHub profile links
           git shortlog -sne "${BASE}..${HEAD}" | sed -E 's/^ *[0-9]+\t//g' | while IFS= read -r line; do
-            # Extract name (everything before the email)
             name=$(echo "$line" | sed -E 's/ *<.*//g')
-            # Extract email username (before @) as GitHub username approximation
+            # Skip Jan De Dobbeleer and common bots
+            if [[ "$name" =~ ^(Jan De Dobbeleer|dependabot|renovate|github-actions|Renovate Bot|dependabot\[bot\]|github-actions\[bot\])$ ]]; then
+              continue
+            fi
             username=$(echo "$line" | sed -E 's/.*<([^@]+)@.*/\1/g')
             echo "- [@${username}](https://github.com/${username}) (${name})"
           done | head -n 200 > contributors.txt || true
@@ -157,8 +159,7 @@ jobs:
           - Call out breaking changes and required migrations with explicit before/after examples or commands
           - Add practical usage notes or snippets to help users adopt new features or changes
           - For segment changes, explain the user-facing impact (e.g., "The Git segment now supports...")
-          - Credit contributors at the end with GitHub profile links (EXCLUDE: Jan De Dobbeleer, bots like dependabot, renovate, github-actions)
-          - Contributors are provided as Markdown links, use them as-is without modification
+          - Credit contributors at the end (they are pre-filtered and formatted as GitHub profile links)
           - Include a "Full diff" link footer
 
           Requirements:

@@ -113,7 +113,7 @@ jobs:
           git shortlog -sne "${BASE}..${HEAD}" | sed -E 's/^ *[0-9]+\t//g' | while IFS= read -r line; do
             name=$(echo "$line" | sed -E 's/ *<.*//g')
             # Skip Jan De Dobbeleer and common bots
-            if [[ "$name" =~ ^(Jan De Dobbeleer|dependabot|renovate|github-actions|Renovate Bot|dependabot\[bot\]|github-actions\[bot\])$ ]]; then
+            if [[ "$name" =~ ^(Jan De Dobbeleer|dependabot|renovate|github-actions|Renovate Bot|dependabot\[bot\]|github-actions\[bot\]|allcontributors\[bot\])$ ]]; then
               continue
             fi
             username=$(echo "$line" | sed -E 's/.*<([^@]+)@.*/\1/g')

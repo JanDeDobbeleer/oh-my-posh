@@ -210,7 +210,7 @@ jobs:
           REPO="${{ github.repository }}"
           COMPARE_URL="${{ steps.diff.outputs.compare_url }}"
           CURR="$CURRENT_TAG"
-          if PREV=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null); then :; else PREV="<none>"; fi
+          PREV="${{ steps.diff.outputs.base_ref }}"
           EXISTING=$(cat existing_notes.md || true)
           SUBJECTS="$(cat commits_subjects.txt || true)"
           DETAILS="$(cat commits_detailed.txt || true)"

@@ -121,6 +121,41 @@ jobs:
           done | head -n 200 > contributors.txt || true
           echo "  ✅ Contributors: $(wc -l < contributors.txt) people"
 
+      - name: Collect issue context
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.diff.outputs.base_ref }}"
+          HEAD="${{ steps.diff.outputs.curr_ref }}"
+          echo "🔍 Collecting issue context for referenced issues"
+          > issues_context.txt
+          # Extract issue numbers from commit messages (e.g., fixes #123, closes #456, #789)
+          ISSUE_NUMBERS=$(git log --no-merges --pretty=format:'%s %b' "${BASE}..${HEAD}" | \
+            grep -oiE '(fix(es|ed)?|close(s|d)?|resolve(s|d)?)?[[:space:]]*#[0-9]+' | \
+            grep -oE '[0-9]+' | sort -u || true)
+          if [ -z "$ISSUE_NUMBERS" ]; then
+            echo "  No issues referenced in commits"
+          else
+            COUNT=0
+            for NUM in $ISSUE_NUMBERS; do
+              echo "  Fetching issue #$NUM..."
+              if ISSUE_DATA=$(gh api "repos/${{ github.repository }}/issues/$NUM" 2>/dev/null); then
+                TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
+                BODY=$(echo "$ISSUE_DATA" | jq -r '.body // ""' | head -c 1000)
+                LABELS=$(echo "$ISSUE_DATA" | jq -r '.labels[]?.name' | tr '\n' ', ' | sed 's/,$//')
+                echo "---" >> issues_context.txt
+                echo "Issue #$NUM: $TITLE" >> issues_context.txt
+                [ -n "$LABELS" ] && echo "Labels: $LABELS" >> issues_context.txt
+                echo "$BODY" >> issues_context.txt
+                echo "" >> issues_context.txt
+                COUNT=$((COUNT + 1))
+              fi
+            done
+            echo "  ✅ Collected context for $COUNT issues"
+          fi
+
       - name: Generate enhanced changelog with AI
         id: ai
         shell: bash
@@ -159,11 +194,12 @@ jobs:
           - Call out breaking changes and required migrations with explicit before/after examples or commands
           - Add practical usage notes or snippets to help users adopt new features or changes
           - For segment changes, explain the user-facing impact (e.g., "The Git segment now supports...")
-          - Credit contributors at the end (they are pre-filtered and formatted as GitHub profile links)
+          - Credit contributors at the end (they are pre-filtered and formatted as GitHub profile links) - ONLY if contributors list is not empty
           - Include a "Full diff" link footer
 
           Requirements:
-          - Output valid Markdown only, no front matter, no HTML
+          - Output valid Markdown only, no front matter, no HTML, no title heading
+          - Do not include a title like "Changelog for vX.Y.Z" - start directly with the content
           - Keep to ~300-800 words unless there are many breaking changes
           - Prefer code blocks for examples with proper language tags (bash, json, yaml, toml, powershell)
           - Do not invent features not present in the commits/diff
@@ -180,6 +216,7 @@ jobs:
           DETAILS="$(cat commits_detailed.txt || true)"
           FILES="$(cat files_changed.txt || true)"
           CONTRIBUTORS="$(cat contributors.txt || true)"
+          ISSUES_CONTEXT="$(cat issues_context.txt || true)"
           VERSIONRC="$(cat .versionrc.json || echo '{}')"
           USER_CONTENT=$(cat << EOF
           Repository: ${REPO}
@@ -213,6 +250,11 @@ jobs:
           ${FILES}
           ---
 
+          Referenced issues (for additional context, explain impact in user terms):
+          ---
+          ${ISSUES_CONTEXT}
+          ---
+
           Contributors:
           ---
           ${CONTRIBUTORS}
@@ -241,16 +283,8 @@ jobs:
             exit 0
           fi
           echo "  Generated changelog length: $(printf "%s" "$OUTPUT_MD" | wc -c) characters"
-          # Wrap with markers for idempotent updates and include compare link
-          {
-            echo "<!-- AI-ENHANCED-CHANGELOG:START -->"
-            echo ""
-            echo "$OUTPUT_MD"
-            echo ""
-            echo "_Full diff: ${COMPARE_URL}_"
-            echo ""
-            echo "<!-- AI-ENHANCED-CHANGELOG:END -->"
-          } > enhanced_changelog.md
+          # Save the AI-generated changelog
+          echo "$OUTPUT_MD" > enhanced_changelog.md
           echo "✅ Enhanced changelog saved to enhanced_changelog.md"
           echo "enhanced_body<<EOF" >> "$GITHUB_OUTPUT"
           cat enhanced_changelog.md >> "$GITHUB_OUTPUT"

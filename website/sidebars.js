@@ -226,6 +226,7 @@ module.exports = {
         "contributing/plastic",
       ],
     },
+    "dsc",
     "themes",
     "share",
     "faq",

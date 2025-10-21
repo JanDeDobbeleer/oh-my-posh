@@ -57,6 +57,11 @@ jobs:
           npm install
           npm run themes
           cd ..
+      - name: Copy schema for MCP validator 📋
+        run: |
+          mkdir -p website/static
+          cp themes/schema.json website/static/schema.json
+          echo "✅ Copied schema.json to website/static/"
       - name: Build Docs And Deploy 🚀
         id: builddeploy
         uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9

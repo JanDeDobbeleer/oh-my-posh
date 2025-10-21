@@ -1,0 +1,38 @@
+{
+  "name": "oh-my-posh-validator",
+  "description": "MCP server for validating oh-my-posh theme configurations against the official JSON schema. Supports JSON, YAML, and TOML formats with detailed error reporting.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jan De Dobbeleer",
+    "url": "https://github.com/JanDeDobbeleer"
+  },
+  "homepage": "https://ohmyposh.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JanDeDobbeleer/oh-my-posh"
+  },
+  "license": "MIT",
+  "transport": {
+    "type": "http",
+    "url": "https://ohmyposh.dev/api/mcp"
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "validate_config",
+        "description": "Validates oh-my-posh configuration files (JSON, YAML, or TOML) against the official schema. Returns detailed validation errors with JSON paths and helpful suggestions."
+      }
+    ]
+  },
+  "keywords": [
+    "oh-my-posh",
+    "prompt",
+    "theme",
+    "validation",
+    "schema",
+    "json-schema",
+    "yaml",
+    "toml",
+    "configuration"
+  ]
+}

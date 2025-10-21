@@ -7,6 +7,11 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "axios": "^1.7.9"
+    "axios": "^1.7.9",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "js-yaml": "^4.1.0",
+    "@iarna/toml": "^2.2.5",
+    "@modelcontextprotocol/sdk": "^0.5.0"
   }
 }

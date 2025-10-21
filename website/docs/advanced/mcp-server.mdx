@@ -1,0 +1,276 @@
+---
+id: mcp-server
+title: MCP Server
+sidebar_label: MCP Server
+---
+
+## What is the Oh My Posh MCP Server?
+
+The Oh My Posh MCP (Model Context Protocol) Server is a validation service that allows you to validate your oh-my-posh
+theme configurations against the official JSON schema. It supports JSON, YAML, and TOML formats and provides detailed
+error reporting to help you create valid configurations.
+
+## Features
+
+- **Multi-format Support**: Validates JSON, YAML, and TOML configurations
+- **Detailed Error Reporting**: Get precise validation errors with JSON paths
+- **Format Auto-detection**: Automatically detects the format of your configuration
+- **Warnings & Recommendations**: Receive best practice suggestions and deprecation warnings
+- **Standards-based**: Uses the official oh-my-posh JSON schema
+- **Remote Access**: No installation required - access via HTTPS
+
+## Usage
+
+### With MCP Clients
+
+Configure your MCP-compatible client (like Claude Desktop, Cline, or other AI assistants) to use the validator:
+
+```json
+{
+  "mcpServers": {
+    "oh-my-posh-validator": {
+      "url": "https://ohmyposh.dev/api/mcp",
+      "transport": "http"
+    }
+  }
+}
+```
+
+Then ask your AI assistant to validate your oh-my-posh configuration.
+
+### Direct HTTP API
+
+You can also use the validator directly via HTTP requests.
+
+#### Get Server Information
+
+```bash
+curl https://ohmyposh.dev/api/mcp
+```
+
+#### List Available Tools
+
+```bash
+curl -X POST https://ohmyposh.dev/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/list",
+    "id": 1
+  }'
+```
+
+#### Validate a Configuration
+
+```bash
+curl -X POST https://ohmyposh.dev/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "validate_config",
+      "arguments": {
+        "content": "{\"$schema\":\"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\",\"version\":3,\"blocks\":[]}",
+        "format": "json"
+      }
+    },
+    "id": 1
+  }'
+```
+
+## Tool Parameters
+
+### validate_config
+
+**Parameters:**
+
+| Parameter | Type   | Required | Description                                                      |
+|-----------|--------|----------|------------------------------------------------------------------|
+| content   | string | Yes      | The configuration content as a string (JSON, YAML, or TOML)      |
+| format    | string | No       | The format: `json`, `yaml`, `toml`, or `auto` (default: `auto`) |
+
+**Returns:**
+
+```json
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "path": "$schema",
+      "message": "Consider adding \"$schema\" property for better editor support.",
+      "type": "recommendation"
+    }
+  ],
+  "detectedFormat": "json",
+  "parsedConfig": { ... }
+}
+```
+
+## Response Fields
+
+| Field          | Type    | Description                                            |
+|----------------|---------|--------------------------------------------------------|
+| valid          | boolean | Whether the configuration is valid                     |
+| errors         | array   | List of validation errors (empty if valid)             |
+| warnings       | array   | List of warnings and recommendations                   |
+| detectedFormat | string  | The detected or specified format                       |
+| parsedConfig   | object  | The parsed configuration object                        |
+
+## Error Format
+
+Each error in the `errors` array contains:
+
+| Field   | Type   | Description                                  |
+|---------|--------|----------------------------------------------|
+| path    | string | JSON path to the problematic property        |
+| message | string | Human-readable error message                 |
+| keyword | string | The validation keyword that failed           |
+| params  | object | Additional parameters about the error        |
+| data    | any    | The actual data that failed validation       |
+
+## Examples
+
+### Valid Configuration
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "path",
+          "style": "powerline",
+          "background": "blue",
+          "foreground": "white"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Invalid Configuration Example
+
+```json
+{
+  "blocks": [
+    {
+      "type": "invalid-type"
+    }
+  ]
+}
+```
+
+**Validation Result:**
+
+```json
+{
+  "valid": false,
+  "errors": [
+    {
+      "path": "/blocks/0/type",
+      "message": "Value must be one of: prompt, rprompt, line",
+      "keyword": "enum"
+    }
+  ]
+}
+```
+
+## Integration Examples
+
+### Claude Desktop
+
+Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "oh-my-posh-validator": {
+      "url": "https://ohmyposh.dev/api/mcp",
+      "transport": "http"
+    }
+  }
+}
+```
+
+Then ask Claude: "Can you validate this oh-my-posh configuration for me?" and paste your config.
+
+### Cline (VS Code Extension)
+
+Configure Cline to use the MCP server, and it will automatically validate configurations when you're working on
+oh-my-posh themes.
+
+## Supported Formats
+
+### JSON
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "blocks": []
+}
+```
+
+### YAML
+
+```yaml
+$schema: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+version: 3
+blocks: []
+```
+
+### TOML
+
+```toml
+version = 3
+blocks = []
+```
+
+## Privacy & Security
+
+- Your configuration content is **not stored** or logged
+- All validation is done in-memory and discarded after processing
+- The server only reads the official schema from the repository
+- No authentication required - fully anonymous
+
+## Source Code
+
+The MCP server is open source and part of the oh-my-posh repository:
+
+- [MCP Server Function](https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/website/api/mcp)
+- [Validator Module](https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/website/api/shared/validator.js)
+
+## Troubleshooting
+
+### Format Not Detected Correctly
+
+If auto-detection fails, explicitly specify the format:
+
+```json
+{
+  "arguments": {
+    "content": "...",
+    "format": "yaml"
+  }
+}
+```
+
+### Parse Errors
+
+If you get parse errors, check that your configuration is valid JSON/YAML/TOML syntax before validating the schema.
+
+### Schema Errors
+
+The validator uses the latest schema from the main branch. If you're using an older oh-my-posh version, some newer
+properties might not be recognized.
+
+## Contributing
+
+Found a bug or have a suggestion? Please [open an issue](https://github.com/JanDeDobbeleer/oh-my-posh/issues) on GitHub.

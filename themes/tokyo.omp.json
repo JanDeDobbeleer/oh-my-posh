@@ -87,7 +87,7 @@
         {
           "foreground": "#ffa5d8",
           "style": "diamond",
-          "template": "[<#ffffff>\uf10fe</> <#ffff00>{{.Context}}</>{{if .Namespace}} :: <#ffff00>{{.Namespace}}</>{{end}}]",
+          "template": "[<#ffffff>\udb84\udcfe</> <#ffff00>{{.Context}}</>{{if .Namespace}} :: <#ffff00>{{.Namespace}}</>{{end}}]",
           "type": "kubectl"
         },
         {

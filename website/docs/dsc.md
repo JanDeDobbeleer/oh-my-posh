@@ -1,7 +1,7 @@
 ---
 id: dsc
 title: Desired State Configuration
-sidebar_label: Desired State Configuration
+sidebar_label: 🖥️ Desired State Configuration
 ---
 
 Oh My Posh supports Desired State Configuration (DSC) for declarative configuration management, enabling automated

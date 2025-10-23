@@ -1,6 +1,12 @@
-# MCP Validator Function
+---
+title: MCP Validator Function
+description: 'Azure Function implementing the Model Context Protocol server for validating oh-my-posh configurations'
+---
 
-This directory contains the Azure Function that implements the Model Context Protocol (MCP) server for validating oh-my-posh configurations.
+## Overview
+
+This directory contains the Azure Function that implements the Model Context Protocol (MCP) server for
+validating oh-my-posh configurations.
 
 ## Endpoints
 
@@ -9,9 +15,12 @@ This directory contains the Azure Function that implements the Model Context Pro
 
 ## Supported Tools
 
-1. **validate_config** - Validate an oh-my-posh configuration
-   - Supports JSON, YAML, and TOML formats
-   - Returns detailed validation errors with JSON paths
+### validate_config
+
+Validate an oh-my-posh configuration.
+
+- Supports JSON, YAML, and TOML formats
+- Returns detailed validation errors with JSON paths
 
 ## Usage
 
@@ -61,7 +70,8 @@ curl -X POST https://ohmyposh.dev/api/mcp \
     "params": {
       "name": "validate_config",
       "arguments": {
-        "content": "{\"$schema\":\"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\",\"blocks\":[]}",
+        "content": "{\"$schema\":\"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/
+themes/schema.json\",\"blocks\":[]}",
         "format": "json"
       }
     },

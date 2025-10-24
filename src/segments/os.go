@@ -18,6 +18,8 @@ const (
 	Linux properties.Property = "linux"
 	// Windows the string/icon to use for windows
 	Windows properties.Property = "windows"
+	// Android the string/icon to use for android
+	Android properties.Property = "android"
 	// DisplayDistroName display the distro name or not
 	DisplayDistroName properties.Property = "display_distro_name"
 )
@@ -41,6 +43,8 @@ func (oi *Os) Enabled() bool {
 			break
 		}
 		oi.Icon = oi.getDistroIcon(pf)
+	case runtime.ANDROID:
+		oi.Icon = oi.props.GetString(Android, "\ue70e")
 	default:
 		oi.Icon = goos
 	}
@@ -53,7 +57,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"almalinux":           "\uF31D",
 		"almalinux9":          "\uF31D",
 		"alpine":              "\uF300",
-		"android":             "\uF17b",
+		"android":             "\ue70e",
 		"aosc":                "\uF301",
 		"arch":                "\uF303",
 		"centos":              "\uF304",

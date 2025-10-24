@@ -5447,7 +5447,7 @@
     "cycle": {
       "type": "array",
       "title": "List of settings to cycle through segment by segment",
-      "description": "https://ohmyposh.dev/docs/configuration/cycle",
+      "description": "https://ohmyposh.dev/docs/configuration/colors#cycle",
       "default": [],
       "items": {
         "properties": {

@@ -3190,6 +3190,12 @@
                     "description": "The icon to use for Debian",
                     "default": "\uF306"
                   },
+                  "deepin": {
+                    "type": "string",
+                    "title": "Deepin Icon",
+                    "description": "The icon to use for Deepin",
+                    "default": "\uF321"
+                  },
                   "devuan": {
                     "type": "string",
                     "title": "Devuan Icon",
@@ -3208,17 +3214,35 @@
                     "description": "The icon to use for Elementary",
                     "default": "\uF309"
                   },
+                  "endeavouros": {
+                    "type": "string",
+                    "title": "EndeavourOS Icon",
+                    "description": "The icon to use for EndeavourOS",
+                    "default": "\uF322"
+                  },
                   "fedora": {
                     "type": "string",
                     "title": "Fedora Icon",
                     "description": "The icon to use for Fedora",
                     "default": "\uF30a"
                   },
+                  "freebsd": {
+                    "type": "string",
+                    "title": "FreeBSD Icon",
+                    "description": "The icon to use for FreeBSD",
+                    "default": "\\U000f08e0"
+                  },
                   "gentoo": {
                     "type": "string",
                     "title": "Gentoo Icon",
                     "description": "The icon to use for Gentoo",
                     "default": "\uF30d"
+                  },
+                  "kali": {
+                    "type": "string",
+                    "title": "Kali Icon",
+                    "description": "The icon to use for Kali",
+                    "default": "\\uf327"
                   },
                   "mageia": {
                     "type": "string",
@@ -3238,6 +3262,12 @@
                     "description": "The icon to use for Mint",
                     "default": "\uF30e"
                   },
+                  "neon": {
+                    "type": "string",
+                    "title": "Neon Icon",
+                    "description": "The icon to use for Neon",
+                    "default": "\\uf331"
+                  },
                   "nixos": {
                     "type": "string",
                     "title": "Nixos Icon",
@@ -3248,6 +3278,12 @@
                     "type": "string",
                     "title": "Opensuse Icon",
                     "description": "The icon to use for Opensuse",
+                    "default": "\uF314"
+                  },
+                  "opensuse-tumbleweed": {
+                    "type": "string",
+                    "title": "OpenSUSE Tumbleweed Icon",
+                    "description": "The icon to use for OpenSUSE Tumbleweed",
                     "default": "\uF314"
                   },
                   "redhat": {
@@ -3286,11 +3322,23 @@
                     "description": "The icon to use for Alma",
                     "default": "\uF31D"
                   },
+                  "almalinux": {
+                    "type": "string",
+                    "title": "AlmaLinux Icon",
+                    "description": "The icon to use for AlmaLinux",
+                    "default": "\uF31D"
+                  },
+                  "almalinux9": {
+                    "type": "string",
+                    "title": "AlmaLinux9 Icon",
+                    "description": "The icon to use for AlmaLinux9",
+                    "default": "\uF31D"
+                  },
                   "android": {
                     "type": "string",
                     "title": "Android Icon",
-                    "description": "The icon to use for Alma",
-                    "default": "\uf17b"
+                    "description": "The icon to use for Android",
+                    "default": "\\ue70e"
                   }
                 }
               }

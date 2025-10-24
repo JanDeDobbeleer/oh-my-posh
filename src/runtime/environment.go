@@ -17,6 +17,7 @@ const (
 	LINUX   = "linux"
 	FREEBSD = "freebsd"
 	CMD     = "cmd"
+	ANDROID = "android"
 
 	PRIMARY = "primary"
 )

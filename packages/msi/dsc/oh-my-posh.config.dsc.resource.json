@@ -38,7 +38,7 @@
       "dsc",
       "set",
       {
-        "jsonInputArg": "--schema",
+        "jsonInputArg": "--state",
         "mandatory": true
       }
     ]

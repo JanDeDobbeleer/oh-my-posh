@@ -90,6 +90,6 @@ func getDebugConfig(configpath string) *config.Config {
 		return config.Load(configpath, false)
 	}
 
-	_, reload := cache.Get[bool](cache.Device, config.RELOAD)
+	reload, _ := cache.Get[bool](cache.Device, config.RELOAD)
 	return config.Get(configpath, reload)
 }

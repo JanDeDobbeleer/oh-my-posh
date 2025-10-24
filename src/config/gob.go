@@ -28,7 +28,9 @@ func Get(configFile string, reload bool) *Config {
 	if reload {
 		log.Debug("reload mode enabled")
 		if source, OK := cache.Get[string](cache.Session, SourceKey); OK {
-			return Load(source, false)
+			cfg := Load(source, false)
+			cfg.Store()
+			return cfg
 		}
 	}
 

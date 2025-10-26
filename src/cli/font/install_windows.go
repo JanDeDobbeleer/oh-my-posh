@@ -24,7 +24,7 @@ func install(font *Font) error {
 	//  - Copy the file to the fonts directory
 	//  - Add registry entry
 	//  - Call AddFontResourceW to set the font
-	fontsDir := filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts", "Oh My Posh")
+	fontsDir := filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts")
 
 	log.Debugf("installing font %s to %s", font.FileName, fontsDir)
 
@@ -59,9 +59,9 @@ func install(font *Font) error {
 	reg := registry.CURRENT_USER
 	regValue := fullPath
 
-	log.Debug("opening HKEY_CURRENT_USER for writing")
+	log.Debug("opening HKEY_CURRENT_USER for writing (SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts)")
 
-	k, _, err := registry.CreateKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts\Oh My Posh`, registry.WRITE)
+	k, _, err := registry.CreateKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts`, registry.WRITE)
 	if err != nil {
 		log.Error(err)
 		// If this fails, remove the font file as well.
@@ -73,7 +73,12 @@ func install(font *Font) error {
 		return errors.New("unable to open HKEY_CURRENT_USER")
 	}
 
-	defer k.Close()
+	defer func() {
+		err := k.Close()
+		if err != nil {
+			log.Error(err)
+		}
+	}()
 
 	fontName := fmt.Sprintf("%v (TrueType)", font.Name)
 	var alreadyInstalled, newFontType bool
@@ -93,6 +98,7 @@ func install(font *Font) error {
 		if err := k.SetStringValue(fontName, fullPath); err != nil {
 			return err
 		}
+
 		log.Debug("font registry entry added successfully")
 	}
 

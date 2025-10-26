@@ -3333,6 +3333,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "spidersouris",
+      "name": "Enzo Doyen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7102007?v=4",
+      "profile": "https://www.edoyen.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

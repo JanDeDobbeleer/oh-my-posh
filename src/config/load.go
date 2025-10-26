@@ -350,14 +350,39 @@ func isTheme(config string) (string, bool) {
 		"zash":                     "zash.omp.json",
 	}
 
-	config = strings.ToLower(config)
-	if theme, ok := themes[config]; ok {
-		log.Debug("theme found:", config)
-		url := fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/tags/v%s/themes/%s", build.Version, theme)
-		return url, true
+	themeFile, OK := themes[config]
+	if !OK {
+		log.Debug(config, "is not a theme")
+		return "", false
 	}
 
-	log.Debug("theme not found for:", config)
+	log.Debug(config, "is a theme")
 
-	return "", false
+	if themeFilePath, err := getMSIXThemePath(themeFile); err == nil {
+		return themeFilePath, true
+	}
+
+	log.Debug("building theme URL for:", themeFile)
+	url := fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/tags/v%s/themes/%s", build.Version, themeFile)
+	return url, true
+}
+
+func getMSIXThemePath(themeFile string) (string, error) {
+	log.Trace(time.Now(), themeFile)
+
+	// For MSIX packages, the executable location is the package root
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Error(err)
+		return "", err
+	}
+
+	themeFilePath := filepath.Join(filepath.Dir(exePath), "themes", themeFile)
+	if _, err := os.Stat(themeFilePath); err != nil {
+		log.Error(err)
+		return "", err
+	}
+
+	log.Debug("found theme in MSIX installation:", themeFilePath)
+	return themeFilePath, nil
 }

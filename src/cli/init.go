@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -70,6 +71,11 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 }
 
 func runInit(sh, command string) {
+	if os.Getenv("CURSOR_AGENT") == "1" {
+		log.Errorf("oh-my-posh init is disabled when running inside Cursor agent mode")
+		return
+	}
+
 	if debug {
 		log.Enable(plain)
 	}

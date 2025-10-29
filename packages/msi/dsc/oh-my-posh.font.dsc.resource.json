@@ -32,7 +32,6 @@
   "set": {
     "executable": "oh-my-posh",
     "implementsPretest": true,
-    "return": "stateAndDiff",
     "args": [
       "font",
       "dsc",

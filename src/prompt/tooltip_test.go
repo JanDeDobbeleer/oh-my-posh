@@ -44,5 +44,3 @@ func TestTooltipCacheStorage(t *testing.T) {
 	assert.True(t, cached, "Output should be cached")
 	assert.Equal(t, output, cachedOutput, "Cached output should match")
 }
-
-

@@ -92,9 +92,10 @@ func (e *Engine) Tooltip(tip string) string {
 	if len(cacheableTooltips) > 0 && finalOutput != "" {
 		cacheKey := e.getTooltipCacheKey(tip)
 		// Use the shortest cache duration among all cacheable tooltips
+		// All tooltips in cacheableTooltips have non-nil Cache (verified at line 26)
 		minDuration := cacheableTooltips[0].Cache.Duration
 		for _, tooltip := range cacheableTooltips[1:] {
-			if tooltip.Cache.Duration < minDuration {
+			if tooltip.Cache != nil && tooltip.Cache.Duration < minDuration {
 				minDuration = tooltip.Cache.Duration
 			}
 		}

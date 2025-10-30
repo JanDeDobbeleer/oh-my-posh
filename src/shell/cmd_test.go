@@ -14,7 +14,7 @@ func TestCmdFeatures(t *testing.T) {
 enable_tooltips()
 transient_enabled = true
 ftcs_marks_enabled = true
-os.execute(string.format('"%s" upgrade', omp_executable))
+os.execute(string.format('"%s" upgrade --auto', omp_executable))
 os.execute(string.format('"%s" notice', omp_executable))
 rprompt_enabled = true`
 

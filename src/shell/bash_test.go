@@ -12,7 +12,7 @@ func TestBashFeatures(t *testing.T) {
 
 	want := `// these are the features
 _omp_ftcs_marks=1
-"$_omp_executable" upgrade
+"$_omp_executable" upgrade --auto
 "$_omp_executable" notice
 _omp_cursor_positioning=1`
 
@@ -33,7 +33,7 @@ bleopt prompt_ps1_final='$(
         --escape=false
 )'
 _omp_ftcs_marks=1
-"$_omp_executable" upgrade
+"$_omp_executable" upgrade --auto
 "$_omp_executable" notice
 bleopt prompt_rps1='$(
 	"$_omp_executable" print right \

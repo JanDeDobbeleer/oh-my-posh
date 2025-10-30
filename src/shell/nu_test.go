@@ -12,7 +12,7 @@ func TestNuFeatures(t *testing.T) {
 
 	want := `// these are the features
 $env.TRANSIENT_PROMPT_COMMAND = {|| _omp_get_prompt transient }
-^$_omp_executable upgrade
+^$_omp_executable upgrade --auto
 ^$_omp_executable notice`
 
 	assert.Equal(t, want, got)

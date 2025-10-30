@@ -1,7 +1,6 @@
 package prompt
 
 import (
-	"fmt"
 	"slices"
 	"strings"
 
@@ -13,32 +12,13 @@ import (
 
 func (e *Engine) Tooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
-
-	// Check if we have any matching tooltips and if they have cache configured
-	var matchingTooltips []*config.Segment
-	var cacheableTooltips []*config.Segment
+	tooltips := make([]*config.Segment, 0, 1)
 
 	for _, tooltip := range e.Config.Tooltips {
 		if !slices.Contains(tooltip.Tips, tip) {
 			continue
 		}
-		matchingTooltips = append(matchingTooltips, tooltip)
-		if tooltip.Cache != nil && !tooltip.Cache.Duration.IsEmpty() {
-			cacheableTooltips = append(cacheableTooltips, tooltip)
-		}
-	}
 
-	// If we have cacheable tooltips, try to get from cache first
-	if len(cacheableTooltips) > 0 {
-		cacheKey := e.getTooltipCacheKey(tip)
-		if cachedOutput, ok := cache.Get[string](cache.Session, cacheKey); ok {
-			return cachedOutput
-		}
-	}
-
-	tooltips := make([]*config.Segment, 0, len(matchingTooltips))
-
-	for _, tooltip := range matchingTooltips {
 		tooltip.Execute(e.Env)
 
 		if !tooltip.Enabled {
@@ -67,8 +47,6 @@ func (e *Engine) Tooltip(tip string) string {
 
 	text, length = e.handleToolTipAction(text, length)
 
-	var finalOutput string
-
 	switch e.Env.Shell() {
 	case shell.PWSH:
 		e.rprompt = text
@@ -83,30 +61,10 @@ func (e *Engine) Tooltip(tip string) string {
 		e.write(strings.Repeat(" ", space))
 		e.write(text)
 		e.write(terminal.RestoreCursorPosition())
-		finalOutput = e.string()
+		return e.string()
 	default:
-		finalOutput = text
+		return text
 	}
-
-	// Cache the final output if any matching tooltip has cache configured
-	if len(cacheableTooltips) > 0 && finalOutput != "" {
-		cacheKey := e.getTooltipCacheKey(tip)
-		// Use the shortest cache duration among all cacheable tooltips
-		// All tooltips in cacheableTooltips have non-nil Cache (verified at line 26)
-		minDuration := cacheableTooltips[0].Cache.Duration
-		for _, tooltip := range cacheableTooltips[1:] {
-			if tooltip.Cache != nil && tooltip.Cache.Duration < minDuration {
-				minDuration = tooltip.Cache.Duration
-			}
-		}
-		cache.Set(cache.Session, cacheKey, finalOutput, minDuration)
-	}
-
-	return finalOutput
-}
-
-func (e *Engine) getTooltipCacheKey(tip string) string {
-	return fmt.Sprintf("tooltip_cache_%s", tip)
 }
 
 func (e *Engine) handleToolTipAction(text string, length int) (string, int) {

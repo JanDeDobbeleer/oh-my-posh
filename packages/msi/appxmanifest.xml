@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:virtualization="http://schemas.microsoft.com/appx/manifest/virtualization/windows10" IgnorableNamespaces="rescap uap uap3 uap5 virtualization">
-  <Identity Name="ohmyposh.cli" Version="27.3.1.0" Publisher="CN=Jan Joris De Dobbeleer, O=Jan Joris De Dobbeleer, L=Diest, C=BE" ProcessorArchitecture="arm64" />
+  <Identity Name="ohmyposh.cli" Version="27.4.2.0" Publisher="CN=Jan Joris De Dobbeleer, O=Jan Joris De Dobbeleer, L=Diest, C=BE" ProcessorArchitecture="arm64" />
   <Properties>
     <DisplayName>Oh My Posh</DisplayName>
     <PublisherDisplayName>Jan Joris De Dobbeleer</PublisherDisplayName>
@@ -20,7 +20,6 @@
   </Dependencies>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
-    <rescap:Capability Name="unvirtualizedResources" />
   </Capabilities>
   <Applications>
     <Application Id="OhMyPosh" Executable="oh-my-posh.exe" EntryPoint="Windows.FullTrustApplication">

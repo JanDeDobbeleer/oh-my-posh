@@ -26,7 +26,7 @@ func (f Features) Pwsh() Code {
 	case FTCSMarks:
 		return "$global:_ompFTCSMarks = $true"
 	case Upgrade:
-		return "& $global:_ompExecutable upgrade"
+		return "& $global:_ompExecutable upgrade --auto"
 	case Notice:
 		return "& $global:_ompExecutable notice"
 	case PromptMark, RPrompt, CursorPositioning, Async:

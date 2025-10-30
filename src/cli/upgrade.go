@@ -20,6 +20,7 @@ import (
 
 var (
 	force bool
+	auto  bool
 )
 
 // upgradeCmd represents the upgrade command
@@ -63,7 +64,8 @@ var upgradeCmd = &cobra.Command{
 
 		cache.Init(sh, cache.Persist)
 
-		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && !force {
+		// Only respect the cache interval when using --auto flag
+		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && auto && !force {
 			log.Debug("upgrade check already performed recently, skipping")
 			return
 		}
@@ -76,8 +78,10 @@ var upgradeCmd = &cobra.Command{
 		defer func() {
 			fmt.Print(terminal.StopProgress())
 
-			// always reset the cache key so we respect the interval no matter what the outcome
-			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
+			// Only set the cache key when in auto mode to respect the interval
+			if auto {
+				cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
+			}
 
 			cache.Close()
 
@@ -144,6 +148,7 @@ func executeUpgrade(cfg *upgrade.Config) int {
 
 func init() {
 	upgradeCmd.Flags().BoolVarP(&force, "force", "f", false, "force the upgrade even if the version is up to date")
+	upgradeCmd.Flags().BoolVar(&auto, "auto", false, "respect the cache interval for automatic upgrades")
 	upgradeCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
 	RootCmd.AddCommand(upgradeCmd)
 }

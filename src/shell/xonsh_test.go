@@ -11,7 +11,7 @@ func TestXonshFeatures(t *testing.T) {
 	got := allFeatures.Lines(XONSH).String("// these are the features")
 
 	want := `// these are the features
-@(_omp_executable) upgrade
+@(_omp_executable) upgrade --auto
 @(_omp_executable) notice`
 
 	assert.Equal(t, want, got)

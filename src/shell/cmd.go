@@ -19,7 +19,7 @@ func (f Features) Cmd() Code {
 	case Tooltips:
 		return "enable_tooltips()"
 	case Upgrade:
-		return `os.execute(string.format('"%s" upgrade', omp_executable))`
+		return `os.execute(string.format('"%s" upgrade --auto', omp_executable))`
 	case Notice:
 		return `os.execute(string.format('"%s" notice', omp_executable))`
 	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async:

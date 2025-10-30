@@ -20,7 +20,7 @@ Enable-PoshLineError
 Enable-PoshTooltips
 Enable-PoshTransientPrompt
 $global:_ompFTCSMarks = $true
-& $global:_ompExecutable upgrade
+& $global:_ompExecutable upgrade --auto
 & $global:_ompExecutable notice`
 
 	assert.Equal(t, want, got)

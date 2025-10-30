@@ -14,7 +14,7 @@ func (f Features) Nu() Code {
 	case Transient:
 		return `$env.TRANSIENT_PROMPT_COMMAND = {|| _omp_get_prompt transient }`
 	case Upgrade:
-		return "^$_omp_executable upgrade"
+		return "^$_omp_executable upgrade --auto"
 	case Notice:
 		return "^$_omp_executable notice"
 	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, FTCSMarks, CursorPositioning, Async:

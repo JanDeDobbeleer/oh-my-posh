@@ -13,7 +13,7 @@ func TestZshFeatures(t *testing.T) {
 enable_poshtooltips
 _omp_create_widget zle-line-init _omp_zle-line-init
 _omp_ftcs_marks=1
-"$_omp_executable" upgrade
+"$_omp_executable" upgrade --auto
 "$_omp_executable" notice
 _omp_cursor_positioning=1`
 

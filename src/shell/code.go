@@ -11,7 +11,7 @@ type Code string
 const (
 	unixFTCSMarks         Code = "_omp_ftcs_marks=1"
 	unixCursorPositioning Code = "_omp_cursor_positioning=1"
-	unixUpgrade           Code = `"$_omp_executable" upgrade`
+	unixUpgrade           Code = `"$_omp_executable" upgrade --auto`
 	unixNotice            Code = `"$_omp_executable" notice`
 )
 

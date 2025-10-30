@@ -78,10 +78,8 @@ var upgradeCmd = &cobra.Command{
 		defer func() {
 			fmt.Print(terminal.StopProgress())
 
-			// Only set the cache key when in auto mode to respect the interval
-			if auto {
-				cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
-			}
+			// Set the cache key after any upgrade check to prevent redundant checks
+			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
 
 			cache.Close()
 

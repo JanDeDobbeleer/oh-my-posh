@@ -11,3 +11,7 @@ func platformCachePath() (string, bool) {
 
 	return "", false
 }
+
+func PackageFamilyName() (string, bool) {
+	return "", false
+}

@@ -28,7 +28,8 @@ func getExecutablePath(env runtime.Environment) (string, error) {
 		return "", err
 	}
 
-	if env.Flags().Strict {
+	_, msix := cache.PackageFamilyName()
+	if msix || env.Flags().Strict {
 		return path.Base(executable), nil
 	}
 

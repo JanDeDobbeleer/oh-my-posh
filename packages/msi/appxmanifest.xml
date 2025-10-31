@@ -20,6 +20,7 @@
   </Dependencies>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="unvirtualizedResources" />
   </Capabilities>
   <Applications>
     <Application Id="OhMyPosh" Executable="oh-my-posh.exe" EntryPoint="Windows.FullTrustApplication">

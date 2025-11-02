@@ -161,4 +161,32 @@ function _omp_install_hook() {
     PROMPT_COMMAND=(_omp_hook "${prompt_command[@]}")
 }
 
+function enable_posh_refresh_interval() {
+    local interval=::REFRESH_INTERVAL::
+    if [[ $interval -le 0 ]]; then
+        return
+    fi
+
+    # Convert milliseconds to seconds for bash
+    local timeout_seconds=$(( interval / 1000 ))
+    
+    function _omp_refresh_prompt() {
+        # Trigger prompt refresh by calling the hook
+        _omp_hook
+    }
+
+    # Use a background process with sleep to trigger refresh
+    (
+        while true; do
+            sleep "$timeout_seconds"
+            kill -WINCH $$  2>/dev/null
+        done
+    ) &
+    
+    _omp_refresh_pid=$!
+    
+    # Set up SIGWINCH handler to refresh prompt
+    trap '_omp_hook' WINCH
+}
+
 _omp_install_hook

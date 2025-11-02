@@ -115,13 +115,18 @@ func runInit(sh, command string) {
 
 	feats := cfg.Features(env)
 
+	// Set refresh interval as environment variable
+	if cfg.RefreshInterval > 0 {
+		os.Setenv("POSH_REFRESH_INTERVAL", fmt.Sprintf("%d", cfg.RefreshInterval))
+	}
+
 	var output string
 
 	switch {
 	case printOutput, debug:
-		output = shell.PrintInit(env, feats, &startTime)
+		output = shell.PrintInit(env, feats, &startTime, cfg.RefreshInterval)
 	default:
-		output = shell.Init(env, feats)
+		output = shell.Init(env, feats, cfg.RefreshInterval)
 	}
 
 	shellDSC := shell.DSC()

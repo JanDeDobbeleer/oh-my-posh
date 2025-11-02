@@ -235,5 +235,29 @@ function enable_poshtooltips() {
   _omp_create_widget $widget _omp_render_tooltip
 }
 
+function enable_posh_refresh_interval() {
+  local interval=::REFRESH_INTERVAL::
+  if [[ $interval -le 0 ]]; then
+    return
+  fi
+
+  # Convert milliseconds to seconds for zsh's TMOUT
+  local timeout_seconds=$(( interval / 1000.0 ))
+  
+  function _omp_refresh_prompt() {
+    # Only refresh if we're at the command prompt (not during command execution)
+    if [[ -z $BUFFER ]]; then
+      zle && zle .reset-prompt
+    fi
+  }
+
+  # Use TMOUT to trigger prompt refresh
+  export TMOUT=$timeout_seconds
+  
+  function TRAPALRM() {
+    _omp_refresh_prompt
+  }
+}
+
 # legacy functions
 function enable_poshtransientprompt() {}

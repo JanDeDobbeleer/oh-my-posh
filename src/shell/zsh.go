@@ -21,6 +21,8 @@ func (f Features) Zsh() Code {
 		return unixUpgrade
 	case Notice:
 		return unixNotice
+	case RefreshInterval:
+		return "enable_posh_refresh_interval"
 	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Async:
 		fallthrough
 	default:

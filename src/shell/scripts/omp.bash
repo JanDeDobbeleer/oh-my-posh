@@ -167,8 +167,8 @@ function enable_posh_refresh_interval() {
         return
     fi
 
-    # Convert milliseconds to seconds for bash
-    local timeout_seconds=$(( interval / 1000 ))
+    # Convert milliseconds to seconds for bash (preserve sub-second precision)
+    local timeout_seconds=$(awk "BEGIN {print $interval/1000}")
     
     function _omp_refresh_prompt() {
         # Trigger prompt refresh by calling the hook

@@ -1,0 +1,116 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#e0e0e0",
+          "leading_diamond": "<#a0a0a0> \ue200 </>",
+          "properties": {
+            "display_host": true
+          },
+          "style": "diamond",
+          "template": "{{ .UserName }} <#888888>on</>",
+          "type": "session"
+        },
+        {
+          "foreground": "#bdbdbd",
+          "properties": {
+            "time_format": "Monday <#888888>at</> 3:04 PM"
+          },
+          "style": "diamond",
+          "template": " {{ .CurrentDate | date .Format }} ",
+          "type": "time"
+        },
+        {
+          "foreground": "#9e9e9e",
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "fetch_worktree_count": true
+          },
+          "style": "diamond",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#d0d0d0",
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#b0b0b0",
+          "properties": {
+            "style": "dallas",
+            "threshold": 0
+          },
+          "style": "diamond",
+          "template": " {{ .FormattedMs }}s <#888888>\ue601</>",
+          "type": "executiontime"
+        },
+        {
+          "properties": {
+            "root_icon": "\uf292 "
+          },
+          "style": "diamond",
+          "template": " \uf0e7 ",
+          "type": "root"
+        },
+        {
+          "foreground": "#9e9e9e",
+          "style": "diamond",
+          "template": " <#888888>MEM:</> {{ round .PhysicalPercentUsed .Precision }}% ({{ (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) }}/{{ (div .PhysicalTotalMemory 1073741824.0) }}GB)",
+          "type": "sysinfo"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#c0c0c0",
+          "leading_diamond": "<#808080> \ue285 </><#c0c0c0>{</>",
+          "properties": {
+            "folder_icon": "\uf07b",
+            "folder_separator_icon": " \uebcb ",
+            "home_icon": "home",
+            "style": "agnoster_full"
+          },
+          "style": "diamond",
+          "template": " \ue5ff {{ .Path }} ",
+          "trailing_diamond": "<#c0c0c0>}</>",
+          "type": "path"
+        },
+        {
+          "foreground": "#d0d0d0",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": " \ue286 ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "console_title_template": "{{ .Folder }}",
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#e5e5e5",
+    "template": "\ue285 "
+  },
+  "version": 3
+}

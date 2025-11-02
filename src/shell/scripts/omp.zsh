@@ -252,7 +252,7 @@ function enable_posh_refresh_interval() {
   }
 
   # Use TMOUT to trigger prompt refresh
-  export TMOUT=$timeout_seconds
+  TMOUT=$timeout_seconds
   
   function TRAPALRM() {
     _omp_refresh_prompt

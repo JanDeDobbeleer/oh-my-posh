@@ -115,11 +115,6 @@ func runInit(sh, command string) {
 
 	feats := cfg.Features(env)
 
-	// Set refresh interval as environment variable
-	if cfg.RefreshInterval > 0 {
-		os.Setenv("POSH_REFRESH_INTERVAL", fmt.Sprintf("%d", cfg.RefreshInterval))
-	}
-
 	var output string
 
 	switch {

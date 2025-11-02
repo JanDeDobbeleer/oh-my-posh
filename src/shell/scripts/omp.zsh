@@ -241,8 +241,14 @@ function enable_posh_refresh_interval() {
     return
   fi
 
+  # TMOUT in zsh only supports integer seconds; sub-second values are unreliable.
+  if [[ $interval -lt 1000 ]]; then
+    print "Warning: zsh TMOUT does not support intervals less than 1000ms. Setting refresh interval to 1000ms."
+    interval=1000
+  fi
+
   # Convert milliseconds to seconds for zsh's TMOUT
-  local timeout_seconds=$(( interval / 1000.0 ))
+  local timeout_seconds=$(( interval / 1000 ))
   
   function _omp_refresh_prompt() {
     # Only refresh if we're at the command prompt (not during command execution)

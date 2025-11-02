@@ -255,7 +255,9 @@ end
 
 # Clean up background timer process on shell exit
 function _omp_cleanup_refresh --on-event fish_exit
-    kill $_omp_refresh_pid 2>/dev/null
+    if set -q _omp_refresh_pid
+        kill $_omp_refresh_pid 2>/dev/null
+    end
 end
 # legacy functions
 function enable_poshtransientprompt

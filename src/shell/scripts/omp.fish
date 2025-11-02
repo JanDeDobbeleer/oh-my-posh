@@ -253,6 +253,10 @@ function enable_posh_refresh_interval
     set --global _omp_refresh_pid $last_pid
 end
 
+# Clean up background timer process on shell exit
+function _omp_cleanup_refresh --on-event fish_exit
+    kill $_omp_refresh_pid 2>/dev/null
+end
 # legacy functions
 function enable_poshtransientprompt
     return

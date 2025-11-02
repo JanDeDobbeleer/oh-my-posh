@@ -176,10 +176,11 @@ function enable_posh_refresh_interval() {
     }
 
     # Use a background process with sleep to trigger refresh
+    parent_pid=$$
     (
         while true; do
             sleep "$timeout_seconds"
-            kill -WINCH $$  2>/dev/null
+            kill -WINCH $parent_pid  2>/dev/null
         done
     ) &
     

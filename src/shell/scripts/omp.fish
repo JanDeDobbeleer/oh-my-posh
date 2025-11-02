@@ -242,7 +242,7 @@ function enable_posh_refresh_interval
     end
 
     # Convert milliseconds to seconds for fish
-    set --local timeout_seconds (math "$interval / 1000")
+    set --local timeout_seconds (math "$interval / 1000.0")
     
     function _omp_refresh_timer --on-signal SIGUSR1
         omp_repaint_prompt

@@ -249,7 +249,7 @@ function enable_posh_refresh_interval
     end
     
     # Start background timer process
-    fish -c "while true; sleep $timeout_seconds; kill -SIGUSR1 %self; end" &
+    fish -c "set parent_pid %self; while true; sleep $timeout_seconds; kill -SIGUSR1 \$parent_pid; end" &
     set --global _omp_refresh_pid $last_pid
 end
 

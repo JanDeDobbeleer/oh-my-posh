@@ -243,7 +243,7 @@ function enable_posh_refresh_interval() {
 
   # TMOUT in zsh only supports integer seconds; sub-second values are unreliable.
   if [[ $interval -lt 1000 ]]; then
-    print "Warning: zsh TMOUT does not support intervals less than 1000ms. Setting refresh interval to 1000ms."
+    print "Warning: zsh TMOUT does not support intervals less than 1000ms. Setting refresh interval to 1000ms." >&2
     interval=1000
   fi
 

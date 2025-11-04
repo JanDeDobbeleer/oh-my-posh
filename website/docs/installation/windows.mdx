@@ -49,10 +49,8 @@ When using oh-my-posh inside the WSL, make sure to follow the [Linux][linux] ins
 Open a PowerShell prompt and run the following command:
 
 ```powershell
-winget install JanDeDobbeleer.OhMyPosh --source winget --scope user --force
+winget install JanDeDobbeleer.OhMyPosh --source winget
 ```
-
-Replace `--scope user` with `--scope machine` if you want to install Oh My Posh for all users on the machine.
 
 </TabItem>
 <TabItem value="manual">
@@ -80,27 +78,6 @@ choco install oh-my-posh
 </TabItem>
 </Tabs>
 
-:::info
-For the `PATH` to be reloaded, a restart of your terminal is advised.
-If oh-my-posh is not recognized as a command, you can run the installer again, or add it manually to your `PATH`.
-For example:
-
-```powershell
-$env:Path += ";C:\Users\user\AppData\Local\Programs\oh-my-posh\bin"
-```
-:::
-
-:::tip Antivirus software
-Due to frequent updates of Oh My Posh, Antivirus software occasionally flags it (false positive).
-To ensure Oh My Posh isn't blocked you can either report it to your favorite Antivirus software as a false positive
-(e.g. [Report a false positive/negative to Microsoft for analysis][report-false-positive]) or create an exclusion for it.
-Exclusions should be added with the full path to the executable, you can get it with the following command from a PowerShell prompt:
-
-```powershell
-(Get-Command oh-my-posh).Source
-```
-:::
-
 <Next />
 
 ## Update
@@ -119,10 +96,8 @@ Exclusions should be added with the full path to the executable, you can get it 
 Open a PowerShell prompt and run the following command:
 
 ```powershell
-winget upgrade JanDeDobbeleer.OhMyPosh --source winget --scope user --force
+winget upgrade JanDeDobbeleer.OhMyPosh --source winget
 ```
-
-Replace `--scope user` with `--scope machine` if you want to upgrade Oh My Posh for all users on the machine.
 
 </TabItem>
 <TabItem value="manual">

@@ -4,25 +4,61 @@ const yaml = require('js-yaml');
 const toml = require('@iarna/toml');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
-// Load the schema - will be copied during build
-let schema;
-try {
-  // Try to load from the static directory (after build)
-  const schemaPath = path.join(__dirname, '..', '..', 'static', 'schema.json');
-  if (fs.existsSync(schemaPath)) {
-    schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
-  } else {
-    // Fallback to relative path during development
-    const devSchemaPath = path.join(__dirname, '..', '..', '..', 'themes', 'schema.json');
-    schema = JSON.parse(fs.readFileSync(devSchemaPath, 'utf8'));
+// Schema cache
+let schema = null;
+let schemaLoadPromise = null;
+
+/**
+ * Load the schema from the local data folder, with GitHub fallback
+ * @returns {Promise<Object>} The loaded schema
+ */
+async function loadSchema() {
+  if (schema) {
+    return schema;
   }
-} catch (error) {
-  console.error('Failed to load schema:', error);
-  schema = null;
+
+  if (schemaLoadPromise) {
+    return schemaLoadPromise;
+  }
+
+  schemaLoadPromise = (async () => {
+    // Try loading from local data directory first
+    try {
+      const schemaPath = path.join(__dirname, '..', 'data', 'schema.json');
+      console.log('Attempting to load schema from:', schemaPath);
+
+      if (fs.existsSync(schemaPath)) {
+        schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+        console.log('Schema loaded successfully from local data folder');
+        return schema;
+      } else {
+        console.log('Local schema file not found, will fetch from GitHub');
+      }
+    } catch (error) {
+      console.log('Failed to load schema from local data folder:', error.message);
+    }
+
+    // Fallback to GitHub
+    try {
+      console.log('Fetching schema from GitHub');
+      const response = await axios.get('https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json', {
+        timeout: 10000
+      });
+      schema = response.data;
+      console.log('Schema loaded successfully from GitHub');
+      return schema;
+    } catch (error) {
+      console.error('Failed to fetch schema from GitHub:', error.message);
+      throw new Error('Could not load schema from local data folder or GitHub');
+    }
+  })();
+
+  return schemaLoadPromise;
 }
 
-// Initialize AJV with schema
+// Initialize AJV
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
@@ -40,12 +76,24 @@ ajv.addFormat('color', {
   }
 });
 
-let validate;
-if (schema) {
+// Compile validator from schema
+let validate = null;
+async function getValidator() {
+  if (validate) {
+    return validate;
+  }
+
+  const loadedSchema = await loadSchema();
+  if (!loadedSchema) {
+    return null;
+  }
+
   try {
-    validate = ajv.compile(schema);
+    validate = ajv.compile(loadedSchema);
+    return validate;
   } catch (error) {
     console.error('Failed to compile schema:', error);
+    return null;
   }
 }
 
@@ -56,17 +104,17 @@ if (schema) {
  */
 function detectFormat(content) {
   const trimmed = content.trim();
-  
+
   // Try JSON first
   if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
     return 'json';
   }
-  
+
   // Check for TOML indicators
   if (trimmed.match(/^\[.*\]$/m) || trimmed.match(/^[a-zA-Z_][a-zA-Z0-9_]*\s*=/m)) {
     return 'toml';
   }
-  
+
   // Default to YAML (most permissive)
   return 'yaml';
 }
@@ -88,14 +136,14 @@ function parseConfig(content, format) {
     switch (detectedFormat.toLowerCase()) {
       case 'json':
         return JSON.parse(content);
-      
+
       case 'yaml':
       case 'yml':
         return yaml.load(content);
-      
+
       case 'toml':
         return toml.parse(content);
-      
+
       default:
         throw new Error(`Unsupported format: ${detectedFormat}`);
     }
@@ -151,7 +199,7 @@ function formatErrors(errors) {
  * Validate an oh-my-posh configuration
  * @param {string} content - The configuration content
  * @param {string} format - The format (json, yaml, toml, or auto)
- * @returns {Object} Validation result
+ * @returns {Promise<Object>} Validation result
  */
 async function validateConfig(content, format = 'auto') {
   const result = {
@@ -162,32 +210,33 @@ async function validateConfig(content, format = 'auto') {
     parsedConfig: null
   };
 
-  // Check if schema is loaded
-  if (!schema || !validate) {
-    result.errors.push({
-      path: 'schema',
-      message: 'Schema could not be loaded. Validation is not available.',
-      keyword: 'schema',
-      params: {},
-      data: null
-    });
-    return result;
-  }
-
   try {
+    // Load and compile validator
+    const validator = await getValidator();
+    if (!validator) {
+      result.errors.push({
+        path: 'schema',
+        message: 'Schema could not be loaded. Validation is not available.',
+        keyword: 'schema',
+        params: {},
+        data: null
+      });
+      return result;
+    }
+
     // Parse the configuration
     const detectedFormat = format === 'auto' ? detectFormat(content) : format;
     result.detectedFormat = detectedFormat;
-    
+
     const config = parseConfig(content, format);
     result.parsedConfig = config;
 
     // Validate against schema
-    const isValid = validate(config);
+    const isValid = validator(config);
     result.valid = isValid;
 
-    if (!isValid && validate.errors) {
-      result.errors = formatErrors(validate.errors);
+    if (!isValid && validator.errors) {
+      result.errors = formatErrors(validator.errors);
     }
 
     // Add warnings for common issues
@@ -213,13 +262,25 @@ async function validateConfig(content, format = 'auto') {
 
   } catch (error) {
     result.valid = false;
-    result.errors.push({
-      path: 'parse',
-      message: error.message,
-      keyword: 'parse',
-      params: {},
-      data: null
-    });
+
+    // Check if it's a schema loading error
+    if (error.message && error.message.includes('Could not load schema')) {
+      result.errors.push({
+        path: 'schema',
+        message: 'Schema could not be loaded. Validation is not available.',
+        keyword: 'schema',
+        params: {},
+        data: null
+      });
+    } else {
+      result.errors.push({
+        path: 'parse',
+        message: error.message,
+        keyword: 'parse',
+        params: {},
+        data: null
+      });
+    }
   }
 
   return result;

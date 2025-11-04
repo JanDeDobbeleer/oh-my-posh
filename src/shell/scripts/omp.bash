@@ -190,7 +190,7 @@ function enable_posh_refresh_interval() {
         done
     ) &
     
-    local _omp_refresh_pid=$!
+    _omp_refresh_pid=$!
     # Ensure background process is killed when shell exits
     trap '[ -n "$_omp_refresh_pid" ] && kill $_omp_refresh_pid 2>/dev/null' EXIT
     # Set up SIGWINCH handler to refresh prompt

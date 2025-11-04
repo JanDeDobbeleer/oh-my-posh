@@ -6,6 +6,10 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
+// Configuration constants
+const SCHEMA_GITHUB_URL = 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json';
+const SCHEMA_FETCH_TIMEOUT = 10000;
+
 // Schema cache
 let schema = null;
 let schemaLoadPromise = null;
@@ -15,10 +19,12 @@ let schemaLoadPromise = null;
  * @returns {Promise<Object>} The loaded schema
  */
 async function loadSchema() {
+  // Return cached schema if available
   if (schema) {
     return schema;
   }
 
+  // Return existing promise if schema is already being loaded
   if (schemaLoadPromise) {
     return schemaLoadPromise;
   }
@@ -30,9 +36,10 @@ async function loadSchema() {
       console.log('Attempting to load schema from:', schemaPath);
 
       if (fs.existsSync(schemaPath)) {
-        schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+        const loadedSchema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
         console.log('Schema loaded successfully from local data folder');
-        return schema;
+        schema = loadedSchema; // Set cache after successful load
+        return loadedSchema;
       } else {
         console.log('Local schema file not found, will fetch from GitHub');
       }
@@ -43,17 +50,22 @@ async function loadSchema() {
     // Fallback to GitHub
     try {
       console.log('Fetching schema from GitHub');
-      const response = await axios.get('https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json', {
-        timeout: 10000
+      const response = await axios.get(SCHEMA_GITHUB_URL, {
+        timeout: SCHEMA_FETCH_TIMEOUT
       });
-      schema = response.data;
+      const loadedSchema = response.data;
       console.log('Schema loaded successfully from GitHub');
-      return schema;
+      schema = loadedSchema; // Set cache after successful load
+      return loadedSchema;
     } catch (error) {
       console.error('Failed to fetch schema from GitHub:', error.message);
       throw new Error('Could not load schema from local data folder or GitHub');
     }
-  })();
+  })()
+    .finally(() => {
+      // Reset promise to allow retry on subsequent calls if this attempt failed
+      schemaLoadPromise = null;
+    });
 
   return schemaLoadPromise;
 }
@@ -83,17 +95,17 @@ async function getValidator() {
     return validate;
   }
 
-  const loadedSchema = await loadSchema();
-  if (!loadedSchema) {
-    return null;
-  }
-
   try {
+    const loadedSchema = await loadSchema();
+    if (!loadedSchema) {
+      throw new Error('Schema loading returned null');
+    }
+
     validate = ajv.compile(loadedSchema);
     return validate;
   } catch (error) {
-    console.error('Failed to compile schema:', error);
-    return null;
+    console.error('Failed to load or compile schema:', error);
+    throw error; // Propagate error instead of returning null
   }
 }
 
@@ -213,16 +225,6 @@ async function validateConfig(content, format = 'auto') {
   try {
     // Load and compile validator
     const validator = await getValidator();
-    if (!validator) {
-      result.errors.push({
-        path: 'schema',
-        message: 'Schema could not be loaded. Validation is not available.',
-        keyword: 'schema',
-        params: {},
-        data: null
-      });
-      return result;
-    }
 
     // Parse the configuration
     const detectedFormat = format === 'auto' ? detectFormat(content) : format;

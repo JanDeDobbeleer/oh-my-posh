@@ -49,11 +49,46 @@ module.exports = async function (context, req) {
 
   // Handle POST requests - process MCP protocol messages
   try {
-    const message = req.body;
+    // Parse the body if it's a string
+    let message = req.body;
+    if (typeof message === 'string') {
+      try {
+        message = JSON.parse(message);
+      } catch (e) {
+        context.log.error('Failed to parse request body as JSON:', e);
+        context.res = {
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: {
+            jsonrpc: '2.0',
+            error: {
+              code: -32700,
+              message: 'Parse error: Invalid JSON'
+            },
+            id: null
+          }
+        };
+        return;
+      }
+    }
+
+    const logMessage = {
+      jsonrpc: message.jsonrpc,
+      method: message.method,
+      id: message.id,
+      ...(message.params?.name && { toolName: message.params.name })
+    };
+    context.log('Received message:', JSON.stringify(logMessage));
 
     if (!message || !message.jsonrpc || message.jsonrpc !== '2.0') {
+      context.log('Invalid JSON-RPC message:', message);
       context.res = {
         status: 400,
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: {
           jsonrpc: '2.0',
           error: {

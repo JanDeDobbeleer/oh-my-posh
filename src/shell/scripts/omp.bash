@@ -167,6 +167,12 @@ function enable_posh_refresh_interval() {
         return
     fi
 
+    # Kill existing timer if running
+    if [[ -n "$_omp_refresh_pid" ]]; then
+        kill "$_omp_refresh_pid" 2>/dev/null
+        _omp_refresh_pid=
+    fi
+
     # Convert milliseconds to seconds for bash (preserve sub-second precision)
     local timeout_seconds=$(awk "BEGIN {print $interval/1000}")
     

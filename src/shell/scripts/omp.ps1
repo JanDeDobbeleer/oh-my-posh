@@ -416,6 +416,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             return
         }
 
+        # Cleanup existing timer if present
+        if ($null -ne $script:PoshRefreshTimer) {
+            $script:PoshRefreshTimer.Stop()
+            $script:PoshRefreshTimer.Dispose()
+            Unregister-Event -SourceIdentifier "Posh.RefreshTimer.Elapsed" -ErrorAction SilentlyContinue
+        }
+
         $script:PoshRefreshTimer = New-Object -Type Timers.Timer
         $script:PoshRefreshTimer.Interval = $interval
 

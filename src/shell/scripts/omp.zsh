@@ -249,7 +249,7 @@ function enable_posh_refresh_interval() {
 
   # Convert milliseconds to seconds for zsh's TMOUT
   local timeout_seconds=$(( interval / 1000 ))
-  
+
   function _omp_refresh_prompt() {
     # Only refresh if we're at the command prompt (not during command execution)
     if [[ -z $BUFFER ]]; then
@@ -259,7 +259,7 @@ function enable_posh_refresh_interval() {
 
   # Use TMOUT to trigger prompt refresh
   TMOUT=$timeout_seconds
-  
+
   function TRAPALRM() {
     _omp_refresh_prompt
   }

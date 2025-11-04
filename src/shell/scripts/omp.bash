@@ -176,7 +176,7 @@ function enable_posh_refresh_interval() {
     }
 
     # Use a background process with sleep to trigger refresh
-    parent_pid=$$
+    local parent_pid=$$
     (
         while true; do
             sleep "$timeout_seconds"

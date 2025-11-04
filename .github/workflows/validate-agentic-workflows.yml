@@ -1,0 +1,43 @@
+name: Validate Agentic Workflows
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/*.md'
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Install gh-aw extension
+        run: gh extension install githubnext/gh-aw
+
+      - name: Compile agentic workflows
+        run: |
+          for workflow in .github/workflows/*.md; do
+            echo "Compiling $workflow..."
+            gh aw compile "$workflow"
+          done
+
+      - name: Check for uncommitted changes
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::Agentic workflows have uncommitted changes after compilation."
+            echo "::error::Please run 'gh aw compile' locally and commit the changes."
+            exit 1
+          fi

@@ -6,7 +6,7 @@ description: 'PowerShell cmdlet and scripting best practices based on Microsoft 
 # PowerShell Cmdlet Development Guidelines
 
 This guide provides PowerShell-specific instructions to help GitHub Copilot generate idiomatic, safe,
-and maintainable scripts. It aligns with Microsoft’s PowerShell cmdlet development guidelines.
+and maintainable scripts. It aligns with Microsoft's PowerShell cmdlet development guidelines.
 
 ## Naming Conventions
 

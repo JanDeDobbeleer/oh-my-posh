@@ -4,7 +4,7 @@
 
 When editing Go files (`*.go`):
 
-- Read `.instructions/golang.md` and announce once per task that you are following it.
+- Read `.github/instructions/golang.md` and announce once per task that you are following it.
 - Before committing, ensure code is formatted and linted:
   - Run `gofmt` (or `go fmt`) and organize imports.
   - Run `golangci-lint run` at the repository root and address findings.
@@ -13,14 +13,14 @@ When editing Go files (`*.go`):
 
 When editing Markdown (`*.md`, `*.mdx`):
 
-- Read `.instructions/markdown.md` and announce once per task that you are following it.
+- Read `.github/instructions/markdown.md` and announce once per task that you are following it.
 - Use proper headings (`##`, `###`), fenced code blocks with language, and keep lines within the configured limit.
 
 ## PowerShell
 
 When editing PowerShell files (`*.ps1`, `*.psm1`, `*.psd1`):
 
-- Read `.instructions/powershell.md` and announce once per task that you are following it.
+- Read `.github/instructions/powershell.md` and announce once per task that you are following it.
 - Follow PowerShell best practices for naming, formatting, and error handling.
 - Include comment-based help for public functions and ensure proper parameter validation.
 

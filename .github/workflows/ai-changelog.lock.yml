@@ -246,8 +246,11 @@ jobs:
           Find the previous tag to establish the comparison range:
           
           ```bash
+          # Fetch all tags first
+          git fetch --tags --quiet
+          
           # Try to find the previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 "$CURRENT_TAG^" 2>/dev/null)
+          PREV_TAG=$(git describe --tags --abbrev=0 "$CURRENT_TAG^" || echo "")
           
           # If no previous tag found, use initial commit
           if [ -z "$PREV_TAG" ]; then

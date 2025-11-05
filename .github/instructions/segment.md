@@ -1,6 +1,6 @@
 ---
 description: 'Automate scaffolding for a new Oh My Posh segment: code, registration, docs, schema, sidebar updates'
-applyTo: ['**/*.go', 'website/docs/**/*.mdx', 'themes/schema.json', 'website/sidebars.js']
+applyTo: ['src/segments/*.go', 'website/docs/**/*.mdx', 'themes/schema.json', 'website/sidebars.js']
 ---
 
 # Segment scaffolding instructions
@@ -27,7 +27,7 @@ Contract
   links, or schema entries.
 - Alphabetical insertions where applicable.
 - Compile-ready Go code, formatted.
-- Docs lint clean according to `.instructions/markdown.md`.
+- Docs lint clean according to `.github/instructions/markdown.md`.
 
 Implementation steps
 

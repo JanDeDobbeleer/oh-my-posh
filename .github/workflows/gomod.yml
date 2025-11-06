@@ -20,7 +20,7 @@ jobs:
     - name: Check for unused dependencies
       run: |
         go mod tidy
-        if [ "$(git status | grep -c "nothing to commit, working tree clean")" == "1" ]; then
+        if [ "$(git status | grep -c "nothing to commit, working tree clean")" -eq 1 ]; then
           echo "Nothing to tidy"
           exit 0
         fi

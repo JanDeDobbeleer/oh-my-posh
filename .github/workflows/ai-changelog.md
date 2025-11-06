@@ -13,7 +13,10 @@ on:
       dry_run:
         description: 'Dry run mode - generate changelog but do not update release'
         required: false
-        type: boolean
+        type: choice
+        options:
+          - 'true'
+          - 'false'
         default: 'true'
 
 permissions:
@@ -53,35 +56,36 @@ Generate a clear, human-friendly Markdown changelog for this release. Use concis
 - Release ID: `${{ github.event.release.id }}`
 - Dry Run: `${{ github.event.inputs.dry_run }}`
 
+**IMPORTANT**: You are running in a read-only environment. Do NOT attempt to:
+- Run `git fetch` or any git commands that modify the repository
+- Create files with redirects (`>`, `>>`) or `cat > file`
+- Use `mkdir` to create directories
+- All git tags are already available in the checked-out repository
+
 ## Step-by-Step Process
 
 ### 1. Gather Release Context
 
-First, determine if this is a manual dispatch or release event:
+Use the GitHub API to get release information:
 
-- If `${{ github.event.inputs.tag }}` is provided, this is a manual dispatch - fetch release info for the specified tag using GitHub CLI
-- Otherwise, use the release event data directly
-
-Extract:
-
-- Current tag name: `${{ github.event.inputs.tag || github.event.release.tag_name }}`
-- Release ID: `${{ github.event.release.id }}`
-- Existing release body/notes (fetch via GitHub CLI if needed)
+- Current release tag: `${{ github.event.inputs.tag || github.event.release.tag_name }}`
+- Get release details using: `gh api repos/${{ github.repository }}/releases/tags/TAG_NAME`
+- Extract release ID and existing body from the API response
 
 ### 2. Determine Diff Range
 
 Find the previous tag to establish the comparison range:
 
 ```bash
-# Fetch all tags first
-git fetch --tags --quiet
+# Get current tag
+CURRENT_TAG="${{ github.event.inputs.tag || github.event.release.tag_name }}"
 
-# Try to find the previous tag
-PREV_TAG=$(git describe --tags --abbrev=0 "$CURRENT_TAG^" || echo "")
+# Find the previous tag - list tags in reverse version order and get the one before current
+PREV_TAG=$(git tag --sort=-version:refname | grep -A1 "^$CURRENT_TAG$" | tail -n1 | grep -v "^$CURRENT_TAG$")
 
-# If no previous tag found, use initial commit
-if [ -z "$PREV_TAG" ]; then
-  PREV_TAG=$(git rev-list --max-parents=0 HEAD | tail -n 1)
+# If no previous tag, use first commit (handle multiple root commits)
+if [ -z "$PREV_TAG" ] || [ "$PREV_TAG" = "$CURRENT_TAG" ]; then
+  PREV_TAG=$(git rev-list --max-parents=0 HEAD | head -n1)
 fi
 
 echo "Comparing $PREV_TAG...$CURRENT_TAG"
@@ -89,35 +93,37 @@ echo "Comparing $PREV_TAG...$CURRENT_TAG"
 
 ### 3. Collect Commits and Changes
 
-Gather the following information:
+Gather the following information using git commands:
 
-- **Commit subjects**: `git log --no-merges --pretty=format:'%s' "$PREV_TAG...$CURRENT_TAG" | head -n 500`
-- **Detailed commits**: `git log --no-merges --pretty=format:'- %s%n%b%n' "$PREV_TAG...$CURRENT_TAG" | head -n 2000`
-- **Changed files**: `git diff --name-status "$PREV_TAG...$CURRENT_TAG" | head -n 1000`
+- **Commit subjects**: `git log --no-merges --pretty=format:'%s' "$PREV_TAG...$CURRENT_TAG"`
+- **Detailed commits**: `git log --no-merges --pretty=format:'- %s%n%b%n' "$PREV_TAG...$CURRENT_TAG"`
+- **Changed files**: `git diff --name-status "$PREV_TAG...$CURRENT_TAG"`
 - **Contributors**: Use `git shortlog -sne "$PREV_TAG...$CURRENT_TAG"` to extract contributors
   - Format as GitHub profile links: `[@username](https://github.com/username)`
   - Exclude: Jan De Dobbeleer, dependabot, renovate, github-actions, and other bots
-  - Limit to 200 contributors
+  - Extract GitHub username from email addresses (e.g., noreply@github.com patterns)
 
 ### 4. Collect Issue Context
 
-Extract issue numbers from commit messages (patterns: fixes #123, closes #456, #789):
+Extract issue numbers from commit messages and fetch their details for context:
 
 ```bash
-# Extract issue numbers from commits
-ISSUE_NUMBERS=$(git log --no-merges --pretty=format:'%s %b' "$PREV_TAG...$CURRENT_TAG" | \
+# Extract issue numbers from commits (patterns: fixes #123, closes #456, #789)
+git log --no-merges --pretty=format:'%s %b' "$PREV_TAG...$CURRENT_TAG" | \
   grep -oiE '(fix(es|ed)?|close(s|d)?|resolve(s|d)?)?[[:space:]]*#[0-9]+' | \
-  grep -oE '[0-9]+' | sort -u)
-
-# Fetch issue details for context
-for NUM in $ISSUE_NUMBERS; do
-  gh issue view $NUM --json title,body,labels
-done
+  grep -oE '[0-9]+' | sort -u
 ```
+
+For each unique issue number found, fetch details using the GitHub API:
+```bash
+gh api repos/${{ github.repository }}/issues/ISSUE_NUMBER
+```
+
+Limit to the first 20 issues if there are many. Use issue titles and labels to provide context in the changelog.
 
 ### 5. Read Version Configuration
 
-Read the `.versionrc.json` file to understand which commit types should be included in the changelog.
+Read the `.versionrc.json` file from the repository to understand which commit types should be included.
 
 **CRITICAL**: Respect the .versionrc.json configuration:
 
@@ -166,26 +172,30 @@ Create a comprehensive changelog that includes:
 
 ### 7. Update Release Body
 
-If not in dry run mode (`${{ github.event.inputs.dry_run }}` is false):
+**Check dry run mode first**: If `${{ github.event.inputs.dry_run }}` equals `'true'` (string), do NOT update the release.
+
+If NOT in dry run mode (value is `'false'` or not provided for release events):
 
 ```bash
 # Update the release body using GitHub API
-gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID \
+gh api -X PATCH repos/${{ github.repository }}/releases/RELEASE_ID \
   -f body="$ENHANCED_CHANGELOG"
 ```
 
-If in dry run mode:
+Where RELEASE_ID comes from the release info fetched in step 1.
 
-- Display the generated changelog in the workflow summary
-- Do not modify the actual release
+If in dry run mode:
+- Display the generated changelog clearly
+- Add a prominent note that this is a DRY RUN and no changes were made
 
 ### 8. Generate Summary
 
-Create a step summary showing:
+Output the enhanced changelog directly in your response with clear formatting:
 
-- If dry run: Preview of the generated changelog with a note that the release was not modified
-- If not dry run: Confirmation that the release was updated with the enhanced changelog
-- The full enhanced changelog content
+- If dry run: Show a clear "🔍 DRY RUN MODE" header and note that no changes were made
+- If not dry run: Show a "✅ RELEASE UPDATED" header confirming the update
+- Display the full enhanced changelog
+- Include basic statistics (commit count, comparison range)
 
 ## Output Format
 

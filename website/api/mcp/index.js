@@ -40,6 +40,26 @@ module.exports = async function (context, req) {
               },
               required: ['content']
             }
+          },
+          {
+            name: 'validate_segment',
+            description: 'Validate a segment snippet against the oh-my-posh schema',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                content: {
+                  type: 'string',
+                  description: 'The segment content as a string (JSON, YAML, or TOML)'
+                },
+                format: {
+                  type: 'string',
+                  enum: ['json', 'yaml', 'toml', 'auto'],
+                  description: 'The format of the segment (auto-detect if not specified)',
+                  default: 'auto'
+                }
+              },
+              required: ['content']
+            }
           }
         ]
       }
@@ -131,6 +151,26 @@ module.exports = async function (context, req) {
                   },
                   required: ['content']
                 }
+              },
+              {
+                name: 'validate_segment',
+                description: 'Validate a segment snippet against the oh-my-posh schema. Useful for validating individual prompt segments before adding them to a configuration.',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    content: {
+                      type: 'string',
+                      description: 'The segment content as a string (JSON, YAML, or TOML)'
+                    },
+                    format: {
+                      type: 'string',
+                      enum: ['json', 'yaml', 'toml', 'auto'],
+                      description: 'The format of the segment (auto-detect if not specified)',
+                      default: 'auto'
+                    }
+                  },
+                  required: ['content']
+                }
               }
             ]
           },
@@ -144,7 +184,13 @@ module.exports = async function (context, req) {
     if (message.method === 'tools/call') {
       const { name, arguments: args } = message.params;
 
-      if (name !== 'validate_config') {
+      let result;
+      
+      if (name === 'validate_config') {
+        result = await validator.validateConfig(args.content, args.format || 'auto');
+      } else if (name === 'validate_segment') {
+        result = await validator.validateSegment(args.content, args.format || 'auto');
+      } else {
         context.res = {
           status: 200,
           headers: {
@@ -161,9 +207,6 @@ module.exports = async function (context, req) {
         };
         return;
       }
-
-      // Validate the configuration
-      const result = await validator.validateConfig(args.content, args.format || 'auto');
 
       context.res = {
         status: 200,

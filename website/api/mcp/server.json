@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "io.github.jandedobbeleer/oh-my-posh-validator",
   "title": "Oh My Posh Validator",
-  "description": "Validate oh-my-posh theme configurations against the official schema.",
+  "description": "Validate oh-my-posh configurations and segment snippets against the official schema.",
   "version": "1.0.0",
   "license": "MIT",
   "websiteUrl": "https://ohmyposh.dev/docs/advanced/mcp-server",

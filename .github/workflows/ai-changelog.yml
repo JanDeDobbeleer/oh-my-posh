@@ -1,0 +1,343 @@
+name: Enhance release changelog with AI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to test (e.g., v19.0.0)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run mode - generate changelog but do not update release'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write  # Update release body
+  models: read     # Access GitHub Models API
+
+jobs:
+  enhance:
+    name: Generate enhanced changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (with tags)
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Gather release context
+        id: ctx
+        shell: bash
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          # Determine if this is a manual dispatch or release event
+          if [[ -n "$INPUT_TAG" ]]; then
+            echo "📋 Manual dispatch mode - fetching release info for tag: $INPUT_TAG"
+            # Manual dispatch: fetch release info for the specified tag
+            CURRENT_TAG="$INPUT_TAG"
+            RELEASE_JSON=$(gh api repos/${{ github.repository }}/releases/tags/$CURRENT_TAG || echo '{}')
+            RELEASE_ID=$(printf "%s" "$RELEASE_JSON" | jq -r '.id // "0"')
+            HTML_URL=$(printf "%s" "$RELEASE_JSON" | jq -r '.html_url // ""')
+            EXISTING_BODY=$(printf "%s" "$RELEASE_JSON" | jq -r '.body // ""')
+            echo "  Release ID: $RELEASE_ID"
+            echo "  Release URL: $HTML_URL"
+          else
+            echo "📋 Release event mode - parsing from event payload"
+            # Release event: parse from event payload
+            CURRENT_TAG=$(jq -r '.release.tag_name' "$GITHUB_EVENT_PATH")
+            RELEASE_ID=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")
+            HTML_URL=$(jq -r '.release.html_url' "$GITHUB_EVENT_PATH")
+            EXISTING_BODY=$(jq -r '.release.body // ""' "$GITHUB_EVENT_PATH")
+            echo "  Tag: $CURRENT_TAG"
+            echo "  Release ID: $RELEASE_ID"
+          fi
+          # Persist to a file for later steps to source
+          {
+            echo "CURRENT_TAG=$CURRENT_TAG"
+            echo "RELEASE_ID=$RELEASE_ID"
+            echo "HTML_URL=$HTML_URL"
+            echo "DRY_RUN=${DRY_RUN:-false}"
+          } > ctx.env
+          echo "✅ Context saved to ctx.env"
+          # Save existing body as a file to avoid env escaping issues
+          printf "%s" "$EXISTING_BODY" > existing_notes.md
+          echo "✅ Existing notes saved ($(wc -l < existing_notes.md) lines)"
+
+      - name: Determine diff range
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          set -a; source ctx.env; set +a
+          echo "🔍 Determining diff range for tag: $CURRENT_TAG"
+          # Try to find the previous tag using git describe
+          if PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null); then
+            BASE="$PREV_TAG"
+            echo "  Previous tag found: $PREV_TAG"
+          else
+            # Fallback to initial commit
+            BASE="$(git rev-list --max-parents=0 HEAD | tail -n 1)"
+            echo "  No previous tag found, using initial commit: ${BASE:0:8}"
+          fi
+          echo "base_ref=$BASE" >> "$GITHUB_OUTPUT"
+          echo "curr_ref=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
+          COMPARE_URL="https://github.com/${{ github.repository }}/compare/${BASE}...${CURRENT_TAG}"
+          echo "compare_url=$COMPARE_URL" >> "$GITHUB_OUTPUT"
+          echo "✅ Diff range: $BASE...$CURRENT_TAG"
+
+      - name: Collect commits and changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.diff.outputs.base_ref }}"
+          HEAD="${{ steps.diff.outputs.curr_ref }}"
+          echo "📝 Collecting commits and changes from $BASE to $HEAD"
+          git log --no-merges --pretty=format:'%s' "${BASE}..${HEAD}" | head -n 500 > commits_subjects.txt || true
+          echo "  ✅ Commit subjects: $(wc -l < commits_subjects.txt) commits"
+          git log --no-merges --pretty=format:'- %s%n%b%n' "${BASE}..${HEAD}" | head -n 2000 > commits_detailed.txt || true
+          echo "  ✅ Detailed commits: $(wc -l < commits_detailed.txt) lines"
+          git diff --name-status "${BASE}..${HEAD}" | head -n 1000 > files_changed.txt || true
+          echo "  ✅ Changed files: $(wc -l < files_changed.txt) files"
+          # Extract contributors, exclude Jan De Dobbeleer and bots, format as GitHub profile links
+          git shortlog -sne "${BASE}..${HEAD}" | sed -E 's/^ *[0-9]+\t//g' | while IFS= read -r line; do
+            name=$(echo "$line" | sed -E 's/ *<.*//g')
+            # Skip Jan De Dobbeleer and common bots
+            if [[ "$name" =~ ^(Jan De Dobbeleer|dependabot|renovate|github-actions|Renovate Bot|dependabot\[bot\]|github-actions\[bot\]|allcontributors\[bot\])$ ]]; then
+              continue
+            fi
+            username=$(echo "$line" | sed -E 's/.*<([^@]+)@.*/\1/g')
+            echo "- [@${username}](https://github.com/${username}) (${name})"
+          done | head -n 200 > contributors.txt || true
+          echo "  ✅ Contributors: $(wc -l < contributors.txt) people"
+
+      - name: Collect issue context
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.diff.outputs.base_ref }}"
+          HEAD="${{ steps.diff.outputs.curr_ref }}"
+          echo "🔍 Collecting issue context for referenced issues"
+          > issues_context.txt
+          # Extract issue numbers from commit messages (e.g., fixes #123, closes #456, #789)
+          ISSUE_NUMBERS=$(git log --no-merges --pretty=format:'%s %b' "${BASE}..${HEAD}" | \
+            grep -oiE '(fix(es|ed)?|close(s|d)?|resolve(s|d)?)?[[:space:]]*#[0-9]+' | \
+            grep -oE '[0-9]+' | sort -u || true)
+          if [ -z "$ISSUE_NUMBERS" ]; then
+            echo "  No issues referenced in commits"
+          else
+            COUNT=0
+            for NUM in $ISSUE_NUMBERS; do
+              echo "  Fetching issue #$NUM..."
+              if ISSUE_DATA=$(gh api "repos/${{ github.repository }}/issues/$NUM" 2>/dev/null); then
+                TITLE=$(echo "$ISSUE_DATA" | jq -r '.title')
+                BODY=$(echo "$ISSUE_DATA" | jq -r '.body // ""' | head -c 1000)
+                LABELS=$(echo "$ISSUE_DATA" | jq -r '.labels[]?.name' | tr '\n' ', ' | sed 's/,$//')
+                echo "---" >> issues_context.txt
+                echo "Issue #$NUM: $TITLE" >> issues_context.txt
+                [ -n "$LABELS" ] && echo "Labels: $LABELS" >> issues_context.txt
+                echo "$BODY" >> issues_context.txt
+                echo "" >> issues_context.txt
+                COUNT=$((COUNT + 1))
+              fi
+            done
+            echo "  ✅ Collected context for $COUNT issues"
+          fi
+
+      - name: Generate enhanced changelog with AI
+        id: ai
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          set -a; source ctx.env; set +a
+          echo "🤖 Generating enhanced changelog with AI"
+          MODEL="openai/gpt-4o-mini"
+          echo "  Model: $MODEL"
+          SYSTEM_PROMPT=$(cat << 'PROMPT'
+          You are a release notes editor for the open-source project "oh-my-posh", a cross-shell prompt theme engine written in Go.
+          Write a clear, human-friendly Markdown changelog for this release. Use concise language and organize with headings.
+
+          CRITICAL: Respect the .versionrc.json configuration:
+          - ONLY include these sections with these exact names:
+            * "Features" (for feat: commits)
+            * "Bug Fixes" (for fix: commits)
+            * "Refactor" (for refactor: commits)
+            * "Reverts" (for revert: commits)
+            * "Themes" (for theme: commits)
+          - DO NOT include chore, ci, docs, perf, or test commits (marked as hidden in .versionrc.json)
+          - Use ONLY the section names specified above, not generic names like "Other"
+          - ONLY show sections that have actual changes - omit empty sections entirely
+
+          Segment changes (public-facing):
+          - When you see changes to src/segments/*.go files (excluding *_test.go), these are prompt segments that users configure
+          - A segment is a customizable component users add to their shell prompt (e.g., git status, battery level, current directory)
+          - Mention segment changes by their user-facing name (infer from the file name), not file paths
+          - Focus on what users can now do or configure differently with that segment
+
+          Goals:
+          - Summarize highlights up front with context and impact
+          - Group changes ONLY by the section names from .versionrc.json above (skip empty sections)
+          - Call out breaking changes and required migrations with explicit before/after examples or commands
+          - Add practical usage notes or snippets to help users adopt new features or changes
+          - For segment changes, explain the user-facing impact (e.g., "The Git segment now supports...")
+          - Credit contributors at the end (they are pre-filtered and formatted as GitHub profile links) - ONLY if contributors list is not empty
+          - Include a "Full diff" link footer
+
+          Requirements:
+          - Output valid Markdown only, no front matter, no HTML, no title heading
+          - Do not include a title like "Changelog for vX.Y.Z" - start directly with the content
+          - Keep to ~300-800 words unless there are many breaking changes
+          - Prefer code blocks for examples with proper language tags (bash, json, yaml, toml, powershell)
+          - Do not invent features not present in the commits/diff
+          - Do not list individual file paths unless they are user-facing config/theme files
+          PROMPT
+          )
+          # Build the user content
+          REPO="${{ github.repository }}"
+          COMPARE_URL="${{ steps.diff.outputs.compare_url }}"
+          CURR="$CURRENT_TAG"
+          PREV="${{ steps.diff.outputs.base_ref }}"
+          EXISTING=$(cat existing_notes.md || true)
+          SUBJECTS="$(cat commits_subjects.txt || true)"
+          DETAILS="$(cat commits_detailed.txt || true)"
+          FILES="$(cat files_changed.txt || true)"
+          CONTRIBUTORS="$(cat contributors.txt || true)"
+          ISSUES_CONTEXT="$(cat issues_context.txt || true)"
+          VERSIONRC="$(cat .versionrc.json || echo '{}')"
+          USER_CONTENT=$(cat << EOF
+          Repository: ${REPO}
+          Release: ${CURR}
+          Previous: ${PREV:-<none>}
+          Release URL: ${HTML_URL}
+          Compare URL: ${COMPARE_URL}
+
+          .versionrc.json configuration (sections to show/hide):
+          ---
+          ${VERSIONRC}
+          ---
+
+          Existing release notes (from conventional commits):
+          ---
+          ${EXISTING}
+          ---
+
+          Conventional commits (subjects):
+          ---
+          ${SUBJECTS}
+          ---
+
+          Commits (details):
+          ---
+          ${DETAILS}
+          ---
+
+          Changed files (for context on segment changes only, do not list paths in output):
+          ---
+          ${FILES}
+          ---
+
+          Referenced issues (for additional context, explain impact in user terms):
+          ---
+          ${ISSUES_CONTEXT}
+          ---
+
+          Contributors:
+          ---
+          ${CONTRIBUTORS}
+          ---
+          EOF
+          )
+          echo "  Calling GitHub Models API..."
+          OUTPUT_MD=""
+          set +e
+          RESP=$(curl -sS -f -X POST "https://models.github.ai/inference/chat/completions" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg model "$MODEL" --arg sys "$SYSTEM_PROMPT" --arg user "$USER_CONTENT" '{model:$model, messages: [{role:"system",content:$sys},{role:"user",content:$user}], temperature: 0.2, max_tokens: 4000}')")
+          CURL_EXIT=$?
+          if [ $CURL_EXIT -eq 0 ]; then
+            OUTPUT_MD=$(printf "%s" "$RESP" | jq -r '.choices[0].message.content // empty')
+            echo "  ✅ API call successful"
+          else
+            echo "  ❌ API call failed with exit code: $CURL_EXIT"
+            echo "  Response: $RESP"
+          fi
+          set -e
+          if [[ -z "$OUTPUT_MD" ]]; then
+            echo "❌ AI generation failed or no output produced."
+            echo "enhanced_body=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "  Generated changelog length: $(printf "%s" "$OUTPUT_MD" | wc -c) characters"
+          # Save the AI-generated changelog
+          echo "$OUTPUT_MD" > enhanced_changelog.md
+          echo "✅ Enhanced changelog saved to enhanced_changelog.md"
+          echo "enhanced_body<<EOF" >> "$GITHUB_OUTPUT"
+          cat enhanced_changelog.md >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "✅ Changelog saved to step output"
+
+      - name: Update release body
+        if: ${{ steps.ai.outputs.enhanced_body != '' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          set -a; source ctx.env; set +a
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "🧪 Dry run mode enabled - skipping release update"
+            echo "   The generated changelog would be applied to release ID: ${RELEASE_ID}"
+            exit 0
+          fi
+          echo "📝 Updating release body for release ID: ${RELEASE_ID}"
+          # Use the AI-generated changelog as the complete release body
+          PAYLOAD=$(jq -Rs '{body: .}' < enhanced_changelog.md)
+          gh api -X PATCH repos/${{ github.repository }}/releases/${RELEASE_ID} -H "Content-Type: application/json" -d "$PAYLOAD"
+          echo "✅ Release body updated successfully"
+
+      - name: Summary
+        if: ${{ always() && (inputs.dry_run || steps.ai.outputs.enhanced_body != '') }}
+        shell: bash
+        run: |
+          set -a; source ctx.env; set +a
+          echo "📊 Generating summary..."
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "## 🧪 Dry Run - Enhanced Changelog Preview" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            if [[ -f enhanced_changelog.md ]]; then
+              echo "**Release would not be modified.** Below is the generated changelog:" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              cat enhanced_changelog.md >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ **AI generation failed or no changelog was produced.**" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Check the workflow logs for details." >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "## ✅ Enhanced Changelog Generated" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Release body has been updated with AI-enhanced changelog:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat enhanced_changelog.md >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "✅ Summary generated"
+
+      - name: Skipped notice
+        if: ${{ steps.ai.outputs.enhanced_body == '' }}
+        run: |
+          echo "❌ AI changelog generation skipped or failed. Ensure GitHub Models access is enabled for this repo." >> $GITHUB_STEP_SUMMARY

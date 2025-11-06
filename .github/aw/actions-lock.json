@@ -1,0 +1,9 @@
+{
+  "entries": {
+    "actions/checkout@v4": {
+      "repo": "actions/checkout",
+      "version": "v4",
+      "sha": "08eba0b27e820071cde6df949e0beb9ba4906955"
+    }
+  }
+}

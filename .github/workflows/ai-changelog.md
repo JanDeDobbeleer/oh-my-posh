@@ -40,6 +40,13 @@ tools:
 engine:
   id: copilot
 
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
+      persist-credentials: false
+
 ---
 
 # Enhanced Changelog Generator for oh-my-posh
@@ -57,21 +64,41 @@ Generate a clear, human-friendly Markdown changelog for this release. Use concis
 - Release ID: `${{ github.event.release.id }}`
 - Dry Run: `${{ github.event.inputs.dry_run }}`
 
-**IMPORTANT**: You are running in a read-only environment. Do NOT attempt to:
-- Run `git fetch` or any git commands that modify the repository
-- Create files with redirects (`>`, `>>`) or `cat > file`
-- Use `mkdir` to create directories
-- All git tags are already available in the checked-out repository
+**IMPORTANT Git History**: The repository is checked out with full history (`fetch-depth: 0`), so all tags and commits are available.
+
+**IMPORTANT Release Data**: Release event data is available in the GitHub context:
+- For release events: Release information is available via API
+- Release ID: `${{ github.event.release.id }}`
+- Release tag: `${{ github.event.release.tag_name }}`
+- Release name: `${{ github.event.release.name }}`
+- Use API to fetch full release details including body
+
+**IMPORTANT**: You are running in a standard GitHub Actions environment. You CAN:
+- Use the GitHub MCP tool to call GitHub API (e.g., `get_release`, `get_repository`, etc.)
+- Run git commands on the full repository history  
+- Use allowed bash commands: git, cat, echo, jq, curl, head, wc, grep, sed, sort
+- Use `echo`, bash variables, and heredocs to create temporary files in `/tmp/gh-aw/agent/`
+- Write to `$GITHUB_STEP_SUMMARY`
+
+Do NOT attempt to:
+- Access files outside `/home/runner/work/` or `/tmp/gh-aw/` without user permission
+- Use interactive prompts
 
 ## Step-by-Step Process
 
 ### 1. Gather Release Context
 
-Use the GitHub API to get release information:
+Use the GitHub API tool to get release information:
 
-- Current release tag: `${{ github.event.inputs.tag || github.event.release.tag_name }}`
-- Get release details using: `gh api repos/${{ github.repository }}/releases/tags/TAG_NAME`
-- Extract release ID and existing body from the API response
+```bash
+# Get release details by tag or ID
+# Use github tool: get_release with owner, repo, and release_id or tag
+```
+
+For release events, the release ID is available as: `${{ github.event.release.id }}`
+For workflow_dispatch, use the tag: `${{ github.event.inputs.tag }}`
+
+Store the release ID for later use when updating the release body.
 
 ### 2. Determine Diff Range
 
@@ -115,10 +142,8 @@ git log --no-merges --pretty=format:'%s %b' "$PREV_TAG...$CURRENT_TAG" | \
   grep -oE '[0-9]+' | sort -u
 ```
 
-For each unique issue number found, fetch details using the GitHub API:
-```bash
-gh api repos/${{ github.repository }}/issues/ISSUE_NUMBER
-```
+For each unique issue number found, use the GitHub API tool to fetch details:
+- Use `get_issue` with owner, repo, and issue_number parameters
 
 Limit to the first 20 issues if there are many. Use issue titles and labels to provide context in the changelog.
 
@@ -236,13 +261,10 @@ Create a comprehensive changelog that includes:
 
 **Check dry run mode first**: If `${{ github.event.inputs.dry_run }}` equals `'true'` (string), do NOT update the release.
 
-If NOT in dry run mode (value is `'false'` or not provided for release events):
+If NOT in dry run mode (value is `'false'` or not provided for release events), use the GitHub API tool to update the release:
 
-```bash
-# Update the release body using GitHub API
-gh api -X PATCH repos/${{ github.repository }}/releases/RELEASE_ID \
-  -f body="$ENHANCED_CHANGELOG"
-```
+- Use the appropriate GitHub API tool method to update the release body
+- Pass the release ID and new body content
 
 Where RELEASE_ID comes from the release info fetched in step 1.
 
@@ -252,7 +274,16 @@ If in dry run mode:
 
 ### 8. Generate Summary
 
-Output the enhanced changelog directly in your response with clear formatting:
+Output the enhanced changelog to the GitHub Action summary and in your response:
+
+```bash
+# Write to GitHub Action summary
+cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+[Your enhanced changelog content here]
+EOF
+```
+
+Display in your response with clear formatting:
 
 - If dry run: Show a clear "🔍 DRY RUN MODE" header and note that no changes were made
 - If not dry run: Show a "✅ RELEASE UPDATED" header confirming the update
@@ -290,9 +321,9 @@ The enhanced changelog should be structured as:
 
 ## Important Notes
 
-- Use the GitHub CLI (`gh`) for all GitHub API operations
+- Use the GitHub MCP tool for all GitHub API operations (not `gh` CLI)
 - Use git commands for repository analysis
-- Store intermediate results in temporary files if needed for reference
+- Use bash commands (git, cat, echo, jq, curl, head, wc, grep, sed, sort) as needed
 - Handle errors gracefully and provide clear feedback
 - Respect the conventional commit format used in oh-my-posh
 - Focus on user-facing impact, not internal implementation details

@@ -2,8 +2,10 @@ name: Publish to MCP Registry
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+    paths:
+      - 'website/api/mcp/**'
   workflow_dispatch:
 
 jobs:
@@ -16,21 +18,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        with:
+          fetch-depth: 0  # Fetch all tags
 
-      - name: Extract version from tag or server.json
+      - name: Extract version from latest git tag
         id: version
         run: |
-          if [[ "${{ github.ref }}" == "refs/tags/v"* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-            echo "version=$VERSION" >> $GITHUB_OUTPUT
-            echo "Using version from tag: $VERSION"
-          else
-            # Extract version from server.json for manual triggers
-            VERSION=$(jq -r '.version' website/api/mcp/server.json)
-            echo "version=$VERSION" >> $GITHUB_OUTPUT
-            echo "Using version from server.json: $VERSION"
-          fi
+          # Get the latest git tag (without 'v' prefix)
+          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Using version from git tag: $VERSION"
 
       - name: Update server.json version
         run: |

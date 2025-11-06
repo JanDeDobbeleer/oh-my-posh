@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.jandedobbeleer/oh-my-posh-validator",
+  "name": "io.github.JanDeDobbeleer/oh-my-posh-validator",
   "title": "Oh My Posh Validator",
   "description": "Validate oh-my-posh configurations and segment snippets against the official schema.",
   "version": "1.0.0",

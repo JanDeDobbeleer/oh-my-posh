@@ -256,14 +256,17 @@ async function validateSegment(content, format = 'auto') {
       result.errors = formatErrors(segmentValidator.errors);
     }
 
-    // Add segment-specific warnings
+    // Add segment-specific validation
     if (segment && typeof segment === 'object') {
       if (!segment.type) {
-        result.warnings.push({
+        result.errors.push({
           path: 'type',
           message: 'Segment type is required for proper rendering.',
-          type: 'error'
+          keyword: 'required',
+          params: { missingProperty: 'type' },
+          data: segment
         });
+        result.valid = false;
       }
 
       if (!segment.style) {

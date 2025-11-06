@@ -22,6 +22,14 @@ Validate an oh-my-posh configuration.
 - Supports JSON, YAML, and TOML formats
 - Returns detailed validation errors with JSON paths
 
+### validate_segment
+
+Validate a segment snippet (individual prompt segment).
+
+- Validates against the segment schema definition
+- Useful for testing individual segments before adding them to a full configuration
+- Supports JSON, YAML, and TOML formats
+
 ## Usage
 
 ### As an MCP Server
@@ -76,6 +84,25 @@ themes/schema.json\",\"blocks\":[]}",
       }
     },
     "id": 1
+  }'
+```
+
+#### Validate a Segment Snippet
+
+```bash
+curl -X POST https://ohmyposh.dev/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "validate_segment",
+      "arguments": {
+        "content": "{\"type\":\"path\",\"style\":\"powerline\",\"foreground\":\"#ffffff\",\"background\":\"#61AFEF\",\"template\":\" {{ .Path }} \"}",
+        "format": "json"
+      }
+    },
+    "id": 2
   }'
 ```
 

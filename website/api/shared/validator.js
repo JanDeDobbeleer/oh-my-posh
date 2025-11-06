@@ -208,6 +208,88 @@ function formatErrors(errors) {
 }
 
 /**
+ * Validate a segment snippet against the schema
+ * @param {string} content - The segment content
+ * @param {string} format - The format (json, yaml, toml, or auto)
+ * @returns {Promise<Object>} Validation result
+ */
+async function validateSegment(content, format = 'auto') {
+  const result = {
+    valid: false,
+    errors: [],
+    warnings: [],
+    detectedFormat: null,
+    parsedSegment: null
+  };
+
+  try {
+    // Load schema
+    const loadedSchema = await loadSchema();
+    
+    // Parse the segment
+    const detectedFormat = format === 'auto' ? detectFormat(content) : format;
+    result.detectedFormat = detectedFormat;
+
+    const segment = parseConfig(content, format);
+    result.parsedSegment = segment;
+
+    // Extract segment schema from the full schema
+    const segmentSchema = loadedSchema.definitions?.segment;
+    if (!segmentSchema) {
+      throw new Error('Segment schema not found in oh-my-posh schema');
+    }
+
+    // Create a standalone schema with the segment definition and all referenced definitions
+    const standaloneSegmentSchema = {
+      ...segmentSchema,
+      definitions: loadedSchema.definitions // Include all definitions for reference resolution
+    };
+
+    // Create validator for segment schema
+    const segmentValidator = ajv.compile(standaloneSegmentSchema);
+    
+    // Validate segment
+    const isValid = segmentValidator(segment);
+    result.valid = isValid;
+
+    if (!isValid && segmentValidator.errors) {
+      result.errors = formatErrors(segmentValidator.errors);
+    }
+
+    // Add segment-specific warnings
+    if (segment && typeof segment === 'object') {
+      if (!segment.type) {
+        result.warnings.push({
+          path: 'type',
+          message: 'Segment type is required for proper rendering.',
+          type: 'error'
+        });
+      }
+
+      if (!segment.style) {
+        result.warnings.push({
+          path: 'style',
+          message: 'Consider adding a "style" property (plain, powerline, diamond, accordion).',
+          type: 'recommendation'
+        });
+      }
+    }
+
+  } catch (error) {
+    result.valid = false;
+    result.errors.push({
+      path: 'parse',
+      message: error.message,
+      keyword: 'parse',
+      params: {},
+      data: null
+    });
+  }
+
+  return result;
+}
+
+/**
  * Validate an oh-my-posh configuration
  * @param {string} content - The configuration content
  * @param {string} format - The format (json, yaml, toml, or auto)
@@ -290,6 +372,7 @@ async function validateConfig(content, format = 'auto') {
 
 module.exports = {
   validateConfig,
+  validateSegment,
   parseConfig,
   detectFormat,
   formatErrors

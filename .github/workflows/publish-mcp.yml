@@ -1,0 +1,61 @@
+name: Publish to MCP Registry
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish MCP Server
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for OIDC authentication
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag or server.json
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Using version from tag: $VERSION"
+          else
+            # Extract version from server.json for manual triggers
+            VERSION=$(jq -r '.version' website/api/mcp/server.json)
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Using version from server.json: $VERSION"
+          fi
+
+      - name: Update server.json version
+        run: |
+          cd website/api/mcp
+          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v' server.json > tmp.json && mv tmp.json server.json
+          echo "Updated server.json version to ${{ steps.version.outputs.version }}"
+          cat server.json
+
+      - name: Validate server.json
+        run: |
+          cd website/api
+          npm ci
+          cd mcp
+          node validate-server.js
+
+      - name: Install MCP Publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          chmod +x mcp-publisher
+          ./mcp-publisher --version
+
+      - name: Login to MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish to MCP Registry
+        run: |
+          cd website/api/mcp
+          ../../../mcp-publisher publish

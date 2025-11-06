@@ -129,3 +129,42 @@ npm start
 ```
 
 Then send requests to `http://localhost:7071/api/mcp`
+
+## Publishing to MCP Registry
+
+This server is published to the [MCP Registry](https://github.com/modelcontextprotocol/registry) using GitHub Actions.
+
+### Publishing
+
+Publishing is triggered automatically when you push a version tag (same as oh-my-posh releases):
+
+```bash
+git tag v9.0.0
+git push origin v9.0.0
+```
+
+The workflow will:
+
+1. Extract version from the tag (e.g., `v9.0.0` → `9.0.0`)
+2. Update `server.json` version to match
+3. Validate the `server.json` file
+4. Authenticate with the MCP Registry using GitHub OIDC
+5. Publish the server to the registry
+
+**Note**: The MCP server version will stay in sync with oh-my-posh versions automatically.
+
+### Files
+
+- `server.json` - MCP Registry server configuration
+- `server.schema.json` - JSON schema for validation
+- `validate-server.js` - Validation script
+- `.github/workflows/publish-mcp.yml` - GitHub Actions workflow
+
+### Validating server.json Locally
+
+```bash
+cd website/api
+npm install
+cd mcp
+node validate-server.js
+```

@@ -35,6 +35,7 @@ tools:
   github:
     toolsets: [all]
   bash: ["git", "cat", "echo", "jq", "curl", "head", "wc", "grep", "sed", "sort"]
+  web-fetch:
 
 engine:
   id: copilot
@@ -149,6 +150,48 @@ Create a comprehensive changelog that includes:
   directory)
 - Mention segment changes by their user-facing name (infer from the file name), not file paths
 - Focus on what users can now do or configure differently with that segment
+- **IMPORTANT**: For segment property additions or new enum values:
+  - Generate a minimal, valid JSON example showing the new property or value
+  - Validate segment examples using curl to call the MCP validation endpoint:
+    ```bash
+    curl -X POST https://ohmyposh.dev/api/mcp \
+      -H "Content-Type: application/json" \
+      -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_segment","arguments":{"content":"...","format":"json"}},"id":1}'
+    ```
+  - Parse the JSON response to check if `result.content[0].text` contains `"valid": true`
+  - Only include validated examples in the changelog
+  - Example format:
+    ```json
+    {
+      "type": "segment-name",
+      "style": "powerline",
+      "foreground": "#ffffff",
+      "background": "#0000ff",
+      "template": "example",
+      "new_property": "value"
+    }
+    ```
+
+**Configuration Changes** (when schema changes affect full configurations):
+
+- For new configuration-level properties (not segment-specific), provide minimal valid configuration examples
+- Validate configuration examples using curl to call the MCP validation endpoint:
+  ```bash
+  curl -X POST https://ohmyposh.dev/api/mcp \
+    -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"...","format":"json"}},"id":1}'
+  ```
+- Parse the JSON response to check if `result.content[0].text` contains `"valid": true`
+- Only include validated examples in the changelog
+- Example format:
+  ```json
+  {
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "version": 2,
+    "new_property": "value",
+    "blocks": []
+  }
+  ```
 
 **Goals**:
 
@@ -156,7 +199,8 @@ Create a comprehensive changelog that includes:
 - Group changes ONLY by the section names from .versionrc.json above (skip empty sections)
 - Call out breaking changes and required migrations with explicit before/after examples or commands
 - Add practical usage notes or snippets to help users adopt new features or changes
-- For segment changes, explain the user-facing impact (e.g., "The Git segment now supports...")
+- For segment changes with new properties/values, include validated JSON examples showing usage (use curl to validate)
+- For configuration changes, include validated minimal configuration examples (use curl to validate)
 - Credit contributors at the end (they are pre-filtered and formatted as GitHub profile links) - ONLY if contributors
   list is not empty
 - Include a "Full diff" link footer
@@ -167,6 +211,12 @@ Create a comprehensive changelog that includes:
 - Do not include a title like "Changelog for vX.Y.Z" - start directly with the content
 - Keep to ~300-800 words unless there are many breaking changes
 - Prefer code blocks for examples with proper language tags (bash, json, yaml, toml, powershell)
+- **CRITICAL**: All JSON segment and configuration examples MUST be validated using curl to call the MCP server:
+  - For segments: `curl -X POST https://ohmyposh.dev/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_segment","arguments":{"content":"JSON_HERE","format":"json"}},"id":1}'`
+  - For configs: `curl -X POST https://ohmyposh.dev/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"JSON_HERE","format":"json"}},"id":1}'`
+  - Parse response and check for `"valid": true` in the result
+  - If validation fails, fix the example and validate again
+  - Do NOT include invalid examples in the changelog
 - Do not invent features not present in the commits/diff
 - Do not list individual file paths unless they are user-facing config/theme files
 

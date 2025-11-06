@@ -337,9 +337,21 @@ jobs:
             - Generate a minimal, valid JSON example showing the new property or value
             - Validate segment examples using curl to call the MCP validation endpoint:
               ```bash
+              # Example: validate a segment JSON (escape inner quotes and newlines)
               curl -X POST https://ohmyposh.dev/api/mcp \
                 -H "Content-Type: application/json" \
-                -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_segment","arguments":{"content":"...","format":"json"}},"id":1}'
+                -d '{
+                  "jsonrpc": "2.0",
+                  "method": "tools/call",
+                  "params": {
+                    "name": "validate_segment",
+                    "arguments": {
+                      "content": "{\"type\": \"path\", \"style\": \"powerline\", \"foreground\": \"#ffffff\", \"background\": \"#0000ff\", \"template\": \"{{ .Path }}\"}",
+                      "format": "json"
+                    }
+                  },
+                  "id": 1
+                }'
               ```
             - Parse the JSON response to check if `result.content[0].text` contains `"valid": true`
             - Only include validated examples in the changelog

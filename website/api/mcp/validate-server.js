@@ -13,6 +13,12 @@ const schemaUrl = "https://static.modelcontextprotocol.io/schemas/2025-10-17/ser
 function downloadSchema() {
   return new Promise((resolve, reject) => {
     https.get(schemaUrl, (res) => {
+      if (res.statusCode !== 200) {
+        // Consume response data to free up memory
+        res.resume();
+        reject(new Error(`Failed to download schema: HTTP status code ${res.statusCode}`));
+        return;
+      }
       let data = "";
       res.on("data", (chunk) => data += chunk);
       res.on("end", () => {
@@ -35,7 +41,11 @@ async function validateServer() {
   }
 
   // Load server.json
-  const serverJson = JSON.parse(fs.readFileSync("server.json", "utf8"));
+  const serverJsonPath = "server.json";
+  if (!fs.existsSync(serverJsonPath)) {
+    throw new Error(`server.json not found at ${serverJsonPath}`);
+  }
+  const serverJson = JSON.parse(fs.readFileSync(serverJsonPath, "utf8"));
 
   // Validate
   const validate = ajv.compile(schema);

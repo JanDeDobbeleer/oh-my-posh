@@ -21,7 +21,7 @@ jobs:
       - name: Extract version from tag or server.json
         id: version
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+          if [[ "${{ github.ref }}" == "refs/tags/v"* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "Using version from tag: $VERSION"
@@ -48,7 +48,7 @@ jobs:
 
       - name: Install MCP Publisher
         run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar -xzf -
           chmod +x mcp-publisher
           ./mcp-publisher --version
 

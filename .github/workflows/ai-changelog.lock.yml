@@ -171,6 +171,7 @@ jobs:
         run: |
           set -e
           docker pull ghcr.io/github/github-mcp-server:v0.20.1
+          docker pull mcp/fetch
       - name: Setup MCPs
         run: |
           mkdir -p /tmp/gh-aw/mcp-config
@@ -197,6 +198,16 @@ jobs:
                 "env": {
                   "GITHUB_PERSONAL_ACCESS_TOKEN": "\${GITHUB_MCP_SERVER_TOKEN}"
                 }
+              },
+              "web-fetch": {
+                "command": "docker",
+                "args": [
+                  "run",
+                  "-i",
+                  "--rm",
+                  "mcp/fetch"
+                ],
+                "tools": ["*"]
               }
             }
           }
@@ -322,6 +333,48 @@ jobs:
             directory)
           - Mention segment changes by their user-facing name (infer from the file name), not file paths
           - Focus on what users can now do or configure differently with that segment
+          - **IMPORTANT**: For segment property additions or new enum values:
+            - Generate a minimal, valid JSON example showing the new property or value
+            - Validate segment examples using curl to call the MCP validation endpoint:
+              ```bash
+              curl -X POST https://ohmyposh.dev/api/mcp \
+                -H "Content-Type: application/json" \
+                -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_segment","arguments":{"content":"...","format":"json"}},"id":1}'
+              ```
+            - Parse the JSON response to check if `result.content[0].text` contains `"valid": true`
+            - Only include validated examples in the changelog
+            - Example format:
+              ```json
+              {
+                "type": "segment-name",
+                "style": "powerline",
+                "foreground": "#ffffff",
+                "background": "#0000ff",
+                "template": "example",
+                "new_property": "value"
+              }
+              ```
+          
+          **Configuration Changes** (when schema changes affect full configurations):
+          
+          - For new configuration-level properties (not segment-specific), provide minimal valid configuration examples
+          - Validate configuration examples using curl to call the MCP validation endpoint:
+            ```bash
+            curl -X POST https://ohmyposh.dev/api/mcp \
+              -H "Content-Type: application/json" \
+              -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"...","format":"json"}},"id":1}'
+            ```
+          - Parse the JSON response to check if `result.content[0].text` contains `"valid": true`
+          - Only include validated examples in the changelog
+          - Example format:
+            ```json
+            {
+              "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+              "version": 2,
+              "new_property": "value",
+              "blocks": []
+            }
+            ```
           
           **Goals**:
           
@@ -329,7 +382,8 @@ jobs:
           - Group changes ONLY by the section names from .versionrc.json above (skip empty sections)
           - Call out breaking changes and required migrations with explicit before/after examples or commands
           - Add practical usage notes or snippets to help users adopt new features or changes
-          - For segment changes, explain the user-facing impact (e.g., "The Git segment now supports...")
+          - For segment changes with new properties/values, include validated JSON examples showing usage (use curl to validate)
+          - For configuration changes, include validated minimal configuration examples (use curl to validate)
           - Credit contributors at the end (they are pre-filtered and formatted as GitHub profile links) - ONLY if contributors
             list is not empty
           - Include a "Full diff" link footer
@@ -340,6 +394,12 @@ jobs:
           - Do not include a title like "Changelog for vX.Y.Z" - start directly with the content
           - Keep to ~300-800 words unless there are many breaking changes
           - Prefer code blocks for examples with proper language tags (bash, json, yaml, toml, powershell)
+          - **CRITICAL**: All JSON segment and configuration examples MUST be validated using curl to call the MCP server:
+            - For segments: `curl -X POST https://ohmyposh.dev/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_segment","arguments":{"content":"JSON_HERE","format":"json"}},"id":1}'`
+            - For configs: `curl -X POST https://ohmyposh.dev/api/mcp -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"JSON_HERE","format":"json"}},"id":1}'`
+            - Parse response and check for `"valid": true` in the result
+            - If validation fails, fix the example and validate again
+            - Do NOT include invalid examples in the changelog
           - Do not invent features not present in the commits/diff
           - Do not list individual file paths unless they are user-facing config/theme files
           
@@ -612,6 +672,7 @@ jobs:
         # --allow-tool shell(uniq)
         # --allow-tool shell(wc)
         # --allow-tool shell(yq)
+        # --allow-tool web-fetch
         timeout-minutes: 15
         run: |
           set -o pipefail
@@ -620,7 +681,7 @@ jobs:
           mkdir -p /tmp/gh-aw/
           mkdir -p /tmp/gh-aw/agent/
           mkdir -p /tmp/gh-aw/.copilot/logs/
-          copilot --add-dir /tmp/ --add-dir /tmp/gh-aw/ --add-dir /tmp/gh-aw/agent/ --log-level all --log-dir /tmp/gh-aw/.copilot/logs/ --disable-builtin-mcps --allow-tool github --allow-tool 'shell(cat)' --allow-tool 'shell(curl)' --allow-tool 'shell(date)' --allow-tool 'shell(echo)' --allow-tool 'shell(git)' --allow-tool 'shell(grep)' --allow-tool 'shell(head)' --allow-tool 'shell(jq)' --allow-tool 'shell(ls)' --allow-tool 'shell(pwd)' --allow-tool 'shell(sed)' --allow-tool 'shell(sort)' --allow-tool 'shell(tail)' --allow-tool 'shell(uniq)' --allow-tool 'shell(wc)' --allow-tool 'shell(yq)' --prompt "$COPILOT_CLI_INSTRUCTION" 2>&1 | tee /tmp/gh-aw/agent-stdio.log
+          copilot --add-dir /tmp/ --add-dir /tmp/gh-aw/ --add-dir /tmp/gh-aw/agent/ --log-level all --log-dir /tmp/gh-aw/.copilot/logs/ --disable-builtin-mcps --allow-tool github --allow-tool 'shell(cat)' --allow-tool 'shell(curl)' --allow-tool 'shell(date)' --allow-tool 'shell(echo)' --allow-tool 'shell(git)' --allow-tool 'shell(grep)' --allow-tool 'shell(head)' --allow-tool 'shell(jq)' --allow-tool 'shell(ls)' --allow-tool 'shell(pwd)' --allow-tool 'shell(sed)' --allow-tool 'shell(sort)' --allow-tool 'shell(tail)' --allow-tool 'shell(uniq)' --allow-tool 'shell(wc)' --allow-tool 'shell(yq)' --allow-tool web-fetch --prompt "$COPILOT_CLI_INSTRUCTION" 2>&1 | tee /tmp/gh-aw/agent-stdio.log
         env:
           COPILOT_AGENT_RUNNER_TYPE: STANDALONE
           GH_AW_MCP_CONFIG: /home/runner/.copilot/mcp-config.json

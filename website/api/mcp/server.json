@@ -1,15 +1,16 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.jandedobbeleer/oh-my-posh-validator",
+  "name": "dev.ohmyposh/validator",
   "title": "Oh My Posh Validator",
   "description": "Validate oh-my-posh configurations and segment snippets against the official schema.",
   "version": "1.0.0",
   "license": "MIT",
   "websiteUrl": "https://ohmyposh.dev/docs/advanced/mcp-server",
   "repository": {
-    "type": "git",
     "url": "https://github.com/JanDeDobbeleer/oh-my-posh",
-    "source": "https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/website/api/mcp"
+    "source": "github",
+    "id": "175405157",
+    "subfolder": "website/api/mcp"
   },
   "author": {
     "name": "Jan De Dobbeleer",

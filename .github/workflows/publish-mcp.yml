@@ -53,7 +53,13 @@ jobs:
           ./mcp-publisher --version
 
       - name: Login to MCP Registry
-        run: ./mcp-publisher login github-oidc
+        env:
+          MCP_REGISTRY_PEM: ${{ secrets.MCP_REGISTRY_PEM }}
+        run: |
+          echo "$MCP_REGISTRY_PEM" > key.pem
+          PRIVATE_KEY=$(openssl pkey -in key.pem -noout -text | grep -A3 "priv:" | tail -n +2 | tr -d ' :\n')
+          ./mcp-publisher login dns --domain ohmyposh.dev --private-key "$PRIVATE_KEY"
+          rm -f key.pem
 
       - name: Publish to MCP Registry
         run: |

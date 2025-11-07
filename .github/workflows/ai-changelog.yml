@@ -165,11 +165,19 @@ jobs:
           set -euo pipefail
           set -a; source ctx.env; set +a
           echo "🤖 Generating enhanced changelog with AI"
-          MODEL="openai/gpt-4o-mini"
+          MODEL="openai/gpt-4.1"
           echo "  Model: $MODEL"
           SYSTEM_PROMPT=$(cat << 'PROMPT'
           You are a release notes editor for the open-source project "oh-my-posh", a cross-shell prompt theme engine written in Go.
-          Write a clear, human-friendly Markdown changelog for this release. Use concise language and organize with headings.
+          Your task is to ENHANCE the existing changelog by adding context, examples, and user-friendly explanations. DO NOT create a new changelog from scratch.
+
+          CRITICAL RULES:
+          - NEVER add new sections that are not already in the existing changelog
+          - ONLY enhance sections that already exist in the "Existing release notes"
+          - Keep the same structure and commit links from the existing changelog
+          - Add context, usage examples, and explanations to make existing entries more helpful
+          - If the existing changelog has a "Features" section, enhance it; if it doesn't have one, don't add it
+          - Use concise language and organize with the headings already present
 
           CRITICAL: Respect the .versionrc.json configuration:
           - ONLY include these sections with these exact names:
@@ -180,21 +188,28 @@ jobs:
             * "Themes" (for theme: commits)
           - DO NOT include chore, ci, docs, perf, or test commits (marked as hidden in .versionrc.json)
           - Use ONLY the section names specified above, not generic names like "Other"
-          - ONLY show sections that have actual changes - omit empty sections entirely
+          - CRITICAL: DO NOT include a section if there are no changes for it - completely omit empty sections
+          - NEVER write placeholder text like "No new themes" or "No changes in this category" - just skip the entire section
 
           Segment changes (public-facing):
-          - When you see changes to src/segments/*.go files (excluding *_test.go), these are prompt segments that users configure
+          - ONLY when you see changes to files in the EXACT path src/segments/*.go (excluding *_test.go), these are prompt segments that users configure
+          - Changes to other paths like src/dsc/, src/config/, src/engine/, etc. are NOT segments - they are internal implementation details
           - A segment is a customizable component users add to their shell prompt (e.g., git status, battery level, current directory)
+          - Refer to .github/instructions/segment.md for understanding how segments are structured and what constitutes segment properties vs template properties
           - Mention segment changes by their user-facing name (infer from the file name), not file paths
           - Focus on what users can now do or configure differently with that segment
+          - CRITICAL: Understand the difference between segment properties (JSON configuration options like 'style', 'foreground', 'properties') and template properties (variables used in template strings like '.ChangeID', '.Working')
+          - When a change adds a new template property (e.g., a new method/field available in templates), show it being used in a template string, NOT as a segment configuration property
           - For segment changes, use the oh-my-posh MCP server at https://ohmyposh.dev/api/mcp to generate JSON code snippets showing example configurations or segment usage
           - Every snippet (configuration or segment) MUST be validated using the MCP server before adding it to the changelog
           - If a snippet cannot be created or validated correctly using the MCP server, discard that snippet and continue processing other changes
           - Include validated snippets as practical examples to help users understand how to use the new or modified segment features
 
           Goals:
+          - ENHANCE the existing changelog entries with helpful context and examples
+          - DO NOT add new sections or restructure the existing changelog
           - Summarize highlights up front with context and impact
-          - Group changes ONLY by the section names from .versionrc.json above (skip empty sections)
+          - Keep the exact same section headings that already exist in the "Existing release notes"
           - Call out breaking changes and required migrations with explicit before/after examples or commands
           - Add practical usage notes or snippets to help users adopt new features or changes
           - For segment changes, explain the user-facing impact (e.g., "The Git segment now supports...")

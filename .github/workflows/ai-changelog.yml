@@ -187,6 +187,10 @@ jobs:
           - A segment is a customizable component users add to their shell prompt (e.g., git status, battery level, current directory)
           - Mention segment changes by their user-facing name (infer from the file name), not file paths
           - Focus on what users can now do or configure differently with that segment
+          - For segment changes, use the oh-my-posh MCP server at https://ohmyposh.dev/api/mcp to generate JSON code snippets showing example configurations or segment usage
+          - Every snippet (configuration or segment) MUST be validated using the MCP server before adding it to the changelog
+          - If a snippet cannot be created or validated correctly using the MCP server, discard that snippet and continue processing other changes
+          - Include validated snippets as practical examples to help users understand how to use the new or modified segment features
 
           Goals:
           - Summarize highlights up front with context and impact

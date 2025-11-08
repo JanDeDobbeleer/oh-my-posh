@@ -267,6 +267,27 @@ async function validateSegment(content, format = 'auto') {
           data: segment
         });
         result.valid = false;
+      } else if (segment.properties && typeof segment.properties === 'object') {
+        // Validate that all properties are allowed for this segment type
+        const allowedProperties = getAllowedPropertiesForSegmentType(loadedSchema, segment.type);
+        
+        if (allowedProperties) {
+          const providedProperties = Object.keys(segment.properties);
+          const invalidProperties = providedProperties.filter(prop => !allowedProperties.includes(prop));
+          
+          if (invalidProperties.length > 0) {
+            invalidProperties.forEach(prop => {
+              result.errors.push({
+                path: `properties/${prop}`,
+                message: `Property '${prop}' is not valid for segment type '${segment.type}'. Allowed properties: ${allowedProperties.join(', ')}`,
+                keyword: 'additionalProperties',
+                params: { additionalProperty: prop },
+                data: segment.properties
+              });
+            });
+            result.valid = false;
+          }
+        }
       }
 
       if (!segment.style) {
@@ -290,6 +311,30 @@ async function validateSegment(content, format = 'auto') {
   }
 
   return result;
+}
+
+/**
+ * Get the allowed properties for a specific segment type from the schema
+ * @param {Object} schema - The loaded oh-my-posh schema
+ * @param {string} segmentType - The segment type to check
+ * @returns {Array|null} Array of allowed property names, or null if not found
+ */
+function getAllowedPropertiesForSegmentType(schema, segmentType) {
+  if (!schema.definitions?.segment?.allOf) {
+    return null;
+  }
+
+  // Find the schema entry for this segment type
+  const segmentDef = schema.definitions.segment.allOf.find(entry => 
+    entry.if?.properties?.type?.const === segmentType
+  );
+
+  if (!segmentDef?.then?.properties?.properties?.properties) {
+    return null;
+  }
+
+  // Return the list of allowed property keys
+  return Object.keys(segmentDef.then.properties.properties.properties);
 }
 
 /**

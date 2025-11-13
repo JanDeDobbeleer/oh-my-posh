@@ -791,6 +791,38 @@ func TestFishPath(t *testing.T) {
 			expected:       "a/b/c",
 			separator:      "/",
 		},
+		{
+			name:           "multi-byte unicode home icon",
+			pwd:            "/󰋜/Downloads/test",
+			dirLength:      1,
+			fullLengthDirs: 1,
+			expected:       "󰋜/D/test",
+			separator:      "/",
+		},
+		{
+			name:           "multi-byte unicode home icon with dir length 2",
+			pwd:            "/󰋜/Documents/Projects",
+			dirLength:      2,
+			fullLengthDirs: 1,
+			expected:       "󰋜/Do/Projects",
+			separator:      "/",
+		},
+		{
+			name:           "path with emoji folders",
+			pwd:            "/🏠/📁/💻",
+			dirLength:      1,
+			fullLengthDirs: 1,
+			expected:       "🏠/📁/💻",
+			separator:      "/",
+		},
+		{
+			name:           "mixed multi-byte and ascii",
+			pwd:            "/󰋜test/normal/󰨳end",
+			dirLength:      2,
+			fullLengthDirs: 1,
+			expected:       "󰋜t/no/󰨳end",
+			separator:      "/",
+		},
 	}
 
 	for _, tc := range cases {

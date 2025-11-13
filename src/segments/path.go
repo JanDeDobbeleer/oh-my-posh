@@ -451,12 +451,15 @@ func (pt *Path) getFishPath() string {
 	var elements []string
 	for i := range folderCount {
 		name := folders[i].Name
-		if folders[i].Display || dirLength <= 0 || len(name) < dirLength || i >= stopAt {
+		runeCount := utf8.RuneCountInString(name)
+		if folders[i].Display || dirLength <= 0 || runeCount < dirLength || i >= stopAt {
 			elements = append(elements, name)
 			continue
 		}
 
-		elements = append(elements, name[:dirLength])
+		// Convert string to rune slice to properly handle multi-byte characters
+		runes := []rune(name)
+		elements = append(elements, string(runes[:dirLength]))
 	}
 
 	if len(elements) == 1 {

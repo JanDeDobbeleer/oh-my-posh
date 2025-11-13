@@ -615,7 +615,7 @@ func (g *Git) getGitConfig() (*ini.File, error) {
 			return
 		}
 
-		cfg, err := ini.Load(configData)
+		cfg, err := ini.Load([]byte(configData))
 		if err != nil {
 			g.configErr = err
 			return

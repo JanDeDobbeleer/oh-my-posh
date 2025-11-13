@@ -115,6 +115,11 @@ func (e *Engine) pwd() {
 		return
 	}
 
+	// Convert to Windows path when in WSL
+	if e.Env.IsWsl() {
+		pwd = e.Env.ConvertToWindowsPath(pwd)
+	}
+
 	user := e.Env.User()
 	host, _ := e.Env.Host()
 	e.write(terminal.Pwd(pwdType, user, host, pwd))

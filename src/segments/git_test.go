@@ -216,6 +216,62 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
+func TestGetGitConfig(t *testing.T) {
+	tests := []struct {
+		name        string
+		fileContent string
+		expectErr   bool
+		expectKey   string
+		expectValue string
+	}{
+		{
+			name:        "happy path with valid ini content",
+			fileContent: "[user]\nname = testuser",
+			expectErr:   false,
+			expectKey:   "user.name",
+			expectValue: "testuser",
+		},
+		{
+			name:        "error path with invalid ini (interpreted as filepath)",
+			fileContent: "does-not-exist",
+			expectErr:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("FileContent", testify_.Anything).Return(tt.fileContent)
+			g := &Git{}
+			g.Init(properties.Map{}, env)
+			cfg, err := g.getGitConfig()
+
+			if tt.expectErr {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+				if cfg != nil {
+					t.Fatalf("expected nil cfg, got %+v", cfg)
+				}
+				return
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if cfg == nil {
+					t.Fatalf("expected config, got nil")
+				}
+
+				val := cfg.Section("user").Key("name").String()
+				if val != tt.expectValue {
+					t.Errorf("expected %s=%s, got %s", tt.expectKey, tt.expectValue, val)
+				}
+			}
+		})
+	}
+
+}
+
 func TestSetGitHEADContextClean(t *testing.T) {
 	cases := []struct {
 		Ours        string

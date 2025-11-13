@@ -194,8 +194,8 @@ func (env *Environment) InWSLSharedDrive() bool {
 	return args.Bool(0)
 }
 
-func (env *Environment) ConvertToWindowsPath(_ string) string {
-	args := env.Called()
+func (env *Environment) ConvertToWindowsPath(input string) string {
+	args := env.Called(input)
 	return args.String(0)
 }
 

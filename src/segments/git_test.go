@@ -1118,13 +1118,15 @@ func TestGitCommit(t *testing.T) {
 
 func TestGitRemotes(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Config   string
-		Expected int
+		ExpectedRemotes map[string]string
+		Case            string
+		Config          string
+		Expected        int
 	}{
 		{
-			Case:     "Empty config file",
-			Expected: 0,
+			Case:            "Empty config file",
+			Expected:        0,
+			ExpectedRemotes: map[string]string{},
 		},
 		{
 			Case:     "Two remotes",
@@ -1137,6 +1139,10 @@ func TestGitRemotes(t *testing.T) {
 	url = git@github.com:microsoft/test.git
 	fetch = +refs/heads/*:refs/remotes/upstream/*
 `,
+			ExpectedRemotes: map[string]string{
+				"origin":   "https://github.com/JanDeDobbeleer/test",
+				"upstream": "https://github.com/microsoft/test",
+			},
 		},
 		{
 			Case:     "One remote",
@@ -1146,11 +1152,35 @@ func TestGitRemotes(t *testing.T) {
 	url = git@github.com:JanDeDobbeleer/test.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 `,
+			ExpectedRemotes: map[string]string{
+				"origin": "https://github.com/JanDeDobbeleer/test",
+			},
 		},
 		{
-			Case:     "Broken config",
-			Expected: 0,
-			Config:   "{{}}",
+			Case:            "Broken config",
+			Expected:        0,
+			Config:          "{{}}",
+			ExpectedRemotes: map[string]string{},
+		},
+		{
+			Case:     "Three remotes with different URL formats",
+			Expected: 3,
+			Config: `
+[remote "origin"]
+	url = git@github.com:JanDeDobbeleer/test.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "upstream"]
+	url = https://github.com/microsoft/test.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
+[remote "fork"]
+	url = git@gitlab.com:user/test.git
+	fetch = +refs/heads/*:refs/remotes/fork/*
+`,
+			ExpectedRemotes: map[string]string{
+				"origin":   "https://github.com/JanDeDobbeleer/test",
+				"upstream": "https://github.com/microsoft/test.git",
+				"fork":     "https://gitlab.com/user/test",
+			},
 		},
 	}
 
@@ -1171,6 +1201,13 @@ func TestGitRemotes(t *testing.T) {
 
 		got := g.Remotes()
 		assert.Equal(t, tc.Expected, len(got), tc.Case)
+
+		// Verify the actual remote names and URLs
+		for name, expectedURL := range tc.ExpectedRemotes {
+			actualURL, exists := got[name]
+			assert.True(t, exists, "%s: expected remote '%s' to exist", tc.Case, name)
+			assert.Equal(t, expectedURL, actualURL, "%s: remote '%s' URL mismatch", tc.Case, name)
+		}
 	}
 }
 

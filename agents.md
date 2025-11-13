@@ -38,6 +38,8 @@ When editing PowerShell files (`*.ps1`, `*.psm1`, `*.psd1`):
 - The repository specific rules are in `.commitlintrc.json`.
 - Always run `gofmt` and `golangci-lint run` before submitting changes.
 - Limit commit message lines to a maximum of 200 characters.
+- **Do not commit initial plans or progress updates as separate commits.**
+  Include planning information in the PR description instead.
 
 Examples:
 

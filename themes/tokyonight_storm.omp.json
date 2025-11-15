@@ -103,15 +103,6 @@
           "style": "plain",
           "foreground": "p:light-sky-blue",
           "template": "\uFCD1 {{ .Full}}"
-        },
-        {
-          "type": "command",
-          "style": "plain",
-          "foreground": "p:white-blue",
-          "properties": {
-            "command": "git log --pretty=format:%cr -1 || date +%H:%M:%S",
-            "shell": "bash"
-          }
         }
       ],
       "type": "prompt"

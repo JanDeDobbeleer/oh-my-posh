@@ -182,7 +182,6 @@ module.exports = {
           collapsed: true,
           items: [
             "segments/system/battery",
-            "segments/system/command",
             "segments/system/connection",
             "segments/system/executiontime",
             "segments/system/os",

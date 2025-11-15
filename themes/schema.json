@@ -320,7 +320,6 @@
             "cf",
             "cftarget",
             "cmake",
-            "command",
             "connection",
             "crystal",
             "dart",
@@ -1257,43 +1256,7 @@
             }
           }
         },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "command"
-              }
-            }
-          },
-          "then": {
-            "title": "Command Segment",
-            "description": "https://ohmyposh.dev/docs/segments/system/command",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "shell": {
-                    "type": "string",
-                    "title": "Shell",
-                    "description": "The shell in which to run the command in. Uses shell -c command under the hood",
-                    "default": "bash"
-                  },
-                  "command": {
-                    "type": "string",
-                    "title": "Command",
-                    "description": "the command(s) to run",
-                    "default": ""
-                  },
-                  "script": {
-                    "type": "string",
-                    "title": "Script",
-                    "description": "A script to run",
-                    "default": ""
-                  }
-                }
-              }
-            }
-          }
-        },
+
         {
           "if": {
             "properties": {

@@ -42,7 +42,6 @@ func init() {
 	gob.Register(&segments.Cf{})
 	gob.Register(&segments.CfTarget{})
 	gob.Register(&segments.Cmake{})
-	gob.Register(&segments.Cmd{})
 	gob.Register(&segments.Connection{})
 	gob.Register(&segments.Crystal{})
 	gob.Register(&segments.Dart{})
@@ -187,8 +186,6 @@ const (
 	CFTARGET SegmentType = "cftarget"
 	// CMAKE writes the active cmake version
 	CMAKE SegmentType = "cmake"
-	// CMD writes the output of a shell command
-	CMD SegmentType = "command"
 	// CONNECTION writes a connection's information
 	CONNECTION SegmentType = "connection"
 	// CRYSTAL writes the active crystal version
@@ -381,7 +378,6 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CF:              func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:        func() SegmentWriter { return &segments.CfTarget{} },
 	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
-	CMD:             func() SegmentWriter { return &segments.Cmd{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },
 	CRYSTAL:         func() SegmentWriter { return &segments.Crystal{} },
 	DART:            func() SegmentWriter { return &segments.Dart{} },

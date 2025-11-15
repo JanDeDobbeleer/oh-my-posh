@@ -12,6 +12,10 @@ import (
 	"github.com/hashicorp/hcl/v2/hclparse"
 )
 
+const (
+	Command properties.Property = "command"
+)
+
 type Terraform struct {
 	Base
 

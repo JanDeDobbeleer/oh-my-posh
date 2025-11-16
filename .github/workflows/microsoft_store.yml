@@ -25,21 +25,19 @@ jobs:
           command: update
           product-update: '{
             "packages":[
-            {
-            "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${{ github.event.release.tag_name }}/install-x64.msi",
-            "languages":["en"],
-            "architectures":["X64"],
-            "installerParameters":"/quiet INSTALLER=ws",
-            "isSilentInstall":false
-            },
-            {
-            "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/${{ github.event.release.tag_name }}/install-arm64.msi",
-            "languages":["en"],
-            "architectures":["Arm64"],
-            "installerParameters":"/quiet INSTALLER=ws",
-            "isSilentInstall":false
-            }
-            ]
+                {
+                  "packageUrl":"https://cdn.ohmyposh.dev/releases/${{ github.event.release.tag_name }}/install-x64.msix",
+                  "languages":["en"],
+                  "architectures":["X64"],
+                  "isSilentInstall":true
+                },
+                {
+                  "packageUrl":"https://cdn.ohmyposh.dev/releases/${{ github.event.release.tag_name }}/install-arm64.msix",
+                  "languages":["en"],
+                  "architectures":["Arm64"],
+                  "isSilentInstall":true
+                }
+              ]
             }'
       - name: Publish Submission
         uses: jandedobbeleer/store-submission@submission-status

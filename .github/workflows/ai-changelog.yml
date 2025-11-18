@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository (with tags)
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.0.1
         with:
           ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0

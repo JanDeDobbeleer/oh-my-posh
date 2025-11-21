@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/gookit/goutil/jsonutil"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
@@ -66,6 +67,11 @@ func (n *Project) Enabled() bool {
 			Name:    "node",
 			Files:   []string{"package.json"},
 			Fetcher: n.getNodePackage,
+		},
+		{
+			Name:    "deno",
+			Files:   []string{"deno.json", "deno.jsonc"},
+			Fetcher: n.getDenoPackage,
 		},
 		{
 			Name:    "cargo",
@@ -146,6 +152,27 @@ func (n *Project) hasProjectFile(p *ProjectItem) bool {
 
 func (n *Project) getNodePackage(item ProjectItem) *ProjectData {
 	content := n.env.FileContent(item.Files[0])
+
+	var data ProjectData
+	err := json.Unmarshal([]byte(content), &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &data
+}
+
+func (n *Project) getDenoPackage(item ProjectItem) *ProjectData {
+	file := n.firstExistingFile(item.Files)
+	if len(file) == 0 {
+		return nil
+	}
+
+	content := n.env.FileContent(file)
+	if filepath.Ext(file) == ".jsonc" {
+		content = jsonutil.StripComments(content)
+	}
 
 	var data ProjectData
 	err := json.Unmarshal([]byte(content), &data)
@@ -324,4 +351,15 @@ func (n *Project) getProjectData(item ProjectItem) *ProjectData {
 	}
 
 	return &data
+}
+
+func (n *Project) firstExistingFile(files []string) string {
+	for _, file := range files {
+		if !n.env.HasFiles(file) {
+			continue
+		}
+		return file
+	}
+
+	return ""
 }

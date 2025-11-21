@@ -60,6 +60,22 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"test\"}",
 		},
 		{
+			Case:            "1.0.0 deno",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"test\"}",
+		},
+		{
+			Case:            "1.0.0 deno jsonc",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "deno",
+			File:            "deno.jsonc",
+			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"test\"\n}",
+		},
+		{
 			Case:            "1.0.0 php",
 			ExpectedEnabled: true,
 			ExpectedString:  "\uf487 1.0.0 test",
@@ -163,6 +179,14 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"name\":\"test\"}",
 		},
 		{
+			Case:            "No version present deno",
+			ExpectedEnabled: true,
+			ExpectedString:  "test",
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{\"name\":\"test\"}",
+		},
+		{
 			Case:            "No version present dart",
 			ExpectedEnabled: true,
 			ExpectedString:  "test",
@@ -208,6 +232,14 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "\uf487 1.0.0",
 			Name:            "node",
 			File:            "package.json",
+			PackageContents: "{\"version\":\"1.0.0\"}",
+		},
+		{
+			Case:            "No name present deno",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "deno",
+			File:            "deno.json",
 			PackageContents: "{\"version\":\"1.0.0\"}",
 		},
 		{
@@ -258,6 +290,13 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{}",
 		},
 		{
+			Case:            "Empty project package deno",
+			ExpectedEnabled: true,
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{}",
+		},
+		{
 			Case:            "Empty project package dart",
 			ExpectedEnabled: true,
 			Name:            "dart",
@@ -290,6 +329,13 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "invalid character '}' looking for beginning of value",
 			Name:            "node",
 			File:            "package.json",
+			PackageContents: "}",
+		},
+		{
+			Case:            "Invalid json deno",
+			ExpectedString:  "invalid character '}' looking for beginning of value",
+			Name:            "deno",
+			File:            "deno.json",
 			PackageContents: "}",
 		},
 		{

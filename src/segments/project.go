@@ -156,58 +156,15 @@ func (n *Project) hasProjectFile(p *ProjectItem) bool {
 }
 
 func (n *Project) getNodePackage(item ProjectItem) *ProjectData {
-	content := n.env.FileContent(item.Files[0])
-
-	var data ProjectData
-	err := json.Unmarshal([]byte(content), &data)
-	if err != nil {
-		n.Error = err.Error()
-		return nil
-	}
-
-	return &data
+	return n.getJSONPackage(item, false)
 }
 
 func (n *Project) getDenoPackage(item ProjectItem) *ProjectData {
-	file := n.firstExistingFile(item.Files)
-	if len(file) == 0 {
-		return nil
-	}
-
-	content := n.env.FileContent(file)
-	if filepath.Ext(file) == ".jsonc" {
-		content = jsonutil.StripComments(content)
-	}
-
-	var data ProjectData
-	err := json.Unmarshal([]byte(content), &data)
-	if err != nil {
-		n.Error = err.Error()
-		return nil
-	}
-
-	return &data
+	return n.getJSONPackage(item, true)
 }
 
 func (n *Project) getJsrPackage(item ProjectItem) *ProjectData {
-	file := n.firstExistingFile(item.Files)
-	if len(file) == 0 {
-		return nil
-	}
-
-	content := n.env.FileContent(file)
-	if filepath.Ext(file) == ".jsonc" {
-		content = jsonutil.StripComments(content)
-	}
-
-	var data ProjectData
-	err := json.Unmarshal([]byte(content), &data)
-	if err != nil {
-		n.Error = err.Error()
-		return nil
-	}
-
-	return &data
+	return n.getJSONPackage(item, true)
 }
 
 func (n *Project) getCargoPackage(item ProjectItem) *ProjectData {
@@ -371,6 +328,27 @@ func (n *Project) getProjectData(item ProjectItem) *ProjectData {
 
 	var data ProjectData
 	err := toml.Unmarshal([]byte(content), &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &data
+}
+
+func (n *Project) getJSONPackage(item ProjectItem, allowJSONC bool) *ProjectData {
+	file := n.firstExistingFile(item.Files)
+	if len(file) == 0 {
+		return nil
+	}
+
+	content := n.env.FileContent(file)
+	if allowJSONC && filepath.Ext(file) == ".jsonc" {
+		content = jsonutil.StripComments(content)
+	}
+
+	var data ProjectData
+	err := json.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()
 		return nil

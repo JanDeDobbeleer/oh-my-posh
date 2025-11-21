@@ -226,28 +226,28 @@ to distinct between both.
   data={{
     segments: [
       {
-        type: "command",
-        alias: "Hello",
+        type: "git",
+        alias: "GitMain",
         style: "plain",
         foreground: "#ffffff",
         properties: {
-          command: "echo Hello",
+          branch_icon: "",
         },
       },
       {
-        type: "command",
-        alias: "World",
+        type: "git",
+        alias: "GitSecondary",
         style: "plain",
         foreground: "#ffffff",
         properties: {
-          command: "echo World",
+          branch_icon: "",
         },
       },
       {
         type: "text",
         style: "plain",
         foreground: "#ffffff",
-        template: "{{ .Segments.Hello.Output }} {{ .Segments.World.Output }}",
+        template: "{{ .Segments.GitMain.HEAD }} - {{ .Segments.GitSecondary.HEAD }}",
       },
     ],
   }}

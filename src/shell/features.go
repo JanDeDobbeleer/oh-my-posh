@@ -18,6 +18,7 @@ const (
 	RPrompt
 	CursorPositioning
 	Async
+	RefreshInterval
 )
 
 // getAllFeatures returns all defined feature flags by iterating through bit positions

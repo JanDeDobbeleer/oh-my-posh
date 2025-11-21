@@ -235,6 +235,30 @@ bind \cc _omp_ctrl_c_key_handler -M default
 bind \cc _omp_ctrl_c_key_handler -M insert
 bind \cc _omp_ctrl_c_key_handler -M visual
 
+function enable_posh_refresh_interval
+    set --local interval ::REFRESH_INTERVAL::
+    if test $interval -le 0
+        return
+    end
+
+    # Convert milliseconds to seconds for fish
+    set --local timeout_seconds (math "$interval / 1000.0")
+    
+    function _omp_refresh_timer --on-signal SIGUSR1
+        omp_repaint_prompt
+    end
+    
+    # Start background timer process
+    fish -c "set parent_pid $fish_pid; while true; sleep $timeout_seconds; kill -SIGUSR1 \$parent_pid; end" &
+    set --global _omp_refresh_pid $last_pid
+end
+
+# Clean up background timer process on shell exit
+function _omp_cleanup_refresh --on-event fish_exit
+    if set -q _omp_refresh_pid
+        kill $_omp_refresh_pid 2>/dev/null
+    end
+end
 # legacy functions
 function enable_poshtransientprompt
     return

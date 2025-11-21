@@ -23,6 +23,8 @@ func (f Features) Fish() Code {
 		return unixUpgrade
 	case Notice:
 		return unixNotice
+	case RefreshInterval:
+		return "enable_posh_refresh_interval"
 	case RPrompt, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async:
 		fallthrough
 	default:

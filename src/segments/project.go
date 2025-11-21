@@ -74,6 +74,11 @@ func (n *Project) Enabled() bool {
 			Fetcher: n.getDenoPackage,
 		},
 		{
+			Name:    "jsr",
+			Files:   []string{"jsr.json", "jsr.jsonc"},
+			Fetcher: n.getJsrPackage,
+		},
+		{
 			Name:    "cargo",
 			Files:   []string{"Cargo.toml"},
 			Fetcher: n.getCargoPackage,
@@ -164,6 +169,27 @@ func (n *Project) getNodePackage(item ProjectItem) *ProjectData {
 }
 
 func (n *Project) getDenoPackage(item ProjectItem) *ProjectData {
+	file := n.firstExistingFile(item.Files)
+	if len(file) == 0 {
+		return nil
+	}
+
+	content := n.env.FileContent(file)
+	if filepath.Ext(file) == ".jsonc" {
+		content = jsonutil.StripComments(content)
+	}
+
+	var data ProjectData
+	err := json.Unmarshal([]byte(content), &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &data
+}
+
+func (n *Project) getJsrPackage(item ProjectItem) *ProjectData {
 	file := n.firstExistingFile(item.Files)
 	if len(file) == 0 {
 		return nil

@@ -76,6 +76,22 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"test\"\n}",
 		},
 		{
+			Case:            "1.0.0 jsr",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 @pinta365/test",
+			Name:            "jsr",
+			File:            "jsr.json",
+			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"@pinta365/test\"}",
+		},
+		{
+			Case:            "1.0.0 jsr jsonc",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 @pinta365/test",
+			Name:            "jsr",
+			File:            "jsr.jsonc",
+			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"@pinta365/test\"\n}",
+		},
+		{
 			Case:            "1.0.0 php",
 			ExpectedEnabled: true,
 			ExpectedString:  "\uf487 1.0.0 test",
@@ -187,6 +203,14 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"name\":\"test\"}",
 		},
 		{
+			Case:            "No version present jsr",
+			ExpectedEnabled: true,
+			ExpectedString:  "@pinta365/test",
+			Name:            "jsr",
+			File:            "jsr.json",
+			PackageContents: "{\"name\":\"@pinta365/test\"}",
+		},
+		{
 			Case:            "No version present dart",
 			ExpectedEnabled: true,
 			ExpectedString:  "test",
@@ -240,6 +264,14 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "\uf487 1.0.0",
 			Name:            "deno",
 			File:            "deno.json",
+			PackageContents: "{\"version\":\"1.0.0\"}",
+		},
+		{
+			Case:            "No name present jsr",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "jsr",
+			File:            "jsr.json",
 			PackageContents: "{\"version\":\"1.0.0\"}",
 		},
 		{
@@ -297,6 +329,13 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{}",
 		},
 		{
+			Case:            "Empty project package jsr",
+			ExpectedEnabled: true,
+			Name:            "jsr",
+			File:            "jsr.json",
+			PackageContents: "{}",
+		},
+		{
 			Case:            "Empty project package dart",
 			ExpectedEnabled: true,
 			Name:            "dart",
@@ -336,6 +375,13 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "invalid character '}' looking for beginning of value",
 			Name:            "deno",
 			File:            "deno.json",
+			PackageContents: "}",
+		},
+		{
+			Case:            "Invalid json jsr",
+			ExpectedString:  "invalid character '}' looking for beginning of value",
+			Name:            "jsr",
+			File:            "jsr.json",
 			PackageContents: "}",
 		},
 		{

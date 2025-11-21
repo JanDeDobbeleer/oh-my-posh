@@ -78,18 +78,18 @@ func TestPackage(t *testing.T) {
 		{
 			Case:            "1.0.0 jsr",
 			ExpectedEnabled: true,
-			ExpectedString:  "\uf487 1.0.0 @pinta365/test",
+			ExpectedString:  "\uf487 1.0.0 @scope/library",
 			Name:            "jsr",
 			File:            "jsr.json",
-			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"@pinta365/test\"}",
+			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"@scope/library\"}",
 		},
 		{
 			Case:            "1.0.0 jsr jsonc",
 			ExpectedEnabled: true,
-			ExpectedString:  "\uf487 1.0.0 @pinta365/test",
+			ExpectedString:  "\uf487 1.0.0 @scope/library",
 			Name:            "jsr",
 			File:            "jsr.jsonc",
-			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"@pinta365/test\"\n}",
+			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"@scope/library\"\n}",
 		},
 		{
 			Case:            "1.0.0 php",
@@ -205,10 +205,10 @@ func TestPackage(t *testing.T) {
 		{
 			Case:            "No version present jsr",
 			ExpectedEnabled: true,
-			ExpectedString:  "@pinta365/test",
+			ExpectedString:  "@scope/library",
 			Name:            "jsr",
 			File:            "jsr.json",
-			PackageContents: "{\"name\":\"@pinta365/test\"}",
+			PackageContents: "{\"name\":\"@scope/library\"}",
 		},
 		{
 			Case:            "No version present dart",
@@ -448,6 +448,23 @@ func TestPackage(t *testing.T) {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
 		}
 	}
+}
+
+func TestDenoProjectUsesJsrMetadata(t *testing.T) {
+	env := new(mock.Environment)
+	env.On(hasFiles, "deno.json").Return(true)
+	env.On(hasFiles, "deno.jsonc").Return(false)
+	env.On(hasFiles, "jsr.json").Return(true)
+	env.On(hasFiles, "jsr.jsonc").Return(false)
+	env.On(hasFiles, testify_.Anything).Return(false)
+	env.On("FileContent", "deno.json").Return("{\"name\":\"library\"}")
+	env.On("FileContent", "jsr.json").Return("{\"version\":\"1.0.0\",\"name\":\"@scope/library\"}")
+
+	pkg := &Project{}
+	pkg.Init(properties.Map{}, env)
+
+	assert.True(t, pkg.Enabled())
+	assert.Equal(t, "\uf487 1.0.0 @scope/library", renderTemplate(env, pkg.Template(), pkg))
 }
 
 func TestNuspecPackage(t *testing.T) {

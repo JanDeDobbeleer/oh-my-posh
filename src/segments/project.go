@@ -160,7 +160,32 @@ func (n *Project) getNodePackage(item ProjectItem) *ProjectData {
 }
 
 func (n *Project) getDenoPackage(item ProjectItem) *ProjectData {
-	return n.getJSONPackage(item, true)
+	data := n.getJSONPackage(item, true)
+	if data == nil {
+		return nil
+	}
+
+	// Deno projects prefer to publish via JSR; merge JSR metadata when available.
+	jsrFile := n.firstExistingFile([]string{"jsr.json", "jsr.jsonc"})
+	if len(jsrFile) == 0 {
+		return data
+	}
+
+	jsrData, err := n.parseJSONPackage(jsrFile, true)
+	if err != nil {
+		log.Error(err)
+		return data
+	}
+
+	if len(jsrData.Version) != 0 {
+		data.Version = jsrData.Version
+	}
+
+	if len(jsrData.Name) != 0 {
+		data.Name = jsrData.Name
+	}
+
+	return data
 }
 
 func (n *Project) getJsrPackage(item ProjectItem) *ProjectData {
@@ -342,19 +367,13 @@ func (n *Project) getJSONPackage(item ProjectItem, allowJSONC bool) *ProjectData
 		return nil
 	}
 
-	content := n.env.FileContent(file)
-	if allowJSONC && filepath.Ext(file) == ".jsonc" {
-		content = jsonutil.StripComments(content)
-	}
-
-	var data ProjectData
-	err := json.Unmarshal([]byte(content), &data)
+	data, err := n.parseJSONPackage(file, allowJSONC)
 	if err != nil {
 		n.Error = err.Error()
 		return nil
 	}
 
-	return &data
+	return data
 }
 
 func (n *Project) firstExistingFile(files []string) string {
@@ -366,4 +385,19 @@ func (n *Project) firstExistingFile(files []string) string {
 	}
 
 	return ""
+}
+
+func (n *Project) parseJSONPackage(file string, allowJSONC bool) (*ProjectData, error) {
+	content := n.env.FileContent(file)
+	if allowJSONC && filepath.Ext(file) == ".jsonc" {
+		content = jsonutil.StripComments(content)
+	}
+
+	var data ProjectData
+	err := json.Unmarshal([]byte(content), &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }

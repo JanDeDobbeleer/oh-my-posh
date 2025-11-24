@@ -216,7 +216,7 @@ func (g *Git) Enabled() bool {
 		g.setBranchStatus()
 		g.setPushStatus()
 	} else {
-		g.setHEADName()
+		g.updateHEADReference()
 	}
 
 	if g.props.GetBool(FetchUpstreamIcon, false) {
@@ -816,14 +816,14 @@ func (g *Git) setHEADStatus() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.Detached = true
-		g.setHEADName()
+		g.resolveDetachedHEAD()
 	} else {
 		head := g.formatBranch(g.Ref)
 		g.HEAD = fmt.Sprintf("%s%s", branchIcon, head)
 	}
 
 	formatDetached := func() string {
-		if g.Ref == DETACHED {
+		if g.Detached {
 			return fmt.Sprintf("%sdetached at %s", branchIcon, g.HEAD)
 		}
 		return g.HEAD
@@ -969,24 +969,52 @@ func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
-func (g *Git) setHEADName() {
-	// we didn't fetch status, fallback to parsing the HEAD file
-	if g.ShortHash == "" {
-		HEADRef := g.fileContent(g.mainSCMDir, "HEAD")
-		g.Detached = !strings.HasPrefix(HEADRef, "ref:")
-		if after, ok := strings.CutPrefix(HEADRef, BRANCHPREFIX); ok {
-			branchName := after
-			g.Ref = branchName
-			g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
+func (g *Git) updateHEADReference() {
+	HEADRef := g.fileContent(g.mainSCMDir, "HEAD")
+	log.Debug("HEADRef:", HEADRef)
+
+	// check if we are in a repo using reftables
+	if HEADRef == "ref: refs/heads/.invalid" {
+		log.Debug("repo is using reftables")
+
+		HEADRef = g.getGitCommandOutput("rev-parse", "--symbolic-full-name", "HEAD")
+
+		// this is a detached head
+		if strings.HasPrefix(HEADRef, "fatal:") {
+			log.Debug("detached HEAD detected")
+			g.Detached = true
+			g.resolveDetachedHEAD()
 			return
 		}
-		// no branch, points to commit
-		if len(HEADRef) >= 7 {
-			g.ShortHash = HEADRef[0:7]
-			g.Hash = HEADRef[0:]
-			g.Ref = g.ShortHash
+
+		if strings.HasPrefix(HEADRef, "refs/heads/") {
+			HEADRef = "ref: " + HEADRef
 		}
+
+		log.Debug("resolved HEADRef:", HEADRef)
 	}
+
+	g.Detached = !strings.HasPrefix(HEADRef, "ref:")
+	if branchName, ok := strings.CutPrefix(HEADRef, BRANCHPREFIX); ok {
+		log.Debug("current HEAD is a branch:", branchName)
+
+		g.Ref = branchName
+		g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
+
+		return
+	}
+
+	g.resolveDetachedHEAD()
+}
+
+func (g *Git) resolveDetachedHEAD() {
+	HEADRef := g.getGitCommandOutput("rev-parse", "HEAD")
+
+	if len(HEADRef) >= 7 {
+		g.ShortHash = HEADRef[0:7]
+		g.Hash = HEADRef[0:]
+	}
+	g.Ref = g.ShortHash
 
 	// check for tag
 	tagName := g.getGitCommandOutput("describe", "--tags", "--exact-match")
@@ -996,7 +1024,7 @@ func (g *Git) setHEADName() {
 		return
 	}
 
-	// fallback to commit
+	// fallback to no commits found
 	if g.ShortHash == "" {
 		g.HEAD = g.props.GetString(NoCommitsIcon, "\uF594 ")
 		return

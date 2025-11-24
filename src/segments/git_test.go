@@ -50,6 +50,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("FileContent", "/dir/hello/HEAD").Return("")
+	env.MockGitCommand(fileInfo.Path, "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 	env.MockGitCommand(fileInfo.Path, "", "describe", "--tags", "--exact-match")
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
@@ -323,6 +324,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 		env.MockGitCommand("", "", "describe", "--tags", "--exact-match")
 		env.MockGitCommand("", tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
 		env.MockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
@@ -368,6 +370,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 			Ref:       tc.Ref,
 		}
 		g.Init(props, env)
+		g.mainSCMDir = ""
 
 		g.setHEADStatus()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
@@ -376,11 +379,12 @@ func TestSetGitHEADContextClean(t *testing.T) {
 
 func TestSetPrettyHEADName(t *testing.T) {
 	cases := []struct {
-		Case      string
-		Expected  string
-		ShortHash string
-		Tag       string
-		HEAD      string
+		Case         string
+		Expected     string
+		ShortHash    string
+		Tag          string
+		HEAD         string
+		SymbolicName string
 	}{
 		{Case: "main", Expected: "branch main", HEAD: BRANCHPREFIX + "main"},
 		{Case: "no hash", Expected: "commit 1234567", HEAD: "12345678910"},
@@ -388,13 +392,22 @@ func TestSetPrettyHEADName(t *testing.T) {
 		{Case: "no hash on tag", Expected: "tag tag-1", Tag: "tag-1"},
 		{Case: "hash on commit", ShortHash: "1234567", Expected: "commit 1234567"},
 		{Case: "no hash on commit", Expected: "commit 1234567", HEAD: "12345678910"},
+		{Case: "reftable main branch", Expected: "branch main", HEAD: "ref: refs/heads/.invalid", SymbolicName: "refs/heads/main"},
+		{Case: "reftable detached head", Expected: "commit 1234567", HEAD: "ref: refs/heads/.invalid", SymbolicName: "fatal: ref HEAD is not a symbolic ref"},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("FileContent", "/HEAD").Return(tc.HEAD)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
+		// Mock rev-parse HEAD for detached HEAD cases
+		headValue := tc.HEAD
+		if headValue == "" || strings.HasSuffix(tc.HEAD, ".invalid") {
+			headValue = "12345678910"
+		}
+		env.MockGitCommand("", headValue, "rev-parse", "HEAD")
 		env.MockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
+		env.MockGitCommand("", tc.SymbolicName, "rev-parse", "--symbolic-full-name", "HEAD")
 
 		props := properties.Map{
 			BranchIcon: "branch ",
@@ -409,8 +422,9 @@ func TestSetPrettyHEADName(t *testing.T) {
 			ShortHash: tc.ShortHash,
 		}
 		g.Init(props, env)
+		g.mainSCMDir = ""
 
-		g.setHEADName()
+		g.updateHEADReference()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
 }
@@ -1286,6 +1300,7 @@ func TestDisableWithJJDisabled(t *testing.T) {
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("FileContent", "/dir/.git/HEAD").Return("")
+	env.MockGitCommand("/dir", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 	env.MockGitCommand("/dir", "", "describe", "--tags", "--exact-match") // Use repo root, not .git dir
 	env.On("IsWsl").Return(false)
 	// Mock .jj directory exists
@@ -1316,6 +1331,7 @@ func TestDisableWithJJNoJJDirectory(t *testing.T) {
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("FileContent", "/dir/.git/HEAD").Return("")
+	env.MockGitCommand("/dir", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 	env.MockGitCommand("/dir", "", "describe", "--tags", "--exact-match") // Use repo root, not .git dir
 	env.On("IsWsl").Return(false)
 	// Mock .jj directory does not exist

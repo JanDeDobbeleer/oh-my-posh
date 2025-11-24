@@ -1,13 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
-  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
-  IgnorableNamespaces="rescap uap uap3 uap5 desktop6">
-
-  <Identity Name="ohmyposh.cli" Version="27.4.2.0" Publisher="CN=Jan Joris De Dobbeleer, O=Jan Joris De Dobbeleer, L=Diest, C=BE" ProcessorArchitecture="arm64" />
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6" IgnorableNamespaces="rescap uap uap3 uap5 desktop6">
+  <Identity Name="ohmyposh.cli" Version="28.0.0.0" Publisher="CN=Jan Joris De Dobbeleer, O=Jan Joris De Dobbeleer, L=Diest, C=BE" ProcessorArchitecture="arm64" />
   <Properties>
     <DisplayName>Oh My Posh</DisplayName>
     <PublisherDisplayName>Jan Joris De Dobbeleer</PublisherDisplayName>

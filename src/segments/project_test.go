@@ -60,6 +60,38 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"test\"}",
 		},
 		{
+			Case:            "1.0.0 deno",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"test\"}",
+		},
+		{
+			Case:            "1.0.0 deno jsonc",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 test",
+			Name:            "deno",
+			File:            "deno.jsonc",
+			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"test\"\n}",
+		},
+		{
+			Case:            "1.0.0 jsr",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 @scope/library",
+			Name:            "jsr",
+			File:            "jsr.json",
+			PackageContents: "{\"version\":\"1.0.0\",\"name\":\"@scope/library\"}",
+		},
+		{
+			Case:            "1.0.0 jsr jsonc",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0 @scope/library",
+			Name:            "jsr",
+			File:            "jsr.jsonc",
+			PackageContents: "{\n// comment\n\"version\":\"1.0.0\",\n\"name\":\"@scope/library\"\n}",
+		},
+		{
 			Case:            "1.0.0 php",
 			ExpectedEnabled: true,
 			ExpectedString:  "\uf487 1.0.0 test",
@@ -163,6 +195,22 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{\"name\":\"test\"}",
 		},
 		{
+			Case:            "No version present deno",
+			ExpectedEnabled: true,
+			ExpectedString:  "test",
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{\"name\":\"test\"}",
+		},
+		{
+			Case:            "No version present jsr",
+			ExpectedEnabled: true,
+			ExpectedString:  "@scope/library",
+			Name:            "jsr",
+			File:            "jsr.json",
+			PackageContents: "{\"name\":\"@scope/library\"}",
+		},
+		{
 			Case:            "No version present dart",
 			ExpectedEnabled: true,
 			ExpectedString:  "test",
@@ -208,6 +256,22 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "\uf487 1.0.0",
 			Name:            "node",
 			File:            "package.json",
+			PackageContents: "{\"version\":\"1.0.0\"}",
+		},
+		{
+			Case:            "No name present deno",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{\"version\":\"1.0.0\"}",
+		},
+		{
+			Case:            "No name present jsr",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0",
+			Name:            "jsr",
+			File:            "jsr.json",
 			PackageContents: "{\"version\":\"1.0.0\"}",
 		},
 		{
@@ -258,6 +322,20 @@ func TestPackage(t *testing.T) {
 			PackageContents: "{}",
 		},
 		{
+			Case:            "Empty project package deno",
+			ExpectedEnabled: true,
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "{}",
+		},
+		{
+			Case:            "Empty project package jsr",
+			ExpectedEnabled: true,
+			Name:            "jsr",
+			File:            "jsr.json",
+			PackageContents: "{}",
+		},
+		{
 			Case:            "Empty project package dart",
 			ExpectedEnabled: true,
 			Name:            "dart",
@@ -290,6 +368,20 @@ func TestPackage(t *testing.T) {
 			ExpectedString:  "invalid character '}' looking for beginning of value",
 			Name:            "node",
 			File:            "package.json",
+			PackageContents: "}",
+		},
+		{
+			Case:            "Invalid json deno",
+			ExpectedString:  "invalid character '}' looking for beginning of value",
+			Name:            "deno",
+			File:            "deno.json",
+			PackageContents: "}",
+		},
+		{
+			Case:            "Invalid json jsr",
+			ExpectedString:  "invalid character '}' looking for beginning of value",
+			Name:            "jsr",
+			File:            "jsr.json",
 			PackageContents: "}",
 		},
 		{
@@ -356,6 +448,23 @@ func TestPackage(t *testing.T) {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
 		}
 	}
+}
+
+func TestDenoProjectUsesJsrMetadata(t *testing.T) {
+	env := new(mock.Environment)
+	env.On(hasFiles, "deno.json").Return(true)
+	env.On(hasFiles, "deno.jsonc").Return(false)
+	env.On(hasFiles, "jsr.json").Return(true)
+	env.On(hasFiles, "jsr.jsonc").Return(false)
+	env.On(hasFiles, testify_.Anything).Return(false)
+	env.On("FileContent", "deno.json").Return("{\"name\":\"library\"}")
+	env.On("FileContent", "jsr.json").Return("{\"version\":\"1.0.0\",\"name\":\"@scope/library\"}")
+
+	pkg := &Project{}
+	pkg.Init(properties.Map{}, env)
+
+	assert.True(t, pkg.Enabled())
+	assert.Equal(t, "\uf487 1.0.0 @scope/library", renderTemplate(env, pkg.Template(), pkg))
 }
 
 func TestNuspecPackage(t *testing.T) {

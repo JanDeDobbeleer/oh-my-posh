@@ -11,6 +11,8 @@ Display the current version of your project defined in the package file.
 Supports:
 
 - Node.js project (`package.json`)
+- Deno project (`deno.json`, `deno.jsonc`)
+- JSR project (`jsr.json`, `jsr.jsonc`)
 - Cargo project (`Cargo.toml`)
 - Python project (`pyproject.toml`, supports metadata defined according to [PEP 621][pep621-standard] or [Poetry][poetry-standard])
 - Mojo project (`mojoproject.toml`)
@@ -58,7 +60,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name       | Type     | Description                                                                                                                                                                                      |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`python`</li><li>`mojo`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
+| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`deno`</li><li>`jsr`</li><li>`cargo`</li><li>`python`</li><li>`mojo`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
 | `.Version` | `string` | The version of your project                                                                                                                                                                      |
 | `.Target`  | `string` | The target framework/language version of your project                                                                                                                                            |
 | `.Name`    | `string` | The name of your project                                                                                                                                                                         |

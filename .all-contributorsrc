@@ -3342,6 +3342,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Pinta365",
+      "name": "Pinta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19735646?v=4",
+      "profile": "https://pinta.land",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

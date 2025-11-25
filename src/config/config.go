@@ -63,6 +63,7 @@ type Config struct {
 	Extends                 string                 `json:"extends,omitempty" toml:"extends,omitempty" yaml:"extends,omitempty"`
 	AccentColor             color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty" yaml:"accent_color,omitempty"`
 	ConsoleTitleTemplate    string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty" yaml:"console_title_template,omitempty"`
+	RefreshInterval         int                    `json:"refresh_interval,omitempty" toml:"refresh_interval,omitempty" yaml:"refresh_interval,omitempty"`
 	PWD                     string                 `json:"pwd,omitempty" toml:"pwd,omitempty" yaml:"pwd,omitempty"`
 	Source                  string                 `json:"-" toml:"-" yaml:"-"`
 	Format                  string                 `json:"-" toml:"-" yaml:"-"`
@@ -155,6 +156,14 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	if len(cfg.Tooltips) > 0 {
 		log.Debug("tooltips enabled")
 		feats |= shell.Tooltips
+	}
+
+	if cfg.RefreshInterval > 0 {
+		supportedShells := []string{shell.PWSH, shell.ZSH, shell.BASH, shell.FISH}
+		if slices.Contains(supportedShells, env.Shell()) {
+			log.Debug("refresh interval enabled")
+			feats |= shell.RefreshInterval
+		}
 	}
 
 	if env.Shell() == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark) {

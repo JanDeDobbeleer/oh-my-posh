@@ -25,6 +25,11 @@ const (
 	done
 )
 
+// ErrorGetter is implemented by auth models to get the error.
+type ErrorGetter interface {
+	GetError() error
+}
+
 func setState(message state) {
 	if program == nil {
 		return
@@ -49,6 +54,10 @@ func (m *model) Init() tea.Cmd {
 	m.spinner = &s
 
 	return m.spinner.Tick
+}
+
+func (m *model) GetError() error {
+	return m.err
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -87,11 +96,10 @@ func Run(m tea.Model) error {
 	program = tea.NewProgram(m)
 	resultModel, _ := program.Run()
 
-	programModel, OK := resultModel.(*model)
-	if !OK {
-		log.Debug("failed to cast model")
-		return nil
+	if eg, ok := resultModel.(ErrorGetter); ok {
+		return eg.GetError()
 	}
 
-	return programModel.err
+	log.Debug("model does not implement ErrorGetter")
+	return nil
 }

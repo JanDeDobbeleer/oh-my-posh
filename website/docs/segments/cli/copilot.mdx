@@ -1,0 +1,117 @@
+---
+id: copilot
+title: GitHub Copilot
+sidebar_label: GitHub Copilot
+---
+
+## What
+
+Display your GitHub Copilot usage statistics and quota information including premium interactions, inline completions, and chat usage.
+This segment was inspired by [Elio Struyf's GitHub Copilot Usage Tauri application][tauri].
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "copilot",
+    style: "diamond",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b4",
+    foreground: "#111111",
+    background: "#fee898",
+    template: " \uec1e {{ .Premium.Percent.Gauge }} ",
+    cache: {
+      duration: "5m",
+      strategy: "session",
+    },
+    properties: {
+      http_timeout: 1000,
+    },
+  }}
+/>
+
+## Properties
+
+| Name           | Type  | Description                                           | Default |
+| -------------- | ----- | ----------------------------------------------------- | ------- |
+| `http_timeout` | `int` | The default timeout for HTTP requests in milliseconds | `20`    |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uec1e {{ .Premium.Percent.Gauge }}
+```
+
+:::
+
+### Properties
+
+| Name                 | Type                | Description                                   |
+| -------------------- | ------------------- | --------------------------------------------- |
+| `.Premium`           | `CopilotUsage`      | Premium interactions usage data               |
+| `.Premium.Used`      | `int`               | Number of premium interactions used           |
+| `.Premium.Limit`     | `int`               | Total premium interactions available          |
+| `.Premium.Percent`   | `CopilotPercentage` | Percentage of premium quota used (0-100)      |
+| `.Premium.Remaining` | `CopilotPercentage` | Percentage of premium quota remaining (0-100) |
+| `.Premium.Unlimited` | `bool`              | Whether premium quota is unlimited            |
+| `.Inline`            | `CopilotUsage`      | Inline completions usage data                 |
+| `.Inline.Used`       | `int`               | Number of inline completions used             |
+| `.Inline.Limit`      | `int`               | Total inline completions available            |
+| `.Inline.Percent`    | `CopilotPercentage` | Percentage of inline quota used (0-100)       |
+| `.Inline.Remaining`  | `CopilotPercentage` | Percentage of inline quota remaining (0-100)  |
+| `.Inline.Unlimited`  | `bool`              | Whether inline quota is unlimited             |
+| `.Chat`              | `CopilotUsage`      | Chat usage data                               |
+| `.Chat.Used`         | `int`               | Number of chat interactions used              |
+| `.Chat.Limit`        | `int`               | Total chat interactions available             |
+| `.Chat.Percent`      | `CopilotPercentage` | Percentage of chat quota used (0-100)         |
+| `.Chat.Remaining`    | `CopilotPercentage` | Percentage of chat quota remaining (0-100)    |
+| `.Chat.Unlimited`    | `bool`              | Whether chat quota is unlimited               |
+| `.BillingCycleEnd`   | `string`            | End date of current billing cycle             |
+
+### CopilotPercentage Methods
+
+The `CopilotPercentage` type provides additional functionality beyond just the numeric value:
+
+| Method      | Returns  | Description                                                        |
+| ----------- | -------- | ------------------------------------------------------------------ |
+| `.Gauge()`  | `string` | Visual gauge showing remaining capacity using 5 bar blocks (▰▰▰▰▱) |
+| `.String()` | `string` | Numeric percentage value (e.g., "75" for use in templates)         |
+
+**Example gauge visualization (shows remaining capacity):**
+
+- 0% used (100% remaining): `▰▰▰▰▰`
+- 20% used (80% remaining): `▰▰▰▰▱`
+- 40% used (60% remaining): `▰▰▰▱▱`
+- 60% used (40% remaining): `▰▰▱▱▱`
+- 80% used (20% remaining): `▰▱▱▱▱`
+- 100% used (0% remaining): `▱▱▱▱▱`
+
+**Example template with gauge:**
+
+```json
+"template": "{{ .Premium.Percent.Gauge() }} {{ .Premium.Used }}/{{ .Premium.Limit }}"
+```
+
+## Authentication
+
+This segment requires authentication with GitHub to access Copilot usage data. Use the built-in OAuth device code flow:
+
+```bash
+oh-my-posh auth copilot
+```
+
+This will:
+
+1. Display a device code and verification URL
+2. Open your browser to GitHub's authorization page
+3. Prompt you to enter the device code
+4. Store the access token securely for future use
+
+The token is stored securely and will be used automatically by the segment.
+
+[templates]: /docs/configuration/templates
+[tauri]: https://github.com/estruyf/github-copilot-usage-tauri

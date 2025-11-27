@@ -1,0 +1,70 @@
+---
+id: copilot
+title: GitHub Copilot
+sidebar_label: GitHub Copilot
+---
+
+## What
+
+Display your GitHub Copilot usage statistics and quota information including premium interactions and completion usage.
+
+## Sample Configuration
+
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "type": "copilot",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#100e23",
+  "background": "#906cff",
+  "template": " \uE272 {{ .PremiumUsed }}/{{ .PremiumLimit }} | {{ .StandardUsed }}/{{ .StandardLimit }} "
+}}/>
+
+## Properties
+
+| Name           | Type  | Description                                     | Default |
+| -------------- | ----- | ----------------------------------------------- | ------- |
+| `http_timeout` | `int` | The default timeout for HTTP requests in milliseconds | `500` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uE272 {{ .PremiumUsed }}/{{ .PremiumLimit }} | {{ .StandardUsed }}/{{ .StandardLimit }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                                    |
+| ---------------- | -------- | ---------------------------------------------- |
+| `.PremiumUsed`   | `int`    | Number of premium interactions used            |
+| `.PremiumLimit`  | `int`    | Total premium interactions available           |
+| `.PremiumPercent`| `int`    | Percentage of premium quota used (0-100)      |
+| `.StandardUsed`  | `int`    | Number of standard completions used           |
+| `.StandardLimit` | `int`    | Total standard completions available          |
+| `.StandardPercent`| `int`   | Percentage of standard quota used (0-100)     |
+| `.BillingCycleEnd`| `string`| End date of current billing cycle            |
+| `.Error`         | `string` | Error message when authentication is required |
+| `.Authenticate`  | `bool`   | Whether authentication is required             |
+
+## Authentication
+
+This segment requires authentication with GitHub to access Copilot usage data. Use the built-in OAuth device code flow:
+
+```bash
+oh-my-posh auth copilot
+```
+
+This will:
+1. Display a device code and verification URL
+2. Open your browser to GitHub's authorization page
+3. Prompt you to enter the device code
+4. Store the access token securely for future use
+
+The token is stored securely and will be used automatically by the segment.
+
+[templates]: /docs/configuration/templates

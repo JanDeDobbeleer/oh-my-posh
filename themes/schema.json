@@ -320,6 +320,7 @@
             "cf",
             "cftarget",
             "cmake",
+            "copilot",
             "connection",
             "crystal",
             "dart",
@@ -1250,6 +1251,28 @@
                   },
                   "folders": {
                     "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "copilot"
+              }
+            }
+          },
+          "then": {
+            "title": "GitHub Copilot Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/copilot",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
                   }
                 }
               }

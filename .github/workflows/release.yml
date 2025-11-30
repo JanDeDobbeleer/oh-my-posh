@@ -125,8 +125,8 @@ jobs:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.CDN_CONNECTIONSTRING }}
         run: |
           echo v${{ needs.changelog.outputs.version }} > version.txt
-          az storage blob upload-batch --destination v${{ needs.changelog.outputs.version }} --source .
-          az storage blob upload-batch --destination latest --overwrite true --source .
+          az storage blob upload-batch --destination releases/v${{ needs.changelog.outputs.version }} --source .
+          az storage blob upload-batch --destination releases/latest --overwrite true --source .
       - name: Release 🎓
         uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe
         with:

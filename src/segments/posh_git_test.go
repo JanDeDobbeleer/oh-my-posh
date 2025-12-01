@@ -74,7 +74,7 @@ func TestPoshGitSegment(t *testing.T) {
 			ExpectedEnabled: true,
 		},
 		{
-			Case: "Changes in Working and Staging, branch ahead an behind",
+			Case: "Changes in Working and Staging, branch ahead and behind",
 			PoshGitJSON: `
 			{
 				"RepoName": "oh-my-posh",

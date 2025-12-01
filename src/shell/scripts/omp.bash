@@ -158,7 +158,7 @@ function _omp_install_hook() {
         prompt_command+=("$cmd")
     done
 
-    PROMPT_COMMAND=(_omp_hook "${prompt_command[@]}")
+    PROMPT_COMMAND=("${prompt_command[@]}" _omp_hook)
 }
 
 _omp_install_hook

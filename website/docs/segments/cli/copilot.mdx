@@ -9,6 +9,23 @@ sidebar_label: GitHub Copilot
 Display your GitHub Copilot usage statistics and quota information including premium interactions, inline completions, and chat usage.
 This segment was inspired by [Elio Struyf's GitHub Copilot Usage Tauri application][tauri].
 
+## Authentication
+
+This segment requires authentication with GitHub to access Copilot usage data. Use the built-in OAuth device code flow:
+
+```bash
+oh-my-posh auth copilot
+```
+
+This will:
+
+1. Display a device code and verification URL
+2. Open your browser to GitHub's authorization page
+3. Prompt you to enter the device code
+4. Store the access token securely for future use
+
+The token is stored securely and will be used automatically by the segment.
+
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";
@@ -95,23 +112,6 @@ The `CopilotPercentage` type provides additional functionality beyond just the n
 ```json
 "template": "{{ .Premium.Percent.Gauge() }} {{ .Premium.Used }}/{{ .Premium.Limit }}"
 ```
-
-## Authentication
-
-This segment requires authentication with GitHub to access Copilot usage data. Use the built-in OAuth device code flow:
-
-```bash
-oh-my-posh auth copilot
-```
-
-This will:
-
-1. Display a device code and verification URL
-2. Open your browser to GitHub's authorization page
-3. Prompt you to enter the device code
-4. Store the access token securely for future use
-
-The token is stored securely and will be used automatically by the segment.
 
 [templates]: /docs/configuration/templates
 [tauri]: https://github.com/estruyf/github-copilot-usage-tauri

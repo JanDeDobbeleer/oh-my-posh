@@ -50,6 +50,21 @@
           "foreground": "#000000",
           "background": "#FFA400",
           "template": " \udb83\ude0f {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+        },
+        {
+          "type": "copilot",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "foreground": "#111111",
+          "background": "#C06EFF",
+          "template": "  {{ .Premium.Percent.Gauge }} Used:{{ .Premium.Remaining }}% Renews: {{ .BillingCycleEnd }} ",
+          "cache": {
+            "duration": "5m",
+            "strategy": "session"
+          },
+          "properties": {
+            "http_timeout": 1000
+          }
         }
       ],
       "type": "prompt"

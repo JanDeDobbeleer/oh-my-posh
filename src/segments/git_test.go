@@ -26,6 +26,11 @@ const (
 	dotGitSubmodule = "dev/.git/modules/submodule"
 )
 
+// Helper function to create a bool pointer.
+func boolPtr(b bool) *bool {
+	return &b
+}
+
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
@@ -1442,5 +1447,151 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 
 		assert.Equal(t, tc.ExpectedPushAhead, g.PushAhead, tc.Case)
 		assert.Equal(t, tc.ExpectedPushBehind, g.PushBehind, tc.Case)
+	}
+}
+
+func TestDirectConfigFields(t *testing.T) {
+	// Test that direct config fields take precedence over properties
+	t.Run("Direct config fields override properties", func(t *testing.T) {
+		g := &Git{
+			BranchIconConfig:        "direct_branch_icon",
+			BranchAheadIconConfig:   "direct_ahead",
+			BranchBehindIconConfig:  "direct_behind",
+			BranchIdenticalIconConf: "direct_identical",
+			BranchGoneIconConfig:    "direct_gone",
+		}
+		g.Init(properties.Map{
+			BranchIcon:          "props_branch_icon",
+			BranchAheadIcon:     "props_ahead",
+			BranchBehindIcon:    "props_behind",
+			BranchIdenticalIcon: "props_identical",
+			BranchGoneIcon:      "props_gone",
+		}, new(mock.Environment))
+
+		// Direct config fields should take precedence
+		assert.Equal(t, "direct_branch_icon", g.getBranchIcon())
+		assert.Equal(t, "direct_ahead", g.getBranchAheadIcon())
+		assert.Equal(t, "direct_behind", g.getBranchBehindIcon())
+		assert.Equal(t, "direct_identical", g.getBranchIdenticalIcon())
+		assert.Equal(t, "direct_gone", g.getBranchGoneIcon())
+	})
+
+	t.Run("Properties used as fallback when direct config is empty", func(t *testing.T) {
+		g := &Git{}
+		g.Init(properties.Map{
+			BranchIcon:          "props_branch_icon",
+			BranchAheadIcon:     "props_ahead",
+			BranchBehindIcon:    "props_behind",
+			BranchIdenticalIcon: "props_identical",
+			BranchGoneIcon:      "props_gone",
+		}, new(mock.Environment))
+
+		// Properties should be used when direct config is empty
+		assert.Equal(t, "props_branch_icon", g.getBranchIcon())
+		assert.Equal(t, "props_ahead", g.getBranchAheadIcon())
+		assert.Equal(t, "props_behind", g.getBranchBehindIcon())
+		assert.Equal(t, "props_identical", g.getBranchIdenticalIcon())
+		assert.Equal(t, "props_gone", g.getBranchGoneIcon())
+	})
+
+	t.Run("Default values used when neither direct config nor properties are set", func(t *testing.T) {
+		g := &Git{}
+		g.Init(properties.Map{}, new(mock.Environment))
+
+		// Default values should be used
+		assert.Equal(t, "\uE0A0", g.getBranchIcon())
+		assert.Equal(t, "\u2191", g.getBranchAheadIcon())
+		assert.Equal(t, "\u2193", g.getBranchBehindIcon())
+		assert.Equal(t, "\u2261", g.getBranchIdenticalIcon())
+		assert.Equal(t, "\u2262", g.getBranchGoneIcon())
+	})
+
+	t.Run("Bool config fields override properties", func(t *testing.T) {
+		g := &Git{
+			FetchStatusConfig:       boolPtr(true),
+			FetchPushStatusConfig:   boolPtr(true),
+			FetchUpstreamIconConfig: boolPtr(true),
+		}
+		g.Init(properties.Map{
+			FetchStatus:       false,
+			FetchPushStatus:   false,
+			FetchUpstreamIcon: false,
+		}, new(mock.Environment))
+
+		assert.True(t, g.getFetchStatus())
+		assert.True(t, g.getFetchPushStatus())
+		assert.True(t, g.getFetchUpstreamIcon())
+	})
+
+	t.Run("Bool config nil falls back to properties", func(t *testing.T) {
+		g := &Git{}
+		g.Init(properties.Map{
+			FetchStatus:       true,
+			FetchPushStatus:   true,
+			FetchUpstreamIcon: true,
+		}, new(mock.Environment))
+
+		assert.True(t, g.getFetchStatus())
+		assert.True(t, g.getFetchPushStatus())
+		assert.True(t, g.getFetchUpstreamIcon())
+	})
+
+	t.Run("Map config fields override properties", func(t *testing.T) {
+		g := &Git{
+			UntrackedModesConfig: map[string]string{"*": "no"},
+			StatusFormatsConfig:  map[string]string{"Added": "custom_added"},
+		}
+		g.Init(properties.Map{
+			UntrackedModes: map[string]string{"*": "all"},
+			StatusFormats:  map[string]string{"Added": "props_added"},
+		}, new(mock.Environment))
+
+		assert.Equal(t, map[string]string{"*": "no"}, g.getUntrackedModes())
+		assert.Equal(t, map[string]string{"Added": "custom_added"}, g.getStatusFormats())
+	})
+
+	t.Run("Slice config fields override properties", func(t *testing.T) {
+		g := &Git{
+			IgnoreStatusConfig: []string{"/direct/path"},
+		}
+		g.Init(properties.Map{
+			IgnoreStatus: []string{"/props/path"},
+		}, new(mock.Environment))
+
+		assert.Equal(t, []string{"/direct/path"}, g.getIgnoreStatus())
+	})
+}
+
+func TestGetBranchStatusWithDirectConfig(t *testing.T) {
+	cases := []struct {
+		Case         string
+		Expected     string
+		Upstream     string
+		Ahead        int
+		Behind       int
+		UpstreamGone bool
+	}{
+		{Case: "Equal with remote", Expected: "eq", Upstream: branchName},
+		{Case: "Ahead", Expected: "u2", Ahead: 2},
+		{Case: "Behind", Expected: "d8", Behind: 8},
+		{Case: "Behind and ahead", Expected: "u7 d8", Behind: 8, Ahead: 7},
+		{Case: "Gone", Expected: "g", Upstream: branchName, UpstreamGone: true},
+	}
+
+	for _, tc := range cases {
+		g := &Git{
+			BranchAheadIconConfig:   "u",
+			BranchBehindIconConfig:  "d",
+			BranchIdenticalIconConf: "eq",
+			BranchGoneIconConfig:    "g",
+			Ahead:                   tc.Ahead,
+			Behind:                  tc.Behind,
+			Upstream:                tc.Upstream,
+			UpstreamGone:            tc.UpstreamGone,
+		}
+		g.Init(properties.Map{}, new(mock.Environment))
+
+		g.setBranchStatus()
+		assert.Equal(t, tc.Expected, g.BranchStatus, tc.Case)
 	}
 }

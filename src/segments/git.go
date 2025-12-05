@@ -4,6 +4,7 @@ import (
 	"fmt"
 	url2 "net/url"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -14,6 +15,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"gopkg.in/ini.v1"
 )
@@ -444,6 +446,54 @@ func (g *Git) getStatusFormats() map[string]string {
 		return g.StatusFormatsConfig
 	}
 	return g.props.GetKeyValueMap(StatusFormats, map[string]string{})
+}
+
+// formatBranch overrides the Scm.formatBranch method to use Git-specific config fields.
+func (g *Git) formatBranch(branch string) string {
+	mappedBranches := g.getMappedBranches()
+
+	// sort the keys alphabetically
+	keys := make([]string, 0, len(mappedBranches))
+	for k := range mappedBranches {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	const wildcard = "*"
+
+	for _, key := range keys {
+		if key == wildcard {
+			branch = mappedBranches[key]
+			break
+		}
+
+		matchSubFolders := strings.HasSuffix(key, wildcard)
+		subfolderKey := strings.TrimSuffix(key, wildcard)
+
+		if matchSubFolders && strings.HasPrefix(branch, subfolderKey) {
+			branch = strings.Replace(branch, subfolderKey, mappedBranches[key], 1)
+			break
+		}
+
+		if matchSubFolders || branch != key {
+			continue
+		}
+
+		branch = strings.Replace(branch, key, mappedBranches[key], 1)
+		break
+	}
+
+	branchTemplate := g.props.GetString(BranchTemplate, "")
+	if branchTemplate == "" {
+		return branch
+	}
+
+	txt, err := template.Render(branchTemplate, struct{ Branch string }{Branch: branch})
+	if err != nil {
+		return branch
+	}
+
+	return txt
 }
 
 func (g *Git) Enabled() bool {

@@ -257,6 +257,13 @@ func (g *Git) getDisableWithJJ() bool {
 	return g.props.GetBool(DisableWithJJ, false)
 }
 
+func (g *Git) getFetchWorktreeCount() bool {
+	if g.FetchWorktreeCountConfig != nil {
+		return *g.FetchWorktreeCountConfig
+	}
+	return g.props.GetBool(FetchWorktreeCount, false)
+}
+
 func (g *Git) getIgnoreStatus() []string {
 	if g.IgnoreStatusConfig != nil {
 		return g.IgnoreStatusConfig
@@ -416,6 +423,13 @@ func (g *Git) getIgnoreSubmodules() map[string]string {
 		return g.IgnoreSubmodulesConfig
 	}
 	return g.props.GetKeyValueMap(IgnoreSubmodules, map[string]string{})
+}
+
+func (g *Git) getMappedBranches() map[string]string {
+	if g.MappedBranchesConfig != nil {
+		return g.MappedBranchesConfig
+	}
+	return g.props.GetKeyValueMap(MappedBranches, map[string]string{})
 }
 
 func (g *Git) getUpstreamIcons() map[string]string {

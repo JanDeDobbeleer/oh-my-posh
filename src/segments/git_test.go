@@ -1508,19 +1508,22 @@ func TestDirectConfigFields(t *testing.T) {
 
 	t.Run("Bool config fields override properties", func(t *testing.T) {
 		g := &Git{
-			FetchStatusConfig:       boolPtr(true),
-			FetchPushStatusConfig:   boolPtr(true),
-			FetchUpstreamIconConfig: boolPtr(true),
+			FetchStatusConfig:        boolPtr(true),
+			FetchPushStatusConfig:    boolPtr(true),
+			FetchUpstreamIconConfig:  boolPtr(true),
+			FetchWorktreeCountConfig: boolPtr(true),
 		}
 		g.Init(properties.Map{
-			FetchStatus:       false,
-			FetchPushStatus:   false,
-			FetchUpstreamIcon: false,
+			FetchStatus:        false,
+			FetchPushStatus:    false,
+			FetchUpstreamIcon:  false,
+			FetchWorktreeCount: false,
 		}, new(mock.Environment))
 
 		assert.True(t, g.getFetchStatus())
 		assert.True(t, g.getFetchPushStatus())
 		assert.True(t, g.getFetchUpstreamIcon())
+		assert.True(t, g.getFetchWorktreeCount())
 	})
 
 	t.Run("Bool config nil falls back to properties", func(t *testing.T) {
@@ -1538,16 +1541,22 @@ func TestDirectConfigFields(t *testing.T) {
 
 	t.Run("Map config fields override properties", func(t *testing.T) {
 		g := &Git{
-			UntrackedModesConfig: map[string]string{"*": "no"},
-			StatusFormatsConfig:  map[string]string{"Added": "custom_added"},
+			UntrackedModesConfig:   map[string]string{"*": "no"},
+			StatusFormatsConfig:    map[string]string{"Added": "custom_added"},
+			MappedBranchesConfig:   map[string]string{"main": "󰊢"},
+			IgnoreSubmodulesConfig: map[string]string{"*": "dirty"},
 		}
 		g.Init(properties.Map{
-			UntrackedModes: map[string]string{"*": "all"},
-			StatusFormats:  map[string]string{"Added": "props_added"},
+			UntrackedModes:   map[string]string{"*": "all"},
+			StatusFormats:    map[string]string{"Added": "props_added"},
+			MappedBranches:   map[string]string{"main": ""},
+			IgnoreSubmodules: map[string]string{"*": "all"},
 		}, new(mock.Environment))
 
 		assert.Equal(t, map[string]string{"*": "no"}, g.getUntrackedModes())
 		assert.Equal(t, map[string]string{"Added": "custom_added"}, g.getStatusFormats())
+		assert.Equal(t, map[string]string{"main": "󰊢"}, g.getMappedBranches())
+		assert.Equal(t, map[string]string{"*": "dirty"}, g.getIgnoreSubmodules())
 	})
 
 	t.Run("Slice config fields override properties", func(t *testing.T) {

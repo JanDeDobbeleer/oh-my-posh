@@ -1,3 +1,4 @@
+//revive:disable:var-naming // test package matches implementation; lint warning is intentional
 package http
 
 import (

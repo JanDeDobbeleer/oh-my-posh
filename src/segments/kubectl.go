@@ -4,7 +4,8 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-	"gopkg.in/yaml.v3"
+
+	yaml "go.yaml.in/yaml/v3"
 )
 
 // Whether to use kubectl or read kubeconfig ourselves

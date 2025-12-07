@@ -21,7 +21,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
 	toml "github.com/pelletier/go-toml/v2"
-	yaml "gopkg.in/yaml.v3"
+	yaml "go.yaml.in/yaml/v3"
 )
 
 // custom no config error

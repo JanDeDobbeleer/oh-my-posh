@@ -14,7 +14,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	toml "github.com/pelletier/go-toml/v2"
-	yaml "gopkg.in/yaml.v3"
+	yaml "go.yaml.in/yaml/v3"
 )
 
 type ProjectItem struct {

@@ -10,7 +10,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-	"gopkg.in/yaml.v3"
+
+	yaml "go.yaml.in/yaml/v3"
 )
 
 const (

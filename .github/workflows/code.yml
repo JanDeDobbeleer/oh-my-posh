@@ -24,11 +24,11 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
     - name: Checkout code
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
     - name: Golang CI
-      uses: golangci/golangci-lint-action@e7fa5ac41e1cf5b7d48e45e42232ce7ada589601
+      uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20
       with:
         working-directory: src
     - name: Fieldalignment

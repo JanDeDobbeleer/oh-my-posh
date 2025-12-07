@@ -1,6 +1,9 @@
 package config
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // BlockType type of block
 type BlockType string
@@ -48,4 +51,84 @@ func (b *Block) key() any {
 	}
 
 	return fmt.Sprintf("%s-%s", b.Type, b.Alignment)
+}
+
+// typedSegmentMarker is used to identify typed segments vs legacy property-based segments
+type typedSegmentMarker interface {
+	IsTypedSegment()
+}
+
+// UnmarshalJSON implements custom unmarshaling to support polymorphic segments
+func (b *Block) UnmarshalJSON(data []byte) error {
+	// Use type alias to avoid recursion
+	type Alias Block
+	aux := &struct {
+		RawSegments []json.RawMessage `json:"segments"`
+		*Alias
+	}{
+		Alias: (*Alias)(b),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Clear segments before repopulating
+	b.Segments = nil
+
+	for i, rawSeg := range aux.RawSegments {
+		segment, err := unmarshalSegment(rawSeg)
+		if err != nil {
+			return fmt.Errorf("segment %d: %w", i, err)
+		}
+		b.Segments = append(b.Segments, segment)
+	}
+
+	return nil
+}
+
+func unmarshalSegment(data []byte) (*Segment, error) {
+	// Peek at type field
+	var typeCheck struct {
+		Type SegmentType `json:"type"`
+	}
+	if err := json.Unmarshal(data, &typeCheck); err != nil {
+		return nil, err
+	}
+
+	// Try to create a segment writer using the factory
+	f, ok := Segments[typeCheck.Type]
+	if !ok {
+		return nil, fmt.Errorf("unknown segment type: %s", typeCheck.Type)
+	}
+
+	writer := f()
+
+	if typedSeg, isTyped := writer.(typedSegmentMarker); isTyped {
+		// Unmarshal into the typed segment
+		if err := json.Unmarshal(data, writer); err != nil {
+			return nil, err
+		}
+
+		// Apply defaults
+		if err := ApplyDefaults(typedSeg); err != nil {
+			return nil, err
+		}
+
+		// Create segment wrapper with writer already set
+		seg := &Segment{
+			Type:   typeCheck.Type,
+			writer: writer,
+		}
+
+		return seg, nil
+	}
+
+	// Fall back to old property-based system for non-migrated segments
+	var seg Segment
+	if err := json.Unmarshal(data, &seg); err != nil {
+		return nil, err
+	}
+
+	return &seg, nil
 }

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
@@ -15,25 +16,41 @@ const (
 )
 
 type Status struct {
-	Base
+	SegmentBase
 
-	String  string
-	Meaning string
-	Error   bool
+	// Configuration fields with defaults
+	StatusTemplate  string `json:"status_template,omitempty" toml:"status_template,omitempty" yaml:"status_template,omitempty" default:"{{ .Code }}"`
+	StatusSeparator string `json:"status_separator,omitempty" toml:"status_separator,omitempty" yaml:"status_separator,omitempty" default:"|"`
+	AlwaysEnabled   bool   `json:"always_enabled,omitempty" toml:"always_enabled,omitempty" yaml:"always_enabled,omitempty"`
+
+	// Runtime state (not serialized)
+	String  string `json:"-"`
+	Meaning string `json:"-"`
+	Error   bool   `json:"-"`
+	Code    int    `json:"-"`
 }
 
 func (s *Status) Template() string {
 	return " {{ .String }} "
 }
 
-func (s *Status) Enabled() bool {
-	status, pipeStatus := s.env.StatusCodes()
+// Init satisfies the SegmentWriter interface (ignores props for typed segments)
+func (s *Status) Init(_ properties.Properties, env runtime.Environment) {
+	s.SegmentBase.Init(env)
+}
 
+// IsTypedSegment marks this as a typed segment
+func (s *Status) IsTypedSegment() {}
+
+func (s *Status) Enabled() bool {
+	status, pipeStatus := s.Env().StatusCodes()
+
+	s.Code = status
 	s.String = s.formatStatus(status, pipeStatus)
 	// Deprecated: Use {{ reason .Code }} instead
 	s.Meaning = template.GetReasonFromStatus(status)
 
-	if s.props.GetBool(properties.AlwaysEnabled, false) {
+	if s.AlwaysEnabled {
 		return true
 	}
 
@@ -41,13 +58,14 @@ func (s *Status) Enabled() bool {
 }
 
 func (s *Status) formatStatus(status int, pipeStatus string) string {
-	statusTemplate := s.props.GetString(StatusTemplate, "{{ .Code }}")
+	statusTemplate := s.StatusTemplate
 
 	if status != 0 {
 		s.Error = true
 	}
 
 	if pipeStatus == "" {
+		s.Code = status
 		if txt, err := template.Render(statusTemplate, s); err == nil {
 			return txt
 		}
@@ -55,7 +73,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 		return strconv.Itoa(status)
 	}
 
-	StatusSeparator := s.props.GetString(StatusSeparator, "|")
+	statusSeparator := s.StatusSeparator
 
 	builder := text.NewBuilder()
 
@@ -70,7 +88,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 	for i, codeStr := range splitted {
 		write := func(txt string) {
 			if i > 0 {
-				builder.WriteString(StatusSeparator)
+				builder.WriteString(statusSeparator)
 			}
 			builder.WriteString(txt)
 		}

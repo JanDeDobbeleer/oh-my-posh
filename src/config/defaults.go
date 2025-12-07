@@ -77,7 +77,12 @@ func isFieldZero(v reflect.Value) bool {
 		return v.Uint() == 0
 	case reflect.Float32, reflect.Float64:
 		return v.Float() == 0
-	case reflect.Slice, reflect.Map:
+	case reflect.Slice:
+		// A slice is zero if it's nil or has length 0
+		return v.IsNil() || v.Len() == 0
+	case reflect.Map:
+		// A map is zero if it's nil or has length 0
+		// Empty maps (non-nil with length 0) are considered zero-valued
 		return v.IsNil() || v.Len() == 0
 	default:
 		return v.IsZero()
@@ -151,9 +156,13 @@ func setSliceDefault(field reflect.Value, defaultValue string) error {
 	}
 
 	// Try to parse as JSON array
-	var result []any
+	var result any
 	if err := json.Unmarshal([]byte(defaultValue), &result); err == nil {
-		return setSliceFromJSON(field, result)
+		// Validate that result is actually an array
+		if arr, ok := result.([]any); ok {
+			return setSliceFromJSON(field, arr)
+		}
+		return fmt.Errorf("expected JSON array for slice default, got %T", result)
 	}
 
 	// Fallback: comma-separated values for string slices
@@ -202,12 +211,15 @@ func setMapDefault(field reflect.Value, defaultValue string) error {
 	keyType := field.Type().Key()
 	valueType := field.Type().Elem()
 
+	// Note: Currently only string keys are supported in map defaults.
+	// This is sufficient for common configuration use cases.
+	// Extend this if other key types are needed.
 	for k, v := range result {
 		key := reflect.New(keyType).Elem()
 		if keyType.Kind() == reflect.String {
 			key.SetString(k)
 		} else {
-			return fmt.Errorf("unsupported map key type %s", keyType)
+			return fmt.Errorf("unsupported map key type %s (only string keys supported)", keyType)
 		}
 
 		val := reflect.New(valueType).Elem()

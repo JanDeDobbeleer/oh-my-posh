@@ -67,7 +67,8 @@ func TestApplyDefaults_Float(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, 3.14, s.Field1)
-	assert.InDelta(t, 2.71, s.Field2, 0.01)
+	// Use small delta for float32 comparison due to precision limitations
+	assert.InDelta(t, 2.71, s.Field2, 0.0001)
 	assert.Equal(t, 0.0, s.Field3)
 }
 

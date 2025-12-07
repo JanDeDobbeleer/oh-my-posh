@@ -474,11 +474,8 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 
 	// If writer is already set (from polymorphic unmarshal), just init it
 	if segment.writer != nil {
-		// Check if it's a typed segment
-		type typedMarker interface {
-			IsTypedSegment()
-		}
-		if _, ok := segment.writer.(typedMarker); ok {
+		// Check if it's a typed segment using the marker interface
+		if _, ok := segment.writer.(segments.TypedSegmentMarker); ok {
 			// Typed segments ignore props, pass nil wrapper
 			segment.writer.Init(nil, env)
 			return nil
@@ -497,10 +494,7 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	writer := f()
 
 	// Check if this is a typed segment that wasn't unmarshaled yet
-	type typedMarker interface {
-		IsTypedSegment()
-	}
-	if _, isTyped := writer.(typedMarker); isTyped {
+	if _, isTyped := writer.(segments.TypedSegmentMarker); isTyped {
 		// Apply defaults
 		if err := ApplyDefaults(writer); err != nil {
 			return err

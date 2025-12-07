@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,10 +32,7 @@ func TestBlockUnmarshalTypedSegment(t *testing.T) {
 	assert.NotNil(t, segment.writer, "writer should be set")
 
 	// Check it's marked as typed
-	type typedMarker interface {
-		IsTypedSegment()
-	}
-	_, isTyped := segment.writer.(typedMarker)
+	_, isTyped := segment.writer.(segments.TypedSegmentMarker)
 	assert.True(t, isTyped, "segment should be marked as typed")
 }
 

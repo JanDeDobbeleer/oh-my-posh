@@ -10,11 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
-const (
-	StatusTemplate  properties.Property = "status_template"
-	StatusSeparator properties.Property = "status_separator"
-)
-
 type Status struct {
 	SegmentBase
 

@@ -3,6 +3,8 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 )
 
 // BlockType type of block
@@ -53,11 +55,6 @@ func (b *Block) key() any {
 	return fmt.Sprintf("%s-%s", b.Type, b.Alignment)
 }
 
-// typedSegmentMarker is used to identify typed segments vs legacy property-based segments
-type typedSegmentMarker interface {
-	IsTypedSegment()
-}
-
 // UnmarshalJSON implements custom unmarshaling to support polymorphic segments
 func (b *Block) UnmarshalJSON(data []byte) error {
 	// Use type alias to avoid recursion
@@ -104,7 +101,7 @@ func unmarshalSegment(data []byte) (*Segment, error) {
 
 	writer := f()
 
-	if typedSeg, isTyped := writer.(typedSegmentMarker); isTyped {
+	if typedSeg, isTyped := writer.(segments.TypedSegmentMarker); isTyped {
 		// Unmarshal into the typed segment
 		if err := json.Unmarshal(data, writer); err != nil {
 			return nil, err

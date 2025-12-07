@@ -1,3 +1,4 @@
+//revive:disable:var-naming // package intentionally mirrors standard name for compatibility across runtime
 package http
 
 import (

@@ -40,7 +40,7 @@ Implementation steps
 package segments
 
 import (
-    "github.com/jandedobbeleer/oh-my-posh/src/properties"
+    "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
     "github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
@@ -55,7 +55,7 @@ type {{goType}} struct {
 const (
 {{#each properties}}
     // {{this.title}}: {{this.description}}
-    {{ pascalCase this.key }} properties.Property = "{{this.key}}"
+    {{ pascalCase this.key }} options.Property = "{{this.key}}"
 {{/each}})
 
 func (s *{{goType}}) Enabled() bool {
@@ -161,4 +161,4 @@ Optional
 - Create a minimal test file at `src/segments/{{id}}_test.go` using the
   table-driven style. Include at least a happy-path test that asserts
   `Enabled()` returns true and the template renders expected output with default
-  properties.
+  options.

@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"gopkg.in/ini.v1"
 
 	"github.com/stretchr/testify/assert"
@@ -34,7 +34,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 	env.On("IsWsl").Return(false)
 
 	g := &Git{}
-	g.Init(properties.Map{}, env)
+	g.Init(options.Map{}, env)
 
 	assert.False(t, g.Enabled())
 }
@@ -60,7 +60,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
 
 	g := &Git{}
-	g.Init(properties.Map{}, env)
+	g.Init(options.Map{}, env)
 
 	assert.True(t, g.Enabled())
 	assert.Equal(t, fileInfo.Path, g.mainSCMDir)
@@ -140,7 +140,7 @@ func TestEnabledInWorktree(t *testing.T) {
 		env.On("PathSeparator").Return(string(os.PathSeparator))
 
 		g := &Git{}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, g.hasWorktree(fileInfo), tc.Case)
 		assert.Equal(t, tc.ExpectedWorkingFolder, g.mainSCMDir, tc.Case)
@@ -179,7 +179,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
 		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
 
-		props := properties.Map{
+		props := options.Map{
 			FetchBareInfo: true,
 		}
 
@@ -211,7 +211,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 			command: GITCOMMAND,
 		},
 	}
-	g.Init(properties.Map{}, env)
+	g.Init(options.Map{}, env)
 
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
@@ -352,7 +352,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("HasFilesInDir", "", "sequencer/todo").Return(tc.Sequencer)
 		env.On("FileContent", "/sequencer/todo").Return(tc.Theirs)
 
-		props := properties.Map{
+		props := options.Map{
 			BranchIcon:     "branch ",
 			CommitIcon:     "commit ",
 			RebaseIcon:     "rebase ",
@@ -409,7 +409,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		env.MockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
 		env.MockGitCommand("", tc.SymbolicName, "rev-parse", "--symbolic-full-name", "HEAD")
 
-		props := properties.Map{
+		props := options.Map{
 			BranchIcon: "branch ",
 			CommitIcon: "commit ",
 			TagIcon:    "tag ",
@@ -588,7 +588,7 @@ func TestSetGitStatus(t *testing.T) {
 				command: GITCOMMAND,
 			},
 		}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		if tc.ExpectedWorking == nil {
 			tc.ExpectedWorking = &GitStatus{}
@@ -635,7 +635,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 				mainSCMDir: "",
 			},
 		}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		got := g.StashCount()
 		assert.Equal(t, tc.Expected, got)
@@ -696,7 +696,7 @@ func TestGitUpstream(t *testing.T) {
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", origin}).Return(tc.Upstream, nil)
 		env.On("GOOS").Return("unix")
-		props := properties.Map{
+		props := options.Map{
 			GithubIcon:      "GH",
 			GitlabIcon:      "GL",
 			BitbucketIcon:   "BB",
@@ -747,7 +747,7 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			BranchAheadIcon:     "up",
 			BranchBehindIcon:    "down",
 			BranchIdenticalIcon: "equal",
@@ -892,12 +892,12 @@ func TestGitTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			FetchStatus: true,
 		}
 		env := new(mock.Environment)
 		tc.Git.env = env
-		tc.Git.props = props
+		tc.Git.options = props
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Git), tc.Case)
 	}
 }
@@ -937,7 +937,7 @@ func TestGitUntrackedMode(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			UntrackedModes: tc.UntrackedModes,
 		}
 
@@ -982,7 +982,7 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			IgnoreSubmodules: tc.IgnoreSubmodules,
 		}
 
@@ -1123,7 +1123,7 @@ func TestGitCommit(t *testing.T) {
 				command: GITCOMMAND,
 			},
 		}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		got := g.Commit()
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -1206,7 +1206,7 @@ func TestGitRemotes(t *testing.T) {
 				repoRootDir: "foo",
 			},
 		}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {
@@ -1265,7 +1265,7 @@ func TestGitRepoName(t *testing.T) {
 			},
 			IsWorkTree: tc.IsWorkTree,
 		}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		got := g.repoName()
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -1281,7 +1281,7 @@ func TestDisableWithJJEnabled(t *testing.T) {
 	env.On("HasParentFilePath", ".jj", false).Return(&runtime.FileInfo{Path: "/dir/.jj", IsDir: true}, nil)
 
 	g := &Git{}
-	props := properties.Map{
+	props := options.Map{
 		DisableWithJJ: true,
 	}
 	g.Init(props, env)
@@ -1312,7 +1312,7 @@ func TestDisableWithJJDisabled(t *testing.T) {
 	env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
 
 	g := &Git{}
-	props := properties.Map{
+	props := options.Map{
 		DisableWithJJ: false, // Property is disabled
 	}
 	g.Init(props, env)
@@ -1343,7 +1343,7 @@ func TestDisableWithJJNoJJDirectory(t *testing.T) {
 	env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
 
 	g := &Git{}
-	props := properties.Map{
+	props := options.Map{
 		DisableWithJJ: true, // Property is enabled but no .jj directory
 	}
 	g.Init(props, env)
@@ -1422,7 +1422,7 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 			Upstream: "origin/main",
 		}
 
-		props := properties.Map{
+		props := options.Map{
 			FetchPushStatus: true,
 		}
 

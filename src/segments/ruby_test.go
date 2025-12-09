@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -95,7 +94,7 @@ func TestRuby(t *testing.T) {
 		env.On("HasFiles", "Rakefile").Return(tc.HasRakeFile)
 		env.On("HasFiles", "Gemfile").Return(tc.HasGemFile)
 
-		props[properties.FetchVersion] = tc.FetchVersion
+		props[options.FetchVersion] = tc.FetchVersion
 
 		ruby := &Ruby{}
 		ruby.Init(props, env)

@@ -34,7 +34,7 @@ const (
 	UPGRADENOTICE = "notice"
 	RELOAD        = "reload"
 
-	Version = 3
+	Version = 4
 )
 
 type Action string
@@ -175,7 +175,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 
 		for _, segment := range block.Segments {
 			if segment.Type == AZ {
-				source := segment.Properties.GetString(segments.Source, segments.FirstMatch)
+				source := segment.Options.String(segments.Source, segments.FirstMatch)
 				if strings.Contains(source, segments.Pwsh) {
 					log.Debug("azure enabled")
 					feats |= shell.Azure
@@ -183,7 +183,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 			}
 
 			if segment.Type == GIT {
-				source := segment.Properties.GetString(segments.Source, segments.Cli)
+				source := segment.Options.String(segments.Source, segments.Cli)
 				if source == segments.Pwsh {
 					log.Debug("posh-git enabled")
 					feats |= shell.PoshGit

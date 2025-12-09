@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +52,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			env := new(mock.Environment)
-			props := properties.Map{
+			props := options.Map{
 				URL:    tc.url,
 				METHOD: tc.method,
 			}
@@ -66,8 +66,8 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 
 			cs := &HTTP{
 				Base: Base{
-					env:   env,
-					props: props,
+					env:     env,
+					options: props,
 				},
 			}
 

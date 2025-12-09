@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/alecthomas/assert"
 )
@@ -65,7 +65,7 @@ func TestNbgv(t *testing.T) {
 		env.On("RunCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 
 		nbgv := &Nbgv{}
-		nbgv.Init(properties.Map{}, env)
+		nbgv.Init(options.Map{}, env)
 
 		enabled := nbgv.Enabled()
 

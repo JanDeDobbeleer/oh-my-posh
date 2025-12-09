@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
@@ -132,7 +132,7 @@ func TestHasCommand(t *testing.T) {
 		env.On("HasCommand", "git").Return(true)
 		env.On("HasCommand", "git.exe").Return(!tc.NativeFallback)
 
-		props := properties.Map{
+		props := options.Map{
 			NativeFallback: tc.NativeFallback,
 		}
 
@@ -211,7 +211,7 @@ func TestFormatBranch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			MappedBranches: tc.MappedBranches,
 			BranchTemplate: tc.BranchTemplate,
 		}

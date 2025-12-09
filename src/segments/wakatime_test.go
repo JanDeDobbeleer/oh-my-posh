@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -65,7 +65,7 @@ func TestWTTrackedTime(t *testing.T) {
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
-		props := properties.Map{
+		props := options.Map{
 			URL: FAKEAPIURL,
 		}
 

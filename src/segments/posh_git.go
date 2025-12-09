@@ -73,7 +73,7 @@ func (g *Git) hasPoshGitStatus() bool {
 
 	g.setBranchStatus()
 
-	if len(g.Upstream) != 0 && g.props.GetBool(FetchUpstreamIcon, false) {
+	if len(g.Upstream) != 0 && g.options.Bool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
 
@@ -86,14 +86,14 @@ func (g *Git) parsePoshGitHEAD(head string) string {
 	if strings.HasSuffix(head, "...)") {
 		head = strings.TrimLeft(head, "(")
 		head = strings.TrimRight(head, ".)")
-		return fmt.Sprintf("%s%s", g.props.GetString(CommitIcon, "\uF417"), head)
+		return fmt.Sprintf("%s%s", g.options.String(CommitIcon, "\uF417"), head)
 	}
 	// tag
 	if strings.HasPrefix(head, "(") {
 		head = strings.TrimLeft(head, "(")
 		head = strings.TrimRight(head, ")")
-		return fmt.Sprintf("%s%s", g.props.GetString(TagIcon, "\uF412"), head)
+		return fmt.Sprintf("%s%s", g.options.String(TagIcon, "\uF412"), head)
 	}
 	// regular branch
-	return fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatBranch(head))
+	return fmt.Sprintf("%s%s", g.options.String(BranchIcon, "\uE0A0"), g.formatBranch(head))
 }

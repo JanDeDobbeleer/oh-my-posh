@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type LastFM struct {
@@ -21,7 +21,7 @@ type LastFM struct {
 
 const (
 	// LastFM username
-	Username properties.Property = "username"
+	Username options.Option = "username"
 )
 
 type lmfDate struct {
@@ -69,9 +69,9 @@ func (d *LastFM) Template() string {
 func (d *LastFM) getResult() (*lfmDataResponse, error) {
 	response := new(lfmDataResponse)
 
-	apikey := d.props.GetString(APIKey, ".")
-	username := d.props.GetString(Username, ".")
-	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	apikey := d.options.String(APIKey, ".")
+	username := d.options.String(Username, ".")
+	httpTimeout := d.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	url := fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
 
@@ -107,10 +107,10 @@ func (d *LastFM) setStatus() error {
 	isPlaying := track.Info != nil && track.Info.IsPlaying != nil && *track.Info.IsPlaying == "true"
 
 	if isPlaying {
-		d.Icon = d.props.GetString(PlayingIcon, "\uE602 ")
+		d.Icon = d.options.String(PlayingIcon, "\uE602 ")
 		d.Status = "playing"
 	} else {
-		d.Icon = d.props.GetString(StoppedIcon, "\uF04D ")
+		d.Icon = d.options.String(StoppedIcon, "\uF04D ")
 		d.Status = "stopped"
 	}
 

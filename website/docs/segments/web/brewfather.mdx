@@ -35,7 +35,7 @@ import Config from "@site/src/components/Config.js";
     background_templates: [
       '{{ if and (.Reading) (eq .Status "Fermenting") (gt .ReadingAge 4) }}#cc1515{{end}}',
     ],
-    properties: {
+    options: {
       user_id: "abcdefg123456",
       api_key: "qrstuvw78910",
       batch_id: "hijklmno098765",
@@ -43,7 +43,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name           |   Type   | Default | Description                                                                                                                     |
 | -------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------- |

@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -83,7 +83,7 @@ func TestUnitySegment(t *testing.T) {
 		}
 		env.On("HasParentFilePath", "ProjectSettings", false).Return(projectDir, err)
 
-		props := properties.Map{}
+		props := options.Map{}
 		unity := &Unity{}
 		unity.Init(props, env)
 		assert.Equal(t, tc.ExpectedToBeEnabled, unity.Enabled())
@@ -173,7 +173,7 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 		url := "https://docs.unity3d.com/2021.9/Documentation/Manual/CSharpCompiler.html"
 		env.On("HTTPRequest", url).Return([]byte(tc.HTTPResponse.body), tc.HTTPResponse.err)
 
-		props := properties.Map{}
+		props := options.Map{}
 		unity := &Unity{}
 		unity.Init(props, env)
 		assert.Equal(t, tc.ExpectedToBeEnabled, unity.Enabled())

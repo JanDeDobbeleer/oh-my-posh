@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
@@ -715,8 +715,8 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 	template.Cache = new(cache.Template)
 	template.Init(env, nil, nil)
 
-	props := properties.Map{
-		properties.Style: FolderType,
+	props := options.Map{
+		options.Style: FolderType,
 		MappedLocations: map[string]string{
 			abcd: "#",
 		},
@@ -761,7 +761,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 		template.Cache = new(cache.Template)
 		template.Init(env, nil, nil)
 
-		props := properties.Map{
+		props := options.Map{
 			MappedLocationsEnabled: tc.MappedLocationsEnabled,
 			MappedLocations: map[string]string{
 				abcd:       "#",
@@ -821,7 +821,7 @@ func TestGetPwd(t *testing.T) {
 		template.Cache = new(cache.Template)
 		template.Init(env, nil, nil)
 
-		props := properties.Map{
+		props := options.Map{
 			MappedLocationsEnabled: tc.MappedLocationsEnabled,
 			MappedLocations: map[string]string{
 				abcd: "#",

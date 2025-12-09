@@ -5,8 +5,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // StravaAPI is a wrapper around http.Oauth
@@ -38,11 +38,11 @@ type Strava struct {
 }
 
 const (
-	RideIcon            properties.Property = "ride_icon"
-	RunIcon             properties.Property = "run_icon"
-	SkiingIcon          properties.Property = "skiing_icon"
-	WorkOutIcon         properties.Property = "workout_icon"
-	UnknownActivityIcon properties.Property = "unknown_activity_icon"
+	RideIcon            options.Option = "ride_icon"
+	RunIcon             options.Option = "run_icon"
+	SkiingIcon          options.Option = "skiing_icon"
+	WorkOutIcon         options.Option = "workout_icon"
+	UnknownActivityIcon options.Option = "unknown_activity_icon"
 
 	StravaAccessTokenKey  = "strava_access_token"
 	StravaRefreshTokenKey = "strava_refresh_token"
@@ -102,11 +102,11 @@ func (s *Strava) initAPI() {
 		AccessTokenKey:  StravaAccessTokenKey,
 		RefreshTokenKey: StravaRefreshTokenKey,
 		SegmentName:     "strava",
-		AccessToken:     s.props.GetString(properties.AccessToken, ""),
-		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
+		AccessToken:     s.options.String(options.AccessToken, ""),
+		RefreshToken:    s.options.String(options.RefreshToken, ""),
 		Request: http.Request{
 			Env:         s.env,
-			HTTPTimeout: s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+			HTTPTimeout: s.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
 		},
 	}
 
@@ -133,17 +133,17 @@ func (s *Strava) getActivityIcon() string {
 	case "VirtualRide":
 		fallthrough
 	case "Ride":
-		return s.props.GetString(RideIcon, "\uf206")
+		return s.options.String(RideIcon, "\uf206")
 	case "Run":
-		return s.props.GetString(RunIcon, "\ue213")
+		return s.options.String(RunIcon, "\ue213")
 	case "NordicSki":
 	case "AlpineSki":
 	case "BackcountrySki":
-		return s.props.GetString(SkiingIcon, "\ue213")
+		return s.options.String(SkiingIcon, "\ue213")
 	case "WorkOut":
-		return s.props.GetString(WorkOutIcon, "\ue213")
+		return s.options.String(WorkOutIcon, "\ue213")
 	default:
-		return s.props.GetString(UnknownActivityIcon, "\ue213")
+		return s.options.String(UnknownActivityIcon, "\ue213")
 	}
-	return s.props.GetString(UnknownActivityIcon, "\ue213")
+	return s.options.String(UnknownActivityIcon, "\ue213")
 }

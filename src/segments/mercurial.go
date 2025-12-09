@@ -51,10 +51,10 @@ func (hg *Mercurial) Enabled() bool {
 		return false
 	}
 
-	statusFormats := hg.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	statusFormats := hg.options.KeyValueMap(StatusFormats, map[string]string{})
 	hg.Working = &MercurialStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
-	displayStatus := hg.props.GetBool(FetchStatus, false)
+	displayStatus := hg.options.Bool(FetchStatus, false)
 	if displayStatus {
 		hg.setMercurialStatus()
 	}

@@ -38,7 +38,7 @@ import Config from "@site/src/components/Config.js";
         trailing_diamond: "\ue0b4",
         template:
           "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
-        properties: {
+        options: {
           fetch_status: true,
           fetch_upstream_icon: true,
         },

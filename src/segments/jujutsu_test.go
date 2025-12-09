@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +18,7 @@ func TestJujutsuEnabledToolNotFound(t *testing.T) {
 	env.On("IsWsl").Return(false)
 
 	jj := &Jujutsu{}
-	jj.Init(properties.Map{}, env)
+	jj.Init(options.Map{}, env)
 
 	assert.False(t, jj.Enabled())
 }
@@ -36,7 +36,7 @@ func TestJujutsuEnabledInWorkingDirectory(t *testing.T) {
 	env.On("GOOS").Return("")
 
 	jj := &Jujutsu{}
-	jj.Init(properties.Map{}, env)
+	jj.Init(options.Map{}, env)
 
 	assert.True(t, jj.Enabled())
 	assert.Equal(t, fileInfo.Path, jj.mainSCMDir)
@@ -87,7 +87,7 @@ R {renamed_file => new_file}
 			IsDir:        true,
 		}
 
-		props := properties.Map{
+		props := options.Map{
 			FetchStatus: true,
 		}
 

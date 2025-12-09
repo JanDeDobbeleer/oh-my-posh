@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -34,7 +34,7 @@ func TestTextSegment(t *testing.T) {
 		env.On("Getenv", "WORLD").Return("")
 
 		txt := &Text{}
-		txt.Init(properties.Map{}, env)
+		txt.Init(options.Map{}, env)
 
 		template.Cache = &cache.Template{
 			SimpleTemplate: cache.SimpleTemplate{

@@ -5,9 +5,9 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +20,7 @@ const (
 
 type languageArgs struct {
 	expectedError      error
-	properties         properties.Properties
+	options            options.Provider
 	matchesVersionFile matchesVersionFile
 	version            string
 	versionURLTemplate string
@@ -56,8 +56,8 @@ func bootStrapLanguageTest(args *languageArgs) *Language {
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
 
-	if args.properties == nil {
-		args.properties = properties.Map{}
+	if args.options == nil {
+		args.options = options.Map{}
 	}
 
 	l := &Language{
@@ -66,7 +66,7 @@ func bootStrapLanguageTest(args *languageArgs) *Language {
 		versionURLTemplate: args.versionURLTemplate,
 		matchesVersionFile: args.matchesVersionFile,
 	}
-	l.Init(args.properties, env)
+	l.Init(args.options, env)
 
 	return l
 }
@@ -88,8 +88,8 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
-	props := properties.Map{
-		properties.FetchVersion: false,
+	props := options.Map{
+		options.FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -100,7 +100,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testin
 		},
 		extensions:        []string{uni},
 		enabledExtensions: []string{uni},
-		properties:        props,
+		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled(), "unicorn is not available")
@@ -267,8 +267,8 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
-	props := properties.Map{
-		properties.FetchVersion: false,
+	props := options.Map{
+		options.FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -282,7 +282,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		properties:        props,
+		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -291,8 +291,8 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
-	props := properties.Map{
-		properties.FetchVersion: false,
+	props := options.Map{
+		options.FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands:          []*cmd{},
@@ -300,7 +300,7 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		properties:        props,
+		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -309,8 +309,8 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
-	props := properties.Map{
-		properties.FetchVersion: true,
+	props := options.Map{
+		options.FetchVersion: true,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -324,7 +324,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"uni"},
 		version:           "",
-		properties:        props,
+		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -334,7 +334,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	expected := "missing"
-	props := properties.Map{
+	props := options.Map{
 		MissingCommandText: expected,
 	}
 	args := &languageArgs{
@@ -343,7 +343,7 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		properties:        props,
+		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -351,14 +351,14 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
-	props := properties.Map{MissingCommandText: "missing"}
+	props := options.Map{MissingCommandText: "missing"}
 	args := &languageArgs{
 		commands:          []*cmd{},
 		extensions:        []string{uni, corn},
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		properties:        props,
+		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -406,7 +406,7 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		properties:         properties.Map{},
+		options:            options.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -432,7 +432,7 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		properties:         properties.Map{},
+		options:            options.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -449,7 +449,7 @@ func TestLanguageEnabledInHome(t *testing.T) {
 		{Case: "Context disabled", HomeEnabled: false, ExpectedEnabled: false},
 	}
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			HomeEnabled: tc.HomeEnabled,
 		}
 		args := &languageArgs{
@@ -464,7 +464,7 @@ func TestLanguageEnabledInHome(t *testing.T) {
 			enabledExtensions: []string{corn},
 			enabledCommands:   []string{"corn"},
 			version:           universion,
-			properties:        props,
+			options:           props,
 			inHome:            true,
 		}
 		lang := bootStrapLanguageTest(args)
@@ -493,7 +493,7 @@ func TestLanguageInnerHyperlink(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		properties:         properties.Map{},
+		options:            options.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -514,8 +514,8 @@ func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
 		enabledExtensions: []string{uni},
 		enabledCommands:   []string{"uni"},
 		version:           universion,
-		properties: properties.Map{
-			properties.VersionURLTemplate: "https://custom/url/template/{{ .Major }}.{{ .Minor }}",
+		options: options.Map{
+			options.VersionURLTemplate: "https://custom/url/template/{{ .Major }}.{{ .Minor }}",
 		},
 	}
 	lang := bootStrapLanguageTest(args)
@@ -530,7 +530,7 @@ type mockedLanguageParams struct {
 	extension     string
 }
 
-func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, properties.Map) {
+func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, options.Map) {
 	env := new(mock.Environment)
 	env.On("HasCommand", params.cmd).Return(true)
 	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
@@ -538,8 +538,8 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, prop
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
 
-	props := properties.Map{
-		properties.FetchVersion: true,
+	props := options.Map{
+		options.FetchVersion: true,
 	}
 
 	return env, props
@@ -567,7 +567,7 @@ func TestNodePackageVersion(t *testing.T) {
 		env.On("FileContent", filepath.Join(path, "package.json")).Return(tc.PackageJSON)
 
 		a := &Language{}
-		a.Init(properties.Map{}, env)
+		a.Init(options.Map{}, env)
 		got, err := a.nodePackageVersion("nx")
 
 		if tc.ShouldFail {

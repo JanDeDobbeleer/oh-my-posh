@@ -115,10 +115,10 @@ func (sl *Sapling) setDir(dir string) {
 func (sl *Sapling) setHeadContext() {
 	sl.setCommitContext()
 
-	statusFormats := sl.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	statusFormats := sl.options.KeyValueMap(StatusFormats, map[string]string{})
 	sl.Working = &SaplingStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
-	displayStatus := sl.props.GetBool(FetchStatus, true)
+	displayStatus := sl.options.Bool(FetchStatus, true)
 	if !displayStatus {
 		return
 	}

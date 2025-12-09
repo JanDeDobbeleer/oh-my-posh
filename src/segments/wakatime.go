@@ -3,7 +3,7 @@ package segments
 import (
 	"encoding/json"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
@@ -39,7 +39,7 @@ func (w *Wakatime) setAPIData() error {
 		return err
 	}
 
-	httpTimeout := w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := w.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	body, err := w.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
@@ -55,6 +55,6 @@ func (w *Wakatime) setAPIData() error {
 }
 
 func (w *Wakatime) getURL() (string, error) {
-	url := w.props.GetString(URL, "")
+	url := w.options.String(URL, "")
 	return template.Render(url, w)
 }

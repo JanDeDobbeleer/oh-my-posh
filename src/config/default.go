@@ -4,8 +4,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 func Default(warning bool) *Config {
@@ -41,8 +41,8 @@ func Default(warning bool) *Config {
 						PowerlineSymbol: "\ue0b0",
 						Foreground:      "p:white",
 						Background:      "p:orange",
-						Properties: properties.Map{
-							properties.Style: "folder",
+						Options: options.Map{
+							options.Style: "folder",
 						},
 						Template: " \uea83 {{ path .Path .Location }} ",
 					},
@@ -63,7 +63,7 @@ func Default(warning bool) *Config {
 							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:white{{ end }}",
 							"{{ if gt .Ahead 0 }}p:white{{ end }}",
 						},
-						Properties: properties.Map{
+						Options: options.Map{
 							segments.BranchTemplate:    "{{ trunc 25 .Branch }}",
 							segments.FetchStatus:       true,
 							segments.FetchUpstreamIcon: true,
@@ -88,8 +88,8 @@ func Default(warning bool) *Config {
 						BackgroundTemplates: []string{
 							exitBackgroundTemplate,
 						},
-						Properties: properties.Map{
-							properties.AlwaysEnabled: true,
+						Options: options.Map{
+							options.AlwaysEnabled: true,
 						},
 						Template: exitTemplate,
 					},
@@ -104,7 +104,7 @@ func Default(warning bool) *Config {
 						Foreground: "p:green",
 						Background: "transparent",
 						Template:   "\ue718 ",
-						Properties: properties.Map{
+						Options: options.Map{
 							segments.HomeEnabled:         false,
 							segments.FetchPackageManager: false,
 							segments.DisplayMode:         "files",
@@ -116,8 +116,8 @@ func Default(warning bool) *Config {
 						Foreground: "p:blue",
 						Background: "transparent",
 						Template:   "\ue626 ",
-						Properties: properties.Map{
-							properties.FetchVersion: false,
+						Options: options.Map{
+							options.FetchVersion: false,
 						},
 					},
 					{
@@ -126,8 +126,8 @@ func Default(warning bool) *Config {
 						Foreground: "p:yellow",
 						Background: "transparent",
 						Template:   "\ue235 ",
-						Properties: properties.Map{
-							properties.FetchVersion:  false,
+						Options: options.Map{
+							options.FetchVersion:     false,
 							segments.DisplayMode:     "files",
 							segments.FetchVirtualEnv: false,
 						},
@@ -178,8 +178,8 @@ func Default(warning bool) *Config {
 				Foreground:      "p:white",
 				Background:      "p:orange",
 				Template:        " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ",
-				Properties: properties.Map{
-					properties.DisplayDefault: true,
+				Options: options.Map{
+					options.DisplayDefault: true,
 				},
 				Tips: []string{"aws"},
 			},
@@ -191,8 +191,8 @@ func Default(warning bool) *Config {
 				Foreground:      "p:white",
 				Background:      "p:blue",
 				Template:        " \uebd8 {{ .Name }} ",
-				Properties: properties.Map{
-					properties.DisplayDefault: true,
+				Options: options.Map{
+					options.DisplayDefault: true,
 				},
 				Tips: []string{"az"},
 			},

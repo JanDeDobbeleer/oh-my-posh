@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Az struct {
@@ -17,7 +17,7 @@ type Az struct {
 }
 
 const (
-	Source properties.Property = "source"
+	Source options.Option = "source"
 
 	Pwsh = "pwsh"
 	Cli  = "cli"
@@ -76,7 +76,7 @@ func (a *Az) Template() string {
 }
 
 func (a *Az) Enabled() bool {
-	source := a.props.GetString(Source, FirstMatch)
+	source := a.options.String(Source, FirstMatch)
 
 	// migrate first_match
 	if source == "first_match" {

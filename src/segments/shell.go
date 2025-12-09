@@ -3,7 +3,7 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Shell struct {
@@ -15,7 +15,7 @@ type Shell struct {
 
 const (
 	// MappedShellNames allows for custom text in place of shell names
-	MappedShellNames properties.Property = "mapped_shell_names"
+	MappedShellNames options.Option = "mapped_shell_names"
 )
 
 func (s *Shell) Template() string {
@@ -23,7 +23,7 @@ func (s *Shell) Template() string {
 }
 
 func (s *Shell) Enabled() bool {
-	mappedNames := s.props.GetKeyValueMap(MappedShellNames, make(map[string]string))
+	mappedNames := s.options.KeyValueMap(MappedShellNames, make(map[string]string))
 	s.Name = s.env.Shell()
 	s.Version = s.env.Flags().ShellVersion
 	for key, val := range mappedNames {

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -69,7 +69,7 @@ func TestFossilStatus(t *testing.T) {
 		env.On("RunCommand", FOSSILCOMMAND, []string{"status"}).Return(strings.ReplaceAll(tc.Output, "\t", ""), tc.OutputError)
 
 		f := &Fossil{}
-		f.Init(properties.Map{}, env)
+		f.Init(options.Map{}, env)
 
 		got := f.Enabled()
 

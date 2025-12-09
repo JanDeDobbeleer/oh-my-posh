@@ -10,8 +10,8 @@ import (
 
 	"github.com/gookit/goutil/jsonutil"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "gopkg.in/yaml.v3"
@@ -127,8 +127,8 @@ func (n *Project) Enabled() bool {
 
 	for _, item := range n.projects {
 		// allow files override
-		property := properties.Property(fmt.Sprintf("%s_files", item.Name))
-		item.Files = n.props.GetStringArray(property, item.Files)
+		property := options.Option(fmt.Sprintf("%s_files", item.Name))
+		item.Files = n.options.StringArray(property, item.Files)
 
 		if !n.hasProjectFile(item) {
 			continue
@@ -144,7 +144,7 @@ func (n *Project) Enabled() bool {
 		return true
 	}
 
-	return n.props.GetBool(properties.AlwaysEnabled, false)
+	return n.options.Bool(options.AlwaysEnabled, false)
 }
 
 func (n *Project) Template() string {

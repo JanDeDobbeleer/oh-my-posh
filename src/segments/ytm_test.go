@@ -5,8 +5,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -87,7 +87,7 @@ func TestYTM(t *testing.T) {
 			cache.Set(cache.Device, auth.YTMDATOKEN, "test_token", cache.INFINITE)
 		}
 
-		props := properties.Map{
+		props := options.Map{
 			StoppedIcon: "Stopped ",
 			PlayingIcon: "Playing ",
 			PausedIcon:  "Paused ",

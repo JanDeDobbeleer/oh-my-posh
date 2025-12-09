@@ -5,16 +5,16 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
 	JUJUTSUCOMMAND = "jj"
 
-	IgnoreWorkingCopy properties.Property = "ignore_working_copy"
-	ChangeIDMinLen    properties.Property = "change_id_min_len"
+	IgnoreWorkingCopy options.Option = "ignore_working_copy"
+	ChangeIDMinLen    options.Option = "change_id_min_len"
 )
 
 type JujutsuStatus struct {
@@ -45,13 +45,13 @@ func (jj *Jujutsu) Template() string {
 }
 
 func (jj *Jujutsu) Enabled() bool {
-	displayStatus := jj.props.GetBool(FetchStatus, false)
+	displayStatus := jj.options.Bool(FetchStatus, false)
 
 	if !jj.shouldDisplay(displayStatus) {
 		return false
 	}
 
-	statusFormats := jj.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	statusFormats := jj.options.KeyValueMap(StatusFormats, map[string]string{})
 	jj.Working = &JujutsuStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
 	if displayStatus {
@@ -130,13 +130,13 @@ func (jj *Jujutsu) setJujutsuStatus() {
 
 func (jj *Jujutsu) logTemplate() string {
 	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
-	return fmt.Sprintf(`change_id.shortest(%d) ++ "\n" ++ diff.summary()`, jj.props.GetInt(ChangeIDMinLen, 0))
+	return fmt.Sprintf(`change_id.shortest(%d) ++ "\n" ++ diff.summary()`, jj.options.Int(ChangeIDMinLen, 0))
 }
 
 func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (string, error) {
 	cli := []string{"--repository", jj.repoRootDir, "--no-pager", "--color", "never"}
 
-	if jj.props.GetBool(IgnoreWorkingCopy, true) {
+	if jj.options.Bool(IgnoreWorkingCopy, true) {
 		cli = append(cli, "--ignore-working-copy")
 	}
 

@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/alecthomas/assert"
 )
@@ -45,7 +45,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 				Version: nodeVersion,
 			},
 		}
-		node.Init(properties.Map{}, env)
+		node.Init(options.Map{}, env)
 
 		version, match := node.matchesVersionFile()
 		assert.Equal(t, tc.Expected, match, tc.Case)
@@ -86,7 +86,7 @@ func TestNodeInContext(t *testing.T) {
 		env.On("HasFiles", "bun.lockb").Return(tc.hasBun)
 		env.On("HasFiles", "bun.lock").Return(tc.hasBun)
 
-		props := properties.Map{
+		props := options.Map{
 			PnpmIcon:            "pnpm",
 			YarnIcon:            "yarn",
 			NPMIcon:             "npm",

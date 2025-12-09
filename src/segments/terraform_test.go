@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -103,8 +103,8 @@ func TestTerraform(t *testing.T) {
 			env.On("FileContent", "terraform.tfstate").Return(string(content))
 		}
 
-		props := properties.Map{
-			properties.FetchVersion: tc.FetchVersion,
+		props := options.Map{
+			options.FetchVersion: tc.FetchVersion,
 		}
 
 		tf := &Terraform{}

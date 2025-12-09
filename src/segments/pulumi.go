@@ -8,14 +8,14 @@ import (
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"gopkg.in/yaml.v3"
 )
 
 const (
-	FetchStack properties.Property = "fetch_stack"
-	FetchAbout properties.Property = "fetch_about"
+	FetchStack options.Option = "fetch_stack"
+	FetchAbout options.Option = "fetch_about"
 
 	JSON string = "json"
 	YAML string = "yaml"
@@ -63,11 +63,11 @@ func (p *Pulumi) Enabled() bool {
 		return false
 	}
 
-	if p.props.GetBool(FetchStack, false) {
+	if p.options.Bool(FetchStack, false) {
 		p.getPulumiStackName()
 	}
 
-	if p.props.GetBool(FetchAbout, false) {
+	if p.options.Bool(FetchAbout, false) {
 		p.getPulumiAbout()
 	}
 

@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -190,7 +190,7 @@ description: A Console App
 
 		env.On("FileContent", filepath.Clean("/home/foobar/.pulumi/workspaces/"+workspaceFile)).Return(tc.WorkSpaceFile, nil)
 
-		props := properties.Map{
+		props := options.Map{
 			FetchStack: tc.FetchStack,
 			FetchAbout: tc.FetchAbout,
 		}

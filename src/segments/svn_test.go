@@ -3,9 +3,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +18,7 @@ func TestSvnEnabledToolNotFound(t *testing.T) {
 	env.On("IsWsl").Return(false)
 
 	s := &Svn{}
-	s.Init(properties.Map{}, env)
+	s.Init(options.Map{}, env)
 
 	assert.False(t, s.Enabled())
 }
@@ -41,7 +41,7 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 	env.On("HasParentFilePath", ".svn", false).Return(fileInfo, nil)
 
 	s := &Svn{}
-	s.Init(properties.Map{}, env)
+	s.Init(options.Map{}, env)
 
 	assert.True(t, s.Enabled())
 	assert.Equal(t, fileInfo.Path, s.mainSCMDir)
@@ -150,12 +150,12 @@ func TestSvnTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			FetchStatus: true,
 		}
 		env := new(mock.Environment)
 		tc.Svn.env = env
-		tc.Svn.props = props
+		tc.Svn.options = props
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Svn), tc.Case)
 	}
 }
@@ -238,7 +238,7 @@ R       Moved.File`,
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "relative-url"}).Return(tc.BranchOutput, nil)
 		env.On("RunCommand", "svn", []string{"status", ""}).Return(tc.StatusOutput, nil)
 
-		props := properties.Map{
+		props := options.Map{
 			FetchStatus: true,
 		}
 
@@ -297,7 +297,7 @@ func TestRepo(t *testing.T) {
 				command: SVNCOMMAND,
 			},
 		}
-		s.Init(properties.Map{}, env)
+		s.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.Expected, s.Repo(), tc.Case)
 	}

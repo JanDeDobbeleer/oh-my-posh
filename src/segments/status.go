@@ -4,14 +4,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
-	StatusTemplate  properties.Property = "status_template"
-	StatusSeparator properties.Property = "status_separator"
+	StatusTemplate  options.Option = "status_template"
+	StatusSeparator options.Option = "status_separator"
 )
 
 type Status struct {
@@ -33,7 +33,7 @@ func (s *Status) Enabled() bool {
 	// Deprecated: Use {{ reason .Code }} instead
 	s.Meaning = template.GetReasonFromStatus(status)
 
-	if s.props.GetBool(properties.AlwaysEnabled, false) {
+	if s.options.Bool(options.AlwaysEnabled, false) {
 		return true
 	}
 
@@ -41,7 +41,7 @@ func (s *Status) Enabled() bool {
 }
 
 func (s *Status) formatStatus(status int, pipeStatus string) string {
-	statusTemplate := s.props.GetString(StatusTemplate, "{{ .Code }}")
+	statusTemplate := s.options.String(StatusTemplate, "{{ .Code }}")
 
 	if status != 0 {
 		s.Error = true
@@ -55,7 +55,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 		return strconv.Itoa(status)
 	}
 
-	StatusSeparator := s.props.GetString(StatusSeparator, "|")
+	StatusSeparator := s.options.String(StatusSeparator, "|")
 
 	builder := text.NewBuilder()
 

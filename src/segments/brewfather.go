@@ -10,7 +10,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // segment struct, makes templating easier
@@ -29,25 +29,25 @@ type Brewfather struct {
 }
 
 const (
-	BFUserID  properties.Property = "user_id"
-	BFBatchID properties.Property = "batch_id"
+	BFUserID  options.Option = "user_id"
+	BFBatchID options.Option = "batch_id"
 
-	BFDoubleUpIcon      properties.Property = "doubleup_icon"
-	BFSingleUpIcon      properties.Property = "singleup_icon"
-	BFFortyFiveUpIcon   properties.Property = "fortyfiveup_icon"
-	BFFlatIcon          properties.Property = "flat_icon"
-	BFFortyFiveDownIcon properties.Property = "fortyfivedown_icon"
-	BFSingleDownIcon    properties.Property = "singledown_icon"
-	BFDoubleDownIcon    properties.Property = "doubledown_icon"
+	BFDoubleUpIcon      options.Option = "doubleup_icon"
+	BFSingleUpIcon      options.Option = "singleup_icon"
+	BFFortyFiveUpIcon   options.Option = "fortyfiveup_icon"
+	BFFlatIcon          options.Option = "flat_icon"
+	BFFortyFiveDownIcon options.Option = "fortyfivedown_icon"
+	BFSingleDownIcon    options.Option = "singledown_icon"
+	BFDoubleDownIcon    options.Option = "doubledown_icon"
 
-	BFPlanningStatusIcon     properties.Property = "planning_status_icon"
-	BFBrewingStatusIcon      properties.Property = "brewing_status_icon"
-	BFFermentingStatusIcon   properties.Property = "fermenting_status_icon"
-	BFConditioningStatusIcon properties.Property = "conditioning_status_icon"
-	BFCompletedStatusIcon    properties.Property = "completed_status_icon"
-	BFArchivedStatusIcon     properties.Property = "archived_status_icon"
+	BFPlanningStatusIcon     options.Option = "planning_status_icon"
+	BFBrewingStatusIcon      options.Option = "brewing_status_icon"
+	BFFermentingStatusIcon   options.Option = "fermenting_status_icon"
+	BFConditioningStatusIcon options.Option = "conditioning_status_icon"
+	BFCompletedStatusIcon    options.Option = "completed_status_icon"
+	BFArchivedStatusIcon     options.Option = "archived_status_icon"
 
-	BFDayIcon properties.Property = "day_icon"
+	BFDayIcon options.Option = "day_icon"
 
 	BFStatusPlanning     string = "Planning"
 	BFStatusBrewing      string = "Brewing"
@@ -125,12 +125,12 @@ func (bf *Brewfather) Enabled() bool {
 	}
 
 	// URL property set to weblink to the full batch page
-	batchID := bf.props.GetString(BFBatchID, "")
+	batchID := bf.options.String(BFBatchID, "")
 	if len(batchID) > 0 {
 		bf.URL = fmt.Sprintf("https://web.brewfather.app/tabs/batches/batch/%s", batchID)
 	}
 
-	bf.DayIcon = bf.props.GetString(BFDayIcon, "d")
+	bf.DayIcon = bf.options.String(BFDayIcon, "d")
 
 	return true
 }
@@ -139,66 +139,66 @@ func (bf *Brewfather) getTrendIcon(trend float64) string {
 	// Not a fan of this logic - wondering if Go lets us do something cleaner...
 	if trend >= 0 {
 		if trend > 4 {
-			return bf.props.GetString(BFDoubleUpIcon, "↑↑")
+			return bf.options.String(BFDoubleUpIcon, "↑↑")
 		}
 
 		if trend > 2 {
-			return bf.props.GetString(BFSingleUpIcon, "↑")
+			return bf.options.String(BFSingleUpIcon, "↑")
 		}
 
 		if trend > 0.5 {
-			return bf.props.GetString(BFFortyFiveUpIcon, "↗")
+			return bf.options.String(BFFortyFiveUpIcon, "↗")
 		}
 
-		return bf.props.GetString(BFFlatIcon, "→")
+		return bf.options.String(BFFlatIcon, "→")
 	}
 
 	if trend < -4 {
-		return bf.props.GetString(BFDoubleDownIcon, "↓↓")
+		return bf.options.String(BFDoubleDownIcon, "↓↓")
 	}
 
 	if trend < -2 {
-		return bf.props.GetString(BFSingleDownIcon, "↓")
+		return bf.options.String(BFSingleDownIcon, "↓")
 	}
 
 	if trend < -0.5 {
-		return bf.props.GetString(BFFortyFiveDownIcon, "↘")
+		return bf.options.String(BFFortyFiveDownIcon, "↘")
 	}
 
-	return bf.props.GetString(BFFlatIcon, "→")
+	return bf.options.String(BFFlatIcon, "→")
 }
 
 func (bf *Brewfather) getBatchStatusIcon(batchStatus string) string {
 	switch batchStatus {
 	case BFStatusPlanning:
-		return bf.props.GetString(BFPlanningStatusIcon, "\uF8EA")
+		return bf.options.String(BFPlanningStatusIcon, "\uF8EA")
 	case BFStatusBrewing:
-		return bf.props.GetString(BFBrewingStatusIcon, "\uF7DE")
+		return bf.options.String(BFBrewingStatusIcon, "\uF7DE")
 	case BFStatusFermenting:
-		return bf.props.GetString(BFFermentingStatusIcon, "\uF499")
+		return bf.options.String(BFFermentingStatusIcon, "\uF499")
 	case BFStatusConditioning:
-		return bf.props.GetString(BFConditioningStatusIcon, "\uE372")
+		return bf.options.String(BFConditioningStatusIcon, "\uE372")
 	case BFStatusCompleted:
-		return bf.props.GetString(BFCompletedStatusIcon, "\uF7A5")
+		return bf.options.String(BFCompletedStatusIcon, "\uF7A5")
 	case BFStatusArchived:
-		return bf.props.GetString(BFArchivedStatusIcon, "\uF187")
+		return bf.options.String(BFArchivedStatusIcon, "\uF187")
 	default:
 		return ""
 	}
 }
 
 func (bf *Brewfather) getResult() (*Batch, error) {
-	userID := bf.props.GetString(BFUserID, "")
+	userID := bf.options.String(BFUserID, "")
 	if userID == "" {
 		return nil, errors.New("missing Brewfather user id (user_id)")
 	}
 
-	apiKey := bf.props.GetString(APIKey, "")
+	apiKey := bf.options.String(APIKey, "")
 	if apiKey == "" {
 		return nil, errors.New("missing Brewfather api key (api_key)")
 	}
 
-	batchID := bf.props.GetString(BFBatchID, "")
+	batchID := bf.options.String(BFBatchID, "")
 	if batchID == "" {
 		return nil, errors.New("missing Brewfather batch id (batch_id)")
 	}
@@ -209,7 +209,7 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 	batchURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s", batchID)
 	batchReadingsURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchID)
 
-	httpTimeout := bf.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := bf.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	// batch
 	addAuthHeader := func(request *http.Request) {

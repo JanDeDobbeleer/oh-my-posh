@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"gopkg.in/ini.v1"
 )
@@ -62,68 +62,68 @@ func (s *GitStatus) add(code string) {
 
 const (
 	// DisableWithJJ disables the git segment when there's a .jj directory in the parent file path
-	DisableWithJJ properties.Property = "disable_with_jj"
+	DisableWithJJ options.Option = "disable_with_jj"
 	// FetchStatus fetches the status of the repository
-	FetchStatus properties.Property = "fetch_status"
+	FetchStatus options.Option = "fetch_status"
 	// FetchPushStatus fetches the push-remote status
-	FetchPushStatus properties.Property = "fetch_push_status"
+	FetchPushStatus options.Option = "fetch_push_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
-	IgnoreStatus properties.Property = "ignore_status"
+	IgnoreStatus options.Option = "ignore_status"
 	// FetchWorktreeCount fetches the worktree count
-	FetchWorktreeCount properties.Property = "fetch_worktree_count"
+	FetchWorktreeCount options.Option = "fetch_worktree_count"
 	// FetchUpstreamIcon fetches the upstream icon
-	FetchUpstreamIcon properties.Property = "fetch_upstream_icon"
+	FetchUpstreamIcon options.Option = "fetch_upstream_icon"
 	// FetchBareInfo fetches the bare repo status
-	FetchBareInfo properties.Property = "fetch_bare_info"
+	FetchBareInfo options.Option = "fetch_bare_info"
 	// FetchUser fetches the current user for the repo
-	FetchUser properties.Property = "fetch_user"
+	FetchUser options.Option = "fetch_user"
 
 	// BranchIcon the icon to use as branch indicator
-	BranchIcon properties.Property = "branch_icon"
+	BranchIcon options.Option = "branch_icon"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
-	BranchIdenticalIcon properties.Property = "branch_identical_icon"
+	BranchIdenticalIcon options.Option = "branch_identical_icon"
 	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
-	BranchAheadIcon properties.Property = "branch_ahead_icon"
+	BranchAheadIcon options.Option = "branch_ahead_icon"
 	// BranchBehindIcon the icon to display when the local branch is behind the remote
-	BranchBehindIcon properties.Property = "branch_behind_icon"
+	BranchBehindIcon options.Option = "branch_behind_icon"
 	// BranchGoneIcon the icon to use when ther's no remote
-	BranchGoneIcon properties.Property = "branch_gone_icon"
+	BranchGoneIcon options.Option = "branch_gone_icon"
 	// RebaseIcon shows before the rebase context
-	RebaseIcon properties.Property = "rebase_icon"
+	RebaseIcon options.Option = "rebase_icon"
 	// CherryPickIcon shows before the cherry-pick context
-	CherryPickIcon properties.Property = "cherry_pick_icon"
+	CherryPickIcon options.Option = "cherry_pick_icon"
 	// RevertIcon shows before the revert context
-	RevertIcon properties.Property = "revert_icon"
+	RevertIcon options.Option = "revert_icon"
 	// CommitIcon shows before the detached context
-	CommitIcon properties.Property = "commit_icon"
+	CommitIcon options.Option = "commit_icon"
 	// NoCommitsIcon shows when there are no commits in the repo yet
-	NoCommitsIcon properties.Property = "no_commits_icon"
+	NoCommitsIcon options.Option = "no_commits_icon"
 	// TagIcon shows before the tag context
-	TagIcon properties.Property = "tag_icon"
+	TagIcon options.Option = "tag_icon"
 	// MergeIcon shows before the merge context
-	MergeIcon properties.Property = "merge_icon"
+	MergeIcon options.Option = "merge_icon"
 	// UpstreamIcons allows to add custom upstream icons
-	UpstreamIcons properties.Property = "upstream_icons"
+	UpstreamIcons options.Option = "upstream_icons"
 	// GithubIcon shows when upstream is github
-	GithubIcon properties.Property = "github_icon"
+	GithubIcon options.Option = "github_icon"
 	// BitbucketIcon shows  when upstream is bitbucket
-	BitbucketIcon properties.Property = "bitbucket_icon"
+	BitbucketIcon options.Option = "bitbucket_icon"
 	// AzureDevOpsIcon shows  when upstream is azure devops
-	AzureDevOpsIcon properties.Property = "azure_devops_icon"
+	AzureDevOpsIcon options.Option = "azure_devops_icon"
 	// CodeCommit shows  when upstream is aws codecommit
-	CodeCommit properties.Property = "codecommit_icon"
+	CodeCommit options.Option = "codecommit_icon"
 	// CodebergIcon shows when upstream is codeberg
-	CodebergIcon properties.Property = "codeberg_icon"
+	CodebergIcon options.Option = "codeberg_icon"
 	// GitlabIcon shows when upstream is gitlab
-	GitlabIcon properties.Property = "gitlab_icon"
+	GitlabIcon options.Option = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
-	GitIcon properties.Property = "git_icon"
+	GitIcon options.Option = "git_icon"
 	// UntrackedModes list the optional untracked files mode per repo
-	UntrackedModes properties.Property = "untracked_modes"
+	UntrackedModes options.Option = "untracked_modes"
 	// IgnoreSubmodules list the optional ignore-submodules mode per repo
-	IgnoreSubmodules properties.Property = "ignore_submodules"
+	IgnoreSubmodules options.Option = "ignore_submodules"
 	// MappedBranches allows overriding certain branches with an icon/text
-	MappedBranches properties.Property = "mapped_branches"
+	MappedBranches options.Option = "mapped_branches"
 
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"
@@ -188,7 +188,7 @@ func (g *Git) Enabled() bool {
 		return false
 	}
 
-	fetchUser := g.props.GetBool(FetchUser, false)
+	fetchUser := g.options.Bool(FetchUser, false)
 	if fetchUser {
 		g.setUser()
 	}
@@ -200,12 +200,12 @@ func (g *Git) Enabled() bool {
 		return true
 	}
 
-	source := g.props.GetString(Source, Cli)
+	source := g.options.String(Source, Cli)
 	if source == Pwsh && g.hasPoshGitStatus() {
 		return true
 	}
 
-	displayStatus := g.props.GetBool(FetchStatus, false)
+	displayStatus := g.options.Bool(FetchStatus, false)
 	if displayStatus && g.shouldIgnoreStatus() {
 		displayStatus = false
 	}
@@ -219,7 +219,7 @@ func (g *Git) Enabled() bool {
 		g.updateHEADReference()
 	}
 
-	if g.props.GetBool(FetchUpstreamIcon, false) {
+	if g.options.Bool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
 
@@ -346,7 +346,7 @@ func (g *Git) LatestTag() string {
 
 func (g *Git) shouldDisplay() bool {
 	// Check if disable_with_jj is enabled and .jj directory exists
-	if g.props.GetBool(DisableWithJJ, false) {
+	if g.options.Bool(DisableWithJJ, false) {
 		if _, err := g.env.HasParentFilePath(".jj", false); err == nil {
 			return false
 		}
@@ -357,7 +357,7 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	if g.props.GetBool(FetchBareInfo, false) {
+	if g.options.Bool(FetchBareInfo, false) {
 		g.IsBare = g.isBareRepo(gitdir)
 	}
 
@@ -422,10 +422,10 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 
 func (g *Git) getBareRepoInfo() {
 	head := g.fileContent(g.mainSCMDir, "HEAD")
-	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
+	branchIcon := g.options.String(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
 	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
-	if !g.props.GetBool(FetchUpstreamIcon, false) {
+	if !g.options.Bool(FetchUpstreamIcon, false) {
 		return
 	}
 
@@ -516,26 +516,26 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 }
 
 func (g *Git) shouldIgnoreStatus() bool {
-	list := g.props.GetStringArray(IgnoreStatus, []string{})
+	list := g.options.StringArray(IgnoreStatus, []string{})
 	return g.env.DirMatchesOneOf(g.repoRootDir, list)
 }
 
 func (g *Git) setBranchStatus() {
 	getBranchStatus := func() string {
 		if g.Ahead > 0 && g.Behind > 0 {
-			return fmt.Sprintf("%s%d %s%d", g.props.GetString(BranchAheadIcon, "\u2191"), g.Ahead, g.props.GetString(BranchBehindIcon, "\u2193"), g.Behind)
+			return fmt.Sprintf("%s%d %s%d", g.options.String(BranchAheadIcon, "\u2191"), g.Ahead, g.options.String(BranchBehindIcon, "\u2193"), g.Behind)
 		}
 		if g.Ahead > 0 {
-			return fmt.Sprintf("%s%d", g.props.GetString(BranchAheadIcon, "\u2191"), g.Ahead)
+			return fmt.Sprintf("%s%d", g.options.String(BranchAheadIcon, "\u2191"), g.Ahead)
 		}
 		if g.Behind > 0 {
-			return fmt.Sprintf("%s%d", g.props.GetString(BranchBehindIcon, "\u2193"), g.Behind)
+			return fmt.Sprintf("%s%d", g.options.String(BranchBehindIcon, "\u2193"), g.Behind)
 		}
 		if g.UpstreamGone {
-			return g.props.GetString(BranchGoneIcon, "\u2262")
+			return g.options.String(BranchGoneIcon, "\u2262")
 		}
 		if g.Behind == 0 && g.Ahead == 0 && g.Upstream != "" {
-			return g.props.GetString(BranchIdenticalIcon, "\u2261")
+			return g.options.String(BranchIdenticalIcon, "\u2261")
 		}
 		return ""
 	}
@@ -543,7 +543,7 @@ func (g *Git) setBranchStatus() {
 }
 
 func (g *Git) setPushStatus() {
-	if !g.props.GetBool(FetchPushStatus, false) {
+	if !g.options.Bool(FetchPushStatus, false) {
 		return
 	}
 
@@ -686,7 +686,7 @@ func (g *Git) getUpstreamIcon() string {
 	g.UpstreamURL = g.cleanUpstreamURL(g.RawUpstreamURL)
 
 	// allow overrides first
-	custom := g.props.GetKeyValueMap(UpstreamIcons, map[string]string{})
+	custom := g.options.KeyValueMap(UpstreamIcons, map[string]string{})
 	for key, value := range custom {
 		if strings.Contains(g.UpstreamURL, key) {
 			return value
@@ -694,7 +694,7 @@ func (g *Git) getUpstreamIcon() string {
 	}
 
 	defaults := map[string]struct {
-		Icon    properties.Property
+		Icon    options.Option
 		Default string
 	}{
 		"github":           {GithubIcon, "\uF408"},
@@ -707,10 +707,10 @@ func (g *Git) getUpstreamIcon() string {
 	}
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {
-			return g.props.GetString(value.Icon, value.Default)
+			return g.options.String(value.Icon, value.Default)
 		}
 	}
-	return g.props.GetString(GitIcon, "\uE5FB ")
+	return g.options.String(GitIcon, "\uE5FB ")
 }
 
 func (g *Git) setStatus() {
@@ -749,7 +749,7 @@ func (g *Git) setStatus() {
 
 	// firstly assume that upstream is gone
 	g.UpstreamGone = true
-	statusFormats := g.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	statusFormats := g.options.KeyValueMap(StatusFormats, map[string]string{})
 
 	g.Working = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 	g.Staging = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
@@ -813,7 +813,7 @@ func (g *Git) getGitCommandOutput(args ...string) string {
 }
 
 func (g *Git) setHEADStatus() {
-	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
+	branchIcon := g.options.String(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.Detached = true
 		g.resolveDetachedHEAD()
@@ -852,7 +852,7 @@ func (g *Git) setHEADStatus() {
 		onto = g.formatBranch(onto)
 		current := parseInt("rebase-merge/msgnum")
 		total := parseInt("rebase-merge/end")
-		icon := g.props.GetString(RebaseIcon, "\uE728 ")
+		icon := g.options.String(RebaseIcon, "\uE728 ")
 
 		g.Rebase = &Rebase{
 			HEAD:    head,
@@ -869,7 +869,7 @@ func (g *Git) setHEADStatus() {
 		head := getPrettyNameOrigin("rebase-apply/head-name")
 		current := parseInt("rebase-apply/next")
 		total := parseInt("rebase-apply/last")
-		icon := g.props.GetString(RebaseIcon, "\uE728 ")
+		icon := g.options.String(RebaseIcon, "\uE728 ")
 
 		g.Rebase = &Rebase{
 			HEAD:    head,
@@ -882,11 +882,11 @@ func (g *Git) setHEADStatus() {
 	}
 
 	// merge
-	commitIcon := g.props.GetString(CommitIcon, "\uF417")
+	commitIcon := g.options.String(CommitIcon, "\uF417")
 
 	if g.hasGitFile("MERGE_MSG") {
 		g.Merge = true
-		icon := g.props.GetString(MergeIcon, "\uE727 ")
+		icon := g.options.String(MergeIcon, "\uE727 ")
 		mergeContext := g.fileContent(g.mainSCMDir, "MERGE_MSG")
 		matches := regex.FindNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
 		// head := g.getGitRefFileSymbolicName("ORIG_HEAD")
@@ -894,7 +894,7 @@ func (g *Git) setHEADStatus() {
 			var headIcon, theirs string
 			switch matches["type"] {
 			case "tag":
-				headIcon = g.props.GetString(TagIcon, "\uF412")
+				headIcon = g.options.String(TagIcon, "\uF412")
 				theirs = matches["theirs"]
 			case "commit":
 				headIcon = commitIcon
@@ -916,7 +916,7 @@ func (g *Git) setHEADStatus() {
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		g.CherryPick = true
 		sha := g.fileContent(g.mainSCMDir, "CHERRY_PICK_HEAD")
-		cherry := g.props.GetString(CherryPickIcon, "\uE29B ")
+		cherry := g.options.String(CherryPickIcon, "\uE29B ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
@@ -924,7 +924,7 @@ func (g *Git) setHEADStatus() {
 	if g.hasGitFile("REVERT_HEAD") {
 		g.Revert = true
 		sha := g.fileContent(g.mainSCMDir, "REVERT_HEAD")
-		revert := g.props.GetString(RevertIcon, "\uF0E2 ")
+		revert := g.options.String(RevertIcon, "\uF0E2 ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
@@ -938,12 +938,12 @@ func (g *Git) setHEADStatus() {
 			switch action {
 			case "p", "pick":
 				g.CherryPick = true
-				cherry := g.props.GetString(CherryPickIcon, "\uE29B ")
+				cherry := g.options.String(CherryPickIcon, "\uE29B ")
 				g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 				return
 			case "revert":
 				g.Revert = true
-				revert := g.props.GetString(RevertIcon, "\uF0E2 ")
+				revert := g.options.String(RevertIcon, "\uF0E2 ")
 				g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 				return
 			}
@@ -999,7 +999,7 @@ func (g *Git) updateHEADReference() {
 		log.Debug("current HEAD is a branch:", branchName)
 
 		g.Ref = branchName
-		g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
+		g.HEAD = fmt.Sprintf("%s%s", g.options.String(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
 
 		return
 	}
@@ -1020,17 +1020,17 @@ func (g *Git) resolveDetachedHEAD() {
 	tagName := g.getGitCommandOutput("describe", "--tags", "--exact-match")
 	if len(tagName) > 0 {
 		g.Ref = tagName
-		g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(TagIcon, "\uF412"), tagName)
+		g.HEAD = fmt.Sprintf("%s%s", g.options.String(TagIcon, "\uF412"), tagName)
 		return
 	}
 
 	// fallback to no commits found
 	if g.ShortHash == "" {
-		g.HEAD = g.props.GetString(NoCommitsIcon, "\uF594 ")
+		g.HEAD = g.options.String(NoCommitsIcon, "\uF594 ")
 		return
 	}
 
-	g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(CommitIcon, "\uF417"), g.ShortHash)
+	g.HEAD = fmt.Sprintf("%s%s", g.options.String(CommitIcon, "\uF417"), g.ShortHash)
 }
 
 func (g *Git) WorktreeCount() int {
@@ -1105,8 +1105,8 @@ func (g *Git) getIgnoreSubmodulesMode() string {
 	return g.getSwitchMode(IgnoreSubmodules, "--ignore-submodules=", "")
 }
 
-func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string) string {
-	repoModes := g.props.GetKeyValueMap(property, map[string]string{})
+func (g *Git) getSwitchMode(property options.Option, gitSwitch, mode string) string {
+	repoModes := g.options.KeyValueMap(property, map[string]string{})
 	// make use of a wildcard for all repo's
 	if val := repoModes["*"]; len(val) != 0 {
 		mode = val

@@ -4,9 +4,9 @@ import (
 	"encoding/gob"
 	"errors"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // SegmentType the type of segment, for more information, see the constants
@@ -19,7 +19,7 @@ type SegmentWriter interface {
 	SetText(text string)
 	SetIndex(index int)
 	Text() string
-	Init(props properties.Properties, env runtime.Environment)
+	Init(props options.Provider, env runtime.Environment)
 	CacheKey() (string, bool)
 }
 
@@ -472,8 +472,8 @@ var Segments = map[SegmentType]func() SegmentWriter{
 func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	segment.env = env
 
-	if segment.Properties == nil {
-		segment.Properties = make(properties.Map)
+	if segment.Options == nil {
+		segment.Options = make(options.Map)
 	}
 
 	f, ok := Segments[segment.Type]
@@ -482,11 +482,7 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	}
 
 	writer := f()
-	wrapper := &properties.Wrapper{
-		Properties: segment.Properties,
-	}
-
-	writer.Init(wrapper, env)
+	writer.Init(segment.Options, env)
 	segment.writer = writer
 
 	return nil

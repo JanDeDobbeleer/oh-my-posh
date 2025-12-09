@@ -10,13 +10,15 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
+	toml "github.com/pelletier/go-toml/v2"
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"gopkg.in/yaml.v3"
 )
 
 // SegmentStyle the style of segment, for more information, see the constants
@@ -36,9 +38,9 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 type Segment struct {
 	writer                 SegmentWriter
 	env                    runtime.Environment
-	Properties             properties.Map `json:"properties,omitempty" toml:"properties,omitempty" yaml:"properties,omitempty"`
-	Cache                  *Cache         `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
-	Alias                  string         `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
+	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
+	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
+	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
@@ -72,6 +74,73 @@ type Segment struct {
 	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+}
+
+// segmentAlias is used to avoid recursion during unmarshaling
+type segmentAlias Segment
+
+// segmentAux is a helper struct that captures the legacy 'properties' field
+type segmentAux struct {
+	Properties options.Map `json:"properties,omitempty" yaml:"properties,omitempty" toml:"properties,omitempty"`
+	*segmentAlias
+}
+
+func (segment *Segment) UnmarshalJSON(data []byte) error {
+	aux := &segmentAux{
+		segmentAlias: (*segmentAlias)(segment),
+	}
+
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+
+	// Migrate 'properties' to 'options' if present
+	if len(aux.Properties) > 0 && len(segment.Options) == 0 {
+		segment.Options = aux.Properties
+	}
+
+	return nil
+}
+
+func (segment *Segment) UnmarshalYAML(node *yaml.Node) error {
+	// Decode into a map to handle field renaming
+	var raw map[string]any
+	if err := node.Decode(&raw); err != nil {
+		return err
+	}
+
+	// If 'properties' exists and 'options' doesn't, rename it
+	if props, hasProps := raw["properties"]; hasProps {
+		if _, hasOptions := raw["options"]; !hasOptions {
+			raw["options"] = props
+			delete(raw, "properties")
+		}
+	}
+
+	// Re-encode and decode into the struct
+	modifiedNode := &yaml.Node{}
+	if err := modifiedNode.Encode(raw); err != nil {
+		return err
+	}
+
+	return modifiedNode.Decode((*segmentAlias)(segment))
+}
+
+func (segment *Segment) UnmarshalTOML(data []byte) error {
+	aux := &segmentAux{
+		segmentAlias: (*segmentAlias)(segment),
+	}
+
+	if err := toml.Unmarshal(data, aux); err != nil {
+		return err
+	}
+
+	// Migrate 'properties' to 'options' if present
+	if len(aux.Properties) > 0 && len(segment.Options) == 0 {
+		segment.Options = aux.Properties
+	}
+
+	return nil
 }
 
 func (segment *Segment) Name() string {

@@ -6,8 +6,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
@@ -31,13 +31,13 @@ func TestSpotifyLinux(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("IsWsl").Return(false)
 
-		dbusCMD := "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player"
+		dbusCMD := "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.options.Get string:org.mpris.MediaPlayer2.Player"
 		env.On("RunShellCommand", shell.BASH, dbusCMD+" string:PlaybackStatus | awk -F '\"' '/string/ {print tolower($2)}'").Return(tc.Status)
 		env.On("RunShellCommand", shell.BASH, dbusCMD+" string:Metadata | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:artist'/ {a=$4} END {print a}'").Return(tc.Artist)
 		env.On("RunShellCommand", shell.BASH, dbusCMD+" string:Metadata | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:title'/ {t=$4} END {print t}'").Return(tc.Track)
 
 		s := &Spotify{}
-		s.Init(properties.Map{}, env)
+		s.Init(options.Map{}, env)
 
 		got := s.Enabled()
 
@@ -68,7 +68,7 @@ func TestSpotifyWSL(t *testing.T) {
 		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", psCommand}).Return(tc.Title, tc.Error)
 
 		s := &Spotify{}
-		s.Init(properties.Map{}, env)
+		s.Init(options.Map{}, env)
 
 		got := s.Enabled()
 

@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
@@ -46,7 +46,7 @@ func (s *Sitecore) Enabled() bool {
 
 	s.EndpointName = userConfig.getDefaultEndpoint()
 
-	displayDefault := s.props.GetBool(properties.DisplayDefault, true)
+	displayDefault := s.options.Bool(options.DisplayDefault, true)
 
 	if !displayDefault && s.EndpointName == defaultEnpointName {
 		log.Debug("displaying of the default environment is turned off")

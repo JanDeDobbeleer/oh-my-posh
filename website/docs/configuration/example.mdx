@@ -16,7 +16,7 @@ import Config from "@site/src/components/Config.js";
           {
             foreground: "#007ACC",
             template: " {{ .CurrentDate | date .Format }} ",
-            properties: {
+            options: {
               time_format: "15:04:05",
             },
             style: "plain",
@@ -43,7 +43,7 @@ import Config from "@site/src/components/Config.js";
             foreground: "#ffffff",
             powerline_symbol: "\ue0b0",
             template: " {{ .Path }} ",
-            properties: {
+            options: {
               style: "folder",
             },
             exclude_folders: ["/super/secret/project"],
@@ -65,7 +65,7 @@ import Config from "@site/src/components/Config.js";
             powerline_symbol: "\ue0b0",
             template:
               " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }} ",
-            properties: {
+            options: {
               branch_template: "{{ trunc 25 .Branch }}",
               fetch_status: true,
             },
@@ -77,7 +77,7 @@ import Config from "@site/src/components/Config.js";
             background_templates: ["{{ if gt .Code 0 }}#e91e63{{ end }}"],
             foreground: "#ffffff",
             template: "<parentBackground>\ue0b0</> \ue23a ",
-            properties: {
+            options: {
               always_enabled: true,
             },
             style: "diamond",

@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 	mock_ "github.com/stretchr/testify/mock"
@@ -36,7 +36,7 @@ func TestDockerContext(t *testing.T) {
 	for _, tc := range cases {
 		docker := &Docker{}
 		env := new(mock.Environment)
-		docker.Init(properties.Map{}, env)
+		docker.Init(options.Map{}, env)
 
 		for _, v := range docker.envVars() {
 			var value string
@@ -77,7 +77,7 @@ func TestDockerFiles(t *testing.T) {
 	for _, tc := range cases {
 		docker := &Docker{}
 		env := new(mock.Environment)
-		props := properties.Map{
+		props := options.Map{
 			DisplayMode:  DisplayModeFiles,
 			FetchContext: false,
 		}

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
-	FetchDependencies properties.Property = "fetch_dependencies"
+	FetchDependencies options.Option = "fetch_dependencies"
 )
 
 type Package struct {
@@ -38,7 +38,7 @@ func (q *Quasar) Enabled() bool {
 		return false
 	}
 
-	if q.props.GetBool(FetchDependencies, false) {
+	if q.options.Bool(FetchDependencies, false) {
 		q.fetchDependencies()
 	}
 

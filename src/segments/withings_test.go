@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -182,7 +182,7 @@ func TestWithingsSegment(t *testing.T) {
 		withings := &Withings{
 			api: api,
 		}
-		withings.Init(properties.Map{}, &mock.Environment{})
+		withings.Init(options.Map{}, &mock.Environment{})
 
 		enabled := withings.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

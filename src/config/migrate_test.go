@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -21,7 +21,7 @@ func TestTimeoutToCache(t *testing.T) {
 
 	for _, tc := range cases {
 		segment := &Segment{
-			Properties: properties.Map{
+			Options: options.Map{
 				cacheTimeout: tc.Timeout,
 			},
 		}
@@ -43,7 +43,7 @@ func TestMigrateFolders(t *testing.T) {
 
 	for _, tc := range cases {
 		segment := &Segment{
-			Properties: properties.Map{
+			Options: options.Map{
 				excludeFolders: tc.Folders,
 			},
 		}

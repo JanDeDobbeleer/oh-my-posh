@@ -25,7 +25,7 @@ func (t *Azd) Template() string {
 func (t *Azd) Enabled() bool {
 	var parentFilePath string
 
-	folders := t.props.GetStringArray(LanguageFolders, []string{".azure"})
+	folders := t.options.StringArray(LanguageFolders, []string{".azure"})
 	for _, folder := range folders {
 		if file, err := t.env.HasParentFilePath(folder, false); err == nil {
 			parentFilePath = file.ParentFolder

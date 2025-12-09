@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/alecthomas/assert"
 )
@@ -48,7 +48,7 @@ func TestGitversion(t *testing.T) {
 		env.On("RunCommand", "gitversion", []string{"-output", "json"}).Return(tc.Response, tc.CommandError)
 
 		gitversion := &GitVersion{}
-		gitversion.Init(properties.Map{}, env)
+		gitversion.Init(options.Map{}, env)
 
 		if tc.Template == "" {
 			tc.Template = gitversion.Template()

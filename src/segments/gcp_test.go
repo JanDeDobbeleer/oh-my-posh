@@ -4,9 +4,9 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -86,7 +86,7 @@ func TestGcpSegment(t *testing.T) {
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
 
 		g := &Gcp{}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
@@ -130,7 +130,7 @@ func TestGetConfigDirectory(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 
 		g := &Gcp{}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.Expected, g.getConfigDirectory(), tc.Case)
 	}
@@ -170,7 +170,7 @@ func TestGetActiveConfig(t *testing.T) {
 		}
 
 		g := &Gcp{}
-		g.Init(properties.Map{}, env)
+		g.Init(options.Map{}, env)
 
 		got, err := g.getActiveConfig("")
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)

@@ -36,7 +36,7 @@ import Config from "@site/src/components/Config.js";
     foreground: "#ffffff",
     background: "#000000",
     template: "{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}",
-    properties: {
+    options: {
       access_token: "11111111111111111",
       refresh_token: "1111111111111111",
       http_timeout: 1500,
@@ -44,7 +44,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name            |   Type   | Default | Description                                                                                   |
 | --------------- | :------: | :-----: | --------------------------------------------------------------------------------------------- |
@@ -64,8 +64,6 @@ import Config from "@site/src/components/Config.js";
 :::
 
 ### Properties
-
-The properties below are available for use in your template
 
 | Name          | Type     | Description                         |
 | ------------- | -------- | ----------------------------------- |

@@ -29,7 +29,7 @@ import Config from "@site/src/components/Config.js";
     ],
     template:
       "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}",
-    properties: {
+    options: {
       fetch_status: true,
     },
   }}
@@ -41,7 +41,7 @@ If you want to use the icon of Plastic SCM in the segment, then please help me p
 by leaving a like!
 ![icon](https://www.plasticscm.com/images/icon-logo-plasticscm.svg)
 
-## Properties
+## Options
 
 ### Fetching information
 

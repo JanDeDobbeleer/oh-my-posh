@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	lang "golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -22,7 +21,7 @@ type DurationStyle string
 
 const (
 	// ThresholdProperty represents minimum duration (milliseconds) required to enable this segment
-	ThresholdProperty properties.Property = "threshold"
+	ThresholdProperty options.Option = "threshold"
 	// Austin milliseconds short
 	Austin DurationStyle = "austin"
 	// Roundrock milliseconds long
@@ -52,13 +51,13 @@ const (
 )
 
 func (t *Executiontime) Enabled() bool {
-	alwaysEnabled := t.props.GetBool(properties.AlwaysEnabled, false)
+	alwaysEnabled := t.options.Bool(options.AlwaysEnabled, false)
 	executionTimeMs := t.env.ExecutionTime()
-	thresholdMs := t.props.GetFloat64(ThresholdProperty, float64(500))
+	thresholdMs := t.options.Float64(ThresholdProperty, float64(500))
 	if !alwaysEnabled && executionTimeMs < thresholdMs {
 		return false
 	}
-	style := DurationStyle(t.props.GetString(properties.Style, string(Austin)))
+	style := DurationStyle(t.options.String(options.Style, string(Austin)))
 	t.Ms = int64(executionTimeMs)
 	t.FormattedMs = t.formatDuration(style)
 	return t.FormattedMs != ""

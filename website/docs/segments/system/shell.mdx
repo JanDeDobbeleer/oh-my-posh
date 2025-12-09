@@ -10,24 +10,26 @@ Show the current shell name (zsh, PowerShell, bash, ...).
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "shell",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#0077c2",
-  "properties": {
-    "mapped_shell_names": {
-      "pwsh": "PS"
-    }
-  }
-}}/>
+<Config
+  data={{
+    type: "shell",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#0077c2",
+    options: {
+      mapped_shell_names: {
+        pwsh: "PS",
+      },
+    },
+  }}
+/>
 
-## Properties
+## Options
 
-| Name                 | Type     | Default | Description                                                                   |
+| Name                 |   Type   | Default | Description                                                                   |
 | -------------------- | :------: | :-----: | ----------------------------------------------------------------------------- |
 | `mapped_shell_names` | `object` |         | custom glyph/text to use in place of specified shell names (case-insensitive) |
 

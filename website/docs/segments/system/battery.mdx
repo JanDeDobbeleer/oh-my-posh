@@ -14,30 +14,33 @@ Battery displays the remaining power percentage for your battery.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "battery",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#ffeb3b",
-  "background_templates": [
-    "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
-    "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
-    "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
-  ],
-  "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}\uF295 ",
-  "properties": {
-    "discharging_icon": "\uE231 ",
-    "charging_icon": "\uE234 ",
-    "charged_icon": "\uE22F "
-  }
-}}/>
+<Config
+  data={{
+    type: "battery",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    background_templates: [
+      '{{if eq "Charging" .State.String}}#40c4ff{{end}}',
+      '{{if eq "Discharging" .State.String}}#ff5722{{end}}',
+      '{{if eq "Full" .State.String}}#4caf50{{end}}',
+    ],
+    template:
+      " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}\uF295 ",
+    options: {
+      discharging_icon: "\uE231 ",
+      charging_icon: "\uE234 ",
+      charged_icon: "\uE22F ",
+    },
+  }}
+/>
 
-## Properties
+## Options
 
-| Name                | Type      | Default | Description                                                             |
+| Name                |   Type    | Default | Description                                                             |
 | ------------------- | :-------: | :-----: | ----------------------------------------------------------------------- |
 | `display_error`     | `boolean` | `false` | show the error context when failing to retrieve the battery information |
 | `charging_icon`     | `string`  |         | icon to display when charging                                           |

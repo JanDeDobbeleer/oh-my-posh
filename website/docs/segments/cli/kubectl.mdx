@@ -20,7 +20,7 @@ import Config from "@site/src/components/Config.js";
     foreground: "#000000",
     background: "#ebcc34",
     template: " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
-    properties: {
+    options: {
       context_aliases: {
         "arn:aws:eks:eu-west-1:1234567890:cluster/posh": "posh",
       },
@@ -28,7 +28,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name               |   Type    | Default | Description                                                                     |
 | ------------------ | :-------: | :-----: | ------------------------------------------------------------------------------- |

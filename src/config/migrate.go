@@ -2,13 +2,13 @@ package config
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
-	includeFolders = properties.Property("include_folders")
-	excludeFolders = properties.Property("exclude_folders")
-	cacheTimeout   = properties.Property("cache_timeout")
+	includeFolders = options.Option("include_folders")
+	excludeFolders = options.Option("exclude_folders")
+	cacheTimeout   = options.Option("cache_timeout")
 )
 
 func (cfg *Config) Migrate() {
@@ -24,19 +24,25 @@ func (cfg *Config) Migrate() {
 
 func (segment *Segment) migrate(version int) {
 	// configs older than 2 are no longer supported
-	if version != 2 {
+	if version < 2 {
 		return
 	}
 
-	if segment.Properties == nil {
-		segment.Properties = properties.Map{}
+	// Ensure Options is initialized
+	if segment.Options == nil {
+		segment.Options = options.Map{}
 	}
 
-	// Cache settings, the default is now 24h so we have to respect this being disabled previously
-	if !segment.Properties.GetBool("cache_version", false) {
-		segment.Properties[properties.CacheDuration] = cache.NONE
+	if version < 4 && version != 2 {
+		return
 	}
-	delete(segment.Properties, "cache_version")
+
+	// Version 2 migrations work on Options
+	// Cache settings, the default is now 24h so we have to respect this being disabled previously
+	if !segment.Options.Bool("cache_version", false) {
+		segment.Options[options.CacheDuration] = cache.NONE
+	}
+	delete(segment.Options, "cache_version")
 
 	segment.IncludeFolders = segment.migrateFolders(includeFolders)
 	segment.ExcludeFolders = segment.migrateFolders(excludeFolders)
@@ -49,8 +55,8 @@ func (segment *Segment) migrate(version int) {
 	}
 }
 
-func (segment *Segment) hasProperty(property properties.Property) bool {
-	for key := range segment.Properties {
+func (segment *Segment) hasProperty(property options.Option) bool {
+	for key := range segment.Options {
 		if key == property {
 			return true
 		}
@@ -63,8 +69,8 @@ func (segment *Segment) timeoutToCache() {
 		return
 	}
 
-	timeout := segment.Properties.GetInt(cacheTimeout, 0)
-	delete(segment.Properties, cacheTimeout)
+	timeout := segment.Options.Int(cacheTimeout, 0)
+	delete(segment.Options, cacheTimeout)
 
 	if timeout == 0 {
 		return
@@ -77,23 +83,23 @@ func (segment *Segment) timeoutToCache() {
 }
 
 func (segment *Segment) timeoutToDuration() {
-	timeout := segment.Properties.GetInt(cacheTimeout, 0)
-	delete(segment.Properties, cacheTimeout)
+	timeout := segment.Options.Int(cacheTimeout, 0)
+	delete(segment.Options, cacheTimeout)
 
 	if timeout == 0 {
 		return
 	}
 
-	segment.Properties[properties.CacheDuration] = cache.ToDuration(timeout * 60)
+	segment.Options[options.CacheDuration] = cache.ToDuration(timeout * 60)
 }
 
-func (segment *Segment) migrateFolders(property properties.Property) []string {
+func (segment *Segment) migrateFolders(property options.Option) []string {
 	if !segment.hasProperty(property) {
 		return []string{}
 	}
 
-	array := segment.Properties.GetStringArray(property, []string{})
-	delete(segment.Properties, property)
+	array := segment.Options.StringArray(property, []string{})
+	delete(segment.Options, property)
 
 	return array
 }

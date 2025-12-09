@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -202,8 +202,8 @@ func TestCarbonIntensitySegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		var props = properties.Map{
-			properties.HTTPTimeout: 5000,
+		var props = options.Map{
+			options.HTTPTimeout: 5000,
 		}
 
 		jsonResponse := fmt.Sprintf(

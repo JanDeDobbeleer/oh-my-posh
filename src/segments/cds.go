@@ -20,7 +20,7 @@ func (c *Cds) Enabled() bool {
 	}
 	c.Language.loadContext = c.loadContext
 	c.Language.inContext = c.inContext
-	c.displayMode = c.props.GetString(DisplayMode, DisplayModeContext)
+	c.displayMode = c.options.String(DisplayMode, DisplayModeContext)
 
 	return c.Language.Enabled()
 }

@@ -44,7 +44,7 @@ import Config from "@site/src/components/Config.js";
     leading_diamond: "\ue0b6",
     trailing_diamond: "\uE0B0",
     template: "\ue2a1 {{ .Sgv }}{{ .TrendIcon }}",
-    properties: {
+    options: {
       url: "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
       http_timeout: 1500,
     },
@@ -60,7 +60,7 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
   }}
 />
 
-## Properties
+## Options
 
 | Name           |        Type         | Default | Description                                                                                                                                                                  |
 | -------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

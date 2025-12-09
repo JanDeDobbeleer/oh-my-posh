@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Aws struct {
@@ -35,7 +35,7 @@ func (a *Aws) Enabled() bool {
 		return ""
 	}
 
-	displayDefaultUser := a.props.GetBool(properties.DisplayDefault, true)
+	displayDefaultUser := a.options.Bool(options.DisplayDefault, true)
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_DEFAULT_PROFILE", "AWS_PROFILE")
 	if !displayDefaultUser && a.Profile == defaultUser {
 		return false

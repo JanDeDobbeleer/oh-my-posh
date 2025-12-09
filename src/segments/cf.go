@@ -17,7 +17,7 @@ func (c *Cf) Enabled() bool {
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
-	c.displayMode = c.props.GetString(DisplayMode, DisplayModeFiles)
+	c.displayMode = c.options.String(DisplayMode, DisplayModeFiles)
 	c.versionURLTemplate = "https://github.com/cloudfoundry/cli/releases/tag/v{{ .Full }}"
 
 	return c.Language.Enabled()

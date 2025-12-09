@@ -1,13 +1,13 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Base struct {
-	props properties.Properties
-	env   runtime.Environment
+	options options.Provider
+	env     runtime.Environment
 
 	Segment *Segment
 }
@@ -29,9 +29,9 @@ func (b *Base) SetIndex(index int) {
 	b.Segment.Index = index
 }
 
-func (b *Base) Init(props properties.Properties, env runtime.Environment) {
+func (b *Base) Init(opts options.Provider, env runtime.Environment) {
 	b.Segment = &Segment{}
-	b.props = props
+	b.options = opts
 	b.env = env
 }
 

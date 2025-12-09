@@ -21,20 +21,22 @@ This segment always chooses the higher version.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "unity",
-  "style": "powerline",
-  "powerline_symbol": "\ue0b0",
-  "foreground": "#111111",
-  "background": "#ffffff",
-  "properties": {
-    "http_timeout": 2000
-  }
-}}/>
+<Config
+  data={{
+    type: "unity",
+    style: "powerline",
+    powerline_symbol: "\ue0b0",
+    foreground: "#111111",
+    background: "#ffffff",
+    options: {
+      http_timeout: 2000,
+    },
+  }}
+/>
 
-## Properties
+## Options
 
 | Name           | Type  | Default | Description                                    |
 | -------------- | :---: | :-----: | ---------------------------------------------- |
@@ -52,10 +54,10 @@ import Config from '@site/src/components/Config.js';
 
 ### Properties
 
-| Name             | Type     | Description                              |
-| ---------------- | -------- | ---------------------------------------- |
-| `.UnityVersion`  | `string` | the Unity version                        |
-| `.CSharpVersion` | `string` | the C# version                           |
+| Name             | Type     | Description       |
+| ---------------- | -------- | ----------------- |
+| `.UnityVersion`  | `string` | the Unity version |
+| `.CSharpVersion` | `string` | the C# version    |
 
 [unity]: https://unity.com/
 [templates]: /docs/configuration/templates

@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -141,7 +141,7 @@ func TestAzSegment(t *testing.T) {
 		}
 
 		az := &Az{}
-		az.Init(properties.Map{}, env)
+		az.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, az.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, az), tc.Case)

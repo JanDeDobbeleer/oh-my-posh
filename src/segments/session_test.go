@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -116,7 +116,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("RunCommand", "who", []string{"am", "i"}).Return(tc.WhoAmI, whoAmIErr)
 
 		session := &Session{}
-		session.Init(properties.Map{}, env)
+		session.Init(options.Map{}, env)
 
 		template.Cache = &cache.Template{
 			SimpleTemplate: cache.SimpleTemplate{

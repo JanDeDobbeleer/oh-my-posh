@@ -1,4 +1,4 @@
-package properties
+package options
 
 import (
 	"testing"
@@ -11,78 +11,78 @@ const (
 	expected      = "expected"
 	expectedColor = color.Ansi("#768954")
 
-	Foo Property = "color"
+	Foo Option = "color"
 )
 
 func TestGetString(t *testing.T) {
-	var properties = Map{Foo: expected}
-	value := properties.GetString(Foo, "err")
+	var options = Map{Foo: expected}
+	value := options.String(Foo, "err")
 	assert.Equal(t, expected, value)
 }
 
 func TestGetStringNoEntry(t *testing.T) {
-	var properties = Map{}
-	value := properties.GetString(Foo, expected)
+	var options = Map{}
+	value := options.String(Foo, expected)
 	assert.Equal(t, expected, value)
 }
 
 func TestGetStringNoTextEntry(t *testing.T) {
-	var properties = Map{Foo: true}
-	value := properties.GetString(Foo, expected)
+	var options = Map{Foo: true}
+	value := options.String(Foo, expected)
 	assert.Equal(t, "true", value)
 }
 
 func TestGetHexColor(t *testing.T) {
 	expected := expectedColor
-	var properties = Map{Foo: expected}
-	value := properties.GetColor(Foo, "#789123")
+	var options = Map{Foo: expected}
+	value := options.Color(Foo, "#789123")
 	assert.Equal(t, expected, value)
 }
 
 func TestGetColor(t *testing.T) {
 	expected := color.Ansi("yellow")
-	var properties = Map{Foo: expected}
-	value := properties.GetColor(Foo, "#789123")
+	var options = Map{Foo: expected}
+	value := options.Color(Foo, "#789123")
 	assert.Equal(t, expected, value)
 }
 
 func TestDefaultColorWithInvalidColorCode(t *testing.T) {
 	expected := expectedColor
-	var properties = Map{Foo: "invalid"}
-	value := properties.GetColor(Foo, expected)
+	var options = Map{Foo: "invalid"}
+	value := options.Color(Foo, expected)
 	assert.Equal(t, expected, value)
 }
 
 func TestDefaultColorWithUnavailableProperty(t *testing.T) {
 	expected := expectedColor
-	var properties = Map{}
-	value := properties.GetColor(Foo, expected)
+	var options = Map{}
+	value := options.Color(Foo, expected)
 	assert.Equal(t, expected, value)
 }
 
 func TestGetPaletteColor(t *testing.T) {
 	expected := color.Ansi("p:red")
-	var properties = Map{Foo: expected}
-	value := properties.GetColor(Foo, "white")
+	var options = Map{Foo: expected}
+	value := options.Color(Foo, "white")
 	assert.Equal(t, expected, value)
 }
 
 func TestGetBool(t *testing.T) {
 	expected := true
-	var properties = Map{Foo: expected}
-	value := properties.GetBool(Foo, false)
+	var options = Map{Foo: expected}
+	value := options.Bool(Foo, false)
 	assert.True(t, value)
 }
 
 func TestGetBoolPropertyNotInMap(t *testing.T) {
-	var properties = Map{}
-	value := properties.GetBool(Foo, false)
+	var options = Map{}
+	value := options.Bool(Foo, false)
 	assert.False(t, value)
 }
 
 func TestGetBoolInvalidProperty(t *testing.T) {
-	var properties = Map{Foo: "borked"}
-	value := properties.GetBool(Foo, false)
+	var options = Map{Foo: "borked"}
+	value := options.Bool(Foo, false)
 	assert.False(t, value)
 }
 
@@ -100,16 +100,16 @@ func TestGetFloat64(t *testing.T) {
 		{Case: "bool", Expected: 9001, Input: true},
 	}
 	for _, tc := range cases {
-		properties := Map{Foo: tc.Input}
-		value := properties.GetFloat64(Foo, 9001)
+		options := Map{Foo: tc.Input}
+		value := options.Float64(Foo, 9001)
 		assert.Equal(t, tc.Expected, value, tc.Case)
 	}
 }
 
 func TestGetFloat64PropertyNotInMap(t *testing.T) {
 	expected := float64(1337)
-	var properties = Map{}
-	value := properties.GetFloat64(Foo, expected)
+	var options = Map{}
+	value := options.Float64(Foo, expected)
 	assert.Equal(t, expected, value)
 }
 
@@ -119,21 +119,21 @@ func TestOneOf(t *testing.T) {
 		Map          Map
 		Case         string
 		DefaultValue string
-		Properties   []Property
+		Options      []Option
 	}{
 		{
-			Case:       "one element",
-			Expected:   "1337",
-			Properties: []Property{Foo},
+			Case:     "one element",
+			Expected: "1337",
+			Options:  []Option{Foo},
 			Map: Map{
 				Foo: "1337",
 			},
 			DefaultValue: "2000",
 		},
 		{
-			Case:       "two elements",
-			Expected:   "1337",
-			Properties: []Property{Foo},
+			Case:     "two elements",
+			Expected: "1337",
+			Options:  []Option{Foo},
 			Map: Map{
 				Foo:   "1337",
 				"Bar": "9001",
@@ -141,9 +141,9 @@ func TestOneOf(t *testing.T) {
 			DefaultValue: "2000",
 		},
 		{
-			Case:       "no match",
-			Expected:   "2000",
-			Properties: []Property{"Moo"},
+			Case:     "no match",
+			Expected: "2000",
+			Options:  []Option{"Moo"},
 			Map: Map{
 				Foo:   "1337",
 				"Bar": "9001",
@@ -151,9 +151,9 @@ func TestOneOf(t *testing.T) {
 			DefaultValue: "2000",
 		},
 		{
-			Case:       "incorrect type",
-			Expected:   "2000",
-			Properties: []Property{Foo},
+			Case:     "incorrect type",
+			Expected: "2000",
+			Options:  []Option{Foo},
 			Map: Map{
 				Foo:   1337,
 				"Bar": "9001",
@@ -162,7 +162,7 @@ func TestOneOf(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		value := OneOf(tc.Map, tc.DefaultValue, tc.Properties...)
+		value := OneOf(tc.Map, tc.DefaultValue, tc.Options...)
 		assert.Equal(t, tc.Expected, value, tc.Case)
 	}
 }

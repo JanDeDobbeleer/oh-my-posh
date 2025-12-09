@@ -8,7 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
@@ -59,17 +59,17 @@ func (y *Ytm) setStatus() error {
 	switch status.Player.TrackState {
 	case 1, 2: // playing or buffering
 		y.Status = playing
-		y.Icon = y.props.GetString(PlayingIcon, "\uf04b ")
+		y.Icon = y.options.String(PlayingIcon, "\uf04b ")
 	case -1: // stopped
 		y.Status = stopped
-		y.Icon = y.props.GetString(StoppedIcon, "\uf04d ")
+		y.Icon = y.options.String(StoppedIcon, "\uf04d ")
 	default: // paused
 		y.Status = paused
-		y.Icon = y.props.GetString(PausedIcon, "\uf04c ")
+		y.Icon = y.options.String(PausedIcon, "\uf04c ")
 	}
 
 	if status.Player.AdPlaying {
-		ad := y.props.GetString(AdIcon, "\ueebb ")
+		ad := y.options.String(AdIcon, "\ueebb ")
 		y.Icon = ad + y.Icon
 	}
 
@@ -85,7 +85,7 @@ func (y *Ytm) requestStatus(token string) (*ytmdaStatusResponse, error) {
 		request.Header.Set("Content-Type", "application/json")
 	}
 
-	httpTimeout := y.props.GetInt(properties.HTTPTimeout, 5000)
+	httpTimeout := y.options.Int(options.HTTPTimeout, 5000)
 	response, err := y.env.HTTPRequest(ytmdaStatusURL, nil, httpTimeout, setHeaders)
 	if err != nil {
 		return nil, err

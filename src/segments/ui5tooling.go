@@ -13,7 +13,7 @@ func (u *UI5Tooling) Template() string {
 
 func (u *UI5Tooling) Enabled() bool {
 	u.extensions = []string{UI5ToolingYamlPattern}
-	u.displayMode = u.props.GetString(DisplayMode, DisplayModeContext)
+	u.displayMode = u.options.String(DisplayMode, DisplayModeContext)
 	u.commands = []*cmd{
 		{
 			executable: "ui5",

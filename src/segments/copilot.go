@@ -8,7 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // CopilotPercentage represents a percentage value with gauge visualization.
@@ -117,7 +117,7 @@ func (c *Copilot) getResult() (*copilotAPIResponse, error) {
 
 	log.Debug("found access token")
 
-	httpTimeout := c.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := c.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	addAuthHeader := func(request *http.Request) {
 		request.Header.Set("Authorization", "Bearer "+accessToken)

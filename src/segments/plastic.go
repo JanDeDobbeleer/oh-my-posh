@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type PlasticStatus struct {
@@ -36,8 +36,8 @@ type Plastic struct {
 	MergePending bool
 }
 
-func (p *Plastic) Init(props properties.Properties, env runtime.Environment) {
-	p.props = props
+func (p *Plastic) Init(props options.Provider, env runtime.Environment) {
+	p.options = props
 	p.env = env
 }
 
@@ -60,7 +60,7 @@ func (p *Plastic) Enabled() bool {
 	}
 
 	p.plasticWorkspaceFolder = wkdir.ParentFolder
-	displayStatus := p.props.GetBool(FetchStatus, false)
+	displayStatus := p.options.Bool(FetchStatus, false)
 	p.setSelector()
 	if displayStatus {
 		p.setPlasticStatus()
@@ -85,7 +85,7 @@ func (p *Plastic) setPlasticStatus() {
 	headChangeset := p.getHeadChangeset()
 	p.Behind = headChangeset > currentChangeset
 
-	statusFormats := p.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	statusFormats := p.options.KeyValueMap(StatusFormats, map[string]string{})
 	p.Status = &PlasticStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
 	// parse file state
@@ -147,14 +147,14 @@ func (p *Plastic) setSelector() {
 	// changeset
 	ref = p.parseChangesetSelector(selector)
 	if len(ref) > 0 {
-		p.Selector = fmt.Sprintf("%s%s", p.props.GetString(CommitIcon, "\uF417"), ref)
+		p.Selector = fmt.Sprintf("%s%s", p.options.String(CommitIcon, "\uF417"), ref)
 		return
 	}
 
 	// fallback to label
 	ref = p.parseLabelSelector(selector)
 	if len(ref) > 0 {
-		p.Selector = fmt.Sprintf("%s%s", p.props.GetString(TagIcon, "\uF412"), ref)
+		p.Selector = fmt.Sprintf("%s%s", p.options.String(TagIcon, "\uF412"), ref)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (p *Plastic) setSelector() {
 		ref = p.formatBranch(ref)
 	}
 
-	p.Selector = fmt.Sprintf("%s%s", p.props.GetString(BranchIcon, "\uE0A0"), ref)
+	p.Selector = fmt.Sprintf("%s%s", p.options.String(BranchIcon, "\uE0A0"), ref)
 }
 
 func (p *Plastic) parseChangesetSelector(selector string) string {

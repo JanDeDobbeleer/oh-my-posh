@@ -6,8 +6,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -168,7 +168,7 @@ func TestCopilotSegment(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			env := &mock.Environment{}
-			props := properties.Map{}
+			props := options.Map{}
 
 			// Setup cached token mock
 			if tc.HasToken {
@@ -314,7 +314,7 @@ func TestCopilotPercentageGauge(t *testing.T) {
 
 func TestCopilotRemainingPercentage(t *testing.T) {
 	env := &mock.Environment{}
-	props := properties.Map{}
+	props := options.Map{}
 
 	jsonResponse := `{
 		"quota_snapshots": {
@@ -361,7 +361,7 @@ func TestCopilotRemainingPercentage(t *testing.T) {
 
 func TestCopilotBillingCycleEnd(t *testing.T) {
 	env := &mock.Environment{}
-	props := properties.Map{}
+	props := options.Map{}
 
 	jsonResponse := `{
 		"quota_snapshots": {

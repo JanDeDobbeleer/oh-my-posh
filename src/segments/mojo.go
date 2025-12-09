@@ -3,7 +3,7 @@ package segments
 import (
 	"slices"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Mojo struct {
@@ -24,7 +24,7 @@ func (m *Mojo) Enabled() bool {
 			regex:      `(?:mojo (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
-	m.displayMode = m.props.GetString(DisplayMode, DisplayModeEnvironment)
+	m.displayMode = m.options.String(DisplayMode, DisplayModeEnvironment)
 	m.Language.loadContext = m.loadContext
 	m.Language.inContext = m.inContext
 
@@ -32,7 +32,7 @@ func (m *Mojo) Enabled() bool {
 }
 
 func (m *Mojo) loadContext() {
-	if !m.props.GetBool(FetchVirtualEnv, true) {
+	if !m.options.Bool(FetchVirtualEnv, true) {
 		return
 	}
 
@@ -51,7 +51,7 @@ func (m *Mojo) inContext() bool {
 func (m *Mojo) canUseVenvName(name string) bool {
 	defaultNames := []string{"default"}
 
-	if m.props.GetBool(properties.DisplayDefault, true) ||
+	if m.options.Bool(options.DisplayDefault, true) ||
 		!slices.Contains(defaultNames, name) {
 		return true
 	}

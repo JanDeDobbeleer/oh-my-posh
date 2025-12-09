@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Python struct {
@@ -19,10 +19,10 @@ type Python struct {
 
 const (
 	// FetchVirtualEnv fetches the virtual env
-	FetchVirtualEnv      properties.Property = "fetch_virtual_env"
-	UsePythonVersionFile properties.Property = "use_python_version_file"
-	FolderNameFallback   properties.Property = "folder_name_fallback"
-	DefaultVenvNames     properties.Property = "default_venv_names"
+	FetchVirtualEnv      options.Option = "fetch_virtual_env"
+	UsePythonVersionFile options.Option = "use_python_version_file"
+	FolderNameFallback   options.Option = "folder_name_fallback"
+	DefaultVenvNames     options.Option = "default_venv_names"
 )
 
 func (p *Python) Template() string {
@@ -54,7 +54,7 @@ func (p *Python) Enabled() bool {
 		},
 	}
 	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
-	p.displayMode = p.props.GetString(DisplayMode, DisplayModeEnvironment)
+	p.displayMode = p.options.String(DisplayMode, DisplayModeEnvironment)
 	p.Language.loadContext = p.loadContext
 	p.Language.inContext = p.inContext
 
@@ -62,7 +62,7 @@ func (p *Python) Enabled() bool {
 }
 
 func (p *Python) loadContext() {
-	if !p.props.GetBool(FetchVirtualEnv, true) {
+	if !p.options.Bool(FetchVirtualEnv, true) {
 		return
 	}
 	if prompt := p.pyvenvCfgPrompt(); len(prompt) > 0 {
@@ -76,8 +76,8 @@ func (p *Python) loadContext() {
 		"CONDA_DEFAULT_ENV",
 	}
 
-	folderNameFallback := p.props.GetBool(FolderNameFallback, true)
-	defaultVenvNames := p.props.GetStringArray(DefaultVenvNames, []string{
+	folderNameFallback := p.options.Bool(FolderNameFallback, true)
+	defaultVenvNames := p.options.StringArray(DefaultVenvNames, []string{
 		".venv",
 		"venv",
 	})
@@ -109,7 +109,7 @@ func (p *Python) inContext() bool {
 }
 
 func (p *Python) canUseVenvName(name string) bool {
-	if p.props.GetBool(properties.DisplayDefault, true) {
+	if p.options.Bool(options.DisplayDefault, true) {
 		return true
 	}
 

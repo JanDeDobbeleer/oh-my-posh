@@ -3,15 +3,14 @@ package segments
 import (
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"gopkg.in/yaml.v3"
 )
 
 // Whether to use kubectl or read kubeconfig ourselves
 const (
-	ParseKubeConfig properties.Property = "parse_kubeconfig"
-	ContextAliases  properties.Property = "context_aliases"
+	ParseKubeConfig options.Option = "parse_kubeconfig"
+	ContextAliases  options.Option = "context_aliases"
 )
 
 type Kubectl struct {
@@ -41,7 +40,7 @@ func (k *Kubectl) Template() string {
 }
 
 func (k *Kubectl) Enabled() bool {
-	parseKubeConfig := k.props.GetBool(ParseKubeConfig, true)
+	parseKubeConfig := k.options.Bool(ParseKubeConfig, true)
 
 	if parseKubeConfig {
 		return k.doParseKubeConfig()
@@ -99,7 +98,7 @@ func (k *Kubectl) doParseKubeConfig() bool {
 		return true
 	}
 
-	displayError := k.props.GetBool(properties.DisplayError, false)
+	displayError := k.options.Bool(options.DisplayError, false)
 	if !displayError {
 		return false
 	}
@@ -114,7 +113,7 @@ func (k *Kubectl) doCallKubectl() bool {
 	}
 
 	result, err := k.env.RunCommand(cmd, "config", "view", "--output", "yaml", "--minify")
-	displayError := k.props.GetBool(properties.DisplayError, false)
+	displayError := k.options.Bool(options.DisplayError, false)
 	if err != nil && displayError {
 		k.setError("KUBECTL ERR")
 		return true
@@ -152,7 +151,7 @@ func (k *Kubectl) setError(message string) {
 }
 
 func (k *Kubectl) SetContextAlias() {
-	aliases := k.props.GetKeyValueMap(ContextAliases, map[string]string{})
+	aliases := k.options.KeyValueMap(ContextAliases, map[string]string{})
 	if alias, exists := aliases[k.Context]; exists {
 		k.Context = alias
 	}

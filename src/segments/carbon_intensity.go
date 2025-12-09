@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type CarbonIntensity struct {
@@ -80,7 +80,7 @@ func (d *CarbonIntensity) getResult() (*CarbonIntensityResponse, error) {
 	response := new(CarbonIntensityResponse)
 	url := "https://api.carbonintensity.org.uk/intensity"
 
-	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := d.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	body, err := d.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {

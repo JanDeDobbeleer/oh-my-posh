@@ -3,7 +3,7 @@ package segments
 import (
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Time struct {
@@ -15,7 +15,7 @@ type Time struct {
 
 const (
 	// TimeFormat uses the reference time Mon Jan 2 15:04:05 MST 2006 to show the pattern with which to format the current time
-	TimeFormat properties.Property = "time_format"
+	TimeFormat options.Option = "time_format"
 )
 
 func (t *Time) Template() string {
@@ -24,7 +24,7 @@ func (t *Time) Template() string {
 
 func (t *Time) Enabled() bool {
 	// if no date set, use now(unit testing)
-	formatInput := t.props.GetString(TimeFormat, "15:04:05")
+	formatInput := t.options.String(TimeFormat, "15:04:05")
 	t.Format = t.getTimeFormat(formatInput)
 	if t.CurrentDate.IsZero() {
 		t.CurrentDate = time.Now()

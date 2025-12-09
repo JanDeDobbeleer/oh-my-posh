@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -46,7 +46,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 		tempus := &Time{
 			CurrentDate: currentDate,
 		}
-		tempus.Init(properties.Map{}, env)
+		tempus.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, tempus.Enabled())
 		if tc.Template == "" {

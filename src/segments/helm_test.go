@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	testify_mock "github.com/stretchr/testify/mock"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 func TestHelmSegment(t *testing.T) {
@@ -89,7 +89,7 @@ func TestHelmSegment(t *testing.T) {
 		env.On("HasParentFilePath", tc.ChartFile, false).Return(&runtime.FileInfo{}, nil)
 		env.On("HasParentFilePath", testify_mock.Anything, false).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 
-		props := properties.Map{
+		props := options.Map{
 			DisplayMode: tc.DisplayMode,
 		}
 

@@ -22,9 +22,9 @@ Before coding, define these key properties:
 If you're using VS Code, you can use the automated segment creation command in VS Code Chat:
 
 1. Open VS Code Chat (use the Chat icon in the sidebar or Command Palette: "Chat: Focus on Chat View")
-3. Type `/segment` and follow the prompts
-4. Provide your segment details when requested
-5. The command will automatically create all necessary files and registrations
+2. Type `/segment` and follow the prompts
+3. Provide your segment details when requested
+4. The command will automatically create all necessary files and registrations
 
 This automated approach ensures all files are created correctly with proper naming conventions and alphabetical ordering. If you prefer to create the segment manually or want to understand the process, continue with the manual steps below.
 
@@ -38,7 +38,7 @@ Create a new file in `./src/segments/` named after your segment ID: `new_feature
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type NewFeature struct {
@@ -51,9 +51,9 @@ type NewFeature struct {
 // Define constants for each configurable property
 const (
 	// EnableNewThing enables the new functionality
-	EnableNewThing properties.Property = "enable_new_thing"
+	EnableNewThing options.Property = "enable_new_thing"
 	// CustomText sets custom display text
-	CustomText properties.Property = "custom_text"
+	CustomText options.Property = "custom_text"
 )
 
 func (n *NewFeature) Enabled() bool {
@@ -71,6 +71,7 @@ func (n *NewFeature) Template() string {
 ```
 
 **Key Guidelines:**
+
 - Use UTF32 representation for icons (e.g., `"\uEFF1"`) instead of the actual icons
 - Find icon codes at [Nerd Fonts Cheat Sheet][nf-icons]
 - Keep the logic in `Enabled()` focused on data preparation and visibility determination
@@ -80,6 +81,7 @@ func (n *NewFeature) Template() string {
 Edit `src/config/segment_types.go` to register your new segment:
 
 ### Add Gob Registration
+
 In the `init()` function, add your segment to the gob registry (maintain alphabetical order):
 
 ```go
@@ -87,6 +89,7 @@ gob.Register(&segments.NewFeature{})
 ```
 
 ### Add Segment Constant
+
 Add a constant for your segment type (maintain alphabetical order):
 
 ```go
@@ -95,6 +98,7 @@ NEWFEATURE SegmentType = "new-feature"
 ```
 
 ### Add to Segments Map
+
 Register your segment in the `Segments` map (maintain alphabetical order):
 
 ```go
@@ -118,26 +122,28 @@ Displays information about the new feature in your environment.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "new-feature",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#ffeb3b",
-  "properties": {
-    "enable_new_thing": true,
-    "custom_text": "Hello World"
-  }
-}}/>
+<Config
+  data={{
+    type: "new-feature",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    options: {
+      enable_new_thing: true,
+      custom_text: "Hello World",
+    },
+  }}
+/>
 
-## Properties
+## Options
 
-| Name | Type | Description | Default |
-| ---- | ---- | ----------- | ------- |
+| Name               | Type      | Description                   | Default |
+| ------------------ | --------- | ----------------------------- | ------- |
 | `enable_new_thing` | `boolean` | Enables the new functionality | `false` |
-| `custom_text` | `string` | Custom text to display | `""` |
+| `custom_text`      | `string`  | Custom text to display        | `""`    |
 ```
 
 ## Step 4: Update Sidebar Navigation
@@ -162,6 +168,7 @@ Edit `website/sidebars.js` and add your documentation to the appropriate categor
 Update `themes/schema.json` in two places:
 
 ### Add to Type Enum
+
 In the segment type enum, add your segment ID (maintain alphabetical order):
 
 ```json
@@ -169,13 +176,14 @@ In the segment type enum, add your segment ID (maintain alphabetical order):
   "enum": [
     "angular",
     // ... other types
-    "new-feature",
+    "new-feature"
     // ... more types
   ]
 }
 ```
 
 ### Add Schema Definition
+
 In the `allOf` array, add your segment's property schema (maintain alphabetical order):
 
 ```json
@@ -189,7 +197,7 @@ In the `allOf` array, add your segment's property schema (maintain alphabetical 
     "title": "New Feature Segment",
     "description": "https://ohmyposh.dev/docs/segments/system/new-feature",
     "properties": {
-      "properties": {
+      "options": {
         "properties": {
           "enable_new_thing": {
             "type": "boolean",
@@ -213,13 +221,14 @@ In the `allOf` array, add your segment's property schema (maintain alphabetical 
 ## Step 6: Add Tests
 
 Create a test file `src/segments/new_feature_test.go` using table-driven tests:
+
 ```go
 package segments
 
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 )
 
@@ -237,7 +246,7 @@ func TestNewFeature(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			env := &mock.Environment{}
-			props := properties.Map{
+			props := options.Map{
 				CustomText: tc.CustomText,
 			}
 
@@ -275,10 +284,11 @@ go test ./src/segments/new_feature_test.go
 ## Important Guidelines
 
 ### File Organization
+
 - **Segment files**: `src/segments/[segment_id].go`
 - **Test files**: `src/segments/[segment_id]_test.go`
 - **Documentation**: `website/docs/segments/[category]/[segment-id].mdx`### Alphabetical Ordering
-Maintain alphabetical order in:
+  Maintain alphabetical order in:
 - `init()` gob registrations in `segment_types.go`
 - Segment type constants in `segment_types.go`
 - Segments map entries in `segment_types.go`
@@ -287,13 +297,15 @@ Maintain alphabetical order in:
 - Sidebar navigation items in `sidebars.js`
 
 ### Code Quality
+
 - Use meaningful property names and constants
-- Include descriptive comments for properties
+- Include descriptive comments for options
 - Keep `Enabled()` logic focused and efficient
 - Use UTF32 codes for icons, not the actual icons
 - Follow Go naming conventions (PascalCase for exported items)
 
 ### Documentation Standards
+
 - Use `.mdx` extension for documentation files
 - Include complete property tables with types, descriptions, and defaults
 - Provide realistic sample configurations

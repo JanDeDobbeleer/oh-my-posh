@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/alecthomas/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -110,7 +110,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("PathSeparator").Return("")
 		env.On("ResolveSymlink", testify_.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 
-		props[properties.FetchVersion] = tc.FetchVersion
+		props[options.FetchVersion] = tc.FetchVersion
 		props[UsePythonVersionFile] = true
 		props[DisplayMode] = DisplayModeAlways
 
@@ -142,7 +142,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "PYENV_VERSION").Return("")
 		env.On("HasParentFilePath", ".python-version", false).Return(&runtime.FileInfo{}, errors.New("no match at root level"))
 		python := &Python{}
-		python.Init(properties.Map{}, env)
+		python.Init(options.Map{}, env)
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.inContext())
 	}

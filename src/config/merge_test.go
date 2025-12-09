@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -18,7 +18,7 @@ func TestConfigMerge(t *testing.T) {
 		expectError    bool
 	}{
 		{
-			name: "merge basic properties",
+			name: "merge basic options",
 			baseConfig: &Config{
 				Version:     3,
 				FinalSpace:  true,
@@ -104,7 +104,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Properties: properties.Map{"style": "full"}},
+							{Type: "path", Options: options.Map{"style": "full"}},
 						},
 					},
 				},
@@ -116,7 +116,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Properties: properties.Map{"style": "short"}},
+							{Type: "path", Options: options.Map{"style": "short"}},
 						},
 					},
 				},
@@ -128,7 +128,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Properties: properties.Map{"style": "short"}},
+							{Type: "path", Options: options.Map{"style": "short"}},
 						},
 					},
 				},
@@ -145,7 +145,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Alias: "override", Properties: properties.Map{"style": "full"}},
+							{Type: "path", Alias: "override", Options: options.Map{"style": "full"}},
 						},
 					},
 				},
@@ -157,7 +157,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "git", Alias: "override", Properties: properties.Map{"branch_icon": "branch"}},
+							{Type: "git", Alias: "override", Options: options.Map{"branch_icon": "branch"}},
 						},
 					},
 				},
@@ -169,7 +169,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "git", Alias: "override", Properties: properties.Map{"branch_icon": "branch"}},
+							{Type: "git", Alias: "override", Options: options.Map{"branch_icon": "branch"}},
 						},
 					},
 				},
@@ -186,8 +186,8 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Properties: properties.Map{"style": "full"}},
-							{Type: "git", Properties: properties.Map{"branch_icon": ""}},
+							{Type: "path", Options: options.Map{"style": "full"}},
+							{Type: "git", Options: options.Map{"branch_icon": ""}},
 						},
 					},
 				},
@@ -199,7 +199,7 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Index: 1, Properties: properties.Map{"style": "short"}},
+							{Type: "path", Index: 1, Options: options.Map{"style": "short"}},
 						},
 					},
 				},
@@ -211,8 +211,8 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Index: 1, Properties: properties.Map{"style": "short"}},
-							{Type: "git", Properties: properties.Map{"branch_icon": ""}},
+							{Type: "path", Index: 1, Options: options.Map{"style": "short"}},
+							{Type: "git", Options: options.Map{"branch_icon": ""}},
 						},
 					},
 				},
@@ -229,8 +229,8 @@ func TestConfigMerge(t *testing.T) {
 						Alignment: "left",
 						Type:      "prompt",
 						Segments: []*Segment{
-							{Type: "path", Properties: properties.Map{"style": "full"}},
-							{Type: "git", Properties: properties.Map{"branch_icon": ""}},
+							{Type: "path", Options: options.Map{"style": "full"}},
+							{Type: "git", Options: options.Map{"branch_icon": ""}},
 						},
 					},
 				},
@@ -241,7 +241,7 @@ func TestConfigMerge(t *testing.T) {
 					{
 						Index: 1,
 						Segments: []*Segment{
-							{Type: "path", Index: 1, Properties: properties.Map{"style": "short"}},
+							{Type: "path", Index: 1, Options: options.Map{"style": "short"}},
 						},
 					},
 				},
@@ -254,8 +254,8 @@ func TestConfigMerge(t *testing.T) {
 						Type:      "prompt",
 						Index:     1,
 						Segments: []*Segment{
-							{Type: "path", Index: 1, Properties: properties.Map{"style": "short"}},
-							{Type: "git", Properties: properties.Map{"branch_icon": ""}},
+							{Type: "path", Index: 1, Options: options.Map{"style": "short"}},
+							{Type: "git", Options: options.Map{"branch_icon": ""}},
 						},
 					},
 				},

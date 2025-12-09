@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // segment struct, makes templating easier
@@ -42,13 +42,13 @@ func (nba *NBAData) Started() bool {
 }
 
 const (
-	NBASeason  properties.Property = "season"
-	TeamName   properties.Property = "team"
-	DaysOffset properties.Property = "days_offset"
+	NBASeason  options.Option = "season"
+	TeamName   options.Option = "team"
+	DaysOffset options.Option = "days_offset"
 
-	ScheduledTemplate  properties.Property = "scheduled_template"
-	InProgressTemplate properties.Property = "in_progress_template"
-	FinishedTemplate   properties.Property = "finished_template"
+	ScheduledTemplate  options.Option = "scheduled_template"
+	InProgressTemplate options.Option = "in_progress_template"
+	FinishedTemplate   options.Option = "finished_template"
 
 	NBAScoreURL    string = "https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json"
 	NBAScheduleURL string = "https://stats.nba.com/stats/internationalbroadcasterschedule?LeagueID=00&Season=%s&Date=%s&RegionID=1&EST=Y"
@@ -221,8 +221,8 @@ func (nba *Nba) retrieveScoreData(teamName string, httpTimeout int) (*NBAData, e
 // Retrieves the data from the schedule endpoint
 func (nba *Nba) retrieveScheduleData(teamName string, httpTimeout int) (*NBAData, error) {
 	// How many days into the future should we look for a game.
-	numDaysToSearch := nba.props.GetInt(DaysOffset, 8)
-	nbaSeason := nba.props.GetString(NBASeason, currentNBASeason)
+	numDaysToSearch := nba.options.Int(DaysOffset, 8)
+	nbaSeason := nba.options.String(NBASeason, currentNBASeason)
 	// Get the current date in America/New_York
 	nowNYC := time.Now().In(time.FixedZone("America/New_York", -5*60*60))
 
@@ -289,9 +289,9 @@ func (nba *Nba) getAvailableGameData(teamName string, httpTimeout int) (*NBAData
 }
 
 func (nba *Nba) getResult() (*NBAData, error) {
-	teamName := nba.props.GetString(TeamName, "")
+	teamName := nba.options.String(TeamName, "")
 
-	httpTimeout := nba.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := nba.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	log.Debug("fetching available data for " + teamName)
 

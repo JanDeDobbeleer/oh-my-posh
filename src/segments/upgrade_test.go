@@ -6,8 +6,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/alecthomas/assert"
 )
@@ -77,7 +77,7 @@ func TestUpgrade(t *testing.T) {
 		build.Version = tc.CurrentVersion
 
 		ug := &Upgrade{}
-		ug.Init(properties.Map{}, env)
+		ug.Init(options.Map{}, env)
 
 		enabled := ug.Enabled()
 

@@ -10,25 +10,27 @@ Display SysInfo.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type":"sysinfo",
-  "powerline_symbol": "\ue0b0",
-  "foreground": "#ffffff",
-  "background": "#8f43f3",
-  "template":" \ue266 {{ round .PhysicalPercentUsed .Precision }}% ",
-  "properties": {
-    "precision": 2
-  },
-  "style":"powerline"
-}}/>
+<Config
+  data={{
+    type: "sysinfo",
+    powerline_symbol: "\ue0b0",
+    foreground: "#ffffff",
+    background: "#8f43f3",
+    template: " \ue266 {{ round .PhysicalPercentUsed .Precision }}% ",
+    options: {
+      precision: 2,
+    },
+    style: "powerline",
+  }}
+/>
 
-## Properties
+## Options
 
 | Name        | Type  | Default | Description                             |
 | ----------- | :---: | :-----: | --------------------------------------- |
-| `Precision` | `int` | `2`     | The precision used for any float values |
+| `Precision` | `int` |   `2`   | The precision used for any float values |
 
 ## Template ([info][templates])
 

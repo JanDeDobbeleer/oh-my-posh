@@ -6,7 +6,7 @@ import (
 	http2 "net/http"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // segment struct, makes templating easier
@@ -19,16 +19,16 @@ type Nightscout struct {
 
 const (
 	// Your complete Nightscout URL and APIKey like this
-	URL     properties.Property = "url"
-	Headers properties.Property = "headers"
+	URL     options.Option = "url"
+	Headers options.Option = "headers"
 
-	DoubleUpIcon      properties.Property = "doubleup_icon"
-	SingleUpIcon      properties.Property = "singleup_icon"
-	FortyFiveUpIcon   properties.Property = "fortyfiveup_icon"
-	FlatIcon          properties.Property = "flat_icon"
-	FortyFiveDownIcon properties.Property = "fortyfivedown_icon"
-	SingleDownIcon    properties.Property = "singledown_icon"
-	DoubleDownIcon    properties.Property = "doubledown_icon"
+	DoubleUpIcon      options.Option = "doubleup_icon"
+	SingleUpIcon      options.Option = "singleup_icon"
+	FortyFiveUpIcon   options.Option = "fortyfiveup_icon"
+	FlatIcon          options.Option = "flat_icon"
+	FortyFiveDownIcon options.Option = "fortyfivedown_icon"
+	SingleDownIcon    options.Option = "singledown_icon"
+	DoubleDownIcon    options.Option = "doubledown_icon"
 )
 
 // NightscoutData struct contains the API data
@@ -64,19 +64,19 @@ func (ns *Nightscout) Enabled() bool {
 func (ns *Nightscout) getTrendIcon() string {
 	switch ns.Direction {
 	case "DoubleUp":
-		return ns.props.GetString(DoubleUpIcon, "↑↑")
+		return ns.options.String(DoubleUpIcon, "↑↑")
 	case "SingleUp":
-		return ns.props.GetString(SingleUpIcon, "↑")
+		return ns.options.String(SingleUpIcon, "↑")
 	case "FortyFiveUp":
-		return ns.props.GetString(FortyFiveUpIcon, "↗")
+		return ns.options.String(FortyFiveUpIcon, "↗")
 	case "Flat":
-		return ns.props.GetString(FlatIcon, "→")
+		return ns.options.String(FlatIcon, "→")
 	case "FortyFiveDown":
-		return ns.props.GetString(FortyFiveDownIcon, "↘")
+		return ns.options.String(FortyFiveDownIcon, "↘")
 	case "SingleDown":
-		return ns.props.GetString(SingleDownIcon, "↓")
+		return ns.options.String(SingleDownIcon, "↓")
 	case "DoubleDown":
-		return ns.props.GetString(DoubleDownIcon, "↓↓")
+		return ns.options.String(DoubleDownIcon, "↓↓")
 	default:
 		return ""
 	}
@@ -95,10 +95,10 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		return result[0], nil
 	}
 
-	url := ns.props.GetString(URL, "")
-	httpTimeout := ns.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	url := ns.options.String(URL, "")
+	httpTimeout := ns.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
-	headers := ns.props.GetKeyValueMap(Headers, map[string]string{})
+	headers := ns.options.KeyValueMap(Headers, map[string]string{})
 	modifiers := func(request *http2.Request) {
 		for key, value := range headers {
 			request.Header.Add(key, value)

@@ -6,12 +6,12 @@ import (
 
 	"slices"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
 	// FetchContext is the property used to fetch the current docker context
-	FetchContext properties.Property = "fetch_context"
+	FetchContext options.Option = "fetch_context"
 )
 
 type DockerConfig struct {
@@ -54,9 +54,9 @@ func (d *Docker) Enabled() bool {
 		"Dockerfile",
 	}
 
-	extensions = d.props.GetStringArray(LanguageExtensions, extensions)
+	extensions = d.options.StringArray(LanguageExtensions, extensions)
 
-	displayMode := d.props.GetString(DisplayMode, DisplayModeContext)
+	displayMode := d.options.String(DisplayMode, DisplayModeContext)
 	switch displayMode {
 	case DisplayModeContext:
 		return d.fetchContext()
@@ -66,7 +66,7 @@ func (d *Docker) Enabled() bool {
 		}
 
 		// always respect the context fetching
-		if d.props.GetBool(FetchContext, true) {
+		if d.options.Bool(FetchContext, true) {
 			_ = d.fetchContext()
 		}
 

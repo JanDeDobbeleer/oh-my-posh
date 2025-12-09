@@ -3,9 +3,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +17,7 @@ func TestWriteCurrentShell(t *testing.T) {
 	env.On("Flags").Return(&runtime.Flags{ShellVersion: "1.2.3"})
 
 	s := &Shell{}
-	s.Init(properties.Map{}, env)
+	s.Init(options.Map{}, env)
 
 	_ = s.Enabled()
 	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
@@ -37,7 +37,7 @@ func TestUseMappedShellNames(t *testing.T) {
 		env.On("Shell").Return(tc.Expected, nil)
 		env.On("Flags").Return(&runtime.Flags{ShellVersion: "1.2.3"})
 
-		props := properties.Map{
+		props := options.Map{
 			MappedShellNames: map[string]string{"pwsh": "PS"},
 		}
 

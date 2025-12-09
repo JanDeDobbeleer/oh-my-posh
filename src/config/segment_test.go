@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -55,6 +56,54 @@ func TestParseTestConfig(t *testing.T) {
 	segment := &Segment{}
 	err := json.Unmarshal([]byte(segmentJSON), segment)
 	assert.NoError(t, err)
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
+}
+
+func TestParseConfigWithOptions(t *testing.T) {
+	segmentJSON :=
+		`
+		{
+			"type": "path",
+			"style": "powerline",
+			"options": {
+				"style": "folder"
+			}
+		}
+		`
+	segment := &Segment{}
+	err := json.Unmarshal([]byte(segmentJSON), segment)
+	assert.NoError(t, err)
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
+}
+
+func TestParseYAMLConfigWithProperties(t *testing.T) {
+	segmentYAML := `
+type: path
+style: powerline
+properties:
+  style: folder
+`
+	segment := &Segment{}
+	err := yaml.Unmarshal([]byte(segmentYAML), segment)
+	assert.NoError(t, err)
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
+}
+
+func TestParseYAMLConfigWithOptions(t *testing.T) {
+	segmentYAML := `
+type: path
+style: powerline
+options:
+  style: folder
+`
+	segment := &Segment{}
+	err := yaml.Unmarshal([]byte(segmentYAML), segment)
+	assert.NoError(t, err)
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
 }
 
 func TestShouldIncludeFolder(t *testing.T) {

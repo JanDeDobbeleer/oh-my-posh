@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -158,10 +158,10 @@ func TestKubectlSegment(t *testing.T) {
 
 		env.On("Home").Return("testhome")
 
-		props := properties.Map{
-			properties.DisplayError: tc.DisplayError,
-			ParseKubeConfig:         tc.ParseKubeConfig,
-			ContextAliases:          tc.ContextAliases,
+		props := options.Map{
+			options.DisplayError: tc.DisplayError,
+			ParseKubeConfig:      tc.ParseKubeConfig,
+			ContextAliases:       tc.ContextAliases,
 		}
 
 		k := &Kubectl{}

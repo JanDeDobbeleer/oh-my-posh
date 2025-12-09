@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,7 +60,7 @@ func TestFirebaseSegment(t *testing.T) {
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 
 		f := &Firebase{}
-		f.Init(properties.Map{}, env)
+		f.Init(options.Map{}, env)
 
 		f.Enabled()
 
@@ -104,7 +104,7 @@ func TestGetFirebaseActiveConfig(t *testing.T) {
 		env.On("FileContent", contentPath).Return(tc.ActiveConfig)
 
 		f := &Firebase{}
-		f.Init(properties.Map{}, env)
+		f.Init(options.Map{}, env)
 
 		got, err := f.getActiveConfig(configPath)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)

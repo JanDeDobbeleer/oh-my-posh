@@ -3,9 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/alecthomas/assert"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 func TestMojoTemplate(t *testing.T) {
@@ -76,8 +75,8 @@ func TestMojoTemplate(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 		env.On("Getenv", "PIXI_ENVIRONMENT_NAME").Return(tc.VirtualEnvName)
-		props[properties.DisplayDefault] = tc.DisplayDefault
-		props[properties.FetchVersion] = tc.FetchVersion
+		props[options.DisplayDefault] = tc.DisplayDefault
+		props[options.FetchVersion] = tc.FetchVersion
 		props[FetchVirtualEnv] = tc.FetchVirtualEnv
 		props[DisplayMode] = DisplayModeAlways
 

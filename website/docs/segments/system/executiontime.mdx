@@ -10,29 +10,31 @@ Displays the execution time of the previously executed command.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "executiontime",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#8800dd",
-  "template": " <#fefefe>\ueba2</> {{ .FormattedMs }} ",
-  "properties": {
-    "threshold": 500,
-    "style": "austin",
-    "always_enabled": true
-  }
-}}/>
+<Config
+  data={{
+    type: "executiontime",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#8800dd",
+    template: " <#fefefe>\ueba2</> {{ .FormattedMs }} ",
+    options: {
+      threshold: 500,
+      style: "austin",
+      always_enabled: true,
+    },
+  }}
+/>
 
-## Properties
+## Options
 
-| Name             | Type      | Default  | Description                                                               |
-| ---------------- | :-------: | :------: | ------------------------------------------------------------------------- |
-| `always_enabled` | `boolean` | `false`  | always show the duration                                                  |
-| `threshold`      | `number`  | `500`    | minimum duration (milliseconds) required to enable this segment           |
-| `style`          | `enum`    | `austin` | one of the available format options                                       |
+| Name             |   Type    | Default  | Description                                                     |
+| ---------------- | :-------: | :------: | --------------------------------------------------------------- |
+| `always_enabled` | `boolean` | `false`  | always show the duration                                        |
+| `threshold`      | `number`  |  `500`   | minimum duration (milliseconds) required to enable this segment |
+| `style`          |  `enum`   | `austin` | one of the available format options                             |
 
 ### Style
 

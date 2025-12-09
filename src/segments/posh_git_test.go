@@ -5,9 +5,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -191,7 +191,7 @@ func TestPoshGitSegment(t *testing.T) {
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", origin}).Return("github.com/cli", nil)
 
-		props := &properties.Map{
+		props := &options.Map{
 			FetchUpstreamIcon: tc.FetchUpstreamIcon,
 		}
 
@@ -243,7 +243,7 @@ func TestParsePoshGitHEAD(t *testing.T) {
 
 	for _, tc := range cases {
 		g := &Git{}
-		g.Init(&properties.Map{}, new(mock.Environment))
+		g.Init(&options.Map{}, new(mock.Environment))
 
 		assert.Equal(t, tc.ExpectedString, g.parsePoshGitHEAD(tc.HEAD), tc.Case)
 	}

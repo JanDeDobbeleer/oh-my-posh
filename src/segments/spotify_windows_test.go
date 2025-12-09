@@ -5,9 +5,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -44,7 +44,7 @@ func TestSpotifyWindowsNative(t *testing.T) {
 		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return("", &runtime.NotImplemented{})
 
 		s := &Spotify{}
-		s.Init(properties.Map{}, env)
+		s.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, s.Enabled())
 		if tc.ExpectedEnabled {
@@ -85,7 +85,7 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 		env.On("QueryWindowTitles", "msedge.exe", "^(Spotify.*)").Return(tc.Title, tc.Error)
 
 		s := &Spotify{}
-		s.Init(properties.Map{}, env)
+		s.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, s.Enabled())
 		if tc.ExpectedEnabled {

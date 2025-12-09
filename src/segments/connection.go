@@ -3,8 +3,8 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Connection struct {
@@ -14,7 +14,7 @@ type Connection struct {
 }
 
 const (
-	Type properties.Property = "type"
+	Type options.Option = "type"
 )
 
 func (c *Connection) Template() string {
@@ -22,7 +22,7 @@ func (c *Connection) Template() string {
 }
 
 func (c *Connection) Enabled() bool {
-	types := c.props.GetString(Type, "wifi|ethernet")
+	types := c.options.String(Type, "wifi|ethernet")
 	connectionTypes := strings.SplitSeq(types, "|")
 	for connectionType := range connectionTypes {
 		network, err := c.env.Connection(runtime.ConnectionType(connectionType))

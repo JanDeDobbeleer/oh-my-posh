@@ -54,7 +54,7 @@ func (o *OAuthRequest) getAccessToken() (string, error) {
 	}
 
 	// use initial refresh token from property
-	// refreshToken := o.props.GetString(properties.RefreshToken, "")
+	// refreshToken := o.props.GetString(options.RefreshToken, "")
 	// ignore an empty or default refresh token
 	if o.RefreshToken == "" || o.RefreshToken == DefaultRefreshToken {
 		return "", &OAuthError{

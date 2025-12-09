@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type SystemInfo struct {
@@ -14,7 +14,7 @@ type SystemInfo struct {
 
 const (
 	// Precision number of decimal places to show
-	Precision properties.Property = "precision"
+	Precision options.Option = "precision"
 )
 
 func (s *SystemInfo) Template() string {
@@ -22,7 +22,7 @@ func (s *SystemInfo) Template() string {
 }
 
 func (s *SystemInfo) Enabled() bool {
-	s.Precision = s.props.GetInt(Precision, 2)
+	s.Precision = s.options.Int(Precision, 2)
 
 	sysInfo, err := s.env.SystemInfo()
 	if err != nil {

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -183,7 +183,7 @@ func TestBrewfatherSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		props := properties.Map{
+		props := options.Map{
 			BFBatchID: BFFakeBatchID,
 			APIKey:    "FAKE",
 			BFUserID:  "FAKE",

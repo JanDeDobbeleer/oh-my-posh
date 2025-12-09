@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -56,8 +56,8 @@ func TestIpifySegment(t *testing.T) {
 		ipify := &IPify{
 			api: api,
 			Base: Base{
-				env:   &mock.Environment{},
-				props: properties.Map{},
+				env:     &mock.Environment{},
+				options: options.Map{},
 			},
 		}
 

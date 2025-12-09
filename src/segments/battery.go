@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Battery struct {
@@ -14,13 +14,13 @@ type Battery struct {
 
 const (
 	// ChargingIcon to display when charging
-	ChargingIcon properties.Property = "charging_icon"
+	ChargingIcon options.Option = "charging_icon"
 	// DischargingIcon o display when discharging
-	DischargingIcon properties.Property = "discharging_icon"
+	DischargingIcon options.Option = "discharging_icon"
 	// ChargedIcon to display when fully charged
-	ChargedIcon properties.Property = "charged_icon"
+	ChargedIcon options.Option = "charged_icon"
 	// NotChargingIcon to display when on AC power
-	NotChargingIcon properties.Property = "not_charging_icon"
+	NotChargingIcon options.Option = "not_charging_icon"
 )
 
 func (b *Battery) Template() string {
@@ -48,13 +48,13 @@ func (b *Battery) Enabled() bool {
 
 	switch b.State {
 	case battery.Discharging:
-		b.Icon = b.props.GetString(DischargingIcon, "")
+		b.Icon = b.options.String(DischargingIcon, "")
 	case battery.NotCharging:
-		b.Icon = b.props.GetString(NotChargingIcon, "")
+		b.Icon = b.options.String(NotChargingIcon, "")
 	case battery.Charging:
-		b.Icon = b.props.GetString(ChargingIcon, "")
+		b.Icon = b.options.String(ChargingIcon, "")
 	case battery.Full:
-		b.Icon = b.props.GetString(ChargedIcon, "")
+		b.Icon = b.options.String(ChargedIcon, "")
 	case battery.Empty, battery.Unknown:
 		return true
 	}
@@ -68,7 +68,7 @@ func (b *Battery) enabledWhileError(err error) bool {
 	if _, ok := err.(*battery.NoBatteryError); ok {
 		return false
 	}
-	displayError := b.props.GetBool(properties.DisplayError, false)
+	displayError := b.options.Bool(options.DisplayError, false)
 	if !displayError {
 		return false
 	}

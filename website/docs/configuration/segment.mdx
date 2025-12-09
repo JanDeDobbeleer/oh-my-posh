@@ -48,7 +48,7 @@ understand how to configure a segment.
 | `template`                 | `string`     | a go [text/template][go-text-template] [template][templates] to render the prompt                                                                                                                                                                                                                                                                                                         |
 | `templates`                | `[]Template` | in some cases having a single [template][templates] string is a bit cumbersome. Templates allows you to span the segment's [template][templates] string multiple lines where every [template][templates] is evaluated and depending on what you aim to achieve, there are two possible outcomes based on `templates_logic`                                                                |
 | `templates_logic`          | `string`     | <ul><li>`first_match`: return the first non-whitespace string and skip everything else</li><li>`join`:evaluate all templates and join all non-whitespace strings (**default**)</li></ul>                                                                                                                                                                                                  |
-| `properties`               | `[]Property` | see [Properties][properties] below                                                                                                                                                                                                                                                                                                                                                        |
+| `options`                  | `[]Option`   | see [Options][options] below                                                                                                                                                                                                                                                                                                                                                              |
 | `interactive`              | `boolean`    | when true, the segment text is not escaped to allow the use of interactive prompt escape sequences in Bash/Zsh - defaults to `false`                                                                                                                                                                                                                                                      |
 | `alias`                    | `string`     | for use with [cross segment template properties][cstp]                                                                                                                                                                                                                                                                                                                                    |
 | `min_width`                | `int`        | if the terminal width is smaller than this value, the segment will be hidden. For your terminal width, see `oh-my-posh get width`. Defaults to `0` (disable)                                                                                                                                                                                                                              |
@@ -113,11 +113,11 @@ segment background as their foreground color.
 Same as Powerline except that it will display even when disabled, but without text. That way it seems
 as if the segment is not expanded, just like an accordion.
 
-## Properties
+## Options
 
-The `properties` attribute allows you to customize the behavior and appearance of a segment beyond the default settings.
+The `options` attribute allows you to customize the behavior and appearance of a segment beyond the default settings.
 These options can be anything from feature flags, configuration or additional styling details that will only apply to the segment in question.
-To understand the available properties for a particular segment, refer to its corresponding documentation section where each property is explained in detail.
+To understand the available options for a particular segment, refer to its corresponding documentation section where each option is explained in detail.
 
 ## Cache
 
@@ -240,7 +240,7 @@ of a shell, it will not disable in the others.
 To list the currently toggled segments, use `oh-my-posh get toggles`.
 
 [segments]: /docs/segments/cli/angular
-[properties]: #properties
+[options]: #options
 [style]: #style
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/

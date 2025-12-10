@@ -16,9 +16,9 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	toml "github.com/pelletier/go-toml/v2"
+	"go.yaml.in/yaml/v3"
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"gopkg.in/yaml.v3"
 )
 
 // SegmentStyle the style of segment, for more information, see the constants

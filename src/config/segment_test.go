@@ -10,7 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 const (

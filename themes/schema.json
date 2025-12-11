@@ -574,7 +574,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -622,7 +623,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -647,7 +649,8 @@
                     "description": "Display the segment when default user or not",
                     "default": true
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -676,7 +679,8 @@
                       "pwsh"
                     ]
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -720,7 +724,8 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -769,7 +774,8 @@
                     "description": "Text/icon to display when on AC power",
                     "default": ""
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -807,7 +813,7 @@
                     "type": "string",
                     "title": "Icon",
                     "description": "The icon representing Bazel's logo",
-                    "default": "\ue63a"
+                    "default": ""
                   },
                   "extensions": {
                     "type": "array",
@@ -838,7 +844,8 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -930,39 +937,40 @@
                     "type": "string",
                     "title": "Icon for batch in planning",
                     "description": "Available in template as .StatusIcon",
-                    "default": "\uF8EA"
+                    "default": ""
                   },
                   "brewing_status_icon": {
                     "type": "string",
                     "title": "Icon for batch being brewed",
                     "description": "Available in template as .StatusIcon",
-                    "default": "\uF7DE"
+                    "default": ""
                   },
                   "fermenting_status_icon": {
                     "type": "string",
                     "title": "Icon for batch fermenting",
                     "description": "Available in template as .StatusIcon",
-                    "default": "\uF499"
+                    "default": ""
                   },
                   "conditioning_status_icon": {
                     "type": "string",
                     "title": "Icon for batch conditioning",
                     "description": "Available in template as .StatusIcon",
-                    "default": "\uE372"
+                    "default": ""
                   },
                   "completed_status_icon": {
                     "type": "string",
                     "title": "Icon for completed batch",
                     "description": "Available in template as .StatusIcon",
-                    "default": "\uF7A5"
+                    "default": ""
                   },
                   "archived_status_icon": {
                     "type": "string",
                     "title": "Icon for archived batch",
                     "description": "Available in template as .StatusIcon",
-                    "default": "\uF187"
+                    "default": ""
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1012,7 +1020,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1061,7 +1070,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1083,7 +1093,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1133,7 +1144,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1182,7 +1194,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1211,7 +1224,8 @@
                     ],
                     "default": "always"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1260,7 +1274,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1282,12 +1297,12 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
         },
-
         {
           "if": {
             "properties": {
@@ -1332,7 +1347,8 @@
                     ],
                     "default": "none"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1385,7 +1401,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1448,7 +1465,8 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1498,7 +1516,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1551,7 +1570,8 @@
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1614,7 +1634,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1667,7 +1688,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1715,7 +1737,8 @@
                     ],
                     "default": "austin"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1787,7 +1810,8 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1855,7 +1879,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1877,7 +1902,8 @@
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -1943,115 +1969,115 @@
                     "type": "string",
                     "title": "Branch Icon",
                     "description": "The icon to use in front of the git branch name",
-                    "default": "\uE0A0 "
+                    "default": " "
                   },
                   "branch_identical_icon": {
                     "type": "string",
                     "title": "Branch Identical Icon",
                     "description": "The icon to display when remote and local are identical",
-                    "default": "\u2261"
+                    "default": "≡"
                   },
                   "branch_ahead_icon": {
                     "type": "string",
                     "title": "Branch Ahead Icon",
                     "description": "The icon to display when the local branch is ahead of its remote",
-                    "default": "\u2191"
+                    "default": "↑"
                   },
                   "branch_behind_icon": {
                     "type": "string",
                     "title": "Branch Behind Icon",
                     "description": "The icon to display when the local branch is behind its remote",
-                    "default": "\u2193"
+                    "default": "↓"
                   },
                   "branch_gone_icon": {
                     "type": "string",
                     "title": "Branch Gone Icon",
                     "description": "The icon to display when there's no remote branch",
-                    "default": "\u2262"
+                    "default": "≢"
                   },
                   "commit_icon": {
                     "type": "string",
                     "title": "Commit Icon",
                     "description": "Icon/text to display before the commit context (detached HEAD)",
-                    "default": "\uF417"
+                    "default": ""
                   },
                   "tag_icon": {
                     "type": "string",
                     "title": "Tag Icon",
                     "description": "Icon/text to display before the tag context",
-                    "default": "\uF412"
+                    "default": ""
                   },
                   "rebase_icon": {
                     "type": "string",
                     "title": "Rebase Icon",
                     "description": "Icon/text to display before the context when in a rebase",
-                    "default": "\uE728"
+                    "default": ""
                   },
                   "cherry_pick_icon": {
                     "type": "string",
                     "title": "Cherry-pick Icon",
                     "description": "Icon/text to display before the context when doing a cherry-pick",
-                    "default": "\uE29B"
+                    "default": ""
                   },
                   "revert_icon": {
                     "type": "string",
                     "title": "Revert Icon",
                     "description": "Icon/text to display before the context when doing a revert",
-                    "default": "\uF0E2"
+                    "default": ""
                   },
                   "merge_icon": {
                     "type": "string",
                     "title": "Merge Icon",
                     "description": "Icon/text to display before the merge context",
-                    "default": "\uE727"
+                    "default": ""
                   },
                   "no_commits_icon": {
                     "type": "string",
                     "title": "No Commits Icon",
                     "description": "Icon/text to display when there are no commits in the repo",
-                    "default": "\uF594"
+                    "default": ""
                   },
                   "github_icon": {
                     "type": "string",
                     "title": "Github Icon",
                     "description": "Icon/text to display when the upstream is Github",
-                    "default": "\uF408"
+                    "default": ""
                   },
                   "gitlab_icon": {
                     "type": "string",
                     "title": "Gitlab Icon",
                     "description": "Icon/text to display when the upstream is Gitlab",
-                    "default": "\uF296"
+                    "default": ""
                   },
                   "bitbucket_icon": {
                     "type": "string",
                     "title": "Bitbucket Icon",
                     "description": "Icon/text to display when the upstream is Bitbucket",
-                    "default": "\uF171"
+                    "default": ""
                   },
                   "azure_devops_icon": {
                     "type": "string",
                     "title": "Azure DevOps Icon",
                     "description": "Icon/text to display when the upstream is Azure DevOps",
-                    "default": "\uEBE8"
+                    "default": ""
                   },
                   "codecommit_icon": {
                     "type": "string",
                     "title": "CodeCommit Icon",
                     "description": "Icon/text to display when the upstream is CodeCommit",
-                    "default": "\uF270"
+                    "default": ""
                   },
                   "codeberg_icon": {
                     "type": "string",
                     "title": "Codeberg Icon",
                     "description": "Icon/text to display when the upstream is Codeberg",
-                    "default": "\uF330"
+                    "default": ""
                   },
                   "git_icon": {
                     "type": "string",
                     "title": "Git Icon",
                     "description": "Icon/text to display when the upstream is not known/mapped",
-                    "default": "\uE5FB"
+                    "default": ""
                   },
                   "untracked_modes": {
                     "type": "object",
@@ -2098,7 +2124,8 @@
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2176,7 +2203,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2244,7 +2272,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2266,7 +2295,8 @@
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2300,7 +2330,8 @@
                       "POST"
                     ]
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2328,7 +2359,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2389,7 +2421,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2426,7 +2459,8 @@
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2478,7 +2512,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2532,7 +2567,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2569,7 +2605,8 @@
                     "description": "Custom context names.",
                     "default": {}
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2592,13 +2629,13 @@
                     "type": "string",
                     "title": "User Info Separator",
                     "description": "Text/icon to show when playing",
-                    "default": "\uE602"
+                    "default": ""
                   },
                   "stopped_icon": {
                     "type": "string",
                     "title": "SSH Icon",
                     "description": "Text/icon to show when stopped",
-                    "default": "\uF04D"
+                    "default": ""
                   },
                   "api_key": {
                     "type": "string",
@@ -2615,7 +2652,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2678,7 +2716,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2709,7 +2748,8 @@
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2775,7 +2815,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2812,7 +2853,8 @@
                     "description": "A key, value map of Headers to send with the request",
                     "default": {}
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2862,7 +2904,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -2923,13 +2966,13 @@
                     "type": "string",
                     "title": "Yarn Icon",
                     "description": "Icon/text to use for Yarn",
-                    "default": "\uF011B"
+                    "default": "B"
                   },
                   "npm_icon": {
                     "type": "string",
                     "title": "NPM Icon",
                     "description": "Icon/text to use for NPM",
-                    "default": "\uE71E"
+                    "default": ""
                   },
                   "extensions": {
                     "type": "array",
@@ -2951,7 +2994,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3000,7 +3044,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3049,7 +3094,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3105,7 +3151,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3128,19 +3175,19 @@
                     "type": "string",
                     "title": "MacOS Icon",
                     "description": "Icon/text to use for macOS",
-                    "default": "\uF179"
+                    "default": ""
                   },
                   "linux": {
                     "type": "string",
                     "title": "Linux Icon",
                     "description": "Icon/text to use for Linux",
-                    "default": "\uF17C"
+                    "default": ""
                   },
                   "windows": {
                     "type": "string",
                     "title": "Windows Icon",
                     "description": "Icon/text to use for Windows",
-                    "default": "\uE62A"
+                    "default": ""
                   },
                   "display_distro_name": {
                     "type": "boolean",
@@ -3152,73 +3199,73 @@
                     "type": "string",
                     "title": "Alpine Icon",
                     "description": "The icon to use for Alpine",
-                    "default": "\uF300"
+                    "default": ""
                   },
                   "aosc": {
                     "type": "string",
                     "title": "Aosc Icon",
                     "description": "The icon to use for Aosc",
-                    "default": "\uF301"
+                    "default": ""
                   },
                   "arch": {
                     "type": "string",
                     "title": "Arch Icon",
                     "description": "The icon to use for Arch",
-                    "default": "\uF303"
+                    "default": ""
                   },
                   "centos": {
                     "type": "string",
                     "title": "Centos Icon",
                     "description": "The icon to use for Centos",
-                    "default": "\uF303"
+                    "default": ""
                   },
                   "coreos": {
                     "type": "string",
                     "title": "Coreos Icon",
                     "description": "The icon to use for Coreos",
-                    "default": "\uF305"
+                    "default": ""
                   },
                   "debian": {
                     "type": "string",
                     "title": "Debian Icon",
                     "description": "The icon to use for Debian",
-                    "default": "\uF306"
+                    "default": ""
                   },
                   "deepin": {
                     "type": "string",
                     "title": "Deepin Icon",
                     "description": "The icon to use for Deepin",
-                    "default": "\uF321"
+                    "default": ""
                   },
                   "devuan": {
                     "type": "string",
                     "title": "Devuan Icon",
                     "description": "The icon to use for Devuan",
-                    "default": "\uF307"
+                    "default": ""
                   },
                   "raspbian": {
                     "type": "string",
                     "title": "Raspbian Icon",
                     "description": "The icon to use for Raspbian",
-                    "default": "\uF315"
+                    "default": ""
                   },
                   "elementary": {
                     "type": "string",
                     "title": "Elementary Icon",
                     "description": "The icon to use for Elementary",
-                    "default": "\uF309"
+                    "default": ""
                   },
                   "endeavouros": {
                     "type": "string",
                     "title": "EndeavourOS Icon",
                     "description": "The icon to use for EndeavourOS",
-                    "default": "\uF322"
+                    "default": ""
                   },
                   "fedora": {
                     "type": "string",
                     "title": "Fedora Icon",
                     "description": "The icon to use for Fedora",
-                    "default": "\uF30a"
+                    "default": ""
                   },
                   "freebsd": {
                     "type": "string",
@@ -3230,7 +3277,7 @@
                     "type": "string",
                     "title": "Gentoo Icon",
                     "description": "The icon to use for Gentoo",
-                    "default": "\uF30d"
+                    "default": ""
                   },
                   "kali": {
                     "type": "string",
@@ -3242,19 +3289,19 @@
                     "type": "string",
                     "title": "Mageia Icon",
                     "description": "The icon to use for Mageia",
-                    "default": "\uF310"
+                    "default": ""
                   },
                   "manjaro": {
                     "type": "string",
                     "title": "Manjaro Icon",
                     "description": "The icon to use for Manjaro",
-                    "default": "\uF312"
+                    "default": ""
                   },
                   "mint": {
                     "type": "string",
                     "title": "Mint Icon",
                     "description": "The icon to use for Mint",
-                    "default": "\uF30e"
+                    "default": ""
                   },
                   "neon": {
                     "type": "string",
@@ -3266,67 +3313,67 @@
                     "type": "string",
                     "title": "Nixos Icon",
                     "description": "The icon to use for Nixos",
-                    "default": "\uF313"
+                    "default": ""
                   },
                   "opensuse": {
                     "type": "string",
                     "title": "Opensuse Icon",
                     "description": "The icon to use for Opensuse",
-                    "default": "\uF314"
+                    "default": ""
                   },
                   "opensuse-tumbleweed": {
                     "type": "string",
                     "title": "OpenSUSE Tumbleweed Icon",
                     "description": "The icon to use for OpenSUSE Tumbleweed",
-                    "default": "\uF314"
+                    "default": ""
                   },
                   "redhat": {
                     "type": "string",
                     "title": "Redhat Icon",
                     "description": "The icon to use for Redhat",
-                    "default": "\uF316"
+                    "default": ""
                   },
                   "sabayon": {
                     "type": "string",
                     "title": "Sabayon Icon",
                     "description": "The icon to use for Sabayon",
-                    "default": "\uF317"
+                    "default": ""
                   },
                   "slackware": {
                     "type": "string",
                     "title": "Slackware Icon",
                     "description": "The icon to use for Slackware",
-                    "default": "\uF319"
+                    "default": ""
                   },
                   "ubuntu": {
                     "type": "string",
                     "title": "Ubuntu Icon",
                     "description": "The icon to use for Ubuntu",
-                    "default": "\uF31b"
+                    "default": ""
                   },
                   "rocky": {
                     "type": "string",
                     "title": "Rocky Icon",
                     "description": "The icon to use for Rocky",
-                    "default": "\uF32B"
+                    "default": ""
                   },
                   "alma": {
                     "type": "string",
                     "title": "Alma Icon",
                     "description": "The icon to use for Alma",
-                    "default": "\uF31D"
+                    "default": ""
                   },
                   "almalinux": {
                     "type": "string",
                     "title": "AlmaLinux Icon",
                     "description": "The icon to use for AlmaLinux",
-                    "default": "\uF31D"
+                    "default": ""
                   },
                   "almalinux9": {
                     "type": "string",
                     "title": "AlmaLinux9 Icon",
                     "description": "The icon to use for AlmaLinux9",
-                    "default": "\uF31D"
+                    "default": ""
                   },
                   "android": {
                     "type": "string",
@@ -3334,7 +3381,8 @@
                     "description": "The icon to use for Android",
                     "default": "\\ue70e"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3379,7 +3427,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3426,7 +3475,7 @@
                     "type": "string",
                     "title": "Windows Registry Icon",
                     "description": "The icon to display when in the Windows registry",
-                    "default": "\uF013"
+                    "default": ""
                   },
                   "style": {
                     "type": "string",
@@ -3548,7 +3597,8 @@
                     "description": "Indicates how many full length directory names should be displayed in fish style.",
                     "default": 1
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3603,7 +3653,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3658,7 +3709,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3690,19 +3742,19 @@
                     "type": "string",
                     "title": "Branch Icon",
                     "description": "The icon to use in front of the selector branch name",
-                    "default": "\uE0A0 "
+                    "default": " "
                   },
                   "commit_icon": {
                     "type": "string",
                     "title": "Commit Icon",
                     "description": "Icon/text to display before the selector changeset",
-                    "default": "\uF417"
+                    "default": ""
                   },
                   "tag_icon": {
                     "type": "string",
                     "title": "Tag Icon",
                     "description": "Icon/text to display before the seletor label",
-                    "default": "\uF412"
+                    "default": ""
                   },
                   "branch_template": {
                     "$ref": "#/definitions/branch_template"
@@ -3713,7 +3765,8 @@
                   "mapped_branches": {
                     "$ref": "#/definitions/mapped_branches"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3762,7 +3815,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3781,13 +3835,13 @@
                 "type": "string",
                 "title": "Powerline Symbol",
                 "description": "https://ohmyposh.dev/docs/configuration/segment#powerline-symbol",
-                "default": "\ue0b0"
+                "default": ""
               },
               "leading_powerline_symbol": {
                 "type": "string",
                 "title": "Leading Powerline Symbol",
                 "description": "https://ohmyposh.dev/docs/configuration/segment#powerline-symbol",
-                "default": "\ue0d7"
+                "default": ""
               },
               "invert_powerline": {
                 "type": "boolean",
@@ -3818,7 +3872,8 @@
                     "description": "Always show the segment",
                     "default": false
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3849,7 +3904,8 @@
                     "description": "Fetch the URL and user for the current stack",
                     "default": false
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3946,7 +4002,8 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -3998,7 +4055,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4056,7 +4114,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4104,7 +4163,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4168,7 +4228,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4219,7 +4280,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4250,7 +4312,8 @@
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4273,9 +4336,10 @@
                     "type": "string",
                     "title": "SSH Icon",
                     "description": "Text/icon to display first when in an active SSH session",
-                    "default": "\uF817"
+                    "default": ""
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4300,7 +4364,8 @@
                     "description": "Custom glyph/text for specific shells",
                     "default": {}
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4325,7 +4390,8 @@
                     "description": "Display the segment or not when the Sitecore environment name matches `default`",
                     "default": true
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4348,21 +4414,22 @@
                     "type": "string",
                     "title": "Playing Icon",
                     "description": "Text/icon to show when playing",
-                    "default": "\uE602"
+                    "default": ""
                   },
                   "paused_icon": {
                     "type": "string",
                     "title": "Paused Icon",
                     "description": "Text/icon to show when paused",
-                    "default": "\uF8E3"
+                    "default": ""
                   },
                   "stopped_icon": {
                     "type": "string",
                     "title": "Stopped Icon",
                     "description": "Text/icon to show when stopped",
-                    "default": "\uF04D"
+                    "default": ""
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4399,7 +4466,8 @@
                     "description": "The separator to use between the status segments",
                     "default": "|"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4428,31 +4496,31 @@
                     "type": "string",
                     "title": "Ride icon",
                     "description": "Alternative icon for this activity type",
-                    "default": "\uf206"
+                    "default": ""
                   },
                   "run_icon": {
                     "type": "string",
                     "title": "Run icon",
                     "description": "Alternative icon for this activity type",
-                    "default": "\ue213"
+                    "default": ""
                   },
                   "skiing_icon": {
                     "type": "string",
                     "title": "Skiing icon",
                     "description": "Alternative icon for this activity type",
-                    "default": "\ue213"
+                    "default": ""
                   },
                   "workout_icon": {
                     "type": "string",
                     "title": "Workout icon",
                     "description": "Alternative icon for this activity type",
-                    "default": "\ue213"
+                    "default": ""
                   },
                   "unknown_activity_icon": {
                     "type": "string",
                     "title": "Fallback icon",
                     "description": "Fallback icon for other activity types",
-                    "default": "\ue213"
+                    "default": ""
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
@@ -4466,7 +4534,8 @@
                   "expires_in": {
                     "$ref": "#/definitions/expires_in"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4518,7 +4587,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4549,7 +4619,8 @@
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4602,7 +4673,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4627,7 +4699,8 @@
                     "description": "number of decimal places to show",
                     "default": 2
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4692,7 +4765,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4717,7 +4791,8 @@
                     "description": "Fetch the version number",
                     "default": false
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4755,7 +4830,8 @@
                     "description": "Format to use, follows the golang standard: https://gobyexample.com/time-formatting-parsing",
                     "default": "15:04:05"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4803,7 +4879,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4838,7 +4915,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4861,7 +4939,8 @@
                     "$ref": "#/definitions/cache_duration",
                     "default": "none"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4913,7 +4992,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4965,7 +5045,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -4993,7 +5074,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -5024,7 +5106,8 @@
                     "description": "Value to display if registry value cannot be retrieved",
                     "default": ""
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -5055,7 +5138,8 @@
                   "expires_in": {
                     "$ref": "#/definitions/expires_in"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -5103,7 +5187,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -5152,7 +5237,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -5175,19 +5261,19 @@
                     "type": "string",
                     "title": "Playing Icon",
                     "description": "Text/icon to show when playing",
-                    "default": "\uE602 "
+                    "default": " "
                   },
                   "paused_icon": {
                     "type": "string",
                     "title": "Paused Icon",
                     "description": "Text/icon to show when paused",
-                    "default": "\uF8E3 "
+                    "default": " "
                   },
                   "stopped_icon": {
                     "type": "string",
                     "title": "Stopped Icon",
                     "description": "Text/icon to show when stopped",
-                    "default": "\uF04D "
+                    "default": " "
                   },
                   "api_url": {
                     "type": "string",
@@ -5198,7 +5284,8 @@
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }
@@ -5251,7 +5338,8 @@
                   "folders": {
                     "$ref": "#/definitions/folders"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             }
           }

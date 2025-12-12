@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
@@ -27,15 +28,7 @@ func (p CopilotPercentage) Gauge() string {
 	emptyBlocks := 5 - filledBlocks
 
 	// Use ▰ for filled blocks (remaining) and ▱ for empty blocks (used)
-	gauge := ""
-	for range filledBlocks {
-		gauge += "▰"
-	}
-	for range emptyBlocks {
-		gauge += "▱"
-	}
-
-	return gauge
+	return strings.Repeat("▰", filledBlocks) + strings.Repeat("▱", emptyBlocks)
 }
 
 // String returns the percentage as a string without % sign for template compatibility.

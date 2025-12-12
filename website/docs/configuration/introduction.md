@@ -44,8 +44,8 @@ A [segment][segment] renders a single context like showing the current folder, u
 when relevant. It can be styled any way you want, resulting in visualizing the prompt you are looking for.
 
 For your convenience, the existing [themes][themes] from [Oh My Posh][themes] have been added to version 3, so you
-can get started even without having to understand the theming. So, let's no longer waste time on theory, have a look at the
-installation guide to get started right away!
+can get started even without having to understand the theming. So, let's no longer waste time on theory, have a look at
+the installation guide to get started right away!
 
 [omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [block]: /docs/configuration/block

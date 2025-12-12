@@ -11,8 +11,8 @@ tags: [weekly, ohmyposh]
 hide_table_of_contents: false
 ---
 
-It finally happened, **I introduced a bug** that only appears in 1 use case and it can’t be resolved as it’s the result of
-using an old and new version of Oh My Posh at the same time. Who does that you might ask? Well, it can be because you’re
+It finally happened, **I introduced a bug** that only appears in 1 use case and it can't be resolved as it's the result
+of using an old and new version of Oh My Posh at the same time. Who does that you might ask? Well, it can be because you're
 using WSL on Windows, or VM’s on any system while sharing the same configuration cross installation.
 Not the main use-case, but also not exotic either.
 
@@ -98,8 +98,8 @@ Is migrated to:
 }
 ```
 
-Awesome, no user interaction at all and _everything works as designed_. However, you now want to do something using S1, and
-due to the logic, Oh My Posh sees that `2 != 1` and **the migration is triggered for version 1**. The migration as such
+Awesome, no user interaction at all and _everything works as designed_. However, you now want to do something using S1,
+and due to the logic, Oh My Posh sees that `2 != 1` and **the migration is triggered for version 1**. The migration as such
 is non-breaking, but Oh My Posh doesn't know the `template` property on `segment` in this case. The end result of our
 config above is rather annoying as we're now left with this:
 

@@ -59,7 +59,7 @@ Exports the config to an image file using customized output settings.`,
 			return
 		}
 
-		cfg := config.Load(configFlag, false)
+		cfg := config.Load(configFlag)
 
 		flags := &runtime.Flags{
 			ConfigPath:    cfg.Source,

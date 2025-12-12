@@ -71,12 +71,6 @@ func (cfg *Config) Export(format string) string {
 	return ""
 }
 
-func (cfg *Config) BackupAndMigrate() {
-	cfg.Backup()
-	cfg.Migrate()
-	cfg.Write(cfg.Format)
-}
-
 func (cfg *Config) Write(format string) {
 	content := cfg.Export(format)
 	if content == "" {

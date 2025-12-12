@@ -27,7 +27,7 @@ import (
 // custom no config error
 var ErrNoConfig = errors.New("no config file specified")
 
-func Load(configFile string, migrate bool) *Config {
+func Load(configFile string) *Config {
 	defer log.Trace(time.Now())
 
 	if configFile == "" {
@@ -43,11 +43,6 @@ func Load(configFile string, migrate bool) *Config {
 	cfg.migrateSegmentProperties()
 
 	cfg.toggleSegments()
-
-	// only migrate automatically when the switch isn't set
-	if !migrate && cfg.Version < Version {
-		cfg.BackupAndMigrate()
-	}
 
 	cfg.Source = configFile
 

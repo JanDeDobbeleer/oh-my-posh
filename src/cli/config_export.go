@@ -14,7 +14,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var output string
+var (
+	format string
+	output string
+)
 
 // exportCmd represents the export command
 var exportCmd = &cobra.Command{
@@ -51,7 +54,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 			return
 		}
 
-		cfg := config.Load(configFlag, false)
+		cfg := config.Load(configFlag)
 
 		validateExportFormat := func() error {
 			format = strings.ToLower(format)

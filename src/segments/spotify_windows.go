@@ -28,9 +28,9 @@ func (s *Spotify) parseNativeTitle(windowTitle string) bool {
 		return false
 	}
 
-	index := strings.Index(windowTitle, separator)
-	s.Artist = windowTitle[0:index]
-	s.Track = windowTitle[index+len(separator):]
+	before, after, _ := strings.Cut(windowTitle, separator)
+	s.Artist = before
+	s.Track = after
 	s.Status = playing
 	s.resolveIcon()
 	return true
@@ -45,9 +45,9 @@ func (s *Spotify) parseWebTitle(windowTitle string) bool {
 		return false
 	}
 
-	index := strings.Index(windowTitle, separator)
-	s.Track = windowTitle[0:index]
-	s.Artist = windowTitle[index+len(separator):]
+	before, after, _ := strings.Cut(windowTitle, separator)
+	s.Track = before
+	s.Artist = after
 	s.Status = playing
 	s.resolveIcon()
 	return true

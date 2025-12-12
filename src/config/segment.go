@@ -15,7 +15,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
-	toml "github.com/pelletier/go-toml/v2"
 	"go.yaml.in/yaml/v3"
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -36,9 +35,12 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 }
 
 type Segment struct {
-	writer                 SegmentWriter
-	env                    runtime.Environment
-	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
+	writer  SegmentWriter
+	env     runtime.Environment
+	Options options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
+	// Properties is deprecated, use Options instead. This field exists for TOML backward compatibility
+	// since go-toml/v2 doesn't support custom unmarshalers. It will be migrated to Options after loading.
+	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
 	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
 	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
@@ -126,21 +128,13 @@ func (segment *Segment) UnmarshalYAML(node *yaml.Node) error {
 	return modifiedNode.Decode((*segmentAlias)(segment))
 }
 
-func (segment *Segment) UnmarshalTOML(data []byte) error {
-	aux := &segmentAux{
-		segmentAlias: (*segmentAlias)(segment),
+// MigratePropertiesToOptions migrates the deprecated Properties field to Options.
+// This is needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
+func (segment *Segment) MigratePropertiesToOptions() {
+	if len(segment.Properties) > 0 && len(segment.Options) == 0 {
+		segment.Options = segment.Properties
+		segment.Properties = nil
 	}
-
-	if err := toml.Unmarshal(data, aux); err != nil {
-		return err
-	}
-
-	// Migrate 'properties' to 'options' if present
-	if len(aux.Properties) > 0 && len(segment.Options) == 0 {
-		segment.Options = aux.Properties
-	}
-
-	return nil
 }
 
 func (segment *Segment) Name() string {

@@ -38,8 +38,8 @@ func (segment *Segment) migrate(version int) {
 	}
 
 	// Version 2 migrations work on Options
-	// Cache settings, the default is now 24h so we have to respect this being disabled previously
-	if !segment.Options.Bool("cache_version", false) {
+	// Only migrate cache settings if cache_version was explicitly set
+	if segment.hasProperty("cache_version") && !segment.Options.Bool("cache_version", false) {
 		segment.Options[options.CacheDuration] = cache.NONE
 	}
 	delete(segment.Options, "cache_version")

@@ -79,7 +79,6 @@ type Config struct {
 	ShellIntegration        bool `json:"shell_integration,omitempty" toml:"shell_integration,omitempty" yaml:"shell_integration,omitempty"`
 	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty" yaml:"final_space,omitempty"`
 	UpgradeNotice           bool `json:"-" toml:"-" yaml:"-"`
-	updated                 bool
 	extended                bool
 	PatchPwshBleed          bool `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty" yaml:"patch_pwsh_bleed,omitempty"`
 	AutoUpgrade             bool `json:"-" toml:"-" yaml:"-"`

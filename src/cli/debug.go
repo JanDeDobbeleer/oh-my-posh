@@ -87,7 +87,7 @@ func createDebugCmd() *cobra.Command {
 
 func getDebugConfig(configpath string) *config.Config {
 	if len(configpath) != 0 {
-		return config.Load(configpath, false)
+		return config.Load(configpath)
 	}
 
 	reload, _ := cache.Get[bool](cache.Device, config.RELOAD)

@@ -227,6 +227,16 @@ func (cfg *Config) Hash() uint64 {
 	return cfg.hash
 }
 
+// migrateSegmentProperties migrates the deprecated Properties field to Options for all segments.
+// This is needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
+func (cfg *Config) migrateSegmentProperties() {
+	for _, block := range cfg.Blocks {
+		for _, segment := range block.Segments {
+			segment.MigratePropertiesToOptions()
+		}
+	}
+}
+
 // toggleSegments processes all segments in all blocks and adds segments
 // with Toggled == true to the toggle cache, effectively toggling them off.
 func (cfg *Config) toggleSegments() {

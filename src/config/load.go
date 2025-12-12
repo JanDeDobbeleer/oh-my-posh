@@ -38,6 +38,10 @@ func Load(configFile string, migrate bool) *Config {
 
 	cfg := parseConfigFile(configFile)
 
+	// Migrate segment properties to options for TOML configs
+	// (go-toml/v2 doesn't support custom unmarshalers)
+	cfg.migrateSegmentProperties()
+
 	cfg.toggleSegments()
 
 	// only migrate automatically when the switch isn't set

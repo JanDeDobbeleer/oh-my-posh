@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
+	toml "github.com/pelletier/go-toml/v2"
 	"github.com/stretchr/testify/assert"
 	"go.yaml.in/yaml/v3"
 )
@@ -102,6 +103,63 @@ options:
 	segment := &Segment{}
 	err := yaml.Unmarshal([]byte(segmentYAML), segment)
 	assert.NoError(t, err)
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
+}
+
+func TestParseTOMLConfigWithProperties(t *testing.T) {
+	segmentTOML := `
+type = "path"
+style = "powerline"
+[properties]
+style = "folder"
+`
+	segment := &Segment{}
+	err := toml.Unmarshal([]byte(segmentTOML), segment)
+	assert.NoError(t, err)
+
+	// Migrate properties to options (normally done by Config.migrateSegmentProperties)
+	segment.MigratePropertiesToOptions()
+
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
+}
+
+func TestParseTOMLConfigWithOptions(t *testing.T) {
+	segmentTOML := `
+type = "path"
+style = "powerline"
+[options]
+style = "folder"
+`
+	segment := &Segment{}
+	err := toml.Unmarshal([]byte(segmentTOML), segment)
+	assert.NoError(t, err)
+
+	// Migrate properties to options (should be a no-op since options is set)
+	segment.MigratePropertiesToOptions()
+
+	assert.NotNil(t, segment.Options)
+	assert.Equal(t, "folder", segment.Options.String("style", ""))
+}
+
+func TestParseTOMLConfigWithBothOptionsAndProperties(t *testing.T) {
+	// If both are specified, options takes precedence
+	segmentTOML := `
+type = "path"
+style = "powerline"
+[options]
+style = "folder"
+[properties]
+style = "letter"
+`
+	segment := &Segment{}
+	err := toml.Unmarshal([]byte(segmentTOML), segment)
+	assert.NoError(t, err)
+
+	// Migrate should not overwrite options
+	segment.MigratePropertiesToOptions()
+
 	assert.NotNil(t, segment.Options)
 	assert.Equal(t, "folder", segment.Options.String("style", ""))
 }

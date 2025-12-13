@@ -93,7 +93,8 @@ func TestHTTPSegmentCache(t *testing.T) {
 	}
 	
 	var result map[string]any
-	_ = json.Unmarshal([]byte(response), &result)
+	err := json.Unmarshal([]byte(response), &result)
+	assert.NoError(t, err)
 	original.Body = result
 	
 	// Marshal to JSON (like setCache does)

@@ -10,7 +10,8 @@ import (
 
 // Configuration constants
 const (
-	maxStringSize = 50 * 1024 // 50KB maximum string size
+	minStringSize = 50 * 1024        // 50KB minimum string size
+	maxStringSize = 10 * 1024 * 1024 // 10MB maximum string size
 )
 
 // Windows API constants
@@ -43,21 +44,35 @@ type PersistentSharedString struct {
 	fileHandle uintptr
 	mapHandle  uintptr
 	data       uintptr
+	size       int // Current allocated size
 }
 
 func createOrOpenPersistentString(filePath string) (*PersistentSharedString, error) {
+	return createOrOpenPersistentStringWithSize(filePath, minStringSize)
+}
+
+func createOrOpenPersistentStringWithSize(filePath string, requiredSize int) (*PersistentSharedString, error) {
+	// Ensure size is within bounds
+	if requiredSize < minStringSize {
+		requiredSize = minStringSize
+	}
+	if requiredSize > maxStringSize {
+		return nil, fmt.Errorf("required size %d exceeds maximum %d", requiredSize, maxStringSize)
+	}
+
 	// First, try to open existing file
-	pss, err := openExistingFile(filePath)
+	pss, err := openExistingFileWithSize(filePath, requiredSize)
 	if err == nil {
 		return pss, nil
 	}
 
-	// File doesn't exist, create new one
-	return createNewFile(filePath)
+	// File doesn't exist or too small, create new one with required size
+	return createNewFileWithSize(filePath, requiredSize)
 }
 
-// openExistingFile attempts to open an existing memory-mapped file
-func openExistingFile(filePath string) (*PersistentSharedString, error) {
+// openExistingFileWithSize attempts to open an existing memory-mapped file
+// openExistingFileWithSize attempts to open an existing memory-mapped file
+func openExistingFileWithSize(filePath string, requiredSize int) (*PersistentSharedString, error) {
 	filePathPtr, err := syscall.UTF16PtrFromString(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert file path to UTF16: %v", err)
@@ -78,19 +93,26 @@ func openExistingFile(filePath string) (*PersistentSharedString, error) {
 		return nil, fmt.Errorf("file does not exist")
 	}
 
-	// Get file size to validate it's large enough
+	// Get file size to check if it's large enough
 	var fileSize int64
 	ret, _, _ := getFileSizeEx.Call(fileHandle, uintptr(unsafe.Pointer(&fileSize)))
-	if ret == 0 || uintptr(fileSize) < maxStringSize+5 { // 4 bytes length + 1 null terminator
+	if ret == 0 {
 		_, _, _ = closeHandle.Call(fileHandle)
-		return nil, fmt.Errorf("existing file is too small")
+		return nil, fmt.Errorf("failed to get file size")
 	}
 
-	return createMappingFromFile(filePath, fileHandle)
+	actualSize := int(fileSize) - 5 // Subtract header (4 bytes length + 1 null terminator)
+	if actualSize < requiredSize {
+		// Existing file is too small, close and recreate
+		_, _, _ = closeHandle.Call(fileHandle)
+		return nil, fmt.Errorf("existing file is too small (%d < %d)", actualSize, requiredSize)
+	}
+
+	return createMappingFromFileWithSize(filePath, fileHandle, actualSize)
 }
 
-// createNewFile creates a new memory-mapped file
-func createNewFile(filePath string) (*PersistentSharedString, error) {
+// createNewFileWithSize creates a new memory-mapped file with the specified size
+func createNewFileWithSize(filePath string, size int) (*PersistentSharedString, error) {
 	filePathPtr, err := syscall.UTF16PtrFromString(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert file path to UTF16: %v", err)
@@ -111,12 +133,12 @@ func createNewFile(filePath string) (*PersistentSharedString, error) {
 		return nil, fmt.Errorf("CreateFileW failed: %v", err)
 	}
 
-	// Set file size (4 bytes for length + MAX_STRING_SIZE for string + 1 for null terminator)
-	totalSize := maxStringSize + 5
+	// Set file size (4 bytes for length + size for string + 1 for null terminator)
+	totalSize := size + 5
 	_, _, _ = setFilePointer.Call(fileHandle, uintptr(totalSize), 0, 0) // FILE_BEGIN = 0
 	_, _, _ = setEndOfFile.Call(fileHandle)
 
-	pss, mapErr := createMappingFromFile(filePath, fileHandle)
+	pss, mapErr := createMappingFromFileWithSize(filePath, fileHandle, size)
 	if mapErr != nil {
 		_, _, _ = closeHandle.Call(fileHandle)
 		return nil, mapErr
@@ -130,9 +152,9 @@ func createNewFile(filePath string) (*PersistentSharedString, error) {
 	return pss, nil
 }
 
-// createMappingFromFile creates a memory mapping from an open file handle
-func createMappingFromFile(filePath string, fileHandle uintptr) (*PersistentSharedString, error) {
-	totalSize := maxStringSize + 5 // 4 bytes length + MAX_STRING_SIZE + 1 null terminator
+// createMappingFromFileWithSize creates a memory mapping from an open file handle with specified size
+func createMappingFromFileWithSize(filePath string, fileHandle uintptr, size int) (*PersistentSharedString, error) {
+	totalSize := size + 5 // 4 bytes length + size + 1 null terminator
 
 	// Create file mapping
 	mapHandle, _, err := createFileMappingW.Call(
@@ -167,6 +189,7 @@ func createMappingFromFile(filePath string, fileHandle uintptr) (*PersistentShar
 		fileHandle: fileHandle,
 		mapHandle:  mapHandle,
 		data:       data,
+		size:       size,
 	}, nil
 }
 
@@ -174,8 +197,8 @@ func createMappingFromFile(filePath string, fileHandle uintptr) (*PersistentShar
 func (pss *PersistentSharedString) SetString(value string) error {
 	strBytes := []byte(value)
 
-	if uintptr(len(strBytes)) > maxStringSize {
-		return fmt.Errorf("string too large for allocated space (%d > %d)", len(strBytes), maxStringSize)
+	if len(strBytes) > pss.size {
+		return fmt.Errorf("string too large for allocated space (%d > %d)", len(strBytes), pss.size)
 	}
 
 	basePtr := unsafe.Pointer(pss.data)
@@ -211,8 +234,8 @@ func (pss *PersistentSharedString) bytes() []byte {
 		return []byte{0}
 	}
 
-	if length > uint32(maxStringSize) {
-		log.Error(fmt.Errorf("corrupted data: length %d exceeds max size %d", length, maxStringSize))
+	if length > uint32(pss.size) {
+		log.Error(fmt.Errorf("corrupted data: length %d exceeds allocated size %d", length, pss.size))
 		return []byte{0}
 	}
 

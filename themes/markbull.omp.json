@@ -22,7 +22,7 @@
           "background": "#C678DD",
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "windows": "\uf17a"
           },
           "style": "powerline",
@@ -33,7 +33,7 @@
           "background": "#C678DD",
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -51,7 +51,7 @@
           ],
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "azure_devops_icon": "\uebd8 ",
             "bitbucket_icon": "\uf171 ",
             "branch_gone_icon": "\uebcc ",
@@ -74,7 +74,7 @@
           "background": "#33a3dc",
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -114,5 +114,5 @@
   ],
   "console_title_template": "{{if .Root}}\u26a1 {{end}}{{.Folder}}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

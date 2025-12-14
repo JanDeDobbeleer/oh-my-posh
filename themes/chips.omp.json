@@ -12,7 +12,7 @@
             "{{ if not (empty .Env.OVERRIDE_FOLDER_BADGE_FG) }}{{ .Env.OVERRIDE_FOLDER_BADGE_FG }}{{ else }}p:c-badge-text{{ end }}"
           ],
           "leading_diamond": "\uE0B6",
-          "properties": {
+          "options": {
             "style": "agnoster_short",
             "folder_separator_icon": "/",
             "hide_root_location": true,
@@ -38,7 +38,7 @@
           "leading_diamond": " \uE0B6",
           "style": "diamond",
           "template": "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE0B1 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uf15c {{ end }}\uf15c ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \ueb4b {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
-          "properties": {
+          "options": {
             "branch_icon": "\uE0A0 ",
             "fetch_status": true
           },
@@ -60,7 +60,7 @@
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
-          "properties": {
+          "options": {
             "style": "austin",
             "threshold": 1
           },
@@ -79,7 +79,7 @@
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
-          "properties": {
+          "options": {
             "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
             "http_timeout": 2000
           },
@@ -102,7 +102,7 @@
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
-          "properties": {
+          "options": {
             "time_format": "15:04 (01/02)"
           },
           "style": "diamond",
@@ -214,7 +214,7 @@
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
-          "properties": {
+          "options": {
             "display_mode": "context"
           },
           "style": "diamond",
@@ -293,5 +293,5 @@
     "foreground": "p:c-secondary-ellipsis",
     "template": " ... "
   },
-  "version": 3
+  "version": 4
 }

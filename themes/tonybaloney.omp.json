@@ -8,7 +8,7 @@
           "background": "#18354c",
           "foreground": "#ffc107",
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "diamond",
@@ -20,7 +20,7 @@
           "background": "#18354c",
           "foreground": "#ffc107",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_upstream_icon": true
           },
           "style": "powerline",
@@ -48,5 +48,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#00C6F7",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "#F62F2E",
-          "properties": {
+          "options": {
             "fetch_status": true
           },
           "style": "plain",
@@ -30,7 +30,7 @@
         },
         {
           "foreground": "#98C379",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "plain",
@@ -53,7 +53,7 @@
         {
           "foreground": "#ffffff",
           "leading_diamond": "\u250b",
-          "properties": {
+          "options": {
             "style": "roundrock",
             "threshold": 0
           },
@@ -79,5 +79,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

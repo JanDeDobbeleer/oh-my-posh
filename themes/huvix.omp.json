@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#56B6C2",
-          "properties": {
+          "options": {
             "style": "agnoster_short"
           },
           "style": "plain",
@@ -33,7 +33,7 @@
         },
         {
           "foreground": "#56B6C2",
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "plain",
@@ -42,7 +42,7 @@
         },
         {
           "foreground": "#FFAB91",
-          "properties": {
+          "options": {
             "always_enabled": false,
             "style": "austin",
             "threshold": 100
@@ -65,7 +65,7 @@
             "{{if eq \"Discharging\" .State.String}}#E36464{{end}}",
             "{{if eq \"Full\" .State.String}}#66BB6A{{end}}"
           ],
-          "properties": {
+          "options": {
             "charged_icon": "\ue22f ",
             "charging_icon": "\ue234 ",
             "discharging_icon": "\ue231 "
@@ -79,5 +79,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

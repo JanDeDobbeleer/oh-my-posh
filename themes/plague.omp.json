@@ -25,7 +25,7 @@
           "background": "#ff0000",
           "foreground": "#000000",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "powerline",
@@ -36,7 +36,7 @@
           "background": "#fffb38",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_upstream_icon": true
           },
           "style": "powerline",
@@ -73,7 +73,7 @@
             "{{ if gt .Code 0 }}#f1184c{{ end }}"
           ],
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -85,5 +85,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

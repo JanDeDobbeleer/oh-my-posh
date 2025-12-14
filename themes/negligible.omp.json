@@ -12,7 +12,7 @@
         },
         {
           "foreground": "cyan",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "#F1502F",
-          "properties": {
+          "options": {
             "fetch_status": true
           },
           "style": "plain",
@@ -54,7 +54,7 @@
         },
         {
           "foreground": "#4584b6",
-          "properties": {
+          "options": {
             "display_mode": "context",
             "fetch_virtual_env": true
           },
@@ -69,7 +69,7 @@
             "{{if eq \"Full\" .State.String}}#ff0000{{end}}"
           ],
           "invert_powerline": true,
-          "properties": {
+          "options": {
             "charged_icon": "\uf00d ",
             "charging_icon": "\ue234 "
           },
@@ -95,7 +95,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}red{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -106,5 +106,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

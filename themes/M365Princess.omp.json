@@ -56,7 +56,7 @@
           "background": "p:blush",
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "powerline",
@@ -67,7 +67,7 @@
           "background": "p:salmon",
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_icon": "",
             "fetch_status": false,
             "fetch_upstream_icon": true
@@ -87,7 +87,7 @@
         {
           "background": "p:teal_blue",
           "foreground": "p:white",
-          "properties": {
+          "options": {
             "time_format": "15:04"
           },
           "style": "diamond",
@@ -100,5 +100,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

@@ -17,7 +17,7 @@
         },
         {
           "foreground": "#7B68EE",
-          "properties": {
+          "options": {
             "style": "agnoster_short"
           },
           "style": "plain",
@@ -26,7 +26,7 @@
         },
         {
           "foreground": "#48D1CC",
-          "properties": {
+          "options": {
             "branch_icon": "",
             "fetch_upstream_icon": false
           },
@@ -39,7 +39,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#E84855{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -50,5 +50,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

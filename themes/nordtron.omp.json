@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#b48ead",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -53,7 +53,7 @@
       "segments": [
         {
           "foreground": "#88c0d0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -78,5 +78,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

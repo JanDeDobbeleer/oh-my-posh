@@ -9,7 +9,7 @@
           "foreground": "#262b44",
           "leading_diamond": "\ue0b6",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "diamond",
@@ -27,7 +27,7 @@
           ],
           "foreground": "#262b44",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -42,7 +42,7 @@
           ],
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -55,5 +55,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

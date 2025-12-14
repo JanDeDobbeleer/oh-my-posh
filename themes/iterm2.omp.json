@@ -8,7 +8,7 @@
           "background": "#003543",
           "foreground": "#fff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "windows": "\uf179"
           },
           "style": "powerline",
@@ -27,7 +27,7 @@
           "background": "#0087D8",
           "foreground": "#003544",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_separator_icon": "/",
             "style": "full"
           },
@@ -45,7 +45,7 @@
           ],
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true
           },
           "style": "powerline",
@@ -59,7 +59,7 @@
           ],
           "foreground": "#242424",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -91,7 +91,7 @@
           "foreground": "#003544",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "properties": {
+          "options": {
             "display_mode": "context",
             "fetch_virtual_env": true
           },
@@ -138,5 +138,5 @@
     "foreground": "#FFD700",
     "template": "{{if .Root}}\u26a1 {{end}}🚀 "
   },
-  "version": 3
+  "version": 4
 }

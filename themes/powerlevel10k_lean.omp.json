@@ -5,7 +5,7 @@
       "segments": [
         {
           "foreground": "#00C5C7",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -20,7 +20,7 @@
       "segments": [
         {
           "foreground": "#77E4F7",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -43,5 +43,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

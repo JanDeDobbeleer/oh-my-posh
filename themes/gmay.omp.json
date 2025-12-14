@@ -23,7 +23,7 @@
           "background": "#ff479c",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -34,7 +34,7 @@
           "background": "#4caf50",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "time_format": "2006-01-02 15:04:05"
           },
           "style": "powerline",
@@ -45,7 +45,7 @@
           "background": "#fffb38",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_upstream_icon": true
           },
           "style": "powerline",
@@ -75,7 +75,7 @@
           ],
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -101,5 +101,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

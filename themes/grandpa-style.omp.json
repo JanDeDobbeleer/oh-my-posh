@@ -21,7 +21,7 @@
         {
           "background": "#5a3d29",
           "foreground": "#43CCEA",
-          "properties": {
+          "options": {
             "folder_icon": "...",
             "folder_separator_icon": "<transparent> \ue0bd </>",
             "home_icon": "\ueb06",
@@ -41,7 +41,7 @@
           ],
           "foreground": "#000000",
           "leading_diamond": "<parentBackground,background>\ue0b0</>",
-          "properties": {
+          "options": {
             "fetch_status": true
           },
           "style": "diamond",
@@ -52,7 +52,7 @@
           "background": "#2ba1bb",
           "foreground": "#5a3d29",
           "leading_diamond": "<parentBackground,background>\ue0b0</>",
-          "properties": {
+          "options": {
             "style": "dallas",
             "threshold": 0
           },
@@ -64,7 +64,7 @@
           "background": "#910000",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -88,7 +88,7 @@
         {
           "background": "#5a3d29",
           "foreground": "#43CCEA",
-          "properties": {
+          "options": {
             "time_format": "3:04:05 PM"
           },
           "style": "plain",
@@ -107,7 +107,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#ff0000{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -119,5 +119,5 @@
     }
   ],
   "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.Folder | replace \"~\" \"🏚\" }} @ {{.HostName}}",
-  "version": 3
+  "version": 4
 }

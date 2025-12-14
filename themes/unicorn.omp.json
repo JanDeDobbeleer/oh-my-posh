@@ -8,7 +8,7 @@
           "background": "#003543",
           "foreground": "#fff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "windows": "\ue62a "
           },
           "style": "powerline",
@@ -19,7 +19,7 @@
           "background": "#0087D8",
           "foreground": "#003544",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_separator_icon": "/",
             "style": "full"
           },
@@ -37,7 +37,7 @@
           ],
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -56,7 +56,7 @@
         {
           "background": "#83769c",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -89,5 +89,5 @@
   ],
   "console_title_template": "{{.UserName}}@{{.HostName}} in {{ .PWD }}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

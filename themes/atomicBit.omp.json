@@ -29,7 +29,7 @@
       "segments": [
         {
           "foreground": "#3C873A",
-          "properties": {
+          "options": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
             "yarn_icon": " <#348cba>\ue6a7</>"
@@ -124,7 +124,7 @@
         },
         {
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "linux": "<#ffffff>\ue27f</>",
             "macos": "<#ffffff>\ue27f</>",
             "windows": "<#ffffff>\ue27f</>"
@@ -140,7 +140,7 @@
             "{{if eq \"Discharging\" .State.String}}#FFFB38{{end}}",
             "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
           ],
-          "properties": {
+          "options": {
             "charged_icon": "\uf240 ",
             "charging_icon": "\uf1e6 ",
             "discharging_icon": "\ue234 "
@@ -151,7 +151,7 @@
         },
         {
           "foreground": "#55ffff",
-          "properties": {
+          "options": {
             "time_format": "_2,15:04"
           },
           "style": "plain",
@@ -172,7 +172,7 @@
         },
         {
           "foreground": "#e0f8ff",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -184,7 +184,7 @@
         {
           "foreground": "#ecf7fa",
           "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -195,5 +195,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

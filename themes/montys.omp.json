@@ -16,7 +16,7 @@
           "background": "#DA627D",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_icon": "\uf115",
             "folder_separator_icon": "\\",
             "home_icon": "\ueb06",
@@ -30,7 +30,7 @@
           "background": "#FCA17D",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_icon": " <#ffffff>\ue0a0 </>",
             "fetch_status": false,
             "fetch_upstream_icon": true
@@ -51,7 +51,7 @@
           "background": "#83769c",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -62,7 +62,7 @@
           "background": "#33658A",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "time_format": "3:04 PM"
           },
           "style": "powerline",
@@ -76,7 +76,7 @@
           ],
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -108,5 +108,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

@@ -20,7 +20,7 @@
           "background": "#91ddff",
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -56,5 +56,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

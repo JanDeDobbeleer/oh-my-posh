@@ -12,7 +12,7 @@
         },
         {
           "foreground": "cyan",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "#ff94df",
-          "properties": {
+          "options": {
             "branch_icon": " <#ff94df><b>\ue0a0 </b></>"
           },
           "style": "plain",
@@ -46,5 +46,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

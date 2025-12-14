@@ -25,7 +25,7 @@
         {
           "background": "#007ACC",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "folder_icon": "\uf115",
             "folder_separator_icon": " \ue0b1 ",
             "style": "full"
@@ -51,5 +51,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

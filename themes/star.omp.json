@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#55B9C4",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "#C678DD",
-          "properties": {
+          "options": {
             "fetch_status": true
           },
           "style": "plain",
@@ -30,7 +30,7 @@
         },
         {
           "foreground": "#98C379",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "plain",
@@ -60,5 +60,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

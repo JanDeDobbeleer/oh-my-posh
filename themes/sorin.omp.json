@@ -24,7 +24,7 @@
         },
         {
           "foreground": "#0973C0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -53,5 +53,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

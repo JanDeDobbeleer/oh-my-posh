@@ -63,7 +63,7 @@ function _omp_precmd() {
   _omp_no_status=true
   _omp_tooltip_command=''
 
-  if [ $_omp_start_time ]; then
+  if [ -n "${_omp_start_time+x}" ]; then
     local omp_now=$($_omp_executable get millis)
     _omp_execution_time=$(($omp_now - $_omp_start_time))
     _omp_no_status=false

@@ -75,10 +75,7 @@ func (rw *persistentStringRWCloser) Close() error {
 		return fmt.Errorf("failed to recreate cache file with size %d: %v", newSize, err)
 	}
 
-	// Update the pointer (though it won't be used after close)
-	rw.pss = newPss
-
-	// Write the data
+	// Write the data to the new file
 	return newPss.SetString(data)
 }
 

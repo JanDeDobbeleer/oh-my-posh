@@ -202,33 +202,6 @@ func createMappingFromFileWithSize(filePath string, fileHandle uintptr, size int
 func createMappingFromFile(filePath string, fileHandle uintptr) (*PersistentSharedString, error) {
 	return createMappingFromFileWithSize(filePath, fileHandle, minStringSize)
 }
-	)
-
-	if mapHandle == 0 {
-		return nil, fmt.Errorf("CreateFileMappingW failed: %v", err)
-	}
-
-	// Map view of file
-	data, _, err := mapViewOfFile.Call(
-		mapHandle,          // hFileMappingObject
-		fileMapAllAccess,   // dwDesiredAccess
-		0,                  // dwFileOffsetHigh
-		0,                  // dwFileOffsetLow
-		uintptr(totalSize), // dwNumberOfBytesToMap
-	)
-
-	if data == 0 {
-		_, _, _ = closeHandle.Call(mapHandle)
-		return nil, fmt.Errorf("MapViewOfFile failed: %v", err)
-	}
-
-	return &PersistentSharedString{
-		filePath:   filePath,
-		fileHandle: fileHandle,
-		mapHandle:  mapHandle,
-		data:       data,
-	}, nil
-}
 
 // SetString stores a string in the memory-mapped file (automatically persisted)
 func (pss *PersistentSharedString) SetString(value string) error {

@@ -15,7 +15,7 @@
         {
           "background": "#3e9022",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -25,7 +25,7 @@
         {
           "background": "#de076f",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "branch_icon": "",
             "fetch_upstream_icon": true
           },
@@ -36,7 +36,7 @@
         {
           "background": "#491545",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "paused_icon": "\uf04c ",
             "playing_icon": "\ue602 ",
             "stopped_icon": "\uf04d ",
@@ -52,7 +52,7 @@
             "{{ if gt .Code 0 }}#f1184c{{ end }}"
           ],
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -65,5 +65,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

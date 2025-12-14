@@ -15,7 +15,7 @@
           "background": "#458588",
           "foreground": "#282828",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -33,7 +33,7 @@
           "foreground": "#282828",
           "leading_diamond": "\ue0b6",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_template": "{{ trunc 25 .Branch }}",
             "fetch_status": true,
             "branch_icon": "\uE0A0 ",
@@ -48,7 +48,7 @@
           "background": "#8ED1F7",
           "foreground": "#111111",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "powerline",
@@ -59,7 +59,7 @@
           "background": "#4063D8",
           "foreground": "#111111",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "powerline",
@@ -70,7 +70,7 @@
           "background": "#FFDE57",
           "foreground": "#111111",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_virtual_env": false
           },
@@ -82,7 +82,7 @@
           "background": "#AE1401",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_version": true
           },
@@ -94,7 +94,7 @@
           "background": "#FEAC19",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_version": false
           },
@@ -109,7 +109,7 @@
           ],
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_default": false
           },
           "style": "powerline",
@@ -130,5 +130,5 @@
   ],
   "console_title_template": "{{ .Folder }}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

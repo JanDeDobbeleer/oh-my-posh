@@ -11,7 +11,7 @@
           "style": "powerline",
           "foreground": "#a9ffb4",
           "template": " {{ .FormattedMs }}s <#ffffff>\ue601</>",
-          "properties": {
+          "options": {
             "threshold": 0,
             "style": "dallas"
           }
@@ -40,7 +40,7 @@
           "type": "path",
           "style": "powerline",
           "foreground": "#ffafd2",
-          "properties": {
+          "options": {
             "style": "agnoster_full",
             "home_icon": "home",
             "folder_icon": "\uf07b",
@@ -52,7 +52,7 @@
           "type": "git",
           "style": "powerline",
           "foreground": "#f14e32",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 "
           },
           "template": "({{ .HEAD }})"
@@ -68,7 +68,7 @@
           "type": "status",
           "style": "diamond",
           "foreground": "#00c7fc",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "template": "<#00c7fc>\u276f</>_: "
@@ -82,5 +82,5 @@
     "foreground": "#FEF5ED",
     "template": "{{ .Shell }}"
   },
-  "version": 3
+  "version": 4
 }

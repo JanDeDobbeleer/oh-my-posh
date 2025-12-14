@@ -109,18 +109,18 @@ import Config from '@site/src/components/Config.js';
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
-  "properties": {
-{{#each properties}}
+  "options": {
+{{#each option}}
     "{{this.key}}": {{ json this.default }},
 {{/each}}
   }
 }}/>
 
-## Properties
+## Options
 
 | Name | Type | Description | Default |
 | ---- | ---- | ----------- | ------- |
-{{#each properties}}| `{{this.key}}` | `{{this.type}}` | {{this.description}} | `{{ stringify this.default }}` |
+{{#each option}}| `{{this.key}}` | `{{this.type}}` | {{this.description}} | `{{ stringify this.default }}` |
 {{/each}}
 ````
 

@@ -27,7 +27,7 @@ function Auth() {
   {
     "type": "${params.get('segment')}",
     ...
-    "properties": {
+    "options": {
       // highlight-start
       "access_token": "${params.get('access_token')}",
       "refresh_token": "${params.get('refresh_token')}",

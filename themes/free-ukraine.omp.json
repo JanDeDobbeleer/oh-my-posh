@@ -33,7 +33,7 @@
         {
           "background": "#0057b7",
           "foreground": "#FBD951",
-          "properties": {
+          "options": {
             "home_icon": "\ue617",
             "style": "mixed"
           },
@@ -46,7 +46,7 @@
           "background": "#0057b7",
           "foreground": "#ffd700",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -64,7 +64,7 @@
           ],
           "foreground": "#0057b7",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": false,
             "fetch_upstream_icon": false
           },
@@ -85,7 +85,7 @@
             "{{ if gt .Code 0 }}#a30000{{ end }}"
           ],
           "leading_diamond": "<transparent,#ffd700>\ue0b0</>",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -112,7 +112,7 @@
           "foreground": "#FBD951",
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "charged_icon": "\ueb2d ",
             "charging_icon": "\uf492 ",
             "discharging_icon": "\uf243 "
@@ -126,7 +126,7 @@
           "foreground": "#FBD951",
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -138,7 +138,7 @@
           "foreground": "#FBD951",
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "time_format": "_2,15:04"
           },
           "style": "diamond",
@@ -179,7 +179,7 @@
           "background": "#FBD951",
           "foreground": "#0057b7",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_host": false
           },
           "style": "powerline",
@@ -222,5 +222,5 @@
   ],
   "console_title_template": "{{if .Root}}Admin: {{end}} {{.Folder}}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

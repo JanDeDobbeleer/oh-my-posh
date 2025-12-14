@@ -14,7 +14,7 @@
         },
         {
           "foreground": "blue",
-          "properties": {
+          "options": {
             "folder_icon": "\ue5ff",
             "folder_separator_icon": "/",
             "home_icon": "\ueb06",
@@ -32,7 +32,7 @@
             "{{ if gt .Ahead 0 }}red{{ end }}",
             "{{ if gt .Behind 0 }}green{{ end }}"
           ],
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true,
             "github_icon": "\uf408 "
@@ -56,7 +56,7 @@
       "segments": [
         {
           "foreground": "yellow",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -74,5 +74,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

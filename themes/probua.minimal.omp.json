@@ -13,14 +13,14 @@
         {
           "foreground": "#42a9ff",
           "style": "plain",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "template": "{{ .Path }} ",
           "type": "path"
         },
         {
-          "properties": {
+          "options": {
             "branch_icon": "",
             "fetch_status": true
           },
@@ -40,7 +40,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#42a9ff{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -51,5 +51,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

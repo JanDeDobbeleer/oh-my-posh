@@ -8,7 +8,7 @@
           "background": "#2f2f2f",
           "foreground": "#26C6DA",
           "leading_diamond": "\ue0c7\u2593",
-          "properties": {
+          "options": {
             "alpine": "\uf300",
             "arch": "\uf303",
             "centos": "\uf304",
@@ -46,7 +46,7 @@
         {
           "background": "#2f2f2f",
           "foreground": "#fafafa",
-          "properties": {
+          "options": {
             "folder_icon": "<#B5B2C2>\ue5fe </>",
             "folder_separator_icon": "<#B5B2C2>\ue0bf </>",
             "home_icon": "\uf015",
@@ -64,7 +64,7 @@
             "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
             "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
           ],
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -116,7 +116,7 @@
         {
           "background": "#2f2f2f",
           "foreground": "#fafafa",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "diamond",
@@ -151,7 +151,7 @@
         },
         {
           "foreground": "#FFCE5C",
-          "properties": {
+          "options": {
             "style": "roundrock",
             "threshold": 500
           },
@@ -164,7 +164,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#E84855{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -182,5 +182,5 @@
     "foreground": "#7a7a7a",
     "template": " ~#@\u276f "
   },
-  "version": 3
+  "version": 4
 }

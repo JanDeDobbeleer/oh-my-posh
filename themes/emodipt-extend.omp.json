@@ -7,7 +7,7 @@
         "segments": [
           {
             "foreground": "#E5C07B",
-            "properties": {
+            "options": {
               "time_format": "15:04"
             },
             "style": "plain",
@@ -18,7 +18,7 @@
             "type": "shell",
             "style": "plain",
             "foreground": "#E06C75",
-            "properties": {
+            "options": {
               "mapped_shell_names": {
                 "pwsh": "Shell",
                 "powershell": "Shell",
@@ -36,7 +36,7 @@
               "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
               "{{ if gt .Behind 0 }}#B388FF{{ end }}"
             ],
-            "properties": {
+            "options": {
               "branch_template": "{{ trunc 25 .Branch }}",
               "fetch_status": true,
               "fetch_upstream_icon": true
@@ -65,7 +65,7 @@
             "foreground_templates": [
               "{{ if gt .Code 0 }}#E06C75{{ end }}"
             ],
-            "properties": {
+            "options": {
               "style": "roundrock",
               "always_enabled": true
             },
@@ -82,7 +82,7 @@
         "segments": [
           {
             "foreground": "#61AFEF",
-            "properties": {
+            "options": {
               "style": "full"
             },
             "style": "plain",
@@ -113,5 +113,5 @@
       }
     ],
     "final_space": true,
-    "version": 3
+    "version": 4
   }

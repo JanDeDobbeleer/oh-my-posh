@@ -25,7 +25,7 @@
         {
           "background": "#007ACC",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "folder_icon": "\u2026",
             "folder_separator_icon": " \ue0b1 ",
             "style": "agnoster_short",
@@ -38,7 +38,7 @@
         {
           "background": "#007ACC",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "cherry_pick_icon": "\u2713 ",
             "commit_icon": "\u25b7 ",
             "fetch_status": true,
@@ -61,5 +61,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

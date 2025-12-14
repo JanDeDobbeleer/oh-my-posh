@@ -13,7 +13,7 @@
         },
         {
           "foreground": "#ffaed8",
-          "properties": {
+          "options": {
             "folder_separator_icon": " | ",
             "home_icon": "\uf46d",
             "style": "letter"
@@ -24,7 +24,7 @@
         },
         {
           "foreground": "#62beff",
-          "properties": {
+          "options": {
             "branch_icon": "\uf418",
             "branch_identical_icon": "\u2261",
             "fetch_status": true
@@ -35,7 +35,7 @@
         },
         {
           "foreground": "#98C379",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "plain",
@@ -56,7 +56,7 @@
         },
         {
           "foreground": "#9966ff",
-          "properties": {
+          "options": {
             "style": "austin",
             "threshold": 0
           },
@@ -85,7 +85,7 @@
       "segments": [
         {
           "foreground": "#f5f5a6",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -96,5 +96,5 @@
       "type": "rprompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

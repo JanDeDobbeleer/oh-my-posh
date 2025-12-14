@@ -8,7 +8,7 @@
           "background": "#21c7a8",
           "foreground": "#011627",
           "leading_diamond": "\u256d\u2500\ue0b6",
-          "properties": {
+          "options": {
             "windows": "\ue62a"
           },
           "style": "diamond",
@@ -29,7 +29,7 @@
           "foreground": "#011627",
           "powerline_symbol": "\ue0b0",
           "leading_powerline_symbol": "\ue0d7",
-          "properties": {
+          "options": {
             "folder_icon": "\uf07c ",
             "folder_separator_icon": "<#011627>\ue0b1</> ",
             "home_icon": " \ueb06 ",
@@ -49,7 +49,7 @@
           ],
           "foreground": "#011627",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
             "fetch_upstream_icon": true,
@@ -67,7 +67,7 @@
           "background": "#575656",
           "foreground": "#d6deeb",
           "leading_diamond": "\ue0d7",
-          "properties": {
+          "options": {
             "style": "roundrock",
             "threshold": 0
           },
@@ -285,7 +285,7 @@
           "background": "#303030",
           "foreground": "#3C873A",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "fetch_package_manager": true,
             "npm_icon": "<#cc3a3a>\ue71e</> ",
             "yarn_icon": "<#348cba>\ue6a7</> "
@@ -371,7 +371,7 @@
           "background": "#234d70",
           "foreground": "#d6deeb",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "diamond",
@@ -396,7 +396,7 @@
           "background": "#1DB954",
           "foreground": "#011627",
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "playing_icon": "\uf1bc "
           },
           "style": "diamond",
@@ -407,7 +407,7 @@
         {
           "foreground": "#22da6e",
           "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -425,5 +425,5 @@
     "foreground": "#d6deeb",
     "template": "\ue285 "
   },
-  "version": 3
+  "version": 4
 }

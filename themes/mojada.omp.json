@@ -9,7 +9,7 @@
           "background": "#fbfbfb",
           "foreground": "#0077c2",
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "arch": "\uf303",
             "debian": "\uf306",
             "fedora": "\uf30a",
@@ -28,7 +28,7 @@
           "background": "#fbfbfb",
           "foreground": "#0077c2",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_host": true
           },
           "style": "powerline",
@@ -47,7 +47,7 @@
           "background": "#0077c2",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_separator_icon": "/",
             "home_icon": "~",
             "max_depth": 2,
@@ -67,7 +67,7 @@
           ],
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -88,7 +88,7 @@
       "segments": [
         {
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -97,7 +97,7 @@
         },
         {
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -114,7 +114,7 @@
           "foreground": "#ffffff",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "properties": {
+          "options": {
             "charged_icon": "\ueb2d ",
             "charging_icon": "\uf241 ",
             "discharging_icon": "\uf242 "
@@ -127,7 +127,7 @@
           "background": "#61afef",
           "foreground": "#ffffff",
           "invert_powerline": true,
-          "properties": {
+          "options": {
             "time_format": "15:04 (Mon)"
           },
           "style": "diamond",
@@ -141,5 +141,5 @@
   ],
   "console_title_template": "{{.UserName}}@{{.HostName}} : {{.Folder}}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

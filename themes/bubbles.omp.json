@@ -17,7 +17,7 @@
           "background": "#29315A",
           "foreground": "#3EC669",
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "diamond",
@@ -29,7 +29,7 @@
           "background": "#29315A",
           "foreground": "#43CCEA",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "diamond",
@@ -41,7 +41,7 @@
           "background": "#29315A",
           "foreground": "#E4F34A",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -53,7 +53,7 @@
           "background": "#29315A",
           "foreground": "#7FD5EA",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -65,7 +65,7 @@
           "background": "#29315A",
           "foreground": "#42E66C",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -77,7 +77,7 @@
           "background": "#29315A",
           "foreground": "#E64747",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -89,7 +89,7 @@
           "background": "#29315A",
           "foreground": "#E64747",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -101,7 +101,7 @@
           "background": "#29315A",
           "foreground": "#9B6BDF",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -118,7 +118,7 @@
             "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
           ],
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "charged_icon": " ",
             "charging_icon": "\u21e1 ",
             "discharging_icon": "\u21e3 "
@@ -139,7 +139,7 @@
           "background": "#29315A",
           "foreground": "#AEA4BF",
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "style": "austin",
             "threshold": 150
           },
@@ -162,5 +162,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

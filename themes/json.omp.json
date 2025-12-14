@@ -6,7 +6,7 @@
       "segments": [
         {
           "foreground": "#F1FA8C",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "diamond",
@@ -15,7 +15,7 @@
         },
         {
           "foreground": "#43CCEA",
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "diamond",
@@ -46,5 +46,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

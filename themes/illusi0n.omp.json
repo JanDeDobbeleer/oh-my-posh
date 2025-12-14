@@ -23,7 +23,7 @@
       "segments": [
         {
           "foreground": "#ff8800",
-          "properties": {
+          "options": {
             "macos": "mac"
           },
           "style": "plain",
@@ -44,7 +44,7 @@
         },
         {
           "foreground": "#62c0ff",
-          "properties": {
+          "options": {
             "folder_separator_icon": "/",
             "style": "full"
           },
@@ -59,7 +59,7 @@
             "{{ if gt .Ahead 0 }}#9962ff{{ end }}",
             "{{ if gt .Behind 0 }}#c062ff{{ end }}"
           ],
-          "properties": {
+          "options": {
             "branch_template": "{{ trunc 25 .Branch }}",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -78,5 +78,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

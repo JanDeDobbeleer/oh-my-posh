@@ -6,7 +6,7 @@
       "segments": [
         {
           "foreground": "white",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "plain",
@@ -39,7 +39,7 @@
         },
         {
           "foreground": "lightYellow",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -50,7 +50,7 @@
           "style": "plain",
           "template": "<darkGray>on</> <white>git:</><cyan>{{ .HEAD }}</>{{ if .Working.Changed }}<red> x</>{{ end }} ",
           "type": "git",
-          "properties": {
+          "options": {
             "fetch_status": true
           }
         },
@@ -84,5 +84,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

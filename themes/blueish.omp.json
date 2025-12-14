@@ -8,7 +8,7 @@
           "background": "#546E7A",
           "foreground": "#26C6DA",
           "leading_diamond": "\ue0c5",
-          "properties": {
+          "options": {
             "macos": "mac"
           },
           "style": "diamond",
@@ -41,7 +41,7 @@
           "background": "#14c2dd",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "powerline",
@@ -52,7 +52,7 @@
           "background": "#a2c4e0",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_upstream_icon": true
           },
           "style": "powerline",
@@ -90,7 +90,7 @@
           ],
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -116,5 +116,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

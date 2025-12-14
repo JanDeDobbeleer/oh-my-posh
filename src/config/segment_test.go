@@ -46,7 +46,7 @@ func TestParseTestConfig(t *testing.T) {
 			"powerline_symbol": "\uE0B0",
 			"foreground": "#ffffff",
 			"background": "#61AFEF",
-			"properties": {
+			"options": {
 				"style": "folder"
 			},
 			"exclude_folders": [

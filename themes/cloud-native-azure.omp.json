@@ -17,7 +17,7 @@
           "background": "#ff479c",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "powerline",
@@ -34,7 +34,7 @@
           ],
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -49,7 +49,7 @@
           ],
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -80,7 +80,7 @@
           "foreground": "#ffffff",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "properties": {
+          "options": {
             "charged_icon": "\ue22f ",
             "charging_icon": "\ueb2d ",
             "discharging_icon": "\uf244 "
@@ -142,5 +142,5 @@
   ],
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

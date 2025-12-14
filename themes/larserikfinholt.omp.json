@@ -17,7 +17,7 @@
           "background": "#ff479c",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_separator_icon": " \ue0b1 ",
             "home_icon": "~",
             "style": "folder"
@@ -36,7 +36,7 @@
           ],
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_template": "{{ trunc 25 .Branch }}",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -48,7 +48,7 @@
         {
           "background": "#83769c",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -68,7 +68,7 @@
             "{{ if and (lt .Hours 100) (gt .Hours 50) }}#343a40{{ end }}",
             "{{ if lt .Hours 50 }}#FFFFFF{{ end }}"
           ],
-          "properties": {
+          "options": {
             "access_token": "0ccbd2ac1e37a5b84101468df3d367177fe02ab3",
             "http_timeout": 1500,
             "refresh_token": "111111111111111111111111111111"
@@ -83,7 +83,7 @@
             "{{ if gt .Code 0 }}#e91e63{{ end }}"
           ],
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -97,5 +97,5 @@
   ],
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

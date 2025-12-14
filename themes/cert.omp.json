@@ -17,7 +17,7 @@
           "background": "green",
           "foreground": "#fff",
           "leading_diamond": "\ue0c7",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "diamond",
@@ -29,7 +29,7 @@
           "background": "lightCyan",
           "foreground": "#fff",
           "leading_diamond": "\ue0c7",
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "diamond",
@@ -41,7 +41,7 @@
           "background": "lightMagenta",
           "foreground": "#fff",
           "leading_diamond": "\ue0c7",
-          "properties": {
+          "options": {
             "time_format": "15:04"
           },
           "style": "diamond",
@@ -54,5 +54,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

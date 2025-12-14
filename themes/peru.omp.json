@@ -29,7 +29,7 @@
             "{{ if gt .Ahead 0 }}#16c60c{{ end }}",
             "{{ if gt .Behind 0 }}#f450de{{ end }}"
           ],
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -62,7 +62,7 @@
           "type": "java"
         },
         {
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -71,7 +71,7 @@
         },
         {
           "foreground": "#bab02a",
-          "properties": {
+          "options": {
             "threshold": 10
           },
           "style": "plain",
@@ -80,7 +80,7 @@
         },
         {
           "foreground": "#00C5C7",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -96,7 +96,7 @@
       "segments": [
         {
           "foreground": "#77E4F7",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -113,5 +113,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

@@ -22,7 +22,7 @@
           "background": "#008AD7",
           "foreground": "#000000",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "source": "cli"
           },
           "style": "powerline",
@@ -33,7 +33,7 @@
           "background": "#012456",
           "foreground": "#FFFFFF",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "source": "pwsh"
           },
           "style": "powerline",
@@ -44,7 +44,7 @@
           "type": "aws",
           "style": "powerline",
           "powerline_symbol": "",
-          "properties": {
+          "options": {
             "display_default": true
           },
           "foreground": "#000000",
@@ -62,7 +62,7 @@
           "background": "#2f2f2f",
           "foreground": "#26C6DA",
           "leading_diamond": "\ue0c7\u2593",
-          "properties": {
+          "options": {
             "alpine": "\uf300",
             "arch": "\uf303",
             "centos": "\uf304",
@@ -100,7 +100,7 @@
         {
           "background": "#2f2f2f",
           "foreground": "#fafafa",
-          "properties": {
+          "options": {
             "folder_icon": "<#B5B2C2>\ue5fe </>",
             "folder_separator_icon": "<#ffea00>\ue0b1 </>",
             "home_icon": " \uf015 ",
@@ -118,7 +118,7 @@
             "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
             "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
           ],
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -151,5 +151,5 @@
   ],
   "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

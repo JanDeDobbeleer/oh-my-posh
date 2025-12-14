@@ -10,7 +10,7 @@
         {
           "type": "session",
           "foreground": "#757575",
-          "properties": {
+          "options": {
             "display_host": true
           },
           "style": "plain",
@@ -21,7 +21,7 @@
           "background": "#91ddff",
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "agnoster_full"
           },
           "style": "powerline",
@@ -40,7 +40,7 @@
             "{{ if gt .Behind 0 }}#c5b6ad{{ end }}"
           ],
           "template": " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} \u2502{{ end }}{{ if .Staging.Changed }} {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} {{ .StashCount }}{{ end }} ",
-          "properties": {
+          "options": {
             "branch_ahead_icon": "\u2191",
             "branch_behind_icon": "\u2193",
             "branch_gone": "\u2262",
@@ -77,7 +77,7 @@
         {
           "type": "time",
           "foreground": "#689f38",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -106,5 +106,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

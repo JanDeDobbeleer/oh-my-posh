@@ -28,7 +28,7 @@
         {
           "background": "#256C9D",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "folder_icon": "\uf115",
             "folder_separator_icon": " \ue0b1 ",
             "max_depth": 2,
@@ -41,7 +41,7 @@
         {
           "background": "#256C9D",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "branch_template": "{{ trunc 30 .Branch }}",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -56,7 +56,7 @@
           "powerline_symbol": "\ue0b0",
           "style": "plain",
           "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
-          "properties": {
+          "options": {
             "text": "\ue0b0"
           },
           "type": "python"
@@ -71,5 +71,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

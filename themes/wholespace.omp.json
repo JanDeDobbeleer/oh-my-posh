@@ -8,7 +8,7 @@
           "background": "#FEF5ED",
           "foreground": "#011627",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "macos": "\uf179 ",
             "ubuntu": "\uf31b ",
             "windows": "\ue62a "
@@ -22,7 +22,7 @@
           "background": "#FEF5ED",
           "foreground": "#011627",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "diamond",
@@ -50,7 +50,7 @@
           "background": "#575656",
           "foreground": "#d6deeb",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "style": "roundrock",
             "threshold": 0
           },
@@ -69,7 +69,7 @@
           "background": "#ffffff",
           "foreground": "#000000",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
             "yarn_icon": " <#348cba>\ue6a7</>"
@@ -83,7 +83,7 @@
           "background": "#17D7A0",
           "foreground": "#011627",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
             "fetch_upstream_icon": true,
@@ -103,7 +103,7 @@
       "segments": [
         {
           "foreground": "#ffafd2",
-          "properties": {
+          "options": {
             "folder_icon": "\uf07b",
             "home_icon": "home",
             "style": "agnoster_full"
@@ -115,7 +115,7 @@
         {
           "foreground": "#00ff15",
           "foreground_templates": ["{{ if gt .Code 0 }}#ff0000{{ end }}"],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -132,5 +132,5 @@
     "foreground": "#FEF5ED",
     "template": "\ue285 "
   },
-  "version": 3
+  "version": 4
 }

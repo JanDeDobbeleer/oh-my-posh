@@ -8,16 +8,13 @@
         {
           "foreground": "#ffbebc",
           "leading_diamond": "<#ff70a6> \ue200 </>",
-          "properties": {
-            "display_host": true
-          },
           "style": "diamond",
           "template": "{{ .UserName }} <#ffffff>on</>",
           "type": "session"
         },
         {
           "foreground": "#bc93ff",
-          "properties": {
+          "options": {
             "time_format": "Monday <#ffffff>at</> 3:04 PM"
           },
           "style": "diamond",
@@ -26,7 +23,7 @@
         },
         {
           "foreground": "#ee79d1",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
             "fetch_upstream_icon": true,
@@ -49,7 +46,7 @@
         },
         {
           "foreground": "#a9ffb4",
-          "properties": {
+          "options": {
             "style": "dallas",
             "threshold": 0
           },
@@ -58,7 +55,7 @@
           "type": "executiontime"
         },
         {
-          "properties": {
+          "options": {
             "root_icon": "\uf292 "
           },
           "style": "diamond",
@@ -81,7 +78,7 @@
         {
           "foreground": "#ffafd2",
           "leading_diamond": "<#00c7fc> \ue285 </><#ffafd2>{</>",
-          "properties": {
+          "options": {
             "folder_icon": "\uf07b",
             "folder_separator_icon": " \uebcb ",
             "home_icon": "home",
@@ -95,7 +92,7 @@
         {
           "foreground": "#A9FFB4",
           "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -112,5 +109,5 @@
     "foreground": "#FEF5ED",
     "template": "\ue285 "
   },
-  "version": 3
+  "version": 4
 }

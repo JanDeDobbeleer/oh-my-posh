@@ -34,7 +34,7 @@
             "{{ if gt .Code 0 }}#f1184c{{ end }}"
           ],
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -54,7 +54,7 @@
           "background": "#ffffff",
           "foreground": "#000000",
           "leading_diamond": "\ue0c2\ue0c2",
-          "properties": {
+          "options": {
             "alpine": "\uf300",
             "arch": "\uf303",
             "centos": "\uf304",
@@ -85,7 +85,7 @@
         {
           "background": "#ffffff",
           "foreground": "#000000",
-          "properties": {
+          "options": {
             "folder_icon": "<#000000>\ue5fe </>",
             "folder_separator_icon": "<#000000>\ue0b1 </>",
             "home_icon": "\ueb06 ",
@@ -103,7 +103,7 @@
             "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
             "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
           ],
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -143,5 +143,5 @@
   ],
   "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

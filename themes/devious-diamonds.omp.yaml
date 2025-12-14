@@ -4,15 +4,10 @@ blocks:
     alignment: left
     newline: true
     segments:
-      - type: iterm
-        interactive: true
-        style: plain
-        foreground: cyan
-        template: "{{ .PromptMark }}"
       - type: os
         style: diamond
         foreground: cyan
-        properties:
+        options:
           alpine: 
           arch: 
           centos: 
@@ -28,8 +23,6 @@ blocks:
           raspbian: 
           ubuntu: 
           windows: 󰍲
-          wsl: 
-          wsl_separator: 
         template: " {{ if .WSL }}{{ end }}{{.Icon}}═"
       - type: shell
         style: diamond
@@ -48,15 +41,15 @@ blocks:
         powerline_symbol: 
         background: lightRed
         foreground: black
-        properties:
+        options:
           fetch_version: true
         template: " 󰚲 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: aurelia
         style: powerline
         powerline_symbol: 
-        background: purple
+        background: magenta
         foreground: white
-        properties:
+        options:
           fetch_version: true
         template: " α {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: aws
@@ -64,7 +57,7 @@ blocks:
         powerline_symbol: 
         background: yellow
         foreground: black
-        properties:
+        options:
           display_default: false
         template: "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
       - type: az
@@ -72,15 +65,13 @@ blocks:
         powerline_symbol: 
         background: lightBlue
         foreground: black
-        properties:
-          display_default: false
         template: " ﴃ Subscription {{ .Name }} ({{ if .EnvironmentName | contains \"AzureCloud\" }}{{ \"Global\" }}{{ else }}{{ .EnvironmentName }}{{ end }}) "
       - type: azfunc
         style: powerline
         powerline_symbol: 
         background: yellow
         foreground: black
-        properties:
+        options:
           display_mode: files
           fetch_version: false
         template: " ﴃ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
@@ -89,7 +80,7 @@ blocks:
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        properties:
+        options:
           fetch_version: true
         template: " 󰟓 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: java
@@ -103,7 +94,7 @@ blocks:
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        properties:
+        options:
           fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: kubectl
@@ -117,7 +108,7 @@ blocks:
         powerline_symbol: 
         background: lightGreen
         foreground: black
-        properties:
+        options:
           fetch_version: true
         template: " 󰎙 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
       - type: php
@@ -137,7 +128,7 @@ blocks:
         powerline_symbol: 
         background: lightYellow
         foreground: black
-        properties:
+        options:
           display_mode: files
           fetch_virtual_env: false
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
@@ -146,7 +137,7 @@ blocks:
         powerline_symbol: 
         background: red
         foreground: black
-        properties:
+        options:
           display_mode: files
           fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
@@ -155,7 +146,7 @@ blocks:
         powerline_symbol: 
         background: lightRed
         foreground: black
-        properties:
+        options:
           display_mode: files
           fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
@@ -164,7 +155,7 @@ blocks:
         powerline_symbol: 
         background: blue
         foreground: black
-        properties:
+        options:
           display_mode: files
           fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
@@ -173,7 +164,7 @@ blocks:
         powerline_symbol: 
         background: yellow
         foreground: black
-        properties:
+        options:
           time_format: Mon | 15:04:05
         template: " {{ .CurrentDate | date .Format }} "
       - type: executiontime
@@ -181,7 +172,7 @@ blocks:
         trailing_diamond: 
         background: cyan
         foreground: black
-        properties:
+        options:
           style: austin
           threshold: 0
         template: " {{ .FormattedMs }} "
@@ -194,7 +185,7 @@ blocks:
         trailing_diamond: 
         background: magenta
         foreground: black
-        properties:
+        options:
           branch_icon: " "
           fetch_status: true
           fetch_upstream_icon: true
@@ -215,7 +206,7 @@ blocks:
         background_templates:
           - "{{ if gt .Code 0 }}red{{ end }}"
         foreground: black
-        properties:
+        options:
           always_enabled: true
         template: " {{ if gt .Code 0 }}󰋔 {{ else }} {{ end }}{{ if eq ( gt .Code 0 ) .Segments.Path.Writable}} {{ end }}"
       - type: path
@@ -225,7 +216,7 @@ blocks:
         background_templates:
           - "{{ if not .Writable }}red{{ end }}"
         foreground: black
-        properties:
+        options:
           style: agnoster_short
           folder_icon: 
           folder_separator_icon: " 󰁕 "
@@ -239,7 +230,7 @@ blocks:
         background_templates:
           - "{{ if and .Segments.Path.Writable (not .Root) }}{{ else }}red{{ end }}"
         foreground: white
-        properties:
+        options:
           root_icon: 
         template: "{{ if not .Root }}\u2800{{ end }}{{ if and .Root ( not .Segments.Path.Writable ) }} {{ end }}{{ if and .Root .Segments.Path.Writable }}  {{ end }}"
 console_title_template: "{{ .Folder }}"
@@ -264,4 +255,4 @@ palette:
   white: "#FFFFFF"
   white-cursorColor-foreground: "#F8F8F2"
   yellow: "#FFCA80"
-version: 3
+version: 4

@@ -15,7 +15,7 @@ blocks:
       - background: p:orange
         foreground: p:white
         powerline_symbol: 
-        properties:
+        options:
           home_icon: ""
           style: folder
         style: powerline
@@ -26,7 +26,7 @@ blocks:
       - background: p:darkred
         foreground: p:white
         powerline_symbol: 
-        properties:
+        options:
           always_enabled: true
           style: round
         style: powerline
@@ -39,7 +39,7 @@ blocks:
           - "{{ if gt .Code 0 }}p:red{{ end }}"
         foreground: p:white
         powerline_symbol: 
-        properties:
+        options:
           always_enabled: true
         style: diamond
         template: " {{ if gt .Code 0 }} {{ reason .Code }}{{ else }}{{ end }} "
@@ -61,7 +61,7 @@ blocks:
           - '{{if eq "Discharging" .State.String}}p:orange{{end}}'
         foreground: p:white
         leading_diamond: 
-        properties:
+        options:
           charged_icon: 󰂄
           charging_icon: 󰂄
           discharging_icon: "󰁹 "
@@ -91,4 +91,4 @@ transient_prompt:
   background: transparent
   foreground: p:white
   template: " "
-version: 3
+version: 4

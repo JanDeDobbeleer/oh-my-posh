@@ -14,12 +14,13 @@ func (a *Angular) Template() string {
 
 func (a *Angular) Enabled() bool {
 	a.extensions = []string{"angular.json"}
-	a.commands = []*cmd{
-		{
+	a.tooling = map[string]*cmd{
+		"angular": {
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			getVersion: a.getVersion,
 		},
 	}
+	a.defaultTooling = []string{"angular"}
 	a.versionURLTemplate = "https://github.com/angular/angular/releases/tag/{{.Full}}"
 
 	return a.Language.Enabled()

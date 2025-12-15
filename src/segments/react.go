@@ -10,12 +10,13 @@ func (r *React) Template() string {
 
 func (r *React) Enabled() bool {
 	r.extensions = []string{"package.json"}
-	r.commands = []*cmd{
-		{
+	r.tooling = map[string]*cmd{
+		"react": {
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			getVersion: r.getVersion,
 		},
 	}
+	r.defaultTooling = []string{"react"}
 	r.versionURLTemplate = "https://github.com/facebook/react/releases/tag/v{{.Full}}"
 
 	if !r.hasNodePackage("react") {

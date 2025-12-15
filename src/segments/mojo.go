@@ -17,13 +17,14 @@ func (m *Mojo) Template() string {
 
 func (m *Mojo) Enabled() bool {
 	m.extensions = []string{"*.🔥", "*.mojo", "mojoproject.toml"}
-	m.commands = []*cmd{
-		{
+	m.tooling = map[string]*cmd{
+		"mojo": {
 			executable: "mojo",
 			args:       []string{"--version"},
 			regex:      `(?:mojo (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
+	m.defaultTooling = []string{"mojo"}
 	m.displayMode = m.options.String(DisplayMode, DisplayModeEnvironment)
 	m.Language.loadContext = m.loadContext
 	m.Language.inContext = m.inContext

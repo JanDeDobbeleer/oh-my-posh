@@ -18,13 +18,14 @@ func (f *Fortran) Enabled() bool {
 		"*.F03", "*.F08",
 		"fpm.toml",
 	}
-	f.commands = []*cmd{
-		{
+	f.tooling = map[string]*cmd{
+		"gfortran": {
 			executable: "gfortran",
 			args:       []string{"--version"},
 			regex:      `GNU Fortran \(.*\) (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 		},
 	}
+	f.defaultTooling = []string{"gfortran"}
 
 	return f.Language.Enabled()
 }

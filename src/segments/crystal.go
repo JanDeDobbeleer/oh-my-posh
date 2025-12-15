@@ -10,13 +10,14 @@ func (c *Crystal) Template() string {
 
 func (c *Crystal) Enabled() bool {
 	c.extensions = []string{"*.cr", "shard.yml"}
-	c.commands = []*cmd{
-		{
+	c.tooling = map[string]*cmd{
+		"crystal": {
 			executable: "crystal",
 			args:       []string{"--version"},
 			regex:      `Crystal (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 		},
 	}
+	c.defaultTooling = []string{"crystal"}
 	c.versionURLTemplate = "https://github.com/crystal-lang/crystal/releases/tag/{{ .Full }}"
 
 	return c.Language.Enabled()

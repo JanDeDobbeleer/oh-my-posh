@@ -4007,6 +4007,15 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "features": {
+                    "type": "array",
+                    "title": "Features",
+                    "description": "Additional features to enable. Options: 'uv' - Use UV package manager for version detection",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "additionalProperties": false

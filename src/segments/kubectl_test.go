@@ -25,6 +25,7 @@ func TestKubectlSegment(t *testing.T) {
 	cases := []struct {
 		Files           map[string]string
 		ContextAliases  map[string]string
+		ClusterAliases  map[string]string
 		Cluster         string
 		Kubeconfig      string
 		Context         string
@@ -101,6 +102,37 @@ func TestKubectlSegment(t *testing.T) {
 			ExpectedEnabled: true,
 		},
 		{
+			Case:            "kubectl cluster alias",
+			Template:        testKubectlAllInfoTemplate,
+			KubectlExists:   true,
+			Context:         "aaa",
+			Namespace:       "bbb",
+			UserName:        "ccc",
+			Cluster:         "ddd",
+			ClusterAliases:  map[string]string{"ddd": "production"},
+			ExpectedString:  "aaa :: bbb :: ccc :: production",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "kubeconfig cluster alias",
+			Template:        testKubectlAllInfoTemplate,
+			ParseKubeConfig: true,
+			Files:           testKubeConfigFiles,
+			ClusterAliases:  map[string]string{"ddd": "prod"},
+			ExpectedString:  "aaa :: bbb :: ccc :: prod",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "kubeconfig context and cluster alias",
+			Template:        testKubectlAllInfoTemplate,
+			ParseKubeConfig: true,
+			Files:           testKubeConfigFiles,
+			ContextAliases:  map[string]string{"aaa": "my-context"},
+			ClusterAliases:  map[string]string{"ddd": "my-cluster"},
+			ExpectedString:  "my-context :: bbb :: ccc :: my-cluster",
+			ExpectedEnabled: true,
+		},
+		{
 			Case:            "kubeconfig multiple current marker first",
 			Template:        testKubectlAllInfoTemplate,
 			ParseKubeConfig: true,
@@ -162,6 +194,7 @@ func TestKubectlSegment(t *testing.T) {
 			options.DisplayError: tc.DisplayError,
 			ParseKubeConfig:      tc.ParseKubeConfig,
 			ContextAliases:       tc.ContextAliases,
+			ClusterAliases:       tc.ClusterAliases,
 		}
 
 		k := &Kubectl{}

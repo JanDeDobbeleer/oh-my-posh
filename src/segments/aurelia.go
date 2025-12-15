@@ -10,12 +10,13 @@ func (a *Aurelia) Template() string {
 
 func (a *Aurelia) Enabled() bool {
 	a.extensions = []string{"package.json"}
-	a.commands = []*cmd{
-		{
+	a.tooling = map[string]*cmd{
+		"aurelia": {
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)(-(?P<prerelease>[a-z]+).(?P<buildmetadata>[0-9]+))?)))`,
 			getVersion: a.getVersion,
 		},
 	}
+	a.defaultTooling = []string{"aurelia"}
 	a.versionURLTemplate = "https://github.com/aurelia/aurelia/releases/tag/v{{ .Full }}"
 
 	if !a.hasNodePackage("aurelia") {

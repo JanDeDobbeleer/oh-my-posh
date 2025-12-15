@@ -10,13 +10,14 @@ func (o *OCaml) Template() string {
 
 func (o *OCaml) Enabled() bool {
 	o.extensions = []string{"*.ml", "*.mli", "dune", "dune-project", "dune-workspace"}
-	o.commands = []*cmd{
-		{
+	o.tooling = map[string]*cmd{
+		"ocaml": {
 			executable: "ocaml",
 			args:       []string{"-version"},
 			regex:      `The OCaml toplevel, version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))(-(?P<prerelease>[a-z]+))?)`,
 		},
 	}
+	o.defaultTooling = []string{"ocaml"}
 
 	return o.Language.Enabled()
 }

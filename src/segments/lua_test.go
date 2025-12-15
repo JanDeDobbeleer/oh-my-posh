@@ -2,9 +2,10 @@ package segments
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,44 +14,43 @@ func TestLua(t *testing.T) {
 		Case           string
 		ExpectedString string
 		Version        string
-		Prefer         string
 		ExpectedURL    string
+		Tooling        []string
 		HasLua         bool
 		HasLuaJit      bool
 	}{
 		{
-			Case:           "Lua 5.4.4 - Prefer Lua",
+			Case:           "Lua 5.4.4 - default tooling prefers lua",
 			ExpectedString: "5.4.4",
 			Version:        "Lua 5.4.4  Copyright (C) 1994-2022 Lua.org, PUC-Rio",
 			ExpectedURL:    "https://www.lua.org/manual/5.4/readme.html#changes",
 			HasLua:         true,
 			HasLuaJit:      true,
-			Prefer:         "lua",
 		},
 		{
-			Case:           "Lua 5.0 - Prefer luajit but missing so fallback to lua",
+			Case:           "Lua 5.0 - tooling set to luajit but missing so fallback to lua",
 			ExpectedString: "5.0",
 			Version:        "Lua 5.0  Copyright (C) 1994-2003 Tecgraf, PUC-Rio",
 			ExpectedURL:    "https://www.lua.org/manual/5.0/readme.html#changes",
 			HasLua:         true,
-			Prefer:         "luajit",
+			Tooling:        []string{"luajit", "lua"},
 		},
 		{
-			Case:           "LuaJIT 2.0.5 - Prefer LuaJIT",
+			Case:           "LuaJIT 2.0.5 - tooling set to luajit first",
 			ExpectedString: "2.0.5",
 			Version:        "LuaJIT 2.0.5 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/",
 			HasLuaJit:      true,
 			HasLua:         true,
 			ExpectedURL:    "https://github.com/LuaJIT/LuaJIT/tree/v2.0",
-			Prefer:         "luajit",
+			Tooling:        []string{"luajit"},
 		},
 		{
-			Case:           "LuaJIT 2.1.0-beta3 - Prefer Lua but missing so try luajit",
+			Case:           "LuaJIT 2.1.0-beta3 - tooling set to lua first but missing so try luajit",
 			ExpectedString: "2.1.0",
 			Version:        "LuaJIT 2.1.0-beta3 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/",
 			HasLuaJit:      true,
 			ExpectedURL:    "https://github.com/LuaJIT/LuaJIT/tree/v2.1",
-			Prefer:         "lua",
+			Tooling:        []string{"lua", "luajit"},
 		},
 	}
 	for _, tc := range cases {
@@ -69,8 +69,17 @@ func TestLua(t *testing.T) {
 
 		env.On("HasCommand", "luajit").Return(tc.HasLuaJit)
 		env.On("RunCommand", "luajit", []string{"-v"}).Return(tc.Version, nil)
+		env.On("Shell").Return("bash")
 
-		props[PreferredExecutable] = tc.Prefer
+		// Initialize template system for version URL rendering
+		if template.Cache == nil {
+			template.Cache = &cache.Template{}
+		}
+		template.Init(env, nil, nil)
+
+		if len(tc.Tooling) > 0 {
+			props[Tooling] = tc.Tooling
+		}
 
 		l := &Lua{}
 		l.Init(props, env)
@@ -79,6 +88,5 @@ func TestLua(t *testing.T) {
 		assert.True(t, l.Enabled(), failMsg)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, l.Template(), l), failMsg)
 		assert.Equal(t, tc.ExpectedURL, l.URL, failMsg)
-		assert.Equal(t, strings.ToLower(strings.Split(tc.Case, " ")[0]), l.Executable, failMsg)
 	}
 }

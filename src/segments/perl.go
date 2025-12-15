@@ -16,13 +16,14 @@ func (p *Perl) Enabled() bool {
 		"*.pm",
 		"*.t",
 	}
-	p.commands = []*cmd{
-		{
+	p.tooling = map[string]*cmd{
+		"perl": {
 			executable: "perl",
 			args:       []string{"-version"},
 			regex:      perlRegex,
 		},
 	}
+	p.defaultTooling = []string{"perl"}
 
 	return p.Language.Enabled()
 }

@@ -34,13 +34,14 @@ func (n *Node) Template() string {
 
 func (n *Node) Enabled() bool {
 	n.extensions = []string{"*.js", "*.ts", "package.json", ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".vue"}
-	n.commands = []*cmd{
-		{
+	n.tooling = map[string]*cmd{
+		"node": {
 			executable: "node",
 			args:       []string{"--version"},
 			regex:      `(?:v(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
+	n.defaultTooling = []string{"node"}
 	n.versionURLTemplate = "https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}"
 	n.Language.matchesVersionFile = n.matchesVersionFile
 	n.Language.loadContext = n.loadContext

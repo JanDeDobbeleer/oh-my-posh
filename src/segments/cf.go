@@ -10,13 +10,14 @@ func (c *Cf) Template() string {
 
 func (c *Cf) Enabled() bool {
 	c.extensions = []string{"manifest.yml", "mta.yaml"}
-	c.commands = []*cmd{
-		{
+	c.tooling = map[string]*cmd{
+		"cf": {
 			executable: "cf",
 			args:       []string{"version"},
 			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
+	c.defaultTooling = []string{"cf"}
 	c.displayMode = c.options.String(DisplayMode, DisplayModeFiles)
 	c.versionURLTemplate = "https://github.com/cloudfoundry/cli/releases/tag/v{{ .Full }}"
 

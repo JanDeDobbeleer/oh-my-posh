@@ -135,6 +135,15 @@
       "description": "The duration for which the segment will be cached. This is parsed using the `time.ParseDuration` function from the Go standard library (see https://pkg.go.dev/time#ParseDuration for details).",
       "pattern": "^(none|infinite|([0-9]+(h|m|s))+)$"
     },
+    "tooling": {
+      "type": "array",
+      "title": "Tooling",
+      "description": "The tooling to use for fetching the version",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
     "filler": {
       "type": "string",
       "title": "Filler",
@@ -4009,13 +4018,7 @@
                     }
                   },
                   "tooling": {
-                    "type": "array",
-                    "title": "Tooling",
-                    "description": "The tooling to use for fetching the version. Available options: pyenv, python, python3, py, uv",
-                    "default": [],
-                    "items": {
-                      "type": "string"
-                    }
+                    "$ref": "#/definitions/tooling"
                   }
                 },
                 "additionalProperties": false

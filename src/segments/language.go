@@ -79,6 +79,8 @@ type Language struct {
 	versionURLTemplate string
 	name               string
 	commands           []*cmd
+	tooling            map[string]*cmd
+	defaultTooling     []string
 	projectFiles       []string
 	folders            []string
 	extensions         []string
@@ -106,6 +108,8 @@ const (
 	LanguageExtensions options.Option = "extensions"
 	// LanguageFolders the list of folders to validate
 	LanguageFolders options.Option = "folders"
+	// Tooling allows enabling additional version fetching tools
+	Tooling options.Option = "tooling"
 )
 
 func (l *Language) getName() string {
@@ -156,6 +160,8 @@ func (l *Language) Enabled() bool {
 		}
 	}
 
+	l.loadTooling()
+
 	if !enabled || !l.options.Bool(options.FetchVersion, true) {
 		return enabled
 	}
@@ -174,6 +180,26 @@ func (l *Language) Enabled() bool {
 	}
 
 	return enabled
+}
+
+// loadTooling builds the commands list from the tooling map based on the tooling configuration.
+// Users can override the default tooling via the Tooling option.
+// This allows specifying which tools should be used to fetch versions
+// (e.g., "uv" for Python to use UV package manager).
+func (l *Language) loadTooling() {
+	enabledTools := l.options.StringArray(Tooling, l.defaultTooling)
+	if len(enabledTools) == 0 {
+		return
+	}
+
+	var commands []*cmd
+	for _, tool := range enabledTools {
+		if command, exists := l.tooling[tool]; exists {
+			commands = append(commands, command)
+		}
+	}
+
+	l.commands = commands
 }
 
 func (l *Language) hasLanguageFiles() bool {

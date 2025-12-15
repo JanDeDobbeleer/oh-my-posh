@@ -32,27 +32,38 @@ func (p *Python) Template() string {
 func (p *Python) Enabled() bool {
 	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
 	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
-	p.commands = []*cmd{
-		{
+
+	// Define all available tooling options for Python
+	p.tooling = map[string]*cmd{
+		"pyenv": {
 			getVersion: p.pyenvVersion,
 			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 		},
-		{
+		"python": {
 			executable: "python",
 			args:       []string{"--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
-		{
+		"python3": {
 			executable: "python3",
 			args:       []string{"--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
-		{
+		"py": {
 			executable: "py",
 			args:       []string{"--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
+		"uv": {
+			executable: "uv",
+			args:       []string{"run", "python", "--version"},
+			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
 	}
+
+	// Default tooling order - users can override via "tooling" option
+	p.defaultTooling = []string{"pyenv", "python", "python3", "py"}
+
 	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
 	p.displayMode = p.options.String(DisplayMode, DisplayModeEnvironment)
 	p.Language.loadContext = p.loadContext

@@ -138,9 +138,8 @@ func (k *Kubectl) doCallKubectl() bool {
 
 	if len(config.Contexts) > 0 {
 		k.KubeContext = *config.Contexts[0].Context
+		k.SetClusterAlias()
 	}
-
-	k.SetClusterAlias()
 
 	return true
 }

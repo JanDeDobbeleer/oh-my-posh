@@ -2604,6 +2604,12 @@
                     "title": "Context aliases",
                     "description": "Custom context names.",
                     "default": {}
+                  },
+                  "cluster_aliases": {
+                    "type": "object",
+                    "title": "Cluster aliases",
+                    "description": "Custom cluster names.",
+                    "default": {}
                   }
                 },
                 "additionalProperties": false

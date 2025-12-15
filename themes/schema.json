@@ -4008,10 +4008,10 @@
                       "type": "string"
                     }
                   },
-                  "features": {
+                  "tooling": {
                     "type": "array",
-                    "title": "Features",
-                    "description": "Additional features to enable. Options: 'uv' - Use UV package manager for version detection",
+                    "title": "Tooling",
+                    "description": "The tooling to use for fetching the version. Available options: pyenv, python, python3, py, uv",
                     "default": [],
                     "items": {
                       "type": "string"

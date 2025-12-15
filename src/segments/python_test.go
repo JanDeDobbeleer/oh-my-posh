@@ -248,12 +248,11 @@ func TestPythonVirtualEnvIgnoreCustomVenvNames(t *testing.T) {
 
 func TestPythonUVTooling(t *testing.T) {
 	cases := []struct {
-		Case             string
-		Expected         string
-		UVVersionOutput  string
-		Tooling          []string
-		HasUVCommand     bool
-		ExpectedDisabled bool
+		Case            string
+		Expected        string
+		UVVersionOutput string
+		Tooling         []string
+		HasUVCommand    bool
 	}{
 		{
 			Case:            "UV enabled and available",
@@ -268,11 +267,10 @@ func TestPythonUVTooling(t *testing.T) {
 			Tooling:  nil, // Use default tooling
 		},
 		{
-			Case:             "UV enabled but not available falls back",
-			Expected:         "3.8.4",
-			Tooling:          []string{"uv", "python"},
-			HasUVCommand:     false,
-			ExpectedDisabled: false,
+			Case:         "UV enabled but not available falls back",
+			Expected:     "3.8.4",
+			Tooling:      []string{"uv", "python"},
+			HasUVCommand: false,
 		},
 	}
 

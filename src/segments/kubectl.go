@@ -12,6 +12,7 @@ import (
 const (
 	ParseKubeConfig options.Option = "parse_kubeconfig"
 	ContextAliases  options.Option = "context_aliases"
+	ClusterAliases  options.Option = "cluster_aliases"
 )
 
 type Kubectl struct {
@@ -94,6 +95,7 @@ func (k *Kubectl) doParseKubeConfig() bool {
 		}
 
 		k.SetContextAlias()
+		k.SetClusterAlias()
 		k.dirty = true
 
 		return true
@@ -138,6 +140,8 @@ func (k *Kubectl) doCallKubectl() bool {
 		k.KubeContext = *config.Contexts[0].Context
 	}
 
+	k.SetClusterAlias()
+
 	return true
 }
 
@@ -155,5 +159,12 @@ func (k *Kubectl) SetContextAlias() {
 	aliases := k.options.KeyValueMap(ContextAliases, map[string]string{})
 	if alias, exists := aliases[k.Context]; exists {
 		k.Context = alias
+	}
+}
+
+func (k *Kubectl) SetClusterAlias() {
+	aliases := k.options.KeyValueMap(ClusterAliases, map[string]string{})
+	if alias, exists := aliases[k.Cluster]; exists {
+		k.Cluster = alias
 	}
 }

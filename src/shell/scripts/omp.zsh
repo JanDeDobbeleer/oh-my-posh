@@ -9,7 +9,7 @@ export OSTYPE=$OSTYPE
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
-_omp_executable=::OMP::
+_omp_executable=/tmp/omp_exec_mock
 _omp_tooltip_command=''
 
 # switches to enable/disable features

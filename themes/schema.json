@@ -359,6 +359,7 @@
             "cds",
             "cf",
             "cftarget",
+            "clojure",
             "cmake",
             "copilot",
             "connection",
@@ -1116,6 +1117,41 @@
                   }
                 },
                 "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "clojure"
+              }
+            }
+          },
+          "then": {
+            "title": "Clojure Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/clojure",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "project.clj",
+                      "deps.edn",
+                      "build.boot",
+                      "bb.edn",
+                      "*.clj",
+                      "*.cljc",
+                      "*.cljs"
+                    ]
+                  }
+                }
               }
             }
           }

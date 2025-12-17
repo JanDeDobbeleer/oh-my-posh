@@ -126,6 +126,7 @@ module.exports = {
           label: "✍️ Languages",
           collapsed: true,
           items: [
+            "segments/languages/clojure",
             "segments/languages/crystal",
             "segments/languages/dart",
             "segments/languages/dotnet",

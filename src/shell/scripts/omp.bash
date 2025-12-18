@@ -116,7 +116,7 @@ function _omp_hook() {
     _omp_stack_count=$((${#DIRSTACK[@]} - 1))
 
     _omp_execution_time=-1
-    if [[ -n "${_omp_start_time+x}" ]]; then
+    if [[ $_omp_start_time ]]; then
         local omp_now=$("$_omp_executable" get millis)
         _omp_execution_time=$((omp_now - _omp_start_time))
         _omp_no_status=false

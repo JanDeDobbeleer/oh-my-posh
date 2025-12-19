@@ -3577,12 +3577,6 @@
             "properties": {
               "options": {
                 "properties": {
-                  "custom_text": {
-                    "type": "object",
-                    "title": "Custom Text",
-                    "description": "Custom glyph/text for specific shells",
-                    "default": {}
-                  },
                   "mapped_shell_names": {
                     "type": "object",
                     "description": "Mapping of shell identifiers to the glyph/string used for that shell (e.g. bash, zsh, pwsh).",

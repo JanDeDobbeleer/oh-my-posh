@@ -3577,9 +3577,9 @@
             "properties": {
               "options": {
                 "properties": {
-                  "custom_text": {
+                  "mapped_shell_names": {
                     "type": "object",
-                    "title": "Custom Text",
+                    "title": "Mapped Shell Names",
                     "description": "Custom glyph/text for specific shells",
                     "default": {}
                   }

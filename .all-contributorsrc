@@ -3363,6 +3363,17 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "anujsrc",
+      "name": "Anuj Kumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1001682?v=4",
+      "profile": "http://linkedin.com/in/anujsays",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

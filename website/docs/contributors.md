@@ -470,6 +470,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://pinta.land"><img src="https://avatars.githubusercontent.com/u/19735646?v=4?s=100" width="100px;" alt="Pinta"/><br /><sub><b>Pinta</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Pinta365" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Pinta365" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/scop"><img src="https://avatars.githubusercontent.com/u/109152?v=4?s=100" width="100px;" alt="Ville Skyttä"/><br /><sub><b>Ville Skyttä</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=scop" title="Code">💻</a> <a href="#design-scop" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=scop" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://linkedin.com/in/anujsays"><img src="https://avatars.githubusercontent.com/u/1001682?v=4?s=100" width="100px;" alt="Anuj Kumar"/><br /><sub><b>Anuj Kumar</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=anujsrc" title="Code">💻</a> <a href="#design-anujsrc" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=anujsrc" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

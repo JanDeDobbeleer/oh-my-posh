@@ -328,7 +328,15 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run(font, zipFolder string) (string, error) {
+func Run(font, zipFolder string, headless bool) (string, error) {
+	if headless {
+		return installHeadless(font, zipFolder)
+	}
+
+	return tui(font, zipFolder)
+}
+
+func tui(font, zipFolder string) (string, error) {
 	main := &main{
 		Asset: Asset{
 			Name:   font,
@@ -340,4 +348,19 @@ func Run(font, zipFolder string) (string, error) {
 	program = tea.NewProgram(main)
 	_, err := program.Run()
 	return main.Name, err
+}
+
+func installHeadless(font, zipFolder string) (string, error) {
+	// Handle local zip file
+	if IsLocalZipFile(font) {
+		data, err := os.ReadFile(font)
+		if err != nil {
+			return "", err
+		}
+
+		_, err = InstallZIP(data, zipFolder)
+		return font, err
+	}
+
+	return downloadAndInstall(font, zipFolder)
 }

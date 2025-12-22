@@ -27,18 +27,29 @@ type Font struct {
 }
 
 func (f *Font) Apply() error {
-	asset, err := ResolveFontAsset(f.Name)
+	_, err := downloadAndInstall(f.Name, "")
+	return err
+}
+
+// downloadAndInstall resolves a font by name or URL, downloads it, and installs it.
+// It returns the resolved font name and any error encountered.
+func downloadAndInstall(font, zipFolder string) (string, error) {
+	asset, err := ResolveFontAsset(font)
 	if err != nil {
-		return err
+		return "", err
+	}
+
+	if asset.Folder != "" && zipFolder == "" {
+		zipFolder = asset.Folder
 	}
 
 	zipFile, err := Download(asset.URL)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	_, err = InstallZIP(zipFile, asset.Folder)
-	return err
+	_, err = InstallZIP(zipFile, zipFolder)
+	return asset.Name, err
 }
 
 func (f *Font) Equal(font *Font) bool {

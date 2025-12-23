@@ -472,6 +472,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://linkedin.com/in/anujsays"><img src="https://avatars.githubusercontent.com/u/1001682?v=4?s=100" width="100px;" alt="Anuj Kumar"/><br /><sub><b>Anuj Kumar</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=anujsrc" title="Code">💻</a> <a href="#design-anujsrc" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=anujsrc" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ValerioCeccarelli"><img src="https://avatars.githubusercontent.com/u/42637334?v=4?s=100" width="100px;" alt="Valerio Ceccarelli"/><br /><sub><b>Valerio Ceccarelli</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ValerioCeccarelli" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

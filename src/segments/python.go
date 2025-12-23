@@ -56,7 +56,7 @@ func (p *Python) Enabled() bool {
 		},
 		"uv": {
 			executable: "uv",
-			args:       []string{"run", "python", "--version"},
+			args:       []string{"run", "--no-sync", "--quiet", "--no-python-downloads", "python", "--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}

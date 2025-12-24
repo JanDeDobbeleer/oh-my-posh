@@ -359,6 +359,7 @@
             "cds",
             "cf",
             "cftarget",
+            "claude",
             "clojure",
             "cmake",
             "copilot",
@@ -1182,6 +1183,24 @@
                     ]
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "claude"
+              }
+            }
+          },
+          "then": {
+            "title": "Claude Code Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/claude",
+            "properties": {
+              "options": {
+                "additionalProperties": false
               }
             }
           }

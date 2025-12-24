@@ -10,4 +10,5 @@ const (
 	GENERIC = "shell"
 	ELVISH  = "elvish"
 	XONSH   = "xonsh"
+	CLAUDE  = "claude"
 )

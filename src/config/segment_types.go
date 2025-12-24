@@ -42,6 +42,7 @@ func init() {
 	gob.Register(&segments.Copilot{})
 	gob.Register(&segments.Cf{})
 	gob.Register(&segments.CfTarget{})
+	gob.Register(&segments.Claude{})
 	gob.Register(&segments.Clojure{})
 	gob.Register(&segments.Cmake{})
 	gob.Register(&segments.Connection{})
@@ -186,6 +187,8 @@ const (
 	CF SegmentType = "cf"
 	// Cloud Foundry logged in target
 	CFTARGET SegmentType = "cftarget"
+	// CLAUDE writes Claude Code session information
+	CLAUDE SegmentType = "claude"
 	// CLOJURE writes the active clojure version
 	CLOJURE SegmentType = "clojure"
 	// CMAKE writes the active cmake version
@@ -383,6 +386,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CDS:             func() SegmentWriter { return &segments.Cds{} },
 	CF:              func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:        func() SegmentWriter { return &segments.CfTarget{} },
+	CLAUDE:          func() SegmentWriter { return &segments.Claude{} },
 	CLOJURE:         func() SegmentWriter { return &segments.Clojure{} },
 	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },

@@ -66,6 +66,7 @@ module.exports = {
             "segments/cli/bazel",
             "segments/cli/buf",
             "segments/cli/bun",
+            "segments/cli/claude",
             "segments/cli/cmake",
             "segments/cli/copilot",
             "segments/cli/deno",

@@ -205,3 +205,80 @@ func Default(warning bool) *Config {
 
 	return cfg
 }
+
+func Claude() *Config {
+	cfg := &Config{
+		hash:    1234567890, // placeholder hash value
+		Version: 4,
+		Blocks: []*Block{
+			{
+				Type:      Prompt,
+				Alignment: Left,
+				Segments: []*Segment{
+					{
+						Type:           PATH,
+						Style:          Diamond,
+						LeadingDiamond: "\ue0b6",
+						Foreground:     "p:white",
+						Background:     "p:orange",
+						Options: options.Map{
+							segments.DirLength:           3,
+							segments.FolderSeparatorIcon: "\ue0bb",
+							options.Style:                "fish",
+						},
+						Template: "{{ if .Segments.Git.Dir }} \uf1d2 <i><b>{{ .Segments.Git.RepoName }}{{ if .Segments.Git.IsWorkTree }} \ue21c{{ end }}</b></i>{{ $rel :=  .Segments.Git.RelativeDir }}{{ if $rel }} \ueaf7 {{ .Format $rel }}{{ end }}{{ else }} \uea83 {{ path .Path .Location }}{{ end }} ", //nolint:lll
+					},
+					{
+						Type:            GIT,
+						Style:           Diamond,
+						LeadingDiamond:  "<parentBackground,background>\ue0b0</>",
+						TrailingDiamond: "\ue0b4",
+						Foreground:      "p:black",
+						Background:      "p:green",
+						BackgroundTemplates: []string{
+							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}",
+							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}",
+							"{{ if gt .Ahead 0 }}#49416D{{ end }}",
+							"{{ if gt .Behind 0 }}#7A306C{{ end }}",
+						},
+						ForegroundTemplates: []string{
+							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:black{{ end }}",
+							"{{ if or (gt .Ahead 0) (gt .Behind 0) }}p:white{{ end }}",
+						},
+						Options: options.Map{
+							segments.FetchStatus:       true,
+							segments.FetchUpstreamIcon: false,
+						},
+						Template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ nospace .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ", //nolint:lll
+					},
+				},
+			},
+			{
+				Type:      Prompt,
+				Alignment: Right,
+				Segments: []*Segment{
+					{
+						Type:            CLAUDE,
+						Style:           Diamond,
+						LeadingDiamond:  "\ue0b6",
+						TrailingDiamond: "\ue0b4",
+						Foreground:      "p:black",
+						Background:      "p:blue",
+						Template:        " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }} ",
+					},
+				},
+			},
+		},
+		Palette: color.Palette{
+			"black":  "#262B44",
+			"blue":   "#4B95E9",
+			"green":  "#59C9A5",
+			"orange": "#F07623",
+			"red":    "#D81E5B",
+			"white":  "#E0DEF4",
+			"yellow": "#F3AE35",
+		},
+	}
+
+	return cfg
+}

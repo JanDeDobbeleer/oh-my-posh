@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -261,57 +262,6 @@ func TestCopilotPercentageCalculation(t *testing.T) {
 	}
 }
 
-func TestCopilotPercentageGauge(t *testing.T) {
-	cases := []struct {
-		Case          string
-		ExpectedGauge string
-		Percent       CopilotPercentage
-	}{
-		{
-			Case:          "0 percent used (100% remaining)",
-			Percent:       CopilotPercentage(0),
-			ExpectedGauge: "▰▰▰▰▰",
-		},
-		{
-			Case:          "20 percent used (80% remaining - 4 blocks)",
-			Percent:       CopilotPercentage(20),
-			ExpectedGauge: "▰▰▰▰▱",
-		},
-		{
-			Case:          "40 percent used (60% remaining - 3 blocks)",
-			Percent:       CopilotPercentage(40),
-			ExpectedGauge: "▰▰▰▱▱",
-		},
-		{
-			Case:          "60 percent used (40% remaining - 2 blocks)",
-			Percent:       CopilotPercentage(60),
-			ExpectedGauge: "▰▰▱▱▱",
-		},
-		{
-			Case:          "80 percent used (20% remaining - 1 block)",
-			Percent:       CopilotPercentage(80),
-			ExpectedGauge: "▰▱▱▱▱",
-		},
-		{
-			Case:          "100 percent used (0% remaining - 0 blocks)",
-			Percent:       CopilotPercentage(100),
-			ExpectedGauge: "▱▱▱▱▱",
-		},
-		{
-			Case:          "50 percent used (50% remaining - 2.5 rounds to 2 blocks)",
-			Percent:       CopilotPercentage(50),
-			ExpectedGauge: "▰▰▱▱▱",
-		},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.Case, func(t *testing.T) {
-			result := tc.Percent.Gauge()
-			assert.Equal(t, tc.ExpectedGauge, result, tc.Case)
-		})
-	}
-}
-
 func TestCopilotRemainingPercentage(t *testing.T) {
 	env := &mock.Environment{}
 	props := options.Map{}
@@ -347,16 +297,16 @@ func TestCopilotRemainingPercentage(t *testing.T) {
 	assert.True(t, enabled)
 
 	// Test Premium: 100 entitlement - 75 remaining = 25 used (25% used, 75% remaining)
-	assert.Equal(t, CopilotPercentage(25), c.Premium.Percent)
-	assert.Equal(t, CopilotPercentage(75), c.Premium.Remaining)
+	assert.Equal(t, text.Percentage(25), c.Premium.Percent)
+	assert.Equal(t, text.Percentage(75), c.Premium.Remaining)
 
 	// Test Inline: 1000 entitlement - 600 remaining = 400 used (40% used, 60% remaining)
-	assert.Equal(t, CopilotPercentage(40), c.Inline.Percent)
-	assert.Equal(t, CopilotPercentage(60), c.Inline.Remaining)
+	assert.Equal(t, text.Percentage(40), c.Inline.Percent)
+	assert.Equal(t, text.Percentage(60), c.Inline.Remaining)
 
 	// Test Chat: 200 entitlement - 0 remaining = 200 used (100% used, 0% remaining)
-	assert.Equal(t, CopilotPercentage(100), c.Chat.Percent)
-	assert.Equal(t, CopilotPercentage(0), c.Chat.Remaining)
+	assert.Equal(t, text.Percentage(100), c.Chat.Percent)
+	assert.Equal(t, text.Percentage(0), c.Chat.Remaining)
 }
 
 func TestCopilotBillingCycleEnd(t *testing.T) {

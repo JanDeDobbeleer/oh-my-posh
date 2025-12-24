@@ -97,6 +97,13 @@ func (term *Terminal) TerminalWidth() (int, error) {
 
 	term.CmdFlags.TerminalWidth = int(info.Size.X)
 	log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
+
+	// Claude CLI has a 2 character padding on both sides
+	if term.CmdFlags.Shell == "claude" {
+		log.Debug("adjusting terminal width for Claude CLI")
+		term.CmdFlags.TerminalWidth -= 4
+	}
+
 	return term.CmdFlags.TerminalWidth, nil
 }
 

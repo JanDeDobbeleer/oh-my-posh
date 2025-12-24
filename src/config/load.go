@@ -34,29 +34,9 @@ func Load(configFile string) *Config {
 		return Default(false)
 	}
 
-	configFile = resolveConfigLocation(configFile)
-
-	cfg := parseConfigFile(configFile)
-
-	// Migrate segment properties to options for TOML configs
-	// (go-toml/v2 doesn't support custom unmarshalers)
-	cfg.migrateSegmentProperties()
-
-	cfg.toggleSegments()
-
-	cfg.Source = configFile
-
-	if cfg.Upgrade == nil {
-		cfg.Upgrade = &upgrade.Config{
-			Source:        upgrade.CDN,
-			DisplayNotice: cfg.UpgradeNotice,
-			Auto:          cfg.AutoUpgrade,
-			Interval:      cache.ONEWEEK,
-		}
-	}
-
-	if cfg.Upgrade.Interval.IsEmpty() {
-		cfg.Upgrade.Interval = cache.ONEWEEK
+	cfg, err := Parse(configFile)
+	if err != nil {
+		cfg = Default(true)
 	}
 
 	return cfg
@@ -99,8 +79,10 @@ type hashWriter interface {
 	Write(p []byte) (n int, err error)
 }
 
-func parseConfigFile(configFile string) *Config {
+func Parse(configFile string) (*Config, error) {
 	defer log.Trace(time.Now())
+
+	configFile = resolveConfigLocation(configFile)
 
 	configDSC := DSC()
 	configDSC.Load()
@@ -110,17 +92,17 @@ func parseConfigFile(configFile string) *Config {
 
 	h := fnv.New64a()
 
-	cfg, err := readConfig(configFile, h)
+	cfg, err := read(configFile, h)
 	if err != nil {
 		log.Error(err)
-		return Default(true)
+		return nil, err
 	}
 
 	parentFolder := filepath.Dir(configFile)
 
 	for cfg.Extends != "" {
 		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
-		base, err := readConfig(cfg.Extends, h)
+		base, err := read(cfg.Extends, h)
 		if err != nil {
 			log.Error(err)
 			break
@@ -137,9 +119,28 @@ func parseConfigFile(configFile string) *Config {
 		cfg = base
 	}
 
+	cfg.Source = configFile
 	cfg.hash = h.Sum64()
+	// Migrate segment properties to options for TOML configs
+	// (go-toml/v2 doesn't support custom unmarshalers)
+	cfg.migrateSegmentProperties()
 
-	return cfg
+	cfg.toggleSegments()
+
+	if cfg.Upgrade == nil {
+		cfg.Upgrade = &upgrade.Config{
+			Source:        upgrade.CDN,
+			DisplayNotice: cfg.UpgradeNotice,
+			Auto:          cfg.AutoUpgrade,
+			Interval:      cache.ONEWEEK,
+		}
+	}
+
+	if cfg.Upgrade.Interval.IsEmpty() {
+		cfg.Upgrade.Interval = cache.ONEWEEK
+	}
+
+	return cfg, nil
 }
 
 func resolvePath(configFile, parentFolder string) string {
@@ -160,7 +161,7 @@ func resolvePath(configFile, parentFolder string) string {
 	return filepath.Join(parentFolder, configFile)
 }
 
-func readConfig(configFile string, h hashWriter) (*Config, error) {
+func read(configFile string, h hashWriter) (*Config, error) {
 	defer log.Trace(time.Now())
 
 	if configFile == "" {

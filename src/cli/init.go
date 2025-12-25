@@ -119,9 +119,9 @@ func runInit(sh, command string) {
 
 	switch {
 	case printOutput, debug:
-		output = shell.PrintInit(env, feats, &startTime)
+		output = shell.PrintInit(env, feats, &startTime, cfg.RefreshInterval)
 	default:
-		output = shell.Init(env, feats)
+		output = shell.Init(env, feats, cfg.RefreshInterval)
 	}
 
 	shellDSC := shell.DSC()

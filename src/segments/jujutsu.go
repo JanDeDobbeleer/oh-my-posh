@@ -3,6 +3,7 @@ package segments
 import (
 	"fmt"
 	"strings"
+	"strconv"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -15,6 +16,8 @@ const (
 
 	IgnoreWorkingCopy options.Option = "ignore_working_copy"
 	ChangeIDMinLen    options.Option = "change_id_min_len"
+	DisplayAhead      options.Option = "display_ahead_counter"
+	DisplayAheadIcon  options.Option = "display_ahead_icon"
 )
 
 type JujutsuStatus struct {
@@ -77,7 +80,41 @@ func (jj *Jujutsu) ClosestBookmarks() string {
 	}
 
 	lines := strings.Split(statusString, "\n")
-	return lines[0]
+
+	if !jj.options.Bool(DisplayAhead, false) || len(lines[0]) == 0 {
+		return lines[0]
+	}
+
+	displayAheadIcon := jj.options.String(DisplayAheadIcon, "\u21e1")
+
+	marks := strings.Split(lines[0], " ")
+
+	endString := ""
+
+	// Loop through each bookmark
+	for index, mark := range marks {
+		rangeString := strings.Trim(mark, "*") + "..@"
+		log.Debug("rangeString: " + rangeString)
+		aheadString, err := jj.getJujutsuCommandOutput("log", "--no-graph", "-T", "'.'", "-r", rangeString)
+		if err != nil {
+			return lines[0]
+		}
+		aheadCounterString :=strconv.Itoa(len(aheadString))
+
+		if index > 0 {
+			endString += " "
+		}
+
+		if aheadCounterString != "0" {
+			endString += mark + displayAheadIcon + aheadCounterString
+		} else {
+			endString += mark
+		}
+		
+	}
+
+	return endString
+
 }
 
 func (jj *Jujutsu) shouldDisplay(displayStatus bool) bool {

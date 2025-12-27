@@ -2134,6 +2134,18 @@
                     "description": "Don't snapshot the working copy, and don't update it",
                     "default": true
                   },
+                  "fetch_ahead_counter": {
+                    "type": "boolean",
+                    "title": "Fetch Ahead Counter",
+                    "description": "Fetch working copy # of changes ahead of the nearest bookmark",
+                    "default": false
+                  },
+                  "ahead_icon": {
+                    "type": "string",
+                    "title": "Ahead icon",
+                    "description": "Icon to separate bookmark name and ahead counter",
+                    "default": false
+                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
                   },

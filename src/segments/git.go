@@ -678,9 +678,11 @@ func (g *Git) cleanUpstreamURL(url string) string {
 }
 
 func (g *Git) getUpstreamIcon() string {
+	fallback := g.options.String(GitIcon, "\uE5FB ")
+
 	g.RawUpstreamURL = g.getRemoteURL()
 	if g.RawUpstreamURL == "" {
-		return ""
+		return fallback
 	}
 
 	g.UpstreamURL = g.cleanUpstreamURL(g.RawUpstreamURL)
@@ -705,12 +707,14 @@ func (g *Git) getUpstreamIcon() string {
 		"codecommit":       {CodeCommit, "\uF270"},
 		"codeberg":         {CodebergIcon, "\uF330"},
 	}
+
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {
 			return g.options.String(value.Icon, value.Default)
 		}
 	}
-	return g.options.String(GitIcon, "\uE5FB ")
+
+	return fallback
 }
 
 func (g *Git) setStatus() {

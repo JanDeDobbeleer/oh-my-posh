@@ -10,18 +10,18 @@
     "clear": "docusaurus clear"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.8.1",
-    "@docusaurus/preset-classic": "^3.8.1",
-    "@docusaurus/theme-search-algolia": "^3.8.1",
+    "@docusaurus/core": "^3.9.2",
+    "@docusaurus/preset-classic": "^3.9.2",
+    "@docusaurus/theme-search-algolia": "^3.9.2",
     "@mdx-js/react": "^3.1.1",
     "classnames": "^2.5.1",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "smol-toml": "^1.4.2",
-    "yaml": "^2.8.1"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "smol-toml": "^1.6.0",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "cross-env": "^10.0.0"
+    "cross-env": "^10.1.0"
   },
   "browserslist": {
     "production": [

@@ -3,6 +3,7 @@ package segments
 import (
 	"fmt"
 	"strings"
+	"strconv"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -15,6 +16,8 @@ const (
 
 	IgnoreWorkingCopy options.Option = "ignore_working_copy"
 	ChangeIDMinLen    options.Option = "change_id_min_len"
+	DisplayAhead      options.Option = "display_ahead_counter"
+	DisplayAheadIcon  options.Option = "display_ahead_icon"
 )
 
 type JujutsuStatus struct {
@@ -77,7 +80,50 @@ func (jj *Jujutsu) ClosestBookmarks() string {
 	}
 
 	lines := strings.Split(statusString, "\n")
-	return lines[0]
+
+	if !jj.options.Bool(DisplayAhead, false) || len(lines[0]) == 0 {
+		return lines[0]
+	}
+
+	displayAheadIcon := jj.options.String(DisplayAheadIcon, "\u21e1")
+
+	marks := strings.Split(lines[0], " ")
+
+	// String to return for status
+	endString := ""
+
+	// Closest bookmarks are all the same distance away from the working copy
+	// so retrieve the distance to the first one and use it for all of them
+
+	rangeString := strings.Trim(marks[0], "*") + "..@"
+
+	aheadString, err := jj.getJujutsuCommandOutput("log", "--no-graph", "-T", "'.'", "-r", rangeString)
+	if err != nil {
+		return lines[0]
+	}
+	
+	aheadCounter := len(aheadString)
+	aheadCounterString := ""
+
+	if aheadCounter != 0 {
+		aheadCounterString = displayAheadIcon + strconv.Itoa(len(aheadString)) 
+	}
+
+	log.Debug("Distance to nearest jj bookmark:" + aheadCounterString)
+
+	// Loop through each bookmark
+	for index, mark := range marks {
+
+		if index > 0 {
+			endString += " "
+		}
+		
+		endString += mark + aheadCounterString
+		
+	}
+
+	return endString
+
 }
 
 func (jj *Jujutsu) shouldDisplay(displayStatus bool) bool {

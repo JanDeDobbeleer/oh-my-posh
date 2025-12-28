@@ -20,8 +20,11 @@ authors:
 
 Terminal customization just got a lot smarter. Oh My Posh now integrates with [Claude Code](https://code.claude.com/)
 through its [statusline functionality](https://code.claude.com/docs/en/statusline), bringing real-time AI session
-information directly into your terminal prompt. This isn't just another segment: it's a bridge between your
+information  and development context directly into your Claude Code prompt.
+This isn't just another segment: it's a bridge between your
 development workflow and AI-powered coding assistance.
+
+![Claude Code](/img/claude.png)
 
 ## What is Claude Code's statusline?
 

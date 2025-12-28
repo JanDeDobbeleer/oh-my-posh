@@ -91,7 +91,7 @@ func processClaudeData(stdinData []byte) {
 		return
 	}
 
-	var claudeData segments.Claude
+	var claudeData segments.ClaudeData
 	if err := json.Unmarshal(stdinData, &claudeData); err != nil {
 		log.Error(err)
 		cache.Init(shell.CLAUDE, cache.Persist, cache.NoSession)

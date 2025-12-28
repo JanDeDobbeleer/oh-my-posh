@@ -11,7 +11,11 @@ import (
 // Claude segment displays Claude Code session information
 type Claude struct {
 	Base
+	ClaudeData
+}
 
+// ClaudeData represents the parsed Claude JSON data
+type ClaudeData struct {
 	SessionID     string              `json:"session_id"`
 	Model         ClaudeModel         `json:"model"`
 	Workspace     ClaudeWorkspace     `json:"workspace"`
@@ -64,7 +68,7 @@ func (c *Claude) Enabled() bool {
 	log.Debug("claude segment: checking if enabled")
 
 	// Try to get Claude data from session cache
-	claudeData, found := cache.Get[Claude](cache.Session, cache.CLAUDECACHE)
+	claudeData, found := cache.Get[ClaudeData](cache.Session, cache.CLAUDECACHE)
 	if !found {
 		log.Debug("claude segment: no Claude data found in session cache")
 		return false
@@ -73,11 +77,8 @@ func (c *Claude) Enabled() bool {
 	log.Debug("claude segment: found Claude data in session cache")
 	log.Debugf("claude segment: model=%s, session=%s", claudeData.Model.DisplayName, claudeData.SessionID)
 
-	// Copy the data to our struct
-	// Preserve the Base struct to avoid nil pointer dereference
-	base := c.Base
-	*c = claudeData
-	c.Base = base
+	// Copy the data to our embedded struct
+	c.ClaudeData = claudeData
 
 	return true
 }

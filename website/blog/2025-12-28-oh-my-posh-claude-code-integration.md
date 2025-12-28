@@ -98,17 +98,13 @@ Under the hood, Oh My Posh reads the rich JSON session data that Claude Code pro
 as a statusline command. The segment only activates when Claude Code session data is available, so there's no
 performance impact when you're not using Claude Code.
 
-The JSON structure follows Claude Code's specification, ensuring forward compatibility as new features are
-added to the statusline API. The segment handles missing data gracefully and provides sensible defaults for
-any fields that might be unavailable.
-
 ## Getting Started
 
 If you're already using Oh My Posh, adding Claude Code integration is as simple as:
 
 1. Install Claude Code if you haven't already
 2. Add the statusline configuration to your Claude Code settings
-3. Add a claude segment to your Oh My Posh theme
+3. Optionally create your own configuration including the `claude` segment
 4. Start a Claude Code session and watch your prompt come alive
 
 For detailed configuration options and all available properties, check out the [complete Claude segment documentation](https://ohmyposh.dev/docs/segments/cli/claude).
@@ -120,7 +116,7 @@ This integration opens up exciting possibilities. Imagine prompts that:
 - Change color based on token usage percentage
 - Show different icons for different AI models
 - Display cost warnings when sessions get expensive
-- Integrate with git status to show AI-assisted development context
+- Integrate with any other segment to show additional development context
 
 The foundation is there, and now it's up to the community to build amazing configurations that make
 AI-powered development even more seamless.

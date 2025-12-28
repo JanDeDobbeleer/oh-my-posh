@@ -59,8 +59,8 @@ Example usage in Claude Code settings:
 
 		var cfg *config.Config
 
-		cfg, errCode := config.Parse(configFlag)
-		if errCode != 0 {
+		cfg, err = config.Parse(configFlag)
+		if err != nil {
 			cfg = config.Claude()
 		}
 

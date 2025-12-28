@@ -43,6 +43,7 @@ func init() {
 	gob.Register(&segments.Cf{})
 	gob.Register(&segments.CfTarget{})
 	gob.Register(&segments.Claude{})
+	gob.Register(&segments.ClaudeData{})
 	gob.Register(&segments.Clojure{})
 	gob.Register(&segments.Cmake{})
 	gob.Register(&segments.Connection{})

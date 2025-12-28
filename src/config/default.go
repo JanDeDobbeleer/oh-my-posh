@@ -8,13 +8,28 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-func Default(warning bool) *Config {
+func Default(errorCode int) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 
-	if warning {
+	if errorCode != 0 {
 		exitBackgroundTemplate = "p:red"
-		exitTemplate = " CONFIG ERROR "
+
+		// Display specific error message based on error code
+		switch errorCode {
+		case ErrorFileNotFound:
+			exitTemplate = " FILE NOT FOUND "
+		case ErrorInvalidExtension:
+			exitTemplate = " INVALID EXTENSION "
+		case ErrorInvalidTheme:
+			exitTemplate = " INVALID THEME "
+		case ErrorURLFetch:
+			exitTemplate = " URL FETCH FAILED "
+		case ErrorParse:
+			exitTemplate = " PARSE ERROR "
+		default:
+			exitTemplate = " CONFIG ERROR "
+		}
 	}
 
 	cfg := &Config{

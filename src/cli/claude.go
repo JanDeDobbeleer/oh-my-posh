@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -44,17 +46,13 @@ Example usage in Claude Code settings:
 
 		log.Debugf("received data from stdin: %s", string(stdinData))
 
-		// Store the JSON in an environment variable for the Claude segment to read
-		if len(stdinData) > 0 {
-			os.Setenv("POSH_CLAUDE_STATUS", string(stdinData))
-		}
+		// Process Claude data and initialize cache
+		processClaudeData(stdinData)
 
 		flags := &runtime.Flags{
 			ConfigPath: configFlag,
 			Shell:      shell.CLAUDE,
 		}
-
-		cache.Init(shell.CLAUDE, cache.Persist, cache.NoSession)
 
 		env := &runtime.Terminal{}
 		env.Init(flags)
@@ -76,9 +74,44 @@ Example usage in Claude Code settings:
 			Env:    env,
 		}
 
+		defer func() {
+			template.SaveCache()
+			cache.Close()
+		}()
+
 		result := eng.Status()
 		fmt.Print(result)
 	},
+}
+
+// processClaudeData handles parsing and caching of Claude JSON data
+func processClaudeData(stdinData []byte) {
+	if len(stdinData) == 0 {
+		cache.Init(shell.CLAUDE, cache.Persist, cache.NoSession)
+		return
+	}
+
+	var claudeData segments.Claude
+	if err := json.Unmarshal(stdinData, &claudeData); err != nil {
+		log.Error(err)
+		cache.Init(shell.CLAUDE, cache.Persist, cache.NoSession)
+		return
+	}
+
+	log.Debugf("parsed Claude data: session_id=%s, model=%s", claudeData.SessionID, claudeData.Model.DisplayName)
+
+	// Set the session ID from Claude data if available
+	if claudeData.SessionID != "" {
+		os.Setenv("POSH_SESSION_ID", claudeData.SessionID)
+		log.Debugf("set POSH_SESSION_ID to: %s", claudeData.SessionID)
+	}
+
+	// Initialize cache first so we can store the data
+	cache.Init(shell.CLAUDE, cache.Persist)
+
+	// Store the parsed data in session cache
+	cache.Set(cache.Session, cache.CLAUDECACHE, claudeData, cache.INFINITE)
+	log.Debug("stored Claude data in session cache")
 }
 
 func init() {

@@ -8,13 +8,13 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-func Default(warning bool) *Config {
+func Default(configError error) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 
-	if warning {
+	if configError != nil && configError != ErrNoConfig {
 		exitBackgroundTemplate = "p:red"
-		exitTemplate = " CONFIG ERROR "
+		exitTemplate = configError.Error()
 	}
 
 	cfg := &Config{

@@ -24,19 +24,30 @@ import (
 	yaml "go.yaml.in/yaml/v3"
 )
 
-// custom no config error
-var ErrNoConfig = errors.New("no config file specified")
+// Custom error types for config validation
+type Error struct {
+	message string
+}
+
+func (e Error) Error() string {
+	return fmt.Sprintf(" %s ", e.message)
+}
+
+var (
+	ErrFileNotFound     = Error{"CONFIG NOT FOUND"}
+	ErrInvalidExtension = Error{"INVALID CONFIG EXTENSION"}
+	ErrInvalidTheme     = Error{"INVALID CONFIG THEME"}
+	ErrURLFetch         = Error{"CONFIG URL FETCH FAILED"}
+	ErrParse            = Error{"CONFIG PARSE ERROR"}
+	ErrNoConfig         = Error{"NO CONFIG"}
+)
 
 func Load(configFile string) *Config {
 	defer log.Trace(time.Now())
 
-	if configFile == "" {
-		return Default(false)
-	}
-
 	cfg, err := Parse(configFile)
 	if err != nil {
-		cfg = Default(true)
+		cfg = Default(err)
 	}
 
 	return cfg
@@ -82,6 +93,11 @@ type hashWriter interface {
 func Parse(configFile string) (*Config, error) {
 	defer log.Trace(time.Now())
 
+	if configFile == "" {
+		log.Debug("no config file specified")
+		return nil, ErrNoConfig
+	}
+
 	configFile = resolveConfigLocation(configFile)
 
 	configDSC := DSC()
@@ -94,7 +110,7 @@ func Parse(configFile string) (*Config, error) {
 
 	cfg, err := read(configFile, h)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("failed to read config: %s", configFile)
 		return nil, err
 	}
 
@@ -104,7 +120,7 @@ func Parse(configFile string) (*Config, error) {
 		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
 		base, err := read(cfg.Extends, h)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("failed to read extended config: %s", cfg.Extends)
 			break
 		}
 
@@ -166,7 +182,7 @@ func read(configFile string, h hashWriter) (*Config, error) {
 
 	if configFile == "" {
 		log.Debug("no config file specified, using default")
-		return Default(false), nil
+		return Default(nil), nil
 	}
 
 	var cfg Config
@@ -175,13 +191,24 @@ func read(configFile string, h hashWriter) (*Config, error) {
 
 	data, err := getData(configFile)
 	if err != nil {
-		return nil, err
+		// Determine the type of error
+		if strings.HasPrefix(configFile, "https://") {
+			log.Errorf("failed to fetch config from URL: %v", err)
+			return nil, ErrURLFetch
+		}
+		if errors.Is(err, os.ErrNotExist) {
+			log.Errorf("config file not found: %v", err)
+			return nil, ErrFileNotFound
+		}
+		log.Errorf("failed to read config: %v", err)
+		return nil, ErrFileNotFound
 	}
 
+	var parseErr error
 	switch cfg.Format {
 	case YAML, YML:
 		cfg.Format = YAML
-		err = yaml.Unmarshal(data, &cfg)
+		parseErr = yaml.Unmarshal(data, &cfg)
 	case JSONC, JSON:
 		cfg.Format = JSON
 
@@ -189,16 +216,18 @@ func read(configFile string, h hashWriter) (*Config, error) {
 		data = []byte(str)
 
 		decoder := json.NewDecoder(bytes.NewReader(data))
-		err = decoder.Decode(&cfg)
+		parseErr = decoder.Decode(&cfg)
 	case TOML, TML:
 		cfg.Format = TOML
-		err = toml.Unmarshal(data, &cfg)
+		parseErr = toml.Unmarshal(data, &cfg)
 	default:
-		err = fmt.Errorf("unsupported config file format: %s", cfg.Format)
+		log.Errorf("unsupported config file format: %s", cfg.Format)
+		return nil, ErrInvalidExtension
 	}
 
-	if err != nil {
-		return nil, err
+	if parseErr != nil {
+		log.Errorf("failed to parse config: %v", parseErr)
+		return nil, ErrParse
 	}
 
 	_, err = h.Write(data)

@@ -14,7 +14,7 @@ import (
 func TestClaudeSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		ClaudeData      *Claude
+		ClaudeData      *ClaudeData
 		ExpectedModel   string
 		ExpectedSession string
 		ExpectedEnabled bool
@@ -26,7 +26,7 @@ func TestClaudeSegment(t *testing.T) {
 		},
 		{
 			Case: "Valid cache data with all fields",
-			ClaudeData: &Claude{
+			ClaudeData: &ClaudeData{
 				SessionID: "abc123",
 				Model: ClaudeModel{
 					ID:          "claude-opus-4-1",
@@ -56,7 +56,7 @@ func TestClaudeSegment(t *testing.T) {
 		},
 		{
 			Case: "Valid cache data with partial fields",
-			ClaudeData: &Claude{
+			ClaudeData: &ClaudeData{
 				SessionID: "xyz789",
 				Model: ClaudeModel{
 					ID:          "claude-sonnet-3-5",

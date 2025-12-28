@@ -1,9 +1,9 @@
 package segments
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
@@ -52,9 +52,8 @@ type ClaudeCurrentUsage struct {
 }
 
 const (
-	poshClaudeStatusEnv = "POSH_CLAUDE_STATUS"
-	thousand            = 1000.0
-	million             = 1000000.0
+	thousand = 1000.0
+	million  = 1000000.0
 )
 
 func (c *Claude) Template() string {
@@ -64,22 +63,21 @@ func (c *Claude) Template() string {
 func (c *Claude) Enabled() bool {
 	log.Debug("claude segment: checking if enabled")
 
-	claudeStatus := c.env.Getenv(poshClaudeStatusEnv)
-	if len(claudeStatus) == 0 {
-		log.Debug("claude segment: POSH_CLAUDE_STATUS is empty")
+	// Try to get Claude data from session cache
+	claudeData, found := cache.Get[Claude](cache.Session, cache.CLAUDECACHE)
+	if !found {
+		log.Debug("claude segment: no Claude data found in session cache")
 		return false
 	}
 
-	log.Debugf("claude segment: parsing JSON (%d bytes)", len(claudeStatus))
+	log.Debug("claude segment: found Claude data in session cache")
+	log.Debugf("claude segment: model=%s, session=%s", claudeData.Model.DisplayName, claudeData.SessionID)
 
-	err := json.Unmarshal([]byte(claudeStatus), c)
-	if err != nil {
-		log.Error(err)
-		return false
-	}
-
-	log.Debug("claude segment: successfully parsed JSON")
-	log.Debugf("claude segment: model=%s, session=%s", c.Model.DisplayName, c.SessionID)
+	// Copy the data to our struct
+	// Preserve the Base struct to avoid nil pointer dereference
+	base := c.Base
+	*c = claudeData
+	c.Base = base
 
 	return true
 }

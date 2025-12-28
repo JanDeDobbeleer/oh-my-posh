@@ -3,6 +3,7 @@ package segments
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
@@ -13,67 +14,60 @@ import (
 func TestClaudeSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		ClaudeStatus    string
+		ClaudeData      *Claude
 		ExpectedModel   string
 		ExpectedSession string
 		ExpectedEnabled bool
 	}{
 		{
-			Case:            "Empty environment variable",
-			ClaudeStatus:    "",
+			Case:            "No cache data",
+			ClaudeData:      nil,
 			ExpectedEnabled: false,
 		},
 		{
-			Case:            "Invalid JSON",
-			ClaudeStatus:    "invalid json",
-			ExpectedEnabled: false,
-		},
-		{
-			Case: "Valid JSON with all fields",
-			ClaudeStatus: `{
-				"session_id": "abc123",
-				"model": {
-					"id": "claude-opus-4-1",
-					"display_name": "Opus"
+			Case: "Valid cache data with all fields",
+			ClaudeData: &Claude{
+				SessionID: "abc123",
+				Model: ClaudeModel{
+					ID:          "claude-opus-4-1",
+					DisplayName: "Opus",
 				},
-				"workspace": {
-					"current_dir": "/repo/project",
-					"project_dir": "/repo"
+				Workspace: ClaudeWorkspace{
+					CurrentDir: "/repo/project",
+					ProjectDir: "/repo",
 				},
-				"cost": {
-					"total_cost_usd": 0.01,
-					"total_duration_ms": 45000
+				Cost: ClaudeCost{
+					TotalCostUSD:    0.01,
+					TotalDurationMS: 45000,
 				},
-				"context_window": {
-					"total_input_tokens": 15234,
-					"total_output_tokens": 4521,
-					"context_window_size": 200000,
-					"current_usage": {
-						"input_tokens": 8500,
-						"output_tokens": 1200
-					}
-				}
-			}`,
+				ContextWindow: ClaudeContextWindow{
+					TotalInputTokens:  15234,
+					TotalOutputTokens: 4521,
+					ContextWindowSize: 200000,
+					CurrentUsage: ClaudeCurrentUsage{
+						InputTokens:  8500,
+						OutputTokens: 1200,
+					},
+				},
+			},
 			ExpectedEnabled: true,
 			ExpectedModel:   "Opus",
 			ExpectedSession: "abc123",
 		},
 		{
-			Case: "Valid JSON with partial fields",
-			ClaudeStatus: `{
-				"session_id": "xyz789",
-				"model": {
-					"id": "claude-sonnet-3-5",
-					"display_name": "Sonnet 3.5"
+			Case: "Valid cache data with partial fields",
+			ClaudeData: &Claude{
+				SessionID: "xyz789",
+				Model: ClaudeModel{
+					ID:          "claude-sonnet-3-5",
+					DisplayName: "Sonnet 3.5",
 				},
-				"workspace": {},
-				"cost": {},
-				"context_window": {
-					"total_input_tokens": 1000,
-					"total_output_tokens": 500,
-					"context_window_size": 100000
-				}
-			}`,
+				ContextWindow: ClaudeContextWindow{
+					TotalInputTokens:  1000,
+					TotalOutputTokens: 500,
+					ContextWindowSize: 100000,
+				},
+			},
 			ExpectedEnabled: true,
 			ExpectedModel:   "Sonnet 3.5",
 			ExpectedSession: "xyz789",
@@ -81,9 +75,14 @@ func TestClaudeSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("Getenv", poshClaudeStatusEnv).Return(tc.ClaudeStatus)
+		// Setup cache for test
+		if tc.ClaudeData != nil {
+			cache.Set(cache.Session, cache.CLAUDECACHE, *tc.ClaudeData, cache.INFINITE)
+		} else {
+			cache.Delete(cache.Session, cache.CLAUDECACHE)
+		}
 
+		env := new(mock.Environment)
 		claude := &Claude{
 			Base: Base{
 				env:     env,

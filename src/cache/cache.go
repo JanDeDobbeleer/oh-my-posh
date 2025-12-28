@@ -23,6 +23,7 @@ const (
 	PROMPTCOUNTCACHE = "prompt_count_cache"
 	ENGINECACHE      = "engine_cache"
 	FONTLISTCACHE    = "font_list_cache"
+	CLAUDECACHE      = "claude_cache"
 )
 
 type Entry[T any] struct {

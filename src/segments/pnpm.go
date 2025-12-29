@@ -20,5 +20,5 @@ func (n *Pnpm) Enabled() bool {
 }
 
 func (n *Pnpm) Template() string {
-	return " \U000F02C1 {{.Full}} "
+	return " \ue865 {{.Full}} "
 }

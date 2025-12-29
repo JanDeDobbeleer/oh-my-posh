@@ -11,8 +11,8 @@ import (
 type WinGet struct {
 	Base
 
-	UpdateCount int
 	Updates     []WinGetPackage
+	UpdateCount int
 }
 
 type WinGetPackage struct {
@@ -66,34 +66,46 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 
 	lines := strings.Split(output, "\n")
 	var headerLine string
-	separatorFound := false
+	separatorIndex := -1
 
-	for _, line := range lines {
+	// First pass: find header line and separator
+	for i, line := range lines {
 		if line == "" {
 			continue
 		}
 
-		// Find the header line and separator
-		if !separatorFound {
-			if strings.Contains(line, "---") || strings.Contains(line, "─") {
-				separatorFound = true
-				continue
-			}
-			// Store the header line to determine column positions
-			if strings.Contains(line, "Id") && strings.Contains(line, "Version") {
-				headerLine = line
-			}
-			continue
+		if strings.Contains(line, "---") || strings.Contains(line, "─") {
+			separatorIndex = i
+			break
 		}
 
-		// Determine column positions from header
-		idIndex := strings.Index(headerLine, "Id")
-		versionIndex := strings.Index(headerLine, "Version")
-		availableIndex := strings.Index(headerLine, "Available")
-		sourceIndex := strings.Index(headerLine, "Source")
+		// Store the header line to determine column positions
+		if strings.Contains(line, "Id") && strings.Contains(line, "Version") {
+			headerLine = line
+		}
+	}
 
-		// If we can't find column positions, skip
-		if idIndex < 0 || versionIndex < 0 || availableIndex < 0 {
+	// If no separator found, return empty
+	if separatorIndex < 0 {
+		return packages
+	}
+
+	// Determine column positions from header (calculated once)
+	idIndex := strings.Index(headerLine, "Id")
+	versionIndex := strings.Index(headerLine, "Version")
+	availableIndex := strings.Index(headerLine, "Available")
+	sourceIndex := strings.Index(headerLine, "Source")
+
+	// If we can't find column positions, return empty
+	if idIndex < 0 || versionIndex < 0 || availableIndex < 0 {
+		return packages
+	}
+
+	// Second pass: process data lines after separator
+	for i := separatorIndex + 1; i < len(lines); i++ {
+		line := lines[i]
+
+		if line == "" {
 			continue
 		}
 

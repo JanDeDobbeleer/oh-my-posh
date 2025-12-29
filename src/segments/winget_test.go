@@ -14,11 +14,11 @@ import (
 func TestWinGet(t *testing.T) {
 	cases := []struct {
 		Case            string
-		ExpectedEnabled bool
-		ExpectedCount   int
 		WinGetOutput    string
-		CommandError    error
 		GOOS            string
+		CommandError    error
+		ExpectedCount   int
+		ExpectedEnabled bool
 		HasCommand      bool
 	}{
 		{
@@ -116,8 +116,8 @@ func TestWinGetParseOutput(t *testing.T) {
 	cases := []struct {
 		Case          string
 		Output        string
-		ExpectedCount int
 		ExpectedFirst WinGetPackage
+		ExpectedCount int
 	}{
 		{
 			Case: "Standard output",

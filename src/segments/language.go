@@ -11,9 +11,9 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
@@ -79,6 +79,8 @@ type Language struct {
 	versionURLTemplate string
 	name               string
 	commands           []*cmd
+	tooling            map[string]*cmd
+	defaultTooling     []string
 	projectFiles       []string
 	folders            []string
 	extensions         []string
@@ -89,7 +91,7 @@ type Language struct {
 
 const (
 	// DisplayMode sets the display mode (always, when_in_context, never)
-	DisplayMode properties.Property = "display_mode"
+	DisplayMode options.Option = "display_mode"
 	// DisplayModeAlways displays the segment always
 	DisplayModeAlways string = "always"
 	// DisplayModeFiles displays the segment when the current folder contains certain extensions
@@ -99,13 +101,15 @@ const (
 	// DisplayModeContext displays the segment when the environment or files is active
 	DisplayModeContext string = "context"
 	// MissingCommandText sets the text to display when the command is not present in the system
-	MissingCommandText properties.Property = "missing_command_text"
+	MissingCommandText options.Option = "missing_command_text"
 	// HomeEnabled displays the segment in the HOME folder or not
-	HomeEnabled properties.Property = "home_enabled"
+	HomeEnabled options.Option = "home_enabled"
 	// LanguageExtensions the list of extensions to validate
-	LanguageExtensions properties.Property = "extensions"
+	LanguageExtensions options.Option = "extensions"
 	// LanguageFolders the list of folders to validate
-	LanguageFolders properties.Property = "folders"
+	LanguageFolders options.Option = "folders"
+	// Tooling allows enabling additional version fetching tools
+	Tooling options.Option = "tooling"
 )
 
 func (l *Language) getName() string {
@@ -117,15 +121,15 @@ func (l *Language) getName() string {
 func (l *Language) Enabled() bool {
 	l.name = l.getName()
 	// override default extensions if needed
-	l.extensions = l.props.GetStringArray(LanguageExtensions, l.extensions)
-	l.folders = l.props.GetStringArray(LanguageFolders, l.folders)
+	l.extensions = l.options.StringArray(LanguageExtensions, l.extensions)
+	l.folders = l.options.StringArray(LanguageFolders, l.folders)
 	inHomeDir := func() bool {
 		return l.env.Pwd() == l.env.Home()
 	}
 
 	var enabled bool
 
-	homeEnabled := l.props.GetBool(HomeEnabled, l.homeEnabled)
+	homeEnabled := l.options.Bool(HomeEnabled, l.homeEnabled)
 	if inHomeDir() && !homeEnabled {
 		return false
 	}
@@ -137,7 +141,7 @@ func (l *Language) Enabled() bool {
 	if !enabled {
 		// set default mode when not set
 		if l.displayMode == "" {
-			l.displayMode = l.props.GetString(DisplayMode, DisplayModeFiles)
+			l.displayMode = l.options.String(DisplayMode, DisplayModeFiles)
 		}
 
 		l.loadLanguageContext()
@@ -156,7 +160,9 @@ func (l *Language) Enabled() bool {
 		}
 	}
 
-	if !enabled || !l.props.GetBool(properties.FetchVersion, true) {
+	l.loadTooling()
+
+	if !enabled || !l.options.Bool(options.FetchVersion, true) {
 		return enabled
 	}
 
@@ -174,6 +180,26 @@ func (l *Language) Enabled() bool {
 	}
 
 	return enabled
+}
+
+// loadTooling builds the commands list from the tooling map based on the tooling configuration.
+// Users can override the default tooling via the Tooling option.
+// This allows specifying which tools should be used to fetch versions
+// (e.g., "uv" for Python to use UV package manager).
+func (l *Language) loadTooling() {
+	enabledTools := l.options.StringArray(Tooling, l.defaultTooling)
+	if len(enabledTools) == 0 {
+		return
+	}
+
+	var commands []*cmd
+	for _, tool := range enabledTools {
+		if command, exists := l.tooling[tool]; exists {
+			commands = append(commands, command)
+		}
+	}
+
+	l.commands = commands
 }
 
 func (l *Language) hasLanguageFiles() bool {
@@ -229,7 +255,7 @@ func (l *Language) setVersion() error {
 		l.buildVersionURL()
 		l.Executable = command.executable
 
-		duration := l.props.GetString(properties.CacheDuration, string(cache.NONE))
+		duration := l.options.String(options.CacheDuration, string(cache.NONE))
 		cache.Set(cache.Device, cacheKey, l.Version, cache.Duration(duration))
 
 		return nil
@@ -239,7 +265,7 @@ func (l *Language) setVersion() error {
 		return lastError
 	}
 
-	return errors.New(l.props.GetString(MissingCommandText, ""))
+	return errors.New(l.options.String(MissingCommandText, ""))
 }
 
 func (l *Language) runCommand(command *cmd) (string, error) {
@@ -284,7 +310,7 @@ func (l *Language) inLanguageContext() bool {
 }
 
 func (l *Language) buildVersionURL() {
-	versionURLTemplate := l.props.GetString(properties.VersionURLTemplate, l.versionURLTemplate)
+	versionURLTemplate := l.options.String(options.VersionURLTemplate, l.versionURLTemplate)
 	if versionURLTemplate == "" {
 		return
 	}

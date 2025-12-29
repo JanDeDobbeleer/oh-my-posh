@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Os struct {
@@ -13,15 +13,15 @@ type Os struct {
 
 const (
 	// MacOS the string/icon to use for MacOS
-	MacOS properties.Property = "macos"
+	MacOS options.Option = "macos"
 	// Linux the string/icon to use for linux
-	Linux properties.Property = "linux"
+	Linux options.Option = "linux"
 	// Windows the string/icon to use for windows
-	Windows properties.Property = "windows"
+	Windows options.Option = "windows"
 	// Android the string/icon to use for android
-	Android properties.Property = "android"
+	Android options.Option = "android"
 	// DisplayDistroName display the distro name or not
-	DisplayDistroName properties.Property = "display_distro_name"
+	DisplayDistroName options.Option = "display_distro_name"
 )
 
 func (oi *Os) Template() string {
@@ -32,19 +32,19 @@ func (oi *Os) Enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
 	case runtime.WINDOWS:
-		oi.Icon = oi.props.GetString(Windows, "\uE62A")
+		oi.Icon = oi.options.String(Windows, "\uE62A")
 	case runtime.DARWIN:
-		oi.Icon = oi.props.GetString(MacOS, "\uF179")
+		oi.Icon = oi.options.String(MacOS, "\uF179")
 	case runtime.LINUX, runtime.FREEBSD:
 		pf := oi.env.Platform()
-		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
+		displayDistroName := oi.options.Bool(DisplayDistroName, false)
 		if displayDistroName {
-			oi.Icon = oi.props.GetString(properties.Property(pf), pf)
+			oi.Icon = oi.options.String(options.Option(pf), pf)
 			break
 		}
 		oi.Icon = oi.getDistroIcon(pf)
 	case runtime.ANDROID:
-		oi.Icon = oi.props.GetString(Android, "\ue70e")
+		oi.Icon = oi.options.String(Android, "\ue70e")
 	default:
 		oi.Icon = goos
 	}
@@ -87,13 +87,13 @@ func (oi *Os) getDistroIcon(distro string) string {
 	}
 
 	if icon, ok := iconMap[distro]; ok {
-		return oi.props.GetString(properties.Property(distro), icon)
+		return oi.options.String(options.Option(distro), icon)
 	}
 
-	icon := oi.props.GetString(properties.Property(distro), "")
+	icon := oi.options.String(options.Option(distro), "")
 	if len(icon) > 0 {
 		return icon
 	}
 
-	return oi.props.GetString(Linux, "\uF17C")
+	return oi.options.String(Linux, "\uF17C")
 }

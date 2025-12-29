@@ -32,7 +32,7 @@
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#053F22{{ end }}",
             "{{ if or (gt .Ahead 0) (gt .Behind 0) }}#0A703E{{ end }}"
           ],
-          "properties": {
+          "options": {
             "branch_template": "{{ trunc 30 .Branch }}",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -44,7 +44,7 @@
         {
           "background": "#E0E0E0",
           "foreground": "#424242",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -57,7 +57,7 @@
           "powerline_symbol": "\ue0b0",
           "style": "plain",
           "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
-          "properties": {
+          "options": {
             "text": "\ue0b0"
           },
           "type": "python"
@@ -72,5 +72,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

@@ -15,7 +15,7 @@
         {
           "background": "#ef5350",
           "foreground": "#FFFB38",
-          "properties": {
+          "options": {
             "root_icon": "\uf292"
           },
           "style": "diamond",
@@ -26,7 +26,7 @@
           "background": "#444444",
           "foreground": "#E4E4E4",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -43,7 +43,7 @@
           ],
           "foreground": "#011627",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -62,7 +62,7 @@
           "background": "#303030",
           "foreground": "#3C873A",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
             "yarn_icon": " <#348cba>\ue6a7</>"
@@ -100,7 +100,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#ef5350{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -111,5 +111,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

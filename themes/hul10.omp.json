@@ -20,7 +20,7 @@
         {
           "background": "#464646",
           "foreground": "p:white",
-          "properties": {
+          "options": {
             "windows": "\ue62a",
             "linux": "\uf17c",
             "ubuntu": "\uf31b",
@@ -47,7 +47,7 @@
         {
           "background": "#ffffd6",
           "foreground": "p:black",
-          "properties": {
+          "options": {
             "branch_icon": " \ue0a0 "
           },
           "style": "plain",
@@ -63,7 +63,7 @@
         {
           "background": "transparent",
           "foreground": "#b3ffde",
-          "properties": {
+          "options": {
             "style": "austin",
             "threshold": 0
           },
@@ -74,7 +74,7 @@
         {
           "background": "transparent",
           "foreground": "#b3ffde",
-          "properties": {
+          "options": {
             "time_format": "02/01/06 15:04"
           },
           "style": "plain",
@@ -91,7 +91,7 @@
         {
           "background": "transparent",
           "foreground": "p:white",
-          "properties": {
+          "options": {
             "folder_icon": "\uf07b",
             "folder_separator_template": "<#93d0ff> \u00bb </>",
             "home_icon": "\ueb06",
@@ -114,7 +114,7 @@
           "foreground_templates": [
             "{{if gt .Code 0}}#ff3030{{end}}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -126,5 +126,5 @@
   ],
   "console_title_template": "{{if .Root}}[root] {{end}}{{.Shell}} in <{{.Folder}}>",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

@@ -21,7 +21,7 @@
         {
           "background": "#546E7A",
           "foreground": "#26C6DA",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -59,7 +59,7 @@
         {
           "background": "#546E7A",
           "foreground": "#D4E157",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -78,7 +78,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#FF5252{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -89,5 +89,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

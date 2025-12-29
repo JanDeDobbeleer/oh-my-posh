@@ -7,7 +7,7 @@ type Helm struct {
 }
 
 func (h *Helm) Enabled() bool {
-	displayMode := h.props.GetString(DisplayMode, DisplayModeAlways)
+	displayMode := h.options.String(DisplayMode, DisplayModeAlways)
 	if displayMode != DisplayModeFiles {
 		return h.getVersion()
 	}

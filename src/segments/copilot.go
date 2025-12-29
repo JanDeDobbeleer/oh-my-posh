@@ -2,54 +2,22 @@ package segments
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
-
-// CopilotPercentage represents a percentage value with gauge visualization.
-type CopilotPercentage int
-
-// Gauge returns a 5-character gauge visualization showing remaining capacity (▰▰▰▰▱ style).
-// The gauge displays remaining capacity, so 20% used shows 4 filled blocks (80% remaining).
-func (p CopilotPercentage) Gauge() string {
-	percent := min(max(int(p), 0), 100)
-
-	// Calculate remaining percentage for gauge display
-	remainingPercent := 100 - percent
-
-	// 5 blocks total, calculate how many should be filled (representing remaining capacity)
-	filledBlocks := (remainingPercent * 5) / 100
-	emptyBlocks := 5 - filledBlocks
-
-	// Use ▰ for filled blocks (remaining) and ▱ for empty blocks (used)
-	gauge := ""
-	for range filledBlocks {
-		gauge += "▰"
-	}
-	for range emptyBlocks {
-		gauge += "▱"
-	}
-
-	return gauge
-}
-
-// String returns the percentage as a string without % sign for template compatibility.
-func (p CopilotPercentage) String() string {
-	return fmt.Sprintf("%d", int(p))
-}
 
 // CopilotUsage represents usage statistics for a specific quota type.
 type CopilotUsage struct {
-	Used      int               `json:"used"`
-	Limit     int               `json:"limit"`
-	Percent   CopilotPercentage `json:"percent"`
-	Remaining CopilotPercentage `json:"remaining"`
-	Unlimited bool              `json:"unlimited"`
+	Used      int             `json:"used"`
+	Limit     int             `json:"limit"`
+	Percent   text.Percentage `json:"percent"`
+	Remaining text.Percentage `json:"remaining"`
+	Unlimited bool            `json:"unlimited"`
 }
 
 // Copilot displays GitHub Copilot usage statistics.
@@ -117,7 +85,7 @@ func (c *Copilot) getResult() (*copilotAPIResponse, error) {
 
 	log.Debug("found access token")
 
-	httpTimeout := c.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := c.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	addAuthHeader := func(request *http.Request) {
 		request.Header.Set("Authorization", "Bearer "+accessToken)
@@ -191,8 +159,8 @@ func (c *Copilot) calculateUsage(snapshot copilotQuotaSnapshot) CopilotUsage {
 		return CopilotUsage{
 			Used:      0,
 			Limit:     0,
-			Percent:   CopilotPercentage(0),
-			Remaining: CopilotPercentage(100),
+			Percent:   text.Percentage(0),
+			Remaining: text.Percentage(100),
 			Unlimited: true,
 		}
 	}
@@ -204,8 +172,8 @@ func (c *Copilot) calculateUsage(snapshot copilotQuotaSnapshot) CopilotUsage {
 	return CopilotUsage{
 		Used:      used,
 		Limit:     snapshot.Entitlement,
-		Percent:   CopilotPercentage(percent),
-		Remaining: CopilotPercentage(remainingPercent),
+		Percent:   text.Percentage(percent),
+		Remaining: text.Percentage(remainingPercent),
 		Unlimited: false,
 	}
 }

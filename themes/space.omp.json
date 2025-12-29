@@ -6,7 +6,7 @@
       "segments": [
         {
           "foreground": "#26C6DA",
-          "properties": {
+          "options": {
             "macos": "mac"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "lightGreen",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -29,7 +29,7 @@
           "type": "path"
         },
         {
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "plain",
@@ -82,5 +82,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

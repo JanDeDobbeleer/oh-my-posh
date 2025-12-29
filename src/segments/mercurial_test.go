@@ -3,9 +3,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ func TestMercurialEnabledToolNotFound(t *testing.T) {
 	env.On("IsWsl").Return(false)
 
 	hg := &Mercurial{}
-	hg.Init(properties.Map{}, env)
+	hg.Init(options.Map{}, env)
 
 	assert.False(t, hg.Enabled())
 }
@@ -39,7 +39,7 @@ func TestMercurialEnabledInWorkingDirectory(t *testing.T) {
 	env.On("Getenv", poshGitEnv).Return("")
 
 	hg := &Mercurial{}
-	hg.Init(properties.Map{}, env)
+	hg.Init(options.Map{}, env)
 
 	assert.True(t, hg.Enabled())
 	assert.Equal(t, fileInfo.Path, hg.mainSCMDir)
@@ -135,7 +135,7 @@ A Added.File
 			IsDir:        true,
 		}
 
-		props := properties.Map{
+		props := options.Map{
 			FetchStatus: true,
 		}
 

@@ -10,20 +10,22 @@ Show the current timestamp.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "time",
-  "style": "plain",
-  "foreground": "#007ACC",
-  "properties": {
-    "time_format": "15:04:05"
-  }
-}}/>
+<Config
+  data={{
+    type: "time",
+    style: "plain",
+    foreground: "#007ACC",
+    options: {
+      time_format: "15:04:05",
+    },
+  }}
+/>
 
-## Properties
+## Options
 
-| Name          | Type     | Default    | Description   |
+| Name          |   Type   |  Default   | Description   |
 | ------------- | :------: | :--------: | ------------- |
 | `time_format` | `string` | `15:04:05` | Format to use |
 
@@ -65,8 +67,6 @@ Follows the [golang datetime standard][format]:
 | **Timezone**                                     | `MST`                                                   |
 | **Offset**                                       | `-0700`, `-07`, `-07:00`, `Z0700`, `Z07:00`             |
 
-
-
 ### Predefined formats
 
 The following predefined date and timestamp [format constants][format-constants] are also available:
@@ -88,7 +88,6 @@ The following predefined date and timestamp [format constants][format-constants]
 | **StampMilli**  | `Jan _2 15:04:05.000`                 |
 | **StampMicro**  | `Jan _2 15:04:05.000000`              |
 | **StampNano**   | `Jan _2 15:04:05.000000000`           |
-
 
 ## Examples
 

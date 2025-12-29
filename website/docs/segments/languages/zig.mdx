@@ -24,7 +24,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name                   |    Type    |    Default     | Description                                                                                                                                                                                                                          |
 | ---------------------- | :--------: | :------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -36,6 +36,7 @@ import Config from "@site/src/components/Config.js";
 | `version_url_template` |  `string`  |                | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
 | `extensions`           | `[]string` | `*.zig, *.zon` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` |     `zig`      | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 

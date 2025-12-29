@@ -1,3 +1,4 @@
+//revive:disable:var-naming // package intentionally mirrors standard name for compatibility across runtime
 package http
 
 import (
@@ -21,7 +22,7 @@ type Environment interface {
 
 func Do[a any](r *Request, url string, body io.Reader, requestModifiers ...RequestModifier) (a, error) {
 	var data a
-	httpTimeout := r.HTTPTimeout // r.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+	httpTimeout := r.HTTPTimeout // r.props.GetInt(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	responseBody, err := r.Env.HTTPRequest(url, body, httpTimeout, requestModifiers...)
 	if err != nil {

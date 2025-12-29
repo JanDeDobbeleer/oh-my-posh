@@ -1,8 +1,6 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-)
+import "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 type Spotify struct {
 	Base
@@ -19,13 +17,13 @@ type MusicPlayer struct {
 
 const (
 	// PlayingIcon indicates a song is playing
-	PlayingIcon properties.Property = "playing_icon"
+	PlayingIcon options.Option = "playing_icon"
 	// PausedIcon indicates a song is paused
-	PausedIcon properties.Property = "paused_icon"
+	PausedIcon options.Option = "paused_icon"
 	// StoppedIcon indicates a song is stopped
-	StoppedIcon properties.Property = "stopped_icon"
+	StoppedIcon options.Option = "stopped_icon"
 	// AdIcon indicates an advertisement is playing
-	AdIcon properties.Property = "ad_icon"
+	AdIcon options.Option = "ad_icon"
 
 	playing = "playing"
 	stopped = "stopped"
@@ -40,10 +38,10 @@ func (s *Spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:
 		// in this case, no artist or track info
-		s.Icon = s.props.GetString(StoppedIcon, "\uF04D ")
+		s.Icon = s.options.String(StoppedIcon, "\uF04D ")
 	case paused:
-		s.Icon = s.props.GetString(PausedIcon, "\uF8E3 ")
+		s.Icon = s.options.String(PausedIcon, "\uF8E3 ")
 	case playing:
-		s.Icon = s.props.GetString(PlayingIcon, "\uE602 ")
+		s.Icon = s.options.String(PlayingIcon, "\uE602 ")
 	}
 }

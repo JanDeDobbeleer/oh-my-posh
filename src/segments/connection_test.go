@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -93,7 +93,7 @@ func TestConnection(t *testing.T) {
 			env.On("Connection", con.Connection.Type).Return(con.Connection, con.Error)
 		}
 
-		props := &properties.Map{
+		props := &options.Map{
 			Type: tc.ConnectionType,
 		}
 

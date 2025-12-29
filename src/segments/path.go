@@ -9,10 +9,10 @@ import (
 	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
@@ -64,15 +64,15 @@ type Path struct {
 
 const (
 	// FolderSeparatorIcon the path which is split will be separated by this icon
-	FolderSeparatorIcon properties.Property = "folder_separator_icon"
+	FolderSeparatorIcon options.Option = "folder_separator_icon"
 	// FolderSeparatorTemplate the path which is split will be separated by this template
-	FolderSeparatorTemplate properties.Property = "folder_separator_template"
+	FolderSeparatorTemplate options.Option = "folder_separator_template"
 	// HomeIcon indicates the $HOME location
-	HomeIcon properties.Property = "home_icon"
+	HomeIcon options.Option = "home_icon"
 	// FolderIcon identifies one folder
-	FolderIcon properties.Property = "folder_icon"
+	FolderIcon options.Option = "folder_icon"
 	// WindowsRegistryIcon indicates the registry location on Windows
-	WindowsRegistryIcon properties.Property = "windows_registry_icon"
+	WindowsRegistryIcon options.Option = "windows_registry_icon"
 	// Agnoster displays a short path with separator icon, this the default style
 	Agnoster string = "agnoster"
 	// AgnosterFull displays all the folder names with the folder_separator_icon
@@ -97,41 +97,41 @@ const (
 	// used in combination with max_width.
 	Powerlevel string = "powerlevel"
 	// MixedThreshold the threshold of the length of the path Mixed will display
-	MixedThreshold properties.Property = "mixed_threshold"
+	MixedThreshold options.Option = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
-	MappedLocations properties.Property = "mapped_locations"
+	MappedLocations options.Option = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
-	MappedLocationsEnabled properties.Property = "mapped_locations_enabled"
+	MappedLocationsEnabled options.Option = "mapped_locations_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
-	MaxDepth properties.Property = "max_depth"
+	MaxDepth options.Option = "max_depth"
 	// MaxWidth Maximum path width to display for powerlevel style
-	MaxWidth properties.Property = "max_width"
+	MaxWidth options.Option = "max_width"
 	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short
-	HideRootLocation properties.Property = "hide_root_location"
+	HideRootLocation options.Option = "hide_root_location"
 	// A color override cycle
-	Cycle properties.Property = "cycle"
+	Cycle options.Option = "cycle"
 	// Color the path separators within the cycle
-	CycleFolderSeparator properties.Property = "cycle_folder_separator"
+	CycleFolderSeparator options.Option = "cycle_folder_separator"
 	// format to use on the folder names
-	FolderFormat properties.Property = "folder_format"
+	FolderFormat options.Option = "folder_format"
 	// format to use on the first and last folder of the path
-	EdgeFormat properties.Property = "edge_format"
+	EdgeFormat options.Option = "edge_format"
 	// format to use on first folder of the path
-	LeftFormat properties.Property = "left_format"
+	LeftFormat options.Option = "left_format"
 	// format to use on the last folder of the path
-	RightFormat properties.Property = "right_format"
+	RightFormat options.Option = "right_format"
 	// GitDirFormat format to use on the git directory
-	GitDirFormat properties.Property = "gitdir_format"
+	GitDirFormat options.Option = "gitdir_format"
 	// DisplayCygpath transforms the path to a cygpath format
-	DisplayCygpath properties.Property = "display_cygpath"
+	DisplayCygpath options.Option = "display_cygpath"
 	// DisplayRoot indicates if the linux root slash should be displayed
-	DisplayRoot properties.Property = "display_root"
+	DisplayRoot options.Option = "display_root"
 	// Fish displays the path in a fish-like style
 	Fish string = "fish"
 	// DirLength the length of the directory name to display in fish style
-	DirLength properties.Property = "dir_length"
+	DirLength options.Option = "dir_length"
 	// FullLengthDirs indicates how many full length directory names should be displayed in fish style
-	FullLengthDirs properties.Property = "full_length_dirs"
+	FullLengthDirs options.Option = "full_length_dirs"
 )
 
 func (pt *Path) Template() string {
@@ -163,7 +163,7 @@ func (pt *Path) setPaths() {
 	}()
 
 	displayCygpath := func() bool {
-		enableCygpath := pt.props.GetBool(DisplayCygpath, false)
+		enableCygpath := pt.options.Bool(DisplayCygpath, false)
 		if !enableCygpath {
 			return false
 		}
@@ -248,7 +248,7 @@ func (pt *Path) setStyle() {
 		return
 	}
 
-	switch style := pt.props.GetString(properties.Style, Agnoster); style {
+	switch style := pt.options.String(options.Style, Agnoster); style {
 	case Agnoster:
 		maxWidth := pt.getMaxWidth()
 		pt.Path = pt.getAgnosterPath(maxWidth)
@@ -284,7 +284,7 @@ func (pt *Path) setStyle() {
 }
 
 func (pt *Path) getMaxWidth() int {
-	width := pt.props.GetString(MaxWidth, "")
+	width := pt.options.String(MaxWidth, "")
 	if width == "" {
 		return 0
 	}
@@ -305,9 +305,9 @@ func (pt *Path) getMaxWidth() int {
 }
 
 func (pt *Path) getFolderSeparator() string {
-	separatorTemplate := pt.props.GetString(FolderSeparatorTemplate, "")
+	separatorTemplate := pt.options.String(FolderSeparatorTemplate, "")
 	if separatorTemplate == "" {
-		separator := pt.props.GetString(FolderSeparatorIcon, pt.pathSeparator)
+		separator := pt.options.String(FolderSeparatorIcon, pt.pathSeparator)
 		// if empty, use the default separator
 		if separator == "" {
 			return pt.pathSeparator
@@ -329,8 +329,8 @@ func (pt *Path) getFolderSeparator() string {
 }
 
 func (pt *Path) getMixedPath() string {
-	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
-	folderIcon := pt.props.GetString(FolderIcon, "..")
+	threshold := int(pt.options.Float64(MixedThreshold, 4))
+	folderIcon := pt.options.String(FolderIcon, "..")
 
 	root, folders := pt.getPaths()
 
@@ -354,7 +354,7 @@ func (pt *Path) getAgnosterPath(maxWidth int) string {
 		return pt.getAgnosterMaxWidth(maxWidth)
 	}
 
-	folderIcon := pt.props.GetString(FolderIcon, "..")
+	folderIcon := pt.options.String(FolderIcon, "..")
 
 	root, folders := pt.getPaths()
 
@@ -373,7 +373,7 @@ func (pt *Path) getAgnosterPath(maxWidth int) string {
 }
 
 func (pt *Path) getAgnosterLeftPath() string {
-	folderIcon := pt.props.GetString(FolderIcon, "..")
+	folderIcon := pt.options.String(FolderIcon, "..")
 
 	root, folders := pt.getPaths()
 
@@ -442,8 +442,8 @@ func (pt *Path) getFishPath() string {
 	root, folders := pt.getPaths()
 	folders = append(Folders{&Folder{Name: root, Display: false}}, folders...)
 
-	dirLength := pt.props.GetInt(DirLength, 1)
-	fullLengthDirs := max(pt.props.GetInt(FullLengthDirs, 1), 1)
+	dirLength := pt.options.Int(DirLength, 1)
+	fullLengthDirs := max(pt.options.Int(FullLengthDirs, 1), 1)
 
 	folderCount := len(folders)
 	stopAt := folderCount - fullLengthDirs
@@ -470,7 +470,7 @@ func (pt *Path) getFishPath() string {
 }
 
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
-	dr := pt.props.GetBool(DisplayRoot, false)
+	dr := pt.options.Bool(DisplayRoot, false)
 	log.Debugf("%t", dr)
 	separator := pt.getFolderSeparator()
 
@@ -536,7 +536,7 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 
 func (pt *Path) getAgnosterMaxWidth(maxWidth int) string {
 	separator := pt.getFolderSeparator()
-	folderIcon := pt.props.GetString(FolderIcon, "..")
+	folderIcon := pt.options.String(FolderIcon, "..")
 
 	root, folders := pt.getPaths()
 	folderNames := append([]string{root}, folders.List()...)
@@ -580,11 +580,11 @@ func (pt *Path) getAgnosterFullPath() string {
 func (pt *Path) getAgnosterShortPath() string {
 	root, folders := pt.getPaths()
 
-	maxDepth := max(pt.props.GetInt(MaxDepth, 1), 1)
+	maxDepth := max(pt.options.Int(MaxDepth, 1), 1)
 
 	pathDepth := len(folders)
-	hideRootLocation := pt.props.GetBool(HideRootLocation, false)
-	folderIcon := pt.props.GetString(FolderIcon, "..")
+	hideRootLocation := pt.options.Bool(HideRootLocation, false)
+	folderIcon := pt.options.String(FolderIcon, "..")
 
 	// No need to shorten.
 	if pathDepth < maxDepth || (pathDepth == maxDepth && !hideRootLocation) {
@@ -634,15 +634,15 @@ func (pt *Path) setMappedLocations() {
 	mappedLocations := make(map[string]string)
 
 	// predefined mapped locations, can be disabled
-	if pt.props.GetBool(MappedLocationsEnabled, true) {
-		mappedLocations["hkcu:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
-		mappedLocations["hklm:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
-		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.GetString(HomeIcon, "~")
+	if pt.options.Bool(MappedLocationsEnabled, true) {
+		mappedLocations["hkcu:"] = pt.options.String(WindowsRegistryIcon, "\uF013")
+		mappedLocations["hklm:"] = pt.options.String(WindowsRegistryIcon, "\uF013")
+		mappedLocations[pt.normalize(pt.env.Home())] = pt.options.String(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations
 	// mapped locations can override predefined locations
-	keyValues := pt.props.GetKeyValueMap(MappedLocations, make(map[string]string))
+	keyValues := pt.options.KeyValueMap(MappedLocations, make(map[string]string))
 	for key, value := range keyValues {
 		if key == "" {
 			continue
@@ -816,7 +816,7 @@ func (pt *Path) getPaths() (string, Folders) {
 	folders := pt.Folders
 
 	isRootFS := func(inputPath string) bool {
-		displayRoot := pt.props.GetBool(DisplayRoot, false)
+		displayRoot := pt.options.Bool(DisplayRoot, false)
 		if displayRoot {
 			return false
 		}
@@ -861,15 +861,15 @@ func (pt *Path) normalize(inputPath string) string {
 }
 
 func (pt *Path) colorizePath(root string, elements []string) string {
-	cycle := pt.props.GetStringArray(Cycle, []string{})
+	cycle := pt.options.StringArray(Cycle, []string{})
 	skipColorize := len(cycle) == 0
 	folderSeparator := pt.getFolderSeparator()
-	colorSeparator := pt.props.GetBool(CycleFolderSeparator, false)
-	folderFormat := pt.props.GetString(FolderFormat, "%s")
+	colorSeparator := pt.options.Bool(CycleFolderSeparator, false)
+	folderFormat := pt.options.String(FolderFormat, "%s")
 
-	edgeFormat := pt.props.GetString(EdgeFormat, folderFormat)
-	leftFormat := pt.props.GetString(LeftFormat, edgeFormat)
-	rightFormat := pt.props.GetString(RightFormat, edgeFormat)
+	edgeFormat := pt.options.String(EdgeFormat, folderFormat)
+	leftFormat := pt.options.String(LeftFormat, edgeFormat)
+	rightFormat := pt.options.String(RightFormat, edgeFormat)
 
 	colorizeElement := func(element string) string {
 		if skipColorize || element == "" {
@@ -970,7 +970,7 @@ func (pt *Path) splitPath() Folders {
 func (pt *Path) makeFolderFormatMap() map[string]string {
 	folderFormatMap := make(map[string]string)
 
-	if gitDirFormat := pt.props.GetString(GitDirFormat, ""); len(gitDirFormat) != 0 {
+	if gitDirFormat := pt.options.String(GitDirFormat, ""); len(gitDirFormat) != 0 {
 		dir, err := pt.env.HasParentFilePath(".git", false)
 		if err == nil && dir.IsDir {
 			// Make it consistent with the modified parent.

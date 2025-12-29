@@ -288,8 +288,154 @@ async function validateConfig(content, format = 'auto') {
   return result;
 }
 
+/**
+ * Validate a segment configuration
+ * @param {string} content - The segment content
+ * @param {string} format - The format (json, yaml, toml, or auto)
+ * @returns {Promise<Object>} Validation result
+ */
+async function validateSegment(content, format = 'auto') {
+  const result = {
+    valid: false,
+    errors: [],
+    warnings: [],
+    detectedFormat: null,
+    parsedSegment: null
+  };
+
+  try {
+    // Load and compile validator
+    const validator = await getValidator();
+
+    // Parse the segment
+    const detectedFormat = format === 'auto' ? detectFormat(content) : format;
+    result.detectedFormat = detectedFormat;
+
+    const segment = parseConfig(content, format);
+    result.parsedSegment = segment;
+
+    // Validate that it's an object
+    if (!segment || typeof segment !== 'object' || Array.isArray(segment)) {
+      result.errors.push({
+        path: 'root',
+        message: 'Segment must be a JSON object',
+        keyword: 'type',
+        params: {},
+        data: segment
+      });
+      return result;
+    }
+
+    // Check required fields
+    if (!segment.type) {
+      result.errors.push({
+        path: 'type',
+        message: 'Missing required property: type',
+        keyword: 'required',
+        params: { missingProperty: 'type' },
+        data: segment
+      });
+    }
+
+    if (!segment.style) {
+      result.errors.push({
+        path: 'style',
+        message: 'Missing required property: style',
+        keyword: 'required',
+        params: { missingProperty: 'style' },
+        data: segment
+      });
+    }
+
+    // If we already have errors, don't continue with schema validation
+    if (result.errors.length > 0) {
+      return result;
+    }
+
+    // Wrap segment in a minimal valid config for schema validation
+    const wrappedConfig = {
+      "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+      "version": 3,
+      "blocks": [
+        {
+          "type": "prompt",
+          "alignment": "left",
+          "segments": [segment]
+        }
+      ]
+    };
+
+    // Validate against schema
+    const isValid = validator(wrappedConfig);
+
+    if (!isValid && validator.errors) {
+      // Filter errors to only those related to the segment
+      // Errors will have paths like /blocks/0/segments/0/...
+      // Also filter out generic "if/then" schema errors as they're not helpful
+      const segmentErrors = validator.errors.filter(error => {
+        const isSegmentError = error.instancePath && error.instancePath.startsWith('/blocks/0/segments/0');
+        const isIfThenError = error.keyword === 'if';
+        return isSegmentError && !isIfThenError;
+      });
+
+      if (segmentErrors.length > 0) {
+        result.errors = formatErrors(segmentErrors.map(error => ({
+          ...error,
+          // Clean up the path to make it relative to the segment
+          instancePath: error.instancePath.replace('/blocks/0/segments/0', '')
+        })));
+      } else {
+        // All segments passed validation
+        result.valid = true;
+      }
+    } else {
+      result.valid = true;
+    }
+
+    // Add specific warnings for segment
+    if (segment.properties && segment.options) {
+      result.warnings.push({
+        path: 'properties',
+        message: 'Both "properties" and "options" are present. "properties" is deprecated, use "options" instead.',
+        type: 'deprecation'
+      });
+    } else if (segment.properties) {
+      result.warnings.push({
+        path: 'properties',
+        message: 'The "properties" field is deprecated. Please rename it to "options".',
+        type: 'deprecation'
+      });
+    }
+
+  } catch (error) {
+    result.valid = false;
+
+    // Check if it's a schema loading error
+    if (error.message && error.message.includes('Could not load schema')) {
+      result.errors.push({
+        path: 'schema',
+        message: 'Schema could not be loaded. Validation is not available.',
+        keyword: 'schema',
+        params: {},
+        data: null
+      });
+    } else {
+      result.errors.push({
+        path: 'parse',
+        message: error.message,
+        keyword: 'parse',
+        params: {},
+        data: null
+      });
+    }
+  }
+
+  return result;
+}
+
 module.exports = {
   validateConfig,
+  validateSegment,
   parseConfig,
   detectFormat,
   formatErrors

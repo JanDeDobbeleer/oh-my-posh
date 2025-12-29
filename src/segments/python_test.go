@@ -5,9 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/alecthomas/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -110,7 +112,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("PathSeparator").Return("")
 		env.On("ResolveSymlink", testify_.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 
-		props[properties.FetchVersion] = tc.FetchVersion
+		props[options.FetchVersion] = tc.FetchVersion
 		props[UsePythonVersionFile] = true
 		props[DisplayMode] = DisplayModeAlways
 
@@ -142,7 +144,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "PYENV_VERSION").Return("")
 		env.On("HasParentFilePath", ".python-version", false).Return(&runtime.FileInfo{}, errors.New("no match at root level"))
 		python := &Python{}
-		python.Init(properties.Map{}, env)
+		python.Init(options.Map{}, env)
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.inContext())
 	}
@@ -241,5 +243,86 @@ func TestPythonVirtualEnvIgnoreCustomVenvNames(t *testing.T) {
 		python.Init(props, env)
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.Venv)
+	}
+}
+
+func TestPythonUVTooling(t *testing.T) {
+	cases := []struct {
+		Case            string
+		Expected        string
+		UVVersionOutput string
+		Tooling         []string
+		HasUVCommand    bool
+	}{
+		{
+			Case:            "UV enabled and available",
+			Expected:        "3.10.5",
+			Tooling:         []string{"uv"},
+			UVVersionOutput: "Python 3.10.5",
+			HasUVCommand:    true,
+		},
+		{
+			Case:     "Default tooling (no UV)",
+			Expected: "3.8.4",
+			Tooling:  nil, // Use default tooling
+		},
+		{
+			Case:         "UV enabled but not available falls back",
+			Expected:     "3.8.4",
+			Tooling:      []string{"uv", "python"},
+			HasUVCommand: false,
+		},
+	}
+
+	for _, tc := range cases {
+		params := &mockedLanguageParams{
+			cmd:           "python",
+			versionParam:  "--version",
+			versionOutput: "Python 3.8.4",
+			extension:     "*.py",
+		}
+		env, props := getMockedLanguageEnv(params)
+
+		env.On("GOOS").Return("")
+		env.On("PathSeparator").Return("/")
+		env.On("Shell").Return("bash")
+		env.On("CommandPath", testify_.Anything).Return("")
+		env.On("HasFilesInDir", testify_.Anything, "pyvenv.cfg").Return(false)
+		env.On("Getenv", "VIRTUAL_ENV").Return("")
+		env.On("Getenv", "CONDA_ENV_PATH").Return("")
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
+		env.On("Getenv", "PYENV_VERSION").Return("")
+		env.On("Getenv", "PYENV_ROOT").Return("")
+		env.On("HasParentFilePath", ".python-version", false).Return(&runtime.FileInfo{}, errors.New("no match at root level"))
+
+		// Initialize template system for version URL rendering
+		if template.Cache == nil {
+			template.Cache = &cache.Template{}
+		}
+		template.Init(env, nil, nil)
+
+		if tc.HasUVCommand {
+			env.On("HasCommand", "uv").Return(true)
+			env.On("RunCommand", "uv", []string{"run", "--no-sync", "--quiet", "--no-python-downloads", "python", "--version"}).Return(tc.UVVersionOutput, nil)
+		} else {
+			env.On("HasCommand", "uv").Return(false)
+		}
+
+		if tc.Tooling != nil {
+			props[Tooling] = tc.Tooling
+		}
+		props[DisplayMode] = DisplayModeAlways
+
+		python := &Python{}
+		python.Init(props, env)
+
+		assert.True(t, python.Enabled(), tc.Case)
+
+		// Verify commands are built from tooling
+		if len(tc.Tooling) > 0 {
+			assert.Equal(t, tc.Tooling[0], python.commands[0].executable, tc.Case)
+		}
+
+		assert.Equal(t, tc.Expected, python.Full, tc.Case)
 	}
 }

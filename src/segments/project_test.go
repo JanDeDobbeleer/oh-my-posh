@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/alecthomas/assert"
 
@@ -442,7 +442,7 @@ func TestPackage(t *testing.T) {
 		})
 		env.On("FileContent", tc.File).Return(tc.PackageContents)
 		pkg := &Project{}
-		pkg.Init(properties.Map{}, env)
+		pkg.Init(options.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
@@ -461,7 +461,7 @@ func TestDenoProjectUsesJsrMetadata(t *testing.T) {
 	env.On("FileContent", "jsr.json").Return("{\"version\":\"1.0.0\",\"name\":\"@scope/library\"}")
 
 	pkg := &Project{}
-	pkg.Init(properties.Map{}, env)
+	pkg.Init(options.Map{}, env)
 
 	assert.True(t, pkg.Enabled())
 	assert.Equal(t, "\uf487 1.0.0 @scope/library", renderTemplate(env, pkg.Template(), pkg))
@@ -524,7 +524,7 @@ func TestNuspecPackage(t *testing.T) {
 		content, _ := os.ReadFile(tc.FileName)
 		env.On("FileContent", tc.FileName).Return(string(content))
 		pkg := &Project{}
-		pkg.Init(properties.Map{}, env)
+		pkg.Init(options.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
@@ -597,7 +597,7 @@ func TestDotnetProject(t *testing.T) {
 		})
 		env.On("FileContent", tc.FileName).Return(tc.ProjectContents)
 		pkg := &Project{}
-		pkg.Init(properties.Map{}, env)
+		pkg.Init(options.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
@@ -642,7 +642,7 @@ func TestPowerShellModuleProject(t *testing.T) {
 		}
 		env.On("FileContent", "oh-my-posh.psd1").Return(moduleContent)
 		pkg := &Project{}
-		pkg.Init(properties.Map{}, env)
+		pkg.Init(options.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)

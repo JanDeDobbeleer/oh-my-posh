@@ -21,6 +21,7 @@ oh-my-posh get shell
   groupId="shell"
   values={[
     { label: 'bash', value: 'bash', },
+    { label: 'claude', value: 'claude', },
     { label: 'cmd', value: 'cmd', },
     { label: 'elvish', value: 'elvish', },
     { label: 'fish', value: 'fish', },
@@ -49,6 +50,25 @@ Or, when using `~/.profile`.
 ```bash
 . ~/.profile
 ```
+
+</TabItem>
+<TabItem value="claude">
+
+To enable Claude Code integration with Oh My Posh, configure Claude Code to use Oh My Posh as the statusline command.
+
+Add the following to your Claude Code settings:
+
+```json title="~/.claude/settings.json"
+{
+  "statusLine": {
+    "type": "command",
+    "command": "oh-my-posh claude",
+    "padding": 0
+  }
+}
+```
+
+For more information about the Claude segment properties and customization options, see the [Claude segment documentation](/docs/segments/cli/claude).
 
 </TabItem>
 <TabItem value="cmd">

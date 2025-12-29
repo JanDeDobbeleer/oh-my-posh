@@ -35,7 +35,7 @@ import Config from "@site/src/components/Config.js";
     background_templates: [
       '{{ if and (.Reading) (eq .Status "Fermenting") (gt .ReadingAge 4) }}#cc1515{{end}}',
     ],
-    properties: {
+    options: {
       user_id: "abcdefg123456",
       api_key: "qrstuvw78910",
       batch_id: "hijklmno098765",
@@ -43,7 +43,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name           |   Type   | Default | Description                                                                                                                     |
 | -------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -100,7 +100,7 @@ You can override the default icons for batch status as used by template property
 | .DaysBottledOrFermented | `int`    | one of the above, chosen automatically based on batch status                                     |
 | .Recipe.Name            | `string` | The recipe being brewed in this batch                                                            |
 | .BatchName              | `string` | The name of this batch                                                                           |
-| .BatchNumer             | `int`    | The number of this batch                                                                         |
+| .BatchNumber            | `int`    | The number of this batch                                                                         |
 | .MeasuredAbv            | `float`  | The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values |
 | .ReadingAge             | `int`    | age in hours of most recent reading or -1 if there are no readings available                     |
 

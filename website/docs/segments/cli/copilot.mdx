@@ -43,13 +43,13 @@ import Config from "@site/src/components/Config.js";
       duration: "5m",
       strategy: "session",
     },
-    properties: {
+    options: {
       http_timeout: 1000,
     },
   }}
 />
 
-## Properties
+## Options
 
 | Name           | Type  | Description                                           | Default |
 | -------------- | ----- | ----------------------------------------------------- | ------- |
@@ -67,31 +67,31 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name                 | Type                | Description                                   |
-| -------------------- | ------------------- | --------------------------------------------- |
-| `.Premium`           | `CopilotUsage`      | Premium interactions usage data               |
-| `.Premium.Used`      | `int`               | Number of premium interactions used           |
-| `.Premium.Limit`     | `int`               | Total premium interactions available          |
-| `.Premium.Percent`   | `CopilotPercentage` | Percentage of premium quota used (0-100)      |
-| `.Premium.Remaining` | `CopilotPercentage` | Percentage of premium quota remaining (0-100) |
-| `.Premium.Unlimited` | `bool`              | Whether premium quota is unlimited            |
-| `.Inline`            | `CopilotUsage`      | Inline completions usage data                 |
-| `.Inline.Used`       | `int`               | Number of inline completions used             |
-| `.Inline.Limit`      | `int`               | Total inline completions available            |
-| `.Inline.Percent`    | `CopilotPercentage` | Percentage of inline quota used (0-100)       |
-| `.Inline.Remaining`  | `CopilotPercentage` | Percentage of inline quota remaining (0-100)  |
-| `.Inline.Unlimited`  | `bool`              | Whether inline quota is unlimited             |
-| `.Chat`              | `CopilotUsage`      | Chat usage data                               |
-| `.Chat.Used`         | `int`               | Number of chat interactions used              |
-| `.Chat.Limit`        | `int`               | Total chat interactions available             |
-| `.Chat.Percent`      | `CopilotPercentage` | Percentage of chat quota used (0-100)         |
-| `.Chat.Remaining`    | `CopilotPercentage` | Percentage of chat quota remaining (0-100)    |
-| `.Chat.Unlimited`    | `bool`              | Whether chat quota is unlimited               |
-| `.BillingCycleEnd`   | `string`            | End date of current billing cycle             |
+| Name                 | Type            | Description                                   |
+| -------------------- | --------------- | --------------------------------------------- |
+| `.Premium`           | `CopilotUsage`  | Premium interactions usage data               |
+| `.Premium.Used`      | `int`           | Number of premium interactions used           |
+| `.Premium.Limit`     | `int`           | Total premium interactions available          |
+| `.Premium.Percent`   | `Percentage`    | Percentage of premium quota used (0-100)      |
+| `.Premium.Remaining` | `Percentage`    | Percentage of premium quota remaining (0-100) |
+| `.Premium.Unlimited` | `bool`          | Whether premium quota is unlimited            |
+| `.Inline`            | `CopilotUsage`  | Inline completions usage data                 |
+| `.Inline.Used`       | `int`           | Number of inline completions used             |
+| `.Inline.Limit`      | `int`           | Total inline completions available            |
+| `.Inline.Percent`    | `Percentage`    | Percentage of inline quota used (0-100)       |
+| `.Inline.Remaining`  | `Percentage`    | Percentage of inline quota remaining (0-100)  |
+| `.Inline.Unlimited`  | `bool`          | Whether inline quota is unlimited             |
+| `.Chat`              | `CopilotUsage`  | Chat usage data                               |
+| `.Chat.Used`         | `int`           | Number of chat interactions used              |
+| `.Chat.Limit`        | `int`           | Total chat interactions available             |
+| `.Chat.Percent`      | `Percentage`    | Percentage of chat quota used (0-100)         |
+| `.Chat.Remaining`    | `Percentage`    | Percentage of chat quota remaining (0-100)    |
+| `.Chat.Unlimited`    | `bool`          | Whether chat quota is unlimited               |
+| `.BillingCycleEnd`   | `string`        | End date of current billing cycle             |
 
-### CopilotPercentage Methods
+### Percentage Methods
 
-The `CopilotPercentage` type provides additional functionality beyond just the numeric value:
+The `Percentage` type provides additional functionality beyond just the numeric value:
 
 | Method      | Returns  | Description                                                        |
 | ----------- | -------- | ------------------------------------------------------------------ |

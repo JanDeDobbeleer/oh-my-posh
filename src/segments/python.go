@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Python struct {
@@ -19,10 +19,10 @@ type Python struct {
 
 const (
 	// FetchVirtualEnv fetches the virtual env
-	FetchVirtualEnv      properties.Property = "fetch_virtual_env"
-	UsePythonVersionFile properties.Property = "use_python_version_file"
-	FolderNameFallback   properties.Property = "folder_name_fallback"
-	DefaultVenvNames     properties.Property = "default_venv_names"
+	FetchVirtualEnv      options.Option = "fetch_virtual_env"
+	UsePythonVersionFile options.Option = "use_python_version_file"
+	FolderNameFallback   options.Option = "folder_name_fallback"
+	DefaultVenvNames     options.Option = "default_venv_names"
 )
 
 func (p *Python) Template() string {
@@ -32,29 +32,40 @@ func (p *Python) Template() string {
 func (p *Python) Enabled() bool {
 	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
 	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
-	p.commands = []*cmd{
-		{
+
+	// Define all available tooling options for Python
+	p.tooling = map[string]*cmd{
+		"pyenv": {
 			getVersion: p.pyenvVersion,
 			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 		},
-		{
+		"python": {
 			executable: "python",
 			args:       []string{"--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
-		{
+		"python3": {
 			executable: "python3",
 			args:       []string{"--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
-		{
+		"py": {
 			executable: "py",
 			args:       []string{"--version"},
 			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
+		"uv": {
+			executable: "uv",
+			args:       []string{"run", "--no-sync", "--quiet", "--no-python-downloads", "python", "--version"},
+			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		},
 	}
+
+	// Default tooling order - users can override via "tooling" option
+	p.defaultTooling = []string{"pyenv", "python", "python3", "py"}
+
 	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
-	p.displayMode = p.props.GetString(DisplayMode, DisplayModeEnvironment)
+	p.displayMode = p.options.String(DisplayMode, DisplayModeEnvironment)
 	p.Language.loadContext = p.loadContext
 	p.Language.inContext = p.inContext
 
@@ -62,7 +73,7 @@ func (p *Python) Enabled() bool {
 }
 
 func (p *Python) loadContext() {
-	if !p.props.GetBool(FetchVirtualEnv, true) {
+	if !p.options.Bool(FetchVirtualEnv, true) {
 		return
 	}
 	if prompt := p.pyvenvCfgPrompt(); len(prompt) > 0 {
@@ -76,8 +87,8 @@ func (p *Python) loadContext() {
 		"CONDA_DEFAULT_ENV",
 	}
 
-	folderNameFallback := p.props.GetBool(FolderNameFallback, true)
-	defaultVenvNames := p.props.GetStringArray(DefaultVenvNames, []string{
+	folderNameFallback := p.options.Bool(FolderNameFallback, true)
+	defaultVenvNames := p.options.StringArray(DefaultVenvNames, []string{
 		".venv",
 		"venv",
 	})
@@ -109,7 +120,7 @@ func (p *Python) inContext() bool {
 }
 
 func (p *Python) canUseVenvName(name string) bool {
-	if p.props.GetBool(properties.DisplayDefault, true) {
+	if p.options.Bool(options.DisplayDefault, true) {
 		return true
 	}
 

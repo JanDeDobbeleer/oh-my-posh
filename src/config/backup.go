@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	toml "github.com/pelletier/go-toml/v2"
-	yaml "gopkg.in/yaml.v3"
+	yaml "go.yaml.in/yaml/v3"
 )
 
 func (cfg *Config) Backup() {
@@ -69,12 +69,6 @@ func (cfg *Config) Export(format string) string {
 
 	// unsupported format
 	return ""
-}
-
-func (cfg *Config) BackupAndMigrate() {
-	cfg.Backup()
-	cfg.Migrate()
-	cfg.Write(cfg.Format)
 }
 
 func (cfg *Config) Write(format string) {

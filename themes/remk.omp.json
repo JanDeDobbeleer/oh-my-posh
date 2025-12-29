@@ -15,7 +15,7 @@
         {
           "background": "lightYellow",
           "foreground": "#3f3f3f",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -25,7 +25,7 @@
         {
           "background": "lightCyan",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "plain",
@@ -35,7 +35,7 @@
         {
           "background": "lightGreen",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "time_format": "15:04"
           },
           "style": "diamond",
@@ -48,5 +48,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

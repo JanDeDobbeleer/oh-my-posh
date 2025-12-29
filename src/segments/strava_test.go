@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -98,7 +98,7 @@ func TestStravaSegment(t *testing.T) {
 		strava := &Strava{
 			api: api,
 		}
-		strava.Init(properties.Map{}, nil)
+		strava.Init(options.Map{}, nil)
 
 		enabled := strava.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

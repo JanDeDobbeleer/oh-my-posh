@@ -7,7 +7,7 @@
         {
           "background": "#0E050F",
           "foreground": "#EFDCF9",
-          "properties": {
+          "options": {
             "arch": "\uf303",
             "debian": "\uf306",
             "fedora": "\uf30a",
@@ -26,7 +26,7 @@
           "background": "#170B3B",
           "foreground": "#EFDCF9",
           "powerline_symbol": "\ue0b4",
-          "properties": {
+          "options": {
             "folder_icon": "...",
             "folder_separator_icon": "/",
             "home_icon": "~",
@@ -41,7 +41,7 @@
           "background": "#341948",
           "foreground": "#EFDCF9",
           "powerline_symbol": "\ue0b4",
-          "properties": {
+          "options": {
             "branch_template": "{{ trunc 25 .Branch }}",
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -54,7 +54,7 @@
           "background": "#4c1f5e",
           "foreground": "#EFDCF9",
           "powerline_symbol": "\ue0b4",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -67,7 +67,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#FF3C3C{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -85,7 +85,7 @@
           "background": "#4c1f5e",
           "foreground": "#E4F34A",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -97,7 +97,7 @@
           "background": "#4c1f5e",
           "foreground": "#7FD5EA",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -109,7 +109,7 @@
           "background": "#4c1f5e",
           "foreground": "#42E66C",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -121,7 +121,7 @@
           "background": "#4c1f5e",
           "foreground": "#E64747",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -133,7 +133,7 @@
           "background": "#4c1f5e",
           "foreground": "#E64747",
           "leading_diamond": " \ue0b6",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "diamond",
@@ -151,7 +151,7 @@
         {
           "background": "#4c1f5e",
           "foreground": "#EFDCF9",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "diamond",
@@ -165,5 +165,5 @@
   ],
   "console_title_template": "{{ .Shell }} - {{ .Folder }}",
   "final_space": true,
-  "version": 3
+  "version": 4
 }

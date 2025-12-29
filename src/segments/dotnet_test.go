@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/constants"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -90,9 +90,9 @@ func TestDotnetSDKVersion(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
-			FetchSDKVersion:         tc.FetchSDK,
-			properties.FetchVersion: false,
+		props := options.Map{
+			FetchSDKVersion:      tc.FetchSDK,
+			options.FetchVersion: false,
 		}
 
 		env, _ := getMockedLanguageEnv(params)

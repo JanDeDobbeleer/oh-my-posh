@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -64,7 +64,7 @@ func TestWinReg(t *testing.T) {
 		env.On("GOOS").Return(runtime.WINDOWS)
 		env.On("WindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
 
-		props := properties.Map{
+		props := options.Map{
 			RegistryPath: tc.Path,
 			Fallback:     tc.Fallback,
 		}

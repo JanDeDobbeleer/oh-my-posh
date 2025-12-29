@@ -3,9 +3,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -69,8 +69,8 @@ func TestAWSSegment(t *testing.T) {
 		env.On("Getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
 		env.On("FileContent", "/usr/home/.aws/config").Return("")
 		env.On("Home").Return("/usr/home")
-		props := properties.Map{
-			properties.DisplayDefault: tc.DisplayDefault,
+		props := options.Map{
+			options.DisplayDefault: tc.DisplayDefault,
 		}
 		env.On("Flags").Return(&runtime.Flags{})
 

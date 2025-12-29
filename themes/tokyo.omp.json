@@ -7,7 +7,7 @@
       "segments": [
         {
           "foreground": "#7eb8da",
-          "properties": {
+          "options": {
             "time_format": "01/02/2006 @ 3:04:05 PM MST"
           },
           "style": "diamond",
@@ -33,7 +33,7 @@
             "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
             "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
           ],
-          "properties": {
+          "options": {
             "charged_icon": "<#ffffff>\ue22f</> ",
             "charging_icon": "\ueb2d ",
             "discharging_icon": "<#ffff00>\uf244</> "
@@ -44,7 +44,7 @@
         },
         {
           "foreground": "#be9ddf",
-          "properties": {
+          "options": {
             "style": "dallas",
             "threshold": 0
           },
@@ -106,7 +106,7 @@
       "segments": [
         {
           "foreground": "#7eb8da",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "diamond",
@@ -115,7 +115,7 @@
         },
         {
           "foreground": "#ffa5d8",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -164,5 +164,5 @@
     "background": "transparent",
     "template": "<#ff0000>\uea87</> "
   },
-  "version": 3
+  "version": 4
 }

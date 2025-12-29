@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	httplib "net/http"
 	"net/url"
@@ -177,11 +177,11 @@ func (w *Withings) initAPI() {
 		AccessTokenKey:  WithingsAccessTokenKey,
 		RefreshTokenKey: WithingsRefreshTokenKey,
 		SegmentName:     "withings",
-		AccessToken:     w.props.GetString(properties.AccessToken, ""),
-		RefreshToken:    w.props.GetString(properties.RefreshToken, ""),
+		AccessToken:     w.options.String(options.AccessToken, ""),
+		RefreshToken:    w.options.String(options.RefreshToken, ""),
 		Request: http.Request{
 			Env:         w.env,
-			HTTPTimeout: w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+			HTTPTimeout: w.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
 		},
 	}
 

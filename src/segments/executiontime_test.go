@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -16,7 +16,7 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 	env.On("ExecutionTime").Return(1337)
 
 	executionTime := &Executiontime{}
-	executionTime.Init(properties.Map{}, env)
+	executionTime.Init(options.Map{}, env)
 
 	assert.True(t, executionTime.Enabled())
 }
@@ -26,7 +26,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 	env.On("ExecutionTime").Return(1)
 
 	executionTime := &Executiontime{}
-	executionTime.Init(properties.Map{}, env)
+	executionTime.Init(options.Map{}, env)
 
 	assert.False(t, executionTime.Enabled())
 }
@@ -34,7 +34,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(99)
-	props := properties.Map{
+	props := options.Map{
 		ThresholdProperty: float64(10),
 	}
 
@@ -47,7 +47,7 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(99)
-	props := properties.Map{
+	props := options.Map{
 		ThresholdProperty: float64(100),
 	}
 
@@ -64,7 +64,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 	env.On("ExecutionTime").Return(input)
 
 	executionTime := &Executiontime{}
-	executionTime.Init(properties.Map{}, env)
+	executionTime.Init(options.Map{}, env)
 
 	executionTime.Enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)
@@ -77,7 +77,7 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 	env.On("ExecutionTime").Return(input)
 
 	executionTime := &Executiontime{}
-	executionTime.Init(properties.Map{}, env)
+	executionTime.Init(options.Map{}, env)
 
 	executionTime.Enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)

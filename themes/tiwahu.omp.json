@@ -7,7 +7,7 @@
         {
           "background": "#007ACC",
           "foreground": "#222222",
-          "properties": {
+          "options": {
             "style": "austin",
             "threshold": 321
           },
@@ -46,7 +46,7 @@
         {
           "background": "#444444",
           "foreground": "#cccccc",
-          "properties": {
+          "options": {
             "folder_icon": "\u2026",
             "style": "mixed"
           },
@@ -57,7 +57,7 @@
         {
           "background": "#cf432B",
           "foreground": "#f1f0e9",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "cherry_pick_icon": "\ue29b ",
             "commit_icon": "\uf417 ",
@@ -76,7 +76,7 @@
         {
           "background": "#7014eb",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "plain",
@@ -86,7 +86,7 @@
         {
           "background": "#7FD5EA",
           "foreground": "#ffffff",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "plain",
@@ -96,7 +96,7 @@
         {
           "background": "#906cff",
           "foreground": "#100e23",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "plain",
@@ -106,7 +106,7 @@
         {
           "background": "#99908a",
           "foreground": "#193549",
-          "properties": {
+          "options": {
             "fetch_version": false
           },
           "style": "plain",
@@ -125,7 +125,7 @@
           "style": "plain",
           "template": "{{ .Name }} ",
           "type": "shell",
-          "properties": {
+          "options": {
             "mapped_shell_names": {
               "pwsh": "\u276f",
               "shell": "\u276f",
@@ -142,5 +142,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

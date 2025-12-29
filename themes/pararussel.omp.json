@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#56B6C2",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "#D0666F",
-          "properties": {
+          "options": {
             "branch_icon": ""
           },
           "style": "plain",
@@ -52,5 +52,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

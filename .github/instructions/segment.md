@@ -40,7 +40,7 @@ Implementation steps
 package segments
 
 import (
-    "github.com/jandedobbeleer/oh-my-posh/src/properties"
+    "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
     "github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
@@ -55,7 +55,7 @@ type {{goType}} struct {
 const (
 {{#each properties}}
     // {{this.title}}: {{this.description}}
-    {{ pascalCase this.key }} properties.Property = "{{this.key}}"
+    {{ pascalCase this.key }} options.Property = "{{this.key}}"
 {{/each}})
 
 func (s *{{goType}}) Enabled() bool {
@@ -109,18 +109,18 @@ import Config from '@site/src/components/Config.js';
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
-  "properties": {
-{{#each properties}}
+  "options": {
+{{#each option}}
     "{{this.key}}": {{ json this.default }},
 {{/each}}
   }
 }}/>
 
-## Properties
+## Options
 
 | Name | Type | Description | Default |
 | ---- | ---- | ----------- | ------- |
-{{#each properties}}| `{{this.key}}` | `{{this.type}}` | {{this.description}} | `{{ stringify this.default }}` |
+{{#each option}}| `{{this.key}}` | `{{this.type}}` | {{this.description}} | `{{ stringify this.default }}` |
 {{/each}}
 ````
 
@@ -161,4 +161,4 @@ Optional
 - Create a minimal test file at `src/segments/{{id}}_test.go` using the
   table-driven style. Include at least a happy-path test that asserts
   `Enabled()` returns true and the template renders expected output with default
-  properties.
+  options.

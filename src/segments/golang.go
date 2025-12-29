@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"golang.org/x/mod/modfile"
 )
 
@@ -11,8 +11,8 @@ type Golang struct {
 }
 
 const (
-	ParseModFile  properties.Property = "parse_mod_file"
-	ParseWorkFile properties.Property = "parse_work_file"
+	ParseModFile  options.Option = "parse_mod_file"
+	ParseWorkFile options.Option = "parse_work_file"
 )
 
 func (g *Golang) Template() string {
@@ -21,17 +21,18 @@ func (g *Golang) Template() string {
 
 func (g *Golang) Enabled() bool {
 	g.extensions = []string{"*.go", "go.mod", "go.sum", "go.work", "go.work.sum"}
-	g.commands = []*cmd{
-		{
+	g.tooling = map[string]*cmd{
+		"mod": {
 			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,
 			getVersion: g.getVersion,
 		},
-		{
+		"go": {
 			executable: "go",
 			args:       []string{"version"},
 			regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?)))`,
 		},
 	}
+	g.defaultTooling = []string{"mod", "go"}
 	g.versionURLTemplate = "https://golang.org/doc/go{{ .Major }}.{{ .Minor }}"
 
 	return g.Language.Enabled()
@@ -42,11 +43,11 @@ func (g *Golang) Enabled() bool {
 // If the go.mod file is not present, it checks if the go.work file is present and if it is, it parses the file to get the version
 // If neither file is present, it returns an empty string
 func (g *Golang) getVersion() (string, error) {
-	if g.props.GetBool(ParseModFile, false) {
+	if g.options.Bool(ParseModFile, false) {
 		return g.parseModFile()
 	}
 
-	if g.props.GetBool(ParseWorkFile, false) {
+	if g.options.Bool(ParseWorkFile, false) {
 		return g.parseWorkFile()
 	}
 

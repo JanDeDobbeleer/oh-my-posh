@@ -15,7 +15,7 @@
         {
           "background": "#292929",
           "foreground": "#fb7e14",
-          "properties": {
+          "options": {
             "always_enabled": true,
             "style": "austin",
             "threshold": 500
@@ -34,7 +34,7 @@
         {
           "background": "#292929",
           "foreground": "#fb7e14",
-          "properties": {
+          "options": {
             "style": "full",
             "trailing_diamond": "\ue0c6"
           },
@@ -56,7 +56,7 @@
             "{{ if eq \"Charging\" .State.String }}#40c4ff{{ end }}",
             "{{ if eq \"Discharging\" .State.String }}#fb7e14{{ end }}"
           ],
-          "properties": {
+          "options": {
             "charged_icon": "\uf240 ",
             "charging_icon": "\ueb2d ",
             "discharging_icon": "\ueb2d ",
@@ -72,7 +72,7 @@
             "{{ if gt .Code 0 }}#292929{{ end }}"
           ],
           "foreground": "#fb7e14",
-          "properties": {
+          "options": {
             "always_enabled": true,
             "display_exit_code": true
           },
@@ -98,7 +98,7 @@
         {
           "background": "#292929",
           "foreground": "#fb7e14",
-          "properties": {
+          "options": {
             "time_format": "15:04:05, _2"
           },
           "style": "diamond",
@@ -114,7 +114,7 @@
       "newline": true,
       "segments": [
         {
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "background": "#fb7e14",
@@ -130,5 +130,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

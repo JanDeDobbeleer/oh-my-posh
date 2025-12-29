@@ -4,8 +4,8 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -89,8 +89,8 @@ func TestSitecoreSegment(t *testing.T) {
 		env.On("HasFilesInDir", ".sitecore", "user.json").Return(tc.UserFileExists)
 		env.On("FileContent", path.Join(".sitecore", "user.json")).Return(tc.UserFileContent)
 
-		props := properties.Map{
-			properties.DisplayDefault: tc.DisplayDefault,
+		props := options.Map{
+			options.DisplayDefault: tc.DisplayDefault,
 		}
 
 		sitecore := &Sitecore{}

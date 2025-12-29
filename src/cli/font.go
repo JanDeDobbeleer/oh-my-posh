@@ -16,6 +16,7 @@ import (
 
 var (
 	zipFolder string
+	headless  bool
 
 	fontCmd = &cobra.Command{
 		Use:   "font [install|configure]",
@@ -58,7 +59,7 @@ This command is used to install fonts and configure the font in your terminal.
 					zipFolder += "/"
 				}
 
-				fontName, err := font.Run(fontName, zipFolder)
+				fontName, err := font.Run(fontName, zipFolder, headless)
 				if err != nil {
 					log.Error(err)
 					exitcode = 70
@@ -87,6 +88,7 @@ This command is used to install fonts and configure the font in your terminal.
 
 func init() {
 	fontCmd.Flags().StringVar(&zipFolder, "zip-folder", "", "the folder inside the zip file to install fonts from")
+	fontCmd.Flags().BoolVar(&headless, "headless", false, "install font without TUI")
 	fontCmd.AddCommand(dsc.Command(font.DSC()))
 	RootCmd.AddCommand(fontCmd)
 }

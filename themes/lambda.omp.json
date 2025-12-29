@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#B80101",
-          "properties": {
+          "options": {
             "style": "agnoster"
           },
           "style": "plain",
@@ -29,5 +29,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

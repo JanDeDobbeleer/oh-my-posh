@@ -28,7 +28,7 @@ import Config from "@site/src/components/Config.js";
     ],
     template:
       "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf0c7 {{ .StashCount }}{{ end }}",
-    properties: {
+    options: {
       fetch_status: true,
       fetch_upstream_icon: true,
       untracked_modes: {
@@ -43,12 +43,12 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 ### Fetching information
 
 As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
-You can set the following properties to `true` to enable fetching additional information (and populate the template).
+You can set the following options to `true` to enable fetching additional information (and populate the template).
 
 | Name                  |        Type         | Default | Description                                                                                                                                                                                                                                                                                                                           |
 | --------------------- | :-----------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

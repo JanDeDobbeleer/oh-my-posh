@@ -23,7 +23,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name                   |    Type    |                   Default                    | Description                                                                                                                                                                                                                          |
 | ---------------------- | :--------: | :------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -37,6 +37,7 @@ import Config from "@site/src/components/Config.js";
 | `parse_go_work_file`   | `boolean`  |                   `false`                    | parse the go.work file instead of calling `go version`                                                                                                                                                                               |
 | `extensions`           | `[]string` | `*.go, go.mod, go.work, go.sum, go.work.sum` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                                              | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` | `mod, go` | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 

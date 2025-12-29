@@ -50,7 +50,7 @@ import Config from "@site/src/components/Config.js";
       "{{ if lt .Hours 50 }}#FFFFFF{{ end }}",
     ],
     template: " {{.Name}} {{.Ago}} {{.Icon}} ",
-    properties: {
+    options: {
       access_token: "11111111111111111",
       refresh_token: "1111111111111111",
       http_timeout: 1500,
@@ -58,7 +58,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name                    |   Type   | Default  | Description                                                                                                   |
 | ----------------------- | :------: | :------: | ------------------------------------------------------------------------------------------------------------- |
@@ -83,8 +83,6 @@ import Config from "@site/src/components/Config.js";
 :::
 
 ### Properties
-
-The properties below are available for use in your template
 
 | Name                    | Type      | Description                         |
 | ----------------------- | --------- | ----------------------------------- |

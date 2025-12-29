@@ -113,7 +113,11 @@ func (s Store) close() {
 		return
 	}
 
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Error(err)
+		}
+	}()
 
 	enc := gob.NewEncoder(file)
 	if err := enc.Encode(cache); err != nil {

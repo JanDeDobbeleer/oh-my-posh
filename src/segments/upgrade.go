@@ -6,7 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type UpgradeCache struct {
@@ -57,8 +57,8 @@ func (u *Upgrade) upgradeCache() (*UpgradeCache, error) {
 }
 
 func (u *Upgrade) checkUpdate(current string) (*UpgradeCache, error) {
-	duration := u.props.GetString(properties.CacheDuration, string(cache.ONEWEEK))
-	source := u.props.GetString(Source, string(upgrade.CDN))
+	duration := u.options.String(options.CacheDuration, string(cache.ONEWEEK))
+	source := u.options.String(Source, string(upgrade.CDN))
 
 	cfg := &upgrade.Config{
 		Source:   upgrade.Source(source),

@@ -161,7 +161,7 @@ _Color override_ ([Battery segment][battery]):
     powerline_symbol: "\uE0B2",
     foreground: "p:white",
     background: "p:black",
-    properties: {
+    options: {
       discharging_icon: "<#ffa500>-</> ",
       charging_icon: "+ ",
       charged_icon: "* ",
@@ -172,7 +172,7 @@ _Color override_ ([Battery segment][battery]):
 ### Handling of invalid references
 
 Should you use an invalid _Palette reference_ as a color (for example typo `p:bleu` instead of `p:blue`),
-the Pallete engine will use the Transparent keyword as a fallback value. So if you see your prompt segments
+the Palette engine will use the Transparent keyword as a fallback value. So if you see your prompt segments
 rendered with incorrect colors, and you are using a Palette, be sure to check the correctness of your references.
 
 ### Recursive resolution

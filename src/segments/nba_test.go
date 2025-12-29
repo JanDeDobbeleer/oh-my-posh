@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -74,7 +74,7 @@ func TestNBASegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		props := properties.Map{
+		props := options.Map{
 			TeamName:   tc.TeamName,
 			DaysOffset: tc.DaysOffset,
 		}

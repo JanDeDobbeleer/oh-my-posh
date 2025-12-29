@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/constants"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type globalJSON struct {
@@ -15,7 +15,7 @@ type globalJSON struct {
 
 const (
 	// FetchSDKVersion fetches the SDK version in global.json
-	FetchSDKVersion properties.Property = "fetch_sdk_version"
+	FetchSDKVersion options.Option = "fetch_sdk_version"
 )
 
 type Dotnet struct {
@@ -60,7 +60,7 @@ func (d *Dotnet) Enabled() bool {
 
 	d.Unsupported = d.exitCode == constants.DotnetExitCode
 
-	if !d.props.GetBool(FetchSDKVersion, false) {
+	if !d.options.Bool(FetchSDKVersion, false) {
 		return true
 	}
 

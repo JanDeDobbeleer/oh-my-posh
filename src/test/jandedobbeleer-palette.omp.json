@@ -17,7 +17,7 @@
           "background": "p:path",
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_separator_icon": " \ue0b1 ",
             "home_icon": "~",
             "style": "folder"
@@ -37,7 +37,7 @@
           "foreground": "p:git-foreground",
           "leading_diamond": "\ue0b6",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
@@ -50,7 +50,7 @@
           "background": "p:node",
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "powerline",
@@ -61,7 +61,7 @@
           "background": "p:go",
           "foreground": "p:black",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "powerline",
@@ -72,7 +72,7 @@
           "background": "p:julia",
           "foreground": "p:black",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "powerline",
@@ -83,7 +83,7 @@
           "background": "p:python",
           "foreground": "p:black",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_virtual_env": false
           },
@@ -95,7 +95,7 @@
           "background": "p:ruby",
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_version": true
           },
@@ -107,7 +107,7 @@
           "background": "p:azfunc",
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_version": false
           },
@@ -122,7 +122,7 @@
           ],
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_default": false
           },
           "style": "powerline",
@@ -140,7 +140,7 @@
         {
           "background": "p:executiontime",
           "foreground": "p:white",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -153,7 +153,7 @@
             "{{ if gt .Code 0 }}p:exit-red{{ end }}"
           ],
           "foreground": "p:white",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -178,7 +178,7 @@
           "foreground": "p:black",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "properties": {
+          "options": {
             "paused_icon": "\uf04c ",
             "playing_icon": "\uf04b "
           },
@@ -196,7 +196,7 @@
           "foreground": "p:white",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "properties": {
+          "options": {
             "charged_icon": "\ue22f ",
             "charging_icon": "\ue234 ",
             "discharging_icon": "\ue231 "
@@ -252,5 +252,5 @@
     "white": "#FFFFFF",
     "ytm": "#1BD760"
   },
-  "version": 3
+  "version": 4
 }

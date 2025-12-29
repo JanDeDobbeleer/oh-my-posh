@@ -28,14 +28,14 @@
         {
           "foreground": "p:blue",
           "style": "plain",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "template": "{{ .Path }} ",
           "type": "path"
         },
         {
-          "properties": {
+          "options": {
             "branch_icon": "",
             "fetch_status": true,
             "fetch_worktree_count": true
@@ -53,7 +53,7 @@
       "segments": [
         {
           "foreground": "p:foreground",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -64,5 +64,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -53,10 +53,10 @@ func TestLFMSegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		props := properties.Map{
-			APIKey:                 "key",
-			Username:               "KibbeWater",
-			properties.HTTPTimeout: 20000,
+		props := options.Map{
+			APIKey:              "key",
+			Username:            "KibbeWater",
+			options.HTTPTimeout: 20000,
 		}
 
 		env.On("HTTPRequest", LFMAPIURL).Return([]byte(tc.APIJSONResponse), tc.Error)

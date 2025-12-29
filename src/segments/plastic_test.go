@@ -3,9 +3,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +17,7 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 	env.On("IsWsl").Return(false)
 
 	p := &Plastic{}
-	p.Init(properties.Map{}, env)
+	p.Init(options.Map{}, env)
 
 	assert.False(t, p.Enabled())
 }
@@ -36,7 +36,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env.On("HasParentFilePath", ".plastic", false).Return(fileInfo, nil)
 
 	p := &Plastic{}
-	p.Init(properties.Map{}, env)
+	p.Init(options.Map{}, env)
 
 	assert.True(t, p.Enabled())
 	assert.Equal(t, fileInfo.ParentFolder, p.plasticWorkspaceFolder)
@@ -48,7 +48,7 @@ func setupCmStatusEnv(status, headStatus string) *Plastic {
 	env.On("RunCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
 
 	p := &Plastic{}
-	p.Init(properties.Map{}, env)
+	p.Init(options.Map{}, env)
 
 	return p
 }
@@ -323,10 +323,10 @@ func TestPlasticTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties.Map{
+		props := options.Map{
 			FetchStatus: true,
 		}
-		tc.Plastic.props = props
+		tc.Plastic.options = props
 		env := new(mock.Environment)
 		tc.Plastic.env = env
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Plastic), tc.Case)

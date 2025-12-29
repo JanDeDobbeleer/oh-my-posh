@@ -23,7 +23,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name                   |    Type    |          Default          | Description                                                                                                                                                                                                                          |
 | ---------------------- | :--------: | :-----------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -34,7 +34,8 @@ import Config from "@site/src/components/Config.js";
 | `display_mode`         |  `string`  |         `context`         | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
 | `version_url_template` |  `string`  |                           | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
 | `extensions`           | `[]string` | `*.rb, Rakefile, Gemfile` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
-| `folders`              | `[]string` |                           | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `folders`              | `[]string` |                                          | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` | `rbenv, rvm-prompt, chruby, asdf, ruby`  | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 

@@ -20,21 +20,25 @@ import Config from "@site/src/components/Config.js";
     foreground: "#000000",
     background: "#ebcc34",
     template: " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
-    properties: {
+    options: {
       context_aliases: {
         "arn:aws:eks:eu-west-1:1234567890:cluster/posh": "posh",
+      },
+      cluster_aliases: {
+        "arn:aws:eks:eu-west-1:1234567890:cluster/posh": "posh-cluster",
       },
     },
   }}
 />
 
-## Properties
+## Options
 
 | Name               |   Type    | Default | Description                                                                     |
 | ------------------ | :-------: | :-----: | ------------------------------------------------------------------------------- |
 | `display_error`    | `boolean` | `false` | show the error context when failing to retrieve the kubectl information         |
 | `parse_kubeconfig` | `boolean` | `true`  | parse kubeconfig files instead of calling out to kubectl to improve performance |
 | `context_aliases`  | `object`  |         | custom context namespace                                                        |
+| `cluster_aliases`  | `object`  |         | custom cluster name                                                             |
 
 ## Template ([info][templates])
 

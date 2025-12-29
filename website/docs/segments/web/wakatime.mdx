@@ -24,14 +24,14 @@ import Config from "@site/src/components/Config.js";
     powerline_symbol: "\uE0B0",
     foreground: "#ffffff",
     background: "#007acc",
-    properties: {
+    options: {
       url: "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
       http_timeout: 500,
     },
   }}
 />
 
-## Properties
+## Options
 
 | Name           |   Type   | Default | Description                                                                                                                                    |
 | -------------- | :------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -44,7 +44,7 @@ If you don't want to include the API key into your configuration, the following 
 
 <Config
   data={{
-    properties: {
+    options: {
       url: "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
       http_timeout: 500,
     },

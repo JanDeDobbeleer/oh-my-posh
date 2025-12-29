@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type Unity struct {
@@ -121,7 +121,7 @@ func (u *Unity) GetCSharpVersion() (version string, err error) {
 
 func (u *Unity) GetCSharpVersionFromWeb(shortUnityVersion string) (version string, err error) {
 	url := fmt.Sprintf("https://docs.unity3d.com/%s/Documentation/Manual/CSharpCompiler.html", shortUnityVersion)
-	httpTimeout := u.props.GetInt(properties.HTTPTimeout, 2000)
+	httpTimeout := u.options.Int(options.HTTPTimeout, 2000)
 
 	body, err := u.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {

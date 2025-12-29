@@ -31,7 +31,7 @@ starting point to create your own configuration.
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "final_space": true,
-  "version": 3,
+  "version": 4,
   "blocks": [
     {
       "type": "prompt",
@@ -43,7 +43,7 @@ starting point to create your own configuration.
           "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#61AFEF",
-          "properties": {
+          "options": {
             "style": "folder"
           }
         }
@@ -59,7 +59,7 @@ starting point to create your own configuration.
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 final_space: true
-version: 3
+version: 4
 blocks:
   - type: prompt
     alignment: left
@@ -69,7 +69,7 @@ blocks:
         powerline_symbol: ""
         foreground: "#ffffff"
         background: "#61AFEF"
-        properties:
+        options:
           style: folder
 ```
 
@@ -79,7 +79,7 @@ blocks:
 ```toml
 "$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
 final_space = true
-version = 3
+version = 4
 
 [[blocks]]
 type = "prompt"
@@ -92,7 +92,7 @@ alignment = "left"
   foreground = "#ffffff"
   background = "#61AFEF"
 
-    [blocks.segments.properties]
+    [blocks.segments.options]
     style = "folder"
 ```
 
@@ -100,7 +100,7 @@ alignment = "left"
 </Tabs>
 
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
-To set this configuration in combination with a Oh My Posh [executable][releases], use the `--config` flag to
+To set this configuration in combination with an Oh My Posh [executable][releases], use the `--config` flag to
 set a path to a file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 

@@ -109,7 +109,7 @@ function _omp_get_secondary() {
 function _omp_hook() {
     _omp_status=$? _omp_pipestatus=("${PIPESTATUS[@]}")
 
-    if [[ ${#BP_PIPESTATUS[@]} -ge ${#_omp_pipestatus[@]} ]]; then
+    if [[ -v BP_PIPESTATUS && ${#BP_PIPESTATUS[@]} -ge ${#_omp_pipestatus[@]} ]]; then
         _omp_pipestatus=("${BP_PIPESTATUS[@]}")
     fi
 
@@ -158,7 +158,7 @@ function _omp_install_hook() {
         prompt_command+=("$cmd")
     done
 
-    PROMPT_COMMAND=(_omp_hook "${prompt_command[@]}")
+    PROMPT_COMMAND=("${prompt_command[@]}" _omp_hook)
 }
 
 _omp_install_hook

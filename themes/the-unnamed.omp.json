@@ -6,7 +6,7 @@
       "segments": [
         {
           "foreground": "#15C2CB",
-          "properties": {
+          "options": {
             "style": "folder"
           },
           "style": "plain",
@@ -15,7 +15,7 @@
         },
         {
           "foreground": "#F141A8",
-          "properties": {
+          "options": {
             "branch_icon": "\ue0a0 "
           },
           "style": "plain",
@@ -30,7 +30,7 @@
         },
         {
           "foreground": "#44FFD2",
-          "properties": {
+          "options": {
             "fetch_version": true
           },
           "style": "plain",
@@ -60,5 +60,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

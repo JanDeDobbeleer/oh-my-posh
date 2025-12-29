@@ -30,7 +30,7 @@
           "background": "#242424",
           "foreground": "#FFBB00",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "time_format": "2006-01-02 15:04:05"
           },
           "style": "powerline",
@@ -41,7 +41,7 @@
           "background": "#242424",
           "foreground": "#33DD2D",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "folder_separator_icon": "/",
             "style": "full"
           },
@@ -53,7 +53,7 @@
           "background": "#242424",
           "foreground": "#3A86FF",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_upstream_icon": true
           },
           "style": "powerline",
@@ -67,7 +67,7 @@
           ],
           "foreground": "#242424",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -91,5 +91,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

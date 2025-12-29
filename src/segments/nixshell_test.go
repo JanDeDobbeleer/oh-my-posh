@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 const (
@@ -61,7 +61,7 @@ func TestNixShellSegment(t *testing.T) {
 			env.On("Getenv", "PATH").Return(path)
 
 			n := NixShell{}
-			n.Init(properties.Map{}, env)
+			n.Init(options.Map{}, env)
 
 			assert.Equal(t, tc.enabled, n.Enabled(), fmt.Sprintf("Failed in case: %s", tc.name))
 

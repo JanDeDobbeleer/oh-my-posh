@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 func TestSetDir(t *testing.T) {
@@ -40,7 +40,7 @@ func TestSetDir(t *testing.T) {
 		env.On("Home").Return(home)
 
 		sl := &Sapling{}
-		sl.Init(properties.Map{}, env)
+		sl.Init(options.Map{}, env)
 
 		sl.setDir(tc.Path)
 		assert.Equal(t, tc.Expected, sl.Dir, tc.Case)
@@ -95,7 +95,7 @@ func TestSetCommitContext(t *testing.T) {
 				command: SAPLINGCOMMAND,
 			},
 		}
-		sl.Init(properties.Map{}, env)
+		sl.Init(options.Map{}, env)
 
 		sl.setCommitContext()
 
@@ -146,7 +146,7 @@ func TestShouldDisplay(t *testing.T) {
 		}
 
 		sl := &Sapling{}
-		sl.Init(&properties.Map{}, env)
+		sl.Init(&options.Map{}, env)
 
 		got := sl.shouldDisplay()
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -211,7 +211,7 @@ func TestSetHeadContext(t *testing.T) {
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(output, nil)
 		env.On("RunCommand", "sl", []string{"status"}).Return(tc.Output, nil)
 
-		props := &properties.Map{
+		props := &options.Map{
 			FetchStatus: tc.FetchStatus,
 		}
 

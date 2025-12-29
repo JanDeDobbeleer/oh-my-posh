@@ -29,12 +29,12 @@ There were two evolutions of bash' custom [`rprompt`][rprompt] in Oh My Posh. Th
 together with the primany prompt in the `PS1` variable, so we only need one CLI call to visualize the prompt.
 
 The challenge is that, as the [`rprompt`][rprompt] is printed together with the primary prompt, we need to make sure
-bash' readline can interprete the prompt correctly. In bash, every character that isn't a printable character,
+bash' readline can interpret the prompt correctly. In bash, every character that isn't a printable character,
 like color codes, needs to be wrapped in `\[` and `\]`. This is necessary to make sure bash can **calculate the length**
 of the prompt and ultimately **position the cursor** correctly.
 
 It turned out that for [`rprompt`][rprompt], this _needed to be done differently_. The [`rprompt`][rprompt] is printed after what
-bash interpretes as the end of the prompt. We found out that we need to wrap the entire [`rprompt`][rprompt] in `\[` and `\]`,
+bash interprets as the end of the prompt. We found out that we need to wrap the entire [`rprompt`][rprompt] in `\[` and `\]`,
 and not escape individual non-printable characters.
 
 We did that for a while, but apparently this approach was **not very robust**. It was easy to break readline's

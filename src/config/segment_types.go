@@ -4,9 +4,9 @@ import (
 	"encoding/gob"
 	"errors"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 // SegmentType the type of segment, for more information, see the constants
@@ -19,7 +19,7 @@ type SegmentWriter interface {
 	SetText(text string)
 	SetIndex(index int)
 	Text() string
-	Init(props properties.Properties, env runtime.Environment)
+	Init(props options.Provider, env runtime.Environment)
 	CacheKey() (string, bool)
 }
 
@@ -42,6 +42,9 @@ func init() {
 	gob.Register(&segments.Copilot{})
 	gob.Register(&segments.Cf{})
 	gob.Register(&segments.CfTarget{})
+	gob.Register(&segments.Claude{})
+	gob.Register(&segments.ClaudeData{})
+	gob.Register(&segments.Clojure{})
 	gob.Register(&segments.Cmake{})
 	gob.Register(&segments.Connection{})
 	gob.Register(&segments.Crystal{})
@@ -187,6 +190,10 @@ const (
 	CF SegmentType = "cf"
 	// Cloud Foundry logged in target
 	CFTARGET SegmentType = "cftarget"
+	// CLAUDE writes Claude Code session information
+	CLAUDE SegmentType = "claude"
+	// CLOJURE writes the active clojure version
+	CLOJURE SegmentType = "clojure"
 	// CMAKE writes the active cmake version
 	CMAKE SegmentType = "cmake"
 	// CONNECTION writes a connection's information
@@ -384,6 +391,8 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CDS:             func() SegmentWriter { return &segments.Cds{} },
 	CF:              func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:        func() SegmentWriter { return &segments.CfTarget{} },
+	CLAUDE:          func() SegmentWriter { return &segments.Claude{} },
+	CLOJURE:         func() SegmentWriter { return &segments.Clojure{} },
 	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },
 	COPILOT:         func() SegmentWriter { return &segments.Copilot{} },
@@ -477,8 +486,8 @@ var Segments = map[SegmentType]func() SegmentWriter{
 func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	segment.env = env
 
-	if segment.Properties == nil {
-		segment.Properties = make(properties.Map)
+	if segment.Options == nil {
+		segment.Options = make(options.Map)
 	}
 
 	f, ok := Segments[segment.Type]
@@ -487,11 +496,7 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	}
 
 	writer := f()
-	wrapper := &properties.Wrapper{
-		Properties: segment.Properties,
-	}
-
-	writer.Init(wrapper, env)
+	writer.Init(segment.Options, env)
 	segment.writer = writer
 
 	return nil

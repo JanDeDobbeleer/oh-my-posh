@@ -9,7 +9,7 @@
           "background": "#575656",
           "foreground": "#D6DEEB",
           "leading_diamond": "\ue0b2",
-          "properties": {
+          "options": {
             "alpine": "\uf300",
             "arch": "\uf303",
             "centos": "\uf304",
@@ -58,7 +58,7 @@
           "type": "python",
           "style": "powerline",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "display_mode": "context"
           },
           "foreground": "#011627",
@@ -91,7 +91,7 @@
           ],
           "foreground": "#011627",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
             "fetch_upstream_icon": true,
@@ -117,7 +117,7 @@
             "{{ if gt .Code 0 }}#D6DEEB{{ end }}"
           ],
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "diamond",
@@ -127,7 +127,7 @@
         {
           "background": "#575656",
           "foreground": "#D6DEEB",
-          "properties": {
+          "options": {
             "style": "roundrock",
             "threshold": 0
           },
@@ -151,7 +151,7 @@
         },
         {
           "foreground": "#F2D3B6",
-          "properties": {
+          "options": {
             "time_format": "<#D6DEEB>\ue641 15:04:05</> <#79DFE1>|</> \uf073 2 Jan, Monday"
           },
           "style": "plain",
@@ -161,7 +161,7 @@
         {
           "foreground": "#B6D6F2",
           "leading_diamond": "<#00C7FC> \uf07b </><#B6D6F2> in </>",
-          "properties": {
+          "options": {
             "folder_icon": " \uf07c ",
             "folder_separator_icon": " \uf061 ",
             "home_icon": "\ueb06 ",
@@ -187,7 +187,7 @@
         },
         {
           "foreground": "#D6DEEB",
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -209,5 +209,5 @@
     "foreground": "#D6DEEB",
     "template": "\u2570\u2500\u276f "
   },
-  "version": 3
+  "version": 4
 }

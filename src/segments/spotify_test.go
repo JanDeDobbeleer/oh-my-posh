@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -21,7 +21,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 			Icon:   "\ue602 ",
 		},
 	}
-	s.Init(properties.Map{}, env)
+	s.Init(options.Map{}, env)
 
 	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
 }
@@ -38,7 +38,7 @@ func TestSpotifyStringStoppedSong(t *testing.T) {
 			Icon:   "\uf04d ",
 		},
 	}
-	s.Init(properties.Map{}, env)
+	s.Init(options.Map{}, env)
 
 	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
 }

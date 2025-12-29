@@ -21,43 +21,33 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
 	toml "github.com/pelletier/go-toml/v2"
-	yaml "gopkg.in/yaml.v3"
+	yaml "go.yaml.in/yaml/v3"
 )
 
-// custom no config error
-var ErrNoConfig = errors.New("no config file specified")
+// Custom error types for config validation
+type Error struct {
+	message string
+}
 
-func Load(configFile string, migrate bool) *Config {
+func (e Error) Error() string {
+	return fmt.Sprintf(" %s ", e.message)
+}
+
+var (
+	ErrFileNotFound     = Error{"CONFIG NOT FOUND"}
+	ErrInvalidExtension = Error{"INVALID CONFIG EXTENSION"}
+	ErrInvalidTheme     = Error{"INVALID CONFIG THEME"}
+	ErrURLFetch         = Error{"CONFIG URL FETCH FAILED"}
+	ErrParse            = Error{"CONFIG PARSE ERROR"}
+	ErrNoConfig         = Error{"NO CONFIG"}
+)
+
+func Load(configFile string) *Config {
 	defer log.Trace(time.Now())
 
-	if configFile == "" {
-		return Default(false)
-	}
-
-	configFile = resolveConfigLocation(configFile)
-
-	cfg := parseConfigFile(configFile)
-
-	cfg.toggleSegments()
-
-	// only migrate automatically when the switch isn't set
-	if !migrate && cfg.Version < Version {
-		cfg.BackupAndMigrate()
-	}
-
-	cfg.Source = configFile
-
-	if cfg.Upgrade == nil {
-		cfg.Upgrade = &upgrade.Config{
-			Source:        upgrade.CDN,
-			DisplayNotice: cfg.UpgradeNotice,
-			Auto:          cfg.AutoUpgrade,
-			Interval:      cache.ONEWEEK,
-		}
-	}
-
-	if cfg.Upgrade.Interval.IsEmpty() {
-		cfg.Upgrade.Interval = cache.ONEWEEK
+	cfg, err := Parse(configFile)
+	if err != nil {
+		cfg = Default(err)
 	}
 
 	return cfg
@@ -100,8 +90,15 @@ type hashWriter interface {
 	Write(p []byte) (n int, err error)
 }
 
-func parseConfigFile(configFile string) *Config {
+func Parse(configFile string) (*Config, error) {
 	defer log.Trace(time.Now())
+
+	if configFile == "" {
+		log.Debug("no config file specified")
+		return nil, ErrNoConfig
+	}
+
+	configFile = resolveConfigLocation(configFile)
 
 	configDSC := DSC()
 	configDSC.Load()
@@ -111,19 +108,19 @@ func parseConfigFile(configFile string) *Config {
 
 	h := fnv.New64a()
 
-	cfg, err := readConfig(configFile, h)
+	cfg, err := read(configFile, h)
 	if err != nil {
-		log.Error(err)
-		return Default(true)
+		log.Errorf("failed to read config: %s", configFile)
+		return nil, err
 	}
 
 	parentFolder := filepath.Dir(configFile)
 
 	for cfg.Extends != "" {
 		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
-		base, err := readConfig(cfg.Extends, h)
+		base, err := read(cfg.Extends, h)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("failed to read extended config: %s", cfg.Extends)
 			break
 		}
 
@@ -138,9 +135,28 @@ func parseConfigFile(configFile string) *Config {
 		cfg = base
 	}
 
+	cfg.Source = configFile
 	cfg.hash = h.Sum64()
+	// Migrate segment properties to options for TOML configs
+	// (go-toml/v2 doesn't support custom unmarshalers)
+	cfg.migrateSegmentProperties()
 
-	return cfg
+	cfg.toggleSegments()
+
+	if cfg.Upgrade == nil {
+		cfg.Upgrade = &upgrade.Config{
+			Source:        upgrade.CDN,
+			DisplayNotice: cfg.UpgradeNotice,
+			Auto:          cfg.AutoUpgrade,
+			Interval:      cache.ONEWEEK,
+		}
+	}
+
+	if cfg.Upgrade.Interval.IsEmpty() {
+		cfg.Upgrade.Interval = cache.ONEWEEK
+	}
+
+	return cfg, nil
 }
 
 func resolvePath(configFile, parentFolder string) string {
@@ -161,12 +177,12 @@ func resolvePath(configFile, parentFolder string) string {
 	return filepath.Join(parentFolder, configFile)
 }
 
-func readConfig(configFile string, h hashWriter) (*Config, error) {
+func read(configFile string, h hashWriter) (*Config, error) {
 	defer log.Trace(time.Now())
 
 	if configFile == "" {
 		log.Debug("no config file specified, using default")
-		return Default(false), nil
+		return Default(nil), nil
 	}
 
 	var cfg Config
@@ -175,13 +191,24 @@ func readConfig(configFile string, h hashWriter) (*Config, error) {
 
 	data, err := getData(configFile)
 	if err != nil {
-		return nil, err
+		// Determine the type of error
+		if strings.HasPrefix(configFile, "https://") {
+			log.Errorf("failed to fetch config from URL: %v", err)
+			return nil, ErrURLFetch
+		}
+		if errors.Is(err, os.ErrNotExist) {
+			log.Errorf("config file not found: %v", err)
+			return nil, ErrFileNotFound
+		}
+		log.Errorf("failed to read config: %v", err)
+		return nil, ErrFileNotFound
 	}
 
+	var parseErr error
 	switch cfg.Format {
 	case YAML, YML:
 		cfg.Format = YAML
-		err = yaml.Unmarshal(data, &cfg)
+		parseErr = yaml.Unmarshal(data, &cfg)
 	case JSONC, JSON:
 		cfg.Format = JSON
 
@@ -189,16 +216,18 @@ func readConfig(configFile string, h hashWriter) (*Config, error) {
 		data = []byte(str)
 
 		decoder := json.NewDecoder(bytes.NewReader(data))
-		err = decoder.Decode(&cfg)
+		parseErr = decoder.Decode(&cfg)
 	case TOML, TML:
 		cfg.Format = TOML
-		err = toml.Unmarshal(data, &cfg)
+		parseErr = toml.Unmarshal(data, &cfg)
 	default:
-		err = fmt.Errorf("unsupported config file format: %s", cfg.Format)
+		log.Errorf("unsupported config file format: %s", cfg.Format)
+		return nil, ErrInvalidExtension
 	}
 
-	if err != nil {
-		return nil, err
+	if parseErr != nil {
+		log.Errorf("failed to parse config: %v", parseErr)
+		return nil, ErrParse
 	}
 
 	_, err = h.Write(data)

@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -72,7 +72,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		props := properties.Map{
+		props := options.Map{
 			APIKey:   "key",
 			Location: tc.Location,
 			Units:    "metric",
@@ -212,7 +212,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env.On("Getenv", OWMLocationKey).Return("")
 		env.On("Getenv", OWMAPIKey).Return("")
 
-		props := properties.Map{
+		props := options.Map{
 			APIKey:   "key",
 			Location: "AMSTERDAM,NL",
 			Units:    "metric",

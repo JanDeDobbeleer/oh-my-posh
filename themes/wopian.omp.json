@@ -12,7 +12,7 @@
         },
         {
           "foreground": "cyan",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "plain",
@@ -33,7 +33,7 @@
       "segments": [
         {
           "foreground": "#68a063",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_package_manager": true,
             "fetch_version": true,
@@ -46,7 +46,7 @@
         },
         {
           "foreground": "#4063D8",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_version": true
           },
@@ -56,7 +56,7 @@
         },
         {
           "foreground": "#DE3F24",
-          "properties": {
+          "options": {
             "display_mode": "files",
             "fetch_version": true
           },
@@ -66,7 +66,7 @@
         },
         {
           "foreground": "#FED142",
-          "properties": {
+          "options": {
             "display_mode": "context",
             "fetch_virtual_env": false
           },
@@ -92,7 +92,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}red{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "powerline",
@@ -103,5 +103,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

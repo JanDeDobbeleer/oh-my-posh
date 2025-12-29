@@ -17,7 +17,7 @@
           "background": "#0000ff",
           "foreground": "#000000",
           "powerline_symbol": "\ue0b4",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -28,7 +28,7 @@
           "background": "#0000ff",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b4",
-          "properties": {
+          "options": {
             "style": "full"
           },
           "style": "powerline",
@@ -69,7 +69,7 @@
           "background": "#ffffff",
           "foreground": "#000000",
           "leading_diamond": "\ue0b6",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "diamond",
@@ -89,7 +89,7 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#FF5252{{ end }}"
           ],
-          "properties": {
+          "options": {
             "always_enabled": true
           },
           "style": "plain",
@@ -100,5 +100,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

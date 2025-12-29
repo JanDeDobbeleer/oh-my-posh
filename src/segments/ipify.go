@@ -4,8 +4,8 @@ import (
 	"net"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type ipData struct {
@@ -57,7 +57,7 @@ func (i *IPify) Enabled() bool {
 
 	i.IP = ip
 
-	duration := i.props.GetString(properties.CacheDuration, string(cache.ONEDAY))
+	duration := i.options.String(options.CacheDuration, string(cache.ONEDAY))
 	cache.Set(cache.Device, key, i.IP, cache.Duration(duration))
 
 	return true
@@ -83,7 +83,7 @@ func (i *IPify) initAPI() {
 
 	request := &http.Request{
 		Env:         i.env,
-		HTTPTimeout: i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		HTTPTimeout: i.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
 	}
 
 	i.api = &ipAPI{

@@ -23,7 +23,7 @@ import Config from "@site/src/components/Config.js";
   }}
 />
 
-## Properties
+## Options
 
 | Name                    |    Type    |                                   Default                                    | Description                                                                                                                                                                                                                          |
 | ----------------------- | :--------: | :--------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -40,6 +40,7 @@ import Config from "@site/src/components/Config.js";
 | `bun_icon`              |  `string`  |                                   `\ue76f`                                   | the icon/text to display when using Bun                                                                                                                                                                                              |
 | `extensions`            | `[]string` | `*.js, *.ts, package.json, .nvmrc, pnpm-workspace.yaml, .pnpmfile.cjs, .vue` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`               | `[]string` |                                                                              | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`               | `[]string` |                                    `node`                                    | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 

@@ -12,6 +12,6 @@
     "ajv-formats": "^2.1.1",
     "js-yaml": "^4.1.0",
     "@iarna/toml": "^2.2.5",
-    "@modelcontextprotocol/sdk": "^0.5.0"
+    "@modelcontextprotocol/sdk": "^1.24.0"
   }
 }

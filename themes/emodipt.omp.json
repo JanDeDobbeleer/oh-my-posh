@@ -6,7 +6,7 @@
       "segments": [
         {
           "foreground": "#E5C07B",
-          "properties": {
+          "options": {
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -21,7 +21,7 @@
         },
         {
           "foreground": "#61AFEF",
-          "properties": {
+          "options": {
             "style": "agnoster"
           },
           "style": "plain",
@@ -30,7 +30,7 @@
         },
         {
           "foreground": "#F3C267",
-          "properties": {
+          "options": {
             "branch_gone_icon": "\u274e",
             "branch_identical_icon": "\uf14a"
           },
@@ -54,5 +54,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

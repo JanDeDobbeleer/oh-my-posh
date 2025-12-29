@@ -12,7 +12,7 @@
         },
         {
           "foreground": "#0CA0D8",
-          "properties": {
+          "options": {
             "folder_separator_icon": "/",
             "style": "full"
           },
@@ -23,7 +23,7 @@
         {
           "foreground": "#14A5AE",
           "powerline_symbol": "\ue0b0",
-          "properties": {
+          "options": {
             "fetch_upstream_icon": true
           },
           "style": "plain",
@@ -53,5 +53,5 @@
       "type": "prompt"
     }
   ],
-  "version": 3
+  "version": 4
 }

@@ -440,6 +440,7 @@
             "v",
             "vala",
             "wakatime",
+            "winget",
             "winreg",
             "withings",
             "xmake",
@@ -4219,6 +4220,19 @@
                 "additionalProperties": false
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "winget"
+              }
+            }
+          },
+          "then": {
+            "title": "WinGet",
+            "description": "https://ohmyposh.dev/docs/segments/system/winget"
           }
         },
         {

@@ -198,6 +198,7 @@ module.exports = {
             "segments/system/text",
             "segments/system/time",
             "segments/system/upgrade",
+            "segments/system/winget",
             "segments/system/winreg",
           ]
         },

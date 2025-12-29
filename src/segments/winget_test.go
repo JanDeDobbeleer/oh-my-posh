@@ -21,7 +21,7 @@ func TestWinGet(t *testing.T) {
 		ExpectedEnabled bool
 	}{
 		{
-			Case:         "No updates available",
+			Case: "No updates available",
 			WinGetOutput: `Name               Id                          Version   Available Source
 -----------------------------------------------------------------------------------
 No applicable updates found.`,

@@ -48,7 +48,9 @@ Configuration is straightforward. Add this to your Claude Code settings:
 ```json title="~/.claude/settings.json"
 {
   "statusLine": {
-    "command": "oh-my-posh claude"
+    "type": "command",
+    "command": "oh-my-posh claude",
+    "padding": 0
   }
 }
 ```

@@ -1,0 +1,67 @@
+---
+id: winget
+title: WinGet
+sidebar_label: WinGet
+---
+
+## What
+
+Displays the number of available [WinGet][winget] package updates. This segment only appears when there are updates available.
+
+:::info
+This segment is only available on Windows.
+:::
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "winget",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#0077c2",
+    template: " \uf409 {{ .UpdateCount }} ",
+    properties: {
+      cache_duration: "24h",
+    },
+  }}
+/>
+
+## Properties
+
+| Name             | Type     | Default | Description                                                                                                                                                                                                               |
+| ---------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_duration` | `string` | `24h`   | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uf409 {{ .UpdateCount }} 
+```
+
+:::
+
+### Properties
+
+| Name           | Type     | Description                                        |
+| -------------- | -------- | -------------------------------------------------- |
+| `.UpdateCount` | `int`    | the number of packages with available updates      |
+| `.Updates`     | `[]WinGetPackage` | array of packages with available updates  |
+
+### WinGetPackage
+
+| Name        | Type     | Description                         |
+| ----------- | -------- | ----------------------------------- |
+| `.Name`     | `string` | the package name                    |
+| `.ID`       | `string` | the package ID                      |
+| `.Current`  | `string` | the currently installed version     |
+| `.Available`| `string` | the available version for update    |
+
+[templates]: /docs/configuration/templates
+[time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration
+[winget]: https://learn.microsoft.com/windows/package-manager/winget/

@@ -24,17 +24,8 @@ import Config from "@site/src/components/Config.js";
     foreground: "#ffffff",
     background: "#0077c2",
     template: " \uf409 {{ .UpdateCount }} ",
-    options: {
-      cache_duration: "24h",
-    },
   }}
 />
-
-## Options
-
-| Name             | Type     | Default | Description                                                                                                                                                                                                               |
-| ---------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cache_duration` | `string` | `24h`   | the duration for which the segment will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none` |
 
 ## Template ([info][templates])
 
@@ -63,5 +54,4 @@ import Config from "@site/src/components/Config.js";
 | `.Available`| `string` | the available version for update    |
 
 [templates]: /docs/configuration/templates
-[time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration
 [winget]: https://learn.microsoft.com/windows/package-manager/winget/

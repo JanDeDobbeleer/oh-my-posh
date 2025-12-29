@@ -112,9 +112,12 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 		if len(line) >= availableIndex {
 			current = strings.TrimSpace(line[versionIndex:availableIndex])
 		}
+
 		if sourceIndex > 0 && len(line) >= sourceIndex {
 			available = strings.TrimSpace(line[availableIndex:sourceIndex])
-		} else if len(line) > availableIndex {
+		}
+
+		if available == "" && len(line) > availableIndex {
 			// No source column or line is shorter
 			available = strings.TrimSpace(line[availableIndex:])
 		}

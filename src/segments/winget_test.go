@@ -21,14 +21,15 @@ func TestWinGet(t *testing.T) {
 		HasCommand      bool
 	}{
 		{
-			Case:            "No updates available",
-			ExpectedEnabled: false,
-			ExpectedCount:   0,
-			GOOS:            runtime.WINDOWS,
-			HasCommand:      true,
+			Case:         "No updates available",
 			WinGetOutput: `Name               Id                          Version   Available Source
 -----------------------------------------------------------------------------------
 No applicable updates found.`,
+			GOOS:            runtime.WINDOWS,
+			CommandError:    nil,
+			ExpectedCount:   0,
+			ExpectedEnabled: false,
+			HasCommand:      true,
 		},
 		{
 			Case:            "Multiple updates available",
@@ -158,7 +159,10 @@ Python 3.11        Python.Python.3.11          3.11.0    3.11.5    winget
 
 		assert.Equal(t, tc.ExpectedCount, len(packages), tc.Case)
 		if tc.ExpectedCount > 0 {
-			assert.Equal(t, tc.ExpectedFirst.Name, packages[0].Name, tc.Case)
+			assert.Equal(t, tc.ExpectedFirst.Name, packages[0].Name, tc.Case+" - Name")
+			assert.Equal(t, tc.ExpectedFirst.ID, packages[0].ID, tc.Case+" - ID")
+			assert.Equal(t, tc.ExpectedFirst.Current, packages[0].Current, tc.Case+" - Current")
+			assert.Equal(t, tc.ExpectedFirst.Available, packages[0].Available, tc.Case+" - Available")
 		}
 	}
 }

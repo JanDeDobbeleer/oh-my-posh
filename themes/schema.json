@@ -4232,17 +4232,7 @@
           },
           "then": {
             "title": "WinGet",
-            "description": "https://ohmyposh.dev/docs/segments/system/winget",
-            "properties": {
-              "options": {
-                "properties": {
-                  "cache_duration": {
-                    "$ref": "#/definitions/cache_duration",
-                    "default": "24h"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/system/winget"
           }
         },
         {

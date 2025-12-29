@@ -161,6 +161,7 @@ module.exports = {
           collapsed: true,
           items: [
             "segments/music/lastfm",
+            "segments/music/peard",
             "segments/music/spotify",
             "segments/music/ytm",
           ]

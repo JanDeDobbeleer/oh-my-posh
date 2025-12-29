@@ -404,6 +404,7 @@
             "os",
             "owm",
             "path",
+            "peard",
             "perl",
             "php",
             "plastic",
@@ -3080,6 +3081,49 @@
                   }
                 },
                 "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "peard"
+              }
+            }
+          },
+          "then": {
+            "title": "Pear Desktop Segment",
+            "description": "https://ohmyposh.dev/docs/segments/music/peard",
+            "properties": {
+              "options": {
+                "properties": {
+                  "port": {
+                    "type": "integer",
+                    "title": "Port",
+                    "description": "Port to connect to Pear Desktop API",
+                    "default": 26538
+                  },
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "Playing Icon",
+                    "description": "Text/icon to show when playing",
+                    "default": "\uf04b "
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "Paused Icon",
+                    "description": "Text/icon to show when paused",
+                    "default": "\uf04c "
+                  },
+                  "http_timeout": {
+                    "type": "integer",
+                    "title": "HTTP request timeout",
+                    "description": "HTTP request timeout in milliseconds",
+                    "default": 5000
+                  }
+                }
               }
             }
           }

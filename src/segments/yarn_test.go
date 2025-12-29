@@ -13,7 +13,7 @@ func TestYarn(t *testing.T) {
 		ExpectedString string
 		Version        string
 	}{
-		{Case: "1.0.0", ExpectedString: "\U000F011B 1.0.0", Version: "1.0.0"},
+		{Case: "1.0.0", ExpectedString: "\ue6a7 1.0.0", Version: "1.0.0"},
 	}
 	for _, tc := range cases {
 		params := &mockedLanguageParams{

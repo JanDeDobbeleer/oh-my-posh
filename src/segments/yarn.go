@@ -5,7 +5,7 @@ type Yarn struct {
 }
 
 func (n *Yarn) Template() string {
-	return " \U000F011B {{.Full}} "
+	return " \ue6a7 {{.Full}} "
 }
 
 func (n *Yarn) Enabled() bool {

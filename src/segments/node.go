@@ -70,7 +70,7 @@ func (n *Node) loadContext() {
 			fileName:     "yarn.lock",
 			name:         "yarn",
 			iconProperty: YarnIcon,
-			defaultIcon:  "\U000F011B",
+			defaultIcon:  "\ue6a7",
 		},
 		{
 			fileName:     "bun.lockb",

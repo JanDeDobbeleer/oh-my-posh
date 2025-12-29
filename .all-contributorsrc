@@ -3383,6 +3383,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jvsca",
+      "name": "Juan Svaikauskas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2821731?v=4",
+      "profile": "https://github.com/jvsca",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

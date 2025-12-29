@@ -13,7 +13,7 @@ func TestPnpm(t *testing.T) {
 		ExpectedString string
 		Version        string
 	}{
-		{Case: "1.0.0", ExpectedString: "\U000F02C1 1.0.0", Version: "1.0.0"},
+		{Case: "1.0.0", ExpectedString: "\ue865 1.0.0", Version: "1.0.0"},
 	}
 	for _, tc := range cases {
 		params := &mockedLanguageParams{

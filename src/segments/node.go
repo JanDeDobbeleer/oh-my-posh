@@ -64,7 +64,7 @@ func (n *Node) loadContext() {
 			fileName:     "pnpm-lock.yaml",
 			name:         "pnpm",
 			iconProperty: PnpmIcon,
-			defaultIcon:  "\U000F02C1",
+			defaultIcon:  "\ue865",
 		},
 		{
 			fileName:     "yarn.lock",

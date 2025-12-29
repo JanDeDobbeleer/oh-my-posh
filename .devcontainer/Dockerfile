@@ -1,7 +1,7 @@
 # See here for image contents: https://github.com/devcontainers/images/blob/main/src/go/.devcontainer/Dockerfile
 
-# [Choice] Go version: 1, 1.23, 1.24, 1-bookworm, 1.23-bookworm, 1.14-bookworm, 1-bullseye, 1.23-bullseye, 1.24-bullseye
-ARG VARIANT=1-bullseye
+# [Choice] Go version: 1, 1.24, 1.25, 1-trixie, 1.24-trixie, 1.25-trixie, 1-bookworm, 1.24-bookworm, 1.25-bookworm, 1-bullseye, 1.24-bullseye, 1.25-bullseye
+ARG VARIANT=1-trixie
 FROM mcr.microsoft.com/vscode/devcontainers/go:${VARIANT}
 
 # [Choice] Node.js version: none, lts/*, 24, 22, 20
@@ -9,9 +9,9 @@ ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
 # Install powershell
-ARG PS_VERSION="7.2.1"
-# powershell-7.3.0-linux-x64.tar.gz
-# powershell-7.3.0-linux-arm64.tar.gz
+ARG PS_VERSION="7.5.4"
+# powershell-7.5.4-linux-x64.tar.gz
+# powershell-7.5.4-linux-arm64.tar.gz
 RUN ARCH="$(dpkg --print-architecture)"; \
     if [ "${ARCH}" = "amd64" ]; then \
         PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-x64.tar.gz"; \
@@ -23,12 +23,13 @@ RUN ARCH="$(dpkg --print-architecture)"; \
     wget https://github.com/PowerShell/PowerShell/releases/download/$PS_BIN -O pwsh.tar.gz; \
     mkdir /usr/local/pwsh && \
     tar Cxvfz /usr/local/pwsh pwsh.tar.gz && \
-    rm pwsh.tar.gz
+    rm pwsh.tar.gz && \
+    chmod +x /usr/local/pwsh/pwsh
 
 ENV PATH=$PATH:/usr/local/pwsh
 
-RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list; \
-    curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null; \
+RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/4/Debian_13/ /' | tee /etc/apt/sources.list.d/shells:fish:release:4.list; \
+    curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:4/Debian_13/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_4.gpg > /dev/null; \
     apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
     fish \
@@ -37,7 +38,6 @@ RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3
     && apt-get clean
 
 ARG USERNAME=vscode
-
 
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve
@@ -50,7 +50,7 @@ RUN pwsh -Command Install-Module posh-git -Scope AllUsers -Force; \
     pwsh -Command Install-Module Terminal-Icons -Scope AllUsers -Force;
 
 # add the oh-my-posh path to the PATH variable
-ENV PATH "$PATH:/home/${USERNAME}/bin"
+ENV PATH="$PATH:/home/${USERNAME}/bin"
 
 # Deploy oh-my-posh prompt to Powershell:
 COPY Microsoft.PowerShell_profile.ps1 /home/${USERNAME}/.config/powershell/Microsoft.PowerShell_profile.ps1

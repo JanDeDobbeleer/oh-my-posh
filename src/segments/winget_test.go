@@ -3,7 +3,6 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
@@ -96,8 +95,6 @@ Visual Studio Code Microsoft.VisualStudioCode  1.75.0    1.76.0    winget`,
 		} else if tc.HasCommand && tc.GOOS == runtime.WINDOWS {
 			env.On("RunCommand", "winget", []string{"upgrade"}).Return(tc.WinGetOutput, nil)
 		}
-
-		cache.DeleteAll(cache.Device)
 
 		w := &WinGet{}
 		w.Init(options.Map{}, env)

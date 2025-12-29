@@ -4234,7 +4234,7 @@
             "title": "WinGet",
             "description": "https://ohmyposh.dev/docs/segments/system/winget",
             "properties": {
-              "properties": {
+              "options": {
                 "properties": {
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",

@@ -3,9 +3,7 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type WinGet struct {
@@ -22,10 +20,6 @@ type WinGetPackage struct {
 	Available string
 }
 
-const (
-	WINGETCACHEKEY = "winget_updates"
-)
-
 func (w *WinGet) Template() string {
 	return " \uf409 {{ .UpdateCount }} "
 }
@@ -39,15 +33,6 @@ func (w *WinGet) Enabled() bool {
 		return false
 	}
 
-	duration := w.options.String(options.CacheDuration, string(cache.ONEDAY))
-
-	updates, ok := cache.Get[[]WinGetPackage](cache.Device, WINGETCACHEKEY)
-	if ok {
-		w.Updates = updates
-		w.UpdateCount = len(updates)
-		return w.UpdateCount > 0
-	}
-
 	output, err := w.env.RunCommand("winget", "upgrade")
 	if err != nil {
 		return false
@@ -55,8 +40,6 @@ func (w *WinGet) Enabled() bool {
 
 	w.Updates = w.parseWinGetOutput(output)
 	w.UpdateCount = len(w.Updates)
-
-	cache.Set(cache.Device, WINGETCACHEKEY, w.Updates, cache.Duration(duration))
 
 	return w.UpdateCount > 0
 }

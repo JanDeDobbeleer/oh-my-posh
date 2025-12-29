@@ -39,6 +39,7 @@ import Config from "@site/src/components/Config.js";
 | `version_url_template` |  `string`  |                                                 | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
 | `extensions`           | `[]string` | `host.json, local.settings.json, function.json` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                                                 | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` |                     `func`                      | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 

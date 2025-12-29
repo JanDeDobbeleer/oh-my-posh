@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -90,7 +90,7 @@ Visual Studio Code Microsoft.VisualStudioCode  1.75.0    1.76.0    winget`,
 		env := new(mock.Environment)
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("HasCommand", "winget").Return(tc.HasCommand)
-		
+
 		if tc.CommandError != nil {
 			env.On("RunCommand", "winget", []string{"upgrade"}).Return("", tc.CommandError)
 		} else if tc.HasCommand && tc.GOOS == runtime.WINDOWS {
@@ -100,7 +100,7 @@ Visual Studio Code Microsoft.VisualStudioCode  1.75.0    1.76.0    winget`,
 		cache.DeleteAll(cache.Device)
 
 		w := &WinGet{}
-		w.Init(properties.Map{}, env)
+		w.Init(options.Map{}, env)
 
 		enabled := w.Enabled()
 
@@ -114,10 +114,10 @@ Visual Studio Code Microsoft.VisualStudioCode  1.75.0    1.76.0    winget`,
 
 func TestWinGetParseOutput(t *testing.T) {
 	cases := []struct {
-		Case           string
-		Output         string
-		ExpectedCount  int
-		ExpectedFirst  WinGetPackage
+		Case          string
+		Output        string
+		ExpectedCount int
+		ExpectedFirst WinGetPackage
 	}{
 		{
 			Case: "Standard output",
@@ -127,10 +127,10 @@ Python 3.11        Python.Python.3.11          3.11.0    3.11.5    winget
 Node.js            OpenJS.NodeJS               18.0.0    18.12.1   winget`,
 			ExpectedCount: 2,
 			ExpectedFirst: WinGetPackage{
-				Name:      "Python",
-				ID:        "3.11",
-				Current:   "Python.Python.3.11",
-				Available: "3.11.0",
+				Name:      "Python 3.11",
+				ID:        "Python.Python.3.11",
+				Current:   "3.11.0",
+				Available: "3.11.5",
 			},
 		},
 		{
@@ -146,6 +146,12 @@ Node.js            OpenJS.NodeJS               18.0.0    18.12.1   winget`,
 Python 3.11        Python.Python.3.11          3.11.0    3.11.5    winget
 2 upgrades available.`,
 			ExpectedCount: 1,
+			ExpectedFirst: WinGetPackage{
+				Name:      "Python 3.11",
+				ID:        "Python.Python.3.11",
+				Current:   "3.11.0",
+				Available: "3.11.5",
+			},
 		},
 	}
 

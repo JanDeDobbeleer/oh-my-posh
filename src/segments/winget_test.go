@@ -12,13 +12,13 @@ import (
 
 func TestWinGet(t *testing.T) {
 	cases := []struct {
+		CommandError    error
 		Case            string
 		WinGetOutput    string
 		GOOS            string
-		CommandError    error
 		ExpectedCount   int
-		ExpectedEnabled bool
 		HasCommand      bool
+		ExpectedEnabled bool
 	}{
 		{
 			Case:         "No updates available",

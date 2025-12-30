@@ -19,6 +19,13 @@
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.projectSubpath": "docs/api",
   "azureFunctions.preDeployTask": "npm prune (functions)",
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": "explicit"
+    }
+  },
   "markdownlint.ignore": [
     "**/agents.md"
   ]

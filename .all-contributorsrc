@@ -3394,6 +3394,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "johnstegeman",
+      "name": "John Stegeman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6601691?v=4",
+      "profile": "https://www.linkedin.com/in/johnstegeman/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

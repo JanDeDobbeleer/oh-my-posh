@@ -4649,6 +4649,11 @@
       "title": "Accent color",
       "$ref": "#/definitions/color"
     },
+    "cursor_color": {
+      "$ref": "#/definitions/color",
+      "title": "Cursor Color",
+      "description": "Sets the terminal cursor color. Requires terminal support for OSC 12. https://ohmyposh.dev/docs/configuration/general#cursor-color"
+    },
     "iterm_features": {
       "type": "array",
       "title": "The iTerm2 features to enable",

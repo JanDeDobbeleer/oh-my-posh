@@ -294,3 +294,58 @@ func TestWriteLength(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestCursorColor(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Color    string
+		Shell    string
+	}{
+		{
+			Case:     "Hex color - generic shell",
+			Color:    "#FF00FF",
+			Expected: "\x1b]12;38;2;255;0;255\x07",
+			Shell:    shell.GENERIC,
+		},
+		{
+			Case:     "Hex color - bash",
+			Color:    "#FF00FF",
+			Expected: "\\[\x1b]12;38;2;255;0;255\x07\\]",
+			Shell:    shell.BASH,
+		},
+		{
+			Case:     "Hex color - zsh",
+			Color:    "#FF00FF",
+			Expected: "%{\x1b]12;38;2;255;0;255\x07%}",
+			Shell:    shell.ZSH,
+		},
+		{
+			Case:     "Empty color",
+			Color:    "",
+			Expected: "",
+			Shell:    shell.GENERIC,
+		},
+		{
+			Case:     "Plain mode",
+			Color:    "#FF00FF",
+			Expected: "",
+			Shell:    shell.GENERIC,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Init(tc.Shell)
+			Colors = &color.Defaults{}
+			Plain = tc.Case == "Plain mode"
+
+			got := CursorColor(tc.Color)
+
+			assert.Equal(t, tc.Expected, got, tc.Case)
+
+			// Reset Plain for next test
+			Plain = false
+		})
+	}
+}

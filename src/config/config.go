@@ -67,6 +67,7 @@ type Config struct {
 	Source                  string                 `json:"-" toml:"-" yaml:"-"`
 	Format                  string                 `json:"-" toml:"-" yaml:"-"`
 	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty" yaml:"terminal_background,omitempty"`
+	CursorColor             color.Ansi             `json:"cursor_color,omitempty" toml:"cursor_color,omitempty" yaml:"cursor_color,omitempty"`
 	ToolTipsAction          Action                 `json:"tooltips_action,omitempty" toml:"tooltips_action,omitempty" yaml:"tooltips_action,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty" yaml:"blocks,omitempty"`
 	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`

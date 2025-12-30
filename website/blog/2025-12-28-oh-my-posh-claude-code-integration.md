@@ -26,6 +26,7 @@ development workflow and AI-powered coding assistance.
 
 ![Claude Code](/img/claude.png)
 
+<!--truncate-->
 ## What is Claude Code's statusline?
 
 Claude Code's `statusline` feature allows you to create custom status displays that appear at the bottom of

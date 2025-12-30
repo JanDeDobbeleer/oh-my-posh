@@ -24,8 +24,8 @@ func TestSpotifyLinux(t *testing.T) {
 	}{
 		{Case: "no data", ExpectedEnabled: false},
 		{Case: "error", ExpectedEnabled: false, Status: "Error.ServiceUnknown"},
-		{Case: "paused", ExpectedEnabled: true, Expected: "\uF8E3 Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
-		{Case: "playing", ExpectedEnabled: true, Expected: "\uE602 Candlemass - Spellbreaker", Status: "playing", Artist: "Candlemass", Track: "Spellbreaker"},
+		{Case: "paused", ExpectedEnabled: true, Expected: "\uf04c Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
+		{Case: "playing", ExpectedEnabled: true, Expected: "\ue602 Candlemass - Spellbreaker", Status: "playing", Artist: "Candlemass", Track: "Spellbreaker"},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)

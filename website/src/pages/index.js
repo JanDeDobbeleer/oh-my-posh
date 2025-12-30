@@ -11,8 +11,8 @@ const features = [
     title: <>🎨 Beautiful & Intelligent</>,
     description: (
       <>
-        Transform your terminal with stunning themes and intelligent segments that display 
-        Git status, cloud info, language versions, system metrics, and 180+ other contextual details. 
+        Transform your terminal with stunning themes and intelligent segments that display
+        Git status, cloud info, language versions, system metrics, and 180+ other contextual details.
         Your prompt adapts to what you're working on.
       </>
     ),
@@ -21,7 +21,7 @@ const features = [
     title: <>⚡ Lightning Fast</>,
     description: (
       <>
-        Built with Go for blazing performance. Smart caching and async operations ensure 
+        Built with Go for blazing performance. Smart caching and async operations ensure
         your prompt renders instantly, even with complex configurations and multiple segments.
         No more waiting for your terminal.
       </>
@@ -31,8 +31,8 @@ const features = [
     title: <>🌍 Universal Compatibility</>,
     description: (
       <>
-        One configuration works everywhere - PowerShell, Bash, Zsh, Fish, Nu Shell, and more. 
-        Windows, macOS, Linux, WSL, containers, SSH sessions. Write once, use everywhere 
+        One configuration works everywhere - PowerShell, Bash, Zsh, Fish, Nu Shell, and more.
+        Windows, macOS, Linux, WSL, containers, SSH sessions. Write once, use everywhere
         with zero vendor lock-in.
       </>
     ),
@@ -83,7 +83,7 @@ function Home() {
               See themes &rarr;
             </Link>
           </div>
-          <img class="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
+          <img className="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
         </div>
       </header>
       <main>

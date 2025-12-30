@@ -22,7 +22,7 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 		{BatchedCase: "false|||", Expected: "", Enabled: false},
 		{BatchedCase: "false||", Expected: "", Error: errors.New("oops"), Enabled: false},
 		{BatchedCase: "true|playing|Candlemass|Spellbreaker", Expected: "\ue602 Candlemass - Spellbreaker", Enabled: true},
-		{BatchedCase: "true|paused|Candlemass|Spellbreaker", Expected: "\uF8E3 Candlemass - Spellbreaker", Enabled: true},
+		{BatchedCase: "true|paused|Candlemass|Spellbreaker", Expected: "\uf04c Candlemass - Spellbreaker", Enabled: true},
 	}
 	batchedCommand := `
 	if application "Spotify" is running then

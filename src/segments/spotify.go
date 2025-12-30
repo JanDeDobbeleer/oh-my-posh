@@ -38,10 +38,10 @@ func (s *Spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:
 		// in this case, no artist or track info
-		s.Icon = s.options.String(StoppedIcon, "\uF04D ")
+		s.Icon = s.options.String(StoppedIcon, "\uf04d ")
 	case paused:
-		s.Icon = s.options.String(PausedIcon, "\uF8E3 ")
+		s.Icon = s.options.String(PausedIcon, "\uf04c ")
 	case playing:
-		s.Icon = s.options.String(PlayingIcon, "\uE602 ")
+		s.Icon = s.options.String(PlayingIcon, "\ue602 ")
 	}
 }

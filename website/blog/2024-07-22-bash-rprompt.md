@@ -33,9 +33,9 @@ bash' readline can interpret the prompt correctly. In bash, every character that
 like color codes, needs to be wrapped in `\[` and `\]`. This is necessary to make sure bash can **calculate the length**
 of the prompt and ultimately **position the cursor** correctly.
 
-It turned out that for [`rprompt`][rprompt], this _needed to be done differently_. The [`rprompt`][rprompt] is printed after what
-bash interprets as the end of the prompt. We found out that we need to wrap the entire [`rprompt`][rprompt] in `\[` and `\]`,
-and not escape individual non-printable characters.
+It turned out that for [`rprompt`][rprompt], this _needed to be done differently_. The [`rprompt`][rprompt] is printed
+after what bash interprets as the end of the prompt. We found out that we need to wrap the entire [`rprompt`][rprompt] in
+`\[` and `\]`, and not escape individual non-printable characters.
 
 We did that for a while, but apparently this approach was **not very robust**. It was easy to break readline's
 cursor position calculation, and it was hard to debug. The behaviour of this was also different cross platform,
@@ -43,9 +43,10 @@ so we had to go back to the drawing board.
 
 ### Second implementation
 
-The second implementation of the [`rprompt`][rprompt] was a lot more robust. We decided to print the [`rprompt`][rprompt] in a separate
-CLI call, so we could control the output more easily. It leveraged the use of the `PROMPT_COMMAND` variable in bash, which
-is a hook that is executed before the prompt is printed. We would first print the [`rprompt`][rprompt] in the `PROMPT_COMMAND`,
+The second implementation of the [`rprompt`][rprompt] was a lot more robust. We decided to print the [`rprompt`][rprompt]
+in a separate CLI call, so we could control the output more easily. It leveraged the use of the `PROMPT_COMMAND`
+variable in bash, which is a hook that is executed before the prompt is printed. We would first print the
+[`rprompt`][rprompt] in the `PROMPT_COMMAND`,
 and then set the primary prompt in the `PS1` variable so bash would not bother about the [`rprompt`][rprompt] being there.
 
 This approach was a lot **cleaner from an achitectural point of view**, but it came with its own challenges.
@@ -53,10 +54,10 @@ The most obvious one is needing two CLI calls to print the prompt, which made re
 
 Additionally, as we print before `PS1` is evaluated, we noticed the following issues along the way:
 
-1. when the output of the previous command didn't end with a newline, the [`rprompt`][rprompt] would be printed on the same line
-  as the output of the previous command
-2. when the prompt was at the bottom of the terminal buffer, the [`rprompt`][rprompt] would be printed on the same line as the
-  prompt, which would break the prompt
+1. when the output of the previous command didn't end with a newline, the [`rprompt`][rprompt] would be printed on the
+  same line as the output of the previous command
+2. when the prompt was at the bottom of the terminal buffer, the [`rprompt`][rprompt] would be printed on the same line
+  as the prompt, which would break the prompt
 3. depending on the platform, it would still break command history navigation
 4. it required different logic for multiline prompts as we print before `PS1` and need to reposition the cursor correctly
 
@@ -64,10 +65,12 @@ Of these issues, **only bullet 4 could be fixed**. Everything else was outside o
 
 ## Conclusion
 
-Oh My Posh is a tool that needs to be easy to use, maintain and be 100% reliable. One of the core principles of Oh My Posh is that it should
-**never break the shell**. The [`rprompt`][rprompt] feature in bash has never been reliable enough, and it was _hard to debug_ when it broke.
+Oh My Posh is a tool that needs to be easy to use, maintain and be 100% reliable. One of the core principles of
+Oh My Posh is that it should **never break the shell**. The [`rprompt`][rprompt] feature in bash has never been reliable
+enough, and it was _hard to debug_ when it broke.
 I spent countless hours debugging issues with the [`rprompt`][rprompt] in bash, but it's **time to move on**. If you
-want to use the [`rprompt`][rprompt] feature, I would recommend using a shell that supports it natively, like [nushell], [zsh] or [fish].
+want to use the [`rprompt`][rprompt] feature, I would recommend using a shell that supports it natively, like
+[nushell], [zsh] or [fish].
 
 ## What about Powershell?
 

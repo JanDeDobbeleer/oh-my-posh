@@ -187,8 +187,8 @@ func CursorColor(colorStr string) string {
 		return ""
 	}
 
-	// Convert hex color to the format terminals expect
-	// OSC 12 accepts hex colors directly (e.g., #FF00FF)
+	// OSC 12 escape sequence to set cursor color
+	// resolvedColor is in ANSI format (e.g., 38;2;255;0;255)
 	return fmt.Sprintf(formats.Osc12, string(resolvedColor))
 }
 

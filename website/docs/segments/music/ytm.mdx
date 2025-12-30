@@ -6,7 +6,7 @@ sidebar_label: YouTube Music
 
 ## What
 
-Shows the currently playing song in the [YouTube Music Desktop App](https://github.com/ytmdesktop/ytmdesktop).
+Shows the currently playing song in the [YouTube Music Desktop App][ytmdesktop].
 
 ## Setup
 
@@ -45,22 +45,25 @@ import Config from "@site/src/components/Config.js";
       playing_icon: "\uf04b ",
       paused_icon: "\uf04c ",
       stopped_icon: "\uf04d ",
+      ad_icon: "\ueebb ",
+      http_timeout: 1000
     },
     cache: {
       duration: "5s",
-      strategy: "session",
-    },
+      strategy: "session"
+    }
   }}
 />
 
 ## Options
 
-| Name           |   Type   |  Default  | Description                                    |
-| -------------- | :------: | :-------: | ---------------------------------------------- |
-| `playing_icon` | `string` | `\uE602 ` | text/icon to show when playing                 |
-| `paused_icon`  | `string` | `\uF8E3 ` | text/icon to show when paused                  |
-| `stopped_icon` | `string` | `\uF04D ` | text/icon to show when stopped                 |
-| `http_timeout` |  `int`   |  `5000`   | in milliseconds - the timeout for http request |
+| Name           |   Type   |  Default  | Description                                        |
+| -------------- | :------: | :-------: | -------------------------------------------------- |
+| `playing_icon` | `string` | `\uf04b ` | text/icon to show when playing                     |
+| `paused_icon`  | `string` | `\uf04c ` | text/icon to show when paused                      |
+| `stopped_icon` | `string` | `\uf04d ` | text/icon to show when stopped                     |
+|   `ad_icon`    | `string` | `\ueebb ` | text/icon to show when an advertisement is playing |
+| `http_timeout` |  `int`   |  `5000`   | in milliseconds - the timeout for http request     |
 
 ## Template ([info][templates])
 
@@ -82,4 +85,4 @@ import Config from "@site/src/components/Config.js";
 | `.Icon`   | `string` | icon (based on `.Status`)                      |
 
 [templates]: /docs/configuration/templates
-[templates]: /docs/configuration/templates
+[ytmdesktop]: https://github.com/ytmdesktop/ytmdesktop

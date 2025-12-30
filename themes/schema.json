@@ -2278,15 +2278,15 @@
                 "properties": {
                   "playing_icon": {
                     "type": "string",
-                    "title": "User Info Separator",
+                    "title": "Playing Icon",
                     "description": "Text/icon to show when playing",
-                    "default": "\ue602"
+                    "default": "\uE602 "
                   },
                   "stopped_icon": {
                     "type": "string",
-                    "title": "SSH Icon",
+                    "title": "Stopped Icon",
                     "description": "Text/icon to show when stopped",
-                    "default": "\uf04d"
+                    "default": "\uF04D "
                   },
                   "api_key": {
                     "type": "string",
@@ -3708,19 +3708,19 @@
                     "type": "string",
                     "title": "Playing Icon",
                     "description": "Text/icon to show when playing",
-                    "default": "\ue602"
+                    "default": "\ue602 "
                   },
                   "paused_icon": {
                     "type": "string",
                     "title": "Paused Icon",
                     "description": "Text/icon to show when paused",
-                    "default": "\uf8e3"
+                    "default": "\uf04c "
                   },
                   "stopped_icon": {
                     "type": "string",
                     "title": "Stopped Icon",
                     "description": "Text/icon to show when stopped",
-                    "default": "\uf04d"
+                    "default": "\uf04d "
                   }
                 },
                 "additionalProperties": false
@@ -4388,13 +4388,13 @@
                     "type": "string",
                     "title": "Playing Icon",
                     "description": "Text/icon to show when playing",
-                    "default": "\ue602 "
+                    "default": "\uf04b "
                   },
                   "paused_icon": {
                     "type": "string",
                     "title": "Paused Icon",
                     "description": "Text/icon to show when paused",
-                    "default": "\uf8e3 "
+                    "default": "\uf04c "
                   },
                   "stopped_icon": {
                     "type": "string",
@@ -4402,11 +4402,11 @@
                     "description": "Text/icon to show when stopped",
                     "default": "\uf04d "
                   },
-                  "api_url": {
+                  "ad_icon": {
                     "type": "string",
-                    "title": "API URL",
-                    "description": "The YTMDA Remote Control API URL",
-                    "default": "http://127.0.0.1:9863"
+                    "title": "Advertisement Icon",
+                    "description": "Text/icon to show when an advertisement is playing",
+                    "default": "\ueebb "
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"

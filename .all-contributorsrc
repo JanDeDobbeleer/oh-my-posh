@@ -289,7 +289,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/48369326?v=4",
       "profile": "https://github.com/cinnamon-msft",
       "contributions": [
-        "design"
+        "design",
+        "code",
+        "doc"
       ]
     },
     {

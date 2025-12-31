@@ -2689,11 +2689,35 @@
                     "description": "Display the distro name or icon or not",
                     "default": false
                   },
+                  "alma": {
+                    "type": "string",
+                    "title": "Alma Icon",
+                    "description": "The icon to use for Alma",
+                    "default": "\uf31d"
+                  },
+                  "almalinux": {
+                    "type": "string",
+                    "title": "AlmaLinux Icon",
+                    "description": "The icon to use for AlmaLinux",
+                    "default": "\uf31d"
+                  },
+                  "almalinux9": {
+                    "type": "string",
+                    "title": "AlmaLinux9 Icon",
+                    "description": "The icon to use for AlmaLinux9",
+                    "default": "\uf31d"
+                  },
                   "alpine": {
                     "type": "string",
                     "title": "Alpine Icon",
                     "description": "The icon to use for Alpine",
                     "default": "\uf300"
+                  },
+                  "android": {
+                    "type": "string",
+                    "title": "Android Icon",
+                    "description": "The icon to use for Android",
+                    "default": "\ue70e"
                   },
                   "aosc": {
                     "type": "string",
@@ -2711,7 +2735,7 @@
                     "type": "string",
                     "title": "Centos Icon",
                     "description": "The icon to use for Centos",
-                    "default": "\uf303"
+                    "default": "\uf304"
                   },
                   "coreos": {
                     "type": "string",
@@ -2737,12 +2761,6 @@
                     "description": "The icon to use for Devuan",
                     "default": "\uf307"
                   },
-                  "raspbian": {
-                    "type": "string",
-                    "title": "Raspbian Icon",
-                    "description": "The icon to use for Raspbian",
-                    "default": "\uf315"
-                  },
                   "elementary": {
                     "type": "string",
                     "title": "Elementary Icon",
@@ -2765,7 +2783,7 @@
                     "type": "string",
                     "title": "FreeBSD Icon",
                     "description": "The icon to use for FreeBSD",
-                    "default": "\\U000f08e0"
+                    "default": "\udb82\udce0"
                   },
                   "gentoo": {
                     "type": "string",
@@ -2777,7 +2795,7 @@
                     "type": "string",
                     "title": "Kali Icon",
                     "description": "The icon to use for Kali",
-                    "default": "\\uf327"
+                    "default": "\uf327"
                   },
                   "mageia": {
                     "type": "string",
@@ -2795,13 +2813,13 @@
                     "type": "string",
                     "title": "Mint Icon",
                     "description": "The icon to use for Mint",
-                    "default": "\uf30e"
+                    "default": "\udb82\udced"
                   },
                   "neon": {
                     "type": "string",
                     "title": "Neon Icon",
                     "description": "The icon to use for Neon",
-                    "default": "\\uf331"
+                    "default": "\uf331"
                   },
                   "nixos": {
                     "type": "string",
@@ -2821,11 +2839,23 @@
                     "description": "The icon to use for OpenSUSE Tumbleweed",
                     "default": "\uf314"
                   },
+                  "raspbian": {
+                    "type": "string",
+                    "title": "Raspbian Icon",
+                    "description": "The icon to use for Raspbian",
+                    "default": "\uf315"
+                  },
                   "redhat": {
                     "type": "string",
                     "title": "Redhat Icon",
                     "description": "The icon to use for Redhat",
                     "default": "\uf316"
+                  },
+                  "rocky": {
+                    "type": "string",
+                    "title": "Rocky Icon",
+                    "description": "The icon to use for Rocky",
+                    "default": "\uf32b"
                   },
                   "sabayon": {
                     "type": "string",
@@ -2844,36 +2874,6 @@
                     "title": "Ubuntu Icon",
                     "description": "The icon to use for Ubuntu",
                     "default": "\uf31b"
-                  },
-                  "rocky": {
-                    "type": "string",
-                    "title": "Rocky Icon",
-                    "description": "The icon to use for Rocky",
-                    "default": "\uf32b"
-                  },
-                  "alma": {
-                    "type": "string",
-                    "title": "Alma Icon",
-                    "description": "The icon to use for Alma",
-                    "default": "\uf31d"
-                  },
-                  "almalinux": {
-                    "type": "string",
-                    "title": "AlmaLinux Icon",
-                    "description": "The icon to use for AlmaLinux",
-                    "default": "\uf31d"
-                  },
-                  "almalinux9": {
-                    "type": "string",
-                    "title": "AlmaLinux9 Icon",
-                    "description": "The icon to use for AlmaLinux9",
-                    "default": "\uf31d"
-                  },
-                  "android": {
-                    "type": "string",
-                    "title": "Android Icon",
-                    "description": "The icon to use for Android",
-                    "default": "\\ue70e"
                   }
                 },
                 "additionalProperties": false

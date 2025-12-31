@@ -73,7 +73,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"kali":                "\uf327",
 		"mageia":              "\uF310",
 		"manjaro":             "\uF312",
-		"mint":                "\uF30e",
+		"mint":                "\U000f08ed",
 		"nixos":               "\uF313",
 		"opensuse":            "\uF314",
 		"opensuse-tumbleweed": "\uF314",

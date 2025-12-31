@@ -21,18 +21,21 @@ First add the repo:
 ```bash
 sudo apt-get update
 sudo apt-get install -y apt-transport-https
-echo "deb https://www.plasticscm.com/plasticrepo/stable/debian/ ./" | sudo tee /etc/apt/sources.list.d/plasticscm-stable.list
-wget https://www.plasticscm.com/plasticrepo/stable/debian/Release.key -O - | sudo apt-key add -
+wget -qO - https://www.plasticscm.com/plasticrepo/stable/debian/Release.key | \
+  gpg --dearmor | sudo tee /usr/share/keyrings/plasticscm-stable.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/plasticscm-stable.gpg] \
+  https://www.plasticscm.com/plasticrepo/stable/debian ./" | \
+  sudo tee /etc/apt/sources.list.d/plasticscm-stable.list
 sudo apt-get update
 ```
 
 Then install the server: *this might throw an error at the end of the setup **see below***
 
 ```bash
-sudo apt-get install plasticscm-server-core
+sudo apt-get install -y plasticscm-server-core
 ```
 
-This might show an error while configuring the installed package. In that case the server was nod registered as a service.
+This might show an error while configuring the installed package. In that case the server was not registered as a service.
 **Ignore it!**
 
 ### Server configuration
@@ -40,17 +43,12 @@ This might show an error while configuring the installed package. In that case t
 Configuring the server is done via:
 
 ```bash
-cd /opt/plasticscm5/server/
-sudo ./plasticd configure
+sudo /opt/plasticscm5/server/plasticd configure \
+  --language=en \
+  --workingmode=NameWorkingMode \
+  --port=8087 \
+  --sslport=8088
 ```
-
-You are asked 5 questions. Choose these options:
-
-1. **1**: English
-2. 8087 (default port, **just hit return**)
-3. 8088 (default ssl port, **just hit return**)
-4. **1**: NameWorkingMode (use local users and groups)
-5. skip license token (**just hit return**)
 
 **Congrats!** Your server is configured. You can find out more in the [official configuration instructions][server-config].
 
@@ -65,8 +63,7 @@ sudo service plasticd start
 If not, you need to start it manually (for example inside the dev-container):
 
 ```bash
-cd /opt/plasticscm5/server/
-sudo ./plasticd start
+sudo /opt/plasticscm5/server/plasticd start
 ```
 
 This will lock the current shell until the server process finishes. You might need to open another terminal to continue.
@@ -82,7 +79,7 @@ Plastic SCM comes, much like git, with a CLI (+ client UI \[optional\])
 These are the steps to install the **Plastic SCM CLI** on Debian or in the dev-container:
 
 ```bash
-sudo apt-get install plasticscm-client-core
+sudo apt-get install -y plasticscm-client-core
 ```
 
 ### Client configuration
@@ -90,18 +87,14 @@ sudo apt-get install plasticscm-client-core
 To connect the client to the server and set up an account run:
 
 ```bash
-clconfigureclient
+cm configure \
+  --language=en \
+  --workingmode=NameWorkingMode \
+  --server=localhost \
+  --port=8087
 ```
 
-You are asked a few questions. Choose these options:
-
-1. **1**: English
-2. localhost (**just hit return**)
-3. default port 8087 (**just hit return**)
-4. No SSL (**just hit return**)
-5. No Proxy (**just hit return**)
-
-**Congrats!** Your client should now be connected to your server.
+**Congrats!** Your client should now be connected to your server. You can find out more in the [official configuration instructions][client-config].
 
 You can test if it worked and display some license info via:
 
@@ -118,7 +111,7 @@ The Plastic SCM CLI command is: `cm`
 If you ever wonder what you can do with it call:
 
 ```bash
-cm showcommands --all`
+cm showcommands --all
 ```
 
 ### Creating a local workspace
@@ -346,7 +339,8 @@ cm merge /main/del --merge
 Hint: This will prompt you to directly resolve the merge conflict
 
 [plastic]: https://www.plasticscm.com/
-[setup-instructions]: https://www.plasticscm.com/documentation/administration/plastic-scm-version-control-administrator-guide#Chapter3:PlasticSCMinstallation
-[server-config]: https://www.plasticscm.com/documentation/administration/plastic-scm-version-control-administrator-guide#Serverconfiguration
+[setup-instructions]: https://docs.unity.com/en-us/unity-version-control/install-uvcs-on-linux#debian
+[server-config]: https://docs.unity.com/en-us/unity-version-control/uvcs-on-prem/server-configuration
+[client-config]: https://docs.unity.com/en-us/unity-version-control/uvcs-on-prem/client-configuration
 [contributing]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md
 [devcontainer]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md#codespaces--devcontainer-development-environment

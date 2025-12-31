@@ -81,4 +81,4 @@ go test "./..."
 [codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=175405157>
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 [timezones]: <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>
-[go.mod]: src\go.mod
+[go.mod]: src/go.mod

@@ -803,12 +803,6 @@
                   }
                 ],
                 "properties": {
-                  "icon": {
-                    "type": "string",
-                    "title": "Icon",
-                    "description": "The icon representing Bazel's logo",
-                    "default": "\ue63a"
-                  },
                   "extensions": {
                     "default": [
                       "*.bazel",
@@ -818,6 +812,19 @@
                       ".bazelrc",
                       ".bazelversion"
                     ]
+                  },
+                  "folders": {
+                    "default": [
+                      "bazel-bin",
+                      "bazel-out",
+                      "bazel-testlogs"
+                    ]
+                  },
+                  "icon": {
+                    "type": "string",
+                    "title": "Icon",
+                    "description": "The icon representing Bazel's logo",
+                    "default": "\ue63a"
                   }
                 }
               }
@@ -1412,14 +1419,23 @@
             "properties": {
               "options": {
                 "properties": {
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "extensions": {
+                    "default": [
+                      "compose.yml",
+                      "compose.yaml",
+                      "docker-compose.yml",
+                      "docker-compose.yaml",
+                      "Dockerfile"
+                    ]
+                  },
                   "fetch_context": {
                     "type": "boolean",
                     "title": "Fetch Context",
                     "description": "Fetch the Docker context",
                     "default": true
-                  },
-                  "display_mode": {
-                    "$ref": "#/definitions/display_mode"
                   }
                 },
                 "additionalProperties": false
@@ -2329,20 +2345,21 @@
                   }
                 ],
                 "properties": {
-                  "preferred_executable": {
-                    "type": "string",
-                    "title": "Preferred Executable",
-                    "description": "The preferred executable to use when fetching the version.",
-                    "enum": [
-                      "lua",
-                      "luajit"
-                    ],
-                    "default": "lua"
-                  },
                   "extensions": {
                     "default": [
                       "*.lua",
                       "*.rockspec"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      "lua"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "lua",
+                      "luajit"
                     ]
                   }
                 }
@@ -2423,6 +2440,48 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mvn"
+              }
+            }
+          },
+          "then": {
+            "title": "Maven Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/mvn",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "pom.xml"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nbgv"
+              }
+            }
+          },
+          "then": {
+            "title": "Nerdbank.GitVersion Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/nbgv"
           }
         },
         {
@@ -3411,6 +3470,23 @@
                       "venv.bak"
                     ]
                   },
+                  "folders": {
+                    "default": [
+                      ".venv",
+                      "pyenv-win",
+                      "venv",
+                      "venv-win",
+                      "virtualenv"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "pyenv",
+                      "python",
+                      "python3",
+                      "py"
+                    ]
+                  },
                   "folder_name_fallback": {
                     "type": "boolean",
                     "title": "Folder Name Fallback",
@@ -3891,7 +3967,7 @@
                 "properties": {
                   "extensions": {
                     "default": [
-                      "package.json"
+                      "svelte.config.js"
                     ]
                   }
                 }
@@ -4021,7 +4097,17 @@
                 "properties": {
                   "extensions": {
                     "default": [
-                      "package.json"
+                      "tauri.conf.json"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      "src-tauri"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "tauri"
                     ]
                   }
                 }
@@ -4043,6 +4129,12 @@
             "properties": {
               "options": {
                 "properties": {
+                  "command": {
+                    "type": "string",
+                    "title": "Terraform Command",
+                    "description": "The terraform command to use",
+                    "default": "terraform"
+                  },
                   "fetch_version": {
                     "type": "boolean",
                     "title": "Fetch Version",

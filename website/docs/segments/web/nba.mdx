@@ -12,7 +12,7 @@ favorite NBA team!
 ## Sample Configuration
 
 In order to use the NBA segment, you need to provide a valid team
-[tri-code](https://liaison.reuters.com/tools/sports-team-codes) that you'd
+[tri-code][tri-code] that you'd
 like to get data for inside of the configuration. For example, if you'd like
 to get information for the Los Angeles Lakers, you'd need to use the "LAL"
 tri-code.
@@ -21,7 +21,7 @@ This example uses "LAL" to get information for the Los Angeles Lakers. It also
 sets the foreground and background colors to match the theming for the team.
 If you are interested in getting information about specific foreground and
 background colors you could use for other teams, you can explore some of
-the color schemes [here](https://teamcolorcodes.com/nba-team-color-codes/).
+the color schemes [here][color-schemes].
 
 It is recommended that you set the HTTP timeout to a higher value than the
 normal default in case it takes some time to gather the scoreboard information.
@@ -57,7 +57,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
-\U000F0806 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
+\udb82\udc06 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
 ```
 
 :::
@@ -81,5 +81,6 @@ import Config from "@site/src/components/Config.js";
 | .Started        | `boolean` | if the game was started or not                              |
 | .HasStats       | `boolean` | if the game has game stats or not                           |
 
+[color-schemes]: https://teamcolorcodes.com/nba-team-color-codes/
 [templates]: /docs/configuration/templates
-[nf-search]: https://www.nerdfonts.com/cheat-sheet
+[tri-code]: https://liaison.reuters.com/tools/sports-team-codes

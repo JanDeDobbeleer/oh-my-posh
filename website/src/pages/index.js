@@ -3,7 +3,6 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import classnames from "classnames";
-import React from "react";
 import styles from "./styles.module.css";
 
 const features = [

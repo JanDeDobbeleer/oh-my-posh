@@ -56,7 +56,7 @@ module.exports = {
         },
         {
           href: 'https://polar.sh/oh-my-posh',
-          label: 'Buy',
+          label: 'Subscribe',
           position: 'left',
         },
         {
@@ -68,12 +68,6 @@ module.exports = {
           href: 'https://github.com/jandedobbeleer/oh-my-posh',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
-          position: 'right',
-        },
-        {
-          href: 'https://www.warp.dev/oh-my-posh',
-          className: 'header-affiliate-link',
-          'aria-label': 'Warp',
           position: 'right',
         },
         {
@@ -131,12 +125,8 @@ module.exports = {
               href: 'https://github.com/sponsors/JanDeDobbeleer',
             },
             {
-              label: 'Buy',
+              label: 'Subscribe',
               href: 'https://polar.sh/oh-my-posh',
-            },
-            {
-              label: 'Warp',
-              href: 'https://www.warp.dev/oh-my-posh',
             },
             {
               label: 'Docusaurus',
@@ -145,6 +135,15 @@ module.exports = {
             {
               label: 'Privacy',
               href: '/privacy',
+            },
+          ],
+        },
+                {
+          title: 'Sponsors',
+          items: [
+            {
+              label: 'Merge Conflict',
+              href: 'https://www.mergeconflict.fm/',
             },
           ],
         },

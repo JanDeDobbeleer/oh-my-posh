@@ -18,26 +18,16 @@
 
 ![Number of GitHub Downloads badge](https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads)
 
-<!-- markdownlint-disable -->
-<div align="center" markdown="1">
-   <sup>Special thanks to:</sup>
-   <br>
-   <br>
-   <a href="https://www.warp.dev/oh-my-posh">
-      <img alt="Warp sponsorship" width="400" src="https://github.com/user-attachments/assets/c21102f7-bab9-4344-a731-0cf6b341cab2">
-   </a>
-
-### [Warp, the intelligent terminal for developers](https://www.warp.dev/oh-my-posh)
-[Available for MacOS, Linux, & Windows](https://www.warp.dev/oh-my-posh)<br>
-
-</div>
-<hr>
-<!-- markdownlint-enable -->
-
 This repo was made with love using GitKraken.
 
 [![GitKraken shield][kraken]][kraken-ref]
 <!-- markdownlint-disable first-header-h1 -->
+
+## Sponsors
+
+[![Documentation link badge ohmyposh.dev][merge-conflict-logo]][merge-conflict]
+
+[Want to become a sponsor?][sponsor-link]
 
 ## Join the community
 
@@ -57,20 +47,11 @@ on oh-my-posh, a modern and more efficient tool was needed to suit my personal n
 
 [![Ko-Fi][kofi-badge]][kofi] - No coffee, no code.
 
-<!-- markdownlint-disable -->
-<a href="https://polar.sh/oh-my-posh">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://polar.sh/embed/tiers.svg?org=oh-my-posh&darkmode">
-    <img alt="Subscription Tiers on Polar" src="https://polar.sh/embed/tiers.svg?org=oh-my-posh">
-  </picture>
-</a>
-<!-- markdownlint-enable -->
-
 ## Features
 
 * Shell and platform agnostic
 * Easily configurable
-* The **most** configurable prompt utility
+* The __most__ configurable prompt utility
 * Fast
 * Secondary prompt
 * Right prompt
@@ -105,3 +86,7 @@ using Go (and the amazing [README](https://github.com/justjanne/powerline-go))
 [docs]: https://ohmyposh.dev
 [release-badge]: https://img.shields.io/github/v/release/jandedobbeleer/oh-my-posh?label=Release
 [release]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
+
+[merge-conflict]: https://www.mergeconflict.fm/
+[merge-conflict-logo]: https://media24.fireside.fm/file/fireside-images-2024/podcasts/images/0/02d84890-e58d-43eb-ab4c-26bcc8524289/cover_small.jpg?v=1
+[sponsor-link]: https://buy.polar.sh/polar_cl_qnmZxboq1IDUJo03mk2Jue6ktqZrCXElnzH2s2xbV2R

@@ -80,7 +80,7 @@ func (c *Copilot) getAccessToken() string {
 func (c *Copilot) getResult() (*copilotAPIResponse, error) {
 	accessToken := c.getAccessToken()
 	if len(accessToken) == 0 {
-		return nil, &noAcccessTokenError{}
+		return nil, &noAccessTokenError{}
 	}
 
 	log.Debug("found access token")
@@ -199,8 +199,8 @@ func (e *noQuotaDataError) Error() string {
 	return "no quota data in response"
 }
 
-type noAcccessTokenError struct{}
+type noAccessTokenError struct{}
 
-func (e *noAcccessTokenError) Error() string {
+func (e *noAccessTokenError) Error() string {
 	return "no access token available, use 'oh-my-posh auth copilot' to authenticate"
 }

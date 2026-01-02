@@ -355,7 +355,7 @@ func Write(background, foreground color.Ansi, txt string) {
 				continue
 			}
 
-			i = writeArchorOverride(match, background, i)
+			i = writeAnchorOverride(match, background, i)
 			continue
 		}
 
@@ -433,7 +433,7 @@ func writeSegmentColors() {
 		fg = currentColor.Foreground()
 	}
 
-	// ignore processing fully tranparent colors
+	// ignore processing fully transparent colors
 	isInvisible = fg.IsTransparent() && bg.IsTransparent()
 	if isInvisible {
 		return
@@ -461,7 +461,7 @@ func writeSegmentColors() {
 	currentColor.Add(bg, fg)
 }
 
-func writeArchorOverride(match map[string]string, background color.Ansi, i int) int {
+func writeAnchorOverride(match map[string]string, background color.Ansi, i int) int {
 	position := i
 	// check color reset first
 	if match[ANCHOR] == resetStyle.AnchorEnd {
@@ -490,7 +490,7 @@ func writeArchorOverride(match map[string]string, background color.Ansi, i int) 
 
 	bg, fg := asAnsiColors(bgColor, fgColor)
 
-	// ignore processing fully tranparent colors
+	// ignore processing fully transparent colors
 	isInvisible = fg.IsTransparent() && bg.IsTransparent()
 	if isInvisible {
 		return position

@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	sitecoreFileName   = "sitecore.json"
-	sitecoreFolderName = ".sitecore"
-	userFileName       = "user.json"
-	defaultEnpointName = "default"
+	sitecoreFileName    = "sitecore.json"
+	sitecoreFolderName  = ".sitecore"
+	userFileName        = "user.json"
+	defaultEndpointName = "default"
 )
 
 type Sitecore struct {
@@ -48,7 +48,7 @@ func (s *Sitecore) Enabled() bool {
 
 	displayDefault := s.options.Bool(options.DisplayDefault, true)
 
-	if !displayDefault && s.EndpointName == defaultEnpointName {
+	if !displayDefault && s.EndpointName == defaultEndpointName {
 		log.Debug("displaying of the default environment is turned off")
 		return false
 	}
@@ -80,7 +80,7 @@ func (u *UserConfig) getDefaultEndpoint() string {
 		return u.DefaultEndpoint
 	}
 
-	return defaultEnpointName
+	return defaultEndpointName
 }
 
 func (u *UserConfig) getEndpoint(name string) *EndpointConfig {

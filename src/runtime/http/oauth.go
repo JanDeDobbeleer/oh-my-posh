@@ -42,14 +42,14 @@ type OAuthRequest struct {
 
 func (o *OAuthRequest) getAccessToken() (string, error) {
 	// get directly from cache
-	if acccessToken, OK := cache.Get[string](cache.Device, o.AccessTokenKey); OK && len(acccessToken) != 0 {
-		return acccessToken, nil
+	if accessToken, OK := cache.Get[string](cache.Device, o.AccessTokenKey); OK && len(accessToken) != 0 {
+		return accessToken, nil
 	}
 
 	// use cached refresh token to get new access token
 	if refreshToken, OK := cache.Get[string](cache.Device, o.RefreshTokenKey); OK && len(refreshToken) != 0 {
-		if acccessToken, err := o.refreshToken(refreshToken); err == nil {
-			return acccessToken, nil
+		if accessToken, err := o.refreshToken(refreshToken); err == nil {
+			return accessToken, nil
 		}
 	}
 
@@ -63,8 +63,8 @@ func (o *OAuthRequest) getAccessToken() (string, error) {
 	}
 
 	// no need to let the user provide access token, we'll always verify the refresh token
-	acccessToken, err := o.refreshToken(o.RefreshToken)
-	return acccessToken, err
+	accessToken, err := o.refreshToken(o.RefreshToken)
+	return accessToken, err
 }
 
 func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {

@@ -232,6 +232,14 @@ module.exports = {
     "dsc",
     "themes",
     "share",
+    {
+      type: "category",
+      label: "🛠️ Advanced",
+      collapsed: true,
+      items: [
+        "advanced/mcp-server",
+      ],
+    },
     "faq",
     "migrating",
     "contributors",

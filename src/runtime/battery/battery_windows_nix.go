@@ -40,7 +40,7 @@ func mapMostLogicalState(currentState, newState State) State {
 // Get returns information about all batteries in the system.
 //
 // If error != nil, it will be either ErrFatal or Errors.
-// If error is of type Errors, it is guaranteed that length of both returned slices is the same and that i-th error coresponds with i-th battery structure.
+// If error is of type Errors, it is guaranteed that length of both returned slices is the same and that i-th error corresponds with i-th battery structure.
 func Get() (*Info, error) {
 	parseBatteryInfo := func(batteries []*battery) *Info {
 		var info Info

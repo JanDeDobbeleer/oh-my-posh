@@ -239,7 +239,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     $promptFunction = {
-        # store the orignal last command execution status
+        # store the original last command execution status
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
             $script:OriginalLastExecutionStatus = $global:NVS_ORIGINAL_LASTEXECUTIONSTATUS
@@ -247,7 +247,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         else {
             $script:OriginalLastExecutionStatus = $?
         }
-        # store the orignal last exit code
+        # store the original last exit code
         $script:OriginalLastExitCode = $global:LASTEXITCODE
 
         # Reset tooltip command.
@@ -286,7 +286,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # remove any posh-git status
         $env:POSH_GIT_STATUS = $null
 
-        # restore the orignal last exit code
+        # restore the original last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode
     }
 

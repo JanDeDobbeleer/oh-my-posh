@@ -5,7 +5,7 @@ import "fmt"
 // BlockType type of block
 type BlockType string
 
-// BlockAlignment aligment of a Block
+// BlockAlignment alignment of a Block
 type BlockAlignment string
 
 // Overflow defines how to handle a right block that overflows with the previous block

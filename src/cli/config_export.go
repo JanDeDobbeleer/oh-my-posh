@@ -70,7 +70,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 				// usage error
 				fmt.Printf("export format must be one of these: %s\n", strings.Join(formats, ", "))
 				exitcode = 2
-				return errors.New("invalide export format")
+				return errors.New("invalid export format")
 			}
 
 			return nil

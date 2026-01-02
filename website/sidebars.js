@@ -7,25 +7,18 @@ module.exports = {
       items: [
         {
           type: "category",
-          label: "🚀 Get started",
+          label: "📦 Installation",
           collapsed: false,
           items: [
-            {
-              type: "category",
-              label: "📦 Installation",
-              collapsed: false,
-              items: [
-                "installation/windows",
-                "installation/macos",
-                "installation/linux",
-              ],
-            },
-            "installation/fonts",
-            "installation/prompt",
-            "installation/customize",
-            "installation/upgrade",
+            "installation/windows",
+            "installation/macos",
+            "installation/linux",
           ],
         },
+        "installation/fonts",
+        "installation/prompt",
+        "installation/customize",
+        "installation/upgrade",
       ],
     },
     {

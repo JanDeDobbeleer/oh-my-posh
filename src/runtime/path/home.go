@@ -16,7 +16,7 @@ func Home() string {
 		return home
 	}
 
-	// fallback to older implemenations on Windows
+	// fallback to older implementations on Windows
 	home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 
 	if home == "" {

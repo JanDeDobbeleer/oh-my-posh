@@ -102,7 +102,7 @@ func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 		return 1 // continue enumeration
 	})
 	// Enumerates all top-level windows on the screen
-	// The error is not checked because if EnumWindows is stopped bofere enumerating all windows
+	// The error is not checked because if EnumWindows is stopped before enumerating all windows
 	// it returns 0(error occurred) instead of 1(success)
 	// In our case, title will equal "" or the title of the window anyway
 	err := enumWindows(cb, 0)

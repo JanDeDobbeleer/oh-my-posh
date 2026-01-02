@@ -102,7 +102,7 @@ const (
 	MappedLocations options.Option = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
 	MappedLocationsEnabled options.Option = "mapped_locations_enabled"
-	// MaxDepth Maximum path depth to display whithout shortening
+	// MaxDepth Maximum path depth to display without shortening
 	MaxDepth options.Option = "max_depth"
 	// MaxWidth Maximum path width to display for powerlevel style
 	MaxWidth options.Option = "max_width"

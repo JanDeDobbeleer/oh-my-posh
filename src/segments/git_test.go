@@ -960,7 +960,7 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 		Expected         string
 	}{
 		{
-			Case:     "Overide",
+			Case:     "Override",
 			Expected: "--ignore-submodules=all",
 			IgnoreSubmodules: map[string]string{
 				"foo": "all",

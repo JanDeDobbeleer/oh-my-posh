@@ -35,8 +35,6 @@ type Block struct {
 	LeadingDiamond  string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
 	TrailingDiamond string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty" yaml:"trailing_diamond,omitempty"`
 	Segments        []*Segment     `json:"segments,omitempty" toml:"segments,omitempty" yaml:"segments,omitempty"`
-	MaxWidth        int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
-	MinWidth        int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
 	Newline         bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
 	Force           bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	Index           int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`

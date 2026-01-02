@@ -305,6 +305,18 @@
           "description": "https://ohmyposh.dev/docs/configuration/block#newline",
           "default": false
         },
+        "filler": {
+          "type": "string",
+          "title": "Filler",
+          "description": "https://ohmyposh.dev/docs/configuration/block#filler",
+          "default": ""
+        },
+        "overflow": {
+          "type": "string",
+          "title": "Overflow",
+          "description": "https://ohmyposh.dev/docs/configuration/block#overflow",
+          "default": ""
+        },
         "leading_diamond": {
           "type": "string",
           "title": "Leading diamond",
@@ -325,6 +337,17 @@
           "items": {
             "$ref": "#/definitions/segment"
           }
+        },
+        "force": {
+          "type": "boolean",
+          "title": "Force",
+          "description": "https://ohmyposh.dev/docs/configuration/block#force",
+          "default": false
+        },
+        "index": {
+          "type": "integer",
+          "title": "Index",
+          "description": "https://ohmyposh.dev/docs/configuration/block#index"
         }
       }
     },

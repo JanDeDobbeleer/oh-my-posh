@@ -66,10 +66,12 @@ to be repeated to this property. Add this property to the _right_ aligned block.
 
 <Config
   data={{
-    block: {
-      alignment: "right",
-      filler: ".",
-    },
+    blocks: [
+      {
+        alignment: "right",
+        filler: ".",
+      },
+    ],
   }}
 />
 
@@ -86,11 +88,13 @@ empty space when the right block is hidden or drawn on a newline due to overflow
 
 <Config
   data={{
-    block: {
-      alignment: "right",
-      overflow: "hide",
-      filler: "{{ if .Overflow }} {{ else }}-{{ end }}",
-    },
+    blocks: [
+      {
+        alignment: "right",
+        overflow: "hide",
+        filler: "{{ if .Overflow }} {{ else }}-{{ end }}",
+      },
+    ],
   }}
 />
 

@@ -6,8 +6,8 @@ sidebar_label: 🐧 Linux
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import InstallHomebrew from "./homebrew.mdx";
-import Next from "./next.mdx";
+import InstallHomebrew from "./homebrew.md";
+import Next from "./next.md";
 
 ## Set up your terminal
 
@@ -19,6 +19,21 @@ To display all icons, we recommend the use of a [Nerd Font][fonts].
 :::
 
 ## Installation
+
+<Tabs
+  defaultValue="homebrew"
+  groupId="install"
+  values={[
+    { label: 'Homebrew', value: 'homebrew', },
+    { label: 'Manual', value: 'manual', }
+  ]
+}>
+<TabItem value="homebrew">
+
+<InstallHomebrew />
+
+</TabItem>
+<TabItem value="manual">
 
 :::info
 Before running the below commands, make sure that you have updated `curl` and the
@@ -46,6 +61,9 @@ If you want to install to a different location you can specify it using the `-d`
 ```bash
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
 ```
+
+</TabItem>
+</Tabs>
 
 <Next />
 

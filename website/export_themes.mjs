@@ -1,18 +1,18 @@
-//jshint esversion:8
-//jshint node:true
-
-import { promises } from 'fs';
-import { join } from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
+import { exec } from 'node:child_process';
+import { promises } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Configuration constants
 const CONFIG = {
-  THEMES_CONFIG_DIR: './../themes',
-  THEMES_STATIC_DIR: './static/img/themes',
-  OUTPUT_FILE: './docs/themes.md',
+  THEMES_CONFIG_DIR: join(__dirname, '../themes'),
+  THEMES_STATIC_DIR: join(__dirname, 'static/img/themes'),
+  OUTPUT_FILE: join(__dirname, 'docs/themes.md'),
   CONCURRENCY: 8,
   DEFAULT_BG_COLOR: '#151515',
   THEME_EXTENSIONS: ['.omp.json', '.omp.toml', '.omp.yaml'],
@@ -56,7 +56,7 @@ function createThemeConfig(author = '', bgColor = CONFIG.DEFAULT_BG_COLOR) {
  * @returns {boolean} True if valid theme file
  */
 function isValidTheme(fileName) {
-  return CONFIG.THEME_EXTENSIONS.some(ext => fileName.endsWith(ext));
+  return CONFIG.THEME_EXTENSIONS.some((ext) => fileName.endsWith(ext));
 }
 
 /**
@@ -82,7 +82,7 @@ function buildPoshCommand(configPath, outputImage, config) {
     'oh-my-posh config export image',
     `--config=${configPath}`,
     `--output=${outputImage}`,
-    `--background-color=${config.bgColor}`
+    `--background-color=${config.bgColor}`,
   ];
 
   if (config.author) {
@@ -240,12 +240,6 @@ async function main() {
 
 // Execute main function if this file is run directly
 // In ES modules, we check if import.meta.url matches the process argv
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 if (process.argv[1] === __filename) {
   main();
 }
@@ -257,5 +251,5 @@ export {
   getThemeNameFromFile,
   generateThemeMarkdown,
   asyncPool,
-  main
+  main,
 };

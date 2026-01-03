@@ -1,11 +1,11 @@
 ---
-description: "Generate a new Oh My Posh segment (code, registration, docs, schema, sidebar)"
-mode: 'agent'
-model: Claude Sonnet 4
-tools: ['githubRepo', 'codebase', 'createFile', 'editFiles', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'testFailure', 'usages']
+description: 'Generate a new Oh My Posh segment (code, registration, docs, schema, sidebar)'
+agent: 'agent'
+model: 'Claude Sonnet 4'
+tools: ['web/githubRepo', 'search/codebase', 'edit/createFile', 'edit/editFiles', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/runTask', 'read/getTaskOutput', 'execute/runTests', 'search', 'execute/testFailure', 'search/usages']
 ---
 
-## New Segment Prompt
+# New Segment Prompt
 
 Provide the inputs below. Keep this prompt minimal;
 the detailed steps live in `.instructions/segment.md`.

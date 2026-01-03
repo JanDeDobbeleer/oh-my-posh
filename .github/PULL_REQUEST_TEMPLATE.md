@@ -1,3 +1,4 @@
+<!--  markdownlint-disable MD041 -->
 ### Prerequisites
 
 - [ ] I have read and understood the [contributing guide][CONTRIBUTING.md].
@@ -12,8 +13,9 @@
 Tips:
 
 If you're not comfortable with working with Git,
-we're working a guide (https://ohmyposh.dev/docs/contributing/git) to help you out.
-Oh My Posh advises GitKraken (https://www.gitkraken.com/invite/nQmDPR9D) as your preferred cross platform Git GUI power tool.
+we're working on a guide (https://ohmyposh.dev/docs/contributing/git) to help you out.
+Oh My Posh advises GitKraken (https://www.gitkraken.com/invite/nQmDPR9D)
+as your preferred cross platform Git GUI power tool.
 
 -->
 

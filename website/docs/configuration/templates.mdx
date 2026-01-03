@@ -128,7 +128,7 @@ $env.SET_POSHCONTEXT = {
 
 <Config
   data={{
-    version: 3,
+    version: 4,
     // highlight-start
     var: {
       Hello: "hello",
@@ -155,8 +155,6 @@ $env.SET_POSHCONTEXT = {
 
 ## Template logic
 
-<!--  markdownlint-disable MD013 -->
-
 | Template                                                             | Description                                                                                                                                                                                                                                                                                                     |
 | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{{.}}`                                                              | Root element.                                                                                                                                                                                                                                                                                                   |
@@ -169,8 +167,6 @@ $env.SET_POSHCONTEXT = {
 | `{{range .Array}} {{end}}`                                           | Range statement, where Array is an array, slice, map, or channel.                                                                                                                                                                                                                                               |
 | `{{ lt 3 4 }}`                                                       | This lt comparison function evaluates to true since 3 is less than 4 (other boolean operators: eq, ne, lt, le, gt, ge).                                                                                                                                                                                         |
 
-<!-- markdownlint-enable MD013 -->
-
 ## Helper functions
 
 ### Sprig
@@ -180,8 +176,6 @@ manipulations straight from your template. Have a look at [their documentation][
 use them.
 
 ### Custom
-
-<!-- markdownlint-disable MD013 -->
 
 | Template                                                           | Description                                                                                                                |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
@@ -194,8 +188,6 @@ use them.
 | <code>\{\{ .Code &vert; hresult \}\}</code>                        | Transform a status code to its HRESULT value for easy troubleshooting. For example `-1978335212` becomes `0x8A150014`.     |
 | `{{ readFile ".version.json" }}`                                   | Read a file in the current directory. Returns a string.                                                                    |
 | `{{ random (list \"a\" 2 .MyThirdItem) }}`                         | Selects a random element from a list. The list can be an array or slice containing any types (use sprig's `list`).         |
-
-<!-- markdownlint-enable MD013 -->
 
 ## Cross segment template properties
 
@@ -280,8 +272,6 @@ You can make use of the following syntax to decorate text:
 This can be used in templates and icons/text inside your config.
 
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-[path-segment]: /docs/path
-[git-segment]: /docs/git
 [go-text-template]: https://pkg.go.dev/text/template
 [sprig]: https://masterminds.github.io/sprig/
 [glob]: https://pkg.go.dev/path/filepath#Glob

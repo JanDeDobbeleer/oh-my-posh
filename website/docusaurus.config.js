@@ -23,7 +23,7 @@ module.exports = {
       respectPrefersColorScheme: true,
     },
     prism: {
-      additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml', 'json', 'yaml'],
+      additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml', 'json'],
     },
     docs: {
         sidebar: {

@@ -95,7 +95,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		return result[0], nil
 	}
 
-	url := ns.options.String(URL, "")
+	url := ns.options.Template(URL, "", ns)
 	httpTimeout := ns.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	headers := ns.options.KeyValueMap(Headers, map[string]string{})

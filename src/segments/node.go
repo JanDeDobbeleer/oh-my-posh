@@ -136,9 +136,11 @@ func (n *Node) matchesVersionFile() (string, bool) {
 		case "hydrogen":
 			fileVersion = "18.20.8"
 		case "iron":
-			fileVersion = "20.19.3"
+			fileVersion = "20.19.6"
 		case "jod":
-			fileVersion = "22.17.0"
+			fileVersion = "22.21.1"
+		case "krypton":
+			fileVersion = "24.12.0"
 		}
 	}
 

@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-next-line MD041 -->
 ## Next
 
 Now that Oh My Posh is installed, you can go ahead and configure your terminal and shell to

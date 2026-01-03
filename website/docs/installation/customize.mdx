@@ -38,7 +38,7 @@ and will download the configuration on shell start. Caching is in place, but for
 it's recommended to use a local configuration file.
 :::
 
-### Set the configuration
+## Set the configuration
 
 The example below uses a local path to the [jandedobbeleer][jandedobbeleer] theme, adjust the `--config` value
 to reflect your configuration file, local or remote.
@@ -115,7 +115,6 @@ exec elvish
 
 :::caution
 It is recommended to use the latest version of Fish. Versions below 4.1.0 have issues and do not support [transient prompt].
-
 :::
 
 Adjust the Oh My Posh init line in `~/.config/fish/config.fish` by adding the `--config` flag with
@@ -212,7 +211,7 @@ Windows user's home folder.
 Inside the WSL, you can find your Windows user's home folder here: `/mnt/c/Users/<WINDOWSUSERNAME>`.
 :::
 
-### Custom configuration
+## Custom configuration
 
 Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there's a segment you
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, **read through
@@ -225,7 +224,7 @@ which can be used to tweak and store as your own custom configuration.
 oh-my-posh config export --config jandedobbeleer --output ~/.mytheme.omp.json
 ```
 
-### Live reloading
+## Live reloading
 
 By default, the configuration is cached for performance reasons. If you make changes to your configuration file
 and want to see those changes reflected in your prompt without restarting your shell, you can use the following
@@ -241,7 +240,7 @@ You can disable live reload with:
 oh-my-posh disable reload
 ```
 
-#### Previewing changes
+### Previewing changes
 
 If you want to preview your changes, you can use the following command to render every configured prompt.
 
@@ -255,17 +254,14 @@ Use the `--force` flag in case you want to render all segments, regardless of th
 oh-my-posh print preview --force
 ```
 
-### Read the docs
+## Read the docs
 
 To fully understand how to customize a theme, read through the documentation in the configuration and segments sections.
 The [configuration][configuration] section covers the basic building blocks and concepts of Oh My Posh themes, while the
 segments section covers how to configure each available segment.
 
-[themes]: themes.md
 [configuration]: configuration/general.mdx
 [prompt]: prompt.mdx
 [jandedobbeleer]: /docs/themes#jandedobbeleer
-[json-schema]: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
-[homebrew-problem]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2644
-[sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.3#methods-of-signing-scripts
+[sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.5#methods-of-signing-scripts
 [transient prompt]: /docs/configuration/transient

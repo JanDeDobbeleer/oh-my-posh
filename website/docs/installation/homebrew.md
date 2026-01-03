@@ -1,4 +1,5 @@
-A [Homebrew][brew] Formula and Cask (macOS only) are available for easy installation.
+<!-- markdownlint-disable-next-line MD041 -->
+A [Homebrew][brew] Formula and Cask are available for easy installation.
 
 ```bash
 brew install jandedobbeleer/oh-my-posh/oh-my-posh
@@ -17,8 +18,8 @@ For example in zsh:
 ```bash
 brew update && brew upgrade && exec zsh
 ```
+
 :::
 
 [brew]: https://brew.sh
-[themes]: https://ohmyposh.dev/docs/themes
 [strange]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/1287

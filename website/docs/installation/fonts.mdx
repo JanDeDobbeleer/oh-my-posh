@@ -7,7 +7,7 @@ sidebar_label: 🔤 Fonts
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-### Nerd Fonts
+## Nerd Fonts
 
 Oh My Posh was designed to use [Nerd Fonts][nerdfonts]. Nerd Fonts are popular fonts that are patched to include icons.
 To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
@@ -18,13 +18,13 @@ This means **when running inside a container or WSL**, you need to install the f
 your terminal emulator to use it.
 :::
 
-### Installation
+## Installation
 
 <Tabs
     defaultValue="oh-my-posh"
     values={[
         { label: 'Oh My Posh', value: 'oh-my-posh' },
-        { label: 'homebrew', value: 'homebrew' },
+        { label: 'Homebrew', value: 'homebrew' },
         { label: 'PowerShell', value: 'powershell' }
     ]
 }>
@@ -42,7 +42,8 @@ By default, Oh My Posh installs the `.ttf` version of the font in case multiple 
 oh-my-posh font install
 ```
 
-This will present a list of Nerd Font libraries, from which you can  select `Meslo`, which includes the `Meslo LGM NF` font we recommend. Note that you can also  install it directly via:
+This will present a list of Nerd Font libraries, from which you can  select `Meslo`, which includes the
+`Meslo LGM NF` font we recommend. Note that you can also install it directly via:
 
 ```bash
 oh-my-posh font install meslo
@@ -80,7 +81,7 @@ Install-NerdFont -Name FiraCode -Scope AllUsers
 </TabItem>
 </Tabs>
 
-### Configuration
+## Configuration
 
 Make sure to **configure your terminal** to use the font you have installed. The following sections will show you how to do this for the most popular terminals.
 
@@ -151,7 +152,7 @@ The command has only been tested on macOS Sequoia 15.5 24F74.
 </TabItem>
 </Tabs>
 
-### Other Fonts
+## Other Fonts
 
 If you are not interested in using a Nerd Font, you will want to use a theme which doesn't include any Nerd Font icons.
 The `minimal` themes do not make use of Nerd Font icons.
@@ -161,5 +162,4 @@ The `minimal` themes do not make use of Nerd Font icons.
 [nerdfonts]: https://www.nerdfonts.com/
 [nerdfonts-ps]: https://psmodule.io/NerdFonts
 [configuration]: /docs/installation/customize
-[wt-issue-8993]: https://github.com/microsoft/terminal/issues/8993
 [vs-otf]: https://stackoverflow.com/questions/75252606/is-it-possible-to-use-nerd-fonts-as-the-font-for-terminals-in-visual-studio

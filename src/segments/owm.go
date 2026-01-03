@@ -70,9 +70,10 @@ func (d *Owm) Template() string {
 func (d *Owm) getResult() (*owmDataResponse, error) {
 	response := new(owmDataResponse)
 
+	// Try api_key first, then fall back to apiKey for backwards compatibility
 	apikey := d.options.Template(APIKey, "", d)
 	if apikey == "" {
-		apikey = d.options.String("apiKey", "")
+		apikey = d.options.Template("apiKey", "", d)
 	}
 	if apikey == "" {
 		return nil, errors.New("no api key found")

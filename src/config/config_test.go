@@ -183,3 +183,75 @@ func TestUpgradeFeatures(t *testing.T) {
 		cache.DeleteAll(cache.Device)
 	}
 }
+
+func TestRefreshIntervalFeature(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Shell            string
+		RefreshInterval  int
+		ExpectedEnabled  bool
+	}{
+		{
+			Case:            "pwsh with refresh interval",
+			Shell:           shell.PWSH,
+			RefreshInterval: 5000,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "zsh with refresh interval",
+			Shell:           shell.ZSH,
+			RefreshInterval: 3000,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "bash with refresh interval",
+			Shell:           shell.BASH,
+			RefreshInterval: 3000,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "fish with refresh interval",
+			Shell:           shell.FISH,
+			RefreshInterval: 3000,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "pwsh without refresh interval",
+			Shell:           shell.PWSH,
+			RefreshInterval: 0,
+			ExpectedEnabled: false,
+		},
+		{
+			Case:            "elvish with refresh interval (unsupported)",
+			Shell:           shell.ELVISH,
+			RefreshInterval: 5000,
+			ExpectedEnabled: false,
+		},
+		{
+			Case:            "cmd with refresh interval (unsupported)",
+			Shell:           shell.CMD,
+			RefreshInterval: 5000,
+			ExpectedEnabled: false,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return(tc.Shell)
+		env.On("Getenv", "OMP_CACHE_DISABLED").Return("")
+
+		cfg := &Config{
+			RefreshInterval: tc.RefreshInterval,
+			Blocks:          []*Block{},
+			Upgrade: &upgrade.Config{
+				Auto:          false,
+				DisplayNotice: false,
+			},
+		}
+
+		feats := cfg.Features(env)
+		hasRefreshInterval := feats&shell.RefreshInterval != 0
+
+		assert.Equal(t, tc.ExpectedEnabled, hasRefreshInterval, tc.Case)
+	}
+}

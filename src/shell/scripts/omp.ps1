@@ -297,7 +297,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     ### Exported Functions ###
 
-    function Set-PoshContext([bool]$originalStatus) {}
+    function Set-PoshContext([bool]$originalStatus) {
+        Start-PoshRefreshTimer
+    }
 
     function Enable-PoshTooltips {
         if ($script:ConstrainedLanguageMode) {
@@ -408,6 +410,39 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
+    function Enable-PoshRefreshInterval {
+        $interval = ::REFRESH_INTERVAL::
+        if ($interval -le 0) {
+            return
+        }
+
+        # Cleanup existing timer if present
+        if ($null -ne $script:PoshRefreshTimer) {
+            $script:PoshRefreshTimer.Stop()
+            $script:PoshRefreshTimer.Dispose()
+            Unregister-Event -SourceIdentifier "Posh.RefreshTimer.Elapsed" -ErrorAction SilentlyContinue
+        }
+
+        $script:PoshRefreshTimer = New-Object -Type Timers.Timer
+        $script:PoshRefreshTimer.Interval = $interval
+
+        Register-ObjectEvent -InputObject $script:PoshRefreshTimer -EventName Elapsed -SourceIdentifier "Posh.RefreshTimer.Elapsed" -Action {
+            [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+        } | Out-Null
+    }
+
+    function Start-PoshRefreshTimer {
+        if ($null -eq $script:PoshRefreshTimer) {
+            return
+        }
+
+        if ($script:PoshRefreshTimer.Enabled) {
+            $script:PoshRefreshTimer.Stop()
+        }
+
+        $script:PoshRefreshTimer.Start()
+    }
+
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {
         $ExecutionContext.SessionState.Module.OnRemove += {
@@ -417,6 +452,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
             (Get-PSReadLineOption).ContinuationPrompt = $script:OriginalContinuationPrompt
             (Get-PSReadLineOption).PromptText = $script:OriginalPromptText
+
+            if ($null -ne $script:PoshRefreshTimer) {
+                $script:PoshRefreshTimer.Stop()
+                $script:PoshRefreshTimer.Dispose()
+                Unregister-Event -SourceIdentifier "Posh.RefreshTimer.Elapsed" -ErrorAction SilentlyContinue
+            }
 
             if ((Get-PSReadLineKeyHandler Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
                 Remove-PSReadLineKeyHandler Spacebar
@@ -443,6 +484,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "Enable-PoshTooltips"
         "Enable-PoshTransientPrompt"
         "Enable-PoshLineError"
+        "Enable-PoshRefreshInterval"
         "Set-TransientPrompt"
         "prompt"
     )

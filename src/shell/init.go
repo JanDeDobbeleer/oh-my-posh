@@ -43,11 +43,11 @@ func getExecutablePath(env runtime.Environment) (string, error) {
 	return executable, nil
 }
 
-func Init(env runtime.Environment, feats Features) string {
+func Init(env runtime.Environment, feats Features, refreshInterval int) string {
 	switch env.Flags().Shell {
 	case ELVISH, PWSH:
 		if env.Flags().Shell != ELVISH && !env.Flags().Eval {
-			return PrintInit(env, feats, nil)
+			return PrintInit(env, feats, nil, refreshInterval)
 		}
 
 		executable, err := getExecutablePath(env)
@@ -79,13 +79,13 @@ func Init(env runtime.Environment, feats Features) string {
 
 		return fmt.Sprintf(command, executable, env.Flags().Shell, config, additionalParams)
 	case ZSH, BASH, FISH, CMD, XONSH, NU:
-		return PrintInit(env, feats, nil)
+		return PrintInit(env, feats, nil, refreshInterval)
 	default:
 		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, env.Flags().Shell)
 	}
 }
 
-func PrintInit(env runtime.Environment, features Features, startTime *time.Time) string {
+func PrintInit(env runtime.Environment, features Features, startTime *time.Time, refreshInterval int) string {
 	async := features&Async != 0
 
 	if scriptPath, OK := hasScript(env); OK {
@@ -133,6 +133,7 @@ func PrintInit(env runtime.Environment, features Features, startTime *time.Time)
 	init := strings.NewReplacer(
 		"::OMP::", executable,
 		"::SESSION_ID::", cache.SessionID(),
+		"::REFRESH_INTERVAL::", fmt.Sprintf("%d", refreshInterval),
 	).Replace(script)
 
 	shellScript := features.Lines(env.Flags().Shell).String(init)

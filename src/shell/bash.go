@@ -49,6 +49,8 @@ bleopt prompt_ps1_final='$(
         --shell-version="$BASH_VERSION" \
         --escape=false
 )'`
+	case RefreshInterval:
+		return "enable_posh_refresh_interval"
 	case PromptMark, PoshGit, Azure, LineError, Jobs, Tooltips, Async:
 		fallthrough
 	default:

@@ -2162,6 +2162,12 @@
             "properties": {
               "options": {
                 "properties": {
+                  "change_id_min_len": {
+                    "type": "integer",
+                    "title": "Change ID Minimum Length",
+                    "description": "Minimum length of the change ID to display",
+                    "default": 0
+                  },
                   "fetch_status": {
                     "type": "boolean",
                     "title": "Display Status",
@@ -2184,13 +2190,13 @@
                     "type": "string",
                     "title": "Ahead icon",
                     "description": "Icon to separate bookmark name and ahead counter",
-                    "default": false
-                  },
-                  "status_formats": {
-                    "$ref": "#/definitions/status_formats"
+                    "default": "\u21e1"
                   },
                   "native_fallback": {
                     "$ref": "#/definitions/native_fallback"
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
                   }
                 },
                 "additionalProperties": false

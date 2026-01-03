@@ -129,12 +129,10 @@ $env.SET_POSHCONTEXT = {
 <Config
   data={{
     version: 4,
-    // highlight-start
     var: {
       Hello: "hello",
       World: "world",
     },
-    // highlight-end
     blocks: [
       {
         type: "prompt",
@@ -144,12 +142,16 @@ $env.SET_POSHCONTEXT = {
             type: "text",
             style: "plain",
             foreground: "p:white",
-            // highlight-next-line
             template: "{{ .Var.Hello }} {{ .Var.World }} ",
           },
         ],
       },
     ],
+  }}
+  metastring={{
+    json: "{3-6,16}",
+    yaml: "{2-4,12}",
+    toml: "{3-5,15}",
   }}
 />
 

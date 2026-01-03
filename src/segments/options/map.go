@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/generics"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 func init() {
@@ -31,6 +32,7 @@ type Provider interface {
 	Color(option Option, defaultValue color.Ansi) color.Ansi
 	Bool(option Option, defaultValue bool) bool
 	String(option Option, defaultValue string) string
+	Template(option Option, defaultValue string, context any) string
 	Float64(option Option, defaultValue float64) float64
 	Int(option Option, defaultValue int) int
 	KeyValueMap(option Option, defaultValue map[string]string) map[string]string
@@ -80,6 +82,25 @@ func (m Map) String(option Option, defaultValue string) string {
 	value := fmt.Sprint(val)
 	log.Debug(fmt.Sprintf("%s: %s", option, value))
 	return value
+}
+
+// Template resolves the option value as a template and returns the resolved string.
+// This allows using template syntax like {{ .Env.MY_API_KEY }} in configuration values.
+// If template rendering fails, it returns the original string value.
+func (m Map) Template(option Option, defaultValue string, context any) string {
+	value := m.String(option, defaultValue)
+	if value == "" {
+		return value
+	}
+
+	resolved, err := template.Render(value, context)
+	if err != nil {
+		log.Debug(fmt.Sprintf("%s: template error, using raw value: %s", option, err))
+		return value
+	}
+
+	log.Debug(fmt.Sprintf("%s (template resolved): %s", option, resolved))
+	return resolved
 }
 
 func (m Map) Color(option Option, defaultValue color.Ansi) color.Ansi {

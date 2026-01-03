@@ -70,16 +70,16 @@ func (d *Owm) Template() string {
 func (d *Owm) getResult() (*owmDataResponse, error) {
 	response := new(owmDataResponse)
 
-	apikey := options.OneOf(d.options, d.env.Getenv(OWMAPIKey), APIKey, "apiKey")
+	// Try api_key first, then fall back to apiKey for backwards compatibility
+	apikey := d.options.Template(APIKey, "", d)
 	if apikey == "" {
-		apikey = "."
+		apikey = d.options.Template("apiKey", "", d)
 	}
-
 	if apikey == "" {
 		return nil, errors.New("no api key found")
 	}
 
-	location := d.options.String(Location, d.env.Getenv(OWMLocationKey))
+	location := d.options.Template(Location, "", d)
 	if location == "" {
 		return nil, errors.New("no location found")
 	}

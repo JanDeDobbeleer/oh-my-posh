@@ -177,8 +177,8 @@ func (w *Withings) initAPI() {
 		AccessTokenKey:  WithingsAccessTokenKey,
 		RefreshTokenKey: WithingsRefreshTokenKey,
 		SegmentName:     "withings",
-		AccessToken:     w.options.String(options.AccessToken, ""),
-		RefreshToken:    w.options.String(options.RefreshToken, ""),
+		AccessToken:     w.options.Template(options.AccessToken, "", w),
+		RefreshToken:    w.options.Template(options.RefreshToken, "", w),
 		Request: http.Request{
 			Env:         w.env,
 			HTTPTimeout: w.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),

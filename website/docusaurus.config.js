@@ -21,7 +21,7 @@ export default {
       respectPrefersColorScheme: true,
     },
     prism: {
-      additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml', 'json'],
+      additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],
     },
     docs: {
         sidebar: {

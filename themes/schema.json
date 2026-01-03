@@ -2625,17 +2625,29 @@
                     "description": "Assigns the Yarn or NPM icon to .PackageManagerIcon",
                     "default": false
                   },
+                  "pnpm_icon": {
+                    "type": "string",
+                    "title": "PNPM Icon",
+                    "description": "Icon/text to use for PNPM",
+                    "default": "\ue865"
+                  },
                   "yarn_icon": {
                     "type": "string",
                     "title": "Yarn Icon",
                     "description": "Icon/text to use for Yarn",
-                    "default": "\uf011B"
+                    "default": "\ue6a7"
                   },
                   "npm_icon": {
                     "type": "string",
                     "title": "NPM Icon",
                     "description": "Icon/text to use for NPM",
                     "default": "\ue71e"
+                  },
+                  "bun_icon": {
+                    "type": "string",
+                    "title": "Bun Icon",
+                    "description": "Icon/text to use for Bun",
+                    "default": "\ue76f"
                   },
                   "extensions": {
                     "default": [
@@ -2646,6 +2658,11 @@
                       "pnpm-workspace.yaml",
                       ".pnpmfile.cjs",
                       ".vue"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "node"
                     ]
                   }
                 }

@@ -69,8 +69,8 @@ func (d *LastFM) Template() string {
 func (d *LastFM) getResult() (*lfmDataResponse, error) {
 	response := new(lfmDataResponse)
 
-	apikey := d.options.String(APIKey, ".")
-	username := d.options.String(Username, ".")
+	apikey := d.options.Template(APIKey, ".", d)
+	username := d.options.Template(Username, ".", d)
 	httpTimeout := d.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	url := fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)

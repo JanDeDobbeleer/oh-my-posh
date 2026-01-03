@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -163,6 +166,89 @@ func TestOneOf(t *testing.T) {
 	}
 	for _, tc := range cases {
 		value := OneOf(tc.Map, tc.DefaultValue, tc.Options...)
+		assert.Equal(t, tc.Expected, value, tc.Case)
+	}
+}
+
+func TestTemplate(t *testing.T) {
+	// Need to initialize template package for testing
+	env := &mock.Environment{}
+	env.On("Getenv", "MY_API_KEY").Return("secret-key-123")
+	env.On("Getenv", "MY_USER").Return("testuser")
+	env.On("Getenv", "SHLVL").Return("1")
+	env.On("Shell").Return("bash")
+	env.On("Flags").Return(&runtime.Flags{
+		IsPrimary:    true,
+		ShellVersion: "1.0.0",
+		PromptCount:  1,
+		JobCount:     0,
+		PSWD:         "/home/test",
+		AbsolutePWD:  "/home/test",
+	})
+	env.On("Root").Return(false)
+	env.On("StatusCodes").Return(0, "0")
+	env.On("IsWsl").Return(false)
+	env.On("Pwd").Return("/home/test")
+	env.On("GOOS").Return(runtime.LINUX)
+	env.On("Platform").Return("ubuntu")
+	env.On("User").Return("testuser")
+	env.On("Host").Return("testhost", nil)
+
+	// Initialize template package
+	template.Init(env, nil, nil)
+
+	cases := []struct {
+		Case         string
+		Options      Map
+		Option       Option
+		DefaultValue string
+		Context      any
+		Expected     string
+	}{
+		{
+			Case:         "plain string no template",
+			Options:      Map{"key": "plain-value"},
+			Option:       "key",
+			DefaultValue: "",
+			Context:      nil,
+			Expected:     "plain-value",
+		},
+		{
+			Case:         "template with env var",
+			Options:      Map{"key": "{{ .Env.MY_API_KEY }}"},
+			Option:       "key",
+			DefaultValue: "",
+			Context:      nil,
+			Expected:     "secret-key-123",
+		},
+		{
+			Case:         "template with multiple env vars",
+			Options:      Map{"key": "{{ .Env.MY_USER }}/{{ .Env.MY_API_KEY }}"},
+			Option:       "key",
+			DefaultValue: "",
+			Context:      nil,
+			Expected:     "testuser/secret-key-123",
+		},
+		{
+			Case:         "empty value returns default",
+			Options:      Map{},
+			Option:       "key",
+			DefaultValue: "default-value",
+			Context:      nil,
+			Expected:     "default-value",
+		},
+		{
+			Case:         "invalid template returns raw value",
+			Options:      Map{"key": "{{ .Invalid }}"},
+			Option:       "key",
+			DefaultValue: "",
+			Context:      nil,
+			Expected:     "{{ .Invalid }}",
+		},
+	}
+
+	for _, tc := range cases {
+		value := tc.Options.Template(tc.Option, tc.DefaultValue, tc.Context)
 		assert.Equal(t, tc.Expected, value, tc.Case)
 	}
 }

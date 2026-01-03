@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
     - name: Lint files
-      uses: articulate/actions-markdownlint@17b8abe7407cd17590c006ecc837c35e1ac3ed83
+      uses: DavidAnson/markdownlint-cli2-action@07035fd053f7be764496c0f8d8f9f41f98305101
       with:
-          files: .
           config: .markdownlint.yaml
+          globs: '**/*.md'

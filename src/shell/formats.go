@@ -15,6 +15,7 @@ type Formats struct {
 	Osc99 string
 	Osc7  string
 	Osc51 string
+	Osc12 string
 
 	EscapeSequences map[rune]string
 
@@ -47,6 +48,7 @@ func GetFormats(shell string) *Formats {
 			Osc99:                 "\\[\x1b]9;9;%s\x1b\\\\\\]",
 			Osc7:                  "\\[\x1b]7;file://%s/%s\x1b\\\\\\]",
 			Osc51:                 "\\[\x1b]51;A;%s@%s:%s\x1b\\\\\\]",
+			Osc12:                 "\\[\x1b]12;%s\x07\\]",
 			ITermPromptMark:       "\\[$(iterm2_prompt_mark)\\]",
 			ITermCurrentDir:       "\\[\x1b]1337;CurrentDir=%s\x07\\]",
 			ITermRemoteHost:       "\\[\x1b]1337;RemoteHost=%s@%s\x07\\]",
@@ -70,6 +72,7 @@ func GetFormats(shell string) *Formats {
 			Osc99:                 "%%{\x1b]9;9;%s\x1b\\%%}",
 			Osc7:                  "%%{\x1b]7;file://%s/%s\x1b\\%%}",
 			Osc51:                 "%%{\x1b]51;A%s@%s:%s\x1b\\%%}",
+			Osc12:                 "%%{\x1b]12;%s\x07%%}",
 			ITermPromptMark:       "%{$(iterm2_prompt_mark)%}",
 			ITermCurrentDir:       "%%{\x1b]1337;CurrentDir=%s\x07%%}",
 			ITermRemoteHost:       "%%{\x1b]1337;RemoteHost=%s@%s\x07%%}",
@@ -96,6 +99,7 @@ func GetFormats(shell string) *Formats {
 			Osc99:           "\x1b]9;9;%s\x1b\\",
 			Osc7:            "\x1b]7;file://%s/%s\x1b\\",
 			Osc51:           "\x1b]51;A%s@%s:%s\x1b\\",
+			Osc12:           "\x1b]12;%s\x07",
 			ITermCurrentDir: "\x1b]1337;CurrentDir=%s\x07",
 			ITermRemoteHost: "\x1b]1337;RemoteHost=%s@%s\x07",
 		}

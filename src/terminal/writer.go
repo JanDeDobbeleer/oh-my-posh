@@ -176,6 +176,22 @@ func Pwd(pwdType, userName, hostName, pwd string) string {
 	}
 }
 
+func CursorColor(colorStr string) string {
+	if Plain || colorStr == "" {
+		return ""
+	}
+
+	// Resolve the color (support palette references like p:blue)
+	resolvedColor := Colors.ToAnsi(color.Ansi(colorStr), false)
+	if resolvedColor.IsEmpty() {
+		return ""
+	}
+
+	// OSC 12 escape sequence to set cursor color
+	// resolvedColor is in ANSI format (e.g., 38;2;255;0;255)
+	return fmt.Sprintf(formats.Osc12, string(resolvedColor))
+}
+
 func ClearAfter() string {
 	if Plain {
 		return ""

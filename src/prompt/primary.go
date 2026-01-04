@@ -101,6 +101,10 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 		e.write(terminal.CommandStart())
 	}
 
+	if e.Config.CursorColor != "" {
+		e.write(terminal.CursorColor(string(e.Config.CursorColor)))
+	}
+
 	e.pwd()
 }
 

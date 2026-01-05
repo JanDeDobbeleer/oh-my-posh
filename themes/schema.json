@@ -761,18 +761,23 @@
             "description": "https://ohmyposh.dev/docs/segments/cloud/azfunc",
             "properties": {
               "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
                 "properties": {
-                  "home_enabled": {
-                    "$ref": "#/definitions/home_enabled"
+                  "extensions": {
+                    "default": [
+                      "host.json",
+                      "local.settings.json",
+                      "function.json"
+                    ]
                   },
-                  "fetch_version": {
-                    "$ref": "#/definitions/fetch_version"
-                  },
-                  "display_mode": {
-                    "$ref": "#/definitions/display_mode"
-                  },
-                  "missing_command_text": {
-                    "$ref": "#/definitions/missing_command_text"
+                  "tooling": {
+                    "default": [
+                      "func"
+                    ]
                   }
                 },
                 "additionalProperties": false
@@ -1126,6 +1131,11 @@
                       ".cdsrc-private.json",
                       "*.cds"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "cds"
+                    ]
                   }
                 }
               }
@@ -1156,6 +1166,11 @@
                       "manifest.yml",
                       "mta.yaml"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "cf"
+                    ]
                   }
                 }
               }
@@ -1177,14 +1192,23 @@
               "options": {
                 "properties": {
                   "display_mode": {
-                    "type": "string",
-                    "title": "Display Mode",
-                    "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder",
+                    "$ref": "#/definitions/display_mode",
                     "enum": [
                       "always",
                       "files"
                     ],
                     "default": "always"
+                  },
+                  "files": {
+                    "type": "array",
+                    "title": "Files",
+                    "description": "The files to display in the segment",
+                    "default": [
+                      "manifest.yml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "additionalProperties": false
@@ -1513,7 +1537,11 @@
               "options": {
                 "properties": {
                   "display_mode": {
-                    "$ref": "#/definitions/display_mode"
+                    "$ref": "#/definitions/display_mode",
+                    "enum": [
+                      "files",
+                      "context"
+                    ]
                   },
                   "extensions": {
                     "default": [
@@ -2152,7 +2180,12 @@
               "options": {
                 "properties": {
                   "display_mode": {
-                    "$ref": "#/definitions/display_mode"
+                    "$ref": "#/definitions/display_mode",
+                    "enum": [
+                      "always",
+                      "files"
+                    ],
+                    "default": "always"
                   }
                 },
                 "additionalProperties": false
@@ -2679,7 +2712,7 @@
                     "type": "integer",
                     "title": "Http request timeout",
                     "description": "Milliseconds to use for http request timeouts",
-                    "default": 500
+                    "default": 20
                   },
                   "headers": {
                     "type": "object",
@@ -4147,12 +4180,6 @@
             "properties": {
               "options": {
                 "properties": {
-                  "url": {
-                    "type": "string",
-                    "title": "URL of API with Strava data",
-                    "description": "Url of your api provinding a Strava activity",
-                    "default": ""
-                  },
                   "ride_icon": {
                     "type": "string",
                     "title": "Ride icon",

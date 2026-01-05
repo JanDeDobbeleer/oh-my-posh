@@ -66,7 +66,7 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 | -------------- | :---------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `url`          | [`template`][templates] |         | Your Nightscout URL, including the full path to entries.json AND count=1 AND token. Example above. You'll know this works if you can curl it yourself and get a single value |
 | `headers`      |   `map[string]string`   |         | A key, value map of Headers to send with the request                                                                                                                         |
-| `http_timeout` |          `int`          |  `500`  | in milliseconds - how long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default                             |
+| `http_timeout` |          `int`          |  `20`   | in milliseconds - how long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default                             |
 
 :::info
 You can change the icons for trend, put the trend elsewhere, add text, however you like!
@@ -89,26 +89,26 @@ Make sure your NerdFont has the glyph you want or [search for one][nf-search].
 :::note default template
 
 ```template
-{{ .Sgv }}
+ {{ .Sgv }}
 ```
 
 :::
 
 ### Properties
 
-| Name        | Type     | Description                                                                                                |
-| ----------- | -------- | ---------------------------------------------------------------------------------------------------------- |
-| .ID         | `string` | The internal ID of the object                                                                              |
-| .Sgv        | `int`    | Your Serum Glucose Value (your sugar)                                                                      |
-| .Date       | `int`    | The unix timestamp of the entry                                                                            |
-| .DateString | `time`   | The timestamp of the entry                                                                                 |
-| .Trend      | `int`    | The trend of the entry                                                                                     |
-| .Device     | `string` | The device linked to the entry                                                                             |
-| .Type       | `string` | The type of the entry                                                                                      |
-| .UtcOffset  | `int`    | The UTC offset                                                                                             |
-| .SysTime    | `time`   | The time on the system                                                                                     |
-| .Mills      | `int`    | The amount of mills                                                                                        |
-| .TrendIcon  | `string` | By default, this will be something like ↑↑ or ↘ etc but you can override them with any glyph as seen above |
+| Name          | Type     | Description                                                                                                |
+| ------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| `.ID`         | `string` | The internal ID of the object                                                                              |
+| `.Sgv`        | `int`    | Your Serum Glucose Value (your sugar)                                                                      |
+| `.Date`       | `int`    | The unix timestamp of the entry                                                                            |
+| `.DateString` | `time`   | The timestamp of the entry                                                                                 |
+| `.Trend`      | `int`    | The trend of the entry                                                                                     |
+| `.Device`     | `string` | The device linked to the entry                                                                             |
+| `.Type`       | `string` | The type of the entry                                                                                      |
+| `.UtcOffset`  | `int`    | The UTC offset                                                                                             |
+| `.SysTime`    | `time`   | The time on the system                                                                                     |
+| `.Mills`      | `int`    | The amount of mills                                                                                        |
+| `.TrendIcon`  | `string` | By default, this will be something like ↑↑ or ↘ etc but you can override them with any glyph as seen above |
 
 [templates]: /docs/configuration/templates
 [nightscout]: http://www.nightscout.info/

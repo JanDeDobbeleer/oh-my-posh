@@ -50,7 +50,7 @@ type pulumiWorkSpaceFileSpec struct {
 }
 
 func (p *Pulumi) Template() string {
-	return "\U000f0d46 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}"
+	return "\ue873 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}"
 }
 
 func (p *Pulumi) Enabled() bool {

@@ -18,11 +18,12 @@ This will give you an access and a refresh token. Paste the tokens into your Wit
 
 Click the following link to connect with Withings:
 
-<div className="withings">
-  <a href="https://account.withings.com/oauth2_user/authorize2?client_id=93675962e88ddfe53f83c0c900558f72174e0ac70ccfb57e48053530c7e6e494&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&scope=user.activity,user.metrics&state=withings">
-    <WithingsConnect className="withings" />
-  </a>
-</div>
+<a
+  href="https://account.withings.com/oauth2_user/authorize2?client_id=93675962e88ddfe53f83c0c900558f72174e0ac70ccfb57e48053530c7e6e494&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&scope=user.activity,user.metrics&state=withings"
+  className="withings"
+>
+  <WithingsConnect />
+</a>
 
 ## Sample Configuration
 
@@ -51,7 +52,7 @@ import Config from "@site/src/components/Config.js";
 | `access_token`  | [`template`][templates] |         | token from Withings login, see login link in section above.                                   |
 | `refresh_token` | [`template`][templates] |         | token from Withings login, see login link in section above.                                   |
 | `expires_in`    |          `int`          |   `0`   | the default timeout of the token from the Withings login                                      |
-| `http_timeout`  |          `int`          |  `500`  | how long do you want to wait before you want to see your prompt more than your Withings data? |
+| `http_timeout`  |          `int`          |  `20`   | how long do you want to wait before you want to see your prompt more than your Withings data? |
 
 ## Template ([info][templates])
 

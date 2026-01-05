@@ -60,7 +60,6 @@
             "commit_icon": "\uf417 ",
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "fetch_worktree_count": true,
             "git_icon": "\uf1d3 ",
             "github_icon": "\uf408 ",
             "gitlab_icon": "\uf296 ",

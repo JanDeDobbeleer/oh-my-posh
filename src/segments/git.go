@@ -61,22 +61,26 @@ func (s *GitStatus) add(code string) {
 }
 
 const (
-	// DisableWithJJ disables the git segment when there's a .jj directory in the parent file path
-	DisableWithJJ options.Option = "disable_with_jj"
 	// FetchStatus fetches the status of the repository
 	FetchStatus options.Option = "fetch_status"
 	// FetchPushStatus fetches the push-remote status
 	FetchPushStatus options.Option = "fetch_push_status"
 	// IgnoreStatus allows to ignore certain repo's for status information
 	IgnoreStatus options.Option = "ignore_status"
-	// FetchWorktreeCount fetches the worktree count
-	FetchWorktreeCount options.Option = "fetch_worktree_count"
 	// FetchUpstreamIcon fetches the upstream icon
 	FetchUpstreamIcon options.Option = "fetch_upstream_icon"
 	// FetchBareInfo fetches the bare repo status
 	FetchBareInfo options.Option = "fetch_bare_info"
 	// FetchUser fetches the current user for the repo
 	FetchUser options.Option = "fetch_user"
+	// UntrackedModes list the optional untracked files mode per repo
+	UntrackedModes options.Option = "untracked_modes"
+	// IgnoreSubmodules list the optional ignore-submodules mode per repo
+	IgnoreSubmodules options.Option = "ignore_submodules"
+	// MappedBranches allows overriding certain branches with an icon/text
+	MappedBranches options.Option = "mapped_branches"
+	// DisableWithJJ disables the git segment when there's a .jj directory in the parent file path
+	DisableWithJJ options.Option = "disable_with_jj"
 
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon options.Option = "branch_icon"
@@ -118,12 +122,6 @@ const (
 	GitlabIcon options.Option = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
 	GitIcon options.Option = "git_icon"
-	// UntrackedModes list the optional untracked files mode per repo
-	UntrackedModes options.Option = "untracked_modes"
-	// IgnoreSubmodules list the optional ignore-submodules mode per repo
-	IgnoreSubmodules options.Option = "ignore_submodules"
-	// MappedBranches allows overriding certain branches with an icon/text
-	MappedBranches options.Option = "mapped_branches"
 
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"

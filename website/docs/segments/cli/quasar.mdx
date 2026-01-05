@@ -20,7 +20,7 @@ import Config from "@site/src/components/Config.js";
     powerline_symbol: "\uE0B0",
     foreground: "#00B4FF",
     template:
-      " \uea6a {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }} ",
+      " \ue87f {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }} ",
   }}
 />
 
@@ -37,13 +37,14 @@ import Config from "@site/src/components/Config.js";
 | `fetch_dependencies`   | `boolean`  |              `false`              | fetch the version number of the `vite` and `@quasar/app-vite` dependencies if present                                                                                                                                                |
 | `extensions`           | `[]string` | `quasar.config, quasar.config.js` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                                   | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` |              `quasar`             | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 
 :::note default template
 
 ```template
-\uea6a {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }}
+ \ue87f {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }}
 ```
 
 :::

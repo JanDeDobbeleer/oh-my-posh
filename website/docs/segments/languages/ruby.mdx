@@ -6,7 +6,7 @@ sidebar_label: Ruby
 
 ## What
 
-Display the currently active ruby version.
+Display the currently active [Ruby][ruby] version.
 
 ## Sample Configuration
 
@@ -25,17 +25,17 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name                   |    Type    |          Default          | Description                                                                                                                                                                                                                          |
-| ---------------------- | :--------: | :-----------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `home_enabled`         | `boolean`  |          `false`          | display the segment in the HOME folder or not                                                                                                                                                                                        |
-| `fetch_version`        | `boolean`  |          `true`           | fetch the ruby version                                                                                                                                                                                                               |
-| `cache_duration`       |  `string`  |          `none`           | the duration for which the version will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none`              |
-| `missing_command_text` |  `string`  |                           | text to display when the command is missing                                                                                                                                                                                          |
-| `display_mode`         |  `string`  |         `context`         | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
-| `version_url_template` |  `string`  |                           | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
-| `extensions`           | `[]string` | `*.rb, Rakefile, Gemfile` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
-| `folders`              | `[]string` |                                          | allows to override the list of folder names to validate                                                                                                                                                                              |
-| `tooling`              | `[]string` | `rbenv, rvm-prompt, chruby, asdf, ruby`  | the tooling to use for fetching the version                                                                                                                                                                                          |
+| Name                   |    Type    |                 Default                 | Description                                                                                                                                                                                                                          |
+| ---------------------- | :--------: | :-------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean`  |                 `false`                 | display the segment in the HOME folder or not                                                                                                                                                                                        |
+| `fetch_version`        | `boolean`  |                 `true`                  | fetch the ruby version                                                                                                                                                                                                               |
+| `cache_duration`       |  `string`  |                 `none`                  | the duration for which the version will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none`              |
+| `missing_command_text` |  `string`  |                                         | text to display when the command is missing                                                                                                                                                                                          |
+| `display_mode`         |  `string`  |                `context`                | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
+| `version_url_template` |  `string`  |                                         | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
+| `extensions`           | `[]string` |        `*.rb, Rakefile, Gemfile`        | allows to override the default list of file extensions to validate                                                                                                                                                                   |
+| `folders`              | `[]string` |                                         | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` | `rbenv, rvm-prompt, chruby, asdf, ruby` | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([info][templates])
 
@@ -56,4 +56,5 @@ import Config from "@site/src/components/Config.js";
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates
+[ruby]: https://www.ruby-lang.org/
 [time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration

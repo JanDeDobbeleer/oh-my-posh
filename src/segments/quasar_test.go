@@ -45,13 +45,13 @@ func TestQuasar(t *testing.T) {
 		HasPackageLockFile bool
 		FetchDependencies  bool
 	}{
-		{Case: "@quasar/cli v2.2.1", ExpectedString: "\uea6a 2.2.1", Version: "@quasar/cli v2.2.1"},
+		{Case: "@quasar/cli v2.2.1", ExpectedString: "\ue87f 2.2.1", Version: "@quasar/cli v2.2.1"},
 		{
 			Case:               "@quasar/cli v2.2.1 with vite",
 			Version:            "@quasar/cli v2.2.1",
 			HasPackageLockFile: true,
 			FetchDependencies:  true,
-			ExpectedString:     "\uea6a 2.2.1 \ueb29 2.9.16",
+			ExpectedString:     "\ue87f 2.2.1 \ueb29 2.9.16",
 		},
 	}
 	for _, tc := range cases {

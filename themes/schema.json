@@ -621,10 +621,28 @@
                     "default": [
                       "angular.json"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "angular"
+                    ]
                   }
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "argocd"
+              }
+            }
+          },
+          "then": {
+            "title": "ArgoCD Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/argocd"
           }
         },
         {
@@ -649,6 +667,11 @@
                   "extensions": {
                     "default": [
                       "package.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "aurelia"
                     ]
                   }
                 }
@@ -843,6 +866,11 @@
                       "bazel-testlogs"
                     ]
                   },
+                  "tooling": {
+                    "default": [
+                      "bazel"
+                    ]
+                  },
                   "icon": {
                     "type": "string",
                     "title": "Icon",
@@ -1004,6 +1032,11 @@
                       "buf.gen.yaml",
                       "buf.work.yaml"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "buf"
+                    ]
                   }
                 }
               }
@@ -1033,6 +1066,11 @@
                     "default": [
                       "bun.lockb",
                       "bun.lock"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "bun"
                     ]
                   }
                 }
@@ -1212,6 +1250,11 @@
                     "default": [
                       "*.cmake",
                       "CMakeLists.txt"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "cmake"
                     ]
                   }
                 }
@@ -1397,6 +1440,11 @@
                       "*.ts",
                       "deno.json"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "deno"
+                    ]
                   }
                 }
               }
@@ -1500,6 +1548,17 @@
                       "*.vbproj",
                       "global.json"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "dotnet"
+                    ]
+                  },
+                  "fetch_sdk_version": {
+                    "type": "boolean",
+                    "title": "Fetch SDK Version",
+                    "description": "Fetch the .NET SDK version used in global.json",
+                    "default": false
                   }
                 }
               }
@@ -1623,6 +1682,17 @@
                       "pubspec.yaml",
                       "pubspec.yml",
                       "pubspec.lock"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      ".dart_tool"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "fvm",
+                      "flutter"
                     ]
                   }
                 }
@@ -2494,6 +2564,11 @@
                     "default": [
                       "pom.xml"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "mvn"
+                    ]
                   }
                 }
               }
@@ -2723,6 +2798,11 @@
                       "package.json",
                       "package-lock.json"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "npm"
+                    ]
                   }
                 }
               }
@@ -2752,6 +2832,11 @@
                     "default": [
                       "workspace.json",
                       "nx.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "nx"
                     ]
                   }
                 }
@@ -3382,6 +3467,11 @@
                       "package.json",
                       "pnpm-lock.yaml"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "pnpm"
+                    ]
                   }
                 }
               }
@@ -3579,12 +3669,17 @@
                     "type": "boolean",
                     "title": "Fetch Dependencies",
                     "description": "Fetch the vite and @quasar/app-vite dependency information or not",
-                    "default": true
+                    "default": false
                   },
                   "extensions": {
                     "default": [
                       "quasar.config",
                       "quasar.config.js"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "quasar"
                     ]
                   }
                 }
@@ -3649,6 +3744,11 @@
                   "extensions": {
                     "default": [
                       "package.json"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "react"
                     ]
                   }
                 }
@@ -4015,6 +4115,11 @@
                     "default": [
                       "svelte.config.js"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "svelte"
+                    ]
                   }
                 }
               }
@@ -4254,6 +4359,11 @@
                   "extensions": {
                     "default": [
                       "*ui5*.y*ml"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "ui5"
                     ]
                   }
                 }
@@ -4508,6 +4618,11 @@
                     "default": [
                       "xmake.lua"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "xmake"
+                    ]
                   }
                 }
               }
@@ -4537,6 +4652,11 @@
                     "default": [
                       "package.json",
                       "yarn.lock"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "yarn"
                     ]
                   }
                 }

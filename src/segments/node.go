@@ -42,7 +42,7 @@ func (n *Node) Enabled() bool {
 		},
 	}
 	n.defaultTooling = []string{"node"}
-	n.versionURLTemplate = "https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}"
+	n.versionURLTemplate = "https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}"
 	n.Language.matchesVersionFile = n.matchesVersionFile
 	n.Language.loadContext = n.loadContext
 

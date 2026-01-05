@@ -6,7 +6,7 @@ sidebar_label: XMake
 
 ## What
 
-Display the currently active [xmake] version.
+Display the currently active [Xmake][xmake] version.
 
 ## Sample Configuration
 
@@ -35,6 +35,7 @@ import Config from "@site/src/components/Config.js";
 | `version_url_template` |  `string`  |             | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
 | `extensions`           | `[]string` | `xmake.lua` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |             | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` |   `xmake`   | the tooling to use for fetching the version                                                                                                                                                                                          |
 
 ## Template ([into][templates])
 

@@ -1183,6 +1183,12 @@
                       "*.cljc",
                       "*.cljs"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "clojure",
+                      "lein"
+                    ]
                   }
                 }
               }
@@ -1334,6 +1340,11 @@
                       "*.cr",
                       "shard.yml"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "crystal"
+                    ]
                   }
                 }
               }
@@ -1365,6 +1376,17 @@
                       "pubspec.yaml",
                       "pubspec.yml",
                       "pubspec.lock"
+                    ]
+                  },
+                  "folders": {
+                    "default": [
+                      ".dart_tool"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "fvm",
+                      "dart"
                     ]
                   }
                 }
@@ -1530,6 +1552,12 @@
                       "*.ex",
                       "*.exs"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "asdf",
+                      "elixir"
+                    ]
                   }
                 }
               }
@@ -1668,6 +1696,11 @@
                       "*.F95",
                       "*.F03",
                       "*.F08"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "gfortran"
                     ]
                   }
                 }
@@ -1967,7 +2000,16 @@
                   "extensions": {
                     "default": [
                       "*.go",
-                      "go.mod"
+                      "go.mod",
+                      "go.work",
+                      "go.sum",
+                      "go.work.sum"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "mod",
+                      "go"
                     ]
                   }
                 }
@@ -2013,6 +2055,11 @@
                       "package.yaml",
                       "*.cabal",
                       "cabal.project"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "ghc"
                     ]
                   }
                 }
@@ -2142,6 +2189,11 @@
                       "*.clj",
                       "*.cljc"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "java"
+                    ]
                   }
                 }
               }
@@ -2227,6 +2279,11 @@
                     "default": [
                       "*.jl"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "julia"
+                    ]
                   }
                 }
               }
@@ -2257,6 +2314,11 @@
                       "*.kt",
                       "*.kts",
                       "*.ktm"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "kotlin"
                     ]
                   }
                 }
@@ -2465,6 +2527,11 @@
                       "*.mojo",
                       "mojoproject.toml"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "mojo"
+                    ]
                   }
                 }
               }
@@ -2609,6 +2676,11 @@
                     "default": [
                       "*.nim",
                       "*.nims"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "nim"
                     ]
                   }
                 }
@@ -2785,6 +2857,11 @@
                       "dune",
                       "dune-project",
                       "dune-workspace"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "ocaml"
                     ]
                   }
                 }
@@ -3264,6 +3341,11 @@
                       "*.pm",
                       "*.t"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "perl"
+                    ]
                   }
                 }
               }
@@ -3294,7 +3376,13 @@
                       "*.php",
                       "composer.json",
                       "composer.lock",
-                      ".php-version"
+                      ".php-version",
+                      "blade.php"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "php"
                     ]
                   }
                 }
@@ -3519,10 +3607,10 @@
                   "folders": {
                     "default": [
                       ".venv",
-                      "pyenv-win",
                       "venv",
+                      "virtualenv",
                       "venv-win",
-                      "virtualenv"
+                      "pyenv-win"
                     ]
                   },
                   "tooling": {
@@ -3621,6 +3709,13 @@
                       "*.Rproj",
                       ".Rproj.user"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "Rscript",
+                      "R",
+                      "R.exe"
+                    ]
                   }
                 }
               }
@@ -3694,6 +3789,15 @@
                       "Rakefile",
                       "Gemfile"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "rbenv",
+                      "rvm-prompt",
+                      "chruby",
+                      "asdf",
+                      "ruby"
+                    ]
                   }
                 }
               }
@@ -3724,6 +3828,11 @@
                       "*.rs",
                       "Cargo.toml",
                       "Cargo.lock"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "rustc"
                     ]
                   }
                 }
@@ -4075,7 +4184,13 @@
                   "extensions": {
                     "default": [
                       "*.swift",
-                      "*.SWIFT"
+                      "*.SWIFT",
+                      "Podfile"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "swift"
                     ]
                   }
                 }
@@ -4344,6 +4459,11 @@
                     "default": [
                       "*.v"
                     ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "v"
+                    ]
                   }
                 }
               }
@@ -4372,6 +4492,11 @@
                   "extensions": {
                     "default": [
                       "*.vala"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "vala"
                     ]
                   }
                 }
@@ -4614,6 +4739,11 @@
                     "default": [
                       "*.zig",
                       "*.zon"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "zig"
                     ]
                   }
                 }

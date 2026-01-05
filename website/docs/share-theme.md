@@ -47,6 +47,8 @@ override colors, set the author name, and specify the background color.
 
 ### Settings Options
 
+<!-- markdownlint-disable MD013 -->
+
 | Name               | Type     | Default   | Description                                                                   |
 | ------------------ | -------- | --------- | ----------------------------------------------------------------------------- |
 | `colors`           | `object` |           | Map of ANSI color names to hex color codes. See [16 ANSI color names][colors] |
@@ -54,6 +56,8 @@ override colors, set the author name, and specify the background color.
 | `background_color` | `string` | `#151515` | Hex code for the image background                                             |
 | `fonts`            | `object` |           | Font settings for the image, including regular, bold, and italic styles       |
 | `cursor`           | `string` | `_`       | A custom cursor                                                               |
+
+<!-- markdownlint-enable MD013 -->
 
 ### Usage
 

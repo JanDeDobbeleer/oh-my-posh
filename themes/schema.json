@@ -1829,14 +1829,14 @@
                   },
                   "github_icon": {
                     "type": "string",
-                    "title": "Github Icon",
-                    "description": "Icon/text to display when the upstream is Github",
+                    "title": "GitHub Icon",
+                    "description": "Icon/text to display when the upstream is GitHub",
                     "default": "\uf408"
                   },
                   "gitlab_icon": {
                     "type": "string",
-                    "title": "Gitlab Icon",
-                    "description": "Icon/text to display when the upstream is Gitlab",
+                    "title": "GitLab Icon",
+                    "description": "Icon/text to display when the upstream is GitLab",
                     "default": "\uf296"
                   },
                   "bitbucket_icon": {

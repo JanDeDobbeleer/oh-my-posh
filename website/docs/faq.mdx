@@ -10,7 +10,7 @@ import Config from "@site/src/components/Config.js";
 
 Before validating anything, make sure you're on the [latest version][latest] of Oh My Posh and your terminal and shell are up-to-date.
 
-### My prompt is broken after upgrading to PowerShell 7.4
+## My prompt is broken after upgrading to PowerShell 7.4
 
 PowerShell 7.4 has an [issue][pwsh-20733] in encoding which affects the rendering of Oh My Posh.
 You can work around this by forcing the entire shell to UTF8.
@@ -25,7 +25,7 @@ Forcing the entire session to UTF8 can have unwanted side effects for other exec
 consider this a temporary workaround until the original PowerShell [issue][pwsh-20733] is resolved.
 :::
 
-### I want to disable the upgrade notice
+## I want to disable the upgrade notice
 
 You can disable the upgrade notice using the following command once:
 
@@ -39,7 +39,7 @@ If you want to enable it again, run:
 oh-my-posh enable notice
 ```
 
-### The prompt is slow (delay in showing the prompt between commands)
+## The prompt is slow (delay in showing the prompt between commands)
 
 :::tip Windows
 The delay you're experiencing may be linked to the real-time protection features of antivirus software.
@@ -94,14 +94,14 @@ If only your Git repo paths are slow, then try running [`git gc`][git-gc] to cle
 
 If nothing seems to resolve the issue, feel free to [create an issue][new-issue].
 
-### There are rectangles instead of icons in my prompt
+## There are rectangles instead of icons in my prompt
 
 The font you're using doesn't have the needed standard extended glyph set like [Nerd Font][nf] does.
 Windows Terminal ships with Cascadia Code by default which has a powerline patched variant called Cascadia Code PL,
 but also that one misses certain interesting icons. You can fall back to any theme with the `.minimal` indication,
 or make use of a Nerd Font. Have a look at the [font][font] section for more context in case you're using all the right conditions.
 
-### Text decoration styles like bold and dimmed don't work
+## Text decoration styles like bold and dimmed don't work
 
 The text decoration styles are based on your terminal emulator's capabilities.
 
@@ -111,7 +111,7 @@ Refer [this page on ArchWiki][arch-terminfo].
 If you are on Windows, use Windows Terminal. It closely copies the `xterm-256color` capabilities.
 See the [PowerShell docs on terminal support][ps-ansi-docs] and [this GitHub comment][xterm-gh-comment].
 
-### Windows Terminal: Unexpected space between segments/text
+## Windows Terminal: Unexpected space between segments/text
 
 Windows Terminal has some issues with [rendering certain glyphs][wt-glyph]. These issues are on [their backlog][wt-glyphs].
 A temporary workaround is to use an invisible character at the end (`\u2800`), or a zero width character (`\u200a`) before the icon.
@@ -137,17 +137,17 @@ Adjust it by adding `\u2800` immediately after the icon.
   }}
 />
 
-### Jetbrains terminals: Icons do not render
+## Jetbrains terminals: Icons do not render
 
 They need to work on their terminal, somehow it only supports UTF-8 and not UTF-16.
 [An issue][jb-icons] is available for a follow-up here.
 
-### Strange colouring after exiting VIM or when using the PowerShell progress bootstrap
+## Strange colouring after exiting VIM or when using the PowerShell progress bootstrap
 
 This bug is caused by Windows Terminal and/or VIM. There are two issues for this, one at [Windows Terminal][wt-vim] and
 one at [VIM][vim-wt].
 
-### Conda: environment name displayed in front of the prompt
+## Conda: environment name displayed in front of the prompt
 
 Conda will automatically prepend the prompt with the name of the environment you're in.
 To solely rely on Oh My Posh to set the prompt, you can configure the following setting to hide it.
@@ -157,7 +157,7 @@ Make sure to add this **before** initializing Oh My Posh.
 conda config --set changeps1 False
 ```
 
-### Python venv: Prompt changes on activating virtual environment
+## Python venv: Prompt changes on activating virtual environment
 
 Virtual environments created with `venv` add the active environment's name to the prompt automatically.
 To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example files:
@@ -200,11 +200,11 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 </TabItem>
 </Tabs>
 
-### PowerShell: The term 'Set-Theme' is not recognized as the name of a cmdlet, function, script file, or operable program.
+## PowerShell: The term 'Set-Theme' is not recognized as the name of a cmdlet, function, script file, or operable program.
 
 You need to migrate using the following [guide][migrating].
 
-### PowerShell: Running in ConstrainedLanguage mode
+## PowerShell: Running in ConstrainedLanguage mode
 
 You're here because you've seen the following message:
 
@@ -224,7 +224,7 @@ To remove the message after manual configuration, you can add the following to y
 $env:POSH_CONSTRAINED_LANGUAGE = 1
 ```
 
-### PowerShell: The term '.../oh-my-posh.exe' is not recognized as a name of a cmdlet...
+## PowerShell: The term '.../oh-my-posh.exe' is not recognized as a name of a cmdlet...
 
 For example:
 
@@ -264,7 +264,7 @@ Alternatively, let the whole shell become UTF-8. (Be aware: Unwanted side effect
 $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 ```
 
-### Zsh: No command history (Ctrl+R does not work)
+## Zsh: No command history (Ctrl+R does not work)
 
 This issue occurs when you're using plain zsh in combination with Oh My Posh.
 You can fix this by adding the right configuration to `~/.zshrc`.
@@ -276,11 +276,11 @@ SAVEHIST=10000
 setopt appendhistory
 ```
 
-### ZSH: No such shell function 'zle-line-init'
+## ZSH: No such shell function 'zle-line-init'
 
 This is most likely caused by two Oh My Posh init lines in your `.zshrc`, remove one of them. See [here][zsh-init].
 
-### Fish: Display current bind (Vim) mode
+## Fish: Display current bind (Vim) mode
 
 By default, Oh My Posh will not re-render the prompt (i.e., generate a new prompt) until a new command is run, so you should
 export `$fish_bind_mode` to `FISH__BIND_MODE` and call the `omp_repaint_prompt` function to do prompt re-rendering when
@@ -313,7 +313,7 @@ After that, you can use the value in a template. The following replicates the [e
   }}
 />
 
-### Fish: Integrate with `Alt+←` and `Alt+→` Bindings to `prevd` and `nextd`
+## Fish: Integrate with `Alt+←` and `Alt+→` Bindings to `prevd` and `nextd`
 
 Fish supports using `Alt+←` (Alt+Left) and `Alt+→` (Alt+Right) bindings to [navigate the directory history](https://fishshell.com/docs/current/interactive.html#id13).
 
@@ -325,7 +325,7 @@ function rerender_on_dir_change --on-variable PWD
 end
 ```
 
-### After updating my Nerd Font to a newer version, the prompt displays unknown characters
+## After updating my Nerd Font to a newer version, the prompt displays unknown characters
 
 Nerd Fonts moved the icons to a different location in the font for v3.
 This can cause the prompt to display unknown characters. There's a built-in migration in Oh My Posh to fix this.
@@ -339,7 +339,7 @@ oh-my-posh config migrate glyphs --write
 This will update your configuration file to use the new glyph locations. Do know they might look different, as they also
 updated the icons themselves. A backup of the current config can be found in the same location with a `.bak` extension.
 
-### Xonsh: Right prompt jumps to bottom of the screen
+## Xonsh: Right prompt jumps to bottom of the screen
 
 This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 
@@ -362,7 +362,6 @@ This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 [wt-vim]: https://github.com/microsoft/terminal/issues/3794
 [vim-wt]: https://github.com/vim/vim/issues/5092
 [utf-8]: https://github.com/PowerShell/PowerShell/issues/7233#issuecomment-640243647
-[fish-changelog]: https://fishshell.com/docs/current/relnotes.html#id1
 [xonsh-issue]: https://github.com/xonsh/xonsh/issues/3810
 [zsh-init]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/3462#discussioncomment-5155790
 [fish-mode-prompt]: https://fishshell.com/docs/current/cmds/fish_mode_prompt.html#example

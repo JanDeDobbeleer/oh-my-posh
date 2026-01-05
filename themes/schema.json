@@ -1093,7 +1093,7 @@
           },
           "then": {
             "title": "Carbon Intensity Segment",
-            "description": "Displays the actual and forecast carbon intensity in gCO2/kWh using the Carbon Intensity API",
+            "description": "https://ohmyposh.dev/docs/segments/web/carbonintensity",
             "properties": {
               "options": {
                 "properties": {
@@ -2220,7 +2220,8 @@
                     "enum": [
                       "GET",
                       "POST"
-                    ]
+                    ],
+                    "default": "GET"
                   }
                 },
                 "additionalProperties": false
@@ -2250,6 +2251,10 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "24h"
                   }
                 },
                 "additionalProperties": false
@@ -3227,7 +3232,7 @@
           },
           "then": {
             "title": "Open Weather Map Segment",
-            "description": "Displays the current weather from the Open Weather Map system",
+            "description": "https://ohmyposh.dev/docs/segments/web/owm",
             "properties": {
               "options": {
                 "properties": {
@@ -4651,14 +4656,14 @@
           },
           "then": {
             "title": "Wakatime",
-            "description": "Displays the tracked time on wakatime.com",
+            "description": "https://ohmyposh.dev/docs/segments/web/wakatime",
             "properties": {
               "options": {
                 "properties": {
-                  "apikey": {
+                  "url": {
                     "type": "string",
-                    "title": "apikey",
-                    "description": "The apikey used for the api call (Required)",
+                    "title": "URL",
+                    "description": "The url used for the api call (Required)",
                     "default": "."
                   },
                   "http_timeout": {

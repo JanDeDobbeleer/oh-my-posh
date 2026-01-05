@@ -681,7 +681,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "SSH url", Expected: "G", Upstream: "ssh://git@git.my.domain:3001/ADIX7/dotconfig.git"},
 		{Case: "Gitea", Expected: "EX", Upstream: "_gitea@src.example.com:user/repo.git"},
 		{Case: "GitHub", Expected: "GH", Upstream: "github.com/test"},
-		{Case: "Gitlab", Expected: "GL", Upstream: "gitlab.com/test"},
+		{Case: "GitLab", Expected: "GL", Upstream: "gitlab.com/test"},
 		{Case: "Bitbucket", Expected: "BB", Upstream: "bitbucket.org/test"},
 		{Case: "Azure DevOps", Expected: "AD", Upstream: "dev.azure.com/test"},
 		{Case: "Azure DevOps Dos", Expected: "AD", Upstream: "test.visualstudio.com"},

@@ -20,8 +20,7 @@
             "options": {
               "branch_icon": "\ue725 ",
               "fetch_status": true,
-              "fetch_upstream_icon": true,
-              "fetch_worktree_count": true
+              "fetch_upstream_icon": true
             },
             "style": "diamond",
             "template": "<#fff>{{ .UpstreamIcon }}</>{{ .HEAD }}",

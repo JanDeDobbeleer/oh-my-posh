@@ -4,8 +4,6 @@ title: Strava
 sidebar_label: Strava
 ---
 
-import StravaConnect from "/img/strava_connect.svg";
-
 ## What
 
 [Strava][strava] is a popular activity tracker for bike, run or any other training.
@@ -20,9 +18,7 @@ This will give you an access and a refresh token. Paste the tokens into your Str
 
 Click the following link to connect with Strava:
 
-<a href="https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read&state=strava">
-  <StravaConnect />
-</a>
+[![strava-connect](/img/strava_connect.svg)][strava-connect]
 
 ## Sample Configuration
 
@@ -65,7 +61,7 @@ import Config from "@site/src/components/Config.js";
 | `access_token`          | [`template`][templates] |          | token from Strava login, see login link in section above.                                                     |
 | `refresh_token`         | [`template`][templates] |          | token from Strava login, see login link in section above.                                                     |
 | `expires_in`            |          `int`          |   `0`    | the default timeout of the token from the Strava login                                                        |
-| `http_timeout`          |          `int`          |  `500`   | in milliseconds - how long do you want to wait before you want to see your prompt more than your strava data? |
+| `http_timeout`          |          `int`          |   `20`   | in milliseconds - how long do you want to wait before you want to see your prompt more than your strava data? |
 | `ride_icon`             |        `string`         | `\uf206` |                                                                                                               |
 | `run_icon`              |        `string`         | `\ue213` |                                                                                                               |
 | `skiing_icon`           |        `string`         | `\ue213` |                                                                                                               |
@@ -77,7 +73,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
-{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}
+ {{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}
 ```
 
 :::
@@ -106,4 +102,4 @@ Now, go out and have a fun ride or run!
 
 [templates]: /docs/configuration/templates
 [strava]: http://www.strava.com/
-[strava-connect]: https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read
+[strava-connect]: https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read&state=strava

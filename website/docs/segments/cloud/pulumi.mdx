@@ -6,7 +6,7 @@ sidebar_label: Pulumi
 
 ## What
 
-Display the currently active pulumi logged-in user, url and stack.
+Display the currently active [Pulumi][pulumi] logged-in user, url and stack.
 
 :::caution
 This requires a pulumi binary in your PATH and will only show in directories that contain a `Pulumi.yaml` file.
@@ -20,11 +20,11 @@ import Config from "@site/src/components/Config.js";
   data={{
     type: "pulumi",
     style: "diamond",
-    powerline_symbol: "\uE0CF",
+    powerline_symbol: "\uE0B0",
     foreground: "#ffffff",
     background: "#662d91",
     template:
-      "{{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}",
+      "\ue873 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}",
   }}
 />
 
@@ -40,7 +40,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
-{{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}
+\ue873 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}
 ```
 
 :::
@@ -54,3 +54,4 @@ import Config from "@site/src/components/Config.js";
 | `.Url`   | `string` | the URL of the state where pulumi stores resources |
 
 [templates]: /docs/configuration/templates
+[pulumi]: https://www.pulumi.com/

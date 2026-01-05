@@ -6,7 +6,7 @@ sidebar_label: AWS
 
 ## What
 
-Display the currently active AWS profile and region.
+Display the currently active [AWS][aws] profile and region.
 
 ## Sample Configuration
 
@@ -34,7 +34,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
-{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}
+ {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}
 ```
 
 :::
@@ -48,3 +48,4 @@ import Config from "@site/src/components/Config.js";
 | `.RegionAlias`  | `string` | short alias for the currently active region |
 
 [templates]: /docs/configuration/templates
+[aws]: https://aws.amazon.com/

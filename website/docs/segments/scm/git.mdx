@@ -6,7 +6,7 @@ sidebar_label: Git
 
 ## What
 
-Display git information when in a git repository. Also works for subfolders. For maximum compatibility,
+Display git information when in a [Git][git] repository. Also works for subfolders. For maximum compatibility,
 make sure your `git` executable is up-to-date (when branch or status information is incorrect for example).
 
 ## Sample Configuration
@@ -57,10 +57,10 @@ You can set the following options to `true` to enable fetching additional inform
 | `ignore_status`       |     `[]string`      |         | do not fetch status for these repo's. Uses the repo's root folder and same logic as the [exclude_folders][exclude_folders] property                                                                                                                                                                                                   |
 | `fetch_upstream_icon` |      `boolean`      | `false` | fetch upstream icon                                                                                                                                                                                                                                                                                                                   |
 | `fetch_bare_info`     |      `boolean`      | `false` | fetch bare repo info                                                                                                                                                                                                                                                                                                                  |
+| `fetch_user`          |   [`User`](#user)   | `false` | fetch the current configured user for the repository                                                                                                                                                                                                                                                                                  |
 | `untracked_modes`     | `map[string]string` |         | map of repo's where to override the default [untracked files mode][untracked]:<ul><li>`no`</li><li>`normal`</li><li>`all`</li></ul>For example `"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use `*` to set the mode instead of the repo path |
 | `ignore_submodules`   | `map[string]string` |         | map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`). For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode instead of the repo path                                                     |
 | `native_fallback`     |      `boolean`      | `false` | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native `git` executable to fetch data. Not all information can be displayed in this case                                                                                                                           |
-| `fetch_user`          |   [`User`](#user)   | `false` | fetch the current configured user for the repository                                                                                                                                                                                                                                                                                  |
 | `status_formats`      | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides.                                                                     |
 | `source`              |      `string`       |  `cli`  | <ul><li>`cli`: fetch the information using the git CLI</li><li>`pwsh`: fetch the information from the [posh-git][poshgit] PowerShell Module</li></ul>                                                                                                                                                                                 |
 | `mapped_branches`     |      `object`       |         | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching                                                                                                                                                                                                                              |
@@ -232,6 +232,7 @@ You can then use the `POSH_GIT_STRING` environment variable in a [text segment][
   }}
 />
 
+[git]: https://git-scm.com/
 [poshgit]: https://github.com/dahlbyk/posh-git
 [templates]: /docs/configuration/templates
 [hyperlinks]: /docs/configuration/templates#custom

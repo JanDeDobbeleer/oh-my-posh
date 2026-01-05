@@ -1832,12 +1832,12 @@
                     "type": "boolean",
                     "title": "Display Status",
                     "description": "Display the local changes or not",
-                    "default": true
+                    "default": false
                   },
-                  "fetch_worktree_count": {
+                  "fetch_push_status": {
                     "type": "boolean",
-                    "title": "Display Worktree Count",
-                    "description": "Display the worktree count or not",
+                    "title": "Display Push Status",
+                    "description": "Display the push-remote ahead/behind information or not",
                     "default": false
                   },
                   "fetch_upstream_icon": {
@@ -1850,6 +1850,12 @@
                     "type": "boolean",
                     "title": "Fetch info when in a bare repo",
                     "description": "Fetch info when in a bare repo or not",
+                    "default": false
+                  },
+                  "fetch_user": {
+                    "type": "boolean",
+                    "title": "Fetch the user",
+                    "description": "Fetch the current configured user for the repository",
                     "default": false
                   },
                   "disable_with_jj": {
@@ -1972,6 +1978,12 @@
                     "description": "Icon/text to display when the upstream is not known/mapped",
                     "default": "\ue5fb"
                   },
+                  "upstream_icons": {
+                    "type": "object",
+                    "title": "Status string formats",
+                    "description": "a key, value map representing the remote URL (or a part of that URL) and icon to use in case the upstream URL contains the key. These get precedence over the standard icons",
+                    "default": {}
+                  },
                   "untracked_modes": {
                     "type": "object",
                     "title": "Untracked files mode",
@@ -1993,20 +2005,8 @@
                       "type": "string"
                     }
                   },
-                  "fetch_user": {
-                    "type": "boolean",
-                    "title": "Fetch the user",
-                    "description": "Fetch the current configured user for the repository",
-                    "default": false
-                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
-                  },
-                  "upstream_icons": {
-                    "type": "object",
-                    "title": "Status string formats",
-                    "description": "a key, value map representing the remote URL (or a part of that URL) and icon to use in case the upstream URL contains the key. These get precedence over the standard icons",
-                    "default": {}
                   },
                   "mapped_branches": {
                     "$ref": "#/definitions/mapped_branches"
@@ -4253,7 +4253,7 @@
                     "type": "boolean",
                     "title": "Display Status",
                     "description": "Display the local changes or not",
-                    "default": true
+                    "default": false
                   },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"

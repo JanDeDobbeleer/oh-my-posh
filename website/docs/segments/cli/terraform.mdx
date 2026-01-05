@@ -6,7 +6,7 @@ sidebar_label: Terraform
 
 ## What
 
-Display the currently active Terraform Workspace name.
+Display the currently active [Terraform][terraform] Workspace name.
 
 ## Sample Configuration
 
@@ -35,7 +35,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
-{{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }}
+ {{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }}
 ```
 
 :::
@@ -48,3 +48,4 @@ import Config from "@site/src/components/Config.js";
 | `.Version`       | `string` | terraform version (set `fetch_version` to `true`) |
 
 [templates]: /docs/configuration/templates
+[terraform]: https://developer.hashicorp.com/terraform

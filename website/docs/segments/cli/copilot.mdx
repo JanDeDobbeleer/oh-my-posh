@@ -6,7 +6,7 @@ sidebar_label: GitHub Copilot
 
 ## What
 
-Display your GitHub Copilot usage statistics and quota information including premium interactions, inline completions, and chat usage.
+Display your [GitHub Copilot][copilot] usage statistics and quota information including premium interactions, inline completions, and chat usage.
 This segment was inspired by [Elio Struyf's GitHub Copilot Usage Tauri application][tauri].
 
 ## Authentication
@@ -51,9 +51,9 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name           | Type  | Description                                           | Default |
-| -------------- | ----- | ----------------------------------------------------- | ------- |
-| `http_timeout` | `int` | The default timeout for HTTP requests in milliseconds | `20`    |
+| Name           | Type  | Default | Description                                           |
+| -------------- | ----- | ------- | ----------------------------------------------------- |
+| `http_timeout` | `int` |  `20`   | The default timeout for HTTP requests in milliseconds |
 
 ## Template ([info][templates])
 
@@ -113,5 +113,6 @@ The `Percentage` type provides additional functionality beyond just the numeric 
 "template": "{{ .Premium.Percent.Gauge() }} {{ .Premium.Used }}/{{ .Premium.Limit }}"
 ```
 
+[copilot]: https://github.com/features/copilot
 [templates]: /docs/configuration/templates
 [tauri]: https://github.com/estruyf/github-copilot-usage-tauri

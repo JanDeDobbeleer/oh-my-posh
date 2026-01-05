@@ -50,33 +50,33 @@ import Config from "@site/src/components/Config.js";
 | `user_id`      |        `string`         |         | as provided by Brewfather's Generate API Key screen                                                                             |
 | `api_key`      | [`template`][templates] |         | as provided by Brewfather's Generate API Key screen                                                                             |
 | `batch_id`     |        `string`         |         | Get this by navigating to the desired batch on the brewfather website, the batch id is at the end of the URL in the address bar |
-| `http_timeout` |          `int`          |   `2`   | in milliseconds - How long to wait for the Brewfather service to answer the request                                             |
 | `day_icon`     |        `string`         |   `d`   | icon or letter to use to indicate days                                                                                          |
+| `http_timeout` |          `int`          |  `20`   | in milliseconds - How long to wait for the Brewfather service to answer the request                                             |
 
 ## Icons
 
 You can override the icons for temperature trend as used by template property `.TemperatureTrendIcon` with:
 
-| Name                 | Description                                     |
-| -------------------- | ----------------------------------------------- |
-| `doubleup_icon`      | for increases of more than 4°C, default is `↑↑` |
-| `singleup_icon`      | increase 2-4°C, default is `↑`                  |
-| `fortyfiveup_icon`   | increase 0.5-2°C, default is `↗`                |
-| `flat_icon`          | change less than 0.5°C, default is `→`          |
-| `fortyfivedown_icon` | decrease 0.5-2°C, default is `↘`                |
-| `singledown_icon`    | decrease 2-4°C, default is `↓`                  |
-| `doubledown_icon`    | decrease more than 4°C, default is `↓↓`         |
+| Name                 | Default | Description                |
+| -------------------- | ------- | -------------------------- |
+| `doubleup_icon`      | `↑↑`    | increases of more than 4°C |
+| `singleup_icon`      | `↑`     | increase 2-4°C             |
+| `fortyfiveup_icon`   | `↗`     | increase 0.5-2°C           |
+| `flat_icon`          | `→`     | change less than 0.5°C     |
+| `fortyfivedown_icon` | `↘`     | decrease 0.5-2°C           |
+| `singledown_icon`    | `↓`     | decrease 2-4°C             |
+| `doubledown_icon`    | `↓↓`    | decrease more than 4°C     |
 
 You can override the default icons for batch status as used by template property `.StatusIcon` with:
 
-| Name                       |
-| -------------------------- |
-| `planning_status_icon`     |
-| `brewing_status_icon`      |
-| `fermenting_status_icon`   |
-| `conditioning_status_icon` |
-| `completed_status_icon`    |
-| `archived_status_icon`     |
+| Name                       | Default  |
+| -------------------------- | -------- |
+| `planning_status_icon`     | `\uF8EA` |
+| `brewing_status_icon`      | `\uF7DE` |
+| `fermenting_status_icon`   | `\uF499` |
+| `conditioning_status_icon` | `\uE372` |
+| `completed_status_icon`    | `\uF7A5` |
+| `archived_status_icon`     | `\uF187` |
 
 ## Template ([info][templates])
 
@@ -90,45 +90,45 @@ You can override the default icons for batch status as used by template property
 
 ### Properties
 
-| Name                    | Type     | Description                                                                                      |
-| ----------------------- | -------- | ------------------------------------------------------------------------------------------------ |
-| .Status                 | `string` | One of "Planning", "Brewing", "Fermenting", "Conditioning", "Completed" or "Archived"            |
-| .StatusIcon             | `string` | Icon representing above stats. Can be overridden with properties shown above                     |
-| .TemperatureTrendIcon   | `string` | Icon showing temperature trend based on latest and previous reading                              |
-| .DaysFermenting         | `int`    | days since start of fermentation                                                                 |
-| .DaysBottled            | `int`    | days since bottled/kegged                                                                        |
-| .DaysBottledOrFermented | `int`    | one of the above, chosen automatically based on batch status                                     |
-| .Recipe.Name            | `string` | The recipe being brewed in this batch                                                            |
-| .BatchName              | `string` | The name of this batch                                                                           |
-| .BatchNumber            | `int`    | The number of this batch                                                                         |
-| .MeasuredAbv            | `float`  | The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values |
-| .ReadingAge             | `int`    | age in hours of most recent reading or -1 if there are no readings available                     |
+| Name                      | Type     | Description                                                                                      |
+| ------------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| `.Status`                 | `string` | One of "Planning", "Brewing", "Fermenting", "Conditioning", "Completed" or "Archived"            |
+| `.StatusIcon`             | `string` | Icon representing above stats. Can be overridden with properties shown above                     |
+| `.TemperatureTrendIcon`   | `string` | Icon showing temperature trend based on latest and previous reading                              |
+| `.DaysFermenting`         | `int`    | days since start of fermentation                                                                 |
+| `.DaysBottled`            | `int`    | days since bottled/kegged                                                                        |
+| `.DaysBottledOrFermented` | `int`    | one of the above, chosen automatically based on batch status                                     |
+| `.Recipe.Name`            | `string` | The recipe being brewed in this batch                                                            |
+| `.BatchName`              | `string` | The name of this batch                                                                           |
+| `.BatchNumber`            | `int`    | The number of this batch                                                                         |
+| `.MeasuredAbv`            | `float`  | The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values |
+| `.ReadingAge`             | `int`    | age in hours of most recent reading or -1 if there are no readings available                     |
 
 #### Reading
 
 `.Reading` contains the most recent data from devices or manual entry as visible on the Brewfather's batch Readings graph.
 If there are no readings available, `.Reading` will be null.
 
-| Name                 | Type     | Description                                |
-| -------------------- | -------- | ------------------------------------------ |
-| .Reading.Gravity     | `float`  | specific gravity (in decimal point format) |
-| .Reading.Temperature | `float`  | temperature in °C                          |
-| .Reading.Time        | `int`    | unix timestamp of reading                  |
-| .Reading.Comment     | `string` | comment attached to this reading           |
-| .Reading.DeviceType  | `string` | source of the reading, e.g. "Tilt"         |
-| .Reading.DeviceID    | `string` | id of the device, e.g. "PINK"              |
+| Name                   | Type     | Description                                |
+| ---------------------- | -------- | ------------------------------------------ |
+| `.Reading.Gravity`     | `float`  | specific gravity (in decimal point format) |
+| `.Reading.Temperature` | `float`  | temperature in °C                          |
+| `.Reading.Time`        | `int`    | unix timestamp of reading                  |
+| `.Reading.Comment`     | `string` | comment attached to this reading           |
+| `.Reading.DeviceType`  | `string` | source of the reading, e.g. "Tilt"         |
+| `.Reading.DeviceID`    | `string` | id of the device, e.g. "PINK"              |
 
 #### Additional properties
 
-| Name              | Type     | Description                                                           |
-| ----------------- | -------- | --------------------------------------------------------------------- |
-| .MeasuredOg       | `float`  | The OG for the batch as manually entered into Brewfather              |
-| .MeasuredFg       | `float`  | The FG for the batch as manually entered into Brewfather              |
-| .BrewDate         | `int`    | The unix timestamp of the brew day                                    |
-| .FermentStartDate | `int`    | The unix timestamp when fermentation was started                      |
-| .BottlingDate     | `time`   | The unix timestamp when bottled/kegged                                |
-| .TemperatureTrend | `float`  | The difference between the most recent and previous temperature in °C |
-| .DayIcon          | `string` | given by "day_icon", or "d" by default                                |
+| Name                | Type     | Description                                                           |
+| ------------------- | -------- | --------------------------------------------------------------------- |
+| `.MeasuredOg`       | `float`  | The OG for the batch as manually entered into Brewfather              |
+| `.MeasuredFg`       | `float`  | The FG for the batch as manually entered into Brewfather              |
+| `.BrewDate`         | `int`    | The unix timestamp of the brew day                                    |
+| `.FermentStartDate` | `int`    | The unix timestamp when fermentation was started                      |
+| `.BottlingDate`     | `time`   | The unix timestamp when bottled/kegged                                |
+| `.TemperatureTrend` | `float`  | The difference between the most recent and previous temperature in °C |
+| `.DayIcon`          | `string` | given by "day_icon", or "d" by default                                |
 
 #### Hyperlink support
 
@@ -156,17 +156,17 @@ The following conversion functions are available to the template to convert to o
 
 #### Temperature
 
-| Name           | Description                                                                |
-| -------------- | -------------------------------------------------------------------------- |
-| `DegCToF`      | input: `float` degrees in C; output `float` degrees in F (1 decimal place) |
-| `DegCToKelvin` | input: `float` degrees in C; output `float` Kelvin (1 decimal place)       |
+| Name            | Description                                                                |
+| --------------- | -------------------------------------------------------------------------- |
+| `.DegCToF`      | input: `float` degrees in C; output `float` degrees in F (1 decimal place) |
+| `.DegCToKelvin` | input: `float` degrees in C; output `float` Kelvin (1 decimal place)       |
 
 #### Gravity
 
-| Name      | Description                                                                |
-| --------- | -------------------------------------------------------------------------- |
-| SGToBrix  | input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)  |
-| SGToPlato | input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places) |
+| Name         | Description                                                                |
+| ------------ | -------------------------------------------------------------------------- |
+| `.SGToBrix`  | input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)  |
+| `.SGToPlato` | input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places) |
 
 _(These use the polynomial conversions from [Wikipedia][wikipedia_gravity_page])_
 

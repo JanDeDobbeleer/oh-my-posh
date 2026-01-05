@@ -42,7 +42,7 @@ func TestPulumi(t *testing.T) {
 		},
 		{
 			Case:            "pulumi file YAML is present",
-			ExpectedString:  "\U000f0d46",
+			ExpectedString:  "\ue873",
 			ExpectedEnabled: true,
 			HasCommand:      true,
 			YAMLConfig: `
@@ -53,14 +53,14 @@ description: A Console App
 		},
 		{
 			Case:            "pulumi file JSON is present",
-			ExpectedString:  "\U000f0d46",
+			ExpectedString:  "\ue873",
 			ExpectedEnabled: true,
 			HasCommand:      true,
 			JSONConfig:      `{ "name": "oh-my-posh" }`,
 		},
 		{
 			Case:               "no stack present",
-			ExpectedString:     "\U000f0d46 1337",
+			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,
@@ -70,7 +70,7 @@ description: A Console App
 		},
 		{
 			Case:               "pulumi stack",
-			ExpectedString:     "\U000f0d46 1337",
+			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,
@@ -80,7 +80,7 @@ description: A Console App
 		},
 		{
 			Case:               "pulumi URL",
-			ExpectedString:     "\U000f0d46 1337 :: posh-user@s3://test-pulumi-state-test",
+			ExpectedString:     "\ue873 1337 :: posh-user@s3://test-pulumi-state-test",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,
@@ -93,7 +93,7 @@ description: A Console App
 		// Error flows
 		{
 			Case:            "pulumi file JSON error",
-			ExpectedString:  "\U000f0d46",
+			ExpectedString:  "\ue873",
 			ExpectedEnabled: true,
 			FetchStack:      true,
 			HasCommand:      true,
@@ -101,7 +101,7 @@ description: A Console App
 		},
 		{
 			Case:               "pulumi workspace file JSON error",
-			ExpectedString:     "\U000f0d46",
+			ExpectedString:     "\ue873",
 			ExpectedEnabled:    true,
 			FetchStack:         true,
 			HasCommand:         true,
@@ -111,7 +111,7 @@ description: A Console App
 		},
 		{
 			Case:            "pulumi URL, no fetch_stack set",
-			ExpectedString:  "\U000f0d46",
+			ExpectedString:  "\ue873",
 			ExpectedEnabled: true,
 			HasCommand:      true,
 			FetchAbout:      true,
@@ -119,7 +119,7 @@ description: A Console App
 		},
 		{
 			Case:               "pulumi URL - about error",
-			ExpectedString:     "\U000f0d46 1337",
+			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,
@@ -131,7 +131,7 @@ description: A Console App
 		},
 		{
 			Case:               "pulumi URL - about decode error",
-			ExpectedString:     "\U000f0d46 1337",
+			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,
@@ -143,7 +143,7 @@ description: A Console App
 		},
 		{
 			Case:               "pulumi URL - about backend is nil",
-			ExpectedString:     "\U000f0d46 1337",
+			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,

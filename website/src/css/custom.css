@@ -159,30 +159,30 @@ iframe.youtube {
   margin-top: 25px;
 }
 
-.withings {
-  width: 150px;
-}
-
-[data-theme="light"] .withings path {
-  fill: white;
-}
-
-[data-theme="dark"] .withings path {
-  fill: black;
-}
-
-[data-theme="dark"] div.withings {
+[data-theme="dark"] .withings {
   background: white;
   padding: 17px 10px 10px 10px;
   display: inline;
   border-radius: 10px;
 }
 
-[data-theme="light"] div.withings {
+[data-theme="light"] .withings {
   background: black;
   padding: 17px 10px 10px 10px;
   display: inline;
   border-radius: 10px;
+}
+
+.withings svg {
+  width: 150px;
+}
+
+[data-theme="light"] .withings svg path {
+  fill: white;
+}
+
+[data-theme="dark"] .withings svg path {
+  fill: black;
 }
 
 h1.hero__title {

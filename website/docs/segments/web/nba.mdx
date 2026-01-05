@@ -46,40 +46,40 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name           | Type     | Description                                                                                                                                        |
-| -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `team`         | `string` | tri-code for the NBA team you want to get data for                                                                                                 |
-| `days_offset`  | `int`    | how many days in advance you wish to see that information for, defaults to 8                                                                       |
-| `http_timeout` | `int`    | How long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default - defaults to 500ms |
+| Name           | Type     | Default | Description                                                                                                                    |
+| -------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `team`         | `string` |         | tri-code for the NBA team you want to get data for                                                                             |
+| `days_offset`  | `int`    |   `8`   | how many days in advance you wish to see that information for                                                                  |
+| `http_timeout` | `int`    |   `20`  | How long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default |
 
 ## Template ([info][templates])
 
 :::note default template
 
 ```template
-\udb82\udc06 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
+ \udb82\udc06 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
 ```
 
 :::
 
 ### Properties
 
-| Name            | Type      | Description                                                 |
-| --------------- | --------- | ----------------------------------------------------------- |
-| .HomeTeam       | `string`  | home team for the upcoming game                             |
-| .AwayTeam       | `string`  | away team for the upcoming game                             |
-| .Time           | `string`  | time (EST) that the upcoming game will start                |
-| .GameDate       | `string`  | date the game will happen                                   |
-| .StartTimeUTC   | `string`  | time (UTC) the game will start                              |
-| .GameStatus     | `integer` | integer, 1 = scheduled, 2 = in progress, 3 = finished       |
-| .HomeScore      | `int`     | score of the home team                                      |
-| .AwayScore      | `int`     | score of the away team                                      |
-| .HomeTeamWins   | `int`     | number of wins the home team currently has for the season   |
-| .HomeTeamLosses | `int`     | number of losses the home team currently has for the season |
-| .AwayTeamWins   | `int`     | number of wins the away team currently has for the season   |
-| .AwayTeamLosses | `int`     | number of losses the away team currently has for the season |
-| .Started        | `boolean` | if the game was started or not                              |
-| .HasStats       | `boolean` | if the game has game stats or not                           |
+| Name              | Type      | Description                                                 |
+| ----------------- | --------- | ----------------------------------------------------------- |
+| `.HomeTeam`       | `string`  | home team for the upcoming game                             |
+| `.AwayTeam`       | `string`  | away team for the upcoming game                             |
+| `.Time`           | `string`  | time (EST) that the upcoming game will start                |
+| `.GameDate`       | `string`  | date the game will happen                                   |
+| `.StartTimeUTC`   | `string`  | time (UTC) the game will start                              |
+| `.GameStatus`     | `integer` | integer, 1 = scheduled, 2 = in progress, 3 = finished       |
+| `.HomeScore`      | `int`     | score of the home team                                      |
+| `.AwayScore`      | `int`     | score of the away team                                      |
+| `.HomeTeamWins`   | `int`     | number of wins the home team currently has for the season   |
+| `.HomeTeamLosses` | `int`     | number of losses the home team currently has for the season |
+| `.AwayTeamWins`   | `int`     | number of wins the away team currently has for the season   |
+| `.AwayTeamLosses` | `int`     | number of losses the away team currently has for the season |
+| `.Started`        | `boolean` | if the game was started or not                              |
+| `.HasStats`       | `boolean` | if the game has game stats or not                           |
 
 [color-schemes]: https://teamcolorcodes.com/nba-team-color-codes/
 [templates]: /docs/configuration/templates

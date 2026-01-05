@@ -33,14 +33,14 @@ import Config from "@site/src/components/Config.js";
 | Name     |   Type   | Default | Description                                         |
 | -------- | :------: | :-----: | --------------------------------------------------- |
 | `url`    | `string` |   ``    | The HTTP URL you want to call, supports [templates] |
-| `method` | `string` |  `GET`  | The HTTP method to use                              |
+| `method` | `string` |  `GET`  | The HTTP method to use, `GET` or `POST`             |
 
 ## Template ([info][templates])
 
 :::note default template
 
 ```template
-{{ .Body }}
+ {{ .Body }}
 ```
 
 :::

@@ -12,4 +12,5 @@ type Strategy string
 const (
 	Folder  Strategy = "folder"
 	Session Strategy = "session"
+	Device  Strategy = "device"
 )

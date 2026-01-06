@@ -45,10 +45,32 @@ func hasScript(env runtime.Environment) (string, bool) {
 	return path, true
 }
 
-func setFile(name string, data []byte, perm os.FileMode) error {
-	f, err := os.ReadFile(name)
 
-	if err == nil && bytes.Equal(data, f) {
+func filesEqual(name string, data []byte, perm os.FileMode) bool {
+	fStat, err := os.Stat(name)
+	if err != nil {
+		return false
+	}
+
+	f, err := os.ReadFile(name)
+	if err != nil {
+		return false
+	}
+
+
+	if !bytes.Equal(f, data) {
+		return false
+	}
+
+	if fStat.Mode().Perm() != perm {
+		return false
+	}
+
+	return true
+}
+
+func setFile(name string, data []byte, perm os.FileMode) error {
+	if filesEqual(name, data, perm) {
 		return nil
 	}
 

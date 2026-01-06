@@ -47,10 +47,11 @@ func hasScript(env runtime.Environment) (string, bool) {
 
 func setFile(name string, data []byte, perm os.FileMode) error {
 	f, err := os.ReadFile(name)
-	if err != nil { return err }
 
-	if slices.Equal(data, f) {
-		return nil
+	if err == nil {
+		if slices.Equal(data, f) {
+			return nil
+		}
 	}
 
 	return os.WriteFile(name, data, perm)

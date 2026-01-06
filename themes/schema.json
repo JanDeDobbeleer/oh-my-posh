@@ -1358,24 +1358,6 @@
                       "bluetooth"
                     ],
                     "default": "wifi|ethernet"
-                  },
-                  "unit": {
-                    "type": "string",
-                    "title": "Transfer speed unit",
-                    "enum": [
-                      "none",
-                      "b",
-                      "bps",
-                      "K",
-                      "Kbps",
-                      "M",
-                      "Mbps",
-                      "G",
-                      "Gbps",
-                      "T",
-                      "Tbps"
-                    ],
-                    "default": "none"
                   }
                 },
                 "additionalProperties": false
@@ -1672,7 +1654,7 @@
                     "default": false
                   },
                   "threshold": {
-                    "type": "number",
+                    "type": "integer",
                     "title": "Threshold",
                     "description": "minimum duration (milliseconds) required to enable this segment",
                     "default": 500
@@ -3338,6 +3320,12 @@
                     "description": "Custom glyph/text for specific paths",
                     "default": {}
                   },
+                  "mapped_locations_enabled": {
+                    "type": "boolean",
+                    "title": "Enable the Mapped Locations feature",
+                    "description": "Replace known locations in the path with the replacements before applying the style.",
+                    "default": true
+                  },
                   "max_depth": {
                     "type": "integer",
                     "title": "Maximum Depth",
@@ -3352,12 +3340,6 @@
                     "title": "Maximum Width",
                     "description": "Maximum path width to display for powerlevel style",
                     "default": 0
-                  },
-                  "mapped_locations_enabled": {
-                    "type": "boolean",
-                    "title": "Enable the Mapped Locations feature",
-                    "description": "Replace known locations in the path with the replacements before applying the style.",
-                    "default": true
                   },
                   "mixed_threshold": {
                     "type": "integer",
@@ -3418,6 +3400,12 @@
                     "type": "boolean",
                     "title": "Display the Cygwin (Linux) style path",
                     "description": "Display the Cygwin (Linux) style path using cygpath -u $PWD.",
+                    "default": false
+                  },
+                  "display_root": {
+                    "type": "boolean",
+                    "title": "Display the root directory (/) on Unix systems",
+                    "description": "Display the root directory (/) on Unix systems.",
                     "default": false
                   },
                   "dir_length": {
@@ -3655,8 +3643,7 @@
                     "description": "Always show the segment",
                     "default": false
                   }
-                },
-                "additionalProperties": false
+                }
               }
             }
           }
@@ -4020,20 +4007,7 @@
           },
           "then": {
             "title": "Session Segment",
-            "description": "https://ohmyposh.dev/docs/segments/system/session",
-            "properties": {
-              "options": {
-                "properties": {
-                  "ssh_icon": {
-                    "type": "string",
-                    "title": "SSH Icon",
-                    "description": "Text/icon to display first when in an active SSH session",
-                    "default": "\uf817"
-                  }
-                },
-                "additionalProperties": false
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/system/session"
           }
         },
         {
@@ -4157,7 +4131,7 @@
                     "type": "string",
                     "title": "Status Template",
                     "description": "The template to use for the status segment",
-                    "default": "|"
+                    "default": "{{ .Code }}"
                   },
                   "status_separator": {
                     "type": "string",
@@ -4570,7 +4544,7 @@
                 "properties": {
                   "cache_duration": {
                     "$ref": "#/definitions/cache_duration",
-                    "default": "none"
+                    "default": "168h"
                   }
                 },
                 "additionalProperties": false

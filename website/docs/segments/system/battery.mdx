@@ -53,7 +53,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
-{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}
+ {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}
 ```
 
 :::
@@ -73,6 +73,4 @@ import Config from "@site/src/components/Config.js";
 | `.Error`         | `string`  | the error in case fetching the battery information failed                                                                                                                                                                             |
 | `.Icon`          | `string`  | the icon based on the battery state                                                                                                                                                                                                   |
 
-[colors]: /docs/configuration/colors
-[battery]: https://github.com/distatus/battery/blob/master/battery.go#L78
 [templates]: /docs/configuration/templates

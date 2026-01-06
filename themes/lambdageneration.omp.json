@@ -34,9 +34,9 @@
         {
           "background": "#292929",
           "foreground": "#fb7e14",
+          "trailing_diamond": "\ue0c6",
           "options": {
-            "style": "full",
-            "trailing_diamond": "\ue0c6"
+            "style": "full"
           },
           "style": "diamond",
           "template": " {{ .Path }} ",
@@ -59,8 +59,7 @@
           "options": {
             "charged_icon": "\uf240 ",
             "charging_icon": "\ueb2d ",
-            "discharging_icon": "\ueb2d ",
-            "text": "\ue0b0"
+            "discharging_icon": "\ueb2d "
           },
           "style": "powerline",
           "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }} \ue0b1",
@@ -73,8 +72,7 @@
           ],
           "foreground": "#fb7e14",
           "options": {
-            "always_enabled": true,
-            "display_exit_code": true
+            "always_enabled": true
           },
           "style": "diamond",
           "template": " {{ if gt .Code 0 }}\uf00d {{ reason .Code }}{{ else }}\uf00c{{ end }} ",
@@ -114,9 +112,6 @@
       "newline": true,
       "segments": [
         {
-          "options": {
-            "always_enabled": true
-          },
           "background": "#fb7e14",
           "foreground": "#292929",
           "style": "diamond",

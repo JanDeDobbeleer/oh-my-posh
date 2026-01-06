@@ -28,9 +28,6 @@
           "background": "#fbfbfb",
           "foreground": "#0077c2",
           "powerline_symbol": "\ue0b0",
-          "options": {
-            "display_host": true
-          },
           "style": "powerline",
           "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .HostName }}</> ",
           "type": "session"

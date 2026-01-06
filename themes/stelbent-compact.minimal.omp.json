@@ -10,9 +10,6 @@
         {
           "type": "session",
           "foreground": "#757575",
-          "options": {
-            "display_host": true
-          },
           "style": "plain",
           "template": "\u250c {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}@{{ .HostName }} "
         },
@@ -43,7 +40,7 @@
           "options": {
             "branch_ahead_icon": "\u2191",
             "branch_behind_icon": "\u2193",
-            "branch_gone": "\u2262",
+            "branch_gone_icon": "\u2262",
             "branch_icon": "\ue0a0 ",
             "branch_identical_icon": "\u2261",
             "cherry_pick_icon": "\u2713 ",

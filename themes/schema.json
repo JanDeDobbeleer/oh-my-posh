@@ -779,8 +779,7 @@
                       "func"
                     ]
                   }
-                },
-                "additionalProperties": false
+                }
               }
             }
           }

@@ -141,6 +141,11 @@ properties:
 
 ### Strategy
 
+#### Session
+
+The session strategy will cache the segment based on the current shell session. Use this for segments you want to display at all times
+but don't want to refresh too often.
+
 #### Folder
 
 The folder strategy will cache the segment based on the current working directory. It will cache a separate value for each
@@ -148,10 +153,11 @@ directory. This is useful when you for example work with language segments, or s
 segments understand repository context in this case, so the same segment cache value is used when in a git repository,
 regardless of the folder you're in.
 
-#### Session
+#### Device
 
-The session strategy will cache the segment based on the current shell session. Use this for segments you want to display at all times
-but don't want to refresh too often.
+The device strategy will cache the segment based on the current device. This means that the same cache value is used
+regardless of the folder or shell session. Use this for segments that are slow to generate but don't change often,
+like system information segments.
 
 ## Include / Exclude Folders
 

@@ -30,9 +30,6 @@
         {
           "background": "#61AFEF",
           "foreground": "#ffffff",
-          "options": {
-            "display_host": false
-          },
           "style": "diamond",
           "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}",
           "trailing_diamond": "\ue0b0",

@@ -179,9 +179,6 @@
           "background": "#FBD951",
           "foreground": "#0057b7",
           "powerline_symbol": "\ue0b0",
-          "options": {
-            "display_host": false
-          },
           "style": "powerline",
           "template": " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
           "type": "session"

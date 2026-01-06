@@ -63,7 +63,7 @@ type Segment struct {
 	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty" yaml:"exclude_folders,omitempty"`
 	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty" yaml:"include_folders,omitempty"`
 	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
-	Timeout                time.Duration  `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	Timeout                int            `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
 	Duration               time.Duration  `json:"-" toml:"-" yaml:"-"`
@@ -195,7 +195,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		select {
 		case <-done:
 			// Completed before timeout
-		case <-time.After(segment.Timeout * time.Millisecond):
+		case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
 			log.Debugf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
 			return
 		}

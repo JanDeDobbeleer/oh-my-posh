@@ -10,9 +10,6 @@
             "{{if .Root}}#ff3026{{else}}#cfcfc4{{end}}"
           ],
           "foreground": "#100e23",
-          "options": {
-            "display_host": false
-          },
           "style": "powerline",
           "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}",
           "type": "session"

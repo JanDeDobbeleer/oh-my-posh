@@ -8,9 +8,6 @@
           {
             "foreground": "#BBC4B9",
             "leading_diamond":"<#BFA8BF>~</> ",
-            "options": {
-              "display_host": true
-            },
             "style": "diamond",
             "template": "{{ .UserName }} ",
             "type": "session"

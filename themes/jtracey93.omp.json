@@ -8,9 +8,6 @@
           "background": "#EB9654",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "options": {
-            "display_host": false
-          },
           "style": "diamond",
           "template": "{{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
           "type": "session"
@@ -41,8 +38,7 @@
           "options": {
             "paused_icon": "",
             "playing_icon": "",
-            "stopped_icon": "",
-            "track_separator": " - "
+            "stopped_icon": ""
           },
           "style": "plain",
           "template": " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",

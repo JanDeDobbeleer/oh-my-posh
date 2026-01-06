@@ -22,8 +22,7 @@
             "opensuse": "\uf314",
             "raspbian": "\uf315",
             "ubuntu": "\uf31b ",
-            "windows": "\ue62a ",
-            "wsl": "\ue712"
+            "windows": "\ue62a "
           },
           "style": "diamond",
           "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
@@ -35,9 +34,7 @@
           "foreground": "#000000",
           "style": "diamond",
           "leading_diamond": "<transparent,#00c7fc>\ue0b0</>",
-          "options": {
-            "template": " \ue266 CPU: {{ round .PhysicalPercentUsed .Precision }}% | "
-          },
+          "template": " \ue266 CPU: {{ round .PhysicalPercentUsed .Precision }}% | ",
           "type": "sysinfo"
         },
         {
@@ -131,9 +128,9 @@
             "folder_icon": "\uf07b ",
             "folder_separator_icon": " \uf061 ",
             "home_icon": "\uf46d",
-            "style": "agnoster_full",
-            "template": " \ue5ff {{ .Path }} "
+            "style": "agnoster_full"
           },
+          "template": " \ue5ff {{ .Path }} ",
           "style": "diamond",
           "trailing_diamond": "",
           "type": "path"
@@ -149,11 +146,10 @@
           "foreground": "#00BCF9",
           "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
           "options": {
-            "always_enabled": true,
-            "template": "\u2570\u2500\ue285  "
+            "always_enabled": true
           },
           "style": "plain",
-          "template": " ",
+          "template": "\u2570\u2500\ue285  ",
           "type": "status"
         }
       ],

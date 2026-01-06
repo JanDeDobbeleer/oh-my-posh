@@ -33,7 +33,7 @@ import Config from "@site/src/components/Config.js";
 | Name             |   Type    | Default  | Description                                                     |
 | ---------------- | :-------: | :------: | --------------------------------------------------------------- |
 | `always_enabled` | `boolean` | `false`  | always show the duration                                        |
-| `threshold`      | `number`  |  `500`   | minimum duration (milliseconds) required to enable this segment |
+| `threshold`      |   `int`   |  `500`   | minimum duration (milliseconds) required to enable this segment |
 | `style`          |  `enum`   | `austin` | one of the available format options                             |
 
 ### Style
@@ -57,7 +57,7 @@ Style specifies the format in which the time will be displayed. The table below 
 :::note default template
 
 ```template
-{{ .FormattedMs }}
+ {{ .FormattedMs }}
 ```
 
 :::

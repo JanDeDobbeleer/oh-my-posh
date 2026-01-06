@@ -74,6 +74,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"mageia":              "\uF310",
 		"manjaro":             "\uF312",
 		"mint":                "\U000f08ed",
+		"neon":                "\uf331",
 		"nixos":               "\uF313",
 		"opensuse":            "\uF314",
 		"opensuse-tumbleweed": "\uF314",
@@ -83,7 +84,6 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"sabayon":             "\uF317",
 		"slackware":           "\uF319",
 		"ubuntu":              "\uF31b",
-		"neon":                "\uf331",
 	}
 
 	if icon, ok := iconMap[distro]; ok {

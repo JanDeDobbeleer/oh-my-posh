@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -49,11 +50,29 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 		return "", err
 	}
 
-	err = os.WriteFile(path, []byte(script), 0o644)
-	if err != nil {
+	deadline := time.Now().Add(10 * time.Second)
+
+	var firstErr error
+
+	for time.Now().Before(deadline) {
+		err = os.WriteFile(path, []byte(script), 0o644)
+		if err == nil {
+			firstErr = nil
+			break
+		}
+
 		log.Error(err)
-		return "", err
+		if firstErr == nil {
+			firstErr = err
+		}
+
+		time.Sleep(250 * time.Millisecond)
 	}
+
+	if firstErr != nil {
+		return "", firstErr
+	}
+
 
 	log.Debug("init script written successfully")
 	cache.Set(cache.Device, cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)

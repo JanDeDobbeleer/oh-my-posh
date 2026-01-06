@@ -57,12 +57,11 @@ func filesEqual(name string, data []byte, perm os.FileMode) bool {
 		return false
 	}
 
-
-	if !bytes.Equal(f, data) {
+	if fStat.Mode().Perm() != perm {
 		return false
 	}
 
-	if fStat.Mode().Perm() != perm {
+	if !bytes.Equal(f, data) {
 		return false
 	}
 

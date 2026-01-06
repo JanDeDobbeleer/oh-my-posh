@@ -1,11 +1,11 @@
 package shell
 
 import (
+	"bytes"
 	"fmt"
 	"hash/fnv"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 	"time"
 
@@ -48,7 +48,7 @@ func hasScript(env runtime.Environment) (string, bool) {
 func setFile(name string, data []byte, perm os.FileMode) error {
 	f, err := os.ReadFile(name)
 
-	if err == nil && slices.Equal(data, f) {
+	if err == nil && bytes.Equal(data, f) {
 		return nil
 	}
 

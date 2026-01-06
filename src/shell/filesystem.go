@@ -1,11 +1,13 @@
 package shell
 
 import (
+	"bytes"
 	"fmt"
 	"hash/fnv"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -43,13 +45,66 @@ func hasScript(env runtime.Environment) (string, bool) {
 	return path, true
 }
 
+func filesEqual(name string, data []byte) bool {
+	existing, err := os.ReadFile(name)
+	return err == nil && bytes.Equal(existing, data)
+}
+
+func writeFileAtomic(path string, data []byte, perm os.FileMode) error {
+	if filesEqual(path, data) {
+		return nil
+	}
+
+	// the temp file must be in the same directory as the target,
+	// os.Rename is only atomic within the same volume
+	tmp, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".*.tmp")
+	if err != nil {
+		return err
+	}
+
+	defer os.Remove(tmp.Name())
+
+	if _, err = tmp.Write(data); err != nil {
+		tmp.Close()
+		return err
+	}
+
+	// CreateTemp creates the file with 0600
+	if err = tmp.Chmod(perm); err != nil {
+		tmp.Close()
+		return err
+	}
+
+	if err = tmp.Close(); err != nil {
+		return err
+	}
+
+	return os.Rename(tmp.Name(), path)
+}
+
 func writeScript(env runtime.Environment, script string) (string, error) {
 	path, err := scriptPath(env)
 	if err != nil {
 		return "", err
 	}
 
-	err = os.WriteFile(path, []byte(script), 0o644)
+	data := []byte(script)
+
+	// another process can hold the script (or its target) open on Windows,
+	// making the rename fail with a sharing violation; retry with backoff
+	// until it lets go — all other errors are persistent, fail fast
+	const attempts = 8
+	wait := 50 * time.Millisecond
+
+	for attempt := 1; ; attempt++ {
+		if err = writeFileAtomic(path, data, 0o644); !canRetryWrite(err) || attempt == attempts {
+			break
+		}
+
+		time.Sleep(wait)
+		wait = min(wait*2, time.Second)
+	}
+
 	if err != nil {
 		log.Error(err)
 		return "", err

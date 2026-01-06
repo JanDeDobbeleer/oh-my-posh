@@ -5,6 +5,7 @@ import (
 	"hash/fnv"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -44,6 +45,17 @@ func hasScript(env runtime.Environment) (string, bool) {
 	return path, true
 }
 
+func setFile(name string, data []byte, perm os.FileMode) error {
+	f, err := os.ReadFile(name)
+	if err != nil { return err }
+
+	if slices.Equal(data, f) {
+		return nil
+	}
+
+	return os.WriteFile(name, data, perm)
+}
+
 func writeScript(env runtime.Environment, script string) (string, error) {
 	path, err := scriptPath(env)
 	if err != nil {
@@ -51,11 +63,12 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 	}
 
 	deadline := time.Now().Add(10 * time.Second)
+	waitTime := 50 * time.Millisecond
 
 	var firstErr error
 
 	for time.Now().Before(deadline) {
-		err = os.WriteFile(path, []byte(script), 0o644)
+		err = setFile(path, []byte(script), 0o644)
 		if err == nil {
 			firstErr = nil
 			break
@@ -66,7 +79,13 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 			firstErr = err
 		}
 
-		time.Sleep(250 * time.Millisecond)
+		time.Sleep(waitTime)
+
+		waitTime *= 2
+
+		if waitTime > time.Second {
+			waitTime = time.Second
+		}
 	}
 
 	if firstErr != nil {

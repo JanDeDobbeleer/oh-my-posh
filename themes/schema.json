@@ -591,7 +591,8 @@
               "default": "folder",
               "enum": [
                 "folder",
-                "session"
+                "session",
+                "device"
               ]
             }
           }

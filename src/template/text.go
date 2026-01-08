@@ -257,8 +257,7 @@ func (f *fields) hasField(field string) bool {
 	field = strings.TrimPrefix(field, ".")
 
 	// get the first part of the field
-	splitted := strings.Split(field, ".")
-	field = splitted[0]
+	field, _, _ = strings.Cut(field, ".")
 
 	f.RLock()
 	defer f.RUnlock()

@@ -51,18 +51,15 @@ func (f *Fossil) Enabled() bool {
 	lines := strings.SplitSeq(output, "\n")
 
 	for line := range lines {
-		if line == "" {
+		key, value, found := strings.Cut(line, " ")
+		if !found {
 			continue
 		}
-		context := strings.SplitN(line, " ", 2)
-		if len(context) < 2 {
-			continue
-		}
-		switch context[0] {
+		switch key {
 		case "tags:":
-			f.Branch = strings.TrimSpace(context[1])
+			f.Branch = strings.TrimSpace(value)
 		default:
-			f.Status.add(context[0])
+			f.Status.add(key)
 		}
 	}
 

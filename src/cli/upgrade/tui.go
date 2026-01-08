@@ -158,7 +158,8 @@ func IsMajorUpgrade(current, latest string) bool {
 	}
 
 	getMajorNumber := func(version string) string {
-		return strings.Split(version, ".")[0]
+		major, _, _ := strings.Cut(version, ".")
+		return major
 	}
 
 	return getMajorNumber(current) != getMajorNumber(latest)

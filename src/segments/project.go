@@ -329,12 +329,12 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 	lines := strings.SplitSeq(content, "\n")
 
 	for line := range lines {
-		splitted := strings.SplitN(line, "=", 2)
-		if len(splitted) < 2 {
+		key, value, found := strings.Cut(line, "=")
+		if !found {
 			continue
 		}
-		key := strings.TrimSpace(splitted[0])
-		value := strings.TrimSpace(splitted[1])
+		key = strings.TrimSpace(key)
+		value = strings.TrimSpace(value)
 		value = strings.Trim(value, "'\"")
 
 		switch key {

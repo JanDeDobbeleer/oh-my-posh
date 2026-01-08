@@ -159,8 +159,8 @@ func (p *Python) pyenvVersion() (string, error) {
 		return "", err
 	}
 
-	versionString := strings.Split(cmdOutput, ":")[0]
-	if versionString == "" {
+	versionString, _, found := strings.Cut(cmdOutput, ":")
+	if !found || versionString == "" {
 		return "", errors.New("no pyenv version-name found")
 	}
 
@@ -206,14 +206,14 @@ func (p *Python) pyvenvCfgPrompt() string {
 
 	pyvenvCfg := p.env.FileContent(filepath.Join(pyvenvDir, "pyvenv.cfg"))
 	for line := range strings.SplitSeq(pyvenvCfg, "\n") {
-		lineSplit := strings.SplitN(line, "=", 2)
-		if len(lineSplit) != 2 {
+		key, value, found := strings.Cut(line, "=")
+		if !found {
 			continue
 		}
 
-		key := strings.TrimSpace(lineSplit[0])
+		key = strings.TrimSpace(key)
 		if key == "prompt" {
-			value := strings.TrimSpace(lineSplit[1])
+			value := strings.TrimSpace(value)
 			return value
 		}
 	}

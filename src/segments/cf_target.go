@@ -56,12 +56,11 @@ func (c *CfTarget) setCFTargetStatus() bool {
 
 	lines := strings.SplitSeq(output, "\n")
 	for line := range lines {
-		splitted := strings.SplitN(line, ":", 2)
-		if len(splitted) < 2 {
+		key, value, found := strings.Cut(line, ":")
+		if !found {
 			continue
 		}
-		key := splitted[0]
-		value := strings.TrimSpace(splitted[1])
+		value = strings.TrimSpace(value)
 		switch key {
 		case "API endpoint":
 			c.URL = value

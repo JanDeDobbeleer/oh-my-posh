@@ -60,14 +60,14 @@ func (s *Spotify) enabledWsl() bool {
 		return false
 	}
 
-	infos := strings.SplitN(title, " - ", 2)
-	if len(infos) < 2 {
+	artist, track, found := strings.Cut(title, " - ")
+	if !found {
 		s.Status = stopped
 		return false
 	}
 
-	s.Artist = strings.TrimSpace(infos[0])
-	s.Track = strings.TrimSpace(infos[1])
+	s.Artist = strings.TrimSpace(artist)
+	s.Track = strings.TrimSpace(track)
 
 	if s.Artist == "" || s.Track == "" {
 		s.Status = stopped

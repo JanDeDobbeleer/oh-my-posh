@@ -206,6 +206,7 @@ export default {
             "segments/web/ipify",
             "segments/web/nba",
             "segments/web/owm",
+            "segments/web/todoist",
             "segments/web/wakatime",
           ]
         },

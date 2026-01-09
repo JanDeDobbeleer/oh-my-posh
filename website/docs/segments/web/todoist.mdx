@@ -1,0 +1,59 @@
+---
+id: todoist
+title: Todoist
+sidebar_label: Todoist
+---
+
+## What
+
+Displays your daily tasks from [Todoist][todoist].
+
+:::caution
+The segment needs an [API Key][guide] from your Todoist profile for this to work.
+:::
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "todoist",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#FF0000",
+    template: "{{.TaskCount}}",
+    options: {
+      api_key: "<YOUR_API_KEY>",
+      http_timeout: 500,
+    },
+  }}
+/>
+
+## Options
+
+| Name           | Type     | Default | Description                                                                                                                                    |
+| -------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api_key`      | `string` | `.`     | Your API Key from [Todoist][todoist]                                                                                                           |
+| `http_timeout` | `int`    | `20`    | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. If no segment is shown, try increasing this timeout. |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ .TaskCount }}
+```
+
+:::
+
+### Properties
+
+| Name         | Type  | Description                   |
+| ------------ | ----- | ----------------------------- |
+| `.TaskCount` | `int` | the number of tasks due today |
+
+[todoist]: https://www.todoist.com/
+[templates]: /docs/configuration/templates
+[guide]: https://www.todoist.com/help/articles/find-your-api-token-Jpzx9IIlB

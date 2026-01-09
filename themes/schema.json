@@ -457,6 +457,7 @@
             "terraform",
             "text",
             "time",
+            "todoist",
             "ui5tooling",
             "umbraco",
             "unity",
@@ -4455,6 +4456,34 @@
                   }
                 },
                 "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type":{
+                "const": "todoist"
+              }
+            }
+          },
+          "then": {
+            "title": "Todoist Segment",
+            "description": "https://ohmyposh.dev/docs/segments/system/todoist",
+            "properties": {
+              "options": {
+                "properties": {
+                  "api_key": {
+                    "type": "string",
+                    "title": "API Key",
+                    "description": "API Key (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  }
+                }
               }
             }
           }

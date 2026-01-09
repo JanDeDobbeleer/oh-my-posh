@@ -130,6 +130,7 @@ func init() {
 	gob.Register(&segments.Terraform{})
 	gob.Register(&segments.Text{})
 	gob.Register(&segments.Time{})
+	gob.Register(&segments.Todoist{})
 	gob.Register(&segments.UI5Tooling{})
 	gob.Register(&segments.Umbraco{})
 	gob.Register(&segments.Unity{})
@@ -342,6 +343,8 @@ const (
 	TEXT SegmentType = "text"
 	// TIME writes the current timestamp
 	TIME SegmentType = "time"
+	// TODOIST segment
+	TODOIST SegmentType = "todoist"
 	// UI5 Tooling segment
 	UI5TOOLING SegmentType = "ui5tooling"
 	// UMBRACO writes the Umbraco version if Umbraco is present
@@ -467,6 +470,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TERRAFORM:       func() SegmentWriter { return &segments.Terraform{} },
 	TEXT:            func() SegmentWriter { return &segments.Text{} },
 	TIME:            func() SegmentWriter { return &segments.Time{} },
+	TODOIST:         func() SegmentWriter { return &segments.Todoist{} },
 	UI5TOOLING:      func() SegmentWriter { return &segments.UI5Tooling{} },
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },

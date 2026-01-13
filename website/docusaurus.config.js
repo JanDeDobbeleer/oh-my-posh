@@ -53,11 +53,6 @@ export default {
           position: 'left',
         },
         {
-          href: 'https://polar.sh/oh-my-posh',
-          label: 'Subscribe',
-          position: 'left',
-        },
-        {
           href: 'https://swag.ohmyposh.dev',
           label: 'Swag',
           position: 'left',
@@ -123,8 +118,8 @@ export default {
               href: 'https://github.com/sponsors/JanDeDobbeleer',
             },
             {
-              label: 'Subscribe',
-              href: 'https://polar.sh/oh-my-posh',
+              label: 'Product spotlight',
+              href: 'https://buy.polar.sh/polar_cl_qnmZxboq1IDUJo03mk2Jue6ktqZrCXElnzH2s2xbV2R',
             },
             {
               label: 'Docusaurus',

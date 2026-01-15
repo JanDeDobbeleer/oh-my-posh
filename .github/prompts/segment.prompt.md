@@ -2,7 +2,7 @@
 description: 'Generate a new Oh My Posh segment (code, registration, docs, schema, sidebar)'
 agent: 'agent'
 model: 'Claude Sonnet 4'
-tools: ['web/githubRepo', 'search/codebase', 'edit/createFile', 'edit/editFiles', 'read/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/runTask', 'read/getTaskOutput', 'execute/runTests', 'search', 'execute/testFailure', 'search/usages']
+tools: ['execute/testFailure', 'execute/getTerminalOutput', 'execute/runTask', 'execute/createAndRunTask', 'execute/runInTerminal', 'execute/runTests', 'read/problems', 'read/readFile', 'read/terminalSelection', 'read/terminalLastCommand', 'read/getTaskOutput', 'edit/createFile', 'edit/editFiles', 'search', 'web/githubRepo', 'agent']
 ---
 
 # New Segment Prompt
@@ -32,3 +32,10 @@ Execute
   - `.instructions/segment.md`
   - Pass the collected inputs (`goTypeName`, `id/slug`, `category`, `title`,
     `description`, `properties`, `template`).
+
+Documentation
+
+- Use the `runSubagent` tool with `agentName: "Segment Documentation"` to delegate
+  documentation creation and updates.
+- Pass the segment details (name, category, title, description, properties, template)
+  in the prompt parameter for the subagent to generate or update the MDX documentation file.

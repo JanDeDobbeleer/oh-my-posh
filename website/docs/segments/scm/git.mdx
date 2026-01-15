@@ -116,36 +116,41 @@ You can set the following options to `true` to enable fetching additional inform
 
 ### Properties
 
-| Name             | Type      | Description                                                                                                                      |
-| ---------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `.RepoName`      | `string`  | the repo folder name                                                                                                             |
-| `.Working`       | `Status`  | changes in the worktree (see below)                                                                                              |
-| `.Staging`       | `Status`  | staged changes in the work tree (see below)                                                                                      |
-| `.HEAD`          | `string`  | the current HEAD context (branch/rebase/merge/...)                                                                               |
-| `.Ref`           | `string`  | the current HEAD reference (branch/tag/...)                                                                                      |
-| `.Behind`        | `int`     | commits behind of upstream                                                                                                       |
-| `.Ahead`         | `int`     | commits ahead of upstream                                                                                                        |
-| `.PushBehind`    | `int`     | commits behind of push remote                                                                                                    |
-| `.PushAhead`     | `int`     | commits ahead of push remote                                                                                                     |
-| `.BranchStatus`  | `string`  | the current branch context (ahead/behind string representation)                                                                  |
-| `.Upstream`      | `string`  | the upstream name (remote)                                                                                                       |
-| `.UpstreamGone`  | `boolean` | whether the upstream is gone (no remote)                                                                                         |
-| `.UpstreamIcon`  | `string`  | the upst ream icon (based on the icons above)                                                                                    |
-| `.UpstreamURL`   | `string`  | the upstream URL for use in [hyperlinks][hyperlinks] in templates: `{{ url .UpstreamIcon .UpstreamURL }}`                        |
-| `.StashCount`    | `int`     | the stash count                                                                                                                  |
-| `.WorktreeCount` | `int`     | the worktree count                                                                                                               |
-| `.IsWorkTree`    | `boolean` | if in a worktree repo or not                                                                                                     |
-| `.IsBare`        | `boolean` | if in a bare repo or not, only set when `fetch_bare_info` is set to `true`                                                       |
-| `.Dir`           | `string`  | the repository's root directory                                                                                                  |
-| `.RelativeDir`   | `string`  | the current directory relative to the root directory                                                                             |
-| `.Kraken`        | `string`  | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
-| `.Commit`        | `Commit`  | HEAD commit information (see below)                                                                                              |
-| `.Detached`      | `boolean` | true when the head is detached                                                                                                   |
-| `.Merge`         | `boolean` | true when in a merge                                                                                                             |
-| `.Rebase`        | `Rebase`  | contains the relevant information when in a rebase                                                                               |
-| `.CherryPick`    | `boolean` | true when in a cherry pick                                                                                                       |
-| `.Revert`        | `boolean` | true when in a revert                                                                                                            |
-| `.LatestTag`     | `string`  | the latest tag name                                                                                                              |
+| Name              | Type                | Description                                                                                                                      |
+| ----------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `.RepoName`       | `string`            | the repo folder name                                                                                                             |
+| `.Working`        | `Status`            | changes in the worktree (see below)                                                                                              |
+| `.Staging`        | `Status`            | staged changes in the work tree (see below)                                                                                      |
+| `.HEAD`           | `string`            | the current HEAD context (branch/rebase/merge/...)                                                                               |
+| `.Ref`            | `string`            | the current HEAD reference (branch/tag/...)                                                                                      |
+| `.Behind`         | `int`               | commits behind of upstream                                                                                                       |
+| `.Ahead`          | `int`               | commits ahead of upstream                                                                                                        |
+| `.PushBehind`     | `int`               | commits behind of push remote                                                                                                    |
+| `.PushAhead`      | `int`               | commits ahead of push remote                                                                                                     |
+| `.BranchStatus`   | `string`            | the current branch context (ahead/behind string representation)                                                                  |
+| `.Upstream`       | `string`            | the upstream name (remote)                                                                                                       |
+| `.UpstreamGone`   | `boolean`           | whether the upstream is gone (no remote)                                                                                         |
+| `.UpstreamIcon`   | `string`            | the upstream icon (based on the icons above)                                                                                     |
+| `.UpstreamURL`    | `string`            | the upstream URL for use in [hyperlinks][hyperlinks] in templates: `{{ url .UpstreamIcon .UpstreamURL }}`                        |
+| `.RawUpstreamURL` | `string`            | the raw upstream URL (not cleaned up for display)                                                                                |
+| `.Hash`           | `string`            | the full commit hash                                                                                                             |
+| `.ShortHash`      | `string`            | the short commit hash (7 characters)                                                                                             |
+| `.StashCount`     | `int`               | the stash count                                                                                                                  |
+| `.WorktreeCount`  | `int`               | the worktree count                                                                                                               |
+| `.IsWorkTree`     | `boolean`           | if in a worktree repo or not                                                                                                     |
+| `.IsBare`         | `boolean`           | if in a bare repo or not, only set when `fetch_bare_info` is set to `true`                                                       |
+| `.Dir`            | `string`            | the repository's root directory                                                                                                  |
+| `.RelativeDir`    | `string`            | the current directory relative to the root directory                                                                             |
+| `.Kraken`         | `string`            | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
+| `.Commit`         | `Commit`            | HEAD commit information (see below)                                                                                              |
+| `.Detached`       | `boolean`           | true when the head is detached                                                                                                   |
+| `.Merge`          | `boolean`           | true when in a merge                                                                                                             |
+| `.Rebase`         | `Rebase`            | contains the relevant information when in a rebase                                                                               |
+| `.CherryPick`     | `boolean`           | true when in a cherry pick                                                                                                       |
+| `.Revert`         | `boolean`           | true when in a revert                                                                                                            |
+| `.User`           | `User`              | the current configured user (requires `fetch_user` to be enabled)                                                                |
+| `.Remotes`        | `map[string]string` | a map of remote names to their URLs                                                                                              |
+| `.LatestTag`      | `string`            | the latest tag name                                                                                                              |
 
 #### Status
 

@@ -151,6 +151,20 @@ Python 3.11        Python.Python.3.11          3.11.0    3.11.5    winget
 				Available: "3.11.5",
 			},
 		},
+		{
+			Case: "Output with extra characters before header line",
+			Output: `<THESE ARE SOME EXTRA CHARACTERS>Name               Id                          Version   Available Source
+-----------------------------------------------------------------------------------
+Python 3.11        Python.Python.3.11          3.11.0    3.11.5    winget
+2 upgrades available.`,
+			ExpectedCount: 1,
+			ExpectedFirst: WinGetPackage{
+				Name:      "Python 3.11",
+				ID:        "Python.Python.3.11",
+				Current:   "3.11.0",
+				Available: "3.11.5",
+			},
+		},
 	}
 
 	for _, tc := range cases {

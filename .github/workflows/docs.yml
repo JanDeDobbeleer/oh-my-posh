@@ -25,7 +25,7 @@ jobs:
       - name: Install Go 🗳
         uses: ./.github/workflows/composite/bootstrap-go
       - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: 20.9.0
         # Create Kind cluster to have a Kubernetes context for cloud-native-azure theme

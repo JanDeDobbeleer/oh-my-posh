@@ -74,10 +74,11 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 	}
 
 	// Determine column positions from header (calculated once)
-	idIndex := strings.Index(headerLine, "Id")
-	versionIndex := strings.Index(headerLine, "Version")
-	availableIndex := strings.Index(headerLine, "Available")
-	sourceIndex := strings.Index(headerLine, "Source")
+	nameIndex := strings.Index(headerLine, "Name")
+	idIndex := strings.Index(headerLine, "Id") - nameIndex
+	versionIndex := strings.Index(headerLine, "Version") - nameIndex
+	availableIndex := strings.Index(headerLine, "Available") - nameIndex
+	sourceIndex := strings.Index(headerLine, "Source") - nameIndex
 
 	// If we can't find column positions, return empty
 	if idIndex < 0 || versionIndex < 0 || availableIndex < 0 {

@@ -2,6 +2,8 @@ package log
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -13,6 +15,9 @@ var (
 	raw     bool
 
 	log strings.Builder
+
+	// fileWriter is an optional file sink for daemon logging.
+	fileWriter io.Writer
 )
 
 func Enable(plain bool) {
@@ -20,6 +25,30 @@ func Enable(plain bool) {
 	raw = plain
 
 	Debugf("logging enabled, raw mode: %t", plain)
+}
+
+// EnableFileLogging enables logging to the given file path.
+// Used by the daemon in detached mode where stderr is unavailable.
+func EnableFileLogging(path string) error {
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return err
+	}
+	enabled = true
+	raw = true
+	fileWriter = f
+	return nil
+}
+
+// DisableFileLogging stops file logging and closes the file.
+func DisableFileLogging() {
+	if fileWriter != nil {
+		if closer, ok := fileWriter.(io.Closer); ok {
+			_ = closer.Close()
+		}
+		fileWriter = nil
+	}
+	enabled = false
 }
 
 func Trace(start time.Time, args ...string) {

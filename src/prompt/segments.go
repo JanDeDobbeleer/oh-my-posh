@@ -6,7 +6,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 type result struct {
@@ -36,7 +35,7 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 	e.activeSegment = nil
 	e.previousActiveSegment = nil
 
-	return terminal.String()
+	return e.Writer.String()
 }
 
 // writeSegmentsConcurrently uses individual goroutines for each segment
@@ -137,7 +136,7 @@ func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) {
 		segment.Background = colors.Background
 	}
 
-	if terminal.Len() == 0 && len(block.LeadingDiamond) > 0 {
+	if e.Writer.Len() == 0 && len(block.LeadingDiamond) > 0 {
 		segment.LeadingDiamond = block.LeadingDiamond
 	}
 

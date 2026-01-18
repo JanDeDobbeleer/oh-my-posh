@@ -22,7 +22,11 @@ type context struct {
 func (c *context) init(t *Text) {
 	c.Data = t.context
 	c.Getenv = env.Getenv
-	c.Template = *Cache
+	if t.cache != nil {
+		c.Template = *t.cache
+	} else {
+		c.Template = *Cache
+	}
 }
 
 var (

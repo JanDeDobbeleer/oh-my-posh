@@ -15,6 +15,11 @@ If you have no idea which shell you're currently using, Oh My Posh has a utility
 oh-my-posh get shell
 ```
 
+:::tip Daemon Mode
+For faster prompt rendering, you can enable [daemon mode][daemon] by adding the `--daemon` flag to your init command.
+This runs Oh My Posh as a background process that caches configuration and segment data. Supported for bash, zsh, fish, and PowerShell.
+:::
+
 <Tabs
   queryString="shell"
   defaultValue="powershell"
@@ -241,3 +246,4 @@ exec zsh
 [iterm2]: https://iterm2.com/
 [sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.3#methods-of-signing-scripts
 [transient prompt]: /docs/configuration/transient
+[daemon]: /docs/advanced/daemon

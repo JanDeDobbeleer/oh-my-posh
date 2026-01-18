@@ -40,6 +40,10 @@ linters:
       line-length: 180
   exclusions:
     generated: lax
+    rules:
+      - linters:
+          - govet
+        path: '\.pb\.go$'
     presets:
       - comments
       - common-false-positives
@@ -49,6 +53,7 @@ linters:
       - third_party$
       - builtin$
       - examples$
+      - '.*\.pb\.go$'
 formatters:
   enable:
     - gofmt

@@ -23,6 +23,7 @@ $global:_ompFTCSMarks = $false
 $global:_ompPoshGit = $false
 $global:_ompAzure = $false
 $global:_ompExecutable = ::OMP::
+$global:_ompConfig = ::CONFIG::
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.
@@ -41,6 +42,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:TransientPrompt = $false
     $script:TooltipCommand = ''
     $script:JobCount = 0
+    $script:SecondaryPromptSet = $false
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL = "pwsh"
@@ -261,6 +263,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         Set-PoshContext $script:ErrorCode
 
+        if (-not $script:SecondaryPromptSet) {
+            $sec = (Invoke-Utf8Posh @("print", "secondary", "--shell=$script:ShellName")) -join "`n"
+            Set-PSReadLineOption -ContinuationPrompt $sec
+            $script:SecondaryPromptSet = $true
+        }
+
         # set the cursor positions, they are zero based so align with other platforms
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
@@ -291,9 +299,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     $Function:prompt = $promptFunction
-
-    # set secondary prompt
-    Set-PSReadLineOption -ContinuationPrompt ((Invoke-Utf8Posh @("print", "secondary", "--shell=$script:ShellName")) -join "`n")
 
     ### Exported Functions ###
 
@@ -438,11 +443,175 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
+    # Daemon mode variables
+    $script:DaemonMode = $false
+    $script:DaemonCurrentPrompt = ''
+    $script:DaemonCurrentRPrompt = ''
+    $script:DaemonCurrentTransient = ''
+    $script:DaemonProcess = $null
+    $script:DaemonEventJob = $null
+
+    function Enable-PoshDaemon {
+        if ($script:ConstrainedLanguageMode) {
+            return
+        }
+
+        # Start daemon if not running
+        Start-Process -FilePath $global:_ompExecutable -ArgumentList "daemon", "start", "--config", "`"$global:_ompConfig`"" -WindowStyle Hidden -ErrorAction SilentlyContinue
+
+        $script:DaemonMode = $true
+
+        # Replace prompt function with daemon version
+        $Function:prompt = $script:DaemonPromptFunction
+    }
+
+    function Start-DaemonRender {
+        # Cleanup any previous render process
+        if ($script:DaemonProcess -and !$script:DaemonProcess.HasExited) {
+            $script:DaemonProcess.Kill()
+        }
+        if ($script:DaemonEventJob) {
+            Unregister-Event -SourceIdentifier "OmpDaemonOutput" -ErrorAction SilentlyContinue
+            $script:DaemonEventJob = $null
+        }
+
+        $nonFSWD = Get-NonFSWD
+        $stackCount = Get-PoshStackCount
+        $terminalWidth = Get-TerminalWidth
+
+        $script:DaemonProcess = New-Object System.Diagnostics.Process
+        $startInfo = $script:DaemonProcess.StartInfo
+        $startInfo.FileName = $global:_ompExecutable
+        $startInfo.Arguments = "render --config=`"$global:_ompConfig`" --shell=$script:ShellName --shell-version=$script:PSVersion --pid=$PID --status=$script:ErrorCode --no-status=$script:NoExitCode --execution-time=$script:ExecutionTime --pswd=`"$nonFSWD`" --stack-count=$stackCount --terminal-width=$terminalWidth --job-count=$script:JobCount"
+        $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+        $startInfo.RedirectStandardOutput = $true
+        $startInfo.RedirectStandardError = $true
+        $startInfo.UseShellExecute = $false
+        $startInfo.CreateNoWindow = $true
+
+        $script:DaemonProcess.EnableRaisingEvents = $true
+
+        # Accumulate lines until we see a status line
+        $script:DaemonOutputBuffer = @()
+
+        # Register event for async output handling
+        $script:DaemonEventJob = Register-ObjectEvent -InputObject $script:DaemonProcess -EventName OutputDataReceived -SourceIdentifier "OmpDaemonOutput" -Action {
+            $line = $Event.SourceEventArgs.Data
+            if ($null -eq $line) {
+                return
+            }
+
+            # Parse line format: type:text
+            $colonIndex = $line.IndexOf(':')
+            if ($colonIndex -lt 0) {
+                return
+            }
+
+            $type = $line.Substring(0, $colonIndex)
+            $text = $line.Substring($colonIndex + 1)
+
+            switch ($type) {
+                "primary" {
+                    $script:DaemonCurrentPrompt = $text
+                }
+                "right" {
+                    $script:DaemonCurrentRPrompt = $text
+                }
+                "transient" {
+                    $script:DaemonCurrentTransient = $text
+                }
+                "secondary" {
+                    Set-PSReadLineOption -ContinuationPrompt $text
+                }
+                "status" {
+                    # Batch complete - trigger repaint
+                    try {
+                        $previousOutputEncoding = [Console]::OutputEncoding
+                        [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                        [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                    }
+                    catch {}
+                    finally {
+                        [Console]::OutputEncoding = $previousOutputEncoding
+                    }
+                }
+            }
+        }
+
+        [void]$script:DaemonProcess.Start()
+        $script:DaemonProcess.BeginOutputReadLine()
+    }
+
+    $script:DaemonPromptFunction = {
+        # Store original status (same as regular prompt)
+        if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
+            $script:OriginalLastExecutionStatus = $global:NVS_ORIGINAL_LASTEXECUTIONSTATUS
+        }
+        else {
+            $script:OriginalLastExecutionStatus = $?
+        }
+        $script:OriginalLastExitCode = $global:LASTEXITCODE
+
+        $script:TooltipCommand = ''
+
+        Set-PoshPromptType
+
+        if ($script:PromptType -ne 'transient') {
+            Update-PoshErrorCode
+        }
+
+        Set-PoshContext $script:ErrorCode
+
+        $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
+        $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
+
+        # For debug prompts, use regular rendering
+        if ($script:PromptType -eq 'debug') {
+            $output = Get-PoshPrompt $script:PromptType
+            Set-PSReadLineOption -ExtraPromptLineCount (($output | Measure-Object -Line).Lines - 1)
+            $output = $output -join "`n"
+
+            $global:LASTEXITCODE = $script:OriginalLastExitCode
+            return $output
+        }
+
+        # For transient prompts, use cached daemon value
+        if ($script:PromptType -eq 'transient') {
+             $output = $script:DaemonCurrentTransient
+             Set-PSReadLineOption -ExtraPromptLineCount (($output | Measure-Object -Line).Lines - 1)
+             $output = $output -join "`n"
+
+             $command = ''
+             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
+             if ($command) {
+                 $output += "  `b`b"
+             }
+
+             $global:LASTEXITCODE = $script:OriginalLastExitCode
+             return $output
+        }
+
+        # Start daemon render in background
+        Start-DaemonRender
+
+        # Return cached prompt immediately
+        $output = $script:DaemonCurrentPrompt
+        if ($output) {
+            Set-PSReadLineOption -ExtraPromptLineCount (($output | Measure-Object -Line).Lines - 1)
+        }
+
+        $env:POSH_GIT_STATUS = $null
+        $global:LASTEXITCODE = $script:OriginalLastExitCode
+
+        $output
+    }
+
     Export-ModuleMember -Function @(
         "Set-PoshContext"
         "Enable-PoshTooltips"
         "Enable-PoshTransientPrompt"
         "Enable-PoshLineError"
+        "Enable-PoshDaemon"
         "Set-TransientPrompt"
         "prompt"
     )

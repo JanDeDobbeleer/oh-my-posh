@@ -75,6 +75,61 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	}
 }
 
+// NewCache creates a new template cache populated with environment data.
+// Used by the daemon to create isolated caches for each request.
+func NewCache(env runtime.Environment, vars maps.Simple[any], aliases *maps.Config) *cache.Template {
+	tmplCache := new(cache.Template)
+
+	tmplCache.Root = env.Root()
+	tmplCache.Shell = aliases.GetShellName(env.Shell())
+	tmplCache.ShellVersion = env.Flags().ShellVersion
+	tmplCache.Code, _ = env.StatusCodes()
+	tmplCache.WSL = env.IsWsl()
+	tmplCache.Segments = maps.NewConcurrent[any]()
+	tmplCache.PromptCount = env.Flags().PromptCount
+	tmplCache.Var = make(map[string]any)
+	tmplCache.Jobs = env.Flags().JobCount
+	tmplCache.Version = build.Version
+
+	if vars != nil {
+		tmplCache.Var = vars
+	}
+
+	pwd := env.Pwd()
+	tmplCache.PWD = path.ReplaceHomeDirPrefixWithTilde(pwd)
+
+	tmplCache.AbsolutePWD = pwd
+	if env.IsWsl() {
+		tmplCache.AbsolutePWD, _ = env.RunCommand("wslpath", "-m", pwd)
+	}
+
+	env.Flags().AbsolutePWD = tmplCache.AbsolutePWD
+	tmplCache.PSWD = env.Flags().PSWD
+
+	tmplCache.Folder = path.Base(pwd)
+	if env.GOOS() == runtime.WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
+		tmplCache.Folder += `\`
+	}
+
+	tmplCache.UserName = aliases.GetUserName(env.User())
+	if host, err := env.Host(); err == nil {
+		tmplCache.HostName = aliases.GetHostName(host)
+	}
+
+	goos := env.GOOS()
+	tmplCache.OS = goos
+	if goos == runtime.LINUX {
+		tmplCache.OS = env.Platform()
+	}
+
+	val := env.Getenv("SHLVL")
+	if shlvl, err := strconv.Atoi(val); err == nil {
+		tmplCache.SHLVL = shlvl
+	}
+
+	return tmplCache
+}
+
 func restoreCache() bool {
 	defer log.Trace(time.Now())
 

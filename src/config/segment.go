@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"time"
@@ -41,42 +42,44 @@ type Segment struct {
 	Options options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	// Properties is deprecated, use Options instead. This field exists for TOML backward compatibility
 	// since go-toml/v2 doesn't support custom unmarshalers. It will be migrated to Options after loading.
-	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
-	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
-	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
-	styleCache             SegmentStyle
-	name                   string
-	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
-	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty" yaml:"trailing_diamond,omitempty"`
-	Template               string         `json:"template,omitempty" toml:"template,omitempty" yaml:"template,omitempty"`
-	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty" yaml:"foreground,omitempty"`
-	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty" yaml:"templates_logic,omitempty"`
-	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty" yaml:"powerline_symbol,omitempty"`
-	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty" yaml:"background,omitempty"`
-	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty" yaml:"filler,omitempty"`
-	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty" yaml:"type,omitempty"`
-	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty" yaml:"style,omitempty"`
-	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty" yaml:"leading_powerline_symbol,omitempty"`
-	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
-	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty" yaml:"tips,omitempty"`
-	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty" yaml:"background_templates,omitempty"`
-	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty" yaml:"templates,omitempty"`
-	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty" yaml:"exclude_folders,omitempty"`
-	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty" yaml:"include_folders,omitempty"`
-	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
-	Timeout                int            `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
-	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
-	Duration               time.Duration  `json:"-" toml:"-" yaml:"-"`
-	NameLength             int            `json:"-" toml:"-" yaml:"-"`
-	Index                  int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
-	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
-	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
-	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	restored               bool           `json:"-" toml:"-" yaml:"-"`
-	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+	Properties              options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
+	Cache                   *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
+	Alias                   string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
+	styleCache              SegmentStyle
+	name                    string
+	LeadingDiamond          string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
+	TrailingDiamond         string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty" yaml:"trailing_diamond,omitempty"`
+	RenderPendingIcon       string         `json:"render_pending_icon,omitempty" toml:"render_pending_icon,omitempty" yaml:"render_pending_icon,omitempty"`
+	Template                string         `json:"template,omitempty" toml:"template,omitempty" yaml:"template,omitempty"`
+	Foreground              color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty" yaml:"foreground,omitempty"`
+	TemplatesLogic          template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty" yaml:"templates_logic,omitempty"`
+	PowerlineSymbol         string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty" yaml:"powerline_symbol,omitempty"`
+	Background              color.Ansi     `json:"background,omitempty" toml:"background,omitempty" yaml:"background,omitempty"`
+	Filler                  string         `json:"filler,omitempty" toml:"filler,omitempty" yaml:"filler,omitempty"`
+	Type                    SegmentType    `json:"type,omitempty" toml:"type,omitempty" yaml:"type,omitempty"`
+	Style                   SegmentStyle   `json:"style,omitempty" toml:"style,omitempty" yaml:"style,omitempty"`
+	LeadingPowerlineSymbol  string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty" yaml:"leading_powerline_symbol,omitempty"`
+	RenderPendingBackground color.Ansi     `json:"render_pending_background,omitempty" toml:"render_pending_background,omitempty" yaml:"render_pending_background,omitempty"`
+	ForegroundTemplates     template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
+	Tips                    []string       `json:"tips,omitempty" toml:"tips,omitempty" yaml:"tips,omitempty"`
+	BackgroundTemplates     template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty" yaml:"background_templates,omitempty"`
+	Templates               template.List  `json:"templates,omitempty" toml:"templates,omitempty" yaml:"templates,omitempty"`
+	ExcludeFolders          []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty" yaml:"exclude_folders,omitempty"`
+	IncludeFolders          []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty" yaml:"include_folders,omitempty"`
+	Needs                   []string       `json:"-" toml:"-" yaml:"-"`
+	Timeout                 int            `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	MaxWidth                int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	MinWidth                int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
+	Duration                time.Duration  `json:"-" toml:"-" yaml:"-"`
+	NameLength              int            `json:"-" toml:"-" yaml:"-"`
+	Index                   int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
+	Interactive             bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	Enabled                 bool           `json:"-" toml:"-" yaml:"-"`
+	Newline                 bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	InvertPowerline         bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	Force                   bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+	restored                bool           `json:"-" toml:"-" yaml:"-"`
+	Toggled                 bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -344,8 +347,16 @@ func (segment *Segment) setCache() {
 	cache.Set(store, key, string(data), segment.Cache.Duration)
 }
 
+func (segment *Segment) CacheKey() string {
+	key, _ := segment.cacheKeyAndStore()
+	return key
+}
+
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
 	format := "segment_cache_%s"
+	if segment.Cache == nil {
+		return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_")), cache.Device
+	}
 	switch segment.Cache.Strategy {
 	case Session:
 		return fmt.Sprintf(format, segment.Name()), cache.Session
@@ -356,6 +367,23 @@ func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
 	default:
 		return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_")), cache.Device
 	}
+}
+
+// DaemonCacheKey returns a cache key for daemon mode.
+// This method always uses the segment's writer.CacheKey() if available,
+// and respects the configured strategy (session, folder) when present.
+// When no strategy is configured, it defaults to folder-based key with writer's CacheKey().
+func (segment *Segment) DaemonCacheKey() string {
+	format := "daemon_cache_%s"
+
+	// If strategy is explicitly set to Session, use only segment name
+	if segment.Cache != nil && segment.Cache.Strategy == Session {
+		return fmt.Sprintf(format, segment.Name())
+	}
+
+	// For all other cases (folder strategy or no config/AsyncRendering),
+	// use segment name + writer's CacheKey (or pwd as fallback)
+	return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_"))
 }
 
 func (segment *Segment) folderKey() string {
@@ -445,4 +473,66 @@ func (segment *Segment) key() any {
 	}
 
 	return segment.Name()
+}
+
+// GetPendingText computes the text to display for a segment in pending state.
+// The pending icon is shown to indicate the segment is being calculated.
+// If cachedText is available, it's appended after the pending icon.
+func (segment *Segment) GetPendingText(cachedText string, cfg *Config) (enabled bool, text string, background color.Ansi) {
+	pendingIcon := segment.getPendingIcon(cfg)
+
+	if cachedText == "" {
+		// If we don't have a cached value, we still show pending icon
+		// but maybe we should show just "..." or similar?
+		// For now matching oh-my-posh logic
+		cachedText = "..."
+	}
+
+	// Show pending icon + cached text
+	text = pendingIcon + cachedText
+
+	// Get pending background if configured
+	background = segment.getPendingBackground(cfg)
+
+	return true, text, background
+}
+
+func (segment *Segment) getPendingIcon(cfg *Config) string {
+	if segment.RenderPendingIcon != "" {
+		return segment.RenderPendingIcon
+	}
+	if cfg != nil && cfg.RenderPendingIcon != "" {
+		return cfg.RenderPendingIcon
+	}
+	return "\uf254 " //  Hourglass from FontAwesome + space
+}
+
+func (segment *Segment) getPendingBackground(cfg *Config) color.Ansi {
+	if segment.RenderPendingBackground != "" {
+		return segment.RenderPendingBackground
+	}
+	if cfg != nil {
+		return cfg.RenderPendingBackground
+	}
+	return ""
+}
+
+func (segment *Segment) Clone() *Segment {
+	if segment == nil {
+		return nil
+	}
+
+	newSegment := *segment
+
+	if segment.Options != nil {
+		newSegment.Options = make(options.Map)
+		maps.Copy(newSegment.Options, segment.Options)
+	}
+
+	if segment.Properties != nil {
+		newSegment.Properties = make(options.Map)
+		maps.Copy(newSegment.Properties, segment.Properties)
+	}
+
+	return &newSegment
 }

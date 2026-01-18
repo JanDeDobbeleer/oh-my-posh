@@ -1,0 +1,168 @@
+---
+id: daemon
+title: Daemon Mode
+sidebar_label: Daemon
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Daemon mode runs Oh My Posh as a background process that renders prompts asynchronously, resulting in
+faster prompt display times. Instead of spawning a new process for each prompt render, the shell communicates
+with a persistent daemon that caches configuration and segment data.
+
+## Benefits
+
+- **Faster prompts**: The daemon keeps configuration loaded and caches segment results
+- **Streaming updates**: See partial results immediately while slow segments complete in the background
+- **Reduced overhead**: No need to spawn a new process and parse config for every prompt
+
+## Enabling Daemon Mode
+
+Add the `--daemon` flag to your shell initialization:
+
+<Tabs
+  defaultValue="zsh"
+  groupId="shell"
+  values={[
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
+    { label: 'powershell', value: 'powershell', },
+    { label: 'zsh', value: 'zsh', },
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+eval "$(oh-my-posh init bash --daemon)"
+```
+
+</TabItem>
+<TabItem value="fish">
+
+```bash
+oh-my-posh init fish --daemon | source
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+oh-my-posh init pwsh --daemon | Invoke-Expression
+```
+
+</TabItem>
+<TabItem value="zsh">
+
+```bash
+eval "$(oh-my-posh init zsh --daemon)"
+```
+
+</TabItem>
+</Tabs>
+
+The daemon starts automatically when you open a new shell session.
+
+## Daemon Commands
+
+You can manage the daemon manually using the `oh-my-posh daemon` command:
+
+| Command | Description |
+|---------|-------------|
+| `oh-my-posh daemon start` | Start the daemon in the background |
+| `oh-my-posh daemon status` | Check if the daemon is running |
+| `oh-my-posh daemon serve` | Run the daemon in the foreground (for debugging) |
+
+### Debugging
+
+To run the daemon in foreground mode with logging enabled:
+
+```bash
+oh-my-posh daemon start --foreground
+```
+
+## How It Works
+
+1. When you initialize your shell with `--daemon`, the shell script starts the daemon if it's not already running
+2. Each time your prompt needs to render, the shell sends environment data to the daemon via IPC
+3. The daemon renders the prompt and streams results back:
+   - First, partial results are returned after the configured timeout (showing pending indicators for slow segments)
+   - Then, updates stream in as each segment completes
+4. The daemon watches your config file and automatically reloads when changes are detected
+
+### Auto-Shutdown
+
+The daemon automatically shuts down after a period of idle time (no active shell sessions). By default,
+this is 5 minutes. You can configure this with the `daemon_idle_timeout` setting, or set it to `"none"`
+to keep the daemon running indefinitely.
+
+## Configuration
+
+import Config from "@site/src/components/Config.js";
+
+### General Settings
+
+These settings are configured at the root level of your configuration:
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `daemon_timeout` | `int` | `100` | Timeout in milliseconds before returning partial results. Lower values show the prompt faster but with more pending indicators |
+| `daemon_idle_timeout` | `string` | `"5"` | How long (in minutes) to keep the daemon running when no terminal sessions are active. After the timeout, the daemon exits and cached data is lost. Set to `"none"` to disable auto-shutdown |
+| `render_pending_icon` | `string` | `` | Icon displayed for segments that are still loading |
+| `render_pending_background` | `string` | | Background [color][colors] for segments in pending state |
+
+<Config
+  data={{
+    daemon_timeout: 150,
+    daemon_idle_timeout: "10",
+    render_pending_icon: "\uf252",
+    render_pending_background: "#333333",
+  }}
+/>
+
+### Segment Settings
+
+You can override the pending appearance per segment:
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `render_pending_icon` | `string` | | Override the global pending icon for this segment |
+| `render_pending_background` | `string` | | Override the global pending background [color][colors] for this segment |
+
+<Config
+  data={{
+    type: "git",
+    style: "powerline",
+    render_pending_icon: "\ue702",
+    render_pending_background: "#444444",
+  }}
+/>
+
+### Segment Caching
+
+When using daemon mode, segment [caching][cache] becomes more powerful. The daemon maintains an in-memory
+cache that persists across prompt renders within the same session. Configure caching on individual segments
+to control how often they recompute:
+
+<Config
+  data={{
+    type: "git",
+    style: "powerline",
+    cache: {
+      duration: "5m",
+      strategy: "folder",
+    },
+  }}
+/>
+
+## Supported Shells
+
+Daemon mode is currently supported in:
+
+- Bash
+- Zsh
+- Fish
+- PowerShell / pwsh
+
+[colors]: /docs/configuration/colors
+[cache]: /docs/configuration/segment#cache

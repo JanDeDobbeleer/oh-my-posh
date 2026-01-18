@@ -47,3 +47,19 @@ func (b *Block) key() any {
 
 	return fmt.Sprintf("%s-%s", b.Type, b.Alignment)
 }
+
+func (b *Block) Clone() *Block {
+	if b == nil {
+		return nil
+	}
+
+	newBlock := *b
+	if b.Segments != nil {
+		newBlock.Segments = make([]*Segment, len(b.Segments))
+		for i, s := range b.Segments {
+			newBlock.Segments[i] = s.Clone()
+		}
+	}
+
+	return &newBlock
+}

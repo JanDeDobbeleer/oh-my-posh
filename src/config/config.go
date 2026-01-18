@@ -2,8 +2,11 @@ package config
 
 import (
 	"encoding/gob"
+	maps0 "maps"
 	"slices"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
@@ -68,21 +71,26 @@ type Config struct {
 	Format                  string                 `json:"-" toml:"-" yaml:"-"`
 	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty" yaml:"terminal_background,omitempty"`
 	ToolTipsAction          Action                 `json:"tooltips_action,omitempty" toml:"tooltips_action,omitempty" yaml:"tooltips_action,omitempty"`
+	RenderPendingIcon       string                 `json:"render_pending_icon,omitempty" toml:"render_pending_icon,omitempty" yaml:"render_pending_icon,omitempty"`
+	DaemonIdleTimeout       string                 `json:"daemon_idle_timeout,omitempty" toml:"daemon_idle_timeout,omitempty" yaml:"daemon_idle_timeout,omitempty"`
+	RenderPendingBackground color.Ansi             `json:"render_pending_background,omitempty" toml:"render_pending_background,omitempty" yaml:"render_pending_background,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty" yaml:"blocks,omitempty"`
-	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`
-	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty" yaml:"iterm_features,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty" yaml:"tooltips,omitempty"`
+	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`
+	FilePaths               []string               `json:"-" toml:"-" yaml:"-"`
+	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty" yaml:"iterm_features,omitempty"`
 	hash                    uint64
 	Version                 int  `json:"version" toml:"version" yaml:"version"`
-	MigrateGlyphs           bool `json:"-" toml:"-" yaml:"-"`
+	DaemonTimeout           int  `json:"daemon_timeout,omitempty" toml:"daemon_timeout,omitempty" yaml:"daemon_timeout,omitempty"`
 	Async                   bool `json:"async,omitempty" toml:"async,omitempty" yaml:"async,omitempty"`
-	ShellIntegration        bool `json:"shell_integration,omitempty" toml:"shell_integration,omitempty" yaml:"shell_integration,omitempty"`
-	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty" yaml:"final_space,omitempty"`
-	UpgradeNotice           bool `json:"-" toml:"-" yaml:"-"`
 	extended                bool
 	PatchPwshBleed          bool `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty" yaml:"patch_pwsh_bleed,omitempty"`
 	AutoUpgrade             bool `json:"-" toml:"-" yaml:"-"`
 	EnableCursorPositioning bool `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty" yaml:"enable_cursor_positioning,omitempty"`
+	UpgradeNotice           bool `json:"-" toml:"-" yaml:"-"`
+	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty" yaml:"final_space,omitempty"`
+	ShellIntegration        bool `json:"shell_integration,omitempty" toml:"shell_integration,omitempty" yaml:"shell_integration,omitempty"`
+	MigrateGlyphs           bool `json:"-" toml:"-" yaml:"-"`
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {
@@ -116,7 +124,7 @@ func (cfg *Config) getPalette() color.Palette {
 	return palette
 }
 
-func (cfg *Config) Features(env runtime.Environment) shell.Features {
+func (cfg *Config) Features(env runtime.Environment, daemon bool) shell.Features {
 	var feats shell.Features
 
 	asyncShells := []string{shell.BASH, shell.ZSH, shell.FISH, shell.PWSH}
@@ -124,6 +132,11 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	if cfg.Async && slices.Contains(asyncShells, env.Shell()) {
 		log.Debug("async enabled")
 		feats |= shell.Async
+	}
+
+	if daemon && slices.Contains(asyncShells, env.Shell()) {
+		log.Debug("daemon enabled")
+		feats |= shell.Daemon
 	}
 
 	if cfg.TransientPrompt != nil {
@@ -226,6 +239,27 @@ func (cfg *Config) Hash() uint64 {
 	return cfg.hash
 }
 
+// GetDaemonIdleTimeout returns the daemon idle timeout duration.
+// Returns 0 if the daemon should never auto-shutdown (when set to "none").
+// Returns the default of 5 minutes if not configured.
+// The config value is specified in minutes (e.g., "5", "10") or "none".
+func (cfg *Config) GetDaemonIdleTimeout() time.Duration {
+	if cfg.DaemonIdleTimeout == "" {
+		return 5 * time.Minute // Default
+	}
+
+	if cfg.DaemonIdleTimeout == "none" {
+		return 0 // No timeout - daemon never exits
+	}
+
+	minutes, err := strconv.Atoi(cfg.DaemonIdleTimeout)
+	if err != nil || minutes <= 0 {
+		return 5 * time.Minute // Invalid value, use default
+	}
+
+	return time.Duration(minutes) * time.Minute
+}
+
 // migrateSegmentProperties migrates the deprecated Properties field to Options for all segments.
 // This is needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
 func (cfg *Config) migrateSegmentProperties() {
@@ -259,4 +293,39 @@ func (cfg *Config) toggleSegments() {
 
 	// Update cache with the map directly
 	cache.Set(cache.Session, cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
+}
+
+func (cfg *Config) Clone() *Config {
+	if cfg == nil {
+		return nil
+	}
+
+	newConfig := *cfg
+
+	if cfg.Blocks != nil {
+		newConfig.Blocks = make([]*Block, len(cfg.Blocks))
+		for i, b := range cfg.Blocks {
+			newConfig.Blocks[i] = b.Clone()
+		}
+	}
+
+	if cfg.Tooltips != nil {
+		newConfig.Tooltips = make([]*Segment, len(cfg.Tooltips))
+		for i, t := range cfg.Tooltips {
+			newConfig.Tooltips[i] = t.Clone()
+		}
+	}
+
+	if cfg.Var != nil {
+		newConfig.Var = make(map[string]any)
+		maps0.Copy(newConfig.Var, cfg.Var)
+	}
+
+	newConfig.DebugPrompt = cfg.DebugPrompt.Clone()
+	newConfig.ValidLine = cfg.ValidLine.Clone()
+	newConfig.SecondaryPrompt = cfg.SecondaryPrompt.Clone()
+	newConfig.TransientPrompt = cfg.TransientPrompt.Clone()
+	newConfig.ErrorLine = cfg.ErrorLine.Clone()
+
+	return &newConfig
 }

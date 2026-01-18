@@ -1,10 +1,14 @@
 package cli
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/daemon"
+	"github.com/jandedobbeleer/oh-my-posh/src/daemon/ipc"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/spf13/cobra"
 )
@@ -18,6 +22,23 @@ var toggleCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
+			return
+		}
+
+		segmentsToToggle := parseSegments(args)
+
+		if ipc.SocketExists() {
+			client, err := daemon.NewClient()
+			if err != nil {
+				fmt.Printf("daemon error: %v\n", err)
+				return
+			}
+			defer client.Close()
+			ctx, cancel := context.WithTimeout(context.Background(), renderTimeout)
+			defer cancel()
+			if err := client.ToggleSegment(ctx, os.Getppid(), segmentsToToggle); err != nil {
+				fmt.Printf("daemon error: %v\n", err)
+			}
 			return
 		}
 
@@ -35,8 +56,6 @@ var toggleCmd = &cobra.Command{
 		if currentToggleSet == nil {
 			currentToggleSet = make(map[string]bool)
 		}
-
-		segmentsToToggle := parseSegments(args)
 
 		// Toggle segments: remove if present, add if not present
 		for _, segment := range segmentsToToggle {

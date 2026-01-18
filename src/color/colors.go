@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gookit/color"
@@ -342,6 +343,7 @@ func (p *PaletteColors) Resolve(colorString Ansi) (Ansi, error) {
 type Cached struct {
 	ansiColors String
 	colorCache map[cachedColorKey]Ansi
+	mu         sync.RWMutex
 }
 
 type cachedColorKey struct {
@@ -350,11 +352,25 @@ type cachedColorKey struct {
 }
 
 func (c *Cached) ToAnsi(colorString Ansi, isBackground bool) Ansi {
+	c.mu.RLock()
+	if c.colorCache != nil {
+		key := cachedColorKey{colorString, isBackground}
+		if ansiColor, hit := c.colorCache[key]; hit {
+			c.mu.RUnlock()
+			return ansiColor
+		}
+	}
+	c.mu.RUnlock()
+
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if c.colorCache == nil {
 		c.colorCache = make(map[cachedColorKey]Ansi)
 	}
 
 	key := cachedColorKey{colorString, isBackground}
+	// Check again in case another goroutine populated it while we waited for lock
 	if ansiColor, hit := c.colorCache[key]; hit {
 		return ansiColor
 	}

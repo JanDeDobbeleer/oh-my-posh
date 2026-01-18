@@ -7,11 +7,13 @@ import (
 	"sync"
 	"unicode"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 type Text struct {
 	context  Data
+	cache    *cache.Template
 	template string
 }
 
@@ -25,6 +27,7 @@ func get(template string, context any) *Text {
 	text := textPool.Get()
 	text.template = template
 	text.context = context
+	text.cache = nil
 
 	return text
 }
@@ -45,10 +48,30 @@ func Render(template string, context any) (string, error) {
 	return renderer.execute(t)
 }
 
+// RenderWithCache renders a template using a specific cache instead of the global.
+// Used by daemon mode to ensure per-request cache isolation.
+func RenderWithCache(template string, context any, c *cache.Template) (string, error) {
+	t := get(template, context)
+	t.cache = c
+	defer t.release()
+
+	if !strings.Contains(t.template, "{{") || !strings.Contains(t.template, "}}") {
+		return t.template, nil
+	}
+
+	t.patchTemplate()
+
+	renderer := renderPool.Get()
+	defer renderer.release()
+
+	return renderer.execute(t)
+}
+
 // Release resets the Text instance and returns it to the pool
 func (t *Text) release() {
 	t.context = nil
 	t.template = ""
+	t.cache = nil
 
 	if textPool != nil {
 		textPool.Put(t)

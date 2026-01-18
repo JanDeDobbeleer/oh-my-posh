@@ -1,6 +1,9 @@
 # Others
 
 .fleet/
+
+# Generated protobuf files
+*.pb.go
 src/test/umbraco/obj/
 src/keys
 *.prof

@@ -35,7 +35,12 @@ RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/4
     fish \
     tmux \
     fzf \
+    protobuf-compiler \
     && apt-get clean
+
+# Install Go protobuf plugins for gRPC code generation
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 ARG USERNAME=vscode
 

@@ -166,31 +166,40 @@ func generateScript(env runtime.Environment, feats Features) string {
 	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
 
 	var script string
+	configPath := env.Flags().ConfigPath
 
 	switch env.Flags().Shell {
 	case PWSH:
 		executable = quotePwshOrElvishStr(executable)
+		configPath = quotePwshOrElvishStr(configPath)
 		script = pwshInit
 	case ZSH:
 		executable = QuotePosixStr(executable)
+		configPath = QuotePosixStr(configPath)
 		script = zshInit
 	case BASH:
 		executable = QuotePosixStr(executable)
+		configPath = QuotePosixStr(configPath)
 		script = bashInit
 	case FISH:
 		executable = quoteFishStr(executable)
+		configPath = quoteFishStr(configPath)
 		script = fishInit
 	case CMD:
 		executable = escapeLuaStr(executable)
+		configPath = escapeLuaStr(configPath)
 		script = cmdInit
 	case NU:
 		executable = quoteNuStr(executable)
+		configPath = quoteNuStr(configPath)
 		script = nuInit
 	case ELVISH:
 		executable = quotePwshOrElvishStr(executable)
+		configPath = quotePwshOrElvishStr(configPath)
 		script = elvishInit
 	case XONSH:
 		executable = quotePythonStr(executable)
+		configPath = quotePythonStr(configPath)
 		script = xonshInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", env.Flags().Shell)
@@ -198,6 +207,7 @@ func generateScript(env runtime.Environment, feats Features) string {
 
 	init := strings.NewReplacer(
 		"::OMP::", executable,
+		"::CONFIG::", configPath,
 		"::SESSION_ID::", cache.SessionID(),
 	).Replace(script)
 

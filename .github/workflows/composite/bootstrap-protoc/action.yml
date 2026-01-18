@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: 'Setup Protoc'
+description: 'Install protoc and Go plugins for gRPC code generation'
+branding:
+  icon: download
+  color: blue
+inputs:
+  protoc-version:
+    description: 'Version of protoc to install'
+    required: false
+    default: '28.3'
+runs:
+  using: "composite"
+  steps:
+    - name: Install protoc (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${{ inputs.protoc-version }}/protoc-${{ inputs.protoc-version }}-linux-x86_64.zip"
+        unzip -o "protoc-${{ inputs.protoc-version }}-linux-x86_64.zip" -d $HOME/.local
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        rm "protoc-${{ inputs.protoc-version }}-linux-x86_64.zip"
+    - name: Install protoc (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${{ inputs.protoc-version }}/protoc-${{ inputs.protoc-version }}-osx-universal_binary.zip"
+        unzip -o "protoc-${{ inputs.protoc-version }}-osx-universal_binary.zip" -d $HOME/.local
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        rm "protoc-${{ inputs.protoc-version }}-osx-universal_binary.zip"
+    - name: Install protoc (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/protocolbuffers/protobuf/releases/download/v${{ inputs.protoc-version }}/protoc-${{ inputs.protoc-version }}-win64.zip" -OutFile protoc.zip
+        Expand-Archive -Path protoc.zip -DestinationPath $env:USERPROFILE\.local -Force
+        "$env:USERPROFILE\.local\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+        Remove-Item protoc.zip
+    - name: Install Go protobuf plugins
+      shell: bash
+      run: |
+        go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    - name: Generate protobuf code
+      shell: bash
+      working-directory: src
+      run: go generate ./...

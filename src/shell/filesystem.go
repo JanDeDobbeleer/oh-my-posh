@@ -45,7 +45,6 @@ func hasScript(env runtime.Environment) (string, bool) {
 	return path, true
 }
 
-
 func filesEqual(name string, data []byte, perm os.FileMode) bool {
 	fStat, err := os.Stat(name)
 	if err != nil {
@@ -111,7 +110,6 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 	if firstErr != nil {
 		return "", firstErr
 	}
-
 
 	log.Debug("init script written successfully")
 	cache.Set(cache.Device, cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)

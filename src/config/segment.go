@@ -12,6 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
@@ -183,26 +184,54 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
+	defer func() {
+		if segment.Enabled {
+			template.Cache.AddSegmentData(segment.Name(), segment.writer)
+		}
+	}()
+
 	if segment.Timeout == 0 {
 		segment.Enabled = segment.writer.Enabled()
-	} else {
-		done := make(chan bool)
-		go func() {
-			segment.Enabled = segment.writer.Enabled()
-			done <- true
-		}()
-
-		select {
-		case <-done:
-			// Completed before timeout
-		case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
-			log.Debugf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
-			return
-		}
+		return
 	}
 
-	if segment.Enabled {
-		template.Cache.AddSegmentData(segment.Name(), segment.writer)
+	done := make(chan bool)
+	gidCh := make(chan uint64, 1)
+	go func() {
+		gid := runjobs.CurrentGID()
+		if err := runjobs.CreateJobForGoroutine(); err != nil {
+			log.Errorf("failed to create job for goroutine %d (segment: %s): %v", gid, segment.Name(), err)
+		}
+		// advertise the goroutine id so the parent can act on it
+		gidCh <- gid
+		segment.Enabled = segment.writer.Enabled()
+		done <- true
+	}()
+
+	select {
+	case <-done:
+		// Completed before timeout; drain gid channel if set
+		select {
+		case <-gidCh:
+		default:
+		}
+	case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
+		// Attempt to kill child processes started by that goroutine.
+		var gid uint64
+		select {
+		case gid = <-gidCh:
+		default:
+		}
+
+		log.Errorf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
+
+		if gid == 0 {
+			return
+		}
+
+		if err := runjobs.KillGoroutineChildren(gid); err != nil {
+			log.Errorf("failed to kill child processes for goroutine %d (segment: %s): %v", gid, segment.Name(), err)
+		}
 	}
 }
 

@@ -48,6 +48,11 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 		_ = cmd.Help()
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		configEnv := os.Getenv("POSH_CONFIG")
+		if configEnv != "" && configFlag == "" {
+			configFlag = configEnv
+		}
+
 		traceEnv := os.Getenv("POSH_TRACE")
 		if traceEnv == "" && !trace {
 			return

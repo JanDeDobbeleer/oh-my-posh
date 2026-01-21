@@ -149,7 +149,7 @@ aligned prompt blocks to play with.
       "segments": [
         {
           "leading_diamond": "\ue0b6",
-          "template": " \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }} ",
+          "template": " \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.GaugeUsed }} ",
           "foreground": "p:white",
           "background": "accent",
           "type": "claude",

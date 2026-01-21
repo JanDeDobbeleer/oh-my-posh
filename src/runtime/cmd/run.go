@@ -5,29 +5,46 @@ import (
 	"context"
 	"os/exec"
 	"strings"
-	"time"
+
+	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
 )
 
-// Run is used to correctly run a command with a timeout.
+// Run executes a command while ensuring the OS process is started in its own
+// process group; the started process is recorded so callers can request a
+// cleanup (KillGoroutineChildren) if they decide to abort waiting for the
+// goroutine that spawned it.
 func Run(command string, args ...string) (string, error) {
-	// set a timeout of 4 seconds
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*4)
-	defer cancel()
-	cmd := exec.CommandContext(ctx, command, args...)
+	cmd := exec.CommandContext(context.Background(), command, args...)
 	var out bytes.Buffer
-	var err bytes.Buffer
+	var errb bytes.Buffer
 	cmd.Stdout = &out
-	cmd.Stderr = &err
-	cmdErr := cmd.Run()
-	if cmdErr != nil {
-		output := err.String()
-		return output, cmdErr
+	cmd.Stderr = &errb
+
+	// ensure child runs in its own process group so we can kill the tree if
+	// needed. Implementation is provided by the runtime/jobs package which is
+	// platform aware.
+	runjobs.SetProcessGroup(cmd)
+
+	if err := cmd.Start(); err != nil {
+		return "", err
 	}
-	// some silly commands return 0 and the output is in stderr instead of stdout
-	result := out.String()
+
+	// register the started process under the current goroutine
+	runjobs.RegisterProcess(cmd.Process.Pid)
+	defer runjobs.UnregisterProcess(cmd.Process.Pid)
+
+	if err := cmd.Wait(); err != nil {
+		// Prefer stderr if available
+		output := strings.TrimSpace(errb.String())
+		if output == "" {
+			output = strings.TrimSpace(out.String())
+		}
+		return output, err
+	}
+
+	result := strings.TrimSpace(out.String())
 	if result == "" {
-		result = err.String()
+		result = strings.TrimSpace(errb.String())
 	}
-	output := strings.TrimSpace(result)
-	return output, nil
+	return result, nil
 }

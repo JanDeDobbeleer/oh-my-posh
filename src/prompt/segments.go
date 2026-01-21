@@ -1,17 +1,12 @@
 package prompt
 
 import (
-	"sync"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
-)
-
-const (
-	// Threshold for using goroutine pool vs individual goroutines
-	goroutinePoolThreshold = 10
-	// Size of the worker pool
-	workerPoolSize = 4
 )
 
 type result struct {
@@ -28,12 +23,7 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 
 	out := make(chan result, length)
 
-	// Use goroutine pool for large numbers of segments to reduce overhead
-	if length > goroutinePoolThreshold {
-		e.writeSegmentsWithPool(block.Segments, out)
-	} else {
-		e.writeSegmentsConcurrently(block.Segments, out)
-	}
+	e.writeSegmentsConcurrently(block.Segments, out)
 
 	e.writeSegments(out, block)
 
@@ -53,40 +43,42 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan result) {
 	for i, segment := range segments {
 		go func(segment *config.Segment, index int) {
-			segment.Execute(e.Env)
+			if segment.Timeout > 0 {
+				e.executeSegmentWithTimeout(segment)
+			} else {
+				segment.Execute(e.Env)
+			}
+
 			out <- result{segment, index}
 		}(segment, i)
 	}
 }
 
-// writeSegmentsWithPool uses a worker pool to process segments
-func (e *Engine) writeSegmentsWithPool(segments []*config.Segment, out chan result) {
-	tasks := make(chan result, len(segments))
-	var wg sync.WaitGroup
+// executeSegmentWithTimeout handles segment execution with timeout logic
+func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
+	done := make(chan bool)
+	gidChan := make(chan uint64, 1)
 
-	// Start worker pool
-	for range workerPoolSize {
-		wg.Go(func() {
-			for task := range tasks {
-				task.segment.Execute(e.Env)
-				out <- task
-			}
-		})
-	}
-
-	// Send tasks to workers
 	go func() {
-		defer close(tasks)
-		for i, segment := range segments {
-			tasks <- result{segment, i}
+		// Get GID after segment.Execute creates the Job
+		gidChan <- runjobs.CurrentGID()
+		segment.Execute(e.Env)
+		done <- true
+	}()
+
+	// Wait for the GID to be available
+	gid := <-gidChan
+
+	select {
+	case <-done:
+		// Completed before timeout
+	case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
+		log.Errorf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
+
+		if err := runjobs.KillGoroutineChildren(gid); err != nil {
+			log.Errorf("failed to kill child processes for goroutine %d (segment: %s): %v", gid, segment.Name(), err)
 		}
-	}()
-
-	// Wait for all workers to complete
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
+	}
 }
 
 func (e *Engine) writeSegments(out chan result, block *config.Block) {

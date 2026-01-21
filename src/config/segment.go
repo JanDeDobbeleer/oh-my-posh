@@ -12,6 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
@@ -183,27 +184,18 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	if segment.Timeout == 0 {
-		segment.Enabled = segment.writer.Enabled()
-	} else {
-		done := make(chan bool)
-		go func() {
-			segment.Enabled = segment.writer.Enabled()
-			done <- true
-		}()
-
-		select {
-		case <-done:
-			// Completed before timeout
-		case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
-			log.Debugf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
-			return
+	defer func() {
+		if segment.Enabled {
+			template.Cache.AddSegmentData(segment.Name(), segment.writer)
 		}
+	}()
+
+	// Create Job for this goroutine so child processes can be tracked and killed on timeout
+	if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
+		log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
 	}
 
-	if segment.Enabled {
-		template.Cache.AddSegmentData(segment.Name(), segment.writer)
-	}
+	segment.Enabled = segment.writer.Enabled()
 }
 
 func (segment *Segment) Render(index int, force bool) bool {

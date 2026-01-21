@@ -53,7 +53,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name           | Type  | Default | Description                                           |
 | -------------- | ----- | ------- | ----------------------------------------------------- |
-| `http_timeout` | `int` |  `20`   | The default timeout for HTTP requests in milliseconds |
+| `http_timeout` | `int` | `20`    | The default timeout for HTTP requests in milliseconds |
 
 ## Template ([info][templates])
 
@@ -67,36 +67,37 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name                 | Type            | Description                                   |
-| -------------------- | --------------- | --------------------------------------------- |
-| `.Premium`           | `CopilotUsage`  | Premium interactions usage data               |
-| `.Premium.Used`      | `int`           | Number of premium interactions used           |
-| `.Premium.Limit`     | `int`           | Total premium interactions available          |
-| `.Premium.Percent`   | `Percentage`    | Percentage of premium quota used (0-100)      |
-| `.Premium.Remaining` | `Percentage`    | Percentage of premium quota remaining (0-100) |
-| `.Premium.Unlimited` | `bool`          | Whether premium quota is unlimited            |
-| `.Inline`            | `CopilotUsage`  | Inline completions usage data                 |
-| `.Inline.Used`       | `int`           | Number of inline completions used             |
-| `.Inline.Limit`      | `int`           | Total inline completions available            |
-| `.Inline.Percent`    | `Percentage`    | Percentage of inline quota used (0-100)       |
-| `.Inline.Remaining`  | `Percentage`    | Percentage of inline quota remaining (0-100)  |
-| `.Inline.Unlimited`  | `bool`          | Whether inline quota is unlimited             |
-| `.Chat`              | `CopilotUsage`  | Chat usage data                               |
-| `.Chat.Used`         | `int`           | Number of chat interactions used              |
-| `.Chat.Limit`        | `int`           | Total chat interactions available             |
-| `.Chat.Percent`      | `Percentage`    | Percentage of chat quota used (0-100)         |
-| `.Chat.Remaining`    | `Percentage`    | Percentage of chat quota remaining (0-100)    |
-| `.Chat.Unlimited`    | `bool`          | Whether chat quota is unlimited               |
-| `.BillingCycleEnd`   | `string`        | End date of current billing cycle             |
+| Name                 | Type           | Description                                   |
+| -------------------- | -------------- | --------------------------------------------- |
+| `.Premium`           | `CopilotUsage` | Premium interactions usage data               |
+| `.Premium.Used`      | `int`          | Number of premium interactions used           |
+| `.Premium.Limit`     | `int`          | Total premium interactions available          |
+| `.Premium.Percent`   | `Percentage`   | Percentage of premium quota used (0-100)      |
+| `.Premium.Remaining` | `Percentage`   | Percentage of premium quota remaining (0-100) |
+| `.Premium.Unlimited` | `bool`         | Whether premium quota is unlimited            |
+| `.Inline`            | `CopilotUsage` | Inline completions usage data                 |
+| `.Inline.Used`       | `int`          | Number of inline completions used             |
+| `.Inline.Limit`      | `int`          | Total inline completions available            |
+| `.Inline.Percent`    | `Percentage`   | Percentage of inline quota used (0-100)       |
+| `.Inline.Remaining`  | `Percentage`   | Percentage of inline quota remaining (0-100)  |
+| `.Inline.Unlimited`  | `bool`         | Whether inline quota is unlimited             |
+| `.Chat`              | `CopilotUsage` | Chat usage data                               |
+| `.Chat.Used`         | `int`          | Number of chat interactions used              |
+| `.Chat.Limit`        | `int`          | Total chat interactions available             |
+| `.Chat.Percent`      | `Percentage`   | Percentage of chat quota used (0-100)         |
+| `.Chat.Remaining`    | `Percentage`   | Percentage of chat quota remaining (0-100)    |
+| `.Chat.Unlimited`    | `bool`         | Whether chat quota is unlimited               |
+| `.BillingCycleEnd`   | `string`       | End date of current billing cycle             |
 
 ### Percentage Methods
 
 The `Percentage` type provides additional functionality beyond just the numeric value:
 
-| Method      | Returns  | Description                                                        |
-| ----------- | -------- | ------------------------------------------------------------------ |
-| `.Gauge()`  | `string` | Visual gauge showing remaining capacity using 5 bar blocks (▰▰▰▰▱) |
-| `.String()` | `string` | Numeric percentage value (e.g., "75" for use in templates)         |
+| Method         | Returns  | Description                                                        |
+| -------------- | -------- | ------------------------------------------------------------------ |
+| `.Gauge()`     | `string` | Visual gauge showing remaining capacity using 5 bar blocks (▰▰▰▰▱) |
+| `.GaugeUsed()` | `string` | Visual gauge showing used capacity using 5 bar blocks (▰▱▱▱▱)      |
+| `.String()`    | `string` | Numeric percentage value (e.g., "75" for use in templates)         |
 
 **Example gauge visualization (shows remaining capacity):**
 
@@ -107,10 +108,25 @@ The `Percentage` type provides additional functionality beyond just the numeric 
 - 80% used (20% remaining): `▰▱▱▱▱`
 - 100% used (0% remaining): `▱▱▱▱▱`
 
+**Example gaugeUsed visualization (shows used capacity):**
+
+- 0% used: `▱▱▱▱▱`
+- 20% used: `▰▱▱▱▱`
+- 40% used: `▰▰▱▱▱`
+- 60% used: `▰▰▰▱▱`
+- 80% used: `▰▰▰▰▱`
+- 100% used: `▰▰▰▰▰`
+
 **Example template with gauge:**
 
 ```json
 "template": "{{ .Premium.Percent.Gauge() }} {{ .Premium.Used }}/{{ .Premium.Limit }}"
+```
+
+**Example template showing used capacity:**
+
+```json
+"template": "{{ .Premium.Percent.GaugeUsed() }} {{ .Premium.Used }}/{{ .Premium.Limit }}"
 ```
 
 [copilot]: https://github.com/features/copilot

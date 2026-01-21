@@ -93,10 +93,11 @@ import Config from "@site/src/components/Config.js";
 
 The `TokenUsagePercent` property is a `Percentage` type that provides additional functionality:
 
-| Method    | Returns  | Description                                                        |
-| --------- | -------- | ------------------------------------------------------------------ |
-| `.Gauge`  | `string` | Visual gauge showing remaining capacity using 5 bar blocks (▰▰▰▰▱) |
-| `.String` | `string` | Numeric percentage value (e.g., "75" for use in templates)         |
+| Method       | Returns  | Description                                                        |
+| ------------ | -------- | ------------------------------------------------------------------ |
+| `.Gauge`     | `string` | Visual gauge showing remaining capacity using 5 bar blocks (▰▰▰▰▱) |
+| `.GaugeUsed` | `string` | Visual gauge showing used capacity using 5 bar blocks (▰▱▱▱▱)      |
+| `.String`    | `string` | Numeric percentage value (e.g., "75" for use in templates)         |
 
 ## How it works
 

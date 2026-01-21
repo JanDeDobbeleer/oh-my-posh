@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:dupl
 func TestPercentageGauge(t *testing.T) {
 	cases := []struct {
 		Case          string
@@ -62,6 +63,68 @@ func TestPercentageGauge(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			result := tc.Percent.Gauge()
+			assert.Equal(t, tc.ExpectedGauge, result, tc.Case)
+		})
+	}
+}
+
+//nolint:dupl
+func TestPercentageGaugeUsed(t *testing.T) {
+	cases := []struct {
+		Case          string
+		ExpectedGauge string
+		Percent       Percentage
+	}{
+		{
+			Case:          "0 percent used",
+			Percent:       Percentage(0),
+			ExpectedGauge: "▱▱▱▱▱",
+		},
+		{
+			Case:          "20 percent used",
+			Percent:       Percentage(20),
+			ExpectedGauge: "▰▱▱▱▱",
+		},
+		{
+			Case:          "40 percent used",
+			Percent:       Percentage(40),
+			ExpectedGauge: "▰▰▱▱▱",
+		},
+		{
+			Case:          "60 percent used",
+			Percent:       Percentage(60),
+			ExpectedGauge: "▰▰▰▱▱",
+		},
+		{
+			Case:          "80 percent used",
+			Percent:       Percentage(80),
+			ExpectedGauge: "▰▰▰▰▱",
+		},
+		{
+			Case:          "100 percent used",
+			Percent:       Percentage(100),
+			ExpectedGauge: "▰▰▰▰▰",
+		},
+		{
+			Case:          "50 percent used",
+			Percent:       Percentage(50),
+			ExpectedGauge: "▰▰▱▱▱",
+		},
+		{
+			Case:          "Negative percent clamps to 0",
+			Percent:       Percentage(-10),
+			ExpectedGauge: "▱▱▱▱▱",
+		},
+		{
+			Case:          "Over 100 percent clamps to 100",
+			Percent:       Percentage(120),
+			ExpectedGauge: "▰▰▰▰▰",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			result := tc.Percent.GaugeUsed()
 			assert.Equal(t, tc.ExpectedGauge, result, tc.Case)
 		})
 	}

@@ -479,6 +479,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/stmach"><img src="https://avatars.githubusercontent.com/u/33124232?v=4?s=100" width="100px;" alt="Stefan Mach"/><br /><sub><b>Stefan Mach</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=stmach" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://squaricdot.com"><img src="https://avatars.githubusercontent.com/u/4513505?v=4?s=100" width="100px;" alt="Olmo Rupert"/><br /><sub><b>Olmo Rupert</b></sub></a><br /><a href="#design-squaricdot" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/IsaacFG2"><img src="https://avatars.githubusercontent.com/u/147211323?v=4?s=100" width="100px;" alt="IsaacFG2"/><br /><sub><b>IsaacFG2</b></sub></a><br /><a href="#design-IsaacFG2" title="Design">🎨</a></td>
+    </tr>
   </tbody>
 </table>
 

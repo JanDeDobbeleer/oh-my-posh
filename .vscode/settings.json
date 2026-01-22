@@ -25,14 +25,5 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.markdownlint": "explicit"
     }
-  },
-  "markdownlint.lintWorkspaceGlobs": [
-    "**/*.{md,mkd,mdwn,mdown,markdown,markdn,mdtxt,mdtext,workbook}",
-    "!**/*.code-search",
-    "!**/bower_components",
-    "!**/node_modules",
-    "!**/.git",
-    "!**/vendor",
-    "!**/AGENTS.md"
-  ]
+  }
 }

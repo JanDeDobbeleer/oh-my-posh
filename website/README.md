@@ -5,13 +5,13 @@ This website is built using [Docusaurus](https://docusaurus.io/), a modern stati
 ## Installation
 
 ```shell
-$ npm install
+npm install
 ```
 
 ## Local Development
 
 ```shell
-$ npm run start
+npm run start
 ```
 
 This command starts a local development server and open up a browser window.

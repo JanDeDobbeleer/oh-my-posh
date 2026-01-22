@@ -3423,6 +3423,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "squaricdot",
+      "name": "Olmo Rupert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4513505?v=4",
+      "profile": "http://squaricdot.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

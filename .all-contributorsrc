@@ -3414,6 +3414,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "stmach",
+      "name": "Stefan Mach",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33124232?v=4",
+      "profile": "https://github.com/stmach",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

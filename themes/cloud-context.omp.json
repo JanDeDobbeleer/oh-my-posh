@@ -83,7 +83,7 @@
           "foreground": "p:cloud-text-gcp",
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": " <p:symbol-color>\ue7f0</> {{ .Project }}",
+          "template": " <p:symbol-color>\udb84\uddf6</> {{ .Project }}",
           "type": "gcp"
         },
         {

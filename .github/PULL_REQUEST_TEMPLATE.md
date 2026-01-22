@@ -1,4 +1,3 @@
-<!--  markdownlint-disable MD041 -->
 ### Prerequisites
 
 - [ ] I have read and understood the [contributing guide][CONTRIBUTING.md].

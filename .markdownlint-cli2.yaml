@@ -1,0 +1,11 @@
+config:
+  MD013:
+    line_length: 120
+    code_blocks: false
+  MD024: false
+fix: true
+gitignore: true
+ignores:
+  - node_modules/
+  - .github/agents/segment-docs.md
+  - .github/PULL_REQUEST_TEMPLATE.md

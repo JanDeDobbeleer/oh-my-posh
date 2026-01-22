@@ -476,6 +476,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jvsca"><img src="https://avatars.githubusercontent.com/u/2821731?v=4?s=100" width="100px;" alt="Juan Svaikauskas"/><br /><sub><b>Juan Svaikauskas</b></sub></a><br /><a href="#design-jvsca" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/johnstegeman/"><img src="https://avatars.githubusercontent.com/u/6601691?v=4?s=100" width="100px;" alt="John Stegeman"/><br /><sub><b>John Stegeman</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=johnstegeman" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=johnstegeman" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gorfey"><img src="https://avatars.githubusercontent.com/u/39035228?v=4?s=100" width="100px;" alt="Luke Van De Weghe"/><br /><sub><b>Luke Van De Weghe</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=gorfey" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/stmach"><img src="https://avatars.githubusercontent.com/u/33124232?v=4?s=100" width="100px;" alt="Stefan Mach"/><br /><sub><b>Stefan Mach</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=stmach" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

@@ -3441,6 +3441,17 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "kostadin-tonchekliev",
+      "name": "Kostadin Tonchekliev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95169764?v=4",
+      "profile": "https://github.com/kostadin-tonchekliev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

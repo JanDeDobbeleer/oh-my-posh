@@ -23,7 +23,7 @@ jobs:
       skipped: ${{ steps.changelog.outputs.skipped }}
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
       - name: Create changelog ✍️
         id: changelog
         uses: TriPSs/conventional-changelog-action@84dadaf2c367cb52af02737cd9c7e888807219e7
@@ -45,7 +45,7 @@ jobs:
         working-directory: ${{ github.workspace }}/build
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
       - name: Install Go 🗳
         uses: ./.github/workflows/composite/bootstrap-go
       - name: Pre Build 😸
@@ -88,7 +88,7 @@ jobs:
         working-directory: ${{ github.workspace }}/packages/msi
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: build-artifacts

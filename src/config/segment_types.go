@@ -97,6 +97,7 @@ func init() {
 	gob.Register(&segments.Owm{})
 	gob.Register(&segments.Path{})
 	gob.Register(&segments.Folders{})
+	gob.Register(&segments.PearDesktop{})
 	gob.Register(&segments.Perl{})
 	gob.Register(&segments.Php{})
 	gob.Register(&segments.Plastic{})
@@ -285,6 +286,8 @@ const (
 	OWM SegmentType = "owm"
 	// PATH represents the current path segment
 	PATH SegmentType = "path"
+	// PEARD writes the currently playing song in Pear Desktop
+	PEARD SegmentType = "peard"
 	// PERL writes which perl version is currently active
 	PERL SegmentType = "perl"
 	// PHP writes which php version is currently active
@@ -441,6 +444,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },
 	PATH:            func() SegmentWriter { return &segments.Path{} },
+	PEARD:           func() SegmentWriter { return &segments.PearDesktop{} },
 	PERL:            func() SegmentWriter { return &segments.Perl{} },
 	PHP:             func() SegmentWriter { return &segments.Php{} },
 	PLASTIC:         func() SegmentWriter { return &segments.Plastic{} },

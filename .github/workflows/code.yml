@@ -27,17 +27,51 @@ jobs:
       uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
+    - name: Install Protoc
+      uses: ./.github/workflows/composite/bootstrap-protoc
     - name: Golang CI
       uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20
       with:
         working-directory: src
-    - name: Fieldalignment
+    - name: Fieldalignment (Unix)
+      if: runner.os != 'Windows'
       run: |
         go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
-        fieldalignment "./..."
-    - name: Modernize
+        output=$(fieldalignment "./..." 2>&1 | grep -v '\.pb\.go:' || true)
+        if [ -n "$output" ]; then
+          echo "$output"
+          exit 1
+        fi
+    - name: Fieldalignment (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
+        $output = (cmd /c "fieldalignment ./... 2>&1 & exit 0" | Out-String -Stream) | Where-Object { $_ -notmatch '\.pb\.go:' }
+        if ($output) {
+          Write-Output "Fieldalignment found issues:"
+          Write-Output $output
+          exit 1
+        }
+    - name: Modernize (Unix)
+      if: runner.os != 'Windows'
       run: |
         go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
-        modernize "./..."
+        output=$(modernize "./..." 2>&1 | grep -v '\.pb\.go:' || true)
+        if [ -n "$output" ]; then
+          echo "$output"
+          exit 1
+        fi
+    - name: Modernize (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
+        $output = (cmd /c "modernize ./... 2>&1 & exit 0" | Out-String -Stream) | Where-Object { $_ -notmatch '\.pb\.go:' }
+        if ($output) {
+          Write-Output "Modernize found issues:"
+          Write-Output $output
+          exit 1
+        }
     - name: Unit Tests
       run: go test -v ./...

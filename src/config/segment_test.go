@@ -310,3 +310,97 @@ func TestEvaluateNeeds(t *testing.T) {
 		assert.Equal(t, tc.Needs, tc.Segment.Needs, tc.Case)
 	}
 }
+
+// Tests for DaemonCacheKey
+
+func TestDaemonCacheKey_NoConfig(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/home/user/project")
+
+	segment := &Segment{
+		Type: SESSION,
+		env:  env,
+	}
+	// Initialize writer
+	_ = segment.MapSegmentWithWriter(env)
+
+	key := segment.DaemonCacheKey()
+	// Should use folder-based key (segment name + pwd)
+	assert.Contains(t, key, "daemon_cache_")
+	assert.Contains(t, key, "Session")
+}
+
+func TestDaemonCacheKey_SessionStrategy(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/home/user/project")
+
+	segment := &Segment{
+		Type: SESSION,
+		Cache: &Cache{
+			Strategy: Session,
+		},
+		env: env,
+	}
+	_ = segment.MapSegmentWithWriter(env)
+
+	key := segment.DaemonCacheKey()
+	// Session strategy uses only segment name
+	assert.Equal(t, "daemon_cache_Session", key)
+}
+
+func TestDaemonCacheKey_FolderStrategy(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/home/user/project")
+
+	segment := &Segment{
+		Type: SESSION,
+		Cache: &Cache{
+			Strategy: Folder,
+		},
+		env: env,
+	}
+	_ = segment.MapSegmentWithWriter(env)
+
+	key := segment.DaemonCacheKey()
+	// Folder strategy uses segment name + folder key
+	assert.Contains(t, key, "daemon_cache_Session_")
+	assert.Contains(t, key, "/home/user/project")
+}
+
+func TestDaemonCacheKey_WithAlias(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/home/user/project")
+
+	segment := &Segment{
+		Type:  SESSION,
+		Alias: "my_session",
+		Cache: &Cache{
+			Strategy: Session,
+		},
+		env: env,
+	}
+	_ = segment.MapSegmentWithWriter(env)
+
+	key := segment.DaemonCacheKey()
+	// Should use alias as segment name
+	assert.Equal(t, "daemon_cache_my_session", key)
+}
+
+func TestDaemonCacheKey_DifferentFromCacheKey(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/home/user/project")
+
+	segment := &Segment{
+		Type: SESSION,
+		env:  env,
+	}
+	_ = segment.MapSegmentWithWriter(env)
+
+	daemonKey := segment.DaemonCacheKey()
+	cliKey := segment.CacheKey()
+
+	// Keys should have different prefixes
+	assert.Contains(t, daemonKey, "daemon_cache_")
+	assert.Contains(t, cliKey, "segment_cache_")
+	assert.NotEqual(t, daemonKey, cliKey)
+}

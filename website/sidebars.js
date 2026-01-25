@@ -231,6 +231,7 @@ export default {
       label: "🛠️ Advanced",
       collapsed: true,
       items: [
+        "advanced/daemon",
         "advanced/mcp-server",
       ],
     },

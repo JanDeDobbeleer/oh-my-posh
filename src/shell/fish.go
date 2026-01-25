@@ -23,6 +23,8 @@ func (f Features) Fish() Code {
 		return unixUpgrade
 	case Notice:
 		return unixNotice
+	case Daemon:
+		return unixDaemon
 	case RPrompt, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async:
 		fallthrough
 	default:

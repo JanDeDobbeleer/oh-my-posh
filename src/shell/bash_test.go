@@ -14,7 +14,8 @@ func TestBashFeatures(t *testing.T) {
 _omp_ftcs_marks=1
 "$_omp_executable" upgrade --auto
 "$_omp_executable" notice
-_omp_cursor_positioning=1`
+_omp_cursor_positioning=1
+enable_poshdaemon`
 
 	assert.Equal(t, want, got)
 }
@@ -48,7 +49,8 @@ bleopt prompt_rps1='$(
 		--terminal-width="${COLUMNS-0}" \
 		--escape=false
 )'
-_omp_cursor_positioning=1`
+_omp_cursor_positioning=1
+enable_poshdaemon`
 
 	assert.Equal(t, want, got)
 

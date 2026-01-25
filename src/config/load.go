@@ -115,9 +115,11 @@ func Parse(configFile string) (*Config, error) {
 	}
 
 	parentFolder := filepath.Dir(configFile)
+	filePaths := []string{configFile}
 
 	for cfg.Extends != "" {
 		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
+		filePaths = append(filePaths, cfg.Extends)
 		base, err := read(cfg.Extends, h)
 		if err != nil {
 			log.Errorf("failed to read extended config: %s", cfg.Extends)
@@ -136,6 +138,7 @@ func Parse(configFile string) (*Config, error) {
 	}
 
 	cfg.Source = configFile
+	cfg.FilePaths = filePaths
 	cfg.hash = h.Sum64()
 	// Migrate segment properties to options for TOML configs
 	// (go-toml/v2 doesn't support custom unmarshalers)

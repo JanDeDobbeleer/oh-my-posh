@@ -1,7 +1,10 @@
 package prompt
 
 import (
+	"fmt"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -16,17 +19,45 @@ import (
 
 var cycle *color.Cycle = &color.Cycle{}
 
+// TextCache is an interface for storing/retrieving cached segment text.
+// The daemon provides an implementation that handles session management.
+type TextCache interface {
+	// Get retrieves cached text by key.
+	Get(key string) (string, bool)
+	// Set stores text with default strategy and TTL.
+	Set(key string, value string)
+
+	// GetWithAge retrieves cached text along with its age (time since creation).
+	// Used for duration-based cache validation in daemon mode.
+	GetWithAge(key string) (text string, age time.Duration, found bool)
+
+	// SetWithConfig stores text with explicit cache configuration.
+	// The segment's Cache config determines strategy and duration.
+	SetWithConfig(key string, value string, cacheConfig *config.Cache)
+
+	// ShouldRecompute determines if a segment should be recomputed based on its cache config.
+	// Returns:
+	//   - recompute: true if segment should be executed again
+	//   - useCacheForPending: true if cached value should be shown during pending render
+	ShouldRecompute(key string, cacheConfig *config.Cache) (recompute bool, useCacheForPending bool)
+}
+
 type Engine struct {
 	Env                   runtime.Environment
+	TextCache             TextCache
+	pendingSegments       map[string]bool
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
+	TemplateCache         *cache.Template
+	cachedValues          map[string]string
 	rprompt               string
 	Overflow              config.Overflow
 	prompt                strings.Builder
-	rpromptLength         int
-	Padding               int
 	currentLineLength     int
+	Padding               int
+	rpromptLength         int
+	streamingMu           sync.Mutex
 	Plain                 bool
 	forceRender           bool
 }
@@ -90,6 +121,306 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 	}
 
 	return availableSpace, canWrite
+}
+
+// PrimaryStreaming renders the primary prompt using parallel segment execution.
+// It returns partial results after timeout, then continues updating in background.
+// Used by the daemon.
+func (e *Engine) PrimaryStreaming(timeout time.Duration, updateCallback func(string)) string {
+	// Initialize streaming state
+	e.pendingSegments = make(map[string]bool)
+	e.cachedValues = make(map[string]string)
+	var segmentsToExecute []*config.Segment
+	var segmentsSkipped []*config.Segment // Segments with fresh cache that don't need execution
+	var wg sync.WaitGroup
+
+	// Collect segments and determine which need execution
+	for _, block := range e.Config.Blocks {
+		for _, segment := range block.Segments {
+			// Pre-initialize writer and name for cache key generation
+			_ = segment.MapSegmentWithWriter(e.Env)
+			_ = segment.Name()
+
+			// Check if we should recompute this segment (daemon mode cache logic)
+			if e.TextCache != nil {
+				cacheKey := segment.DaemonCacheKey()
+				shouldRecompute, useCacheForPending := e.TextCache.ShouldRecompute(cacheKey, segment.Cache)
+
+				if !shouldRecompute {
+					// Cache is fresh: use cached value directly, skip execution
+					if cachedText, ok := e.TextCache.Get(cacheKey); ok {
+						segment.Enabled = true
+						segment.SetText(cachedText)
+						segmentsSkipped = append(segmentsSkipped, segment)
+						continue
+					}
+				}
+
+				// Store cached value for pending display if available
+				if useCacheForPending {
+					if cachedText, ok := e.TextCache.Get(cacheKey); ok {
+						e.cachedValues[segment.Name()] = cachedText
+					}
+				}
+			}
+
+			segmentsToExecute = append(segmentsToExecute, segment)
+		}
+	}
+
+	// Helper to start segment execution
+	execute := func(segment *config.Segment, index int, out chan<- result) {
+		// Execute segment (state modified in place on cloned segment)
+		segment.Execute(e.Env)
+		out <- result{segment, index}
+	}
+
+	// Start all segments that need execution in parallel
+	results := make(chan result, len(segmentsToExecute))
+	for i, segment := range segmentsToExecute {
+		wg.Add(1)
+		go func(s *config.Segment, idx int) {
+			defer wg.Done()
+			execute(s, idx, results)
+		}(segment, i)
+	}
+
+	// Close results channel when all goroutines complete
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// Wait for results or timeout
+	timeoutChan := time.After(timeout)
+
+	// Consume results until all done or timeout
+	executedCount := 0
+	totalCount := len(segmentsToExecute)
+
+	// Map to track completed segments for the initial render pass
+	completedSegments := make(map[*config.Segment]bool)
+
+	// Mark skipped segments as already completed
+	for _, s := range segmentsSkipped {
+		completedSegments[s] = true
+	}
+
+	// Wait loop
+	loop := true
+	for loop {
+		select {
+		case res, ok := <-results:
+			if !ok {
+				loop = false
+				break
+			}
+			executedCount++
+			completedSegments[res.segment] = true
+			if executedCount == totalCount {
+				loop = false
+			}
+		case <-timeoutChan:
+			loop = false
+		}
+	}
+
+	// Identify pending segments (those that started but haven't finished)
+	e.streamingMu.Lock()
+	for _, s := range segmentsToExecute {
+		if !completedSegments[s] {
+			e.pendingSegments[s.Name()] = true
+		}
+	}
+	e.streamingMu.Unlock()
+
+	// Initial render
+	initialPrompt := e.renderStreamingPrompt()
+
+	// If there are pending segments, start background listener for updates
+	if len(e.pendingSegments) > 0 {
+		go func() {
+			// Continue consuming results
+			for res := range results {
+				e.streamingMu.Lock()
+				delete(e.pendingSegments, res.segment.Name())
+				e.streamingMu.Unlock()
+
+				// Notify daemon
+				updateCallback(res.segment.Name())
+			}
+		}()
+	}
+
+	return initialPrompt
+}
+
+// ReRender re-renders the prompt using the current state of all segments.
+// Called by the daemon when a background segment completes.
+func (e *Engine) ReRender() string {
+	e.streamingMu.Lock()
+	defer e.streamingMu.Unlock()
+	return e.renderStreamingPrompt()
+}
+
+// renderStreamingPrompt renders the prompt handling pending vs completed segments.
+func (e *Engine) renderStreamingPrompt() string {
+	e.prompt.Reset()
+	e.currentLineLength = 0
+	e.rprompt = ""
+	e.rpromptLength = 0
+
+	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
+	e.writePrimaryPromptStreaming(needsPrimaryRightPrompt)
+
+	switch e.Env.Shell() {
+	case shell.ZSH:
+		if !e.Env.Flags().Eval {
+			break
+		}
+		// Warp doesn't support RPROMPT so we need to write it manually
+		if e.isWarp() {
+			e.writePrimaryRightPrompt()
+			prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(e.string()))
+			return prompt
+		}
+
+		prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(e.string()))
+		prompt += fmt.Sprintf("\nRPROMPT=%s", shell.QuotePosixStr(e.rprompt))
+		return prompt
+	default:
+		if !needsPrimaryRightPrompt {
+			break
+		}
+		e.writePrimaryRightPrompt()
+	}
+
+	return e.string()
+}
+
+// writePrimaryPromptStreaming is a copy of writePrimaryPrompt but handles pending segments
+func (e *Engine) writePrimaryPromptStreaming(needsPrimaryRPrompt bool) {
+	if e.Config.ShellIntegration {
+		exitCode, _ := e.Env.StatusCodes()
+		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+		e.write(terminal.PromptStart())
+	}
+
+	cycle = &e.Config.Cycle
+	var cancelNewline, didRender bool
+
+	for i, block := range e.Config.Blocks {
+		if i == 0 {
+			row, _ := e.Env.CursorPosition()
+			cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
+		}
+
+		if i != 0 {
+			cancelNewline = !didRender
+		}
+
+		if block.Type == config.RPrompt && !needsPrimaryRPrompt {
+			continue
+		}
+
+		// Custom renderBlock logic for streaming
+		if e.renderBlockStreaming(block, cancelNewline) {
+			didRender = true
+		}
+	}
+
+	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
+		title := e.getTitleTemplateText()
+		e.write(terminal.FormatTitle(title))
+	}
+
+	if e.Config.FinalSpace {
+		e.write(" ")
+		e.currentLineLength++
+	}
+
+	if e.Config.ITermFeatures != nil && e.isIterm() {
+		host, _ := e.Env.Host()
+		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
+	}
+}
+
+// renderBlockStreaming renders a block, handling pending segments
+func (e *Engine) renderBlockStreaming(block *config.Block, cancelNewline bool) bool {
+	blockText, length := e.writeBlockSegmentsStreaming(block)
+	return e.renderBlockWithText(block, blockText, length, cancelNewline)
+}
+
+func (e *Engine) writeBlockSegmentsStreaming(block *config.Block) (string, int) {
+	segmentIndex := 0
+
+	for _, segment := range block.Segments {
+		// Check if pending
+		isPending := e.pendingSegments[segment.Name()]
+
+		if isPending {
+			// Render as pending
+			cachedVal := e.cachedValues[segment.Name()]
+			enabled, text, background := segment.GetPendingText(cachedVal, e.Config)
+
+			if !enabled {
+				continue
+			}
+
+			// Store original state to restore later
+			// Since we clone the config per request, this modification is local to this request/render
+			// However, we might re-render this request multiple times (ReRender), so we should restore
+			// to avoid polluting the state for the *next* ReRender of *this* request (if the segment is still pending).
+			originalText := segment.Text()
+			originalBackground := segment.Background
+			originalEnabled := segment.Enabled
+			originalForeground := segment.Foreground // segment.GetPendingText doesn't return fg, but we should preserve it
+
+			// Update segment for pending render
+			segment.SetText(text)
+			if background != "" {
+				segment.Background = background
+			} else {
+				// Use configured background if set, or keep original
+				switch {
+				case segment.RenderPendingBackground != "":
+					segment.Background = segment.RenderPendingBackground
+				case e.Config.RenderPendingBackground != "":
+					segment.Background = e.Config.RenderPendingBackground
+				default:
+					segment.Background = "darkGray"
+				}
+			}
+			segment.Enabled = true
+
+			// Render it
+			e.writeSegment(block, segment)
+
+			// Restore state
+			segment.SetText(originalText)
+			segment.Background = originalBackground
+			segment.Enabled = originalEnabled
+			segment.Foreground = originalForeground
+		} else {
+			// Normal rendering
+			// Segment.Execute has already run (or is finished)
+			if segment.Render(segmentIndex, e.forceRender) {
+				segmentIndex++
+			}
+			e.writeSegment(block, segment)
+		}
+	}
+
+	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
+		e.activeSegment.TrailingDiamond = block.TrailingDiamond
+	}
+
+	e.writeSeparator(true)
+
+	e.activeSegment = nil
+	e.previousActiveSegment = nil
+
+	return terminal.String()
 }
 
 func (e *Engine) pwd() {
@@ -197,9 +528,40 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
+// CacheSegmentText stores a segment's rendered text in TextCache.
+// Called when a segment completes successfully in daemon mode.
+// Uses DaemonCacheKey and stores with the segment's cache configuration.
+func (e *Engine) CacheSegmentText(segment *config.Segment) {
+	if e.TextCache == nil {
+		return
+	}
+
+	if !segment.Enabled {
+		return
+	}
+
+	key := segment.DaemonCacheKey()
+	text := segment.Text()
+	e.TextCache.SetWithConfig(key, text, segment.Cache)
+}
+
+// StreamingMu returns the mutex protecting streaming state.
+func (e *Engine) StreamingMu() *sync.Mutex {
+	return &e.streamingMu
+}
+
+// PendingSegments returns the set of currently pending segments.
+func (e *Engine) PendingSegments() map[string]bool {
+	return e.pendingSegments
+}
+
 func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	blockText, length := e.writeBlockSegments(block)
+	return e.renderBlockWithText(block, blockText, length, cancelNewline)
+}
 
+// renderBlockWithText renders a block with pre-computed text and length.
+func (e *Engine) renderBlockWithText(block *config.Block, blockText string, length int, cancelNewline bool) bool {
 	// do not print anything when we don't have any text unless forced
 	if !block.Force && length == 0 {
 		return false
@@ -485,6 +847,25 @@ func (e *Engine) rectifyTerminalWidth(diff int) {
 	e.Env.Flags().TerminalWidth += diff
 }
 
+// SaveTemplateCache persists the Engine's template cache to session storage.
+// This allows secondary/transient prompts to access segment data from the primary prompt.
+// Only used in CLI mode - daemon mode returns all prompts in a single response.
+func (e *Engine) SaveTemplateCache() {
+	if e.TemplateCache != nil {
+		// Convert *cache.Template to whatever format template.SaveCache expects,
+		// or update template.SaveCache to accept an argument.
+		// In oh-my-posh-before-daemon, template.SaveCache() takes NO arguments and uses the global `Cache`.
+		// But here we want to save e.TemplateCache.
+		// So we might need to update template.SaveCache in oh-my-posh-before-daemon/src/template/cache.go
+		// OR we can hack it by setting the global Cache to e.TemplateCache before calling SaveCache.
+
+		// Let's modify template.SaveCache to be more flexible in a separate step if needed.
+		// For now, let's just make this method exist and do nothing or do the hack.
+		template.Cache = e.TemplateCache
+		template.SaveCache()
+	}
+}
+
 // New returns a prompt engine initialized with the
 // given configuration options, and is ready to print any
 // of the prompt components.
@@ -515,11 +896,12 @@ func New(flags *runtime.Flags) *Engine {
 	terminal.Plain = flags.Plain
 
 	eng := &Engine{
-		Config:      cfg,
-		Env:         env,
-		Plain:       flags.Plain,
-		forceRender: flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
-		prompt:      strings.Builder{},
+		Config:        cfg,
+		Env:           env,
+		Plain:         flags.Plain,
+		TemplateCache: template.NewCache(env, cfg.Var, cfg.Maps),
+		forceRender:   flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
+		prompt:        strings.Builder{},
 	}
 
 	// Pre-allocate prompt builder capacity to reduce allocations during rendering

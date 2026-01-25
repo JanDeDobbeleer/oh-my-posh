@@ -103,7 +103,7 @@ func (term *Terminal) Platform() string {
 	}()
 
 	if wsl := term.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
-		platform, _, _ := strings.Cut(wsl, "-")
+		platform, _, _ = strings.Cut(wsl, "-")
 		platform = strings.ToLower(platform)
 		log.Debug(platform)
 		return platform

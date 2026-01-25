@@ -3199,6 +3199,12 @@
                     "title": "Ubuntu Icon",
                     "description": "The icon to use for Ubuntu",
                     "default": "\uf31b"
+                  },
+                  "void": {
+                    "type": "string",
+                    "title": "Void Icon",
+                    "description": "The icon to use for Void",
+                    "default": "\uf32e"
                   }
                 },
                 "unevaluatedProperties": false

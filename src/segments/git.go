@@ -283,18 +283,18 @@ func (g *Git) Commit() *Commit {
 			refs := strings.SplitSeq(line, ", ")
 			for ref := range refs {
 				ref = strings.TrimSpace(ref)
-				switch {
-				case strings.HasSuffix(ref, "HEAD"):
+				if strings.HasSuffix(ref, "HEAD") {
 					continue
-				case strings.HasPrefix(ref, "tag: refs/tags/"):
-					g.commit.Refs.Tags = append(g.commit.Refs.Tags, strings.TrimPrefix(ref, "tag: refs/tags/"))
-				case strings.HasPrefix(ref, "refs/remotes/"):
-					g.commit.Refs.Remotes = append(g.commit.Refs.Remotes, strings.TrimPrefix(ref, "refs/remotes/"))
-				case strings.HasPrefix(ref, "HEAD -> refs/heads/"):
-					g.commit.Refs.Heads = append(g.commit.Refs.Heads, strings.TrimPrefix(ref, "HEAD -> refs/heads/"))
-				case strings.HasPrefix(ref, "refs/heads/"):
-					g.commit.Refs.Heads = append(g.commit.Refs.Heads, strings.TrimPrefix(ref, "refs/heads/"))
-				default:
+				}
+				if tag, found := strings.CutPrefix(ref, "tag: refs/tags/"); found {
+					g.commit.Refs.Tags = append(g.commit.Refs.Tags, tag)
+				} else if remote, found := strings.CutPrefix(ref, "refs/remotes/"); found {
+					g.commit.Refs.Remotes = append(g.commit.Refs.Remotes, remote)
+				} else if head, found := strings.CutPrefix(ref, "HEAD -> refs/heads/"); found {
+					g.commit.Refs.Heads = append(g.commit.Refs.Heads, head)
+				} else if head, found := strings.CutPrefix(ref, "refs/heads/"); found {
+					g.commit.Refs.Heads = append(g.commit.Refs.Heads, head)
+				} else {
 					g.commit.Refs.Heads = append(g.commit.Refs.Heads, ref)
 				}
 			}

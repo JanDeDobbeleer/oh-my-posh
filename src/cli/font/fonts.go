@@ -132,9 +132,11 @@ func fetchFontAssets(repo string) ([]*Asset, error) {
 
 	var fonts []*Asset
 	for _, asset := range release.Assets {
-		if asset.State == "uploaded" && strings.HasSuffix(asset.Name, ".zip") {
-			asset.Name = strings.TrimSuffix(asset.Name, ".zip")
-			fonts = append(fonts, asset)
+		if asset.State == "uploaded" {
+			if name, found := strings.CutSuffix(asset.Name, ".zip"); found {
+				asset.Name = name
+				fonts = append(fonts, asset)
+			}
 		}
 	}
 

@@ -60,7 +60,16 @@ func resolveConfigLocation(config string) string {
 		return config
 	}
 
-	if url, OK := isTheme(config); OK {
+	var OK bool
+	var configFull string
+	var url string
+
+	// Get theme locally from some default path's.
+	if configFull, OK = getThemePath(config); OK {
+		config = configFull
+	}
+
+	if url, OK = isTheme(config); OK && configFull == "" {
 		log.Debug("theme detected, using theme file")
 		return url
 	}
@@ -379,6 +388,9 @@ func isTheme(config string) (string, bool) {
 		"zash":                     "zash.omp.json",
 	}
 
+	// Remove the file extension.
+	config = strings.TrimSuffix(config, ".omp.json")
+
 	themeFile, OK := themes[config]
 	if !OK {
 		log.Debug(config, "is not a theme")
@@ -392,22 +404,49 @@ func isTheme(config string) (string, bool) {
 	return url, true
 }
 
-func getMSIXThemePath(themeFile string) (string, error) {
+func getThemePath(themeFile string) (string, bool) {
 	log.Trace(time.Now(), themeFile)
 
-	// For MSIX packages, the executable location is the package root
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Error(err)
-		return "", err
+	themeFilePaths := []string{}
+
+	if runtimelib.GOOS == "windows" {
+		exePath, err := os.Executable()
+		if err != nil {
+			log.Debug(err.Error())
+		} else {
+			themeFilePaths = append(themeFilePaths, filepath.Join(filepath.Dir(exePath), "themes", themeFile))
+		}
 	}
 
-	themeFilePath := filepath.Join(filepath.Dir(exePath), "themes", themeFile)
-	if _, err := os.Stat(themeFilePath); err != nil {
-		log.Error(err)
-		return "", err
+	if runtimelib.GOOS == "linux" {
+		homePath, err := os.UserHomeDir()
+		if err != nil {
+			log.Debug(err.Error())
+		} else {
+			themeFilePaths = append(themeFilePaths, filepath.Join(homePath, ".config", "oh-my-posh", "themes", themeFile))
+		}
+		themeFilePaths = append(themeFilePaths, filepath.Join("/", "usr", "share", "oh-my-posh", "themes", themeFile))
 	}
 
-	log.Debug("found theme in MSIX installation:", themeFilePath)
-	return themeFilePath, nil
+	var themeFilePath strings.Builder
+	for index := range themeFilePaths {
+		if _, err := os.Open(themeFilePaths[index]); err != nil || themeFilePath.String() != "" {
+			log.Debug(err.Error())
+			if _, err := os.Open(themeFilePaths[index] + ".omp.json"); err != nil || themeFilePath.String() != "" {
+				log.Debug(err.Error())
+			} else {
+				themeFilePath.WriteString(themeFilePaths[index])
+				themeFilePath.WriteString(".omp.json")
+			}
+		} else {
+			themeFilePath.WriteString(themeFilePaths[index])
+		}
+	}
+
+	if themeFilePath.String() != "" {
+		log.Debug("Found theme in:", themeFilePath.String())
+		return themeFilePath.String(), true
+	} else {
+		return "", false
+	}
 }

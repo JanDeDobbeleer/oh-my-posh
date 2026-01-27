@@ -387,10 +387,6 @@ func isTheme(config string) (string, bool) {
 
 	log.Debug(config, "is a theme")
 
-	if themeFilePath, err := getMSIXThemePath(themeFile); err == nil {
-		return themeFilePath, true
-	}
-
 	log.Debug("building theme URL for:", themeFile)
 	url := fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/tags/v%s/themes/%s", build.Version, themeFile)
 	return url, true

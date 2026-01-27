@@ -2,5 +2,5 @@ package build
 
 var (
 	Date    string
-	Version = "29.1.0"
+	Version = "0.0.0-dev"
 )

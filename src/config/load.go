@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	runtimelib "runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -40,6 +41,16 @@ var (
 	ErrURLFetch         = Error{"CONFIG URL FETCH FAILED"}
 	ErrParse            = Error{"CONFIG PARSE ERROR"}
 	ErrNoConfig         = Error{"NO CONFIG"}
+
+	// Valid extension's for theme's.
+	fileExtensions = [...]string{
+		".omp.json",
+		".omp.toml",
+		".omp.yaml",
+		".json",
+		".toml",
+		".yaml",
+	}
 )
 
 func Load(configFile string) *Config {
@@ -261,6 +272,11 @@ func isCygwin() bool {
 }
 
 func isTheme(config string) (string, bool) {
+	validExtensions := []string{
+		// Only one for now.
+		".omp.json",
+	}
+
 	themes := map[string]string{
 		"1_shell":                  "1_shell.omp.json",
 		"m365princess":             "M365Princess.omp.json",
@@ -389,7 +405,16 @@ func isTheme(config string) (string, bool) {
 	}
 
 	// Remove the file extension.
-	config = strings.TrimSuffix(config, ".omp.json")
+	trimmedExtension := false
+	for _, extension := range fileExtensions {
+		if !trimmedExtension && slices.Index(validExtensions, extension) != -1 {
+			configTrimmed, hasTrimmed := strings.CutSuffix(config, extension)
+			if hasTrimmed {
+				config = configTrimmed
+				trimmedExtension = hasTrimmed
+			}
+		}
+	}
 
 	themeFile, OK := themes[config]
 	if !OK {
@@ -402,6 +427,15 @@ func isTheme(config string) (string, bool) {
 	log.Debug("building theme URL for:", themeFile)
 	url := fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/tags/v%s/themes/%s", build.Version, themeFile)
 	return url, true
+}
+
+func testThemePath(path string) (string, bool) {
+	if _, err := os.Open(path); err != nil {
+		log.Debug(err.Error())
+		return "", false
+	} else {
+		return path, true
+	}
 }
 
 func getThemePath(themeFile string) (string, bool) {
@@ -428,24 +462,23 @@ func getThemePath(themeFile string) (string, bool) {
 		themeFilePaths = append(themeFilePaths, filepath.Join("/", "usr", "share", "oh-my-posh", "themes", themeFile))
 	}
 
-	var themeFilePath strings.Builder
-	for index := range themeFilePaths {
-		if _, err := os.Open(themeFilePaths[index]); err != nil || themeFilePath.String() != "" {
-			log.Debug(err.Error())
-			if _, err := os.Open(themeFilePaths[index] + ".omp.json"); err != nil || themeFilePath.String() != "" {
-				log.Debug(err.Error())
-			} else {
-				themeFilePath.WriteString(themeFilePaths[index])
-				themeFilePath.WriteString(".omp.json")
+	themeFilePath := ""
+	for _, path := range themeFilePaths {
+		filePath, OK := testThemePath(path)
+		if OK && themeFilePath == "" {
+			themeFilePath = filePath
+		}
+		for _, extension := range fileExtensions {
+			filePath, OK := testThemePath(path + extension)
+			if OK && themeFilePath == "" {
+				themeFilePath = filePath
 			}
-		} else {
-			themeFilePath.WriteString(themeFilePaths[index])
 		}
 	}
 
-	if themeFilePath.String() != "" {
-		log.Debug("Found theme in:", themeFilePath.String())
-		return themeFilePath.String(), true
+	if themeFilePath != "" {
+		log.Debug("Found theme in:", themeFilePath)
+		return themeFilePath, true
 	} else {
 		return "", false
 	}

@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
+# Immediate exit on ^C
+trap "echo '' && exit 0" SIGINT
+
 install_dir=""
 themes_dir=""
 executable=""
 version=""
+scope=""
 
 error() {
     printf "\e[31m$1\e[0m\n"
@@ -61,6 +65,22 @@ validate_dependencies() {
     validate_dependency unzip
     validate_dependency realpath
     validate_dependency dirname
+    validate_dependency sudo
+    validate_dependency test
+}
+
+set_owner() {
+    if [[ "$1" == "/home/"* ]]; then
+        sudo chown -R "$USER:$USER" "$1"
+    fi
+}
+
+get_themes_directory_user() {
+    if [[ "$1" == "/home/"* ]]; then
+        echo "$USER"
+    else
+        echo "root"
+    fi
 }
 
 set_install_directory() {
@@ -81,15 +101,22 @@ set_install_directory() {
         return 0
     fi
 
-    # check if $HOME/bin exists and is writable
-    if [ -d "$HOME/bin" ] && [ -w "$HOME/bin" ]; then
-        install_dir="$HOME/bin"
-        return 0
+    if [[ "$scope" == "local" || "$scope" == "custom" ]]; then
+        # check if $HOME/bin exists and is writable
+        if [ -d "$HOME/bin" ] && [ -w "$HOME/bin" ]; then
+            install_dir="$HOME/bin"
+            return 0
+        fi
+
+        # check if $HOME/.local/bin exists and is writable
+        if ([ -d "$HOME/.local/bin" ] && [ -w "$HOME/.local/bin" ]) || mkdir -p "$HOME/.local/bin"; then
+            install_dir="$HOME/.local/bin"
+            return 0
+        fi
     fi
 
-    # check if $HOME/.local/bin exists and is writable
-    if ([ -d "$HOME/.local/bin" ] && [ -w "$HOME/.local/bin" ]) || mkdir -p "$HOME/.local/bin"; then
-        install_dir="$HOME/.local/bin"
+    if [[ "$scope" == "global" ]]; then
+        install_dir="/usr/bin"
         return 0
     fi
 
@@ -102,8 +129,8 @@ validate_install_directory() {
         error "Directory ${install_dir} does not exist, set a different directory and try again."
     fi
 
-    # Check if regular user has write permission
-    if [ ! -w "$install_dir" ]; then
+    # Check if root user has write permission
+    if ! sudo test "$install_dir" > /dev/null 2>&1; then
         error "Cannot write to ${install_dir}. Please check write permissions or set a different directory and try again: \ncurl -s https://ohmyposh.dev/install.sh | bash -s -- -d {directory}"
     fi
 
@@ -126,12 +153,12 @@ validate_install_directory() {
 validate_themes_directory() {
 
     # Validate if the themes directory exists
-    if ! mkdir -p "$themes_dir" > /dev/null 2>&1; then
+    if ! sudo -u "$(get_themes_directory_user '$themes_dir')" mkdir -p "$themes_dir" > /dev/null 2>&1; then
         error "Cannot write to ${themes_dir}. Please check write permissions or set a different directory and try again: \ncurl -s https://ohmyposh.dev/install.sh | bash -s -- -t {directory}"
     fi
 
     #check user write permission
-    if [ ! -w "$themes_dir" ]; then
+    if ! sudo -u "$(get_themes_directory_user '$themes_dir')" test "$themes_dir" > /dev/null 2>&1; then
         error "Cannot write to ${themes_dir}. Please check write permissions or set a different directory and try again: \ncurl -s https://ohmyposh.dev/install.sh | bash -s -- -t {directory}"
     fi
 }
@@ -146,7 +173,13 @@ install_themes() {
 
     # validate if the user set the path to the themes directory
     if [ -z "$themes_dir" ]; then
-        themes_dir="${cache_dir}/themes"
+        if [[ "$scope" == "local" ]]; then
+            themes_dir="$HOME/.config/oh-my-posh/themes"
+        elif [[ "$scope" == "global" ]]; then
+            themes_dir="/usr/share/oh-my-posh/themes"
+        else
+            themes_dir="${cache_dir}/themes"
+        fi
     fi
 
     validate_themes_directory
@@ -160,9 +193,10 @@ install_themes() {
     http_response=$(curl -s -f -L $url -o $zip_file -w "%{http_code}")
 
     if [ $http_response = "200" ] && [ -f $zip_file ]; then
-        unzip -o -q $zip_file -d $themes_dir
-        # make sure the files are readable and writable for all users
-        chmod a+rwX ${themes_dir}/*.omp.*
+        sudo unzip -o -q $zip_file -d $themes_dir
+        # make sure the files are readable and executable for all users
+        sudo chmod 755 ${themes_dir}/*
+        set_owner "$themes_dir"
         rm $zip_file
     else
         warn "Unable to download themes at ${url}\nPlease validate your curl, connection and/or proxy settings"
@@ -198,13 +232,14 @@ install() {
 
     info "⬇️  Downloading oh-my-posh from ${url}"
 
-    http_response=$(curl -s -f -L $url -o $executable -w "%{http_code}")
+    http_response=$(sudo curl -s -f -L $url -o $executable -w "%{http_code}")
 
     if [ $http_response != "200" ] || [ ! -f $executable ]; then
         error "Unable to download executable at ${url}\nPlease validate your curl, connection and/or proxy settings"
     fi
 
-    chmod +x $executable
+    sudo chmod 755 $executable
+    set_owner "$executable"
 
     install_themes
 
@@ -245,6 +280,30 @@ detect_platform() {
   printf '%s' "${platform}"
 }
 
+ask_for_install_scope() {
+    if [[ "$themes_dir" != "" || "$install_dir" != "" ]]; then
+        scope="custom"
+        return 0
+    fi
+    echo -n "🌐 Would you like to install globally or just for your user(locally)? [G/l]: "
+    read -r -n 1 scope_input < /dev/tty
+    echo ""
+    if [[ "$scope_input" == "l" || "$scope_input" == "L" ]]; then
+        scope="local"
+    elif [[ "$scope_input" == "g" || "$scope_input" == "G" ]]; then
+        scope="global"
+    elif [[ -z "$scope_input" ]]; then
+        scope="global"
+    else
+        warn "Invalid option selected. Please run the script again and select 'g' for global or 'l' for local installation."
+        ask_for_install_scope
+    fi
+}
+
+# Request sudo permissions upfront
+sudo true > /dev/null 2>&1 || error "Sudo permissions are required to install Oh My Posh. Please run the script again and provide sudo access."
+
+ask_for_install_scope
 validate_dependencies
 set_install_directory
 validate_install_directory

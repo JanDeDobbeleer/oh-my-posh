@@ -27,13 +27,15 @@ The installation script requires the following tools to be installed:
 - `unzip`
 - `realpath`
 - `dirname`
+- `sudo`
+- `test`
 
 :::
 
 Install the latest version for your system by running the following command:
 
 ```bash
-curl -s https://ohmyposh.dev/install.sh | bash -s
+curl -sL https://ohmyposh.dev/install.sh | bash -s
 ```
 
 By default the script will install to `~/bin` or `~/.local/bin` depending on which one exists,
@@ -41,7 +43,13 @@ or the existing Oh My Posh executable's installation folder.
 If you want to install to a different location you can specify it using the `-d` flag:
 
 ```bash
-curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
+curl -sL https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
+```
+
+For more information:
+
+```bash
+curl -sL https://ohmyposh.dev/install.sh | bash -s -- -h
 ```
 
 <Next />

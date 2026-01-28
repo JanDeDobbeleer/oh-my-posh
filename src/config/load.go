@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	runtimelib "runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -40,6 +41,16 @@ var (
 	ErrURLFetch         = Error{"CONFIG URL FETCH FAILED"}
 	ErrParse            = Error{"CONFIG PARSE ERROR"}
 	ErrNoConfig         = Error{"NO CONFIG"}
+
+	// Valid extension's for theme's.
+	fileExtensions = [...]string{
+		".omp.json",
+		".omp.toml",
+		".omp.yaml",
+		".json",
+		".toml",
+		".yaml",
+	}
 )
 
 func Load(configFile string) *Config {
@@ -60,7 +71,16 @@ func resolveConfigLocation(config string) string {
 		return config
 	}
 
-	if url, OK := isTheme(config); OK {
+	var OK bool
+	var configFull string
+	var url string
+
+	// Get theme locally from some default path's.
+	if configFull, OK = getThemePath(config); OK {
+		config = configFull
+	}
+
+	if url, OK = isTheme(config); OK && configFull == "" {
 		log.Debug("theme detected, using theme file")
 		return url
 	}
@@ -252,6 +272,11 @@ func isCygwin() bool {
 }
 
 func isTheme(config string) (string, bool) {
+	validExtensions := []string{
+		// Only one for now.
+		".omp.json",
+	}
+
 	themes := map[string]string{
 		"1_shell":                  "1_shell.omp.json",
 		"m365princess":             "M365Princess.omp.json",
@@ -379,6 +404,18 @@ func isTheme(config string) (string, bool) {
 		"zash":                     "zash.omp.json",
 	}
 
+	// Remove the file extension.
+	trimmedExtension := false
+	for _, extension := range fileExtensions {
+		if !trimmedExtension && slices.Index(validExtensions, extension) != -1 {
+			configTrimmed, hasTrimmed := strings.CutSuffix(config, extension)
+			if hasTrimmed {
+				config = configTrimmed
+				trimmedExtension = hasTrimmed
+			}
+		}
+	}
+
 	themeFile, OK := themes[config]
 	if !OK {
 		log.Debug(config, "is not a theme")
@@ -387,31 +424,62 @@ func isTheme(config string) (string, bool) {
 
 	log.Debug(config, "is a theme")
 
-	if themeFilePath, err := getMSIXThemePath(themeFile); err == nil {
-		return themeFilePath, true
-	}
-
 	log.Debug("building theme URL for:", themeFile)
 	url := fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/tags/v%s/themes/%s", build.Version, themeFile)
 	return url, true
 }
 
-func getMSIXThemePath(themeFile string) (string, error) {
+func testThemePath(path string) (string, bool) {
+	if _, err := os.Open(path); err != nil {
+		log.Debug(err.Error())
+		return "", false
+	} else {
+		return path, true
+	}
+}
+
+func getThemePath(themeFile string) (string, bool) {
 	log.Trace(time.Now(), themeFile)
 
-	// For MSIX packages, the executable location is the package root
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Error(err)
-		return "", err
+	themeFilePaths := []string{}
+
+	if runtimelib.GOOS == "windows" {
+		exePath, err := os.Executable()
+		if err != nil {
+			log.Debug(err.Error())
+		} else {
+			themeFilePaths = append(themeFilePaths, filepath.Join(filepath.Dir(exePath), "themes", themeFile))
+		}
 	}
 
-	themeFilePath := filepath.Join(filepath.Dir(exePath), "themes", themeFile)
-	if _, err := os.Stat(themeFilePath); err != nil {
-		log.Error(err)
-		return "", err
+	if runtimelib.GOOS == "linux" {
+		homePath, err := os.UserHomeDir()
+		if err != nil {
+			log.Debug(err.Error())
+		} else {
+			themeFilePaths = append(themeFilePaths, filepath.Join(homePath, ".config", "oh-my-posh", "themes", themeFile))
+		}
+		themeFilePaths = append(themeFilePaths, filepath.Join("/", "usr", "share", "oh-my-posh", "themes", themeFile))
 	}
 
-	log.Debug("found theme in MSIX installation:", themeFilePath)
-	return themeFilePath, nil
+	themeFilePath := ""
+	for _, path := range themeFilePaths {
+		filePath, OK := testThemePath(path)
+		if OK && themeFilePath == "" {
+			themeFilePath = filePath
+		}
+		for _, extension := range fileExtensions {
+			filePath, OK := testThemePath(path + extension)
+			if OK && themeFilePath == "" {
+				themeFilePath = filePath
+			}
+		}
+	}
+
+	if themeFilePath != "" {
+		log.Debug("Found theme in:", themeFilePath)
+		return themeFilePath, true
+	} else {
+		return "", false
+	}
 }

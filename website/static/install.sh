@@ -119,7 +119,7 @@ validate_install_directory() {
     )
 
     if [ "${good}" != "1" ]; then
-        warn "Installation directory ${install_dir} is not in your \$PATH, add it using \nexport PATH=\$PATH:${install_dir}"
+        warn "Installation directory ${install_dir} is not in your \$PATH, add it using: \nexport PATH=\"\$PATH:${install_dir}\""
     fi
 }
 
@@ -146,7 +146,7 @@ install_themes() {
 
     # validate if the user set the path to the themes directory
     if [ -z "$themes_dir" ]; then
-        themes_dir="${cache_dir}/themes"
+        themes_dir="$HOME/.config/oh-my-posh/themes"
     fi
 
     validate_themes_directory

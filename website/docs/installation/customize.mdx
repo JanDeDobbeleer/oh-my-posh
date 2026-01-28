@@ -12,7 +12,7 @@ The standard initialization sets Oh My Posh' default, built-in theme.
 To set a new configuration or theme you need to change the `--config` option of the `oh-my-posh init <shell>`
 line in your `profile` or `.<shell>rc` script (see [prompt][prompt]).
 
-These are the three possible values the `--config` flag can handle:
+These are the four possible values the `--config` flag can handle:
 
 - a path to a local configuration file
 
@@ -20,7 +20,13 @@ These are the three possible values the `--config` flag can handle:
   --config 'C:/Users/Posh/myconfig.omp.json'
   ```
 
-- a pointer to a theme, without the extensions
+- a pointer to a theme
+
+  ```powershell
+  --config 'jandedobbeleer.omp.json'
+  ```
+
+- a pointer to a theme, but without the extensions
 
   ```powershell
   --config 'jandedobbeleer'
@@ -33,9 +39,17 @@ These are the three possible values the `--config` flag can handle:
   ```
 
 :::info
-Using a theme name (like `jandedobbeleer`) or a remote URL requires an active internet connection
+Using a theme name (like `jandedobbeleer`) that is not locally installed, or a remote URL requires an active internet connection
 and will download the configuration on shell start. Caching is in place, but for better performance,
 it's recommended to use a local configuration file.
+:::
+
+:::info
+Please note that, on Linux, themes inside `/usr/share/oh-my-posh/themes` or `~/.config/oh-my-posh/themes`
+can be loaded using the theme name.
+
+Please also note that these folders can be used to override the default themes,
+because they are searched for before the default, internet versions are used.
 :::
 
 ## Set the configuration

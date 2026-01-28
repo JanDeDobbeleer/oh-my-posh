@@ -119,7 +119,7 @@ validate_install_directory() {
     )
 
     if [ "${good}" != "1" ]; then
-        warn "Installation directory ${install_dir} is not in your \$PATH, add it using \nexport PATH=\$PATH:${install_dir}"
+        warn "Installation directory ${install_dir} is not in your \$PATH, add it using: \nexport PATH=\"\$PATH:${install_dir}\""
     fi
 }
 

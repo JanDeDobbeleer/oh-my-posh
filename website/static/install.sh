@@ -146,7 +146,7 @@ install_themes() {
 
     # validate if the user set the path to the themes directory
     if [ -z "$themes_dir" ]; then
-        themes_dir="${cache_dir}/themes"
+        themes_dir="$HOME/.config/oh-my-posh/themes"
     fi
 
     validate_themes_directory

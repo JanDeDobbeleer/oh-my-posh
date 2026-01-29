@@ -22,17 +22,12 @@
         {
           "foreground": "#D0666F",
           "options": {
-            "branch_icon": ""
+            "branch_icon": "",
+            "fetch_status": true
           },
           "style": "plain",
-          "template": " <#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
+          "template": " <#5FAAE8>git:(</>{{ .HEAD }}{{ if .Working.Changed }} <#FFEB3B>{{ .Working.String }}</>{{ end }}<#5FAAE8>)</>{{ if or .Working.Changed .Staging.Changed }} <#FFEB3B>\u2717</>{{ end }}",
           "type": "git"
-        },
-        {
-          "foreground": "#BF616A",
-          "style": "plain",
-          "template": " \u2717",
-          "type": "status"
         }
       ],
       "type": "prompt"

@@ -26,7 +26,7 @@
             "fetch_status": true
           },
           "style": "plain",
-          "template": " <#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>{{ if or .Working.Changed .Staging.Changed }} <#FFEB3B>\u2717</>{{ end }}",
+          "template": " <#5FAAE8>git:(</>{{ .HEAD }}{{ if .Working.Changed }} <#FFEB3B>{{ .Working.String }}</>{{ end }}<#5FAAE8>)</>{{ if or .Working.Changed .Staging.Changed }} <#FFEB3B>\u2717</>{{ end }}",
           "type": "git"
         }
       ],
@@ -34,5 +34,5 @@
     }
   ],
   "final_space": true,
-  "version": 3
+  "version": 4
 }

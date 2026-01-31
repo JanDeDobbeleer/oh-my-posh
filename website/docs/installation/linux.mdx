@@ -30,6 +30,11 @@ The installation script requires the following tools to be installed:
 
 :::
 
+:::tip Alpine Linux
+Oh My Posh fully supports Alpine Linux on both x86_64 and ARM64 architectures, including when running in Docker containers.
+The installation script automatically detects musl-based systems and downloads optimized builds.
+:::
+
 Install the latest version for your system by running the following command:
 
 ```bash
@@ -42,6 +47,27 @@ If you want to install to a different location you can specify it using the `-d`
 
 ```bash
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
+```
+
+### Alpine Linux Specific
+
+Alpine Linux uses musl libc instead of glibc. Oh My Posh provides optimized builds for Alpine systems.
+The installation script will automatically detect your system type and download the appropriate build.
+
+If you're using Alpine in a Docker container, you can also install Oh My Posh like this:
+
+```dockerfile
+FROM alpine:latest
+
+RUN apk add --no-cache bash curl unzip realpath
+
+RUN curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin
+```
+
+Then configure your shell to use Oh My Posh:
+
+```bash
+eval "$(oh-my-posh init bash)"
 ```
 
 <Next />

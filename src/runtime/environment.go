@@ -56,6 +56,7 @@ type Environment interface {
 	IsWsl() bool
 	IsWsl2() bool
 	IsCygwin() bool
+	IsMusl() bool
 	StackCount() int
 	TerminalWidth() (int, error)
 	Logs() string

@@ -40,6 +40,25 @@ func downloadAndVerify(cfg *Config) ([]byte, error) {
 	}
 
 	asset := fmt.Sprintf("posh-%s-%s%s", stdruntime.GOOS, stdruntime.GOARCH, extension)
+	
+	// Try musl variant for Alpine/musl systems on Linux
+	if stdruntime.GOOS == runtime.LINUX && cfg.Environment != nil && cfg.Environment.IsMusl() {
+		muslAsset := fmt.Sprintf("posh-%s-%s-musl%s", stdruntime.GOOS, stdruntime.GOARCH, extension)
+		log.Debug("musl-based system detected, trying musl variant:", muslAsset)
+		
+		data, err := cfg.DownloadAsset(muslAsset)
+		if err == nil {
+			log.Debug("successfully downloaded musl variant")
+			setState(verifying)
+			err = verify(cfg, muslAsset, data)
+			if err == nil {
+				return data, nil
+			}
+			log.Debug("failed to verify musl variant, falling back to default")
+		} else {
+			log.Debug("musl variant not available, falling back to default")
+		}
+	}
 
 	log.Debug("downloading asset:", asset)
 

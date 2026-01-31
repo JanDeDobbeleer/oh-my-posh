@@ -74,6 +74,9 @@ var upgradeCmd = &cobra.Command{
 		fmt.Print(terminal.StartProgress())
 
 		cfg := config.Get(configFlag, false)
+		
+		// Pass environment to upgrade config
+		cfg.Upgrade.Environment = env
 
 		defer func() {
 			fmt.Print(terminal.StopProgress())
@@ -111,6 +114,7 @@ var upgradeCmd = &cobra.Command{
 
 		if force {
 			log.Debug("forced upgrade")
+			cfg.Upgrade.Environment = env
 			exitcode = executeUpgrade(cfg.Upgrade)
 			return
 		}
@@ -124,6 +128,7 @@ var upgradeCmd = &cobra.Command{
 
 		if build.Version != latest {
 			log.Debug("upgrade available")
+			cfg.Upgrade.Environment = env
 			exitcode = executeUpgrade(cfg.Upgrade)
 			return
 		}

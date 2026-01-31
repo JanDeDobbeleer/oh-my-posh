@@ -56,6 +56,43 @@ func (term *Terminal) IsCygwin() bool {
 	return false
 }
 
+func (term *Terminal) IsMusl() bool {
+	defer log.Trace(time.Now())
+	const key = "is_musl"
+	if val, found := cache.Get[bool](cache.Device, key); found {
+		return val
+	}
+
+	var val bool
+	defer func() {
+		cache.Set(cache.Device, key, val, cache.INFINITE)
+	}()
+
+	// Check if the libc is musl by examining ldd output or /etc/os-release
+	// Alpine Linux and other musl-based distros
+	lddOutput := term.FileContent("/usr/bin/ldd")
+	if strings.Contains(lddOutput, "musl") {
+		val = true
+		return val
+	}
+
+	// Try running 'ldd --version' command
+	output, err := term.RunCommand("ldd", "--version")
+	if err == nil && strings.Contains(output, "musl") {
+		val = true
+		return val
+	}
+
+	// Check /proc/self/map_files for musl loader
+	mapOutput := term.FileContent("/proc/self/maps")
+	if strings.Contains(mapOutput, "musl") {
+		val = true
+		return val
+	}
+
+	return val
+}
+
 func (term *Terminal) TerminalWidth() (int, error) {
 	defer log.Trace(time.Now())
 

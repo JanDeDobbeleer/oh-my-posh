@@ -42,6 +42,34 @@ builds:
     hooks:
       post:
         - pwsh -c "if ('{{ .Path }}'.EndsWith('.exe')) { & '{{ .Env.SIGNTOOL }}' sign /v /debug /fd SHA256 /tr 'http://timestamp.acs.microsoft.com' /td SHA256 /dlib '{{ .Env.SIGNTOOLDLIB }}' /dmdf './metadata.json' '{{ .Path }}' }"
+  -
+    id: musl
+    binary: "posh-{{ .Os }}-{{ .Arch }}-musl"
+    no_unique_dist_dir: true
+    flags:
+      - -a
+    ldflags:
+      - -s -w
+      - -X github.com/jandedobbeleer/oh-my-posh/src/build.Version={{ .Version }}
+      - -X github.com/jandedobbeleer/oh-my-posh/src/build.Date={{ .Date }}
+      - -extldflags "-static"
+    tags:
+      - netgo
+      - osusergo
+      - static_build
+      - timetzdata
+    env:
+      - CGO_ENABLED=0
+      - GOEXPERIMENT=greenteagc,jsonv2
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    hooks:
+      post:
+        - pwsh -c "# musl builds do not require code signing"
 archives:
   - id: oh-my-posh
     format: binary

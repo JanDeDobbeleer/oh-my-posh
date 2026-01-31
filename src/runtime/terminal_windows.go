@@ -75,6 +75,11 @@ func (term *Terminal) IsCygwin() bool {
 	return len(term.Getenv("OSTYPE")) != 0 || term.Getenv("BROWSER") == "cygstart"
 }
 
+func (term *Terminal) IsMusl() bool {
+	defer log.Trace(time.Now())
+	return false
+}
+
 func (term *Terminal) TerminalWidth() (int, error) {
 	defer log.Trace(time.Now())
 

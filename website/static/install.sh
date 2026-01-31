@@ -192,8 +192,35 @@ install() {
 
     executable=${install_dir}/oh-my-posh
     url=https://cdn.ohmyposh.dev/releases/latest/posh-${target}
+    
+    # Try musl variant first for Alpine/musl systems
+    if [ "${platform}" = "linux" ]; then
+        libc=$(detect_libc)
+        if [ "${libc}" = "musl" ]; then
+            musl_url=https://cdn.ohmyposh.dev/releases/latest/posh-${target}-musl
+            info "📦 Detected musl-based system (Alpine), checking for musl build..."
+            
+            # Check if musl variant is available
+            if curl -s -f -L -o /dev/null -w "%{http_code}" "$musl_url" | grep -q "200"; then
+                url="${musl_url}"
+                info "✓ Using musl-optimized build"
+            else
+                info "ℹ️  Musl build not available, using standard build"
+            fi
+        fi
+    fi
+    
     if [ "$version" ]; then
-      url=https://cdn.ohmyposh.dev/releases/${version}/posh-${target}
+        if [ "${platform}" = "linux" ]; then
+            libc=$(detect_libc)
+            if [ "${libc}" = "musl" ]; then
+                url=https://cdn.ohmyposh.dev/releases/${version}/posh-${target}-musl
+            else
+                url=https://cdn.ohmyposh.dev/releases/${version}/posh-${target}
+            fi
+        else
+            url=https://cdn.ohmyposh.dev/releases/${version}/posh-${target}
+        fi
     fi
 
     info "⬇️  Downloading oh-my-posh from ${url}"
@@ -243,6 +270,15 @@ detect_platform() {
   esac
 
   printf '%s' "${platform}"
+}
+
+detect_libc() {
+  # Detect if the system is using musl libc (Alpine Linux, etc.)
+  if ldd --version 2>&1 | grep -qi musl; then
+    printf 'musl'
+  else
+    printf 'glibc'
+  fi
 }
 
 validate_dependencies

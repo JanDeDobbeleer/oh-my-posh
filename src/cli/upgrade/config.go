@@ -11,6 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -26,6 +27,7 @@ type Config struct {
 	Auto          bool           `json:"auto" toml:"auto" yaml:"auto"`
 	DisplayNotice bool           `json:"notice" toml:"notice" yaml:"notice"`
 	Force         bool           `json:"-" toml:"-" yaml:"-"`
+	Environment   runtime.Environment `json:"-" toml:"-" yaml:"-"`
 }
 
 type Source string

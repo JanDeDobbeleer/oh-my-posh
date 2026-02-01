@@ -106,5 +106,4 @@ To extend this feature:
 
 ## See Also
 
-- [Async Prompt Rendering Issue](https://github.com/JanDeDobbeleer/oh-my-posh/issues/XXXX)
 - [NuShell Documentation](https://www.nushell.sh/book/)

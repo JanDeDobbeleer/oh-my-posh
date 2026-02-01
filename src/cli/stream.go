@@ -2,11 +2,9 @@ package cli
 
 import (
 	"bufio"
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -14,10 +12,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/spf13/cobra"
-)
-
-const (
-	partialTimeout = 100 * time.Millisecond
 )
 
 // StreamRequest represents a request to render a prompt
@@ -121,9 +115,9 @@ func processRequest(req *StreamRequest) {
 		Type:          prompt.PRIMARY,
 	}
 
-	// Create context with timeout for partial rendering
-	ctx, cancel := context.WithTimeout(context.Background(), partialTimeout)
-	defer cancel()
+	// TODO: Implement partial rendering with timeout mechanism
+	// When implemented, we'll use a timeout to send partial updates
+	// and then wait for completion. For now, we just wait for full completion.
 
 	// Start rendering in background
 	resultChan := make(chan *renderResult, 1)
@@ -131,17 +125,9 @@ func processRequest(req *StreamRequest) {
 		resultChan <- renderPrompts(flags)
 	}()
 
-	// Wait for either timeout or completion
-	select {
-	case <-ctx.Done():
-		// Timeout reached, send partial update
-		// For now, we'll wait for completion since we don't have partial rendering yet
-		result := <-resultChan
-		sendResponse(req.ID, "complete", result)
-	case result := <-resultChan:
-		// Rendering completed quickly
-		sendResponse(req.ID, "complete", result)
-	}
+	// Wait for completion
+	result := <-resultChan
+	sendResponse(req.ID, "complete", result)
 
 	template.SaveCache()
 }
@@ -179,16 +165,17 @@ func renderPrompts(flags *runtime.Flags) *renderResult {
 func sendResponse(id, responseType string, result *renderResult) {
 	resp := StreamResponse{
 		ID:      id,
-		Type:    responseType,
 		Prompts: make(map[string]string),
 	}
 
 	if result.err != nil {
+		resp.Type = "error"
 		resp.Error = result.err.Error()
 		sendJSON(&resp)
 		return
 	}
 
+	resp.Type = responseType
 	resp.Prompts["primary"] = result.primary
 	resp.Prompts["right"] = result.right
 

@@ -82,3 +82,22 @@ func TestStreamResponse_WithError(t *testing.T) {
 	assert.Equal(t, "error", decoded.Type)
 	assert.Equal(t, "test error message", decoded.Error)
 }
+
+func TestStreamResponse_ErrorTypeConsistency(t *testing.T) {
+	// Verify that error responses always have Type="error"
+	resp := StreamResponse{
+		ID:      "test-uuid-123",
+		Type:    "error",
+		Error:   "simulated error",
+		Prompts: make(map[string]string),
+	}
+
+	data, err := json.Marshal(&resp)
+	assert.NoError(t, err)
+
+	var decoded StreamResponse
+	err = json.Unmarshal(data, &decoded)
+	assert.NoError(t, err)
+	assert.Equal(t, "error", decoded.Type, "Error responses must have Type='error'")
+	assert.NotEmpty(t, decoded.Error, "Error responses must have an error message")
+}

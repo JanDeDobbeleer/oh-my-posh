@@ -16,11 +16,11 @@ type Claude struct {
 
 // ClaudeData represents the parsed Claude JSON data
 type ClaudeData struct {
-	SessionID     string              `json:"session_id"`
 	Model         ClaudeModel         `json:"model"`
 	Workspace     ClaudeWorkspace     `json:"workspace"`
-	Cost          ClaudeCost          `json:"cost"`
+	SessionID     string              `json:"session_id"`
 	ContextWindow ClaudeContextWindow `json:"context_window"`
+	Cost          ClaudeCost          `json:"cost"`
 }
 
 // ClaudeModel represents the AI model information
@@ -43,16 +43,20 @@ type ClaudeCost struct {
 
 // ClaudeContextWindow represents token usage information
 type ClaudeContextWindow struct {
-	TotalInputTokens  int                `json:"total_input_tokens"`
-	TotalOutputTokens int                `json:"total_output_tokens"`
-	ContextWindowSize int                `json:"context_window_size"`
-	CurrentUsage      ClaudeCurrentUsage `json:"current_usage"`
+	UsedPercentage      *int                `json:"used_percentage"`
+	RemainingPercentage *int                `json:"remaining_percentage"`
+	CurrentUsage        *ClaudeCurrentUsage `json:"current_usage"`
+	TotalInputTokens    int                 `json:"total_input_tokens"`
+	TotalOutputTokens   int                 `json:"total_output_tokens"`
+	ContextWindowSize   int                 `json:"context_window_size"`
 }
 
-// ClaudeCurrentUsage represents current message token usage
+// ClaudeCurrentUsage represents current context window usage from the last API call
 type ClaudeCurrentUsage struct {
-	InputTokens  int `json:"input_tokens"`
-	OutputTokens int `json:"output_tokens"`
+	InputTokens              int `json:"input_tokens"`
+	OutputTokens             int `json:"output_tokens"`
+	CacheCreationInputTokens int `json:"cache_creation_input_tokens"`
+	CacheReadInputTokens     int `json:"cache_read_input_tokens"`
 }
 
 const (
@@ -83,19 +87,44 @@ func (c *Claude) Enabled() bool {
 	return true
 }
 
-// TokenUsagePercent returns the percentage of context window used by total tokens
+// TokenUsagePercent returns the percentage of context window used.
+// Uses pre-calculated UsedPercentage when available (resets on compact/clear),
+// falls back to calculating from CurrentUsage, then to total tokens for backwards compatibility.
 func (c *Claude) TokenUsagePercent() text.Percentage {
+	// Prefer pre-calculated UsedPercentage - most accurate and resets on compact/clear
+	// When UsedPercentage is nil (null in JSON), context was reset - return 0
+	if c.ContextWindow.UsedPercentage != nil {
+		if *c.ContextWindow.UsedPercentage > 100 {
+			return 100
+		}
+		return text.Percentage(*c.ContextWindow.UsedPercentage)
+	}
+
+	// UsedPercentage is nil - check if CurrentUsage is also nil (indicates reset/clear)
+	if c.ContextWindow.CurrentUsage == nil {
+		return 0
+	}
+
 	if c.ContextWindow.ContextWindowSize <= 0 {
 		return 0
 	}
 
-	totalTokens := c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
-	if totalTokens <= 0 {
+	// Calculate from CurrentUsage (includes cache tokens for accurate context measurement)
+	currentTokens := c.ContextWindow.CurrentUsage.InputTokens +
+		c.ContextWindow.CurrentUsage.CacheCreationInputTokens +
+		c.ContextWindow.CurrentUsage.CacheReadInputTokens
+
+	// Fallback to total tokens if CurrentUsage is not provided (backwards compatibility)
+	if currentTokens <= 0 {
+		currentTokens = c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
+	}
+
+	if currentTokens <= 0 {
 		return 0
 	}
 
 	// Use floating-point arithmetic for accurate percentage calculation
-	percent := (float64(totalTokens) * 100.0) / float64(c.ContextWindow.ContextWindowSize)
+	percent := (float64(currentTokens) * 100.0) / float64(c.ContextWindow.ContextWindowSize)
 
 	// Round to nearest integer and cap at 100
 	roundedPercent := int(percent + 0.5)
@@ -115,17 +144,32 @@ func (c *Claude) FormattedCost() string {
 	return fmt.Sprintf("$%.2f", c.Cost.TotalCostUSD)
 }
 
-// FormattedTokens returns a human-readable string of total tokens used
+// FormattedTokens returns a human-readable string of current context tokens.
+// Uses CurrentUsage (which represents actual context and resets on compact/clear)
+// with fallback to total tokens for backwards compatibility.
 func (c *Claude) FormattedTokens() string {
-	totalTokens := c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
+	var currentTokens int
 
-	if totalTokens < int(thousand) {
-		return fmt.Sprintf("%d", totalTokens)
+	// Use CurrentUsage for display - includes cache tokens for accurate context measurement
+	// When CurrentUsage is nil (context reset), fall back to total tokens
+	if c.ContextWindow.CurrentUsage != nil {
+		currentTokens = c.ContextWindow.CurrentUsage.InputTokens +
+			c.ContextWindow.CurrentUsage.CacheCreationInputTokens +
+			c.ContextWindow.CurrentUsage.CacheReadInputTokens
 	}
 
-	if totalTokens < int(million) {
-		return fmt.Sprintf("%.1fK", float64(totalTokens)/thousand)
+	// Fallback to total tokens if CurrentUsage is not provided (backwards compatibility)
+	if currentTokens <= 0 {
+		currentTokens = c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
 	}
 
-	return fmt.Sprintf("%.1fM", float64(totalTokens)/million)
+	if currentTokens < int(thousand) {
+		return fmt.Sprintf("%d", currentTokens)
+	}
+
+	if currentTokens < int(million) {
+		return fmt.Sprintf("%.1fK", float64(currentTokens)/thousand)
+	}
+
+	return fmt.Sprintf("%.1fM", float64(currentTokens)/million)
 }

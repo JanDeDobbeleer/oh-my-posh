@@ -1,7 +1,9 @@
 # Oh My Posh for NuShell
-# This script provides synchronous prompt rendering. Async streaming support
-# is available via 'oh-my-posh stream' but requires NuShell async capabilities
-# (background jobs, async closures) which are not yet available.
+# This script provides synchronous prompt rendering. 
+#
+# Async streaming support is available via 'oh-my-posh stream' using NuShell's
+# experimental job system (job spawn/send/recv). However, this is not yet
+# integrated as it requires additional testing and error handling.
 # See STREAMING.md in the repository root for more information.
 
 # make sure we have the right prompt render correctly

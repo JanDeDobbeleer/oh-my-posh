@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `stream` command provides a foundation for asynchronous prompt rendering in shells that support concurrent execution. This feature is currently **experimental** and provides infrastructure for future async implementations.
+The `stream` command provides a foundation for asynchronous prompt rendering in shells that support concurrent execution. This feature is currently **experimental** and can be integrated with NuShell's background job system.
 
 ## Command Usage
 
@@ -63,22 +63,47 @@ The stream command runs oh-my-posh in server mode, reading JSON requests from st
 
 ## NuShell Integration
 
-Currently, NuShell does not support the background job system required for async streaming as described in the original specification. The stream command exists as infrastructure for when such capabilities become available.
+NuShell has experimental support for thread-based background jobs (available since version 0.80+), which can be used for async streaming. The integration uses:
+
+- `job spawn` - Start the stream command as a background job
+- `job send` / `job recv` - Communicate between the main thread and stream job
+- `job list` / `job kill` - Manage job lifecycle
+
+### Current Implementation Status
+
+The stream command infrastructure is complete and ready for integration. A full NuShell integration would:
+
+1. Spawn the stream command as a background job on shell startup
+2. Send JSON requests via `job send` when prompt is needed
+3. Poll for responses with `job recv` 
+4. Update prompts as responses arrive
+5. Handle job failures with fallback to synchronous rendering
+
+### Example Integration Pattern
+
+```nu
+# Initialize streaming job
+let stream_job = job spawn { ^oh-my-posh stream }
+
+# Send request
+{"id": "uuid", "flags": {...}} | to json | job send $stream_job
+
+# Receive response (non-blocking with timeout)
+let response = job recv --timeout 100ms
+```
 
 ### Limitations
 
-1. **No Background Jobs**: NuShell doesn't have traditional job control like Bash/Zsh
-2. **No Async Closure Support**: Closure execution is synchronous
-3. **No Process Communication**: Limited IPC between NuShell and background processes
+1. **Experimental Feature**: NuShell's job system is marked as experimental
+2. **Job Lifetime**: Jobs terminate when the shell exits (no `disown` equivalent)
+3. **Version Requirement**: Requires NuShell 0.80+ for job support
 
 ### Future Work
 
-When NuShell adds support for:
-- Background task execution
-- Async closures or promises
-- Better process communication
-
-The streaming feature can be fully integrated.
+- Implement complete NuShell integration script using job system
+- Add timeout handling for partial prompt updates
+- Test across different NuShell versions
+- Add configuration option to enable/disable streaming mode
 
 ## Testing
 

@@ -1,3 +1,9 @@
+# Oh My Posh for NuShell
+# This script provides synchronous prompt rendering. Async streaming support
+# is available via 'oh-my-posh stream' but requires NuShell async capabilities
+# (background jobs, async closures) which are not yet available.
+# See STREAMING.md in the repository root for more information.
+
 # make sure we have the right prompt render correctly
 if ($env.config? | is-not-empty) {
     $env.config = ($env.config | upsert render_right_prompt_on_last_line true)

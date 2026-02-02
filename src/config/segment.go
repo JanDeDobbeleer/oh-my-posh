@@ -77,6 +77,7 @@ type Segment struct {
 	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+	Pending                bool           `json:"-" toml:"-" yaml:"-"`
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -331,6 +332,11 @@ func (segment *Segment) setCache() {
 		return
 	}
 
+	// Never cache pending state to avoid polluting cache with incomplete data
+	if segment.Pending {
+		return
+	}
+
 	data, err := json.Marshal(segment.writer)
 	if err != nil {
 		log.Error(err)
@@ -368,6 +374,11 @@ func (segment *Segment) folderKey() string {
 }
 
 func (segment *Segment) string() string {
+	// Use simple pending text if segment is still pending
+	if segment.Pending {
+		return "..."
+	}
+
 	result := segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
 	if len(result) != 0 {
 		return result

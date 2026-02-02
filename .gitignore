@@ -1,5 +1,6 @@
 # Others
 
+.specs/
 .fleet/
 src/test/umbraco/obj/
 src/keys

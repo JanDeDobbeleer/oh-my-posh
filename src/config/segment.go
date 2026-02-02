@@ -75,7 +75,7 @@ type Segment struct {
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
 	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	restored               bool           `json:"-" toml:"-" yaml:"-"`
+	Restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
 }
@@ -177,7 +177,9 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	if segment.restoreCache() {
+	// In streaming mode, use cache for initial display but continue executing for fresh data
+	cacheRestored := segment.restoreCache()
+	if cacheRestored && !env.Flags().Streaming {
 		return
 	}
 
@@ -322,13 +324,13 @@ func (segment *Segment) restoreCache() bool {
 
 	log.Debug("restored segment from cache: ", segment.Name())
 
-	segment.restored = true
+	segment.Restored = true
 
 	return true
 }
 
 func (segment *Segment) setCache() {
-	if segment.restored || !segment.hasCache() {
+	if segment.Restored || !segment.hasCache() {
 		return
 	}
 

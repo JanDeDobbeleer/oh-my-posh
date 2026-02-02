@@ -6,14 +6,15 @@ import (
 
 // StreamPrimary returns a channel that yields prompt updates as segments complete
 func (e *Engine) StreamPrimary() <-chan string {
+	// Initialize streaming infrastructure BEFORE launching goroutine
+	// This ensures the channel exists when segments start timing out
+	e.streamingResults = make(chan *config.Segment, 100)
+	e.allBlocks = e.Config.Blocks
+
 	out := make(chan string, 10)
 
 	go func() {
 		defer close(out)
-
-		// Initialize streaming infrastructure
-		e.streamingResults = make(chan *config.Segment, 100)
-		e.allBlocks = e.Config.Blocks
 
 		// Render and send initial prompt with pending segments
 		initialPrompt := e.Primary()
@@ -68,8 +69,7 @@ func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
 		return
 	}
 
-	e.pendingSegments.Store(segment.Name(), true)
-
+	// Segment is already pre-registered in pendingSegments map
 	go func() {
 		<-done
 		segment.Pending = false

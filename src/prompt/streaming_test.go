@@ -300,6 +300,9 @@ func TestStreamingWithTimeout(t *testing.T) {
 		Timeout: 10,
 	}
 
+	// Pre-register segment as pending (this happens in writeSegmentsConcurrently in real code)
+	engine.pendingSegments.Store(segment.Name(), true)
+
 	// Test that timeout with streaming enabled marks segment as pending
 	done := make(chan bool)
 

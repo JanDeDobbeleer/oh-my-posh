@@ -340,7 +340,7 @@ func TestSegment_NoCachingWhenPending(t *testing.T) {
 
 	// Now with Pending=false, setCache will attempt to cache
 	segment.Pending = false
-	segment.restored = false
+	segment.Restored = false
 	segment.setCache() // Should attempt to cache (may fail but shouldn't panic)
 
 	assert.False(t, segment.Pending, "Segment should not be pending")

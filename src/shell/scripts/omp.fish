@@ -7,6 +7,7 @@ set --global _omp_tooltip_command ''
 set --global _omp_current_rprompt ''
 set --global _omp_transient 0
 set --global _omp_executable ::OMP::
+set --global _omp_config ::CONFIG::
 set --global _omp_ftcs_marks 0
 set --global _omp_transient_prompt 0
 set --global _omp_prompt_mark 0
@@ -244,4 +245,155 @@ end
 function omp_repaint_prompt
     set --global _omp_new_prompt 1
     commandline --function repaint
+end
+
+# Daemon mode functions
+set --global _omp_daemon_mode 0
+set --global _omp_daemon_prompt_file ""
+set --global _omp_current_transient ""
+set --global _omp_current_secondary ""
+
+# Signal handler for async prompt updates
+function _omp_daemon_repaint --on-signal USR1
+    if test -n "$_omp_daemon_prompt_file" && test -f "$_omp_daemon_prompt_file"
+        # Read updated prompts from temp file
+        while read -l line
+            set --local parts (string split -m1 ':' -- $line)
+            set --local type $parts[1]
+            set --local text $parts[2]
+            switch $type
+                case primary
+                    set --global _omp_current_prompt $text
+                case right
+                    set --global _omp_current_rprompt $text
+                case transient
+                    set --global _omp_current_transient $text
+                case secondary
+                    set --global _omp_current_secondary $text
+            end
+        end < $_omp_daemon_prompt_file
+    end
+    # Small delay for stability (per fish-async-prompt)
+    sleep 0.02
+    commandline -f repaint >/dev/null 2>/dev/null
+end
+
+function enable_poshdaemon
+    # Start daemon if not running
+    $_omp_executable daemon start --config=$_omp_config --silent &>/dev/null &
+    disown
+    set --global _omp_daemon_mode 1
+    set --global _omp_daemon_prompt_file /tmp/omp_fish_prompt_$fish_pid
+
+    # Replace prompt functions with daemon versions
+    functions --erase fish_prompt
+    functions --copy _omp_daemon_fish_prompt fish_prompt
+    functions --erase fish_right_prompt
+    functions --copy _omp_daemon_fish_right_prompt fish_right_prompt
+end
+
+# Background reader that streams daemon output
+function _omp_daemon_reader
+    set --local prompt_file $argv[1]
+    set --local parent_pid $argv[2]
+
+    $_omp_executable render \
+        --config=$_omp_config \
+        --shell=fish \
+        --shell-version=$FISH_VERSION \
+        --pid=$parent_pid \
+        --status=$_omp_status \
+        --pipestatus="$_omp_pipestatus" \
+        --no-status=$_omp_no_status \
+        --execution-time=$_omp_execution_time \
+        --stack-count=$_omp_stack_count \
+        2>/dev/null | while read -l line
+        set --local parts (string split -m1 ':' -- $line)
+        set --local type $parts[1]
+
+        # Write prompt lines to temp file
+        if test "$type" = "primary" || test "$type" = "right" || test "$type" = "transient" || test "$type" = "secondary"
+            echo $line >> $prompt_file
+        end
+
+        # Signal parent on each status line (batch complete)
+        if test "$type" = "status"
+            kill -USR1 $parent_pid 2>/dev/null
+            # Clear file for next batch
+            if test "$parts[2]" != "complete"
+                echo -n "" > $prompt_file
+            end
+        end
+    end
+
+    # Cleanup
+    rm -f $prompt_file 2>/dev/null
+end
+
+function _omp_daemon_fish_prompt
+    set --local omp_status_temp $status
+    set --local omp_pipestatus_temp $pipestatus
+    # clear from cursor to end of screen
+    printf \e\[0J
+
+    if test "$_omp_transient" = 1
+        echo -n "$_omp_current_transient"
+        return
+    end
+
+    if test "$_omp_new_prompt" = 0
+        echo -n "$_omp_current_prompt"
+        return
+    end
+
+    set --global _omp_status $omp_status_temp
+    set --global _omp_pipestatus $omp_pipestatus_temp
+    set --global _omp_no_status false
+    set --global _omp_execution_time "$CMD_DURATION$cmd_duration"
+    set --global _omp_stack_count (count $dirstack)
+
+    if set --query _omp_last_command && test -z "$_omp_last_command"
+        set _omp_execution_time 0
+        set _omp_no_status true
+    end
+
+    if set --query _omp_last_status_generation && test "$_omp_last_status_generation" = "$status_generation"
+        set _omp_execution_time 0
+        set _omp_no_status true
+    else if test -z "$_omp_last_status_generation"
+        set _omp_no_status true
+    end
+
+    if set --query status_generation
+        set --global _omp_last_status_generation $status_generation
+    end
+
+    set_poshcontext
+
+    if test $_omp_prompt_mark = 1
+        iterm2_prompt_mark
+    end
+
+    # Clear temp file and start background reader
+    echo -n "" > $_omp_daemon_prompt_file
+    _omp_daemon_reader $_omp_daemon_prompt_file $fish_pid &
+    disown
+
+    # Return cached prompt immediately (will be updated via signal)
+    echo -n "$_omp_current_prompt"
+end
+
+function _omp_daemon_fish_right_prompt
+    if test "$_omp_transient" = 1
+        set --global _omp_transient 0
+        return
+    end
+
+    if test "$_omp_new_prompt" = 0
+        echo -n "$_omp_current_rprompt"
+        return
+    end
+
+    set --global _omp_new_prompt 0
+    echo -n "$_omp_current_rprompt"
 end

@@ -73,10 +73,10 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 
 	foreground := color.Ansi(prompt.ForegroundTemplates.FirstMatch(nil, string(prompt.Foreground)))
 	background := color.Ansi(prompt.BackgroundTemplates.FirstMatch(nil, string(prompt.Background)))
-	terminal.SetColors(background, foreground)
-	terminal.Write(background, foreground, promptText)
+	e.Writer.SetColors(background, foreground)
+	e.Writer.Write(background, foreground, promptText)
 
-	str, length := terminal.String()
+	str, length := e.Writer.String()
 
 	if promptType == Transient && len(prompt.Filler) != 0 {
 		consoleWidth, err := e.Env.TerminalWidth()

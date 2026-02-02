@@ -223,9 +223,14 @@ func engineRender() {
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors(env)
 
+	writer := terminal.NewWriter(shell.GENERIC)
+	writer.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
+	writer.Colors = cfg.MakeColors(env)
+
 	engine := &Engine{
 		Config: cfg,
 		Env:    env,
+		Writer: writer,
 	}
 
 	engine.Primary()
@@ -454,8 +459,13 @@ func TestShouldFill(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("Shell").Return(shell.GENERIC)
 
+		writer := terminal.NewWriter(shell.GENERIC)
+		writer.Plain = true
+		writer.Colors = &color.Defaults{}
+
 		engine := &Engine{
 			Env:      env,
+			Writer:   writer,
 			Overflow: tc.Overflow,
 		}
 

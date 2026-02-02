@@ -88,7 +88,11 @@ func printLn(lt logType, args ...string) {
 	str += Text(time.Now().Format("15:04:05.000") + " ").Yellow().Plain()
 	str += Text(args[0])
 	str += parseArgs(args...)
-	log.WriteString(str.String())
+	s := str.String()
+	log.WriteString(s)
+	if fileWriter != nil {
+		_, _ = fmt.Fprint(fileWriter, s)
+	}
 }
 
 func parseArgs(args ...string) Text {

@@ -3,6 +3,7 @@ package cache
 import (
 	"encoding/gob"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -63,6 +64,12 @@ func (s Store) init(filePath string, persist bool) {
 	store.cache = maps.NewConcurrent[*Entry[any]]()
 	store.filePath = filepath.Join(Path(), filePath)
 	store.persist = persist
+
+	if !persist {
+		if _, err := os.Stat(store.filePath); os.IsNotExist(err) {
+			return
+		}
+	}
 
 	reader, err := openFile(store.filePath)
 	if err != nil {

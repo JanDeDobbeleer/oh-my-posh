@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package ipc;
+
+option go_package = "github.com/jandedobbeleer/oh-my-posh/src/daemon/ipc";
+
+// DaemonService handles prompt rendering requests.
+service DaemonService {
+  // RenderPrompt streams segment updates as they complete.
+  // A new request for the same session automatically cancels any in-progress render.
+  rpc RenderPrompt(PromptRequest) returns (stream PromptResponse);
+
+  // ToggleSegment toggles the visibility of segments for a session.
+  rpc ToggleSegment(ToggleSegmentRequest) returns (ToggleSegmentResponse);
+
+  // CacheClear clears all daemon cache entries.
+  rpc CacheClear(CacheClearRequest) returns (CacheClearResponse);
+
+  // CacheSetTTL sets the default cache TTL (in days).
+  rpc CacheSetTTL(CacheSetTTLRequest) returns (CacheSetTTLResponse);
+
+  // CacheGetTTL gets the current default cache TTL (in days).
+  rpc CacheGetTTL(CacheGetTTLRequest) returns (CacheGetTTLResponse);
+
+  // SetLogging enables or disables file logging on the running daemon.
+  rpc SetLogging(SetLoggingRequest) returns (SetLoggingResponse);
+}
+
+// ToggleSegmentRequest contains segments to toggle.
+message ToggleSegmentRequest {
+  string session_id = 1;
+  repeated string segments = 2;
+}
+
+message ToggleSegmentResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// PromptRequest contains all information needed to render prompts.
+message PromptRequest {
+  uint32 version = 1;                 // Protocol version for evolution
+  string session_id = 2;              // Terminal session ID
+  string request_id = 3;              // Unique request ID for cancellation
+  map<string, string> env = 4;        // Environment variables
+  Flags flags = 5;                    // Runtime flags
+  int32 pid = 6;                      // Shell process ID for session tracking
+}
+
+// Flags contains runtime flags passed to the prompt engine.
+// Mirrors runtime.Flags from the Go codebase.
+message Flags {
+  string type = 1;                    // Prompt type (primary, secondary, etc.)
+  string pipe_status = 2;             // Pipe status codes
+  string config_path = 3;             // Config file path
+  string pswd = 4;                    // PowerShell working directory
+  string shell = 5;                   // Shell name
+  string shell_version = 6;           // Shell version
+  string pwd = 7;                     // Current working directory
+  string absolute_pwd = 8;            // Absolute working directory
+  int32 error_code = 9;               // Exit code of last command
+  int32 prompt_count = 10;            // Prompt count
+  int32 column = 11;                  // Cursor column position
+  int32 terminal_width = 12;          // Terminal width
+  double execution_time = 13;         // Execution time of last command in ms
+  int32 stack_count = 14;             // Directory stack count
+  uint64 config_hash = 15;            // Config hash for cache invalidation
+  int32 job_count = 16;               // Background job count
+  bool has_extra = 17;                // Has extra context
+  bool strict = 18;                   // Strict mode
+  bool debug = 19;                    // Debug mode
+  bool cleared = 20;                  // Screen was cleared
+  bool no_exit_code = 21;             // No valid status code
+  bool init = 22;                     // Init mode
+  bool migrate = 23;                  // Migrate mode
+  bool eval = 24;                     // Eval mode
+  bool escape = 25;                   // Escape ANSI sequences
+  bool is_primary = 26;               // Is primary prompt
+  bool plain = 27;                    // Plain text mode
+  bool force = 28;                    // Force rendering
+}
+
+// PromptResponse contains rendered prompts and segment updates.
+message PromptResponse {
+  string type = 1;                    // "update" or "complete"
+  string request_id = 2;              // Echo back for cancellation check
+  map<string, Prompt> prompts = 3;    // All prompts: "primary", "right", etc.
+  string error = 4;                   // Error message if any
+}
+
+// Prompt contains the rendered prompt string.
+message Prompt {
+  string text = 1;                    // Fully rendered prompt (ANSI formatted)
+}
+
+// CacheClearRequest requests clearing all daemon cache entries.
+message CacheClearRequest {}
+
+// CacheClearResponse is the response to a cache clear request.
+message CacheClearResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// CacheSetTTLRequest sets the default cache TTL.
+message CacheSetTTLRequest {
+  int32 days = 1;                     // TTL in days
+}
+
+// CacheSetTTLResponse is the response to a set TTL request.
+message CacheSetTTLResponse {
+  bool success = 1;
+}
+
+// CacheGetTTLRequest gets the current default cache TTL.
+message CacheGetTTLRequest {}
+
+// CacheGetTTLResponse returns the current default cache TTL.
+message CacheGetTTLResponse {
+  int32 days = 1;                     // TTL in days
+}
+
+// SetLoggingRequest enables or disables daemon file logging.
+message SetLoggingRequest {
+  string path = 1;                    // File path to log to (empty = disable logging)
+}
+
+// SetLoggingResponse is the response to a set logging request.
+message SetLoggingResponse {
+  bool success = 1;
+  string error = 2;
+}
+

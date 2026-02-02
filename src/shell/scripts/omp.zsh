@@ -10,6 +10,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
 _omp_executable=::OMP::
+_omp_config=::CONFIG::
 _omp_tooltip_command=''
 
 # switches to enable/disable features
@@ -17,7 +18,7 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # set secondary prompt
-_omp_secondary_prompt=$($_omp_executable print secondary --shell=zsh)
+_omp_secondary_prompt=''
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander
@@ -55,6 +56,10 @@ function _omp_preexec() {
 }
 
 function _omp_precmd() {
+  if [[ -z $_omp_secondary_prompt ]]; then
+    _omp_secondary_prompt=$($_omp_executable print secondary --shell=zsh)
+  fi
+
   _omp_status=$?
   _omp_pipestatus=(${pipestatus[@]})
   _omp_job_count=${#jobstates}
@@ -165,13 +170,18 @@ function _omp_zle-line-init() {
   local -i ret=$?
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-  # We need this workaround because when the `filler` is set,
-  # there will be a redundant blank line below the transient prompt if the input is empty.
-  local terminal_width_option
-  if [[ -z $BUFFER ]]; then
-    terminal_width_option="--terminal-width=$((${COLUMNS-0} - 1))"
+  if [[ $_omp_daemon_mode == 1 ]] && [[ -n $_omp_transient_prompt ]]; then
+    # Use daemon-provided transient prompt
+    PS1=$_omp_transient_prompt
+  else
+    # We need this workaround because when the `filler` is set,
+    # there will be a redundant blank line below the transient prompt if the input is empty.
+    local terminal_width_option
+    if [[ -z $BUFFER ]]; then
+      terminal_width_option="--terminal-width=$((${COLUMNS-0} - 1))"
+    fi
+    eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
   fi
-  eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
   zle .reset-prompt
 
   if ((ret)); then
@@ -223,6 +233,144 @@ function _omp_create_widget() {
     zle -N $widget _omp_decorated_$widget
     ;;
   esac
+}
+
+# Daemon mode variables
+_omp_daemon_mode=0
+_omp_daemon_fd=
+_omp_transient_prompt=
+
+function _omp_daemon_precmd() {
+  _omp_status=$?
+  _omp_pipestatus=(${pipestatus[@]})
+  _omp_job_count=${#jobstates}
+  _omp_stack_count=${#dirstack[@]}
+  _omp_execution_time=-1
+  _omp_no_status=true
+  _omp_tooltip_command=''
+
+  if [ $_omp_start_time ]; then
+    local omp_now=$($_omp_executable get millis)
+    _omp_execution_time=$(($omp_now - $_omp_start_time))
+    _omp_no_status=false
+  fi
+
+  if [[ ${_omp_pipestatus[-1]} != "$_omp_status" ]]; then
+    _omp_pipestatus=("$_omp_status")
+  fi
+
+  set_poshcontext
+  _omp_set_cursor_position
+
+  unsetopt PROMPT_SUBST
+  unsetopt PROMPT_BANG
+  setopt PROMPT_PERCENT
+
+  PS2=$_omp_secondary_prompt
+
+  # Clean up any existing fd handler from previous prompt
+  if [[ -n $_omp_daemon_fd ]]; then
+    zle -F $_omp_daemon_fd 2>/dev/null
+    exec {_omp_daemon_fd}<&- 2>/dev/null
+    _omp_daemon_fd=
+  fi
+
+  # Start daemon render process
+  local fd
+  exec {fd}< <($_omp_executable render \
+    --config=$_omp_config \
+    --shell=zsh \
+    --shell-version=$ZSH_VERSION \
+    --pwd="$PWD" \
+    --pid=$$ \
+    --status=$_omp_status \
+    --pipestatus="${_omp_pipestatus[*]}" \
+    --no-status=$_omp_no_status \
+    --execution-time=$_omp_execution_time \
+    --job-count=$_omp_job_count \
+    --stack-count=$_omp_stack_count \
+    --terminal-width="${COLUMNS-0}" \
+    2>/dev/null)
+
+  # Read first batch synchronously (partial results after daemon timeout)
+  local line batch_complete=0
+  while [[ $batch_complete -eq 0 ]] && IFS= read -r line <&$fd; do
+    _omp_daemon_parse_line "$line"
+    if [[ $line == status:* ]]; then
+      batch_complete=1
+      if [[ $line == "status:complete" ]]; then
+        # All done, close fd
+        exec {fd}<&-
+        unset _omp_start_time
+        return
+      fi
+    fi
+  done
+
+  # More updates may come - register fd handler for streaming
+  _omp_daemon_fd=$fd
+  zle -F $fd _omp_daemon_handler
+
+  unset _omp_start_time
+}
+
+function _omp_daemon_parse_line() {
+  local line=$1
+  local type=${line%%:*}
+  local text=${line#*:}
+
+  case $type in
+    primary)
+      PS1=$text
+      ;;
+    right)
+      RPROMPT=$text
+      ;;
+    secondary)
+      PS2=$text
+      ;;
+    transient)
+      _omp_transient_prompt=$text
+      ;;
+  esac
+}
+
+function _omp_daemon_handler() {
+  local fd=$1
+  local line batch_complete=0
+
+  # Read all available lines in this batch
+  while [[ $batch_complete -eq 0 ]] && IFS= read -r -t 0 line <&$fd; do
+    _omp_daemon_parse_line "$line"
+    if [[ $line == status:* ]]; then
+      batch_complete=1
+    fi
+  done
+
+  # If we read at least one status line, repaint
+  if [[ $batch_complete -eq 1 ]]; then
+    zle .reset-prompt
+  fi
+
+  # Check if stream ended
+  if [[ $line == "status:complete" ]] || ! IFS= read -r -t 0.01 line <&$fd 2>/dev/null; then
+    # Check if fd is still valid by trying to read
+    if ! IFS= read -r -t 0.01 _ <&$fd 2>/dev/null; then
+      zle -F $fd 2>/dev/null
+      exec {fd}<&- 2>/dev/null
+      _omp_daemon_fd=
+    fi
+  fi
+}
+
+function enable_poshdaemon() {
+  # Start daemon if not running
+  $_omp_executable daemon start --config=$_omp_config --silent >/dev/null 2>&1 &!
+
+  # Replace precmd with daemon version
+  _omp_daemon_mode=1
+  add-zsh-hook -d precmd _omp_precmd
+  add-zsh-hook precmd _omp_daemon_precmd
 }
 
 function enable_poshtooltips() {

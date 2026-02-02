@@ -38,7 +38,11 @@ var (
 
 	resetStyle      = &style{AnchorStart: "RESET", AnchorEnd: `</>`, End: "\x1b[0m"}
 	backgroundStyle = &style{AnchorStart: "BACKGROUND", AnchorEnd: `</>`, End: "\x1b[49m"}
+)
 
+// Package-level variables kept for CLI backward compatibility.
+// CLI code paths set these directly; package-level functions sync them to defaultWriter.
+var (
 	BackgroundColor color.Ansi
 	CurrentColors   *color.Set
 	ParentColors    []*color.Set
@@ -47,23 +51,14 @@ var (
 	Plain       bool
 	Interactive bool
 
-	builder strings.Builder
-	length  int
-
-	foregroundColor color.Ansi
-	backgroundColor color.Ansi
-	currentColor    color.History
-	runes           []rune
-
-	isTransparent bool
-	isInvisible   bool
-	isHyperlink   bool
-
 	Shell   string
 	Program string
 
 	formats *shell.Formats
 )
+
+// defaultWriter is used by package-level wrapper functions for CLI backward compat.
+var defaultWriter = &Writer{}
 
 const (
 	AnchorRegex      = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
@@ -100,6 +95,49 @@ const (
 	Unknown         = "Unknown"
 )
 
+// Writer holds all per-render mutable state for terminal output.
+// Each render request should use its own Writer instance to avoid shared state.
+type Writer struct {
+	Colors          color.String
+	formats         *shell.Formats
+	CurrentColors   *color.Set
+	foregroundColor color.Ansi
+	backgroundColor color.Ansi
+	BackgroundColor color.Ansi
+	builder         strings.Builder
+	currentColor    color.History
+	runes           []rune
+	ParentColors    []*color.Set
+	length          int
+	isTransparent   bool
+	isInvisible     bool
+	isHyperlink     bool
+	Plain           bool
+	Interactive     bool
+}
+
+// NewWriter creates a new Writer instance with shell-specific formats.
+// Used by the daemon to create per-request writers.
+func NewWriter(sh string) *Writer {
+	return &Writer{
+		formats: shell.GetFormats(sh),
+	}
+}
+
+// syncDefaultWriter copies package-level config vars to defaultWriter
+// so that package-level wrapper functions work correctly for CLI paths.
+func syncDefaultWriter() {
+	defaultWriter.BackgroundColor = BackgroundColor
+	defaultWriter.CurrentColors = CurrentColors
+	defaultWriter.ParentColors = ParentColors
+	defaultWriter.Colors = Colors
+	defaultWriter.Plain = Plain
+	defaultWriter.Interactive = Interactive
+	defaultWriter.formats = formats
+}
+
+// --- Package-level functions for CLI backward compat ---
+
 func Init(sh string) {
 	Shell = sh
 	Program = getTerminalName()
@@ -127,22 +165,32 @@ func getTerminalName() string {
 }
 
 func SetColors(background, foreground color.Ansi) {
-	CurrentColors = &color.Set{
-		Background: background,
-		Foreground: foreground,
-	}
+	syncDefaultWriter()
+	defaultWriter.SetColors(background, foreground)
+	// Sync back to package-level for any code reading CurrentColors directly
+	CurrentColors = defaultWriter.CurrentColors
 }
 
 func SetParentColors(background, foreground color.Ansi) {
-	if ParentColors == nil {
-		ParentColors = make([]*color.Set, 0)
-	}
-
-	ParentColors = append([]*color.Set{{
-		Background: background,
-		Foreground: foreground,
-	}}, ParentColors...)
+	syncDefaultWriter()
+	defaultWriter.SetParentColors(background, foreground)
+	ParentColors = defaultWriter.ParentColors
 }
+
+func Write(background, foreground color.Ansi, txt string) {
+	syncDefaultWriter()
+	defaultWriter.Write(background, foreground, txt)
+}
+
+func Len() int {
+	return defaultWriter.Len()
+}
+
+func String() (string, int) {
+	return defaultWriter.String()
+}
+
+// --- Package-level functions that only read Shell/Program/formats (no builder state) ---
 
 func ChangeLine(numberOfLines int) string {
 	if Plain {
@@ -271,16 +319,36 @@ func StopProgress() string {
 	return endProgress
 }
 
-func Write(background, foreground color.Ansi, txt string) {
+// --- Writer methods ---
+
+func (w *Writer) SetColors(background, foreground color.Ansi) {
+	w.CurrentColors = &color.Set{
+		Background: background,
+		Foreground: foreground,
+	}
+}
+
+func (w *Writer) SetParentColors(background, foreground color.Ansi) {
+	if w.ParentColors == nil {
+		w.ParentColors = make([]*color.Set, 0)
+	}
+
+	w.ParentColors = append([]*color.Set{{
+		Background: background,
+		Foreground: foreground,
+	}}, w.ParentColors...)
+}
+
+func (w *Writer) Write(background, foreground color.Ansi, txt string) {
 	if txt == "" {
 		return
 	}
 
-	backgroundColor, foregroundColor = asAnsiColors(background, foreground)
+	w.backgroundColor, w.foregroundColor = w.asAnsiColors(background, foreground)
 
 	// default to white foreground
-	if foregroundColor.IsEmpty() {
-		foregroundColor = Colors.ToAnsi("white", false)
+	if w.foregroundColor.IsEmpty() {
+		w.foregroundColor = w.Colors.ToAnsi("white", false)
 	}
 
 	// validate if we start with a color override
@@ -292,191 +360,190 @@ func Write(background, foreground color.Ansi, txt string) {
 				continue
 			}
 
-			writeEscapedAnsiString(style.Start)
+			w.writeEscapedAnsiString(style.Start)
 			colorOverride = false
 		}
 
 		if colorOverride {
-			currentColor.Add(asAnsiColors(color.Ansi(match[BG]), color.Ansi(match[FG])))
+			w.currentColor.Add(w.asAnsiColors(color.Ansi(match[BG]), color.Ansi(match[FG])))
 		}
 	}
 
-	writeSegmentColors()
+	w.writeSegmentColors()
 
 	// print the hyperlink part AFTER the coloring
 	if match[ANCHOR] == hyperLinkStart {
-		isHyperlink = true
-		builder.WriteString(formats.HyperlinkStart)
+		w.isHyperlink = true
+		w.builder.WriteString(w.formats.HyperlinkStart)
 	}
 
 	txt = txt[len(match[ANCHOR]):]
-	runes = []rune(txt)
+	w.runes = []rune(txt)
 	hyperlinkTextPosition := 0
 
-	for i := 0; i < len(runes); i++ {
-		s := runes[i]
+	for i := 0; i < len(w.runes); i++ {
+		s := w.runes[i]
 		// ignore everything which isn't overriding
 		if s != '<' {
-			write(s)
+			w.write(s)
 			continue
 		}
 
 		// color/end overrides first
-		txt = string(runes[i:])
+		txt = string(w.runes[i:])
 		match = regex.FindNamedRegexMatch(AnchorRegex, txt)
 		if len(match) > 0 {
 			// check for hyperlinks first
 			switch match[ANCHOR] {
 			case hyperLinkStart:
-				isHyperlink = true
+				w.isHyperlink = true
 				i += len([]rune(match[ANCHOR])) - 1
-				builder.WriteString(formats.HyperlinkStart)
+				w.builder.WriteString(w.formats.HyperlinkStart)
 				continue
 			case hyperLinkText:
-				isHyperlink = false
+				w.isHyperlink = false
 				i += len([]rune(match[ANCHOR])) - 1
 				hyperlinkTextPosition = i
-				builder.WriteString(formats.HyperlinkCenter)
+				w.builder.WriteString(w.formats.HyperlinkCenter)
 				continue
 			case hyperLinkTextEnd:
 				// this implies there's no text in the hyperlink
 				if hyperlinkTextPosition+1 == i {
-					builder.WriteString("link")
-					length += 4
+					w.builder.WriteString("link")
+					w.length += 4
 				}
 				i += len([]rune(match[ANCHOR])) - 1
 				continue
 			case hyperLinkEnd:
 				i += len([]rune(match[ANCHOR])) - 1
-				builder.WriteString(formats.HyperlinkEnd)
+				w.builder.WriteString(w.formats.HyperlinkEnd)
 				continue
 			case empty:
 				i += len([]rune(match[ANCHOR])) - 1
 				continue
 			}
 
-			i = writeAnchorOverride(match, background, i)
+			i = w.writeAnchorOverride(match, background, i)
 			continue
 		}
 
-		write(s)
+		w.write(s)
 	}
 
 	// reset colors
-	writeEscapedAnsiString(resetStyle.End)
+	w.writeEscapedAnsiString(resetStyle.End)
 
 	// pop last color from the stack
-	currentColor.Pop()
+	w.currentColor.Pop()
 }
 
-func Len() int {
-	return length
+func (w *Writer) Len() int {
+	return w.length
 }
 
-func String() (string, int) {
+func (w *Writer) String() (string, int) {
 	defer func() {
-		length = 0
-		builder.Reset()
+		w.length = 0
+		w.builder.Reset()
 
-		isTransparent = false
-		isInvisible = false
+		w.isTransparent = false
+		w.isInvisible = false
 	}()
 
-	return builder.String(), length
+	return w.builder.String(), w.length
 }
 
-func writeEscapedAnsiString(txt string) {
-	if Plain {
+func (w *Writer) writeEscapedAnsiString(txt string) {
+	if w.Plain {
 		return
 	}
 
-	if len(formats.Escape) != 0 {
-		txt = fmt.Sprintf(formats.Escape, txt)
+	if len(w.formats.Escape) != 0 {
+		txt = fmt.Sprintf(w.formats.Escape, txt)
 	}
 
-	builder.WriteString(txt)
+	w.builder.WriteString(txt)
 }
 
-func write(s rune) {
-	if isInvisible {
+func (w *Writer) write(s rune) {
+	if w.isInvisible {
 		return
 	}
 
-	if isHyperlink {
-		builder.WriteRune(s)
+	if w.isHyperlink {
+		w.builder.WriteRune(s)
 		return
 	}
 
 	// UNSOLVABLE: When "Interactive" is true, the prompt length calculation in Bash/Zsh can be wrong, since the final string expansion is done by shells.
-	length += runewidth.RuneWidth(s)
-	// length += utf8.RuneCountInString(string(s))
+	w.length += runewidth.RuneWidth(s)
 
-	if !Interactive && !Plain {
-		escaped, shouldEscape := formats.EscapeSequences[s]
+	if !w.Interactive && !w.Plain {
+		escaped, shouldEscape := w.formats.EscapeSequences[s]
 		if shouldEscape {
-			builder.WriteString(escaped)
+			w.builder.WriteString(escaped)
 			return
 		}
 	}
 
-	builder.WriteRune(s)
+	w.builder.WriteRune(s)
 }
 
-func writeSegmentColors() {
+func (w *Writer) writeSegmentColors() {
 	// use correct starting colors
-	bg := backgroundColor
-	fg := foregroundColor
-	if !currentColor.Background().IsEmpty() {
-		bg = currentColor.Background()
+	bg := w.backgroundColor
+	fg := w.foregroundColor
+	if !w.currentColor.Background().IsEmpty() {
+		bg = w.currentColor.Background()
 	}
-	if !currentColor.Foreground().IsEmpty() {
-		fg = currentColor.Foreground()
+	if !w.currentColor.Foreground().IsEmpty() {
+		fg = w.currentColor.Foreground()
 	}
 
 	// ignore processing fully transparent colors
-	isInvisible = fg.IsTransparent() && bg.IsTransparent()
-	if isInvisible {
+	w.isInvisible = fg.IsTransparent() && bg.IsTransparent()
+	if w.isInvisible {
 		return
 	}
 
 	switch {
-	case fg.IsTransparent() && len(BackgroundColor) != 0:
-		background := Colors.ToAnsi(BackgroundColor, false)
-		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
+	case fg.IsTransparent() && len(w.BackgroundColor) != 0:
+		background := w.Colors.ToAnsi(w.BackgroundColor, false)
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
 	case fg.IsTransparent() && !bg.IsEmpty():
-		isTransparent = true
-		writeEscapedAnsiString(fmt.Sprintf(transparentStart, bg))
+		w.isTransparent = true
+		w.writeEscapedAnsiString(fmt.Sprintf(transparentStart, bg))
 	default:
 		if !bg.IsEmpty() && !bg.IsTransparent() {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
+			w.writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
 		}
 
 		if !fg.IsEmpty() && !fg.IsTransparent() {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, fg))
+			w.writeEscapedAnsiString(fmt.Sprintf(colorise, fg))
 		}
 	}
 
 	// set current colors
-	currentColor.Add(bg, fg)
+	w.currentColor.Add(bg, fg)
 }
 
-func writeAnchorOverride(match map[string]string, background color.Ansi, i int) int {
+func (w *Writer) writeAnchorOverride(match map[string]string, background color.Ansi, i int) int {
 	position := i
 	// check color reset first
 	if match[ANCHOR] == resetStyle.AnchorEnd {
-		return endColorOverride(position)
+		return w.endColorOverride(position)
 	}
 
 	position += len([]rune(match[ANCHOR])) - 1
 
 	for _, style := range knownStyles {
 		if style.AnchorEnd == match[ANCHOR] {
-			writeEscapedAnsiString(style.End)
+			w.writeEscapedAnsiString(style.End)
 			return position
 		}
 		if style.AnchorStart == match[ANCHOR] {
-			writeEscapedAnsiString(style.Start)
+			w.writeEscapedAnsiString(style.Start)
 			return position
 		}
 	}
@@ -488,77 +555,77 @@ func writeAnchorOverride(match map[string]string, background color.Ansi, i int) 
 		bgColor = background
 	}
 
-	bg, fg := asAnsiColors(bgColor, fgColor)
+	bg, fg := w.asAnsiColors(bgColor, fgColor)
 
 	// ignore processing fully transparent colors
-	isInvisible = fg.IsTransparent() && bg.IsTransparent()
-	if isInvisible {
+	w.isInvisible = fg.IsTransparent() && bg.IsTransparent()
+	if w.isInvisible {
 		return position
 	}
 
 	// make sure we have colors
 	if fg.IsEmpty() {
-		fg = foregroundColor
+		fg = w.foregroundColor
 	}
 	if bg.IsEmpty() {
-		bg = backgroundColor
+		bg = w.backgroundColor
 	}
 
-	currentColor.Add(bg, fg)
+	w.currentColor.Add(bg, fg)
 
-	if currentColor.Foreground().IsTransparent() && len(BackgroundColor) != 0 {
-		background := Colors.ToAnsi(BackgroundColor, false)
-		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background().ToForeground()))
+	if w.currentColor.Foreground().IsTransparent() && len(w.BackgroundColor) != 0 {
+		background := w.Colors.ToAnsi(w.BackgroundColor, false)
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentColor.Background().ToForeground()))
 		return position
 	}
 
-	if currentColor.Foreground().IsTransparent() && !currentColor.Background().IsTransparent() {
-		isTransparent = true
-		writeEscapedAnsiString(fmt.Sprintf(transparentStart, currentColor.Background()))
+	if w.currentColor.Foreground().IsTransparent() && !w.currentColor.Background().IsTransparent() {
+		w.isTransparent = true
+		w.writeEscapedAnsiString(fmt.Sprintf(transparentStart, w.currentColor.Background()))
 		return position
 	}
 
-	if currentColor.Background() != backgroundColor {
+	if w.currentColor.Background() != w.backgroundColor {
 		// end the colors in case we have a transparent background
-		if currentColor.Background().IsTransparent() {
-			writeEscapedAnsiString(backgroundEnd)
+		if w.currentColor.Background().IsTransparent() {
+			w.writeEscapedAnsiString(backgroundEnd)
 		} else {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background()))
+			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentColor.Background()))
 		}
 	}
 
-	if currentColor.Foreground() != foregroundColor {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Foreground()))
+	if w.currentColor.Foreground() != w.foregroundColor {
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentColor.Foreground()))
 	}
 
 	return position
 }
 
-func endColorOverride(position int) int {
+func (w *Writer) endColorOverride(position int) int {
 	// make sure to reset the colors if needed
 	position += len([]rune(resetStyle.AnchorEnd)) - 1
 
 	// do not restore colors at the end of the string, we print it anyways
-	if position == len(runes)-1 {
-		currentColor.Pop()
+	if position == len(w.runes)-1 {
+		w.currentColor.Pop()
 		return position
 	}
 
 	// reset colors to previous when we have more than 1 in stack
 	// as soon as we have  more than 1, we can pop the last one
 	// and print the previous override as it wasn't ended yet
-	if currentColor.Len() > 1 {
-		fg := currentColor.Foreground()
-		bg := currentColor.Background()
+	if w.currentColor.Len() > 1 {
+		fg := w.currentColor.Foreground()
+		bg := w.currentColor.Background()
 
-		currentColor.Pop()
+		w.currentColor.Pop()
 
-		previousBg := currentColor.Background()
-		previousFg := currentColor.Foreground()
+		previousBg := w.currentColor.Background()
+		previousFg := w.currentColor.Foreground()
 
-		if isTransparent {
-			writeEscapedAnsiString(transparentEnd)
+		if w.isTransparent {
+			w.writeEscapedAnsiString(transparentEnd)
 		}
 
 		if previousBg != bg {
@@ -567,45 +634,45 @@ func endColorOverride(position int) int {
 				background = backgroundStyle.End
 			}
 
-			writeEscapedAnsiString(background)
+			w.writeEscapedAnsiString(background)
 		}
 
 		if previousFg != fg {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, previousFg))
+			w.writeEscapedAnsiString(fmt.Sprintf(colorise, previousFg))
 		}
 
 		return position
 	}
 
 	// pop the last colors from the stack
-	defer currentColor.Pop()
+	defer w.currentColor.Pop()
 
 	// do not reset when colors are identical
-	if currentColor.Background() == backgroundColor && currentColor.Foreground() == foregroundColor {
+	if w.currentColor.Background() == w.backgroundColor && w.currentColor.Foreground() == w.foregroundColor {
 		return position
 	}
 
-	if isTransparent {
-		writeEscapedAnsiString(transparentEnd)
+	if w.isTransparent {
+		w.writeEscapedAnsiString(transparentEnd)
 	}
 
-	if backgroundColor.IsClear() {
-		writeEscapedAnsiString(backgroundStyle.End)
+	if w.backgroundColor.IsClear() {
+		w.writeEscapedAnsiString(backgroundStyle.End)
 	}
 
-	if currentColor.Background() != backgroundColor && !backgroundColor.IsClear() {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, backgroundColor))
+	if w.currentColor.Background() != w.backgroundColor && !w.backgroundColor.IsClear() {
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.backgroundColor))
 	}
 
-	if (currentColor.Foreground() != foregroundColor || isTransparent) && !foregroundColor.IsClear() {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, foregroundColor))
+	if (w.currentColor.Foreground() != w.foregroundColor || w.isTransparent) && !w.foregroundColor.IsClear() {
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.foregroundColor))
 	}
 
-	isTransparent = false
+	w.isTransparent = false
 	return position
 }
 
-func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
+func (w *Writer) asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
 	if background == "" {
 		background = color.Background
 	}
@@ -614,21 +681,21 @@ func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
 		foreground = color.Foreground
 	}
 
-	background = background.Resolve(CurrentColors, ParentColors)
-	foreground = foreground.Resolve(CurrentColors, ParentColors)
+	background = background.Resolve(w.CurrentColors, w.ParentColors)
+	foreground = foreground.Resolve(w.CurrentColors, w.ParentColors)
 
-	if bg, err := Colors.Resolve(background); err == nil {
+	if bg, err := w.Colors.Resolve(background); err == nil {
 		background = bg
 	}
 
-	if fg, err := Colors.Resolve(foreground); err == nil {
+	if fg, err := w.Colors.Resolve(foreground); err == nil {
 		foreground = fg
 	}
 
 	inverted := foreground == color.Transparent && len(background) != 0
 
-	background = Colors.ToAnsi(background, !inverted)
-	foreground = Colors.ToAnsi(foreground, false)
+	background = w.Colors.ToAnsi(background, !inverted)
+	foreground = w.Colors.ToAnsi(foreground, false)
 
 	return background, foreground
 }

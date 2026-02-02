@@ -29,6 +29,8 @@ func (f Features) Pwsh() Code {
 		return "& $global:_ompExecutable upgrade --auto"
 	case Notice:
 		return "& $global:_ompExecutable notice"
+	case Daemon:
+		return "Enable-PoshDaemon"
 	case PromptMark, RPrompt, CursorPositioning, Async:
 		fallthrough
 	default:

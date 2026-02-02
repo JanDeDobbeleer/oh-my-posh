@@ -485,9 +485,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	}
 
 	// convert to absolute path for worktrees only
-	if strings.HasPrefix(g.mainSCMDir, "..") {
-		g.mainSCMDir = filepath.Join(gitdir.ParentFolder, g.mainSCMDir)
-	}
+	g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
 
 	if worktreeIndex > -1 {
 		gitDir := filepath.Join(g.mainSCMDir, "gitdir")

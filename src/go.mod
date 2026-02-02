@@ -35,7 +35,7 @@ require (
 	github.com/invopop/jsonschema v0.13.0
 	github.com/mattn/go-runewidth v0.0.19
 	github.com/pelletier/go-toml/v2 v2.2.4
-	github.com/shirou/gopsutil/v4 v4.25.12
+	github.com/shirou/gopsutil/v4 v4.26.1
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	go.yaml.in/yaml/v3 v3.0.4

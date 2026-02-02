@@ -50,6 +50,11 @@ func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan 
 			}
 
 			out <- result{segment, index}
+
+			// When streaming, notify completion for pending segments
+			if e.Env.Flags().Streaming && segment.Pending {
+				e.notifySegmentCompletion(segment)
+			}
 		}(segment, i)
 	}
 }
@@ -74,6 +79,15 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 		// Completed before timeout
 	case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
 		log.Errorf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
+
+		// When streaming is enabled, don't kill goroutines - let them continue executing
+		if e.Env.Flags().Streaming {
+			segment.Pending = true
+
+			// Track this segment as pending and continue execution in background
+			e.trackPendingSegment(segment, done)
+			return
+		}
 
 		if err := runjobs.KillGoroutineChildren(gid); err != nil {
 			log.Errorf("failed to kill child processes for goroutine %d (segment: %s): %v", gid, segment.Name(), err)

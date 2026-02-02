@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -29,6 +30,9 @@ type Engine struct {
 	currentLineLength     int
 	Plain                 bool
 	forceRender           bool
+	streamingResults      chan *config.Segment
+	pendingSegments       sync.Map
+	allBlocks             []*config.Block
 }
 
 const (
@@ -205,6 +209,11 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		return false
 	}
 
+	return e.writeBlock(block, blockText, length, cancelNewline)
+}
+
+// writeBlock handles the common logic for writing a block to the prompt
+func (e *Engine) writeBlock(block *config.Block, blockText string, length int, cancelNewline bool) bool {
 	defer func() {
 		e.applyPowerShellBleedPatch()
 	}()
@@ -271,6 +280,51 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	}
 
 	return true
+}
+
+// renderBlockFromCache re-renders a block using existing segment data without re-execution
+func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) bool {
+	// Re-render all segments in the block
+	for segmentIndex, segment := range block.Segments {
+		if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+			continue
+		}
+
+		// Render segment text (will use pending state if still pending)
+		if !segment.Render(segmentIndex, e.forceRender) {
+			continue
+		}
+
+		if colors, newCycle := cycle.Loop(); colors != nil {
+			cycle = &newCycle
+			segment.Foreground = colors.Foreground
+			segment.Background = colors.Background
+		}
+
+		if terminal.Len() == 0 && len(block.LeadingDiamond) > 0 {
+			segment.LeadingDiamond = block.LeadingDiamond
+		}
+
+		e.setActiveSegment(segment)
+		e.renderActiveSegment()
+	}
+
+	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
+		e.activeSegment.TrailingDiamond = block.TrailingDiamond
+	}
+
+	e.writeSeparator(true)
+	e.activeSegment = nil
+	e.previousActiveSegment = nil
+
+	blockText, length := terminal.String()
+
+	// do not print anything when we don't have any text unless forced
+	if !block.Force && length == 0 {
+		return false
+	}
+
+	return e.writeBlock(block, blockText, length, cancelNewline)
 }
 
 func (e *Engine) applyPowerShellBleedPatch() {

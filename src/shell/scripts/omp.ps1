@@ -1,4 +1,4 @@
-# remove any existing dynamic module of OMP
+﻿# remove any existing dynamic module of OMP
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
@@ -41,6 +41,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:TransientPrompt = $false
     $script:TooltipCommand = ''
     $script:JobCount = 0
+    $script:StreamingEnabled = $false
+    $script:Streaming = [hashtable]::Synchronized(@{
+        Process  = $null
+        Prompt   = ''
+        Redraw   = $false
+    })
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL = "pwsh"
@@ -238,7 +244,86 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         )
     }
 
+    function Stop-StreamingProcess {
+        Unregister-Event -SourceIdentifier "OhMyPoshStreaming" -ErrorAction Ignore
+        Get-Job -Name "OhMyPoshStreaming" -ErrorAction Ignore | Remove-Job -Force
+
+        if ($null -ne $script:Streaming.Process -and -not $script:Streaming.Process.HasExited) {
+            try { $script:Streaming.Process.Kill() } catch {}
+        }
+        $script:Streaming.Process = $null
+    }
+
+    function Get-PoshStreamingPrompt {
+        if ($script:Streaming.Redraw) {
+            $script:Streaming.Redraw = $false
+            return $script:Streaming.Prompt
+        }
+
+        # Start streaming process
+        $script:Streaming.Process = New-Object System.Diagnostics.Process
+        $script:Streaming.Process.StartInfo.FileName = $global:_ompExecutable
+        $script:Streaming.Process.StartInfo.Arguments = @(
+            "stream"
+            "--shell=$script:ShellName"
+            "--shell-version=$script:PSVersion"
+            "--status=$script:ErrorCode"
+            "--no-status=$script:NoExitCode"
+            "--execution-time=$script:ExecutionTime"
+            "--pswd=$(Get-NonFSWD)"
+            "--stack-count=$(Get-PoshStackCount)"
+            "--terminal-width=$(Get-TerminalWidth)"
+            "--job-count=$script:JobCount"
+        ) -join ' '
+        $script:Streaming.Process.StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+        $script:Streaming.Process.StartInfo.RedirectStandardOutput = $true
+        $script:Streaming.Process.StartInfo.UseShellExecute = $false
+        $script:Streaming.Process.StartInfo.CreateNoWindow = $true
+        if ($PWD.Provider.Name -eq 'FileSystem') {
+            $script:Streaming.Process.StartInfo.WorkingDirectory = $PWD.ProviderPath
+        }
+        [void]$script:Streaming.Process.Start()
+
+        # Read output asynchronously
+        $output = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
+        $input = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
+        $input.Complete()
+        $ps = [powershell]::Create().AddScript({
+            param($stream)
+            while ($true) {
+                $bytes = [System.Collections.Generic.List[byte]]::new()
+                while (($b = $stream.ReadByte()) -notin -1, 0) { $bytes.Add($b) }
+                if ($bytes.Count -gt 0) { Write-Output ([Text.Encoding]::UTF8.GetString($bytes.ToArray())) }
+                if ($b -eq -1) { return }
+            }
+        }).AddArgument($script:Streaming.Process.StandardOutput.BaseStream)
+        [void]$ps.BeginInvoke($input, $output)
+
+        # Wait for first prompt
+        while ($output.Count -eq 0) { Start-Sleep -Milliseconds 10 }
+        $script:Streaming.Prompt = $output[0]
+
+        # Update prompt when second output arrives
+        Register-ObjectEvent -InputObject $output -EventName DataAdded -SourceIdentifier "OhMyPoshStreaming" -MessageData $script:Streaming -Action {
+            if ($event.SourceEventArgs.Index -gt 0) {
+                $s = $event.MessageData
+                $s.Prompt = $event.SourceArgs[0][$event.SourceEventArgs.Index]
+                $s.Redraw = $true
+                try {
+                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                } catch {}
+            }
+        } | Out-Null
+
+        return $script:Streaming.Prompt
+    }
+
     $promptFunction = {
+        if (-not $script:Streaming.Redraw -and $null -ne $script:Streaming.Process) {
+            Stop-StreamingProcess
+        }
+
         # store the original last command execution status
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
@@ -265,7 +350,14 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
-        $output = Get-PoshPrompt $script:PromptType
+        # Use streaming prompt if enabled, otherwise use regular prompt
+        if ($script:StreamingEnabled -and $script:PromptType -eq 'primary') {
+            $output = Get-PoshStreamingPrompt
+        }
+        else {
+            $output = Get-PoshPrompt $script:PromptType
+        }
+
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($output | Measure-Object -Line).Lines - 1)
 
@@ -408,9 +500,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
+    function Enable-PoshStreaming {
+        $script:StreamingEnabled = $true
+    }
+
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {
         $ExecutionContext.SessionState.Module.OnRemove += {
+            # Clean up streaming process
+            Stop-StreamingProcess
+
             Remove-Item Function:Get-PoshStackCount -ErrorAction SilentlyContinue
 
             $Function:prompt = $script:OriginalPromptFunction
@@ -443,6 +542,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "Enable-PoshTooltips"
         "Enable-PoshTransientPrompt"
         "Enable-PoshLineError"
+        "Enable-PoshStreaming"
         "Set-TransientPrompt"
         "prompt"
     )

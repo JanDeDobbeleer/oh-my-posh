@@ -286,8 +286,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         # Read output asynchronously
         $output = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
-        $input = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
-        $input.Complete()
+        $inputData = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
+        $inputData.Complete()
         $ps = [powershell]::Create().AddScript({
             param($stream)
             while ($true) {
@@ -297,17 +297,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 if ($b -eq -1) { return }
             }
         }).AddArgument($script:Streaming.Process.StandardOutput.BaseStream)
-        [void]$ps.BeginInvoke($input, $output)
+        [void]$ps.BeginInvoke($inputData, $output)
 
-        # Wait for first prompt
-        while ($output.Count -eq 0) { Start-Sleep -Milliseconds 10 }
-        $script:Streaming.Prompt = $output[0]
-
-        # Update prompt when second output arrives
+        # Update prompt when output arrives
         Register-ObjectEvent -InputObject $output -EventName DataAdded -SourceIdentifier "OhMyPoshStreaming" -MessageData $script:Streaming -Action {
-            if ($event.SourceEventArgs.Index -gt 0) {
-                $s = $event.MessageData
-                $s.Prompt = $event.SourceArgs[0][$event.SourceEventArgs.Index]
+            $s = $event.MessageData
+            $index = $event.SourceEventArgs.Index
+            $s.Prompt = $event.SourceArgs[0][$index]
+
+            if ($index -gt 0) {
+                # Trigger redraw for subsequent prompts
                 $s.Redraw = $true
                 try {
                     [Console]::OutputEncoding = [Text.Encoding]::UTF8
@@ -315,6 +314,15 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 } catch {}
             }
         } | Out-Null
+
+        # Wait for first prompt using polling approach.
+        # We can't use WaitHandles or blocking operations because PowerShell event handlers
+        # run in separate runspaces, and .NET synchronization primitives don't survive the
+        # serialization boundary. The PSDataCollection doesn't provide a blocking wait method,
+        # so polling with a short sleep is the most reliable approach. 1ms is imperceptible
+        # for prompt rendering and avoids busy-waiting.
+        while ($output.Count -eq 0) { Start-Sleep -Milliseconds 1 }
+        $script:Streaming.Prompt = $output[0]
 
         return $script:Streaming.Prompt
     }

@@ -43,7 +43,7 @@ func (e *Engine) StreamPrimary() <-chan string {
 // countPendingSegments counts how many segments are marked as pending
 func (e *Engine) countPendingSegments() int {
 	count := 0
-	e.pendingSegments.Range(func(_, _ interface{}) bool {
+	e.pendingSegments.Range(func(_, _ any) bool {
 		count++
 		return true
 	})

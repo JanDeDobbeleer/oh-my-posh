@@ -81,8 +81,8 @@ func TestStreamPrimary_WithPendingSegments(t *testing.T) {
 func TestCountPendingSegments(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Count    int
 		Segments []string
+		Count    int
 	}{
 		{Case: "No pending segments", Count: 0, Segments: []string{}},
 		{Case: "One pending segment", Count: 1, Segments: []string{"segment1"}},

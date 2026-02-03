@@ -97,8 +97,8 @@ func TestStreamCommand_OutputDelimiter(t *testing.T) {
 	// Test that output uses null byte delimiter for multi-line prompts
 	tests := []struct {
 		name     string
-		prompts  []string
 		expected string
+		prompts  []string
 	}{
 		{
 			name:     "Single line prompt",
@@ -141,9 +141,9 @@ func TestStreamCommand_Integration_MockOutput(t *testing.T) {
 	// It simulates what the stream command would output with null byte delimiter
 
 	tests := []struct {
+		validateOutput func(t *testing.T, output string)
 		name           string
 		promptCount    int
-		validateOutput func(t *testing.T, output string)
 	}{
 		{
 			name:        "Single prompt with null byte",

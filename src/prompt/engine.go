@@ -19,20 +19,20 @@ var cycle *color.Cycle = &color.Cycle{}
 
 type Engine struct {
 	Env                   runtime.Environment
+	streamingResults      chan *config.Segment
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
+	pendingSegments       sync.Map
 	rprompt               string
 	Overflow              config.Overflow
 	prompt                strings.Builder
-	rpromptLength         int
-	Padding               int
+	allBlocks             []*config.Block
 	currentLineLength     int
+	Padding               int
+	rpromptLength         int
 	Plain                 bool
 	forceRender           bool
-	streamingResults      chan *config.Segment
-	pendingSegments       sync.Map
-	allBlocks             []*config.Block
 }
 
 const (

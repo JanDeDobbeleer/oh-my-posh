@@ -99,7 +99,10 @@ func TestExecuteSegmentWithTimeout_Streaming(t *testing.T) {
 		close(done)
 	}()
 
-	// Manually mark as pending and track (simulating what executeSegmentWithTimeout does)
+	// Pre-register segment as pending (this happens in writeSegmentsConcurrently)
+	engine.pendingSegments.Store(segment.Name(), true)
+
+	// Mark as pending and track (simulating what executeSegmentWithTimeout does)
 	segment.Pending = true
 	engine.trackPendingSegment(segment, done)
 
@@ -119,33 +122,59 @@ func TestExecuteSegmentWithTimeout_Streaming(t *testing.T) {
 
 func TestExecuteSegmentWithTimeout_NonStreaming(t *testing.T) {
 	// This test verifies that when streaming is disabled,
-	// segments don't get marked as pending or tracked
-	segment := &config.Segment{}
+	// trackPendingSegment returns early without tracking when streamingResults is nil
+	segment := &config.Segment{
+		Type:    "text",
+		Timeout: 10,
+	}
 
-	engine := &Engine{}
+	engine := &Engine{
+		// streamingResults is nil (non-streaming mode)
+	}
 
-	// In non-streaming mode, pending should remain false
-	assert.False(t, segment.Pending, "Segment should not be marked as pending in non-streaming mode")
+	done := make(chan bool)
 
-	// Verify no tracking happens
+	// Pre-register segment (simulating what happens in concurrent execution)
+	engine.pendingSegments.Store(segment.Name(), true)
+
+	// trackPendingSegment should not track when streamingResults is nil
+	engine.trackPendingSegment(segment, done)
+
+	// Signal completion
+	close(done)
+
+	// Give time for any goroutine to run (shouldn't be one)
+	time.Sleep(50 * time.Millisecond)
+
+	// Segment should still be in pendingSegments because notifySegmentCompletion
+	// was never called (trackPendingSegment returns early when streamingResults is nil)
 	_, exists := engine.pendingSegments.Load(segment.Name())
-	assert.False(t, exists, "Segment should not be tracked when streaming is disabled")
+	assert.True(t, exists, "Segment should remain in pendingSegments when streaming is disabled")
 }
 
 func TestExecuteSegmentWithTimeout_CachedValueFallback(t *testing.T) {
-	// This test verifies the timeout flow marks segments as pending,
-	// allowing them to use pending text while continuing execution
+	// This test verifies that a pending segment's Text() returns "..." placeholder
+	env := new(mock.Environment)
+	env.On("Flags").Return(&runtime.Flags{})
+
 	segment := &config.Segment{
-		Pending: false, // Start as not pending
+		Type:     "text",
+		Pending:  true,
+		Template: "actual content",
 	}
 
-	// Simulate the segment being marked as pending due to timeout
-	segment.Pending = true
+	// Initialize the segment writer
+	err := segment.MapSegmentWithWriter(env)
+	assert.NoError(t, err)
 
-	// Verify that segment.string() returns "..." when pending
-	// This is defined in segment.go and tested in streaming_test.go
-	assert.True(t, segment.Pending, "Segment should be pending when timing out")
+	// Render with pending state - should show "..."
+	segment.Render(0, true)
+	text := segment.Text()
+	assert.Equal(t, "...", text, "Pending segment should show ...")
 
-	// Clean up
+	// After completion, render again with actual content
 	segment.Pending = false
+	segment.Render(0, true)
+	text = segment.Text()
+	assert.NotEqual(t, "...", text, "Non-pending segment should show actual content")
 }

@@ -157,6 +157,9 @@ func TestTrackPendingSegment(t *testing.T) {
 
 	done := make(chan bool)
 
+	// Pre-register segment as pending (this happens in writeSegmentsConcurrently in real code)
+	engine.pendingSegments.Store(segment.Name(), true)
+
 	// Start tracking
 	engine.trackPendingSegment(segment, done)
 

@@ -126,6 +126,16 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRealFolder:    TestRootPath + "dev/",
 			ExpectedRootFolder:    TestRootPath + "dev/separate/.git/posh",
 		},
+		{
+			Case:                  "worktree with relative gitdir path",
+			ExpectedEnabled:       true,
+			WorkingFolder:         TestRootPath + "dev/.git/worktrees/folder_worktree",
+			WorkingFolderAddon:    "gitdir",
+			WorkingFolderContent:  "../../../worktree/.git\n",
+			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
+			ExpectedRealFolder:    TestRootPath + "dev/worktree",
+			ExpectedRootFolder:    TestRootPath + dotGit,
+		},
 	}
 	fileInfo := &runtime.FileInfo{
 		Path:         TestRootPath + dotGit,

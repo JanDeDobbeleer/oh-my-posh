@@ -1,0 +1,72 @@
+---
+id: peard
+title: Pear Desktop
+sidebar_label: Pear Desktop
+---
+
+## What
+
+Shows the currently playing song in [Pear Desktop][pear-desktop].
+
+## Setup
+
+You need to enable the API Server plugin in the Pear Desktop settings.
+To do this, open the app, go to `Plugins > API Server [Beta]` and enable it.
+
+You must also disable authorization in `Plugins > API Server [Beta] > Authorization Strategy` for the segment to work.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+data={{
+    type: "peard",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#FF0000",
+    options: {
+      port: 26538,
+      playing_icon: "\uf04b ",
+      paused_icon: "\uf04c ",
+    },
+  }}
+/>
+
+## Options
+
+| Name           |   Type   |  Default  | Description                          |
+| -------------- | :------: | :-------: | ------------------------------------ |
+| `port`         |  `int`   |  `26538`  | Port to connect to Pear Desktop API  |
+| `playing_icon` | `string` | `\uf04b ` | Text/icon to show when playing       |
+| `paused_icon`  | `string` | `\uf04c ` | Text/icon to show when paused        |
+| `http_timeout` |  `int`   |  `5000`   | HTTP request timeout in milliseconds |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Icon }}{{ if ne .Status "paused" }}{{ .Artist }} - {{ .Track }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name              | Type     | Description                                                                                              |
+| ----------------- | -------- | -------------------------------------------------------------------------------------------------------- |
+| `.Status`         | `string` | Player status (`playing`, `paused`)                                                                      |
+| `.Artist`         | `string` | Current artist                                                                                           |
+| `.Track`          | `string` | Current track                                                                                            |
+| `.TrackUrl`       | `string` | YouTube Music URL for the track                                                                          |
+| `.ArtistUrl`      | `string` | YouTube Music URL for the artist                                                                         |
+| `.MediaType`      | `string` | Media type (`AUDIO`, `ORIGINAL_MUSIC_VIDEO`, `USER_GENERATED_CONTENT`, `PODCAST_EPISODE`, `OTHER_VIDEO`) |
+| `.IsPaused`       | `bool`   | Whether playback is paused                                                                               |
+| `.SongDuration`   | `int`    | Total song duration in seconds                                                                           |
+| `.ElapsedSeconds` | `int`    | Elapsed playback time in seconds                                                                         |
+| `.Icon`           | `string` | Icon based on status                                                                                     |
+
+[templates]: /docs/configuration/templates
+[pear-desktop]: https://github.com/pear-devs/pear-desktop

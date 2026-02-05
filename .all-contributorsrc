@@ -3461,6 +3461,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "yblossier",
+      "name": "Yoann BLOSSIER",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60755917?v=4",
+      "profile": "https://blog.toenn-vaot.fr",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

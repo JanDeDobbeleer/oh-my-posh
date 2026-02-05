@@ -3480,6 +3480,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "MrRainbow0704",
+      "name": "Marco Simone",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95081253?v=4",
+      "profile": "https://github.com/MrRainbow0704",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

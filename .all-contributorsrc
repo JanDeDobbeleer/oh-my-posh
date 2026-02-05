@@ -3470,6 +3470,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "kvokka",
+      "name": "Mikhail Beliakov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15954013?v=4",
+      "profile": "https://kvokka.github.io/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

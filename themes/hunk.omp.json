@@ -53,14 +53,14 @@
             "{{ if gt .Ahead 0 }}#89d1dc{{ end }}",
             "{{ if gt .Behind 0 }}#f17c37{{ end }}"
           ],
-          "foreground": "#ffffff",
+          "foreground": "#333333",
           "powerline_symbol": "\ue0b0",
           "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }} {{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -131,5 +131,5 @@
     }
   ],
   "final_space": true,
-  "version": 4
+  "version": 5
 }

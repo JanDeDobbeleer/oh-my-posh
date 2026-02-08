@@ -149,28 +149,12 @@ func TestClaudeTokenUsagePercent(t *testing.T) {
 			ExpectedPercent: 0,
 		},
 		{
-			Case:            "10% usage (fallback to total)",
+			Case:            "No UsedPercentage, zero CurrentUsage returns 0",
 			HasCurrentUsage: true,
 			InputTokens:     8000,
 			OutputTokens:    2000,
 			ContextWindow:   100000,
-			ExpectedPercent: 10,
-		},
-		{
-			Case:            "50% usage (fallback to total)",
-			HasCurrentUsage: true,
-			InputTokens:     50000,
-			OutputTokens:    50000,
-			ContextWindow:   200000,
-			ExpectedPercent: 50,
-		},
-		{
-			Case:            "Over 100% usage (capped)",
-			HasCurrentUsage: true,
-			InputTokens:     100000,
-			OutputTokens:    50000,
-			ContextWindow:   100000,
-			ExpectedPercent: 100,
+			ExpectedPercent: 0,
 		},
 		{
 			Case:            "Uses CurrentUsage input tokens",
@@ -202,13 +186,13 @@ func TestClaudeTokenUsagePercent(t *testing.T) {
 			ExpectedPercent: 3, // Should use current (6000/200000 = 3%)
 		},
 		{
-			Case:            "Fallback to total when CurrentUsage is zero",
+			Case:            "No fallback to total when CurrentUsage is zero",
 			HasCurrentUsage: true,
 			InputTokens:     20000,
 			OutputTokens:    10000,
 			CurrentInput:    0,
 			ContextWindow:   100000,
-			ExpectedPercent: 30, // Should fallback to total (30000/100000 = 30%)
+			ExpectedPercent: 0, // Should NOT fallback to cumulative total tokens
 		},
 	}
 
@@ -285,32 +269,11 @@ func TestClaudeFormattedTokens(t *testing.T) {
 		HasCurrentUsage          bool
 	}{
 		{
-			Case:            "Small token count (fallback to total)",
+			Case:            "No CurrentUsage tokens returns 0",
 			HasCurrentUsage: true,
 			InputTokens:     300,
 			OutputTokens:    200,
-			ExpectedFormat:  "500",
-		},
-		{
-			Case:            "Thousands (fallback to total)",
-			HasCurrentUsage: true,
-			InputTokens:     8500,
-			OutputTokens:    1500,
-			ExpectedFormat:  "10.0K",
-		},
-		{
-			Case:            "Tens of thousands (fallback to total)",
-			HasCurrentUsage: true,
-			InputTokens:     50000,
-			OutputTokens:    25000,
-			ExpectedFormat:  "75.0K",
-		},
-		{
-			Case:            "Millions (fallback to total)",
-			HasCurrentUsage: true,
-			InputTokens:     1500000,
-			OutputTokens:    500000,
-			ExpectedFormat:  "2.0M",
+			ExpectedFormat:  "0",
 		},
 		{
 			Case:            "Uses CurrentUsage input tokens",
@@ -339,19 +302,19 @@ func TestClaudeFormattedTokens(t *testing.T) {
 			ExpectedFormat:  "500",
 		},
 		{
-			Case:            "Fallback to total when CurrentUsage is zero",
+			Case:            "No fallback to total when CurrentUsage is zero",
 			HasCurrentUsage: true,
 			InputTokens:     50000,
 			OutputTokens:    25000,
 			CurrentInput:    0,
-			ExpectedFormat:  "75.0K", // Should fallback to total
+			ExpectedFormat:  "0", // Should NOT fallback to cumulative total tokens
 		},
 		{
-			Case:            "Nil CurrentUsage falls back to total",
+			Case:            "Nil CurrentUsage returns 0",
 			HasCurrentUsage: false,
 			InputTokens:     50000,
 			OutputTokens:    25000,
-			ExpectedFormat:  "75.0K", // Should fallback to total
+			ExpectedFormat:  "0", // Should NOT fallback to cumulative total tokens
 		},
 	}
 

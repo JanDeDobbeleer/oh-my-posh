@@ -3,6 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	http2 "net/http"
 	"time"
 
@@ -44,6 +45,38 @@ type NightscoutData struct {
 	Trend      int       `json:"trend"`
 	UtcOffset  int       `json:"utcOffset"`
 	Mills      int64     `json:"mills"`
+}
+
+// UnmarshalJSON handles both integer and floating-point JSON numbers for the date field.
+// Some Nightscout API providers (e.g. T1Pal) return the date as a float.
+func (n *NightscoutData) UnmarshalJSON(data []byte) error {
+	type Alias NightscoutData
+	aux := &struct {
+		*Alias
+		Date json.Number `json:"date"`
+	}{
+		Alias: (*Alias)(n),
+	}
+
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+
+	if aux.Date == "" {
+		return nil
+	}
+
+	if i, err := aux.Date.Int64(); err == nil {
+		n.Date = i
+		return nil
+	}
+
+	if f, err := aux.Date.Float64(); err == nil {
+		n.Date = int64(f)
+		return nil
+	}
+
+	return fmt.Errorf("date field must be a valid number, got: %s", aux.Date)
 }
 
 func (ns *Nightscout) Template() string {

@@ -38,7 +38,31 @@ type Terminal struct {
 	networks []*Connection
 }
 
+func initLoacl() {
+	var timeZone *time.Location
+
+	systemTimeZone, err := exec.CommandContext(context.Background(), "/system/bin/getprop", "persist.sys.timezone").Output()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to get systemTimeZone from OS")
+
+		systemTimeZone = []byte("UTC")
+	}
+
+	timeZone, err = time.LoadLocation(strings.TrimSpace(string(systemTimeZone)))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to compute timeZone from systemTimeZone: %s\n", string(systemTimeZone))
+
+		timeZone = time.Now().UTC().Location()
+	}
+
+	time.Local = timeZone
+}
+
 func (term *Terminal) Init(flags *Flags) {
+	if term.GOOS() == ANDROID {
+		initLoacl()
+	}
+
 	defer log.Trace(time.Now())
 
 	term.CmdFlags = flags

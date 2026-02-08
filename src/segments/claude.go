@@ -89,10 +89,9 @@ func (c *Claude) Enabled() bool {
 
 // TokenUsagePercent returns the percentage of context window used.
 // Uses pre-calculated UsedPercentage when available (resets on compact/clear),
-// falls back to calculating from CurrentUsage, then to total tokens for backwards compatibility.
+// falls back to calculating from CurrentUsage.
 func (c *Claude) TokenUsagePercent() text.Percentage {
 	// Prefer pre-calculated UsedPercentage - most accurate and resets on compact/clear
-	// When UsedPercentage is nil (null in JSON), context was reset - return 0
 	if c.ContextWindow.UsedPercentage != nil {
 		if *c.ContextWindow.UsedPercentage > 100 {
 			return 100
@@ -100,7 +99,6 @@ func (c *Claude) TokenUsagePercent() text.Percentage {
 		return text.Percentage(*c.ContextWindow.UsedPercentage)
 	}
 
-	// UsedPercentage is nil - check if CurrentUsage is also nil (indicates reset/clear)
 	if c.ContextWindow.CurrentUsage == nil {
 		return 0
 	}
@@ -113,11 +111,6 @@ func (c *Claude) TokenUsagePercent() text.Percentage {
 	currentTokens := c.ContextWindow.CurrentUsage.InputTokens +
 		c.ContextWindow.CurrentUsage.CacheCreationInputTokens +
 		c.ContextWindow.CurrentUsage.CacheReadInputTokens
-
-	// Fallback to total tokens if CurrentUsage is not provided (backwards compatibility)
-	if currentTokens <= 0 {
-		currentTokens = c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
-	}
 
 	if currentTokens <= 0 {
 		return 0
@@ -145,22 +138,14 @@ func (c *Claude) FormattedCost() string {
 }
 
 // FormattedTokens returns a human-readable string of current context tokens.
-// Uses CurrentUsage (which represents actual context and resets on compact/clear)
-// with fallback to total tokens for backwards compatibility.
+// Uses CurrentUsage (which represents actual context and resets on compact/clear).
 func (c *Claude) FormattedTokens() string {
 	var currentTokens int
 
-	// Use CurrentUsage for display - includes cache tokens for accurate context measurement
-	// When CurrentUsage is nil (context reset), fall back to total tokens
 	if c.ContextWindow.CurrentUsage != nil {
 		currentTokens = c.ContextWindow.CurrentUsage.InputTokens +
 			c.ContextWindow.CurrentUsage.CacheCreationInputTokens +
 			c.ContextWindow.CurrentUsage.CacheReadInputTokens
-	}
-
-	// Fallback to total tokens if CurrentUsage is not provided (backwards compatibility)
-	if currentTokens <= 0 {
-		currentTokens = c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
 	}
 
 	if currentTokens < int(thousand) {

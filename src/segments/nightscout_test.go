@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"encoding/json"
 	"errors"
 	"testing"
 
@@ -83,6 +84,14 @@ func TestNSSegment(t *testing.T) {
 			ExpectedEnabled: true,
 		},
 		{
+			Case: "Float date value",
+			JSONResponse: `
+			[{"_id":"619d6fa819696e8ded5b2206","sgv":124,"date":1770512410938.386,"dateString":"2026-02-08T01:00:10.000Z","trend":4,"direction":"Flat","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2026-02-08T01:00:10.000Z","mills":1770512410000}]`, //nolint:lll
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 124→",
+			ExpectedEnabled: true,
+		},
+		{
 			Case:            "Error in retrieving data",
 			JSONResponse:    "nonsense",
 			Error:           errors.New("Something went wrong"),
@@ -133,5 +142,52 @@ func TestNSSegment(t *testing.T) {
 			tc.Template = ns.Template()
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ns), tc.Case)
+	}
+}
+
+func TestNightscoutDataUnmarshalJSON(t *testing.T) {
+	cases := []struct {
+		Case         string
+		JSONInput    string
+		ExpectedDate int64
+		ExpectError  bool
+	}{
+		{
+			Case:         "Integer date value",
+			JSONInput:    `{"date": 1637707537000}`,
+			ExpectedDate: 1637707537000,
+		},
+		{
+			Case:         "Floating-point date value",
+			JSONInput:    `{"date": 1637707537000.5}`,
+			ExpectedDate: 1637707537000,
+		},
+		{
+			Case:         "Floating-point date with larger decimal",
+			JSONInput:    `{"date": 1637707537123.789}`,
+			ExpectedDate: 1637707537123,
+		},
+		{
+			Case:        "Invalid date value",
+			JSONInput:   `{"date": "not-a-number"}`,
+			ExpectError: true,
+		},
+		{
+			Case:      "Missing date field",
+			JSONInput: `{"sgv": 150}`,
+		},
+	}
+
+	for _, tc := range cases {
+		var data NightscoutData
+		err := json.Unmarshal([]byte(tc.JSONInput), &data)
+
+		if tc.ExpectError {
+			assert.Error(t, err, tc.Case)
+			continue
+		}
+
+		assert.NoError(t, err, tc.Case)
+		assert.Equal(t, tc.ExpectedDate, data.Date, tc.Case)
 	}
 }

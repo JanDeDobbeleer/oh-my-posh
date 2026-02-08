@@ -11,12 +11,18 @@
           "type": "text"
         },
         {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#00c200",
+          "template": " ({{ if .Venv }}venv{{ end }})"
+        },
+        {
           "foreground": "#56B6C2",
           "options": {
             "style": "folder"
           },
           "style": "plain",
-          "template": "  {{ .Path }}",
+          "template": " {{ .Path }}",
           "type": "path"
         },
         {

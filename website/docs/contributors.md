@@ -488,6 +488,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MrRainbow0704"><img src="https://avatars.githubusercontent.com/u/95081253?v=4?s=100" width="100px;" alt="Marco Simone"/><br /><sub><b>Marco Simone</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MrRainbow0704" title="Code">💻</a> <a href="#design-MrRainbow0704" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MrRainbow0704" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sbeardsley"><img src="https://avatars.githubusercontent.com/u/6288131?v=4?s=100" width="100px;" alt="sbeardsley"/><br /><sub><b>sbeardsley</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sbeardsley" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/maxvictor"><img src="https://avatars.githubusercontent.com/u/11591713?v=4?s=100" width="100px;" alt="Max Victor"/><br /><sub><b>Max Victor</b></sub></a><br /><a href="#design-maxvictor" title="Design">🎨</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -3500,6 +3500,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "maxvictor",
+      "name": "Max Victor",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11591713?v=4",
+      "profile": "https://www.linkedin.com/in/maxvictor",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

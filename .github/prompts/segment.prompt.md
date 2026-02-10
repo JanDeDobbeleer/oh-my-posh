@@ -1,7 +1,6 @@
 ---
 description: 'Generate a new Oh My Posh segment (code, registration, docs, schema, sidebar)'
 agent: 'agent'
-model: 'Claude Sonnet 4'
 tools: ['execute/testFailure', 'execute/getTerminalOutput', 'execute/runTask', 'execute/createAndRunTask', 'execute/runInTerminal', 'execute/runTests', 'read/problems', 'read/readFile', 'read/terminalSelection', 'read/terminalLastCommand', 'read/getTaskOutput', 'edit/createFile', 'edit/editFiles', 'search', 'web/githubRepo', 'agent']
 ---
 

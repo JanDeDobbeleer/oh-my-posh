@@ -1,4 +1,4 @@
-const Ajv = require('ajv');
+const Ajv = require('ajv/dist/2020');
 const addFormats = require('ajv-formats');
 const yaml = require('js-yaml');
 const toml = require('@iarna/toml');
@@ -70,7 +70,7 @@ async function loadSchema() {
   return schemaLoadPromise;
 }
 
-// Initialize AJV
+// Initialize AJV with draft 2020-12 support (oh-my-posh schema uses draft 2020-12)
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,

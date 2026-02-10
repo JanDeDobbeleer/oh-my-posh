@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "node --test test/**/*.test.js"
   },
   "dependencies": {
     "axios": "^1.13.2",

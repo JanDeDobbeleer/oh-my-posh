@@ -40,6 +40,10 @@ const (
 	Round DurationStyle = "round"
 	// Always 7 character width
 	Lucky7 = "lucky7"
+	// ISO8601 ISO 8601 duration format (seconds)
+	ISO8601 DurationStyle = "iso8601"
+	// ISO8601Ms ISO 8601 duration format with milliseconds
+	ISO8601Ms DurationStyle = "iso8601ms"
 
 	second           = 1000
 	minute           = 60000
@@ -87,6 +91,10 @@ func (t *Executiontime) formatDuration(style DurationStyle) string {
 		return t.formatDurationRound()
 	case Lucky7:
 		return t.formatDurationLucky7()
+	case ISO8601:
+		return t.formatDurationISO8601()
+	case ISO8601Ms:
+		return t.formatDurationISO8601Ms()
 	default:
 		return fmt.Sprintf("Style: %s is not available", style)
 	}
@@ -272,4 +280,64 @@ func (t *Executiontime) formatDurationLucky7() string {
 	// return "   ∞   "
 	d := t.Ms / day
 	return fmt.Sprintf("%6dd", d)
+}
+
+func (t *Executiontime) formatDurationISO8601() string {
+	// ISO 8601 duration format: PT[n]H[n]M[n]S
+	// Examples: PT13M12S, PT1H30M45S
+	result := "PT"
+
+	hours := t.Ms / hour
+	minutes := (t.Ms % hour) / minute
+	seconds := float64(t.Ms%minute) / second
+
+	roundedSeconds := int64(seconds)
+	if t.Ms%second >= second/2 {
+		roundedSeconds++
+	}
+
+	// Handle potential overflow from rounding
+	if roundedSeconds >= secondsPerMinute {
+		roundedSeconds = 0
+		minutes++
+		if minutes >= minutesPerHour {
+			minutes = 0
+			hours++
+		}
+	}
+
+	if hours > 0 {
+		result += fmt.Sprintf("%dH", hours)
+	}
+	if minutes > 0 {
+		result += fmt.Sprintf("%dM", minutes)
+	}
+	if roundedSeconds > 0 || (hours == 0 && minutes == 0) {
+		result += fmt.Sprintf("%dS", roundedSeconds)
+	}
+
+	return result
+}
+
+func (t *Executiontime) formatDurationISO8601Ms() string {
+	// ISO 8601 duration format with milliseconds: PT[n]H[n]M[n]S
+	// Examples: PT13M12.1S, PT1H30M45.123S
+	result := "PT"
+
+	hours := t.Ms / hour
+	minutes := (t.Ms % hour) / minute
+	seconds := float64(t.Ms%minute) / second
+
+	if hours > 0 {
+		result += fmt.Sprintf("%dH", hours)
+	}
+	if minutes > 0 {
+		result += fmt.Sprintf("%dM", minutes)
+	}
+	if seconds > 0 || (hours == 0 && minutes == 0) {
+		secondsStr := strconv.FormatFloat(seconds, 'f', -1, 64)
+		result += fmt.Sprintf("%sS", secondsStr)
+	}
+
+	return result
 }

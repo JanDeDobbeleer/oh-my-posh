@@ -362,3 +362,59 @@ func TestExecutionTimeFormatDurationLucky7(t *testing.T) {
 		assert.Equal(t, len(executionTime), 7)
 	}
 }
+
+func TestExecutionTimeFormatISO8601(t *testing.T) {
+	cases := []struct {
+		Input    string
+		Expected string
+	}{
+		{Input: "0.001s", Expected: "PT0S"},
+		{Input: "0.1s", Expected: "PT0S"},
+		{Input: "0.5s", Expected: "PT1S"},
+		{Input: "1s", Expected: "PT1S"},
+		{Input: "2.1s", Expected: "PT2S"},
+		{Input: "2.6s", Expected: "PT3S"},
+		{Input: "1m", Expected: "PT1M"},
+		{Input: "3m2.1s", Expected: "PT3M2S"},
+		{Input: "3m2.6s", Expected: "PT3M3S"},
+		{Input: "1h", Expected: "PT1H"},
+		{Input: "4h3m2.1s", Expected: "PT4H3M2S"},
+		{Input: "124h3m2.1s", Expected: "PT124H3M2S"},
+		{Input: "124h3m2.0s", Expected: "PT124H3M2S"},
+	}
+
+	for _, tc := range cases {
+		duration, _ := time.ParseDuration(tc.Input)
+		executionTime := &Executiontime{}
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationISO8601()
+		assert.Equal(t, tc.Expected, output, "Input: %s", tc.Input)
+	}
+}
+
+func TestExecutionTimeFormatISO8601Ms(t *testing.T) {
+	cases := []struct {
+		Input    string
+		Expected string
+	}{
+		{Input: "0.001s", Expected: "PT0.001S"},
+		{Input: "0.1s", Expected: "PT0.1S"},
+		{Input: "1s", Expected: "PT1S"},
+		{Input: "2.1s", Expected: "PT2.1S"},
+		{Input: "2.123s", Expected: "PT2.123S"},
+		{Input: "1m", Expected: "PT1M"},
+		{Input: "3m2.1s", Expected: "PT3M2.1S"},
+		{Input: "3m2.123s", Expected: "PT3M2.123S"},
+		{Input: "1h", Expected: "PT1H"},
+		{Input: "4h3m2.1s", Expected: "PT4H3M2.1S"},
+		{Input: "124h3m2.123s", Expected: "PT124H3M2.123S"},
+	}
+
+	for _, tc := range cases {
+		duration, _ := time.ParseDuration(tc.Input)
+		executionTime := &Executiontime{}
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationISO8601Ms()
+		assert.Equal(t, tc.Expected, output, "Input: %s", tc.Input)
+	}
+}

@@ -115,19 +115,19 @@ func TestClaudeTokenUsagePercent(t *testing.T) {
 	}{
 		{
 			Case:            "Uses UsedPercentage when available",
-			UsedPercentage:  intPtr(42),
+			UsedPercentage:  new(42),
 			ContextWindow:   200000,
 			ExpectedPercent: 42,
 		},
 		{
 			Case:            "UsedPercentage capped at 100",
-			UsedPercentage:  intPtr(150),
+			UsedPercentage:  new(150),
 			ContextWindow:   200000,
 			ExpectedPercent: 100,
 		},
 		{
 			Case:            "UsedPercentage zero is valid",
-			UsedPercentage:  intPtr(0),
+			UsedPercentage:  new(0),
 			ContextWindow:   200000,
 			ExpectedPercent: 0,
 		},
@@ -232,8 +232,10 @@ func TestClaudeTokenUsagePercent(t *testing.T) {
 }
 
 // intPtr is a helper to create a pointer to an int value
+//
+//go:fix inline
 func intPtr(i int) *int {
-	return &i
+	return new(i)
 }
 
 func TestClaudeFormattedCost(t *testing.T) {

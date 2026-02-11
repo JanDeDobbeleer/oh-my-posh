@@ -19,19 +19,16 @@ var (
 	hWlanEnumInterfaces = wlanapi.NewProc("WlanEnumInterfaces")
 )
 
-//nolint:revive
 type MIN_IF_TABLE2 struct {
 	NumEntries uint64
 	Table      [256]MIB_IF_ROW2
 }
 
-//nolint:revive
 const (
 	IF_MAX_STRING_SIZE         uint64 = 256
 	IF_MAX_PHYS_ADDRESS_LENGTH uint64 = 32
 )
 
-//nolint:revive
 type MIB_IF_ROW2 struct {
 	InterfaceLuid            uint64
 	InterfaceIndex           uint32
@@ -90,27 +87,25 @@ type MIB_IF_ROW2 struct {
 	OutQLen            uint64
 }
 
-//nolint:revive, unused
+//nolint:unused
 type WLAN_INTERFACE_INFO_LIST struct {
 	dwNumberOfItems uint32
 	dwIndex         uint32
 	InterfaceInfo   [1]WLAN_INTERFACE_INFO
 }
 
-//nolint:revive
 type WLAN_INTERFACE_INFO struct {
 	InterfaceGuid           syscall.GUID
 	strInterfaceDescription [256]uint16
 	isState                 uint32
 }
 
-//nolint:revive
 const (
 	WLAN_MAX_NAME_LENGTH  int64 = 256
 	DOT11_SSID_MAX_LENGTH int64 = 32
 )
 
-//nolint:revive, unused
+//nolint:unused
 type WLAN_CONNECTION_ATTRIBUTES struct {
 	isState                   uint32
 	wlanConnectionMode        uint32
@@ -119,7 +114,7 @@ type WLAN_CONNECTION_ATTRIBUTES struct {
 	wlanSecurityAttributes    WLAN_SECURITY_ATTRIBUTES
 }
 
-//nolint:revive, unused
+//nolint:unused
 type WLAN_ASSOCIATION_ATTRIBUTES struct {
 	dot11Ssid         DOT11_SSID
 	dot11BssType      uint32
@@ -131,7 +126,7 @@ type WLAN_ASSOCIATION_ATTRIBUTES struct {
 	ulTxRate          uint32
 }
 
-//nolint:revive, unused
+//nolint:unused
 type WLAN_SECURITY_ATTRIBUTES struct {
 	bSecurityEnabled     uint32
 	bOneXEnabled         uint32
@@ -139,7 +134,6 @@ type WLAN_SECURITY_ATTRIBUTES struct {
 	dot11CipherAlgorithm uint32
 }
 
-//nolint:revive
 type DOT11_SSID struct {
 	uSSIDLength uint32
 	ucSSID      [DOT11_SSID_MAX_LENGTH]uint8

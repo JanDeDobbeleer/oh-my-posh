@@ -231,13 +231,6 @@ func TestClaudeTokenUsagePercent(t *testing.T) {
 	}
 }
 
-// intPtr is a helper to create a pointer to an int value
-//
-//go:fix inline
-func intPtr(i int) *int {
-	return new(i)
-}
-
 func TestClaudeFormattedCost(t *testing.T) {
 	cases := []struct {
 		Case         string

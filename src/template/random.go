@@ -3,7 +3,7 @@ package template
 import (
 	"errors"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"reflect"
 )
 
@@ -18,5 +18,5 @@ func random(list any) (string, error) {
 		return "", errors.New("input slice or array is empty")
 	}
 
-	return fmt.Sprintf("%v", v.Index(rand.Intn(v.Len()))), nil
+	return fmt.Sprintf("%v", v.Index(rand.IntN(v.Len()))), nil
 }

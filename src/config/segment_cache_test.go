@@ -15,6 +15,7 @@ func TestSegmentCache(t *testing.T) {
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
 	}
+	defer cache.DeleteAll(cache.Device)
 
 	env := new(mock.Environment)
 	env.On("Pwd").Return("/tmp")

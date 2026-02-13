@@ -305,26 +305,29 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	key, store := segment.cacheKeyAndStore()
-	data, OK := cache.Get[SegmentWriter](store, key)
-	if !OK {
-		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
+	// attempt to get the value as a SegmentWriter
+	// if that fails, it might be a legacy value (string)
+	// in that case we need to delete the key and return false
+	// so the segment can be re-rendered and cached correctly
+	if data, OK := cache.Get[SegmentWriter](store, key); OK {
+		segment.writer = data
+		// segments are pointers to structs, so we need to set the value to the interface
+		segment.Enabled = true
+		template.Cache.AddSegmentData(segment.Name(), segment.writer)
+		log.Debug("restored segment from cache: ", segment.Name())
+		segment.restored = true
+		return true
+	}
+
+	// check if we have a legacy string value
+	if _, OK := cache.Get[string](store, key); OK {
+		log.Debugf("removing legacy cache key: %s", key)
+		cache.Delete(store, key)
 		return false
 	}
 
-	segment.writer = data
-	// segments are pointers to structs, so we need to set the value to the interface
-	// however, when restoring from cache, we get a pointer to the struct
-	// so we need to dereference it to get the value if we want to change it
-	// but here we just assign it to the writer interface
-
-	segment.Enabled = true
-	template.Cache.AddSegmentData(segment.Name(), segment.writer)
-
-	log.Debug("restored segment from cache: ", segment.Name())
-
-	segment.restored = true
-
-	return true
+	log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
+	return false
 }
 
 func (segment *Segment) setCache() {

@@ -311,7 +311,7 @@ func (segment *Segment) restoreCache() bool {
 	// so the segment can be re-rendered and cached correctly
 	if data, OK := cache.Get[SegmentWriter](store, key); OK {
 		segment.writer = data
-		// segments are pointers to structs, so we need to set the value to the interface
+		// restore the cached writer to this segment
 		segment.Enabled = true
 		template.Cache.AddSegmentData(segment.Name(), segment.writer)
 		log.Debug("restored segment from cache: ", segment.Name())

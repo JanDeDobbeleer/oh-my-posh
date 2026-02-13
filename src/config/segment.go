@@ -305,25 +305,29 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	key, store := segment.cacheKeyAndStore()
-	data, OK := cache.Get[string](store, key)
-	if !OK {
-		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
+	// attempt to get the value as a SegmentWriter
+	// if that fails, it might be a legacy value (string)
+	// in that case we need to delete the key and return false
+	// so the segment can be re-rendered and cached correctly
+	if data, OK := cache.Get[SegmentWriter](store, key); OK {
+		segment.writer = data
+		// restore the cached writer to this segment
+		segment.Enabled = true
+		template.Cache.AddSegmentData(segment.Name(), segment.writer)
+		log.Debug("restored segment from cache: ", segment.Name())
+		segment.restored = true
+		return true
+	}
+
+	// check if we have a legacy string value
+	if _, OK := cache.Get[string](store, key); OK {
+		log.Debugf("removing legacy cache key: %s", key)
+		cache.Delete(store, key)
 		return false
 	}
 
-	err := json.Unmarshal([]byte(data), &segment.writer)
-	if err != nil {
-		log.Error(err)
-	}
-
-	segment.Enabled = true
-	template.Cache.AddSegmentData(segment.Name(), segment.writer)
-
-	log.Debug("restored segment from cache: ", segment.Name())
-
-	segment.restored = true
-
-	return true
+	log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
+	return false
 }
 
 func (segment *Segment) setCache() {
@@ -331,17 +335,8 @@ func (segment *Segment) setCache() {
 		return
 	}
 
-	data, err := json.Marshal(segment.writer)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-
-	// TODO: check if we can make segmentwriter a generic Type indicator
-	// that way we can actually get the value straight from cache.Get
-	// and marchalling is obsolete
 	key, store := segment.cacheKeyAndStore()
-	cache.Set(store, key, string(data), segment.Cache.Duration)
+	cache.Set(store, key, segment.writer, segment.Cache.Duration)
 }
 
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {

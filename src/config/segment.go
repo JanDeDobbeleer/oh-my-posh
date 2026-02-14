@@ -198,6 +198,12 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
 	}
 
+	// In streaming mode, don't write to Enabled if segment is pending to avoid data race
+	// Render() will be the sole controller of Enabled state for pending segments
+	if env.Flags().Streaming && segment.Pending {
+		return
+	}
+
 	segment.Enabled = segment.writer.Enabled()
 }
 

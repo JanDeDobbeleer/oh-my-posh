@@ -42,9 +42,10 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 // writeSegmentsConcurrently uses individual goroutines for each segment
 func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan result) {
 	for i, segment := range segments {
-		// In streaming mode, pre-register segments with timeouts as pending
+		// In streaming mode, pre-register all segments as pending
 		// This ensures countPendingSegments() sees them before timeout occurs
-		if e.Env.Flags().Streaming && segment.Timeout > 0 {
+		if e.Env.Flags().Streaming {
+			segment.Timeout = 100 // Force 100ms timeout for all segments in streaming mode
 			e.pendingSegments.Store(segment.Name(), true)
 		}
 

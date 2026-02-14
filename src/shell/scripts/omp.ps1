@@ -45,7 +45,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:JobCount = 0
     $script:Streaming = [hashtable]::Synchronized(@{
             Process     = $null
-            Runspace    = $null
+            # Runspace    = $null
             AsyncResult = $null
             Prompt      = ''
             State       = 'NEW'
@@ -262,17 +262,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         Unregister-Event -SourceIdentifier "OhMyPoshStreaming" -ErrorAction Ignore
         Get-Job -Name "OhMyPoshStreaming" -ErrorAction Ignore | Remove-Job -Force
 
-        # Stop async reader runspace first
-        if ($null -ne $script:Streaming.Runspace) {
-            if ($null -ne $script:Streaming.AsyncResult -and -not $script:Streaming.AsyncResult.IsCompleted) {
-                # Give it a moment to finish gracefully after process terminates
-                $script:Streaming.AsyncResult.AsyncWaitHandle.WaitOne(500) | Out-Null
-            }
-            $script:Streaming.Runspace.Dispose()
-            $script:Streaming.Runspace = $null
-            $script:Streaming.AsyncResult = $null
-        }
-
         # Then kill the streaming process
         if ($null -ne $script:Streaming.Process -and -not $script:Streaming.Process.HasExited) {
             try {
@@ -333,9 +322,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 }
             }).AddArgument($script:Streaming.Process.StandardOutput.BaseStream)
 
-        # Store runspace and async handle for proper cleanup
-        $script:Streaming.Runspace = $ps
-        $script:Streaming.AsyncResult = $ps.BeginInvoke($inputData, $output)
+        $ps.BeginInvoke($inputData, $output) | Out-Null
 
         # Update prompt when output arrives
         Register-ObjectEvent -InputObject $output -EventName DataAdded -SourceIdentifier "OhMyPoshStreaming" -MessageData @{
@@ -345,32 +332,28 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $s = $event.MessageData.Streaming
             $index = $event.SourceEventArgs.Index
 
-            if ($index -eq 0) {
+            if ($index -eq 0 -or $s.State -ne 'RUNNING') {
                 return
             }
 
-            # Only trigger redraw if initial prompt has been rendered (State = RUNNING)
-            if ($s.State -eq 'RUNNING') {
-                try {
-                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
-                    $s.Prompt = $event.SourceArgs[0][$index]
-                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-                }
-                catch {
-                }
+            $previousOutputEncoding = [Console]::OutputEncoding
+
+            try {
+                [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                $s.Prompt = $event.SourceArgs[0][$index]
+                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+            }
+            catch {}
+            finally {
+                [Console]::OutputEncoding = $previousOutputEncoding
             }
         } | Out-Null
 
-        # Wait for first prompt using polling approach with Thread.Sleep.
-        # Thread.Sleep blocks without processing PowerShell events, preventing the event handler
-        # from firing before we return the initial prompt. This avoids InvokePrompt being called
-        # while PSReadLine is still waiting for the prompt function to complete.
         while ($output.Count -eq 0) {
             Start-Sleep -Milliseconds 1
         }
 
         $script:Streaming.Prompt = $output[0]
-
         return $script:Streaming.Prompt
     }
 

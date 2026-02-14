@@ -286,7 +286,8 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) bool {
 	// Re-render all segments in the block
 	for segmentIndex, segment := range block.Segments {
-		if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+		// Allow pending segments to render (they show "..." text)
+		if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 			continue
 		}
 
@@ -366,7 +367,8 @@ func (e *Engine) renderActiveSegment() {
 		terminal.Write(background, color.Background, e.activeSegment.LeadingDiamond)
 		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Accordion:
-		if e.activeSegment.Enabled {
+		// Render accordion segments if enabled OR pending (pending shows "..." text)
+		if e.activeSegment.Enabled || e.activeSegment.Pending {
 			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 		}
 	}

@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
@@ -77,7 +76,6 @@ Command exits when all segments are resolved.`,
 			for promptString := range eng.StreamPrimary() {
 				fmt.Print(promptString)
 				fmt.Print("\x00") // Null byte delimiter for multi-line prompts
-				os.Stdout.Sync()  // Flush stdout to ensure PowerShell can read immediately
 			}
 		},
 	}

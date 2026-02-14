@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var allFeatures = Tooltips | LineError | Transient | Jobs | Azure | PoshGit | FTCSMarks | Upgrade | Notice | PromptMark | RPrompt | CursorPositioning
+var allFeatures = Tooltips | LineError | Transient | Jobs | Azure | PoshGit | FTCSMarks | Upgrade | Notice | PromptMark | RPrompt | CursorPositioning | KeyHandlers
 
 func TestPwshFeatures(t *testing.T) {
 	got := allFeatures.Lines(PWSH).String("")
@@ -18,10 +18,11 @@ $global:_ompAzure = $true
 $global:_ompPoshGit = $true
 Enable-PoshLineError
 Enable-PoshTooltips
-Enable-PoshTransientPrompt
+$global:_ompTransientPrompt = $true
 $global:_ompFTCSMarks = $true
 & $global:_ompExecutable upgrade --auto
-& $global:_ompExecutable notice`
+& $global:_ompExecutable notice
+Enable-KeyHandlers`
 
 	assert.Equal(t, want, got)
 }

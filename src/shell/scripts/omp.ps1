@@ -23,6 +23,8 @@ $global:_ompFTCSMarks = $false
 $global:_ompPoshGit = $false
 $global:_ompAzure = $false
 $global:_ompExecutable = ::OMP::
+$global:_ompTransientPrompt = $false
+$global:_ompStreaming = $false
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.
@@ -41,11 +43,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:TransientPrompt = $false
     $script:TooltipCommand = ''
     $script:JobCount = 0
-    $script:StreamingEnabled = $false
     $script:Streaming = [hashtable]::Synchronized(@{
-            Process = $null
-            Prompt  = ''
-            State   = 'NEW'
+            Process     = $null
+            Runspace    = $null
+            AsyncResult = $null
+            Prompt      = ''
+            State       = 'NEW'
         })
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
@@ -252,13 +255,25 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Stop-StreamingProcess {
-        if (-not $script:StreamingEnabled) {
+        if (-not $global:_ompStreaming) {
             return
         }
 
         Unregister-Event -SourceIdentifier "OhMyPoshStreaming" -ErrorAction Ignore
         Get-Job -Name "OhMyPoshStreaming" -ErrorAction Ignore | Remove-Job -Force
 
+        # Stop async reader runspace first
+        if ($null -ne $script:Streaming.Runspace) {
+            if ($null -ne $script:Streaming.AsyncResult -and -not $script:Streaming.AsyncResult.IsCompleted) {
+                # Give it a moment to finish gracefully after process terminates
+                $script:Streaming.AsyncResult.AsyncWaitHandle.WaitOne(500) | Out-Null
+            }
+            $script:Streaming.Runspace.Dispose()
+            $script:Streaming.Runspace = $null
+            $script:Streaming.AsyncResult = $null
+        }
+
+        # Then kill the streaming process
         if ($null -ne $script:Streaming.Process -and -not $script:Streaming.Process.HasExited) {
             try {
                 $script:Streaming.Process.Kill()
@@ -268,12 +283,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
 
         $script:Streaming.Process = $null
+        $script:Streaming.State = 'NEW'
     }
 
     function Get-PoshStreamingPrompt {
-        $script:Streaming.State = 'RUNNING'
-
-        # Start streaming process
+        # Start streaming process (State stays 'NEW' until initial prompt fully rendered)
         $script:Streaming.Process = New-Object System.Diagnostics.Process
         $script:Streaming.Process.StartInfo.FileName = $global:_ompExecutable
         $script:Streaming.Process.StartInfo.Arguments = @(
@@ -318,7 +332,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     }
                 }
             }).AddArgument($script:Streaming.Process.StandardOutput.BaseStream)
-        [void]$ps.BeginInvoke($inputData, $output)
+
+        # Store runspace and async handle for proper cleanup
+        $script:Streaming.Runspace = $ps
+        $script:Streaming.AsyncResult = $ps.BeginInvoke($inputData, $output)
 
         # Update prompt when output arrives
         Register-ObjectEvent -InputObject $output -EventName DataAdded -SourceIdentifier "OhMyPoshStreaming" -MessageData @{
@@ -332,22 +349,22 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 return
             }
 
-            # Trigger redraw for subsequent prompts
-            try {
-                [Console]::OutputEncoding = [Text.Encoding]::UTF8
-                $s.Prompt = $event.SourceArgs[0][$index]
-                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-            }
-            catch {
+            # Only trigger redraw if initial prompt has been rendered (State = RUNNING)
+            if ($s.State -eq 'RUNNING') {
+                try {
+                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                    $s.Prompt = $event.SourceArgs[0][$index]
+                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                }
+                catch {
+                }
             }
         } | Out-Null
 
-        # Wait for first prompt using polling approach.
-        # We can't use WaitHandles or blocking operations because PowerShell event handlers
-        # run in separate runspaces, and .NET synchronization primitives don't survive the
-        # serialization boundary. The PSDataCollection doesn't provide a blocking wait method,
-        # so polling with a short sleep is the most reliable approach. 1ms is imperceptible
-        # for prompt rendering and avoids busy-waiting.
+        # Wait for first prompt using polling approach with Thread.Sleep.
+        # Thread.Sleep blocks without processing PowerShell events, preventing the event handler
+        # from firing before we return the initial prompt. This avoids InvokePrompt being called
+        # while PSReadLine is still waiting for the prompt function to complete.
         while ($output.Count -eq 0) {
             Start-Sleep -Milliseconds 1
         }
@@ -361,7 +378,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # Only return cached prompt if we're in a streaming redraw (RUNNING state)
         # AND it's not a transient prompt. Don't use cached prompt for FINAL state
         # as that means the previous prompt is complete and we need a fresh one.
-        if ($script:Streaming.State -ne 'NEW') {
+        if ($script:PromptType -ne 'transient' -and $script:Streaming.State -ne 'NEW') {
+            # Update ExtraPromptLineCount for PSReadLine to properly clear previous prompt
+            Set-PSReadLineOption -ExtraPromptLineCount (($script:Streaming.Prompt | Measure-Object -Line).Lines - 1)
             return $script:Streaming.Prompt
         }
 
@@ -396,7 +415,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
         # Use streaming prompt if enabled, otherwise use regular prompt
-        if ($script:StreamingEnabled -and $script:PromptType -eq 'primary') {
+        if ($global:_ompStreaming -and $script:PromptType -eq 'primary') {
             $output = Get-PoshStreamingPrompt
         }
         else {
@@ -416,6 +435,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             if ($command) {
                 $output += "  `b`b"
             }
+        }
+
+        # Now that we're about to return, mark streaming as ready for updates
+        if ($global:_ompStreaming -and $script:PromptType -eq 'primary') {
+            $script:Streaming.State = 'RUNNING'
         }
 
         $output
@@ -477,7 +501,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
-    function Enable-PoshTransientPrompt {
+    function Enable-KeyHandlers {
         if ($script:ConstrainedLanguageMode) {
             return
         }
@@ -494,7 +518,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     $parseErrors = $null
                     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
                     $executingCommand = $parseErrors.Count -eq 0
-                    if ($executingCommand) {
+                    if ($global:_ompTransientPrompt -and $executingCommand) {
                         Set-TransientPrompt
                     }
                 }
@@ -520,7 +544,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     $start = $null
                     [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
                     # only render a transient prompt when no text is selected
-                    if ($start -eq -1) {
+                    if ($global:_ompTransientPrompt -and $start -eq -1) {
                         Set-TransientPrompt
                     }
                 }
@@ -549,10 +573,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $validLine = (Invoke-Utf8Posh @("print", "valid", "--shell=$script:ShellName")) -join "`n"
         $errorLine = (Invoke-Utf8Posh @("print", "error", "--shell=$script:ShellName")) -join "`n"
         Set-PSReadLineOption -PromptText $validLine, $errorLine
-    }
-
-    function Enable-PoshStreaming {
-        $script:StreamingEnabled = $true
     }
 
     # perform cleanup on removal so a new initialization in current session works
@@ -591,7 +611,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     Export-ModuleMember -Function @(
         "Set-PoshContext"
         "Enable-PoshTooltips"
-        "Enable-PoshTransientPrompt"
+        "Enable-KeyHandlers"
         "Enable-PoshLineError"
         "Enable-PoshStreaming"
         "Set-TransientPrompt"

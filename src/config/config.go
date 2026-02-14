@@ -132,6 +132,15 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 		feats |= shell.Transient
 	}
 
+	if cfg.Streaming {
+		log.Debug("streaming enabled")
+		feats |= shell.Streaming
+	}
+
+	if feats&(shell.Streaming|shell.Transient) != 0 {
+		feats |= shell.KeyHandlers
+	}
+
 	unsupportedShells := []string{shell.ELVISH, shell.XONSH}
 	if slices.Contains(unsupportedShells, env.Shell()) {
 		cfg.ShellIntegration = false

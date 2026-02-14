@@ -1,10 +1,8 @@
 package prompt
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/config"
-)
+import "github.com/jandedobbeleer/oh-my-posh/src/config"
 
-// StreamPrimary returns a channel that yields prompt updates as segments complete
+// StreamPrimary returns a channel that yields prompt updates as segments complete.
 func (e *Engine) StreamPrimary() <-chan string {
 	// Initialize streaming infrastructure BEFORE launching goroutine
 	// This ensures the channel exists when segments start timing out
@@ -20,20 +18,17 @@ func (e *Engine) StreamPrimary() <-chan string {
 		initialPrompt := e.Primary()
 		out <- initialPrompt
 
-		// Count pending segments to know when we're done
-		pendingCount := e.countPendingSegments()
-		if pendingCount == 0 {
+		if e.countPendingSegments() == 0 {
 			return
 		}
 
-		// Listen for segment completions and re-render
-		for pendingCount > 0 {
-			<-e.streamingResults
-			pendingCount--
+		// Listen for segment completions
+		for range e.streamingResults {
+			out <- e.renderFromBlocks()
 
-			// Re-render complete prompt with updated segments
-			updatedPrompt := e.renderFromBlocks()
-			out <- updatedPrompt
+			if e.countPendingSegments() == 0 {
+				return
+			}
 		}
 	}()
 
@@ -84,6 +79,12 @@ func (e *Engine) notifySegmentCompletion(segment *config.Segment) {
 	}
 
 	if _, ok := e.pendingSegments.LoadAndDelete(segment.Name()); ok {
-		e.streamingResults <- segment
+		select {
+		case e.streamingResults <- segment:
+			// Successfully notified consumer
+		default:
+			// Consumer not ready or already exited
+			// This can happen if segment completes after consumer finishes
+		}
 	}
 }

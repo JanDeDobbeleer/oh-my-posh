@@ -202,7 +202,8 @@ func (segment *Segment) Execute(env runtime.Environment) {
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
-	if !segment.Enabled && !force {
+	// Allow pending segments to render (they'll show "..." text)
+	if !segment.Pending && !segment.Enabled && !force {
 		return false
 	}
 
@@ -213,11 +214,15 @@ func (segment *Segment) Render(index int, force bool) bool {
 	segment.writer.SetIndex(index)
 
 	text := segment.string()
-	segment.Enabled = segment.Force || len(strings.ReplaceAll(text, " ", "")) > 0
 
-	if !segment.Enabled {
-		template.Cache.RemoveSegmentData(segment.Name())
-		return false
+	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
+	if !segment.Pending {
+		segment.Enabled = segment.Force || len(strings.ReplaceAll(text, " ", "")) > 0
+
+		if !segment.Enabled {
+			template.Cache.RemoveSegmentData(segment.Name())
+			return false
+		}
 	}
 
 	segment.SetText(text)

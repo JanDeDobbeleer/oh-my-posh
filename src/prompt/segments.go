@@ -73,7 +73,7 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 	go func() {
 		gidChan <- runjobs.CurrentGID()
 		segment.Execute(e.Env)
-		done <- true
+		close(done)
 	}()
 
 	gid := <-gidChan
@@ -87,7 +87,8 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 		// When streaming is enabled, don't kill goroutines - let them continue executing
 		if e.Env.Flags().Streaming {
 			segment.Pending = true
-			segment.Enabled = true // Enable segment so it renders with "..." text
+			// Note: Do NOT set segment.Enabled here - that would race with Execute()
+			// Rendering logic handles Pending state to display "..." text
 
 			// Track this segment as pending and continue execution in background
 			e.trackPendingSegment(segment, done)
@@ -147,7 +148,8 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 }
 
 func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) {
-	if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+	// Allow pending segments to render (they show "..." text)
+	if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 		return
 	}
 

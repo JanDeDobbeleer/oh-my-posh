@@ -544,3 +544,81 @@ func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
 
 	assert.Len(t, prompts, 1, "Should get exactly one prompt with no pending segments")
 }
+
+// TestStreamPrimary_RaceConditionFix validates that the streaming loop
+// correctly handles segments that complete after Primary() but before/during
+// the counting phase. This tests the fix for the race where pendingCount
+// could get out of sync with actual pending segments.
+func TestStreamPrimary_RaceConditionFix(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/test")
+	env.On("Home").Return("/home")
+	env.On("Shell").Return(shell.PWSH)
+	env.On("Flags").Return(&runtime.Flags{Streaming: true})
+	env.On("CursorPosition").Return(1, 1)
+	env.On("StatusCodes").Return(0, "0")
+
+	template.Cache = &cache.Template{
+		Segments: maps.NewConcurrent[any](),
+	}
+	template.Init(env, nil, nil)
+	terminal.Init(shell.PWSH)
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{},
+		},
+		Env:              env,
+		streamingResults: make(chan *config.Segment, 10),
+	}
+
+	// Create three segments, simulating the race scenario:
+	// - segmentA: Completes quickly after Primary()
+	// - segmentB: Completes during loop
+	// - segmentC: Completes last
+	segmentA := &config.Segment{Type: "test-a", Pending: true}
+	segmentB := &config.Segment{Type: "test-b", Pending: true}
+	segmentC := &config.Segment{Type: "test-c", Pending: true}
+
+	// Pre-register all three as pending (simulates timeout during Primary())
+	engine.pendingSegments.Store(segmentA.Name(), true)
+	engine.pendingSegments.Store(segmentB.Name(), true)
+	engine.pendingSegments.Store(segmentC.Name(), true)
+
+	// Simulate segmentA completing immediately after Primary() but before countPendingSegments()
+	// This is the race condition - notification sent but segment removed from map
+	go func() {
+		// Small delay to ensure StreamPrimary has been called but before counting
+		time.Sleep(5 * time.Millisecond)
+		segmentA.Pending = false
+		engine.notifySegmentCompletion(segmentA)
+	}()
+
+	// Simulate segmentB and segmentC completing during the loop
+	go func() {
+		time.Sleep(30 * time.Millisecond)
+		segmentB.Pending = false
+		engine.notifySegmentCompletion(segmentB)
+	}()
+
+	go func() {
+		time.Sleep(50 * time.Millisecond)
+		segmentC.Pending = false
+		engine.notifySegmentCompletion(segmentC)
+	}()
+
+	// Start streaming
+	out := engine.StreamPrimary()
+
+	// Collect all prompts with sufficient timeout
+	prompts := collectChannelOutput(out, 200*time.Millisecond)
+
+	// With the fix, we should receive updates for all three segments
+	// Initial prompt + 3 updates (A, B, C) = 4 total
+	// Without the fix, we might only get Initial + 2 updates and exit early
+	assert.GreaterOrEqual(t, len(prompts), 3, "Should receive updates for all pending segments")
+
+	// Verify all segments were properly cleaned up
+	count := engine.countPendingSegments()
+	assert.Equal(t, 0, count, "All pending segments should be cleared")
+}

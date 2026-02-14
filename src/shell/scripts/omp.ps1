@@ -278,8 +278,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     function Get-PoshStreamingPrompt {
         # Start streaming process (State stays 'NEW' until initial prompt fully rendered)
         $script:Streaming.Process = New-Object System.Diagnostics.Process
-        $script:Streaming.Process.StartInfo.FileName = $global:_ompExecutable
-        $script:Streaming.Process.StartInfo.Arguments = @(
+        $StartInfo = $script:Streaming.Process.StartInfo
+        $StartInfo.FileName = $global:_ompExecutable
+
+        # Build arguments array
+        $Arguments = @(
             "stream"
             "--shell=$script:ShellName"
             "--shell-version=$script:PSVersion"
@@ -290,14 +293,35 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             "--stack-count=$(Get-PoshStackCount)"
             "--terminal-width=$(Get-TerminalWidth)"
             "--job-count=$script:JobCount"
-        ) -join ' '
-        $script:Streaming.Process.StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
-        $script:Streaming.Process.StartInfo.RedirectStandardOutput = $true
-        $script:Streaming.Process.StartInfo.UseShellExecute = $false
-        $script:Streaming.Process.StartInfo.CreateNoWindow = $true
-        if ($PWD.Provider.Name -eq 'FileSystem') {
-            $script:Streaming.Process.StartInfo.WorkingDirectory = $PWD.ProviderPath
+        )
+
+        # Use ArgumentList if available (PowerShell 6.1+), otherwise escape manually
+        if ($StartInfo.ArgumentList.Add) {
+            $Arguments | ForEach-Object -Process { $StartInfo.ArgumentList.Add($_) }
         }
+        else {
+            # escape arguments manually in lower versions, refer to https://docs.microsoft.com/en-us/previous-versions/17w5ykft(v=vs.85)
+            $escapedArgs = $Arguments | ForEach-Object {
+                # escape N consecutive backslash(es), which are followed by a double quote, to 2N consecutive ones
+                $s = $_ -replace '(\\+)"', '$1$1"'
+                # escape N consecutive backslash(es), which are at the end of the string, to 2N consecutive ones
+                $s = $s -replace '(\\+)$', '$1$1'
+                # escape double quotes
+                $s = $s -replace '"', '\"'
+                # quote the argument
+                "`"$s`""
+            }
+            $StartInfo.Arguments = $escapedArgs -join ' '
+        }
+
+        $StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+        $StartInfo.RedirectStandardOutput = $true
+        $StartInfo.UseShellExecute = $false
+        $StartInfo.CreateNoWindow = $true
+        if ($PWD.Provider.Name -eq 'FileSystem') {
+            $StartInfo.WorkingDirectory = $PWD.ProviderPath
+        }
+
         [void]$script:Streaming.Process.Start()
 
         # Read output asynchronously

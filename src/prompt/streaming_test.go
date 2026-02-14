@@ -342,13 +342,16 @@ func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
 	env.On("DirMatchesOneOf", testifymock.Anything, testifymock.Anything).Return(false)
+	// Mock accent color retrieval for both Windows and macOS
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything, testifymock.Anything, testifymock.Anything).Return("4", nil)
+	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
-	terminal.Colors = color.MakeColors(nil, false, "", nil)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	// Create segments with different speeds
 	fastSegment := &config.Segment{
@@ -425,13 +428,16 @@ func TestStreamPrimary_MultipleBlocks_MixedSpeed(t *testing.T) {
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
 	env.On("DirMatchesOneOf", testifymock.Anything, testifymock.Anything).Return(false)
+	// Mock accent color retrieval for both Windows and macOS
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything, testifymock.Anything, testifymock.Anything).Return("4", nil)
+	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
-	terminal.Colors = color.MakeColors(nil, false, "", nil)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	// Block 1: Fast segment
 	fast1 := &config.Segment{

@@ -11,9 +11,14 @@ import (
 )
 
 func (e *Engine) Primary() string {
+	return e.primaryInternal(false)
+}
+
+// primaryInternal handles both regular and streaming prompt rendering
+func (e *Engine) primaryInternal(fromCache bool) string {
 	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
 
-	e.writePrimaryPrompt(needsPrimaryRightPrompt)
+	e.writePrimaryPromptInternal(needsPrimaryRightPrompt, fromCache)
 
 	switch e.Env.Shell() {
 	case shell.ZSH:
@@ -44,6 +49,11 @@ func (e *Engine) Primary() string {
 }
 
 func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
+	e.writePrimaryPromptInternal(needsPrimaryRPrompt, false)
+}
+
+// writePrimaryPromptInternal handles both regular and streaming prompt rendering
+func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool) {
 	if e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
 		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
@@ -54,7 +64,13 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 	cycle = &e.Config.Cycle
 	var cancelNewline, didRender bool
 
-	for i, block := range e.Config.Blocks {
+	// Choose block source based on whether we're rendering from cache
+	blocks := e.Config.Blocks
+	if fromCache {
+		blocks = e.allBlocks
+	}
+
+	for i, block := range blocks {
 		// do not print a leading newline when we're at the first row and the prompt is cleared
 		if i == 0 {
 			row, _ := e.Env.CursorPosition()
@@ -70,16 +86,23 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 			continue
 		}
 
-		if e.renderBlock(block, cancelNewline) {
+		// Choose render method based on whether we're rendering from cache
+		var rendered bool
+		if fromCache {
+			rendered = e.renderBlockFromCache(block, cancelNewline)
+		} else {
+			rendered = e.renderBlock(block, cancelNewline)
+		}
+
+		if rendered {
 			didRender = true
 		}
 
-		if e.Config.ToolTipsAction.IsDefault() {
-			continue
+		// Only handle tooltip caching in regular (non-cached) rendering
+		if !fromCache && !e.Config.ToolTipsAction.IsDefault() {
+			cache.Set(cache.Session, RPromptKey, e.rprompt, cache.INFINITE)
+			cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 		}
-
-		cache.Set(cache.Session, RPromptKey, e.rprompt, cache.INFINITE)
-		cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {

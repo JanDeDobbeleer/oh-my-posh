@@ -83,6 +83,7 @@ type Config struct {
 	PatchPwshBleed          bool `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty" yaml:"patch_pwsh_bleed,omitempty"`
 	AutoUpgrade             bool `json:"-" toml:"-" yaml:"-"`
 	EnableCursorPositioning bool `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty" yaml:"enable_cursor_positioning,omitempty"`
+	Streaming               int  `json:"streaming,omitempty" toml:"streaming,omitempty" yaml:"streaming,omitempty"`
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {
@@ -129,6 +130,15 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	if cfg.TransientPrompt != nil {
 		log.Debug("transient prompt enabled")
 		feats |= shell.Transient
+	}
+
+	if cfg.Streaming > 0 {
+		log.Debug("streaming enabled")
+		feats |= shell.Streaming
+	}
+
+	if feats&(shell.Streaming|shell.Transient) != 0 {
+		feats |= shell.KeyHandlers
 	}
 
 	unsupportedShells := []string{shell.ELVISH, shell.XONSH}

@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -18,15 +19,18 @@ var cycle *color.Cycle = &color.Cycle{}
 
 type Engine struct {
 	Env                   runtime.Environment
+	streamingResults      chan *config.Segment
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
+	pendingSegments       sync.Map
 	rprompt               string
 	Overflow              config.Overflow
 	prompt                strings.Builder
-	rpromptLength         int
-	Padding               int
+	allBlocks             []*config.Block
 	currentLineLength     int
+	Padding               int
+	rpromptLength         int
 	Plain                 bool
 	forceRender           bool
 }
@@ -205,6 +209,11 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		return false
 	}
 
+	return e.writeBlock(block, blockText, length, cancelNewline)
+}
+
+// writeBlock handles the common logic for writing a block to the prompt
+func (e *Engine) writeBlock(block *config.Block, blockText string, length int, cancelNewline bool) bool {
 	defer func() {
 		e.applyPowerShellBleedPatch()
 	}()
@@ -273,6 +282,52 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	return true
 }
 
+// renderBlockFromCache re-renders a block using existing segment data without re-execution
+func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) bool {
+	// Re-render all segments in the block
+	for segmentIndex, segment := range block.Segments {
+		// Allow pending segments to render (they show "..." text)
+		if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+			continue
+		}
+
+		// Render segment text (will use pending state if still pending)
+		if !segment.Render(segmentIndex, e.forceRender) {
+			continue
+		}
+
+		if colors, newCycle := cycle.Loop(); colors != nil {
+			cycle = &newCycle
+			segment.Foreground = colors.Foreground
+			segment.Background = colors.Background
+		}
+
+		if terminal.Len() == 0 && len(block.LeadingDiamond) > 0 {
+			segment.LeadingDiamond = block.LeadingDiamond
+		}
+
+		e.setActiveSegment(segment)
+		e.renderActiveSegment()
+	}
+
+	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
+		e.activeSegment.TrailingDiamond = block.TrailingDiamond
+	}
+
+	e.writeSeparator(true)
+	e.activeSegment = nil
+	e.previousActiveSegment = nil
+
+	blockText, length := terminal.String()
+
+	// do not print anything when we don't have any text unless forced
+	if !block.Force && length == 0 {
+		return false
+	}
+
+	return e.writeBlock(block, blockText, length, cancelNewline)
+}
+
 func (e *Engine) applyPowerShellBleedPatch() {
 	// when in PowerShell, we need to clear the line after the prompt
 	// to avoid the background being printed on the next line
@@ -312,7 +367,8 @@ func (e *Engine) renderActiveSegment() {
 		terminal.Write(background, color.Background, e.activeSegment.LeadingDiamond)
 		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Accordion:
-		if e.activeSegment.Enabled {
+		// Render accordion segments if enabled OR pending (pending shows "..." text)
+		if e.activeSegment.Enabled || e.activeSegment.Pending {
 			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 		}
 	}

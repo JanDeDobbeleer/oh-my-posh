@@ -11,6 +11,12 @@ set --global _omp_ftcs_marks 0
 set --global _omp_transient_prompt 0
 set --global _omp_prompt_mark 0
 
+# streaming support variables
+set --global _omp_enable_streaming 0
+set --global _omp_streaming_pid 0
+set --global _omp_streaming_tempfile ''
+set --global _omp_primary_prompt ''
+
 # disable all known python virtual environment prompts
 set --global VIRTUAL_ENV_DISABLE_PROMPT 1
 set --global PYENV_VIRTUALENV_DISABLE_PROMPT 1
@@ -21,6 +27,110 @@ set --global _omp_new_prompt 1
 # template function for context loading
 function set_poshcontext
     return
+end
+
+# cleanup stream resources
+function _omp_cleanup_stream
+    # kill background process if running
+    if test -n "$_omp_streaming_pid" -a "$_omp_streaming_pid" -gt 0 2>/dev/null
+        kill $_omp_streaming_pid 2>/dev/null
+        set --global _omp_streaming_pid 0
+    end
+    # remove temp file
+    if test -n "$_omp_streaming_tempfile"
+        rm -f "$_omp_streaming_tempfile" 2>/dev/null
+    end
+end
+
+# shell exit handler
+function _omp_exit_handler --on-event fish_exit
+    _omp_cleanup_stream
+end
+
+# streaming background reader: reads null-delimited prompts and signals parent
+function _omp_streaming_reader
+    set --local parent_pid $argv[1]
+    set --local tempfile $argv[2]
+    set --local count 0
+
+    # read null-delimited prompts from oh-my-posh stream
+    while read --null --local prompt
+        # write to temp file (atomic via printf)
+        printf '%s' "$prompt" >$tempfile
+
+        # signal parent for updates after first prompt (index > 0)
+        if test $count -gt 0
+            kill -SIGUSR1 $parent_pid 2>/dev/null
+        end
+
+        set count (math $count + 1)
+    end
+end
+
+# signal handler: called when streaming process has new prompt
+function _omp_streaming_handler --on-signal SIGUSR1
+    # only process if streaming is active
+    if test $_omp_enable_streaming -eq 0
+        return
+    end
+
+    if test -z "$_omp_streaming_tempfile" -o ! -f "$_omp_streaming_tempfile"
+        return
+    end
+
+    # read updated prompt from temp file
+    set --global _omp_primary_prompt (cat "$_omp_streaming_tempfile")
+    set --global _omp_current_prompt "$_omp_primary_prompt"
+
+    # trigger repaint
+    commandline --function repaint
+end
+
+# start oh-my-posh stream process, block until first prompt arrives
+function _omp_start_streaming
+    # cleanup any prior stream
+    _omp_cleanup_stream
+
+    # determine temp file location
+    set --local tmpdir $TMPDIR
+    if test -z "$tmpdir"
+        set tmpdir /tmp
+    end
+    set --global _omp_streaming_tempfile "$tmpdir/omp-fish-$fish_pid.txt"
+    rm -f "$_omp_streaming_tempfile" 2>/dev/null
+
+    # build stream command with all context
+    set --local stream_cmd $_omp_executable stream \
+        --shell=fish \
+        --shell-version=$FISH_VERSION \
+        --status=$_omp_status \
+        --pipestatus="$_omp_pipestatus" \
+        --no-status=$_omp_no_status \
+        --execution-time=$_omp_execution_time \
+        --stack-count=$_omp_stack_count
+
+    # start background reader process
+    $stream_cmd | _omp_streaming_reader $fish_pid "$_omp_streaming_tempfile" &
+    set --global _omp_streaming_pid (jobs --last --pid)
+
+    # block until first prompt arrives (mirrors zsh's blocking read)
+    set --local timeout 5000
+    set --local elapsed 0
+    while not test -s "$_omp_streaming_tempfile"
+        sleep 0.01
+        set elapsed (math $elapsed + 10)
+        if test $elapsed -ge $timeout
+            # timeout - cleanup and return failure
+            _omp_cleanup_stream
+            return 1
+        end
+    end
+
+    # read first prompt
+    set --global _omp_primary_prompt (cat "$_omp_streaming_tempfile")
+    set --global _omp_current_prompt "$_omp_primary_prompt"
+
+    return 0
 end
 
 function _omp_get_prompt
@@ -95,6 +205,18 @@ function fish_prompt
         iterm2_prompt_mark
     end
 
+    # === STREAMING PATH ===
+    if test $_omp_enable_streaming -eq 1
+        # start new streaming session (blocks until first prompt arrives)
+        if _omp_start_streaming
+            # _omp_current_prompt already set by _omp_start_streaming
+            echo -n "$_omp_current_prompt"
+            return
+        end
+        # fall through to sync on failure
+    end
+
+    # === FALLBACK PATH ===
     # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
     set --global _omp_current_prompt (_omp_get_prompt primary --cleared=$omp_cleared | string join \n | string collect)
 
@@ -198,6 +320,9 @@ function _omp_enter_key_handler
         set --global _omp_new_prompt 1
         set --global _omp_tooltip_command ''
 
+        # cleanup streaming before executing command
+        _omp_cleanup_stream
+
         if test $_omp_transient_prompt = 1
             set --global _omp_transient 1
             commandline --function repaint
@@ -215,6 +340,9 @@ function _omp_ctrl_c_key_handler
     # Render a transient prompt on Ctrl-C with non-empty command line buffer.
     set --global _omp_new_prompt 1
     set --global _omp_tooltip_command ''
+
+    # cleanup streaming before canceling
+    _omp_cleanup_stream
 
     if test $_omp_transient_prompt = 1
         set --global _omp_transient 1

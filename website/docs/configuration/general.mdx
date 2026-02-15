@@ -142,14 +142,15 @@ For example, the following is a valid `--config` flag:
 | `async`                     | `boolean`        | `false` | load the prompt async. Will either load the standard prompt, or allow you to start typing right away. Supported for `pwsh`, `powershell`, `zsh`, `bash` and `fish`                                                                                                           |
 | `version`                   | `int`            | `4`     | the config version, currently at `4`                                                                                                                                                                                                                                         |
 | `extends`                   | `string`         |         | the configuration to [extend] from                                                                                                                                                                                                                                           |
+| `streaming`                 | `int`            |         | enable streaming mode with a timeout in milliseconds for pending segments. See [streaming]                                                                                                                                                                                   |
 
 ### Maps
 
-| Name         | Type     | Description                                                                            |
-| ------------ | -------- | -------------------------------------------------------------------------------------- |
-| `user_name`  | `object` | text replacement mapping for user names                                                |
-| `host_name`  | `object` | text replacement mapping for host names                                                |
-| `shell_name` | `object` | text replacement mapping for shell names.  This modifies the `.Shell` global property. |
+| Name         | Type     | Description                                                                           |
+| ------------ | -------- | ------------------------------------------------------------------------------------- |
+| `user_name`  | `object` | text replacement mapping for user names                                               |
+| `host_name`  | `object` | text replacement mapping for host names                                               |
+| `shell_name` | `object` | text replacement mapping for shell names. This modifies the `.Shell` global property. |
 
 import Config from "@site/src/components/Config.js";
 
@@ -158,12 +159,12 @@ import Config from "@site/src/components/Config.js";
     maps: {
       user_name: {
         jan: "🚀",
-        root: "⚡",
+        root: "⚡"
       },
       host_name: {
-        laptop123: "work",
-      },
-    },
+        laptop123: "work"
+      }
+    }
   }}
 />
 
@@ -237,3 +238,4 @@ Converters won't catch this change, so you will need to adjust manually.
 [iterm2-si]: https://iterm2.com/documentation-shell-integration.html
 [Upgrade]: /docs/installation/upgrade
 [extend]: /docs/configuration/general#extends
+[streaming]: /docs/experimental/streaming

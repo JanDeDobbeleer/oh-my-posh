@@ -16,6 +16,12 @@ _omp_tooltip_command=''
 _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
+# streaming support variables
+_omp_stream_fd=-1
+_omp_enable_streaming=0
+_omp_primary_prompt=""
+_omp_streaming_supported=""
+
 # set secondary prompt
 _omp_secondary_prompt=$($_omp_executable print secondary --shell=zsh)
 
@@ -45,6 +51,82 @@ function _omp_set_cursor_position() {
 function set_poshcontext() {
   return
 }
+
+# cleanup stream resources
+function _omp_cleanup_stream() {
+  # unregister handler first (prevents handler firing on closed fd)
+  [[ $_omp_stream_fd -ge 0 ]] && zle -F -w $_omp_stream_fd 2>/dev/null
+  # close fd — process gets SIGPIPE and terminates
+  [[ $_omp_stream_fd -ge 0 ]] && eval "exec {_omp_stream_fd}<&-" 2>/dev/null
+  _omp_stream_fd=-1
+}
+
+# start oh-my-posh stream process, block until first prompt arrives
+function _omp_start_streaming() {
+  # cleanup any stale streams
+  _omp_cleanup_stream
+
+  # build command with all context
+  local -a stream_cmd=(
+    "$_omp_executable" stream
+    --shell=zsh
+    --shell-version="$ZSH_VERSION"
+    --status=$_omp_status
+    --pipestatus="${_omp_pipestatus[*]}"
+    --no-status=$_omp_no_status
+    --execution-time=$_omp_execution_time
+    --job-count=$_omp_job_count
+    --stack-count=$_omp_stack_count
+    --terminal-width="${COLUMNS:-0}"
+  )
+
+  # start process substitution — no PID tracking needed
+  # closing fd sends SIGPIPE which terminates oh-my-posh
+  exec {_omp_stream_fd}< <(exec "${stream_cmd[@]}") 2>/dev/null
+
+  if [[ $_omp_stream_fd -lt 0 ]]; then
+    return 1
+  fi
+
+  # block until first prompt arrives (mirrors PowerShell's polling loop)
+  IFS= read -r -u $_omp_stream_fd -d $'\0' _omp_primary_prompt
+  if [[ $? -ne 0 || -z "$_omp_primary_prompt" ]]; then
+    _omp_cleanup_stream
+    return 1
+  fi
+
+  PS1="$_omp_primary_prompt"
+
+  return 0
+}
+
+# async handler: called when data available on fd (reads single value)
+function _omp_async_handler() {
+  local fd=$1
+
+  # read single null-delimited prompt (stream emits one value per \0)
+  IFS= read -r -u $fd -d $'\0' _omp_primary_prompt
+  if [[ $? -ne 0 ]]; then
+    if [[ -z "$_omp_primary_prompt" ]]; then
+      # EOF — stream closed normally
+      _omp_cleanup_stream
+      return 0
+    fi
+  fi
+
+  PS1="$_omp_primary_prompt"
+  zle reset-prompt 2>/dev/null
+
+  return 0
+}
+
+# shell exit handler
+function _omp_exit_handler() {
+  _omp_cleanup_stream
+}
+
+# register exit handler
+zshexit_functions+=(_omp_exit_handler)
 
 function _omp_preexec() {
   if [[ $_omp_ftcs_marks == 1 ]]; then
@@ -84,6 +166,23 @@ function _omp_precmd() {
   setopt PROMPT_PERCENT
 
   PS2=$_omp_secondary_prompt
+
+  # === STREAMING PATH ===
+  if [[ $_omp_enable_streaming -eq 1 ]]; then
+    # set RPROMPT synchronously (stream only emits primary prompt)
+    RPROMPT=$(_omp_get_prompt right)
+
+    # start new streaming session (blocks until first prompt arrives)
+    if _omp_start_streaming; then
+      # PS1 already set by _omp_start_streaming (blocking first read)
+      zle -F $_omp_stream_fd _omp_async_handler
+      unset _omp_start_time
+      return 0
+    fi
+    # fall through to sync
+  fi
+
+  # === FALLBACK PATH ===
   eval "$(_omp_get_prompt primary --eval)"
 
   unset _omp_start_time
@@ -171,6 +270,10 @@ function _omp_zle-line-init() {
   if [[ -z $BUFFER ]]; then
     terminal_width_option="--terminal-width=$((${COLUMNS-0} - 1))"
   fi
+
+  # kill streaming before transient prompt to prevent handler overwriting it
+  _omp_cleanup_stream
+
   eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
   zle .reset-prompt
 

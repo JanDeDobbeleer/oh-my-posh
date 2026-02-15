@@ -15,7 +15,7 @@ func (f Features) Xonsh() Code {
 		return "@(_omp_executable) upgrade --auto"
 	case Notice:
 		return "@(_omp_executable) notice"
-	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, Transient, CursorPositioning, FTCSMarks, Async:
+	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, Transient, CursorPositioning, FTCSMarks, Async, Streaming, KeyHandlers:
 		fallthrough
 	default:
 		return ""

@@ -13,7 +13,7 @@ func (f Features) Elvish() Code {
 		return "$_omp_executable upgrade --auto"
 	case Notice:
 		return "$_omp_executable notice"
-	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, CursorPositioning, Tooltips, Transient, FTCSMarks, Async:
+	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, CursorPositioning, Tooltips, Transient, FTCSMarks, Async, Streaming, KeyHandlers:
 		fallthrough
 	default:
 		return ""

@@ -42,6 +42,13 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 // writeSegmentsConcurrently uses individual goroutines for each segment
 func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan result) {
 	for i, segment := range segments {
+		// In streaming mode, pre-register all segments as pending
+		// This ensures countPendingSegments() sees them before timeout occurs
+		if e.Env.Flags().Streaming {
+			segment.Timeout = 100 // Force 100ms timeout for all segments in streaming mode
+			e.pendingSegments.Store(segment.Name(), true)
+		}
+
 		go func(segment *config.Segment, index int) {
 			if segment.Timeout > 0 {
 				e.executeSegmentWithTimeout(segment)
@@ -50,6 +57,11 @@ func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan 
 			}
 
 			out <- result{segment, index}
+
+			// In streaming mode, clean up pre-registered segments that completed before timeout
+			if e.Env.Flags().Streaming && segment.Timeout > 0 && !segment.Pending {
+				e.pendingSegments.Delete(segment.Name())
+			}
 		}(segment, i)
 	}
 }
@@ -60,21 +72,31 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 	gidChan := make(chan uint64, 1)
 
 	go func() {
-		// Get GID after segment.Execute creates the Job
 		gidChan <- runjobs.CurrentGID()
 		segment.Execute(e.Env)
-		done <- true
+		close(done)
 	}()
 
-	// Wait for the GID to be available
 	gid := <-gidChan
 
 	select {
 	case <-done:
-		// Completed before timeout
+		// Completed before timeout - nothing extra to do
 	case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
 		log.Errorf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
 
+		// When streaming is enabled, don't kill goroutines - let them continue executing
+		if e.Env.Flags().Streaming {
+			segment.Pending = true
+			// Note: Do NOT set segment.Enabled here - that would race with Execute()
+			// Rendering logic handles Pending state to display "..." text
+
+			// Track this segment as pending and continue execution in background
+			e.trackPendingSegment(segment, done)
+			return
+		}
+
+		// For non-streaming mode, kill the goroutine
 		if err := runjobs.KillGoroutineChildren(gid); err != nil {
 			log.Errorf("failed to kill child processes for goroutine %d (segment: %s): %v", gid, segment.Name(), err)
 		}
@@ -127,7 +149,8 @@ func (e *Engine) writeSegments(out chan result, block *config.Block) {
 }
 
 func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) {
-	if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+	// Allow pending segments to render (they show "..." text)
+	if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 		return
 	}
 

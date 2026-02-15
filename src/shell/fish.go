@@ -19,11 +19,13 @@ func (f Features) Fish() Code {
 		return "set --global _omp_prompt_mark 1"
 	case Tooltips:
 		return "enable_poshtooltips"
+	case Streaming:
+		return "set --global _omp_enable_streaming 1"
 	case Upgrade:
 		return unixUpgrade
 	case Notice:
 		return unixNotice
-	case RPrompt, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, Streaming, KeyHandlers:
+	case RPrompt, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, KeyHandlers:
 		fallthrough
 	default:
 		return ""

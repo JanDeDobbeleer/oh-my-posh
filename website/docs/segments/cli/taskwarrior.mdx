@@ -1,0 +1,56 @@
+---
+id: taskwarrior
+title: Taskwarrior
+sidebar_label: Taskwarrior
+---
+
+## What
+
+Display [Taskwarrior][taskwarrior] task counts (due, scheduled, waiting) and the active context.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "taskwarrior",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    template: " \uf4a0 D:{{.Due}} S:{{.Scheduled}} W:{{.Waiting}}{{ if .Context }} [{{.Context}}]{{ end }} ",
+  }}
+/>
+
+## Options
+
+| Name                | Type     | Default                               | Description                            |
+| ------------------- | :------: | :-----------------------------------: | -------------------------------------- |
+| `command`           | `string` | `task`                                | the Taskwarrior command to use         |
+| `due_command`       | `string` | `+PENDING due.before:tomorrow count`  | arguments to get the due task count    |
+| `scheduled_command` | `string` | `+PENDING scheduled.before:tomorrow count` | arguments to get the scheduled count |
+| `waiting_command`   | `string` | `+WAITING count`                      | arguments to get the waiting count     |
+| `context_command`   | `string` | `_get rc.context`                     | arguments to get the current context   |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ "\uf4a0" }} {{.Due}}
+```
+
+:::
+
+### Properties
+
+| Name         | Type     | Description                        |
+| ------------ | -------- | ---------------------------------- |
+| `.Due`       | `int`    | number of tasks due before tomorrow |
+| `.Scheduled` | `int`    | number of scheduled tasks          |
+| `.Waiting`   | `int`    | number of waiting tasks            |
+| `.Context`   | `string` | the active Taskwarrior context     |
+
+[templates]: /docs/configuration/templates
+[taskwarrior]: https://taskwarrior.org

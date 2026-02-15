@@ -126,6 +126,7 @@ func init() {
 	gob.Register(&segments.Swift{})
 	gob.Register(&segments.SystemInfo{})
 	gob.Register(&segments.TalosCTL{})
+	gob.Register(&segments.Taskwarrior{})
 	gob.Register(&segments.Tauri{})
 	gob.Register(&segments.Terraform{})
 	gob.Register(&segments.Text{})
@@ -335,6 +336,8 @@ const (
 	SYSTEMINFO SegmentType = "sysinfo"
 	// TALOSCTL writes the talosctl context
 	TALOSCTL SegmentType = "talosctl"
+	// TASKWARRIOR writes Taskwarrior task counts and context
+	TASKWARRIOR SegmentType = "taskwarrior"
 	// Tauri Segment
 	TAURI SegmentType = "tauri"
 	// TERRAFORM writes the terraform workspace we're currently in
@@ -466,6 +469,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SWIFT:           func() SegmentWriter { return &segments.Swift{} },
 	SYSTEMINFO:      func() SegmentWriter { return &segments.SystemInfo{} },
 	TALOSCTL:        func() SegmentWriter { return &segments.TalosCTL{} },
+	TASKWARRIOR:     func() SegmentWriter { return &segments.Taskwarrior{} },
 	TAURI:           func() SegmentWriter { return &segments.Tauri{} },
 	TERRAFORM:       func() SegmentWriter { return &segments.Terraform{} },
 	TEXT:            func() SegmentWriter { return &segments.Text{} },

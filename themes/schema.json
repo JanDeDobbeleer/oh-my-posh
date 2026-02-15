@@ -453,6 +453,7 @@
             "swift",
             "sysinfo",
             "talosctl",
+            "taskwarrior",
             "tauri",
             "terraform",
             "text",
@@ -4389,6 +4390,55 @@
                     "default": [
                       "tauri"
                     ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "taskwarrior"
+              }
+            }
+          },
+          "then": {
+            "title": "Taskwarrior Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/taskwarrior",
+            "properties": {
+              "options": {
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "title": "Taskwarrior Command",
+                    "description": "The taskwarrior command to use",
+                    "default": "task"
+                  },
+                  "due_command": {
+                    "type": "string",
+                    "title": "Due Command",
+                    "description": "Arguments to get the due task count",
+                    "default": "+PENDING due.before:tomorrow count"
+                  },
+                  "scheduled_command": {
+                    "type": "string",
+                    "title": "Scheduled Command",
+                    "description": "Arguments to get the scheduled task count",
+                    "default": "+PENDING scheduled.before:tomorrow count"
+                  },
+                  "waiting_command": {
+                    "type": "string",
+                    "title": "Waiting Command",
+                    "description": "Arguments to get the waiting task count",
+                    "default": "+WAITING count"
+                  },
+                  "context_command": {
+                    "type": "string",
+                    "title": "Context Command",
+                    "description": "Arguments to get the current context",
+                    "default": "_get rc.context"
                   }
                 }
               }

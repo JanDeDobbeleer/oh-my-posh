@@ -1,0 +1,93 @@
+---
+id: taskwarrior
+title: Taskwarrior
+sidebar_label: Taskwarrior
+---
+
+## What
+
+Display [Taskwarrior][taskwarrior] task data for configurable commands. Each named command runs
+`task` with the specified arguments and exposes the raw output in the template.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "taskwarrior",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    template: " \uf4a0 {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}",
+    options: {
+      commands: {
+        due: "+PENDING due.before:tomorrow count",
+        scheduled: "+PENDING scheduled.before:tomorrow count",
+        waiting: "+WAITING count",
+        context: "_get rc.context",
+      },
+    },
+  }}
+/>
+
+## Options
+
+| Name       | Type                | Default   | Description                                                                    |
+| ---------- | :-----------------: | :-------: | ------------------------------------------------------------------------------ |
+| `command`  | `string`            | `task`    | the Taskwarrior executable to use                                              |
+| `commands` | `map[string]string` | see below | map of name to Taskwarrior arguments; the raw output is exposed in `.Commands` |
+
+### Default `commands` value
+
+```json
+{
+  "due": "+PENDING due.before:tomorrow count",
+  "scheduled": "+PENDING scheduled.before:tomorrow count",
+  "waiting": "+WAITING count",
+  "context": "_get rc.context"
+}
+```
+
+Each entry runs `task <arguments>` and stores the trimmed stdout as a string. Remove entries
+you do not need to keep prompt rendering fast.
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ "\uf4a0" }} {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}
+```
+
+:::
+
+### Properties
+
+| Name         | Type                | Description                                                                          |
+| ------------ | ------------------- | ------------------------------------------------------------------------------------ |
+| `.Commands`  | `map[string]string` | raw command output keyed by name with the first letter uppercased (e.g. `"Due"`)     |
+
+### Examples
+
+Access a specific command result directly:
+
+```template
+ {{ "\uf4a0" }} Due: {{ .Commands.Due }}
+```
+
+Display multiple results:
+
+```template
+ {{ "\uf4a0" }} Due: {{ .Commands.Due }} | Waiting: {{ .Commands.Waiting }}
+```
+
+Include the active context alongside task counts:
+
+```template
+ {{ "\uf4a0" }} {{ .Commands.Context }} - Due: {{ .Commands.Due }} Scheduled: {{ .Commands.Scheduled }}
+```
+
+[templates]: /docs/configuration/templates
+[taskwarrior]: https://taskwarrior.org

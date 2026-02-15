@@ -454,6 +454,7 @@
             "swift",
             "sysinfo",
             "talosctl",
+            "taskwarrior",
             "tauri",
             "terraform",
             "text",
@@ -4472,6 +4473,46 @@
                     ]
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "taskwarrior"
+              }
+            }
+          },
+          "then": {
+            "title": "Taskwarrior Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/taskwarrior",
+            "properties": {
+              "options": {
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "title": "Taskwarrior Command",
+                    "description": "The taskwarrior command to use",
+                    "default": "task"
+                  },
+                  "commands": {
+                    "type": "object",
+                    "title": "Commands",
+                    "description": "Map of name to Taskwarrior arguments; the trimmed stdout of each invocation is exposed as .Commands.<Name> in the template",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "due": "+PENDING due.before:tomorrow count",
+                      "scheduled": "+PENDING scheduled.before:tomorrow count",
+                      "waiting": "+WAITING count",
+                      "context": "_get rc.context"
+                    }
+                  }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

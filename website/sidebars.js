@@ -79,6 +79,7 @@ export default {
             "segments/cli/react",
             "segments/cli/svelte",
             "segments/cli/talosctl",
+            "segments/cli/taskwarrior",
             "segments/cli/tauri",
             "segments/cli/terraform",
             "segments/cli/ui5tooling",

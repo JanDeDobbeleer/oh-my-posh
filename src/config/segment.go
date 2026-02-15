@@ -36,11 +36,9 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 }
 
 type Segment struct {
-	writer  SegmentWriter
-	env     runtime.Environment
-	Options options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
-	// Properties is deprecated, use Options instead. This field exists for TOML backward compatibility
-	// since go-toml/v2 doesn't support custom unmarshalers. It will be migrated to Options after loading.
+	writer                 SegmentWriter
+	env                    runtime.Environment
+	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
 	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
 	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
@@ -57,27 +55,28 @@ type Segment struct {
 	Type                   SegmentType    `json:"type,omitempty" toml:"type,omitempty" yaml:"type,omitempty"`
 	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty" yaml:"style,omitempty"`
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty" yaml:"leading_powerline_symbol,omitempty"`
-	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
+	Placeholder            string         `json:"placeholder,omitempty" toml:"placeholder,omitempty" yaml:"placeholder,omitempty"`
 	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty" yaml:"tips,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty" yaml:"background_templates,omitempty"`
 	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty" yaml:"templates,omitempty"`
 	ExcludeFolders         []string       `json:"exclude_folders,omitempty" toml:"exclude_folders,omitempty" yaml:"exclude_folders,omitempty"`
 	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty" yaml:"include_folders,omitempty"`
 	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
-	Timeout                int            `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
+	Index                  int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
 	Duration               time.Duration  `json:"-" toml:"-" yaml:"-"`
 	NameLength             int            `json:"-" toml:"-" yaml:"-"`
-	Index                  int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
+	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	Timeout                int            `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
 	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	Restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
+	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -389,6 +388,10 @@ func (segment *Segment) folderKey() string {
 func (segment *Segment) string() string {
 	// Use simple pending text if segment is still pending
 	if segment.Pending {
+		if segment.Placeholder != "" {
+			return segment.Placeholder
+		}
+
 		return "..."
 	}
 

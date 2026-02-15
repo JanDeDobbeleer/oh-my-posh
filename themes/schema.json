@@ -4989,6 +4989,12 @@
     "terminal_background": {
       "$ref": "#/definitions/color"
     },
+    "streaming": {
+      "type": "integer",
+      "title": "Streaming Mode",
+      "description": "https://ohmyposh.dev/docs/experimental/streaming",
+      "default": 100
+    },
     "blocks": {
       "type": "array",
       "title": "Block array",

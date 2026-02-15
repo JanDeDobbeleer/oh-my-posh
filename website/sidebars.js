@@ -234,6 +234,14 @@ export default {
         "advanced/mcp-server",
       ],
     },
+    {
+      type: "category",
+      label: "🧪 Experimental",
+      collapsed: true,
+      items: [
+        "experimental/streaming",
+      ],
+    },
     "faq",
     "migrating",
     "contributors",

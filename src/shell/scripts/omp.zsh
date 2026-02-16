@@ -55,7 +55,7 @@ function set_poshcontext() {
 # cleanup stream resources
 function _omp_cleanup_stream() {
   # unregister handler first (prevents handler firing on closed fd)
-  [[ $_omp_stream_fd -ge 0 ]] && zle -F -w $_omp_stream_fd 2>/dev/null
+  [[ $_omp_stream_fd -ge 0 ]] && zle -F $_omp_stream_fd 2>/dev/null
   # close fd — process gets SIGPIPE and terminates
   [[ $_omp_stream_fd -ge 0 ]] && eval "exec {_omp_stream_fd}<&-" 2>/dev/null
   _omp_stream_fd=-1

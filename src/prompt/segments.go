@@ -45,7 +45,7 @@ func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan 
 		// In streaming mode, pre-register all segments as pending
 		// This ensures countPendingSegments() sees them before timeout occurs
 		if e.Env.Flags().Streaming {
-			segment.Timeout = 100 // Force 100ms timeout for all segments in streaming mode
+			segment.Timeout = e.Config.Streaming
 			e.pendingSegments.Store(segment.Name(), true)
 		}
 

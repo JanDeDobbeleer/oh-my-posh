@@ -352,7 +352,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # Update prompt when output arrives
         Register-ObjectEvent -InputObject $output -EventName DataAdded -SourceIdentifier "OhMyPoshStreaming" -MessageData @{
             Streaming = $script:Streaming
-            SessionId = $script:StreamingSessionId
         } -Action {
             $s = $event.MessageData.Streaming
             $index = $event.SourceEventArgs.Index
@@ -621,7 +620,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "Enable-PoshTooltips"
         "Enable-KeyHandlers"
         "Enable-PoshLineError"
-        "Enable-PoshStreaming"
         "Set-TransientPrompt"
         "prompt"
     )

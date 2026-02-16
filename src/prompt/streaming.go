@@ -15,6 +15,7 @@ func (e *Engine) StreamPrimary() <-chan string {
 
 	go func() {
 		defer close(out)
+		defer close(e.streamingResults)
 
 		// Render and send initial prompt with pending segments
 		initialPrompt := e.Primary()

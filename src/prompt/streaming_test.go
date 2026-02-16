@@ -333,7 +333,7 @@ func TestStreamingWithTimeout(t *testing.T) {
 	assert.False(t, isPending, "Segment should no longer be pending")
 }
 
-func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
+func setupStreamingTestEnv() *mock.Environment {
 	env := new(mock.Environment)
 	env.On("Pwd").Return("/test")
 	env.On("Home").Return("/home")
@@ -352,6 +352,12 @@ func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
 	terminal.Colors = color.MakeColors(nil, false, "", env)
+
+	return env
+}
+
+func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
+	env := setupStreamingTestEnv()
 
 	// Create segments with different speeds
 	fastSegment := &config.Segment{
@@ -420,24 +426,7 @@ func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
 }
 
 func TestStreamPrimary_MultipleBlocks_MixedSpeed(t *testing.T) {
-	env := new(mock.Environment)
-	env.On("Pwd").Return("/test")
-	env.On("Home").Return("/home")
-	env.On("Shell").Return(shell.PWSH)
-	env.On("Flags").Return(&runtime.Flags{Streaming: true})
-	env.On("CursorPosition").Return(1, 1)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("DirMatchesOneOf", testifymock.Anything, testifymock.Anything).Return(false)
-	// Mock accent color retrieval for both Windows and macOS
-	env.On("RunCommand", testifymock.Anything, testifymock.Anything, testifymock.Anything, testifymock.Anything).Return("4", nil)
-	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
-
-	template.Cache = &cache.Template{
-		Segments: maps.NewConcurrent[any](),
-	}
-	template.Init(env, nil, nil)
-	terminal.Init(shell.PWSH)
-	terminal.Colors = color.MakeColors(nil, false, "", env)
+	env := setupStreamingTestEnv()
 
 	// Block 1: Fast segment
 	fast1 := &config.Segment{
@@ -494,33 +483,7 @@ func TestStreamPrimary_MultipleBlocks_MixedSpeed(t *testing.T) {
 	assert.NotEmpty(t, prompts, "Should receive streaming prompts")
 }
 
-func TestStreamPrimary_EarlyChannelClosure(t *testing.T) {
-	env := new(mock.Environment)
-	env.On("Shell").Return(shell.PWSH)
-	env.On("Flags").Return(&runtime.Flags{Streaming: true})
-
-	engine := &Engine{
-		Config: &config.Config{
-			Blocks: []*config.Block{},
-		},
-		Env:              env,
-		streamingResults: make(chan *config.Segment, 10),
-	}
-
-	// Start streaming
-	out := engine.StreamPrimary()
-
-	// Close streamingResults channel early (simulating cleanup)
-	close(engine.streamingResults)
-
-	// Should still be able to read from output channel without panic
-	prompts := collectChannelOutput(out, 100*time.Millisecond)
-
-	// Should get at least the initial prompt before closure
-	assert.NotEmpty(t, prompts, "Should receive initial prompt before closure")
-}
-
-func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
+func setupBasicStreamingTestEnv() *Engine {
 	env := new(mock.Environment)
 	env.On("Pwd").Return("/test")
 	env.On("Home").Return("/home")
@@ -535,14 +498,35 @@ func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
 
-	// Engine without streamingResults channel (edge case)
 	engine := &Engine{
 		Config: &config.Config{
 			Blocks: []*config.Block{},
 		},
 		Env: env,
-		// No streamingResults channel
 	}
+
+	return engine
+}
+
+func TestStreamPrimary_EarlyChannelClosure(t *testing.T) {
+	engine := setupBasicStreamingTestEnv()
+
+	// Start streaming with no pending segments
+	// The goroutine should complete quickly and close channels properly
+	out := engine.StreamPrimary()
+
+	// Should be able to read from output channel without panic
+	prompts := collectChannelOutput(out, 100*time.Millisecond)
+
+	// Should get exactly one prompt (initial) with no pending segments
+	assert.Len(t, prompts, 1, "Should receive initial prompt")
+}
+
+func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
+	engine := setupBasicStreamingTestEnv()
+
+	// Engine without streamingResults channel (edge case)
+	// No streamingResults channel set
 
 	// Should not panic
 	out := engine.StreamPrimary()

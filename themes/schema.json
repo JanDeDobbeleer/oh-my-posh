@@ -597,6 +597,12 @@
               ]
             }
           }
+        },
+        "placeholder": {
+          "type": "string",
+          "title": "Placeholder text",
+          "description": "Text to display while the segment is loading in streaming mode. See https://ohmyposh.dev/docs/experimental/streaming",
+          "default": "..."
         }
       },
       "allOf": [
@@ -4469,7 +4475,7 @@
         {
           "if": {
             "properties": {
-              "type":{
+              "type": {
                 "const": "todoist"
               }
             }

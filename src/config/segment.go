@@ -73,7 +73,7 @@ type Segment struct {
 	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
 	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	Restored               bool           `json:"-" toml:"-" yaml:"-"`
+	restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
 	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
@@ -176,7 +176,6 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
-	// In streaming mode, use cache for initial display but continue executing for fresh data
 	cacheRestored := segment.restoreCache()
 	if cacheRestored && !env.Flags().Streaming {
 		return
@@ -195,12 +194,6 @@ func (segment *Segment) Execute(env runtime.Environment) {
 	// Create Job for this goroutine so child processes can be tracked and killed on timeout
 	if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
 		log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
-	}
-
-	// In streaming mode, don't write to Enabled if segment is pending to avoid data race
-	// Render() will be the sole controller of Enabled state for pending segments
-	if env.Flags().Streaming && segment.Pending {
-		return
 	}
 
 	segment.Enabled = segment.writer.Enabled()
@@ -334,13 +327,13 @@ func (segment *Segment) restoreCache() bool {
 
 	log.Debug("restored segment from cache: ", segment.Name())
 
-	segment.Restored = true
+	segment.restored = true
 
 	return true
 }
 
 func (segment *Segment) setCache() {
-	if segment.Restored || !segment.hasCache() {
+	if segment.restored || !segment.hasCache() {
 		return
 	}
 

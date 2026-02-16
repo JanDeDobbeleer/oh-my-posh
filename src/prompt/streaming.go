@@ -1,6 +1,8 @@
 package prompt
 
-import "github.com/jandedobbeleer/oh-my-posh/src/config"
+import (
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
+)
 
 // StreamPrimary returns a channel that yields prompt updates as segments complete.
 func (e *Engine) StreamPrimary() <-chan string {

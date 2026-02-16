@@ -284,6 +284,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # Build arguments array
         $Arguments = @(
             "stream"
+            "--save-cache"
             "--shell=$script:ShellName"
             "--shell-version=$script:PSVersion"
             "--status=$script:ErrorCode"

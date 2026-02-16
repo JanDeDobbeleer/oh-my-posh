@@ -69,6 +69,7 @@ function _omp_start_streaming() {
   # build command with all context
   local -a stream_cmd=(
     "$_omp_executable" stream
+    --save-cache
     --shell=zsh
     --shell-version="$ZSH_VERSION"
     --status=$_omp_status

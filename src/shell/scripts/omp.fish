@@ -101,6 +101,7 @@ function _omp_start_streaming
 
     # build stream command with all context
     set --local stream_cmd $_omp_executable stream \
+        --save-cache \
         --shell=fish \
         --shell-version=$FISH_VERSION \
         --status=$_omp_status \

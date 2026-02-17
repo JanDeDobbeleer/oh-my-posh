@@ -1,6 +1,8 @@
 package config
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -412,15 +414,33 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	key, store := segment.cacheKeyAndStore()
-	data, OK := cache.Get[string](store, key)
+
+	data, OK := cache.Get[any](store, key)
 	if !OK {
 		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
 		return false
 	}
 
-	err := json.Unmarshal([]byte(data), &segment.writer)
-	if err != nil {
-		log.Error(err)
+	switch v := data.(type) {
+	case []byte:
+		// Decode into the writer initialized by MapSegmentWithWriter instead of
+		// replacing it: the snapshot only carries exported fields, while the
+		// writer's unexported runtime state (env, options) must stay intact or
+		// any method relying on it panics after a restore.
+		if err := gob.NewDecoder(bytes.NewReader(v)).Decode(segment.writer); err != nil {
+			log.Error(err)
+			cache.Delete(store, key)
+			return false
+		}
+	case string:
+		// legacy JSON cache entry, remove it so it gets re-cached in the new format
+		log.Debugf("removing legacy cache key: %s", key)
+		cache.Delete(store, key)
+		return false
+	default:
+		log.Debugf("unexpected cache type for segment: %s, key: %s", segment.Name(), key)
+		cache.Delete(store, key)
+		return false
 	}
 
 	segment.Enabled = true
@@ -468,17 +488,20 @@ func (segment *Segment) setCache() {
 		return
 	}
 
-	data, err := json.Marshal(segment.writer)
-	if err != nil {
+	// Store a gob snapshot rather than the writer itself. The writer is a live
+	// object that render passes keep mutating, so caching it directly would
+	// share mutable state through the cache; and once persisted to disk it
+	// would come back without its unexported runtime state (env, options).
+	// The snapshot is immutable and restoreCache overlays it onto a freshly
+	// initialized writer. An encode failure only skips caching this segment.
+	var data bytes.Buffer
+	if err := gob.NewEncoder(&data).Encode(segment.writer); err != nil {
 		log.Error(err)
 		return
 	}
 
-	// TODO: check if we can make segmentwriter a generic Type indicator
-	// that way we can actually get the value straight from cache.Get
-	// and marchalling is obsolete
 	key, store := segment.cacheKeyAndStore()
-	cache.Set(store, key, string(data), segment.Cache.Duration)
+	cache.Set(store, key, data.Bytes(), segment.Cache.Duration)
 }
 
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {

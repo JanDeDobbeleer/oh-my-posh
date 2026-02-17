@@ -22,7 +22,7 @@ func (f Features) Cmd() Code {
 		return `os.execute(string.format('"%s" upgrade --auto', omp_executable))`
 	case Notice:
 		return `os.execute(string.format('"%s" notice', omp_executable))`
-	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async:
+	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, Streaming, KeyHandlers:
 		fallthrough
 	default:
 		return ""

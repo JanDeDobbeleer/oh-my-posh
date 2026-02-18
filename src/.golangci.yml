@@ -38,6 +38,10 @@ linters:
         - experimental
     lll:
       line-length: 180
+    revive:
+      rules:
+        - name: var-naming
+          disabled: true
   exclusions:
     generated: lax
     presets:

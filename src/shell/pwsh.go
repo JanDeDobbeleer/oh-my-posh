@@ -16,7 +16,7 @@ func (f Features) Pwsh() Code {
 	case LineError:
 		return "Enable-PoshLineError"
 	case Transient:
-		return "Enable-PoshTransientPrompt"
+		return "$global:_ompTransientPrompt = $true"
 	case Jobs:
 		return "$global:_ompJobCount = $true"
 	case Azure:
@@ -29,6 +29,10 @@ func (f Features) Pwsh() Code {
 		return "& $global:_ompExecutable upgrade --auto"
 	case Notice:
 		return "& $global:_ompExecutable notice"
+	case Streaming:
+		return "$global:_ompStreaming = $true"
+	case KeyHandlers:
+		return "Enable-KeyHandlers"
 	case PromptMark, RPrompt, CursorPositioning, Async:
 		fallthrough
 	default:

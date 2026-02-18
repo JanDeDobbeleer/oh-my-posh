@@ -72,7 +72,7 @@ type guid struct {
 
 type spDeviceInterfaceData struct {
 	cbSize             uint32
-	InterfaceClassGuid guid //nolint:revive
+	InterfaceClassGuid guid
 	Flags              uint32
 	Reserved           uint
 }

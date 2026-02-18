@@ -122,7 +122,7 @@ var (
 )
 
 const (
-	ACCESS_DENIED_ACE_TYPE = 1 //nolint: revive
+	ACCESS_DENIED_ACE_TYPE = 1
 )
 
 type accessMask uint32

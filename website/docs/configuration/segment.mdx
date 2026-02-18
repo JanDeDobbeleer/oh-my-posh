@@ -59,6 +59,7 @@ understand how to configure a segment.
 | `force`                    | `boolean`    | `false` | when true, the segment is always rendered, even when it's only whitespace - defaults to `false`                                                                                                                                                                                                                                                                                           |
 | `timeout`                  | `int`        |   `0`   | timeout in milliseconds for segment execution. If the segment takes longer than this value to complete, it will be disabled. Defaults to `0` (no timeout)                                                                                                                                                                                                                                 |
 | `index`                    | `int`        |         | used to [override] a specific segment (1-based)                                                                                                                                                                                                                                                                                                                                           |
+| `placeholder`              | `string`     |         | text to display while the segment is loading in [streaming mode][streaming]. Defaults to `...`                                                                                                                                                                                                                                                                                                         |
 
 :::warning
 In Bash/Zsh, when the property `interactive` is `true` for a segment, the prompt length calculation can be wrong
@@ -259,3 +260,4 @@ To list the currently toggled segments, use `oh-my-posh get toggles`.
 [include-exclude]: #include--exclude-folders
 [time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration
 [override]: /docs/configuration/general#extends
+[streaming]: /docs/experimental/streaming

@@ -15,8 +15,8 @@ import (
 // https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-addfontresourcea
 
 const (
-	WM_FONTCHANGE  = 0x001D //nolint:revive
-	HWND_BROADCAST = 0xFFFF //nolint:revive
+	WM_FONTCHANGE  = 0x001D
+	HWND_BROADCAST = 0xFFFF
 )
 
 func install(font *Font) error {

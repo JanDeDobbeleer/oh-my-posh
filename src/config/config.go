@@ -83,7 +83,8 @@ type Config struct {
 	PatchPwshBleed          bool `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty" yaml:"patch_pwsh_bleed,omitempty"`
 	AutoUpgrade             bool `json:"-" toml:"-" yaml:"-"`
 	EnableCursorPositioning bool `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty" yaml:"enable_cursor_positioning,omitempty"`
-	Streaming               int  `json:"streaming,omitempty" toml:"streaming,omitempty" yaml:"streaming,omitempty"`
+	Streaming               int         `json:"streaming,omitempty" toml:"streaming,omitempty" yaml:"streaming,omitempty"`
+	Tmux                    *TmuxConfig `json:"tmux,omitempty" toml:"tmux,omitempty" yaml:"tmux,omitempty"`
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {
@@ -240,6 +241,22 @@ func (cfg *Config) Hash() uint64 {
 // This is needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
 func (cfg *Config) migrateSegmentProperties() {
 	for _, block := range cfg.Blocks {
+		for _, segment := range block.Segments {
+			segment.MigratePropertiesToOptions()
+		}
+	}
+
+	if cfg.Tmux == nil {
+		return
+	}
+
+	for _, block := range cfg.Tmux.StatusLeft.Blocks {
+		for _, segment := range block.Segments {
+			segment.MigratePropertiesToOptions()
+		}
+	}
+
+	for _, block := range cfg.Tmux.StatusRight.Blocks {
 		for _, segment := range block.Segments {
 			segment.MigratePropertiesToOptions()
 		}

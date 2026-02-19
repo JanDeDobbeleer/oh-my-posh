@@ -45,6 +45,8 @@ const (
 	VALID     = "valid"
 	ERROR     = "error"
 	PREVIEW   = "preview"
+	TMUXLEFT  = "tmux-left"
+	TMUXRIGHT = "tmux-right"
 )
 
 func (e *Engine) write(txt string) {

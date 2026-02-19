@@ -148,6 +148,8 @@ func init() {
 	gob.Register(&segments.Ytm{})
 	gob.Register(&segments.Zig{})
 	gob.Register(&segments.Segment{})
+	gob.Register(&segments.TmuxSession{})
+	gob.Register(&segments.TmuxWindowList{})
 }
 
 const (
@@ -373,6 +375,10 @@ const (
 	YTM SegmentType = "ytm"
 	// ZIG writes the active zig version
 	ZIG SegmentType = "zig"
+	// TMUXSESSION writes the current tmux session name
+	TMUXSESSION SegmentType = "tmux_session"
+	// TMUXWINDOWLIST renders all tmux windows as a powerline list
+	TMUXWINDOWLIST SegmentType = "tmux_window_list"
 )
 
 // Segments contains all available prompt segment writers.
@@ -484,7 +490,9 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	XMAKE:           func() SegmentWriter { return &segments.XMake{} },
 	YARN:            func() SegmentWriter { return &segments.Yarn{} },
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
-	ZIG:             func() SegmentWriter { return &segments.Zig{} },
+	ZIG:            func() SegmentWriter { return &segments.Zig{} },
+	TMUXSESSION:    func() SegmentWriter { return &segments.TmuxSession{} },
+	TMUXWINDOWLIST: func() SegmentWriter { return &segments.TmuxWindowList{} },
 }
 
 func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {

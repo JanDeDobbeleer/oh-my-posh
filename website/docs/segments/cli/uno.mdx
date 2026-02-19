@@ -1,0 +1,43 @@
+---
+id: uno
+title: Uno Platform
+sidebar_label: Uno Platform
+---
+
+## What
+
+Display the currently active [Uno Platform][uno] SDK version.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "uno",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#7D4698",
+    template: " \ue799 {{ .Version }} ",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Version }}
+```
+
+:::
+
+### Properties
+
+| Name       | Type     | Description               |
+| ---------- | -------- | ------------------------- |
+| `.Version` | `string` | the Uno Platform SDK version |
+
+[uno]: https://platform.uno/
+[templates]: /docs/configuration/templates

@@ -27,6 +27,7 @@ oh-my-posh get shell
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
     { label: 'powershell', value: 'powershell', },
+    { label: 'tmux', value: 'tmux', },
     { label: 'xonsh', value: 'xonsh', },
     { label: 'zsh', value: 'zsh', },
   ]
@@ -191,6 +192,47 @@ Once added, reload your profile for the changes to take effect.
 ```powershell
 . $PROFILE
 ```
+
+</TabItem>
+<TabItem value="tmux">
+
+To use Oh My Posh as the tmux status bar renderer, add the following to your `~/.tmux.conf`:
+
+```bash
+set -g status-interval 5
+set -g status-left-length 400
+set -g status-right-length 200
+
+# OMP renders both sides; the window list lives inside status-left
+set -g status-left  "#(oh-my-posh print tmux-left  --config ~/.config/ohmyposh/config.yaml --shell tmux)"
+set -g status-right "#(oh-my-posh print tmux-right --config ~/.config/ohmyposh/config.yaml --shell tmux --pwd '#{pane_current_path}')"
+
+# Suppress tmux's own per-window format strings so OMP controls the window list
+set -g window-status-format ""
+set -g window-status-current-format ""
+
+# Refresh the status bar immediately on window changes
+set-hook -g window-linked          "refresh-client -S"
+set-hook -g window-unlinked        "refresh-client -S"
+set-hook -g window-renamed         "refresh-client -S"
+set-hook -g client-session-changed "refresh-client -S"
+```
+
+Once added, reload your tmux config:
+
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+:::tip
+`#{pane_current_path}` is expanded by tmux before running the command, so `--pwd` always
+reflects the active pane's current directory — useful for git and path segments in
+`status-right`.
+:::
+
+For the `tmux:` configuration block in your OMP config file, see [tmux integration][tmux].
+
+[tmux]: /docs/configuration/tmux
 
 </TabItem>
 <TabItem value="xonsh">

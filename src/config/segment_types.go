@@ -490,9 +490,9 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	XMAKE:           func() SegmentWriter { return &segments.XMake{} },
 	YARN:            func() SegmentWriter { return &segments.Yarn{} },
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
-	ZIG:            func() SegmentWriter { return &segments.Zig{} },
-	TMUXSESSION:    func() SegmentWriter { return &segments.TmuxSession{} },
-	TMUXWINDOWLIST: func() SegmentWriter { return &segments.TmuxWindowList{} },
+	ZIG:             func() SegmentWriter { return &segments.Zig{} },
+	TMUXSESSION:     func() SegmentWriter { return &segments.TmuxSession{} },
+	TMUXWINDOWLIST:  func() SegmentWriter { return &segments.TmuxWindowList{} },
 }
 
 func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {

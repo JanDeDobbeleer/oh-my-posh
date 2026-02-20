@@ -4531,7 +4531,8 @@
                     "description": "The powerline separator symbol between windows",
                     "default": "\ue0b0"
                   }
-                }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

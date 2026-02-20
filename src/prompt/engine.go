@@ -567,6 +567,12 @@ func New(flags *runtime.Flags) *Engine {
 		sh = shell.GENERIC
 	}
 
+	// tmux reads status bar output directly; it needs raw ANSI with no
+	// shell-specific wrapping (no \[...\] for bash, no %{...%} for zsh).
+	if flags.Type == TMUXLEFT || flags.Type == TMUXRIGHT {
+		sh = shell.GENERIC
+	}
+
 	terminal.Init(sh)
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors(env)

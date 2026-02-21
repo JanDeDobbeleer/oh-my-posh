@@ -2,6 +2,7 @@ package segments
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -15,93 +16,166 @@ func TestTaskwarrior(t *testing.T) {
 		Case            string
 		Template        string
 		HasCommand      bool
-		DueOutput       string
-		DueErr          error
-		ScheduledOutput string
-		ScheduledErr    error
-		WaitingOutput   string
-		WaitingErr      error
+		ConfiguredTags  map[string]string
+		TagOutputs      map[string]string
+		TagErrors       map[string]error
+		ContextCmd      string
 		ContextOutput   string
 		ContextErr      error
 		ExpectedEnabled bool
-		ExpectedString  string
+		ExpectedTags    map[string]int
+		ExpectedContext string
 	}{
 		{
-			Case:            "happy path",
-			HasCommand:      true,
-			DueOutput:       "3",
-			ScheduledOutput: "1",
-			WaitingOutput:   "2",
-			ContextOutput:   "work",
+			Case:       "happy path default tags",
+			HasCommand: true,
+			TagOutputs: map[string]string{
+				"+PENDING due.before:tomorrow count":       "3",
+				"+PENDING scheduled.before:tomorrow count": "1",
+				"+WAITING count":                           "2",
+			},
 			ExpectedEnabled: true,
-			ExpectedString:  "\uf4a0 3",
+			ExpectedTags: map[string]int{
+				"Due":       3,
+				"Scheduled": 1,
+				"Waiting":   2,
+			},
 		},
 		{
 			Case:            "no command",
 			HasCommand:      false,
 			ExpectedEnabled: false,
-			ExpectedString:  "",
 		},
 		{
-			Case:            "all zeros",
-			HasCommand:      true,
-			DueOutput:       "0",
-			ScheduledOutput: "0",
-			WaitingOutput:   "0",
-			ContextOutput:   "",
+			Case:       "all zeros",
+			HasCommand: true,
+			TagOutputs: map[string]string{
+				"+PENDING due.before:tomorrow count":       "0",
+				"+PENDING scheduled.before:tomorrow count": "0",
+				"+WAITING count":                           "0",
+			},
 			ExpectedEnabled: true,
-			ExpectedString:  "\uf4a0 0",
+			ExpectedTags: map[string]int{
+				"Due":       0,
+				"Scheduled": 0,
+				"Waiting":   0,
+			},
 		},
 		{
-			Case:            "custom template",
-			Template:        " D:{{.Due}} S:{{.Scheduled}} W:{{.Waiting}} [{{.Context}}] ",
-			HasCommand:      true,
-			DueOutput:       "5",
-			ScheduledOutput: "2",
-			WaitingOutput:   "1",
-			ContextOutput:   "home",
+			Case:       "custom tags only",
+			HasCommand: true,
+			ConfiguredTags: map[string]string{
+				"urgent": "+PENDING +OVERDUE",
+			},
+			TagOutputs: map[string]string{
+				"+PENDING +OVERDUE count": "5",
+			},
 			ExpectedEnabled: true,
-			ExpectedString:  "D:5 S:2 W:1 [home]",
+			ExpectedTags: map[string]int{
+				"Urgent": 5,
+			},
 		},
 		{
-			Case:            "due error returns zero",
-			HasCommand:      true,
-			DueOutput:       "",
-			DueErr:          errors.New("command failed"),
-			ScheduledOutput: "1",
-			WaitingOutput:   "0",
-			ContextOutput:   "",
+			Case:       "with context",
+			HasCommand: true,
+			ConfiguredTags: map[string]string{
+				"due": "+PENDING due.before:tomorrow",
+			},
+			TagOutputs: map[string]string{
+				"+PENDING due.before:tomorrow count": "3",
+			},
+			ContextCmd:      "_get rc.context",
+			ContextOutput:   "work",
 			ExpectedEnabled: true,
-			ExpectedString:  "\uf4a0 0",
+			ExpectedTags: map[string]int{
+				"Due": 3,
+			},
+			ExpectedContext: "work",
+		},
+		{
+			Case:       "command error returns zero for that tag",
+			HasCommand: true,
+			ConfiguredTags: map[string]string{
+				"due": "+PENDING due.before:tomorrow",
+			},
+			TagErrors: map[string]error{
+				"+PENDING due.before:tomorrow count": errors.New("command failed"),
+			},
+			ExpectedEnabled: true,
+			ExpectedTags: map[string]int{
+				"Due": 0,
+			},
 		},
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("HasCommand", "task").Return(tc.HasCommand)
 
-		env.On("HasCommand", "task").Return(tc.HasCommand)
-		env.On("RunCommand", "task", []string{"+PENDING", "due.before:tomorrow", "count"}).Return(tc.DueOutput, tc.DueErr)
-		env.On("RunCommand", "task", []string{"+PENDING", "scheduled.before:tomorrow", "count"}).Return(tc.ScheduledOutput, tc.ScheduledErr)
-		env.On("RunCommand", "task", []string{"+WAITING", "count"}).Return(tc.WaitingOutput, tc.WaitingErr)
-		env.On("RunCommand", "task", []string{"_get", "rc.context"}).Return(tc.ContextOutput, tc.ContextErr)
+			// Determine which tags to configure
+			configuredTags := tc.ConfiguredTags
+			if configuredTags == nil && tc.HasCommand {
+				// default tags
+				configuredTags = map[string]string{
+					"due":       "+PENDING due.before:tomorrow",
+					"scheduled": "+PENDING scheduled.before:tomorrow",
+					"waiting":   "+WAITING",
+				}
+			}
 
-		props := options.Map{}
+			for _, filter := range configuredTags {
+				args := splitAndAppend(filter, "count")
+				var output string
+				var err error
+				if tc.TagOutputs != nil {
+					output = tc.TagOutputs[filter+" count"]
+				}
+				if tc.TagErrors != nil {
+					err = tc.TagErrors[filter+" count"]
+				}
+				env.On("RunCommand", "task", args).Return(output, err)
+			}
 
-		tw := &Taskwarrior{}
-		tw.Init(props, env)
+			if tc.ContextCmd != "" {
+				contextArgs := splitArgs(tc.ContextCmd)
+				env.On("RunCommand", "task", contextArgs).Return(tc.ContextOutput, tc.ContextErr)
+			}
 
-		tmpl := tc.Template
-		if tmpl == "" {
-			tmpl = tw.Template()
-		}
+			props := options.Map{}
+			if tc.ConfiguredTags != nil {
+				props[TaskwarriorTags] = tc.ConfiguredTags
+			}
+			if tc.ContextCmd != "" {
+				props[TaskwarriorCtxCmd] = tc.ContextCmd
+			}
 
-		assert.Equal(t, tc.ExpectedEnabled, tw.Enabled(), tc.Case)
+			tw := &Taskwarrior{}
+			tw.Init(props, env)
 
-		if !tc.ExpectedEnabled {
-			continue
-		}
+			assert.Equal(t, tc.ExpectedEnabled, tw.Enabled(), tc.Case)
 
-		got := renderTemplate(env, tmpl, tw)
-		assert.Equal(t, tc.ExpectedString, got, tc.Case)
+			if !tc.ExpectedEnabled {
+				return
+			}
+
+			assert.Equal(t, tc.ExpectedTags, tw.Tags, tc.Case)
+			assert.Equal(t, tc.ExpectedContext, tw.Context, tc.Case)
+		})
 	}
+}
+
+// splitAndAppend splits a filter string into fields and appends extra args.
+func splitAndAppend(filter string, extra ...string) []string {
+	parts := splitArgs(filter)
+	return append(parts, extra...)
+}
+
+// splitArgs splits a space-separated argument string into a slice.
+func splitArgs(s string) []string {
+	var result []string
+	for _, f := range strings.Fields(s) {
+		result = append(result, f)
+	}
+	return result
 }

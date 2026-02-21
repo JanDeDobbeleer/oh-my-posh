@@ -153,6 +153,7 @@ func TestFormatBranch(t *testing.T) {
 		Expected       string
 		Input          string
 		BranchTemplate string
+		Upstream       string
 	}{
 		{
 			Case:     "No settings",
@@ -208,6 +209,13 @@ func TestFormatBranch(t *testing.T) {
 				"bug/*":  "🐛 ",
 			},
 		},
+		{
+			Case:           "Branch with upstream",
+			Input:          "feat/my-new-feature",
+			Expected:       "feat/my-new-feature@origin",
+			Upstream:       "origin",
+			BranchTemplate: "{{ .Branch }}{{ if .Upstream }}@{{ .Upstream }}{{ end }}",
+		},
 	}
 
 	for _, tc := range cases {
@@ -216,15 +224,17 @@ func TestFormatBranch(t *testing.T) {
 			BranchTemplate: tc.BranchTemplate,
 		}
 
-		g := &Git{}
-		g.Init(props, nil)
+		s := &Scm{
+			Upstream: tc.Upstream,
+		}
+		s.Init(props, nil)
 
 		env := new(mock.Environment)
 		env.On("Shell").Return(shell.BASH)
 		template.Cache = new(cache.Template)
 		template.Init(env, nil, nil)
 
-		got := g.formatBranch(tc.Input)
+		got := s.formatBranch(tc.Input)
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

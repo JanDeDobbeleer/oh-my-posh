@@ -4497,29 +4497,19 @@
                     "description": "The taskwarrior command to use",
                     "default": "task"
                   },
-                  "due_command": {
-                    "type": "string",
-                    "title": "Due Command",
-                    "description": "Arguments to get the due task count",
-                    "default": "+PENDING due.before:tomorrow count"
-                  },
-                  "scheduled_command": {
-                    "type": "string",
-                    "title": "Scheduled Command",
-                    "description": "Arguments to get the scheduled task count",
-                    "default": "+PENDING scheduled.before:tomorrow count"
-                  },
-                  "waiting_command": {
-                    "type": "string",
-                    "title": "Waiting Command",
-                    "description": "Arguments to get the waiting task count",
-                    "default": "+WAITING count"
-                  },
-                  "context_command": {
-                    "type": "string",
-                    "title": "Context Command",
-                    "description": "Arguments to get the current context",
-                    "default": "_get rc.context"
+                  "commands": {
+                    "type": "object",
+                    "title": "Commands",
+                    "description": "Map of name to Taskwarrior arguments; the trimmed stdout of each invocation is exposed as .Commands.<Name> in the template",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "due": "+PENDING due.before:tomorrow count",
+                      "scheduled": "+PENDING scheduled.before:tomorrow count",
+                      "waiting": "+WAITING count",
+                      "context": "_get rc.context"
+                    }
                   }
                 }
               }

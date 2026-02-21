@@ -1,7 +1,6 @@
 package segments
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -10,26 +9,24 @@ import (
 
 // Taskwarrior option constants
 const (
-	TaskwarriorCommand options.Option = "command"
-	TaskwarriorTags    options.Option = "tags"
-	TaskwarriorCtxCmd  options.Option = "context_command"
+	TaskwarriorCommand  options.Option = "command"
+	TaskwarriorCommands options.Option = "commands"
 )
 
 // Taskwarrior displays task counts and context from Taskwarrior.
-// The Tags field is a map from capitalized tag name to task count, populated
-// from the "tags" configuration option. Each entry in the config map has the
-// tag name as key and a Taskwarrior filter expression as value (without the
-// trailing "count" word, which is appended automatically).
+// The Commands field is a map from capitalized command name to the raw output
+// of the corresponding Taskwarrior invocation. Each entry in the config map
+// has the command name as key and a full Taskwarrior argument string as value.
 type Taskwarrior struct {
 	Base
 
-	// Tags holds a count per tag name (first letter uppercased).
-	Tags    map[string]int
-	Context string
+	// Commands holds the raw output of each configured command, keyed by name
+	// with the first letter uppercased.
+	Commands map[string]string
 }
 
 func (t *Taskwarrior) Template() string {
-	return " \uf4a0 {{ range $k, $v := .Tags }}{{ $k }}:{{ $v }} {{ end }}"
+	return " \uf4a0 {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}"
 }
 
 func (t *Taskwarrior) Enabled() bool {
@@ -39,50 +36,26 @@ func (t *Taskwarrior) Enabled() bool {
 		return false
 	}
 
-	defaultTags := map[string]string{
-		"due":       "+PENDING due.before:tomorrow",
-		"scheduled": "+PENDING scheduled.before:tomorrow",
-		"waiting":   "+WAITING",
+	defaultCommands := map[string]string{
+		"due":       "+PENDING due.before:tomorrow count",
+		"scheduled": "+PENDING scheduled.before:tomorrow count",
+		"waiting":   "+WAITING count",
+    "context":   "_get rc.context",
 	}
 
-	configuredTags := t.options.KeyValueMap(TaskwarriorTags, defaultTags)
+	configuredCommands := t.options.KeyValueMap(TaskwarriorCommands, defaultCommands)
 
-	t.Tags = make(map[string]int, len(configuredTags))
+	t.Commands = make(map[string]string, len(configuredCommands))
 
-	for name, filter := range configuredTags {
-		count := t.queryCount(cmd, filter)
+	for name, args := range configuredCommands {
 		key := strings.ToUpper(name[:1]) + name[1:]
-		t.Tags[key] = count
-	}
-
-	contextCmd := t.options.String(TaskwarriorCtxCmd, "")
-	if contextCmd != "" {
-		t.Context = t.queryContext(cmd, contextCmd)
+		t.Commands[key] = t.runCommand(cmd, args)
 	}
 
 	return true
 }
 
-func (t *Taskwarrior) queryCount(cmd, filter string) int {
-	args := strings.Fields(filter)
-	args = append(args, "count")
-
-	output, err := t.env.RunCommand(cmd, args...)
-	if err != nil {
-		log.Error(err)
-		return 0
-	}
-
-	count, err := strconv.Atoi(strings.TrimSpace(output))
-	if err != nil {
-		log.Error(err)
-		return 0
-	}
-
-	return count
-}
-
-func (t *Taskwarrior) queryContext(cmd, args string) string {
+func (t *Taskwarrior) runCommand(cmd, args string) string {
 	output, err := t.env.RunCommand(cmd, strings.Fields(args)...)
 	if err != nil {
 		log.Error(err)

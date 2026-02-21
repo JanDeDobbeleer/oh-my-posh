@@ -6,7 +6,8 @@ sidebar_label: Taskwarrior
 
 ## What
 
-Display [Taskwarrior][taskwarrior] task counts for configurable filters and the active context.
+Display [Taskwarrior][taskwarrior] task data for configurable commands. Each named command runs
+`task` with the specified arguments and exposes the raw output in the template.
 
 ## Sample Configuration
 
@@ -19,74 +20,73 @@ import Config from "@site/src/components/Config.js";
     powerline_symbol: "\uE0B0",
     foreground: "#193549",
     background: "#ffeb3b",
-    template: " \uf4a0 {{ range $k, $v := .Tags }}{{ $k }}:{{ $v }} {{ end }}",
+    template: " \uf4a0 {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}",
     options: {
-      tags: {
-        due: "+PENDING due.before:tomorrow",
-        scheduled: "+PENDING scheduled.before:tomorrow",
-        waiting: "+WAITING",
+      commands: {
+        due: "+PENDING due.before:tomorrow count",
+        scheduled: "+PENDING scheduled.before:tomorrow count",
+        waiting: "+WAITING count",
+        context: "_get rc.context",
       },
-      context_command: "_get rc.context",
     },
   }}
 />
 
 ## Options
 
-| Name               | Type                  | Default | Description                                                     |
-| ------------------ | :-------------------: | :-----: | --------------------------------------------------------------- |
-| `command`          | `string`              | `task`  | the Taskwarrior executable to use                               |
-| `tags`             | `map[string]string`   | see below | map of tag name to Taskwarrior filter; `count` is appended automatically |
-| `context_command`  | `string`              | `""`    | arguments passed to `task` to retrieve the active context; omit to skip |
+| Name       | Type                | Default   | Description                                                                    |
+| ---------- | :-----------------: | :-------: | ------------------------------------------------------------------------------ |
+| `command`  | `string`            | `task`    | the Taskwarrior executable to use                                              |
+| `commands` | `map[string]string` | see below | map of name to Taskwarrior arguments; the raw output is exposed in `.Commands` |
 
-### Default `tags` value
+### Default `commands` value
 
 ```json
 {
-  "due": "+PENDING due.before:tomorrow",
-  "scheduled": "+PENDING scheduled.before:tomorrow",
-  "waiting": "+WAITING"
+  "due": "+PENDING due.before:tomorrow count",
+  "scheduled": "+PENDING scheduled.before:tomorrow count",
+  "waiting": "+WAITING count",
+  "context": "_get rc.context"
 }
 ```
 
-Only the tags present in `tags` result in a `task` command execution, so remove entries you do not need
-to keep prompt rendering fast.
+Each entry runs `task <arguments>` and stores the trimmed stdout as a string. Remove entries
+you do not need to keep prompt rendering fast.
 
 ## Template ([info][templates])
 
 :::note default template
 
 ```template
- {{ "\uf4a0" }} {{ range $k, $v := .Tags }}{{ $k }}:{{ $v }} {{ end }}
+ {{ "\uf4a0" }} {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}
 ```
 
 :::
 
 ### Properties
 
-| Name       | Type              | Description                                                                      |
-| ---------- | ----------------- | -------------------------------------------------------------------------------- |
-| `.Tags`    | `map[string]int`  | task counts keyed by tag name with the first letter uppercased (e.g. `"Due"`)    |
-| `.Context` | `string`          | the active Taskwarrior context; empty string when `context_command` is not set   |
+| Name         | Type                | Description                                                                          |
+| ------------ | ------------------- | ------------------------------------------------------------------------------------ |
+| `.Commands`  | `map[string]string` | raw command output keyed by name with the first letter uppercased (e.g. `"Due"`)     |
 
 ### Examples
 
-Access a specific tag directly:
+Access a specific command result directly:
 
 ```template
- {{ "\uf4a0" }} Due: {{ .Tags.Due }}
+ {{ "\uf4a0" }} Due: {{ .Commands.Due }}
 ```
 
-Display multiple specific tags:
+Display multiple results:
 
 ```template
- {{ "\uf4a0" }} Due: {{ .Tags.Due }} | Waiting: {{ .Tags.Waiting }}
+ {{ "\uf4a0" }} Due: {{ .Commands.Due }} | Waiting: {{ .Commands.Waiting }}
 ```
 
-Include the active context:
+Include the active context alongside task counts:
 
 ```template
- {{ "\uf4a0" }} {{ .Context }} - Due: {{ .Tags.Due }} Scheduled: {{ .Tags.Scheduled }}
+ {{ "\uf4a0" }} {{ .Commands.Context }} - Due: {{ .Commands.Due }} Scheduled: {{ .Commands.Scheduled }}
 ```
 
 [templates]: /docs/configuration/templates

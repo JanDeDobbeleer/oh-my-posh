@@ -13,32 +13,27 @@ import (
 
 func TestTaskwarrior(t *testing.T) {
 	cases := []struct {
-		Case            string
-		Template        string
-		HasCommand      bool
-		ConfiguredTags  map[string]string
-		TagOutputs      map[string]string
-		TagErrors       map[string]error
-		ContextCmd      string
-		ContextOutput   string
-		ContextErr      error
-		ExpectedEnabled bool
-		ExpectedTags    map[string]int
-		ExpectedContext string
+		Case               string
+		HasCommand         bool
+		ConfiguredCommands map[string]string
+		CommandOutputs     map[string]string
+		CommandErrors      map[string]error
+		ExpectedEnabled    bool
+		ExpectedCommands   map[string]string
 	}{
 		{
-			Case:       "happy path default tags",
+			Case:       "happy path default commands",
 			HasCommand: true,
-			TagOutputs: map[string]string{
+			CommandOutputs: map[string]string{
 				"+PENDING due.before:tomorrow count":       "3",
 				"+PENDING scheduled.before:tomorrow count": "1",
 				"+WAITING count":                           "2",
 			},
 			ExpectedEnabled: true,
-			ExpectedTags: map[string]int{
-				"Due":       3,
-				"Scheduled": 1,
-				"Waiting":   2,
+			ExpectedCommands: map[string]string{
+				"Due":       "3",
+				"Scheduled": "1",
+				"Waiting":   "2",
 			},
 		},
 		{
@@ -49,61 +44,61 @@ func TestTaskwarrior(t *testing.T) {
 		{
 			Case:       "all zeros",
 			HasCommand: true,
-			TagOutputs: map[string]string{
+			CommandOutputs: map[string]string{
 				"+PENDING due.before:tomorrow count":       "0",
 				"+PENDING scheduled.before:tomorrow count": "0",
 				"+WAITING count":                           "0",
 			},
 			ExpectedEnabled: true,
-			ExpectedTags: map[string]int{
-				"Due":       0,
-				"Scheduled": 0,
-				"Waiting":   0,
+			ExpectedCommands: map[string]string{
+				"Due":       "0",
+				"Scheduled": "0",
+				"Waiting":   "0",
 			},
 		},
 		{
-			Case:       "custom tags only",
+			Case:       "custom commands only",
 			HasCommand: true,
-			ConfiguredTags: map[string]string{
-				"urgent": "+PENDING +OVERDUE",
+			ConfiguredCommands: map[string]string{
+				"urgent": "+PENDING +OVERDUE count",
 			},
-			TagOutputs: map[string]string{
+			CommandOutputs: map[string]string{
 				"+PENDING +OVERDUE count": "5",
 			},
 			ExpectedEnabled: true,
-			ExpectedTags: map[string]int{
-				"Urgent": 5,
+			ExpectedCommands: map[string]string{
+				"Urgent": "5",
 			},
 		},
 		{
-			Case:       "with context",
+			Case:       "context command via commands map",
 			HasCommand: true,
-			ConfiguredTags: map[string]string{
-				"due": "+PENDING due.before:tomorrow",
+			ConfiguredCommands: map[string]string{
+				"due":     "+PENDING due.before:tomorrow count",
+				"context": "_get rc.context",
 			},
-			TagOutputs: map[string]string{
+			CommandOutputs: map[string]string{
 				"+PENDING due.before:tomorrow count": "3",
+				"_get rc.context":                    "work",
 			},
-			ContextCmd:      "_get rc.context",
-			ContextOutput:   "work",
 			ExpectedEnabled: true,
-			ExpectedTags: map[string]int{
-				"Due": 3,
+			ExpectedCommands: map[string]string{
+				"Due":     "3",
+				"Context": "work",
 			},
-			ExpectedContext: "work",
 		},
 		{
-			Case:       "command error returns zero for that tag",
+			Case:       "command error returns empty string for that command",
 			HasCommand: true,
-			ConfiguredTags: map[string]string{
-				"due": "+PENDING due.before:tomorrow",
+			ConfiguredCommands: map[string]string{
+				"due": "+PENDING due.before:tomorrow count",
 			},
-			TagErrors: map[string]error{
+			CommandErrors: map[string]error{
 				"+PENDING due.before:tomorrow count": errors.New("command failed"),
 			},
 			ExpectedEnabled: true,
-			ExpectedTags: map[string]int{
-				"Due": 0,
+			ExpectedCommands: map[string]string{
+				"Due": "",
 			},
 		},
 	}
@@ -113,41 +108,32 @@ func TestTaskwarrior(t *testing.T) {
 			env := new(mock.Environment)
 			env.On("HasCommand", "task").Return(tc.HasCommand)
 
-			// Determine which tags to configure
-			configuredTags := tc.ConfiguredTags
-			if configuredTags == nil && tc.HasCommand {
-				// default tags
-				configuredTags = map[string]string{
-					"due":       "+PENDING due.before:tomorrow",
-					"scheduled": "+PENDING scheduled.before:tomorrow",
-					"waiting":   "+WAITING",
+			configuredCommands := tc.ConfiguredCommands
+			if configuredCommands == nil && tc.HasCommand {
+				// default commands
+				configuredCommands = map[string]string{
+					"due":       "+PENDING due.before:tomorrow count",
+					"scheduled": "+PENDING scheduled.before:tomorrow count",
+					"waiting":   "+WAITING count",
 				}
 			}
 
-			for _, filter := range configuredTags {
-				args := splitAndAppend(filter, "count")
+			for _, args := range configuredCommands {
+				splitArgs := splitTaskArgs(args)
 				var output string
 				var err error
-				if tc.TagOutputs != nil {
-					output = tc.TagOutputs[filter+" count"]
+				if tc.CommandOutputs != nil {
+					output = tc.CommandOutputs[args]
 				}
-				if tc.TagErrors != nil {
-					err = tc.TagErrors[filter+" count"]
+				if tc.CommandErrors != nil {
+					err = tc.CommandErrors[args]
 				}
-				env.On("RunCommand", "task", args).Return(output, err)
-			}
-
-			if tc.ContextCmd != "" {
-				contextArgs := splitArgs(tc.ContextCmd)
-				env.On("RunCommand", "task", contextArgs).Return(tc.ContextOutput, tc.ContextErr)
+				env.On("RunCommand", "task", splitArgs).Return(output, err)
 			}
 
 			props := options.Map{}
-			if tc.ConfiguredTags != nil {
-				props[TaskwarriorTags] = tc.ConfiguredTags
-			}
-			if tc.ContextCmd != "" {
-				props[TaskwarriorCtxCmd] = tc.ContextCmd
+			if tc.ConfiguredCommands != nil {
+				props[TaskwarriorCommands] = tc.ConfiguredCommands
 			}
 
 			tw := &Taskwarrior{}
@@ -159,20 +145,13 @@ func TestTaskwarrior(t *testing.T) {
 				return
 			}
 
-			assert.Equal(t, tc.ExpectedTags, tw.Tags, tc.Case)
-			assert.Equal(t, tc.ExpectedContext, tw.Context, tc.Case)
+			assert.Equal(t, tc.ExpectedCommands, tw.Commands, tc.Case)
 		})
 	}
 }
 
-// splitAndAppend splits a filter string into fields and appends extra args.
-func splitAndAppend(filter string, extra ...string) []string {
-	parts := splitArgs(filter)
-	return append(parts, extra...)
-}
-
-// splitArgs splits a space-separated argument string into a slice.
-func splitArgs(s string) []string {
+// splitTaskArgs splits a space-separated argument string into a slice.
+func splitTaskArgs(s string) []string {
 	var result []string
 	for _, f := range strings.Fields(s) {
 		result = append(result, f)

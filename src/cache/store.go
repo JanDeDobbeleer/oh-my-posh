@@ -232,7 +232,7 @@ func Print(s Store) string {
 		builder.WriteString("\n")
 
 		if entry.Expired() {
-			builder.WriteString(fmt.Sprintf("Key: %s [EXPIRED]\n", key))
+			fmt.Fprintf(&builder, "Key: %s [EXPIRED]\n", key)
 			builder.WriteString("\n")
 			continue
 		}
@@ -246,11 +246,11 @@ func Print(s Store) string {
 			ttlInfo = fmt.Sprintf("expires at %s", expiresAt.Format("2006-01-02 15:04:05"))
 		}
 
-		builder.WriteString(fmt.Sprintf("Key: %s\n", key))
-		builder.WriteString(fmt.Sprintf("  Value: %s\n", fmt.Sprintf("%#v", entry.Value)))
-		builder.WriteString(fmt.Sprintf("  Type: %T\n", entry.Value))
-		builder.WriteString(fmt.Sprintf("  Created: %s\n", time.Unix(entry.Timestamp, 0).Format("2006-01-02 15:04:05")))
-		builder.WriteString(fmt.Sprintf("  TTL: %s\n", ttlInfo))
+		fmt.Fprintf(&builder, "Key: %s\n", key)
+		fmt.Fprintf(&builder, "  Value: %s\n", fmt.Sprintf("%#v", entry.Value))
+		fmt.Fprintf(&builder, "  Type: %T\n", entry.Value)
+		fmt.Fprintf(&builder, "  Created: %s\n", time.Unix(entry.Timestamp, 0).Format("2006-01-02 15:04:05"))
+		fmt.Fprintf(&builder, "  TTL: %s\n", ttlInfo)
 	}
 
 	return builder.String()

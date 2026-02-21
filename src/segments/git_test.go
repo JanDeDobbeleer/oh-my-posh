@@ -723,9 +723,9 @@ func TestGitUpstream(t *testing.T) {
 
 		g := &Git{
 			Scm: Scm{
-				command: GITCOMMAND,
+				command:  GITCOMMAND,
+				Upstream: "origin/main",
 			},
-			Upstream: "origin/main",
 		}
 		g.Init(props, env)
 
@@ -766,9 +766,11 @@ func TestGetBranchStatus(t *testing.T) {
 		}
 
 		g := &Git{
+			Scm: Scm{
+				Upstream: tc.Upstream,
+			},
 			Ahead:        tc.Ahead,
 			Behind:       tc.Behind,
-			Upstream:     tc.Upstream,
 			UpstreamGone: tc.UpstreamGone,
 		}
 		g.Init(props, new(mock.Environment))
@@ -1428,9 +1430,9 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 				command:     "git",
 				repoRootDir: "/dir",
 				scmDir:      "/dir/.git",
+				Upstream:    "origin/main",
 			},
-			Ref:      "main",
-			Upstream: "origin/main",
+			Ref: "main",
 		}
 
 		props := options.Map{

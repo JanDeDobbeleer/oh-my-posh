@@ -88,6 +88,7 @@ type Scm struct {
 
 	Dir             string
 	RepoName        string
+	Upstream        string
 	mainSCMDir      string
 	scmDir          string
 	repoRootDir     string
@@ -162,7 +163,7 @@ func (s *Scm) formatBranch(branch string) string {
 		return branch
 	}
 
-	txt, err := template.Render(branchTemplate, struct{ Branch string }{Branch: branch})
+	txt, err := template.Render(branchTemplate, struct{ Branch, Upstream string }{Branch: branch, Upstream: s.Upstream})
 	if err != nil {
 		return branch
 	}

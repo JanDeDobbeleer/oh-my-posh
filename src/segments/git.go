@@ -149,7 +149,6 @@ type Git struct {
 	ShortHash      string
 	Hash           string
 	BranchStatus   string
-	Upstream       string
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string

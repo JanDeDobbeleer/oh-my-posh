@@ -34,6 +34,7 @@ func TestTaskwarrior(t *testing.T) {
 				"Due":       "3",
 				"Scheduled": "1",
 				"Waiting":   "2",
+				"Context":   "",
 			},
 		},
 		{
@@ -54,6 +55,7 @@ func TestTaskwarrior(t *testing.T) {
 				"Due":       "0",
 				"Scheduled": "0",
 				"Waiting":   "0",
+				"Context":   "",
 			},
 		},
 		{
@@ -115,6 +117,7 @@ func TestTaskwarrior(t *testing.T) {
 					"due":       "+PENDING due.before:tomorrow count",
 					"scheduled": "+PENDING scheduled.before:tomorrow count",
 					"waiting":   "+WAITING count",
+					"context":   "_get rc.context",
 				}
 			}
 

@@ -42,6 +42,12 @@ func TestUnoSegment(t *testing.T) {
 			ExpectedEnabled: true,
 		},
 		{
+			Case:            "valid dotnet sdk global.json without Uno.Sdk",
+			HasGlobalJSON:   true,
+			GlobalJSON:      `{"sdk":{ "version": "10.0.103" }}`,
+			ExpectedEnabled: false,
+		},
+		{
 			Case:          "valid Uno.Sdk in commented global.json",
 			HasGlobalJSON: true,
 			GlobalJSON: `{

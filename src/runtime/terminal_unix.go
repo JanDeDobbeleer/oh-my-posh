@@ -122,7 +122,9 @@ func (term *Terminal) getSpecialLinuxDistros(platform string) string {
 	if platform == "arch" && strings.Contains(strings.ToLower(lsbInfo), "manjaro") {
 		// validate for Manjaro
 		return "manjaro"
-	} else if platform == "debian" && strings.Contains(strings.ToLower(lsbInfo), "zorin") {
+	}
+
+	if platform == "debian" && strings.Contains(strings.ToLower(lsbInfo), "zorin") {
 		// validate for Zorin OS
 		return "zorin"
 	}

@@ -1,4 +1,4 @@
-# remove any existing dynamic module of OMP
+﻿# remove any existing dynamic module of OMP
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
@@ -382,18 +382,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     $promptFunction = {
-        # Only return cached prompt if we're in a streaming redraw (RUNNING state)
-        # AND it's not a transient prompt. Don't use cached prompt for FINAL state
-        # as that means the previous prompt is complete and we need a fresh one.
-        if ($script:PromptType -ne 'transient' -and $script:Streaming.State -ne 'NEW') {
-            # Update ExtraPromptLineCount for PSReadLine to properly clear previous prompt
-            Set-PSReadLineOption -ExtraPromptLineCount (($script:Streaming.Prompt | Measure-Object -Line).Lines - 1)
-            return $script:Streaming.Prompt
-        }
-
-        # Stop any previous streaming process and reset state
-        Stop-StreamingProcess
-
         # store the original last command execution status
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
@@ -405,6 +393,18 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         # store the original last exit code
         $script:OriginalLastExitCode = $global:LASTEXITCODE
+
+        # Only return cached prompt if we're in a streaming redraw (RUNNING state)
+        # AND it's not a transient prompt. Don't use cached prompt for FINAL state
+        # as that means the previous prompt is complete and we need a fresh one.
+        if ($script:PromptType -ne 'transient' -and $script:Streaming.State -ne 'NEW') {
+            # Update ExtraPromptLineCount for PSReadLine to properly clear previous prompt
+            Set-PSReadLineOption -ExtraPromptLineCount (($script:Streaming.Prompt | Measure-Object -Line).Lines - 1)
+            return $script:Streaming.Prompt
+        }
+
+        # Stop any previous streaming process and reset state
+        Stop-StreamingProcess
 
         # Reset tooltip command.
         $script:TooltipCommand = ''

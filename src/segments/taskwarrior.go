@@ -40,7 +40,7 @@ func (t *Taskwarrior) Enabled() bool {
 		"due":       "+PENDING due.before:tomorrow count",
 		"scheduled": "+PENDING scheduled.before:tomorrow count",
 		"waiting":   "+WAITING count",
-    "context":   "_get rc.context",
+		"context":   "_get rc.context",
 	}
 
 	configuredCommands := t.options.KeyValueMap(TaskwarriorCommands, defaultCommands)

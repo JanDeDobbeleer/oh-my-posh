@@ -1,4 +1,4 @@
-﻿# remove any existing dynamic module of OMP
+# remove any existing dynamic module of OMP
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }

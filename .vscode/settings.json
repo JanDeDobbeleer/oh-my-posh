@@ -25,5 +25,9 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.markdownlint": "explicit"
     }
+  },
+  "files.encoding": "utf8",
+  "[powershell]": {
+    "files.encoding": "utf8"
   }
 }

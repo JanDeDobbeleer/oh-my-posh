@@ -196,6 +196,9 @@ func generateScript(env runtime.Environment, feats Features) string {
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", env.Flags().Shell)
 	}
 
+	// Remove UTF-8 BOM if present, as it can cause issues in some shells.
+	script = strings.TrimPrefix(script, "\xef\xbb\xbf")
+
 	init := strings.NewReplacer(
 		"::OMP::", executable,
 		"::SESSION_ID::", cache.SessionID(),

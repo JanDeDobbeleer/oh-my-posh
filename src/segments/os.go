@@ -68,12 +68,12 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"elementary":          "\uf309",
 		"endeavouros":         "\uf322",
 		"fedora":              "\uf30a",
-		"freebsd":             "\u000f08e0",
+		"freebsd":             "\U000f08e0",
 		"gentoo":              "\uf30d",
 		"kali":                "\uf327",
 		"mageia":              "\uf310",
 		"manjaro":             "\uf312",
-		"mint":                "\u000f08ed",
+		"mint":                "\U000f08ed",
 		"neon":                "\uf331",
 		"nixos":               "\uf313",
 		"opensuse":            "\uf314",
@@ -85,6 +85,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"slackware":           "\uf319",
 		"ubuntu":              "\uf31b",
 		"void":                "\uf32e",
+		"zorin":               "\uf32f",
 	}
 
 	if icon, ok := iconMap[distro]; ok {

@@ -4511,7 +4511,8 @@
                       "context": "_get rc.context"
                     }
                   }
-                }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

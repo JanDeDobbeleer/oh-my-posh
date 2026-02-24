@@ -1,0 +1,114 @@
+---
+id: ramadan
+title: Ramadan
+sidebar_label: Ramadan
+---
+
+## What
+
+Displays Sehar (Fajr) and Iftar (Maghrib) prayer times along with a countdown to the next
+event during Ramadan. Powered by the free [Aladhan Prayer Times API][aladhan]. The segment
+auto-hides when it is not Ramadan (configurable via `hide_outside_ramadan`).
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "ramadan",
+    style: "diamond",
+    foreground: "#ffffff",
+    background: "#1a472a",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b0",
+    template:
+      "\U0001F319 Roza {{.RozaNumber}} \u00b7 {{.NextEvent}} in {{.TimeRemaining}}",
+    options: {
+      city: "Lahore",
+      country: "PK",
+      method: 1,
+      school: 1
+    }
+  }}
+/>
+
+## Options
+
+| Name                   |   Type    | Default | Description                                                                  |
+| ---------------------- | :-------: | :-----: | ---------------------------------------------------------------------------- |
+| `latitude`             | `float64` |   `0`   | Latitude for prayer time calculation (use with `longitude`)                  |
+| `longitude`            | `float64` |   `0`   | Longitude for prayer time calculation (use with `latitude`)                  |
+| `city`                 | `string`  |  `""`   | City name for location lookup — takes precedence over `latitude`/`longitude` |
+| `country`              | `string`  |  `""`   | Country name or ISO 3166 alpha-2 code — required when using `city`           |
+| `method`               |   `int`   |   `3`   | Prayer calculation method (0–23, 99). See [Aladhan methods][methods] for details |
+| `school`               |   `int`   |   `0`   | Madhab school: `0` = Shafi (standard), `1` = Hanafi                          |
+| `hide_outside_ramadan` |  `bool`   | `true`  | Hide the segment when not in Ramadan                                         |
+| `first_roza_date`      | `string`  |  `""`   | Override first day of Ramadan as `YYYY-MM-DD` for local moon sighting        |
+| `http_timeout`         |   `int`   |  `20`   | HTTP request timeout in milliseconds                                         |
+
+:::info
+Either **city + country** or **latitude + longitude** must be configured. If both are
+provided, `city` + `country` takes precedence.
+:::
+
+:::tip Prayer calculation methods
+
+Use the method associated with the issuing authority closest to your location.
+The full ID→authority mapping is:
+
+| ID  | Authority                                                      |
+| --- | -------------------------------------------------------------- |
+| 0   | Shia Ithna-Ashari, Leva Institute, Qum                         |
+| 1   | University of Islamic Sciences, Karachi                        |
+| 2   | Islamic Society of North America (ISNA)                        |
+| 3   | Muslim World League (**default**)                              |
+| 4   | Umm Al-Qura University, Makkah                                 |
+| 5   | Egyptian General Authority of Survey                           |
+| 7   | Institute of Geophysics, University of Tehran                  |
+| 8   | Gulf Region                                                    |
+| 9   | Kuwait                                                         |
+| 10  | Qatar                                                          |
+| 11  | Majlis Ugama Islam Singapura, Singapore                        |
+| 12  | Union Organisation Islamique de France                         |
+| 13  | Diyanet İşleri Başkanlığı, Turkey *(experimental)*             |
+| 14  | Spiritual Administration of Muslims of Russia                  |
+| 15  | Moonsighting Committee Worldwide                               |
+| 16  | Dubai *(experimental)*                                         |
+| 17  | Jabatan Kemajuan Islam Malaysia (JAKIM)                        |
+| 18  | Tunisia                                                        |
+| 19  | Algeria                                                        |
+| 20  | Kementerian Agama Republik Indonesia                           |
+| 21  | Morocco                                                        |
+| 22  | Comunidade Islâmica de Lisboa, Portugal                        |
+| 23  | Ministry of Awqaf, Islamic Affairs and Holy Places, Jordan     |
+| 99  | Custom (use `methodSettings` via the API)                      |
+
+Note: ID 6 is not assigned.
+:::
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ 🌙 Roza {{.RozaNumber}} · {{.NextEvent}} in {{.TimeRemaining}}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                                                     |
+| ---------------- | -------- | --------------------------------------------------------------- |
+| `.Fajr`          | `string` | Sehar (Fajr) time in `HH:MM` format                             |
+| `.Iftar`         | `string` | Iftar (Maghrib) time in `HH:MM` format                          |
+| `.Imsak`         | `string` | Imsak time in `HH:MM` format (~10 min before Fajr)              |
+| `.RozaNumber`    | `int`    | Day number within Ramadan (1–30)                                |
+| `.NextEvent`     | `string` | Name of the next event: `Sehar` or `Iftar`                      |
+| `.TimeRemaining` | `string` | Countdown to the next event, e.g. `3h 42m`                      |
+| `.Fasting`       | `bool`   | `true` when currently between Fajr and Maghrib (fasting window) |
+
+[templates]: /docs/configuration/templates
+[aladhan]: https://aladhan.com/prayer-times-api
+[methods]: https://aladhan.com/calculation-methods

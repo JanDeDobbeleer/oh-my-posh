@@ -354,6 +354,12 @@ After making any Go code changes, run the following commands to ensure code qual
    fieldalignment --fix "./..."
    ```
 
+   > **Warning:** `fieldalignment` rewrites struct field order. Any inline struct
+   > literals that use **positional** (unnamed) field initialization — common in
+   > table-driven test files — will break after the reorder.
+   > **Always use named fields** in struct literals (e.g. `{Case: "foo", Now: t}`)
+   > so that the order of fields in the struct definition does not matter.
+
 2. **Code Modernization**: Apply modern Go best practices
 
    ```bash

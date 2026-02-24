@@ -108,6 +108,7 @@ func init() {
 	gob.Register(&segments.Quasar{})
 	gob.Register(&segments.Package{})
 	gob.Register(&segments.R{})
+	gob.Register(&segments.Ramadan{})
 	gob.Register(&segments.React{})
 	gob.Register(&segments.Root{})
 	gob.Register(&segments.Ruby{})
@@ -303,6 +304,8 @@ const (
 	QUASAR SegmentType = "quasar"
 	// R version
 	R SegmentType = "r"
+	// RAMADAN displays Sehar and Iftar prayer times during Ramadan
+	RAMADAN SegmentType = "ramadan"
 	// REACT writes the current react version
 	REACT SegmentType = "react"
 	// ROOT writes root symbol
@@ -450,6 +453,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PYTHON:          func() SegmentWriter { return &segments.Python{} },
 	QUASAR:          func() SegmentWriter { return &segments.Quasar{} },
 	R:               func() SegmentWriter { return &segments.R{} },
+	RAMADAN:         func() SegmentWriter { return &segments.Ramadan{} },
 	REACT:           func() SegmentWriter { return &segments.React{} },
 	ROOT:            func() SegmentWriter { return &segments.Root{} },
 	RUBY:            func() SegmentWriter { return &segments.Ruby{} },

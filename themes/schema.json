@@ -437,6 +437,7 @@
             "python",
             "quasar",
             "r",
+            "ramadan",
             "react",
             "root",
             "ruby",
@@ -2714,6 +2715,80 @@
                     "title": "Headers",
                     "description": "A key, value map of Headers to send with the request",
                     "default": {}
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ramadan"
+              }
+            }
+          },
+          "then": {
+            "title": "Ramadan Segment",
+            "description": "https://ohmyposh.dev/docs/segments/health/ramadan",
+            "properties": {
+              "options": {
+                "properties": {
+                  "latitude": {
+                    "type": "number",
+                    "title": "Latitude",
+                    "description": "Latitude for prayer time calculation",
+                    "default": 0
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "title": "Longitude",
+                    "description": "Longitude for prayer time calculation",
+                    "default": 0
+                  },
+                  "city": {
+                    "type": "string",
+                    "title": "City",
+                    "description": "City name for location lookup (takes precedence over latitude/longitude)",
+                    "default": ""
+                  },
+                  "country": {
+                    "type": "string",
+                    "title": "Country",
+                    "description": "Country name or ISO 3166 alpha-2 code (required when using city)",
+                    "default": ""
+                  },
+                  "method": {
+                    "type": "integer",
+                    "title": "Calculation Method",
+                    "description": "Prayer calculation method ID (0-23). See https://aladhan.com/calculation-methods",
+                    "default": 3
+                  },
+                  "school": {
+                    "type": "integer",
+                    "title": "Madhab School",
+                    "description": "0 = Shafi (standard), 1 = Hanafi",
+                    "default": 0
+                  },
+                  "hide_outside_ramadan": {
+                    "type": "boolean",
+                    "title": "Hide Outside Ramadan",
+                    "description": "Hide the segment when not in Ramadan",
+                    "default": true
+                  },
+                  "first_roza_date": {
+                    "type": "string",
+                    "title": "First Roza Date",
+                    "description": "Override first day of Ramadan as YYYY-MM-DD for local moon sighting",
+                    "default": ""
+                  },
+                  "http_timeout": {
+                    "type": "integer",
+                    "title": "HTTP request timeout",
+                    "description": "Milliseconds to use for HTTP request timeouts",
+                    "default": 20
                   }
                 },
                 "unevaluatedProperties": false

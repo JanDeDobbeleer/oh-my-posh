@@ -110,15 +110,25 @@ func (term *Terminal) Platform() string {
 	}
 
 	platform, _, _, _ = host.PlatformInformation()
-	if platform == "arch" {
-		// validate for Manjaro
-		lsbInfo := term.FileContent("/etc/lsb-release")
-		if strings.Contains(strings.ToLower(lsbInfo), "manjaro") {
-			platform = "manjaro"
-		}
-	}
+	platform = term.getSpecialLinuxDistros(platform)
 
 	log.Debug(platform)
+	return platform
+}
+
+func (term *Terminal) getSpecialLinuxDistros(platform string) string {
+	lsbInfo := term.FileContent("/etc/lsb-release")
+
+	if platform == "arch" && strings.Contains(strings.ToLower(lsbInfo), "manjaro") {
+		// validate for Manjaro
+		return "manjaro"
+	}
+
+	if platform == "debian" && strings.Contains(strings.ToLower(lsbInfo), "zorin") {
+		// validate for Zorin OS
+		return "zorin"
+	}
+
 	return platform
 }
 

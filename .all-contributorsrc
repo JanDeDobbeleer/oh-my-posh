@@ -3509,6 +3509,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "adackny",
+      "name": "Adackny Castillo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61998238?v=4",
+      "profile": "https://github.com/adackny",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

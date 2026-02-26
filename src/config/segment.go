@@ -1,6 +1,8 @@
 package config
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -319,15 +321,22 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	switch v := data.(type) {
-	case SegmentWriter:
-		segment.writer = v
+	case []byte:
+		buf := bytes.NewBuffer(v)
+		dec := gob.NewDecoder(buf)
+		var writer SegmentWriter
+		if err := dec.Decode(&writer); err != nil {
+			log.Debugf("failed to decode cached writer for segment: %s, error: %v", segment.Name(), err)
+			cache.Delete(store, key)
+			return false
+		}
+		segment.writer = writer
 		segment.Enabled = true
 		template.Cache.AddSegmentData(segment.Name(), segment.writer)
 		log.Debug("restored segment from cache: ", segment.Name())
 		segment.restored = true
 		return true
 	case string:
-		// legacy JSON cache entry, remove it so it gets re-cached with the new format
 		log.Debugf("removing legacy cache key: %s", key)
 		cache.Delete(store, key)
 		return false
@@ -339,12 +348,19 @@ func (segment *Segment) restoreCache() bool {
 }
 
 func (segment *Segment) setCache() {
-	if segment.restored || !segment.hasCache() {
+	if segment.restored || !segment.hasCache() || segment.Pending {
+		return
+	}
+
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err := enc.Encode(&segment.writer); err != nil {
+		log.Debugf("failed to encode writer for cache: %v", err)
 		return
 	}
 
 	key, store := segment.cacheKeyAndStore()
-	cache.Set(store, key, segment.writer, segment.Cache.Duration)
+	cache.Set(store, key, buf.Bytes(), segment.Cache.Duration)
 }
 
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {

@@ -490,6 +490,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/maxvictor"><img src="https://avatars.githubusercontent.com/u/11591713?v=4?s=100" width="100px;" alt="Max Victor"/><br /><sub><b>Max Victor</b></sub></a><br /><a href="#design-maxvictor" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/adackny"><img src="https://avatars.githubusercontent.com/u/61998238?v=4?s=100" width="100px;" alt="Adackny Castillo"/><br /><sub><b>Adackny Castillo</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=adackny" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=adackny" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

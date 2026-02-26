@@ -66,7 +66,7 @@ func TestSegmentCache(t *testing.T) {
 	legacySegment := &Segment{
 		Type: TEXT,
 		Cache: &Cache{
-			Strategy: Device,
+			Strategy: Folder,
 			Duration: cache.Duration("10m"),
 		},
 		Alias: "legacy_segment",
@@ -74,20 +74,56 @@ func TestSegmentCache(t *testing.T) {
 	}
 	legacySegment.name = "legacy_segment"
 
-	// Initialize writer so cacheKeyAndStore can compute the key
 	legacyWriter := &segments.Text{}
 	legacyWriter.Init(nil, nil)
 	legacySegment.writer = legacyWriter
 
-	// Derive the key using the same logic as production code
 	legacyKey, legacyStore := legacySegment.cacheKeyAndStore()
 	cache.Set(legacyStore, legacyKey, "legacy_json_string", cache.Duration("10m"))
 
-	// Should return false and delete the key
 	restoredLegacy := legacySegment.restoreCache()
-	assert.False(t, restoredLegacy, "Legacy cache should not be restored")
+	assert.False(t, restoredLegacy)
 
-	// Verify key is gone
 	_, found := cache.Get[string](legacyStore, legacyKey)
-	assert.False(t, found, "Legacy key should be removed")
+	assert.False(t, found)
+
+	// Test snapshot isolation (immutability)
+	isoSegment := &Segment{
+		Type: TEXT,
+		Cache: &Cache{
+			Strategy: Folder,
+			Duration: cache.Duration("10m"),
+		},
+		Alias: "iso_segment",
+		env:   env,
+	}
+	isoWriter := &segments.Text{}
+	isoWriter.Init(nil, nil)
+	isoWriter.SetText("Original")
+	isoSegment.writer = isoWriter
+	isoSegment.name = "iso_segment"
+
+	isoSegment.setCache()
+
+	// Modify the local writer after caching
+	isoWriter.SetText("Modified")
+
+	// Restore into a new segment
+	newIsoSegment := &Segment{
+		Type: TEXT,
+		Cache: &Cache{
+			Strategy: Folder,
+			Duration: cache.Duration("10m"),
+		},
+		Alias: "iso_segment",
+		env:   env,
+	}
+	newIsoSegment.name = "iso_segment"
+	newIsoSegment.writer = &segments.Text{}
+	newIsoSegment.writer.Init(nil, nil)
+
+	newIsoSegment.restoreCache()
+
+	// The restored value should still be "Original"
+	assert.Equal(t, "Original", newIsoSegment.writer.Text(), "Restored value should be a copy (Original), not the modified local instance")
 }

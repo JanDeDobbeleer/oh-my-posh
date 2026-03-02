@@ -3,6 +3,7 @@ package cache
 import (
 	"encoding/gob"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -96,11 +97,32 @@ func (s Store) init(filePath string, persist bool) {
 	}
 }
 
+// touchSessionFile updates the session file's modification time if it's older than 1 hour.
+// This prevents stale session cache files from being cleaned up while reducing steady-state overhead.
+func touchSessionFile(filePath string) {
+	info, err := os.Stat(filePath)
+	if err != nil {
+		return
+	}
+
+	if time.Since(info.ModTime()) <= time.Hour {
+		return
+	}
+
+	if err := os.Chtimes(filePath, time.Now(), time.Now()); err != nil {
+		log.Error(err)
+	}
+}
+
 func (s Store) close() {
 	defer log.Trace(time.Now(), string(s))
 
 	store := s.get()
 	if store == nil || !store.persist || !store.dirty {
+		if s == Session && store != nil && store.filePath != "" {
+			touchSessionFile(store.filePath)
+		}
+
 		log.Debugf("(%s) not persisting", string(s))
 		return
 	}

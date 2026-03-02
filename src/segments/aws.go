@@ -80,7 +80,7 @@ func (a *Aws) getConfigFileInfo() {
 		}
 
 		if sectionActive && strings.HasPrefix(line, "region") {
-			splitted := strings.Split(line, "=")
+			splitted := strings.SplitN(line, "=", 3)
 			if len(splitted) >= 2 {
 				a.Region = strings.TrimSpace(splitted[1])
 				break

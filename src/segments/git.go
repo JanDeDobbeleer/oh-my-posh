@@ -785,7 +785,7 @@ func (g *Git) setStatus() {
 
 		if strings.HasPrefix(line, BRANCHSTATUS) && len(line) > len(BRANCHSTATUS) {
 			status := line[len(BRANCHSTATUS):]
-			splitted := strings.Split(status, " ")
+			splitted := strings.SplitN(status, " ", 3)
 			if len(splitted) >= 2 {
 				g.Ahead, _ = strconv.Atoi(splitted[0])
 				behind, _ := strconv.Atoi(splitted[1])

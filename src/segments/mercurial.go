@@ -107,7 +107,7 @@ func (hg *Mercurial) setMercurialStatus() {
 		return
 	}
 
-	idSplit := strings.Split(idString, "|")
+	idSplit := strings.SplitN(idString, "|", 6)
 	if len(idSplit) != 5 {
 		return
 	}

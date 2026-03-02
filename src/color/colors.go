@@ -49,7 +49,7 @@ func (c *Set) String() string {
 }
 
 func (c *Set) ParseString(colors string) {
-	parts := strings.Split(colors, "|")
+	parts := strings.SplitN(colors, "|", 3)
 	if len(parts) != 2 {
 		return
 	}

@@ -79,14 +79,14 @@ func (jj *Jujutsu) ClosestBookmarks() string {
 		return ""
 	}
 
-	lines := strings.Split(statusString, "\n")
+	line, _, _ := strings.Cut(statusString, "\n")
 
-	if !jj.options.Bool(FetchAhead, false) || len(lines[0]) == 0 {
-		return lines[0]
+	if !jj.options.Bool(FetchAhead, false) || len(line) == 0 {
+		return line
 	}
 
 	aheadIcon := jj.options.String(AheadIcon, "\u21e1")
-	marks := strings.Split(lines[0], " ")
+	marks := strings.Split(line, " ")
 	// String to return for status
 	var endString strings.Builder
 
@@ -97,7 +97,7 @@ func (jj *Jujutsu) ClosestBookmarks() string {
 
 	aheadString, err := jj.getJujutsuCommandOutput("log", "--no-graph", "-T", "'.'", "-r", rangeString)
 	if err != nil {
-		return lines[0]
+		return line
 	}
 
 	aheadCounter := len(aheadString)

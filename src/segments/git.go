@@ -312,8 +312,7 @@ func (g *Git) StashCount() int {
 		return 0
 	}
 
-	lines := strings.Split(stashContent, "\n")
-	g.stashCount = len(lines)
+	g.stashCount = strings.Count(stashContent, "\n") + 1 // +1: fileContent() trims
 	return g.stashCount
 }
 

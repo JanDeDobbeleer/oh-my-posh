@@ -83,7 +83,8 @@ function _omp_start_streaming() {
 
   # start process substitution — no PID tracking needed
   # closing fd sends SIGPIPE which terminates oh-my-posh
-  exec {_omp_stream_fd}< <(exec "${stream_cmd[@]}") 2>/dev/null
+  # redirect stream process stdin to prevent it from interfering with command output
+  exec {_omp_stream_fd}< <(exec "${stream_cmd[@]}" </dev/null 2>/dev/null)
 
   if [[ $_omp_stream_fd -lt 0 ]]; then
     return 1
@@ -146,7 +147,7 @@ function _omp_precmd() {
   _omp_no_status=true
   _omp_tooltip_command=''
 
-  if [ $_omp_start_time ]; then
+  if [[ -n $_omp_start_time ]]; then
     local omp_now=$($_omp_executable get millis)
     _omp_execution_time=$(($omp_now - $_omp_start_time))
     _omp_no_status=false

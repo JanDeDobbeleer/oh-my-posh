@@ -2,6 +2,7 @@ package segments
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
@@ -48,10 +49,9 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 	var packages []WinGetPackage
 
 	lines := strings.Split(output, "\n")
-	var headerLine string
 	separatorIndex := -1
 
-	// First pass: find header line and separator
+	// Find the separator line
 	for i, line := range lines {
 		if line == "" {
 			continue
@@ -61,11 +61,6 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 			separatorIndex = i
 			break
 		}
-
-		// Store the header line to determine column positions
-		if strings.Contains(line, "Id") && strings.Contains(line, "Version") {
-			headerLine = line
-		}
 	}
 
 	// If no separator found, return empty
@@ -73,15 +68,18 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 		return packages
 	}
 
-	// Determine column positions from header (calculated once)
-	nameIndex := strings.Index(headerLine, "Name")
-	idIndex := strings.Index(headerLine, "Id") - nameIndex
-	versionIndex := strings.Index(headerLine, "Version") - nameIndex
-	availableIndex := strings.Index(headerLine, "Available") - nameIndex
-	sourceIndex := strings.Index(headerLine, "Source") - nameIndex
+	// The header line is right before the separator
+	if separatorIndex == 0 {
+		return packages
+	}
 
-	// If we can't find column positions, return empty
-	if idIndex < 0 || versionIndex < 0 || availableIndex < 0 {
+	headerLine := lines[separatorIndex-1]
+
+	// Find column positions by detecting transitions from non-letter to letter
+	columnIndices := findColumnIndices(headerLine)
+
+	// We need at least 4 columns: Name, Id, Version, Available
+	if len(columnIndices) < 4 {
 		return packages
 	}
 
@@ -98,30 +96,16 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 			continue
 		}
 
-		// Skip lines that are too short
-		if len(line) < availableIndex {
+		// Skip lines that are too short to contain all fields
+		if len(line) < columnIndices[3] {
 			continue
 		}
 
 		// Extract fields using column positions
-		name := strings.TrimSpace(line[:idIndex])
-
-		var id, current, available string
-		if len(line) >= versionIndex {
-			id = strings.TrimSpace(line[idIndex:versionIndex])
-		}
-		if len(line) >= availableIndex {
-			current = strings.TrimSpace(line[versionIndex:availableIndex])
-		}
-
-		if sourceIndex > 0 && len(line) >= sourceIndex {
-			available = strings.TrimSpace(line[availableIndex:sourceIndex])
-		}
-
-		if available == "" && len(line) > availableIndex {
-			// No source column or line is shorter
-			available = strings.TrimSpace(line[availableIndex:])
-		}
+		name := extractField(line, columnIndices[0], columnIndices[1])
+		id := extractField(line, columnIndices[1], columnIndices[2])
+		current := extractField(line, columnIndices[2], columnIndices[3])
+		available := extractField(line, columnIndices[3], columnIndices[4])
 
 		// Skip if essential fields are empty
 		if name == "" || id == "" {
@@ -139,4 +123,43 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 	}
 
 	return packages
+}
+
+func findColumnIndices(headerLine string) []int {
+	var allIndices []int
+	prevWasLetter := false
+
+	for i, char := range headerLine {
+		isLetter := unicode.IsLetter(char)
+
+		if isLetter && !prevWasLetter {
+			// Found transition from non-letter to letter - this is a column start
+			allIndices = append(allIndices, i)
+		}
+
+		prevWasLetter = isLetter
+	}
+
+	// Get the last 5 column positions (Name, Id, Version, Available, Source)
+	// This handles cases where there's garbage before the actual header
+	lastFive := allIndices[len(allIndices)-5:]
+
+	// Make all positions relative to the first column position
+	firstColPos := lastFive[0]
+	relativeIndices := make([]int, len(lastFive))
+	for i, pos := range lastFive {
+		relativeIndices[i] = pos - firstColPos
+	}
+
+	return relativeIndices
+}
+
+func extractField(line string, startIndex, endIndex int) string {
+	if startIndex >= len(line) {
+		return ""
+	}
+	if endIndex > len(line) {
+		endIndex = len(line)
+	}
+	return strings.TrimSpace(line[startIndex:endIndex])
 }

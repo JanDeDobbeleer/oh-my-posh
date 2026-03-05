@@ -15,6 +15,7 @@ func TestTaskwarrior(t *testing.T) {
 	cases := []struct {
 		Case               string
 		HasCommand         bool
+		Command            string
 		ConfiguredCommands map[string]string
 		CommandOutputs     map[string]string
 		CommandErrors      map[string]error
@@ -103,12 +104,33 @@ func TestTaskwarrior(t *testing.T) {
 				"Due": "",
 			},
 		},
+		{
+			Case:    "custom executable is used when TaskwarriorCommand is set",
+			Command: "task2",
+			ConfiguredCommands: map[string]string{
+				"due": "+PENDING due.before:tomorrow count",
+			},
+			CommandOutputs: map[string]string{
+				"+PENDING due.before:tomorrow count": "7",
+			},
+			HasCommand:      true,
+			ExpectedEnabled: true,
+			ExpectedCommands: map[string]string{
+				"Due": "7",
+			},
+		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			env := new(mock.Environment)
-			env.On("HasCommand", "task").Return(tc.HasCommand)
+
+			cmd := tc.Command
+			if cmd == "" {
+				cmd = "task"
+			}
+
+			env.On("HasCommand", cmd).Return(tc.HasCommand)
 
 			configuredCommands := tc.ConfiguredCommands
 			if configuredCommands == nil && tc.HasCommand {
@@ -131,12 +153,15 @@ func TestTaskwarrior(t *testing.T) {
 				if tc.CommandErrors != nil {
 					err = tc.CommandErrors[args]
 				}
-				env.On("RunCommand", "task", splitArgs).Return(output, err)
+				env.On("RunCommand", cmd, splitArgs).Return(output, err)
 			}
 
 			props := options.Map{}
 			if tc.ConfiguredCommands != nil {
 				props[TaskwarriorCommands] = tc.ConfiguredCommands
+			}
+			if tc.Command != "" {
+				props[TaskwarriorCommand] = tc.Command
 			}
 
 			tw := &Taskwarrior{}

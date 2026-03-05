@@ -45,6 +45,8 @@ const (
 	VALID     = "valid"
 	ERROR     = "error"
 	PREVIEW   = "preview"
+	TMUXLEFT  = "tmux-left"
+	TMUXRIGHT = "tmux-right"
 )
 
 func (e *Engine) write(txt string) {
@@ -562,6 +564,12 @@ func New(flags *runtime.Flags) *Engine {
 	// when we print using https://github.com/akinomyoga/ble.sh, this needs to be unescaped for certain prompts
 	sh := env.Shell()
 	if sh == shell.BASH && !flags.Escape {
+		sh = shell.GENERIC
+	}
+
+	// tmux reads status bar output directly; it needs raw ANSI with no
+	// shell-specific wrapping (no \[...\] for bash, no %{...%} for zsh).
+	if flags.Type == TMUXLEFT || flags.Type == TMUXRIGHT {
 		sh = shell.GENERIC
 	}
 

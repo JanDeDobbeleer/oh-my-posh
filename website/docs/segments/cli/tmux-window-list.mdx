@@ -1,0 +1,70 @@
+---
+id: tmux-window-list
+title: Tmux Window List
+sidebar_label: Tmux Window List
+---
+
+## What
+
+Render all [tmux][tmux] windows as a powerline-connected list, showing the index and name of
+each window with distinct active/inactive colors.
+
+Unlike tmux's built-in `window-status-format`, this segment calls `tmux list-windows` in a
+**single invocation**, so it knows the colors of every neighboring window and can draw
+correct powerline separator arrows between them.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "tmux_window_list",
+    style: "plain",
+    foreground: "#ebdbb2",
+    background: "#32302f",
+    options: {
+      active_foreground: "#282828",
+      active_background: "#83a598",
+      inactive_foreground: "#928374",
+      inactive_background: "#3c3836",
+      powerline_symbol: "\ue0b0",
+    },
+  }}
+/>
+
+## Options
+
+| Name                  | Type     | Default   | Description                                          |
+| --------------------- | -------- | --------- | ---------------------------------------------------- |
+| `active_foreground`   | `string` | `#282828` | [color][colors] - foreground of the active window    |
+| `active_background`   | `string` | `#83a598` | [color][colors] - background of the active window    |
+| `inactive_foreground` | `string` | `#928374` | [color][colors] - foreground of inactive windows     |
+| `inactive_background` | `string` | `#3c3836` | [color][colors] - background of inactive windows     |
+| `powerline_symbol`    | `string` | `\ue0b0`  | the powerline separator symbol between windows       |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .RenderedList }}
+```
+
+:::
+
+### Properties
+
+| Name            | Type     | Description                                               |
+| --------------- | -------- | --------------------------------------------------------- |
+| `.RenderedList` | `string` | the complete pre-rendered ANSI string for all windows     |
+
+:::note
+The segment builds the complete powerline-connected window list internally and exposes it as
+a single `.RenderedList` string. Template customization of individual windows is not supported
+— use the `active_*` and `inactive_*` color options instead.
+:::
+
+[tmux]: https://github.com/tmux/tmux
+[colors]: /docs/configuration/colors
+[templates]: /docs/configuration/templates

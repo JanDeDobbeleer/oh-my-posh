@@ -1,0 +1,173 @@
+---
+id: tmux
+title: Tmux
+sidebar_label: Tmux
+---
+
+## What
+
+Oh My Posh can render your entire [tmux][tmux] status bar — session name, window list, git
+status, path, and clock — using the same block/segment/style pipeline that powers your
+terminal prompt.
+
+The `tmux:` config key holds two independent sections: `status_left` and `status_right`.
+Each section accepts the same `blocks` array as the top-level prompt config, so any
+segment that works in your prompt also works in the tmux status bar.
+
+## How it works
+
+tmux supports `#(command)` in its format strings, which runs a shell command and pastes its
+raw output into the status bar. Oh My Posh's `--shell tmux` flag produces unwrapped ANSI
+escape sequences (no shell-specific prompt wrappers), so the output appears correctly inside
+`status-left` and `status-right`.
+
+The window list is rendered by the [`tmux_window_list`][tmux-window-list] segment, which calls
+`tmux list-windows` in a **single invocation**. This is important: tmux's built-in
+`window-status-format` calls the template once per window in isolation, making it impossible
+to draw correct powerline arrows between windows. By enumerating all windows at once, Oh My
+Posh can compute the correct separator colors for every transition.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Config
+  data={{
+    tmux: {
+      status_left: {
+        blocks: [
+          {
+            type: "prompt",
+            alignment: "left",
+            segments: [
+              {
+                type: "tmux_session",
+                style: "diamond",
+                leading_diamond: "\ue0b6",
+                trailing_diamond: "\ue0b0",
+                foreground: "#282828",
+                background: "#d65d0e",
+                template: "  {{ .SessionName }} ",
+              },
+              {
+                type: "tmux_window_list",
+                style: "plain",
+                foreground: "#ebdbb2",
+                background: "#32302f",
+                options: {
+                  active_foreground: "#282828",
+                  active_background: "#83a598",
+                  inactive_foreground: "#928374",
+                  inactive_background: "#3c3836",
+                  powerline_symbol: "\ue0b0",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      status_right: {
+        blocks: [
+          {
+            type: "prompt",
+            alignment: "left",
+            segments: [
+              {
+                type: "git",
+                style: "powerline",
+                powerline_symbol: "\ue0b0",
+                foreground: "#282828",
+                background: "#83a598",
+                template: " {{ .HEAD }} ",
+              },
+              {
+                type: "path",
+                style: "powerline",
+                powerline_symbol: "\ue0b0",
+                foreground: "#ebdbb2",
+                background: "#504945",
+                template: " {{ .Path }} ",
+              },
+              {
+                type: "time",
+                style: "diamond",
+                leading_diamond: "\ue0b6",
+                trailing_diamond: "\ue0b4",
+                foreground: "#282828",
+                background: "#d3869b",
+                template: "  {{ .CurrentDate | date \"15:04\" }} ",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  }}
+/>
+
+## Settings
+
+| Name           | Type                              | Description                        |
+| -------------- | --------------------------------- | ---------------------------------- |
+| `status_left`  | [`TmuxStatusSection`](#section)   | blocks rendered for `status-left`  |
+| `status_right` | [`TmuxStatusSection`](#section)   | blocks rendered for `status-right` |
+
+### TmuxStatusSection {#section}
+
+| Name     | Type              | Description                                      |
+| -------- | ----------------- | ------------------------------------------------ |
+| `blocks` | `[]`[`Block`][block] | the blocks to render, identical to the top-level `blocks` array |
+
+## tmux.conf integration
+
+Add the following to `~/.tmux.conf` (adjust the config path to match yours):
+
+```bash
+set -g status-interval 5
+set -g status-left-length 400
+set -g status-right-length 200
+
+set -g status-left  "#(oh-my-posh print tmux-left  --config ~/.config/ohmyposh/config.yaml --shell tmux)"
+set -g status-right "#(oh-my-posh print tmux-right --config ~/.config/ohmyposh/config.yaml --shell tmux --pwd \"#{pane_current_path}\")"
+
+# Clear tmux's own window list formatting so OMP controls it entirely
+set -g window-status-format ""
+set -g window-status-current-format ""
+
+# Refresh the status bar immediately when windows are opened, closed, or renamed
+set-hook -g window-linked          "refresh-client -S"
+set-hook -g window-unlinked        "refresh-client -S"
+set-hook -g window-renamed         "refresh-client -S"
+set-hook -g client-session-changed "refresh-client -S"
+```
+
+Then reload your config:
+
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+:::tip
+`#{pane_current_path}` is a tmux format variable that is expanded *before* the shell command
+runs. Passing it via `--pwd` means segments like [git][git] and [path][path] in `status_right`
+always see the active pane's current directory.
+:::
+
+## Available tmux segments
+
+| Segment                                | Description                                      |
+| -------------------------------------- | ------------------------------------------------ |
+| [`tmux_session`][tmux-session]         | Current tmux session name                        |
+| [`tmux_window_list`][tmux-window-list] | All windows as a powerline-connected list        |
+
+Any other Oh My Posh segment (git, path, time, etc.) also works inside `status_left` and
+`status_right` blocks.
+
+[tmux]: https://github.com/tmux/tmux
+[block]: /docs/configuration/block
+[git]: /docs/segments/scm/git
+[path]: /docs/segments/system/path
+[tmux-session]: /docs/segments/cli/tmux-session
+[tmux-window-list]: /docs/segments/cli/tmux-window-list

@@ -458,6 +458,8 @@
             "terraform",
             "text",
             "time",
+            "tmux_session",
+            "tmux_window_list",
             "todoist",
             "ui5tooling",
             "umbraco",
@@ -4551,6 +4553,69 @@
           "if": {
             "properties": {
               "type": {
+                "const": "tmux_session"
+              }
+            }
+          },
+          "then": {
+            "title": "Tmux Session Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/tmux-session"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tmux_window_list"
+              }
+            }
+          },
+          "then": {
+            "title": "Tmux Window List Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/tmux-window-list",
+            "properties": {
+              "options": {
+                "properties": {
+                  "active_foreground": {
+                    "type": "string",
+                    "title": "Active Foreground",
+                    "description": "Foreground color of the active window",
+                    "default": "#282828"
+                  },
+                  "active_background": {
+                    "type": "string",
+                    "title": "Active Background",
+                    "description": "Background color of the active window",
+                    "default": "#83a598"
+                  },
+                  "inactive_foreground": {
+                    "type": "string",
+                    "title": "Inactive Foreground",
+                    "description": "Foreground color of inactive windows",
+                    "default": "#928374"
+                  },
+                  "inactive_background": {
+                    "type": "string",
+                    "title": "Inactive Background",
+                    "description": "Background color of inactive windows",
+                    "default": "#3c3836"
+                  },
+                  "powerline_symbol": {
+                    "type": "string",
+                    "title": "Powerline Symbol",
+                    "description": "The powerline separator symbol between windows",
+                    "default": "\ue0b0"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "todoist"
               }
             }
@@ -5075,6 +5140,35 @@
       "title": "Streaming Mode",
       "description": "https://ohmyposh.dev/docs/experimental/streaming",
       "default": 100
+    },
+    "tmux": {
+      "type": "object",
+      "title": "Tmux Config",
+      "description": "https://ohmyposh.dev/docs/configuration/tmux",
+      "properties": {
+        "status_left": {
+          "type": "object",
+          "title": "Tmux Status Left",
+          "properties": {
+            "blocks": {
+              "type": "array",
+              "title": "Block array",
+              "items": { "$ref": "#/definitions/block" }
+            }
+          }
+        },
+        "status_right": {
+          "type": "object",
+          "title": "Tmux Status Right",
+          "properties": {
+            "blocks": {
+              "type": "array",
+              "title": "Block array",
+              "items": { "$ref": "#/definitions/block" }
+            }
+          }
+        }
+      }
     },
     "blocks": {
       "type": "array",

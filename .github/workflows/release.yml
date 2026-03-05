@@ -67,7 +67,7 @@ jobs:
       - name: Post Build 🤐
         run: |
           ./post.ps1
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: build-artifacts
           path: |
@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: Checkout code 👋
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3
         with:
           name: build-artifacts
           path: dist
@@ -104,7 +104,7 @@ jobs:
         run: |
           $version = '${{ needs.changelog.outputs.version }}'.TrimStart("v")
           ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign -SDKVersion "10.0.26100.0"
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: msi-artifact-${{ matrix.arch }}
           path: |
@@ -117,7 +117,7 @@ jobs:
       - artifacts
       - msi
     steps:
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3
         with:
           merge-multiple: true
       - name: Upload version file

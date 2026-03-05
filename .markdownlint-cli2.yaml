@@ -8,4 +8,5 @@ gitignore: true
 ignores:
   - node_modules/
   - .github/agents/segment-docs.md
+  - .github/agents/architecture.md
   - .github/PULL_REQUEST_TEMPLATE.md

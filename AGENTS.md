@@ -17,6 +17,16 @@ When editing Go files (`*.go`):
   - Run `gofmt` (or `go fmt`) and organize imports.
   - Run `golangci-lint run` at the repository root and address findings.
 
+## Architecture and Design
+
+When working on code that impacts performance, maintainability, or system
+design:
+
+- Consult the **Architecture and Design** agent for cross-language guidance on
+  code organization, complexity management, and performance considerations.
+- Key principles: extract complex logic into helpers, use guard clauses and
+  early returns, throttle frequent operations in hot paths.
+
 ## Markdown
 
 When editing Markdown (`*.md`, `*.mdx`):

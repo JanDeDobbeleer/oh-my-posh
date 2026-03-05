@@ -40,4 +40,4 @@ jobs:
         go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
         modernize "./..."
     - name: Unit Tests
-      run: go test -v ./...
+      run: go test "./..."

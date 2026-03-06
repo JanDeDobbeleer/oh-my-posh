@@ -31,6 +31,7 @@ var (
 	noStatus     bool
 	column       int
 	escape       bool
+	interrupted  bool
 )
 
 // printCmd represents the print command
@@ -88,6 +89,7 @@ func createPrintCmd() *cobra.Command {
 				IsPrimary:     args[0] == prompt.PRIMARY,
 				Escape:        escape,
 				Force:         force,
+				Interrupted:   interrupted,
 			}
 
 			if err := applyDataFile(flags, cmd.Flags().Changed); err != nil {
@@ -154,6 +156,7 @@ func createPrintCmd() *cobra.Command {
 	printCmd.Flags().BoolVar(&escape, "escape", true, "escape the ANSI sequences for the shell")
 	printCmd.Flags().BoolVarP(&force, "force", "f", false, "force rendering the segments")
 	printCmd.Flags().StringVar(&dataPath, "data", "", "path to a template data file (json/yaml/toml) to render with")
+	printCmd.Flags().BoolVar(&interrupted, "interrupted", false, "the command was interrupted")
 
 	// Hide flags that are for internal use only.
 	_ = printCmd.Flags().MarkHidden("save-cache")

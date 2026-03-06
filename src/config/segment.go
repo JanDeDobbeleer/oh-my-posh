@@ -81,12 +81,13 @@ type Segment struct {
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
 	// Killed is set by the engine when the segment's timeout expired and its
 	// child processes were killed; it blocks fallback_template rendering.
-	Killed             bool `json:"-" toml:"-" yaml:"-"`
-	Interactive        bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	foregroundResolved bool
-	backgroundResolved bool
-	needsEvaluated     bool
-	evaluated          bool
+	Killed              bool `json:"-" toml:"-" yaml:"-"`
+	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt bool `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
+	foregroundResolved  bool
+	backgroundResolved  bool
+	needsEvaluated      bool
+	evaluated           bool
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling

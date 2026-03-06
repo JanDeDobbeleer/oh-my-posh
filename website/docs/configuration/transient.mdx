@@ -25,6 +25,10 @@ By enabling Transient Prompt, you can replace the prompt with some other content
 
 ![After Transient](/img/transient-after.gif)
 
+:::tip
+In Zsh, the transient prompt correctly handles multi-line commands, ensuring the prompt stays full while you are typing and only becomes transient once the entire command is submitted.
+:::
+
 ## Configuration
 
 You need to extend or create a custom theme with your transient prompt. For example:
@@ -50,6 +54,15 @@ You need to extend or create a custom theme with your transient prompt. For exam
 | `template`             | `string`  | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{ .Shell }}> `     |
 | `filler`               | `string`  | when you want to create a line with a repeated set of characters spanning the width of the terminal. Will be added _after_ the `template` text |
 | `newline`              | `boolean` | add a newline before the prompt                                                                                                                |
+
+### Secondary Prompt
+
+The secondary prompt is used when you have a multi-line command.
+
+| Name                   | Type      | Description                                                                                                                                    |
+| ---------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `template`             | `string`  | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `> `                 |
+| `multiline_keepprompt` | `boolean` | when true, treats multi-line commands as a single block to support transient prompts correctly (Zsh only). Defaults to `false`                 |
 
 ## Enable the feature
 

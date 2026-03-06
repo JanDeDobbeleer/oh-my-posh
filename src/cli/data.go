@@ -54,5 +54,9 @@ func applyDataFile(flags *runtime.Flags, changed func(name string) bool) error {
 		flags.PipeStatus = *envFlags.PipeStatus
 	}
 
+	if envFlags.Interrupted != nil && !changed("interrupted") {
+		flags.Interrupted = *envFlags.Interrupted
+	}
+
 	return nil
 }

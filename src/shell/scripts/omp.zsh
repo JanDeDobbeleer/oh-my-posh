@@ -566,7 +566,12 @@ function _omp_zle-line-init() {
   _omp_cleanup_stream
   _omp_serve_abort
 
-  if [[ -n $_omp_transient_prompt ]]; then
+  if ((ret)); then
+    # interrupted (e.g. Ctrl-C): a pre-rendered transient prompt was built
+    # before the interrupt and can't carry .Interrupted, so always re-render
+    # through the CLI with the flag set
+    eval "$(_omp_get_prompt transient --eval $terminal_width_option --interrupted)"
+  elif [[ -n $_omp_transient_prompt ]]; then
     # rendered ahead of time by the streaming process (one column narrower,
     # mirroring the empty-buffer workaround above), saves a CLI call
     PS1=$_omp_transient_prompt

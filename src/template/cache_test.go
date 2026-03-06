@@ -55,18 +55,19 @@ func TestLoadCacheEnvDataOverlay(t *testing.T) {
 
 func TestLoadCacheEnvDataIgnoresRoutedKeys(t *testing.T) {
 	flags := &runtime.Flags{
-		EnvData: json.RawMessage(`{"PWD":"/bogus/path","Code":99,"ExecutionTime":42.5,"PipeStatus":"1 0"}`),
+		EnvData: json.RawMessage(`{"PWD":"/bogus/path","Code":99,"ExecutionTime":42.5,"PipeStatus":"1 0","Interrupted":true}`),
 	}
 
 	env = newLoadCacheMockEnv(flags)
 
 	loadCache(nil, &maps.Config{})
 
-	// The routed keys must be ignored by the overlay: PWD/Code keep the
-	// value already resolved by the CLI layer (here, the live mock values),
+	// The routed keys must be ignored by the overlay: PWD/Code/Interrupted keep
+	// the value already resolved by the CLI layer (here, the live mock values),
 	// never the raw file value.
 	assert.Equal(t, "/tmp/omp-test/project", Cache.PWD)
 	assert.Equal(t, 0, Cache.Code)
+	assert.False(t, Cache.Interrupted)
 }
 
 func TestLoadCacheEnvDataAliasAppliesToOverlaidValue(t *testing.T) {

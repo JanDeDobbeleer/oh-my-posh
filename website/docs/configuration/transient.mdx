@@ -52,6 +52,28 @@ You need to extend or create a custom theme with your transient prompt. For exam
 | `filler`               | `string`  | when you want to create a line with a repeated set of characters spanning the width of the terminal. Will be added _after_ the `template` text |
 | `newline`              | `boolean` | add a newline before the prompt. The newline will not be printed under the same conditions as for primary prompt [newlines][block-newline].    |
 
+## Template ([info][templates])
+
+On top of the [global template properties][templates], the transient prompt exposes:
+
+| Name           | Type      | Description                                                       |
+| -------------- | --------- | ---------------------------------------------------------------- |
+| `.Interrupted` | `boolean` | whether the previous command was interrupted (e.g. via `Ctrl-C`) |
+
+:::caution
+`.Interrupted` is only set in `zsh`. Every other shell reports `false`, even after a real `Ctrl-C`.
+:::
+
+For example, to show a red `^C` in front of the transient prompt when a command was interrupted:
+
+```json
+{
+  "transient_prompt": {
+    "template": "{{ if .Interrupted }}<red>^C </>{{ end }}{{ .Shell }}> "
+  }
+}
+```
+
 ## Enable the feature
 
 Oh My posh handles enabling the feature automatically for all shells except `cmd` when the config contains a

@@ -134,6 +134,7 @@ func TestEnvFlagsPresence(t *testing.T) {
 	assert.Nil(t, envFlags.PWD)
 	assert.Nil(t, envFlags.ExecutionTime)
 	assert.Nil(t, envFlags.PipeStatus)
+	assert.Nil(t, envFlags.Interrupted)
 }
 
 func TestEnvFlagsAbsent(t *testing.T) {
@@ -146,6 +147,7 @@ func TestEnvFlagsAbsent(t *testing.T) {
 	assert.Nil(t, envFlags.Code)
 	assert.Nil(t, envFlags.ExecutionTime)
 	assert.Nil(t, envFlags.PipeStatus)
+	assert.Nil(t, envFlags.Interrupted)
 }
 
 func TestLoadDataUnsupportedExtension(t *testing.T) {

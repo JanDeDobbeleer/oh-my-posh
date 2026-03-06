@@ -52,7 +52,7 @@ func changedSet(names ...string) func(string) bool {
 func TestApplyDataFile_EmptyPathIsNoop(t *testing.T) {
 	withDataPath(t, "")
 
-	flags := &runtime.Flags{PWD: "/live/pwd", ErrorCode: 1, ExecutionTime: 2.5, PipeStatus: "0"}
+	flags := &runtime.Flags{PWD: "/live/pwd", ErrorCode: 1, ExecutionTime: 2.5, PipeStatus: "0", Interrupted: true}
 
 	err := applyDataFile(flags, noneChanged)
 	require.NoError(t, err)
@@ -61,6 +61,7 @@ func TestApplyDataFile_EmptyPathIsNoop(t *testing.T) {
 	assert.Equal(t, 1, flags.ErrorCode)
 	assert.InDelta(t, 2.5, flags.ExecutionTime, 0)
 	assert.Equal(t, "0", flags.PipeStatus)
+	assert.True(t, flags.Interrupted)
 	assert.Nil(t, flags.EnvData)
 	assert.Nil(t, flags.SegmentData)
 }
@@ -85,9 +86,9 @@ func TestApplyDataFile_UnsupportedExtensionErrors(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestApplyDataFile_RoutesAllFourKeysWhenNoFlagsChanged(t *testing.T) {
+func TestApplyDataFile_RoutesEveryKeyWhenNoFlagsChanged(t *testing.T) {
 	path := writeDataFile(t, `{
-		"env": {"PWD": "/data/pwd", "Code": 3, "ExecutionTime": 12.5, "PipeStatus": "0 1"},
+		"env": {"PWD": "/data/pwd", "Code": 3, "ExecutionTime": 12.5, "PipeStatus": "0 1", "Interrupted": true},
 		"segments": {"az": {"Name": "my-sub"}}
 	}`)
 	withDataPath(t, path)
@@ -101,6 +102,7 @@ func TestApplyDataFile_RoutesAllFourKeysWhenNoFlagsChanged(t *testing.T) {
 	assert.Equal(t, 3, flags.ErrorCode)
 	assert.InDelta(t, 12.5, flags.ExecutionTime, 0)
 	assert.Equal(t, "0 1", flags.PipeStatus)
+	assert.True(t, flags.Interrupted)
 
 	require.NotNil(t, flags.SegmentData)
 	assert.JSONEq(t, `{"Name": "my-sub"}`, string(flags.SegmentData["az"]))
@@ -114,33 +116,34 @@ func TestApplyDataFile_RoutesAllFourKeysWhenNoFlagsChanged(t *testing.T) {
 
 func TestApplyDataFile_ExplicitCLIFlagWinsOverDataFile(t *testing.T) {
 	path := writeDataFile(t, `{
-		"env": {"PWD": "/data/pwd", "Code": 3, "ExecutionTime": 12.5, "PipeStatus": "0 1"}
+		"env": {"PWD": "/data/pwd", "Code": 3, "ExecutionTime": 12.5, "PipeStatus": "0 1", "Interrupted": true}
 	}`)
 	withDataPath(t, path)
 
 	flags := &runtime.Flags{PWD: "/live/pwd", ErrorCode: 1, ExecutionTime: 2.5, PipeStatus: "0"}
 
-	err := applyDataFile(flags, changedSet("pwd", "status", "execution-time", "pipestatus"))
+	err := applyDataFile(flags, changedSet("pwd", "status", "execution-time", "pipestatus", "interrupted"))
 	require.NoError(t, err)
 
 	// Every routed key was explicitly set on the CLI, so the live/flag
-	// value must survive untouched despite the data file providing all four.
+	// value must survive untouched despite the data file providing them all.
 	assert.Equal(t, "/live/pwd", flags.PWD)
 	assert.Equal(t, 1, flags.ErrorCode)
 	assert.InDelta(t, 2.5, flags.ExecutionTime, 0)
 	assert.Equal(t, "0", flags.PipeStatus)
+	assert.False(t, flags.Interrupted)
 }
 
 func TestApplyDataFile_PerKeyPrecedence(t *testing.T) {
 	path := writeDataFile(t, `{
-		"env": {"PWD": "/data/pwd", "Code": 3, "ExecutionTime": 12.5, "PipeStatus": "0 1"}
+		"env": {"PWD": "/data/pwd", "Code": 3, "ExecutionTime": 12.5, "PipeStatus": "0 1", "Interrupted": true}
 	}`)
 	withDataPath(t, path)
 
 	flags := &runtime.Flags{PWD: "/live/pwd", ErrorCode: 1, ExecutionTime: 2.5, PipeStatus: "0"}
 
-	// Only "status" is explicitly set on the CLI; the other three keys
-	// should still be routed from the data file.
+	// Only "status" is explicitly set on the CLI; the remaining keys should
+	// still be routed from the data file.
 	err := applyDataFile(flags, changedSet("status"))
 	require.NoError(t, err)
 
@@ -148,13 +151,28 @@ func TestApplyDataFile_PerKeyPrecedence(t *testing.T) {
 	assert.Equal(t, 1, flags.ErrorCode, "status explicitly set, so it must keep the live/flag value")
 	assert.InDelta(t, 12.5, flags.ExecutionTime, 0, "execution-time not explicitly set, so the data file value should apply")
 	assert.Equal(t, "0 1", flags.PipeStatus, "pipestatus not explicitly set, so the data file value should apply")
+	assert.True(t, flags.Interrupted, "interrupted not explicitly set, so the data file value should apply")
+}
+
+func TestApplyDataFile_InterruptedFalseIsRoutedNotTreatedAsAbsent(t *testing.T) {
+	path := writeDataFile(t, `{"env": {"Interrupted": false}}`)
+	withDataPath(t, path)
+
+	// EnvData holds a *bool so an explicit false is distinguishable from a
+	// missing key: it must overwrite the live true rather than be skipped.
+	flags := &runtime.Flags{Interrupted: true}
+
+	err := applyDataFile(flags, noneChanged)
+	require.NoError(t, err)
+
+	assert.False(t, flags.Interrupted)
 }
 
 func TestApplyDataFile_MissingEnvKeysLeaveFlagsUntouched(t *testing.T) {
 	path := writeDataFile(t, `{"segments": {"az": {"Name": "my-sub"}}}`)
 	withDataPath(t, path)
 
-	flags := &runtime.Flags{PWD: "/live/pwd", ErrorCode: 1, ExecutionTime: 2.5, PipeStatus: "0"}
+	flags := &runtime.Flags{PWD: "/live/pwd", ErrorCode: 1, ExecutionTime: 2.5, PipeStatus: "0", Interrupted: true}
 
 	err := applyDataFile(flags, noneChanged)
 	require.NoError(t, err)
@@ -163,4 +181,5 @@ func TestApplyDataFile_MissingEnvKeysLeaveFlagsUntouched(t *testing.T) {
 	assert.Equal(t, 1, flags.ErrorCode)
 	assert.InDelta(t, 2.5, flags.ExecutionTime, 0)
 	assert.Equal(t, "0", flags.PipeStatus)
+	assert.True(t, flags.Interrupted)
 }

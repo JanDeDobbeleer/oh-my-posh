@@ -22,14 +22,20 @@ var (
 	// time loadCache runs, env.Pwd()/StatusCodes()/ExecutionTime() already
 	// reflect the flag-precedence-resolved value (CLI flag > data file >
 	// live). They must never be applied a second time here, or a raw file
-	// value could clobber that resolved value.
-	routedEnvDataKeys = []string{"PWD", "Code", "ExecutionTime", "PipeStatus"}
+	// value could clobber that resolved value. A key belongs here if and only
+	// if applyDataFile routes it - listing one it does not route would instead
+	// make that key unsettable from a data file.
+	routedEnvDataKeys = []string{"PWD", "Code", "ExecutionTime", "PipeStatus", "Interrupted"}
 )
 
 func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	if !env.Flags().IsPrimary {
 		// Load the template cache for a non-primary prompt before rendering any templates.
 		if OK := restoreCache(); OK {
+			// Interrupted is a per-invocation flag, never a cached value: the
+			// restored blob was saved by the primary prompt (never interrupted),
+			// so it must be refreshed from the current flags.
+			Cache.Interrupted = env.Flags().Interrupted
 			return
 		}
 	}
@@ -43,6 +49,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	tmpl.Shell = env.Shell()
 	tmpl.ShellVersion = env.Flags().ShellVersion
 	tmpl.Code, _ = env.StatusCodes()
+	tmpl.Interrupted = env.Flags().Interrupted
 	tmpl.WSL = env.IsWsl()
 	tmpl.Segments = maps.NewConcurrent[any]()
 	tmpl.PromptCount = env.Flags().PromptCount

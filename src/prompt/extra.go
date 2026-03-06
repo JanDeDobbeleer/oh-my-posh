@@ -79,6 +79,12 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 
 	str, length := terminal.String()
 
+	if promptType == Secondary && e.Env.Shell() == shell.ZSH && e.Env.Flags().Eval {
+		evalOutput := fmt.Sprintf("_omp_secondary_prompt=%s", shell.QuotePosixStr(str))
+		evalOutput += fmt.Sprintf("\nPOSH_MULTILINE_KEEPPROMPT=%t", prompt.MultilineKeepPrompt)
+		return evalOutput
+	}
+
 	if promptType != Transient {
 		return str
 	}

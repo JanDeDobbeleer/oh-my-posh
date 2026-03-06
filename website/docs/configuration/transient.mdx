@@ -25,6 +25,10 @@ By enabling Transient Prompt, you can replace the prompt with some other content
 
 ![After Transient](/img/transient-after.gif)
 
+:::tip
+In Zsh, enabling [`multiline_keepprompt`][secondary-prompt] on the secondary prompt keeps the full prompt in place while you type a multi-line command, so the transient prompt takes over once the whole command is submitted rather than on its first line.
+:::
+
 ## Configuration
 
 You need to extend or create a custom theme with your transient prompt. For example:
@@ -91,3 +95,4 @@ clink set prompt.transient always
 [color-templates]: /docs/configuration/colors#color-templates
 [cstp]: /docs/configuration/templates#cross-segment-template-properties
 [block-newline]: /docs/configuration/block#newline
+[secondary-prompt]: /docs/configuration/secondary-prompt

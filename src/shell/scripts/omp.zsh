@@ -37,8 +37,8 @@ _omp_serve_pid=${_omp_serve_pid:-0}
 _omp_serve_cycle=0
 _omp_serve_failures=0
 
-# set secondary prompt
-_omp_secondary_prompt=$($_omp_executable print secondary --shell=zsh)
+# set secondary prompt (also exports POSH_MULTILINE_KEEPPROMPT)
+eval "$($_omp_executable print secondary --shell=zsh --eval)"
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander
@@ -569,6 +569,36 @@ function _omp_restore_rprompt() {
   zle .reset-prompt
 }
 
+# Returns 0 when the current buffer is a complete command, 1 when more input
+# is expected (used to keep the primary prompt while a multi-line command is
+# still being typed).
+function _omp_is_buffer_complete() {
+  local buf=$PREBUFFER$BUFFER
+
+  # 1. Syntax check. The buffer travels over a pipe rather than a here-document,
+  # so no delimiter word can collide with whatever the user happens to type.
+  if ! print -r -- "$buf" | zsh -n 2>/dev/null; then
+    return 1
+  fi
+
+  # 2. An unterminated here-document parses cleanly, because the parser simply
+  # ends the body at EOF. Step 1 therefore cannot see one. Re-parse with `;;`
+  # appended: outside a case branch that is a syntax error, but an open
+  # here-document swallows it as body text. A clean parse means the body was
+  # never closed. The `<<` test only skips the extra parse when no here-document
+  # can possibly be open.
+  if [[ $buf == *'<<'* ]] && print -r -- "$buf"$'\n;;' | zsh -n 2>/dev/null; then
+    return 1
+  fi
+
+  # 3. An odd number of trailing backslashes escapes the newline that follows the
+  # buffer, which parses as a line continuation rather than an incomplete command.
+  local trailing=${buf##*[^\\]}
+  (( ${#trailing} % 2 )) && return 1
+
+  return 0
+}
+
 function _omp_zle-line-init() {
   [[ $CONTEXT == start ]] || return 0
 
@@ -586,8 +616,30 @@ function _omp_zle-line-init() {
 
   # Start regular line editor.
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
-  zle .recursive-edit
-  local -i ret=$?
+
+  local -i ret=0
+  if [[ $POSH_MULTILINE_KEEPPROMPT == "true" ]]; then
+    # Keep the full primary prompt while a multi-line command is still being
+    # typed: re-enter the editor until the buffer is a complete command.
+    while true; do
+      zle .recursive-edit
+      ret=$?
+
+      if ((ret)) || _omp_is_buffer_complete; then
+        break
+      fi
+
+      # Nothing may be prefixed to the continuation line. BUFFER is the command
+      # itself, so anything added here is executed. Even pure whitespace breaks a
+      # here-document, whose terminator only matches at the very start of a line.
+      BUFFER+=$'\n'
+      CURSOR=$#BUFFER
+    done
+  else
+    zle .recursive-edit
+    ret=$?
+  fi
+
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
   # We need this workaround because when the `filler` is set,

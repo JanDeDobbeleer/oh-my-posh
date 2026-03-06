@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
@@ -22,23 +23,23 @@ const (
 )
 
 func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
-	var segment *config.Segment
+	var prompt *config.Segment
 
 	switch promptType {
 	case Debug:
-		segment = e.Config.DebugPrompt
+		prompt = e.Config.DebugPrompt
 	case Transient:
-		segment = e.Config.TransientPrompt
+		prompt = e.Config.TransientPrompt
 	case Valid:
-		segment = e.Config.ValidLine
+		prompt = e.Config.ValidLine
 	case Error:
-		segment = e.Config.ErrorLine
+		prompt = e.Config.ErrorLine
 	case Secondary:
-		segment = e.Config.SecondaryPrompt
+		prompt = e.Config.SecondaryPrompt
 	}
 
-	if segment == nil {
-		segment = &config.Segment{}
+	if prompt == nil {
+		prompt = &config.Segment{}
 	}
 
 	getTemplate := func(template string) string {
@@ -57,12 +58,12 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 	}
 
-	promptText, err := template.Render(getTemplate(segment.Template), nil)
+	promptText, err := template.Render(getTemplate(prompt.Template), e)
 	if err != nil {
 		promptText = err.Error()
 	}
 
-	if promptType == Transient && segment.Newline {
+	if promptType == Transient && prompt.Newline {
 		promptText = fmt.Sprintf("%s%s", e.getNewline(), promptText)
 	}
 
@@ -72,17 +73,17 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		e.write(terminal.PromptStart())
 	}
 
-	foreground := color.Ansi(segment.ForegroundTemplates.FirstMatch(nil, string(segment.Foreground)))
-	background := color.Ansi(segment.BackgroundTemplates.FirstMatch(nil, string(segment.Background)))
+	foreground := color.Ansi(prompt.ForegroundTemplates.FirstMatch(nil, string(prompt.Foreground)))
+	background := color.Ansi(prompt.BackgroundTemplates.FirstMatch(nil, string(prompt.Background)))
 	terminal.SetColors(background, foreground)
 	terminal.Write(background, foreground, promptText)
 
 	str, length := terminal.String()
 
-	if promptType == Transient && len(segment.Filler) != 0 {
+	if promptType == Transient && len(prompt.Filler) != 0 {
 		consoleWidth, err := e.Env.TerminalWidth()
 		if err == nil || consoleWidth != 0 {
-			if padText, OK := e.shouldFill(segment.Filler, consoleWidth-length); OK {
+			if padText, OK := e.shouldFill(prompt.Filler, consoleWidth-length); OK {
 				str += padText
 			}
 		}
@@ -95,18 +96,20 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 
 		if promptType == Transient {
-			prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
+			evalOutput := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
 			// empty RPROMPT
-			prompt += "\nRPROMPT=''"
-			return prompt
+			evalOutput += "\nRPROMPT=''"
+			return evalOutput
 		}
 
 		if promptType == Secondary {
-			prompt := fmt.Sprintf("_omp_secondary_prompt=%s", shell.QuotePosixStr(str))
+			evalOutput := fmt.Sprintf("_omp_secondary_prompt=%s", shell.QuotePosixStr(str))
 			plain := regex.ReplaceAllString(terminal.AnsiRegex, str, "")
-			prompt += fmt.Sprintf("\n_omp_secondary_prompt_plain=%s", shell.QuotePosixStr(plain))
-			prompt += fmt.Sprintf("\nPOSH_MULTILINE_KEEPPROMPT=%t", segment.MultilineKeepPrompt)
-			return prompt
+			plain = strings.ReplaceAll(plain, "%{", "")
+			plain = strings.ReplaceAll(plain, "%}", "")
+			evalOutput += fmt.Sprintf("\n_omp_secondary_prompt_plain=%s", shell.QuotePosixStr(plain))
+			evalOutput += fmt.Sprintf("\nPOSH_MULTILINE_KEEPPROMPT=%t", prompt.MultilineKeepPrompt)
+			return evalOutput
 		}
 	case shell.PWSH:
 		if promptType == Transient {

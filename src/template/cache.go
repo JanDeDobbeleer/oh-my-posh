@@ -21,6 +21,8 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	if !env.Flags().IsPrimary {
 		// Load the template cache for a non-primary prompt before rendering any templates.
 		if OK := restoreCache(); OK {
+			Cache.Interrupted = env.Flags().Interrupted
+			Cache.Code, _ = env.StatusCodes()
 			return
 		}
 	}
@@ -36,6 +38,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	Cache.PromptCount = env.Flags().PromptCount
 	Cache.Var = make(map[string]any)
 	Cache.Jobs = env.Flags().JobCount
+	Cache.Interrupted = env.Flags().Interrupted
 	Cache.Version = build.Version
 
 	if vars != nil {

@@ -331,7 +331,7 @@ function _omp_zle-line-init() {
     BUFFER=$saved_buffer
     CURSOR=$saved_cursor
   else
-    eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
+    eval "$(_omp_get_prompt transient --eval $terminal_width_option --interrupted)"
     zle .reset-prompt
   fi
 

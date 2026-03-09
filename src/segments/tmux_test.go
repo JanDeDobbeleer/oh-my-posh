@@ -34,18 +34,18 @@ func TestTmuxEnabled(t *testing.T) {
 			SessionName: "main",
 		},
 		{
-			Case:       "tmux command fails, fallback to TMUX env",
-			CommandErr: errors.New("not in tmux"),
-			TmuxEnv:    "/tmp/tmux-1000/default,12345,0",
-			Expected:   true,
-			// $TMUX third field (index 2) is used as last-resort identifier
-			SessionName: "0",
+			Case:        "tmux command fails, fallback to #S when TMUX env set",
+			CommandErr:  errors.New("not in tmux"),
+			TmuxEnv:     "/tmp/tmux-1000/default,12345,0",
+			Expected:    true,
+			SessionName: "#S",
 		},
 		{
-			Case:       "tmux command fails, TMUX env malformed",
-			CommandErr: errors.New("not in tmux"),
-			TmuxEnv:    "bad-value",
-			Expected:   false,
+			Case:        "tmux command fails, TMUX env set but malformed — still in tmux",
+			CommandErr:  errors.New("not in tmux"),
+			TmuxEnv:     "bad-value",
+			Expected:    true,
+			SessionName: "#S",
 		},
 		{
 			Case:       "tmux command fails, TMUX env empty — not in tmux",

@@ -570,6 +570,9 @@ func New(flags *runtime.Flags) *Engine {
 	terminal.Init(sh)
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors(env)
+	if env.Shell() == shell.TMUX {
+		terminal.Colors = color.NewTmuxColors(terminal.Colors)
+	}
 	terminal.Plain = flags.Plain
 
 	eng := &Engine{

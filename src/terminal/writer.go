@@ -25,7 +25,7 @@ type style struct {
 }
 
 var (
-	knownStyles = []*style{
+	ansiKnownStyles = []*style{
 		{AnchorStart: `<b>`, AnchorEnd: `</b>`, Start: "\x1b[1m", End: "\x1b[22m"},
 		{AnchorStart: `<u>`, AnchorEnd: `</u>`, Start: "\x1b[4m", End: "\x1b[24m"},
 		{AnchorStart: `<o>`, AnchorEnd: `</o>`, Start: "\x1b[53m", End: "\x1b[55m"},
@@ -35,6 +35,19 @@ var (
 		{AnchorStart: `<f>`, AnchorEnd: `</f>`, Start: "\x1b[5m", End: "\x1b[25m"},
 		{AnchorStart: `<r>`, AnchorEnd: `</r>`, Start: "\x1b[7m", End: "\x1b[27m"},
 	}
+
+	tmuxKnownStyles = []*style{
+		{AnchorStart: `<b>`, AnchorEnd: `</b>`, Start: "#[bold]", End: "#[nobold]"},
+		{AnchorStart: `<u>`, AnchorEnd: `</u>`, Start: "#[underscore]", End: "#[nounderscore]"},
+		{AnchorStart: `<o>`, AnchorEnd: `</o>`, Start: "#[overline]", End: "#[nooverline]"},
+		{AnchorStart: `<i>`, AnchorEnd: `</i>`, Start: "#[italics]", End: "#[noitalics]"},
+		{AnchorStart: `<s>`, AnchorEnd: `</s>`, Start: "#[strikethrough]", End: "#[nostrikethrough]"},
+		{AnchorStart: `<d>`, AnchorEnd: `</d>`, Start: "#[dim]", End: "#[nodim]"},
+		{AnchorStart: `<f>`, AnchorEnd: `</f>`, Start: "#[blink]", End: "#[noblink]"},
+		{AnchorStart: `<r>`, AnchorEnd: `</r>`, Start: "#[reverse]", End: "#[noreverse]"},
+	}
+
+	knownStyles []*style
 
 	resetStyle      = &style{AnchorStart: "RESET", AnchorEnd: `</>`, End: "\x1b[0m"}
 	backgroundStyle = &style{AnchorStart: "BACKGROUND", AnchorEnd: `</>`, End: "\x1b[49m"}
@@ -66,11 +79,7 @@ var (
 )
 
 const (
-	AnchorRegex      = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
-	colorise         = "\x1b[%sm"
-	transparentStart = "\x1b[0m\x1b[%s;49m\x1b[7m"
-	transparentEnd   = "\x1b[27m"
-	backgroundEnd    = "\x1b[49m"
+	AnchorRegex = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
 
 	AnsiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 
@@ -110,6 +119,15 @@ func Init(sh string) {
 	color.TrueColor = Program != AppleTerminal
 
 	formats = shell.GetFormats(Shell)
+
+	resetStyle.End = formats.ColorReset
+	backgroundStyle.End = formats.ColorBgReset
+
+	if sh == shell.TMUX {
+		knownStyles = tmuxKnownStyles
+	} else {
+		knownStyles = ansiKnownStyles
+	}
 }
 
 func getTerminalName() string {
@@ -442,18 +460,20 @@ func writeSegmentColors() {
 	switch {
 	case fg.IsTransparent() && len(BackgroundColor) != 0:
 		background := Colors.ToAnsi(BackgroundColor, false)
-		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, background))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, bg.ToForeground()))
 	case fg.IsTransparent() && !bg.IsEmpty():
 		isTransparent = true
-		writeEscapedAnsiString(fmt.Sprintf(transparentStart, bg))
+		if formats.TransparentStart != "" {
+			writeEscapedAnsiString(fmt.Sprintf(formats.TransparentStart, bg))
+		}
 	default:
 		if !bg.IsEmpty() && !bg.IsTransparent() {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
+			writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, bg))
 		}
 
 		if !fg.IsEmpty() && !fg.IsTransparent() {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, fg))
+			writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, fg))
 		}
 	}
 
@@ -508,28 +528,30 @@ func writeAnchorOverride(match map[string]string, background color.Ansi, i int) 
 
 	if currentColor.Foreground().IsTransparent() && len(BackgroundColor) != 0 {
 		background := Colors.ToAnsi(BackgroundColor, false)
-		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background().ToForeground()))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, background))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, currentColor.Background().ToForeground()))
 		return position
 	}
 
 	if currentColor.Foreground().IsTransparent() && !currentColor.Background().IsTransparent() {
 		isTransparent = true
-		writeEscapedAnsiString(fmt.Sprintf(transparentStart, currentColor.Background()))
+		if formats.TransparentStart != "" {
+			writeEscapedAnsiString(fmt.Sprintf(formats.TransparentStart, currentColor.Background()))
+		}
 		return position
 	}
 
 	if currentColor.Background() != backgroundColor {
 		// end the colors in case we have a transparent background
 		if currentColor.Background().IsTransparent() {
-			writeEscapedAnsiString(backgroundEnd)
+			writeEscapedAnsiString(formats.ColorBgReset)
 		} else {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background()))
+			writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, currentColor.Background()))
 		}
 	}
 
 	if currentColor.Foreground() != foregroundColor {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Foreground()))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, currentColor.Foreground()))
 	}
 
 	return position
@@ -557,12 +579,12 @@ func endColorOverride(position int) int {
 		previousBg := currentColor.Background()
 		previousFg := currentColor.Foreground()
 
-		if isTransparent {
-			writeEscapedAnsiString(transparentEnd)
+		if isTransparent && formats.TransparentEnd != "" {
+			writeEscapedAnsiString(formats.TransparentEnd)
 		}
 
 		if previousBg != bg {
-			background := fmt.Sprintf(colorise, previousBg)
+			background := fmt.Sprintf(formats.ColorEscape, previousBg)
 			if previousBg.IsClear() {
 				background = backgroundStyle.End
 			}
@@ -571,7 +593,7 @@ func endColorOverride(position int) int {
 		}
 
 		if previousFg != fg {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, previousFg))
+			writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, previousFg))
 		}
 
 		return position
@@ -585,8 +607,8 @@ func endColorOverride(position int) int {
 		return position
 	}
 
-	if isTransparent {
-		writeEscapedAnsiString(transparentEnd)
+	if isTransparent && formats.TransparentEnd != "" {
+		writeEscapedAnsiString(formats.TransparentEnd)
 	}
 
 	if backgroundColor.IsClear() {
@@ -594,11 +616,11 @@ func endColorOverride(position int) int {
 	}
 
 	if currentColor.Background() != backgroundColor && !backgroundColor.IsClear() {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, backgroundColor))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, backgroundColor))
 	}
 
 	if (currentColor.Foreground() != foregroundColor || isTransparent) && !foregroundColor.IsClear() {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, foregroundColor))
+		writeEscapedAnsiString(fmt.Sprintf(formats.ColorEscape, foregroundColor))
 	}
 
 	isTransparent = false

@@ -42,27 +42,24 @@ func (t *Tmux) Enabled() bool {
 }
 
 func (t *Tmux) fetchSessionName() bool {
-	// Prefer tmux's own display-message so we get the exact session name.
+	// Try the tmux command for the exact session name (works when tmux is in PATH).
 	if name, err := t.env.RunCommand("tmux", "display-message", "-p", "#S"); err == nil {
 		t.SessionName = strings.TrimSpace(name)
-		return t.SessionName != ""
+		if t.SessionName != "" {
+			return true
+		}
 	}
 
-	// Fallback: parse $TMUX which has the format "/tmp/tmux-NNN/socket,PID,windowIndex".
-	// The window index is not the session name, but it is a last-resort identifier
-	// when tmux display-message is unavailable.
-	tmuxEnv := t.env.Getenv("TMUX")
-	if tmuxEnv == "" {
+	// When running from the tmux status bar (#(...) format), the tmux binary may not
+	// be in the minimal PATH used by /bin/sh. Use $TMUX to confirm we are inside tmux,
+	// then fall back to the tmux format alias #S — tmux expands it to the actual session
+	// name when processing the status bar format string.
+	if t.env.Getenv("TMUX") == "" {
 		return false
 	}
 
-	parts := strings.Split(tmuxEnv, ",")
-	if len(parts) >= 3 {
-		t.SessionName = parts[2]
-		return t.SessionName != ""
-	}
-
-	return false
+	t.SessionName = "#S"
+	return true
 }
 
 func (t *Tmux) fetchWindowList() []TmuxWindow {

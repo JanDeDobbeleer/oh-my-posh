@@ -19,4 +19,4 @@ jobs:
       - name: Sync Vale packages
         run: vale sync
       - name: Lint
-        run: vale .github/skills .github/prompts
+        run: vale AGENTS.md .github/copilot-instructions.md .github/skills

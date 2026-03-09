@@ -1,6 +1,8 @@
 ---
-description: 'Instructions for writing Go code following idiomatic Go practices and community standards'
-applyTo: ['**/*.go', '/go.mod', '/go.sum']
+name: golang
+description: >
+  Go coding standards and conventions for this project. Apply when writing,
+  reviewing, or refactoring any Go source file.
 ---
 
 # Go Development Instructions

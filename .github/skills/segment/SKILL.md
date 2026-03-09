@@ -1,6 +1,9 @@
 ---
-description: 'Automate scaffolding for a new Oh My Posh segment: code, registration, docs, schema, sidebar updates'
-applyTo: ['src/segments/*.go', 'website/docs/**/*.mdx', 'themes/schema.json', 'website/sidebars.js']
+name: segment
+description: >
+  Full scaffolding workflow for creating a new Oh My Posh segment. Invoke when
+  asked to add a new segment: generates the Go source, registers the type,
+  creates documentation, updates the sidebar and JSON schema.
 ---
 
 # Segment scaffolding instructions

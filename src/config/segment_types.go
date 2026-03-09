@@ -130,6 +130,7 @@ func init() {
 	gob.Register(&segments.Terraform{})
 	gob.Register(&segments.Text{})
 	gob.Register(&segments.Time{})
+	gob.Register(&segments.Tmux{})
 	gob.Register(&segments.Todoist{})
 	gob.Register(&segments.UI5Tooling{})
 	gob.Register(&segments.Umbraco{})
@@ -148,8 +149,6 @@ func init() {
 	gob.Register(&segments.Ytm{})
 	gob.Register(&segments.Zig{})
 	gob.Register(&segments.Segment{})
-	gob.Register(&segments.TmuxSession{})
-	gob.Register(&segments.TmuxWindowList{})
 }
 
 const (
@@ -345,6 +344,8 @@ const (
 	TEXT SegmentType = "text"
 	// TIME writes the current timestamp
 	TIME SegmentType = "time"
+	// TMUX writes the current tmux session name and optionally the window list
+	TMUX SegmentType = "tmux"
 	// TODOIST segment
 	TODOIST SegmentType = "todoist"
 	// UI5 Tooling segment
@@ -375,10 +376,6 @@ const (
 	YTM SegmentType = "ytm"
 	// ZIG writes the active zig version
 	ZIG SegmentType = "zig"
-	// TMUXSESSION writes the current tmux session name
-	TMUXSESSION SegmentType = "tmux_session"
-	// TMUXWINDOWLIST renders all tmux windows as a powerline list
-	TMUXWINDOWLIST SegmentType = "tmux_window_list"
 )
 
 // Segments contains all available prompt segment writers.
@@ -476,6 +473,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TERRAFORM:       func() SegmentWriter { return &segments.Terraform{} },
 	TEXT:            func() SegmentWriter { return &segments.Text{} },
 	TIME:            func() SegmentWriter { return &segments.Time{} },
+	TMUX:            func() SegmentWriter { return &segments.Tmux{} },
 	TODOIST:         func() SegmentWriter { return &segments.Todoist{} },
 	UI5TOOLING:      func() SegmentWriter { return &segments.UI5Tooling{} },
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
@@ -490,9 +488,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	XMAKE:           func() SegmentWriter { return &segments.XMake{} },
 	YARN:            func() SegmentWriter { return &segments.Yarn{} },
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
-	ZIG:            func() SegmentWriter { return &segments.Zig{} },
-	TMUXSESSION:    func() SegmentWriter { return &segments.TmuxSession{} },
-	TMUXWINDOWLIST: func() SegmentWriter { return &segments.TmuxWindowList{} },
+	ZIG:             func() SegmentWriter { return &segments.Zig{} },
 }
 
 func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {

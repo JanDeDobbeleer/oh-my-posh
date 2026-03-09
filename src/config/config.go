@@ -245,22 +245,6 @@ func (cfg *Config) migrateSegmentProperties() {
 			segment.MigratePropertiesToOptions()
 		}
 	}
-
-	if cfg.Tmux == nil {
-		return
-	}
-
-	for _, block := range cfg.Tmux.StatusLeft.Blocks {
-		for _, segment := range block.Segments {
-			segment.MigratePropertiesToOptions()
-		}
-	}
-
-	for _, block := range cfg.Tmux.StatusRight.Blocks {
-		for _, segment := range block.Segments {
-			segment.MigratePropertiesToOptions()
-		}
-	}
 }
 
 // toggleSegments processes all segments in all blocks and adds segments

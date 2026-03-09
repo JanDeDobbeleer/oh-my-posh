@@ -457,8 +457,7 @@
             "terraform",
             "text",
             "time",
-            "tmux_session",
-            "tmux_window_list",
+            "tmux",
             "todoist",
             "ui5tooling",
             "umbraco",
@@ -4478,60 +4477,24 @@
           "if": {
             "properties": {
               "type": {
-                "const": "tmux_session"
+                "const": "tmux"
               }
             }
           },
           "then": {
-            "title": "Tmux Session Segment",
-            "description": "https://ohmyposh.dev/docs/segments/cli/tmux-session"
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "tmux_window_list"
-              }
-            }
-          },
-          "then": {
-            "title": "Tmux Window List Segment",
-            "description": "https://ohmyposh.dev/docs/segments/cli/tmux-window-list",
+            "title": "Tmux Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/tmux",
             "properties": {
               "options": {
                 "properties": {
-                  "active_foreground": {
-                    "type": "string",
-                    "title": "Active Foreground",
-                    "description": "Foreground color of the active window",
-                    "default": "#282828"
-                  },
-                  "active_background": {
-                    "type": "string",
-                    "title": "Active Background",
-                    "description": "Background color of the active window",
-                    "default": "#83a598"
-                  },
-                  "inactive_foreground": {
-                    "type": "string",
-                    "title": "Inactive Foreground",
-                    "description": "Foreground color of inactive windows",
-                    "default": "#928374"
-                  },
-                  "inactive_background": {
-                    "type": "string",
-                    "title": "Inactive Background",
-                    "description": "Background color of inactive windows",
-                    "default": "#3c3836"
-                  },
-                  "powerline_symbol": {
-                    "type": "string",
-                    "title": "Powerline Symbol",
-                    "description": "The powerline separator symbol between windows",
-                    "default": "\ue0b0"
+                  "fetch_windows": {
+                    "type": "boolean",
+                    "title": "Fetch Windows",
+                    "description": "Populate the Windows list with the current tmux window list",
+                    "default": false
                   }
-                }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

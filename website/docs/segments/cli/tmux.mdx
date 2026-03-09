@@ -1,0 +1,75 @@
+---
+id: tmux
+title: Tmux
+sidebar_label: Tmux
+---
+
+## What
+
+Display the current [tmux][tmux] session name and optionally the window list.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "tmux",
+    style: "diamond",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b0",
+    foreground: "#282828",
+    background: "#d65d0e",
+    template: "  {{ .SessionName }} ",
+  }}
+/>
+
+With windows enabled:
+
+<Config
+  data={{
+    type: "tmux",
+    style: "diamond",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b0",
+    foreground: "#282828",
+    background: "#d65d0e",
+    options: {
+      fetch_windows: true,
+    },
+  }}
+/>
+
+## Options
+
+| Name            | Type   | Default | Description                                        |
+| --------------- | ------ | ------- | -------------------------------------------------- |
+| `fetch_windows` | `bool` | `false` | populate `.Windows` with the current window list   |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \ue7a2 {{ .SessionName }}{{ if .Windows }} | {{ range .Windows }}{{if .Active}}*{{end}}{{.Index}}:{{.Name}} {{end}}{{end}}
+```
+
+:::
+
+### Properties
+
+| Name           | Type            | Description                                                  |
+| -------------- | --------------- | ------------------------------------------------------------ |
+| `.SessionName` | `string`        | the current tmux session name                                |
+| `.Windows`     | `[]TmuxWindow`  | list of windows; only populated when `fetch_windows` is true |
+
+### TmuxWindow
+
+| Name      | Type     | Description                              |
+| --------- | -------- | ---------------------------------------- |
+| `.Index`  | `string` | the window index                         |
+| `.Name`   | `string` | the window name                          |
+| `.Active` | `bool`   | whether this is the currently active window |
+
+[tmux]: https://github.com/tmux/tmux
+[templates]: /docs/configuration/templates

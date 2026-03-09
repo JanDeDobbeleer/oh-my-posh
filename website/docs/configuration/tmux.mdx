@@ -21,11 +21,9 @@ raw output into the status bar. Oh My Posh's `--shell tmux` flag produces unwrap
 escape sequences (no shell-specific prompt wrappers), so the output appears correctly inside
 `status-left` and `status-right`.
 
-The window list is rendered by the [`tmux_window_list`][tmux-window-list] segment, which calls
-`tmux list-windows` in a **single invocation**. This is important: tmux's built-in
-`window-status-format` calls the template once per window in isolation, making it impossible
-to draw correct powerline arrows between windows. By enumerating all windows at once, Oh My
-Posh can compute the correct separator colors for every transition.
+The window list is rendered by the [`tmux`][tmux-segment] segment when `fetch_windows: true`
+is set. This calls `tmux list-windows` in a **single invocation**, so all window data is
+available to the template at once.
 
 ## Sample Configuration
 
@@ -43,25 +41,14 @@ import TabItem from "@theme/TabItem";
             alignment: "left",
             segments: [
               {
-                type: "tmux_session",
+                type: "tmux",
                 style: "diamond",
                 leading_diamond: "\ue0b6",
                 trailing_diamond: "\ue0b0",
                 foreground: "#282828",
                 background: "#d65d0e",
-                template: "  {{ .SessionName }} ",
-              },
-              {
-                type: "tmux_window_list",
-                style: "plain",
-                foreground: "#ebdbb2",
-                background: "#32302f",
                 options: {
-                  active_foreground: "#282828",
-                  active_background: "#83a598",
-                  inactive_foreground: "#928374",
-                  inactive_background: "#3c3836",
-                  powerline_symbol: "\ue0b0",
+                  fetch_windows: true,
                 },
               },
             ],
@@ -130,7 +117,7 @@ set -g status-left-length 400
 set -g status-right-length 200
 
 set -g status-left  "#(oh-my-posh print tmux-left  --config ~/.config/ohmyposh/config.yaml --shell tmux)"
-set -g status-right "#(oh-my-posh print tmux-right --config ~/.config/ohmyposh/config.yaml --shell tmux --pwd '#{pane_current_path}')"
+set -g status-right "#(oh-my-posh print tmux-right --config ~/.config/ohmyposh/config.yaml --shell tmux --pwd \"#{pane_current_path}\")"
 
 # Clear tmux's own window list formatting so OMP controls it entirely
 set -g window-status-format ""
@@ -157,10 +144,9 @@ always see the active pane's current directory.
 
 ## Available tmux segments
 
-| Segment                                | Description                                      |
-| -------------------------------------- | ------------------------------------------------ |
-| [`tmux_session`][tmux-session]         | Current tmux session name                        |
-| [`tmux_window_list`][tmux-window-list] | All windows as a powerline-connected list        |
+| Segment                     | Description                                                      |
+| --------------------------- | ---------------------------------------------------------------- |
+| [`tmux`][tmux-segment]      | Current session name; set `fetch_windows: true` for window list  |
 
 Any other Oh My Posh segment (git, path, time, etc.) also works inside `status_left` and
 `status_right` blocks.
@@ -169,5 +155,4 @@ Any other Oh My Posh segment (git, path, time, etc.) also works inside `status_l
 [block]: /docs/configuration/block
 [git]: /docs/segments/scm/git
 [path]: /docs/segments/system/path
-[tmux-session]: /docs/segments/cli/tmux-session
-[tmux-window-list]: /docs/segments/cli/tmux-window-list
+[tmux-segment]: /docs/segments/cli/tmux

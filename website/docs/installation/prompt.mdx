@@ -205,7 +205,7 @@ set -g status-right-length 200
 
 # OMP renders both sides; the window list lives inside status-left
 set -g status-left  "#(oh-my-posh print tmux-left  --config ~/.config/ohmyposh/config.yaml --shell tmux)"
-set -g status-right "#(oh-my-posh print tmux-right --config ~/.config/ohmyposh/config.yaml --shell tmux --pwd '#{pane_current_path}')"
+set -g status-right "#(oh-my-posh print tmux-right --config ~/.config/ohmyposh/config.yaml --shell tmux --pwd \"#{pane_current_path}\")"
 
 # Suppress tmux's own per-window format strings so OMP controls the window list
 set -g window-status-format ""

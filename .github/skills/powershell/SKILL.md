@@ -1,6 +1,8 @@
 ---
-applyTo: '**/*.ps1,**/*.psm1'
-description: 'PowerShell cmdlet and scripting best practices based on Microsoft guidelines'
+name: powershell
+description: >
+  PowerShell cmdlet conventions for this project. Apply when writing or
+  reviewing any .ps1 or module file.
 ---
 
 # PowerShell Cmdlet Development Guidelines

@@ -1,6 +1,8 @@
 ---
-description: 'Documentation and content creation standards'
-applyTo: ['**/*.md', '**/*.mdx']
+name: markdown
+description: >
+  Markdown formatting rules for this project. Apply when writing or editing
+  any .md or .mdx file, including documentation and website content.
 ---
 
 # Markdown Content Rules

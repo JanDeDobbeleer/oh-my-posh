@@ -17,13 +17,13 @@ and [Google's Go Style Guide](https://google.github.io/styleguide/go/).
 - Write simple, clear, and idiomatic Go code
 - Favor clarity and simplicity over cleverness
 - Follow the principle of least surprise
-- Keep the happy path left-aligned (minimize indentation)
+- Keep the happy path left-aligned (reduce indentation)
 - Return early to reduce nesting
 - Make the zero value useful
 - Document exported types, functions, methods, and packages
 - Use Go modules for dependency management
 - **AVOID `else` statements - use early returns, continue, or break instead**
-- Avoid wrapping primitives without a clear semantic benefit; define new types only when they add meaning.
+- Avoid wrapping primitives without a clear semantic benefit; define new types when they add meaning.
 - Use typed slices/maps and document element semantics when not obvious.
 - Start error strings with a lowercase letter.
 
@@ -32,16 +32,16 @@ and [Google's Go Style Guide](https://google.github.io/styleguide/go/).
 ### Packages
 
 - Use lowercase, single-word package names
-- Avoid underscores, hyphens, or mixedCaps
+- Avoid `_` characters, hyphens, or mixedCaps
 - Choose names that describe what the package provides, not what it contains
 - Avoid generic names like `util`, `common`, or `base`
 - Package names should be singular, not plural
 
 ### Variables and Functions
 
-- Use mixedCaps or MixedCaps (camelCase) rather than underscores
+- Use mixedCaps or MixedCaps (camelCase) rather than `_` characters
 - Keep names short but descriptive
-- Use single-letter variables only for very short scopes (like loop indices)
+- Use single-letter variables for very short scopes (like loop indices)
 - Exported names start with a capital letter
 - Unexported names start with a lowercase letter
 - Avoid stuttering (e.g., avoid `http.HTTPServer`, prefer `http.Server`)
@@ -176,7 +176,7 @@ for _, item := range items {
 - Keep dependencies minimal
 - Regularly update dependencies for security patches
 - Use `go mod tidy` to clean up unused dependencies
-- Vendor dependencies only when necessary
+- Vendor dependencies when necessary
 
 ## Type Safety and Language Features
 
@@ -232,7 +232,7 @@ for _, item := range items {
 ### Creating Errors
 
 - Use `errors.New` for simple static errors
-- Use `fmt.Errorf` for dynamic errors
+- Use `fmt.Errorf` for errors with runtime values
 - Create custom error types for domain-specific errors
 - Export error variables for sentinel errors
 - Use `errors.Is` and `errors.As` for error checking
@@ -258,7 +258,7 @@ for _, item := range items {
 
 - Use built-in profiling tools (`pprof`)
 - Benchmark critical code paths
-- Profile before optimizing
+- Profile before making performance changes
 - Focus on algorithmic improvements first
 - Consider using `testing.B` for benchmarks
 
@@ -282,7 +282,7 @@ for _, item := range items {
 - Test edge cases and error conditions
 - When including a standard library that conflicts with an existing import,
   use the lib(library name) pattern to avoid conflicts.
-  For example: `libtime` for the `time` package.
+  Such as: `libtime` for the `time` package.
 
 ### Test Helpers
 
@@ -304,7 +304,7 @@ for _, item := range items {
 ### Cryptography
 
 - Use standard library crypto packages
-- Don't implement your own cryptography
+- Never write your own cryptography
 - Use crypto/rand for random number generation
 - Store passwords using bcrypt or similar
 - Use TLS for network communication
@@ -343,7 +343,7 @@ for _, item := range items {
 - Run tests before committing
 - Use pre-commit hooks for formatting and linting
 - Keep commits focused and atomic
-- Write meaningful commit messages
+- Write clear, descriptive commit messages
 - Review diffs before committing
 
 ### Post-Edit Code Quality Commands
@@ -357,8 +357,8 @@ After making any Go code changes, run the following commands to ensure code qual
    ```
 
    > **Warning:** `fieldalignment` rewrites struct field order. Any inline struct
-   > literals that use **positional** (unnamed) field initialization — common in
-   > table-driven test files — will break after the reorder.
+   > literals that use **positional** (unnamed) field initialization (common in
+   > table-driven test files) will break after the reorder.
    > **Always use named fields** in struct literals (e.g. `{Case: "foo", Now: t}`)
    > so that the order of fields in the struct definition does not matter.
 
@@ -391,7 +391,7 @@ code quality, performance, and consistency across the codebase.
 - Creating goroutine leaks
 - Not using defer for cleanup
 - Modifying maps concurrently
-- Not understanding nil interfaces vs nil pointers
+- Confusing nil interfaces with nil pointers
 - Forgetting to close resources (files, connections)
 - Using global variables unnecessarily
 - Over-using empty interfaces (`interface{}` or `any`)

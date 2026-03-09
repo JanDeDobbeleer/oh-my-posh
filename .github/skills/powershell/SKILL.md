@@ -7,9 +7,6 @@ description: >
 
 # PowerShell Cmdlet Development Guidelines
 
-This guide provides PowerShell-specific instructions to help GitHub Copilot generate idiomatic, safe,
-and maintainable scripts. It aligns with Microsoft's PowerShell cmdlet development guidelines.
-
 ## Naming Conventions
 
 - **Verb-Noun Format:**
@@ -28,7 +25,7 @@ and maintainable scripts. It aligns with Microsoft's PowerShell cmdlet developme
   - Use PascalCase for public variables
   - Use camelCase for private variables
   - Avoid abbreviations
-  - Use meaningful names
+  - Use descriptive names
 
 - **Alias Avoidance:**
   - Use full cmdlet names
@@ -191,16 +188,16 @@ function Update-ResourceStatus {
 - **Message Streams:**
   - `Write-Verbose` for operational details with `-Verbose`
   - `Write-Warning` for warning conditions
-  - `Write-Error` for non-terminating errors
-  - `throw` for terminating errors
+  - `Write-Error` for recoverable errors that allow execution to continue
+  - `throw` for fatal errors that stop execution
   - Avoid `Write-Host` except for user interface text
 
 - **Error Handling Pattern:**
   - Use try/catch blocks for error management
   - Set appropriate ErrorAction preferences
-  - Return meaningful error messages
+  - Return clear, specific error messages
   - Use ErrorVariable when needed
-  - Include proper terminating vs non-terminating error handling
+  - Include proper fatal vs recoverable error handling
 
 - **Non-Interactive Design:**
   - Accept input via parameters
@@ -263,8 +260,8 @@ function Remove-UserAccount {
 
 ## Documentation and Style
 
-- **Comment-Based Help:** Include comment-based help for any public-facing function or cmdlet. Inside the function,
-  add a `<# ... #>` help comment with at least:
+- **Comment-Based Docs:** Include comment-based documentation for any public-facing function or cmdlet. Inside the function,
+  add a `<# ... #>` block with at least:
   - `.SYNOPSIS` Brief description
   - `.DESCRIPTION` Detailed explanation
   - `.EXAMPLE` sections with practical usage

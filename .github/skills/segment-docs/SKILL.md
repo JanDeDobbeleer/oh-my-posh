@@ -7,6 +7,8 @@ description: >
   options, template properties, and type representations in docs.
 ---
 
+# Segment Documentation Reference
+
 ## Go-to-Documentation Type Mapping
 
 When reading a segment's Go source to document its options, determine the type from the

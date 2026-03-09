@@ -73,7 +73,7 @@ Template properties are values available inside the segment's `template` string.
 - **Nested struct fields** use dot notation: a field `Working ScmStatus` exposes
   `.Working.Modified`, `.Working.Added`, etc.
 - **Zero-argument methods** with a single return value → `.MethodName`
-- **Only document fields that are actually assigned** in `Enabled()` or its callees —
+- **Document fields that are assigned** in `Enabled()` or its callees,
   not every inherited field from embedded structs is populated by every segment
 
 The default template comes from the `Template()` method:

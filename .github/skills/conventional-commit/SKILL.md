@@ -24,8 +24,8 @@ triggers:
 | ---- | ----------- |
 | `feat` | A new feature |
 | `fix` | A bug fix |
-| `docs` | Documentation changes only |
-| `style` | Formatting, missing semicolons, etc. — no logic change |
+| `docs` | Documentation changes, no code |
+| `style` | Formatting, missing semicolons, etc. (no logic change) |
 | `refactor` | Code change that is neither a fix nor a feature |
 | `perf` | Performance improvement |
 | `test` | Adding or correcting tests |
@@ -38,23 +38,23 @@ Append `!` after the type/scope to signal a **breaking change**: `feat!:` or `fe
 
 ### Scope
 
-Optional. Use the name of the area affected — e.g., `segment`, `cache`, `config`, `ui`.
+Optional. Use the name of the area affected, e.g., `segment`, `cache`, `config`, `ui`.
 Omit when the change is truly cross-cutting.
 
 ### Description
 
-- Required. One short imperative sentence — no period at the end.
+- Required. One short imperative sentence, no period at the end.
 - Use the imperative mood: "add", not "added" or "adds".
 
 ### Body
 
-Optional. Add context about *why* the change was made, not *what* — the diff shows that.
+Optional. Add context about *why* the change was made, not *what*. The diff shows that.
 Wrap at 72 characters.
 
 ### Footer
 
 Use for:
-- `BREAKING CHANGE: <description>` — required when `!` is used; explains the break.
+- `BREAKING CHANGE: <description>` (required when `!` is used; explains the break).
 - Issue references: `Closes #123`, `Fixes #456`.
 - Co-authors: `Co-Authored-By: Name <email>`.
 

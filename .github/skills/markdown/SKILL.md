@@ -33,7 +33,7 @@ Follow these guidelines for formatting and structuring your markdown content:
   hierarchical manner. Recommend restructuring if content includes H4, and more
   strongly recommend for H5.
 - Lists: Use `-` for bullet points and `1.` for numbered lists. Indent nested lists with two spaces.
-- Code Blocks: Use fenced code blocks with a language for syntax highlighting, for example:
+- Code Blocks: Use fenced code blocks with a language for syntax highlighting:
 
   ```go
   fmt.Println("hello")

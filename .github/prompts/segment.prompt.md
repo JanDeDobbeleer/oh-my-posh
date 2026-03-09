@@ -34,7 +34,5 @@ Execute
 
 Documentation
 
-- Use the `runSubagent` tool with `agentName: "Segment Documentation"` to delegate
-  documentation creation and updates.
-- Pass the segment details (name, category, title, description, properties, template)
-  in the prompt parameter for the subagent to generate or update the MDX documentation file.
+- Documentation guidance is provided automatically by the `segment-docs` skill
+  in `.claude/skills/segment-docs/`. Activate it when creating or updating MDX docs.

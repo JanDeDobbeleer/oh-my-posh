@@ -8,9 +8,11 @@ triggers:
   - on_commit
 ---
 
+# Conventional Commit
+
 ## Commit Message Structure
 
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -54,6 +56,7 @@ Wrap at 72 characters.
 ### Footer
 
 Use for:
+
 - `BREAKING CHANGE: <description>` (required when `!` is used; explains the break).
 - Issue references: `Closes #123`, `Fixes #456`.
 - Co-authors: `Co-Authored-By: Name <email>`.
@@ -72,7 +75,7 @@ Use for:
 
 ## Examples
 
-```
+```text
 feat(segment): add Ramadan segment with Aladhan API
 fix(cache): always store mod time
 docs(readme): update installation instructions

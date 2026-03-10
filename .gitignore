@@ -1,3 +1,9 @@
+# APM
+apm_modules/
+.github/skills/*
+!.github/skills/segment-create/
+!.github/skills/segment-docs/
+
 # Others
 
 .specs/

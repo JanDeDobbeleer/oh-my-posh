@@ -68,6 +68,23 @@ Done! Restart the terminal and you're ready to continue below.
 </TabItem>
 </Tabs>
 
+## Install agents and skills
+
+This project uses [APM (Agent Package Manager)][apm] to manage shared AI agent skills.
+After cloning the repository, install APM and run `apm install` to pull in the shared skills:
+
+```powershell
+# Install APM
+pip install apm-cli
+
+# Install shared skills
+apm install
+```
+
+This pulls in shared coding conventions (Go, PowerShell, Markdown, and conventional commits)
+from the [agentic][agentic] repository. Project-specific skills (segment-create and segment-docs)
+are already included in the repository under `.github/skills/`.
+
 ## Configure Visual Studio Code
 
 A default config (.vscode folder) for [Visual Studio Code][code] is available in the repo:
@@ -164,3 +181,5 @@ With everything set up, you're ready to start making changes and create your fir
 [winget-configuration]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/.config/configuration.winget
 [winget]: https://learn.microsoft.com/en-us/windows/package-manager/winget/
 [nodejs]: https://nodejs.org/en/download/
+[apm]: https://github.com/microsoft/apm
+[agentic]: https://github.com/JanDeDobbeleer/agentic

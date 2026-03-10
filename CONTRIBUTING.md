@@ -11,6 +11,41 @@ Ensure you've read through the [documentation][docs] so you understand the core 
 project. If you're looking to get familiar with go, following the getting started [guide][guide]
 can be a good starting point.
 
+## Setting Up Agents and Skills
+
+This project uses [APM (Agent Package Manager)][apm] to manage shared AI agent skills.
+Project-specific skills live in `.github/skills/`, while shared skills are declared
+in `apm.yml` and installed via APM.
+
+### Install APM
+
+```bash
+curl -sSL https://raw.githubusercontent.com/microsoft/apm/main/install.sh | sh
+```
+
+<details>
+<summary>Homebrew or pip</summary>
+
+```bash
+brew install microsoft/apm/apm
+# or
+pip install apm-cli
+```
+
+</details>
+
+### Install Skills
+
+After cloning the repository, run:
+
+```bash
+apm install
+```
+
+This pulls in the shared skills from [JanDeDobbeleer/agentic][agentic] (conventional commits,
+Go, Markdown, and PowerShell conventions). The project-specific skills (segment-create and
+segment-docs) are already included in the repository.
+
 ## Pull Request Process
 
 1. Ensure any dependencies or build artifacts are removed/ignored before creating a commit.
@@ -84,3 +119,5 @@ go test "./..."
 [timezones]: <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>
 [devcontainer]: .devcontainer/devcontainer.json
 [go.mod]: src/go.mod
+[apm]: https://github.com/microsoft/apm
+[agentic]: https://github.com/JanDeDobbeleer/agentic

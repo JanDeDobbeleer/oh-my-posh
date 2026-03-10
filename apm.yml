@@ -1,0 +1,10 @@
+name: oh-my-posh
+version: 1.0.0
+description: A prompt theme engine for any shell.
+
+dependencies:
+  apm:
+    - JanDeDobbeleer/agentic/skills/conventional-commit
+    - JanDeDobbeleer/agentic/skills/golang
+    - JanDeDobbeleer/agentic/skills/markdown
+    - JanDeDobbeleer/agentic/skills/powershell

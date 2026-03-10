@@ -1,0 +1,40 @@
+lockfile_version: '1'
+generated_at: '2026-03-11T11:40:09.315428+00:00'
+apm_version: 0.7.7
+dependencies:
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: dfc3f6e80eae907b2ad0562b072386034171d5fe
+  virtual_path: skills/conventional-commit
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .claude/skills/conventional-commit
+  - .github/skills/conventional-commit
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: dfc3f6e80eae907b2ad0562b072386034171d5fe
+  virtual_path: skills/golang
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .claude/skills/golang
+  - .github/skills/golang
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: dfc3f6e80eae907b2ad0562b072386034171d5fe
+  virtual_path: skills/markdown
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .claude/skills/markdown
+  - .github/skills/markdown
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: dfc3f6e80eae907b2ad0562b072386034171d5fe
+  virtual_path: skills/powershell
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .claude/skills/powershell
+  - .github/skills/powershell

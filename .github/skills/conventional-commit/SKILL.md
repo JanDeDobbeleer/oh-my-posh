@@ -22,19 +22,18 @@ triggers:
 
 ### Types
 
-| Type | When to use |
-| ---- | ----------- |
-| `feat` | A new feature |
-| `fix` | A bug fix |
-| `docs` | Documentation changes, no code |
-| `style` | Formatting, missing semicolons, etc. (no logic change) |
-| `refactor` | Code change that is neither a fix nor a feature |
-| `perf` | Performance improvement |
-| `test` | Adding or correcting tests |
-| `build` | Changes to build system or external dependencies |
-| `ci` | CI configuration changes |
-| `chore` | Maintenance tasks (updating deps, tooling, etc.) |
-| `revert` | Reverts a previous commit |
+| Type       | When to use                                            |
+| ---------- | ------------------------------------------------------ |
+| `feat`     | A new feature                                          |
+| `fix`      | A bug fix                                              |
+| `docs`     | Documentation changes, no code                         |
+| `style`    | Formatting, missing semicolons, etc. (no logic change) |
+| `refactor` | Code change that is neither a fix nor a feature        |
+| `perf`     | Performance improvement                                |
+| `test`     | Adding or correcting tests                             |
+| `ci`       | CI configuration changes                               |
+| `chore`    | Maintenance tasks (updating deps, tooling, etc.)       |
+| `revert`   | Reverts a previous commit                              |
 
 Append `!` after the type/scope to signal a **breaking change**: `feat!:` or `feat(api)!:`
 
@@ -50,7 +49,7 @@ Omit when the change is truly cross-cutting.
 
 ### Body
 
-Optional. Add context about *why* the change was made, not *what*. The diff shows that.
+Optional. Add context about _why_ the change was made, not _what_. The diff shows that.
 Wrap at 72 characters.
 
 ### Footer
@@ -68,7 +67,7 @@ Use for:
 3. Identify the **type** from the table above.
 4. Identify the **scope** from the files/area changed.
 5. Write a short **description** in the imperative mood.
-6. Add a **body** if the *why* needs explanation.
+6. Add a **body** if the _why_ needs explanation.
 7. Add a **footer** for breaking changes or issue references.
 8. Stage the relevant files explicitly (avoid `git add -A`).
 9. Commit with a message that preserves multi-line formatting when body/footer are present.

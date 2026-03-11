@@ -71,6 +71,7 @@ type Config struct {
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty" yaml:"blocks,omitempty"`
 	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`
 	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty" yaml:"iterm_features,omitempty"`
+	TerminalFeatures        map[string][]string    `json:"terminal_features,omitempty" toml:"terminal_features,omitempty" yaml:"terminal_features,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty" yaml:"tooltips,omitempty"`
 	hash                    uint64
 	Version                 int  `json:"version" toml:"version" yaml:"version"`

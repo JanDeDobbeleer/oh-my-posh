@@ -566,6 +566,7 @@ func New(flags *runtime.Flags) *Engine {
 	}
 
 	terminal.Init(sh)
+	terminal.Features = cfg.TerminalFeatures
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors(env)
 	terminal.Plain = flags.Plain

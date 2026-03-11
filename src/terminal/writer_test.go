@@ -294,3 +294,82 @@ func TestWriteLength(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestSupportsFeature(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Program  string
+		Features map[string][]string
+		Feature  string
+		Defaults []string
+		Expected bool
+	}{
+		{
+			Case:     "default match - Windows Terminal matches built-in default",
+			Program:  WindowsTerminal,
+			Feature:  Progress,
+			Defaults: []string{WindowsTerminal},
+			Expected: true,
+		},
+		{
+			Case:     "default no match - Ghostty not in built-in defaults",
+			Program:  "ghostty",
+			Feature:  Progress,
+			Defaults: []string{WindowsTerminal},
+			Expected: false,
+		},
+		{
+			Case:    "configured list - Ghostty added by user",
+			Program: "ghostty",
+			Feature: Progress,
+			Features: map[string][]string{
+				Progress: {"ghostty", WindowsTerminal},
+			},
+			Defaults: []string{WindowsTerminal},
+			Expected: true,
+		},
+		{
+			Case:    "configured list overrides defaults - Windows Terminal removed by user",
+			Program: WindowsTerminal,
+			Feature: Progress,
+			Features: map[string][]string{
+				Progress: {"ghostty"},
+			},
+			Defaults: []string{WindowsTerminal},
+			Expected: false,
+		},
+		{
+			Case:    "configured list - other feature not configured falls back to defaults",
+			Program: WindowsTerminal,
+			Feature: "other",
+			Features: map[string][]string{
+				Progress: {"ghostty"},
+			},
+			Defaults: []string{WindowsTerminal},
+			Expected: true,
+		},
+		{
+			Case:     "nil Features map uses defaults",
+			Program:  WindowsTerminal,
+			Feature:  Progress,
+			Features: nil,
+			Defaults: []string{WindowsTerminal},
+			Expected: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Program = tc.Program
+			Features = tc.Features
+
+			got := SupportsFeature(tc.Feature, tc.Defaults...)
+
+			assert.Equal(t, tc.Expected, got, tc.Case)
+		})
+	}
+
+	// Reset global state
+	Features = nil
+	Program = Unknown
+}

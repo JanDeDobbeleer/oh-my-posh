@@ -2622,7 +2622,7 @@
                   },
                   "extensions": {
                     "default": [
-                      "*.🔥",
+                      "*.\ud83d\udd25",
                       "*.mojo",
                       "mojoproject.toml"
                     ]
@@ -5266,6 +5266,17 @@
       "title": "Extends",
       "description": "https://ohmyposh.dev/docs/configuration/general#extends",
       "default": ""
+    },
+    "terminal_features": {
+      "type": "object",
+      "title": "Terminal feature support overrides",
+      "description": "Maps feature names to the list of terminal programs that support them. When set, overrides the built-in defaults. Supported feature names: \"progress\".",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
     }
   }
 }

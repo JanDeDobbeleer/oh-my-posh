@@ -3,6 +3,7 @@ package terminal
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -62,6 +63,11 @@ var (
 	Shell   string
 	Program string
 
+	// Features maps feature names to the list of terminal programs that support them.
+	// When set, SupportsFeature uses this map to resolve feature support.
+	// When unset, SupportsFeature falls back to the built-in defaults.
+	Features map[string][]string
+
 	formats *shell.Formats
 )
 
@@ -92,6 +98,9 @@ const (
 	startProgress = "\x1b]9;4;3;0\x07"
 	setProgress   = "\x1b]9;4;4;%d\x07"
 	endProgress   = "\x1b]9;4;0;0\x07"
+
+	// Progress is the feature name for OSC 9;4 taskbar progress sequences.
+	Progress = "progress"
 
 	WindowsTerminal = "Windows Terminal"
 	Warp            = "WarpTerminal"
@@ -247,8 +256,19 @@ func LineBreak() string {
 	return cr + lf
 }
 
+// SupportsFeature reports whether the current terminal program supports the named feature.
+// When Features contains an entry for the feature name, the configured list of programs is used.
+// Otherwise, the provided defaults are checked against the current Program.
+func SupportsFeature(feature string, defaults ...string) bool {
+	if programs, ok := Features[feature]; ok {
+		return slices.Contains(programs, Program)
+	}
+
+	return slices.Contains(defaults, Program)
+}
+
 func StartProgress() string {
-	if Program != WindowsTerminal {
+	if !SupportsFeature(Progress, WindowsTerminal) {
 		return ""
 	}
 
@@ -256,7 +276,7 @@ func StartProgress() string {
 }
 
 func SetProgress(percentage int) string {
-	if Program != WindowsTerminal {
+	if !SupportsFeature(Progress, WindowsTerminal) {
 		return ""
 	}
 
@@ -264,7 +284,7 @@ func SetProgress(percentage int) string {
 }
 
 func StopProgress() string {
-	if Program != WindowsTerminal {
+	if !SupportsFeature(Progress, WindowsTerminal) {
 		return ""
 	}
 

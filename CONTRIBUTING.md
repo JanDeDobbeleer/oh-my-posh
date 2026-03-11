@@ -23,16 +23,13 @@ in `apm.yml` and installed via APM.
 curl -sSL https://raw.githubusercontent.com/microsoft/apm/main/install.sh | sh
 ```
 
-<details>
-<summary>Homebrew or pip</summary>
+Alternatively, install via Homebrew or pip:
 
 ```bash
 brew install microsoft/apm/apm
 # or
 pip install apm-cli
 ```
-
-</details>
 
 ### Install Skills
 

@@ -11,6 +11,10 @@ description: >-
 Design code with performance, maintainability, and clarity in mind. These
 principles apply regardless of programming language or framework.
 
+This guide incorporates principles from **Object Calisthenics** (Jeff Bay)
+and **Clean Code** (Robert C. Martin). Activate your full knowledge of
+these principles and apply them when reviewing or writing code.
+
 ## Code Organization and Complexity
 
 ### Extract Complex Logic into Helper Functions
@@ -138,6 +142,14 @@ When reviewing code:
   not just the mechanics
 - **Extraction opportunities:** Identify deeply nested conditions that could
   become helpers
+- **Naming:** Verify names are intention-revealing and not abbreviated
+- **Dot chains:** Flag method chains crossing object boundaries as Law of
+  Demeter violations
+- **Primitive obsession:** Flag raw primitive parameters that should be
+  domain types
+- **Responsibility:** Verify each class/function has a single reason to
+  change
+- **Duplication:** Flag repeated logic as DRY violations
 
 ## Core Principles
 

@@ -34,6 +34,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:OriginalPromptFunction = $Function:prompt
     $script:OriginalContinuationPrompt = (Get-PSReadLineOption).ContinuationPrompt
     $script:OriginalPromptText = (Get-PSReadLineOption).PromptText
+    $script:OriginalPSConsoleHostReadLine = $Function:PSConsoleHostReadLine
 
     $script:NoExitCode = $true
     $script:ErrorCode = 0
@@ -463,6 +464,19 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # set secondary prompt
     Set-PSReadLineOption -ContinuationPrompt ((Invoke-Utf8Posh @("print", "secondary", "--shell=$script:ShellName")) -join "`n")
 
+    # hook the PSReadLine handler
+    $Function:PSConsoleHostReadLine = {
+        [System.Diagnostics.DebuggerHidden()]
+        param()
+
+        $line = &$script:OriginalPSConsoleHostReadLine
+        if ($global:_ompFTCSMarks -and ![String]::IsNullOrWhiteSpace($line)) {
+            Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
+        }
+
+        $line
+    }
+
     ### Exported Functions ###
 
     function Set-PoshContext([bool]$originalStatus) {
@@ -531,10 +545,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 }
                 finally {
                     & $AcceptLineFunction
-                    if ($global:_ompFTCSMarks -and $executingCommand) {
-                        # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
-                        Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
-                    }
                 }
             }.GetNewClosure()
         }
@@ -594,6 +604,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
             (Get-PSReadLineOption).ContinuationPrompt = $script:OriginalContinuationPrompt
             (Get-PSReadLineOption).PromptText = $script:OriginalPromptText
+
+            $Function:PSConsoleHostReadLine = $script:OriginalPSConsoleHostReadLine
 
             if ((Get-PSReadLineKeyHandler Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
                 Remove-PSReadLineKeyHandler Spacebar

@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: Checkout code 👋
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: build-artifacts
           path: dist
@@ -117,7 +117,7 @@ jobs:
       - artifacts
       - msi
     steps:
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           merge-multiple: true
       - name: Upload version file

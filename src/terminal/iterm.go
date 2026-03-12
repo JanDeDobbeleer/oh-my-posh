@@ -1,7 +1,6 @@
 package terminal
 
 import (
-	"encoding/gob"
 	"fmt"
 	"slices"
 
@@ -9,42 +8,31 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
-func init() {
-	gob.Register(&ITermFeatures{})
-}
-
-type iTermFeature string
-
 const (
-	PromptMark iTermFeature = "prompt_mark"
-	CurrentDir iTermFeature = "current_dir"
-	RemoteHost iTermFeature = "remote_host"
+	PromptMark = "prompt_mark"
+	CurrentDir = "current_dir"
+	RemoteHost = "remote_host"
 )
 
-type ITermFeatures []iTermFeature
-
-func (f ITermFeatures) Contains(feature iTermFeature) bool {
-	return slices.Contains(f, feature)
+func HasITermFeatures() bool {
+	return SupportsFeature(PromptMark) || SupportsFeature(CurrentDir) || SupportsFeature(RemoteHost)
 }
 
-func RenderItermFeatures(features ITermFeatures, sh, pwd, user, host string) string {
-	supportedShells := []string{shell.BASH, shell.ZSH}
-
+func RenderItermFeatures(sh, pwd, user, host string) string {
 	result := text.NewBuilder()
 
-	for _, feature := range features {
-		switch feature {
-		case PromptMark:
-			if !slices.Contains(supportedShells, sh) {
-				continue
-			}
+	supportedShells := []string{shell.BASH, shell.ZSH}
 
-			result.WriteString(formats.ITermPromptMark)
-		case CurrentDir:
-			result.WriteString(fmt.Sprintf(formats.ITermCurrentDir, pwd))
-		case RemoteHost:
-			result.WriteString(fmt.Sprintf(formats.ITermRemoteHost, user, host))
-		}
+	if SupportsFeature(PromptMark) && slices.Contains(supportedShells, sh) {
+		result.WriteString(formats.ITermPromptMark)
+	}
+
+	if SupportsFeature(CurrentDir) {
+		result.WriteString(fmt.Sprintf(formats.ITermCurrentDir, pwd))
+	}
+
+	if SupportsFeature(RemoteHost) {
+		result.WriteString(fmt.Sprintf(formats.ITermRemoteHost, user, host))
 	}
 
 	return result.String()

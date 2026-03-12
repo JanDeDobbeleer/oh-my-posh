@@ -115,9 +115,9 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		e.currentLineLength++
 	}
 
-	if e.Config.ITermFeatures != nil && e.isIterm() {
+	if terminal.HasITermFeatures() {
 		host, _ := e.Env.Host()
-		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
+		e.write(terminal.RenderItermFeatures(e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
 	}
 
 	if e.Config.ShellIntegration {

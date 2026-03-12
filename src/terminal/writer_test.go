@@ -313,37 +313,37 @@ func TestSupportsFeature(t *testing.T) {
 		},
 		{
 			Case:     "default no match - Ghostty not in built-in defaults",
-			Program:  "ghostty",
+			Program:  "Ghostty",
 			Feature:  Progress,
 			Defaults: []string{WindowsTerminal},
 			Expected: false,
 		},
 		{
 			Case:    "configured list - Ghostty added by user",
-			Program: "ghostty",
+			Program: "Ghostty",
 			Feature: Progress,
 			Features: map[string][]string{
-				Progress: {"ghostty", WindowsTerminal},
+				"Ghostty": {Progress},
 			},
 			Defaults: []string{WindowsTerminal},
 			Expected: true,
 		},
 		{
-			Case:    "configured list overrides defaults - Windows Terminal removed by user",
+			Case:    "configured list - Windows Terminal explicitly cleared",
 			Program: WindowsTerminal,
 			Feature: Progress,
 			Features: map[string][]string{
-				Progress: {"ghostty"},
+				WindowsTerminal: {},
 			},
 			Defaults: []string{WindowsTerminal},
 			Expected: false,
 		},
 		{
-			Case:    "configured list - other feature not configured falls back to defaults",
+			Case:    "configured list - unlisted program falls back to defaults",
 			Program: WindowsTerminal,
-			Feature: "other",
+			Feature: Progress,
 			Features: map[string][]string{
-				Progress: {"ghostty"},
+				"Ghostty": {Progress},
 			},
 			Defaults: []string{WindowsTerminal},
 			Expected: true,
@@ -355,6 +355,21 @@ func TestSupportsFeature(t *testing.T) {
 			Features: nil,
 			Defaults: []string{WindowsTerminal},
 			Expected: true,
+		},
+		{
+			Case:    "iTerm prompt_mark configured for iTerm.app",
+			Program: ITerm,
+			Feature: PromptMark,
+			Features: map[string][]string{
+				ITerm: {PromptMark, CurrentDir, RemoteHost},
+			},
+			Expected: true,
+		},
+		{
+			Case:    "iTerm prompt_mark not configured - no defaults",
+			Program: ITerm,
+			Feature: PromptMark,
+			Expected: false,
 		},
 	}
 

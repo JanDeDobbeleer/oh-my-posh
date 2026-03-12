@@ -63,7 +63,7 @@ var (
 	Shell   string
 	Program string
 
-	// Features maps feature names to the list of terminal programs that support them.
+	// Features maps terminal program names to the list of features they support.
 	// When set, SupportsFeature uses this map to resolve feature support.
 	// When unset, SupportsFeature falls back to the built-in defaults.
 	Features map[string][]string
@@ -257,11 +257,11 @@ func LineBreak() string {
 }
 
 // SupportsFeature reports whether the current terminal program supports the named feature.
-// When Features contains an entry for the feature name, the configured list of programs is used.
-// Otherwise, the provided defaults are checked against the current Program.
+// When Features contains an entry for the current Program, the configured feature list is used.
+// Otherwise, the provided defaults (program names) are checked against the current Program.
 func SupportsFeature(feature string, defaults ...string) bool {
-	if programs, ok := Features[feature]; ok {
-		return slices.Contains(programs, Program)
+	if features, ok := Features[Program]; ok {
+		return slices.Contains(features, feature)
 	}
 
 	return slices.Contains(defaults, Program)

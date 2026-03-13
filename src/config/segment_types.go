@@ -131,6 +131,7 @@ func init() {
 	gob.Register(&segments.Terraform{})
 	gob.Register(&segments.Text{})
 	gob.Register(&segments.Time{})
+	gob.Register(&segments.Tmux{})
 	gob.Register(&segments.Todoist{})
 	gob.Register(&segments.UI5Tooling{})
 	gob.Register(&segments.Umbraco{})
@@ -346,6 +347,8 @@ const (
 	TEXT SegmentType = "text"
 	// TIME writes the current timestamp
 	TIME SegmentType = "time"
+	// TMUX writes the current tmux session name and optionally the window list
+	TMUX SegmentType = "tmux"
 	// TODOIST segment
 	TODOIST SegmentType = "todoist"
 	// UI5 Tooling segment
@@ -474,6 +477,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TERRAFORM:       func() SegmentWriter { return &segments.Terraform{} },
 	TEXT:            func() SegmentWriter { return &segments.Text{} },
 	TIME:            func() SegmentWriter { return &segments.Time{} },
+	TMUX:            func() SegmentWriter { return &segments.Tmux{} },
 	TODOIST:         func() SegmentWriter { return &segments.Todoist{} },
 	UI5TOOLING:      func() SegmentWriter { return &segments.UI5Tooling{} },
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },

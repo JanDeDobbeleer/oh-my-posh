@@ -458,6 +458,7 @@
             "terraform",
             "text",
             "time",
+            "tmux",
             "todoist",
             "ui5tooling",
             "umbraco",
@@ -4551,6 +4552,32 @@
           "if": {
             "properties": {
               "type": {
+                "const": "tmux"
+              }
+            }
+          },
+          "then": {
+            "title": "Tmux Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/tmux",
+            "properties": {
+              "options": {
+                "properties": {
+                  "fetch_windows": {
+                    "type": "boolean",
+                    "title": "Fetch Windows",
+                    "description": "Populate the Windows list with the current tmux window list",
+                    "default": false
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "todoist"
               }
             }
@@ -5075,6 +5102,35 @@
       "title": "Streaming Mode",
       "description": "https://ohmyposh.dev/docs/experimental/streaming",
       "default": 100
+    },
+    "tmux": {
+      "type": "object",
+      "title": "Tmux Config",
+      "description": "https://ohmyposh.dev/docs/configuration/tmux",
+      "properties": {
+        "status_left": {
+          "type": "object",
+          "title": "Tmux Status Left",
+          "properties": {
+            "blocks": {
+              "type": "array",
+              "title": "Block array",
+              "items": { "$ref": "#/definitions/block" }
+            }
+          }
+        },
+        "status_right": {
+          "type": "object",
+          "title": "Tmux Status Right",
+          "properties": {
+            "blocks": {
+              "type": "array",
+              "title": "Block array",
+              "items": { "$ref": "#/definitions/block" }
+            }
+          }
+        }
+      }
     },
     "blocks": {
       "type": "array",

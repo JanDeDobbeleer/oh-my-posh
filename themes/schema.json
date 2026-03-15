@@ -2622,7 +2622,7 @@
                   },
                   "extensions": {
                     "default": [
-                      "*.🔥",
+                      "*.\ud83d\udd25",
                       "*.mojo",
                       "mojoproject.toml"
                     ]
@@ -5202,16 +5202,15 @@
       "title": "Accent color",
       "$ref": "#/definitions/color"
     },
-    "iterm_features": {
-      "type": "array",
-      "title": "The iTerm2 features to enable",
-      "items": {
-        "type": "string",
-        "enum": [
-          "prompt_mark",
-          "current_dir",
-          "remote_host"
-        ]
+    "terminal_features": {
+      "type": "object",
+      "title": "Terminal feature support overrides",
+      "description": "Maps terminal program names to the list of features they support. Keys are program names matched against the $TERM_PROGRAM environment variable (or \"Windows Terminal\" when $WT_SESSION is set). Values are lists of feature names (e.g. \"progress\", \"prompt_mark\", \"current_dir\", \"remote_host\"). Programs not listed fall back to built-in defaults.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       }
     },
     "var": {

@@ -1,6 +1,6 @@
 lockfile_version: '1'
-generated_at: '2026-03-11T11:40:09.315428+00:00'
-apm_version: 0.7.7
+generated_at: '2026-03-15T08:59:17.859220+00:00'
+apm_version: 0.7.9
 dependencies:
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
@@ -9,7 +9,6 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/conventional-commit
   - .github/skills/conventional-commit
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
@@ -18,7 +17,6 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/golang
   - .github/skills/golang
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
@@ -27,7 +25,6 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/markdown
   - .github/skills/markdown
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
@@ -36,5 +33,4 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/powershell
   - .github/skills/powershell

@@ -134,6 +134,7 @@ func init() {
 	gob.Register(&segments.Todoist{})
 	gob.Register(&segments.UI5Tooling{})
 	gob.Register(&segments.Umbraco{})
+	gob.Register(&segments.Uno{})
 	gob.Register(&segments.Unity{})
 	gob.Register(&segments.Upgrade{})
 	gob.Register(&segments.UpgradeCache{})
@@ -352,6 +353,8 @@ const (
 	UI5TOOLING SegmentType = "ui5tooling"
 	// UMBRACO writes the Umbraco version if Umbraco is present
 	UMBRACO SegmentType = "umbraco"
+	// UNO writes the Uno.Sdk version from global.json
+	UNO SegmentType = "uno"
 	// UNITY writes which Unity version is currently active
 	UNITY SegmentType = "unity"
 	// UPGRADE lets you know if you can upgrade Oh My Posh
@@ -477,6 +480,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TODOIST:         func() SegmentWriter { return &segments.Todoist{} },
 	UI5TOOLING:      func() SegmentWriter { return &segments.UI5Tooling{} },
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
+	UNO:             func() SegmentWriter { return &segments.Uno{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
 	V:               func() SegmentWriter { return &segments.V{} },

@@ -1682,7 +1682,9 @@
                       "houston",
                       "amarillo",
                       "round",
-                      "lucky7"
+                      "lucky7",
+                      "iso8601",
+                      "iso8601ms"
                     ],
                     "default": "austin"
                   }
@@ -3287,6 +3289,12 @@
                     "title": "Void Icon",
                     "description": "The icon to use for Void",
                     "default": "\uf32e"
+                  },
+                  "zorin": {
+                    "type": "string",
+                    "title": "Zorin Icon",
+                    "description": "The icon to use for Zorin OS",
+                    "default": "\uf32f"
                   }
                 },
                 "unevaluatedProperties": false

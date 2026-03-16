@@ -5,7 +5,7 @@
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
-      // Update the VARIANT arg to pick a version of Go: 1, 1.24, 1.25
+      // Update the VARIANT arg to pick a version of Go: 1, 1.25, 1.26
       // Append -trixie, -bookworm or -bullseye to pin to an OS version.
       "VARIANT": "2-1.26-trixie",
 

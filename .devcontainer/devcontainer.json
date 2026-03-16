@@ -7,7 +7,7 @@
     "args": {
       // Update the VARIANT arg to pick a version of Go: 1, 1.24, 1.25
       // Append -trixie, -bookworm or -bullseye to pin to an OS version.
-      "VARIANT": "2-1.25-trixie",
+      "VARIANT": "2-1.26-trixie",
 
       // Override me with your own timezone:
       "TZ": "UTC",

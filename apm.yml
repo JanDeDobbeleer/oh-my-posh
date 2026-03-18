@@ -8,3 +8,4 @@ dependencies:
     - JanDeDobbeleer/agentic/skills/golang
     - JanDeDobbeleer/agentic/skills/markdown
     - JanDeDobbeleer/agentic/skills/powershell
+    - JanDeDobbeleer/agentic/skills/vale-user-facing-text

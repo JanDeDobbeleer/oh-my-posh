@@ -42,6 +42,11 @@ func (p Percentage) GaugeUsed() string {
 	return strings.Repeat("▰", filledBlocks) + strings.Repeat("▱", emptyBlocks)
 }
 
+// Int returns the percentage as an integer for template comparisons.
+func (p Percentage) Int() int {
+	return int(p)
+}
+
 // String returns the percentage as a string without % sign for template compatibility.
 func (p Percentage) String() string {
 	return fmt.Sprintf("%d", int(p))

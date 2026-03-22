@@ -130,6 +130,25 @@ func TestPercentageGaugeUsed(t *testing.T) {
 	}
 }
 
+func TestPercentageInt(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected int
+		Percent  Percentage
+	}{
+		{Case: "Zero percent", Percent: Percentage(0), Expected: 0},
+		{Case: "32 percent", Percent: Percentage(32), Expected: 32},
+		{Case: "100 percent", Percent: Percentage(100), Expected: 100},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			result := tc.Percent.Int()
+			assert.Equal(t, tc.Expected, result, tc.Case)
+		})
+	}
+}
+
 func TestPercentageString(t *testing.T) {
 	cases := []struct {
 		Case     string

@@ -214,7 +214,7 @@ func (p *Python) pyvenvCfgPrompt() string {
 		key = strings.TrimSpace(key)
 		if key == "prompt" {
 			value := strings.TrimSpace(value)
-			return value
+			return strings.Trim(value, "\"")
 		}
 	}
 

@@ -89,6 +89,15 @@ func TestPythonTemplate(t *testing.T) {
 			PyvenvCfg:      "home = /usr/bin/\nprompt = pyvenvCfgPrompt\n",
 			Expected:       "pyvenvCfgPrompt 3.8",
 		},
+		{
+			Case:           "pyvenv.cfg prompt with quotes (pipenv)",
+			FetchVersion:   true,
+			VirtualEnvName: "VENV",
+			PythonPath:     "/home/user/.pyenv/shims/python",
+			Template:       "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+			PyvenvCfg:      "home = /usr/bin/\nprompt = \"myproject\"\n",
+			Expected:       "myproject 3.8",
+		},
 	}
 
 	for _, tc := range cases {

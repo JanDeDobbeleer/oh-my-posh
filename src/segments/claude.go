@@ -21,6 +21,7 @@ type ClaudeData struct {
 	SessionID     string              `json:"session_id"`
 	ContextWindow ClaudeContextWindow `json:"context_window"`
 	Cost          ClaudeCost          `json:"cost"`
+	RateLimits    *ClaudeRateLimits   `json:"rate_limits"`
 }
 
 // ClaudeModel represents the AI model information
@@ -42,6 +43,18 @@ type ClaudeCost struct {
 	TotalAPIDurationMS int64   `json:"total_api_duration_ms"`
 	TotalLinesAdded    int     `json:"total_lines_added"`
 	TotalLinesRemoved  int     `json:"total_lines_removed"`
+}
+
+// ClaudeRateLimitWindow represents a single rate limit time window.
+type ClaudeRateLimitWindow struct {
+	UsedPercentage *float64 `json:"used_percentage"`
+	ResetsAt       *int64   `json:"resets_at"`
+}
+
+// ClaudeRateLimits represents rate limit information across time windows.
+type ClaudeRateLimits struct {
+	FiveHour *ClaudeRateLimitWindow `json:"five_hour"`
+	SevenDay *ClaudeRateLimitWindow `json:"seven_day"`
 }
 
 // ClaudeContextWindow represents token usage information
@@ -163,6 +176,39 @@ func (c *Claude) FormattedDuration() string {
 // FormattedAPIDuration returns API wait time as "Xm Ys".
 func (c *Claude) FormattedAPIDuration() string {
 	return formatDurationMS(c.Cost.TotalAPIDurationMS)
+}
+
+// rateLimitPercentage extracts a percentage from a rate limit window with nil-safety.
+func rateLimitPercentage(limits *ClaudeRateLimits, window func(*ClaudeRateLimits) *ClaudeRateLimitWindow) text.Percentage {
+	if limits == nil {
+		return 0
+	}
+
+	w := window(limits)
+	if w == nil || w.UsedPercentage == nil {
+		return 0
+	}
+
+	percent := int(*w.UsedPercentage + 0.5)
+	if percent > 100 {
+		return 100
+	}
+
+	return text.Percentage(percent)
+}
+
+// FiveHourUsage returns the 5-hour rolling window rate limit usage as a Percentage.
+func (c *Claude) FiveHourUsage() text.Percentage {
+	return rateLimitPercentage(c.RateLimits, func(r *ClaudeRateLimits) *ClaudeRateLimitWindow {
+		return r.FiveHour
+	})
+}
+
+// SevenDayUsage returns the 7-day window rate limit usage as a Percentage.
+func (c *Claude) SevenDayUsage() text.Percentage {
+	return rateLimitPercentage(c.RateLimits, func(r *ClaudeRateLimits) *ClaudeRateLimitWindow {
+		return r.SevenDay
+	})
 }
 
 // FormattedTokens returns a human-readable string of current context tokens.

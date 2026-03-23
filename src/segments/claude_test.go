@@ -403,3 +403,79 @@ func TestClaudeFormattedTokens(t *testing.T) {
 		assert.Equal(t, tc.ExpectedFormat, formatted, tc.Case)
 	}
 }
+
+func TestClaudeRateLimitUsage(t *testing.T) {
+	cases := []struct {
+		Case          string
+		RateLimits    *ClaudeRateLimits
+		ExpectedFive  text.Percentage
+		ExpectedSeven text.Percentage
+	}{
+		{
+			Case:          "Nil RateLimits",
+			RateLimits:    nil,
+			ExpectedFive:  0,
+			ExpectedSeven: 0,
+		},
+		{
+			Case: "Nil FiveHour window",
+			RateLimits: &ClaudeRateLimits{
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(50.0)},
+			},
+			ExpectedFive:  0,
+			ExpectedSeven: 50,
+		},
+		{
+			Case: "Nil SevenDay window",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(25.0)},
+			},
+			ExpectedFive:  25,
+			ExpectedSeven: 0,
+		},
+		{
+			Case: "Nil UsedPercentage",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: nil},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: nil},
+			},
+			ExpectedFive:  0,
+			ExpectedSeven: 0,
+		},
+		{
+			Case: "Valid percentages",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(42.7)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(75.3)},
+			},
+			ExpectedFive:  43,
+			ExpectedSeven: 75,
+		},
+		{
+			Case: "Value over 100 capped",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(150.0)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(200.0)},
+			},
+			ExpectedFive:  100,
+			ExpectedSeven: 100,
+		},
+		{
+			Case: "Zero percentages",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(0.0)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(0.0)},
+			},
+			ExpectedFive:  0,
+			ExpectedSeven: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+
+		assert.Equal(t, tc.ExpectedFive, claude.FiveHourUsage(), tc.Case+" (FiveHour)")
+		assert.Equal(t, tc.ExpectedSeven, claude.SevenDayUsage(), tc.Case+" (SevenDay)")
+	}
+}

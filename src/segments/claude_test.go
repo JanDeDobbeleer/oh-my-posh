@@ -268,6 +268,43 @@ func TestClaudeFormattedCost(t *testing.T) {
 	}
 }
 
+func TestClaudeFormattedDuration(t *testing.T) {
+	cases := []struct {
+		Case     string
+		MS       int64
+		Expected string
+	}{
+		{Case: "Zero", MS: 0, Expected: "0m 0s"},
+		{Case: "Seconds only", MS: 45000, Expected: "0m 45s"},
+		{Case: "Minutes and seconds", MS: 125000, Expected: "2m 5s"},
+		{Case: "Exact minute", MS: 60000, Expected: "1m 0s"},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.Cost.TotalDurationMS = tc.MS
+		assert.Equal(t, tc.Expected, claude.FormattedDuration(), tc.Case)
+	}
+}
+
+func TestClaudeFormattedAPIDuration(t *testing.T) {
+	cases := []struct {
+		Case     string
+		MS       int64
+		Expected string
+	}{
+		{Case: "Zero", MS: 0, Expected: "0m 0s"},
+		{Case: "Seconds only", MS: 30000, Expected: "0m 30s"},
+		{Case: "Minutes and seconds", MS: 90000, Expected: "1m 30s"},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.Cost.TotalAPIDurationMS = tc.MS
+		assert.Equal(t, tc.Expected, claude.FormattedAPIDuration(), tc.Case)
+	}
+}
+
 func TestClaudeFormattedTokens(t *testing.T) {
 	cases := []struct {
 		Case                     string

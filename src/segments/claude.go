@@ -37,8 +37,11 @@ type ClaudeWorkspace struct {
 
 // ClaudeCost represents cost and duration information
 type ClaudeCost struct {
-	TotalCostUSD    float64 `json:"total_cost_usd"`
-	TotalDurationMS int64   `json:"total_duration_ms"`
+	TotalCostUSD       float64 `json:"total_cost_usd"`
+	TotalDurationMS    int64   `json:"total_duration_ms"`
+	TotalAPIDurationMS int64   `json:"total_api_duration_ms"`
+	TotalLinesAdded    int     `json:"total_lines_added"`
+	TotalLinesRemoved  int     `json:"total_lines_removed"`
 }
 
 // ClaudeContextWindow represents token usage information
@@ -142,6 +145,24 @@ func (c *Claude) FormattedCost() string {
 	}
 
 	return fmt.Sprintf("$%.2f", c.Cost.TotalCostUSD)
+}
+
+// formatDurationMS converts milliseconds to "Xm Ys" format.
+func formatDurationMS(ms int64) string {
+	totalSeconds := ms / 1000
+	minutes := totalSeconds / 60
+	seconds := totalSeconds % 60
+	return fmt.Sprintf("%dm %ds", minutes, seconds)
+}
+
+// FormattedDuration returns total session duration as "Xm Ys".
+func (c *Claude) FormattedDuration() string {
+	return formatDurationMS(c.Cost.TotalDurationMS)
+}
+
+// FormattedAPIDuration returns API wait time as "Xm Ys".
+func (c *Claude) FormattedAPIDuration() string {
+	return formatDurationMS(c.Cost.TotalAPIDurationMS)
 }
 
 // FormattedTokens returns a human-readable string of current context tokens.

@@ -1,6 +1,6 @@
 # See here for image contents: https://github.com/devcontainers/images/blob/main/src/go/.devcontainer/Dockerfile
 
-# [Choice] Go version: 1, 1.24, 1.25, 1-trixie, 1.24-trixie, 1.25-trixie, 1-bookworm, 1.24-bookworm, 1.25-bookworm, 1-bullseye, 1.24-bullseye, 1.25-bullseye
+# [Choice] Go version: 1, 1.25, 1.26, 1-trixie, 1.25-trixie, 1.26-trixie, 1-bookworm, 1.25-bookworm, 1.26-bookworm, 1-bullseye, 1.25-bullseye, 1.26-bullseye
 ARG VARIANT=1-trixie
 FROM mcr.microsoft.com/vscode/devcontainers/go:${VARIANT}
 

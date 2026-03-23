@@ -3558,6 +3558,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "josephgruber",
+      "name": "Joseph Gruber",
+      "avatar_url": "https://avatars.githubusercontent.com/u/590669?v=4",
+      "profile": "https://josephgruber.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

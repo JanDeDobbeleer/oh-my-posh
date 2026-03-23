@@ -36,13 +36,23 @@ type ClaudeWorkspace struct {
 	ProjectDir string `json:"project_dir"`
 }
 
+// DurationMS is a duration in milliseconds that formats as "Xm Ys".
+type DurationMS int64
+
+func (d DurationMS) String() string {
+	totalSeconds := int64(d) / 1000
+	minutes := totalSeconds / 60
+	seconds := totalSeconds % 60
+	return fmt.Sprintf("%dm %ds", minutes, seconds)
+}
+
 // ClaudeCost represents cost and duration information
 type ClaudeCost struct {
-	TotalCostUSD       float64 `json:"total_cost_usd"`
-	TotalDurationMS    int64   `json:"total_duration_ms"`
-	TotalAPIDurationMS int64   `json:"total_api_duration_ms"`
-	TotalLinesAdded    int     `json:"total_lines_added"`
-	TotalLinesRemoved  int     `json:"total_lines_removed"`
+	TotalCostUSD       float64    `json:"total_cost_usd"`
+	TotalDurationMS    DurationMS `json:"total_duration_ms"`
+	TotalAPIDurationMS DurationMS `json:"total_api_duration_ms"`
+	TotalLinesAdded    int        `json:"total_lines_added"`
+	TotalLinesRemoved  int        `json:"total_lines_removed"`
 }
 
 // ClaudeRateLimitWindow represents a single rate limit time window.
@@ -160,22 +170,14 @@ func (c *Claude) FormattedCost() string {
 	return fmt.Sprintf("$%.2f", c.Cost.TotalCostUSD)
 }
 
-// formatDurationMS converts milliseconds to "Xm Ys" format.
-func formatDurationMS(ms int64) string {
-	totalSeconds := ms / 1000
-	minutes := totalSeconds / 60
-	seconds := totalSeconds % 60
-	return fmt.Sprintf("%dm %ds", minutes, seconds)
-}
-
 // FormattedDuration returns total session duration as "Xm Ys".
 func (c *Claude) FormattedDuration() string {
-	return formatDurationMS(c.Cost.TotalDurationMS)
+	return c.Cost.TotalDurationMS.String()
 }
 
 // FormattedAPIDuration returns API wait time as "Xm Ys".
 func (c *Claude) FormattedAPIDuration() string {
-	return formatDurationMS(c.Cost.TotalAPIDurationMS)
+	return c.Cost.TotalAPIDurationMS.String()
 }
 
 // rateLimitPercentage extracts a percentage from a rate limit window with nil-safety.

@@ -284,7 +284,7 @@ func TestClaudeFormattedCost(t *testing.T) {
 func TestClaudeFormattedDuration(t *testing.T) {
 	cases := []struct {
 		Case     string
-		MS       int64
+		MS       DurationMS
 		Expected string
 	}{
 		{Case: "Zero", MS: 0, Expected: "0m 0s"},
@@ -303,7 +303,7 @@ func TestClaudeFormattedDuration(t *testing.T) {
 func TestClaudeFormattedAPIDuration(t *testing.T) {
 	cases := []struct {
 		Case     string
-		MS       int64
+		MS       DurationMS
 		Expected string
 	}{
 		{Case: "Zero", MS: 0, Expected: "0m 0s"},

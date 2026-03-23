@@ -37,8 +37,11 @@ func TestClaudeSegment(t *testing.T) {
 					ProjectDir: "/repo",
 				},
 				Cost: ClaudeCost{
-					TotalCostUSD:    0.01,
-					TotalDurationMS: 45000,
+					TotalCostUSD:       0.01,
+					TotalDurationMS:    45000,
+					TotalAPIDurationMS: 30000,
+					TotalLinesAdded:    156,
+					TotalLinesRemoved:  23,
 				},
 				ContextWindow: ClaudeContextWindow{
 					TotalInputTokens:  15234,
@@ -47,6 +50,16 @@ func TestClaudeSegment(t *testing.T) {
 					CurrentUsage: &ClaudeCurrentUsage{
 						InputTokens:  8500,
 						OutputTokens: 1200,
+					},
+				},
+				RateLimits: &ClaudeRateLimits{
+					FiveHour: &ClaudeRateLimitWindow{
+						UsedPercentage: new(24.5),
+						ResetsAt:       new(int64(1711180800)),
+					},
+					SevenDay: &ClaudeRateLimitWindow{
+						UsedPercentage: new(45.0),
+						ResetsAt:       new(int64(1711612800)),
 					},
 				},
 			},

@@ -469,7 +469,7 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking:      &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 3, Deleted: 1, Unmerged: 1}},
+			ExpectedWorking:      &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
 			ExpectedStaging:      &GitStatus{ScmStatus: ScmStatus{Added: 1}},
 			ExpectedHash:         "1234567",
 			ExpectedRef:          "rework-git-status",
@@ -492,7 +492,7 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 3, Deleted: 1, Unmerged: 1}},
+			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
 			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Added: 1}},
 			ExpectedUpstream: "origin/rework-git-status",
 			ExpectedHash:     "1234567",
@@ -585,26 +585,6 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedRef:      "rework-git-status",
 			Merge:            true,
 			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Unmerged: 4}},
-		},
-		{
-			Case: "staged new file also appears in working",
-			Output: `
-			# branch.oid 1234567891011121314
-			# branch.head main
-			# branch.upstream origin/main
-			# branch.ab +0 -0
-			1 .M N...
-			1 A. N...
-			? untracked1
-			? untracked2
-			? untracked3
-			? untracked4
-			`,
-			ExpectedUpstream: "origin/main",
-			ExpectedHash:     "1234567",
-			ExpectedRef:      "main",
-			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Modified: 1, Added: 1, Untracked: 4}},
-			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Added: 1}},
 		},
 	}
 	for _, tc := range cases {

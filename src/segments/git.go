@@ -740,11 +740,6 @@ func (g *Git) setStatus() {
 		stagingCode := status[2:3]
 		g.Working.add(workingCode)
 		g.Staging.add(stagingCode)
-		// A newly staged file (A.) exists in the working directory but hasn't been committed yet.
-		// Reflect it in Working so that templates tracking only Working can see the new file.
-		if stagingCode == "A" && workingCode == "." {
-			g.Working.add("A")
-		}
 	}
 
 	const (

@@ -16,7 +16,7 @@
 
       "NODE_VERSION": "lts/*",
       //Powershell version
-      "PS_VERSION": "7.5.4"
+      "PS_VERSION": "7.6.0"
     }
   },
   "runArgs": [

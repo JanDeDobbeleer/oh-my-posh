@@ -75,8 +75,8 @@ import Config from "@site/src/components/Config.js";
 | Name               | Type      | Description                            |
 | ------------------ | --------- | -------------------------------------- |
 | `.TotalCostUSD`       | `float64` | Total cost in USD                                 |
-| `.TotalDurationMS`    | `int64`   | Total session duration in milliseconds            |
-| `.TotalAPIDurationMS` | `int64`   | Time spent waiting for API responses (ms)         |
+| `.TotalDurationMS`    | `DurationMS` | Total session duration in milliseconds (formats as "Xm Ys") |
+| `.TotalAPIDurationMS` | `DurationMS` | Time spent waiting for API responses (formats as "Xm Ys")   |
 | `.TotalLinesAdded`    | `int`     | Lines of code added in the session                |
 | `.TotalLinesRemoved`  | `int`     | Lines of code removed in the session              |
 

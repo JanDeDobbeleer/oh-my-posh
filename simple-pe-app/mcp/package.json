@@ -1,0 +1,11 @@
+{
+  "name": "simple-pe-mcp",
+  "version": "1.0.0",
+  "main": "connector.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

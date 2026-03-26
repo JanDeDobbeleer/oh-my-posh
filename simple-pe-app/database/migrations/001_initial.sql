@@ -1,0 +1,11 @@
+BEGIN;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE TYPE user_status AS ENUM ('active', 'inactive', 'suspended', 'pending_verification');
+CREATE TYPE user_role AS ENUM ('user', 'admin', 'support');
+CREATE TYPE account_type AS ENUM ('savings', 'current', 'investment');
+CREATE TYPE account_status AS ENUM ('active', 'inactive', 'frozen');
+CREATE TYPE transaction_type AS ENUM ('transfer', 'deposit', 'withdrawal', 'payment', 'refund');
+CREATE TYPE transaction_status AS ENUM ('pending', 'completed', 'failed', 'cancelled', 'reversed');
+CREATE TYPE currency_code AS ENUM ('PEN', 'USD');
+COMMIT;

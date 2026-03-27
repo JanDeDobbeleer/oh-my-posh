@@ -51,6 +51,12 @@ import Config from "@site/src/components/Config.js";
 | `.TokenUsagePercent` | `Percentage`    | Percentage of context window used (0-100)          |
 | `.FormattedCost`     | `string`        | Formatted cost string (e.g., "$0.15" or "$0.0012") |
 | `.FormattedTokens`   | `string`        | Human-readable token count (e.g., "1.2K", "15.3M") |
+| `.RateLimits`        | `RateLimits`    | Claude.ai subscription rate limit data (optional)  |
+| `.FiveHourPercent`   | `Percentage`    | 5-hour window usage percentage (0 if unavailable)  |
+| `.SevenDayPercent`   | `Percentage`    | 7-day window usage percentage (0 if unavailable)   |
+| `.HasRateLimits`     | `bool`          | Whether rate limit data is available               |
+| `.HasFiveHourLimit`  | `bool`          | Whether the 5-hour rate limit window is available  |
+| `.HasSevenDayLimit`  | `bool`          | Whether the 7-day rate limit window is available   |
 
 #### Model Properties
 
@@ -88,6 +94,20 @@ import Config from "@site/src/components/Config.js";
 | --------------- | ----- | ------------------------------------- |
 | `.InputTokens`  | `int` | Input tokens for the current message  |
 | `.OutputTokens` | `int` | Output tokens for the current message |
+
+#### RateLimits Properties
+
+| Name        | Type         | Description                                      |
+| ----------- | ------------ | ------------------------------------------------ |
+| `.FiveHour` | `RateWindow` | 5-hour session limit (nil when not available)    |
+| `.SevenDay` | `RateWindow` | 7-day weekly limit (nil when not available)      |
+
+#### RateWindow Properties
+
+| Name              | Type      | Description                                    |
+| ----------------- | --------- | ---------------------------------------------- |
+| `.UsedPercentage` | `float64` | Percentage of limit used (0-100)               |
+| `.ResetsAt`       | `int64`   | Unix epoch seconds when this window resets      |
 
 ### Percentage Methods
 

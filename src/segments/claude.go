@@ -21,6 +21,7 @@ type ClaudeData struct {
 	SessionID     string              `json:"session_id"`
 	ContextWindow ClaudeContextWindow `json:"context_window"`
 	Cost          ClaudeCost          `json:"cost"`
+	RateLimits    *ClaudeRateLimits   `json:"rate_limits,omitempty"`
 }
 
 // ClaudeModel represents the AI model information
@@ -57,6 +58,18 @@ type ClaudeCurrentUsage struct {
 	OutputTokens             int `json:"output_tokens"`
 	CacheCreationInputTokens int `json:"cache_creation_input_tokens"`
 	CacheReadInputTokens     int `json:"cache_read_input_tokens"`
+}
+
+// ClaudeRateLimits represents Claude.ai subscription usage limits
+type ClaudeRateLimits struct {
+	FiveHour *ClaudeRateWindow `json:"five_hour,omitempty"`
+	SevenDay *ClaudeRateWindow `json:"seven_day,omitempty"`
+}
+
+// ClaudeRateWindow represents a single rate limit window
+type ClaudeRateWindow struct {
+	UsedPercentage float64 `json:"used_percentage"`
+	ResetsAt       int64   `json:"resets_at"`
 }
 
 const (
@@ -172,4 +185,49 @@ func (c *Claude) FormattedTokens() string {
 	}
 
 	return fmt.Sprintf("%.1fM", float64(currentTokens)/million)
+}
+
+// FiveHourPercent returns the 5-hour rate limit usage as a Percentage.
+// Returns 0 when rate limit data is not available.
+func (c *Claude) FiveHourPercent() text.Percentage {
+	if c.RateLimits == nil || c.RateLimits.FiveHour == nil {
+		return 0
+	}
+
+	percent := int(c.RateLimits.FiveHour.UsedPercentage + 0.5)
+	if percent > 100 {
+		return 100
+	}
+
+	return text.Percentage(percent)
+}
+
+// SevenDayPercent returns the 7-day rate limit usage as a Percentage.
+// Returns 0 when rate limit data is not available.
+func (c *Claude) SevenDayPercent() text.Percentage {
+	if c.RateLimits == nil || c.RateLimits.SevenDay == nil {
+		return 0
+	}
+
+	percent := int(c.RateLimits.SevenDay.UsedPercentage + 0.5)
+	if percent > 100 {
+		return 100
+	}
+
+	return text.Percentage(percent)
+}
+
+// HasRateLimits returns true when rate limit data is available.
+func (c *Claude) HasRateLimits() bool {
+	return c.RateLimits != nil
+}
+
+// HasFiveHourLimit returns true when the 5-hour rate limit window is available.
+func (c *Claude) HasFiveHourLimit() bool {
+	return c.RateLimits != nil && c.RateLimits.FiveHour != nil
+}
+
+// HasSevenDayLimit returns true when the 7-day rate limit window is available.
+func (c *Claude) HasSevenDayLimit() bool {
+	return c.RateLimits != nil && c.RateLimits.SevenDay != nil
 }

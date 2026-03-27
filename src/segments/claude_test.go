@@ -231,6 +231,134 @@ func TestClaudeTokenUsagePercent(t *testing.T) {
 	}
 }
 
+func TestClaudeFiveHourPercent(t *testing.T) {
+	cases := []struct {
+		Case            string
+		RateLimits      *ClaudeRateLimits
+		ExpectedPercent text.Percentage
+	}{
+		{
+			Case:            "Nil rate limits",
+			RateLimits:      nil,
+			ExpectedPercent: 0,
+		},
+		{
+			Case:            "Nil five hour window",
+			RateLimits:      &ClaudeRateLimits{},
+			ExpectedPercent: 0,
+		},
+		{
+			Case: "Zero usage",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateWindow{UsedPercentage: 0, ResetsAt: 1711612800},
+			},
+			ExpectedPercent: 0,
+		},
+		{
+			Case: "Normal usage",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateWindow{UsedPercentage: 45.3, ResetsAt: 1711612800},
+			},
+			ExpectedPercent: 45,
+		},
+		{
+			Case: "High usage rounds up",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateWindow{UsedPercentage: 79.6, ResetsAt: 1711612800},
+			},
+			ExpectedPercent: 80,
+		},
+		{
+			Case: "Over 100 capped",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateWindow{UsedPercentage: 150, ResetsAt: 1711612800},
+			},
+			ExpectedPercent: 100,
+		},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+
+		percent := claude.FiveHourPercent()
+		assert.Equal(t, tc.ExpectedPercent, percent, tc.Case)
+	}
+}
+
+func TestClaudeSevenDayPercent(t *testing.T) {
+	cases := []struct {
+		Case            string
+		RateLimits      *ClaudeRateLimits
+		ExpectedPercent text.Percentage
+	}{
+		{
+			Case:            "Nil rate limits",
+			RateLimits:      nil,
+			ExpectedPercent: 0,
+		},
+		{
+			Case:            "Nil seven day window",
+			RateLimits:      &ClaudeRateLimits{},
+			ExpectedPercent: 0,
+		},
+		{
+			Case: "Normal usage",
+			RateLimits: &ClaudeRateLimits{
+				SevenDay: &ClaudeRateWindow{UsedPercentage: 12.7, ResetsAt: 1711612800},
+			},
+			ExpectedPercent: 13,
+		},
+		{
+			Case: "Over 100 capped",
+			RateLimits: &ClaudeRateLimits{
+				SevenDay: &ClaudeRateWindow{UsedPercentage: 200, ResetsAt: 1711612800},
+			},
+			ExpectedPercent: 100,
+		},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+
+		percent := claude.SevenDayPercent()
+		assert.Equal(t, tc.ExpectedPercent, percent, tc.Case)
+	}
+}
+
+func TestClaudeHasRateLimits(t *testing.T) {
+	cases := []struct {
+		Case       string
+		RateLimits *ClaudeRateLimits
+		Expected   bool
+	}{
+		{
+			Case:       "Nil rate limits",
+			RateLimits: nil,
+			Expected:   false,
+		},
+		{
+			Case:       "Empty rate limits",
+			RateLimits: &ClaudeRateLimits{},
+			Expected:   true,
+		},
+		{
+			Case: "With five hour",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateWindow{UsedPercentage: 10},
+			},
+			Expected: true,
+		},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+		assert.Equal(t, tc.Expected, claude.HasRateLimits(), tc.Case)
+	}
+}
+
 func TestClaudeFormattedCost(t *testing.T) {
 	cases := []struct {
 		Case         string

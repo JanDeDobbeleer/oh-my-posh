@@ -16,12 +16,12 @@ type Claude struct {
 
 // ClaudeData represents the parsed Claude JSON data
 type ClaudeData struct {
+	RateLimits    *ClaudeRateLimits   `json:"rate_limits"`
 	Model         ClaudeModel         `json:"model"`
 	Workspace     ClaudeWorkspace     `json:"workspace"`
 	SessionID     string              `json:"session_id"`
 	ContextWindow ClaudeContextWindow `json:"context_window"`
 	Cost          ClaudeCost          `json:"cost"`
-	RateLimits    *ClaudeRateLimits   `json:"rate_limits"`
 }
 
 // ClaudeModel represents the AI model information

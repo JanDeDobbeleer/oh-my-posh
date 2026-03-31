@@ -34,11 +34,11 @@ func TestGradle(t *testing.T) {
 		ExpectedString string
 		GradleOutput   string
 		GradlewOutput  string
-		HasGradlew     bool
 		ExpectedKotlin string
 		ExpectedGroovy string
 		ExpectedAnt    string
 		ExpectedJVM    string
+		HasGradlew     bool
 	}{
 		{
 			Case:           "Global gradle binary",

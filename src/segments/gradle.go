@@ -5,11 +5,11 @@ import (
 )
 
 type Gradle struct {
-	Language
 	KotlinVersion string
 	GroovyVersion string
 	AntVersion    string
 	JVMVersion    string
+	Language
 }
 
 func (g *Gradle) Template() string {

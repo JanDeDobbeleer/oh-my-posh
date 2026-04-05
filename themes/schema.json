@@ -1532,7 +1532,8 @@
                     "$ref": "#/definitions/display_mode",
                     "enum": [
                       "files",
-                      "context"
+                      "context",
+                      "environment"
                     ]
                   },
                   "extensions": {
@@ -1549,6 +1550,18 @@
                     "title": "Fetch Context",
                     "description": "Fetch the Docker context",
                     "default": true
+                  },
+                  "docker_command": {
+                    "type": "string",
+                    "title": "Docker Command",
+                    "description": "Command used to call Docker",
+                    "default": "docker"
+                  },
+                  "filter": {
+                    "type": "string",
+                    "title": "Filter",
+                    "description": "Filter passed to docker ps. See https://docs.docker.com/reference/cli/docker/container/ls/#filter",
+                    "default": ""
                   }
                 },
                 "unevaluatedProperties": false

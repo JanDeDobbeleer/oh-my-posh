@@ -2,6 +2,7 @@ package segments
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -94,11 +95,11 @@ func (d *Docker) Enabled() bool {
 		return true
 	case DisplayModeEnvironment:
 		// always fetch context first
-		hasContext := d.fetchContext()
+		_ = d.fetchContext()
 
 		dockerCommand := d.options.String(DockerCommand, "docker")
 		if !d.env.HasCommand(dockerCommand) {
-			return hasContext
+			return false
 		}
 
 		filter := d.options.String(Filter, "")
@@ -116,12 +117,12 @@ func (d *Docker) Enabled() bool {
 
 		containers, err := d.fetchContainers()
 		if err != nil {
-			return hasContext
+			return false
 		}
 
 		d.Containers = containers
 
-		return hasContext || len(d.Containers) > 0
+		return len(d.Containers) > 0
 	}
 
 	return false
@@ -176,13 +177,14 @@ func (d *Docker) fetchContainers() ([]Container, error) {
 		return nil, nil
 	}
 
-	containers := make([]Container, len(lines))
+	containers := make([]Container, 0, len(lines))
 	for i, line := range lines {
+		line = strings.TrimRight(line, "\r")
 		fields := strings.Split(line, "\t")
 		if len(fields) != 7 {
-			continue // Or handle error for malformed line
+			return nil, fmt.Errorf("invalid docker ps output on line %d: expected 7 fields, got %d", i+1, len(fields))
 		}
-		containers[i] = Container{
+		containers = append(containers, Container{
 			ID:      fields[0],
 			Image:   fields[1],
 			Command: fields[2],
@@ -190,7 +192,7 @@ func (d *Docker) fetchContainers() ([]Container, error) {
 			Status:  fields[4],
 			Ports:   fields[5],
 			Names:   fields[6],
-		}
+		})
 	}
 
 	return containers, nil

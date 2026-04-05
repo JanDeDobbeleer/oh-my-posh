@@ -127,6 +127,19 @@ func TestDockerEnvironment(t *testing.T) {
 			ExpectedContext: "2 running (c1)",
 		},
 		{
+			Case:            "Multiple running containers with windows line endings",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1\r\nc2\timage2\tcmd2\tcreated2\tstatus2\tports2\tnames2\r\n",
+			ExpectedContext: "2 running (c1)",
+		},
+		{
+			Case:            "Output with empty line",
+			ExpectedEnabled: false,
+			HasCommand:      true,
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1\n\nc2\timage2\tcmd2\tcreated2\tstatus2\tports2\tnames2",
+		},
+		{
 			Case:            "Filter applied",
 			ExpectedEnabled: true,
 			HasCommand:      true,

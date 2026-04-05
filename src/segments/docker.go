@@ -2,7 +2,9 @@ package segments
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
+	"strings"
 
 	"slices"
 
@@ -12,8 +14,12 @@ import (
 const (
 	// FetchContext is the property used to fetch the current docker context
 	FetchContext options.Option = "fetch_context"
-
+	// DefaultDockerContext is the default docker context name
 	defaultDockerContext = "default"
+	// DockerCommand is the property used to specify the docker command to use
+	DockerCommand options.Option = "docker_command"
+	// Filter is the property used to specify a filter to apply to docker ps results in environment mode, see https://docs.docker.com/reference/cli/docker/container/ls/#filter
+	Filter options.Option = "filter"
 )
 
 type DockerConfig struct {
@@ -22,8 +28,19 @@ type DockerConfig struct {
 
 type Docker struct {
 	Base
+	command    *cmd
+	Context    string
+	Containers []Container
+}
 
-	Context string
+type Container struct {
+	ID      string
+	Image   string
+	Command string
+	Created string
+	Status  string
+	Ports   string
+	Names   string
 }
 
 func (d *Docker) Template() string {
@@ -59,6 +76,7 @@ func (d *Docker) Enabled() bool {
 	extensions = d.options.StringArray(LanguageExtensions, extensions)
 
 	displayMode := d.options.String(DisplayMode, DisplayModeContext)
+
 	switch displayMode {
 	case DisplayModeContext:
 		return d.fetchContext()
@@ -73,6 +91,40 @@ func (d *Docker) Enabled() bool {
 		}
 
 		return true
+	case DisplayModeEnvironment:
+		// always fetch context first
+		_ = d.fetchContext()
+
+		if d.Context == "" {
+			d.Context = defaultStr
+		}
+
+		dockerCommand := d.options.String(DockerCommand, "docker")
+		if !d.env.HasCommand(dockerCommand) {
+			return false
+		}
+
+		filter := d.options.String(Filter, "")
+		// Use Go template formatting with tab separation
+		format := `{{.ID}}\t{{.Image}}\t{{.Command}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}`
+		args := []string{"ps", "--format", format}
+		if len(filter) > 0 {
+			args = append(args, "--filter", filter)
+		}
+
+		d.command = &cmd{
+			executable: dockerCommand,
+			args:       args,
+		}
+
+		containers, err := d.fetchContainers()
+		if err != nil {
+			return false
+		}
+
+		d.Containers = containers
+
+		return len(d.Containers) > 0
 	}
 
 	return false
@@ -110,4 +162,43 @@ func (d *Docker) fetchContext() bool {
 	}
 
 	return false
+}
+
+func (d *Docker) fetchContainers() ([]Container, error) {
+	if d.command == nil {
+		return nil, nil
+	}
+
+	output, err := d.env.RunCommand(d.command.executable, d.command.args...)
+	if err != nil {
+		return nil, err
+	}
+
+	lines := strings.Split(strings.TrimSpace(output), "\n")
+	if len(lines) == 0 || (len(lines) == 1 && lines[0] == "") {
+		return nil, nil
+	}
+
+	containers := make([]Container, 0, len(lines))
+
+	for i, line := range lines {
+		line = strings.TrimRight(line, "\r")
+		fields := strings.Split(line, "\t")
+
+		if len(fields) != 7 {
+			return nil, fmt.Errorf("invalid docker ps output on line %d: expected 7 fields, got %d", i+1, len(fields))
+		}
+
+		containers = append(containers, Container{
+			ID:      fields[0],
+			Image:   fields[1],
+			Command: fields[2],
+			Created: fields[3],
+			Status:  fields[4],
+			Ports:   fields[5],
+			Names:   fields[6],
+		})
+	}
+
+	return containers, nil
 }

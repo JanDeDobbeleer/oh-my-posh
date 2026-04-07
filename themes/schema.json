@@ -368,6 +368,7 @@
           "enum": [
             "angular",
             "argocd",
+            "aspire",
             "aurelia",
             "aws",
             "az",
@@ -653,6 +654,32 @@
           "then": {
             "title": "ArgoCD Segment",
             "description": "https://ohmyposh.dev/docs/segments/cli/argocd"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "aspire"
+              }
+            }
+          },
+          "then": {
+            "title": "Aspire Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/aspire",
+            "properties": {
+              "options": {
+                "properties": {
+                  "fetch_running": {
+                    "type": "boolean",
+                    "title": "Fetch Running",
+                    "description": "Query aspire ps to determine whether the resolved AppHost is running",
+                    "default": true
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
           }
         },
         {

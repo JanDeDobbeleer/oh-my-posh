@@ -1,7 +1,14 @@
 let _omp_executable: string = (echo ::OMP::)
 
+let _omp_executable_is_path = (
+    ($_omp_executable | str contains "/")
+    or ($_omp_executable | str contains "\\")
+    or ($_omp_executable | str starts-with ".")
+    or ($_omp_executable | str starts-with "~")
+)
+
 # Exit early if the oh-my-posh executable is not available
-if not (($_omp_executable | path exists) or (which $_omp_executable | is-not-empty)) { return }
+if not (($_omp_executable_is_path and ($_omp_executable | path exists)) or (which $_omp_executable | is-not-empty)) { return }
 
 # make sure we have the right prompt render correctly
 if ($env.config? | is-not-empty) {

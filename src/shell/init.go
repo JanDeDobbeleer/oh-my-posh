@@ -123,10 +123,7 @@ func recurseInitCommand(env runtime.Environment) string {
 
 // generateAndSourceScript writes the init script to the cache and returns a source command.
 func generateAndSourceScript(env runtime.Environment, feats Features) string {
-	// Streaming provides its own async update mechanism via oh-my-posh stream;
-	// combining it with async sourcing (precmd re-source) causes the old stream's
-	// EOF handler to close the new stream's fd, so skip async sourcing when streaming is active.
-	async := feats&Async != 0 && feats&Streaming == 0
+	async := feats&Async != 0
 
 	if scriptPath, ok := hasScript(env); ok {
 		return sourceCommand(env, scriptPath, async)

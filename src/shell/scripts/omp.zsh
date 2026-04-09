@@ -111,11 +111,9 @@ function _omp_async_handler() {
   IFS= read -r -u $fd -d $'\0' _omp_primary_prompt
   if [[ $? -ne 0 ]]; then
     if [[ -z "$_omp_primary_prompt" ]]; then
-      # EOF — unregister and close only this specific fd so that a stale handler
-      # from a previous prompt cycle cannot close the current stream's fd.
-      zle -F $fd 2>/dev/null
-      eval "exec ${fd}<&-" 2>/dev/null
-      [[ $_omp_stream_fd -eq $fd ]] && _omp_stream_fd=-1
+      # EOF — only clean up if this is still the active stream fd.
+      # A stale handler from a previous prompt cycle must not close the current stream.
+      [[ $_omp_stream_fd -eq $fd ]] && _omp_cleanup_stream
       return 0
     fi
   fi

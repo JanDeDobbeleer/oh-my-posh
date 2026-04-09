@@ -149,6 +149,11 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	if cfg.ShellIntegration {
 		log.Debug("shell integration enabled")
 		feats |= shell.FTCSMarks
+		// PowerShell emits FTCS_COMMAND_EXECUTED (OSC 133;C) inside the Enter key handler,
+		// so KeyHandlers must be enabled whenever shell integration is active.
+		if env.Shell() == shell.PWSH {
+			feats |= shell.KeyHandlers
+		}
 	}
 
 	// do not enable upgrade features when async is enabled

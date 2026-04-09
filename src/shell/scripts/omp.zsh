@@ -17,7 +17,7 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # streaming support variables
-# Use := to preserve the current fd value if the script is re-sourced mid-session.
+# Preserve the current fd value if the script is re-sourced mid-session; default to -1 when unset or empty.
 _omp_stream_fd=${_omp_stream_fd:--1}
 _omp_enable_streaming=0
 _omp_primary_prompt=""

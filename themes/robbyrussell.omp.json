@@ -6,6 +6,7 @@
       "segments": [
         {
           "foreground": "#98C379",
+          "foreground_templates": ["{{ if gt .Code 0 }}#E06C75{{ end }}"],
           "style": "plain",
           "template": "\u279c",
           "type": "text"

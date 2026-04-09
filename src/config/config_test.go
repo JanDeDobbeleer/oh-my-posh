@@ -111,6 +111,60 @@ func TestGetPalette(t *testing.T) {
 		assert.Equal(t, tc.ExpectedPalette, got, tc.Case)
 	}
 }
+func TestFeaturesShellIntegration(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Shell            string
+		ShellIntegration bool
+		ExpectedFeats    shell.Features
+	}{
+		{
+			Case:             "pwsh with shell integration enables FTCSMarks and KeyHandlers",
+			Shell:            shell.PWSH,
+			ShellIntegration: true,
+			ExpectedFeats:    shell.FTCSMarks | shell.KeyHandlers,
+		},
+		{
+			Case:             "bash with shell integration enables FTCSMarks only",
+			Shell:            shell.BASH,
+			ShellIntegration: true,
+			ExpectedFeats:    shell.FTCSMarks,
+		},
+		{
+			Case:             "zsh with shell integration enables FTCSMarks only",
+			Shell:            shell.ZSH,
+			ShellIntegration: true,
+			ExpectedFeats:    shell.FTCSMarks,
+		},
+		{
+			Case:             "pwsh without shell integration enables nothing",
+			Shell:            shell.PWSH,
+			ShellIntegration: false,
+			ExpectedFeats:    0,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return(tc.Shell)
+
+		template.Cache = &cache.Template{
+			SimpleTemplate: cache.SimpleTemplate{
+				Shell: tc.Shell,
+			},
+		}
+		template.Init(env, nil, nil)
+
+		cfg := &Config{
+			ShellIntegration: tc.ShellIntegration,
+			Upgrade:          &upgrade.Config{},
+		}
+
+		got := cfg.Features(env)
+		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
+	}
+}
+
 func TestUpgradeFeatures(t *testing.T) {
 	cases := []struct {
 		Case                  string

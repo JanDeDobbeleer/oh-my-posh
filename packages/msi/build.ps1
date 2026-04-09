@@ -200,7 +200,7 @@ try {
     $msiPackagePath = "$PWD/out/$msiFileName" -replace '\\', '/'
 
     Write-Verbose "Building MSI: $msiPackagePath" -Verbose
-    wix build -arch $Architecture -out $msiPackagePath .\oh-my-posh.wxs
+    wix build -acceptEula wix7 -arch $Architecture -out $msiPackagePath .\oh-my-posh.wxs
 
     if (-not (Test-Path $msiPackagePath)) {
         throw "MSI package was not created successfully"

@@ -17,7 +17,8 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # streaming support variables
-_omp_stream_fd=-1
+# Use := to preserve the current fd value if the script is re-sourced mid-session.
+_omp_stream_fd=${_omp_stream_fd:--1}
 _omp_enable_streaming=0
 _omp_primary_prompt=""
 _omp_streaming_supported=""
@@ -110,8 +111,11 @@ function _omp_async_handler() {
   IFS= read -r -u $fd -d $'\0' _omp_primary_prompt
   if [[ $? -ne 0 ]]; then
     if [[ -z "$_omp_primary_prompt" ]]; then
-      # EOF — stream closed normally
-      _omp_cleanup_stream
+      # EOF — unregister and close only this specific fd so that a stale handler
+      # from a previous prompt cycle cannot close the current stream's fd.
+      zle -F $fd 2>/dev/null
+      eval "exec ${fd}<&-" 2>/dev/null
+      [[ $_omp_stream_fd -eq $fd ]] && _omp_stream_fd=-1
       return 0
     fi
   fi

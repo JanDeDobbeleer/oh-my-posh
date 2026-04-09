@@ -17,7 +17,8 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # streaming support variables
-_omp_stream_fd=-1
+# Preserve the current fd value if the script is re-sourced mid-session; default to -1 when unset or empty.
+_omp_stream_fd=${_omp_stream_fd:--1}
 _omp_enable_streaming=0
 _omp_primary_prompt=""
 _omp_streaming_supported=""
@@ -110,8 +111,9 @@ function _omp_async_handler() {
   IFS= read -r -u $fd -d $'\0' _omp_primary_prompt
   if [[ $? -ne 0 ]]; then
     if [[ -z "$_omp_primary_prompt" ]]; then
-      # EOF — stream closed normally
-      _omp_cleanup_stream
+      # EOF — only clean up if this is still the active stream fd.
+      # A stale handler from a previous prompt cycle must not close the current stream.
+      [[ $_omp_stream_fd -eq $fd ]] && _omp_cleanup_stream
       return 0
     fi
   fi

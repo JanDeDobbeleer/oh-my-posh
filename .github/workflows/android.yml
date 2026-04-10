@@ -17,7 +17,7 @@ jobs:
         cd src
         go build -o dist/posh-android-arm -ldflags="-s -w -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Version=${VERSION}' -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Date=$(date)'"
     - name: Upload artifacts 🆙
-      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |

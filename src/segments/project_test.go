@@ -610,7 +610,7 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 		Case            string
 		SolutionFile    string
 		SubDirs         map[string][]fs.DirEntry // path -> entries returned by LsDir
-		FileContents    map[string]string         // path -> file content
+		FileContents    map[string]string        // path -> file content
 		Options         options.Map
 		ExpectedString  string
 		ExpectedEnabled bool
@@ -628,8 +628,8 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 				},
 			},
 			FileContents: map[string]string{
-				"MyApp.sln":                              "",
-				filepath.Join("App", "App.csproj"):       "<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>",
+				"MyApp.sln":                        "",
+				filepath.Join("App", "App.csproj"): "<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>",
 			},
 			ExpectedEnabled: true,
 			ExpectedString:  "MyApp \uf4de net8.0",
@@ -650,8 +650,8 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 				},
 			},
 			FileContents: map[string]string{
-				"MyApp.sln":                                          "",
-				filepath.Join("src", "App", "App.csproj"):            "<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>",
+				"MyApp.sln": "",
+				filepath.Join("src", "App", "App.csproj"): "<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>",
 			},
 			ExpectedEnabled: true,
 			ExpectedString:  "MyApp \uf4de net8.0",
@@ -710,8 +710,8 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 				},
 			},
 			FileContents: map[string]string{
-				"MyApp.slnx":                              "",
-				filepath.Join("Lib", "Lib.fsproj"):        "<Project><PropertyGroup><TargetFramework>net9.0</TargetFramework></PropertyGroup></Project>",
+				"MyApp.slnx":                       "",
+				filepath.Join("Lib", "Lib.fsproj"): "<Project><PropertyGroup><TargetFramework>net9.0</TargetFramework></PropertyGroup></Project>",
 			},
 			ExpectedEnabled: true,
 			ExpectedString:  "MyApp \uf4de net9.0",

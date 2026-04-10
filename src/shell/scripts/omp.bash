@@ -158,7 +158,13 @@ function _omp_install_hook() {
         prompt_command+=("$cmd")
     done
 
-    PROMPT_COMMAND=("${prompt_command[@]}" _omp_hook)
+    # When VS Code shell integration is active, prepend so _omp_hook sets PS1 before
+    # VS Code's __vsc_prompt_cmd_original wraps it with A/B shell integration sequences.
+    if [[ "${TERM_PROGRAM-}" == "vscode" ]]; then
+        PROMPT_COMMAND=(_omp_hook "${prompt_command[@]}")
+    else
+        PROMPT_COMMAND=("${prompt_command[@]}" _omp_hook)
+    fi
 }
 
 _omp_install_hook

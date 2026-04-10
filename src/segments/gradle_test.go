@@ -89,7 +89,6 @@ func TestGradle(t *testing.T) {
 	})
 
 	for _, tc := range cases {
-		tc := tc // capture range variable
 		t.Run(tc.Case, func(t *testing.T) {
 			params := &mockedLanguageParams{
 				cmd:           "gradle",

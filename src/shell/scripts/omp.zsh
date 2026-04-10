@@ -259,6 +259,24 @@ function _omp_render_tooltip() {
   zle .reset-prompt
 }
 
+function _omp_restore_rprompt() {
+  if [[ -z $_omp_tooltip_command ]]; then
+    return
+  fi
+
+  setopt local_options no_shwordsplit
+
+  local current_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
+
+  if [[ $current_command = "$_omp_tooltip_command" ]]; then
+    return
+  fi
+
+  _omp_tooltip_command="$current_command"
+  RPROMPT=$(_omp_get_prompt tooltip --command="$current_command")
+  zle .reset-prompt
+}
+
 function _omp_zle-line-init() {
   [[ $CONTEXT == start ]] || return 0
 
@@ -340,6 +358,7 @@ function enable_poshtooltips() {
   fi
 
   _omp_create_widget $widget _omp_render_tooltip
+  _omp_create_widget backward-delete-char _omp_restore_rprompt
 }
 
 # legacy functions

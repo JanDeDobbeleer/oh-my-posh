@@ -259,6 +259,24 @@ function _omp_render_tooltip() {
   zle .reset-prompt
 }
 
+function _omp_unrender_tooltip() {
+  if [[ $KEYS == $terminfo[kbs] ]]; then
+    return
+  fi
+
+  setopt local_options no_shwordsplit
+
+  # Get the first word of command line as tip.
+  local tooltip_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
+
+  if [[ ! -z $tooltip_command ]] && [[ $tooltip_command = "$_omp_tooltip_command" ]]; then
+    _omp_tooltip_command=''
+    RPROMPT=''
+    zle .reset-prompt
+    return
+  fi
+}
+
 function _omp_zle-line-init() {
   [[ $CONTEXT == start ]] || return 0
 
@@ -340,6 +358,19 @@ function enable_poshtooltips() {
   fi
 
   _omp_create_widget $widget _omp_render_tooltip
+
+  # Also trigger tooltip rendering on line init to support tooltips on the first command.
+  enable_poshtooltipdismiss
+}
+
+function enable_poshtooltipdismiss() {
+  local widget=${$(bindkey '^H'):2}
+
+  if [[ -z $widget ]]; then
+    widget=backward-delete-char
+  fi
+
+  _omp_create_widget $widget _omp_unrender_tooltip
 }
 
 # legacy functions

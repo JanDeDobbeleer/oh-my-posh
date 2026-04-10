@@ -278,6 +278,11 @@ if bind \x20 --user 2>/dev/null | string match -qe _omp_space_key_handler
     bind -e \x20 -M insert
 end
 
+if bind \x7f --user 2>/dev/null | string match -qe _omp_backspace_key_handler
+    bind -e \x7f -M default
+    bind -e \x7f -M insert
+end
+
 # tooltip
 
 function _omp_space_key_handler
@@ -304,9 +309,27 @@ function _omp_space_key_handler
     commandline --function repaint
 end
 
+function _omp_backspace_key_handler
+     # Get the first word of command line as tip.
+    set --local tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
+
+    # If the tooltip command is the same as current, repaint with tooltip cleared. 
+    # This handles the case when user tries to dismiss tooltip by pressing space again without changing the command.
+    if test -n "$tooltip_command" && test "$tooltip_command" = "$_omp_tooltip_command"
+        set --global _omp_tooltip_command ''
+        set --global _omp_current_rprompt ''
+        commandline --function repaint
+    else
+        # Otherwise, perform normal backspace
+        commandline --function backward-delete-char
+    end
+end
+
 function enable_poshtooltips
     bind \x20 _omp_space_key_handler -M default
     bind \x20 _omp_space_key_handler -M insert
+    bind \x7f _omp_backspace_key_handler -M default
+    bind \x7f _omp_backspace_key_handler -M insert
 end
 
 # transient prompt

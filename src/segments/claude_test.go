@@ -13,11 +13,12 @@ import (
 
 func TestClaudeSegment(t *testing.T) {
 	cases := []struct {
-		Case            string
-		ClaudeData      *ClaudeData
-		ExpectedModel   string
-		ExpectedSession string
-		ExpectedEnabled bool
+		Case                string
+		ClaudeData          *ClaudeData
+		ExpectedModel       string
+		ExpectedSession     string
+		ExpectedGitWorktree string
+		ExpectedEnabled     bool
 	}{
 		{
 			Case:            "No cache data",
@@ -33,8 +34,9 @@ func TestClaudeSegment(t *testing.T) {
 					DisplayName: "Opus",
 				},
 				Workspace: ClaudeWorkspace{
-					CurrentDir: "/repo/project",
-					ProjectDir: "/repo",
+					CurrentDir:  "/repo/project/.worktrees/feature",
+					ProjectDir:  "/repo/project",
+					GitWorktree: "/repo/project/.worktrees/feature",
 				},
 				Cost: ClaudeCost{
 					TotalCostUSD:    0.01,
@@ -50,9 +52,10 @@ func TestClaudeSegment(t *testing.T) {
 					},
 				},
 			},
-			ExpectedEnabled: true,
-			ExpectedModel:   "Opus",
-			ExpectedSession: "abc123",
+			ExpectedEnabled:     true,
+			ExpectedModel:       "Opus",
+			ExpectedSession:     "abc123",
+			ExpectedGitWorktree: "/repo/project/.worktrees/feature",
 		},
 		{
 			Case: "Valid cache data with partial fields",
@@ -96,7 +99,53 @@ func TestClaudeSegment(t *testing.T) {
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedModel, claude.Model.DisplayName, tc.Case)
 			assert.Equal(t, tc.ExpectedSession, claude.SessionID, tc.Case)
+			assert.Equal(t, tc.ExpectedGitWorktree, claude.Workspace.GitWorktree, tc.Case)
 		}
+	}
+}
+
+func TestClaudeWorkspaceGitWorktree(t *testing.T) {
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, cache.CLAUDECACHE)
+	})
+
+	cases := []struct {
+		Case                string
+		Workspace           ClaudeWorkspace
+		ExpectedGitWorktree string
+	}{
+		{
+			Case: "Inside a linked worktree",
+			Workspace: ClaudeWorkspace{
+				CurrentDir:  "/repo/project/.worktrees/feature",
+				ProjectDir:  "/repo/project",
+				GitWorktree: "/repo/project/.worktrees/feature",
+			},
+			ExpectedGitWorktree: "/repo/project/.worktrees/feature",
+		},
+		{
+			Case: "Outside a linked worktree",
+			Workspace: ClaudeWorkspace{
+				CurrentDir: "/repo/project",
+				ProjectDir: "/repo/project",
+			},
+			ExpectedGitWorktree: "",
+		},
+	}
+
+	for _, tc := range cases {
+		cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{Workspace: tc.Workspace}, cache.INFINITE)
+
+		env := new(mock.Environment)
+		claude := &Claude{
+			Base: Base{
+				env:     env,
+				options: options.Map{},
+			},
+		}
+
+		assert.True(t, claude.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedGitWorktree, claude.Workspace.GitWorktree, tc.Case)
 	}
 }
 

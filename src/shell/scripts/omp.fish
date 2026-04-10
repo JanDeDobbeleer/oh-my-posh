@@ -310,7 +310,7 @@ function _omp_space_key_handler
 end
 
 function _omp_backspace_key_handler
-     # Get the first word of command line as tip.
+    # Get the first word of command line as tip.
     set --local tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
 
     # If the tooltip command is the same as current, repaint with tooltip cleared. 

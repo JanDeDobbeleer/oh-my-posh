@@ -269,7 +269,7 @@ function _omp_unrender_tooltip() {
   # Get the first word of command line as tip.
   local tooltip_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
 
-  if [[ ! -z $tooltip_command ]] && [[ $tooltip_command = "$_omp_tooltip_command" ]]; then
+  if [[ -n $tooltip_command ]] && [[ $tooltip_command = "$_omp_tooltip_command" ]]; then
     _omp_tooltip_command=''
     RPROMPT=''
     zle .reset-prompt
@@ -360,10 +360,10 @@ function enable_poshtooltips() {
   _omp_create_widget $widget _omp_render_tooltip
 
   # Also trigger tooltip rendering on line init to support tooltips on the first command.
-  enable_poshtooltipdismiss
+  enable_posh_tooltip_dismiss
 }
 
-function enable_poshtooltipdismiss() {
+function enable_posh_tooltip_dismiss() {
   local widget=${$(bindkey '^H'):2}
 
   if [[ -z $widget ]]; then

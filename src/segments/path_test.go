@@ -487,6 +487,9 @@ func TestGetMaxWidth(t *testing.T) {
 		path := &Path{}
 		path.Init(props, env)
 
+		// Set the path as its own context so templates can resolve
+		props.SetContext(path)
+
 		got := path.getMaxWidth()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}

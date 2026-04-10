@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io/fs"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -15,6 +16,11 @@ import (
 
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "go.yaml.in/yaml/v3"
+)
+
+const (
+	ResolveTargetFromSolution options.Option = "resolve_target_from_solution"
+	SolutionSearchDepth       options.Option = "solution_search_depth"
 )
 
 type ProjectItem struct {
@@ -309,6 +315,16 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		target = values["TFM"]
 	}
 
+	if target == "" && (extension == ".sln" || extension == ".slnx") && n.options.Bool(ResolveTargetFromSolution, true) {
+		maxDepth := n.options.Int(SolutionSearchDepth, 2)
+		if projContent := n.findProjectFile(files, maxDepth); projContent != "" {
+			values = regex.FindNamedRegexMatch(tag, projContent)
+			if len(values) != 0 {
+				target = values["TFM"]
+			}
+		}
+	}
+
 	if target == "" {
 		log.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
 	}
@@ -317,6 +333,49 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		Target: target,
 		Name:   name,
 	}
+}
+
+// findProjectFile scans rootEntries and their subdirectories breadth-first,
+// up to maxDepth levels deep, and returns the content of the first
+// .csproj/.fsproj/.vbproj file found. Paths are kept relative to pwd so
+// FileContent resolves them the same way the caller does.
+func (n *Project) findProjectFile(rootEntries []fs.DirEntry, maxDepth int) string {
+	projectExts := []string{".csproj", ".fsproj", ".vbproj"}
+	pwd := n.env.Pwd()
+
+	var dirs []string
+	for _, entry := range rootEntries {
+		if entry.IsDir() {
+			dirs = append(dirs, entry.Name())
+			continue
+		}
+
+		// a project file can live next to the solution
+		if slices.Contains(projectExts, filepath.Ext(entry.Name())) {
+			return n.env.FileContent(entry.Name())
+		}
+	}
+
+	for depth := 1; depth <= maxDepth && len(dirs) > 0; depth++ {
+		var next []string
+
+		for _, dir := range dirs {
+			for _, entry := range n.env.LsDir(filepath.Join(pwd, dir)) {
+				if entry.IsDir() {
+					next = append(next, filepath.Join(dir, entry.Name()))
+					continue
+				}
+
+				if slices.Contains(projectExts, filepath.Ext(entry.Name())) {
+					return n.env.FileContent(filepath.Join(dir, entry.Name()))
+				}
+			}
+		}
+
+		dirs = next
+	}
+
+	return ""
 }
 
 func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {

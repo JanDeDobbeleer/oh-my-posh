@@ -509,6 +509,7 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 
 	writer := f()
 	writer.Init(segment.Options, env)
+	segment.Options.SetContext(writer)
 	segment.writer = writer
 
 	return nil

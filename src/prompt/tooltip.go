@@ -10,6 +10,37 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
+func (e *Engine) tooltipFallback() string {
+	rprompt, OK := cache.Get[string](cache.Session, RPromptKey)
+	if !OK {
+		return ""
+	}
+
+	rpromptLength, OK := cache.Get[int](cache.Session, RPromptLengthKey)
+	if !OK {
+		return rprompt
+	}
+
+	switch e.Env.Shell() {
+	case shell.PWSH:
+		e.rprompt = rprompt
+		e.currentLineLength = e.Env.Flags().Column
+
+		space, ok := e.canWriteRightBlock(rpromptLength, true)
+		if !ok {
+			return ""
+		}
+
+		e.write(terminal.SaveCursorPosition())
+		e.write(strings.Repeat(" ", space))
+		e.write(rprompt)
+		e.write(terminal.RestoreCursorPosition())
+		return e.string()
+	default:
+		return rprompt
+	}
+}
+
 func (e *Engine) Tooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
 	tooltips := make([]*config.Segment, 0, 1)
@@ -29,7 +60,7 @@ func (e *Engine) Tooltip(tip string) string {
 	}
 
 	if len(tooltips) == 0 {
-		return ""
+		return e.tooltipFallback()
 	}
 
 	// little hack to reuse the current logic

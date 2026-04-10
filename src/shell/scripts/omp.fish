@@ -304,9 +304,29 @@ function _omp_space_key_handler
     commandline --function repaint
 end
 
+function _omp_backspace_key_handler
+    commandline --function backward-delete-char
+
+    if test -z "$_omp_tooltip_command"
+        return
+    end
+
+    set --local current_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
+
+    if test "$current_command" = "$_omp_tooltip_command"
+        return
+    end
+
+    set _omp_tooltip_command "$current_command"
+    set _omp_current_rprompt (_omp_get_prompt tooltip --command="$current_command" | string join '')
+    commandline --function repaint
+end
+
 function enable_poshtooltips
     bind \x20 _omp_space_key_handler -M default
     bind \x20 _omp_space_key_handler -M insert
+    bind \x7f _omp_backspace_key_handler -M default
+    bind \x7f _omp_backspace_key_handler -M insert
 end
 
 # transient prompt

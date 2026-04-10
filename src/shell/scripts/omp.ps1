@@ -506,6 +506,27 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             finally {
             }
         }
+
+        Set-PSReadLineKeyHandler -Key Backspace -BriefDescription 'OhMyPoshBackspaceKeyHandler' -ScriptBlock {
+            [Microsoft.PowerShell.PSConsoleReadLine]::BackwardDeleteChar()
+            if (!$script:TooltipCommand) { return }
+
+            $command = ''
+            [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
+            $command = $command.TrimStart().Split(' ', 2) | Select-Object -First 1
+
+            if ($command -eq $script:TooltipCommand) { return }
+
+            $script:TooltipCommand = $command
+
+            $output = (Get-PoshPrompt "tooltip" @(
+                    "--column=$($Host.UI.RawUI.CursorPosition.X)"
+                    "--command=$command"
+                )) -join ''
+            if ($output) {
+                Write-Host $output -NoNewline
+            }
+        }
     }
 
     function Enable-KeyHandlers {

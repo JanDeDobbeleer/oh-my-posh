@@ -39,8 +39,11 @@ func TestClaudeSegment(t *testing.T) {
 					GitWorktree: "/repo/project/.worktrees/feature",
 				},
 				Cost: ClaudeCost{
-					TotalCostUSD:    0.01,
-					TotalDurationMS: 45000,
+					TotalCostUSD:       0.01,
+					TotalDurationMS:    45000,
+					TotalAPIDurationMS: 30000,
+					TotalLinesAdded:    156,
+					TotalLinesRemoved:  23,
 				},
 				ContextWindow: ClaudeContextWindow{
 					TotalInputTokens:  15234,
@@ -49,6 +52,16 @@ func TestClaudeSegment(t *testing.T) {
 					CurrentUsage: &ClaudeCurrentUsage{
 						InputTokens:  8500,
 						OutputTokens: 1200,
+					},
+				},
+				RateLimits: &ClaudeRateLimits{
+					FiveHour: &ClaudeRateLimitWindow{
+						UsedPercentage: new(24.5),
+						ResetsAt:       new(int64(1711180800)),
+					},
+					SevenDay: &ClaudeRateLimitWindow{
+						UsedPercentage: new(45.0),
+						ResetsAt:       new(int64(1711612800)),
 					},
 				},
 			},
@@ -317,6 +330,43 @@ func TestClaudeFormattedCost(t *testing.T) {
 	}
 }
 
+func TestClaudeFormattedDuration(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		MS       DurationMS
+	}{
+		{Case: "Zero", MS: 0, Expected: "0m 0s"},
+		{Case: "Seconds only", MS: 45000, Expected: "0m 45s"},
+		{Case: "Minutes and seconds", MS: 125000, Expected: "2m 5s"},
+		{Case: "Exact minute", MS: 60000, Expected: "1m 0s"},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.Cost.TotalDurationMS = tc.MS
+		assert.Equal(t, tc.Expected, claude.FormattedDuration(), tc.Case)
+	}
+}
+
+func TestClaudeFormattedAPIDuration(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		MS       DurationMS
+	}{
+		{Case: "Zero", MS: 0, Expected: "0m 0s"},
+		{Case: "Seconds only", MS: 30000, Expected: "0m 30s"},
+		{Case: "Minutes and seconds", MS: 90000, Expected: "1m 30s"},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.Cost.TotalAPIDurationMS = tc.MS
+		assert.Equal(t, tc.Expected, claude.FormattedAPIDuration(), tc.Case)
+	}
+}
+
 func TestClaudeFormattedTokens(t *testing.T) {
 	cases := []struct {
 		Case                     string
@@ -413,5 +463,81 @@ func TestClaudeFormattedTokens(t *testing.T) {
 
 		formatted := claude.FormattedTokens()
 		assert.Equal(t, tc.ExpectedFormat, formatted, tc.Case)
+	}
+}
+
+func TestClaudeRateLimitUsage(t *testing.T) {
+	cases := []struct {
+		RateLimits    *ClaudeRateLimits
+		Case          string
+		ExpectedFive  text.Percentage
+		ExpectedSeven text.Percentage
+	}{
+		{
+			Case:          "Nil RateLimits",
+			RateLimits:    nil,
+			ExpectedFive:  0,
+			ExpectedSeven: 0,
+		},
+		{
+			Case: "Nil FiveHour window",
+			RateLimits: &ClaudeRateLimits{
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(50.0)},
+			},
+			ExpectedFive:  0,
+			ExpectedSeven: 50,
+		},
+		{
+			Case: "Nil SevenDay window",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(25.0)},
+			},
+			ExpectedFive:  25,
+			ExpectedSeven: 0,
+		},
+		{
+			Case: "Nil UsedPercentage",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: nil},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: nil},
+			},
+			ExpectedFive:  0,
+			ExpectedSeven: 0,
+		},
+		{
+			Case: "Valid percentages",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(42.7)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(75.3)},
+			},
+			ExpectedFive:  43,
+			ExpectedSeven: 75,
+		},
+		{
+			Case: "Value over 100 capped",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(150.0)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(200.0)},
+			},
+			ExpectedFive:  100,
+			ExpectedSeven: 100,
+		},
+		{
+			Case: "Zero percentages",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(0.0)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(0.0)},
+			},
+			ExpectedFive:  0,
+			ExpectedSeven: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+
+		assert.Equal(t, tc.ExpectedFive, claude.FiveHourUsage(), tc.Case+" (FiveHour)")
+		assert.Equal(t, tc.ExpectedSeven, claude.SevenDayUsage(), tc.Case+" (SevenDay)")
 	}
 }

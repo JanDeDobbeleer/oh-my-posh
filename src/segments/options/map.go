@@ -143,10 +143,8 @@ func (m Map) Color(option Option, defaultValue color.Ansi) color.Ansi {
 
 	colorString := fmt.Sprint(val)
 
-	if strings.Contains(colorString, "{{") {
-		if resolved, wasTemplate := m.resolveTemplate(option, colorString); wasTemplate {
-			colorString = resolved
-		}
+	if resolved, wasTemplate := m.resolveTemplate(option, colorString); wasTemplate {
+		colorString = resolved
 	}
 
 	ansi := color.Ansi(colorString)

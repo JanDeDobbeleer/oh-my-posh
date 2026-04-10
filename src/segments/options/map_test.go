@@ -11,6 +11,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func setupTemplateTestEnv() *mock.Environment {
+	env := &mock.Environment{}
+	env.On("Getenv", "SHLVL").Return("1")
+	env.On("Shell").Return("bash")
+	env.On("Flags").Return(&runtime.Flags{
+		IsPrimary:    true,
+		ShellVersion: "1.0.0",
+		PromptCount:  1,
+		JobCount:     0,
+		PSWD:         "/home/test",
+		AbsolutePWD:  "/home/test",
+	})
+	env.On("Root").Return(false)
+	env.On("StatusCodes").Return(0, "0")
+	env.On("IsWsl").Return(false)
+	env.On("Pwd").Return("/home/test")
+	env.On("GOOS").Return(runtime.LINUX)
+	env.On("Platform").Return("ubuntu")
+	env.On("User").Return("testuser")
+	env.On("Host").Return("testhost", nil)
+
+	template.Cache = new(cache.Template)
+	template.Init(env, nil, nil)
+
+	return env
+}
+
 const (
 	expected      = "expected"
 	expectedColor = color.Ansi("#768954")
@@ -181,29 +208,8 @@ func TestSetAndGetContext(t *testing.T) {
 }
 
 func TestResolveTemplate(t *testing.T) {
-	env := &mock.Environment{}
-	env.On("Getenv", "SHLVL").Return("1")
-	env.On("Shell").Return("bash")
-	env.On("Flags").Return(&runtime.Flags{
-		IsPrimary:    true,
-		ShellVersion: "1.0.0",
-		PromptCount:  1,
-		JobCount:     0,
-		PSWD:         "/home/test",
-		AbsolutePWD:  "/home/test",
-	})
-	env.On("Root").Return(false)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("IsWsl").Return(false)
-	env.On("Pwd").Return("/home/test")
-	env.On("GOOS").Return(runtime.LINUX)
-	env.On("Platform").Return("ubuntu")
-	env.On("User").Return("testuser")
-	env.On("Host").Return("testhost", nil)
+	env := setupTemplateTestEnv()
 	env.On("Getenv", "MY_VAR").Return("42")
-
-	template.Cache = new(cache.Template)
-	template.Init(env, nil, nil)
 
 	type testContext struct {
 		Value int
@@ -259,31 +265,9 @@ func TestResolveTemplate(t *testing.T) {
 }
 
 func TestTemplate(t *testing.T) {
-	// Need to initialize template package for testing
-	env := &mock.Environment{}
+	env := setupTemplateTestEnv()
 	env.On("Getenv", "MY_API_KEY").Return("secret-key-123")
 	env.On("Getenv", "MY_USER").Return("testuser")
-	env.On("Getenv", "SHLVL").Return("1")
-	env.On("Shell").Return("bash")
-	env.On("Flags").Return(&runtime.Flags{
-		IsPrimary:    true,
-		ShellVersion: "1.0.0",
-		PromptCount:  1,
-		JobCount:     0,
-		PSWD:         "/home/test",
-		AbsolutePWD:  "/home/test",
-	})
-	env.On("Root").Return(false)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("IsWsl").Return(false)
-	env.On("Pwd").Return("/home/test")
-	env.On("GOOS").Return(runtime.LINUX)
-	env.On("Platform").Return("ubuntu")
-	env.On("User").Return("testuser")
-	env.On("Host").Return("testhost", nil)
-
-	// Initialize template package
-	template.Init(env, nil, nil)
 
 	cases := []struct {
 		Case         string
@@ -342,28 +326,7 @@ func TestTemplate(t *testing.T) {
 }
 
 func TestIntWithTemplate(t *testing.T) {
-	env := &mock.Environment{}
-	env.On("Getenv", "SHLVL").Return("1")
-	env.On("Shell").Return("bash")
-	env.On("Flags").Return(&runtime.Flags{
-		IsPrimary:    true,
-		ShellVersion: "1.0.0",
-		PromptCount:  1,
-		JobCount:     0,
-		PSWD:         "/home/test",
-		AbsolutePWD:  "/home/test",
-	})
-	env.On("Root").Return(false)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("IsWsl").Return(false)
-	env.On("Pwd").Return("/home/test")
-	env.On("GOOS").Return(runtime.LINUX)
-	env.On("Platform").Return("ubuntu")
-	env.On("User").Return("testuser")
-	env.On("Host").Return("testhost", nil)
-
-	template.Cache = new(cache.Template)
-	template.Init(env, nil, nil)
+	setupTemplateTestEnv()
 
 	type testContext struct {
 		Width int
@@ -432,28 +395,7 @@ func TestIntWithTemplate(t *testing.T) {
 }
 
 func TestFloat64WithTemplate(t *testing.T) {
-	env := &mock.Environment{}
-	env.On("Getenv", "SHLVL").Return("1")
-	env.On("Shell").Return("bash")
-	env.On("Flags").Return(&runtime.Flags{
-		IsPrimary:    true,
-		ShellVersion: "1.0.0",
-		PromptCount:  1,
-		JobCount:     0,
-		PSWD:         "/home/test",
-		AbsolutePWD:  "/home/test",
-	})
-	env.On("Root").Return(false)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("IsWsl").Return(false)
-	env.On("Pwd").Return("/home/test")
-	env.On("GOOS").Return(runtime.LINUX)
-	env.On("Platform").Return("ubuntu")
-	env.On("User").Return("testuser")
-	env.On("Host").Return("testhost", nil)
-
-	template.Cache = new(cache.Template)
-	template.Init(env, nil, nil)
+	setupTemplateTestEnv()
 
 	type testContext struct {
 		Rate float64
@@ -508,28 +450,7 @@ func TestFloat64WithTemplate(t *testing.T) {
 }
 
 func TestBoolWithTemplate(t *testing.T) {
-	env := &mock.Environment{}
-	env.On("Getenv", "SHLVL").Return("1")
-	env.On("Shell").Return("bash")
-	env.On("Flags").Return(&runtime.Flags{
-		IsPrimary:    true,
-		ShellVersion: "1.0.0",
-		PromptCount:  1,
-		JobCount:     0,
-		PSWD:         "/home/test",
-		AbsolutePWD:  "/home/test",
-	})
-	env.On("Root").Return(false)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("IsWsl").Return(false)
-	env.On("Pwd").Return("/home/test")
-	env.On("GOOS").Return(runtime.LINUX)
-	env.On("Platform").Return("ubuntu")
-	env.On("User").Return("testuser")
-	env.On("Host").Return("testhost", nil)
-
-	template.Cache = new(cache.Template)
-	template.Init(env, nil, nil)
+	setupTemplateTestEnv()
 
 	type testContext struct {
 		Flag bool
@@ -591,28 +512,7 @@ func TestBoolWithTemplate(t *testing.T) {
 }
 
 func TestColorWithTemplate(t *testing.T) {
-	env := &mock.Environment{}
-	env.On("Getenv", "SHLVL").Return("1")
-	env.On("Shell").Return("bash")
-	env.On("Flags").Return(&runtime.Flags{
-		IsPrimary:    true,
-		ShellVersion: "1.0.0",
-		PromptCount:  1,
-		JobCount:     0,
-		PSWD:         "/home/test",
-		AbsolutePWD:  "/home/test",
-	})
-	env.On("Root").Return(false)
-	env.On("StatusCodes").Return(0, "0")
-	env.On("IsWsl").Return(false)
-	env.On("Pwd").Return("/home/test")
-	env.On("GOOS").Return(runtime.LINUX)
-	env.On("Platform").Return("ubuntu")
-	env.On("User").Return("testuser")
-	env.On("Host").Return("testhost", nil)
-
-	template.Cache = new(cache.Template)
-	template.Init(env, nil, nil)
+	setupTemplateTestEnv()
 
 	type testContext struct {
 		MyColor string

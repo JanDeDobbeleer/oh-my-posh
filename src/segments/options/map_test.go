@@ -370,9 +370,9 @@ func TestIntWithTemplate(t *testing.T) {
 	}
 
 	cases := []struct {
-		Case     string
 		Input    any
 		Context  any
+		Case     string
 		Expected int
 		Default  int
 	}{
@@ -460,9 +460,9 @@ func TestFloat64WithTemplate(t *testing.T) {
 	}
 
 	cases := []struct {
-		Case     string
 		Input    any
 		Context  any
+		Case     string
 		Expected float64
 		Default  float64
 	}{
@@ -536,9 +536,9 @@ func TestBoolWithTemplate(t *testing.T) {
 	}
 
 	cases := []struct {
-		Case     string
 		Input    any
 		Context  any
+		Case     string
 		Expected bool
 		Default  bool
 	}{

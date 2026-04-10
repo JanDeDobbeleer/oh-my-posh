@@ -10,15 +10,15 @@
     "clear": "docusaurus clear"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.9.2",
-    "@docusaurus/preset-classic": "^3.9.2",
-    "@docusaurus/theme-search-algolia": "^3.9.2",
+    "@docusaurus/core": "^3.10.0",
+    "@docusaurus/preset-classic": "^3.10.0",
+    "@docusaurus/theme-search-algolia": "^3.10.0",
     "@mdx-js/react": "^3.1.1",
     "classnames": "^2.5.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "smol-toml": "^1.6.0",
-    "yaml": "^2.8.2"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "smol-toml": "^1.6.1",
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "cross-env": "^10.1.0"
@@ -34,6 +34,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.5"
   },
   "engines": {
     "npm": "10.1.0",

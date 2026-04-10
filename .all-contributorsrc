@@ -3569,6 +3569,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "MO2k4",
+      "name": "Martin Oehlert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/453360?v=4",
+      "profile": "https://mastodontech.de/@martinoe",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

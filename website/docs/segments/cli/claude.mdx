@@ -51,6 +51,10 @@ import Config from "@site/src/components/Config.js";
 | `.TokenUsagePercent` | `Percentage`    | Percentage of context window used (0-100)          |
 | `.FormattedCost`     | `string`        | Formatted cost string (e.g., "$0.15" or "$0.0012") |
 | `.FormattedTokens`   | `string`        | Human-readable token count (e.g., "1.2K", "15.3M") |
+| `.FormattedDuration`    | `string`        | Total session duration (e.g., "2m 5s")             |
+| `.FormattedAPIDuration` | `string`        | API wait time (e.g., "0m 45s")                     |
+| `.FiveHourUsage`        | `Percentage`    | 5-hour rolling rate limit usage (0-100)            |
+| `.SevenDayUsage`        | `Percentage`    | 7-day rate limit usage (0-100)                     |
 
 #### Model Properties
 
@@ -71,8 +75,11 @@ import Config from "@site/src/components/Config.js";
 
 | Name               | Type      | Description                            |
 | ------------------ | --------- | -------------------------------------- |
-| `.TotalCostUSD`    | `float64` | Total cost in USD                      |
-| `.TotalDurationMS` | `int64`   | Total session duration in milliseconds |
+| `.TotalCostUSD`       | `float64` | Total cost in USD                                 |
+| `.TotalDurationMS`    | `DurationMS` | Total session duration in milliseconds (formats as "Xm Ys") |
+| `.TotalAPIDurationMS` | `DurationMS` | Time spent waiting for API responses (formats as "Xm Ys")   |
+| `.TotalLinesAdded`    | `int`     | Lines of code added in the session                |
+| `.TotalLinesRemoved`  | `int`     | Lines of code removed in the session              |
 
 #### ContextWindow Properties
 
@@ -89,6 +96,22 @@ import Config from "@site/src/components/Config.js";
 | --------------- | ----- | ------------------------------------- |
 | `.InputTokens`  | `int` | Input tokens for the current message  |
 | `.OutputTokens` | `int` | Output tokens for the current message |
+
+#### RateLimits Properties
+
+Available when Claude Code provides rate limit data (Pro/Max subscribers). Access via `.RateLimits`.
+
+| Name        | Type              | Description              |
+| ----------- | ----------------- | ------------------------ |
+| `.FiveHour` | `RateLimitWindow` | 5-hour rolling window    |
+| `.SevenDay` | `RateLimitWindow` | 7-day rolling window     |
+
+#### RateLimitWindow Properties
+
+| Name              | Type       | Description                              |
+| ----------------- | ---------- | ---------------------------------------- |
+| `.UsedPercentage` | `*float64` | Usage percentage (0-100), nil if unknown |
+| `.ResetsAt`       | `*int64`   | Unix epoch seconds when window resets    |
 
 ### Percentage Methods
 

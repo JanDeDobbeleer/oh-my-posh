@@ -16,6 +16,7 @@ type Claude struct {
 
 // ClaudeData represents the parsed Claude JSON data
 type ClaudeData struct {
+	RateLimits    *ClaudeRateLimits   `json:"rate_limits"`
 	Model         ClaudeModel         `json:"model"`
 	Workspace     ClaudeWorkspace     `json:"workspace"`
 	SessionID     string              `json:"session_id"`
@@ -36,10 +37,35 @@ type ClaudeWorkspace struct {
 	GitWorktree string `json:"git_worktree"`
 }
 
+// DurationMS is a duration in milliseconds that formats as "Xm Ys".
+type DurationMS int64
+
+func (d DurationMS) String() string {
+	totalSeconds := int64(d) / 1000
+	minutes := totalSeconds / 60
+	seconds := totalSeconds % 60
+	return fmt.Sprintf("%dm %ds", minutes, seconds)
+}
+
 // ClaudeCost represents cost and duration information
 type ClaudeCost struct {
-	TotalCostUSD    float64 `json:"total_cost_usd"`
-	TotalDurationMS int64   `json:"total_duration_ms"`
+	TotalCostUSD       float64    `json:"total_cost_usd"`
+	TotalDurationMS    DurationMS `json:"total_duration_ms"`
+	TotalAPIDurationMS DurationMS `json:"total_api_duration_ms"`
+	TotalLinesAdded    int        `json:"total_lines_added"`
+	TotalLinesRemoved  int        `json:"total_lines_removed"`
+}
+
+// ClaudeRateLimitWindow represents a single rate limit time window.
+type ClaudeRateLimitWindow struct {
+	UsedPercentage *float64 `json:"used_percentage"`
+	ResetsAt       *int64   `json:"resets_at"`
+}
+
+// ClaudeRateLimits represents rate limit information across time windows.
+type ClaudeRateLimits struct {
+	FiveHour *ClaudeRateLimitWindow `json:"five_hour"`
+	SevenDay *ClaudeRateLimitWindow `json:"seven_day"`
 }
 
 // ClaudeContextWindow represents token usage information
@@ -143,6 +169,49 @@ func (c *Claude) FormattedCost() string {
 	}
 
 	return fmt.Sprintf("$%.2f", c.Cost.TotalCostUSD)
+}
+
+// FormattedDuration returns total session duration as "Xm Ys".
+func (c *Claude) FormattedDuration() string {
+	return c.Cost.TotalDurationMS.String()
+}
+
+// FormattedAPIDuration returns API wait time as "Xm Ys".
+func (c *Claude) FormattedAPIDuration() string {
+	return c.Cost.TotalAPIDurationMS.String()
+}
+
+// rateLimitPercentage extracts a percentage from a rate limit window with nil-safety.
+func rateLimitPercentage(limits *ClaudeRateLimits, window func(*ClaudeRateLimits) *ClaudeRateLimitWindow) text.Percentage {
+	if limits == nil {
+		return 0
+	}
+
+	w := window(limits)
+	if w == nil || w.UsedPercentage == nil {
+		return 0
+	}
+
+	percent := int(*w.UsedPercentage + 0.5)
+	if percent > 100 {
+		return 100
+	}
+
+	return text.Percentage(percent)
+}
+
+// FiveHourUsage returns the 5-hour rolling window rate limit usage as a Percentage.
+func (c *Claude) FiveHourUsage() text.Percentage {
+	return rateLimitPercentage(c.RateLimits, func(r *ClaudeRateLimits) *ClaudeRateLimitWindow {
+		return r.FiveHour
+	})
+}
+
+// SevenDayUsage returns the 7-day window rate limit usage as a Percentage.
+func (c *Claude) SevenDayUsage() text.Percentage {
+	return rateLimitPercentage(c.RateLimits, func(r *ClaudeRateLimits) *ClaudeRateLimitWindow {
+		return r.SevenDay
+	})
 }
 
 // FormattedTokens returns a human-readable string of current context tokens.

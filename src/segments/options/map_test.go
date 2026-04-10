@@ -3,6 +3,7 @@ package options
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -167,6 +168,93 @@ func TestOneOf(t *testing.T) {
 	for _, tc := range cases {
 		value := OneOf(tc.Map, tc.DefaultValue, tc.Options...)
 		assert.Equal(t, tc.Expected, value, tc.Case)
+	}
+}
+
+func TestSetAndGetContext(t *testing.T) {
+	m := Map{}
+	assert.Nil(t, m.getContext())
+
+	ctx := struct{ Name string }{Name: "test"}
+	m.SetContext(ctx)
+	assert.Equal(t, ctx, m.getContext())
+}
+
+func TestResolveTemplate(t *testing.T) {
+	env := &mock.Environment{}
+	env.On("Getenv", "SHLVL").Return("1")
+	env.On("Shell").Return("bash")
+	env.On("Flags").Return(&runtime.Flags{
+		IsPrimary:    true,
+		ShellVersion: "1.0.0",
+		PromptCount:  1,
+		JobCount:     0,
+		PSWD:         "/home/test",
+		AbsolutePWD:  "/home/test",
+	})
+	env.On("Root").Return(false)
+	env.On("StatusCodes").Return(0, "0")
+	env.On("IsWsl").Return(false)
+	env.On("Pwd").Return("/home/test")
+	env.On("GOOS").Return(runtime.LINUX)
+	env.On("Platform").Return("ubuntu")
+	env.On("User").Return("testuser")
+	env.On("Host").Return("testhost", nil)
+	env.On("Getenv", "MY_VAR").Return("42")
+
+	template.Cache = new(cache.Template)
+	template.Init(env, nil, nil)
+
+	type testContext struct {
+		Value int
+	}
+
+	cases := []struct {
+		Case        string
+		Raw         string
+		Context     any
+		Expected    string
+		WasTemplate bool
+	}{
+		{
+			Case:        "plain string, no template",
+			Raw:         "hello",
+			Context:     nil,
+			Expected:    "hello",
+			WasTemplate: false,
+		},
+		{
+			Case:        "template with context",
+			Raw:         "{{ .Value }}",
+			Context:     testContext{Value: 42},
+			Expected:    "42",
+			WasTemplate: true,
+		},
+		{
+			Case:        "template but nil context",
+			Raw:         "{{ .Value }}",
+			Context:     nil,
+			Expected:    "{{ .Value }}",
+			WasTemplate: false,
+		},
+		{
+			Case:        "env var template",
+			Raw:         "{{ .Env.MY_VAR }}",
+			Context:     testContext{Value: 0},
+			Expected:    "42",
+			WasTemplate: true,
+		},
+	}
+
+	for _, tc := range cases {
+		m := Map{}
+		if tc.Context != nil {
+			m.SetContext(tc.Context)
+		}
+
+		resolved, wasTemplate := m.resolveTemplate("test_option", tc.Raw)
+		assert.Equal(t, tc.Expected, resolved, tc.Case)
+		assert.Equal(t, tc.WasTemplate, wasTemplate, tc.Case)
 	}
 }
 

@@ -3,6 +3,7 @@ package options
 import (
 	"encoding/gob"
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/generics"
@@ -83,6 +84,35 @@ func debugf(format string, args ...any) {
 	}
 
 	log.Debug(fmt.Sprintf(format, args...))
+}
+
+const templateContextKey Option = "__template_context__"
+
+func (m Map) SetContext(ctx any) {
+	m[templateContextKey] = ctx
+}
+
+func (m Map) getContext() any {
+	return m[templateContextKey]
+}
+
+func (m Map) resolveTemplate(option Option, raw string) (string, bool) {
+	if !strings.Contains(raw, "{{") {
+		return raw, false
+	}
+
+	ctx := m.getContext()
+	if ctx == nil {
+		return raw, false
+	}
+
+	resolved, err := template.Render(raw, ctx)
+	if err != nil {
+		debugf("%s: template resolution failed: %s", option, err)
+		return raw, false
+	}
+
+	return resolved, true
 }
 
 func (m Map) String(option Option, defaultValue string) string {

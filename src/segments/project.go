@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io/fs"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -304,11 +305,10 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		target = values["TFM"]
 	}
 
-	// When a .sln/.slnx is matched and no TFM was found, scan subdirectories
 	if target == "" && (extension == ".sln" || extension == ".slnx") {
 		if n.options.Bool(ResolveTargetFromSolution, true) {
 			maxDepth := n.options.Int(SolutionSearchDepth, 2)
-			projContent := n.findProjectFileInSubdirs(maxDepth)
+			projContent := n.findProjectFileInSubdirs(files, maxDepth)
 			if projContent != "" {
 				values = regex.FindNamedRegexMatch(tag, projContent)
 				if len(values) != 0 {
@@ -328,48 +328,48 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 	}
 }
 
-func (n *Project) findProjectFileInSubdirs(maxDepth int) string {
+func (n *Project) findProjectFileInSubdirs(rootEntries []fs.DirEntry, maxDepth int) string {
 	projectExts := []string{".csproj", ".fsproj", ".vbproj"}
 	pwd := n.env.Pwd()
 
-	type dirEntry struct {
-		path  string // absolute path for LsDir
-		depth int
+	type queueItem struct {
+		absPath string
+		relPath string
+		depth   int
 	}
 
-	queue := []dirEntry{{path: pwd, depth: 0}}
+	var queue []queueItem
+	for _, entry := range rootEntries {
+		if entry.IsDir() {
+			queue = append(queue, queueItem{
+				absPath: filepath.Join(pwd, entry.Name()),
+				relPath: entry.Name(),
+				depth:   1,
+			})
+		}
+	}
 
 	for len(queue) > 0 {
 		current := queue[0]
 		queue = queue[1:]
 
-		entries := n.env.LsDir(current.path)
+		entries := n.env.LsDir(current.absPath)
 		for _, entry := range entries {
 			if entry.IsDir() {
 				if current.depth < maxDepth {
-					queue = append(queue, dirEntry{
-						path:  filepath.Join(current.path, entry.Name()),
-						depth: current.depth + 1,
+					queue = append(queue, queueItem{
+						absPath: filepath.Join(current.absPath, entry.Name()),
+						relPath: filepath.Join(current.relPath, entry.Name()),
+						depth:   current.depth + 1,
 					})
 				}
 
 				continue
 			}
 
-			// Only check for project files in subdirectories (depth > 0)
-			if current.depth == 0 {
-				continue
-			}
-
 			ext := filepath.Ext(entry.Name())
 			if slices.Contains(projectExts, ext) {
-				relPath, err := filepath.Rel(pwd, filepath.Join(current.path, entry.Name()))
-				if err != nil {
-					log.Error(err)
-					continue
-				}
-
-				return n.env.FileContent(relPath)
+				return n.env.FileContent(filepath.Join(current.relPath, entry.Name()))
 			}
 		}
 	}

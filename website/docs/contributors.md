@@ -497,6 +497,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Eckii24"><img src="https://avatars.githubusercontent.com/u/35373554?v=4?s=100" width="100px;" alt="Eckii24"/><br /><sub><b>Eckii24</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Eckii24" title="Code">💻</a> <a href="#design-Eckii24" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Eckii24" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://josephgruber.com"><img src="https://avatars.githubusercontent.com/u/590669?v=4?s=100" width="100px;" alt="Joseph Gruber"/><br /><sub><b>Joseph Gruber</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=josephgruber" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://mastodontech.de/@martinoe"><img src="https://avatars.githubusercontent.com/u/453360?v=4?s=100" width="100px;" alt="Martin Oehlert"/><br /><sub><b>Martin Oehlert</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MO2k4" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MO2k4" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

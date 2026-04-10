@@ -105,6 +105,10 @@ func TestClaudeSegment(t *testing.T) {
 }
 
 func TestClaudeWorkspaceGitWorktree(t *testing.T) {
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, cache.CLAUDECACHE)
+	})
+
 	cases := []struct {
 		Case                string
 		Workspace           ClaudeWorkspace

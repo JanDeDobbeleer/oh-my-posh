@@ -31,8 +31,9 @@ type ClaudeModel struct {
 
 // ClaudeWorkspace represents workspace directory information
 type ClaudeWorkspace struct {
-	CurrentDir string `json:"current_dir"`
-	ProjectDir string `json:"project_dir"`
+	CurrentDir  string `json:"current_dir"`
+	ProjectDir  string `json:"project_dir"`
+	GitWorktree string `json:"git_worktree"`
 }
 
 // ClaudeCost represents cost and duration information

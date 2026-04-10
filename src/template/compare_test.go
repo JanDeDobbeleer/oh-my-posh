@@ -3,6 +3,7 @@ package template
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,6 +22,12 @@ func TestGt(t *testing.T) {
 		{Case: "Float vs String", Expected: true, E1: float64(3), E2: "test"},
 		{Case: "Int vs String", Expected: true, E1: 3, E2: "test"},
 		{Case: "String vs String", Expected: false, E1: "test", E2: "test"},
+		// Named int types (e.g. text.Percentage)
+		{Case: "Percentage(60) gt 50 = true", Expected: true, E1: text.Percentage(60), E2: 50},
+		{Case: "Percentage(40) gt 50 = false", Expected: false, E1: text.Percentage(40), E2: 50},
+		{Case: "Percentage(50) gt 50 = false", Expected: false, E1: text.Percentage(50), E2: 50},
+		{Case: "Int gt Percentage = true", Expected: true, E1: 60, E2: text.Percentage(50)},
+		{Case: "Int gt Percentage = false", Expected: false, E1: 40, E2: text.Percentage(50)},
 	}
 
 	for _, tc := range cases {
@@ -42,6 +49,11 @@ func TestLt(t *testing.T) {
 		{Case: "Float vs Float", Expected: true, E1: float64(3), E2: float64(4)},
 		{Case: "Float vs String", Expected: false, E1: float64(3), E2: "test"},
 		{Case: "String vs String", Expected: false, E1: "test", E2: "test"},
+		// Named int types (e.g. text.Percentage)
+		{Case: "Percentage(40) lt 50 = true", Expected: true, E1: text.Percentage(40), E2: 50},
+		{Case: "Percentage(60) lt 50 = false", Expected: false, E1: text.Percentage(60), E2: 50},
+		{Case: "Int lt Percentage = true", Expected: true, E1: 40, E2: text.Percentage(50)},
+		{Case: "Int lt Percentage = false", Expected: false, E1: 60, E2: text.Percentage(50)},
 	}
 
 	for _, tc := range cases {

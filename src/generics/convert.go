@@ -2,6 +2,7 @@ package generics
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 )
 
@@ -31,6 +32,16 @@ func toNumeric[T Numeric](value any) (T, error) {
 		}
 		return T(0), nil
 	default:
+		// Handle named types with numeric underlying types (e.g. type Percentage int)
+		rv := reflect.ValueOf(value)
+		switch rv.Kind() { //nolint:exhaustive
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			return T(rv.Int()), nil
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			return T(rv.Uint()), nil
+		case reflect.Float32, reflect.Float64:
+			return T(rv.Float()), nil
+		}
 		return T(0), errors.New("invalid numeric type")
 	}
 }

@@ -1,6 +1,10 @@
 package template
 
-import "github.com/jandedobbeleer/oh-my-posh/src/generics"
+import (
+	"reflect"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/generics"
+)
 
 func toIntOrZero(e any) int {
 	if value, err := generics.TryParseInt[int](e); err == nil {
@@ -31,6 +35,18 @@ func gt(e1, e2 any) bool {
 	if val, OK := e1.(float64); OK {
 		return val > toFloat64(e2)
 	}
+
+	// Handle named types with numeric underlying types (e.g. type Percentage int)
+	v := reflect.ValueOf(e1)
+	switch v.Kind() { //nolint:exhaustive
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return v.Int() > int64(toIntOrZero(e2))
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return int64(v.Uint()) > int64(toIntOrZero(e2))
+	case reflect.Float32, reflect.Float64:
+		return v.Float() > toFloat64(e2)
+	}
+
 	return false
 }
 

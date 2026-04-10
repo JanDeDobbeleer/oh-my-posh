@@ -42,7 +42,14 @@ func gt(e1, e2 any) bool {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return v.Int() > int64(toIntOrZero(e2))
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return int64(v.Uint()) > int64(toIntOrZero(e2))
+		e2Int, err := toInt(e2)
+		if err != nil {
+			return v.Uint() > 0
+		}
+		if e2Int < 0 {
+			return true
+		}
+		return v.Uint() > uint64(e2Int)
 	case reflect.Float32, reflect.Float64:
 		return v.Float() > toFloat64(e2)
 	}

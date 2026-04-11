@@ -11,4 +11,5 @@ const (
 	ELVISH  = "elvish"
 	XONSH   = "xonsh"
 	CLAUDE  = "claude"
+	TMUX    = "tmux"
 )

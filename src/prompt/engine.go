@@ -45,6 +45,8 @@ const (
 	VALID     = "valid"
 	ERROR     = "error"
 	PREVIEW   = "preview"
+	TMUXLEFT  = "tmux-left"
+	TMUXRIGHT = "tmux-right"
 )
 
 func (e *Engine) write(txt string) {
@@ -568,6 +570,9 @@ func New(flags *runtime.Flags) *Engine {
 	terminal.Init(sh)
 	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors(env)
+	if env.Shell() == shell.TMUX {
+		terminal.Colors = color.NewTmuxColors(terminal.Colors)
+	}
 	terminal.Plain = flags.Plain
 
 	eng := &Engine{

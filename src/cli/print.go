@@ -42,7 +42,7 @@ func init() {
 
 func createPrintCmd() *cobra.Command {
 	printCmd := &cobra.Command{
-		Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error|preview]",
+		Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error|preview|tmux-left|tmux-right]",
 		Short: "Print the prompt/context",
 		Long:  "Print one of the prompts based on the location/use-case.",
 		ValidArgs: []string{
@@ -55,6 +55,8 @@ func createPrintCmd() *cobra.Command {
 			prompt.VALID,
 			prompt.ERROR,
 			prompt.PREVIEW,
+			prompt.TMUXLEFT,
+			prompt.TMUXRIGHT,
 		},
 		Args: NoArgsOrOneValidArg,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -123,6 +125,10 @@ func createPrintCmd() *cobra.Command {
 				fmt.Print(eng.ExtraPrompt(prompt.Error))
 			case prompt.PREVIEW:
 				fmt.Print(eng.Preview())
+			case prompt.TMUXLEFT:
+				fmt.Print(eng.TmuxStatusLeft())
+			case prompt.TMUXRIGHT:
+				fmt.Print(eng.TmuxStatusRight())
 			default:
 				_ = cmd.Help()
 			}

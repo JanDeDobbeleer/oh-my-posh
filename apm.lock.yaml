@@ -1,6 +1,6 @@
 lockfile_version: '1'
-generated_at: '2026-03-24T19:20:00.231781+00:00'
-apm_version: 0.7.7
+generated_at: '2026-04-12T20:00:53.202813+00:00'
+apm_version: 0.8.11
 dependencies:
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
@@ -9,8 +9,8 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/conventional-commit
   - .github/skills/conventional-commit
+  content_hash: sha256:d842107e497b6fd51f24e2bfe74dbaf3f9e0e358bf5f95b9d79abbec5785e7af
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
   resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
@@ -18,8 +18,8 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/golang
   - .github/skills/golang
+  content_hash: sha256:b0783cb13028c1b486aaffe7bce1b49294e92b22e1f8ce58895e61c639865f90
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
   resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
@@ -27,8 +27,8 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/markdown
   - .github/skills/markdown
+  content_hash: sha256:fa25f4f36faa33fa51ec6e9a3b5bf7cde618d8d7dfb572dd8f55733dc1813265
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
   resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
@@ -36,8 +36,8 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/powershell
   - .github/skills/powershell
+  content_hash: sha256:bc844acc1cf9ccc5d2d10e1c889b8b5b69b92f743e3bc11e0bc9a386770fc864
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
   resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
@@ -45,5 +45,5 @@ dependencies:
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .claude/skills/vale-user-facing-text
   - .github/skills/vale-user-facing-text
+  content_hash: sha256:7676bf19dc93149f469655ffb0b166db7c953fe0483b8a96e763ce024b1c8a59

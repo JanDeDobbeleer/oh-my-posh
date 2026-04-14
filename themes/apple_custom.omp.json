@@ -1,0 +1,120 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
+  "final_space": true,
+  "console_title_template": "{{ .Shell }} \u2014 {{ .Folder }}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#03045e",
+          "template": "  \uf179 ",
+          "properties": {
+            "macos": "\uf179",
+            "linux": "\uf17c",
+            "windows": "\uf17a"
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#0077b6",
+          "template": "  \uf07b {{ .Path }} ",
+          "properties": {
+            "style": "full",
+            "folder_separator_icon": "/"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "foreground_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffffff{{ end }}"
+          ],
+          "background": "#0096c7",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#00b4d8{{ end }}"
+          ],
+          "template": "  {{ .HEAD }}{{ if gt .Ahead 0 }}  \uf55c {{ .Ahead }}{{ end }}{{ if gt .Behind 0 }}  \uf544 {{ .Behind }}{{ end }}{{ if .Staging.Changed }}  \uf046 {{ .Staging.String }}{{ end }}{{ if .Working.Changed }}  \uf044 {{ .Working.String }}{{ end }} ",
+          "properties": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "branch_icon": "\ue725 "
+          }
+        },
+        {
+          "type": "session",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#00b4d8",
+          "template": "  \uf007 {{ .UserName }} "
+        },
+        {
+          "type": "time",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#03045e",
+          "background": "#90e0ef",
+          "template": "  \uf017 {{ .CurrentDate | date .Format }} ",
+          "properties": {
+            "time_format": "02 Jan 2006  15:04:05"
+          }
+        },
+        {
+          "type": "sysinfo",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#03045e",
+          "background": "#ade8f4",
+          "template": "  \uf0e4 {{ printf \"%.2f\" .Load1 }} ",
+          "properties": {
+            "precision": 0
+          }
+        },
+        {
+          "type": "sysinfo",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#03045e",
+          "background": "#caf0f8",
+          "template": "  \uf1c0 {{ div (sub .PhysicalTotalMemory .PhysicalAvailableMemory) 1073741824 }}/{{ div .PhysicalTotalMemory 1073741824 }}GB ",
+          "properties": {
+            "precision": 0
+          }
+        },
+        {
+          "type": "text",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#caf0f8",
+          "background": "transparent",
+          "template": ""
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#caf0f8",
+          "template": "\uf054 "
+        }
+      ]
+    }
+  ]
+}

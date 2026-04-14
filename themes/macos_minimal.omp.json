@@ -1,0 +1,115 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 4,
+  "final_space": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
+          "cache": {
+            "duration": "24h",
+            "strategy": "session"
+          },
+          "foreground": "p:text-light",
+          "background": "p:blue"
+        },
+        {
+          "type": "session",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " \uf007 {{ .UserName }}",
+          "foreground": "p:text-light",
+          "background": "p:lighter-blue"
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "p:text-light",
+          "background": "p:lighter1-blue",
+          "template": " \uf07c {{ .Path }} ",
+          "options": {
+            "style": "folder"
+          }
+        },
+        {
+          "type": "battery",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ if not .Error }}{{ .Icon }} {{ .Percentage }}%{{ end }}{{ .Error }} ",
+          "foreground": "p:text-light",
+          "background": "p:lighter3-blue"
+        },
+        {
+          "type": "owm",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ .Weather }} {{ .Temperature }}{{ .UnitIcon }} ",
+          "foreground": "p:text-light",
+          "background": "p:cyan"
+        },
+        {
+          "type": "sysinfo",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " \uf4bc {{ round .PhysicalPercentUsed .Precision }}% ",
+          "foreground": "p:text-light",
+          "background": "p:lighter-cyan"
+        },
+        {
+          "type": "executiontime",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " \uf252 {{ .FormattedMs }} ",
+          "foreground": "p:text-light",
+          "background": "p:lighter2-cyan"
+        },
+        {
+          "type": "shell",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "template": " \ue795 {{ .Name }} ",
+          "cache": {
+            "duration": "24h",
+            "strategy": "session"
+          },
+          "foreground": "p:text-light",
+          "background": "p:path-bg"
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "p:text-light",
+          "background": "p:greenish",
+          "template": " \uf126 {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": []
+    }
+  ],
+  "palette": {
+    "text-light": "#ffffff",
+    "path-bg": "#61AFEF",
+    "git-bg": "#98C379",
+    "blue": "#001f99",
+    "lighter-blue": "#0126df",
+    "lighter1-blue": "#0033ff",
+    "lighert2-blue": "#0055ff",
+    "lighter3-blue": "#0069cc",
+    "cyan": "#009dff",
+    "lighter-cyan": "#00bfff",
+    "lighter2-cyan": "#00c0f0",
+    "greenish": "#00ffd5"
+  }
+}

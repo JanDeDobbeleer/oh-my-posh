@@ -67,7 +67,7 @@ jobs:
       - name: Post Build 🤐
         run: |
           ./post.ps1
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: build-artifacts
           path: |
@@ -104,7 +104,7 @@ jobs:
         run: |
           $version = '${{ needs.changelog.outputs.version }}'.TrimStart("v")
           ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign -SDKVersion "10.0.26100.0"
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: msi-artifact-${{ matrix.arch }}
           path: |
@@ -128,7 +128,7 @@ jobs:
           az storage blob upload-batch --destination releases/v${{ needs.changelog.outputs.version }} --source .
           az storage blob upload-batch --destination releases/latest --overwrite true --source .
       - name: Release 🎓
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}

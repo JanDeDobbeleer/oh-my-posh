@@ -121,12 +121,14 @@
           "invert_powerline": true,
           "leading_diamond": "",
           "options": {
-            "charged_icon": " ",
-            "charging_icon": " ",
-            "discharging_icon": " "
+            "always_enabled": true,
+            "charged_icon": " ",
+            "charging_icon": " ",
+            "discharging_icon": " ",
+            "not_charging_icon": " "
           },
           "style": "diamond",
-          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% <#111111></>",
+          "template": " {{ .Icon }}{{ .Percentage }}% <#111111></>",
           "type": "battery"
         },
         {

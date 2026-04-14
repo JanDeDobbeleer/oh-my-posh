@@ -19,39 +19,39 @@
         {
           "foreground": "#0057b7",
           "style": "plain",
-          "template": "\ue0c5",
+          "template": "",
           "type": "text"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
-          "powerline_symbol": "\ue0c4",
+          "powerline_symbol": "",
           "style": "powerline",
-          "template": " \ue795 ",
+          "template": "  ",
           "type": "text"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
           "options": {
-            "home_icon": "\ue617",
+            "home_icon": "",
             "style": "full"
           },
           "style": "diamond",
           "template": "{{ .Path }} ",
-          "trailing_diamond": "\ue0b0",
+          "trailing_diamond": "",
           "type": "path"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
-          "powerline_symbol": "\ue0b0",
+          "powerline_symbol": "",
           "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " \uf408  {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\ueb4b {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} ",
+          "template": "   {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}}  {{ .WorktreeCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -63,19 +63,19 @@
             "{{ if gt .Behind 0 }}#c53379{{ end }}"
           ],
           "foreground": "#0057b7",
-          "powerline_symbol": "\ue0b0",
+          "powerline_symbol": "",
           "options": {
             "fetch_status": false,
             "fetch_upstream_icon": false
           },
           "style": "powerline",
-          "template": "\uf105",
+          "template": "",
           "type": "git"
         },
         {
-          "leading_diamond": "<transparent,#49404f>\ue0b0</>",
+          "leading_diamond": "<transparent,#49404f></>",
           "style": "plain",
-          "trailing_diamond": "\ue0b0",
+          "trailing_diamond": "",
           "type": "text"
         },
         {
@@ -84,13 +84,13 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#a30000{{ end }}"
           ],
-          "leading_diamond": "<transparent,#ffffff>\ue0b0</>",
+          "leading_diamond": "<transparent,#ffffff></>",
           "options": {
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " {{ if gt .Code 0 }}\uf421 \uf119 {{ else }}\uf469 \u2665 {{ end }}",
-          "trailing_diamond": "\ue0b0",
+          "template": " {{ if gt .Code 0 }}  {{ else }} ♥ {{ end }}",
+          "trailing_diamond": "",
           "type": "status"
         }
       ],
@@ -102,56 +102,58 @@
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
-          "leading_diamond": "\ue0b6",
+          "leading_diamond": "",
           "style": "diamond",
-          "template": " \ue266 {{ round .PhysicalPercentUsed .Precision }}% | RAM: {{ round (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) 1 }}/{{ round (div .PhysicalTotalMemory 1073741824.0) 0 }}GB <#111111>\ue0b2</>",
+          "template": "  {{ round .PhysicalPercentUsed .Precision }}% | RAM: {{ round (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) 1 }}/{{ round (div .PhysicalTotalMemory 1073741824.0) 0 }}GB <#111111></>",
           "type": "sysinfo"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "",
           "style": "diamond",
-          "template": " \uf0ac <#111111>\ue0b2</>",
+          "template": "  <#111111></>",
           "type": "text"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
           "invert_powerline": true,
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "",
           "options": {
-            "charged_icon": "\ueb2d ",
-            "charging_icon": "\uf492 ",
-            "discharging_icon": "\uf243 "
+            "always_enabled": true,
+            "charged_icon": " ",
+            "charging_icon": " ",
+            "discharging_icon": " ",
+            "not_charging_icon": " "
           },
           "style": "diamond",
-          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% <#111111>\ue0b2</>",
+          "template": " {{ .Icon }}{{ .Percentage }}% <#111111></>",
           "type": "battery"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
           "invert_powerline": true,
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "",
           "options": {
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " \ueba2 {{ .FormattedMs }} <#111111>\ue0b2</>",
+          "template": "  {{ .FormattedMs }} <#111111></>",
           "type": "executiontime"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
           "invert_powerline": true,
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "",
           "options": {
             "time_format": "02 Jan Mon 15:04:05"
           },
           "style": "diamond",
-          "template": " \uf073 {{ .CurrentDate | date .Format }}",
-          "trailing_diamond": "\ue0b4",
+          "template": "  {{ .CurrentDate | date .Format }}",
+          "trailing_diamond": "",
           "type": "time"
         }
       ],
@@ -164,13 +166,13 @@
         {
           "foreground": "#0057b7",
           "style": "plain",
-          "template": "\ue0c5",
+          "template": "",
           "type": "text"
         },
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
-          "powerline_symbol": "\ue0c4",
+          "powerline_symbol": "",
           "style": "powerline",
           "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
           "type": "os"
@@ -178,17 +180,17 @@
         {
           "background": "#0057b7",
           "foreground": "#ffffff",
-          "powerline_symbol": "\ue0b0",
+          "powerline_symbol": "",
           "style": "powerline",
-          "template": "\uf0e7 ",
+          "template": " ",
           "type": "root"
         },
         {
           "background": "#ffffff",
           "foreground": "#0057b7",
-          "powerline_symbol": "\ue0b0",
+          "powerline_symbol": "",
           "style": "powerline",
-          "template": " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
+          "template": " {{ if .SSHSession }} {{ end }}{{ .UserName }} ",
           "type": "session"
         }
       ],
@@ -200,25 +202,25 @@
         {
           "foreground": "#0057b7",
           "style": "plain",
-          "template": "\uf004",
+          "template": "",
           "type": "text"
         },
         {
           "foreground": "#ffffff",
           "style": "plain",
-          "template": "\uf004",
+          "template": "",
           "type": "text"
         },
         {
           "foreground": "#0057b7",
           "style": "plain",
-          "template": "\uf004",
+          "template": "",
           "type": "text"
         },
         {
           "foreground": "#ffffff",
           "style": "plain",
-          "template": "\uf004  Greece",
+          "template": "  Greece",
           "type": "text"
         }
       ],

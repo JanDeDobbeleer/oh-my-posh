@@ -34,7 +34,7 @@
           "background": "#880E4F",
           "foreground": "#F8BBD0",
           "options": {
-            "home_icon": "",
+            "home_icon": "~",
             "style": "full"
           },
           "style": "diamond",

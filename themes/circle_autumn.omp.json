@@ -22,7 +22,7 @@
           "leading_diamond": "",
           "style": "diamond",
           "template": "zsh  ",
-          "trailing_diamond": "",
+          "trailing_diamond": "",
           "type": "text"
         },
         {
@@ -32,16 +32,16 @@
             "home_icon": "~",
             "style": "full"
           },
-          "leading_diamond": "<transparent,#BF360C></>",
+          "leading_diamond": "<transparent,#BF360C></>",
           "style": "diamond",
           "template": "  {{ .Path }} ",
-          "trailing_diamond": "",
+          "trailing_diamond": "",
           "type": "path"
         },
         {
           "background": "#BF360C",
           "foreground": "#FFE0B2",
-          "powerline_symbol": "",
+          "powerline_symbol": "",
           "options": {
             "fetch_status": true,
             "fetch_upstream_icon": true
@@ -59,7 +59,7 @@
             "{{ if gt .Behind 0 }}#c53379{{ end }}"
           ],
           "foreground": "#BF360C",
-          "powerline_symbol": "",
+          "powerline_symbol": "",
           "options": {
             "fetch_status": false,
             "fetch_upstream_icon": false
@@ -69,9 +69,9 @@
           "type": "git"
         },
         {
-          "leading_diamond": "<transparent,#49404f></>",
+          "leading_diamond": "<transparent,#49404f></>",
           "style": "plain",
-          "trailing_diamond": "",
+          "trailing_diamond": "",
           "type": "text"
         },
         {
@@ -80,13 +80,13 @@
           "foreground_templates": [
             "{{ if gt .Code 0 }}#a30000{{ end }}"
           ],
-          "leading_diamond": "<transparent,#FFE0B2></>",
+          "leading_diamond": "<transparent,#FFE0B2></>",
           "options": {
             "always_enabled": true
           },
           "style": "diamond",
           "template": " {{ if gt .Code 0 }}  {{ else }} ♥ {{ end }}",
-          "trailing_diamond": "",
+          "trailing_diamond": "",
           "type": "status"
         }
       ],
@@ -100,22 +100,22 @@
           "foreground": "#FFE0B2",
           "leading_diamond": "",
           "style": "diamond",
-          "template": "  {{ round .PhysicalPercentUsed .Precision }}% | RAM: {{ round (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) 1 }}/{{ round (div .PhysicalTotalMemory 1073741824.0) 0 }}GB <#111111></>",
+          "template": "  {{ round .PhysicalPercentUsed .Precision }}% | RAM: {{ round (div ((sub .PhysicalTotalMemory .PhysicalAvailableMemory)|float64) 1073741824.0) 1 }}/{{ round (div .PhysicalTotalMemory 1073741824.0) 0 }}GB <#111111></>",
           "type": "sysinfo"
         },
         {
           "background": "#BF360C",
           "foreground": "#FFE0B2",
-          "leading_diamond": "",
+          "leading_diamond": "",
           "style": "diamond",
-          "template": "  <#111111></>",
+          "template": "  <#111111></>",
           "type": "text"
         },
         {
           "background": "#BF360C",
           "foreground": "#FFE0B2",
           "invert_powerline": true,
-          "leading_diamond": "",
+          "leading_diamond": "",
           "options": {
             "always_enabled": true,
             "charged_icon": " ",
@@ -124,26 +124,26 @@
             "not_charging_icon": " "
           },
           "style": "diamond",
-          "template": " {{ .Icon }}{{ .Percentage }}% <#111111></>",
+          "template": " {{ .Icon }}{{ .Percentage }}% <#111111></>",
           "type": "battery"
         },
         {
           "background": "#BF360C",
           "foreground": "#FFE0B2",
           "invert_powerline": true,
-          "leading_diamond": "",
+          "leading_diamond": "",
           "options": {
             "always_enabled": true
           },
           "style": "diamond",
-          "template": "  {{ .FormattedMs }} <#111111></>",
+          "template": "  {{ .FormattedMs }} <#111111></>",
           "type": "executiontime"
         },
         {
           "background": "#BF360C",
           "foreground": "#FFE0B2",
           "invert_powerline": true,
-          "leading_diamond": "",
+          "leading_diamond": "",
           "options": {
             "time_format": "02 Jan Mon 15:04:05"
           },
@@ -176,7 +176,7 @@
         {
           "background": "#BF360C",
           "foreground": "#FFE0B2",
-          "powerline_symbol": "",
+          "powerline_symbol": "",
           "style": "powerline",
           "template": " ",
           "type": "root"
@@ -184,7 +184,7 @@
         {
           "background": "#FFE0B2",
           "foreground": "#BF360C",
-          "powerline_symbol": "",
+          "powerline_symbol": "",
           "style": "powerline",
           "template": " {{ if .SSHSession }} {{ end }}{{ .UserName }} ",
           "type": "session"

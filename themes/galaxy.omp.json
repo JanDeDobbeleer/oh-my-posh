@@ -17,17 +17,12 @@
       "alignment": "left",
       "segments": [
         {
+          "background": "#B388FF",
           "foreground": "#1A237E",
-          "style": "plain",
-          "template": "",
-          "type": "text"
-        },
-        {
-          "background": "#1A237E",
-          "foreground": "#B388FF",
-          "powerline_symbol": "",
-          "style": "powerline",
-          "template": "  ",
+          "leading_diamond": "",
+          "style": "diamond",
+          "template": "zsh  ",
+          "trailing_diamond": "",
           "type": "text"
         },
         {
@@ -37,8 +32,9 @@
             "home_icon": "~",
             "style": "full"
           },
+          "leading_diamond": "<transparent,#1A237E></>",
           "style": "diamond",
-          "template": "{{ .Path }} ",
+          "template": "  {{ .Path }} ",
           "trailing_diamond": "",
           "type": "path"
         },

@@ -2,8 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
+      "type": "prompt",
       "alignment": "left",
-     "segments": [
+      "segments": [
         {
           "background": "#29315A",
           "foreground": "#3EC669",
@@ -36,19 +37,38 @@
           "trailing_diamond": "\ue0b4",
           "type": "git"
         },
-
         {
           "foreground": "#C94A16",
           "style": "plain",
           "template": "x ",
           "type": "status"
         }
-      ],
-      "type": "prompt"
+      ]
     },
-     {
+    {
+      "type": "prompt",
       "alignment": "right",
       "segments": [
+        {
+          "type": "bun",
+          "style": "plain",
+          "foreground": "#e5dbcc",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue76f {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "crystal",
+          "style": "plain",
+          "foreground": "#e5e5e5",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue7ac {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
         {
           "type": "node",
           "style": "plain",
@@ -62,42 +82,42 @@
             "pnpm_icon": "<#e5a100>\ue865 pnpm</> ",
             "yarn_icon": "<#37aee5>\ue6a7 yarn</> "
           },
-          "template": "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}\ue718 {{ .Full }}"
+          "template": "{{ if ne .PackageManagerName \"bun\" }}{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }}{{ end }}\ue718 {{ .Full }}{{ end }}"
         },
         {
-          "foreground": "#4063D8",
-          "options": {
-            "display_mode": "files",
-            "fetch_version": true
-          },
+          "type": "python",
           "style": "plain",
-          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
-          "type": "crystal"
-        },
-        {
-          "foreground": "#DE3F24",
-          "options": {
-            "display_mode": "files",
-            "fetch_version": true
-          },
-          "style": "plain",
-          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
-          "type": "ruby"
-        },
-        {
-          "foreground": "#FED142",
+          "foreground": "#e5c949",
           "options": {
             "display_mode": "context",
             "fetch_virtual_env": false
           },
+          "template": " \ue73c {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "ruby",
           "style": "plain",
-          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
-          "type": "python"
+          "foreground": "#e5252b",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "rust",
+          "style": "plain",
+          "foreground": "#e58a55",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
         }
-      ],
-      "type": "prompt"
+      ]
     },
     {
+      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
@@ -107,8 +127,7 @@
           "template": "\u279c ",
           "type": "text"
         }
-      ],
-      "type": "prompt"
+      ]
     }
   ],
   "version": 4

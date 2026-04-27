@@ -73,7 +73,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			}
 
 			if tc.timeout > 0 {
-				props[TIMEOUT] = tc.timeout
+				props[options.HTTPTimeout] = tc.timeout
 			}
 
 			env.On("HTTPRequest", tc.url).Return([]byte(tc.response), func() error {

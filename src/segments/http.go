@@ -16,8 +16,7 @@ type HTTP struct {
 }
 
 const (
-	METHOD  options.Option = "method"
-	TIMEOUT options.Option = "timeout"
+	METHOD options.Option = "method"
 )
 
 func (h *HTTP) Template() string {
@@ -31,7 +30,7 @@ func (h *HTTP) Enabled() bool {
 	}
 
 	method := h.options.String(METHOD, "GET")
-	timeout := h.options.Int(TIMEOUT, 10000)
+	timeout := h.options.Int(options.HTTPTimeout, 10000)
 
 	if resolved, err := template.Render(url, nil); err == nil {
 		url = resolved

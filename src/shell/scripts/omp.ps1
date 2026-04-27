@@ -523,9 +523,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     "--column=$($Host.UI.RawUI.CursorPosition.X)"
                     "--command=$command"
                 )) -join ''
-            if ($output) {
-                Write-Host $output -NoNewline
+            if (!$output) {
+                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                return
             }
+
+            Write-Host $output -NoNewline
+
+            # Workaround to prevent the text after cursor from disappearing when the tooltip is printed.
+            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
+            [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
         }
     }
 

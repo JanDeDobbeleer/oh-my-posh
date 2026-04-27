@@ -14,7 +14,8 @@ import (
 )
 
 func TestTooltipFallback_NoCacheReturnsEmpty(t *testing.T) {
-	cache.DeleteAll(cache.Session)
+	cache.Delete(cache.Session, RPromptKey)
+	cache.Delete(cache.Session, RPromptLengthKey)
 
 	env := new(mock.Environment)
 	env.On("Shell").Return(shell.ZSH)
@@ -31,7 +32,8 @@ func TestTooltipFallback_NoCacheReturnsEmpty(t *testing.T) {
 }
 
 func TestTooltipFallback_NoMatchReturnsRPromptText(t *testing.T) {
-	cache.DeleteAll(cache.Session)
+	cache.Delete(cache.Session, RPromptKey)
+	cache.Delete(cache.Session, RPromptLengthKey)
 	cache.Set(cache.Session, RPromptKey, "my-rprompt", cache.INFINITE)
 	cache.Set(cache.Session, RPromptLengthKey, 10, cache.INFINITE)
 
@@ -50,7 +52,8 @@ func TestTooltipFallback_NoMatchReturnsRPromptText(t *testing.T) {
 }
 
 func TestTooltipFallback_PwshNoMatchReturnsCursorPositionedRPrompt(t *testing.T) {
-	cache.DeleteAll(cache.Session)
+	cache.Delete(cache.Session, RPromptKey)
+	cache.Delete(cache.Session, RPromptLengthKey)
 	cache.Set(cache.Session, RPromptKey, "my-rprompt", cache.INFINITE)
 	cache.Set(cache.Session, RPromptLengthKey, 10, cache.INFINITE)
 
@@ -73,7 +76,8 @@ func TestTooltipFallback_PwshNoMatchReturnsCursorPositionedRPrompt(t *testing.T)
 }
 
 func TestTooltipFallback_PwshNoRoomReturnsEmpty(t *testing.T) {
-	cache.DeleteAll(cache.Session)
+	cache.Delete(cache.Session, RPromptKey)
+	cache.Delete(cache.Session, RPromptLengthKey)
 	cache.Set(cache.Session, RPromptKey, "my-rprompt", cache.INFINITE)
 	// rprompt length exceeds available terminal space
 	cache.Set(cache.Session, RPromptLengthKey, 200, cache.INFINITE)

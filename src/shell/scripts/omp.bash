@@ -116,7 +116,9 @@ function _omp_hook() {
     fi
 
     _omp_stack_count=$((${#DIRSTACK[@]} - 1))
-    _omp_job_count=$(( $(jobs -p 2>/dev/null | wc -l) ))
+    local _omp_jobs=()
+    _omp_jobs=($(jobs -p 2>/dev/null))
+    _omp_job_count=${#_omp_jobs[@]}
 
     _omp_execution_time=-1
     if [[ $_omp_start_time ]]; then

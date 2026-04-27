@@ -553,8 +553,6 @@ func TestClaudeGaugeMethods(t *testing.T) {
 		ExpectedFiveHourGauge  string
 		ExpectedSevenDayGauge  string
 		UsedPercentage         int
-		FiveHourPercent        float64
-		SevenDayPercent        float64
 	}{
 		{
 			Case:                   "Default chars (▰▱) at 40% used",

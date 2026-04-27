@@ -12,9 +12,9 @@ import (
 // Claude segment displays Claude Code session information
 type Claude struct {
 	Base
-	ClaudeData
 	markedChar   string
 	unmarkedChar string
+	ClaudeData
 }
 
 // ClaudeData represents the parsed Claude JSON data

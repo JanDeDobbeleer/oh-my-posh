@@ -573,9 +573,9 @@ func TestClaudeGaugeMethods(t *testing.T) {
 			ExpectedTokenGaugeUsed: "██░░░", // 40% used = 2 blocks
 		},
 		{
-			Case:         "Custom chars with rate limits",
-			MarkedChar:   "█",
-			UnmarkedChar: "░",
+			Case:           "Custom chars with rate limits",
+			MarkedChar:     "█",
+			UnmarkedChar:   "░",
 			UsedPercentage: 0,
 			RateLimits: &ClaudeRateLimits{
 				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(60.0)},

@@ -333,6 +333,17 @@ end
 
 function _omp_enter_key_handler
     if commandline --paging-mode
+        set --global _omp_new_prompt 1
+        set --global _omp_tooltip_command ''
+
+        # cleanup streaming before executing command
+        _omp_cleanup_stream
+
+        if test $_omp_transient_prompt = 1
+            set --global _omp_transient 1
+            commandline --function repaint
+        end
+
         commandline --function execute
         return
     end

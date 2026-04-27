@@ -524,7 +524,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     "--command=$command"
                 )) -join ''
             if (!$output) {
-                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                $previousOutputEncoding = [Console]::OutputEncoding
+                try {
+                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                }
+                catch [System.ArgumentOutOfRangeException] {
+                }
+                finally {
+                    [Console]::OutputEncoding = $previousOutputEncoding
+                }
                 return
             }
 

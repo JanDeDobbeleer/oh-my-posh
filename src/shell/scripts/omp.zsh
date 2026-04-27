@@ -202,6 +202,7 @@ function _omp_cleanup() {
   local omp_widgets=(
     self-insert
     zle-line-init
+    backward-delete-char
   )
   local widget
   for widget in "${omp_widgets[@]}"; do

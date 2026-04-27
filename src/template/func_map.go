@@ -27,6 +27,12 @@ func funcMap() template.FuncMap {
 		"stat":         stat,
 		"dir":          filepath.Dir,
 		"base":         filepath.Base,
+		// Override sprig date functions to support string epoch values (e.g. output of unixEpoch).
+		"date":           ompDate,
+		"date_in_zone":   ompDateInZone,
+		"dateInZone":     ompDateInZone,
+		"htmlDate":       ompHTMLDate,
+		"htmlDateInZone": ompHTMLDateInZone,
 	}
 
 	for key, fun := range sprig.TxtFuncMap() {

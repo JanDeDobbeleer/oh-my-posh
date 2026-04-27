@@ -21,10 +21,10 @@ func TestDateFromStringEpoch(t *testing.T) {
 
 	// Use date_in_zone with UTC so tests are timezone-independent.
 	cases := []struct {
+		Context  any
 		Case     string
 		Expected string
 		Template string
-		Context  any
 	}{
 		{
 			Case:     "string epoch via date_in_zone",
@@ -89,10 +89,10 @@ func TestDateAndHTMLDateFunctions(t *testing.T) {
 	epochStr := fmt.Sprintf("%d", knownEpoch)
 
 	cases := []struct {
+		Context  any
 		Case     string
 		Expected string
 		Template string
-		Context  any
 	}{
 		{
 			Case:     "date function with string epoch",

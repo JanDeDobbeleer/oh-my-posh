@@ -541,3 +541,101 @@ func TestClaudeRateLimitUsage(t *testing.T) {
 		assert.Equal(t, tc.ExpectedSeven, claude.SevenDayUsage(), tc.Case+" (SevenDay)")
 	}
 }
+
+func TestClaudeGaugeMethods(t *testing.T) {
+	cases := []struct {
+		RateLimits             *ClaudeRateLimits
+		Case                   string
+		MarkedChar             string
+		UnmarkedChar           string
+		ExpectedTokenGauge     string
+		ExpectedTokenGaugeUsed string
+		ExpectedFiveHourGauge  string
+		ExpectedSevenDayGauge  string
+		UsedPercentage         int
+		FiveHourPercent        float64
+		SevenDayPercent        float64
+	}{
+		{
+			Case:                   "Default chars (▰▱) at 40% used",
+			MarkedChar:             "▰",
+			UnmarkedChar:           "▱",
+			UsedPercentage:         40,
+			ExpectedTokenGauge:     "▰▰▰▱▱", // 60% remaining = 3 blocks
+			ExpectedTokenGaugeUsed: "▰▰▱▱▱", // 40% used = 2 blocks
+		},
+		{
+			Case:                   "Custom chars (█░) at 40% used",
+			MarkedChar:             "█",
+			UnmarkedChar:           "░",
+			UsedPercentage:         40,
+			ExpectedTokenGauge:     "███░░", // 60% remaining = 3 blocks
+			ExpectedTokenGaugeUsed: "██░░░", // 40% used = 2 blocks
+		},
+		{
+			Case:         "Custom chars with rate limits",
+			MarkedChar:   "█",
+			UnmarkedChar: "░",
+			UsedPercentage: 0,
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{UsedPercentage: new(60.0)},
+				SevenDay: &ClaudeRateLimitWindow{UsedPercentage: new(20.0)},
+			},
+			ExpectedFiveHourGauge: "███░░", // 60% used = 3 blocks
+			ExpectedSevenDayGauge: "█░░░░", // 20% used = 1 block
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			usedPct := tc.UsedPercentage
+			claude := &Claude{
+				markedChar:   tc.MarkedChar,
+				unmarkedChar: tc.UnmarkedChar,
+			}
+			claude.ContextWindow.UsedPercentage = &usedPct
+			claude.RateLimits = tc.RateLimits
+
+			if tc.ExpectedTokenGauge != "" {
+				assert.Equal(t, tc.ExpectedTokenGauge, claude.TokenGauge(), tc.Case+" (TokenGauge)")
+			}
+
+			if tc.ExpectedTokenGaugeUsed != "" {
+				assert.Equal(t, tc.ExpectedTokenGaugeUsed, claude.TokenGaugeUsed(), tc.Case+" (TokenGaugeUsed)")
+			}
+
+			if tc.ExpectedFiveHourGauge != "" {
+				assert.Equal(t, tc.ExpectedFiveHourGauge, claude.FiveHourGauge(), tc.Case+" (FiveHourGauge)")
+			}
+
+			if tc.ExpectedSevenDayGauge != "" {
+				assert.Equal(t, tc.ExpectedSevenDayGauge, claude.SevenDayGauge(), tc.Case+" (SevenDayGauge)")
+			}
+		})
+	}
+}
+
+func TestClaudeGaugeOptionsReadInEnabled(t *testing.T) {
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, cache.CLAUDECACHE)
+	})
+
+	cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{
+		Model: ClaudeModel{DisplayName: "Opus"},
+	}, cache.INFINITE)
+
+	env := new(mock.Environment)
+	claude := &Claude{
+		Base: Base{
+			env: env,
+			options: options.Map{
+				gaugeMarkedChar:   "█",
+				gaugeUnmarkedChar: "░",
+			},
+		},
+	}
+
+	assert.True(t, claude.Enabled())
+	assert.Equal(t, "█", claude.markedChar)
+	assert.Equal(t, "░", claude.unmarkedChar)
+}

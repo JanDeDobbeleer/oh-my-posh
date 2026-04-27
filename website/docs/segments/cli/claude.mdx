@@ -25,7 +25,7 @@ import Config from "@site/src/components/Config.js";
     foreground: "#FFFFFF",
     background: "#FF6B35",
     template:
-      " \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }} ",
+      " \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ",
   }}
 />
 
@@ -34,10 +34,17 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
- \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }}
+ \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }}
 ```
 
 :::
+
+## Options
+
+| Option               | Default | Description                                              |
+| -------------------- | ------- | -------------------------------------------------------- |
+| `gauge_marked_char`  | `▰`     | Character used for filled blocks in gauge visualizations |
+| `gauge_unmarked_char`| `▱`     | Character used for empty blocks in gauge visualizations  |
 
 ### Properties
 
@@ -49,6 +56,10 @@ import Config from "@site/src/components/Config.js";
 | `.Cost`              | `Cost`          | Cost and duration information                      |
 | `.ContextWindow`     | `ContextWindow` | Token usage information                            |
 | `.TokenUsagePercent` | `Percentage`    | Percentage of context window used (0-100)          |
+| `.TokenGauge`        | `string`        | Gauge showing remaining context capacity using configured characters (e.g., `▰▰▰▱▱`) |
+| `.TokenGaugeUsed`    | `string`        | Gauge showing used context capacity using configured characters (e.g., `▰▰▱▱▱`) |
+| `.FiveHourGauge`     | `string`        | Gauge showing 5-hour rate limit usage using configured characters |
+| `.SevenDayGauge`     | `string`        | Gauge showing 7-day rate limit usage using configured characters |
 | `.FormattedCost`     | `string`        | Formatted cost string (e.g., "$0.15" or "$0.0012") |
 | `.FormattedTokens`   | `string`        | Human-readable token count (e.g., "1.2K", "15.3M") |
 | `.FormattedDuration`    | `string`        | Total session duration (e.g., "2m 5s")             |
@@ -115,13 +126,19 @@ Available when Claude Code provides rate limit data (Pro/Max subscribers). Acces
 
 ### Percentage Methods
 
-The `TokenUsagePercent` property is a `Percentage` type that provides additional functionality:
+The `Percentage` type (returned by `.TokenUsagePercent`, `.FiveHourUsage`, `.SevenDayUsage`)
+provides additional methods for direct use in templates:
 
 | Method       | Returns  | Description                                                        |
 | ------------ | -------- | ------------------------------------------------------------------ |
-| `.Gauge`     | `string` | Visual gauge showing remaining capacity using 5 bar blocks (▰▰▰▰▱) |
-| `.GaugeUsed` | `string` | Visual gauge showing used capacity using 5 bar blocks (▰▱▱▱▱)      |
+| `.Gauge`     | `string` | Visual gauge showing remaining capacity using hardcoded `▰`/`▱` characters |
+| `.GaugeUsed` | `string` | Visual gauge showing used capacity using hardcoded `▰`/`▱` characters |
 | `.String`    | `string` | Numeric percentage value (e.g., "75" for use in templates)         |
+
+:::tip Custom gauge characters
+Use `.TokenGauge`, `.TokenGaugeUsed`, `.FiveHourGauge`, and `.SevenDayGauge` instead of the
+raw `.Percentage` methods above — they respect the `gauge_marked_char` and `gauge_unmarked_char` options.
+:::
 
 ## How it works
 

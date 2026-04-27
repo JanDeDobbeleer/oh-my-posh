@@ -130,6 +130,68 @@ func TestPercentageGaugeUsed(t *testing.T) {
 	}
 }
 
+func TestPercentageGaugeWith(t *testing.T) {
+	cases := []struct {
+		Case          string
+		ExpectedGauge string
+		Percent       Percentage
+	}{
+		{
+			Case:          "0 percent used (100% remaining)",
+			Percent:       Percentage(0),
+			ExpectedGauge: "█████",
+		},
+		{
+			Case:          "20 percent used (80% remaining - 4 blocks)",
+			Percent:       Percentage(20),
+			ExpectedGauge: "████░",
+		},
+		{
+			Case:          "100 percent used (0% remaining - 0 blocks)",
+			Percent:       Percentage(100),
+			ExpectedGauge: "░░░░░",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			result := tc.Percent.GaugeWith("█", "░")
+			assert.Equal(t, tc.ExpectedGauge, result, tc.Case)
+		})
+	}
+}
+
+func TestPercentageGaugeUsedWith(t *testing.T) {
+	cases := []struct {
+		Case          string
+		ExpectedGauge string
+		Percent       Percentage
+	}{
+		{
+			Case:          "0 percent used",
+			Percent:       Percentage(0),
+			ExpectedGauge: "░░░░░",
+		},
+		{
+			Case:          "20 percent used",
+			Percent:       Percentage(20),
+			ExpectedGauge: "█░░░░",
+		},
+		{
+			Case:          "100 percent used",
+			Percent:       Percentage(100),
+			ExpectedGauge: "█████",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			result := tc.Percent.GaugeUsedWith("█", "░")
+			assert.Equal(t, tc.ExpectedGauge, result, tc.Case)
+		})
+	}
+}
+
 func TestPercentageString(t *testing.T) {
 	cases := []struct {
 		Case     string

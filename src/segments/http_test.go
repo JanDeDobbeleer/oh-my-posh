@@ -17,6 +17,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 		name        string
 		url         string
 		method      string
+		timeout     int
 		response    string
 		shouldError bool
 	}{
@@ -24,6 +25,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			name:        "Valid URL with GET response",
 			url:         "https://jsonplaceholder.typicode.com/posts/1",
 			method:      "GET",
+			timeout:     0,
 			response:    `{"id": "1"}`,
 			expected:    "1",
 			shouldError: false,
@@ -32,6 +34,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			name:        "Valid URL with POST response",
 			url:         "https://jsonplaceholder.typicode.com/posts",
 			method:      "POST",
+			timeout:     0,
 			response:    `{"id": "101"}`,
 			expected:    "101",
 			shouldError: false,
@@ -40,12 +43,23 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			name:        "Valid URL with error response",
 			url:         "https://api.example.com/data",
 			method:      "GET",
+			timeout:     0,
 			shouldError: true,
 		},
 		{
 			name:        "Empty URL",
 			url:         "",
 			method:      "GET",
+			timeout:     0,
+			shouldError: false,
+		},
+		{
+			name:        "Custom timeout",
+			url:         "https://jsonplaceholder.typicode.com/posts/1",
+			method:      "GET",
+			timeout:     5000,
+			response:    `{"id": "2"}`,
+			expected:    "2",
 			shouldError: false,
 		},
 	}
@@ -56,6 +70,10 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 			props := options.Map{
 				URL:    tc.url,
 				METHOD: tc.method,
+			}
+
+			if tc.timeout > 0 {
+				props[TIMEOUT] = tc.timeout
 			}
 
 			env.On("HTTPRequest", tc.url).Return([]byte(tc.response), func() error {

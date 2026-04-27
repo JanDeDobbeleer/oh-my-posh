@@ -17,8 +17,8 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 		name        string
 		url         string
 		method      string
-		timeout     int
 		response    string
+		timeout     int
 		shouldError bool
 	}{
 		{

@@ -79,4 +79,3 @@ func TestDateFromStringEpoch(t *testing.T) {
 		}
 	}
 }
-

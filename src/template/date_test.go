@@ -79,3 +79,43 @@ func TestDateFromStringEpoch(t *testing.T) {
 		}
 	}
 }
+
+func TestDateAndHTMLDateFunctions(t *testing.T) {
+	// Override time.Local to UTC so `date` and `htmlDate` produce deterministic output.
+	origLocal := time.Local
+	time.Local = time.UTC
+	defer func() { time.Local = origLocal }()
+
+	epochStr := fmt.Sprintf("%d", knownEpoch)
+
+	cases := []struct {
+		Case     string
+		Expected string
+		Template string
+		Context  any
+	}{
+		{
+			Case:     "date function with string epoch",
+			Expected: "13 Jun 19 20:39 +0000",
+			Template: `{{ date "02 Jan 06 15:04 -0700" .Epoch }}`,
+			Context:  struct{ Epoch string }{Epoch: epochStr},
+		},
+		{
+			Case:     "htmlDate function with zero string epoch",
+			Expected: "1970-01-01",
+			Template: `{{ htmlDate .Epoch }}`,
+			Context:  struct{ Epoch string }{Epoch: "0"},
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("Shell").Return("foo")
+		Cache = new(cache.Template)
+		Init(env, nil, nil)
+
+		text, err := Render(tc.Template, tc.Context)
+		assert.NoError(t, err, tc.Case)
+		assert.Equal(t, tc.Expected, text, tc.Case)
+	}
+}

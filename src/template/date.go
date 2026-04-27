@@ -9,7 +9,7 @@ import (
 // epoch values. Sprig's unixEpoch returns a string, which sprig's own date functions
 // do not handle — they fall through to time.Now(). This wrapper parses numeric strings
 // as Unix timestamps so that patterns like `{{ now | unixEpoch | date "..." }}` work.
-func dateInZone(fmt string, date interface{}, zone string) string {
+func dateInZone(fmt string, date any, zone string) string {
 	var t time.Time
 
 	switch v := date.(type) {
@@ -41,18 +41,18 @@ func dateInZone(fmt string, date interface{}, zone string) string {
 	return t.In(loc).Format(fmt)
 }
 
-func ompDate(fmt string, date interface{}) string {
+func ompDate(fmt string, date any) string {
 	return dateInZone(fmt, date, "Local")
 }
 
-func ompDateInZone(fmt string, date interface{}, zone string) string {
+func ompDateInZone(fmt string, date any, zone string) string {
 	return dateInZone(fmt, date, zone)
 }
 
-func ompHTMLDate(date interface{}) string {
+func ompHTMLDate(date any) string {
 	return dateInZone("2006-01-02", date, "Local")
 }
 
-func ompHTMLDateInZone(date interface{}, zone string) string {
+func ompHTMLDateInZone(date any, zone string) string {
 	return dateInZone("2006-01-02", date, zone)
 }

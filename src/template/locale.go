@@ -55,7 +55,7 @@ func localeShortDate(date any) string {
 	return dateInZone(layout, date, "Local")
 }
 
-// localeShortTime formats date using the OS short-time regional setting.
+// localeShortTime formats time using the OS short-time regional setting.
 //
 // Example:
 //
@@ -95,7 +95,8 @@ func windowsPatternToGoLayout(pattern string) string {
 		// Seconds
 		{"ss", "05"},
 		{"s", "5"},
-		// AM/PM
+		// AM/PM — Go has no single-character AM/PM token; both "t" and "tt" map to "PM".
+		// "t" will always render as two characters ("AM"/"PM"), matching "tt" behaviour.
 		{"tt", "PM"},
 		{"t", "PM"},
 	}

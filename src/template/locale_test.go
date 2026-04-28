@@ -82,11 +82,14 @@ func TestLocaleShortDateFallback(t *testing.T) {
 	Init(mockEnv, nil, nil)
 
 	// Override the resolver to return empty strings (simulates resolver failure).
+	prevResolver := localeLayoutsResolver
 	localeLayoutsResolver = func() (string, string) { return "", "" }
+	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
 	resetLocaleCache("", "")
 
+	origLocal := time.Local
 	time.Local = time.UTC
-	defer func() { time.Local = time.FixedZone("UTC", 0) }()
+	t.Cleanup(func() { time.Local = origLocal })
 
 	tmpl := `{{ localeShortDate .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(0, 0).UTC()}
@@ -103,11 +106,14 @@ func TestLocaleShortTimeFallback(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
+	prevResolver := localeLayoutsResolver
 	localeLayoutsResolver = func() (string, string) { return "", "" }
+	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
 	resetLocaleCache("", "")
 
+	origLocal := time.Local
 	time.Local = time.UTC
-	defer func() { time.Local = time.FixedZone("UTC", 0) }()
+	t.Cleanup(func() { time.Local = origLocal })
 
 	tmpl := `{{ localeShortTime .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(0, 0).UTC()}
@@ -124,11 +130,14 @@ func TestLocaleShortDateWithISOLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
+	prevResolver := localeLayoutsResolver
 	localeLayoutsResolver = func() (string, string) { return defaultDateLayout, defaultTimeLayout }
+	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
 	resetLocaleCache("", "")
 
+	origLocal := time.Local
 	time.Local = time.UTC
-	defer func() { time.Local = time.FixedZone("UTC", 0) }()
+	t.Cleanup(func() { time.Local = origLocal })
 
 	// knownEpoch = 2019-06-13 20:39:39 UTC (from date_test.go)
 	tmpl := `{{ localeShortDate .T }}`
@@ -145,11 +154,14 @@ func TestLocaleShortTimeWith24hLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
+	prevResolver := localeLayoutsResolver
 	localeLayoutsResolver = func() (string, string) { return defaultDateLayout, defaultTimeLayout }
+	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
 	resetLocaleCache("", "")
 
+	origLocal := time.Local
 	time.Local = time.UTC
-	defer func() { time.Local = time.FixedZone("UTC", 0) }()
+	t.Cleanup(func() { time.Local = origLocal })
 
 	tmpl := `{{ localeShortTime .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(knownEpoch, 0).UTC()}
@@ -165,11 +177,14 @@ func TestLocaleShortDateWith12hUSLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
+	prevResolver := localeLayoutsResolver
 	localeLayoutsResolver = func() (string, string) { return "1/2/2006", "3:04 PM" }
+	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
 	resetLocaleCache("", "")
 
+	origLocal := time.Local
 	time.Local = time.UTC
-	defer func() { time.Local = time.FixedZone("UTC", 0) }()
+	t.Cleanup(func() { time.Local = origLocal })
 
 	tmpl := `{{ localeShortDate .T }} {{ localeShortTime .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(knownEpoch, 0).UTC()}

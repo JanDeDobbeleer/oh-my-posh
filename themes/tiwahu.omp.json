@@ -3,6 +3,23 @@
   "blocks": [
     {
       "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "#0078D4",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0ba",
+          "trailing_diamond": "\ue0b8",
+          "style": "diamond",
+          "template": "\uebd8 {{ .Name }} <#a8c8e8>{{ .TenantDisplayName }}</>",
+          "type": "az"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
       "segments": [
         {
           "background": "#007ACC",
@@ -24,21 +41,21 @@
         },
         {
           "background": "#ffcc88",
-          "foreground": "#222222",
+          "foreground": "#2b2b2b",
           "style": "plain",
           "template": "\uf0e7",
           "type": "root"
         },
         {
-          "background": "#222222",
-          "foreground": "#666666",
+          "background": "#2b2b2b",
+          "foreground": "#888888",
           "style": "plain",
           "template": " {{ if .WSL }}\uebcc {{ end }}{{.Icon}}",
           "type": "os"
         },
         {
-          "background": "#222222",
-          "foreground": "#666666",
+          "background": "#2b2b2b",
+          "foreground": "#888888",
           "style": "plain",
           "template": " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
@@ -55,47 +72,198 @@
           "type": "path"
         },
         {
-          "background": "#cf432B",
-          "foreground": "#f1f0e9",
+          "background": "#1d63ed",
+          "foreground": "#ffffff",
           "options": {
-            "branch_icon": "\ue725 ",
-            "cherry_pick_icon": "\ue29b ",
-            "commit_icon": "\uf417 ",
-            "fetch_status": false,
-            "fetch_upstream_icon": false,
-            "merge_icon": "\ue727 ",
-            "no_commits_icon": "\uf0c3 ",
-            "rebase_icon": "\ue728 ",
-            "revert_icon": "\uf0e2 ",
-            "tag_icon": "\uf412 "
+            "display_mode": "files"
           },
+          "type": "docker",
           "style": "plain",
-          "template": " {{ .HEAD }} ",
-          "type": "git"
+          "template": " \uf308 "
         },
         {
-          "background": "#7014eb",
+          "background": "#63B132",
           "foreground": "#ffffff",
           "options": {
             "fetch_version": false
           },
           "style": "plain",
-          "template": " \ue77f ",
+          "template": " \ue768 ",
+          "type": "clojure"
+        },
+        {
+          "background": "#000000",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue62f ",
+          "type": "crystal"
+        },
+        {
+          "background": "#0175C2",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue798 ",
+          "type": "dart"
+        },
+        {
+          "background": "#512bd4",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \udb82\udeae ",
           "type": "dotnet"
         },
         {
-          "background": "#7FD5EA",
+          "background": "#4B275F",
           "foreground": "#ffffff",
           "options": {
             "fetch_version": false
           },
           "style": "plain",
-          "template": " \ue626 ",
+          "template": " \ue62d ",
+          "type": "elixir"
+        },
+        {
+          "background": "#734F96",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \udb84\ude1a ",
+          "type": "fortran"
+        },
+        {
+          "background": "#00add8",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue65e ",
           "type": "go"
         },
         {
-          "background": "#906cff",
-          "foreground": "#100e23",
+          "background": "#5e5086",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue61f ",
+          "type": "haskell"
+        },
+        {
+          "background": "#ED8B00",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue738 ",
+          "type": "java"
+        },
+        {
+          "background": "#9558B2",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue624 ",
+          "type": "julia"
+        },
+        {
+          "background": "#7F52FF",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue634 ",
+          "type": "kotlin"
+        },
+        {
+          "background": "#000080",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue620 ",
+          "type": "lua"
+        },
+        {
+          "background": "#FF4F00",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ud83d\udd25 ",
+          "type": "mojo"
+        },
+        {
+          "background": "#FFE953",
+          "foreground": "#1a1a2e",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue841 ",
+          "type": "nim"
+        },
+        {
+          "background": "#339933",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue718 ",
+          "type": "node"
+        },
+        {
+          "background": "#EC6813",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue67a ",
+          "type": "ocaml"
+        },
+        {
+          "background": "#39457E",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue769 ",
+          "type": "perl"
+        },
+        {
+          "background": "#777BB4",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue73d ",
+          "type": "php"
+        },
+        {
+          "background": "#306998",
+          "foreground": "#ffd43b",
           "options": {
             "fetch_version": false
           },
@@ -104,14 +272,100 @@
           "type": "python"
         },
         {
-          "background": "#99908a",
-          "foreground": "#193549",
+          "background": "#2266B8",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue68a ",
+          "type": "r"
+        },
+        {
+          "background": "#CC342D",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue791 ",
+          "type": "ruby"
+        },
+        {
+          "background": "#1e2650",
+          "foreground": "#d34516",
           "options": {
             "fetch_version": false
           },
           "style": "plain",
           "template": " \ue7a8 ",
           "type": "rust"
+        },
+        {
+          "background": "#F05138",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue755 ",
+          "type": "swift"
+        },
+        {
+          "background": "#5D87BF",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue6ac ",
+          "type": "v"
+        },
+        {
+          "background": "#7239B3",
+          "foreground": "#ffffff",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue69e ",
+          "type": "vala"
+        },
+        {
+          "background": "#F7A41D",
+          "foreground": "#1a1a2e",
+          "options": {
+            "fetch_version": false
+          },
+          "style": "plain",
+          "template": " \ue6a9 ",
+          "type": "zig"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "#983e18",
+          "foreground": "#f7e7d3",
+          "options": {
+            "branch_icon": "\ue725 ",
+            "cherry_pick_icon": "\ue29b ",
+            "commit_icon": "\uf417 ",
+            "fetch_status": true,
+            "fetch_upstream_icon": false,
+            "merge_icon": "\ue727 ",
+            "no_commits_icon": "\uf0c3 ",
+            "rebase_icon": "\ue728 ",
+            "revert_icon": "\uf0e2 ",
+            "tag_icon": "\uf412 "
+          },
+          "style": "plain",
+          "template": "{{ if or (.Working.Changed) (.Staging.Changed) }} \uf444{{ end }} {{ .HEAD }} ",
+          "type": "git"
         }
       ],
       "type": "prompt"

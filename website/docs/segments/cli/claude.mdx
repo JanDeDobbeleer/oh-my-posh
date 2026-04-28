@@ -60,6 +60,10 @@ import Config from "@site/src/components/Config.js";
 | `.TokenGaugeUsed`    | `string`        | Gauge showing used context capacity using configured characters (e.g., `▰▰▱▱▱`) |
 | `.FiveHourGauge`     | `string`        | Gauge showing 5-hour rate limit usage using configured characters |
 | `.SevenDayGauge`     | `string`        | Gauge showing 7-day rate limit usage using configured characters |
+| `.FiveHourResetsAt`  | `time.Time`     | 5-hour rate limit window reset time                |
+| `.SevenDayResetsAt`  | `time.Time`     | 7-day rate limit window reset time                 |
+| `.FiveHourResetsIn`  | `time.Duration` | time until 5-hour resets; 0=unavailable, neg=past  |
+| `.SevenDayResetsIn`  | `time.Duration` | time until 7-day resets; 0=unavailable, neg=past   |
 | `.FormattedCost`     | `string`        | Formatted cost string (e.g., "$0.15" or "$0.0012") |
 | `.FormattedTokens`   | `string`        | Human-readable token count (e.g., "1.2K", "15.3M") |
 | `.FormattedDuration`    | `string`        | Total session duration (e.g., "2m 5s")             |

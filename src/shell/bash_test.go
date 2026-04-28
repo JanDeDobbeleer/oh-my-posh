@@ -44,6 +44,7 @@ bleopt prompt_rps1='$(
 		--pipestatus="${_omp_pipestatus[*]}" \
 		--no-status="$_omp_no_status" \
 		--execution-time="$_omp_execution_time" \
+		--job-count="$_omp_job_count" \
 		--stack-count="$_omp_stack_count" \
 		--terminal-width="${COLUMNS-0}" \
 		--escape=false

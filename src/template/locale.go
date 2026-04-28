@@ -2,6 +2,7 @@ package template
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 )
@@ -42,6 +43,8 @@ var (
 	// when the cache is empty, and the result is stored in the device cache so
 	// subsequent sessions do not need to query the OS again.
 	localeLayoutsResolver func() (dateLayout, timeLayout string)
+
+	localeResolveOnce = &sync.Once{}
 )
 
 // getLocaleLayouts returns the OS short-date and short-time layouts as Go
@@ -55,20 +58,26 @@ func getLocaleLayouts() (string, string) {
 		return dateLayout, timeLayout
 	}
 
-	if localeLayoutsResolver != nil {
-		dateLayout, timeLayout = localeLayoutsResolver()
-	}
+	localeResolveOnce.Do(func() {
+		date, t := "", ""
+		if localeLayoutsResolver != nil {
+			date, t = localeLayoutsResolver()
+		}
 
-	if dateLayout == "" {
-		dateLayout = defaultDateLayout
-	}
+		if date == "" {
+			date = defaultDateLayout
+		}
 
-	if timeLayout == "" {
-		timeLayout = defaultTimeLayout
-	}
+		if t == "" {
+			t = defaultTimeLayout
+		}
 
-	localeLayoutsStore.set(localeDateCacheKey, dateLayout)
-	localeLayoutsStore.set(localeTimeCacheKey, timeLayout)
+		localeLayoutsStore.set(localeDateCacheKey, date)
+		localeLayoutsStore.set(localeTimeCacheKey, t)
+	})
+
+	dateLayout, _ = localeLayoutsStore.get(localeDateCacheKey)
+	timeLayout, _ = localeLayoutsStore.get(localeTimeCacheKey)
 
 	return dateLayout, timeLayout
 }

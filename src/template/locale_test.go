@@ -1,6 +1,7 @@
 package template
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -29,19 +30,22 @@ func (m *mockLocaleCache) set(key, val string) {
 	m.data[key] = val
 }
 
-// setupLocaleTest wires up a fresh mock cache and returns a cleanup function
-// that restores both the store and the resolver to their original values.
+// setupLocaleTest wires up a fresh mock cache and registers cleanup via
+// t.Cleanup to restore both the store and the resolver to their original values.
 func setupLocaleTest(t *testing.T) {
 	t.Helper()
 
 	origStore := localeLayoutsStore
 	origResolver := localeLayoutsResolver
+	origOnce := localeResolveOnce
 
 	localeLayoutsStore = newMockLocaleCache()
+	localeResolveOnce = &sync.Once{}
 
 	t.Cleanup(func() {
 		localeLayoutsStore = origStore
 		localeLayoutsResolver = origResolver
+		localeResolveOnce = origOnce
 	})
 }
 

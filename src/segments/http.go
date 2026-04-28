@@ -30,12 +30,13 @@ func (h *HTTP) Enabled() bool {
 	}
 
 	method := h.options.String(METHOD, "GET")
+	timeout := h.options.Int(options.HTTPTimeout, 10000)
 
 	if resolved, err := template.Render(url, nil); err == nil {
 		url = resolved
 	}
 
-	result, err := h.getResult(url, method)
+	result, err := h.getResult(url, method, timeout)
 	if err != nil {
 		return false
 	}
@@ -44,12 +45,12 @@ func (h *HTTP) Enabled() bool {
 	return true
 }
 
-func (h *HTTP) getResult(url, method string) (map[string]any, error) {
+func (h *HTTP) getResult(url, method string, timeout int) (map[string]any, error) {
 	setMethod := func(request *http.Request) {
 		request.Method = method
 	}
 
-	resultBody, err := h.env.HTTPRequest(url, nil, 10000, setMethod)
+	resultBody, err := h.env.HTTPRequest(url, nil, timeout, setMethod)
 	if err != nil {
 		return nil, err
 	}

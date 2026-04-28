@@ -18,7 +18,7 @@ func resolveUnixLocale() (dateLayout, timeLayout string) {
 		return "", ""
 	}
 
-	for _, line := range strings.Split(output, "\n") {
+	for line := range strings.SplitSeq(output, "\n") {
 		line = strings.TrimSpace(line)
 
 		key, value, ok := strings.Cut(line, "=")

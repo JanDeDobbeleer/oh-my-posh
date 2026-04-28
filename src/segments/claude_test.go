@@ -705,10 +705,10 @@ func TestClaudeRateLimitResetsIn(t *testing.T) {
 	futureTS := libtime.Now().Add(24 * libtime.Hour).Unix()
 
 	cases := []struct {
-		RateLimits      *ClaudeRateLimits
-		Case            string
-		FiveHourSign    int // -1=negative, 0=zero, 1=positive
-		SevenDaySign    int
+		RateLimits   *ClaudeRateLimits
+		Case         string
+		FiveHourSign int // -1=negative, 0=zero, 1=positive
+		SevenDaySign int
 	}{
 		{
 			Case:         "Nil RateLimits",

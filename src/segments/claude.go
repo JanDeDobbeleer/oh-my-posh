@@ -5,12 +5,15 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 // Claude segment displays Claude Code session information
 type Claude struct {
 	Base
+	markedChar   string
+	unmarkedChar string
 	ClaudeData
 }
 
@@ -89,10 +92,13 @@ type ClaudeCurrentUsage struct {
 const (
 	thousand = 1000.0
 	million  = 1000000.0
+
+	gaugeMarkedChar   options.Option = "gauge_marked_char"
+	gaugeUnmarkedChar options.Option = "gauge_unmarked_char"
 )
 
 func (c *Claude) Template() string {
-	return " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }} "
+	return " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} "
 }
 
 func (c *Claude) Enabled() bool {
@@ -110,6 +116,9 @@ func (c *Claude) Enabled() bool {
 
 	// Copy the data to our embedded struct
 	c.ClaudeData = claudeData
+
+	c.markedChar = c.options.String(gaugeMarkedChar, "▰")
+	c.unmarkedChar = c.options.String(gaugeUnmarkedChar, "▱")
 
 	return true
 }
@@ -160,6 +169,26 @@ func (c *Claude) TokenUsagePercent() text.Percentage {
 	}
 
 	return text.Percentage(roundedPercent)
+}
+
+// TokenGauge returns a 5-block gauge showing remaining context window capacity using the configured characters.
+func (c *Claude) TokenGauge() string {
+	return c.TokenUsagePercent().GaugeWith(c.markedChar, c.unmarkedChar)
+}
+
+// TokenGaugeUsed returns a 5-block gauge showing used context window capacity using the configured characters.
+func (c *Claude) TokenGaugeUsed() string {
+	return c.TokenUsagePercent().GaugeUsedWith(c.markedChar, c.unmarkedChar)
+}
+
+// FiveHourGauge returns a 5-block gauge showing 5-hour rate limit usage using the configured characters.
+func (c *Claude) FiveHourGauge() string {
+	return c.FiveHourUsage().GaugeUsedWith(c.markedChar, c.unmarkedChar)
+}
+
+// SevenDayGauge returns a 5-block gauge showing 7-day rate limit usage using the configured characters.
+func (c *Claude) SevenDayGauge() string {
+	return c.SevenDayUsage().GaugeUsedWith(c.markedChar, c.unmarkedChar)
 }
 
 // FormattedCost returns the cost formatted as a currency string

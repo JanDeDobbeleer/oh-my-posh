@@ -2,6 +2,7 @@ package segments
 
 import (
 	"testing"
+	libtime "time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -636,4 +637,136 @@ func TestClaudeGaugeOptionsReadInEnabled(t *testing.T) {
 	assert.True(t, claude.Enabled())
 	assert.Equal(t, "█", claude.markedChar)
 	assert.Equal(t, "░", claude.unmarkedChar)
+}
+
+func TestClaudeRateLimitResetsAt(t *testing.T) {
+	fiveHourTS := int64(1711180800) // 2024-03-23 08:00:00 UTC
+	sevenDayTS := int64(1711612800) // 2024-03-28 08:00:00 UTC
+
+	cases := []struct {
+		ExpectedFiveHour libtime.Time
+		ExpectedSevenDay libtime.Time
+		RateLimits       *ClaudeRateLimits
+		Case             string
+	}{
+		{
+			Case:             "Nil RateLimits",
+			RateLimits:       nil,
+			ExpectedFiveHour: libtime.Time{},
+			ExpectedSevenDay: libtime.Time{},
+		},
+		{
+			Case: "Nil FiveHour window",
+			RateLimits: &ClaudeRateLimits{
+				SevenDay: &ClaudeRateLimitWindow{ResetsAt: &sevenDayTS},
+			},
+			ExpectedFiveHour: libtime.Time{},
+			ExpectedSevenDay: libtime.Unix(sevenDayTS, 0),
+		},
+		{
+			Case: "Nil SevenDay window",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{ResetsAt: &fiveHourTS},
+			},
+			ExpectedFiveHour: libtime.Unix(fiveHourTS, 0),
+			ExpectedSevenDay: libtime.Time{},
+		},
+		{
+			Case: "Nil ResetsAt pointers",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{ResetsAt: nil},
+				SevenDay: &ClaudeRateLimitWindow{ResetsAt: nil},
+			},
+			ExpectedFiveHour: libtime.Time{},
+			ExpectedSevenDay: libtime.Time{},
+		},
+		{
+			Case: "Valid timestamps for both windows",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{ResetsAt: &fiveHourTS},
+				SevenDay: &ClaudeRateLimitWindow{ResetsAt: &sevenDayTS},
+			},
+			ExpectedFiveHour: libtime.Unix(fiveHourTS, 0),
+			ExpectedSevenDay: libtime.Unix(sevenDayTS, 0),
+		},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+
+		assert.Equal(t, tc.ExpectedFiveHour, claude.FiveHourResetsAt(), tc.Case+" (FiveHour)")
+		assert.Equal(t, tc.ExpectedSevenDay, claude.SevenDayResetsAt(), tc.Case+" (SevenDay)")
+	}
+}
+
+func TestClaudeRateLimitResetsIn(t *testing.T) {
+	pastTS := libtime.Now().Add(-libtime.Hour).Unix()
+	futureTS := libtime.Now().Add(24 * libtime.Hour).Unix()
+
+	cases := []struct {
+		RateLimits   *ClaudeRateLimits
+		Case         string
+		FiveHourSign int // -1=negative, 0=zero, 1=positive
+		SevenDaySign int
+	}{
+		{
+			Case:         "Nil RateLimits",
+			RateLimits:   nil,
+			FiveHourSign: 0,
+			SevenDaySign: 0,
+		},
+		{
+			Case:         "Nil windows",
+			RateLimits:   &ClaudeRateLimits{},
+			FiveHourSign: 0,
+			SevenDaySign: 0,
+		},
+		{
+			Case: "Nil ResetsAt",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{},
+				SevenDay: &ClaudeRateLimitWindow{},
+			},
+			FiveHourSign: 0,
+			SevenDaySign: 0,
+		},
+		{
+			Case: "Past timestamp",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{ResetsAt: &pastTS},
+				SevenDay: &ClaudeRateLimitWindow{ResetsAt: &pastTS},
+			},
+			FiveHourSign: -1,
+			SevenDaySign: -1,
+		},
+		{
+			Case: "Future timestamp",
+			RateLimits: &ClaudeRateLimits{
+				FiveHour: &ClaudeRateLimitWindow{ResetsAt: &futureTS},
+				SevenDay: &ClaudeRateLimitWindow{ResetsAt: &futureTS},
+			},
+			FiveHourSign: 1,
+			SevenDaySign: 1,
+		},
+	}
+
+	assertSign := func(t *testing.T, d libtime.Duration, sign int, name string) {
+		t.Helper()
+		switch sign {
+		case 0:
+			assert.Equal(t, libtime.Duration(0), d, name)
+		case 1:
+			assert.Positive(t, d, name)
+		case -1:
+			assert.Negative(t, d, name)
+		}
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.RateLimits = tc.RateLimits
+		assertSign(t, claude.FiveHourResetsIn(), tc.FiveHourSign, tc.Case+" (FiveHour)")
+		assertSign(t, claude.SevenDayResetsIn(), tc.SevenDaySign, tc.Case+" (SevenDay)")
+	}
 }

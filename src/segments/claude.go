@@ -246,7 +246,7 @@ func (c *Claude) SevenDayUsage() text.Percentage {
 
 // rateLimitResetsAt extracts the reset time from a rate limit window with nil-safety.
 func rateLimitResetsAt(limits *ClaudeRateLimits, window func(*ClaudeRateLimits) *ClaudeRateLimitWindow) time.Time {
-	if limits == nil {
+	if limits == nil || window == nil {
 		return time.Time{}
 	}
 
@@ -272,7 +272,8 @@ func (c *Claude) SevenDayResetsAt() time.Time {
 	})
 }
 
-// rateLimitResetsIn returns the duration until a rate limit window resets.
+// rateLimitResetsIn returns the signed duration until a rate limit window resets.
+// Returns 0 when data is unavailable, a negative value when the window already reset, and a positive value otherwise.
 func rateLimitResetsIn(limits *ClaudeRateLimits, window func(*ClaudeRateLimits) *ClaudeRateLimitWindow) time.Duration {
 	t := rateLimitResetsAt(limits, window)
 	if t.IsZero() {
@@ -282,14 +283,16 @@ func rateLimitResetsIn(limits *ClaudeRateLimits, window func(*ClaudeRateLimits) 
 	return time.Until(t)
 }
 
-// FiveHourResetsIn returns the duration until the 5-hour rolling window resets, or 0 if unavailable.
+// FiveHourResetsIn returns the signed duration until the 5-hour rolling window resets.
+// Returns 0 when unavailable, negative when the window already reset.
 func (c *Claude) FiveHourResetsIn() time.Duration {
 	return rateLimitResetsIn(c.RateLimits, func(r *ClaudeRateLimits) *ClaudeRateLimitWindow {
 		return r.FiveHour
 	})
 }
 
-// SevenDayResetsIn returns the duration until the 7-day rolling window resets, or 0 if unavailable.
+// SevenDayResetsIn returns the signed duration until the 7-day rolling window resets.
+// Returns 0 when unavailable, negative when the window already reset.
 func (c *Claude) SevenDayResetsIn() time.Duration {
 	return rateLimitResetsIn(c.RateLimits, func(r *ClaudeRateLimits) *ClaudeRateLimitWindow {
 		return r.SevenDay

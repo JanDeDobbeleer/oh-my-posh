@@ -527,13 +527,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $previousOutputEncoding = [Console]::OutputEncoding
                 try {
                     [Console]::OutputEncoding = [Text.Encoding]::UTF8
-                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
                 }
                 catch [System.ArgumentOutOfRangeException] {
                 }
                 finally {
                     [Console]::OutputEncoding = $previousOutputEncoding
                 }
+                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
                 return
             }
 

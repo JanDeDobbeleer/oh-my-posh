@@ -1,0 +1,44 @@
+lockfile_version: '1'
+generated_at: '2026-04-28T06:19:02.309773+00:00'
+apm_version: 0.7.7
+dependencies:
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
+  virtual_path: skills/conventional-commit
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/conventional-commit
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
+  virtual_path: skills/golang
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/golang
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
+  virtual_path: skills/markdown
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/markdown
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
+  virtual_path: skills/powershell
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/powershell
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
+  virtual_path: skills/vale-user-facing-text
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/vale-user-facing-text

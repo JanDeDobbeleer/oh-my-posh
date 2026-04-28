@@ -500,6 +500,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://mastodontech.de/@martinoe"><img src="https://avatars.githubusercontent.com/u/453360?v=4?s=100" width="100px;" alt="Martin Oehlert"/><br /><sub><b>Martin Oehlert</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MO2k4" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MO2k4" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/shubsolos19"><img src="https://avatars.githubusercontent.com/u/181342494?v=4?s=100" width="100px;" alt="Shubham Bawari"/><br /><sub><b>Shubham Bawari</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=shubsolos19" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://mroth.xyz"><img src="https://avatars.githubusercontent.com/u/40650?v=4?s=100" width="100px;" alt="Matthew Rothenberg"/><br /><sub><b>Matthew Rothenberg</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mroth" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

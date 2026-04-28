@@ -3588,6 +3588,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "mroth",
+      "name": "Matthew Rothenberg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40650?v=4",
+      "profile": "https://mroth.xyz",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

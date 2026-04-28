@@ -3,13 +3,27 @@ package segments
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"testing"
 
+	runtimehttp "github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
+
+// timeoutCapturingEnv wraps the mock environment to record the timeout argument
+// passed to HTTPRequest, so tests can assert it flows through correctly.
+type timeoutCapturingEnv struct {
+	*mock.Environment
+	capturedTimeout int
+}
+
+func (e *timeoutCapturingEnv) HTTPRequest(url string, body io.Reader, timeout int, modifiers ...runtimehttp.RequestModifier) ([]byte, error) {
+	e.capturedTimeout = timeout
+	return e.Environment.HTTPRequest(url, body, timeout, modifiers...)
+}
 
 func TestHTTPSegmentEnabled(t *testing.T) {
 	cases := []struct {
@@ -66,7 +80,7 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			env := new(mock.Environment)
+			inner := new(mock.Environment)
 			props := options.Map{
 				URL:    tc.url,
 				METHOD: tc.method,
@@ -76,22 +90,27 @@ func TestHTTPSegmentEnabled(t *testing.T) {
 				props[options.HTTPTimeout] = tc.timeout
 			}
 
-			env.On("HTTPRequest", tc.url).Return([]byte(tc.response), func() error {
+			inner.On("HTTPRequest", tc.url).Return([]byte(tc.response), func() error {
 				if tc.shouldError {
 					return errors.New("error")
 				}
 				return nil
 			}())
 
+			capturing := &timeoutCapturingEnv{Environment: inner}
+
 			cs := &HTTP{
 				Base: Base{
-					env:     env,
+					env:     capturing,
 					options: props,
 				},
 			}
 
 			_ = cs.Enabled()
 			assert.Equal(t, tc.expected, cs.Body["id"], tc.name)
+			if tc.timeout > 0 {
+				assert.Equal(t, tc.timeout, capturing.capturedTimeout, "expected custom timeout to be passed to HTTPRequest")
+			}
 		})
 	}
 }

@@ -190,6 +190,8 @@ use them.
 | <code>\{\{ .Code &vert; hresult \}\}</code>                        | Transform a status code to its HRESULT value for easy troubleshooting. For example `-1978335212` becomes `0x8A150014`.     |
 | `{{ readFile ".version.json" }}`                                   | Read a file in the current directory. Returns a string.                                                                    |
 | `{{ random (list \"a\" 2 .MyThirdItem) }}`                         | Selects a random element from a list. The list can be an array or slice containing any types (use sprig's `list`).         |
+| `{{ localeShortDate .SomeTime }}`                                  | Format a `time.Time` value using the OS short-date regional setting (e.g. `2026-04-25`). Falls back to `2006-01-02`.       |
+| `{{ localeShortTime .SomeTime }}`                                  | Format a `time.Time` value using the OS short-time regional setting (e.g. `17:59`). Falls back to `15:04`.                 |
 
 ## Cross segment template properties
 

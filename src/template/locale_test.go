@@ -20,16 +20,18 @@ func resetLocaleCache(dateLayout, timeLayout string) {
 }
 
 // TestWindowsPatternToGoLayout verifies the Windows date/time format → Go layout converter.
+//
+//nolint:dupl
 func TestWindowsPatternToGoLayout(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Input    string
 		Expected string
 	}{
-		{Case: "ISO-style date", Input: "yyyy-MM-dd", Expected: "2006-01-02"},
+		{Case: "ISO-style date", Input: "yyyy-MM-dd", Expected: defaultDateLayout},
 		{Case: "US short date", Input: "M/d/yyyy", Expected: "1/2/2006"},
 		{Case: "EU date with dots", Input: "dd.MM.yyyy", Expected: "02.01.2006"},
-		{Case: "24-hour time", Input: "HH:mm", Expected: "15:04"},
+		{Case: "24-hour time", Input: "HH:mm", Expected: defaultTimeLayout},
 		{Case: "12-hour time with AM/PM", Input: "h:mm tt", Expected: "3:04 PM"},
 		{Case: "zero-padded 12-hour", Input: "hh:mm tt", Expected: "03:04 PM"},
 		{Case: "abbreviated day name", Input: "ddd, MMM d yyyy", Expected: "Mon, Jan 2 2006"},
@@ -45,16 +47,18 @@ func TestWindowsPatternToGoLayout(t *testing.T) {
 }
 
 // TestPosixPatternToGoLayout verifies the POSIX strftime → Go layout converter.
+//
+//nolint:dupl
 func TestPosixPatternToGoLayout(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Input    string
 		Expected string
 	}{
-		{Case: "ISO date", Input: "%Y-%m-%d", Expected: "2006-01-02"},
+		{Case: "ISO date", Input: "%Y-%m-%d", Expected: defaultDateLayout},
 		{Case: "US date", Input: "%m/%d/%Y", Expected: "01/02/2006"},
 		{Case: "EU date with dots", Input: "%d.%m.%Y", Expected: "02.01.2006"},
-		{Case: "24-hour time", Input: "%H:%M", Expected: "15:04"},
+		{Case: "24-hour time", Input: "%H:%M", Expected: defaultTimeLayout},
 		{Case: "12-hour with AM/PM", Input: "%I:%M %p", Expected: "03:04 PM"},
 		{Case: "abbreviated month", Input: "%b %e, %Y", Expected: "Jan 2, 2006"},
 		{Case: "full day and month", Input: "%A, %B %e, %Y", Expected: "Monday, January 2, 2006"},
@@ -120,7 +124,7 @@ func TestLocaleShortDateWithISOLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	localeLayoutsResolver = func() (string, string) { return "2006-01-02", "15:04" }
+	localeLayoutsResolver = func() (string, string) { return defaultDateLayout, defaultTimeLayout }
 	resetLocaleCache("", "")
 
 	time.Local = time.UTC
@@ -141,7 +145,7 @@ func TestLocaleShortTimeWith24hLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	localeLayoutsResolver = func() (string, string) { return "2006-01-02", "15:04" }
+	localeLayoutsResolver = func() (string, string) { return defaultDateLayout, defaultTimeLayout }
 	resetLocaleCache("", "")
 
 	time.Local = time.UTC

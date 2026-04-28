@@ -5,6 +5,11 @@ import (
 	"sync"
 )
 
+const (
+	defaultDateLayout = "2006-01-02"
+	defaultTimeLayout = "15:04"
+)
+
 var (
 	localeOnce       sync.Once
 	localeDateLayout string
@@ -29,12 +34,12 @@ func getLocaleLayouts() (string, string) {
 
 	dateLayout := localeDateLayout
 	if dateLayout == "" {
-		dateLayout = "2006-01-02"
+		dateLayout = defaultDateLayout
 	}
 
 	timeLayout := localeTimeLayout
 	if timeLayout == "" {
-		timeLayout = "15:04"
+		timeLayout = defaultTimeLayout
 	}
 
 	return dateLayout, timeLayout
@@ -127,7 +132,7 @@ func posixPatternToGoLayout(pattern string) string {
 		"%y": "06",
 		"%m": "01",
 		"%d": "02",
-		"%e": "2",  // space-padded day; Go has no space padding — use unpadded
+		"%e": "2", // space-padded day; Go has no space padding — use unpadded
 		"%H": "15",
 		"%I": "03",
 		"%M": "04",

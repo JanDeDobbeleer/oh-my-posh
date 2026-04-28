@@ -1,7 +1,6 @@
 package template
 
 import (
-	"sync"
 	"testing"
 	"time"
 
@@ -11,12 +10,39 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// resetLocaleCache resets the locale sync.Once so individual test cases can
-// inject their own layouts without cross-contamination.
-func resetLocaleCache(dateLayout, timeLayout string) {
-	localeOnce = sync.Once{}
-	localeDateLayout = dateLayout
-	localeTimeLayout = timeLayout
+// mockLocaleCache is a simple in-memory localeCache implementation used in
+// tests to avoid touching the real device cache store.
+type mockLocaleCache struct {
+	data map[string]string
+}
+
+func newMockLocaleCache() *mockLocaleCache {
+	return &mockLocaleCache{data: make(map[string]string)}
+}
+
+func (m *mockLocaleCache) get(key string) (string, bool) {
+	v, ok := m.data[key]
+	return v, ok
+}
+
+func (m *mockLocaleCache) set(key, val string) {
+	m.data[key] = val
+}
+
+// setupLocaleTest wires up a fresh mock cache and returns a cleanup function
+// that restores both the store and the resolver to their original values.
+func setupLocaleTest(t *testing.T) {
+	t.Helper()
+
+	origStore := localeLayoutsStore
+	origResolver := localeLayoutsResolver
+
+	localeLayoutsStore = newMockLocaleCache()
+
+	t.Cleanup(func() {
+		localeLayoutsStore = origStore
+		localeLayoutsResolver = origResolver
+	})
 }
 
 // TestWindowsPatternToGoLayout verifies the Windows date/time format → Go layout converter.
@@ -81,11 +107,8 @@ func TestLocaleShortDateFallback(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	// Override the resolver to return empty strings (simulates resolver failure).
-	prevResolver := localeLayoutsResolver
+	setupLocaleTest(t)
 	localeLayoutsResolver = func() (string, string) { return "", "" }
-	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
-	resetLocaleCache("", "")
 
 	origLocal := time.Local
 	time.Local = time.UTC
@@ -106,10 +129,8 @@ func TestLocaleShortTimeFallback(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	prevResolver := localeLayoutsResolver
+	setupLocaleTest(t)
 	localeLayoutsResolver = func() (string, string) { return "", "" }
-	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
-	resetLocaleCache("", "")
 
 	origLocal := time.Local
 	time.Local = time.UTC
@@ -130,10 +151,8 @@ func TestLocaleShortDateWithISOLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	prevResolver := localeLayoutsResolver
+	setupLocaleTest(t)
 	localeLayoutsResolver = func() (string, string) { return defaultDateLayout, defaultTimeLayout }
-	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
-	resetLocaleCache("", "")
 
 	origLocal := time.Local
 	time.Local = time.UTC
@@ -154,10 +173,8 @@ func TestLocaleShortTimeWith24hLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	prevResolver := localeLayoutsResolver
+	setupLocaleTest(t)
 	localeLayoutsResolver = func() (string, string) { return defaultDateLayout, defaultTimeLayout }
-	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
-	resetLocaleCache("", "")
 
 	origLocal := time.Local
 	time.Local = time.UTC
@@ -177,10 +194,8 @@ func TestLocaleShortDateWith12hUSLayout(t *testing.T) {
 	Cache = new(cache.Template)
 	Init(mockEnv, nil, nil)
 
-	prevResolver := localeLayoutsResolver
+	setupLocaleTest(t)
 	localeLayoutsResolver = func() (string, string) { return "1/2/2006", "3:04 PM" }
-	t.Cleanup(func() { localeLayoutsResolver = prevResolver })
-	resetLocaleCache("", "")
 
 	origLocal := time.Local
 	time.Local = time.UTC

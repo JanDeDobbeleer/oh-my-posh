@@ -2,45 +2,73 @@ package template
 
 import (
 	"strings"
-	"sync"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 )
 
 const (
 	defaultDateLayout = "2006-01-02"
 	defaultTimeLayout = "15:04"
+
+	localeDateCacheKey = "locale_date_layout"
+	localeTimeCacheKey = "locale_time_layout"
 )
 
+// localeCache abstracts the persistent store used for locale layout strings.
+// The default implementation writes to cache.Device; tests inject a simple
+// in-memory map so they never touch the real device store.
+type localeCache interface {
+	get(key string) (string, bool)
+	set(key, val string)
+}
+
+type deviceLocaleCache struct{}
+
+func (deviceLocaleCache) get(key string) (string, bool) {
+	return cache.Get[string](cache.Device, key)
+}
+
+func (deviceLocaleCache) set(key, val string) {
+	cache.Set(cache.Device, key, val, cache.INFINITE)
+}
+
 var (
-	localeOnce       sync.Once
-	localeDateLayout string
-	localeTimeLayout string
+	// localeLayoutsStore is the backing store for cached layouts; replaced by a
+	// mock in tests.
+	localeLayoutsStore localeCache = deviceLocaleCache{}
 
 	// localeLayoutsResolver is set by init() in the platform-specific files
-	// (locale_windows.go / locale_unix.go). It is never called until the first
-	// time a template actually uses localeShortDate or localeShortTime, so the
-	// OS is not queried on every prompt render — only when these functions are
-	// needed, and then the results are cached for the lifetime of the process.
+	// (locale_windows.go / locale_unix.go). It is queried once at init time
+	// when the cache is empty, and the result is stored in the device cache so
+	// subsequent sessions do not need to query the OS again.
 	localeLayoutsResolver func() (dateLayout, timeLayout string)
 )
 
 // getLocaleLayouts returns the OS short-date and short-time layouts as Go
-// time format strings. The OS is queried at most once per process.
+// time format strings. Results are stored in the device cache (via
+// localeLayoutsStore) so the OS is queried at most once per device.
 func getLocaleLayouts() (string, string) {
-	localeOnce.Do(func() {
-		if localeLayoutsResolver != nil {
-			localeDateLayout, localeTimeLayout = localeLayoutsResolver()
-		}
-	})
+	dateLayout, dateOK := localeLayoutsStore.get(localeDateCacheKey)
+	timeLayout, timeOK := localeLayoutsStore.get(localeTimeCacheKey)
 
-	dateLayout := localeDateLayout
+	if dateOK && timeOK {
+		return dateLayout, timeLayout
+	}
+
+	if localeLayoutsResolver != nil {
+		dateLayout, timeLayout = localeLayoutsResolver()
+	}
+
 	if dateLayout == "" {
 		dateLayout = defaultDateLayout
 	}
 
-	timeLayout := localeTimeLayout
 	if timeLayout == "" {
 		timeLayout = defaultTimeLayout
 	}
+
+	localeLayoutsStore.set(localeDateCacheKey, dateLayout)
+	localeLayoutsStore.set(localeTimeCacheKey, timeLayout)
 
 	return dateLayout, timeLayout
 }

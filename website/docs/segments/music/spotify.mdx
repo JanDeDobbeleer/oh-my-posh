@@ -11,10 +11,11 @@ Show the currently playing song in the [Spotify][spotify] client.
 :::caution
 Be aware this can make the prompt a tad bit slower as it needs to get a response from the Spotify player.
 
-On _macOS & Linux_, all states are supported (playing/paused/stopped).
-
-On _Windows/WSL_, **only the playing state is supported** (no information when paused/stopped). It supports
-fetching information from the native Spotify application and Edge PWA.
+All playback states are supported on every platform (playing/paused/stopped, and an optional `ad` state on
+Windows and WSL). On _Windows_ the data is read from the [System Media Transport Controls][smtc], which
+covers both the native Spotify client and the Microsoft Store version, with a fall-back to scraping the
+Edge PWA window title. On _WSL_ the same SMTC session is queried via the Windows interop `powershell.exe`,
+so the Linux side sees the same information the Windows host does.
 :::
 
 ## Sample Configuration
@@ -31,18 +32,20 @@ import Config from "@site/src/components/Config.js";
     options: {
       playing_icon: "\ue602 ",
       paused_icon: "\uf04c ",
-      stopped_icon: "\uf04d "
+      stopped_icon: "\uf04d ",
+      ad_icon: "\ueebb "
     }
   }}
 />
 
 ## Options
 
-| Name           |   Type   |  Default  | Description                    |
-| -------------- | :------: | :-------: | ------------------------------ |
-| `playing_icon` | `string` | `\ue602 ` | text/icon to show when playing |
-| `paused_icon`  | `string` | `\uf04c ` | text/icon to show when paused  |
-| `stopped_icon` | `string` | `\uf04d ` | text/icon to show when stopped |
+| Name           |   Type   |  Default  | Description                                                      |
+| -------------- | :------: | :-------: | ---------------------------------------------------------------- |
+| `playing_icon` | `string` | `\ue602 ` | text/icon to show when playing                                   |
+| `paused_icon`  | `string` | `\uf04c ` | text/icon to show when paused                                    |
+| `stopped_icon` | `string` | `\uf04d ` | text/icon to show when stopped                                   |
+| `ad_icon`      | `string` | `\ueebb ` | text/icon to show when an advertisement is playing (Windows/WSL) |
 
 ## Template ([info][templates])
 
@@ -56,12 +59,13 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name      | Type     | Description                                    |
-| --------- | -------- | ---------------------------------------------- |
-| `.Status` | `string` | player status (`playing`, `paused`, `stopped`) |
-| `.Artist` | `string` | current artist                                 |
-| `.Track`  | `string` | current track                                  |
-| `.Icon`   | `string` | icon (based on `.Status`)                      |
+| Name      | Type     | Description                                          |
+| --------- | -------- | ---------------------------------------------------- |
+| `.Status` | `string` | player status (`playing`, `paused`, `stopped`, `ad`) |
+| `.Artist` | `string` | current artist                                       |
+| `.Track`  | `string` | current track                                        |
+| `.Icon`   | `string` | icon (based on `.Status`)                            |
 
 [templates]: /docs/configuration/templates
 [spotify]: https://www.spotify.com
+[smtc]: https://learn.microsoft.com/en-us/windows/apps/develop/media-playback/system-media-transport-controls

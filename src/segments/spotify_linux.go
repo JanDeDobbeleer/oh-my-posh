@@ -45,37 +45,9 @@ func (s *Spotify) runLinuxScriptCommand(command string) string {
 	return val
 }
 
+// enabledWsl reads the Windows host's SMTC sessions through the WSL Windows
+// interop powershell.exe. The Linux side sees the same data the native
+// Windows segment does (playing/paused/stopped/ad).
 func (s *Spotify) enabledWsl() bool {
-	psCommand := `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; (Get-Process Spotify -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -ne ""} | Select-Object -First 1).MainWindowTitle` //nolint: lll
-
-	windowName, err := s.env.RunCommand("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", psCommand)
-	if err != nil {
-		s.Status = stopped
-		return false
-	}
-
-	title := strings.TrimSpace(windowName)
-	if title == "" || !strings.Contains(title, " - ") {
-		s.Status = stopped
-		return false
-	}
-
-	artist, track, found := strings.Cut(title, " - ")
-	if !found {
-		s.Status = stopped
-		return false
-	}
-
-	s.Artist = strings.TrimSpace(artist)
-	s.Track = strings.TrimSpace(track)
-
-	if s.Artist == "" || s.Track == "" {
-		s.Status = stopped
-		return false
-	}
-
-	s.Status = playing
-	s.resolveIcon()
-
-	return true
+	return s.querySMTC()
 }

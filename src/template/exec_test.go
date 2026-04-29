@@ -14,11 +14,11 @@ func TestExec(t *testing.T) {
 	cases := []struct {
 		Case        string
 		Command     string
-		Args        []string
 		ReturnValue string
 		ReturnError error
 		Template    string
 		Expected    string
+		Args        []string
 		ShouldError bool
 	}{
 		{

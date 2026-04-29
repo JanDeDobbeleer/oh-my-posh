@@ -24,3 +24,4 @@ jobs:
         run: |
           pip install apm-cli
           apm install
+          git restore apm.lock

@@ -2,9 +2,11 @@ package prompt
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -56,7 +58,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 	}
 
-	promptText, err := template.Render(getTemplate(prompt.Template), nil)
+	promptText, err := template.Render(getTemplate(prompt.Template), e)
 	if err != nil {
 		promptText = err.Error()
 	}
@@ -89,15 +91,25 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 
 	switch e.Env.Shell() {
 	case shell.ZSH:
-		if promptType == Transient {
-			if !e.Env.Flags().Eval {
-				break
-			}
+		if !e.Env.Flags().Eval {
+			break
+		}
 
-			prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
+		if promptType == Transient {
+			evalOutput := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
 			// empty RPROMPT
-			prompt += "\nRPROMPT=''"
-			return prompt
+			evalOutput += "\nRPROMPT=''"
+			return evalOutput
+		}
+
+		if promptType == Secondary {
+			evalOutput := fmt.Sprintf("_omp_secondary_prompt=%s", shell.QuotePosixStr(str))
+			plain := regex.ReplaceAllString(terminal.AnsiRegex, str, "")
+			plain = strings.ReplaceAll(plain, "%{", "")
+			plain = strings.ReplaceAll(plain, "%}", "")
+			evalOutput += fmt.Sprintf("\n_omp_secondary_prompt_plain=%s", shell.QuotePosixStr(plain))
+			evalOutput += fmt.Sprintf("\nPOSH_MULTILINE_KEEPPROMPT=%t", prompt.MultilineKeepPrompt)
+			return evalOutput
 		}
 	case shell.PWSH:
 		if promptType == Transient {

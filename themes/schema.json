@@ -5190,7 +5190,34 @@
       "description": "https://ohmyposh.dev/docs/configuration/line-error"
     },
     "secondary_prompt": {
-      "$ref": "#/definitions/extra_prompt",
+      "type": "object",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Prompt Template"
+        },
+        "foreground": {
+          "$ref": "#/definitions/color"
+        },
+        "foreground_templates": {
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates"
+        },
+        "background": {
+          "$ref": "#/definitions/color"
+        },
+        "background_templates": {
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates"
+        },
+        "multiline_keepprompt": {
+          "type": "boolean",
+          "title": "Multiline Keep Prompt",
+          "description": "Treat multi-line commands as a single block to support transient prompts correctly",
+          "default": false
+        }
+      },
       "title": "Secondary Prompt Setting",
       "description": "https://ohmyposh.dev/docs/configuration/secondary-prompt"
     },

@@ -3,6 +3,10 @@ scripts:
   command: apm install
   triggers:
   - session.create
+- name: Restore apm.lock
+  command: git restore apm.lock
+  triggers:
+  - session.create
 automation:
   auto_issue_session: true
   remote_control: true

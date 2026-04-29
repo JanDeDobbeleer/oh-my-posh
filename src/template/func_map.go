@@ -23,6 +23,7 @@ func funcMap() template.FuncMap {
 		"hresult":      hresult,
 		"trunc":        trunc,
 		"truncE":       TruncE,
+		"cmd":          cmd,
 		"readFile":     readFile,
 		"stat":         stat,
 		"dir":          filepath.Dir,

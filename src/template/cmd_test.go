@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExec(t *testing.T) {
+func TestCmd(t *testing.T) {
 	cases := []struct {
 		Case        string
 		Command     string

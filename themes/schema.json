@@ -3740,6 +3740,19 @@
                     "title": "Always Enabled",
                     "description": "Always show the segment",
                     "default": false
+                  },
+                  "resolve_target_from_solution": {
+                    "type": "boolean",
+                    "title": "Resolve Target from Solution",
+                    "description": "When a .sln/.slnx is matched, scan subdirectories for project files to extract TargetFramework",
+                    "default": true
+                  },
+                  "solution_search_depth": {
+                    "type": "integer",
+                    "title": "Solution Search Depth",
+                    "description": "Maximum directory depth to scan for project files when resolving from a solution",
+                    "default": 2,
+                    "minimum": 1
                   }
                 }
               }

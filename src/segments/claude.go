@@ -24,8 +24,10 @@ type ClaudeData struct {
 	Model         ClaudeModel         `json:"model"`
 	Workspace     ClaudeWorkspace     `json:"workspace"`
 	SessionID     string              `json:"session_id"`
+	Effort        ClaudeEffort        `json:"effort"`
 	ContextWindow ClaudeContextWindow `json:"context_window"`
 	Cost          ClaudeCost          `json:"cost"`
+	Thinking      ClaudeThinking      `json:"thinking"`
 }
 
 // ClaudeModel represents the AI model information
@@ -39,6 +41,17 @@ type ClaudeWorkspace struct {
 	CurrentDir  string `json:"current_dir"`
 	ProjectDir  string `json:"project_dir"`
 	GitWorktree string `json:"git_worktree"`
+}
+
+// ClaudeEffort represents reasoning effort information for the current session.
+// Level is empty when the active model does not support reasoning effort.
+type ClaudeEffort struct {
+	Level string `json:"level"`
+}
+
+// ClaudeThinking represents extended thinking state for the current session.
+type ClaudeThinking struct {
+	Enabled bool `json:"enabled"`
 }
 
 // DurationMS is a duration in milliseconds that formats as "Xm Ys".

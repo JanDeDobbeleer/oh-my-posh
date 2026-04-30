@@ -163,6 +163,52 @@ func TestClaudeWorkspaceGitWorktree(t *testing.T) {
 	}
 }
 
+func TestClaudeEffortAndThinking(t *testing.T) {
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, cache.CLAUDECACHE)
+	})
+
+	cases := []struct {
+		Case             string
+		Effort           ClaudeEffort
+		ExpectedLevel    string
+		Thinking         ClaudeThinking
+		ExpectedThinking bool
+	}{
+		{
+			Case:             "Reasoning effort active, thinking enabled",
+			Effort:           ClaudeEffort{Level: "xhigh"},
+			ExpectedLevel:    "xhigh",
+			Thinking:         ClaudeThinking{Enabled: true},
+			ExpectedThinking: true,
+		},
+		{
+			Case:             "Model without effort support, thinking off",
+			ExpectedLevel:    "",
+			ExpectedThinking: false,
+		},
+	}
+
+	for _, tc := range cases {
+		cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{
+			Effort:   tc.Effort,
+			Thinking: tc.Thinking,
+		}, cache.INFINITE)
+
+		env := new(mock.Environment)
+		claude := &Claude{
+			Base: Base{
+				env:     env,
+				options: options.Map{},
+			},
+		}
+
+		assert.True(t, claude.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedLevel, claude.Effort.Level, tc.Case)
+		assert.Equal(t, tc.ExpectedThinking, claude.Thinking.Enabled, tc.Case)
+	}
+}
+
 func TestClaudeTokenUsagePercent(t *testing.T) {
 	cases := []struct {
 		UsedPercentage           *int

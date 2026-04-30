@@ -53,6 +53,8 @@ import Config from "@site/src/components/Config.js";
 | `.SessionID`         | `string`        | Unique identifier for the Claude session           |
 | `.Model`             | `Model`         | AI model information                               |
 | `.Workspace`         | `Workspace`     | Workspace directory information                    |
+| `.Effort`            | `Effort`        | Reasoning effort information                       |
+| `.Thinking`          | `Thinking`      | Extended thinking state                            |
 | `.Cost`              | `Cost`          | Cost and duration information                      |
 | `.ContextWindow`     | `ContextWindow` | Token usage information                            |
 | `.TokenUsagePercent` | `Percentage`    | Percentage of context window used (0-100)          |
@@ -85,6 +87,18 @@ import Config from "@site/src/components/Config.js";
 | `.CurrentDir`  | `string` | Current working directory                                                    |
 | `.ProjectDir`  | `string` | Root project directory                                                       |
 | `.GitWorktree` | `string` | Path to the linked git worktree, empty when not inside a linked git worktree |
+
+#### Effort Properties
+
+| Name     | Type     | Description                                                                                  |
+| -------- | -------- | -------------------------------------------------------------------------------------------- |
+| `.Level` | `string` | Reasoning effort level (e.g., `low`, `medium`, `high`, `xhigh`, `max`); empty if unsupported |
+
+#### Thinking Properties
+
+| Name       | Type   | Description                                  |
+| ---------- | ------ | -------------------------------------------- |
+| `.Enabled` | `bool` | Whether extended thinking is enabled         |
 
 #### Cost Properties
 

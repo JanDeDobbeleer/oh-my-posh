@@ -55,6 +55,7 @@ export default {
           items: [
             "segments/cli/angular",
             "segments/cli/argocd",
+            "segments/cli/aspire",
             "segments/cli/aurelia",
             "segments/cli/bazel",
             "segments/cli/buf",

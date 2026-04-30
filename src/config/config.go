@@ -203,6 +203,11 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 					feats |= shell.PoshGit
 				}
 			}
+
+			if segment.Type == VIMODE && env.Shell() == shell.ZSH {
+				log.Debug("vi mode tracking enabled")
+				feats |= shell.VIMode
+			}
 		}
 	}
 

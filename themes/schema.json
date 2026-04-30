@@ -466,6 +466,7 @@
             "upgrade",
             "v",
             "vala",
+            "vimode",
             "wakatime",
             "winget",
             "winreg",
@@ -4784,6 +4785,19 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "vimode"
+              }
+            }
+          },
+          "then": {
+            "title": "Vi mode",
+            "description": "https://ohmyposh.dev/docs/segments/system/vimode"
           }
         },
         {

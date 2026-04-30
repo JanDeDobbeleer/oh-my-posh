@@ -90,3 +90,111 @@ func TestDockerFiles(t *testing.T) {
 		assert.Equal(t, tc.ExpectedEnabled, docker.Enabled(), tc.Case)
 	}
 }
+
+func TestDockerEnvironment(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedEnabled bool
+		ExpectedContext string
+		Filter          string
+		DockerCommand   string
+		CommandOutput   string
+		HasCommand      bool
+	}{
+		{
+			Case:            "Docker command not found",
+			ExpectedEnabled: false,
+			HasCommand:      false,
+		},
+		{
+			Case:            "No running containers",
+			ExpectedEnabled: false,
+			HasCommand:      true,
+			CommandOutput:   "",
+		},
+		{
+			Case:            "One running container",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1",
+			ExpectedContext: "1 running (c1)",
+		},
+		{
+			Case:            "Multiple running containers",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1\nc2\timage2\tcmd2\tcreated2\tstatus2\tports2\tnames2",
+			ExpectedContext: "2 running (c1)",
+		},
+		{
+			Case:            "Multiple running containers with windows line endings",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1\r\nc2\timage2\tcmd2\tcreated2\tstatus2\tports2\tnames2\r\n",
+			ExpectedContext: "2 running (c1)",
+		},
+		{
+			Case:            "Output with empty line",
+			ExpectedEnabled: false,
+			HasCommand:      true,
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1\n\nc2\timage2\tcmd2\tcreated2\tstatus2\tports2\tnames2",
+		},
+		{
+			Case:            "Filter applied",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			Filter:          "name=service1",
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1",
+			ExpectedContext: "1 running (c1)",
+		},
+		{
+			Case:            "Custom docker command",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			DockerCommand:   "podman",
+			CommandOutput:   "c1\timage1\tcmd1\tcreated1\tstatus1\tports1\tnames1",
+			ExpectedContext: "1 running (c1)",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("Getenv", mock_.Anything).Return("")
+			env.On("Home").Return("")
+			env.On("FileContent", mock_.Anything).Return("")
+
+			dockerCommand := "docker"
+			if len(tc.DockerCommand) > 0 {
+				dockerCommand = tc.DockerCommand
+			}
+
+			env.On("HasCommand", dockerCommand).Return(tc.HasCommand)
+
+			format := `{{.ID}}\t{{.Image}}\t{{.Command}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}`
+			args := []string{"ps", "--format", format}
+			if len(tc.Filter) > 0 {
+				args = append(args, "--filter", tc.Filter)
+			}
+
+			env.On("RunCommand", dockerCommand, args).Return(tc.CommandOutput, nil)
+
+			props := options.Map{
+				DisplayMode: DisplayModeEnvironment,
+				Filter:      tc.Filter,
+			}
+			if len(tc.DockerCommand) > 0 {
+				props[DockerCommand] = tc.DockerCommand
+			}
+
+			docker := &Docker{}
+			docker.Init(props, env)
+
+			assert.Equal(t, tc.ExpectedEnabled, docker.Enabled())
+			if tc.ExpectedEnabled {
+				template := `{{ len .Containers }} running ({{ (index .Containers 0).ID }})`
+				assert.Equal(t, tc.ExpectedContext, renderTemplate(env, template, docker))
+			}
+		})
+	}
+}

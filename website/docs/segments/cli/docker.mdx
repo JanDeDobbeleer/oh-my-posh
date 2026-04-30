@@ -6,7 +6,7 @@ sidebar_label: Docker
 
 ## What
 
-Display the current [Docker][docker] context. Will not be active when using the default context.
+Display the current [Docker][docker] context, or a list of running containers when `display_mode` is set to `environment`.
 
 ## Sample Configuration
 
@@ -20,16 +20,23 @@ import Config from "@site/src/components/Config.js";
     foreground: "#000000",
     background: "#0B59E7",
     template: " \uf308 {{ .Context }} ",
+    options: {
+      display_mode: "environment",
+      docker_command: "docker",
+      filter: "name=oh-my-posh-db-1"
+    }
   }}
 />
 
 ## Options
 
-| Name            |    Type    |                                      Default                                     | Description                                                                                                                                                              |
-| --------------- | :--------: | :------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `display_mode`  |  `string`  |                                     `context`                                    | <ul><li>`files`: the segment is only displayed when a file `extensions` listed is present</li><li>`context`: displays the segment when a Docker context active</li></ul> |
-| `fetch_context` | `boolean`  |                                      `true`                                      | also fetch the current active Docker context when in the `files` display mode                                                                                            |
-| `extensions`    | `[]string` | `compose.yml, compose.yaml, docker-compose.yml, docker-compose.yaml, Dockerfile` | allows to override the default list of file extensions to validate                                                                                                       |
+| Name             | Type       | Default                      | Description                                                                                                               |
+| ---------------- | ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `display_mode`   | `string`   | `context`                    | `files`, `context`, or `environment`                                                                                      |
+| `fetch_context`  | `boolean`  | `true`                       | fetch context in `files` mode                                                                                             |
+| `docker_command` | `string`   | `docker`                     | command used in `environment` mode                                                                                        |
+| `filter`         | `string`   | empty                        | passed to `docker ps`, see [the filter documentation](https://docs.docker.com/engine/reference/commandline/ps/#filtering) |
+| `extensions`     | `[]string` | compose files and Dockerfile | overrides the file checks                                                                                                 |
 
 ## Template ([info][templates])
 
@@ -43,10 +50,22 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name       | Type     | Description                |
-| ---------- | -------- | -------------------------- |
-| `.Context` | `string` | the current active context |
+| Name          | Type          | Description                         |
+| ------------- | ------------- | ----------------------------------- |
+| `.Context`    | `string`      | current active context              |
+| `.Containers` | `[]Container` | running containers from `docker ps` |
+
+#### Container
+
+| Name       | Type     | Description       |
+| ---------- | -------- | ----------------- |
+| `.ID`      | `string` | container ID      |
+| `.Image`   | `string` | container image   |
+| `.Command` | `string` | container command |
+| `.Created` | `string` | created time      |
+| `.Status`  | `string` | container status  |
+| `.Ports`   | `string` | published ports   |
+| `.Names`   | `string` | container name    |
 
 [docker]: https://www.docker.com/
-[go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

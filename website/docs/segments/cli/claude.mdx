@@ -90,15 +90,15 @@ import Config from "@site/src/components/Config.js";
 
 #### Effort Properties
 
-| Name     | Type     | Description                                                                                  |
-| -------- | -------- | -------------------------------------------------------------------------------------------- |
-| `.Level` | `string` | Reasoning effort level (e.g., `low`, `medium`, `high`, `xhigh`, `max`); empty if unsupported |
+| Name     | Type     | Description                                                                                                  |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `.Level` | `string` | Reasoning effort level (`low`, `medium`, `high`, `xhigh`, `max`); empty when absent or unsupported           |
 
 #### Thinking Properties
 
-| Name       | Type   | Description                                  |
-| ---------- | ------ | -------------------------------------------- |
-| `.Enabled` | `bool` | Whether extended thinking is enabled         |
+| Name       | Type   | Description                                                  |
+| ---------- | ------ | ------------------------------------------------------------ |
+| `.Enabled` | `bool` | Whether extended thinking is enabled; `false` when absent    |
 
 #### Cost Properties
 

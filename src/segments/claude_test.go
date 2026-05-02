@@ -183,7 +183,19 @@ func TestClaudeEffortAndThinking(t *testing.T) {
 			ExpectedThinking: true,
 		},
 		{
-			Case:             "Model without effort support, thinking off",
+			Case:             "Reasoning effort active, thinking disabled",
+			Effort:           ClaudeEffort{Level: "high"},
+			ExpectedLevel:    "high",
+			ExpectedThinking: false,
+		},
+		{
+			Case:             "Reasoning effort absent, thinking enabled",
+			ExpectedLevel:    "",
+			Thinking:         ClaudeThinking{Enabled: true},
+			ExpectedThinking: true,
+		},
+		{
+			Case:             "Reasoning effort absent, thinking disabled",
 			ExpectedLevel:    "",
 			ExpectedThinking: false,
 		},

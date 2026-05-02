@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"encoding/json"
 	"testing"
 	libtime "time"
 
@@ -218,6 +219,42 @@ func TestClaudeEffortAndThinking(t *testing.T) {
 		assert.True(t, claude.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedLevel, claude.Effort.Level, tc.Case)
 		assert.Equal(t, tc.ExpectedThinking, claude.Thinking.Enabled, tc.Case)
+	}
+}
+
+func TestClaudeEffortAndThinkingJSONShape(t *testing.T) {
+	cases := []struct {
+		Case             string
+		JSON             string
+		ExpectedLevel    string
+		ExpectedThinking bool
+	}{
+		{
+			Case:             "Both fields present",
+			JSON:             `{"effort":{"level":"xhigh"},"thinking":{"enabled":true}}`,
+			ExpectedLevel:    "xhigh",
+			ExpectedThinking: true,
+		},
+		{
+			Case:             "Both fields absent",
+			JSON:             `{}`,
+			ExpectedLevel:    "",
+			ExpectedThinking: false,
+		},
+		{
+			Case:             "Effort object empty, thinking disabled",
+			JSON:             `{"effort":{},"thinking":{"enabled":false}}`,
+			ExpectedLevel:    "",
+			ExpectedThinking: false,
+		},
+	}
+
+	for _, tc := range cases {
+		var data ClaudeData
+		err := json.Unmarshal([]byte(tc.JSON), &data)
+		assert.NoError(t, err, tc.Case)
+		assert.Equal(t, tc.ExpectedLevel, data.Effort.Level, tc.Case)
+		assert.Equal(t, tc.ExpectedThinking, data.Thinking.Enabled, tc.Case)
 	}
 }
 

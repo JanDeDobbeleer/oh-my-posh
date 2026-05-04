@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -852,5 +853,28 @@ func TestFishPath(t *testing.T) {
 
 			assert.Equal(t, result, tc.expected, tc.name)
 		})
+	}
+}
+
+func TestTerminalWidth(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Width    int
+		Err      error
+		Expected int
+	}{
+		{Case: "success", Width: 120, Err: nil, Expected: 120},
+		{Case: "error returns 0", Width: 0, Err: errors.New("no tty"), Expected: 0},
+		{Case: "zero width", Width: 0, Err: nil, Expected: 0},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("TerminalWidth").Return(tc.Width, tc.Err)
+
+		path := &Path{}
+		path.Init(options.Map{}, env)
+
+		assert.Equal(t, tc.Expected, path.TerminalWidth(), tc.Case)
 	}
 }

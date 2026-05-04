@@ -286,6 +286,14 @@ func (pt *Path) getMaxWidth() int {
 	return pt.options.Int(MaxWidth, 0)
 }
 
+func (pt *Path) TerminalWidth() int {
+	width, err := pt.env.TerminalWidth()
+	if err != nil {
+		return 0
+	}
+	return width
+}
+
 func (pt *Path) getFolderSeparator() string {
 	separatorTemplate := pt.options.String(FolderSeparatorTemplate, "")
 	if separatorTemplate == "" {

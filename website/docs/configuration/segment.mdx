@@ -144,7 +144,11 @@ is used.
 
 Available template functions include `add`, `sub`, `mul`, `div`, and all other
 [sprig](http://masterminds.github.io/sprig/) functions. The template context is the segment
-writer itself, so segment-specific fields (like `.TerminalWidth` on the path segment) are available.
+writer itself: any exported method or field on the writer is reachable as `{{ .FieldName }}`.
+For example, the `path` segment exposes `.TerminalWidth` (the terminal column count, or `0`
+when it cannot be determined). Other segments expose their own fields — see the segment's
+documentation page for what is available. A field that does not exist on the writer resolves
+to the zero value, in which case the option falls back to its default.
 
 :::note
 This applies to **segment options** (inside `[blocks.segments.options]`), not to top-level segment

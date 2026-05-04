@@ -20,14 +20,24 @@ type Claude struct {
 
 // ClaudeData represents the parsed Claude JSON data
 type ClaudeData struct {
-	RateLimits    *ClaudeRateLimits   `json:"rate_limits"`
-	Model         ClaudeModel         `json:"model"`
-	Workspace     ClaudeWorkspace     `json:"workspace"`
-	SessionID     string              `json:"session_id"`
-	Effort        ClaudeEffort        `json:"effort"`
-	ContextWindow ClaudeContextWindow `json:"context_window"`
-	Cost          ClaudeCost          `json:"cost"`
-	Thinking      ClaudeThinking      `json:"thinking"`
+	RateLimits        *ClaudeRateLimits   `json:"rate_limits"`
+	Worktree          ClaudeWorktree      `json:"worktree"`
+	Model             ClaudeModel         `json:"model"`
+	OutputStyle       ClaudeOutputStyle   `json:"output_style"`
+	Vim               ClaudeVim           `json:"vim"`
+	TranscriptPath    string              `json:"transcript_path"`
+	CWD               string              `json:"cwd"`
+	Version           string              `json:"version"`
+	SessionID         string              `json:"session_id"`
+	Effort            ClaudeEffort        `json:"effort"`
+	SessionName       string              `json:"session_name"`
+	Agent             ClaudeAgent         `json:"agent"`
+	Workspace         ClaudeWorkspace     `json:"workspace"`
+	ContextWindow     ClaudeContextWindow `json:"context_window"`
+	Cost              ClaudeCost          `json:"cost"`
+	Exceeds200KTokens bool                `json:"exceeds_200k_tokens"`
+	Thinking          ClaudeThinking      `json:"thinking"`
+	FastMode          bool                `json:"fast_mode"`
 }
 
 // ClaudeModel represents the AI model information
@@ -38,9 +48,15 @@ type ClaudeModel struct {
 
 // ClaudeWorkspace represents workspace directory information
 type ClaudeWorkspace struct {
-	CurrentDir  string `json:"current_dir"`
-	ProjectDir  string `json:"project_dir"`
-	GitWorktree string `json:"git_worktree"`
+	CurrentDir  string   `json:"current_dir"`
+	ProjectDir  string   `json:"project_dir"`
+	GitWorktree string   `json:"git_worktree"`
+	AddedDirs   []string `json:"added_dirs"`
+}
+
+// ClaudeOutputStyle represents the current output style.
+type ClaudeOutputStyle struct {
+	Name string `json:"name"`
 }
 
 // ClaudeEffort represents reasoning effort information for the current session.
@@ -52,6 +68,25 @@ type ClaudeEffort struct {
 // ClaudeThinking represents extended thinking state for the current session.
 type ClaudeThinking struct {
 	Enabled bool `json:"enabled"`
+}
+
+// ClaudeVim represents vim mode state.
+type ClaudeVim struct {
+	Mode string `json:"mode"`
+}
+
+// ClaudeAgent represents the active agent.
+type ClaudeAgent struct {
+	Name string `json:"name"`
+}
+
+// ClaudeWorktree represents Claude Code --worktree session information.
+type ClaudeWorktree struct {
+	Name           string `json:"name"`
+	Path           string `json:"path"`
+	Branch         string `json:"branch"`
+	OriginalCWD    string `json:"original_cwd"`
+	OriginalBranch string `json:"original_branch"`
 }
 
 // DurationMS is a duration in milliseconds that formats as "Xm Ys".

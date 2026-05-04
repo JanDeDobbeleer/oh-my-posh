@@ -203,6 +203,7 @@ number of folders specified by `full_length_dirs`, which will be displayed in fu
 | `.StackCount` | `int`      | the stack count                                                                                                                                                        |
 | `.Writable`   | `boolean`  | is the current directory writable by the user or not                                                                                                                   |
 | `.Format`     | `function` | format any path based on the segment's settings (e.g. `{{ .Format .Segments.Git.RelativeDir }}`)                                                                       |
+| `.TerminalWidth` | `int`     | the current terminal width in columns; `0` when it cannot be determined                                                                                                |
 
 [templates]: /docs/configuration/templates
 [regexp]: https://pkg.go.dev/regexp/syntax

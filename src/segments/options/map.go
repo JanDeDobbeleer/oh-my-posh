@@ -78,14 +78,14 @@ const (
 
 type Map map[Option]any
 
-const templateContextKey Option = "__template_context__"
+const TemplateContextKey Option = "__template_context__"
 
 func (m Map) SetContext(ctx any) {
-	m[templateContextKey] = ctx
+	m[TemplateContextKey] = ctx
 }
 
 func (m Map) getContext() any {
-	return m[templateContextKey]
+	return m[TemplateContextKey]
 }
 
 func (m Map) resolveTemplate(option Option, raw string) (string, bool) {

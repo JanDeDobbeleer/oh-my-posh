@@ -40,7 +40,10 @@ type Provider interface {
 	KeyValueMap(option Option, defaultValue map[string]string) map[string]string
 	StringArray(option Option, defaultValue []string) []string
 	Any(option Option, defaultValue any) any
+	SetContext(ctx any)
 }
+
+var _ Provider = Map{}
 
 // Option defines one property of a segment for context
 type Option string

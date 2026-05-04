@@ -50,7 +50,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name                    | Type            | Description                                                                          |
 | ----------------------- | --------------- | ------------------------------------------------------------------------------------ |
-| `.CWD`                  | `string`        | Current working directory                                                            |
+| `.CWD`                  | `string`        | Current working directory; same value as `.Workspace.CurrentDir`                     |
 | `.SessionID`            | `string`        | Unique identifier for the Claude session                                             |
 | `.SessionName`          | `string`        | Custom session name; empty when absent                                               |
 | `.TranscriptPath`       | `string`        | Path to the conversation transcript file                                             |
@@ -66,7 +66,7 @@ import Config from "@site/src/components/Config.js";
 | `.Vim`                  | `Vim`           | Vim mode information; empty when absent                                              |
 | `.Agent`                | `Agent`         | Agent information; empty when absent                                                 |
 | `.Worktree`             | `Worktree`      | Claude Code worktree information; empty when absent                                  |
-| `.FastMode`             | `bool`          | Whether fast mode is enabled when Claude Code provides the field                     |
+| `.FastMode`             | `bool`          | Whether fast mode is enabled; `false` when absent or unsupported                     |
 | `.TokenUsagePercent`    | `Percentage`    | Percentage of context window used (0-100)                                            |
 | `.TokenGauge`           | `string`        | Gauge showing remaining context capacity using configured characters (e.g., `▰▰▰▱▱`) |
 | `.TokenGaugeUsed`       | `string`        | Gauge showing used context capacity using configured characters (e.g., `▰▰▱▱▱`)      |
@@ -94,7 +94,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name           | Type       | Description                                                                  |
 | -------------- | ---------- | ---------------------------------------------------------------------------- |
-| `.CurrentDir`  | `string`   | Current working directory                                                    |
+| `.CurrentDir`  | `string`   | Current working directory; preferred when using other workspace fields       |
 | `.ProjectDir`  | `string`   | Root project directory                                                       |
 | `.AddedDirs`   | `[]string` | Additional directories added via `/add-dir` or `--add-dir`                   |
 | `.GitWorktree` | `string`   | Path to the linked git worktree, empty when not inside a linked git worktree |

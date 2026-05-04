@@ -94,8 +94,8 @@ import Config from "@site/src/components/Config.js";
 
 | Name           | Type       | Description                                                                  |
 | -------------- | ---------- | ---------------------------------------------------------------------------- |
-| `.CurrentDir`  | `string`   | Current working directory; preferred when using other workspace fields       |
-| `.ProjectDir`  | `string`   | Root project directory                                                       |
+| `.CurrentDir`  | `string`   | Current working directory; same value as `.CWD`                              |
+| `.ProjectDir`  | `string`   | Directory where Claude Code was launched; may differ from `.CurrentDir`      |
 | `.AddedDirs`   | `[]string` | Additional directories added via `/add-dir` or `--add-dir`                   |
 | `.GitWorktree` | `string`   | Path to the linked git worktree, empty when not inside a linked git worktree |
 

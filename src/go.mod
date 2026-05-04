@@ -11,7 +11,7 @@ require (
 	github.com/esimov/stackblur-go v1.1.1
 	github.com/fogleman/gg v1.3.0
 	github.com/google/uuid v1.6.0
-	github.com/gookit/color v1.6.0
+	github.com/gookit/color v1.6.1
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
@@ -22,7 +22,7 @@ require (
 	golang.org/x/image v0.39.0
 	golang.org/x/sys v0.43.0
 	golang.org/x/text v0.36.0
-	gopkg.in/ini.v1 v1.67.1
+	gopkg.in/ini.v1 v1.67.2
 )
 
 require (
@@ -34,8 +34,8 @@ require (
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/invopop/jsonschema v0.14.0
 	github.com/mattn/go-runewidth v0.0.23
-	github.com/pelletier/go-toml/v2 v2.3.0
-	github.com/shirou/gopsutil/v4 v4.26.3
+	github.com/pelletier/go-toml/v2 v2.3.1
+	github.com/shirou/gopsutil/v4 v4.26.4
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	go.yaml.in/yaml/v3 v3.0.4

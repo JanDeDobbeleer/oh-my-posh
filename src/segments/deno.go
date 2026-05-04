@@ -11,13 +11,13 @@ func (d *Deno) Template() string {
 func (d *Deno) Enabled() bool {
 	d.extensions = []string{"*.js", "*.ts", "deno.json"}
 	d.tooling = map[string]*cmd{
-		"deno": {
-			executable: "deno",
-			args:       []string{"--version"},
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		denoToolName: {
+			executable: denoToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegexPrefixed,
 		},
 	}
-	d.defaultTooling = []string{"deno"}
+	d.defaultTooling = []string{denoToolName}
 	d.versionURLTemplate = "https://github.com/denoland/deno/releases/tag/v{{.Full}}"
 
 	return d.Language.Enabled()

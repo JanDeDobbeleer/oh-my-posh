@@ -8,6 +8,16 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
+const (
+	paletteBlack          = "p:black"
+	paletteBlue           = "p:blue"
+	paletteGreen          = "p:green"
+	paletteOrange         = "p:orange"
+	paletteWhite          = "p:white"
+	paletteYellow         = "p:yellow"
+	backgroundTransparent = "transparent"
+)
+
 func Default(configError error) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
@@ -31,16 +41,16 @@ func Default(configError error) *Config {
 						Style:           Diamond,
 						LeadingDiamond:  "\ue0b6",
 						TrailingDiamond: "\ue0b0",
-						Foreground:      "p:black",
-						Background:      "p:yellow",
+						Foreground:      paletteBlack,
+						Background:      paletteYellow,
 						Template:        " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
 					},
 					{
 						Type:            PATH,
 						Style:           Powerline,
 						PowerlineSymbol: "\ue0b0",
-						Foreground:      "p:white",
-						Background:      "p:orange",
+						Foreground:      paletteWhite,
+						Background:      paletteOrange,
 						Options: options.Map{
 							options.Style: "folder",
 						},
@@ -50,8 +60,8 @@ func Default(configError error) *Config {
 						Type:            GIT,
 						Style:           Powerline,
 						PowerlineSymbol: "\ue0b0",
-						Foreground:      "p:black",
-						Background:      "p:green",
+						Foreground:      paletteBlack,
+						Background:      paletteGreen,
 						BackgroundTemplates: []string{
 							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}",
 							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}",
@@ -74,8 +84,8 @@ func Default(configError error) *Config {
 						Type:            ROOT,
 						Style:           Powerline,
 						PowerlineSymbol: "\ue0b0",
-						Foreground:      "p:white",
-						Background:      "p:yellow",
+						Foreground:      paletteWhite,
+						Background:      paletteYellow,
 						Template:        " \uf0e7 ",
 					},
 					{
@@ -83,8 +93,8 @@ func Default(configError error) *Config {
 						Style:           Diamond,
 						LeadingDiamond:  "<transparent,background>\ue0b0</>",
 						TrailingDiamond: "\ue0b4",
-						Foreground:      "p:white",
-						Background:      "p:blue",
+						Foreground:      paletteWhite,
+						Background:      paletteBlue,
 						BackgroundTemplates: []string{
 							exitBackgroundTemplate,
 						},
@@ -101,8 +111,8 @@ func Default(configError error) *Config {
 					{
 						Type:       NODE,
 						Style:      Plain,
-						Foreground: "p:green",
-						Background: "transparent",
+						Foreground: paletteGreen,
+						Background: backgroundTransparent,
 						Template:   "\ue718 ",
 						Options: options.Map{
 							segments.HomeEnabled:         false,
@@ -113,8 +123,8 @@ func Default(configError error) *Config {
 					{
 						Type:       GOLANG,
 						Style:      Plain,
-						Foreground: "p:blue",
-						Background: "transparent",
+						Foreground: paletteBlue,
+						Background: backgroundTransparent,
 						Template:   "\ue626 ",
 						Options: options.Map{
 							options.FetchVersion: false,
@@ -123,8 +133,8 @@ func Default(configError error) *Config {
 					{
 						Type:       PYTHON,
 						Style:      Plain,
-						Foreground: "p:yellow",
-						Background: "transparent",
+						Foreground: paletteYellow,
+						Background: backgroundTransparent,
 						Template:   "\ue235 ",
 						Options: options.Map{
 							options.FetchVersion:     false,
@@ -135,15 +145,15 @@ func Default(configError error) *Config {
 					{
 						Type:       SHELL,
 						Style:      Plain,
-						Foreground: "p:white",
-						Background: "transparent",
+						Foreground: paletteWhite,
+						Background: backgroundTransparent,
 						Template:   "in <p:blue><b>{{ .Name }}</b></> ",
 					},
 					{
 						Type:       TIME,
 						Style:      Plain,
-						Foreground: "p:white",
-						Background: "transparent",
+						Foreground: paletteWhite,
+						Background: backgroundTransparent,
 						Template:   "at <p:blue><b>{{ .CurrentDate | date \"15:04:05\" }}</b></>",
 					},
 				},
@@ -160,13 +170,13 @@ func Default(configError error) *Config {
 			"yellow": "#F3AE35",
 		},
 		SecondaryPrompt: &Segment{
-			Foreground: "p:black",
-			Background: "transparent",
+			Foreground: paletteBlack,
+			Background: backgroundTransparent,
 			Template:   "<p:yellow,transparent>\ue0b6</><,p:yellow> > </><p:yellow,transparent>\ue0b0</> ",
 		},
 		TransientPrompt: &Segment{
-			Foreground: "p:black",
-			Background: "transparent",
+			Foreground: paletteBlack,
+			Background: backgroundTransparent,
 			Template:   "<p:yellow,transparent>\ue0b6</><,p:yellow> {{ .Folder }} </><p:yellow,transparent>\ue0b0</> ",
 		},
 		Tooltips: []*Segment{
@@ -175,8 +185,8 @@ func Default(configError error) *Config {
 				Style:           Diamond,
 				LeadingDiamond:  "\ue0b0",
 				TrailingDiamond: "\ue0b4",
-				Foreground:      "p:white",
-				Background:      "p:orange",
+				Foreground:      paletteWhite,
+				Background:      paletteOrange,
 				Template:        " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ",
 				Options: options.Map{
 					options.DisplayDefault: true,
@@ -188,8 +198,8 @@ func Default(configError error) *Config {
 				Style:           Diamond,
 				LeadingDiamond:  "\ue0b0",
 				TrailingDiamond: "\ue0b4",
-				Foreground:      "p:white",
-				Background:      "p:blue",
+				Foreground:      paletteWhite,
+				Background:      paletteBlue,
 				Template:        " \uebd8 {{ .Name }} ",
 				Options: options.Map{
 					options.DisplayDefault: true,
@@ -219,8 +229,8 @@ func Claude() *Config {
 						Type:           PATH,
 						Style:          Diamond,
 						LeadingDiamond: "\ue0b6",
-						Foreground:     "p:white",
-						Background:     "p:orange",
+						Foreground:     paletteWhite,
+						Background:     paletteOrange,
 						Options: options.Map{
 							segments.DirLength:           3,
 							segments.FolderSeparatorIcon: "\ue0bb",
@@ -233,8 +243,8 @@ func Claude() *Config {
 						Style:           Diamond,
 						LeadingDiamond:  "<parentBackground,background>\ue0b0</>",
 						TrailingDiamond: "\ue0b4",
-						Foreground:      "p:black",
-						Background:      "p:green",
+						Foreground:      paletteBlack,
+						Background:      paletteGreen,
 						BackgroundTemplates: []string{
 							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}",
 							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}",
@@ -262,8 +272,8 @@ func Claude() *Config {
 						Style:           Diamond,
 						LeadingDiamond:  "\ue0b6",
 						TrailingDiamond: "\ue0b4",
-						Foreground:      "p:black",
-						Background:      "p:blue",
+						Foreground:      paletteBlack,
+						Background:      paletteBlue,
 						Template:        " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }} ",
 					},
 				},

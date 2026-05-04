@@ -64,12 +64,12 @@ type Project struct {
 func (n *Project) Enabled() bool {
 	n.projects = []*ProjectItem{
 		{
-			Name:    "node",
-			Files:   []string{"package.json"},
+			Name:    nodeToolName,
+			Files:   []string{fileName},
 			Fetcher: n.getNodePackage,
 		},
 		{
-			Name:    "deno",
+			Name:    denoToolName,
 			Files:   []string{"deno.json", "deno.jsonc"},
 			Fetcher: n.getDenoPackage,
 		},
@@ -84,22 +84,22 @@ func (n *Project) Enabled() bool {
 			Fetcher: n.getCargoPackage,
 		},
 		{
-			Name:    "python",
+			Name:    pythonToolName,
 			Files:   []string{"pyproject.toml"},
 			Fetcher: n.getPythonPackage,
 		},
 		{
-			Name:    "mojo",
+			Name:    mojoToolName,
 			Files:   []string{"mojoproject.toml"},
 			Fetcher: n.getPythonPackage,
 		},
 		{
-			Name:    "php",
+			Name:    phpToolName,
 			Files:   []string{"composer.json"},
 			Fetcher: n.getNodePackage,
 		},
 		{
-			Name:    "dart",
+			Name:    dartToolName,
 			Files:   []string{"pubspec.yaml"},
 			Fetcher: n.getDartPackage,
 		},
@@ -109,12 +109,12 @@ func (n *Project) Enabled() bool {
 			Fetcher: n.getNuSpecPackage,
 		},
 		{
-			Name:    "dotnet",
+			Name:    dotnetToolName,
 			Files:   []string{"*.sln", "*.slnf", "*.slnx", "*.vbproj", "*.fsproj", "*.csproj"},
 			Fetcher: n.getDotnetProject,
 		},
 		{
-			Name:    "julia",
+			Name:    juliaToolName,
 			Files:   []string{"JuliaProject.toml", "Project.toml"},
 			Fetcher: n.getProjectData,
 		},

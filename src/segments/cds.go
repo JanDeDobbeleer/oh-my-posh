@@ -9,16 +9,18 @@ func (c *Cds) Template() string {
 	return languageTemplate
 }
 
+const cdsToolName = "cds"
+
 func (c *Cds) Enabled() bool {
 	c.extensions = []string{".cdsrc.json", ".cdsrc-private.json", "*.cds"}
 	c.tooling = map[string]*cmd{
-		"cds": {
-			executable: "cds",
-			args:       []string{"--version"},
-			regex:      `@sap/cds: (?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		cdsToolName: {
+			executable: cdsToolName,
+			args:       []string{versionFlagArg},
+			regex:      `@sap/cds: ` + versionRegexPrefixed,
 		},
 	}
-	c.defaultTooling = []string{"cds"}
+	c.defaultTooling = []string{cdsToolName}
 	c.Language.loadContext = c.loadContext
 	c.Language.inContext = c.inContext
 	c.displayMode = c.options.String(DisplayMode, DisplayModeContext)

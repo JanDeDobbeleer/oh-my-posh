@@ -5,15 +5,15 @@ type Pnpm struct {
 }
 
 func (n *Pnpm) Enabled() bool {
-	n.extensions = []string{"package.json", "pnpm-lock.yaml"}
+	n.extensions = []string{fileName, "pnpm-lock.yaml"}
 	n.tooling = map[string]*cmd{
-		"pnpm": {
-			executable: "pnpm",
-			args:       []string{"--version"},
-			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		pnpmToolName: {
+			executable: pnpmToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegex,
 		},
 	}
-	n.defaultTooling = []string{"pnpm"}
+	n.defaultTooling = []string{pnpmToolName}
 	n.versionURLTemplate = "https://github.com/pnpm/pnpm/releases/tag/v{{ .Full }}"
 
 	return n.Language.Enabled()

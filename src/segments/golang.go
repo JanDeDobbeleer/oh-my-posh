@@ -28,7 +28,7 @@ func (g *Golang) Enabled() bool {
 		},
 		"go": {
 			executable: "go",
-			args:       []string{"version"},
+			args:       []string{versionArg},
 			regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?)))`,
 		},
 	}

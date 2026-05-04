@@ -24,15 +24,17 @@ type Quasar struct {
 }
 
 func (q *Quasar) Enabled() bool {
+	const quasarToolName = "quasar"
+
 	q.projectFiles = []string{"quasar.config", "quasar.config.js"}
 	q.tooling = map[string]*cmd{
-		"quasar": {
-			executable: "quasar",
-			args:       []string{"--version"},
-			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		quasarToolName: {
+			executable: quasarToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegex,
 		},
 	}
-	q.defaultTooling = []string{"quasar"}
+	q.defaultTooling = []string{quasarToolName}
 	q.versionURLTemplate = "https://github.com/quasarframework/quasar/releases/tag/quasar-v{{ .Full }}"
 
 	if !q.Language.Enabled() {

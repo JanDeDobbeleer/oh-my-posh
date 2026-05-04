@@ -12,16 +12,18 @@ func (u *UI5Tooling) Template() string {
 }
 
 func (u *UI5Tooling) Enabled() bool {
+	const ui5ToolName = "ui5"
+
 	u.extensions = []string{UI5ToolingYamlPattern}
 	u.displayMode = u.options.String(DisplayMode, DisplayModeContext)
 	u.tooling = map[string]*cmd{
-		"ui5": {
-			executable: "ui5",
-			args:       []string{"--version"},
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		ui5ToolName: {
+			executable: ui5ToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegexPrefixed,
 		},
 	}
-	u.defaultTooling = []string{"ui5"}
+	u.defaultTooling = []string{ui5ToolName}
 	u.versionURLTemplate = "https://github.com/SAP/ui5-cli/releases/tag/v{{ .Full }}"
 	u.Language.loadContext = u.loadContext
 	u.Language.inContext = u.inContext

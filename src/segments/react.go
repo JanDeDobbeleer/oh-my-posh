@@ -9,10 +9,10 @@ func (r *React) Template() string {
 }
 
 func (r *React) Enabled() bool {
-	r.extensions = []string{"package.json"}
+	r.extensions = []string{fileName}
 	r.tooling = map[string]*cmd{
 		"react": {
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			regex:      versionRegexPrefixed,
 			getVersion: r.getVersion,
 		},
 	}

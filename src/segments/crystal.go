@@ -8,16 +8,18 @@ func (c *Crystal) Template() string {
 	return languageTemplate
 }
 
+const crystalToolName = "crystal"
+
 func (c *Crystal) Enabled() bool {
 	c.extensions = []string{"*.cr", "shard.yml"}
 	c.tooling = map[string]*cmd{
-		"crystal": {
-			executable: "crystal",
-			args:       []string{"--version"},
-			regex:      `Crystal (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		crystalToolName: {
+			executable: crystalToolName,
+			args:       []string{versionFlagArg},
+			regex:      `Crystal ` + versionRegex,
 		},
 	}
-	c.defaultTooling = []string{"crystal"}
+	c.defaultTooling = []string{crystalToolName}
 	c.versionURLTemplate = "https://github.com/crystal-lang/crystal/releases/tag/{{ .Full }}"
 
 	return c.Language.Enabled()

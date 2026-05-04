@@ -13,8 +13,8 @@ func (c *Cf) Enabled() bool {
 	c.tooling = map[string]*cmd{
 		"cf": {
 			executable: "cf",
-			args:       []string{"version"},
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			args:       []string{versionArg},
+			regex:      versionRegexPrefixed,
 		},
 	}
 	c.defaultTooling = []string{"cf"}

@@ -9,15 +9,15 @@ func (n *Yarn) Template() string {
 }
 
 func (n *Yarn) Enabled() bool {
-	n.extensions = []string{"package.json", "yarn.lock"}
+	n.extensions = []string{fileName, "yarn.lock"}
 	n.tooling = map[string]*cmd{
-		"yarn": {
-			executable: "yarn",
-			args:       []string{"--version"},
-			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		yarnToolName: {
+			executable: yarnToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegex,
 		},
 	}
-	n.defaultTooling = []string{"yarn"}
+	n.defaultTooling = []string{yarnToolName}
 	n.versionURLTemplate = "https://github.com/yarnpkg/berry/releases/tag/v{{ .Full }}"
 
 	return n.Language.Enabled()

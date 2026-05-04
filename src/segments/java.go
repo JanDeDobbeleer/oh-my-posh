@@ -18,6 +18,8 @@ func (j *Java) Enabled() bool {
 	return j.Language.Enabled()
 }
 
+const javaToolName = "java"
+
 func (j *Java) init() {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 
@@ -38,13 +40,13 @@ func (j *Java) init() {
 	}
 
 	j.tooling = map[string]*cmd{
-		"java": {
-			executable: "java",
+		javaToolName: {
+			executable: javaToolName,
 			args:       []string{"-Xinternalversion"},
 			regex:      javaRegex,
 		},
 	}
-	j.defaultTooling = []string{"java"}
+	j.defaultTooling = []string{javaToolName}
 
 	javaHome := j.env.Getenv("JAVA_HOME")
 	if len(javaHome) > 0 {
@@ -54,6 +56,6 @@ func (j *Java) init() {
 			args:       []string{"-Xinternalversion"},
 			regex:      javaRegex,
 		}
-		j.defaultTooling = []string{"java_home", "java"}
+		j.defaultTooling = []string{"java_home", javaToolName}
 	}
 }

@@ -28,6 +28,8 @@ linters:
     - unused
     - whitespace
   settings:
+    goconst:
+      ignore-tests: true
     gocritic:
       enabled-tags:
         - diagnostic

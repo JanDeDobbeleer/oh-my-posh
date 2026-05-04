@@ -12,7 +12,7 @@ func (s *Svelte) Enabled() bool {
 	s.extensions = []string{"svelte.config.js"}
 	s.tooling = map[string]*cmd{
 		"svelte": {
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			regex:      versionRegexPrefixed,
 			getVersion: s.getVersion,
 		},
 	}

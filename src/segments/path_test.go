@@ -471,12 +471,18 @@ func TestGetMaxWidth(t *testing.T) {
 			MaxWidth: "{{ .Env.MAX_WIDTH }}",
 			Expected: 120,
 		},
+		{
+			Case:     "TerminalWidth template",
+			MaxWidth: "{{ sub .TerminalWidth 30 }}",
+			Expected: 90,
+		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("Getenv", "MAX_WIDTH").Return("120")
 		env.On("Shell").Return(shell.BASH)
+		env.On("TerminalWidth").Return(120, nil)
 
 		template.Cache = new(cache.Template)
 		template.Init(env, nil, nil)

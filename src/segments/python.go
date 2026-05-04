@@ -23,6 +23,9 @@ const (
 	UsePythonVersionFile options.Option = "use_python_version_file"
 	FolderNameFallback   options.Option = "folder_name_fallback"
 	DefaultVenvNames     options.Option = "default_venv_names"
+
+	python3ToolName    = "python3"
+	pythonVersionRegex = "(?:Python " + versionRegex + ")"
 )
 
 func (p *Python) Template() string {
@@ -37,32 +40,32 @@ func (p *Python) Enabled() bool {
 	p.tooling = map[string]*cmd{
 		"pyenv": {
 			getVersion: p.pyenvVersion,
-			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+			regex:      versionRegex,
 		},
-		"python": {
-			executable: "python",
-			args:       []string{"--version"},
-			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		pythonToolName: {
+			executable: pythonToolName,
+			args:       []string{versionFlagArg},
+			regex:      pythonVersionRegex,
 		},
-		"python3": {
-			executable: "python3",
-			args:       []string{"--version"},
-			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		python3ToolName: {
+			executable: python3ToolName,
+			args:       []string{versionFlagArg},
+			regex:      pythonVersionRegex,
 		},
 		"py": {
 			executable: "py",
-			args:       []string{"--version"},
-			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			args:       []string{versionFlagArg},
+			regex:      pythonVersionRegex,
 		},
 		"uv": {
 			executable: "uv",
-			args:       []string{"run", "--no-sync", "--quiet", "--no-python-downloads", "python", "--version"},
-			regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			args:       []string{"run", "--no-sync", "--quiet", "--no-python-downloads", pythonToolName, versionFlagArg},
+			regex:      pythonVersionRegex,
 		},
 	}
 
 	// Default tooling order - users can override via "tooling" option
-	p.defaultTooling = []string{"pyenv", "python", "python3", "py"}
+	p.defaultTooling = []string{"pyenv", pythonToolName, python3ToolName, "py"}
 
 	p.versionURLTemplate = "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
 	p.displayMode = p.options.String(DisplayMode, DisplayModeEnvironment)
@@ -139,9 +142,9 @@ func (p *Python) pyenvVersion() (string, error) {
 	// Use `pyenv root` instead of $PYENV_ROOT?
 	// Is our Python executable at $PYENV_ROOT/bin/python ?
 	// Should p.env expose command paths?
-	cmdPath := p.env.CommandPath("python")
+	cmdPath := p.env.CommandPath(pythonToolName)
 	if cmdPath == "" {
-		cmdPath = p.env.CommandPath("python3")
+		cmdPath = p.env.CommandPath(python3ToolName)
 	}
 
 	if cmdPath == "" {
@@ -186,9 +189,9 @@ func (p *Python) pyenvVersion() (string, error) {
 }
 
 func (p *Python) pyvenvCfgPrompt() string {
-	cmdPath := p.env.CommandPath("python")
+	cmdPath := p.env.CommandPath(pythonToolName)
 	if cmdPath == "" {
-		cmdPath = p.env.CommandPath("python3")
+		cmdPath = p.env.CommandPath(python3ToolName)
 	}
 
 	if cmdPath == "" {

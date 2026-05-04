@@ -209,7 +209,7 @@ func (f *fields) init(data any) {
 		for key := range m {
 			f.add(key)
 		}
-	case reflect.Ptr:
+	case reflect.Pointer:
 		f.init(reflect.ValueOf(data).Elem().Interface())
 	}
 }

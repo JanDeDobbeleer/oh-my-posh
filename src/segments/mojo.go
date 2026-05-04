@@ -18,13 +18,13 @@ func (m *Mojo) Template() string {
 func (m *Mojo) Enabled() bool {
 	m.extensions = []string{"*.🔥", "*.mojo", "mojoproject.toml"}
 	m.tooling = map[string]*cmd{
-		"mojo": {
-			executable: "mojo",
-			args:       []string{"--version"},
+		mojoToolName: {
+			executable: mojoToolName,
+			args:       []string{versionFlagArg},
 			regex:      `(?:mojo (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 		},
 	}
-	m.defaultTooling = []string{"mojo"}
+	m.defaultTooling = []string{mojoToolName}
 	m.displayMode = m.options.String(DisplayMode, DisplayModeEnvironment)
 	m.Language.loadContext = m.loadContext
 	m.Language.inContext = m.inContext
@@ -50,7 +50,7 @@ func (m *Mojo) inContext() bool {
 }
 
 func (m *Mojo) canUseVenvName(name string) bool {
-	defaultNames := []string{"default"}
+	defaultNames := []string{defaultUser}
 
 	if m.options.Bool(options.DisplayDefault, true) ||
 		!slices.Contains(defaultNames, name) {

@@ -20,6 +20,30 @@ import (
 const (
 	languageTemplate = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
 	noVersion        = "NO VERSION"
+
+	versionFlagArg      = "--version"
+	versionFlagShortArg = "-version"
+	versionArg          = "version"
+
+	versionRegex         = `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
+	versionRegexPrefixed = `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`
+
+	fileName = "package.json"
+
+	asdfToolName   = "asdf"
+	bunToolName    = "bun"
+	dartToolName   = "dart"
+	denoToolName   = "deno"
+	dotnetToolName = "dotnet"
+	fvmToolName    = "fvm"
+	juliaToolName  = "julia"
+	mojoToolName   = "mojo"
+	nodeToolName   = "node"
+	npmToolName    = "npm"
+	phpToolName    = "php"
+	pnpmToolName   = "pnpm"
+	pythonToolName = "python"
+	yarnToolName   = "yarn"
 )
 
 type loadContext func()
@@ -324,7 +348,7 @@ func (l *Language) buildVersionURL() {
 }
 
 func (l *Language) hasNodePackage(name string) bool {
-	packageJSON := l.env.FileContent("package.json")
+	packageJSON := l.env.FileContent(fileName)
 
 	var packageData map[string]any
 	if err := json.Unmarshal([]byte(packageJSON), &packageData); err != nil {
@@ -346,7 +370,6 @@ func (l *Language) hasNodePackage(name string) bool {
 func (l *Language) nodePackageVersion(name string) (string, error) {
 	folder := filepath.Join(l.env.Pwd(), "node_modules", name)
 
-	const fileName string = "package.json"
 	if !l.env.HasFilesInDir(folder, fileName) {
 		return "", fmt.Errorf("%s not found in %s", fileName, folder)
 	}

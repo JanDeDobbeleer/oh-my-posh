@@ -8,27 +8,32 @@ func (r *R) Template() string {
 	return languageTemplate
 }
 
+const (
+	rscriptToolName = "Rscript"
+	rExeToolName    = "R.exe"
+)
+
 func (r *R) Enabled() bool {
-	rRegex := `version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
+	rRegex := `version ` + versionRegex
 	r.extensions = []string{"*.R", "*.Rmd", "*.Rsx", "*.Rda", "*.Rd", "*.Rproj", ".Rproj.user"}
 	r.tooling = map[string]*cmd{
-		"Rscript": {
-			executable: "Rscript",
-			args:       []string{"--version"},
+		rscriptToolName: {
+			executable: rscriptToolName,
+			args:       []string{versionFlagArg},
 			regex:      rRegex,
 		},
 		"R": {
 			executable: "R",
-			args:       []string{"--version"},
+			args:       []string{versionFlagArg},
 			regex:      rRegex,
 		},
-		"R.exe": {
-			executable: "R.exe",
-			args:       []string{"--version"},
+		rExeToolName: {
+			executable: rExeToolName,
+			args:       []string{versionFlagArg},
 			regex:      rRegex,
 		},
 	}
-	r.defaultTooling = []string{"Rscript", "R", "R.exe"}
+	r.defaultTooling = []string{rscriptToolName, "R", rExeToolName}
 	r.versionURLTemplate = "https://www.r-project.org/"
 
 	return r.Language.Enabled()

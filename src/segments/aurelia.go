@@ -9,10 +9,10 @@ func (a *Aurelia) Template() string {
 }
 
 func (a *Aurelia) Enabled() bool {
-	a.extensions = []string{"package.json"}
+	a.extensions = []string{fileName}
 	a.tooling = map[string]*cmd{
 		"aurelia": {
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)(-(?P<prerelease>[a-z]+).(?P<buildmetadata>[0-9]+))?)))`,
+			regex:      versionRegexPrefixed,
 			getVersion: a.getVersion,
 		},
 	}

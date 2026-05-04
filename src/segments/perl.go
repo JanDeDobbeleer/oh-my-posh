@@ -9,6 +9,8 @@ func (p *Perl) Template() string {
 }
 
 func (p *Perl) Enabled() bool {
+	const perlToolName = "perl"
+
 	perlRegex := `This is perl.*v(?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))(?:\.(?P<patch>[0-9]+))?).* built for .+`
 	p.extensions = []string{
 		".perl-version",
@@ -17,13 +19,13 @@ func (p *Perl) Enabled() bool {
 		"*.t",
 	}
 	p.tooling = map[string]*cmd{
-		"perl": {
-			executable: "perl",
-			args:       []string{"-version"},
+		perlToolName: {
+			executable: perlToolName,
+			args:       []string{versionFlagShortArg},
 			regex:      perlRegex,
 		},
 	}
-	p.defaultTooling = []string{"perl"}
+	p.defaultTooling = []string{perlToolName}
 
 	return p.Language.Enabled()
 }

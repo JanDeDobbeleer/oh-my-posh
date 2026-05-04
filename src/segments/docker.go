@@ -82,7 +82,7 @@ func (d *Docker) fetchContext() bool {
 	// Return the current context if it is not empty and not `default`
 	for _, v := range d.envVars() {
 		context := d.env.Getenv(v)
-		if len(context) > 0 && context != "default" {
+		if len(context) > 0 && context != defaultUser {
 			d.Context = context
 			return true
 		}
@@ -101,7 +101,7 @@ func (d *Docker) fetchContext() bool {
 			continue
 		}
 
-		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != "default" {
+		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != defaultUser {
 			d.Context = cfg.CurrentContext
 			return true
 		}

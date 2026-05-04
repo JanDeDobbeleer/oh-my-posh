@@ -13,10 +13,14 @@ func (c *Clojure) Enabled() bool {
 	return c.Language.Enabled()
 }
 
+const clojureToolName = "clojure"
+
+const leinToolName = "lein"
+
 func (c *Clojure) init() {
 	options := c.options.StringArray(Tooling, []string{})
 	if len(options) == 0 {
-		c.defaultTooling = []string{"clojure", "lein"}
+		c.defaultTooling = []string{clojureToolName, leinToolName}
 	}
 
 	c.extensions = []string{
@@ -30,14 +34,14 @@ func (c *Clojure) init() {
 	}
 
 	c.tooling = map[string]*cmd{
-		"clojure": {
-			executable: "clojure",
-			args:       []string{"--version"},
+		clojureToolName: {
+			executable: clojureToolName,
+			args:       []string{versionFlagArg},
 			regex:      `Clojure CLI version (?P<version>(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+)(?:\.(?P<build>[0-9]+))?)`,
 		},
-		"lein": {
-			executable: "lein",
-			args:       []string{"--version"},
+		leinToolName: {
+			executable: leinToolName,
+			args:       []string{versionFlagArg},
 			regex:      `Leiningen (?P<version>(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+))`,
 		},
 	}

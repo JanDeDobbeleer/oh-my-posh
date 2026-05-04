@@ -21,6 +21,8 @@ type WithingsData struct {
 	Status int   `json:"status"`
 }
 
+const withingsActionKey = "action"
+
 type Body struct {
 	MeasureGroups []*MeasureGroup `json:"measuregrps"`
 	Activities    []*Activity     `json:"activities"`
@@ -82,10 +84,10 @@ type withingsAPI struct {
 func (w *withingsAPI) GetMeasures(meastypes string) (*WithingsData, error) {
 	twoWeeksAgo := strconv.FormatInt(time.Now().AddDate(0, 0, -14).Unix(), 10)
 	formData := url.Values{
-		"meastypes":  {meastypes},
-		"action":     {"getmeas"},
-		"lastupdate": {twoWeeksAgo},
-		"category":   {"1"},
+		"meastypes":       {meastypes},
+		withingsActionKey: {"getmeas"},
+		"lastupdate":      {twoWeeksAgo},
+		"category":        {"1"},
 	}
 	return w.getWithingsData("https://wbsapi.withings.net/measure", formData)
 }
@@ -94,11 +96,11 @@ func (w *withingsAPI) GetActivities(activities string) (*WithingsData, error) {
 	yesterday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
 	today := time.Now().Format("2006-01-02")
 	formData := url.Values{
-		"data_fields":  {activities},
-		"action":       {"getactivity"},
-		"startdateymd": {yesterday},
-		"enddateymd":   {today},
-		"category":     {"1"},
+		"data_fields":     {activities},
+		withingsActionKey: {"getactivity"},
+		"startdateymd":    {yesterday},
+		"enddateymd":      {today},
+		"category":        {"1"},
 	}
 	return w.getWithingsData("https://wbsapi.withings.net/v2/measure", formData)
 }
@@ -111,9 +113,9 @@ func (w *withingsAPI) GetSleep() (*WithingsData, error) {
 	// end at 12PM today
 	end := time.Date(today.Year(), today.Month(), today.Day(), 12, 0, 0, 0, time.UTC).Unix()
 	formData := url.Values{
-		"action":    {"get"},
-		"startdate": {strconv.FormatInt(start, 10)},
-		"enddate":   {strconv.FormatInt(end, 10)},
+		withingsActionKey: {"get"},
+		"startdate":       {strconv.FormatInt(start, 10)},
+		"enddate":         {strconv.FormatInt(end, 10)},
 	}
 	return w.getWithingsData("https://wbsapi.withings.net/v2/sleep", formData)
 }

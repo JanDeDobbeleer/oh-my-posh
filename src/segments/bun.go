@@ -11,13 +11,13 @@ func (b *Bun) Template() string {
 func (b *Bun) Enabled() bool {
 	b.extensions = []string{"bun.lockb", "bun.lock"}
 	b.tooling = map[string]*cmd{
-		"bun": {
-			executable: "bun",
-			args:       []string{"--version"},
-			regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+		bunToolName: {
+			executable: bunToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegexPrefixed,
 		},
 	}
-	b.defaultTooling = []string{"bun"}
+	b.defaultTooling = []string{bunToolName}
 	b.versionURLTemplate = "https://github.com/oven-sh/bun/releases/tag/bun-v{{.Full}}"
 
 	return b.Language.Enabled()

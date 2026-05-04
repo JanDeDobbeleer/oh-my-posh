@@ -78,6 +78,13 @@ func (u *Unity) GetUnityVersion() (string, error) {
 	return "", errors.New("ProjectSettings/ProjectVersion.txt is missing m_EditorVersion")
 }
 
+const (
+	csharp6  = "C# 6"
+	csharp73 = "C# 7.3"
+	csharp8  = "C# 8"
+	csharp9  = "C# 9"
+)
+
 func (u *Unity) GetCSharpVersion() (version string, err error) {
 	lastDotIndex := strings.LastIndex(u.UnityVersion, ".")
 	if lastDotIndex == -1 {
@@ -86,28 +93,28 @@ func (u *Unity) GetCSharpVersion() (version string, err error) {
 	shortUnityVersion := u.UnityVersion[0:lastDotIndex]
 
 	var csharpVersionsByUnityVersion = map[string]string{
-		"2017.1": "C# 6",
-		"2017.2": "C# 6",
-		"2017.3": "C# 6",
-		"2017.4": "C# 6",
-		"2018.1": "C# 6",
-		"2018.2": "C# 6",
-		"2018.3": "C# 7.3",
-		"2018.4": "C# 7.3",
-		"2019.1": "C# 7.3",
-		"2019.2": "C# 7.3",
-		"2019.3": "C# 7.3",
-		"2019.4": "C# 7.3",
-		"2020.1": "C# 7.3",
-		"2020.2": "C# 8",
-		"2020.3": "C# 8",
-		"2021.1": "C# 8",
-		"2021.2": "C# 9",
-		"2021.3": "C# 9",
-		"2022.1": "C# 9",
-		"2022.2": "C# 9",
-		"2023.1": "C# 9",
-		"2023.2": "C# 9",
+		"2017.1": csharp6,
+		"2017.2": csharp6,
+		"2017.3": csharp6,
+		"2017.4": csharp6,
+		"2018.1": csharp6,
+		"2018.2": csharp6,
+		"2018.3": csharp73,
+		"2018.4": csharp73,
+		"2019.1": csharp73,
+		"2019.2": csharp73,
+		"2019.3": csharp73,
+		"2019.4": csharp73,
+		"2020.1": csharp73,
+		"2020.2": csharp8,
+		"2020.3": csharp8,
+		"2021.1": csharp8,
+		"2021.2": csharp9,
+		"2021.3": csharp9,
+		"2022.1": csharp9,
+		"2022.2": csharp9,
+		"2023.1": csharp9,
+		"2023.2": csharp9,
 	}
 
 	csharpVersion, found := csharpVersionsByUnityVersion[shortUnityVersion]

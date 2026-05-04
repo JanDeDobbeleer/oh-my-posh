@@ -16,33 +16,35 @@ func (h *Haskell) Template() string {
 	return languageTemplate
 }
 
-func (h *Haskell) Enabled() bool {
-	ghcRegex := `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
+const ghcToolName = "ghc"
 
+const stackToolName = "stack"
+
+func (h *Haskell) Enabled() bool {
 	h.extensions = []string{"*.hs", "*.lhs", "stack.yaml", "package.yaml", "*.cabal", "cabal.project"}
 	h.tooling = map[string]*cmd{
-		"ghc": {
-			executable: "ghc",
+		ghcToolName: {
+			executable: ghcToolName,
 			args:       []string{"--numeric-version"},
-			regex:      ghcRegex,
+			regex:      versionRegex,
 		},
-		"stack": {
-			executable: "stack",
-			args:       []string{"ghc", "--", "--numeric-version"},
-			regex:      ghcRegex,
+		stackToolName: {
+			executable: stackToolName,
+			args:       []string{ghcToolName, "--", "--numeric-version"},
+			regex:      versionRegex,
 		},
 	}
-	h.defaultTooling = []string{"ghc"}
+	h.defaultTooling = []string{ghcToolName}
 	h.versionURLTemplate = "https://www.haskell.org/ghc/download_ghc_{{ .Major }}_{{ .Minor }}_{{ .Patch }}.html"
 
 	switch h.options.String(StackGhcMode, "never") {
 	case "always":
-		h.defaultTooling = []string{"stack"}
+		h.defaultTooling = []string{stackToolName}
 		h.StackGhc = true
 	case "package":
 		_, err := h.env.HasParentFilePath("stack.yaml", false)
 		if err == nil {
-			h.defaultTooling = []string{"stack"}
+			h.defaultTooling = []string{stackToolName}
 			h.StackGhc = true
 		}
 	}

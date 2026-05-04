@@ -167,7 +167,7 @@ func isZeroValue(v reflect.Value) bool {
 	switch v.Kind() { //nolint: exhaustive
 	case reflect.Slice, reflect.Map:
 		return v.IsNil() || v.Len() == 0
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return v.IsNil()
 	case reflect.String:
 		return v.String() == ""

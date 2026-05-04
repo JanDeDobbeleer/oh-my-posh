@@ -1,7 +1,28 @@
 lockfile_version: '1'
-generated_at: '2026-04-28T06:19:02.309773+00:00'
+generated_at: '2026-05-04T17:15:32.688004+00:00'
 apm_version: 0.7.7
 dependencies:
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  virtual_path: instructions/golang.instructions.md
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .github/instructions/golang.instructions.md
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  virtual_path: instructions/markdown.instructions.md
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .github/instructions/markdown.instructions.md
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  virtual_path: instructions/powershell.instructions.md
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .github/instructions/powershell.instructions.md
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
   resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2
@@ -42,3 +63,11 @@ dependencies:
   package_type: claude_skill
   deployed_files:
   - .github/skills/vale-user-facing-text
+- repo_url: ast-grep/agent-skill
+  host: github.com
+  resolved_commit: 577f4d4507678f2c8cee150fae25e6ce309f70b1
+  virtual_path: ast-grep/skills/ast-grep
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .github/skills/ast-grep

@@ -51,6 +51,7 @@ type Environment interface {
 	Flags() *Flags
 	BatteryState() (*battery.Info, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
+	QuerySpotifySMTC() (string, error)
 	WindowsRegistryKeyValue(key string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error)
 	IsWsl() bool

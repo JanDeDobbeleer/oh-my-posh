@@ -1,8 +1,6 @@
-//go:build windows || (linux && !darwin)
+//go:build linux && !darwin
 
 package segments
-
-import "strings"
 
 // PowerShell script that queries the Spotify session from the Windows
 // System Media Transport Controls (SMTC). Output is a single line of
@@ -10,10 +8,10 @@ import "strings"
 // lowercased PlaybackStatus enum value (playing/paused/stopped/closed/
 // opened/changing), or "closed||||0" when no Spotify SMTC session exists.
 //
-// Works for both the native Win32 Spotify client and the Microsoft Store
-// version (SourceAppUserModelId starts with "SpotifyAB.SpotifyMusic_").
-// On WSL, the same script is invoked via the Windows interop powershell.exe
-// so the Linux side reads the same SMTC sessions as the Windows host.
+// Used from WSL: the Linux binary cannot call WinRT directly, so it shells
+// out to the Windows interop powershell.exe to read the host's SMTC list.
+// On native Windows the binary instead calls combase.dll directly via
+// runtime.QuerySpotifySMTC — see runtime/smtc_windows.go.
 const spotifySMTCScript = `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $null = [Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager,Windows.Media.Control,ContentType=WindowsRuntime]
 Add-Type -AssemblyName System.Runtime.WindowsRuntime
@@ -41,40 +39,4 @@ func (s *Spotify) querySMTC() bool {
 		return false
 	}
 	return s.parseSMTCOutput(output)
-}
-
-func (s *Spotify) parseSMTCOutput(output string) bool {
-	output = strings.TrimSpace(output)
-	if output == "" {
-		return false
-	}
-
-	parts := strings.SplitN(output, "|", 5)
-	if len(parts) != 5 {
-		return false
-	}
-
-	switch parts[0] {
-	case playing:
-		s.Status = playing
-	case paused:
-		s.Status = paused
-	default:
-		// stopped, closed, opened, changing — segment hidden, matching macOS/Linux behavior.
-		s.Status = stopped
-		return false
-	}
-
-	s.Track = parts[1]
-	s.Artist = parts[2]
-
-	// Spotify ads expose the campaign as a regular "Music" SMTC entry but with no
-	// AlbumTitle and TrackNumber=0 — neither is true for real tracks. Use the pair
-	// to flag ads (single condition would false-positive on Spotify Singles etc.).
-	if s.Status == playing && parts[3] == "" && parts[4] == "0" {
-		s.Status = ad
-	}
-
-	s.resolveIcon()
-	return true
 }

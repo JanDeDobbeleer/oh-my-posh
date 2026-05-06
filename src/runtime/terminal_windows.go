@@ -60,6 +60,15 @@ func (term *Terminal) QueryWindowTitles(processName, windowTitleRegex string) (s
 	return title, err
 }
 
+func (term *Terminal) QuerySpotifySMTC() (string, error) {
+	defer log.Trace(time.Now())
+	output, err := querySpotifySMTC()
+	if err != nil {
+		log.Error(err)
+	}
+	return output, err
+}
+
 func (term *Terminal) IsWsl() bool {
 	defer log.Trace(time.Now())
 	return false

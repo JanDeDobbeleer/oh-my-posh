@@ -33,7 +33,7 @@ func (f Features) Pwsh() Code {
 		return "$global:_ompStreaming = $true"
 	case KeyHandlers:
 		return "Enable-KeyHandlers"
-	case PromptMark, RPrompt, CursorPositioning, Async:
+	case PromptMark, RPrompt, CursorPositioning, Async, VIMode:
 		fallthrough
 	default:
 		return ""

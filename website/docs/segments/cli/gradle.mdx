@@ -1,0 +1,69 @@
+---
+id: gradle
+title: Gradle
+sidebar_label: Gradle
+---
+
+## What
+
+Display the currently active [Gradle][gradle] version, along with the versions of its
+bundled components (Kotlin, Groovy, Ant, JVM).
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "gradle",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#02303a",
+    template: " \uE70f {{ .Full }} ",
+  }}
+/>
+
+## Options
+
+| Name                   |    Type    |              Default               | Description                                                                                                                                                                                                                          |
+| ---------------------- | :--------: | :--------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean`  |              `false`               | display the segment in the HOME folder or not                                                                                                                                                                                        |
+| `fetch_version`        | `boolean`  |               `true`               | fetch the Gradle version                                                                                                                                                                                                             |
+| `cache_duration`       |  `string`  |               `none`               | the duration for which the version will be cached. The duration is a string in the format `1h2m3s` and is parsed using the [time.ParseDuration] function from the Go standard library. To disable the cache, use `none`              |
+| `missing_command_text` |  `string`  |                                    | text to display when the command is missing                                                                                                                                                                                          |
+| `display_mode`         |  `string`  |            `context`               | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
+| `version_url_template` |  `string`  |                                    | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
+| `extensions`           | `[]string` | `*.gradle, *.gradle.kts`           | allows to override the default list of file extensions to validate                                                                                                                                                                   |
+| `folders`              | `[]string` |                                    | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `tooling`              | `[]string` |             `gradle`               | the tooling to use for fetching the version                                                                                                                                                                                          |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                                        |
+| ---------------- | -------- | -------------------------------------------------- |
+| `.Full`          | `string` | the full Gradle version                            |
+| `.Major`         | `string` | major number                                       |
+| `.Minor`         | `string` | minor number                                       |
+| `.Patch`         | `string` | patch number                                       |
+| `.KotlinVersion` | `string` | bundled Kotlin version                             |
+| `.GroovyVersion` | `string` | bundled Groovy version                             |
+| `.AntVersion`    | `string` | bundled Ant version                                |
+| `.JVMVersion`    | `string` | Launcher JVM version                               |
+| `.URL`           | `string` | URL of the release notes (from `version_url_template`) |
+| `.Error`         | `string` | error encountered when fetching the version string |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[gradle]: https://gradle.org/
+[time.ParseDuration]: https://pkg.go.dev/time#ParseDuration

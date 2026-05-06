@@ -402,6 +402,7 @@
             "git",
             "gitversion",
             "go",
+            "gradle",
             "haskell",
             "helm",
             "http",
@@ -2102,6 +2103,41 @@
                     "default": [
                       "mod",
                       "go"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gradle"
+              }
+            }
+          },
+          "then": {
+            "title": "Gradle Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/gradle",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.gradle",
+                      "*.gradle.kts"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "gradle"
                     ]
                   }
                 }

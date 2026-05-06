@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -115,7 +115,7 @@ func (a *Aws) Enabled() bool {
 func (a *Aws) loadConfigFile() {
 	configPath := a.env.Getenv("AWS_CONFIG_FILE")
 	if configPath == "" {
-		configPath = fmt.Sprintf("%s/.aws/config", a.env.Home())
+		configPath = filepath.Join(a.env.Home(), ".aws", "config")
 	}
 
 	cfg, ok := a.parseINI(configPath)
@@ -138,7 +138,7 @@ func (a *Aws) loadConfigFile() {
 func (a *Aws) loadCredentialsFile() {
 	credentialsPath := a.env.Getenv("AWS_SHARED_CREDENTIALS_FILE")
 	if credentialsPath == "" {
-		credentialsPath = fmt.Sprintf("%s/.aws/credentials", a.env.Home())
+		credentialsPath = filepath.Join(a.env.Home(), ".aws", "credentials")
 	}
 
 	cfg, ok := a.parseINI(credentialsPath)

@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -195,8 +196,8 @@ func TestAWSSegment(t *testing.T) {
 		env.On("Getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
 		env.On("Getenv", "AWS_SHARED_CREDENTIALS_FILE").Return("")
 		env.On("Getenv", "AWS_ACCESS_KEY_ID").Return(tc.AccessKeyEnv)
-		env.On("FileContent", "/usr/home/.aws/config").Return(tc.ConfigContent)
-		env.On("FileContent", "/usr/home/.aws/credentials").Return(tc.CredentialsBody)
+		env.On("FileContent", filepath.Join("/usr/home", ".aws", "config")).Return(tc.ConfigContent)
+		env.On("FileContent", filepath.Join("/usr/home", ".aws", "credentials")).Return(tc.CredentialsBody)
 		env.On("Home").Return("/usr/home")
 		props := options.Map{
 			options.DisplayDefault: tc.DisplayDefault,

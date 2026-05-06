@@ -4198,6 +4198,12 @@
                     "title": "Stopped Icon",
                     "description": "Text/icon to show when stopped",
                     "default": "\uf04d "
+                  },
+                  "ad_icon": {
+                    "type": "string",
+                    "title": "Advertisement Icon",
+                    "description": "Text/icon to show when an advertisement is playing (Windows/WSL)",
+                    "default": "\ueebb "
                   }
                 },
                 "unevaluatedProperties": false

@@ -7,33 +7,27 @@ import (
 )
 
 func (s *Spotify) Enabled() bool {
-	// search for spotify window to retrieve the title
-	// Can be either "Spotify xxx" or the song name "Candlemass - Spellbreaker"
-	windowTitle, err := s.env.QueryWindowTitles("spotify.exe", `^(Spotify.*)|(.*\s-\s.*)$`)
-	if err == nil {
-		return s.parseNativeTitle(windowTitle)
+	// Primary path: query SMTC directly via WinRT, which gives accurate
+	// artist/title/status without relying on window titles.
+	if output, err := s.env.QuerySMTC(); err == nil {
+		artist, title, status, ok := parseSMTCOutput(output)
+		if ok {
+			s.Artist = artist
+			s.Track = title
+			s.Status = status
+			s.resolveIcon()
+			return true
+		}
 	}
-	windowTitle, err = s.env.QueryWindowTitles("msedge.exe", `^(Spotify.*)`)
+
+	// Fallback: Spotify PWA running inside Microsoft Edge does not register
+	// with SMTC under a "Spotify" app model ID, so we fall back to reading
+	// the Edge window title.
+	windowTitle, err := s.env.QueryWindowTitles("msedge.exe", `^(Spotify.*)`)
 	if err != nil {
 		return false
 	}
 	return s.parseWebTitle(windowTitle)
-}
-
-func (s *Spotify) parseNativeTitle(windowTitle string) bool {
-	separator := " - "
-
-	if !strings.Contains(windowTitle, separator) {
-		s.Status = stopped
-		return false
-	}
-
-	before, after, _ := strings.Cut(windowTitle, separator)
-	s.Artist = before
-	s.Track = after
-	s.Status = playing
-	s.resolveIcon()
-	return true
 }
 
 func (s *Spotify) parseWebTitle(windowTitle string) bool {

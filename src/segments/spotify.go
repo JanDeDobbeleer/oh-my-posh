@@ -1,6 +1,10 @@
 package segments
 
-import "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+import (
+	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+)
 
 type Spotify struct {
 	Base
@@ -44,4 +48,39 @@ func (s *Spotify) resolveIcon() {
 	case playing:
 		s.Icon = s.options.String(PlayingIcon, "\ue602 ")
 	}
+}
+
+// parseSMTCOutput parses the output from a SMTC query (WinRT or PowerShell).
+// The expected format is three newline-separated values: artist, title, and
+// playback status ("Playing", "Paused", or any other value treated as stopped).
+// Returns ok=false when the output is missing, malformed, or indicates stopped.
+func parseSMTCOutput(output string) (artist, title, status string, ok bool) {
+	// Normalize CRLF (PowerShell on Windows) to LF.
+	output = strings.ReplaceAll(output, "\r\n", "\n")
+	output = strings.ReplaceAll(output, "\r", "\n")
+	output = strings.TrimSpace(output)
+
+	lines := strings.SplitN(output, "\n", 3)
+	if len(lines) < 3 {
+		return
+	}
+
+	artist = strings.TrimSpace(lines[0])
+	title = strings.TrimSpace(lines[1])
+
+	switch strings.ToLower(strings.TrimSpace(lines[2])) {
+	case "playing":
+		status = playing
+	case "paused":
+		status = paused
+	default:
+		return
+	}
+
+	if artist == "" || title == "" {
+		return
+	}
+
+	ok = true
+	return
 }

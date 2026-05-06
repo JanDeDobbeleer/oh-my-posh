@@ -92,6 +92,10 @@ const (
 	asyncError     = 3
 )
 
+// asyncTimeout is the maximum time to wait for a WinRT async operation
+// to reach a terminal state before giving up.
+const asyncTimeout = 5 * time.Second
+
 var (
 	combase = syscall.NewLazyDLL("combase.dll")
 
@@ -224,7 +228,7 @@ func waitForAsync(asyncOp unsafe.Pointer) error {
 	}
 	defer comRelease(asyncInfo)
 
-	deadline := time.Now().Add(5 * time.Second)
+	deadline := time.Now().Add(asyncTimeout)
 	for time.Now().Before(deadline) {
 		var status uint32
 		comCall(asyncInfo, 7, uintptr(unsafe.Pointer(&status))) // get_Status

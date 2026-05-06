@@ -12,6 +12,8 @@ import (
 const (
 	// FetchContext is the property used to fetch the current docker context
 	FetchContext options.Option = "fetch_context"
+
+	defaultDockerContext = "default"
 )
 
 type DockerConfig struct {
@@ -82,7 +84,7 @@ func (d *Docker) fetchContext() bool {
 	// Return the current context if it is not empty and not `default`
 	for _, v := range d.envVars() {
 		context := d.env.Getenv(v)
-		if len(context) > 0 && context != defaultUser {
+		if len(context) > 0 && context != defaultDockerContext {
 			d.Context = context
 			return true
 		}
@@ -101,7 +103,7 @@ func (d *Docker) fetchContext() bool {
 			continue
 		}
 
-		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != defaultUser {
+		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != defaultDockerContext {
 			d.Context = cfg.CurrentContext
 			return true
 		}

@@ -12,7 +12,7 @@ func (a *Aurelia) Enabled() bool {
 	a.extensions = []string{fileName}
 	a.tooling = map[string]*cmd{
 		"aurelia": {
-			regex:      versionRegexPrefixed,
+			regex:      versionRegexSemver,
 			getVersion: a.getVersion,
 		},
 	}

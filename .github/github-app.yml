@@ -4,7 +4,11 @@ scripts:
   triggers:
   - session.create
 - name: Restore apm.lock
-  command: git restore apm.lock
+  command: git restore apm.lock.yaml
+  triggers:
+  - session.create
+- name: Install ast-grep-cli
+  command: pip install ast-grep-cli
   triggers:
   - session.create
 automation:

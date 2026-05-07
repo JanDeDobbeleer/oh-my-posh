@@ -4,6 +4,7 @@ apm_modules/
 .github/instructions/*
 !.github/skills/segment-create/
 !.github/skills/segment-docs/
+.agents/
 
 # Others
 

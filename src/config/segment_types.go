@@ -27,6 +27,7 @@ func init() {
 	gob.Register(&segments.Angular{})
 	gob.Register(&segments.Version{})
 	gob.Register(&segments.Argocd{})
+	gob.Register(&segments.Aspire{})
 	gob.Register(&segments.Aurelia{})
 	gob.Register(&segments.Aws{})
 	gob.Register(&segments.Az{})
@@ -165,6 +166,8 @@ const (
 	ANGULAR SegmentType = "angular"
 	// ARGOCD writes the current argocd context
 	ARGOCD SegmentType = "argocd"
+	// ASPIRE writes the Aspire apphost status
+	ASPIRE SegmentType = "aspire"
 	// AURELIA writes which aurelia version is currently referenced in package.json
 	AURELIA SegmentType = "aurelia"
 	// AWS writes the active aws context
@@ -386,6 +389,7 @@ const (
 var Segments = map[SegmentType]func() SegmentWriter{
 	ANGULAR:         func() SegmentWriter { return &segments.Angular{} },
 	ARGOCD:          func() SegmentWriter { return &segments.Argocd{} },
+	ASPIRE:          func() SegmentWriter { return &segments.Aspire{} },
 	AURELIA:         func() SegmentWriter { return &segments.Aurelia{} },
 	AWS:             func() SegmentWriter { return &segments.Aws{} },
 	AZ:              func() SegmentWriter { return &segments.Az{} },

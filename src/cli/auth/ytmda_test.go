@@ -80,10 +80,6 @@ func TestYtdma_Authenticate(t *testing.T) {
 			env.On("HTTPRequest", codeURL).Return([]byte(tc.requestCodeResponse), tc.requestCodeError)
 			env.On("HTTPRequest", tokenURL).Return([]byte(tc.requestTokenResponse), tc.requestTokenError)
 
-			if tc.shouldSetToken {
-				cache.Set(cache.Device, YTMDATOKEN, tc.expectedToken, cache.INFINITE)
-			}
-
 			ytmda := &Ytmda{
 				model: model{
 					env: env,
@@ -97,6 +93,12 @@ func TestYtdma_Authenticate(t *testing.T) {
 				assert.Equal(t, tc.expectedError.Error(), ytmda.err.Error())
 			} else {
 				assert.Nil(t, ytmda.err)
+			}
+
+			if tc.shouldSetToken {
+				token, ok := cache.Get[string](cache.Device, YTMDATOKEN)
+				require.True(t, ok)
+				assert.Equal(t, tc.expectedToken, token)
 			}
 
 			cache.DeleteAll(cache.Device)

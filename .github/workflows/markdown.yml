@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
     - name: Lint files
-      uses: DavidAnson/markdownlint-cli2-action@6b51ade7a9e4a75a7ad929842dd298a3804ebe8b
+      uses: DavidAnson/markdownlint-cli2-action@ded1f9488f68a970bc66ea5619e13e9b52e601cd
       with:
           config: .markdownlint-cli2.yaml
           globs: '**/*.md'

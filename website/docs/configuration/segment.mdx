@@ -120,6 +120,41 @@ The `options` attribute allows you to customize the behavior and appearance of a
 These options can be anything from feature flags, configuration or additional styling details that will only apply to the segment in question.
 To understand the available options for a particular segment, refer to its corresponding documentation section where each option is explained in detail.
 
+## Template Expressions in Options
+
+Numeric and boolean segment options accept Go [template][templates] expressions in addition to their
+static types. This lets you compute option values dynamically — for example, sizing a path segment
+based on the terminal width.
+
+### Example
+
+Instead of duplicating segments for different terminal widths:
+
+```toml
+[[blocks.segments]]
+  type = 'path'
+  [blocks.segments.options]
+    max_width = '{{ sub .TerminalWidth 30 }}'
+    style = 'powerlevel'
+```
+
+When the option value is a string containing `{{ }}`, it is resolved as a template before being
+converted to the target type (integer, float, or boolean). If resolution fails, the default value
+is used.
+
+Available template functions include `add`, `sub`, `mul`, `div`, and all other
+[sprig](http://masterminds.github.io/sprig/) functions. The template context is the segment
+writer itself: any exported method or field on the writer is reachable as `{{ .FieldName }}`.
+For example, the `path` segment exposes `.TerminalWidth` (the terminal column count, or `0`
+when it cannot be determined). Other segments expose their own fields — see the segment's
+documentation page for what is available. A field that does not exist on the writer resolves
+to the zero value, in which case the option falls back to its default.
+
+:::note
+This applies to **segment options** (inside `[blocks.segments.options]`), not to top-level segment
+settings like `min_width` or `max_width` on the segment itself.
+:::
+
 ## Cache
 
 The cache property allows you to control how often a segment is refreshed. This is useful when a segment is slow to

@@ -52,20 +52,22 @@ func TestSpotifyWSL(t *testing.T) {
 	cases := []struct {
 		Case            string
 		Error           error
-		Title           string
+		SMTCOutput      string
 		Expected        string
 		ExpectedEnabled bool
 	}{
-		{Case: "nothing"},
-		{Case: "error", Error: errors.New("oops")},
-		{Case: "title", ExpectedEnabled: true, Expected: "\ue602 Xzibit - Crash (ft. Royce Da 5'9\" K.A.A.N.)", Title: `Xzibit - Crash (ft. Royce Da 5'9" K.A.A.N.)`},
+		{Case: "no session"},
+		{Case: "powershell error", Error: errors.New("oops")},
+		{Case: "stopped", SMTCOutput: "Candlemass\nSpellbreaker\nStopped"},
+		{Case: "closed", SMTCOutput: "Candlemass\nSpellbreaker\nClosed"},
+		{Case: "playing", ExpectedEnabled: true, Expected: "\ue602 Candlemass - Spellbreaker", SMTCOutput: "Candlemass\nSpellbreaker\nPlaying"},
+		{Case: "paused", ExpectedEnabled: true, Expected: "\uf04c Candlemass - Spellbreaker", SMTCOutput: "Candlemass\nSpellbreaker\nPaused"},
+		{Case: "crlf line endings", ExpectedEnabled: true, Expected: "\ue602 Candlemass - Spellbreaker", SMTCOutput: "Candlemass\r\nSpellbreaker\r\nPlaying"},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("IsWsl").Return(true)
-
-		psCommand := `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; (Get-Process Spotify -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -ne ""} | Select-Object -First 1).MainWindowTitle` //nolint: lll
-		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", psCommand}).Return(tc.Title, tc.Error)
+		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", spotifySMTCScript}).Return(tc.SMTCOutput, tc.Error)
 
 		s := &Spotify{}
 		s.Init(options.Map{}, env)

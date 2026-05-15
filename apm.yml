@@ -13,3 +13,4 @@ dependencies:
     - JanDeDobbeleer/agentic/skills/powershell
     - JanDeDobbeleer/agentic/skills/vale-user-facing-text
     - ast-grep/agent-skill/ast-grep/skills/ast-grep
+    - github/awesome-copilot/skills/gh-cli

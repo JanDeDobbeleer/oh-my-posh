@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/spf13/cobra"
@@ -22,11 +23,18 @@ var noticeCmd = &cobra.Command{
 
 		cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
 
-		defer func() {
-			cache.Close()
-		}()
+		// Skip if we already checked within the configured interval
+		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK {
+			return
+		}
 
 		cfg := config.Get(configFlag, false)
+
+		defer func() {
+			// Set the cache key after the notice check to prevent redundant checks
+			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
+			cache.Close()
+		}()
 
 		if notice, hasNotice := cfg.Upgrade.Notice(); hasNotice {
 			fmt.Println(notice)

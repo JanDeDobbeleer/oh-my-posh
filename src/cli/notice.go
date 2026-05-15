@@ -22,9 +22,10 @@ var noticeCmd = &cobra.Command{
 		env.Init(&runtime.Flags{})
 
 		cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
+		defer cache.Close()
 
 		// Skip if we already checked within the configured interval
-		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK {
+		if _, ok := cache.Get[string](cache.Device, upgrade.CACHEKEY); ok {
 			return
 		}
 
@@ -33,7 +34,6 @@ var noticeCmd = &cobra.Command{
 		defer func() {
 			// Set the cache key after the notice check to prevent redundant checks
 			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
-			cache.Close()
 		}()
 
 		if notice, hasNotice := cfg.Upgrade.Notice(); hasNotice {

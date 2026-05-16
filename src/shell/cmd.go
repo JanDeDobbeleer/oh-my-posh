@@ -21,7 +21,17 @@ func (f Features) Cmd() Code {
 	case Upgrade:
 		return `os.execute(string.format('"%s" upgrade --auto', omp_executable))`
 	case Notice:
-		return `os.execute(string.format('"%s" notice', omp_executable))`
+		return `if clink.onbeginedit then
+    local need_notice = true
+    clink.onbeginedit(function()
+        if need_notice then
+            need_notice = false
+            os.execute(string.format('"%s" notice', omp_executable))
+        end
+    end)
+else
+    os.execute(string.format('"%s" notice', omp_executable))
+end`
 	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, Streaming, KeyHandlers:
 		fallthrough
 	default:

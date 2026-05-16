@@ -3597,6 +3597,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kkebo",
+      "name": "Kenta Kubo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/601636?v=4",
+      "profile": "https://kebo.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -15,7 +15,17 @@ enable_tooltips()
 transient_enabled = true
 ftcs_marks_enabled = true
 os.execute(string.format('"%s" upgrade --auto', omp_executable))
-os.execute(string.format('"%s" notice', omp_executable))
+if clink.onbeginedit then
+    local need_notice = true
+    clink.onbeginedit(function()
+        if need_notice then
+            need_notice = false
+            os.execute(string.format('"%s" notice', omp_executable))
+        end
+    end)
+else
+    os.execute(string.format('"%s" notice', omp_executable))
+end
 rprompt_enabled = true`
 
 	assert.Equal(t, want, got)

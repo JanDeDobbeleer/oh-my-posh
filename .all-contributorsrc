@@ -2215,12 +2215,13 @@
       ]
     },
     {
-      "login": "kkk669",
+      "login": "kkebo",
       "name": "Kenta Kubo",
       "avatar_url": "https://avatars.githubusercontent.com/u/601636?v=4",
-      "profile": "https://kebo.xyz",
+      "profile": "https://kebo.dev",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -3594,15 +3595,6 @@
       "name": "Matthew Rothenberg",
       "avatar_url": "https://avatars.githubusercontent.com/u/40650?v=4",
       "profile": "https://mroth.xyz",
-      "contributions": [
-        "code"
-      ]
-    },
-    {
-      "login": "kkebo",
-      "name": "Kenta Kubo",
-      "avatar_url": "https://avatars.githubusercontent.com/u/601636?v=4",
-      "profile": "https://kebo.dev",
       "contributions": [
         "code"
       ]

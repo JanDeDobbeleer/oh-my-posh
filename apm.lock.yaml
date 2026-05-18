@@ -1,7 +1,40 @@
 lockfile_version: '1'
-generated_at: '2026-05-07T10:54:22.196155+00:00'
+generated_at: '2026-05-17T14:33:11.312146+00:00'
 apm_version: 0.12.3
 dependencies:
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: 92d80e66873d98885281291a11c8acbcf30709f0
+  virtual_path: instructions/golang.instructions.md
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .github/instructions/golang.instructions.md
+  deployed_file_hashes:
+    .github/instructions/golang.instructions.md: sha256:89b03e000879a36a4b68f37136d1dcad039a908f242dd412f59a71e5c159cbb3
+  content_hash: sha256:94556f47cd95ee4c76dec6f7e53aad1948a1a51c6c85a810b320ecf3ebe075b4
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: 92d80e66873d98885281291a11c8acbcf30709f0
+  virtual_path: instructions/markdown.instructions.md
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .github/instructions/markdown.instructions.md
+  deployed_file_hashes:
+    .github/instructions/markdown.instructions.md: sha256:e16f52f4e7f24c8b59caef5b423332690e5bf95d3f3cd37f86eb782b36e6ea82
+  content_hash: sha256:0f47d924eba5b69635958c5fe13194a39deb56fa1e9cab3f556f0d810ac283cd
+- repo_url: JanDeDobbeleer/agentic
+  host: github.com
+  resolved_commit: 92d80e66873d98885281291a11c8acbcf30709f0
+  virtual_path: instructions/powershell.instructions.md
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .github/instructions/powershell.instructions.md
+  deployed_file_hashes:
+    .github/instructions/powershell.instructions.md: sha256:8a6d0340bb63944ad6b318051a412a380275aa5750e2a9d0d50e2e78b3ecac3f
+  content_hash: sha256:0b75b2bb281c733a5beb1503104c164649d5d2dbc386a4aac3f784da6420c590
 - repo_url: JanDeDobbeleer/agentic
   host: github.com
   resolved_commit: b4e8062eaeef93582bf4cbb86ad4816f37630bb2

@@ -1,0 +1,147 @@
+---
+id: copilot-cli
+title: GitHub Copilot CLI
+sidebar_label: GitHub Copilot CLI
+---
+
+## What
+
+Display GitHub Copilot CLI session information including the current AI model, token usage,
+and workspace details. Shows a visual gauge of context window usage and formatted token/duration
+information for monitoring your Copilot CLI session.
+
+This segment integrates with [GitHub Copilot CLI's statusline functionality][copilot-statusline]
+to provide real-time session data in your prompt.
+
+For setup instructions, see [Change your prompt](/docs/installation/prompt?shell=copilot).
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "copilot_cli",
+    style: "diamond",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b4",
+    foreground: "#111111",
+    background: "#fee898",
+    template: " \uec1e {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uec1e {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }}
+```
+
+:::
+
+## Options
+
+| Name                  | Type     | Default | Description                                              |
+| --------------------- | -------- | ------- | -------------------------------------------------------- |
+| `gauge_marked_char`   | `string` | `▰`     | Character used for filled blocks in gauge visualizations |
+| `gauge_unmarked_char` | `string` | `▱`     | Character used for empty blocks in gauge visualizations  |
+
+### Properties
+
+| Name                    | Type            | Description                                                                              |
+| ----------------------- | --------------- | ---------------------------------------------------------------------------------------- |
+| `.CWD`                  | `string`        | Current working directory                                                                |
+| `.SessionID`            | `string`        | Unique identifier for the Copilot CLI session                                            |
+| `.SessionName`          | `string`        | Custom session name; empty when absent                                                   |
+| `.TranscriptPath`       | `string`        | Path to the session transcript directory                                                 |
+| `.Model`                | `Model`         | AI model information                                                                     |
+| `.Workspace`            | `Workspace`     | Workspace directory information                                                          |
+| `.Remote`               | `Remote`        | Remote connection state                                                                  |
+| `.Version`              | `string`        | Copilot CLI version                                                                      |
+| `.Username`             | `string`        | Authenticated username; empty when absent                                                |
+| `.Cost`                 | `Cost`          | Duration and line-change information                                                     |
+| `.ContextWindow`        | `ContextWindow` | Token usage information                                                                  |
+| `.TokenUsagePercent`    | `Percentage`    | Percentage of context window used (0-100)                                                |
+| `.TokenGauge`           | `string`        | Gauge showing remaining context capacity using configured characters (e.g., `▰▰▰▱▱`)    |
+| `.TokenGaugeUsed`       | `string`        | Gauge showing used context capacity using configured characters (e.g., `▰▰▱▱▱`)         |
+| `.RemainingPercent`     | `Percentage`    | Percentage of context window remaining (0-100)                                           |
+| `.RemainingTokensCount` | `int`           | Number of remaining context window tokens; 0 when context window size is unknown         |
+| `.FormattedTokens`      | `string`        | Human-readable token count (e.g., "1.2K", "15.3M")                                      |
+| `.FormattedDuration`    | `string`        | Total session duration (e.g., "2m 5s")                                                   |
+| `.FormattedAPIDuration` | `string`        | API wait time (e.g., "0m 45s")                                                           |
+
+#### Model Properties
+
+| Name           | Type     | Description                                     |
+| -------------- | -------- | ----------------------------------------------- |
+| `.ID`          | `string` | Technical model identifier                      |
+| `.DisplayName` | `string` | Human-readable model name (e.g., "claude-sonnet-4.6 (medium)")  |
+
+#### Workspace Properties
+
+| Name          | Type     | Description              |
+| ------------- | -------- | ------------------------ |
+| `.CurrentDir` | `string` | Current working directory |
+
+#### Remote Properties
+
+| Name         | Type   | Description                               |
+| ------------ | ------ | ----------------------------------------- |
+| `.Connected` | `bool` | Whether a remote connection is active     |
+
+#### Cost Properties
+
+| Name                    | Type         | Description                                                 |
+| ----------------------- | ------------ | ----------------------------------------------------------- |
+| `.TotalDurationMS`      | `DurationMS` | Total session duration in milliseconds (formats as "Xm Ys") |
+| `.TotalAPIDurationMS`   | `DurationMS` | Time spent waiting for API responses (formats as "Xm Ys")   |
+| `.TotalLinesAdded`      | `int`        | Lines of code added in the session                          |
+| `.TotalLinesRemoved`    | `int`        | Lines of code removed in the session                        |
+| `.TotalPremiumRequests` | `int`        | Number of premium model requests made in the session        |
+
+#### ContextWindow Properties
+
+| Name                    | Type      | Description                                                 |
+| ----------------------- | --------- | ----------------------------------------------------------- |
+| `.ContextWindowSize`    | `*int`    | Maximum context window size; `nil` when unknown             |
+| `.UsedPercentage`       | `*float64`| Percentage used (0-100); `nil` when unknown                 |
+| `.RemainingPercentage`  | `*float64`| Percentage remaining (0-100); `nil` when unknown            |
+| `.RemainingTokens`      | `*int`    | Remaining token count; `nil` when unknown                   |
+| `.CurrentContextTokens` | `int`     | Tokens in the current active context                        |
+| `.TotalInputTokens`     | `int`     | Total input tokens used in the session                      |
+| `.TotalOutputTokens`    | `int`     | Total output tokens generated in the session                |
+| `.TotalCacheReadTokens` | `int`     | Total tokens read from cache                                |
+| `.TotalCacheWriteTokens`| `int`     | Total tokens written to cache                               |
+| `.TotalReasoningTokens` | `int`     | Total reasoning tokens used in the session                  |
+| `.TotalTokens`          | `int`     | Grand total of all tokens used in the session               |
+| `.LastCallInputTokens`  | `int`     | Input tokens for the most recent API call                   |
+| `.LastCallOutputTokens` | `int`     | Output tokens for the most recent API call                  |
+
+### Percentage Methods
+
+The `Percentage` type (returned by `.TokenUsagePercent`, `.RemainingPercent`) provides
+additional methods for direct use in templates:
+
+| Method       | Returns  | Description                                                               |
+| ------------ | -------- | ------------------------------------------------------------------------- |
+| `.Gauge`     | `string` | Visual gauge showing remaining capacity using hardcoded `▰`/`▱` characters |
+| `.GaugeUsed` | `string` | Visual gauge showing used capacity using hardcoded `▰`/`▱` characters     |
+| `.String`    | `string` | Numeric percentage value (e.g., "75")                                     |
+
+:::tip Custom gauge characters
+Use `.TokenGauge` and `.TokenGaugeUsed` instead of the raw `.Percentage` methods above —
+they respect the `gauge_marked_char` and `gauge_unmarked_char` options.
+:::
+
+## How it works
+
+The `oh-my-posh copilot` command reads GitHub Copilot CLI's session JSON from stdin,
+caches the parsed data, then renders your configured prompt. Copilot CLI sends a fresh
+JSON payload on every statusline refresh.
+
+The segment is only visible when Copilot CLI is actively providing session data.
+
+[copilot-statusline]: https://docs.github.com/copilot/cli
+[templates]: /docs/configuration/templates

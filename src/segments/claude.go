@@ -22,7 +22,7 @@ type Claude struct {
 type ClaudeData struct {
 	RateLimits        *ClaudeRateLimits   `json:"rate_limits"`
 	Worktree          ClaudeWorktree      `json:"worktree"`
-	Model             ClaudeModel         `json:"model"`
+	Model             AIModel             `json:"model"`
 	OutputStyle       ClaudeOutputStyle   `json:"output_style"`
 	Vim               ClaudeVim           `json:"vim"`
 	TranscriptPath    string              `json:"transcript_path"`
@@ -40,8 +40,8 @@ type ClaudeData struct {
 	FastMode          bool                `json:"fast_mode"`
 }
 
-// ClaudeModel represents the AI model information
-type ClaudeModel struct {
+// AIModel represents the AI model information shared across AI CLI segments.
+type AIModel struct {
 	ID          string `json:"id"`
 	DisplayName string `json:"display_name"`
 }
@@ -145,6 +145,19 @@ const (
 	gaugeMarkedChar   options.Option = "gauge_marked_char"
 	gaugeUnmarkedChar options.Option = "gauge_unmarked_char"
 )
+
+// formatTokenCount formats a token count as a human-readable string ("1.2K", "3.4M", or raw).
+func formatTokenCount(n int) string {
+	if n < int(thousand) {
+		return fmt.Sprintf("%d", n)
+	}
+
+	if n < int(million) {
+		return fmt.Sprintf("%.1fK", float64(n)/thousand)
+	}
+
+	return fmt.Sprintf("%.1fM", float64(n)/million)
+}
 
 func (c *Claude) Template() string {
 	return " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} "
@@ -366,13 +379,5 @@ func (c *Claude) FormattedTokens() string {
 		currentTokens = c.ContextWindow.TotalInputTokens + c.ContextWindow.TotalOutputTokens
 	}
 
-	if currentTokens < int(thousand) {
-		return fmt.Sprintf("%d", currentTokens)
-	}
-
-	if currentTokens < int(million) {
-		return fmt.Sprintf("%.1fK", float64(currentTokens)/thousand)
-	}
-
-	return fmt.Sprintf("%.1fM", float64(currentTokens)/million)
+	return formatTokenCount(currentTokens)
 }

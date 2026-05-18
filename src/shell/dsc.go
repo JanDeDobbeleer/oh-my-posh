@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
@@ -174,8 +175,7 @@ func (s *Shell) addInitLine(content string) string {
 }
 
 func (s *Shell) getLastInitLinePosition(lines []string) int {
-	for i := len(lines) - 1; i >= 0; i-- {
-		line := lines[i]
+	for i, line := range slices.Backward(lines) {
 		if regex.MatchString(initCommandRegex, line) && !strings.HasPrefix(strings.TrimSpace(line), "#") {
 			return i
 		}

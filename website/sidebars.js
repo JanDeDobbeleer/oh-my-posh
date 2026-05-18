@@ -62,6 +62,7 @@ export default {
             "segments/cli/claude",
             "segments/cli/cmake",
             "segments/cli/copilot",
+            "segments/cli/copilot-cli",
             "segments/cli/deno",
             "segments/cli/docker",
             "segments/cli/firebase",

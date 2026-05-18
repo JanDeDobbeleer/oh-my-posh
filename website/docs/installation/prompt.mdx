@@ -23,6 +23,7 @@ oh-my-posh get shell
     { label: 'bash', value: 'bash', },
     { label: 'claude', value: 'claude', },
     { label: 'cmd', value: 'cmd', },
+    { label: 'copilot', value: 'copilot', },
     { label: 'elvish', value: 'elvish', },
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
@@ -71,6 +72,33 @@ Add the following to your Claude Code settings:
 For more information about the Claude segment properties and customization options, see the [Claude segment documentation](/docs/segments/cli/claude).
 
 </TabItem>
+<TabItem value="copilot">
+
+To enable GitHub Copilot CLI integration with Oh My Posh, configure Copilot CLI to use Oh My Posh as
+the statusline command.
+
+Add the following to your Copilot CLI settings:
+
+```json title="~/.copilot/settings.json"
+{
+  "statusLine": {
+    "type": "command",
+    "command": "oh-my-posh copilot",
+    "padding": 2
+  },
+  "feature_flags": {
+    "enabled": ["STATUS_LINE"]
+  },
+  "experimental": true
+}
+```
+
+Restart Copilot CLI or run `/restart` in an open session to pick up the new settings.
+
+For more information about the Copilot CLI segment properties and customization options, see the
+[Copilot CLI segment documentation](/docs/segments/cli/copilot-cli).
+
+</TabItem>
 <TabItem value="cmd">
 
 There's no out-of-the-box support for Windows CMD when it comes to custom prompts.
@@ -98,6 +126,7 @@ To set the configuration file, use the following command:
 ```bash
 clink set ohmyposh.theme <path>
 ```
+
 :::
 
 </TabItem>

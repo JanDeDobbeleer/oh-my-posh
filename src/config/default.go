@@ -217,8 +217,19 @@ func Default(configError error) *Config {
 }
 
 func Claude() *Config {
-	cfg := &Config{
-		hash:    1234567890, // placeholder hash value
+	return statuslineCLIConfig(1234567890, CLAUDE, " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ")
+}
+
+func CopilotCLI() *Config {
+	return statuslineCLIConfig(1234567891, COPILOTCLI, " \uec1e {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ")
+}
+
+// statuslineCLIConfig builds the shared default config for AI CLI statusline integrations
+// (e.g. Claude, Copilot CLI). The left block is always PATH + GIT; the right block
+// contains a single segment of the given type and template.
+func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) *Config {
+	return &Config{
+		hash:    hash,
 		Version: 4,
 		Blocks: []*Block{
 			{
@@ -268,13 +279,13 @@ func Claude() *Config {
 				Alignment: Right,
 				Segments: []*Segment{
 					{
-						Type:            CLAUDE,
+						Type:            segmentType,
 						Style:           Diamond,
 						LeadingDiamond:  "\ue0b6",
 						TrailingDiamond: "\ue0b4",
 						Foreground:      paletteBlack,
 						Background:      paletteBlue,
-						Template:        " \U000f0bc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenUsagePercent.Gauge }} ",
+						Template:        template,
 					},
 				},
 			},
@@ -289,6 +300,4 @@ func Claude() *Config {
 			"yellow": "#F3AE35",
 		},
 	}
-
-	return cfg
 }

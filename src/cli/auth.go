@@ -21,7 +21,7 @@ Available services:
 - copilot: GitHub Copilot API
 - ytmda: YouTube Music Desktop App (YTMDA) API`,
 	ValidArgs: []string{
-		"copilot",
+		copilotServiceName,
 		"ytmda",
 	},
 	Args: NoArgsOrOneValidArg,
@@ -45,7 +45,7 @@ Available services:
 		}()
 
 		switch args[0] {
-		case "copilot":
+		case copilotServiceName:
 			authenticator := auth.NewCopilot(env)
 			if err := auth.Run(authenticator); err != nil {
 				log.Error(err)

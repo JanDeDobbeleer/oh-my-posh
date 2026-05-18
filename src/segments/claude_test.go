@@ -31,7 +31,7 @@ func TestClaudeSegment(t *testing.T) {
 			Case: "Valid cache data with all fields",
 			ClaudeData: &ClaudeData{
 				SessionID: "abc123",
-				Model: ClaudeModel{
+				Model: AIModel{
 					ID:          "claude-opus-4-1",
 					DisplayName: "Opus",
 				},
@@ -76,7 +76,7 @@ func TestClaudeSegment(t *testing.T) {
 			Case: "Valid cache data with partial fields",
 			ClaudeData: &ClaudeData{
 				SessionID: "xyz789",
-				Model: ClaudeModel{
+				Model: AIModel{
 					ID:          "claude-sonnet-3-5",
 					DisplayName: "Sonnet 3.5",
 				},
@@ -855,7 +855,7 @@ func TestClaudeGaugeOptionsReadInEnabled(t *testing.T) {
 	})
 
 	cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{
-		Model: ClaudeModel{DisplayName: "Opus"},
+		Model: AIModel{DisplayName: "Opus"},
 	}, cache.INFINITE)
 
 	env := new(mock.Environment)

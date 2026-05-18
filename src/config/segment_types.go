@@ -40,6 +40,8 @@ func init() {
 	gob.Register(&segments.CarbonIntensity{})
 	gob.Register(&segments.Cds{})
 	gob.Register(&segments.Copilot{})
+	gob.Register(&segments.CopilotCLI{})
+	gob.Register(&segments.CopilotCLIData{})
 	gob.Register(&segments.Cf{})
 	gob.Register(&segments.CfTarget{})
 	gob.Register(&segments.Claude{})
@@ -203,6 +205,8 @@ const (
 	CONNECTION SegmentType = "connection"
 	// COPILOT writes GitHub Copilot usage statistics
 	COPILOT SegmentType = "copilot"
+	// COPILOTCLI writes GitHub Copilot CLI session information
+	COPILOTCLI SegmentType = "copilot_cli"
 	// CRYSTAL writes the active crystal version
 	CRYSTAL SegmentType = "crystal"
 	// DART writes the active dart version
@@ -405,6 +409,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },
 	COPILOT:         func() SegmentWriter { return &segments.Copilot{} },
+	COPILOTCLI:      func() SegmentWriter { return &segments.CopilotCLI{} },
 	CRYSTAL:         func() SegmentWriter { return &segments.Crystal{} },
 	DART:            func() SegmentWriter { return &segments.Dart{} },
 	DENO:            func() SegmentWriter { return &segments.Deno{} },

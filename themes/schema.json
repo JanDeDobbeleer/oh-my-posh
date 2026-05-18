@@ -386,6 +386,7 @@
             "clojure",
             "cmake",
             "copilot",
+            "copilot_cli",
             "connection",
             "crystal",
             "dart",
@@ -1315,6 +1316,20 @@
             "description": "https://ohmyposh.dev/docs/segments/cli/claude",
             "properties": {
               "options": {
+                "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge",
+                    "default": "▱"
+                  }
+                },
                 "unevaluatedProperties": false
               }
             }
@@ -1336,6 +1351,38 @@
                 "properties": {
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "copilot_cli"
+              }
+            }
+          },
+          "then": {
+            "title": "Copilot CLI Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/copilot-cli",
+            "properties": {
+              "options": {
+                "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge",
+                    "default": "▱"
                   }
                 },
                 "unevaluatedProperties": false

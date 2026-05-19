@@ -81,6 +81,7 @@ Supported shells: `bash`, `zsh`, `fish`, `powershell`/`pwsh`, `cmd`, `nu`, `elvi
 ## CLI Commands
 
 CLI commands use [Cobra](https://github.com/spf13/cobra) and live in `src/cli/`. To add a new command:
+
 1. Create `src/cli/<name>.go` with a `var <name>Cmd = &cobra.Command{...}`
 2. Register it in `src/cli/root.go` via `RootCmd.AddCommand(<name>Cmd)`
 

@@ -41,10 +41,12 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name             |   Type    | Default | Description                                                                                                         |
-| ---------------- | :-------: | :-----: | ------------------------------------------------------------------------------------------------------------------- |
-| `always_enabled` | `boolean` | `false` | always show the segment                                                                                             |
-| `<type>_files`   |  `array`  |  `[]`   | override the project's files to validate for. Use the `.Type` values listed below to override (e.g. `dotnet_files`) |
+| Name                            |   Type    | Default | Description                                                                                                         |
+| ------------------------------- | :-------: | :-----: | ------------------------------------------------------------------------------------------------------------------- |
+| `always_enabled`                | `boolean` | `false` | always show the segment                                                                                             |
+| `<type>_files`                  |  `array`  |  `[]`   | override the project's files to validate for. Use the `.Type` values listed below to override (e.g. `dotnet_files`) |
+| `resolve_target_from_solution`  | `boolean` | `true`  | when a `.sln`/`.slnx` is matched, scan subdirectories for project files to extract `TargetFramework`               |
+| `solution_search_depth`         |   `int`   |  `2`    | maximum directory depth to scan for project files when resolving from a solution                                    |
 
 ## Template ([info][templates])
 

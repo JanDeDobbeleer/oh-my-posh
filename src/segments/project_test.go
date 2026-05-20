@@ -605,6 +605,188 @@ func TestDotnetProject(t *testing.T) {
 	}
 }
 
+func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
+	cases := []struct {
+		Case            string
+		SolutionFile    string
+		SubDirs         map[string][]fs.DirEntry // path -> entries returned by LsDir
+		FileContents    map[string]string        // path -> file content
+		Options         options.Map
+		ExpectedString  string
+		ExpectedEnabled bool
+	}{
+		{
+			Case:         ".sln with .csproj one level deep",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "App", isDir: true},
+				},
+				filepath.Join("posh", "App"): {
+					&MockDirEntry{name: "App.csproj"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln":                        "",
+				filepath.Join("App", "App.csproj"): "<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp \uf4de net8.0",
+		},
+		{
+			Case:         ".sln with .csproj at depth 2",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "src", isDir: true},
+				},
+				filepath.Join("posh", "src"): {
+					&MockDirEntry{name: "App", isDir: true},
+				},
+				filepath.Join("posh", "src", "App"): {
+					&MockDirEntry{name: "App.csproj"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln": "",
+				filepath.Join("src", "App", "App.csproj"): "<Project><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup></Project>",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp \uf4de net8.0",
+		},
+		{
+			Case:         "depth limit exceeded - .csproj at depth 3, max depth 2",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "src", isDir: true},
+				},
+				filepath.Join("posh", "src"): {
+					&MockDirEntry{name: "nested", isDir: true},
+				},
+				filepath.Join("posh", "src", "nested"): {
+					&MockDirEntry{name: "deep", isDir: true},
+				},
+				filepath.Join("posh", "src", "nested", "deep"): {
+					&MockDirEntry{name: "App.csproj"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln": "",
+			},
+			Options:         options.Map{SolutionSearchDepth: 2},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp",
+		},
+		{
+			Case:         "opt-out with resolve_target_from_solution=false",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "App", isDir: true},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln": "",
+			},
+			Options:         options.Map{ResolveTargetFromSolution: false},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp",
+		},
+		{
+			Case:         ".slnx triggers scanning - resolves TFM from .fsproj",
+			SolutionFile: "MyApp.slnx",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.slnx"},
+					&MockDirEntry{name: "Lib", isDir: true},
+				},
+				filepath.Join("posh", "Lib"): {
+					&MockDirEntry{name: "Lib.fsproj"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.slnx":                       "",
+				filepath.Join("Lib", "Lib.fsproj"): "<Project><PropertyGroup><TargetFramework>net9.0</TargetFramework></PropertyGroup></Project>",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp \uf4de net9.0",
+		},
+		{
+			Case:         ".slnf does NOT trigger scanning",
+			SolutionFile: "MyApp.slnf",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.slnf"},
+					&MockDirEntry{name: "App", isDir: true},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.slnf": "",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp",
+		},
+		{
+			Case:         "no project files in subdirs",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "docs", isDir: true},
+				},
+				filepath.Join("posh", "docs"): {
+					&MockDirEntry{name: "README.md"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln": "",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp",
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
+			for _, c := range env.ExpectedCalls {
+				if c.Method == hasFiles {
+					pattern := "*" + filepath.Ext(tc.SolutionFile)
+					c.ReturnArguments = testify_.Arguments{args.Get(0).(string) == pattern}
+				}
+			}
+		})
+		env.On("Pwd").Return("posh")
+
+		// Set up LsDir mocks for all paths
+		for path, entries := range tc.SubDirs {
+			env.On("LsDir", path).Return(entries)
+		}
+
+		// Set up FileContent mocks
+		for path, content := range tc.FileContents {
+			env.On("FileContent", path).Return(content)
+		}
+
+		opts := tc.Options
+		if opts == nil {
+			opts = options.Map{}
+		}
+
+		pkg := &Project{}
+		pkg.Init(opts, env)
+		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
+		if tc.ExpectedEnabled {
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
+		}
+	}
+}
+
 func TestPowerShellModuleProject(t *testing.T) {
 	cases := []struct {
 		Case            string

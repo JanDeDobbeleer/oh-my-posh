@@ -1,17 +1,34 @@
 const validator = require('../shared/validator.js');
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
+};
+
 /**
  * Azure Function entry point for MCP server
  */
 module.exports = async function (context, req) {
   context.log('MCP validator function processed a request');
 
+  // Handle OPTIONS preflight requests
+  if (req.method === 'OPTIONS') {
+    context.res = {
+      status: 204,
+      headers: CORS_HEADERS,
+      body: '',
+    };
+    return;
+  }
+
   // Handle GET requests - return server info
   if (req.method === 'GET') {
     context.res = {
       status: 200,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...CORS_HEADERS,
       },
       body: {
         name: 'oh-my-posh-validator',
@@ -78,17 +95,12 @@ module.exports = async function (context, req) {
         context.log.error('Failed to parse request body as JSON:', e);
         context.res = {
           status: 400,
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
           body: {
             jsonrpc: '2.0',
-            error: {
-              code: -32700,
-              message: 'Parse error: Invalid JSON'
-            },
-            id: null
-          }
+            error: {code: -32700, message: 'Parse error: Invalid JSON'},
+            id: null,
+          },
         };
         return;
       }
@@ -106,17 +118,15 @@ module.exports = async function (context, req) {
       context.log('Invalid JSON-RPC message:', message);
       context.res = {
         status: 400,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
         body: {
           jsonrpc: '2.0',
           error: {
             code: -32600,
-            message: 'Invalid Request: Not a valid JSON-RPC 2.0 message'
+            message: 'Invalid Request: Not a valid JSON-RPC 2.0 message',
           },
-          id: message?.id || null
-        }
+          id: message?.id || null,
+        },
       };
       return;
     }
@@ -125,9 +135,7 @@ module.exports = async function (context, req) {
     if (message.method === 'tools/list') {
       context.res = {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
         body: {
           jsonrpc: '2.0',
           result: {
@@ -174,8 +182,8 @@ module.exports = async function (context, req) {
               }
             ]
           },
-          id: message.id
-        }
+          id: message.id,
+        },
       };
       return;
     }
@@ -193,38 +201,26 @@ module.exports = async function (context, req) {
       } else {
         context.res = {
           status: 200,
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
           body: {
             jsonrpc: '2.0',
-            error: {
-              code: -32601,
-              message: `Unknown tool: ${name}`
-            },
-            id: message.id
-          }
+            error: {code: -32601, message: `Unknown tool: ${name}`},
+            id: message.id,
+          },
         };
         return;
       }
 
       context.res = {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
         body: {
           jsonrpc: '2.0',
           result: {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(result, null, 2)
-              }
-            ]
+            content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
           },
-          id: message.id
-        }
+          id: message.id,
+        },
       };
       return;
     }
@@ -233,23 +229,16 @@ module.exports = async function (context, req) {
     if (message.method === 'initialize') {
       context.res = {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
         body: {
           jsonrpc: '2.0',
           result: {
             protocolVersion: '2024-11-05',
-            capabilities: {
-              tools: {}
-            },
-            serverInfo: {
-              name: 'oh-my-posh-validator',
-              version: '1.0.0'
-            }
+            capabilities: {tools: {}},
+            serverInfo: {name: 'oh-my-posh-validator', version: '1.0.0'},
           },
-          id: message.id
-        }
+          id: message.id,
+        },
       };
       return;
     }
@@ -257,35 +246,28 @@ module.exports = async function (context, req) {
     // Unknown method
     context.res = {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
       body: {
         jsonrpc: '2.0',
-        error: {
-          code: -32601,
-          message: `Method not found: ${message.method}`
-        },
-        id: message.id
-      }
+        error: {code: -32601, message: `Method not found: ${message.method}`},
+        id: message.id,
+      },
     };
 
   } catch (error) {
     context.log.error('Error processing MCP request:', error);
     context.res = {
       status: 500,
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
       body: {
         jsonrpc: '2.0',
         error: {
           code: -32603,
           message: 'Internal error',
-          data: error.message
+          data: error.message,
         },
-        id: req.body?.id || null
-      }
+        id: req.body?.id || null,
+      },
     };
   }
 };

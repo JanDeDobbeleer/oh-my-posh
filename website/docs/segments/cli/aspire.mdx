@@ -1,0 +1,58 @@
+---
+id: aspire
+title: Aspire
+sidebar_label: Aspire
+---
+
+## What
+
+Status of your [Aspire][aspire] AppHost in the current repo and whether it is running.
+The segment uses the Aspire CLI to resolve the AppHost with `aspire extension get-apphosts`
+and checks running instances with `aspire ps --format json`.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "aspire",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    options: {
+      fetch_running: true,
+    },
+    template: " \uf423 {{ .Name }}{{ if .Running }} \uf00c{{ end }} ",
+  }}
+/>
+
+## Options
+
+| Name            | Type      | Description                                                   | Default |
+| --------------- | --------- | ------------------------------------------------------------- | ------- |
+| `fetch_running` | `boolean` | query `aspire ps` to determine whether the resolved AppHost is running | `true` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uf423 {{ .Name }}{{ if .Running }} \uf00c{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name           | Type      | Description                                                         |
+| -------------- | --------- | ------------------------------------------------------------------- |
+| `.AppHostPath` | `string`  | the resolved AppHost path reported by the Aspire CLI or file search |
+| `.Name`        | `string`  | the Aspire AppHost display name                                     |
+| `.Version`     | `string`  | the Aspire Hosting version from `Directory.Packages.props`          |
+| `.Lang`        | `string`  | the detected single-file AppHost language (`cs` or `ts`)            |
+| `.Running`     | `boolean` | whether the resolved AppHost currently appears in `aspire ps`       |
+
+[templates]: /docs/configuration/templates
+[aspire]: https://aspire.dev/

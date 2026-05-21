@@ -2,6 +2,7 @@ import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
+import Head from "@docusaurus/Head";
 import classnames from "classnames";
 import styles from "./styles.module.css";
 
@@ -56,8 +57,33 @@ function Feature({ imageUrl, title, description }) {
 function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
+
+  const websiteJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://ohmyposh.dev/",
+    "name": "Oh My Posh",
+    "description": siteConfig.tagline,
+  });
+
+  const organizationJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Oh My Posh",
+    "url": "https://ohmyposh.dev/",
+    "logo": "https://ohmyposh.dev/img/logo.png",
+    "description": siteConfig.tagline,
+    "sameAs": [
+      "https://github.com/JanDeDobbeleer/oh-my-posh",
+    ],
+  });
+
   return (
     <Layout title="Home" description={`${siteConfig.tagline}`}>
+      <Head>
+        <script type="application/ld+json">{websiteJsonLd}</script>
+        <script type="application/ld+json">{organizationJsonLd}</script>
+      </Head>
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
         <div className="container">
           <h1 className="hero__title">{siteConfig.title}</h1>

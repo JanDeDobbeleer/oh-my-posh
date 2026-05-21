@@ -1,0 +1,43 @@
+{
+  "evals": [
+    {
+      "expectations": [
+        "Includes the correct winget install command: winget install JanDeDobbeleer.OhMyPosh --source winget",
+        "Includes the PowerShell profile init line: oh-my-posh init pwsh | Invoke-Expression",
+        "Explains how to open or edit the PowerShell profile (e.g. using $PROFILE or notepad $PROFILE)",
+        "Mentions installing a Nerd Font",
+        "Mentions reloading the profile or restarting the terminal after changes"
+      ],
+      "id": 1,
+      "expected_output": "Step-by-step guide: install via winget, edit PowerShell profile to add init line, install a Nerd Font, reload profile.",
+      "prompt": "I want to set up oh-my-posh on my Windows machine. I use PowerShell.",
+      "files": []
+    },
+    {
+      "expectations": [
+        "Includes the Homebrew install command using the tap: brew install jandedobbeleer/oh-my-posh/oh-my-posh",
+        "Includes the zsh init line: eval \"$(oh-my-posh init zsh)\"",
+        "Mentions adding the init line to ~/.zshrc",
+        "Mentions installing a Nerd Font",
+        "Warns about macOS Terminal color/icon limitations or recommends a modern terminal like iTerm2"
+      ],
+      "id": 2,
+      "expected_output": "Step-by-step guide: install via Homebrew with the tap command, add init line to ~/.zshrc, install a Nerd Font, warn about macOS Terminal limitations.",
+      "prompt": "I'm on macOS and use zsh. How do I get oh-my-posh working?",
+      "files": []
+    },
+    {
+      "expectations": [
+        "Explains using the --config flag to specify a theme",
+        "Provides a concrete init command example with a theme name (e.g. oh-my-posh init pwsh --config 'jandedobbeleer')",
+        "Mentions how to browse available themes (link to ohmyposh.dev/docs/themes)",
+        "Mentions exporting a theme for local editing (oh-my-posh config export)"
+      ],
+      "id": 3,
+      "expected_output": "Explains --config flag, shows how to set a theme in the init line, links to theme browser or oh-my-posh debug, mentions exporting a theme for editing.",
+      "prompt": "I just installed oh-my-posh. How do I change the theme to something that shows git status?",
+      "files": []
+    }
+  ],
+  "skill_name": "oh-my-posh"
+}

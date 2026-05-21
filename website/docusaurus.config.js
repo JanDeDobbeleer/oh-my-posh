@@ -135,8 +135,8 @@ export default {
           title: 'Sponsors',
           items: [
             {
-              label: 'Merge Conflict',
-              href: 'https://www.mergeconflict.fm/',
+              label: 'CodeRabbit',
+              href: 'https://coderabbit.link/posh',
             },
           ],
         },

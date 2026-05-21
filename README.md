@@ -25,7 +25,7 @@ This repo was made with love using GitKraken.
 
 ## Sponsors
 
-[![Documentation link badge ohmyposh.dev][merge-conflict-logo]][merge-conflict]
+[![CodeRabbit][coderabbit-logo]][coderabbit]
 
 [Want to become a sponsor?][sponsor-link]
 
@@ -87,6 +87,6 @@ using Go (and the amazing [README](https://github.com/justjanne/powerline-go))
 [release-badge]: https://img.shields.io/github/v/release/jandedobbeleer/oh-my-posh?label=Release
 [release]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 
-[merge-conflict]: https://www.mergeconflict.fm/
-[merge-conflict-logo]: https://media24.fireside.fm/file/fireside-images-2024/podcasts/images/0/02d84890-e58d-43eb-ab4c-26bcc8524289/cover_small.jpg?v=1
+[coderabbit]: https://coderabbit.link/posh
+[coderabbit-logo]: https://victorious-bubble-f69a016683.media.strapiapp.com/Orange_Typemark_43bf516c9d.svg
 [sponsor-link]: https://buy.polar.sh/polar_cl_qnmZxboq1IDUJo03mk2Jue6ktqZrCXElnzH2s2xbV2R

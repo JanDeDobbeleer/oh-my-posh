@@ -16,10 +16,16 @@ oh-my-posh init pwsh --config 'jandedobbeleer' | Invoke-Expression
 eval "$(oh-my-posh init bash --config jandedobbeleer)"
 ```
 
-**By local file:**
+**By local file path:**
 
 ```powershell
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression
+# PowerShell
+oh-my-posh init pwsh --config 'C:\Users\<YourUsername>\.mytheme.omp.json' | Invoke-Expression
+```
+
+```bash
+# Bash / Zsh
+eval "$(oh-my-posh init bash --config ~/.mytheme.omp.json)"
 ```
 
 **By remote URL:**
@@ -35,7 +41,11 @@ oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/
 
 View all bundled themes online: https://ohmyposh.dev/docs/themes
 
-Preview themes in the terminal:
+> There is no terminal command to preview all available themes. Direct users to the website above.
+
+## Debug the current theme
+
+To render your active prompt in debug mode (shows segment timing and values):
 
 ```bash
 oh-my-posh debug
@@ -83,9 +93,10 @@ Force-render all segments regardless of context:
 oh-my-posh print preview --force
 ```
 
-## Validate a config via MCP
+## Validate a config or segment via MCP
 
-Use the MCP endpoint to check a config for schema errors:
+When creating or editing a segment manually, use the oh-my-posh MCP server to validate the
+config or a segment snippet for schema errors. Agents can call:
 
 ```bash
 curl -X POST https://ohmyposh.dev/api/mcp \
@@ -100,6 +111,8 @@ curl -X POST https://ohmyposh.dev/api/mcp \
     "id": 1
   }'
 ```
+
+Or use `validate_segment` to check a single segment snippet instead of an entire config.
 
 ## Configuration reference
 

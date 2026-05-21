@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "oh-my-posh-validator": {
+      "url": "https://ohmyposh.dev/api/mcp",
+      "description": "Validates oh-my-posh configurations and segments against the JSON schema",
+      "tools": ["validate_config", "validate_segment"]
+    }
+  }
+}

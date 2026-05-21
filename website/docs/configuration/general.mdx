@@ -134,10 +134,11 @@ For example, the following is a valid `--config` flag:
 | `accent_color`              | `string`         |         | [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported                                                                                                                                                                        |
 | `var`                       | `map[string]any` |         | config variables to use in [templates][templates]. Can be any value                                                                                                                                                                                                          |
 | `shell_integration`         | `boolean`        | `false` | enable shell integration using FinalTerm's OSC sequences. Works in bash, cmd (Clink v1.14.25+), fish, powershell and zsh                                                                                                                                                     |
-| `enable_cursor_positioning` | `boolean`        | `false` | enable fetching the cursor position in bash, zsh, and fish to allow automatic hiding of leading newlines when at the top of the shell |
+| `enable_cursor_positioning` | `boolean`        | `false` | enable fetching the cursor position in bash, zsh, and fish to allow automatic hiding of leading newlines when at the top of the shell                                                                                                                                        |
 | `patch_pwsh_bleed`          | `boolean`        | `false` | patch a PowerShell bug where the background colors bleed into the next line at the end of the buffer (can be removed when [this][pwsh-bleed] is merged)                                                                                                                      |
 | `upgrade`                   | `Upgrade`        |         | enable auto upgrade or the upgrade notice. See [Upgrade]                                                                                                                                                                                                                     |
 | `iterm_features`            | `[]string`       | `false` | enable iTerm2 specific features:<ul><li>`prompt_mark`: add the `iterm2_prompt_mark` [function][iterm2-si] for supported shells</li><li>`current_dir`: expose the current directory for iTerm2</li><li>`remote_host`: expose the current remote and user for iTerm2</li></ul> |
+| `terminal_features`         | TerminalFeatures |         | map terminal features to the terminals supporting them. See [Terminal features](#terminal-features)                                                                                                                                                                          |
 | `maps`                      | [`Maps`](#maps)  |         | a list of custom text mappings                                                                                                                                                                                                                                               |
 | `async`                     | `boolean`        | `false` | load the prompt async. Will either load the standard prompt, or allow you to start typing right away. Supported for `pwsh`, `powershell`, `zsh`, `bash` and `fish`                                                                                                           |
 | `version`                   | `int`            | `4`     | the config version, currently at `4`                                                                                                                                                                                                                                         |
@@ -164,6 +165,25 @@ import Config from "@site/src/components/Config.js";
       host_name: {
         laptop123: "work"
       }
+    }
+  }}
+/>
+
+### Terminal features
+
+Some escape sequences only work in terminals that support them. The `terminal_features` setting maps such a
+feature to the terminal programs supporting it. Values are matched case-insensitively against the `TERM_PROGRAM`
+environment variable (Windows Terminal is detected via `WT_SESSION`). Progress sequences are used by the
+`upgrade` and `font install` commands.
+
+| Name       | Type       | Default              | Description                                     |
+| ---------- | ---------- | -------------------- | ----------------------------------------------- |
+| `progress` | `[]string` | `[Windows Terminal]` | terminals supporting OSC 9;4 progress sequences |
+
+<Config
+  data={{
+    terminal_features: {
+      progress: ["Windows Terminal", "ghostty"]
     }
   }}
 />

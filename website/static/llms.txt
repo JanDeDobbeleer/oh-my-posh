@@ -21,7 +21,7 @@
 
 Agent-ready installation and configuration guides:
 
-- [Oh My Posh skill root](/skills/ohmyposh/ohmyposh.md) — overview and navigation
+- [Oh My Posh skill root](/skills/ohmyposh/SKILL.md) — overview and navigation
 - [Install on Windows](/skills/ohmyposh/installation/windows.md)
 - [Install on macOS](/skills/ohmyposh/installation/macos.md)
 - [Install on Linux](/skills/ohmyposh/installation/linux.md)

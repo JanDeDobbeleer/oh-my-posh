@@ -3,8 +3,51 @@ const validator = require('../shared/validator.js');
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type, Accept',
 };
+
+const TOOLS = [
+  {
+    name: 'validate_config',
+    description: 'Validate an oh-my-posh configuration against the schema. Supports JSON, YAML, and TOML formats.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        content: {
+          type: 'string',
+          description: 'The configuration content as a string (JSON, YAML, or TOML)'
+        },
+        format: {
+          type: 'string',
+          enum: ['json', 'yaml', 'toml', 'auto'],
+          description: 'The format of the configuration (auto-detect if not specified)',
+          default: 'auto'
+        }
+      },
+      required: ['content']
+    }
+  },
+  {
+    name: 'validate_segment',
+    description: 'Validate a segment snippet against the oh-my-posh schema. Useful for validating individual prompt segments before adding them to a configuration.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        content: {
+          type: 'string',
+          description: 'The segment content as a string (JSON, YAML, or TOML)'
+        },
+        format: {
+          type: 'string',
+          enum: ['json', 'yaml', 'toml', 'auto'],
+          description: 'The format of the segment (auto-detect if not specified)',
+          default: 'auto'
+        }
+      },
+      required: ['content']
+    }
+  }
+];
 
 /**
  * Azure Function entry point for MCP server
@@ -37,48 +80,7 @@ module.exports = async function (context, req) {
         capabilities: {
           tools: {}
         },
-        tools: [
-          {
-            name: 'validate_config',
-            description: 'Validate an oh-my-posh configuration against the schema',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                content: {
-                  type: 'string',
-                  description: 'The configuration content as a string (JSON, YAML, or TOML)'
-                },
-                format: {
-                  type: 'string',
-                  enum: ['json', 'yaml', 'toml', 'auto'],
-                  description: 'The format of the configuration (auto-detect if not specified)',
-                  default: 'auto'
-                }
-              },
-              required: ['content']
-            }
-          },
-          {
-            name: 'validate_segment',
-            description: 'Validate a segment snippet against the oh-my-posh schema',
-            inputSchema: {
-              type: 'object',
-              properties: {
-                content: {
-                  type: 'string',
-                  description: 'The segment content as a string (JSON, YAML, or TOML)'
-                },
-                format: {
-                  type: 'string',
-                  enum: ['json', 'yaml', 'toml', 'auto'],
-                  description: 'The format of the segment (auto-detect if not specified)',
-                  default: 'auto'
-                }
-              },
-              required: ['content']
-            }
-          }
-        ]
+        tools: TOOLS
       }
     };
     return;
@@ -106,14 +108,6 @@ module.exports = async function (context, req) {
       }
     }
 
-    const logMessage = {
-      jsonrpc: message.jsonrpc,
-      method: message.method,
-      id: message.id,
-      ...(message.params?.name && { toolName: message.params.name })
-    };
-    context.log('Received message:', JSON.stringify(logMessage));
-
     if (!message || !message.jsonrpc || message.jsonrpc !== '2.0') {
       context.log('Invalid JSON-RPC message:', message);
       context.res = {
@@ -131,6 +125,13 @@ module.exports = async function (context, req) {
       return;
     }
 
+    context.log('Received message:', JSON.stringify({
+      jsonrpc: message.jsonrpc,
+      method: message.method,
+      id: message.id,
+      ...(message.params?.name && { toolName: message.params.name })
+    }));
+
     // Handle list tools request
     if (message.method === 'tools/list') {
       context.res = {
@@ -139,48 +140,7 @@ module.exports = async function (context, req) {
         body: {
           jsonrpc: '2.0',
           result: {
-            tools: [
-              {
-                name: 'validate_config',
-                description: 'Validate an oh-my-posh configuration against the schema. Supports JSON, YAML, and TOML formats.',
-                inputSchema: {
-                  type: 'object',
-                  properties: {
-                    content: {
-                      type: 'string',
-                      description: 'The configuration content as a string (JSON, YAML, or TOML)'
-                    },
-                    format: {
-                      type: 'string',
-                      enum: ['json', 'yaml', 'toml', 'auto'],
-                      description: 'The format of the configuration (auto-detect if not specified)',
-                      default: 'auto'
-                    }
-                  },
-                  required: ['content']
-                }
-              },
-              {
-                name: 'validate_segment',
-                description: 'Validate a segment snippet against the oh-my-posh schema. Useful for validating individual prompt segments before adding them to a configuration.',
-                inputSchema: {
-                  type: 'object',
-                  properties: {
-                    content: {
-                      type: 'string',
-                      description: 'The segment content as a string (JSON, YAML, or TOML)'
-                    },
-                    format: {
-                      type: 'string',
-                      enum: ['json', 'yaml', 'toml', 'auto'],
-                      description: 'The format of the segment (auto-detect if not specified)',
-                      default: 'auto'
-                    }
-                  },
-                  required: ['content']
-                }
-              }
-            ]
+            tools: TOOLS
           },
           id: message.id,
         },
@@ -190,6 +150,19 @@ module.exports = async function (context, req) {
 
     // Handle tool call request
     if (message.method === 'tools/call') {
+      if (!message.params?.name || !message.params?.arguments?.content) {
+        context.res = {
+          status: 400,
+          headers: {'Content-Type': 'application/json', ...CORS_HEADERS},
+          body: {
+            jsonrpc: '2.0',
+            error: {code: -32602, message: 'Invalid params: name and arguments.content are required'},
+            id: message.id,
+          },
+        };
+        return;
+      }
+
       const { name, arguments: args } = message.params;
 
       let result;
@@ -264,9 +237,8 @@ module.exports = async function (context, req) {
         error: {
           code: -32603,
           message: 'Internal error',
-          data: error.message,
         },
-        id: req.body?.id || null,
+        id: message?.id || null,
       },
     };
   }

@@ -2,38 +2,24 @@
 
 package segments
 
-import (
-	"strings"
-)
+import "strings"
 
 func (s *Spotify) Enabled() bool {
-	// search for spotify window to retrieve the title
-	// Can be either "Spotify xxx" or the song name "Candlemass - Spellbreaker"
-	windowTitle, err := s.env.QueryWindowTitles("spotify.exe", `^(Spotify.*)|(.*\s-\s.*)$`)
-	if err == nil {
-		return s.parseNativeTitle(windowTitle)
+	// Primary path: native WinRT call into SMTC. See runtime/smtc_windows.go
+	// for the combase.dll binding. PowerShell startup latency made the
+	// previous approach unsuitable for per-prompt rendering.
+	if output, err := s.env.QuerySpotifySMTC(); err == nil && s.parseSMTCOutput(output) {
+		return true
 	}
-	windowTitle, err = s.env.QueryWindowTitles("msedge.exe", `^(Spotify.*)`)
+
+	// Fall back to scraping the Edge window title for the Spotify Web Player PWA,
+	// whose SMTC entry surfaces under "Microsoft.MicrosoftEdge_*" rather than
+	// "Spotify*", so the SMTC walker above skips it.
+	windowTitle, err := s.env.QueryWindowTitles("msedge.exe", `^(Spotify.*)`)
 	if err != nil {
 		return false
 	}
 	return s.parseWebTitle(windowTitle)
-}
-
-func (s *Spotify) parseNativeTitle(windowTitle string) bool {
-	separator := " - "
-
-	if !strings.Contains(windowTitle, separator) {
-		s.Status = stopped
-		return false
-	}
-
-	before, after, _ := strings.Cut(windowTitle, separator)
-	s.Artist = before
-	s.Track = after
-	s.Status = playing
-	s.resolveIcon()
-	return true
 }
 
 func (s *Spotify) parseWebTitle(windowTitle string) bool {

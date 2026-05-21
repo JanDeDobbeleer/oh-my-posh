@@ -1,0 +1,52 @@
+---
+id: vimode
+title: Vi mode
+sidebar_label: Vi mode
+---
+
+## What
+
+Display the current ZSH [Vi mode][zsh-vi-mode] (insert / normal / visual …) in
+the prompt. Useful when using `bindkey -v` so you can tell at a glance which
+mode you are in.
+
+:::caution
+This segment is currently only supported in **ZSH**. Adding it to your
+configuration will automatically register a `zle-keymap-select` hook that
+re-renders the prompt every time the keymap changes.
+:::
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "vimode",
+    style: "plain",
+    foreground: "#ffffff",
+    background: "#0077c2",
+    template: " {{ if eq .Mode \"normal\" }} NORMAL{{ else if eq .Mode \"visual\" }} VISUAL{{ else }} INSERT{{ end }} ",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ .Mode }}
+```
+
+:::
+
+### Properties
+
+| Name      |   Type   | Description                                                                                              |
+| --------- | :------: | -------------------------------------------------------------------------------------------------------- |
+| `.Mode`   | `string` | the normalized mode: `insert`, `normal`, `visual`, `viopp`, `replace`, or the raw keymap when unmapped   |
+| `.Keymap` | `string` | the raw [`$KEYMAP`][zsh-keymap] value reported by ZSH (e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`) |
+
+[templates]: /docs/configuration/templates
+[zsh-vi-mode]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps
+[zsh-keymap]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-KEYMAP

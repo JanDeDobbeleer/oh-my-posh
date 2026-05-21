@@ -1,70 +1,62 @@
 # Oh My Posh
 
-> Oh My Posh is the most customizable and fastest prompt theme engine for any shell. It lets you
-> display Git status, language versions, cloud context, system metrics, and 180+ other segments
-> in a beautifully themed terminal prompt — on Windows, macOS, and Linux.
+> Oh My Posh is the most customizable and fastest prompt theme engine for any shell. It renders
+> beautifully themed terminal prompts displaying Git status, language versions, cloud context,
+> system metrics, and 180+ other segments — on Windows, macOS, and Linux.
 
 ## Docs
 
-- [Getting Started](/docs/) — install Oh My Posh on Windows, macOS, or Linux in minutes
-- [Windows Installation](/docs/installation/windows) — winget, chocolatey, or manual PowerShell install
-- [macOS Installation](/docs/installation/macos) — brew or manual install
+- [Getting Started](/docs/) — install Oh My Posh in minutes
+- [Windows Installation](/docs/installation/windows) — winget, chocolatey, or manual install
+- [macOS Installation](/docs/installation/macos) — Homebrew or MacPorts
 - [Linux Installation](/docs/installation/linux) — curl install script
-- [Change Your Prompt](/docs/installation/prompt) — per-shell init snippets (PowerShell, Bash, Zsh, Fish, Nu, Cmd, Elvish, Xonsh)
-- [Fonts](/docs/installation/fonts) — install a Nerd Font for icons and glyphs
-- [Customize Your Prompt](/docs/installation/customize) — choose or build a theme
+- [Shell Setup](/docs/installation/prompt) — per-shell init snippets
+- [Fonts](/docs/installation/fonts) — install a Nerd Font for icons
 - [Themes Gallery](/docs/themes) — browse all bundled themes
-- [Configuration Reference](/docs/configuration/overview) — full schema for JSON/YAML/TOML config
+- [Configuration Reference](/docs/configuration/overview) — full JSON/YAML/TOML schema
 - [Segments Reference](/docs/segments/overview) — all 180+ available segments
 - [FAQ](/docs/faq) — common issues and solutions
+
+## Skills
+
+Agent-ready installation and configuration guides:
+
+- [Oh My Posh skill root](/skills/ohmyposh/ohmyposh.md) — overview and navigation
+- [Install on Windows](/skills/ohmyposh/installation/windows.md)
+- [Install on macOS](/skills/ohmyposh/installation/macos.md)
+- [Install on Linux](/skills/ohmyposh/installation/linux.md)
+- [Shell setup — PowerShell](/skills/ohmyposh/shell/powershell.md)
+- [Shell setup — Bash](/skills/ohmyposh/shell/bash.md)
+- [Shell setup — Zsh](/skills/ohmyposh/shell/zsh.md)
+- [Shell setup — Fish](/skills/ohmyposh/shell/fish.md)
+- [Shell setup — Nu](/skills/ohmyposh/shell/nu.md)
+- [Shell setup — Cmd (Clink)](/skills/ohmyposh/shell/cmd.md)
+- [Shell setup — Elvish](/skills/ohmyposh/shell/elvish.md)
+- [Shell setup — Xonsh](/skills/ohmyposh/shell/xonsh.md)
+- [Configuration & themes](/skills/ohmyposh/configuration.md)
 
 ## MCP
 
 Oh My Posh exposes an MCP (Model Context Protocol) endpoint for validating prompt configurations:
 
-- `POST /api/mcp` — JSON-RPC 2.0 endpoint; supports `tools/list`, `tools/call`, and `initialize`
+- `POST /api/mcp` — JSON-RPC 2.0; supports tools/list, tools/call, initialize
 - `GET /api/mcp` — returns server info and available tools
-- Available tools: `validate_config` (full config), `validate_segment` (individual segment snippet)
-- Supported formats: JSON, YAML, TOML (auto-detected)
-
-Discovery: `/.well-known/mcp.json`
+- Tools: `validate_config` (full config), `validate_segment` (individual segment)
+- Formats: JSON, YAML, TOML (auto-detected)
+- Discovery: `/.well-known/mcp.json`
 
 ## Examples
 
-Check which shell you are in:
+Detect current shell:
 
 ```bash
 oh-my-posh get shell
 ```
 
-Initialize Oh My Posh in PowerShell (add to `$PROFILE`):
-
-```powershell
-oh-my-posh init pwsh | Invoke-Expression
-```
-
-Initialize Oh My Posh in Bash (add to `~/.bashrc`):
-
-```bash
-eval "$(oh-my-posh init bash)"
-```
-
-Initialize Oh My Posh in Zsh (add to `~/.zshrc`):
-
-```bash
-eval "$(oh-my-posh init zsh)"
-```
-
-Initialize Oh My Posh in Fish (add to `~/.config/fish/config.fish`):
-
-```bash
-oh-my-posh init fish | source
-```
-
-Validate a config file via MCP:
+Validate a config via MCP:
 
 ```bash
 curl -X POST https://ohmyposh.dev/api/mcp \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"{\"$schema\":\"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\"}","format":"json"}},"id":1}'
+  -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"{\"version\":3}","format":"json"}},"id":1}'
 ```

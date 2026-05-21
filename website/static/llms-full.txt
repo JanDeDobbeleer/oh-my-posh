@@ -28,55 +28,28 @@ Key features:
 
 ## Installation
 
-### Windows
+For step-by-step installation instructions see the skill files:
 
-Install via winget (recommended):
+- [Windows](/skills/ohmyposh/installation/windows.md)
+- [macOS](/skills/ohmyposh/installation/macos.md)
+- [Linux](/skills/ohmyposh/installation/linux.md)
+
+### Windows (summary)
+
 ```powershell
 winget install JanDeDobbeleer.OhMyPosh --source winget
 ```
 
-Install via the install script (PowerShell):
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
-```
+### macOS (summary)
 
-Install via Chocolatey:
-```powershell
-choco install oh-my-posh
-```
-
-Update via winget:
-```powershell
-winget upgrade JanDeDobbeleer.OhMyPosh --source winget
-```
-
-### macOS
-
-Install via Homebrew (recommended):
 ```bash
 brew install jandedobbeleer/oh-my-posh/oh-my-posh
 ```
 
-Update via Homebrew:
-```bash
-brew upgrade oh-my-posh
-```
+### Linux (summary)
 
-Install via MacPorts:
-```bash
-sudo port selfupdate && sudo port install oh-my-posh
-```
-
-### Linux
-
-Install via the install script:
 ```bash
 curl -s https://ohmyposh.dev/install.sh | bash -s
-```
-
-Install to a custom directory:
-```bash
-curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
 ```
 
 ---
@@ -84,6 +57,7 @@ curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
 ## Fonts
 
 Oh My Posh themes use glyphs and icons from Nerd Fonts. Install a Nerd Font with:
+
 ```bash
 oh-my-posh font install
 ```
@@ -92,127 +66,79 @@ Recommended font: Meslo LGM NF. Set the font in your terminal emulator after ins
 
 ---
 
-## Shell Integration (Prompt Setup)
+## Shell Integration
+
+For detailed per-shell setup see the skill files:
+
+- [PowerShell](/skills/ohmyposh/shell/powershell.md)
+- [Bash](/skills/ohmyposh/shell/bash.md)
+- [Zsh](/skills/ohmyposh/shell/zsh.md)
+- [Fish](/skills/ohmyposh/shell/fish.md)
+- [Nu / Nushell](/skills/ohmyposh/shell/nu.md)
+- [Cmd via Clink](/skills/ohmyposh/shell/cmd.md)
+- [Elvish](/skills/ohmyposh/shell/elvish.md)
+- [Xonsh](/skills/ohmyposh/shell/xonsh.md)
 
 Detect your current shell:
+
 ```bash
 oh-my-posh get shell
 ```
 
-### PowerShell
+Quick reference:
 
-Edit your profile (`$PROFILE`), e.g.: `notepad $PROFILE`
-
-Add to profile:
-```powershell
-oh-my-posh init pwsh | Invoke-Expression
-```
-
-Reload: `. $PROFILE`
-
-If execution policy blocks scripts: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
-
-### Bash
-
-Add to `~/.bashrc` (or `~/.profile` / `~/.bash_profile`):
-```bash
-eval "$(oh-my-posh init bash)"
-```
-
-Reload: `exec bash`
-
-### Zsh
-
-Add to `~/.zshrc`:
-```bash
-eval "$(oh-my-posh init zsh)"
-```
-
-Reload: `exec zsh`
-
-### Fish (requires Fish 4.1.0+)
-
-Add to `~/.config/fish/config.fish`:
-```bash
-oh-my-posh init fish | source
-```
-
-Reload: `exec fish`
-
-### Nu / Nushell (requires v0.104.0+)
-
-Add to `$nu.config-path`:
-```bash
-oh-my-posh init nu
-```
-
-Restart Nushell.
-
-### Cmd (via Clink)
-
-Create `oh-my-posh.lua` in the Clink scripts directory (`clink info` shows the path):
-```lua
-load(io.popen('oh-my-posh init cmd'):read("*a"))()
-```
-
-Restart Cmd.
-
-### Elvish
-
-Add to `~/.elvish/rc.elv`:
-```bash
-eval (oh-my-posh init elvish)
-```
-
-Reload: `exec elvish`
-
-### Xonsh
-
-Add to `~/.xonshrc`:
-```bash
-execx($(oh-my-posh init xonsh))
-```
-
-Reload: `exec xonsh`
+| Shell      | Profile file                          | Init line                                       |
+|------------|---------------------------------------|-------------------------------------------------|
+| PowerShell | `$PROFILE`                            | `oh-my-posh init pwsh \| Invoke-Expression`    |
+| Bash       | `~/.bashrc`                           | `eval "$(oh-my-posh init bash)"`                |
+| Zsh        | `~/.zshrc`                            | `eval "$(oh-my-posh init zsh)"`                 |
+| Fish       | `~/.config/fish/config.fish`          | `oh-my-posh init fish \| source`               |
+| Nu         | `$nu.config-path`                     | `oh-my-posh init nu`                            |
+| Cmd        | Clink scripts / oh-my-posh.lua        | `load(io.popen('oh-my-posh init cmd'):read("*a"))()` |
+| Elvish     | `~/.elvish/rc.elv`                    | `eval (oh-my-posh init elvish)`                 |
+| Xonsh      | `~/.xonshrc`                          | `execx($(oh-my-posh init xonsh))`               |
 
 ---
 
-## Choosing and Customizing a Theme
+## Configuration & Themes
+
+For detailed customization instructions see [/skills/ohmyposh/configuration.md](/skills/ohmyposh/configuration.md).
 
 Browse themes: https://ohmyposh.dev/docs/themes
 
-Apply a theme via --config:
+Apply a theme:
+
 ```powershell
 # PowerShell
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression
+oh-my-posh init pwsh --config 'jandedobbeleer' | Invoke-Expression
+```
 
-# Bash/Zsh
-eval "$(oh-my-posh init bash --config ~/jandedobbeleer.omp.json)"
+```bash
+# Bash / Zsh
+eval "$(oh-my-posh init bash --config jandedobbeleer)"
 ```
 
 Export a theme for editing:
+
 ```bash
 oh-my-posh config export --config jandedobbeleer --output ~/.mytheme.omp.json
 ```
 
 Enable live reload while editing:
+
 ```bash
 oh-my-posh enable reload
 ```
 
-Preview current config:
-```bash
-oh-my-posh print preview
-```
-
 ---
 
-## Configuration Reference
+## Configuration Schema
 
-Configs are JSON, YAML, or TOML. The schema is at:
+Configs are JSON, YAML, or TOML. Schema:
 https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 
-Minimal JSON config structure:
+Minimal JSON structure:
+
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
@@ -228,9 +154,7 @@ Minimal JSON config structure:
           "powerline_symbol": "\ue0b0",
           "foreground": "#ffffff",
           "background": "#61afef",
-          "properties": {
-            "style": "folder"
-          }
+          "properties": { "style": "folder" }
         }
       ]
     }
@@ -238,43 +162,30 @@ Minimal JSON config structure:
 }
 ```
 
-Top-level fields:
-- `version` (required): schema version, use 3
-- `blocks`: array of prompt blocks (left/right/newline alignment)
-- `final_space`: add trailing space to prompt
-- `console_title_template`: custom terminal window title template
-- `transient_prompt`: condensed prompt shown for previous commands
-- `secondary_prompt`: continuation prompt (PS2)
-- `palette`: named colors
-- `cycle`: alternate segment background colors
+Top-level fields: `version`, `blocks`, `final_space`, `console_title_template`,
+`transient_prompt`, `secondary_prompt`, `palette`, `cycle`.
 
 ---
 
-## Segments Overview
+## Popular Segments
 
-Each segment in a block has:
-- `type`: the segment type (e.g. `git`, `path`, `node`, `aws`, `battery`, …)
-- `style`: `powerline`, `plain`, `diamond`, `accordion`
-- `foreground`, `background`: color values (hex, ANSI, or palette name)
-- `template`: Go template string for custom rendering
-- `properties`: segment-specific settings
-
-Popular segment types:
-- `path` — current directory
-- `git` — Git branch, status, ahead/behind
-- `node` — Node.js version
-- `python` — Python version / virtualenv
-- `go` — Go version
-- `rust` — Rust version
-- `aws` — AWS profile/region
-- `azure` — Azure subscription
-- `kubectl` — Kubernetes context
-- `battery` — battery level
-- `time` — current time
-- `os` — OS icon
-- `session` — username / hostname
-- `exit` — last command exit code
-- `executiontime` — last command duration
+| Type           | Description                         |
+|----------------|-------------------------------------|
+| `path`         | Current directory                   |
+| `git`          | Git branch, status, ahead/behind    |
+| `node`         | Node.js version                     |
+| `python`       | Python version / virtualenv         |
+| `go`           | Go version                          |
+| `rust`         | Rust version                        |
+| `aws`          | AWS profile/region                  |
+| `azure`        | Azure subscription                  |
+| `kubectl`      | Kubernetes context                  |
+| `battery`      | Battery level                       |
+| `time`         | Current time                        |
+| `os`           | OS icon                             |
+| `session`      | Username / hostname                 |
+| `exit`         | Last command exit code              |
+| `executiontime`| Last command duration               |
 
 Full segments reference: https://ohmyposh.dev/docs/segments/overview
 
@@ -282,66 +193,28 @@ Full segments reference: https://ohmyposh.dev/docs/segments/overview
 
 ## MCP Endpoint
 
-Oh My Posh provides an MCP (Model Context Protocol) endpoint for config validation:
+URL: `https://ohmyposh.dev/api/mcp`
+Protocol: JSON-RPC 2.0 over HTTP POST (GET returns server info)
+Discovery: `https://ohmyposh.dev/.well-known/mcp.json`
 
-**URL**: `https://ohmyposh.dev/api/mcp`
-**Protocol**: JSON-RPC 2.0 over HTTP POST (also supports GET for server info)
-**Discovery**: `https://ohmyposh.dev/.well-known/mcp.json`
-
-Available tools:
-
-### validate_config
-Validates a full oh-my-posh configuration against the official schema.
+Available tools: `validate_config`, `validate_segment`
+Supported formats: json, yaml, toml, auto
 
 ```bash
 curl -X POST https://ohmyposh.dev/api/mcp \
   -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "params": {
-      "name": "validate_config",
-      "arguments": {
-        "content": "{\"$schema\":\"...\",\"version\":3,\"blocks\":[]}",
-        "format": "json"
-      }
-    },
-    "id": 1
-  }'
+  -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"validate_config","arguments":{"content":"{\"version\":3}","format":"json"}},"id":1}'
 ```
-
-### validate_segment
-Validates a single segment snippet.
-
-```bash
-curl -X POST https://ohmyposh.dev/api/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "params": {
-      "name": "validate_segment",
-      "arguments": {
-        "content": "{\"type\":\"git\",\"style\":\"powerline\"}",
-        "format": "json"
-      }
-    },
-    "id": 1
-  }'
-```
-
-Supported format values: `json`, `yaml`, `toml`, `auto` (default).
 
 ---
 
 ## Troubleshooting
 
-- **Icons show as boxes**: Install a Nerd Font and set it in your terminal emulator.
-- **`oh-my-posh` not found**: Restart terminal or add the install directory to `$PATH`.
-- **PowerShell execution policy error**: Run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`.
-- **Slow prompt**: Enable async rendering in config: set `async_timeout` on segments.
-- **Fish version error**: Upgrade to Fish 4.1.0+ for full transient prompt support.
-- **Nu version error**: Oh My Posh requires Nushell v0.104.0 or higher.
-- **macOS bash error "conditional binary operator expected"**: Update bash with `brew install bash`.
+- Icons show as boxes — install a Nerd Font and set it in your terminal emulator
+- `oh-my-posh` not found — restart terminal or add install directory to `$PATH`
+- PowerShell execution policy error — run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
+- Fish version error — upgrade to Fish 4.1.0+
+- Nu version error — upgrade to Nushell v0.104.0+
+- macOS bash error — update bash with `brew install bash`
 
 Full FAQ: https://ohmyposh.dev/docs/faq

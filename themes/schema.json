@@ -5478,6 +5478,21 @@
         ]
       }
     },
+    "terminal_features": {
+      "type": "object",
+      "title": "Terminal features configuration",
+      "description": "https://ohmyposh.dev/docs/configuration/general#terminal-features",
+      "properties": {
+        "progress": {
+          "type": "array",
+          "title": "Progress terminals",
+          "description": "Terminal programs supporting OSC 9;4 progress sequences, matched case-insensitively against $TERM_PROGRAM. Defaults to Windows Terminal",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "var": {
       "type": "object",
       "title": "Config variables to use in templates (can be any value)",

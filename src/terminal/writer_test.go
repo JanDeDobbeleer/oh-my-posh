@@ -294,3 +294,90 @@ func TestWriteLength(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestProgressFunctions(t *testing.T) {
+	originalProgram := Program
+	originalProgressTerminals := progressTerminals
+
+	t.Cleanup(func() {
+		Program = originalProgram
+		progressTerminals = originalProgressTerminals
+	})
+
+	cases := []struct {
+		Features       *Features
+		Case           string
+		Program        string
+		ExpectProgress bool
+	}{
+		{
+			Case:           "Windows Terminal default",
+			Program:        WindowsTerminal,
+			ExpectProgress: true,
+		},
+		{
+			Case:    "Unknown terminal default",
+			Program: Unknown,
+		},
+		{
+			Case:           "Ghostty configured",
+			Program:        "ghostty",
+			Features:       &Features{Progress: []string{"ghostty", WindowsTerminal}},
+			ExpectProgress: true,
+		},
+		{
+			Case:           "case insensitive match",
+			Program:        "ghostty",
+			Features:       &Features{Progress: []string{"Ghostty"}},
+			ExpectProgress: true,
+		},
+		{
+			Case:           "Windows Terminal with custom list",
+			Program:        WindowsTerminal,
+			Features:       &Features{Progress: []string{"ghostty", WindowsTerminal}},
+			ExpectProgress: true,
+		},
+		{
+			Case:     "Unknown terminal with custom list",
+			Program:  Unknown,
+			Features: &Features{Progress: []string{"ghostty", WindowsTerminal}},
+		},
+		{
+			Case:     "Custom terminal not in list",
+			Program:  "alacritty",
+			Features: &Features{Progress: []string{"ghostty"}},
+		},
+		{
+			Case:           "empty features keep the default",
+			Program:        WindowsTerminal,
+			Features:       &Features{},
+			ExpectProgress: true,
+		},
+		{
+			Case:           "empty list keeps the default",
+			Program:        WindowsTerminal,
+			Features:       &Features{Progress: []string{}},
+			ExpectProgress: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Program = tc.Program
+			progressTerminals = []string{WindowsTerminal}
+
+			tc.Features.Apply()
+
+			if tc.ExpectProgress {
+				assert.NotEmpty(t, StartProgress(), tc.Case)
+				assert.NotEmpty(t, SetProgress(50), tc.Case)
+				assert.NotEmpty(t, StopProgress(), tc.Case)
+				return
+			}
+
+			assert.Empty(t, StartProgress(), tc.Case)
+			assert.Empty(t, SetProgress(50), tc.Case)
+			assert.Empty(t, StopProgress(), tc.Case)
+		})
+	}
+}

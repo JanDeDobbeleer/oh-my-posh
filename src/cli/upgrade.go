@@ -72,9 +72,14 @@ var upgradeCmd = &cobra.Command{
 		}
 
 		terminal.Init(sh)
-		fmt.Print(terminal.StartProgress())
 
 		cfg := config.Get(configFlag, false)
+
+		if cfg.TerminalFeatures != nil && len(cfg.TerminalFeatures.Progress) > 0 {
+			terminal.SetProgressTerminals(cfg.TerminalFeatures.Progress)
+		}
+
+		fmt.Print(terminal.StartProgress())
 
 		defer func() {
 			fmt.Print(terminal.StopProgress())

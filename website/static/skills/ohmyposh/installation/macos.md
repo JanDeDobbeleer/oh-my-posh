@@ -29,12 +29,3 @@ brew upgrade oh-my-posh
 Restart the terminal (or open a new window) so `oh-my-posh` is on `$PATH`, then proceed to the
 [shell setup guide](/skills/ohmyposh/ohmyposh.md).
 
-## Troubleshooting
-
-If you see "conditional binary operator expected", your system bash is outdated. Update it:
-
-```bash
-brew install bash
-grep -qxF "$(brew --prefix)/bin/bash" /etc/shells || sudo bash -c 'echo "$(brew --prefix)/bin/bash" >> /etc/shells'
-chsh -s "$(brew --prefix)/bin/bash" $USER
-```

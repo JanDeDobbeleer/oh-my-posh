@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "go.yaml.in/yaml/v3"
 )
@@ -29,7 +31,21 @@ func (cfg *Config) Backup() {
 	}
 }
 
+// stripRuntimeState removes runtime-only state (e.g. the template context
+// injected by Segment.MapSegmentWithWriter) from every segment's options map.
+// It must be called before any encoder runs over the config so that internal
+// state never reaches a serialized form.
+func (cfg *Config) stripRuntimeState() {
+	for _, block := range cfg.Blocks {
+		for _, segment := range block.Segments {
+			delete(segment.Options, options.TemplateContextKey)
+		}
+	}
+}
+
 func (cfg *Config) Export(format string) string {
+	cfg.stripRuntimeState()
+
 	if len(format) != 0 {
 		cfg.Format = format
 	}

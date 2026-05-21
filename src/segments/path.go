@@ -3,7 +3,6 @@ package segments
 import (
 	"fmt"
 	"sort"
-	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -284,24 +283,15 @@ func (pt *Path) setStyle() {
 }
 
 func (pt *Path) getMaxWidth() int {
-	width := pt.options.String(MaxWidth, "")
-	if width == "" {
-		return 0
-	}
+	return pt.options.Int(MaxWidth, 0)
+}
 
-	txt, err := template.Render(width, pt)
+func (pt *Path) TerminalWidth() int {
+	width, err := pt.env.TerminalWidth()
 	if err != nil {
-		log.Error(err)
 		return 0
 	}
-
-	value, err := strconv.Atoi(txt)
-	if err != nil {
-		log.Error(err)
-		return 0
-	}
-
-	return value
+	return width
 }
 
 func (pt *Path) getFolderSeparator() string {

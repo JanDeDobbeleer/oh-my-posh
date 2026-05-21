@@ -1,6 +1,6 @@
 ---
 name: oh-my-posh
-description: Install and configure Oh My Posh — the most customizable and fastest prompt theme engine for any shell — on Windows, macOS, or Linux.
+description: Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell init, themes, segments, Nerd Font icons, and prompt setup on PowerShell, zsh, bash, or fish.
 ---
 
 # Oh My Posh
@@ -10,7 +10,7 @@ description: Install and configure Oh My Posh — the most customizable and fast
 > and 180+ other segments.
 
 Full skill (folder-based, with per-OS and per-shell guides):
-[/skills/ohmyposh/ohmyposh.md](/skills/ohmyposh/ohmyposh.md)
+[/skills/ohmyposh/SKILL.md](/skills/ohmyposh/SKILL.md)
 
 ## Quick links
 

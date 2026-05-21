@@ -29,7 +29,7 @@ winget upgrade JanDeDobbeleer.OhMyPosh --source winget
 ## After installing
 
 Restart the terminal (or open a new window) so `oh-my-posh` is on `$PATH`, then proceed to the
-[shell setup guide](/skills/ohmyposh/ohmyposh.md).
+[shell setup guide](/skills/ohmyposh/SKILL.md).
 
 > **Tip:** When using Oh My Posh inside WSL, follow the
 > [Linux installation](/skills/ohmyposh/installation/linux.md) guide inside WSL instead.

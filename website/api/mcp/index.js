@@ -87,9 +87,9 @@ module.exports = async function (context, req) {
   }
 
   // Handle POST requests - process MCP protocol messages
+  let message = req.body;
   try {
     // Parse the body if it's a string
-    let message = req.body;
     if (typeof message === 'string') {
       try {
         message = JSON.parse(message);
@@ -191,6 +191,7 @@ module.exports = async function (context, req) {
           jsonrpc: '2.0',
           result: {
             content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
+            isError: !result.valid,
           },
           id: message.id,
         },

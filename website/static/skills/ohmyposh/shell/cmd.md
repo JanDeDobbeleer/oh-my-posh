@@ -22,6 +22,7 @@ load(io.popen('oh-my-posh init cmd'):read("*a"))()
 Restart Cmd to apply.
 
 > **Tip:** Clink has built-in support for Oh My Posh. You can also set the prompt with:
+>
 > ```bash
 > clink config prompt use oh-my-posh
 > ```

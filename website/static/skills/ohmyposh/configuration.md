@@ -39,7 +39,7 @@ oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/
 
 ## Browse available themes
 
-View all bundled themes online: https://ohmyposh.dev/docs/themes
+View all bundled themes online: <https://ohmyposh.dev/docs/themes>
 
 > There is no terminal command to preview all available themes. Direct users to the website above.
 
@@ -116,6 +116,6 @@ Or use `validate_segment` to check a single segment snippet instead of an entire
 
 ## Configuration reference
 
-Full schema: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
-Docs: https://ohmyposh.dev/docs/configuration/overview
-Segments: https://ohmyposh.dev/docs/segments/overview
+- Full schema: <https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json>
+- Docs: <https://ohmyposh.dev/docs/configuration/overview>
+- Segments: <https://ohmyposh.dev/docs/segments/overview>

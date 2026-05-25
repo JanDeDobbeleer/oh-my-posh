@@ -28,4 +28,3 @@ brew upgrade oh-my-posh
 
 Restart the terminal (or open a new window) so `oh-my-posh` is on `$PATH`, then proceed to the
 [shell setup guide](/skills/ohmyposh/SKILL.md).
-

@@ -50,5 +50,5 @@ oh-my-posh get shell
 - **`oh-my-posh` not found after install** — restart the terminal or add the install path to `$PATH`.
 - **Slow prompt** — enable async rendering in the config (`async_timeout` on segments).
 
-Full documentation: https://ohmyposh.dev/docs
-FAQ: https://ohmyposh.dev/docs/faq
+Full documentation: <https://ohmyposh.dev/docs>
+FAQ: <https://ohmyposh.dev/docs/faq>

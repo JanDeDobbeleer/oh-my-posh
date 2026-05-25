@@ -81,8 +81,8 @@ function Home() {
   return (
     <Layout title="Home" description={`${siteConfig.tagline}`}>
       <Head>
-        <script type="application/ld+json">{websiteJsonLd}</script>
-        <script type="application/ld+json">{organizationJsonLd}</script>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{__html: websiteJsonLd}} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{__html: organizationJsonLd}} />
       </Head>
       <header className={classnames("hero hero--primary", styles.heroBanner)}>
         <div className="container">

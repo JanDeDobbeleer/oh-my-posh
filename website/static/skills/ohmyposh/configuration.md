@@ -34,8 +34,9 @@ eval "$(oh-my-posh init bash --config ~/.mytheme.omp.json)"
 oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json' | Invoke-Expression
 ```
 
-> Using a theme name or remote URL downloads the config on every shell start. For better
-> performance, export it to a local file and use a local path instead.
+> Using a remote URL adds a network dependency. Oh My Posh caches remote configs using ETags,
+> but latency still applies on cache misses. For reliable offline use, copy the theme to a
+> local file and use a local path instead.
 
 ## Browse available themes
 

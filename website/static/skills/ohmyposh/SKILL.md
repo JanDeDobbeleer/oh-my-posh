@@ -1,6 +1,6 @@
 ---
 name: oh-my-posh
-description: Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell init, themes, segments, Nerd Font icons, and prompt setup on PowerShell, zsh, bash, or fish.
+description: "Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell init, themes, segments, Nerd Font icons, and prompt setup on PowerShell, zsh, bash, or fish."
 ---
 
 # Oh My Posh
@@ -48,7 +48,7 @@ oh-my-posh get shell
 
 - **Icons show as boxes** — install a Nerd Font and set it in the terminal emulator.
 - **`oh-my-posh` not found after install** — restart the terminal or add the install path to `$PATH`.
-- **Slow prompt** — enable async rendering in the config (`async_timeout` on segments).
+- **Slow prompt** -- enable async rendering by setting `"async": true` at the top level of your config.
 
 Full documentation: <https://ohmyposh.dev/docs>
 FAQ: <https://ohmyposh.dev/docs/faq>

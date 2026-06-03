@@ -266,13 +266,17 @@ func (term *Terminal) Home() string {
 }
 
 func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
+	return term.RunCommandWithEnv(command, nil, args...)
+}
+
+func (term *Terminal) RunCommandWithEnv(command string, envs []string, args ...string) (string, error) {
 	defer log.Trace(time.Now(), append([]string{command}, args...)...)
 
 	if cacheCommand, ok := term.cmdCache.Get(command); ok {
 		command = cacheCommand
 	}
 
-	output, err := cmd.Run(command, args...)
+	output, err := cmd.RunWithEnv(command, envs, args...)
 	if err != nil {
 		log.Error(err)
 	}

@@ -95,6 +95,11 @@ func (env *Environment) RunCommand(command string, args ...string) (string, erro
 	return arguments.String(0), arguments.Error(1)
 }
 
+func (env *Environment) RunCommandWithEnv(command string, envs []string, args ...string) (string, error) {
+	arguments := env.Called(command, envs, args)
+	return arguments.String(0), arguments.Error(1)
+}
+
 func (env *Environment) RunShellCommand(shell, command string) string {
 	args := env.Called(shell, command)
 	return args.String(0)

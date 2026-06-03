@@ -620,12 +620,17 @@ type mockedLanguageParams struct {
 	versionParam  string
 	versionOutput string
 	extension     string
+	envs          []string
 }
 
 func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, options.Map) {
 	env := new(mock.Environment)
 	env.On("HasCommand", params.cmd).Return(true)
-	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	if len(params.envs) > 0 {
+		env.On("RunCommandWithEnv", params.cmd, params.envs, []string{params.versionParam}).Return(params.versionOutput, nil)
+	} else {
+		env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	}
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")

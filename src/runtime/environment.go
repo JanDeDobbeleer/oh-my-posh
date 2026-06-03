@@ -46,6 +46,7 @@ type Environment interface {
 	FileContent(file string) string
 	LsDir(input string) []fs.DirEntry
 	RunCommand(command string, args ...string) (string, error)
+	RunCommandWithEnv(command string, envs []string, args ...string) (string, error)
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
 	Flags() *Flags

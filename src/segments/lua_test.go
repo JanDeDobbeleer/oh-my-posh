@@ -68,7 +68,7 @@ func TestLua(t *testing.T) {
 		}
 
 		env.On("HasCommand", "luajit").Return(tc.HasLuaJit)
-		env.On("RunCommand", "luajit", []string{"-v"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "luajit", []string(nil), []string{"-v"}).Return(tc.Version, nil)
 		env.On("Shell").Return("bash")
 
 		// Initialize template system for version URL rendering

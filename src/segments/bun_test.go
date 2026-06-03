@@ -24,7 +24,7 @@ func TestBun(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("HasCommand", "bun").Return(true)
-		env.On("RunCommand", "bun", []string{"--version"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "bun", []string(nil), []string{"--version"}).Return(tc.Version, nil)
 		env.On("HasFiles", "bun.lockb").Return(tc.Extension == "bun.lockb")
 		env.On("HasFiles", "bun.lock").Return(tc.Extension == "bun.lock")
 		env.On("Pwd").Return("/usr/home/project")

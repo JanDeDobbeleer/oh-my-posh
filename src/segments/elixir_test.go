@@ -52,7 +52,7 @@ func TestElixir(t *testing.T) {
 		if tc.AsdfExitCode != 0 {
 			asdfErr = &runtime.CommandError{ExitCode: tc.AsdfExitCode}
 		}
-		env.On("RunCommand", "asdf", []string{"current", "elixir"}).Return(tc.AsdfVersionOutput, asdfErr)
+		env.On("RunCommandWithEnv", "asdf", []string(nil), []string{"current", "elixir"}).Return(tc.AsdfVersionOutput, asdfErr)
 
 		r := &Elixir{}
 		r.Init(props, env)

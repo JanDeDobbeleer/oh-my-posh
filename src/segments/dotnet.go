@@ -47,6 +47,7 @@ func (d *Dotnet) Enabled() bool {
 		dotnetToolName: {
 			executable: dotnetToolName,
 			args:       []string{versionFlagArg},
+			envs:       []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
 			regex: `(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)` +
 				`(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?))`,
 		},

@@ -28,13 +28,14 @@ func TestDotnetSegment(t *testing.T) {
 			versionParam:  "--version",
 			versionOutput: tc.Version,
 			extension:     "*.cs",
+			envs:          []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
 		}
 		env, props := getMockedLanguageEnv(params)
 
 		if tc.ExitCode != 0 {
-			env.Unset("RunCommand")
+			env.Unset("RunCommandWithEnv")
 			err := &runtime.CommandError{ExitCode: tc.ExitCode}
-			env.On("RunCommand", "dotnet", []string{"--version"}).Return("", err)
+			env.On("RunCommandWithEnv", "dotnet", []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"}, []string{"--version"}).Return("", err)
 		}
 
 		dotnet := &Dotnet{}
@@ -87,6 +88,7 @@ func TestDotnetSDKVersion(t *testing.T) {
 		versionParam:  "--version",
 		versionOutput: "6.0.100",
 		extension:     "*.cs",
+		envs:          []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
 	}
 
 	for _, tc := range cases {
@@ -113,4 +115,27 @@ func TestDotnetSDKVersion(t *testing.T) {
 		assert.True(t, dotnet.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedSDK, dotnet.SDKVersion, tc.Case)
 	}
+}
+
+func TestDotnetSegmentSuppressesTelemetry(t *testing.T) {
+	params := &mockedLanguageParams{
+		cmd:           "dotnet",
+		versionParam:  "--version",
+		versionOutput: "8.0.100",
+		extension:     "*.cs",
+		envs:          []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
+	}
+	env, props := getMockedLanguageEnv(params)
+
+	dotnet := &Dotnet{}
+	dotnet.Init(props, env)
+
+	assert.True(t, dotnet.Enabled())
+	env.AssertCalled(
+		t,
+		"RunCommandWithEnv",
+		"dotnet",
+		[]string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
+		[]string{"--version"},
+	)
 }

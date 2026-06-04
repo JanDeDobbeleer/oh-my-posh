@@ -28,8 +28,9 @@ func DSC() *dsc.Resource[*Shell] {
 }
 
 type Shell struct {
-	Command string `json:"command,omitempty" jsonschema:"title=Command,description=The oh-my-posh init command to run"`
-	Name    string `json:"name,omitempty" jsonschema:"title=Shell name,description=The name of the shell"`
+	Command          string `json:"command,omitempty" jsonschema:"title=Command,description=The oh-my-posh init command to run"`
+	Name             string `json:"name,omitempty" jsonschema:"title=Shell name,description=The name of the shell"`
+	SkipExistingInit bool   `json:"skipExistingInit,omitempty" jsonschema:"title=Skip existing init,description=Treat any existing oh-my-posh init line as compliant instead of rewriting it"` //nolint:lll
 }
 
 func (s *Shell) Equal(shell *Shell) bool {
@@ -148,6 +149,11 @@ func (s *Shell) updateShellConfig(content string) (string, bool) {
 
 	initLineStr := lines[initLinePos]
 	shellCommand := s.shellCommand()
+
+	if s.SkipExistingInit {
+		log.Debug("existing oh-my-posh init line found, skipping update")
+		return content, false
+	}
 
 	// validate if we have the same command
 	if strings.Contains(initLineStr, shellCommand) {

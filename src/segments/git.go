@@ -1063,7 +1063,7 @@ func (g *Git) resolveDetachedHEAD() {
 
 	// fallback to no commits found
 	if g.ShortHash == "" {
-		g.HEAD = g.options.String(NoCommitsIcon, "\uF594 ")
+		g.HEAD = g.options.String(NoCommitsIcon, "\U000F0095 ")
 		return
 	}
 

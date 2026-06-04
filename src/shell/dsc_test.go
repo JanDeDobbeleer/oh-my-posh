@@ -265,6 +265,28 @@ func TestUpdateShellConfig(t *testing.T) {
 			expectedOutput: "if command -v oh-my-posh >/dev/null 2>&1; then\n \t  eval \"$(oh-my-posh init bash --config theme.json)\"\nfi\n",
 			expectedUpdate: true,
 		},
+		{
+			name: "preserve existing initialization when configured",
+			shell: &Shell{
+				Name:             "pwsh",
+				Command:          "oh-my-posh init pwsh",
+				SkipExistingInit: true,
+			},
+			content:        "oh-my-posh init pwsh --config \"$HOME/.config/oh-my-posh/custom.omp.json\" | Invoke-Expression\n",
+			expectedOutput: "oh-my-posh init pwsh --config \"$HOME/.config/oh-my-posh/custom.omp.json\" | Invoke-Expression\n",
+			expectedUpdate: false,
+		},
+		{
+			name: "add initialization when skip existing is enabled but no init line exists",
+			shell: &Shell{
+				Name:             "pwsh",
+				Command:          "oh-my-posh init pwsh",
+				SkipExistingInit: true,
+			},
+			content:        "$env:PATH += ';C:\\Program Files'\n",
+			expectedOutput: "$env:PATH += ';C:\\Program Files'\noh-my-posh init pwsh | Invoke-Expression\n",
+			expectedUpdate: true,
+		},
 	}
 
 	for _, tt := range tests {

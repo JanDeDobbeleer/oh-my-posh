@@ -244,6 +244,7 @@ resources:
       states:
         - name: pwsh
           command: oh-my-posh init pwsh --config ~/mytheme.omp.json
+          skipExistingInit: true
 ```
 
 Apply with:
@@ -388,6 +389,13 @@ Manages Oh My Posh configuration files.
 #### OhMyPosh/Shell
 
 Manages shell initialization.
+
+**Properties:**
+
+- `states` (array): List of shell initialization states
+  - `name` (string): Shell name
+  - `command` (string): `oh-my-posh init` command to apply
+  - `skipExistingInit` (boolean): When `true`, any existing `oh-my-posh init` line is treated as compliant and left unchanged
 
 **Properties:**
 

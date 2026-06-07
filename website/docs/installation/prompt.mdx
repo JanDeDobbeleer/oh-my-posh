@@ -23,6 +23,7 @@ oh-my-posh get shell
     { label: 'bash', value: 'bash', },
     { label: 'claude', value: 'claude', },
     { label: 'cmd', value: 'cmd', },
+    { label: 'codex', value: 'codex', },
     { label: 'copilot', value: 'copilot', },
     { label: 'elvish', value: 'elvish', },
     { label: 'fish', value: 'fish', },
@@ -79,6 +80,38 @@ oh-my-posh claude --config /path/to/claude.omp.json
 :::
 
 For more information about the Claude segment properties and customization options, see the [Claude segment documentation](/docs/segments/cli/claude).
+
+</TabItem>
+<TabItem value="codex">
+
+To render OpenAI Codex session information with Oh My Posh, provide a compatible Codex status JSON
+payload to Oh My Posh.
+
+The `oh-my-posh codex` command reads status JSON from standard input and renders a dedicated
+statusline prompt:
+
+```bash
+cat codex-status.json | oh-my-posh codex
+```
+
+:::tip
+You can use the `--config` flag to point to a tailored Oh My Posh config just for Codex:
+
+```bash
+cat codex-status.json | oh-my-posh codex --config /path/to/codex.omp.json
+```
+
+:::
+
+For regular shell prompts, write the Codex status payload to a file and point the segment at it with
+`status_file`, or set `POSH_CODEX_STATUS_FILE` to the file path. You can also set
+`POSH_CODEX_STATUS` directly to the JSON payload.
+
+The Codex segment does not authenticate to Codex or read Codex auth files. It only renders the
+status data you provide.
+
+For more information about the Codex segment properties and customization options, see the
+[Codex segment documentation].
 
 </TabItem>
 <TabItem value="copilot">
@@ -281,6 +314,7 @@ exec zsh
 </Tabs>
 
 [Copilot CLI segment documentation]: /docs/segments/cli/copilot-cli
+[Codex segment documentation]: /docs/segments/cli/codex
 [clink]: https://chrisant996.github.io/clink/
 [iterm2]: https://iterm2.com/
 [sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.3#methods-of-signing-scripts

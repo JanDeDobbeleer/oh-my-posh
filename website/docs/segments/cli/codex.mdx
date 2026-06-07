@@ -136,8 +136,8 @@ wrapper whose `payload.type` is `token_count`.
 | `.FormattedText` | `string` | Default Codex segment text assembled from display options |
 | `.FormattedModel` | `string` | Model text assembled from `display_model` and `display_reasoning` |
 | `.TokenUsagePercent` | `Percentage` | Percentage of model context window used by the latest token usage snapshot (0-100) |
-| `.TokenGauge` | `string` | Gauge showing remaining context capacity |
-| `.TokenGaugeUsed` | `string` | Gauge showing used context capacity |
+| `.TokenGauge` | `string` | Gauge showing remaining context capacity; empty when context usage is unavailable |
+| `.TokenGaugeUsed` | `string` | Gauge showing used context capacity; empty when context usage is unavailable |
 | `.RemainingPercent` | `Percentage` | Percentage of model context window remaining (0-100) |
 | `.RemainingTokensCount` | `int` | Number of remaining context window tokens; 0 when unavailable |
 | `.FormattedTokens` | `string` | Human-readable total token count |
@@ -150,13 +150,13 @@ wrapper whose `payload.type` is `token_count`.
 | `.WeeklyUsage` | `Percentage` | Secondary rolling window usage percentage (0-100) |
 | `.FiveHourRemaining` | `Percentage` | Primary rolling window remaining percentage (0-100) |
 | `.WeeklyRemaining` | `Percentage` | Secondary rolling window remaining percentage (0-100) |
-| `.FiveHourGauge` | `string` | Gauge showing primary rolling window usage |
-| `.WeeklyGauge` | `string` | Gauge showing weekly rolling window usage |
-| `.FiveHourRemainingGauge` | `string` | Gauge showing primary rolling quota remaining |
-| `.WeeklyRemainingGauge` | `string` | Gauge showing weekly quota remaining |
-| `.FormattedFiveHourRemaining` | `string` | Primary rolling window remaining with a percent sign |
-| `.FormattedWeeklyRemaining` | `string` | Weekly rolling window remaining with a percent sign |
-| `.FormattedLimits` | `string` | Default remaining-limit text, controlled by the limit display options |
+| `.FiveHourGauge` | `string` | Gauge showing primary rolling window usage; empty when unavailable |
+| `.WeeklyGauge` | `string` | Gauge showing weekly rolling window usage; empty when unavailable |
+| `.FiveHourRemainingGauge` | `string` | Gauge showing primary rolling quota remaining; empty when unavailable |
+| `.WeeklyRemainingGauge` | `string` | Gauge showing weekly quota remaining; empty when unavailable |
+| `.FormattedFiveHourRemaining` | `string` | Primary rolling window remaining with a percent sign; empty when unavailable |
+| `.FormattedWeeklyRemaining` | `string` | Weekly rolling window remaining with a percent sign; empty when unavailable |
+| `.FormattedLimits` | `string` | Default remaining-limit text, controlled by available limit data and display options |
 | `.FiveHourResetsAt` | `time.Time` | Reset time for the primary rolling window, or zero when unavailable |
 | `.WeeklyResetsAt` | `time.Time` | Reset time for the weekly rolling window, or zero when unavailable |
 | `.FiveHourResetsIn` | `time.Duration` | Time until the primary rolling window resets; 0 when unavailable |

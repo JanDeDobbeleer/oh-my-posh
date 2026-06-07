@@ -1349,6 +1349,7 @@
             "description": "https://ohmyposh.dev/docs/segments/cli/codex",
             "properties": {
               "options": {
+                "type": "object",
                 "properties": {
                   "display_model": {
                     "type": "boolean",

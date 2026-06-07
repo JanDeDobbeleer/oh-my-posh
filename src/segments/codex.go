@@ -317,7 +317,9 @@ func (c *Codex) FormattedText() string {
 	}
 
 	if c.DisplayContext() {
-		parts = append(parts, "\uf2d0 "+c.TokenGauge())
+		if gauge := c.TokenGauge(); gauge != "" {
+			parts = append(parts, "\uf2d0 "+gauge)
+		}
 	}
 
 	if c.DisplayTokens() {
@@ -360,10 +362,7 @@ func (c *Codex) FormattedModel() string {
 
 // TokenUsagePercent returns the percentage of the Codex model context window used.
 func (c *Codex) TokenUsagePercent() text.Percentage {
-	tokens := c.Info.LastTokenUsage.TotalTokens
-	if tokens <= 0 {
-		tokens = c.Info.TotalTokenUsage.TotalTokens
-	}
+	tokens := c.contextTokens()
 
 	if c.Info.ModelContextWindow <= 0 || tokens <= 0 {
 		return 0
@@ -378,13 +377,34 @@ func (c *Codex) TokenUsagePercent() text.Percentage {
 	return text.Percentage(rounded)
 }
 
+func (c *Codex) hasContextUsage() bool {
+	return c.Info.ModelContextWindow > 0 && c.contextTokens() > 0
+}
+
+func (c *Codex) contextTokens() int {
+	tokens := c.Info.LastTokenUsage.TotalTokens
+	if tokens <= 0 {
+		tokens = c.Info.TotalTokenUsage.TotalTokens
+	}
+
+	return tokens
+}
+
 // TokenGauge returns a 5-block gauge showing remaining context capacity using the configured characters.
 func (c *Codex) TokenGauge() string {
+	if !c.hasContextUsage() {
+		return ""
+	}
+
 	return c.TokenUsagePercent().GaugeWith(c.optionString(gaugeMarkedChar, "▰"), c.optionString(gaugeUnmarkedChar, "▱"))
 }
 
 // TokenGaugeUsed returns a 5-block gauge showing used context capacity using the configured characters.
 func (c *Codex) TokenGaugeUsed() string {
+	if !c.hasContextUsage() {
+		return ""
+	}
+
 	return c.TokenUsagePercent().GaugeUsedWith(c.optionString(gaugeMarkedChar, "▰"), c.optionString(gaugeUnmarkedChar, "▱"))
 }
 
@@ -468,31 +488,55 @@ func (c *Codex) WeeklyRemaining() text.Percentage {
 
 // FiveHourGauge returns a 5-block gauge showing primary window usage.
 func (c *Codex) FiveHourGauge() string {
+	if !codexRateLimitHasUsage(c.RateLimits, codexPrimaryRateLimitWindow) {
+		return ""
+	}
+
 	return c.FiveHourUsage().GaugeUsedWith(c.optionString(gaugeMarkedChar, "▰"), c.optionString(gaugeUnmarkedChar, "▱"))
 }
 
 // WeeklyGauge returns a 5-block gauge showing weekly window usage.
 func (c *Codex) WeeklyGauge() string {
+	if !codexRateLimitHasUsage(c.RateLimits, codexSecondaryRateLimitWindow) {
+		return ""
+	}
+
 	return c.WeeklyUsage().GaugeUsedWith(c.optionString(gaugeMarkedChar, "▰"), c.optionString(gaugeUnmarkedChar, "▱"))
 }
 
 // FiveHourRemainingGauge returns a 5-block gauge showing primary quota remaining.
 func (c *Codex) FiveHourRemainingGauge() string {
+	if !codexRateLimitHasUsage(c.RateLimits, codexPrimaryRateLimitWindow) {
+		return ""
+	}
+
 	return c.FiveHourUsage().GaugeWith(c.optionString(gaugeMarkedChar, "▰"), c.optionString(gaugeUnmarkedChar, "▱"))
 }
 
 // WeeklyRemainingGauge returns a 5-block gauge showing weekly quota remaining.
 func (c *Codex) WeeklyRemainingGauge() string {
+	if !codexRateLimitHasUsage(c.RateLimits, codexSecondaryRateLimitWindow) {
+		return ""
+	}
+
 	return c.WeeklyUsage().GaugeWith(c.optionString(gaugeMarkedChar, "▰"), c.optionString(gaugeUnmarkedChar, "▱"))
 }
 
 // FormattedFiveHourRemaining returns the primary rolling window remaining percentage with a percent sign.
 func (c *Codex) FormattedFiveHourRemaining() string {
+	if !codexRateLimitHasUsage(c.RateLimits, codexPrimaryRateLimitWindow) {
+		return ""
+	}
+
 	return fmt.Sprintf("%d%%", c.FiveHourRemaining())
 }
 
 // FormattedWeeklyRemaining returns the weekly rolling window remaining percentage with a percent sign.
 func (c *Codex) FormattedWeeklyRemaining() string {
+	if !codexRateLimitHasUsage(c.RateLimits, codexSecondaryRateLimitWindow) {
+		return ""
+	}
+
 	return fmt.Sprintf("%d%%", c.WeeklyRemaining())
 }
 
@@ -501,11 +545,15 @@ func (c *Codex) FormattedLimits() string {
 	limits := []string{}
 
 	if c.DisplayFiveHourLimit() {
-		limits = append(limits, "5h "+c.FormattedFiveHourRemaining())
+		if remaining := c.FormattedFiveHourRemaining(); remaining != "" {
+			limits = append(limits, "5h "+remaining)
+		}
 	}
 
 	if c.DisplayWeeklyLimit() {
-		limits = append(limits, "7d "+c.FormattedWeeklyRemaining())
+		if remaining := c.FormattedWeeklyRemaining(); remaining != "" {
+			limits = append(limits, "7d "+remaining)
+		}
 	}
 
 	return strings.Join(limits, " ")
@@ -551,7 +599,7 @@ func remainingPercentage(used text.Percentage) text.Percentage {
 }
 
 func codexRateLimitUsage(limits *CodexRateLimits, window func(*CodexRateLimits) *CodexRateLimitWindow) text.Percentage {
-	if limits == nil || window == nil {
+	if !codexRateLimitHasUsage(limits, window) {
 		return 0
 	}
 
@@ -570,6 +618,22 @@ func codexRateLimitUsage(limits *CodexRateLimits, window func(*CodexRateLimits) 
 	}
 
 	return text.Percentage(percent)
+}
+
+func codexRateLimitHasUsage(limits *CodexRateLimits, window func(*CodexRateLimits) *CodexRateLimitWindow) bool {
+	if limits == nil || window == nil {
+		return false
+	}
+
+	return codexRateLimitWindowHasUsage(window(limits))
+}
+
+func codexPrimaryRateLimitWindow(limits *CodexRateLimits) *CodexRateLimitWindow {
+	return limits.Primary
+}
+
+func codexSecondaryRateLimitWindow(limits *CodexRateLimits) *CodexRateLimitWindow {
+	return limits.Secondary
 }
 
 func codexRateLimitReset(limits *CodexRateLimits, window func(*CodexRateLimits) *CodexRateLimitWindow) time.Time {

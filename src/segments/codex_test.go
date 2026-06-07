@@ -345,6 +345,25 @@ func TestCodexFormattedTextUsesOptionsWithoutEnabled(t *testing.T) {
 	assert.Equal(t, "\ue7cf GPT-5.5 (high) \uf2d0 ####- tok 1.2K \uf017 5h 87% 7d 74%", segment.FormattedText())
 }
 
+func TestCodexFormattedTextOmitsUnknownContext(t *testing.T) {
+	segment := &Codex{
+		CodexData: CodexData{
+			Model: CodexModel{
+				DisplayName: "GPT-5.5",
+			},
+			Info: CodexTokenInfo{
+				TotalTokenUsage: CodexTokenUsage{
+					TotalTokens: 1200,
+				},
+			},
+		},
+	}
+
+	assert.Empty(t, segment.TokenGauge())
+	assert.Empty(t, segment.TokenGaugeUsed())
+	assert.Equal(t, "\ue7cf GPT-5.5", segment.FormattedText())
+}
+
 func TestCodexTokenUsagePercent(t *testing.T) {
 	cases := []struct {
 		Case            string
@@ -476,6 +495,54 @@ func TestCodexRateLimitUsage(t *testing.T) {
 	assert.Equal(t, "74%", segment.FormattedWeeklyRemaining())
 	assert.Equal(t, "7d 74%", segment.FormattedLimits())
 	assert.Equal(t, time.Unix(reset, 0), segment.WeeklyResetsAt())
+}
+
+func TestCodexFormattedLimitsOmitsUnknownWindows(t *testing.T) {
+	primary := 12.5
+	segment := &Codex{
+		Base: Base{
+			options: options.Map{
+				displayFiveHourLimit: true,
+			},
+		},
+		CodexData: CodexData{
+			RateLimits: &CodexRateLimits{
+				Primary: &CodexRateLimitWindow{
+					UsedPercent: &primary,
+				},
+				Secondary: &CodexRateLimitWindow{},
+			},
+		},
+	}
+
+	assert.Equal(t, "5h 87%", segment.FormattedLimits())
+	assert.Equal(t, "87%", segment.FormattedFiveHourRemaining())
+	assert.Empty(t, segment.FormattedWeeklyRemaining())
+	assert.NotEmpty(t, segment.FiveHourGauge())
+	assert.NotEmpty(t, segment.FiveHourRemainingGauge())
+	assert.Empty(t, segment.WeeklyGauge())
+	assert.Empty(t, segment.WeeklyRemainingGauge())
+}
+
+func TestCodexFormattedLimitsEmptyWhenUsageUnknown(t *testing.T) {
+	segment := &Codex{
+		Base: Base{
+			options: options.Map{
+				displayFiveHourLimit: true,
+			},
+		},
+		CodexData: CodexData{
+			RateLimits: &CodexRateLimits{},
+		},
+	}
+
+	assert.Empty(t, segment.FormattedLimits())
+	assert.Empty(t, segment.FormattedFiveHourRemaining())
+	assert.Empty(t, segment.FormattedWeeklyRemaining())
+	assert.Empty(t, segment.FiveHourGauge())
+	assert.Empty(t, segment.WeeklyGauge())
+	assert.Empty(t, segment.FiveHourRemainingGauge())
+	assert.Empty(t, segment.WeeklyRemainingGauge())
 }
 
 func TestCodexTokenGaugeCustomChars(t *testing.T) {

@@ -150,30 +150,29 @@ func (c *Codex) Enabled() bool {
 	data, found := cache.Get[CodexData](cache.Session, cache.CODEXCACHE)
 	if found {
 		if !data.hasStatus() {
-			log.Debug("codex segment: cached data has no status information")
-			return false
+			log.Debug("codex segment: cached data has no status information, ignoring cache entry")
+			cache.Delete(cache.Session, cache.CODEXCACHE)
+		} else {
+			log.Debug("codex segment: found data in session cache")
+			log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
+
+			c.CodexData = data
+			return true
 		}
-
-		log.Debug("codex segment: found data in session cache")
-		log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
-
-		c.CodexData = data
-		return true
+	} else {
+		log.Debug("codex segment: no data found in session cache")
 	}
-
-	log.Debug("codex segment: no data found in session cache")
 
 	if data, found = c.statusFileData(); found {
 		if !data.hasStatus() {
-			log.Debug("codex segment: status file has no status information")
-			return false
+			log.Debug("codex segment: status file has no status information, checking environment variable")
+		} else {
+			log.Debug("codex segment: found data in status file")
+			log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
+
+			c.CodexData = data
+			return true
 		}
-
-		log.Debug("codex segment: found data in status file")
-		log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
-
-		c.CodexData = data
-		return true
 	}
 
 	if data, found = c.statusEnvData(); found {
@@ -198,7 +197,19 @@ func (c *CodexData) hasStatus() bool {
 		c.Model.ID != "" ||
 		c.Info.TotalTokenUsage.TotalTokens > 0 ||
 		c.Info.LastTokenUsage.TotalTokens > 0 ||
-		c.RateLimits != nil
+		(c.RateLimits != nil && c.RateLimits.hasUsage())
+}
+
+func (c *CodexRateLimits) hasUsage() bool {
+	if c == nil {
+		return false
+	}
+
+	return codexRateLimitWindowHasUsage(c.Primary) || codexRateLimitWindowHasUsage(c.Secondary)
+}
+
+func codexRateLimitWindowHasUsage(window *CodexRateLimitWindow) bool {
+	return window != nil && window.UsedPercent != nil
 }
 
 func (c *Codex) statusFileData() (CodexData, bool) {

@@ -231,6 +231,81 @@ func TestCodexSegmentStatusEnv(t *testing.T) {
 	assert.Equal(t, "gpt-5.5", segment.Model.DisplayName)
 }
 
+func TestCodexSegmentInvalidCacheFallsBackToStatusFile(t *testing.T) {
+	cache.Set(cache.Session, cache.CODEXCACHE, CodexData{}, cache.INFINITE)
+	defer cache.Delete(cache.Session, cache.CODEXCACHE)
+
+	status := `{
+		"type": "token_count",
+		"thread_id": "thread-from-file-after-cache-miss",
+		"model": "gpt-5.5"
+	}`
+
+	env := new(mock.Environment)
+	env.On("Getenv", defaultCodexStatusFileEnv).Return("/tmp/codex-status.json")
+	env.On("FileContent", "/tmp/codex-status.json").Return(status)
+
+	segment := &Codex{
+		Base: Base{
+			env:     env,
+			options: options.Map{},
+		},
+	}
+
+	require.True(t, segment.Enabled())
+	assert.Equal(t, "thread-from-file-after-cache-miss", segment.ThreadID)
+	assert.Equal(t, "gpt-5.5", segment.Model.DisplayName)
+
+	_, found := cache.Get[CodexData](cache.Session, cache.CODEXCACHE)
+	assert.False(t, found)
+}
+
+func TestCodexSegmentInvalidStatusFileFallsBackToStatusEnv(t *testing.T) {
+	cache.Delete(cache.Session, cache.CODEXCACHE)
+
+	status := `{
+		"type": "token_count",
+		"thread_id": "thread-from-env-after-file-miss",
+		"model": "gpt-5.5"
+	}`
+
+	env := new(mock.Environment)
+	env.On("Getenv", defaultCodexStatusFileEnv).Return("/tmp/codex-status.json")
+	env.On("FileContent", "/tmp/codex-status.json").Return(`{"type":"token_count"}`)
+	env.On("Getenv", defaultCodexStatusJSONEnv).Return(status)
+
+	segment := &Codex{
+		Base: Base{
+			env:     env,
+			options: options.Map{},
+		},
+	}
+
+	require.True(t, segment.Enabled())
+	assert.Equal(t, "thread-from-env-after-file-miss", segment.ThreadID)
+	assert.Equal(t, "gpt-5.5", segment.Model.DisplayName)
+}
+
+func TestCodexSegmentEmptyRateLimitsDisabled(t *testing.T) {
+	cache.Set(cache.Session, cache.CODEXCACHE, CodexData{
+		RateLimits: &CodexRateLimits{},
+	}, cache.INFINITE)
+	defer cache.Delete(cache.Session, cache.CODEXCACHE)
+
+	env := new(mock.Environment)
+	env.On("Getenv", defaultCodexStatusFileEnv).Return("")
+	env.On("Getenv", defaultCodexStatusJSONEnv).Return("")
+
+	segment := &Codex{
+		Base: Base{
+			env:     env,
+			options: options.Map{},
+		},
+	}
+
+	assert.False(t, segment.Enabled())
+}
+
 func TestCodexFormattedTextUsesOptionsWithoutEnabled(t *testing.T) {
 	primary := 12.5
 	secondary := 26.0

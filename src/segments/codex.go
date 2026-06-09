@@ -3,6 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -196,7 +197,6 @@ func (c *Codex) Enabled() bool {
 		log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
 
 		c.CodexData = data
-		cache.Set(cache.Session, cache.CODEXCACHE, data, cache.ToDuration(30))
 		return true
 	}
 
@@ -298,6 +298,39 @@ func (c *Codex) localStatusData() (CodexData, bool) {
 	}
 
 	return data, true
+}
+
+func (c *Codex) CacheKey() (string, bool) {
+	parts := []string{"codex"}
+
+	if value := c.optionString(statusFile, ""); value != "" {
+		parts = append(parts, "file", value)
+	}
+
+	if value := c.optionString(statusFileEnv, defaultCodexStatusFileEnv); value != "" {
+		parts = append(parts, "file-env", value)
+	}
+
+	if value := c.optionString(statusJSONEnv, defaultCodexStatusJSONEnv); value != "" {
+		parts = append(parts, "json-env", value)
+	}
+
+	if value := c.optionString(codexSessionID, ""); value != "" {
+		parts = append(parts, "session", value)
+	}
+
+	if value := c.optionString(sessionRoot, ""); value != "" {
+		parts = append(parts, "root", value)
+	} else if value := c.optionString(codexHome, ""); value != "" {
+		parts = append(parts, "root", filepath.Join(value, "sessions"))
+	} else if c.env != nil {
+		localOptions := ResolveCodexLocalStatusOptions(CodexLocalStatusOptions{}, c.env.Getenv("CODEX_HOME"), c.env.Home())
+		if localOptions.SessionRoot != "" {
+			parts = append(parts, "root", localOptions.SessionRoot)
+		}
+	}
+
+	return strings.Join(parts, "|"), true
 }
 
 func parseCodexStatus(status string) (CodexData, bool) {

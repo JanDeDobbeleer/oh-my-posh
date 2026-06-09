@@ -46,7 +46,7 @@ func statuslineRunWithDataSource[T any](
 		}
 
 		if len(stdinData) > 0 {
-			log.Debugf("received data from stdin: %s", string(stdinData))
+			log.Debugf("received %d bytes from stdin", len(stdinData))
 		}
 
 		if len(bytes.TrimSpace(stdinData)) == 0 && dataSource != nil {

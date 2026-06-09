@@ -29,6 +29,10 @@ import Config from "@site/src/components/Config.js";
     foreground: "#111111",
     background: "#10A37F",
     template: " {{ .FormattedText }} ",
+    cache: {
+      duration: "30s",
+      strategy: "device",
+    },
     options: {
       display_model: true,
       display_reasoning: true,
@@ -241,6 +245,9 @@ When the segment is added to a normal Oh My Posh config, it first checks the ses
 then `status_file`, then the file path in `POSH_CODEX_STATUS_FILE`, then the JSON payload in
 `POSH_CODEX_STATUS`. If none of those sources provide usable status data, it automatically
 reads the latest local Codex session `token_count` event.
+
+Use the standard segment `cache` setting to control how often local discovery refreshes. Without
+a segment cache, local discovery runs whenever the segment renders.
 
 The `oh-my-posh codex` command uses the same local discovery logic, caches the parsed data,
 then renders your configured statusline prompt. Standard input takes precedence when a

@@ -27,7 +27,7 @@ type CodexLocalStatusOptions struct {
 
 type codexSessionFile struct {
 	path    string
-	modTime int64
+	sortKey string
 }
 
 type codexJSONLEvent struct {
@@ -86,6 +86,10 @@ func CodexStatusFromLocalSessions(options CodexLocalStatusOptions) (CodexData, e
 
 	for _, file := range files {
 		data, err := codexStatusFromSessionFile(file.path, cfg)
+		if err == nil && options.SessionID != "" && data.ThreadID != options.SessionID {
+			continue
+		}
+
 		if err == nil && data.hasStatus() {
 			return data, nil
 		}
@@ -108,60 +112,124 @@ func CodexStatusFromLocalSessions(options CodexLocalStatusOptions) (CodexData, e
 
 func codexSessionFiles(root, sessionID string) ([]codexSessionFile, error) {
 	files := []codexSessionFile{}
-	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
 
-		if entry.IsDir() {
-			return nil
-		}
-
-		if !strings.EqualFold(filepath.Ext(entry.Name()), ".jsonl") {
-			return nil
-		}
-
-		if sessionID != "" && !strings.Contains(entry.Name(), sessionID) {
-			return nil
-		}
-
-		info, err := entry.Info()
-		if err != nil {
-			return err
-		}
-
-		files = appendNewestCodexSessionFile(files, codexSessionFile{
-			path:    path,
-			modTime: info.ModTime().UnixNano(),
-		}, sessionID == "")
-
-		return nil
-	})
+	dirs, err := codexSessionSearchDirs(root)
 	if err != nil {
 		return nil, err
 	}
 
-	sort.Slice(files, func(i, j int) bool {
-		return files[i].modTime > files[j].modTime
-	})
+	for _, dir := range dirs {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			return nil, err
+		}
 
-	return files, nil
-}
+		for _, file := range codexSessionFilesInDir(dir, entries, sessionID) {
+			files = append(files, file)
 
-func appendNewestCodexSessionFile(files []codexSessionFile, file codexSessionFile, bound bool) []codexSessionFile {
-	files = append(files, file)
-	if !bound || len(files) <= codexMaxSessionFiles {
-		return files
-	}
-
-	oldestIndex := 0
-	for i := 1; i < len(files); i++ {
-		if files[i].modTime < files[oldestIndex].modTime {
-			oldestIndex = i
+			if sessionID == "" && len(files) >= codexMaxSessionFiles {
+				sortCodexSessionFiles(files)
+				return files, nil
+			}
 		}
 	}
 
-	return append(files[:oldestIndex], files[oldestIndex+1:]...)
+	sortCodexSessionFiles(files)
+	return files, nil
+}
+
+func codexSessionSearchDirs(root string) ([]string, error) {
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return nil, err
+	}
+
+	years := filterCodexSessionDirs(entries, 4)
+	sort.Sort(sort.Reverse(sort.StringSlice(years)))
+
+	dirs := []string{}
+	for _, year := range years {
+		yearPath := filepath.Join(root, year)
+		monthEntries, err := os.ReadDir(yearPath)
+		if err != nil {
+			return nil, err
+		}
+
+		months := filterCodexSessionDirs(monthEntries, 2)
+		sort.Sort(sort.Reverse(sort.StringSlice(months)))
+
+		for _, month := range months {
+			monthPath := filepath.Join(yearPath, month)
+			dayEntries, err := os.ReadDir(monthPath)
+			if err != nil {
+				return nil, err
+			}
+
+			days := filterCodexSessionDirs(dayEntries, 2)
+			sort.Sort(sort.Reverse(sort.StringSlice(days)))
+
+			for _, day := range days {
+				dirs = append(dirs, filepath.Join(monthPath, day))
+			}
+		}
+	}
+
+	return append(dirs, root), nil
+}
+
+func filterCodexSessionDirs(entries []os.DirEntry, length int) []string {
+	dirs := []string{}
+	for _, entry := range entries {
+		if entry.IsDir() && isDigits(entry.Name(), length) {
+			dirs = append(dirs, entry.Name())
+		}
+	}
+
+	return dirs
+}
+
+func isDigits(value string, length int) bool {
+	if len(value) != length {
+		return false
+	}
+
+	for _, char := range value {
+		if char < '0' || char > '9' {
+			return false
+		}
+	}
+
+	return true
+}
+
+func codexSessionFilesInDir(dir string, entries []os.DirEntry, sessionID string) []codexSessionFile {
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].Name() > entries[j].Name()
+	})
+
+	files := []codexSessionFile{}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.EqualFold(filepath.Ext(entry.Name()), ".jsonl") {
+			continue
+		}
+
+		if sessionID != "" && !strings.Contains(entry.Name(), sessionID) {
+			continue
+		}
+
+		files = append(files, codexSessionFile{
+			path:    filepath.Join(dir, entry.Name()),
+			sortKey: entry.Name(),
+		})
+	}
+
+	return files
+}
+
+func sortCodexSessionFiles(files []codexSessionFile) {
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].sortKey > files[j].sortKey
+	})
 }
 
 func codexStatusFromSessionFile(path string, cfg codexConfigStatus) (CodexData, error) {
@@ -177,16 +245,25 @@ func codexStatusFromSessionFile(path string, cfg codexConfigStatus) (CodexData, 
 
 	for {
 		line, err := reader.ReadBytes('\n')
-		if len(line) > 0 {
-			event, ok := parseCodexJSONLEvent(line)
-			if ok {
-				switch event.Type {
-				case "session_meta":
-					_ = json.Unmarshal(event.Payload, &meta)
-				case "event_msg":
-					if isCodexTokenCountPayload(event.Payload) {
-						latest = event.Payload
-					}
+		if len(strings.TrimSpace(string(line))) > 0 {
+			event, parseErr := parseCodexJSONLEvent(line)
+			if parseErr != nil {
+				return CodexData{}, parseErr
+			}
+
+			switch event.Type {
+			case "session_meta":
+				if parseErr := json.Unmarshal(event.Payload, &meta); parseErr != nil {
+					return CodexData{}, parseErr
+				}
+			case "event_msg":
+				matches, parseErr := isCodexTokenCountPayload(event.Payload)
+				if parseErr != nil {
+					return CodexData{}, parseErr
+				}
+
+				if matches {
+					latest = event.Payload
 				}
 			}
 		}
@@ -214,21 +291,24 @@ func codexStatusFromSessionFile(path string, cfg codexConfigStatus) (CodexData, 
 	return data, nil
 }
 
-func parseCodexJSONLEvent(line []byte) (codexJSONLEvent, bool) {
+func parseCodexJSONLEvent(line []byte) (codexJSONLEvent, error) {
 	var event codexJSONLEvent
 	if err := json.Unmarshal(line, &event); err != nil {
-		return codexJSONLEvent{}, false
+		return codexJSONLEvent{}, err
 	}
 
-	return event, true
+	return event, nil
 }
 
-func isCodexTokenCountPayload(payload json.RawMessage) bool {
+func isCodexTokenCountPayload(payload json.RawMessage) (bool, error) {
 	var typed struct {
 		Type string `json:"type"`
 	}
+	if err := json.Unmarshal(payload, &typed); err != nil {
+		return false, err
+	}
 
-	return json.Unmarshal(payload, &typed) == nil && typed.Type == "token_count"
+	return typed.Type == "token_count", nil
 }
 
 func enrichCodexStatusPayload(payload *CodexData, meta *codexSessionMeta, cfg codexConfigStatus) {

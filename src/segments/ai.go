@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	thousand = 1000.0
-	million  = 1000000.0
+	thousand = 1000
+	million  = 1000000
 
 	gaugeMarkedChar   options.Option = "gauge_marked_char"
 	gaugeUnmarkedChar options.Option = "gauge_unmarked_char"
@@ -16,13 +16,13 @@ const (
 
 // formatTokenCount formats a token count as a human-readable string ("1.2K", "3.4M", or raw).
 func formatTokenCount(n int) string {
-	if n < int(thousand) {
+	if n < thousand {
 		return fmt.Sprintf("%d", n)
 	}
 
-	if n < int(million) {
-		return fmt.Sprintf("%.1fK", float64(n)/thousand)
+	if n < million {
+		return fmt.Sprintf("%.1fK", float64(n)/float64(thousand))
 	}
 
-	return fmt.Sprintf("%.1fM", float64(n)/million)
+	return fmt.Sprintf("%.1fM", float64(n)/float64(million))
 }

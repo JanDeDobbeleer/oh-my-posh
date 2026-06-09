@@ -74,6 +74,22 @@ func TestCodexStatusFromLocalSessionsUsesRequestedSession(t *testing.T) {
 	assert.Equal(t, 20, payload.Info.TotalTokenUsage.TotalTokens)
 }
 
+func TestCodexStatusFromLocalSessionsSkipsMismatchedRequestedSession(t *testing.T) {
+	tmp := t.TempDir()
+	sessionRoot := filepath.Join(tmp, "sessions")
+	require.NoError(t, os.MkdirAll(sessionRoot, 0o755))
+
+	mismatch := filepath.Join(sessionRoot, "rollout-2026-06-09T10-00-00-requested-session.jsonl")
+	writeCodexSessionFile(t, mismatch, "different-session", "2026-06-09T14:00:00Z", 10, 20)
+
+	_, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
+		SessionRoot: sessionRoot,
+		SessionID:   "requested-session",
+	})
+	require.Error(t, err)
+	assert.ErrorIs(t, err, errCodexNoTokenCount)
+}
+
 func TestCodexStatusFromLocalSessionsReturnsErrorWhenNoTokenCount(t *testing.T) {
 	tmp := t.TempDir()
 	sessionRoot := filepath.Join(tmp, "sessions")
@@ -89,6 +105,39 @@ func TestCodexStatusFromLocalSessionsReturnsErrorWhenNoTokenCount(t *testing.T) 
 	})
 	require.Error(t, err)
 	assert.ErrorIs(t, err, errCodexNoTokenCount)
+}
+
+func TestCodexStatusFromLocalSessionsReturnsMalformedJSONLError(t *testing.T) {
+	tmp := t.TempDir()
+	sessionRoot := filepath.Join(tmp, "sessions")
+	require.NoError(t, os.MkdirAll(sessionRoot, 0o755))
+	require.NoError(t, os.WriteFile(
+		filepath.Join(sessionRoot, "rollout-malformed.jsonl"),
+		[]byte("{\"timestamp\":\"2026-06-09T14:00:00Z\",\"type\":\"event_msg\",\"payload\":"),
+		0o644,
+	))
+
+	_, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
+		SessionRoot: sessionRoot,
+	})
+	require.Error(t, err)
+	assert.NotErrorIs(t, err, errCodexNoTokenCount)
+}
+
+func TestCodexStatusFromLocalSessionsIgnoresNonDateDirectories(t *testing.T) {
+	tmp := t.TempDir()
+	sessionRoot := filepath.Join(tmp, "sessions")
+	require.NoError(t, os.MkdirAll(filepath.Join(sessionRoot, "archive"), 0o755))
+	require.NoError(t, os.MkdirAll(filepath.Join(sessionRoot, "2026", "06", "09"), 0o755))
+
+	session := filepath.Join(sessionRoot, "2026", "06", "09", "rollout-2026-06-09T10-00-00-session.jsonl")
+	writeCodexSessionFile(t, session, "session", "2026-06-09T14:00:00Z", 10, 20)
+
+	payload, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
+		SessionRoot: sessionRoot,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, "session", payload.ThreadID)
 }
 
 func TestCodexSegmentDiscoversLocalStatus(t *testing.T) {
@@ -118,6 +167,28 @@ func TestCodexSegmentDiscoversLocalStatus(t *testing.T) {
 	assert.Equal(t, 20, segment.Info.TotalTokenUsage.TotalTokens)
 
 	cache.Delete(cache.Session, cache.CODEXCACHE)
+}
+
+func TestCodexCacheKeyUsesStatusSource(t *testing.T) {
+	env := new(mock.Environment)
+
+	segment := &Codex{
+		Base: Base{
+			env: env,
+			options: options.Map{
+				codexHome:      "C:/Users/Test/.codex",
+				codexSessionID: "thread-1",
+			},
+		},
+	}
+
+	key, ok := segment.CacheKey()
+	require.True(t, ok)
+	assert.Equal(
+		t,
+		"codex|file-env|POSH_CODEX_STATUS_FILE|json-env|POSH_CODEX_STATUS|session|thread-1|root|"+filepath.Join("C:/Users/Test/.codex", "sessions"),
+		key,
+	)
 }
 
 func writeCodexSessionFile(t *testing.T, path, sessionID, timestamp string, firstTokens, secondTokens int) {

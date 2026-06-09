@@ -171,6 +171,7 @@ func TestCodexSegmentDiscoversLocalStatus(t *testing.T) {
 
 func TestCodexCacheKeyUsesStatusSource(t *testing.T) {
 	env := new(mock.Environment)
+	env.On("Getenv", defaultCodexStatusFileEnv).Return("C:/tmp/codex-status.json")
 
 	segment := &Codex{
 		Base: Base{
@@ -184,9 +185,13 @@ func TestCodexCacheKeyUsesStatusSource(t *testing.T) {
 
 	key, ok := segment.CacheKey()
 	require.True(t, ok)
+
+	expectedKey := "codex|discover|true|file-env|POSH_CODEX_STATUS_FILE|" +
+		"file|C:/tmp/codex-status.json|json-env|POSH_CODEX_STATUS|" +
+		"session|thread-1|root|" + filepath.Join("C:/Users/Test/.codex", "sessions")
 	assert.Equal(
 		t,
-		"codex|file-env|POSH_CODEX_STATUS_FILE|json-env|POSH_CODEX_STATUS|session|thread-1|root|"+filepath.Join("C:/Users/Test/.codex", "sessions"),
+		expectedKey,
 		key,
 	)
 }

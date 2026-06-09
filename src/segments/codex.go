@@ -301,7 +301,7 @@ func (c *Codex) localStatusData() (CodexData, bool) {
 }
 
 func (c *Codex) CacheKey() (string, bool) {
-	parts := []string{"codex"}
+	parts := []string{"codex", "discover", fmt.Sprintf("%t", c.optionBool(discoverLocalStatus, true))}
 
 	if value := c.optionString(statusFile, ""); value != "" {
 		parts = append(parts, "file", value)
@@ -309,6 +309,11 @@ func (c *Codex) CacheKey() (string, bool) {
 
 	if value := c.optionString(statusFileEnv, defaultCodexStatusFileEnv); value != "" {
 		parts = append(parts, "file-env", value)
+		if c.env != nil {
+			if file := c.env.Getenv(value); file != "" {
+				parts = append(parts, "file", file)
+			}
+		}
 	}
 
 	if value := c.optionString(statusJSONEnv, defaultCodexStatusJSONEnv); value != "" {

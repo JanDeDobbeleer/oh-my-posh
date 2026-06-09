@@ -58,8 +58,10 @@ func TestCodexSegment(t *testing.T) {
 
 			segment := &Codex{
 				Base: Base{
-					env:     env,
-					options: options.Map{},
+					env: env,
+					options: options.Map{
+						discoverLocalStatus: false,
+					},
 				},
 			}
 
@@ -144,8 +146,10 @@ func TestCodexSegmentEmptyPayloadDisabled(t *testing.T) {
 
 	segment := &Codex{
 		Base: Base{
-			env:     env,
-			options: options.Map{},
+			env: env,
+			options: options.Map{
+				discoverLocalStatus: false,
+			},
 		},
 	}
 
@@ -196,8 +200,10 @@ func TestCodexSegmentStatusFileEnv(t *testing.T) {
 
 	segment := &Codex{
 		Base: Base{
-			env:     env,
-			options: options.Map{},
+			env: env,
+			options: options.Map{
+				discoverLocalStatus: false,
+			},
 		},
 	}
 
@@ -221,8 +227,10 @@ func TestCodexSegmentStatusEnv(t *testing.T) {
 
 	segment := &Codex{
 		Base: Base{
-			env:     env,
-			options: options.Map{},
+			env: env,
+			options: options.Map{
+				discoverLocalStatus: false,
+			},
 		},
 	}
 
@@ -247,8 +255,10 @@ func TestCodexSegmentInvalidCacheFallsBackToStatusFile(t *testing.T) {
 
 	segment := &Codex{
 		Base: Base{
-			env:     env,
-			options: options.Map{},
+			env: env,
+			options: options.Map{
+				discoverLocalStatus: false,
+			},
 		},
 	}
 
@@ -298,8 +308,10 @@ func TestCodexSegmentEmptyRateLimitsDisabled(t *testing.T) {
 
 	segment := &Codex{
 		Base: Base{
-			env:     env,
-			options: options.Map{},
+			env: env,
+			options: options.Map{
+				discoverLocalStatus: false,
+			},
 		},
 	}
 

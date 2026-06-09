@@ -1,12 +1,15 @@
-package cli
+package segments
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,26 +34,21 @@ func TestCodexStatusFromLocalSessions(t *testing.T) {
 	require.NoError(t, os.Chtimes(older, time.Now().Add(-time.Hour), time.Now().Add(-time.Hour)))
 	require.NoError(t, os.Chtimes(newer, time.Now(), time.Now()))
 
-	data, err := codexStatusFromLocalSessions(codexLocalStatusOptions{
+	payload, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
 		CodexHome:   codexHome,
 		SessionRoot: filepath.Join(codexHome, "sessions"),
 	})
 	require.NoError(t, err)
 
-	var payload map[string]any
-	require.NoError(t, json.Unmarshal(data, &payload))
-	assert.Equal(t, "token_count", payload["type"])
-	assert.Equal(t, "newer-session", payload["thread_id"])
-	assert.Equal(t, "C:/repo/newer-session", payload["cwd"])
-	assert.Equal(t, "0.138.0", payload["version"])
-	assert.Equal(t, "high", payload["reasoning_effort"])
-	assert.Equal(t, "never", payload["approval_mode"])
-	assert.Equal(t, "workspace-write", payload["sandbox_policy"])
-	assert.Equal(t, float64(40), payload["sequence"])
-	assert.Equal(t, map[string]any{
-		"id":           "gpt-5.5",
-		"display_name": "gpt-5.5",
-	}, payload["model"])
+	assert.Equal(t, "token_count", payload.Type)
+	assert.Equal(t, "newer-session", payload.ThreadID)
+	assert.Equal(t, "C:/repo/newer-session", payload.CWD)
+	assert.Equal(t, "0.138.0", payload.Version)
+	assert.Equal(t, "high", payload.ReasoningEffort)
+	assert.Equal(t, "never", payload.ApprovalMode)
+	assert.Equal(t, "workspace-write", payload.SandboxPolicy)
+	assert.Equal(t, "gpt-5.5", payload.Model.DisplayName)
+	assert.Equal(t, 40, payload.Info.TotalTokenUsage.TotalTokens)
 }
 
 func TestCodexStatusFromLocalSessionsUsesRequestedSession(t *testing.T) {
@@ -66,16 +64,14 @@ func TestCodexStatusFromLocalSessionsUsesRequestedSession(t *testing.T) {
 	require.NoError(t, os.Chtimes(older, time.Now().Add(-time.Hour), time.Now().Add(-time.Hour)))
 	require.NoError(t, os.Chtimes(newer, time.Now(), time.Now()))
 
-	data, err := codexStatusFromLocalSessions(codexLocalStatusOptions{
+	payload, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
 		SessionRoot: sessionRoot,
 		SessionID:   "older-session",
 	})
 	require.NoError(t, err)
 
-	var payload map[string]any
-	require.NoError(t, json.Unmarshal(data, &payload))
-	assert.Equal(t, "older-session", payload["thread_id"])
-	assert.Equal(t, float64(20), payload["sequence"])
+	assert.Equal(t, "older-session", payload.ThreadID)
+	assert.Equal(t, 20, payload.Info.TotalTokenUsage.TotalTokens)
 }
 
 func TestCodexStatusFromLocalSessionsReturnsErrorWhenNoTokenCount(t *testing.T) {
@@ -88,30 +84,60 @@ func TestCodexStatusFromLocalSessionsReturnsErrorWhenNoTokenCount(t *testing.T) 
 		0o644,
 	))
 
-	_, err := codexStatusFromLocalSessions(codexLocalStatusOptions{
+	_, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
 		SessionRoot: sessionRoot,
 	})
 	require.Error(t, err)
+	assert.ErrorIs(t, err, errCodexNoTokenCount)
 }
 
-func writeCodexSessionFile(t *testing.T, path, sessionID, timestamp string, firstSequence, secondSequence int) {
+func TestCodexSegmentDiscoversLocalStatus(t *testing.T) {
+	cache.Delete(cache.Session, cache.CODEXCACHE)
+
+	tmp := t.TempDir()
+	codexHome := filepath.Join(tmp, ".codex")
+	sessionRoot := filepath.Join(codexHome, "sessions", "2026", "06", "09")
+	require.NoError(t, os.MkdirAll(sessionRoot, 0o755))
+	writeCodexSessionFile(t, filepath.Join(sessionRoot, "rollout-local-session.jsonl"), "local-session", "2026-06-09T14:00:00Z", 10, 20)
+
+	env := new(mock.Environment)
+	env.On("Getenv", defaultCodexStatusFileEnv).Return("")
+	env.On("Getenv", defaultCodexStatusJSONEnv).Return("")
+	env.On("Getenv", "CODEX_HOME").Return(codexHome)
+	env.On("Home").Return(tmp)
+
+	segment := &Codex{
+		Base: Base{
+			env:     env,
+			options: options.Map{},
+		},
+	}
+
+	require.True(t, segment.Enabled())
+	assert.Equal(t, "local-session", segment.ThreadID)
+	assert.Equal(t, 20, segment.Info.TotalTokenUsage.TotalTokens)
+
+	cache.Delete(cache.Session, cache.CODEXCACHE)
+}
+
+func writeCodexSessionFile(t *testing.T, path, sessionID, timestamp string, firstTokens, secondTokens int) {
 	t.Helper()
 
 	content := "" +
 		"{\"timestamp\":\"" + timestamp + "\",\"type\":\"session_meta\",\"payload\":{\"id\":\"" + sessionID + "\",\"cwd\":\"C:/repo/" + sessionID + "\",\"cli_version\":\"0.138.0\"}}\n" +
-		codexTokenCountLine(timestamp, firstSequence) + "\n" +
-		codexTokenCountLine(timestamp, secondSequence) + "\n"
+		codexTokenCountLine(timestamp, firstTokens) + "\n" +
+		codexTokenCountLine(timestamp, secondTokens) + "\n"
 
 	require.NoError(t, os.WriteFile(path, []byte(content), 0o644))
 }
 
-func codexTokenCountLine(timestamp string, sequence int) string {
+func codexTokenCountLine(timestamp string, totalTokens int) string {
 	return fmt.Sprintf(
-		`{"timestamp":"%s","type":"event_msg","payload":{"type":"token_count","sequence":%d,`+
-			`"info":{"total_token_usage":{"total_tokens":1000},"last_token_usage":{"total_tokens":100},`+
+		`{"timestamp":"%s","type":"event_msg","payload":{"type":"token_count",`+
+			`"info":{"total_token_usage":{"total_tokens":%d},"last_token_usage":{"total_tokens":100},`+
 			`"model_context_window":10000},"rate_limits":{"primary":{"used_percent":12},`+
 			`"secondary":{"used_percent":34}}}}`,
 		timestamp,
-		sequence,
+		totalTokens,
 	)
 }

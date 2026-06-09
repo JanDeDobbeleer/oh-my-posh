@@ -78,6 +78,10 @@ const (
 	displayTokens        options.Option = "display_tokens"
 	displayFiveHourLimit options.Option = "display_five_hour_limit"
 	displayWeeklyLimit   options.Option = "display_weekly_limit"
+	discoverLocalStatus  options.Option = "discover_local_status"
+	codexHome            options.Option = "codex_home"
+	sessionRoot          options.Option = "session_root"
+	codexSessionID       options.Option = "session_id"
 	statusFile           options.Option = "status_file"
 	statusFileEnv        options.Option = "status_file_env"
 	statusJSONEnv        options.Option = "status_json_env"
@@ -178,13 +182,21 @@ func (c *Codex) Enabled() bool {
 	if data, found = c.statusEnvData(); found {
 		if !data.hasStatus() {
 			log.Debug("codex segment: status environment variable has no status information")
-			return false
-		}
+		} else {
+			log.Debug("codex segment: found data in status environment variable")
+			log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
 
-		log.Debug("codex segment: found data in status environment variable")
+			c.CodexData = data
+			return true
+		}
+	}
+
+	if data, found = c.localStatusData(); found {
+		log.Debug("codex segment: found data in local session transcripts")
 		log.Debugf("codex segment: model=%s, thread=%s", data.Model.DisplayName, data.ThreadID)
 
 		c.CodexData = data
+		cache.Set(cache.Session, cache.CODEXCACHE, data, cache.ToDuration(30))
 		return true
 	}
 
@@ -261,6 +273,31 @@ func (c *Codex) statusEnvData() (CodexData, bool) {
 	}
 
 	return parseCodexStatus(c.env.Getenv(envName))
+}
+
+func (c *Codex) localStatusData() (CodexData, bool) {
+	if c.env == nil || !c.optionBool(discoverLocalStatus, true) {
+		return CodexData{}, false
+	}
+
+	localOptions := ResolveCodexLocalStatusOptions(CodexLocalStatusOptions{
+		CodexHome:   c.optionString(codexHome, ""),
+		SessionRoot: c.optionString(sessionRoot, ""),
+		SessionID:   c.optionString(codexSessionID, ""),
+	}, c.env.Getenv("CODEX_HOME"), c.env.Home())
+
+	data, err := CodexStatusFromLocalSessions(localOptions)
+	if err != nil {
+		log.Debugf("codex segment: failed to discover local status data: %v", err)
+		return CodexData{}, false
+	}
+
+	if !data.hasStatus() {
+		log.Debug("codex segment: local session data has no status information")
+		return CodexData{}, false
+	}
+
+	return data, true
 }
 
 func parseCodexStatus(status string) (CodexData, bool) {

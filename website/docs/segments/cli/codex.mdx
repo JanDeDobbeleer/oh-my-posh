@@ -10,9 +10,9 @@ Display OpenAI Codex session information including the current model, token usag
 context window usage, and available rate-limit data. Shows visual gauges for context
 usage, five-hour usage, and weekly usage.
 
-The `oh-my-posh codex` command reads the latest Codex `token_count` event from local
-Codex session transcripts under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when
-`CODEX_HOME` is not set. It does not read Codex auth files or call Codex APIs.
+The segment reads the latest Codex `token_count` event from local Codex session
+transcripts under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when `CODEX_HOME`
+is not set. It does not read Codex auth files or call Codex APIs.
 
 For setup instructions, see [Change your prompt](/docs/installation/prompt?shell=codex).
 
@@ -52,8 +52,8 @@ import Config from "@site/src/components/Config.js";
 
 ## Status Payload
 
-The Codex command discovers this payload from local Codex JSONL session transcripts by
-default. The segment also accepts either a direct `token_count` payload or a Codex rollout
+The segment discovers this payload from local Codex JSONL session transcripts by
+default. It also accepts either a direct `token_count` payload or a Codex rollout
 `event_msg` wrapper whose `payload.type` is `token_count`.
 
 ```json
@@ -109,6 +109,10 @@ default. The segment also accepts either a direct `token_count` payload or a Cod
 | `display_tokens` | `boolean` | `false` | Display total token usage in the default template |
 | `display_five_hour_limit` | `boolean` | `false` | Display the 5-hour limit in the default template |
 | `display_weekly_limit` | `boolean` | `true` | Display the 7-day limit in the default template |
+| `discover_local_status` | `boolean` | `true` | Discover Codex status from local session transcripts when no explicit status data is available |
+| `codex_home` | `string` | `CODEX_HOME` or `~/.codex` | Codex home directory |
+| `session_root` | `string` | `<codex_home>/sessions` | Codex sessions directory |
+| `session_id` | `string` | `""` | Codex session/thread ID to render; defaults to the newest session with token usage |
 | `status_file` | `string` | `""` | Path to a JSON file containing Codex status data |
 | `status_file_env` | `string` | `POSH_CODEX_STATUS_FILE` | Environment variable containing a Codex status file path |
 | `status_json_env` | `string` | `POSH_CODEX_STATUS` | Environment variable containing Codex status JSON |
@@ -233,18 +237,18 @@ the `gauge_marked_char` and `gauge_unmarked_char` options to apply.
 
 ## How it works
 
-The `oh-my-posh codex` command reads the latest local Codex session `token_count` event,
-caches the parsed data, then renders your configured prompt. Standard input takes precedence
-when a payload is piped to the command:
+When the segment is added to a normal Oh My Posh config, it first checks the session cache,
+then `status_file`, then the file path in `POSH_CODEX_STATUS_FILE`, then the JSON payload in
+`POSH_CODEX_STATUS`. If none of those sources provide usable status data, it automatically
+reads the latest local Codex session `token_count` event.
+
+The `oh-my-posh codex` command uses the same local discovery logic, caches the parsed data,
+then renders your configured statusline prompt. Standard input takes precedence when a
+payload is piped to the command:
 
 ```bash
 oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json < codex-status.json
 ```
-
-For normal prompt rendering, the segment can also read status data from
-`status_file`, from the file path in `POSH_CODEX_STATUS_FILE`, or from the JSON
-payload in `POSH_CODEX_STATUS`. This is useful when the prompt is rendered outside
-the Codex command process.
 
 The segment is only visible when Codex status data is available.
 

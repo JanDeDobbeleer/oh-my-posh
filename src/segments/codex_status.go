@@ -18,6 +18,7 @@ const codexMaxSessionFiles = 25
 
 var errCodexNoTokenCount = errors.New("no token_count event found")
 
+// CodexLocalStatusOptions configures local Codex session transcript discovery.
 type CodexLocalStatusOptions struct {
 	CodexHome   string
 	SessionRoot string
@@ -52,6 +53,7 @@ type codexConfigStatus struct {
 	SandboxMode          string `toml:"sandbox_mode"`
 }
 
+// ResolveCodexLocalStatusOptions fills default local Codex discovery paths.
 func ResolveCodexLocalStatusOptions(options CodexLocalStatusOptions, codexHomeEnv, userHome string) CodexLocalStatusOptions {
 	if options.CodexHome == "" {
 		options.CodexHome = defaultCodexHome(codexHomeEnv, userHome)
@@ -64,6 +66,7 @@ func ResolveCodexLocalStatusOptions(options CodexLocalStatusOptions, codexHomeEn
 	return options
 }
 
+// CodexStatusFromLocalSessions returns the latest token_count status from local Codex session transcripts.
 func CodexStatusFromLocalSessions(options CodexLocalStatusOptions) (CodexData, error) {
 	if options.SessionRoot == "" {
 		return CodexData{}, errors.New("codex sessions directory could not be determined")
@@ -107,7 +110,7 @@ func codexSessionFiles(root, sessionID string) ([]codexSessionFile, error) {
 	files := []codexSessionFile{}
 	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 		if err != nil {
-			return nil
+			return err
 		}
 
 		if entry.IsDir() {

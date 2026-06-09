@@ -28,6 +28,8 @@ linters:
     - unused
     - whitespace
   settings:
+    exhaustive:
+      default-signifies-exhaustive: true
     goconst:
       ignore-tests: true
     gocritic:

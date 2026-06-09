@@ -38,7 +38,7 @@ func gt(e1, e2 any) bool {
 
 	// Handle named types with numeric underlying types (e.g. type Percentage int)
 	v := reflect.ValueOf(e1)
-	switch v.Kind() { //nolint:exhaustive
+	switch v.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return v.Int() > int64(toIntOrZero(e2))
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
@@ -52,9 +52,9 @@ func gt(e1, e2 any) bool {
 		return v.Uint() > uint64(e2Int)
 	case reflect.Float32, reflect.Float64:
 		return v.Float() > toFloat64(e2)
+	default:
+		return false
 	}
-
-	return false
 }
 
 func lt(e1, e2 any) bool {

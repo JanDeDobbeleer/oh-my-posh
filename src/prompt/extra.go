@@ -44,7 +44,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		if len(template) != 0 {
 			return template
 		}
-		switch promptType { //nolint: exhaustive
+		switch promptType {
 		case Debug:
 			return "[DBG]: "
 		case Transient:

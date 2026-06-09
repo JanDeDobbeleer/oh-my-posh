@@ -14,20 +14,29 @@ var codexCmd = &cobra.Command{
 	Short: "Render a prompt for OpenAI Codex status data",
 	Long: `Render a prompt for OpenAI Codex status data.
 
-This command reads Codex status JSON data from stdin and renders a prompt
-that can include a Codex segment with model, token, and rate limit information.
+This command renders the latest OpenAI Codex token usage data from local Codex
+session transcripts. It reads the newest token_count event from
+$CODEX_HOME/sessions, falling back to ~/.codex/sessions when CODEX_HOME is not set.
+
+When JSON is provided on stdin, stdin takes precedence over local session discovery.
 
 Example usage:
+  oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json
+  oh-my-posh codex --session 019e9eac-83ec-7393-ae18-cc2e566394d5
   cat codex-status.json | oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json`,
 	Args: cobra.NoArgs,
-	Run: statuslineRun[segments.CodexData](
+	Run: statuslineRunWithDataSource[segments.CodexData](
 		shell.CODEX,
 		cache.CODEXCACHE,
 		func(d *segments.CodexData) string { return d.ThreadID },
 		config.Codex,
+		codexStatusDataSource,
 	),
 }
 
 func init() {
+	codexCmd.Flags().String("session", "", "Codex session/thread ID to render; defaults to the newest session with token usage")
+	codexCmd.Flags().String("codex-home", "", "Codex home directory; defaults to CODEX_HOME or ~/.codex")
+	codexCmd.Flags().String("session-root", "", "Codex sessions directory; defaults to <codex-home>/sessions")
 	RootCmd.AddCommand(codexCmd)
 }

@@ -84,31 +84,42 @@ For more information about the Claude segment properties and customization optio
 </TabItem>
 <TabItem value="codex">
 
-To render OpenAI Codex session information with Oh My Posh, provide a compatible Codex status JSON
-payload to Oh My Posh.
+To render OpenAI Codex session information with Oh My Posh, use the `oh-my-posh codex`
+command. It reads the latest Codex `token_count` event from local Codex session transcripts
+under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when `CODEX_HOME` is not set.
 
-The `oh-my-posh codex` command reads status JSON from standard input and renders a dedicated
-statusline prompt:
+The command renders a dedicated statusline prompt:
 
 ```bash
-cat codex-status.json | oh-my-posh codex
+oh-my-posh codex
 ```
 
 :::tip
 You can use the `--config` flag to point to a tailored Oh My Posh config just for Codex:
 
 ```bash
-cat codex-status.json | oh-my-posh codex --config /path/to/codex.omp.json
+oh-my-posh codex --config /path/to/codex.omp.json
 ```
 
 :::
 
-For regular shell prompts, write the Codex status payload to a file and point the segment at it with
-`status_file`, or set `POSH_CODEX_STATUS_FILE` to the file path. You can also set
-`POSH_CODEX_STATUS` directly to the JSON payload.
+To render a specific Codex session, pass its thread ID:
 
-The Codex segment does not authenticate to Codex or read Codex auth files. It only renders the
-status data you provide.
+```bash
+oh-my-posh codex --session 019e9eac-83ec-7393-ae18-cc2e566394d5
+```
+
+The Codex command does not authenticate to Codex, call Codex APIs, or read Codex auth files. It
+only reads local session metadata and `token_count` events. If status JSON is provided on standard
+input, standard input takes precedence over local session discovery:
+
+```bash
+cat codex-status.json | oh-my-posh codex
+```
+
+For regular shell prompts, you can also write a Codex status payload to a file and point the
+segment at it with `status_file`, set `POSH_CODEX_STATUS_FILE` to the file path, or set
+`POSH_CODEX_STATUS` directly to the JSON payload.
 
 For more information about the Codex segment properties and customization options, see the
 [Codex segment documentation].

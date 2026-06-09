@@ -164,7 +164,7 @@ func (f *fields) init(data any) {
 	}
 
 	val := reflect.TypeOf(data)
-	switch val.Kind() { //nolint:exhaustive
+	switch val.Kind() {
 	case reflect.Struct:
 		name := val.Name()
 
@@ -211,6 +211,7 @@ func (f *fields) init(data any) {
 		}
 	case reflect.Pointer:
 		f.init(reflect.ValueOf(data).Elem().Interface())
+	default:
 	}
 }
 

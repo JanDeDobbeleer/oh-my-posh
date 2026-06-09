@@ -16,7 +16,7 @@ const (
 )
 
 func (color Ansi) isKeyword() bool {
-	switch color { //nolint: exhaustive
+	switch color {
 	case Transparent, ParentBackground, ParentForeground, Background, Foreground:
 		return true
 	default:
@@ -31,7 +31,7 @@ func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 				return Transparent
 			}
 
-			switch keyword { //nolint: exhaustive
+			switch keyword {
 			case ParentBackground:
 				keyword = parentColor.Background
 			case ParentForeground:

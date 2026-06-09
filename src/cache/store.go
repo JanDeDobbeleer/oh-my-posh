@@ -40,7 +40,7 @@ func (s Store) new() *store {
 
 // getStore returns the appropriate store based on the Store identifier
 func (s Store) get() *store {
-	switch s { //nolint:exhaustive
+	switch s {
 	case Device:
 		if device == nil {
 			device = s.new()

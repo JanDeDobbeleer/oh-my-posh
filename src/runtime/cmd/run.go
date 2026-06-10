@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"context"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -14,7 +15,16 @@ import (
 // cleanup (KillGoroutineChildren) if they decide to abort waiting for the
 // goroutine that spawned it.
 func Run(command string, args ...string) (string, error) {
+	return RunWithEnv(command, nil, args...)
+}
+
+// RunWithEnv executes a command with additional environment variables.
+func RunWithEnv(command string, envs []string, args ...string) (string, error) {
 	cmd := exec.CommandContext(context.Background(), command, args...)
+	if len(envs) > 0 {
+		cmd.Env = append(os.Environ(), envs...)
+	}
+
 	var out bytes.Buffer
 	var errb bytes.Buffer
 	cmd.Stdout = &out

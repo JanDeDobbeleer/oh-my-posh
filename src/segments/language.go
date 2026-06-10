@@ -72,6 +72,7 @@ type cmd struct {
 	regex              string
 	versionURLTemplate string
 	args               []string
+	envs               []string
 }
 
 func (c *cmd) parse(versionInfo string) (*Version, error) {
@@ -299,10 +300,11 @@ func (l *Language) runCommand(command *cmd) (string, error) {
 			return "", errors.New(noVersion)
 		}
 
-		versionStr, err := l.env.RunCommand(command.executable, command.args...)
+		versionStr, err := l.env.RunCommandWithEnv(command.executable, command.envs, command.args...)
+
 		if exitErr, ok := err.(*runtime.CommandError); ok {
 			l.exitCode = exitErr.ExitCode
-			return "", fmt.Errorf("err executing %s with %s", command.executable, command.args)
+			return "", fmt.Errorf("err executing %s with %v", command.executable, command.args)
 		}
 
 		return versionStr, nil

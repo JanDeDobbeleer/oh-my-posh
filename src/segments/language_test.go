@@ -40,7 +40,7 @@ func bootStrapLanguageTest(args *languageArgs) *Language {
 
 	for _, command := range args.commands {
 		env.On("HasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
-		env.On("RunCommand", command.executable, command.args).Return(args.version, args.expectedError)
+		env.On("RunCommandWithEnv", command.executable, command.envs, command.args).Return(args.version, args.expectedError)
 	}
 
 	for _, extension := range args.extensions {
@@ -575,13 +575,13 @@ func TestLanguageTooling(t *testing.T) {
 		hasUnicorn := slices.Contains(tc.EnabledTools, "unicorn")
 		env.On("HasCommand", "unicorn").Return(hasUnicorn)
 		if hasUnicorn {
-			env.On("RunCommand", "unicorn", []string{"--version"}).Return(tc.DefaultVersion, nil)
+			env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return(tc.DefaultVersion, nil)
 		}
 
 		hasToolCommand := slices.Contains(tc.EnabledTools, "mytool")
 		env.On("HasCommand", "mytool").Return(hasToolCommand)
 		if hasToolCommand {
-			env.On("RunCommand", "mytool", []string{"--version"}).Return(tc.ToolVersion, nil)
+			env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return(tc.ToolVersion, nil)
 		}
 
 		props := options.Map{
@@ -620,12 +620,13 @@ type mockedLanguageParams struct {
 	versionParam  string
 	versionOutput string
 	extension     string
+	envs          []string
 }
 
 func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, options.Map) {
 	env := new(mock.Environment)
 	env.On("HasCommand", params.cmd).Return(true)
-	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	env.On("RunCommandWithEnv", params.cmd, params.envs, []string{params.versionParam}).Return(params.versionOutput, nil)
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")

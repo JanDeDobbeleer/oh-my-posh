@@ -142,6 +142,10 @@ func findColumnIndices(headerLine string) []int {
 
 	// Get the last 5 column positions (Name, Id, Version, Available, Source)
 	// This handles cases where there's garbage before the actual header
+	if len(allIndices) < 5 {
+		return allIndices
+	}
+
 	lastFive := allIndices[len(allIndices)-5:]
 
 	// Make all positions relative to the first column position

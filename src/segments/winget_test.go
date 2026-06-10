@@ -179,6 +179,13 @@ Node.js            OpenJS.NodeJS               18.0.0    18.12.1   winget`,
 				Available: "3.11.5",
 			},
 		},
+		{
+			Case: "Fewer than 5 column headers (no panic)",
+			Output: `Name Id Version
+-----------------------------------------------------------------------------------
+Python 3.11        Python.Python.3.11          3.11.0`,
+			ExpectedCount: 0,
+		},
 	}
 
 	for _, tc := range cases {

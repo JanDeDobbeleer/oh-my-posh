@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -30,9 +29,6 @@ func TestCodexStatusFromLocalSessions(t *testing.T) {
 	writeCodexSessionFile(t, older, "older-session", "2026-06-09T14:00:00Z", 10, 20)
 	newer := filepath.Join(sessionRoot, "rollout-2026-06-09T11-00-00-newer-session.jsonl")
 	writeCodexSessionFile(t, newer, "newer-session", "2026-06-09T15:00:00Z", 30, 40)
-
-	require.NoError(t, os.Chtimes(older, time.Now().Add(-time.Hour), time.Now().Add(-time.Hour)))
-	require.NoError(t, os.Chtimes(newer, time.Now(), time.Now()))
 
 	payload, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
 		CodexHome:   codexHome,
@@ -60,9 +56,6 @@ func TestCodexStatusFromLocalSessionsUsesRequestedSession(t *testing.T) {
 	writeCodexSessionFile(t, older, "older-session", "2026-06-09T14:00:00Z", 10, 20)
 	newer := filepath.Join(sessionRoot, "rollout-2026-06-09T11-00-00-newer-session.jsonl")
 	writeCodexSessionFile(t, newer, "newer-session", "2026-06-09T15:00:00Z", 30, 40)
-
-	require.NoError(t, os.Chtimes(older, time.Now().Add(-time.Hour), time.Now().Add(-time.Hour)))
-	require.NoError(t, os.Chtimes(newer, time.Now(), time.Now()))
 
 	payload, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{
 		SessionRoot: sessionRoot,
@@ -186,9 +179,11 @@ func TestCodexCacheKeyUsesStatusSource(t *testing.T) {
 	key, ok := segment.CacheKey()
 	require.True(t, ok)
 
+	statusFileHash := codexCacheKeyHash("C:/tmp/codex-status.json")
+	sessionRootHash := codexCacheKeyHash(filepath.Join("C:/Users/Test/.codex", "sessions"))
 	expectedKey := "codex|discover|true|file-env|POSH_CODEX_STATUS_FILE|" +
-		"file|C:/tmp/codex-status.json|json-env|POSH_CODEX_STATUS|" +
-		"session|thread-1|root|" + filepath.Join("C:/Users/Test/.codex", "sessions")
+		"file|" + statusFileHash + "|json-env|POSH_CODEX_STATUS|" +
+		"session|thread-1|root|" + sessionRootHash
 	assert.Equal(
 		t,
 		expectedKey,

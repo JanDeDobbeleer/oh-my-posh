@@ -52,7 +52,7 @@ func statuslineRunWithDataSource[T any](
 		if len(bytes.TrimSpace(stdinData)) == 0 && dataSource != nil {
 			stdinData, err = dataSource(cmd)
 			if err != nil {
-				log.Debug(err.Error())
+				log.Error(err)
 			}
 		}
 

@@ -2,6 +2,7 @@ package segments
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -245,7 +246,7 @@ func codexStatusFromSessionFile(path string, cfg codexConfigStatus) (CodexData, 
 
 	for {
 		line, err := reader.ReadBytes('\n')
-		if len(strings.TrimSpace(string(line))) > 0 {
+		if len(bytes.TrimSpace(line)) > 0 {
 			event, parseErr := parseCodexJSONLEvent(line)
 			if parseErr != nil {
 				return CodexData{}, parseErr

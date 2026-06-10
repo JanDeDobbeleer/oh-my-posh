@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"crypto/sha1"
 	"encoding/json"
 	"fmt"
 	"path/filepath"
@@ -304,14 +305,14 @@ func (c *Codex) CacheKey() (string, bool) {
 	parts := []string{"codex", "discover", fmt.Sprintf("%t", c.optionBool(discoverLocalStatus, true))}
 
 	if value := c.optionString(statusFile, ""); value != "" {
-		parts = append(parts, "file", value)
+		parts = append(parts, "file", codexCacheKeyHash(value))
 	}
 
 	if value := c.optionString(statusFileEnv, defaultCodexStatusFileEnv); value != "" {
 		parts = append(parts, "file-env", value)
 		if c.env != nil {
 			if file := c.env.Getenv(value); file != "" {
-				parts = append(parts, "file", file)
+				parts = append(parts, "file", codexCacheKeyHash(file))
 			}
 		}
 	}
@@ -325,17 +326,21 @@ func (c *Codex) CacheKey() (string, bool) {
 	}
 
 	if value := c.optionString(sessionRoot, ""); value != "" {
-		parts = append(parts, "root", value)
+		parts = append(parts, "root", codexCacheKeyHash(value))
 	} else if value := c.optionString(codexHome, ""); value != "" {
-		parts = append(parts, "root", filepath.Join(value, "sessions"))
+		parts = append(parts, "root", codexCacheKeyHash(filepath.Join(value, "sessions")))
 	} else if c.env != nil {
 		localOptions := ResolveCodexLocalStatusOptions(CodexLocalStatusOptions{}, c.env.Getenv("CODEX_HOME"), c.env.Home())
 		if localOptions.SessionRoot != "" {
-			parts = append(parts, "root", localOptions.SessionRoot)
+			parts = append(parts, "root", codexCacheKeyHash(localOptions.SessionRoot))
 		}
 	}
 
 	return strings.Join(parts, "|"), true
+}
+
+func codexCacheKeyHash(value string) string {
+	return fmt.Sprintf("%x", sha1.Sum([]byte(value)))
 }
 
 func parseCodexStatus(status string) (CodexData, bool) {

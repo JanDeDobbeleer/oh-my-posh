@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io/fs"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -15,6 +16,11 @@ import (
 
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "go.yaml.in/yaml/v3"
+)
+
+const (
+	ResolveTargetFromSolution options.Option = "resolve_target_from_solution"
+	SolutionSearchDepth       options.Option = "solution_search_depth"
 )
 
 type ProjectItem struct {
@@ -299,6 +305,19 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		target = values["TFM"]
 	}
 
+	if target == "" && (extension == ".sln" || extension == ".slnx") {
+		if n.options.Bool(ResolveTargetFromSolution, true) {
+			maxDepth := n.options.Int(SolutionSearchDepth, 2)
+			projContent := n.findProjectFileInSubdirs(files, maxDepth)
+			if projContent != "" {
+				values = regex.FindNamedRegexMatch(tag, projContent)
+				if len(values) != 0 {
+					target = values["TFM"]
+				}
+			}
+		}
+	}
+
 	if target == "" {
 		log.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
 	}
@@ -307,6 +326,55 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		Target: target,
 		Name:   name,
 	}
+}
+
+func (n *Project) findProjectFileInSubdirs(rootEntries []fs.DirEntry, maxDepth int) string {
+	projectExts := []string{".csproj", ".fsproj", ".vbproj"}
+	pwd := n.env.Pwd()
+
+	type queueItem struct {
+		absPath string
+		relPath string
+		depth   int
+	}
+
+	var queue []queueItem
+	for _, entry := range rootEntries {
+		if entry.IsDir() {
+			queue = append(queue, queueItem{
+				absPath: filepath.Join(pwd, entry.Name()),
+				relPath: entry.Name(),
+				depth:   1,
+			})
+		}
+	}
+
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+
+		entries := n.env.LsDir(current.absPath)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				if current.depth < maxDepth {
+					queue = append(queue, queueItem{
+						absPath: filepath.Join(current.absPath, entry.Name()),
+						relPath: filepath.Join(current.relPath, entry.Name()),
+						depth:   current.depth + 1,
+					})
+				}
+
+				continue
+			}
+
+			ext := filepath.Ext(entry.Name())
+			if slices.Contains(projectExts, ext) {
+				return n.env.FileContent(filepath.Join(current.relPath, entry.Name()))
+			}
+		}
+	}
+
+	return ""
 }
 
 func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {

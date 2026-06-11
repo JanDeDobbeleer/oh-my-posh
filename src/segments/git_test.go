@@ -439,6 +439,27 @@ func TestSetPrettyHEADName(t *testing.T) {
 	}
 }
 
+func TestSetPrettyHEADNameDefaultsToCurrentNoCommitsIcon(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("FileContent", "/HEAD").Return("")
+	env.On("GOOS").Return("unix")
+	env.On("IsWsl").Return(false)
+	env.MockGitCommand("", "", "rev-parse", "HEAD")
+	env.MockGitCommand("", "", "describe", "--tags", "--exact-match")
+
+	g := &Git{
+		Scm: Scm{
+			command: GITCOMMAND,
+		},
+	}
+	g.Init(options.Map{}, env)
+	g.mainSCMDir = ""
+
+	g.updateHEADReference()
+
+	assert.Equal(t, "\U000F0095 ", g.HEAD)
+}
+
 func TestSetGitStatus(t *testing.T) {
 	cases := []struct {
 		ExpectedWorking      *GitStatus

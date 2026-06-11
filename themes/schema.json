@@ -2003,7 +2003,7 @@
                     "type": "string",
                     "title": "No Commits Icon",
                     "description": "Icon/text to display when there are no commits in the repo",
-                    "default": "\uf594"
+                    "default": "\udb80\udc95"
                   },
                   "github_icon": {
                     "type": "string",

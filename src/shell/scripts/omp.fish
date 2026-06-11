@@ -7,6 +7,7 @@ set --global _omp_tooltip_command ''
 set --global _omp_current_rprompt ''
 set --global _omp_transient 0
 set --global _omp_executable ::OMP::
+set --global _omp_cursor_positioning 0
 set --global _omp_ftcs_marks 0
 set --global _omp_transient_prompt 0
 set --global _omp_prompt_mark 0
@@ -23,6 +24,29 @@ set --global PYENV_VIRTUALENV_DISABLE_PROMPT 1
 
 # We use this to avoid unnecessary CLI calls for prompt repaint.
 set --global _omp_new_prompt 1
+
+function _omp_set_cursor_position
+    # not supported in Midnight Commander
+    # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
+    if test "$_omp_cursor_positioning" = 0; or set --query MC_SID
+        return
+    end
+
+    set --local oldstty (stty -F /dev/tty -g)
+    stty -F /dev/tty raw -echo min 1
+
+    set --local pos ''
+    echo -en '\e[6n' >/dev/tty
+    while true
+        read --null --nchars 1 --local ch </dev/tty
+        set pos $pos$ch
+        string match -q 'R' $ch; and break
+    end
+
+    stty -F /dev/tty $oldstty
+
+    string match -gr '\[(\d+);(\d+)R' $pos | read --line --export --global POSH_CURSOR_LINE POSH_CURSOR_COLUMN
+end
 
 # template function for context loading
 function set_poshcontext
@@ -193,6 +217,7 @@ function fish_prompt
     end
 
     set_poshcontext
+    _omp_set_cursor_position
 
     # validate if the user cleared the screen
     set --local omp_cleared false

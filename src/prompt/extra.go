@@ -61,7 +61,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		promptText = err.Error()
 	}
 
-	if promptType == Transient && prompt.Newline {
+	if promptType == Transient && prompt.Newline && !e.cancelNewline() {
 		promptText = fmt.Sprintf("%s%s", e.getNewline(), promptText)
 	}
 

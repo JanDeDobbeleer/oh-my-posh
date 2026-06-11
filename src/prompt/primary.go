@@ -73,8 +73,7 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 	for i, block := range blocks {
 		// do not print a leading newline when we're at the first row and the prompt is cleared
 		if i == 0 {
-			row, _ := e.Env.CursorPosition()
-			cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
+			cancelNewline = e.cancelNewline()
 		}
 
 		// skip setting a newline when we didn't print anything yet

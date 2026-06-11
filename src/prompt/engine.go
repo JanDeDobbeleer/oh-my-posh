@@ -541,6 +541,11 @@ func (e *Engine) rectifyTerminalWidth(diff int) {
 	e.Env.Flags().TerminalWidth += diff
 }
 
+func (e *Engine) cancelNewline() bool {
+	row, _ := e.Env.CursorPosition()
+	return e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
+}
+
 // New returns a prompt engine initialized with the
 // given configuration options, and is ready to print any
 // of the prompt components.

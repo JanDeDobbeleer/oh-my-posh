@@ -294,3 +294,68 @@ func TestWriteLength(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestProgressFunctions(t *testing.T) {
+	cases := []struct {
+		Case              string
+		Program           string
+		ProgressTerminals []string
+		ExpectProgress    bool
+	}{
+		{
+			Case:           "Windows Terminal default",
+			Program:        WindowsTerminal,
+			ExpectProgress: true,
+		},
+		{
+			Case:           "Unknown terminal default",
+			Program:        Unknown,
+			ExpectProgress: false,
+		},
+		{
+			Case:              "Ghostty configured",
+			Program:           "ghostty",
+			ProgressTerminals: []string{"ghostty", WindowsTerminal},
+			ExpectProgress:    true,
+		},
+		{
+			Case:              "Windows Terminal with custom list",
+			Program:           WindowsTerminal,
+			ProgressTerminals: []string{"ghostty", WindowsTerminal},
+			ExpectProgress:    true,
+		},
+		{
+			Case:              "Unknown terminal with custom list",
+			Program:           Unknown,
+			ProgressTerminals: []string{"ghostty", WindowsTerminal},
+			ExpectProgress:    false,
+		},
+		{
+			Case:              "Custom terminal not in list",
+			Program:           "alacritty",
+			ProgressTerminals: []string{"ghostty"},
+			ExpectProgress:    false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Program = tc.Program
+			progressTerminals = []string{WindowsTerminal}
+
+			if tc.ProgressTerminals != nil {
+				SetProgressTerminals(tc.ProgressTerminals)
+			}
+
+			if tc.ExpectProgress {
+				assert.NotEmpty(t, StartProgress(), tc.Case)
+				assert.NotEmpty(t, SetProgress(50), tc.Case)
+				assert.NotEmpty(t, StopProgress(), tc.Case)
+			} else {
+				assert.Empty(t, StartProgress(), tc.Case)
+				assert.Empty(t, SetProgress(50), tc.Case)
+				assert.Empty(t, StopProgress(), tc.Case)
+			}
+		})
+	}
+}

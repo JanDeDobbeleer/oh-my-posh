@@ -3,6 +3,7 @@ package terminal
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -62,6 +63,8 @@ var (
 	Shell   string
 	Program string
 
+	progressTerminals []string
+
 	formats *shell.Formats
 )
 
@@ -109,6 +112,7 @@ func Init(sh string) {
 
 	color.TrueColor = Program != AppleTerminal
 
+	progressTerminals = []string{WindowsTerminal}
 	formats = shell.GetFormats(Shell)
 }
 
@@ -124,6 +128,10 @@ func getTerminalName() string {
 	}
 
 	return Unknown
+}
+
+func SetProgressTerminals(terminals []string) {
+	progressTerminals = terminals
 }
 
 func SetColors(background, foreground color.Ansi) {
@@ -248,7 +256,7 @@ func LineBreak() string {
 }
 
 func StartProgress() string {
-	if Program != WindowsTerminal {
+	if !slices.Contains(progressTerminals, Program) {
 		return ""
 	}
 
@@ -256,7 +264,7 @@ func StartProgress() string {
 }
 
 func SetProgress(percentage int) string {
-	if Program != WindowsTerminal {
+	if !slices.Contains(progressTerminals, Program) {
 		return ""
 	}
 
@@ -264,7 +272,7 @@ func SetProgress(percentage int) string {
 }
 
 func StopProgress() string {
-	if Program != WindowsTerminal {
+	if !slices.Contains(progressTerminals, Program) {
 		return ""
 	}
 

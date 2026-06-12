@@ -5310,6 +5310,21 @@
         ]
       }
     },
+    "terminal_features": {
+      "type": "object",
+      "title": "Terminal features configuration",
+      "description": "Configure which terminal programs support specific features",
+      "properties": {
+        "progress": {
+          "type": "array",
+          "title": "Progress terminals",
+          "description": "List of terminal programs that support OSC 9 progress sequences",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "var": {
       "type": "object",
       "title": "Config variables to use in templates (can be any value)",

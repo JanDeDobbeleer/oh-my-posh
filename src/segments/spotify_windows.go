@@ -5,11 +5,16 @@ package segments
 import "strings"
 
 func (s *Spotify) Enabled() bool {
-	if s.querySMTC() {
+	// Primary path: native WinRT call into SMTC. See runtime/smtc_windows.go
+	// for the combase.dll binding. PowerShell startup latency made the
+	// previous approach unsuitable for per-prompt rendering.
+	if output, err := s.env.QuerySpotifySMTC(); err == nil && s.parseSMTCOutput(output) {
 		return true
 	}
 
-	// Fall back to scraping the Edge window title for the Spotify Web Player PWA.
+	// Fall back to scraping the Edge window title for the Spotify Web Player PWA,
+	// whose SMTC entry surfaces under "Microsoft.MicrosoftEdge_*" rather than
+	// "Spotify*", so the SMTC walker above skips it.
 	windowTitle, err := s.env.QueryWindowTitles("msedge.exe", `^(Spotify.*)`)
 	if err != nil {
 		return false

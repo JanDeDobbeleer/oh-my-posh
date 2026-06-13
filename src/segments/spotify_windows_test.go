@@ -73,7 +73,7 @@ func TestSpotifyWindowsSMTC(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", spotifySMTCScript}).Return(tc.Output, tc.Error)
+		env.On("QuerySpotifySMTC").Return(tc.Output, tc.Error)
 		// Edge PWA fallback never matches in this group of tests.
 		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return("", &runtime.NotImplemented{})
 
@@ -110,7 +110,7 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		// SMTC unavailable — falls back to Edge PWA window title parsing.
-		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", spotifySMTCScript}).Return("", errors.New("smtc unavailable"))
+		env.On("QuerySpotifySMTC").Return("", errors.New("smtc unavailable"))
 		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return(tc.Title, tc.Error)
 
 		s := &Spotify{}

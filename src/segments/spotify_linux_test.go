@@ -50,22 +50,55 @@ func TestSpotifyLinux(t *testing.T) {
 
 func TestSpotifyWSL(t *testing.T) {
 	cases := []struct {
-		Case            string
 		Error           error
-		Title           string
+		Case            string
+		Output          string
 		Expected        string
 		ExpectedEnabled bool
 	}{
-		{Case: "nothing"},
-		{Case: "error", Error: errors.New("oops")},
-		{Case: "title", ExpectedEnabled: true, Expected: "\ue602 Xzibit - Crash (ft. Royce Da 5'9\" K.A.A.N.)", Title: `Xzibit - Crash (ft. Royce Da 5'9" K.A.A.N.)`},
+		{
+			Case:            "playing",
+			Output:          "playing|Spellbreaker|Candlemass|Nightfall|3",
+			Expected:        "\ue602 Candlemass - Spellbreaker",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "paused",
+			Output:          "paused|Spellbreaker|Candlemass|Nightfall|3",
+			Expected:        "\uf04c Candlemass - Spellbreaker",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "ad (empty album, track number 0)",
+			Output:          "playing|Try Premium for free|Spotify||0",
+			Expected:        "\ueebb Spotify - Try Premium for free",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "stopped",
+			Output:          "stopped||||0",
+			ExpectedEnabled: false,
+		},
+		{
+			Case:            "closed (no Spotify session)",
+			Output:          "closed||||0",
+			ExpectedEnabled: false,
+		},
+		{
+			Case:            "powershell error",
+			Error:           errors.New("oops"),
+			ExpectedEnabled: false,
+		},
+		{
+			Case:            "malformed output",
+			Output:          "garbage",
+			ExpectedEnabled: false,
+		},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("IsWsl").Return(true)
-
-		psCommand := `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; (Get-Process Spotify -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -ne ""} | Select-Object -First 1).MainWindowTitle` //nolint: lll
-		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", psCommand}).Return(tc.Title, tc.Error)
+		env.On("RunCommand", "powershell.exe", []string{"-NoProfile", "-NonInteractive", "-Command", spotifySMTCScript}).Return(tc.Output, tc.Error)
 
 		s := &Spotify{}
 		s.Init(options.Map{}, env)

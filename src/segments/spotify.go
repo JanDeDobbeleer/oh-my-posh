@@ -28,6 +28,7 @@ const (
 	playing = "playing"
 	stopped = "stopped"
 	paused  = "paused"
+	ad      = "ad"
 )
 
 func (s *Spotify) Template() string {
@@ -43,5 +44,7 @@ func (s *Spotify) resolveIcon() {
 		s.Icon = s.options.String(PausedIcon, "\uf04c ")
 	case playing:
 		s.Icon = s.options.String(PlayingIcon, "\ue602 ")
+	case ad:
+		s.Icon = s.options.String(AdIcon, "\ueebb ")
 	}
 }

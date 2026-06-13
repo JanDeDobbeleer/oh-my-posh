@@ -3,6 +3,8 @@ package options
 import (
 	"encoding/gob"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/generics"
@@ -38,7 +40,10 @@ type Provider interface {
 	KeyValueMap(option Option, defaultValue map[string]string) map[string]string
 	StringArray(option Option, defaultValue []string) []string
 	Any(option Option, defaultValue any) any
+	SetContext(ctx any)
 }
+
+var _ Provider = Map{}
 
 // Option defines one property of a segment for context
 type Option string
@@ -72,6 +77,35 @@ const (
 )
 
 type Map map[Option]any
+
+const TemplateContextKey Option = "__template_context__"
+
+func (m Map) SetContext(ctx any) {
+	m[TemplateContextKey] = ctx
+}
+
+func (m Map) getContext() any {
+	return m[TemplateContextKey]
+}
+
+func (m Map) resolveTemplate(option Option, raw string) (string, bool) {
+	if !strings.Contains(raw, "{{") {
+		return raw, false
+	}
+
+	ctx := m.getContext()
+	if ctx == nil {
+		return raw, false
+	}
+
+	resolved, err := template.Render(raw, ctx)
+	if err != nil {
+		log.Debug(fmt.Sprintf("%s: template resolution failed: %s", option, err))
+		return raw, false
+	}
+
+	return resolved, true
+}
 
 func (m Map) String(option Option, defaultValue string) string {
 	val, found := m[option]
@@ -110,13 +144,19 @@ func (m Map) Color(option Option, defaultValue color.Ansi) color.Ansi {
 		return defaultValue
 	}
 
-	colorString := color.Ansi(fmt.Sprint(val))
-	if color.IsAnsiColorName(colorString) {
-		log.Debug(fmt.Sprintf("%s: %s", option, colorString))
-		return colorString
+	colorString := fmt.Sprint(val)
+
+	if resolved, wasTemplate := m.resolveTemplate(option, colorString); wasTemplate {
+		colorString = resolved
 	}
 
-	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString.String())
+	ansi := color.Ansi(colorString)
+	if color.IsAnsiColorName(ansi) {
+		log.Debug(fmt.Sprintf("%s: %s", option, ansi))
+		return ansi
+	}
+
+	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, ansi.String())
 	if values != nil && values["color"] != "" {
 		value := color.Ansi(values["color"])
 		log.Debug(fmt.Sprintf("%s: %s", option, value))
@@ -133,13 +173,24 @@ func (m Map) Bool(option Option, defaultValue bool) bool {
 		log.Debug(fmt.Sprintf("%s: %t", option, defaultValue))
 		return defaultValue
 	}
-	boolValue, ok := val.(bool)
-	if !ok {
-		log.Debug(fmt.Sprintf("%s: %t", option, defaultValue))
-		return defaultValue
+
+	switch v := val.(type) {
+	case bool:
+		log.Debug(fmt.Sprintf("%s: %t", option, v))
+		return v
+	case string:
+		resolved, wasTemplate := m.resolveTemplate(option, v)
+		if value, err := strconv.ParseBool(resolved); err == nil {
+			log.Debug(fmt.Sprintf("%s: %t", option, value))
+			return value
+		}
+		if wasTemplate {
+			log.Debug(fmt.Sprintf("%s: template resolved to '%s' which is not a valid bool, using default %t", option, resolved, defaultValue))
+		}
 	}
-	log.Debug(fmt.Sprintf("%s: %t", option, boolValue))
-	return boolValue
+
+	log.Debug(fmt.Sprintf("%s: %t", option, defaultValue))
+	return defaultValue
 }
 
 func (m Map) Float64(option Option, defaultValue float64) float64 {
@@ -149,7 +200,6 @@ func (m Map) Float64(option Option, defaultValue float64) float64 {
 		return defaultValue
 	}
 
-	// Direct type conversions for common numeric types
 	switch v := val.(type) {
 	case float64:
 		log.Debug(fmt.Sprintf("%s: %f", option, v))
@@ -166,10 +216,19 @@ func (m Map) Float64(option Option, defaultValue float64) float64 {
 		value := float64(v)
 		log.Debug(fmt.Sprintf("%s: %f", option, value))
 		return value
-	default:
-		log.Debug(fmt.Sprintf("%s: %f", option, defaultValue))
-		return defaultValue
+	case string:
+		resolved, wasTemplate := m.resolveTemplate(option, v)
+		if value, err := strconv.ParseFloat(resolved, 64); err == nil {
+			log.Debug(fmt.Sprintf("%s: %f", option, value))
+			return value
+		}
+		if wasTemplate {
+			log.Debug(fmt.Sprintf("%s: template resolved to '%s' which is not a valid float64, using default %f", option, resolved, defaultValue))
+		}
 	}
+
+	log.Debug(fmt.Sprintf("%s: %f", option, defaultValue))
+	return defaultValue
 }
 
 func (m Map) Int(option Option, defaultValue int) int {
@@ -179,7 +238,6 @@ func (m Map) Int(option Option, defaultValue int) int {
 		return defaultValue
 	}
 
-	// Direct type conversions for common numeric types
 	switch v := val.(type) {
 	case int:
 		log.Debug(fmt.Sprintf("%s: %d", option, v))
@@ -196,10 +254,19 @@ func (m Map) Int(option Option, defaultValue int) int {
 		value := int(v)
 		log.Debug(fmt.Sprintf("%s: %d", option, value))
 		return value
-	default:
-		log.Debug(fmt.Sprintf("%s: %d", option, defaultValue))
-		return defaultValue
+	case string:
+		resolved, wasTemplate := m.resolveTemplate(option, v)
+		if value, err := strconv.Atoi(resolved); err == nil {
+			log.Debug(fmt.Sprintf("%s: %d", option, value))
+			return value
+		}
+		if wasTemplate {
+			log.Debug(fmt.Sprintf("%s: template resolved to '%s' which is not a valid int, using default %d", option, resolved, defaultValue))
+		}
 	}
+
+	log.Debug(fmt.Sprintf("%s: %d", option, defaultValue))
+	return defaultValue
 }
 
 func (m Map) KeyValueMap(option Option, defaultValue map[string]string) map[string]string {

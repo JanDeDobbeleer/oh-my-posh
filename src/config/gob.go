@@ -52,6 +52,8 @@ func Get(configFile string, reload bool) *Config {
 func (cfg *Config) Base64() string {
 	defer log.Trace(time.Now())
 
+	cfg.stripRuntimeState()
+
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 	err := encoder.Encode(cfg)

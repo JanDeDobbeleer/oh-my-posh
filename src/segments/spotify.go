@@ -28,6 +28,7 @@ const (
 	playing = "playing"
 	stopped = "stopped"
 	paused  = "paused"
+	ad      = "ad"
 )
 
 func (s *Spotify) Template() string {
@@ -38,10 +39,12 @@ func (s *Spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:
 		// in this case, no artist or track info
-		s.Icon = s.options.String(StoppedIcon, "\uf04d ")
+		s.Icon = s.options.String(StoppedIcon, " ")
 	case paused:
-		s.Icon = s.options.String(PausedIcon, "\uf04c ")
+		s.Icon = s.options.String(PausedIcon, " ")
 	case playing:
-		s.Icon = s.options.String(PlayingIcon, "\ue602 ")
+		s.Icon = s.options.String(PlayingIcon, " ")
+	case ad:
+		s.Icon = s.options.String(AdIcon, " ")
 	}
 }

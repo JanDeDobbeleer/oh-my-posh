@@ -8,6 +8,11 @@ sidebar_label: AWS
 
 Display the currently active [AWS][aws] profile and region.
 
+The segment reads `~/.aws/config` (or `AWS_CONFIG_FILE`) and `~/.aws/credentials`
+(or `AWS_SHARED_CREDENTIALS_FILE`). Every key/value pair from the active
+profile is exposed via the `.Settings` map so any [AWS-recognized setting][aws-settings]
+can be referenced from a template — see [AWS configuration keys](#aws-configuration-keys).
+
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";
@@ -25,9 +30,11 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name              | Type      | Default | Description                                  |
-| ----------------- | :-------: | :-----: | -------------------------------------------- |
-| `display_default` | `boolean` | `true`  | display the segment when default user or not |
+| Name                    | Type      | Default | Description                                                                                |
+| ----------------------- | :-------: | :-----: | ------------------------------------------------------------------------------------------ |
+| `display_default`       | `boolean` | `true`  | display the segment when default user or not                                               |
+| `display_account_id`    | `boolean` | `true`  | populate `.AccountID` with `sso_account_id` (preferred) or `aws_account_id`                |
+| `display_access_key_id` | `boolean` | `false` | populate `.AccessKeyID` from `AWS_ACCESS_KEY_ID`, the credentials file, or the config file |
 
 ## Template ([info][templates])
 
@@ -41,11 +48,94 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name            | Type     | Description                                 |
-| --------------- | -------- | ------------------------------------------- |
-| `.Profile`      | `string` | the currently active profile                |
-| `.Region`       | `string` | the currently active region                 |
-| `.RegionAlias`  | `string` | short alias for the currently active region |
+| Name           | Type                | Description                                                                                  |
+| -------------- | ------------------- | -------------------------------------------------------------------------------------------- |
+| `.Profile`     | `string`            | the currently active profile                                                                 |
+| `.Region`      | `string`            | the currently active region                                                                  |
+| `.RegionAlias` | `string`            | short alias for the currently active region                                                  |
+| `.AccountID`   | `string`            | account id of the active profile (filled when `display_account_id` is true)                  |
+| `.AccessKeyID` | `string`            | access key id of the active profile (filled when `display_access_key_id` is true)            |
+| `.Settings`    | `map[string]string` | every key/value pair from the active profile (config + credentials, credentials wins on dup) |
+| `.SSOSession`  | `map[string]string` | every key/value pair from the `[sso-session <name>]` section referenced by the profile       |
+
+Access individual settings via `{{ index .Settings "<key>" }}` (or
+`{{ .Settings.<key> }}` for keys that are valid Go identifiers, e.g.
+`{{ .Settings.sso_role_name }}`).
+
+### Examples
+
+```template
+{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ with index .Settings "sso_role_name" }} ({{ . }}){{ end }}
+```
+
+```template
+{{ .Profile }} {{ .AccountID }}/{{ index .Settings "sso_role_name" }}
+```
+
+```template
+{{ .Profile }} via {{ index .SSOSession "sso_start_url" }}
+```
+
+### AWS configuration keys
+
+The keys below are the ones AWS SDKs and the AWS CLI recognize in the shared
+config and credentials files. Any of them, when present in the active profile
+section, is available through `.Settings`. Keys defined in a referenced
+`[sso-session <name>]` section are available through `.SSOSession`.
+
+#### Credentials
+
+`aws_access_key_id`, `aws_secret_access_key`, `aws_session_token`, `aws_account_id`
+
+#### IAM Identity Center (SSO)
+
+`sso_session`, `sso_account_id`, `sso_role_name`, `sso_region`, `sso_start_url`,
+`sso_registration_scopes`
+
+#### Assume role
+
+`role_arn`, `role_session_name`, `source_profile`, `external_id`, `mfa_serial`,
+`duration_seconds`, `web_identity_token_file`, `credential_process`,
+`credential_source`
+
+#### Region & endpoints
+
+`region`, `endpoint_url`, `ignore_configured_endpoint_urls`,
+`sts_regional_endpoints`, `use_fips_endpoint`, `use_dualstack_endpoint`,
+`account_id_endpoint_mode`
+
+#### S3
+
+`s3_use_arn_region`, `s3_disable_multiregion_access_points`,
+`s3_disable_express_session_auth`
+
+#### EC2 / IMDS
+
+`ec2_metadata_service_endpoint`, `ec2_metadata_service_endpoint_mode`,
+`ec2_metadata_v1_disabled`, `metadata_service_num_attempts`,
+`metadata_service_timeout`
+
+#### Retry & request handling
+
+`max_attempts`, `retry_mode`, `disable_request_compression`,
+`request_min_compression_size_bytes`, `request_checksum_calculation`,
+`response_checksum_validation`
+
+#### Auth & signing
+
+`auth_scheme_preference`, `sigv4a_signing_region_set`
+
+#### General
+
+`output`, `parameter_validation`, `defaults_mode`, `api_versions`,
+`ca_bundle`, `tcp_keepalive`, `endpoint_discovery_enabled`,
+`disable_host_prefix_injection`, `sdk_ua_app_id`
+
+#### CLI-only
+
+`cli_pager`, `cli_history`, `cli_timestamp_format`, `cli_binary_format`,
+`cli_auto_prompt`, `cli_follow_urlparam`
 
 [templates]: /docs/configuration/templates
 [aws]: https://aws.amazon.com/
+[aws-settings]: https://docs.aws.amazon.com/sdkref/latest/guide/settings-reference.html

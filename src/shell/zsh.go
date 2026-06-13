@@ -23,6 +23,8 @@ func (f Features) Zsh() Code {
 		return unixNotice
 	case Streaming:
 		return "_omp_enable_streaming=1"
+	case VIMode:
+		return "_omp_enable_vimode"
 	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Async, KeyHandlers:
 		fallthrough
 	default:

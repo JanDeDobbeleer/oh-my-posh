@@ -53,6 +53,6 @@ jobs:
         permissions:
             contents: "write"
             pull-requests: "write"
-        uses: "Nick2bad4u/workflow-templates/.github/workflows/reusable-auto-merge-dependabot.yml@aca93c9f0f022b2c006bde8102bdb1588878b713"
+        uses: "Nick2bad4u/workflow-templates/.github/workflows/reusable-auto-merge-dependabot.yml@d8d4958ee20f3089dc0baeed32c27afbec4c8502"
         with:
             semver-policy: "patch,minor"

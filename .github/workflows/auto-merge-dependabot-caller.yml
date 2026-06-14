@@ -1,0 +1,58 @@
+name: "Dependabot Auto Merge"
+
+run-name: >-
+    ${{
+        github.event_name == 'pull_request' &&
+        format('Dependabot Auto Merge #{0}', github.event.pull_request.number) ||
+        github.event_name == 'merge_group' &&
+        format('Dependabot Auto Merge merge group {0}', github.event.merge_group.head_sha || github.ref_name || github.run_id) ||
+        format('Dependabot Auto Merge {0}', github.ref_name || github.run_id)
+    }}
+
+concurrency:
+    group: >-
+        dependabot-auto-merge-${{ github.workflow }}-${{
+            github.event.pull_request.number ||
+            github.event.merge_group.head_sha ||
+            github.event.merge_group.head_ref ||
+            github.ref ||
+            github.run_id
+        }}
+    cancel-in-progress: true
+
+on:
+    pull_request:
+        branches:
+            - "main"
+            - "master"
+            - "develop"
+            - "release/*"
+        types:
+            - "opened"
+            - "synchronize"
+            - "reopened"
+            - "ready_for_review"
+    merge_group:
+        branches:
+            - "main"
+            - "master"
+            - "develop"
+            - "release/*"
+        types:
+            - "checks_requested"
+
+permissions: {}
+
+defaults:
+    run:
+        shell: "bash"
+
+jobs:
+    dependabot-auto-merge:
+        name: "Dependabot Auto Merge"
+        permissions:
+            contents: "write"
+            pull-requests: "write"
+        uses: "Nick2bad4u/workflow-templates/.github/workflows/reusable-auto-merge-dependabot.yml@aca93c9f0f022b2c006bde8102bdb1588878b713"
+        with:
+            semver-policy: "patch,minor"

@@ -60,13 +60,13 @@ func (term *Terminal) QueryWindowTitles(processName, windowTitleRegex string) (s
 	return title, err
 }
 
-func (term *Terminal) QuerySpotifySMTC() (string, error) {
+func (term *Terminal) QueryMediaPlayer(player string) (*MediaInfo, error) {
 	defer log.Trace(time.Now())
-	output, err := querySpotifySMTC()
+	info, err := queryMediaPlayer(player)
 	if err != nil {
 		log.Error(err)
 	}
-	return output, err
+	return info, err
 }
 
 func (term *Terminal) IsWsl() bool {

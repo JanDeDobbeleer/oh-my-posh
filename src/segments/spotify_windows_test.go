@@ -15,65 +15,55 @@ import (
 
 func TestSpotifyWindowsSMTC(t *testing.T) {
 	cases := []struct {
+		Info            *runtime.MediaInfo
 		Error           error
 		Case            string
-		Output          string
 		ExpectedString  string
 		ExpectedEnabled bool
 	}{
 		{
 			Case:            "playing",
-			Output:          "playing|Spellbreaker|Candlemass|Nightfall|3",
+			Info:            &runtime.MediaInfo{Status: "playing", Title: "Spellbreaker", Artist: "Candlemass", Album: "Nightfall", TrackNumber: 3},
 			ExpectedString:  " Candlemass - Spellbreaker",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:            "paused",
-			Output:          "paused|Spellbreaker|Candlemass|Nightfall|3",
+			Info:            &runtime.MediaInfo{Status: "paused", Title: "Spellbreaker", Artist: "Candlemass", Album: "Nightfall", TrackNumber: 3},
 			ExpectedString:  " Candlemass - Spellbreaker",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:            "ad (empty album, track number 0)",
-			Output:          "playing|君のこころが観たいもの　プライムビデオ|プライムビデオ||0",
+			Info:            &runtime.MediaInfo{Status: "playing", Title: "君のこころが観たいもの　プライムビデオ", Artist: "プライムビデオ", Album: "", TrackNumber: 0},
 			ExpectedString:  " プライムビデオ - 君のこころが観たいもの　プライムビデオ",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:            "stopped",
-			Output:          "stopped||||0",
+			Info:            &runtime.MediaInfo{Status: "stopped"},
 			ExpectedEnabled: false,
 		},
 		{
 			Case:            "closed (no Spotify session)",
-			Output:          "closed||||0",
+			Info:            &runtime.MediaInfo{Status: "closed"},
 			ExpectedEnabled: false,
 		},
 		{
 			Case:            "track with parentheses and quotes",
-			Output:          `playing|Collapsing (feat. Björn "Speed" Strid)|Demon Hunter|The World Is a Thorn|9`,
+			Info:            &runtime.MediaInfo{Status: "playing", Title: `Collapsing (feat. Björn "Speed" Strid)`, Artist: "Demon Hunter", Album: "The World Is a Thorn", TrackNumber: 9},
 			ExpectedString:  " Demon Hunter - Collapsing (feat. Björn \"Speed\" Strid)",
 			ExpectedEnabled: true,
 		},
 		{
-			Case:            "powershell error",
+			Case:            "smtc error",
 			Error:           errors.New("oops"),
-			ExpectedEnabled: false,
-		},
-		{
-			Case:            "malformed output (too few fields)",
-			Output:          "playing|only|three|fields",
-			ExpectedEnabled: false,
-		},
-		{
-			Case:            "malformed output (no separators)",
-			Output:          "garbage",
 			ExpectedEnabled: false,
 		},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("QuerySpotifySMTC").Return(tc.Output, tc.Error)
+		env.On("QueryMediaPlayer", "spotify").Return(tc.Info, tc.Error)
 		// Edge PWA fallback never matches in this group of tests.
 		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return("", &runtime.NotImplemented{})
 
@@ -110,7 +100,7 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		// SMTC unavailable — falls back to Edge PWA window title parsing.
-		env.On("QuerySpotifySMTC").Return("", errors.New("smtc unavailable"))
+		env.On("QueryMediaPlayer", "spotify").Return((*runtime.MediaInfo)(nil), errors.New("smtc unavailable"))
 		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return(tc.Title, tc.Error)
 
 		s := &Spotify{}

@@ -135,9 +135,12 @@ func (env *Environment) QueryWindowTitles(processName, windowTitleRegex string) 
 	return args.String(0), args.Error(1)
 }
 
-func (env *Environment) QuerySpotifySMTC() (string, error) {
-	args := env.Called()
-	return args.String(0), args.Error(1)
+func (env *Environment) QueryMediaPlayer(player string) (*runtime.MediaInfo, error) {
+	args := env.Called(player)
+	if info, ok := args.Get(0).(*runtime.MediaInfo); ok {
+		return info, args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
 func (env *Environment) WindowsRegistryKeyValue(path string) (*runtime.WindowsRegistryValue, error) {

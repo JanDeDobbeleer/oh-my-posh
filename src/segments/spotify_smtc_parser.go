@@ -2,24 +2,17 @@
 
 package segments
 
-import "strings"
+import "github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
-// parseSMTCOutput consumes a "<status>|<title>|<artist>|<album>|<trackNumber>"
-// line produced by either the WSL PowerShell script (spotify_smtc.go) or the
-// native Windows WinRT path (runtime/smtc_windows.go), applies it to s, and
-// returns whether the segment should be displayed.
-func (s *Spotify) parseSMTCOutput(output string) bool {
-	output = strings.TrimSpace(output)
-	if output == "" {
+// applyMediaInfo maps a media session read from SMTC (native WinRT on Windows
+// via runtime.QueryMediaPlayer, or the WSL PowerShell script in spotify_smtc.go)
+// onto s and returns whether the segment should be displayed.
+func (s *Spotify) applyMediaInfo(info *runtime.MediaInfo) bool {
+	if info == nil {
 		return false
 	}
 
-	parts := strings.SplitN(output, "|", 5)
-	if len(parts) != 5 {
-		return false
-	}
-
-	switch parts[0] {
+	switch info.Status {
 	case playing:
 		s.Status = playing
 	case paused:
@@ -30,13 +23,13 @@ func (s *Spotify) parseSMTCOutput(output string) bool {
 		return false
 	}
 
-	s.Track = parts[1]
-	s.Artist = parts[2]
+	s.Track = info.Title
+	s.Artist = info.Artist
 
 	// Spotify ads expose the campaign as a regular "Music" SMTC entry but with no
 	// AlbumTitle and TrackNumber=0 — neither is true for real tracks. Use the pair
 	// to flag ads (single condition would false-positive on Spotify Singles etc.).
-	if s.Status == playing && parts[3] == "" && parts[4] == "0" {
+	if s.Status == playing && info.Album == "" && info.TrackNumber == 0 {
 		s.Status = ad
 	}
 

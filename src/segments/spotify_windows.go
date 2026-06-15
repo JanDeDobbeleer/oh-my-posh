@@ -8,7 +8,7 @@ func (s *Spotify) Enabled() bool {
 	// Primary path: native WinRT call into SMTC. See runtime/smtc_windows.go
 	// for the combase.dll binding. PowerShell startup latency made the
 	// previous approach unsuitable for per-prompt rendering.
-	if output, err := s.env.QuerySpotifySMTC(); err == nil && s.parseSMTCOutput(output) {
+	if info, err := s.env.QueryMediaPlayer("spotify"); err == nil && s.applyMediaInfo(info) {
 		return true
 	}
 

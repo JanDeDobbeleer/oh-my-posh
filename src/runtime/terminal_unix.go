@@ -25,8 +25,8 @@ func (term *Terminal) QueryWindowTitles(_, _ string) (string, error) {
 	return "", &NotImplemented{}
 }
 
-func (term *Terminal) QuerySpotifySMTC() (string, error) {
-	return "", &NotImplemented{}
+func (term *Terminal) QueryMediaPlayer(_ string) (*MediaInfo, error) {
+	return nil, &NotImplemented{}
 }
 
 func (term *Terminal) IsWsl() bool {

@@ -2,6 +2,13 @@
 
 package segments
 
+import (
+	"strconv"
+	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+)
+
 // PowerShell script that queries the Spotify session from the Windows
 // System Media Transport Controls (SMTC). Output is a single line of
 // "<status>|<title>|<artist>|<album>|<trackNumber>" where <status> is the
@@ -11,7 +18,7 @@ package segments
 // Used from WSL: the Linux binary cannot call WinRT directly, so it shells
 // out to the Windows interop powershell.exe to read the host's SMTC list.
 // On native Windows the binary instead calls combase.dll directly via
-// runtime.QuerySpotifySMTC — see runtime/smtc_windows.go.
+// runtime.QueryMediaPlayer — see runtime/smtc_windows.go.
 const spotifySMTCScript = `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $null = [Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager,Windows.Media.Control,ContentType=WindowsRuntime]
 Add-Type -AssemblyName System.Runtime.WindowsRuntime
@@ -38,5 +45,32 @@ func (s *Spotify) querySMTC() bool {
 	if err != nil {
 		return false
 	}
-	return s.parseSMTCOutput(output)
+	info, ok := parseSMTCLine(output)
+	if !ok {
+		return false
+	}
+	return s.applyMediaInfo(info)
+}
+
+// parseSMTCLine turns the PowerShell script's
+// "<status>|<title>|<artist>|<album>|<trackNumber>" line into a *MediaInfo.
+func parseSMTCLine(output string) (*runtime.MediaInfo, bool) {
+	output = strings.TrimSpace(output)
+	if output == "" {
+		return nil, false
+	}
+
+	parts := strings.SplitN(output, "|", 5)
+	if len(parts) != 5 {
+		return nil, false
+	}
+
+	trackNumber, _ := strconv.Atoi(strings.TrimSpace(parts[4]))
+	return &runtime.MediaInfo{
+		Status:      parts[0],
+		Title:       parts[1],
+		Artist:      parts[2],
+		Album:       parts[3],
+		TrackNumber: trackNumber,
+	}, true
 }

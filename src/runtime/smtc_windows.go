@@ -14,14 +14,13 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// querySpotifySMTC reads the active Spotify session from the Windows System
-// Media Transport Controls (SMTC) using a minimal in-tree WinRT binding —
-// `combase.dll` exports + COM vtable dispatch. It returns the line
-//
-//	"<status>|<title>|<artist>|<album>|<trackNumber>"
-//
-// which the segment-side parseSMTCOutput already understands, including the
-// `playing && album=="" && trackNumber=="0"` ad-detection heuristic.
+// queryMediaPlayer reads the media session for the given player (matched by a
+// case-insensitive substring of its SourceAppUserModelId, e.g. "spotify") from
+// the Windows System Media Transport Controls (SMTC) using a minimal in-tree
+// WinRT binding — `combase.dll` exports + COM vtable dispatch. SMTC is
+// player-agnostic, so the same path serves any app that publishes a session.
+// It returns a *MediaInfo, leaving status mapping and the
+// `playing && album=="" && trackNumber==0` ad-detection heuristic to the caller.
 //
 // Vtable indices and IIDs were verified by .NET reflection against
 // Windows.Media.Control.winmd on Windows 11 (see the table in the const
@@ -95,14 +94,14 @@ const (
 
 var (
 	// IGlobalSystemMediaTransportControlsSessionManagerStatics
-	iidSpotifySessionManagerStatics = windows.GUID{
+	iidSMTCSessionManagerStatics = windows.GUID{
 		Data1: 0x2050c4ee,
 		Data2: 0x11a0,
 		Data3: 0x57de,
 		Data4: [8]byte{0xae, 0xd7, 0xc9, 0x7c, 0x70, 0x33, 0x82, 0x45},
 	}
 	// IAsyncInfo
-	iidSpotifyAsyncInfo = windows.GUID{
+	iidAsyncInfo = windows.GUID{
 		Data1: 0x00000036,
 		Data2: 0x0000,
 		Data3: 0x0000,
@@ -195,7 +194,7 @@ func comRelease(ptr unsafe.Pointer) {
 func awaitAsync(asyncOp unsafe.Pointer) error {
 	var asyncInfo unsafe.Pointer
 	hr := comCall(asyncOp, iunknownQueryInterface,
-		uintptr(unsafe.Pointer(&iidSpotifyAsyncInfo)),
+		uintptr(unsafe.Pointer(&iidAsyncInfo)),
 		uintptr(unsafe.Pointer(&asyncInfo)),
 	)
 	if hr != 0 {
@@ -222,7 +221,7 @@ func awaitAsync(asyncOp unsafe.Pointer) error {
 	}
 }
 
-func querySpotifySMTC() (string, error) {
+func queryMediaPlayer(player string) (*MediaInfo, error) {
 	// RoInitialize / RoUninitialize update thread-local state, so we have to
 	// pin the goroutine to one OS thread for the duration of this call.
 	goruntime.LockOSThread()
@@ -232,52 +231,52 @@ func querySpotifySMTC() (string, error) {
 	// this thread, which is fine — we still pair with RoUninitialize.
 	hr, _, _ := procRoInitialize.Call(1)
 	if hr != 0 && hr != 1 {
-		return "", fmt.Errorf("RoInitialize: 0x%08x", hr)
+		return nil, fmt.Errorf("RoInitialize: 0x%08x", hr)
 	}
 	defer func() { _, _, _ = procRoUninitialize.Call() }()
 
 	classID, err := newHString("Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer classID.Close()
 
 	var factory unsafe.Pointer
 	hr, _, _ = procRoGetActivationFactory.Call(
 		uintptr(classID),
-		uintptr(unsafe.Pointer(&iidSpotifySessionManagerStatics)),
+		uintptr(unsafe.Pointer(&iidSMTCSessionManagerStatics)),
 		uintptr(unsafe.Pointer(&factory)),
 	)
 	if hr != 0 {
-		return "", fmt.Errorf("RoGetActivationFactory: 0x%08x", hr)
+		return nil, fmt.Errorf("RoGetActivationFactory: 0x%08x", hr)
 	}
 	defer comRelease(factory)
 
 	var asyncOp unsafe.Pointer
 	if hr := comCall(factory, staticsRequestAsync, uintptr(unsafe.Pointer(&asyncOp))); hr != 0 {
-		return "", fmt.Errorf("RequestAsync: 0x%08x", hr)
+		return nil, fmt.Errorf("RequestAsync: 0x%08x", hr)
 	}
 	defer comRelease(asyncOp)
 
 	if err := awaitAsync(asyncOp); err != nil {
-		return "", fmt.Errorf("await RequestAsync: %w", err)
+		return nil, fmt.Errorf("await RequestAsync: %w", err)
 	}
 
 	var manager unsafe.Pointer
 	if hr := comCall(asyncOp, asyncOpGetResults, uintptr(unsafe.Pointer(&manager))); hr != 0 {
-		return "", fmt.Errorf("GetResults manager: 0x%08x", hr)
+		return nil, fmt.Errorf("GetResults manager: 0x%08x", hr)
 	}
 	defer comRelease(manager)
 
 	var sessions unsafe.Pointer
 	if hr := comCall(manager, managerGetSessions, uintptr(unsafe.Pointer(&sessions))); hr != 0 {
-		return "", fmt.Errorf("GetSessions: 0x%08x", hr)
+		return nil, fmt.Errorf("GetSessions: 0x%08x", hr)
 	}
 	defer comRelease(sessions)
 
 	var size uint32
 	if hr := comCall(sessions, vectorViewGetSize, uintptr(unsafe.Pointer(&size))); hr != 0 {
-		return "", fmt.Errorf("get_Size: 0x%08x", hr)
+		return nil, fmt.Errorf("get_Size: 0x%08x", hr)
 	}
 
 	for i := uint32(0); i < size; i++ {
@@ -285,47 +284,51 @@ func querySpotifySMTC() (string, error) {
 		if hr := comCall(sessions, vectorViewGetAt, uintptr(i), uintptr(unsafe.Pointer(&session))); hr != 0 {
 			continue
 		}
-		result, ok := readSpotifySession(session)
+		info, ok := readMediaSession(session, player)
 		comRelease(session)
 		if ok {
-			return result, nil
+			return info, nil
 		}
 	}
 
-	// No Spotify session in the SMTC list — match the contract the existing
-	// PowerShell script returns when the manager has nothing matching.
-	return "closed||||0", nil
+	// No matching session in the SMTC list — surface a closed status so the
+	// caller hides cleanly, mirroring the PowerShell script's contract.
+	return &MediaInfo{Status: "closed"}, nil
 }
 
-func readSpotifySession(session unsafe.Pointer) (string, bool) {
+func readMediaSession(session unsafe.Pointer, player string) (*MediaInfo, bool) {
 	var appHS hstring
 	if hr := comCall(session, sessionGetSourceAppUserModelID, uintptr(unsafe.Pointer(&appHS))); hr != 0 {
-		return "", false
+		return nil, false
 	}
 	appID := appHS.String()
 	appHS.Close()
 
-	if !strings.Contains(strings.ToLower(appID), "spotify") {
-		return "", false
+	if !strings.Contains(strings.ToLower(appID), strings.ToLower(player)) {
+		return nil, false
 	}
 
 	var playbackInfo unsafe.Pointer
 	if hr := comCall(session, sessionGetPlaybackInfo, uintptr(unsafe.Pointer(&playbackInfo))); hr != 0 {
-		return "", false
+		return nil, false
 	}
 	defer comRelease(playbackInfo)
 
 	var status int32
 	if hr := comCall(playbackInfo, playbackInfoGetPlaybackStatus, uintptr(unsafe.Pointer(&status))); hr != 0 {
-		return "", false
+		return nil, false
 	}
-
-	statusStr := smtcStatusString(status)
 
 	// Title/artist/album/trackNumber are best-effort; if the async op fails
 	// we still return the status so the segment can hide cleanly.
 	title, artist, album, trackNumber := readMediaProperties(session)
-	return fmt.Sprintf("%s|%s|%s|%s|%d", statusStr, title, artist, album, trackNumber), true
+	return &MediaInfo{
+		Status:      smtcStatusString(status),
+		Title:       title,
+		Artist:      artist,
+		Album:       album,
+		TrackNumber: int(trackNumber),
+	}, true
 }
 
 func smtcStatusString(s int32) string {

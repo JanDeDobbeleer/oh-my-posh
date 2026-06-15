@@ -33,7 +33,6 @@ import Config from "@site/src/components/Config.js";
 | Name                    | Type      | Default | Description                                                                                |
 | ----------------------- | :-------: | :-----: | ------------------------------------------------------------------------------------------ |
 | `display_default`       | `boolean` | `true`  | display the segment when default user or not                                               |
-| `display_account_id`    | `boolean` | `true`  | populate `.AccountID` with `sso_account_id` (preferred) or `aws_account_id`                |
 | `display_access_key_id` | `boolean` | `false` | populate `.AccessKeyID` from `AWS_ACCESS_KEY_ID`, the credentials file, or the config file |
 
 ## Template ([info][templates])
@@ -53,7 +52,7 @@ import Config from "@site/src/components/Config.js";
 | `.Profile`     | `string`            | the currently active profile                                                                 |
 | `.Region`      | `string`            | the currently active region                                                                  |
 | `.RegionAlias` | `string`            | short alias for the currently active region                                                  |
-| `.AccountID`   | `string`            | account id of the active profile (filled when `display_account_id` is true)                  |
+| `.AccountID`   | `string`            | account id of the active profile (`sso_account_id` preferred, else `aws_account_id`)         |
 | `.AccessKeyID` | `string`            | access key id of the active profile (filled when `display_access_key_id` is true)            |
 | `.Settings`    | `map[string]string` | every key/value pair from the active profile (config + credentials, credentials wins on dup) |
 | `.SSOSession`  | `map[string]string` | every key/value pair from the `[sso-session <name>]` section referenced by the profile       |

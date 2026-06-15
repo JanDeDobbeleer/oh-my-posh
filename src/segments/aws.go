@@ -35,9 +35,6 @@ type Aws struct {
 const (
 	defaultUser = "default"
 
-	// DisplayAccountID toggles populating the AccountID convenience field
-	// from sso_account_id (preferred) or aws_account_id.
-	DisplayAccountID options.Option = "display_account_id"
 	// DisplayAccessKeyID toggles populating the AccessKeyID convenience field
 	// from AWS_ACCESS_KEY_ID, the credentials file, or the config file.
 	DisplayAccessKeyID options.Option = "display_access_key_id"
@@ -73,7 +70,6 @@ func (a *Aws) Enabled() bool {
 	}
 
 	displayDefaultUser := a.options.Bool(options.DisplayDefault, true)
-	displayAccountID := a.options.Bool(DisplayAccountID, true)
 	displayAccessKeyID := a.options.Bool(DisplayAccessKeyID, false)
 
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_DEFAULT_PROFILE", "AWS_PROFILE")
@@ -93,7 +89,7 @@ func (a *Aws) Enabled() bool {
 		a.Region = a.Settings[awsKeyRegion]
 	}
 
-	if displayAccountID && a.AccountID == "" {
+	if a.AccountID == "" {
 		a.AccountID = firstNonEmpty(a.Settings[awsKeySSOAccountID], a.Settings[awsKeyAccountID])
 	}
 

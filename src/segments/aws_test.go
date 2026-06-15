@@ -27,7 +27,6 @@ func TestAWSSegment(t *testing.T) {
 		Template          string
 		ExpectedEnabled   bool
 		DisplayDefault    bool
-		DisableAccountID  bool
 		EnableAccessKeyID bool
 	}{
 		{Case: "enabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
@@ -74,17 +73,6 @@ func TestAWSSegment(t *testing.T) {
 				"sso_role_name = SomeRoleName\n" +
 				"region = eu-west-1\n",
 			Template: "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccountID }} ({{ .AccountID }}){{ end }}",
-		},
-		{
-			Case:            "sso account id disabled",
-			ExpectedString:  "aws-first@eu-west-1",
-			ExpectedEnabled: true,
-			Profile:         "aws-first",
-			ConfigContent: "[profile aws-first]\n" +
-				"sso_account_id = 500000000007\n" +
-				"region = eu-west-1\n",
-			DisableAccountID: true,
-			Template:         "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccountID }} ({{ .AccountID }}){{ end }}",
 		},
 		{
 			Case:              "access key id from env",
@@ -201,9 +189,6 @@ func TestAWSSegment(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		props := options.Map{
 			options.DisplayDefault: tc.DisplayDefault,
-		}
-		if tc.DisableAccountID {
-			props[DisplayAccountID] = false
 		}
 		if tc.EnableAccessKeyID {
 			props[DisplayAccessKeyID] = true

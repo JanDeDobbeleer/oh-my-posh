@@ -11,5 +11,6 @@ const (
 	ELVISH     = "elvish"
 	XONSH      = "xonsh"
 	CLAUDE     = "claude"
+	CODEX      = "codex"
 	COPILOTCLI = "copilot-cli"
 )

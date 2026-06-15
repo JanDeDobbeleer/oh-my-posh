@@ -383,6 +383,7 @@
             "cf",
             "cftarget",
             "claude",
+            "codex",
             "clojure",
             "cmake",
             "copilot",
@@ -1317,6 +1318,113 @@
             "properties": {
               "options": {
                 "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge",
+                    "default": "▱"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "codex"
+              }
+            }
+          },
+          "then": {
+            "title": "OpenAI Codex Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/codex",
+            "properties": {
+              "options": {
+                "type": "object",
+                "properties": {
+                  "display_model": {
+                    "type": "boolean",
+                    "title": "Display model",
+                    "description": "Display the Codex model name in the default template",
+                    "default": true
+                  },
+                  "display_reasoning": {
+                    "type": "boolean",
+                    "title": "Display reasoning",
+                    "description": "Display the Codex reasoning level in the default template",
+                    "default": false
+                  },
+                  "display_context": {
+                    "type": "boolean",
+                    "title": "Display context",
+                    "description": "Display context window usage in the default template",
+                    "default": true
+                  },
+                  "display_tokens": {
+                    "type": "boolean",
+                    "title": "Display tokens",
+                    "description": "Display total token usage in the default template",
+                    "default": false
+                  },
+                  "display_five_hour_limit": {
+                    "type": "boolean",
+                    "title": "Display five-hour limit",
+                    "description": "Display the primary 5-hour rolling limit in the default template",
+                    "default": false
+                  },
+                  "display_weekly_limit": {
+                    "type": "boolean",
+                    "title": "Display weekly limit",
+                    "description": "Display the secondary 7-day rolling limit in the default template",
+                    "default": true
+                  },
+                  "discover_local_status": {
+                    "type": "boolean",
+                    "title": "Discover local status",
+                    "description": "Discover Codex status from local session transcripts when no explicit status data is available",
+                    "default": true
+                  },
+                  "codex_home": {
+                    "type": "string",
+                    "title": "Codex home",
+                    "description": "Codex home directory; defaults to CODEX_HOME or ~/.codex"
+                  },
+                  "session_root": {
+                    "type": "string",
+                    "title": "Session root",
+                    "description": "Codex sessions directory; defaults to <codex_home>/sessions"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "title": "Session ID",
+                    "description": "Codex session/thread ID to render; defaults to the newest session with token usage"
+                  },
+                  "status_file": {
+                    "type": "string",
+                    "title": "Status file",
+                    "description": "Path to a JSON file containing Codex status data"
+                  },
+                  "status_file_env": {
+                    "type": "string",
+                    "title": "Status file environment variable",
+                    "description": "Environment variable containing the Codex status file path",
+                    "default": "POSH_CODEX_STATUS_FILE"
+                  },
+                  "status_json_env": {
+                    "type": "string",
+                    "title": "Status JSON environment variable",
+                    "description": "Environment variable containing Codex status JSON",
+                    "default": "POSH_CODEX_STATUS"
+                  },
                   "gauge_marked_char": {
                     "type": "string",
                     "title": "Gauge marked character",

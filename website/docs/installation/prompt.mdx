@@ -23,6 +23,7 @@ oh-my-posh get shell
     { label: 'bash', value: 'bash', },
     { label: 'claude', value: 'claude', },
     { label: 'cmd', value: 'cmd', },
+    { label: 'codex', value: 'codex', },
     { label: 'copilot', value: 'copilot', },
     { label: 'elvish', value: 'elvish', },
     { label: 'fish', value: 'fish', },
@@ -79,6 +80,50 @@ oh-my-posh claude --config /path/to/claude.omp.json
 :::
 
 For more information about the Claude segment properties and customization options, see the [Claude segment documentation](/docs/segments/cli/claude).
+
+</TabItem>
+<TabItem value="codex">
+
+To render OpenAI Codex session information with Oh My Posh, add the `codex` segment to your
+prompt config. The segment reads the latest Codex `token_count` event from local Codex session
+transcripts under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when `CODEX_HOME` is not set.
+Use the standard segment `cache` setting to control how often local discovery refreshes.
+
+You can also use the `oh-my-posh codex` command to render a dedicated Codex statusline prompt:
+
+```bash
+oh-my-posh codex
+```
+
+:::tip
+You can use the `--config` flag to point to a tailored Oh My Posh config just for Codex:
+
+```bash
+oh-my-posh codex --config /path/to/codex.omp.json
+```
+
+:::
+
+To render a specific Codex session, pass its thread ID:
+
+```bash
+oh-my-posh codex --session 019e9eac-83ec-7393-ae18-cc2e566394d5
+```
+
+The Codex segment and command do not authenticate to Codex, call Codex APIs, or read Codex auth
+files. They only read local session metadata and `token_count` events. If status JSON is provided
+to the command on standard input, standard input takes precedence over local session discovery:
+
+```bash
+cat codex-status.json | oh-my-posh codex
+```
+
+For regular shell prompts, explicit status data takes precedence over local session discovery. You
+can write a Codex status payload to a file and point the segment at it with `status_file`, set
+`POSH_CODEX_STATUS_FILE` to the file path, or set `POSH_CODEX_STATUS` directly to the JSON payload.
+
+For more information about the Codex segment properties and customization options, see the
+[Codex segment documentation].
 
 </TabItem>
 <TabItem value="copilot">
@@ -281,6 +326,7 @@ exec zsh
 </Tabs>
 
 [Copilot CLI segment documentation]: /docs/segments/cli/copilot-cli
+[Codex segment documentation]: /docs/segments/cli/codex
 [clink]: https://chrisant996.github.io/clink/
 [iterm2]: https://iterm2.com/
 [sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.3#methods-of-signing-scripts

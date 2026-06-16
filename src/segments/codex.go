@@ -147,7 +147,7 @@ func (c *CodexData) UnmarshalJSON(data []byte) error {
 }
 
 func (c *Codex) Template() string {
-	return " {{ if .ModelName }}\ue7cf {{ .ModelName }}{{ end }}{{ if .TokenGauge }} \uf2d0 {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }} \uf017 7d {{ .FormattedWeeklyRemaining }}{{ end }} "
+	return " {{ if .ModelName }}\ue7cf {{ .ModelName }}{{ end }}{{ if .TokenGauge }} \uf2d0 {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }} \uf017 {{ .WeeklyLimitLabel }} {{ .FormattedWeeklyRemaining }}{{ end }} "
 }
 
 func (c *Codex) Enabled() bool {
@@ -639,19 +639,37 @@ func (c *Codex) FormattedWeeklyRemaining() string {
 	return fmt.Sprintf("%d%%", c.WeeklyRemaining())
 }
 
+// FiveHourLimitLabel returns the primary rolling window label.
+func (c *Codex) FiveHourLimitLabel() string {
+	if c.RateLimits == nil {
+		return "5h"
+	}
+
+	return codexRateLimitWindowLabel(c.RateLimits.Primary, "5h")
+}
+
+// WeeklyLimitLabel returns the secondary rolling window label.
+func (c *Codex) WeeklyLimitLabel() string {
+	if c.RateLimits == nil {
+		return "7d"
+	}
+
+	return codexRateLimitWindowLabel(c.RateLimits.Secondary, "7d")
+}
+
 // FormattedLimits returns rate limit text for the FormattedText preset.
 func (c *Codex) FormattedLimits() string {
 	limits := []string{}
 
 	if c.DisplayFiveHourLimit() {
 		if remaining := c.FormattedFiveHourRemaining(); remaining != "" {
-			limits = append(limits, "5h "+remaining)
+			limits = append(limits, c.FiveHourLimitLabel()+" "+remaining)
 		}
 	}
 
 	if c.DisplayWeeklyLimit() {
 		if remaining := c.FormattedWeeklyRemaining(); remaining != "" {
-			limits = append(limits, "7d "+remaining)
+			limits = append(limits, c.WeeklyLimitLabel()+" "+remaining)
 		}
 	}
 
@@ -725,6 +743,23 @@ func codexRateLimitHasUsage(limits *CodexRateLimits, window func(*CodexRateLimit
 	}
 
 	return codexRateLimitWindowHasUsage(window(limits))
+}
+
+func codexRateLimitWindowLabel(window *CodexRateLimitWindow, fallback string) string {
+	if window == nil || window.WindowMinutes <= 0 {
+		return fallback
+	}
+
+	const minutesPerDay = 24 * 60
+	if window.WindowMinutes%minutesPerDay == 0 {
+		return fmt.Sprintf("%dd", window.WindowMinutes/minutesPerDay)
+	}
+
+	if window.WindowMinutes%60 == 0 {
+		return fmt.Sprintf("%dh", window.WindowMinutes/60)
+	}
+
+	return fmt.Sprintf("%dm", window.WindowMinutes)
 }
 
 func codexPrimaryRateLimitWindow(limits *CodexRateLimits) *CodexRateLimitWindow {

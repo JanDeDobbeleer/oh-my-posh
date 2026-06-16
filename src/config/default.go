@@ -224,7 +224,7 @@ func Codex() *Config {
 	return statuslineCLIConfig(
 		1234567892,
 		CODEX,
-		" {{ if .ModelName }}\ue7cf {{ .ModelName }}{{ end }}{{ if .TokenGauge }} \uf2d0 {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }} \uf017 7d {{ .FormattedWeeklyRemaining }}{{ end }} ",
+		" {{ if .ModelName }}\ue7cf {{ .ModelName }}{{ end }}{{ if .TokenGauge }} \uf2d0 {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }} \uf017 {{ .WeeklyLimitLabel }} {{ .FormattedWeeklyRemaining }}{{ end }} ",
 	)
 }
 

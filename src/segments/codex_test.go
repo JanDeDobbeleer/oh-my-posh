@@ -541,11 +541,13 @@ func TestCodexRateLimitUsage(t *testing.T) {
 		CodexData: CodexData{
 			RateLimits: &CodexRateLimits{
 				Primary: &CodexRateLimitWindow{
-					UsedPercent: &primary,
+					UsedPercent:   &primary,
+					WindowMinutes: 300,
 				},
 				Secondary: &CodexRateLimitWindow{
-					UsedPercent: &secondary,
-					ResetsAt:    &reset,
+					UsedPercent:   &secondary,
+					WindowMinutes: 10080,
+					ResetsAt:      &reset,
 				},
 			},
 		},
@@ -556,8 +558,38 @@ func TestCodexRateLimitUsage(t *testing.T) {
 	assert.Equal(t, text.Percentage(87), segment.FiveHourRemaining())
 	assert.Equal(t, text.Percentage(74), segment.WeeklyRemaining())
 	assert.Equal(t, "74%", segment.FormattedWeeklyRemaining())
+	assert.Equal(t, "5h", segment.FiveHourLimitLabel())
+	assert.Equal(t, "7d", segment.WeeklyLimitLabel())
 	assert.Equal(t, "7d 74%", segment.FormattedLimits())
 	assert.Equal(t, time.Unix(reset, 0), segment.WeeklyResetsAt())
+}
+
+func TestCodexRateLimitLabelsUseWindowMinutes(t *testing.T) {
+	primary := 12.5
+	secondary := 26.0
+	segment := &Codex{
+		Base: Base{
+			options: options.Map{
+				displayFiveHourLimit: true,
+			},
+		},
+		CodexData: CodexData{
+			RateLimits: &CodexRateLimits{
+				Primary: &CodexRateLimitWindow{
+					UsedPercent:   &primary,
+					WindowMinutes: 90,
+				},
+				Secondary: &CodexRateLimitWindow{
+					UsedPercent:   &secondary,
+					WindowMinutes: 4320,
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, "90m", segment.FiveHourLimitLabel())
+	assert.Equal(t, "3d", segment.WeeklyLimitLabel())
+	assert.Equal(t, "90m 87% 3d 74%", segment.FormattedLimits())
 }
 
 func TestCodexFormattedLimitsOmitsUnknownWindows(t *testing.T) {

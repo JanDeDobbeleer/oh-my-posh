@@ -29,7 +29,7 @@ import Config from "@site/src/components/Config.js";
     foreground: "#111111",
     background: "#10A37F",
     template:
-      " \ue7cf {{ .ModelName }} \uf2d0 {{ .TokenGauge }}{{ if .FormattedWeeklyRemaining }} \uf017 7d {{ .FormattedWeeklyRemaining }}{{ end }} ",
+      " \ue7cf {{ .ModelName }} \uf2d0 {{ .TokenGauge }}{{ if .FormattedWeeklyRemaining }} \uf017 {{ .WeeklyLimitLabel }} {{ .FormattedWeeklyRemaining }}{{ end }} ",
     cache: {
       duration: "15m",
       strategy: "device",
@@ -42,7 +42,7 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
- {{ if .ModelName }} {{ .ModelName }}{{ end }}{{ if .TokenGauge }}  {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }}  7d {{ .FormattedWeeklyRemaining }}{{ end }}
+ {{ if .ModelName }} {{ .ModelName }}{{ end }}{{ if .TokenGauge }}  {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }}  {{ .WeeklyLimitLabel }} {{ .FormattedWeeklyRemaining }}{{ end }}
 ```
 
 :::
@@ -125,6 +125,8 @@ segment renders.
 | `.WeeklyRemainingGauge` | `string` | Gauge showing weekly quota remaining; empty when unavailable |
 | `.FormattedFiveHourRemaining` | `string` | Primary rolling window remaining with a percent sign; empty when unavailable |
 | `.FormattedWeeklyRemaining` | `string` | Weekly rolling window remaining with a percent sign; empty when unavailable |
+| `.FiveHourLimitLabel` | `string` | Primary rolling window label derived from `WindowMinutes`, falling back to `5h` |
+| `.WeeklyLimitLabel` | `string` | Secondary rolling window label derived from `WindowMinutes`, falling back to `7d` |
 | `.FormattedLimits` | `string` | Default remaining-limit text, controlled by available limit data and display options |
 | `.FiveHourResetsAt` | `time.Time` | Reset time for the primary rolling window, or zero when unavailable |
 | `.WeeklyResetsAt` | `time.Time` | Reset time for the weekly rolling window, or zero when unavailable |

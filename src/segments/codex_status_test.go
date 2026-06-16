@@ -73,7 +73,7 @@ func TestCodexStatusFromLocalSessionsConsidersRootFilesAfterDateCap(t *testing.T
 	dateRoot := filepath.Join(sessionRoot, "2026", "06", "09")
 	require.NoError(t, os.MkdirAll(dateRoot, 0o755))
 
-	for i := range codexMaxSessionFiles {
+	for i := 0; i < codexMaxSessionFiles; i++ {
 		sessionID := fmt.Sprintf("dated-session-%02d", i)
 		path := filepath.Join(dateRoot, fmt.Sprintf("rollout-2026-06-09T10-%02d-00-%s.jsonl", i, sessionID))
 		writeCodexSessionFile(t, path, sessionID, "2026-06-09T14:00:00Z", 10, 20)
@@ -101,7 +101,7 @@ func TestCodexSessionFilesCapsRequestedSessionCandidates(t *testing.T) {
 	sessionRoot := filepath.Join(tmp, "sessions")
 	require.NoError(t, os.MkdirAll(sessionRoot, 0o755))
 
-	for i := range codexMaxRequestedSessionFiles + 10 {
+	for i := 0; i < codexMaxRequestedSessionFiles+10; i++ {
 		path := filepath.Join(sessionRoot, fmt.Sprintf("rollout-2026-06-09T10-%03d-00.jsonl", i))
 		writeCodexSessionFile(t, path, fmt.Sprintf("session-%03d", i), "2026-06-09T14:00:00Z", 10, 20)
 	}

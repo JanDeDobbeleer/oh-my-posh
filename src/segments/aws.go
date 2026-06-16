@@ -35,10 +35,6 @@ type Aws struct {
 const (
 	defaultUser = "default"
 
-	// DisplayAccessKeyID toggles populating the AccessKeyID convenience field
-	// from AWS_ACCESS_KEY_ID, the credentials file, or the config file.
-	DisplayAccessKeyID options.Option = "display_access_key_id"
-
 	// AWS shared config keys we promote to convenience fields.
 	awsKeyRegion       = "region"
 	awsKeyAccessKeyID  = "aws_access_key_id"
@@ -70,7 +66,6 @@ func (a *Aws) Enabled() bool {
 	}
 
 	displayDefaultUser := a.options.Bool(options.DisplayDefault, true)
-	displayAccessKeyID := a.options.Bool(DisplayAccessKeyID, false)
 
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_DEFAULT_PROFILE", "AWS_PROFILE")
 	if !displayDefaultUser && a.Profile == defaultUser {
@@ -78,9 +73,7 @@ func (a *Aws) Enabled() bool {
 	}
 
 	a.Region = getEnvFirstMatch("AWS_REGION", "AWS_DEFAULT_REGION")
-	if displayAccessKeyID {
-		a.AccessKeyID = a.env.Getenv("AWS_ACCESS_KEY_ID")
-	}
+	a.AccessKeyID = a.env.Getenv("AWS_ACCESS_KEY_ID")
 
 	a.loadConfigFile()
 	a.loadCredentialsFile()
@@ -93,7 +86,7 @@ func (a *Aws) Enabled() bool {
 		a.AccountID = firstNonEmpty(a.Settings[awsKeySSOAccountID], a.Settings[awsKeyAccountID])
 	}
 
-	if displayAccessKeyID && a.AccessKeyID == "" {
+	if a.AccessKeyID == "" {
 		a.AccessKeyID = a.Settings[awsKeyAccessKeyID]
 	}
 

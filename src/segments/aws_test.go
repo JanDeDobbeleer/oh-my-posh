@@ -13,21 +13,20 @@ import (
 
 func TestAWSSegment(t *testing.T) {
 	cases := []struct {
-		Case              string
-		ExpectedString    string
-		Profile           string
-		DefaultProfile    string
-		Vault             string
-		Region            string
-		DefaultRegion     string
-		ConfigFile        string
-		ConfigContent     string
-		CredentialsBody   string
-		AccessKeyEnv      string
-		Template          string
-		ExpectedEnabled   bool
-		DisplayDefault    bool
-		EnableAccessKeyID bool
+		Case            string
+		ExpectedString  string
+		Profile         string
+		DefaultProfile  string
+		Vault           string
+		Region          string
+		DefaultRegion   string
+		ConfigFile      string
+		ConfigContent   string
+		CredentialsBody string
+		AccessKeyEnv    string
+		Template        string
+		ExpectedEnabled bool
+		DisplayDefault  bool
 	}{
 		{Case: "enabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
 		{Case: "disabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: false, DisplayDefault: false},
@@ -75,14 +74,13 @@ func TestAWSSegment(t *testing.T) {
 			Template: "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccountID }} ({{ .AccountID }}){{ end }}",
 		},
 		{
-			Case:              "access key id from env",
-			ExpectedString:    "company@eu-west [AKIA123]",
-			ExpectedEnabled:   true,
-			Profile:           "company",
-			Region:            "eu-west",
-			AccessKeyEnv:      "AKIA123",
-			EnableAccessKeyID: true,
-			Template:          "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
+			Case:            "access key id from env",
+			ExpectedString:  "company@eu-west [AKIA123]",
+			ExpectedEnabled: true,
+			Profile:         "company",
+			Region:          "eu-west",
+			AccessKeyEnv:    "AKIA123",
+			Template:        "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
 		},
 		{
 			Case:            "access key id from credentials file",
@@ -93,17 +91,7 @@ func TestAWSSegment(t *testing.T) {
 			CredentialsBody: "[prof1]\n" +
 				"aws_access_key_id = yyy\n" +
 				"aws_secret_access_key = yyyyy\n",
-			EnableAccessKeyID: true,
-			Template:          "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
-		},
-		{
-			Case:            "access key id default hidden",
-			ExpectedString:  "prof1@us-east-1",
-			ExpectedEnabled: true,
-			Profile:         "prof1",
-			Region:          "us-east-1",
-			AccessKeyEnv:    "AKIA123",
-			Template:        "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
+			Template: "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
 		},
 		{
 			Case:            "access key id fallback from config file",
@@ -115,8 +103,7 @@ func TestAWSSegment(t *testing.T) {
 				"output=text\n" +
 				"aws_access_key_id=yyy\n" +
 				"aws_secret_access_key=yyyyy\n",
-			EnableAccessKeyID: true,
-			Template:          "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
+			Template: "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}{{ if .AccessKeyID }} [{{ .AccessKeyID }}]{{ end }}",
 		},
 		{
 			Case:            "expose role_arn via Settings map",
@@ -169,8 +156,7 @@ func TestAWSSegment(t *testing.T) {
 				"aws_access_key_id = config-key\n",
 			CredentialsBody: "[prof1]\n" +
 				"aws_access_key_id = override-key\n",
-			EnableAccessKeyID: true,
-			Template:          "{{ .Profile }} [{{ .AccessKeyID }}]",
+			Template: "{{ .Profile }} [{{ .AccessKeyID }}]",
 		},
 	}
 
@@ -189,9 +175,6 @@ func TestAWSSegment(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		props := options.Map{
 			options.DisplayDefault: tc.DisplayDefault,
-		}
-		if tc.EnableAccessKeyID {
-			props[DisplayAccessKeyID] = true
 		}
 		env.On("Flags").Return(&runtime.Flags{})
 

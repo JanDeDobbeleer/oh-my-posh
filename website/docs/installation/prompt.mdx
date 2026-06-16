@@ -87,45 +87,11 @@ For more information about the Claude segment properties and customization optio
 To render OpenAI Codex session information with Oh My Posh, add the `codex` segment to your
 prompt config. The segment reads the latest Codex `token_count` event from local Codex session
 transcripts under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when `CODEX_HOME` is not set.
-Use the standard segment `cache` setting to control how often local discovery refreshes.
-Set `discover_local_status` to `false` when you only want to render explicit status data from
-a file or environment variable, for example when a Codex hook updates a status file.
+Use the standard segment `cache` setting to control how often local discovery refreshes. Without
+a segment cache, local discovery runs whenever the segment renders.
 
-You can also use the `oh-my-posh codex` command to render a dedicated Codex statusline prompt:
-
-```bash
-oh-my-posh codex
-```
-
-:::tip
-You can use the `--config` flag to point to a tailored Oh My Posh config just for Codex:
-
-```bash
-oh-my-posh codex --config /path/to/codex.omp.json
-```
-
-:::
-
-To render a specific Codex session, pass its thread ID:
-
-```bash
-oh-my-posh codex --session 019e9eac-83ec-7393-ae18-cc2e566394d5
-```
-
-The Codex segment and command do not authenticate to Codex, call Codex APIs, or read Codex auth
-files. They only read local session metadata and `token_count` events. If status JSON is provided
-to the command on standard input, standard input takes precedence over local session discovery.
-This is useful for manual testing or scripts that emit Codex status data:
-
-```bash
-cat codex-status.json | oh-my-posh codex
-```
-
-For regular shell prompts, explicit status data takes precedence over local session discovery. You
-can write a Codex status payload to a file and point the segment at it with `status_file`, set
-`POSH_CODEX_STATUS_FILE` to the file path, or set `POSH_CODEX_STATUS` directly to the JSON payload.
-Codex hooks can use that file-based path by running a command on `Stop` that updates the status
-file after each turn.
+The Codex segment does not authenticate to Codex, call Codex APIs, or read Codex auth files. It only
+reads local session metadata and `token_count` events.
 
 For more information about the Codex segment properties and customization options, see the
 [Codex segment documentation].

@@ -19,13 +19,11 @@ session transcripts. It reads the newest token_count event from
 $CODEX_HOME/sessions, falling back to ~/.codex/sessions when CODEX_HOME is not set.
 
 When JSON is provided on stdin, stdin takes precedence over local session discovery.
-This is useful for scripts that emit Codex status data, including hook-driven
-workflows that generate a token_count payload.
+This is useful for tests or scripts that already emit a token_count payload.
 
 Example usage:
   oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json
-  oh-my-posh codex --session 019e9eac-83ec-7393-ae18-cc2e566394d5
-  cat codex-status.json | oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json`,
+  oh-my-posh codex --session 019e9eac-83ec-7393-ae18-cc2e566394d5`,
 	Args: cobra.NoArgs,
 	Run: statuslineRunWithDataSource[segments.CodexData](
 		shell.CODEX,

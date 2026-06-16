@@ -126,6 +126,10 @@ default. It also accepts either a direct `token_count` payload or a Codex rollou
 
 ## Command Options
 
+These options apply to the standalone `oh-my-posh codex` command, which is primarily useful for
+testing and scripts that already emit Codex status data. Regular shell prompts only need the segment
+configuration above.
+
 | Name | Description |
 | ---- | ----------- |
 | `--session <id>` | Render a specific Codex session/thread ID instead of the newest session with token usage |
@@ -243,168 +247,29 @@ the `gauge_marked_char` and `gauge_unmarked_char` options to apply.
 
 ## How it works
 
-When the segment is added to a normal Oh My Posh config, it first checks the session cache,
-then `status_file`, then the file path in `POSH_CODEX_STATUS_FILE`, then the JSON payload in
-`POSH_CODEX_STATUS`. If none of those sources provide usable status data, it automatically
-reads the latest local Codex session `token_count` event.
+When the segment is added to a normal Oh My Posh config, it automatically reads the latest local
+Codex session `token_count` event.
 
 Use the standard segment `cache` setting to control how often local discovery refreshes. Without
 a segment cache, local discovery runs whenever the segment renders.
 
-Set `discover_local_status` to `false` when you only want to render explicit status data
-from `status_file`, `POSH_CODEX_STATUS_FILE`, or `POSH_CODEX_STATUS`. This is useful when
-a Codex hook updates a status file and you do not want Oh My Posh to scan local transcripts
-as a fallback.
-
-The `oh-my-posh codex` command uses the same local discovery logic, caches the parsed data,
-then renders your configured statusline prompt. Standard input takes precedence when a
-payload is piped to the command. This is mostly useful for manual testing or for scripts
-that already emit a Codex `token_count` payload:
-
-```bash
-oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json < codex-status.json
-```
+Explicit status data from `status_file`, `POSH_CODEX_STATUS_FILE`, or `POSH_CODEX_STATUS` takes
+precedence over local discovery. Set `discover_local_status` to `false` when you only want to render
+those explicit sources.
 
 The segment is only visible when Codex status data is available.
 
 The parser accepts either a direct Codex token-count payload or a Codex rollout
 `event_msg` wrapper whose `payload.type` is `token_count`.
 
-## Hook-updated Status File
+:::note advanced integrations
 
-Codex hooks can run commands on lifecycle events such as `Stop`. A hook can update
-a status file after each turn, and the segment can read that file instead of scanning
-session transcripts itself.
+Codex hooks can run commands on lifecycle events, but they should not be used to update Oh My Posh's
+internal segment cache directly. That cache is implementation-specific and scoped to Oh My Posh's
+runtime/session. If a hook or another script already emits Codex status data, write it to a file and
+point `status_file` or `POSH_CODEX_STATUS_FILE` at that file. The normal local-discovery path does not
+require this.
 
-```json title="~/.codex/hooks.json"
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh ~/.codex/hooks/export-codex-status.sh",
-            "commandWindows": "pwsh -NoProfile -File \"$HOME/.codex/hooks/Export-CodexStatus.ps1\"",
-            "timeout": 10,
-            "statusMessage": "Updating Codex status"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Configure the segment to read that status file and skip automatic local discovery:
-
-```json
-{
-  "type": "codex",
-  "template": "  {{ .ModelName }}  {{ .TokenGauge }}{{ if .FormattedWeeklyRemaining }}  7d {{ .FormattedWeeklyRemaining }}{{ end }} ",
-  "cache": {
-    "duration": "30s",
-    "strategy": "device"
-  },
-  "options": {
-    "status_file": "~/.codex/oh-my-posh-codex-status.json",
-    "discover_local_status": false
-  }
-}
-```
-
-The standard segment cache still applies. If the hook updates the file on every
-turn but the segment cache duration is `30s`, Oh My Posh can continue showing
-the cached segment data until that cache entry expires. Omit the segment cache
-or use a shorter duration when you want hook updates to appear immediately.
-
-```sh title="~/.codex/hooks/export-codex-status.sh"
-#!/usr/bin/env sh
-set -eu
-
-codex_home="${CODEX_HOME:-"$HOME/.codex"}"
-out_file="${POSH_CODEX_STATUS_FILE:-"$codex_home/oh-my-posh-codex-status.json"}"
-
-CODEX_HOME_DIR="$codex_home" OUT_FILE="$out_file" python3 <<'PY'
-import json
-import os
-from pathlib import Path
-
-root = Path(os.environ["CODEX_HOME_DIR"]) / "sessions"
-out_file = Path(os.environ["OUT_FILE"])
-
-if not root.exists():
-    raise SystemExit(0)
-
-for path in sorted(root.rglob("*.jsonl"), reverse=True)[:250]:
-    latest = None
-    try:
-        lines = path.read_text(encoding="utf-8").splitlines()
-    except OSError:
-        continue
-
-    for line in lines:
-        if not line.strip():
-            continue
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        payload = event.get("payload") if event.get("type") == "event_msg" else event
-        if isinstance(payload, dict) and payload.get("type") == "token_count":
-            latest = payload
-
-    if latest is not None:
-        out_file.parent.mkdir(parents=True, exist_ok=True)
-        out_file.write_text(json.dumps(latest, separators=(",", ":")), encoding="utf-8")
-        break
-PY
-```
-
-```powershell title="~/.codex/hooks/Export-CodexStatus.ps1"
-$codexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
-$outFile = if ($env:POSH_CODEX_STATUS_FILE) {
-    $env:POSH_CODEX_STATUS_FILE
-} else {
-    Join-Path $codexHome 'oh-my-posh-codex-status.json'
-}
-
-$sessionRoot = Join-Path $codexHome 'sessions'
-if (-not (Test-Path -LiteralPath $sessionRoot)) {
-    exit 0
-}
-
-$files = Get-ChildItem -LiteralPath $sessionRoot -Recurse -Filter '*.jsonl' -File -ErrorAction SilentlyContinue |
-    Sort-Object -Property FullName -Descending |
-    Select-Object -First 250
-
-foreach ($file in $files) {
-    $latest = $null
-
-    foreach ($line in Get-Content -LiteralPath $file.FullName -ErrorAction SilentlyContinue) {
-        if ([string]::IsNullOrWhiteSpace($line)) {
-            continue
-        }
-
-        try {
-            $event = $line | ConvertFrom-Json -ErrorAction Stop
-        } catch {
-            continue
-        }
-
-        if ($event.type -eq 'event_msg' -and $event.payload.type -eq 'token_count') {
-            $latest = $event.payload
-        } elseif ($event.type -eq 'token_count') {
-            $latest = $event
-        }
-    }
-
-    if ($null -ne $latest) {
-        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $outFile) | Out-Null
-        $latest | ConvertTo-Json -Depth 20 -Compress | Set-Content -LiteralPath $outFile -Encoding utf8
-        break
-    }
-}
-```
+:::
 
 [templates]: /docs/configuration/templates

@@ -18,6 +18,9 @@ This command reads Claude Code's contextual JSON data from stdin and renders
 a prompt that can include a Claude segment with session information like
 model name, costs, tokens, and more.
 
+Stdin is read only when data is piped or redirected to the command; interactive
+terminal stdin is ignored to avoid blocking.
+
 Example usage in Claude Code settings:
   "statusLine": {
     "command": "oh-my-posh claude --config ~/.config/ohmyposh/claude.toml"

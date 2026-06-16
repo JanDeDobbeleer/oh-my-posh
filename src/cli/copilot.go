@@ -20,6 +20,9 @@ This command reads GitHub Copilot CLI's contextual JSON data from stdin and rend
 a prompt that can include a Copilot CLI segment with session information like
 model name, token usage, costs, and more.
 
+Stdin is read only when data is piped or redirected to the command; interactive
+terminal stdin is ignored to avoid blocking.
+
 Example usage in GitHub Copilot CLI settings (%USERPROFILE%\.copilot\statusline.cmd):
   @echo off
   oh-my-posh copilot --config %USERPROFILE%\.config\ohmyposh\copilot.toml`,

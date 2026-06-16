@@ -111,6 +111,17 @@ func TestCodexSessionFilesCapsRequestedSessionCandidates(t *testing.T) {
 	require.Len(t, files, codexMaxRequestedSessionFiles)
 }
 
+func TestSortCodexSessionFilesBreaksTiesByPath(t *testing.T) {
+	files := []codexSessionFile{
+		{path: filepath.Join("sessions", "2026", "06", "09", "rollout.jsonl"), sortKey: "rollout.jsonl"},
+		{path: filepath.Join("sessions", "rollout.jsonl"), sortKey: "rollout.jsonl"},
+	}
+
+	sortCodexSessionFiles(files)
+
+	assert.Equal(t, filepath.Join("sessions", "rollout.jsonl"), files[0].path)
+}
+
 func TestCodexStatusFromLocalSessionsReturnsActionableErrorWhenSessionRootMissing(t *testing.T) {
 	_, err := CodexStatusFromLocalSessions(CodexLocalStatusOptions{})
 	require.Error(t, err)

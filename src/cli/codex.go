@@ -20,6 +20,8 @@ $CODEX_HOME/sessions, falling back to ~/.codex/sessions when CODEX_HOME is not s
 
 When JSON is provided on stdin, stdin takes precedence over local session discovery.
 This is useful for tests or scripts that already emit a token_count payload.
+Stdin is read only when data is piped or redirected to the command; interactive
+terminal stdin is ignored to avoid blocking.
 
 Example usage:
   oh-my-posh codex --config ~/.config/ohmyposh/codex.omp.json

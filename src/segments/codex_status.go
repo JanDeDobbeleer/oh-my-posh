@@ -17,6 +17,7 @@ import (
 
 const (
 	codexMaxSessionFiles          = 25
+	codexMaxSessionDirs           = codexMaxSessionFiles
 	codexMaxRequestedSessionFiles = 250
 )
 
@@ -136,6 +137,23 @@ func codexSessionFiles(root, sessionID string) ([]codexSessionFile, error) {
 				files = files[:limit]
 			}
 		}
+
+		if sessionID == "" && len(files) >= limit {
+			break
+		}
+	}
+
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range codexSessionFilesInDir(root, entries) {
+		files = append(files, file)
+		if len(files) > limit {
+			sortCodexSessionFiles(files)
+			files = files[:limit]
+		}
 	}
 
 	sortCodexSessionFiles(files)
@@ -182,11 +200,14 @@ func codexSessionSearchDirs(root string) ([]string, error) {
 
 			for _, day := range days {
 				dirs = append(dirs, filepath.Join(monthPath, day))
+				if len(dirs) >= codexMaxSessionDirs {
+					return dirs, nil
+				}
 			}
 		}
 	}
 
-	return append(dirs, root), nil
+	return dirs, nil
 }
 
 func filterCodexSessionDirs(entries []os.DirEntry, length int) []string {
@@ -225,8 +246,9 @@ func codexSessionFilesInDir(dir string, entries []os.DirEntry) []codexSessionFil
 			continue
 		}
 
+		path := filepath.Join(dir, entry.Name())
 		files = append(files, codexSessionFile{
-			path:    filepath.Join(dir, entry.Name()),
+			path:    path,
 			sortKey: entry.Name(),
 		})
 	}
@@ -236,6 +258,10 @@ func codexSessionFilesInDir(dir string, entries []os.DirEntry) []codexSessionFil
 
 func sortCodexSessionFiles(files []codexSessionFile) {
 	sort.Slice(files, func(i, j int) bool {
+		if files[i].sortKey == files[j].sortKey {
+			return files[i].path > files[j].path
+		}
+
 		return files[i].sortKey > files[j].sortKey
 	})
 }

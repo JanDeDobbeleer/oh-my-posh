@@ -31,7 +31,7 @@ import Config from "@site/src/components/Config.js";
     template:
       " \ue7cf {{ .ModelName }} \uf2d0 {{ .TokenGauge }}{{ if .FormattedWeeklyRemaining }} \uf017 7d {{ .FormattedWeeklyRemaining }}{{ end }} ",
     cache: {
-      duration: "30s",
+      duration: "15m",
       strategy: "device",
     },
   }}
@@ -55,54 +55,11 @@ matches other CLI status segments and remains easy to customize directly.
 
 :::
 
-## Status Payload
+## Caching
 
-The segment discovers this payload from local Codex JSONL session transcripts by
-default. It also accepts either a direct `token_count` payload or a Codex rollout
-`event_msg` wrapper whose `payload.type` is `token_count`.
-
-```json
-{
-  "type": "token_count",
-  "thread_id": "019e9eac-83ec-7393-ae18-cc2e566394d5",
-  "version": "0.137.0",
-  "reasoning_effort": "high",
-  "model": {
-    "id": "gpt-5",
-    "display_name": "gpt-5"
-  },
-  "info": {
-    "total_token_usage": {
-      "input_tokens": 420000,
-      "cached_input_tokens": 300000,
-      "output_tokens": 24000,
-      "reasoning_output_tokens": 8000,
-      "total_tokens": 444000
-    },
-    "last_token_usage": {
-      "input_tokens": 150000,
-      "cached_input_tokens": 120000,
-      "output_tokens": 4000,
-      "reasoning_output_tokens": 1500,
-      "total_tokens": 154000
-    },
-    "model_context_window": 258000
-  },
-  "rate_limits": {
-    "primary": {
-      "used_percent": 12,
-      "window_minutes": 300,
-      "resets_at": 1780794869
-    },
-    "secondary": {
-      "used_percent": 28,
-      "window_minutes": 10080,
-      "resets_at": 1781137565
-    },
-    "plan_type": "pro"
-  }
-}
-```
+The sample uses Oh My Posh's standard segment `cache` setting with a `15m` duration. The Codex
+segment does not define a separate cache default; without `cache`, local discovery runs whenever the
+segment renders.
 
 ## Options
 
@@ -123,18 +80,6 @@ default. It also accepts either a direct `token_count` payload or a Codex rollou
 | `status_json_env` | `string` | `POSH_CODEX_STATUS` | Environment variable containing Codex status JSON |
 | `gauge_marked_char` | `string` | `▰` | Character used for filled blocks in gauge visualizations |
 | `gauge_unmarked_char` | `string` | `▱` | Character used for empty blocks in gauge visualizations |
-
-## Command Options
-
-These options apply to the standalone `oh-my-posh codex` command, which is primarily useful for
-testing and scripts that already emit Codex status data. Regular shell prompts only need the segment
-configuration above.
-
-| Name | Description |
-| ---- | ----------- |
-| `--session <id>` | Render a specific Codex session/thread ID instead of the newest session with token usage |
-| `--codex-home <path>` | Override the Codex home directory; defaults to `CODEX_HOME` or `~/.codex` |
-| `--session-root <path>` | Override the Codex sessions directory; defaults to `<codex-home>/sessions` |
 
 ### Properties
 
@@ -250,8 +195,8 @@ the `gauge_marked_char` and `gauge_unmarked_char` options to apply.
 When the segment is added to a normal Oh My Posh config, it automatically reads the latest local
 Codex session `token_count` event.
 
-Use the standard segment `cache` setting to control how often local discovery refreshes. Without
-a segment cache, local discovery runs whenever the segment renders.
+Use the standard segment `cache` setting to control how often local discovery refreshes. A
+minutes-scale cache avoids scanning local session files on every prompt render.
 
 Explicit status data from `status_file`, `POSH_CODEX_STATUS_FILE`, or `POSH_CODEX_STATUS` takes
 precedence over local discovery. Set `discover_local_status` to `false` when you only want to render
@@ -262,14 +207,79 @@ The segment is only visible when Codex status data is available.
 The parser accepts either a direct Codex token-count payload or a Codex rollout
 `event_msg` wrapper whose `payload.type` is `token_count`.
 
-:::note advanced integrations
+## Advanced
+
+### Status Payload
+
+The segment discovers this payload from local Codex JSONL session transcripts by default. It also
+accepts either a direct `token_count` payload or a Codex rollout `event_msg` wrapper whose
+`payload.type` is `token_count`.
+
+```json
+{
+  "type": "token_count",
+  "thread_id": "019e9eac-83ec-7393-ae18-cc2e566394d5",
+  "version": "0.137.0",
+  "reasoning_effort": "high",
+  "model": {
+    "id": "gpt-5",
+    "display_name": "gpt-5"
+  },
+  "info": {
+    "total_token_usage": {
+      "input_tokens": 420000,
+      "cached_input_tokens": 300000,
+      "output_tokens": 24000,
+      "reasoning_output_tokens": 8000,
+      "total_tokens": 444000
+    },
+    "last_token_usage": {
+      "input_tokens": 150000,
+      "cached_input_tokens": 120000,
+      "output_tokens": 4000,
+      "reasoning_output_tokens": 1500,
+      "total_tokens": 154000
+    },
+    "model_context_window": 258000
+  },
+  "rate_limits": {
+    "primary": {
+      "used_percent": 12,
+      "window_minutes": 300,
+      "resets_at": 1780794869
+    },
+    "secondary": {
+      "used_percent": 28,
+      "window_minutes": 10080,
+      "resets_at": 1781137565
+    },
+    "plan_type": "pro"
+  }
+}
+```
+
+### Command Options
+
+These options apply to the standalone `oh-my-posh codex` command, which is primarily useful for
+testing and scripts that already emit Codex status data. Regular shell prompts only need the segment
+configuration above.
+
+| Name | Description |
+| ---- | ----------- |
+| `--session <id>` | Render a specific Codex session/thread ID instead of the newest session with token usage |
+| `--codex-home <path>` | Override the Codex home directory; defaults to `CODEX_HOME` or `~/.codex` |
+| `--session-root <path>` | Override the Codex sessions directory; defaults to `<codex-home>/sessions` |
+
+### Hooks and Explicit Status
 
 Codex hooks can run commands on lifecycle events, but they should not be used to update Oh My Posh's
 internal segment cache directly. That cache is implementation-specific and scoped to Oh My Posh's
-runtime/session. If a hook or another script already emits Codex status data, write it to a file and
-point `status_file` or `POSH_CODEX_STATUS_FILE` at that file. The normal local-discovery path does not
-require this.
+runtime/session.
 
-:::
+If a hook or another script already emits Codex status data, write it to a file and point
+`status_file` or `POSH_CODEX_STATUS_FILE` at that file. Keep `discover_local_status` enabled to fall
+back to transcript discovery when the file is missing, invalid, or empty. A valid explicit file wins
+over local discovery, so remove or update stale hook output when you want newer transcript data to
+show. The standard segment cache still controls when the prompt sees either source.
 
 [templates]: /docs/configuration/templates

@@ -87,8 +87,8 @@ For more information about the Claude segment properties and customization optio
 To render OpenAI Codex session information with Oh My Posh, add the `codex` segment to your
 prompt config. The segment reads the latest Codex `token_count` event from local Codex session
 transcripts under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when `CODEX_HOME` is not set.
-Use the standard segment `cache` setting to control how often local discovery refreshes. Without
-a segment cache, local discovery runs whenever the segment renders.
+Use the standard segment `cache` setting to control how often local discovery refreshes. A
+minutes-scale cache, such as `15m`, avoids scanning local session files on every prompt render.
 
 The Codex segment does not authenticate to Codex, call Codex APIs, or read Codex auth files. It only
 reads local session metadata and `token_count` events.

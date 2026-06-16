@@ -25,6 +25,10 @@ func (term *Terminal) QueryWindowTitles(_, _ string) (string, error) {
 	return "", &NotImplemented{}
 }
 
+func (term *Terminal) QueryMediaPlayer(_ string) (*MediaInfo, error) {
+	return nil, &NotImplemented{}
+}
+
 func (term *Terminal) IsWsl() bool {
 	defer log.Trace(time.Now())
 	const key = "is_wsl"

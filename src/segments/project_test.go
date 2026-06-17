@@ -429,6 +429,52 @@ func TestPackage(t *testing.T) {
 			File:            "JuliaProject.toml",
 			PackageContents: "[",
 		},
+		{
+			Case:            "lakefile.lean plain name",
+			ExpectedEnabled: true,
+			ExpectedString:  "Example1",
+			Name:            "lake",
+			File:            "lakefile.lean",
+			PackageContents: "import Lake\nopen Lake DSL\n\npackage Example1 where\n\nlean_lib Example1 where\n  precompileModules := true\n",
+		},
+		{
+			Case:            "lakefile.lean guillemet name",
+			ExpectedEnabled: true,
+			ExpectedString:  "Example2",
+			Name:            "lake",
+			File:            "lakefile.lean",
+			PackageContents: "import Lake\nopen Lake DSL\n\npackage «Example2» where\n\nrequire mathlib from git\n  \"https://github.com/leanprover-community/mathlib4.git\"\n",
+		},
+		{
+			Case:            "lakefile.toml name",
+			ExpectedEnabled: true,
+			ExpectedString:  "example",
+			Name:            "lake",
+			File:            "lakefile.toml",
+			PackageContents: "name = \"example\"\ndefaultTargets = [\"Example\"]\n\n[[require]]\nname = \"foo\"\npath = \"foo\"\n",
+		},
+		{
+			Case:            "lakefile.lean no package name",
+			ExpectedEnabled: false,
+			Name:            "lake",
+			File:            "lakefile.lean",
+			PackageContents: "import Lake\nopen Lake DSL\n\nlean_lib Foo where\n",
+		},
+		{
+			Case:            "lakefile.toml no name",
+			ExpectedEnabled: true,
+			ExpectedString:  "",
+			Name:            "lake",
+			File:            "lakefile.toml",
+			PackageContents: "defaultTargets = [\"Example\"]\n",
+		},
+		{
+			Case:            "lakefile.toml invalid toml",
+			ExpectedString:  "toml: line 1: unexpected end of table name (table names cannot be empty)",
+			Name:            "lake",
+			File:            "lakefile.toml",
+			PackageContents: "[",
+		},
 	}
 
 	for _, tc := range cases {

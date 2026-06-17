@@ -22,6 +22,7 @@ Supports:
 - .NET project (`*.sln`, `*.slnf`, `*.slnx`, `*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
 - Julia project (`JuliaProject.toml`, `Project.toml`)
 - PowerShell project (`*.psd1`, first file match info is displayed)
+- Lean 4 project (`lakefile.lean`, `lakefile.toml`)
 
 ## Sample Configuration
 
@@ -60,7 +61,7 @@ import Config from "@site/src/components/Config.js";
 
 | Name       | Type     | Description                                                                                                                                                                                      |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`deno`</li><li>`jsr`</li><li>`cargo`</li><li>`python`</li><li>`mojo`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
+| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`deno`</li><li>`jsr`</li><li>`cargo`</li><li>`python`</li><li>`mojo`</li><li>`php`</li><li>`dart`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li><li>`lake`</li></ul> |
 | `.Version` | `string` | The version of your project                                                                                                                                                                      |
 | `.Target`  | `string` | The target framework/language version of your project                                                                                                                                            |
 | `.Name`    | `string` | The name of your project                                                                                                                                                                         |

@@ -30,6 +30,11 @@ type ProjectData struct {
 	Target  string
 }
 
+// Lake file package
+type LakeFileTOML struct {
+	Name string
+}
+
 // Rust Cargo package
 type CargoTOML struct {
 	Package ProjectData
@@ -117,6 +122,11 @@ func (n *Project) Enabled() bool {
 			Name:    juliaToolName,
 			Files:   []string{"JuliaProject.toml", "Project.toml"},
 			Fetcher: n.getProjectData,
+		},
+		{
+			Name:    "lake",
+			Files:   []string{"lakefile.lean", "lakefile.toml"},
+			Fetcher: n.getLakePackage,
 		},
 		{
 			Name:    "powershell",
@@ -346,6 +356,51 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 	}
 
 	return data
+}
+
+func (n *Project) getLakePackage(item ProjectItem) *ProjectData {
+	file := n.firstExistingFile(item.Files)
+	if len(file) == 0 {
+		return nil
+	}
+
+	if strings.HasSuffix(file, ".lean") {
+		return n.getLakeLeanPackage(file)
+	}
+
+	return n.getLakeTomlPackage(file)
+}
+
+func (n *Project) getLakeLeanPackage(file string) *ProjectData {
+	content := n.env.FileContent(file)
+
+	match := regex.FindNamedRegexMatch(`package\s+(?P<NAME>.+?)\s+where`, content)
+	name, ok := match["NAME"]
+	if !ok || len(name) == 0 {
+		return nil
+	}
+
+	// Strip guillemets (« U+00AB and » U+00BB) if present
+	name = strings.Trim(name, "\u00AB\u00BB")
+
+	return &ProjectData{
+		Name: strings.TrimSpace(name),
+	}
+}
+
+func (n *Project) getLakeTomlPackage(file string) *ProjectData {
+	content := n.env.FileContent(file)
+
+	var data LakeFileTOML
+	err := toml.Unmarshal([]byte(content), &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &ProjectData{
+		Name: data.Name,
+	}
 }
 
 func (n *Project) getProjectData(item ProjectItem) *ProjectData {

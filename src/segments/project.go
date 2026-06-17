@@ -380,8 +380,8 @@ func (n *Project) getLakeLeanPackage(file string) *ProjectData {
 		return nil
 	}
 
-	// Strip guillemets (Unicode «\u00AB» and »\u00BB) if present
-	name = strings.Trim(name, "«\u00AB\u00BB")
+	// Strip guillemets (« U+00AB and » U+00BB) if present
+	name = strings.Trim(name, "\u00AB\u00BB")
 
 	return &ProjectData{
 		Name: strings.TrimSpace(name),

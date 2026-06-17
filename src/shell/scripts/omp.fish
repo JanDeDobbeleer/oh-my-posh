@@ -32,20 +32,22 @@ function _omp_set_cursor_position
         return
     end
 
-    set --local oldstty (stty -F /dev/tty -g)
-    stty -F /dev/tty raw -echo min 1
+    set --local oldstty (stty -g </dev/tty)
+    stty raw -echo min 1 </dev/tty
 
     set --local pos ''
-    echo -en '\e[6n' >/dev/tty
+    printf '\e[6n' >/dev/tty
     while true
         read --null --nchars 1 --local ch </dev/tty
         set pos $pos$ch
         string match -q 'R' $ch; and break
     end
 
-    stty -F /dev/tty $oldstty
+    stty $oldstty </dev/tty
 
-    string match -gr '\[(\d+);(\d+)R' $pos | read --line --export --global POSH_CURSOR_LINE POSH_CURSOR_COLUMN
+    set --local parts (string match -gr '\[(\d+);(\d+)R' $pos)
+    set --export --global POSH_CURSOR_LINE $parts[1]
+    set --export --global POSH_CURSOR_COLUMN $parts[2]
 end
 
 # template function for context loading

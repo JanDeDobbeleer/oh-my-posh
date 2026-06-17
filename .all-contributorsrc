@@ -3598,6 +3598,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Kas1o",
+      "name": "Kase-One-Only",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88198563?v=4",
+      "profile": "https://github.com/Kas1o",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

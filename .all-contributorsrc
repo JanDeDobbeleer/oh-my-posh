@@ -3608,6 +3608,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "rightaditya",
+      "name": "Aditya Bhargava",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1624945?v=4",
+      "profile": "https://www.cs.toronto.edu/~aditya",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

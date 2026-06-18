@@ -15,6 +15,8 @@ func TestCurrentGID(t *testing.T) {
 }
 
 func TestRunWithEnv(t *testing.T) {
+	t.Setenv("OMP_TEST_CHILD_ENV", "parent")
+
 	output, err := RunWithEnv(
 		os.Args[0],
 		[]string{

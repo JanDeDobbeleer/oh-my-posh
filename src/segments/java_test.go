@@ -64,7 +64,7 @@ func TestJava(t *testing.T) {
 		if tc.JavaHomeEnabled {
 			env.On("Getenv", "JAVA_HOME").Return("/usr/java")
 			env.On("HasCommand", "/usr/java/bin/java").Return(true)
-			env.On("RunCommand", "/usr/java/bin/java", []string{"-Xinternalversion"}).Return(tc.JavaHomeVersion, nil)
+			env.On("RunCommandWithEnv", "/usr/java/bin/java", []string(nil), []string{"-Xinternalversion"}).Return(tc.JavaHomeVersion, nil)
 		} else {
 			env.On("Getenv", "JAVA_HOME").Return("")
 		}

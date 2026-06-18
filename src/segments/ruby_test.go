@@ -84,13 +84,13 @@ func TestRuby(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 
 		env.On("HasCommand", "rbenv").Return(tc.HasRbenv)
-		env.On("RunCommand", "rbenv", []string{"version-name"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "rbenv", []string(nil), []string{"version-name"}).Return(tc.Version, nil)
 		env.On("HasCommand", "rvm-prompt").Return(tc.HasRvmprompt)
-		env.On("RunCommand", "rvm-prompt", []string{"i", "v", "g"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "rvm-prompt", []string(nil), []string{"i", "v", "g"}).Return(tc.Version, nil)
 		env.On("HasCommand", "chruby").Return(tc.HasChruby)
-		env.On("RunCommand", "chruby", []string(nil)).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "chruby", []string(nil), []string(nil)).Return(tc.Version, nil)
 		env.On("HasCommand", "asdf").Return(tc.HasAsdf)
-		env.On("RunCommand", "asdf", []string{"current", "ruby"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "asdf", []string(nil), []string{"current", "ruby"}).Return(tc.Version, nil)
 		env.On("HasFiles", "Rakefile").Return(tc.HasRakeFile)
 		env.On("HasFiles", "Gemfile").Return(tc.HasGemFile)
 

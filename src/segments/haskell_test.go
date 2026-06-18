@@ -63,7 +63,7 @@ func TestHaskell(t *testing.T) {
 
 		if tc.StackGhcMode == "always" || (tc.StackGhcMode == "package" && tc.InStackPackage) {
 			env.On("HasCommand", "stack").Return(true)
-			env.On("RunCommand", "stack", []string{"ghc", "--", "--numeric-version"}).Return(tc.StackGhcVersion, nil)
+			env.On("RunCommandWithEnv", "stack", []string(nil), []string{"ghc", "--", "--numeric-version"}).Return(tc.StackGhcVersion, nil)
 		}
 
 		fileInfo := &runtime.FileInfo{

@@ -3,7 +3,6 @@ package mock
 import (
 	"io"
 	"io/fs"
-	"reflect"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
@@ -97,18 +96,7 @@ func (env *Environment) RunCommand(command string, args ...string) (string, erro
 }
 
 func (env *Environment) RunCommandWithEnv(command string, envs []string, args ...string) (string, error) {
-	for _, call := range env.ExpectedCalls {
-		if call.Method == "RunCommandWithEnv" &&
-			len(call.Arguments) == 3 &&
-			call.Arguments[0] == command &&
-			reflect.DeepEqual(call.Arguments[1], envs) &&
-			reflect.DeepEqual(call.Arguments[2], args) {
-			arguments := env.Called(command, envs, args)
-			return arguments.String(0), arguments.Error(1)
-		}
-	}
-
-	arguments := env.MethodCalled("RunCommand", command, args)
+	arguments := env.Called(command, envs, args)
 	return arguments.String(0), arguments.Error(1)
 }
 

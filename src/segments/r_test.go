@@ -40,9 +40,9 @@ func TestR(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 
 		env.On("HasCommand", "Rscript").Return(tc.HasRscript)
-		env.On("RunCommand", "Rscript", []string{"--version"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "Rscript", []string(nil), []string{"--version"}).Return(tc.Version, nil)
 		env.On("HasCommand", "R.exe").Return(tc.HasRexe)
-		env.On("RunCommand", "R.exe", []string{"--version"}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", "R.exe", []string(nil), []string{"--version"}).Return(tc.Version, nil)
 
 		r := &R{}
 		r.Init(props, env)

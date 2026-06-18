@@ -50,7 +50,7 @@ bleopt prompt_ps1_final='$(
         --shell-version="$BASH_VERSION" \
         --escape=false
 )'`
-	case PromptMark, PoshGit, Azure, LineError, Jobs, Tooltips, Async, Streaming, KeyHandlers:
+	case PromptMark, PoshGit, Azure, LineError, Jobs, Tooltips, Async, Streaming, KeyHandlers, VIMode:
 		fallthrough
 	default:
 		return ""

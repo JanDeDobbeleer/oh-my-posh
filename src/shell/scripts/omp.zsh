@@ -362,5 +362,17 @@ function enable_poshtooltips() {
   _omp_create_widget backward-delete-char _omp_restore_rprompt
 }
 
+# vi mode tracking — re-render the prompt whenever the active keymap changes
+function _omp_render_vimode() {
+  export POSH_VI_MODE=${KEYMAP:-main}
+  eval "$(_omp_get_prompt primary --eval)"
+  zle .reset-prompt
+}
+
+function _omp_enable_vimode() {
+  export POSH_VI_MODE=${POSH_VI_MODE:-main}
+  _omp_create_widget zle-keymap-select _omp_render_vimode
+}
+
 # legacy functions
 function enable_poshtransientprompt() {}

@@ -50,6 +50,19 @@
         },
         {
           "background": "#29315A",
+          "foreground": "#caa6f7",
+          "leading_diamond": " \ue0b6",
+          "options": {
+            "fetch_version": true
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "powerline_symbol": "\ue0b0",
+          "template": " \ue77f {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} ",
+          "type": "dotnet"
+        },
+        {
+          "background": "#29315A",
           "foreground": "#7FD5EA",
           "leading_diamond": " \ue0b6",
           "options": {

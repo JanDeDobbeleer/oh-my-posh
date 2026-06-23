@@ -135,23 +135,23 @@ func (a *Aspire) isRunning() bool {
 		return false
 	}
 
-	running, _ := a.parseRunningAppHosts(output)
+	running := a.parseRunningAppHosts(output)
 	return running
 }
 
-func (a *Aspire) parseRunningAppHosts(output string) (bool, bool) {
+func (a *Aspire) parseRunningAppHosts(output string) bool {
 	var appHosts []aspireAppHostProcess
 	if err := json.Unmarshal([]byte(output), &appHosts); err != nil {
-		return false, false
+		return false
 	}
 
 	for _, appHost := range appHosts {
 		if sameFilePath(appHost.AppHostPath, a.AppHostPath) {
-			return true, true
+			return true
 		}
 	}
 
-	return false, true
+	return false
 }
 
 func (a *Aspire) resolveVersion() {

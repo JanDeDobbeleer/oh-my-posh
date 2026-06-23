@@ -29,7 +29,7 @@
             "style": "folder"
           },
           "style": "powerline",
-          "template": " \uf07b\uea9c {{ .Path }} ",
+          "template": "\uf07b\u200b\uea9c\u200b{{ .Path }}",
           "type": "path"
         },
         {
@@ -59,7 +59,7 @@
             "threshold": 0
           },
           "style": "diamond",
-          "template": " \ueba2 {{ .FormattedMs }} ",
+          "template": " \ueba2\u200b{{ .FormattedMs }}\u2800",
           "trailing_diamond": "\ue0b4",
           "type": "executiontime"
         }
@@ -147,15 +147,6 @@
           "type": "angular"
         },
         {
-          "background": "#ffffff",
-          "foreground": "#de1f84",
-          "leading_diamond": " \ue0b6",
-          "style": "diamond",
-          "template": "\u03b1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
-          "trailing_diamond": "\ue0b4 ",
-          "type": "aurelia"
-        },
-        {
           "background": "#1e293b",
           "foreground": "#ffffff",
           "leading_diamond": " \ue0b6",
@@ -213,7 +204,6 @@
           "background": "#b2bec3",
           "foreground": "#222222",
           "leading_diamond": "\ue0b6",
-          "trailing_diamond": "<transparent,background>\ue0b2</>",
           "options": {
             "linux": "\ue712",
             "macos": "\ue711",
@@ -231,21 +221,19 @@
             "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
           ],
           "foreground": "#262626",
-          "invert_powerline": true,
-          "powerline_symbol": "\ue0b2",
+          "leading_diamond": "\ue0b2",
           "options": {
             "charged_icon": "\uf240 ",
             "charging_icon": "\uf1e6 ",
             "discharging_icon": "\ue234 "
           },
-          "style": "powerline",
-          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 ",
+          "style": "diamond",
+          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 <#262626>\ue0b2</>",
           "type": "battery"
         },
         {
           "background": "#40c4ff",
           "foreground": "#ffffff",
-          "invert_powerline": true,
           "leading_diamond": "\ue0b2",
           "options": {
             "time_format": "_2,15:04"

@@ -3618,6 +3618,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "DamianEdwards",
+      "name": "Damian Edwards",
+      "avatar_url": "https://avatars.githubusercontent.com/u/249088?v=4",
+      "profile": "https://blog.damianedwards.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

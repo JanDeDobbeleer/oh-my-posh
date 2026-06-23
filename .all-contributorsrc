@@ -3628,6 +3628,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "maddymontaquila",
+      "name": "Maddy Montaquila (Leger) (Not a David)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12660687?v=4",
+      "profile": "http://aspire.dev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -476,7 +476,8 @@
             "xmake",
             "yarn",
             "ytm",
-            "zig"
+            "zig",
+            "zvm"
           ]
         },
         "style": {
@@ -5146,6 +5147,31 @@
                     "default": [
                       "zig"
                     ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "zvm"
+              }
+            }
+          },
+          "then": {
+            "title": "ZVM Segment",
+            "description": "https://ohmyposh.dev/docs/segments/cli/zvm",
+            "properties": {
+              "options": {
+                "properties": {
+                  "zigicon": {
+                    "type": "string",
+                    "title": "Zig Icon",
+                    "description": "icon to display before the version",
+                    "default": "ZVM"
                   }
                 }
               }

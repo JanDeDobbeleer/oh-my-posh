@@ -89,6 +89,7 @@ export default {
             "segments/cli/unity",
             "segments/cli/xmake",
             "segments/cli/yarn",
+            "segments/cli/zvm",
           ]
         },
         {

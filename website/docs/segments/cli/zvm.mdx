@@ -1,0 +1,55 @@
+---
+id: zvm
+title: ZVM
+sidebar_label: ZVM
+---
+
+## What
+
+Display the active Zig version reported by [ZVM][zvm] (Zig Version Manager).
+
+The segment is only enabled when the `zvm` command is available and a version is currently in use.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "zvm",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#F7A41D",
+    background: "#193549",
+    template: " {{ if .ZigIcon }}{{ .ZigIcon }} {{ end }}{{ .Version }} ",
+    options: {
+      zigicon: "ZVM - "
+    }
+  }}
+/>
+
+## Options
+
+| Name      | Type     | Default | Description                            |
+| --------- | -------- | :-----: | -------------------------------------- |
+| `zigicon` | `string` |  `ZVM`  | the icon to display before the version |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ if .ZigIcon }}{{ .ZigIcon }} {{ end }}{{ .Version }}
+```
+
+:::
+
+### Properties
+
+| Name       | Type     | Description                          |
+| ---------- | -------- | ------------------------------------ |
+| `.Version` | `string` | the active Zig version used by `zvm` |
+| `.ZigIcon` | `string` | the configured `zigicon`             |
+
+[zvm]: https://github.com/tristanisham/zvm
+[templates]: configuration/templates.mdx

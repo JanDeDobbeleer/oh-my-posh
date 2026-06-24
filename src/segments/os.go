@@ -60,6 +60,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"android":             "\ue70e",
 		"aosc":                "\uf301",
 		"arch":                "\uf303",
+		"artix":               "\uf31f",
 		"centos":              "\uf304",
 		"coreos":              "\uf305",
 		"debian":              "\uf306",

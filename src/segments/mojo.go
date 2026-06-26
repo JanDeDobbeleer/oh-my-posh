@@ -6,10 +6,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-const (
-	defaultVenvName = "default"
-)
-
 type Mojo struct {
 	Venv string
 	Language
@@ -54,7 +50,7 @@ func (m *Mojo) inContext() bool {
 }
 
 func (m *Mojo) canUseVenvName(name string) bool {
-	defaultNames := []string{defaultVenvName}
+	defaultNames := []string{defaultStr}
 
 	if m.options.Bool(options.DisplayDefault, true) ||
 		!slices.Contains(defaultNames, name) {

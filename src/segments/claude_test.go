@@ -260,8 +260,7 @@ func TestClaudeEffortAndThinkingJSONShape(t *testing.T) {
 
 func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 	const (
-		defaultOutputStyleName = "default"
-		originalBranchName     = "main"
+		originalBranchName = "main"
 	)
 
 	cases := []struct {
@@ -304,7 +303,7 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 				SessionName:       "release-check",
 				TranscriptPath:    "/repo/project/.claude/transcript.jsonl",
 				Version:           "2.1.123",
-				OutputStyle:       ClaudeOutputStyle{Name: defaultOutputStyleName},
+				OutputStyle:       ClaudeOutputStyle{Name: defaultStr},
 				Workspace:         ClaudeWorkspace{AddedDirs: []string{"/repo/shared", "/repo/docs"}},
 				Exceeds200KTokens: true,
 				Vim:               ClaudeVim{Mode: "NORMAL"},

@@ -14,8 +14,6 @@ import (
 const (
 	// FetchContext is the property used to fetch the current docker context
 	FetchContext options.Option = "fetch_context"
-	// DefaultDockerContext is the default docker context name
-	defaultDockerContext = "default"
 	// DockerCommand is the property used to specify the docker command to use
 	DockerCommand options.Option = "docker_command"
 	// Filter is the property used to specify a filter to apply to docker ps results in environment mode, see https://docs.docker.com/reference/cli/docker/container/ls/#filter
@@ -134,7 +132,7 @@ func (d *Docker) fetchContext() bool {
 	// Return the current context if it is not empty and not `default`
 	for _, v := range d.envVars() {
 		context := d.env.Getenv(v)
-		if len(context) > 0 && context != defaultDockerContext {
+		if len(context) > 0 && context != defaultStr {
 			d.Context = context
 			return true
 		}
@@ -153,7 +151,7 @@ func (d *Docker) fetchContext() bool {
 			continue
 		}
 
-		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != defaultDockerContext {
+		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != defaultStr {
 			d.Context = cfg.CurrentContext
 			return true
 		}

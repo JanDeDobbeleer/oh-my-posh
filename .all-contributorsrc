@@ -3639,6 +3639,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "swmarks",
+      "name": "swmarks",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9942801?v=4",
+      "profile": "https://github.com/swmarks",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

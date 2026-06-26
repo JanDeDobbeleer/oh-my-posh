@@ -24,7 +24,7 @@ _omp_primary_prompt=""
 _omp_streaming_supported=""
 
 # set secondary prompt
-_omp_secondary_prompt=$($_omp_executable print secondary --shell=zsh)
+eval "$($_omp_executable print secondary --shell=zsh --eval)"
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander
@@ -278,13 +278,60 @@ function _omp_restore_rprompt() {
   zle .reset-prompt
 }
 
+function _omp_is_buffer_complete() {
+  # 1. Syntax check
+  if ! zsh -n <<EOF 2>/dev/null
+$PREBUFFER$BUFFER
+EOF
+  then
+    return 1
+  fi
+
+  # 2. Check for odd number of trailing backslashes
+  local bs_count=0
+  local i=${#BUFFER}
+  # Zsh indices start at 1
+  while (( i > 0 )); do
+    # Check current char
+    if [[ "${BUFFER[i]}" == '\' ]]; then
+      (( bs_count++ ))
+      (( i-- ))
+    else
+      break
+    fi
+  done
+
+  if (( bs_count % 2 != 0 )); then
+    return 1
+  fi
+
+  return 0
+}
+
 function _omp_zle-line-init() {
   [[ $CONTEXT == start ]] || return 0
 
   # Start regular line editor.
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
-  zle .recursive-edit
-  local -i ret=$?
+
+  local -i ret=0
+  if [[ $POSH_MULTILINE_KEEPPROMPT == "true" ]]; then
+    while true; do
+      zle .recursive-edit
+      ret=$?
+
+      if ((ret)) || _omp_is_buffer_complete; then
+        break
+      fi
+
+      BUFFER+=$'\n'$_omp_secondary_prompt_plain
+      CURSOR=$#BUFFER
+    done
+  else
+    zle .recursive-edit
+    ret=$?
+  fi
+
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
   # We need this workaround because when the `filler` is set,
@@ -297,8 +344,18 @@ function _omp_zle-line-init() {
   # kill streaming before transient prompt to prevent handler overwriting it
   _omp_cleanup_stream
 
-  eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
-  zle .reset-prompt
+  if ((ret == 0)); then
+    local saved_buffer=$BUFFER
+    local saved_cursor=$CURSOR
+    BUFFER=""
+    eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
+    zle .reset-prompt
+    BUFFER=$saved_buffer
+    CURSOR=$saved_cursor
+  else
+    eval "$(_omp_get_prompt transient --eval $terminal_width_option --interrupted)"
+    zle .reset-prompt
+  fi
 
   if ((ret)); then
     # TODO (fix): this is not equal to sending a SIGINT, since the status code ($?) is set to 1 instead of 130.

@@ -77,6 +77,7 @@ type Segment struct {
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
 	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt    bool           `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling

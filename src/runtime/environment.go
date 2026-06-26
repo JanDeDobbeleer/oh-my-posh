@@ -111,6 +111,7 @@ type Flags struct {
 	Plain         bool
 	Force         bool
 	Streaming     bool
+	Interrupted   bool
 }
 
 type CommandError struct {

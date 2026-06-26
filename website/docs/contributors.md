@@ -506,6 +506,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://blog.damianedwards.com"><img src="https://avatars.githubusercontent.com/u/249088?v=4?s=100" width="100px;" alt="Damian Edwards"/><br /><sub><b>Damian Edwards</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=DamianEdwards" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://aspire.dev"><img src="https://avatars.githubusercontent.com/u/12660687?v=4?s=100" width="100px;" alt="Maddy Montaquila (Leger) (Not a David)"/><br /><sub><b>Maddy Montaquila (Leger) (Not a David)</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=maddymontaquila" title="Code">💻</a> <a href="#design-maddymontaquila" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=maddymontaquila" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/swmarks"><img src="https://avatars.githubusercontent.com/u/9942801?v=4?s=100" width="100px;" alt="swmarks"/><br /><sub><b>swmarks</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=swmarks" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

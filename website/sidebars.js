@@ -87,6 +87,7 @@ export default {
             "segments/cli/terraform",
             "segments/cli/ui5tooling",
             "segments/cli/umbraco",
+            "segments/cli/uno",
             "segments/cli/unity",
             "segments/cli/xmake",
             "segments/cli/yarn",

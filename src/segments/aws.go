@@ -33,7 +33,7 @@ type Aws struct {
 }
 
 const (
-	defaultUser = "default"
+	defaultStr = "default"
 
 	// AWS shared config keys we promote to convenience fields.
 	awsKeyRegion       = "region"
@@ -42,7 +42,6 @@ const (
 	awsKeySSOAccountID = "sso_account_id"
 	awsKeySSOSession   = "sso_session"
 
-	awsConfigSectionDefault    = "default"
 	awsConfigSectionPrefix     = "profile "
 	awsConfigSectionSSOSession = "sso-session "
 )
@@ -68,7 +67,7 @@ func (a *Aws) Enabled() bool {
 	displayDefaultUser := a.options.Bool(options.DisplayDefault, true)
 
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_DEFAULT_PROFILE", "AWS_PROFILE")
-	if !displayDefaultUser && a.Profile == defaultUser {
+	if !displayDefaultUser && a.Profile == defaultStr {
 		return false
 	}
 
@@ -91,10 +90,10 @@ func (a *Aws) Enabled() bool {
 	}
 
 	if a.Profile == "" && a.Region != "" {
-		a.Profile = defaultUser
+		a.Profile = defaultStr
 	}
 
-	if !displayDefaultUser && a.Profile == defaultUser {
+	if !displayDefaultUser && a.Profile == defaultStr {
 		return false
 	}
 
@@ -112,7 +111,7 @@ func (a *Aws) loadConfigFile() {
 		return
 	}
 
-	sectionName := awsConfigSectionDefault
+	sectionName := defaultStr
 	if a.Profile != "" {
 		sectionName = awsConfigSectionPrefix + a.Profile
 	}
@@ -135,7 +134,7 @@ func (a *Aws) loadCredentialsFile() {
 		return
 	}
 
-	sectionName := awsConfigSectionDefault
+	sectionName := defaultStr
 	if a.Profile != "" {
 		sectionName = a.Profile
 	}

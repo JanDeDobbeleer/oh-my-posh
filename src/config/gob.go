@@ -34,23 +34,66 @@ func Get(configFile string, reload bool) *Config {
 		}
 	}
 
-	base64String, found := cache.Get[string](cache.Session, configKey)
-	if !found {
-		log.Debug("no cached config found")
-		cfg := Load(configFile)
-		cfg.Store()
-		return cfg
-	}
+	if base64String, found := cache.Get[string](cache.Session, configKey); found {
+		var cfg Config
+		if err := cfg.Restore(base64String); err == nil {
+			return &cfg
+		}
 
-	var cfg Config
-	if err := cfg.Restore(base64String); err != nil {
 		log.Debug("failed to restore config from cache")
-		loaded := Load(configFile)
-		loaded.Store()
-		return loaded
+	} else {
+		log.Debug("no cached config found")
 	}
 
-	return &cfg
+	// A prompt render relies on the session cache for its configuration: it's
+	// invoked without an explicit --config, so configFile is empty here. When the
+	// session cache is missing or corrupt - the file got purged (e.g. under disk
+	// pressure) or clobbered by a concurrent writer sharing the session - falling
+	// back to Load("") silently renders the default theme for the rest of the
+	// session. Recover the previously initialized source first so the configured
+	// theme keeps rendering and the session cache self-heals.
+	if configFile == "" {
+		if source := recoverSource(); source != "" {
+			if cfg, err := Parse(source); err == nil {
+				log.Debug("recovered configuration from source: ", source)
+				cfg.Store()
+				return cfg
+			}
+
+			log.Debug("failed to recover configuration from source: ", source)
+		}
+	}
+
+	cfg := Load(configFile)
+	cfg.Store()
+	return cfg
+}
+
+// recoverSource locates the most recently initialized configuration source when
+// the session config cache is unavailable. It first checks the session source,
+// which survives when only the config blob is corrupt, then falls back to the
+// device-level DSC, which persists across sessions with an infinite TTL and is
+// populated on every init (where --config is required).
+func recoverSource() string {
+	defer log.Trace(time.Now())
+
+	if source, OK := cache.Get[string](cache.Session, SourceKey); OK && source != "" {
+		return source
+	}
+
+	resource := DSC()
+	resource.Load()
+
+	if len(resource.States) == 0 {
+		return ""
+	}
+
+	// the last added state reflects the most recent init.
+	if last := resource.States[len(resource.States)-1]; last != nil {
+		return last.Source
+	}
+
+	return ""
 }
 
 func (cfg *Config) Base64() string {

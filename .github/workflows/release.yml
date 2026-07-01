@@ -35,6 +35,23 @@ jobs:
           skip-on-empty: "true"
           skip-tag: "true"
 
+  android:
+    needs: changelog
+    if: ${{ needs.changelog.outputs.skipped == 'false' }}
+    runs-on: ubuntu-latest
+    container: ghcr.io/jandedobbeleer/golang-android-container:latest
+    steps:
+      - name: Checkout code 👋
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - name: Build 🏗
+        run: |
+          cd src
+          go build -o dist/posh-android-arm -ldflags="-s -w -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Version=${{ needs.changelog.outputs.version }}' -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Date=$(date)'"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: android-artifact
+          path: src/dist/posh-android-arm
+
   artifacts:
     needs: changelog
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
@@ -116,6 +133,7 @@ jobs:
       - changelog
       - artifacts
       - msi
+      - android
     steps:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
@@ -127,15 +145,20 @@ jobs:
           echo v${{ needs.changelog.outputs.version }} > version.txt
           az storage blob upload-batch --destination releases/v${{ needs.changelog.outputs.version }} --source .
           az storage blob upload-batch --destination releases/latest --overwrite true --source .
-      - name: Release 🎓
+      - name: Create draft release 📝
         uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}
           fail_on_unmatched_files: true
+          draft: true
           token: ${{ secrets.GH_PAT }}
           files: |
             *
+      - name: Publish release 🎓
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: gh release edit ${{ needs.changelog.outputs.tag }} --draft=false --repo ${{ github.repository }}
   winget:
     runs-on: windows-latest
     needs:

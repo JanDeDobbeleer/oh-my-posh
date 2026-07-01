@@ -1,7 +1,9 @@
 package segments
 
 import (
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -29,9 +31,11 @@ type ClaudeData struct {
 	CWD               string              `json:"cwd"`
 	Version           string              `json:"version"`
 	SessionID         string              `json:"session_id"`
+	PromptID          string              `json:"prompt_id"`
 	Effort            ClaudeEffort        `json:"effort"`
 	SessionName       string              `json:"session_name"`
 	Agent             ClaudeAgent         `json:"agent"`
+	PR                *ClaudePR           `json:"pr"`
 	Workspace         ClaudeWorkspace     `json:"workspace"`
 	ContextWindow     ClaudeContextWindow `json:"context_window"`
 	Cost              ClaudeCost          `json:"cost"`
@@ -48,10 +52,18 @@ type AIModel struct {
 
 // ClaudeWorkspace represents workspace directory information
 type ClaudeWorkspace struct {
-	CurrentDir  string   `json:"current_dir"`
-	ProjectDir  string   `json:"project_dir"`
-	GitWorktree string   `json:"git_worktree"`
-	AddedDirs   []string `json:"added_dirs"`
+	Repo        *ClaudeRepo `json:"repo"`
+	CurrentDir  string      `json:"current_dir"`
+	ProjectDir  string      `json:"project_dir"`
+	GitWorktree string      `json:"git_worktree"`
+	AddedDirs   []string    `json:"added_dirs"`
+}
+
+// ClaudeRepo represents the repository identity parsed from the origin remote.
+type ClaudeRepo struct {
+	Host  string `json:"host"`
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
 }
 
 // ClaudeOutputStyle represents the current output style.
@@ -78,6 +90,47 @@ type ClaudeVim struct {
 // ClaudeAgent represents the active agent.
 type ClaudeAgent struct {
 	Name string `json:"name"`
+}
+
+// ClaudePR represents the open pull request for the current branch.
+type ClaudePR struct {
+	Number      string `json:"number"`
+	URL         string `json:"url"`
+	ReviewState string `json:"review_state"`
+}
+
+func (p *ClaudePR) UnmarshalJSON(data []byte) error {
+	var raw struct {
+		URL         string          `json:"url"`
+		ReviewState string          `json:"review_state"`
+		Number      json.RawMessage `json:"number"`
+	}
+
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	p.URL = raw.URL
+	p.ReviewState = raw.ReviewState
+
+	if len(raw.Number) == 0 || string(raw.Number) == "null" {
+		return nil
+	}
+
+	var number string
+	if err := json.Unmarshal(raw.Number, &number); err == nil {
+		p.Number = number
+		return nil
+	}
+
+	var numberValue int64
+	if err := json.Unmarshal(raw.Number, &numberValue); err != nil {
+		return err
+	}
+
+	p.Number = strconv.FormatInt(numberValue, 10)
+
+	return nil
 }
 
 // ClaudeWorktree represents Claude Code --worktree session information.

@@ -53,6 +53,7 @@ import Config from "@site/src/components/Config.js";
 | `.CWD`                  | `string`        | Current working directory; same value as `.Workspace.CurrentDir`                     |
 | `.SessionID`            | `string`        | Unique identifier for the Claude session                                             |
 | `.SessionName`          | `string`        | Custom session name; empty when absent                                               |
+| `.PromptID`             | `string`        | User prompt identifier for event correlation; empty when absent                      |
 | `.TranscriptPath`       | `string`        | Path to the conversation transcript file                                             |
 | `.Model`                | `Model`         | AI model information                                                                 |
 | `.Workspace`            | `Workspace`     | Workspace directory information                                                      |
@@ -65,6 +66,7 @@ import Config from "@site/src/components/Config.js";
 | `.Exceeds200KTokens`    | `bool`          | Whether the most recent API response exceeded 200K total tokens                      |
 | `.Vim`                  | `Vim`           | Vim mode information; empty when absent                                              |
 | `.Agent`                | `Agent`         | Agent information; empty when absent                                                 |
+| `.PR`                   | `PR`            | Pull request information for the current branch; nil when absent                     |
 | `.Worktree`             | `Worktree`      | Claude Code worktree information; empty when absent                                  |
 | `.FastMode`             | `bool`          | Whether fast mode is enabled; `false` when absent or unsupported                     |
 | `.TokenUsagePercent`    | `Percentage`    | Percentage of context window used (0-100)                                            |
@@ -98,6 +100,15 @@ import Config from "@site/src/components/Config.js";
 | `.ProjectDir`  | `string`   | Directory where Claude Code was launched; may differ from `.CurrentDir`      |
 | `.AddedDirs`   | `[]string` | Additional directories added via `/add-dir` or `--add-dir`                   |
 | `.GitWorktree` | `string`   | Path to the linked git worktree, empty when not inside a linked git worktree |
+| `.Repo`        | `Repo`     | Repository identity parsed from the `origin` remote; nil when absent         |
+
+#### Repo Properties
+
+| Name     | Type     | Description                                                  |
+| -------- | -------- | ------------------------------------------------------------ |
+| `.Host`  | `string` | Repository host, for example `github.com`; empty when absent |
+| `.Owner` | `string` | Repository owner or organization; empty when absent          |
+| `.Name`  | `string` | Repository name; empty when absent                           |
 
 #### OutputStyle Properties
 
@@ -128,6 +139,14 @@ import Config from "@site/src/components/Config.js";
 | Name    | Type     | Description                               |
 | ------- | -------- | ----------------------------------------- |
 | `.Name` | `string` | Agent name; empty when no agent is active |
+
+#### PR Properties
+
+| Name           | Type          | Description                                                                                   |
+| -------------- | ------------- | --------------------------------------------------------------------------------------------- |
+| `.Number`      | `string`      | Open pull request number for the current branch; empty when absent                            |
+| `.URL`         | `string`      | Open pull request URL for the current branch; empty when absent                               |
+| `.ReviewState` | `string`      | Review status (`approved`, `pending`, `changes_requested`, or `draft`); empty when unavailable |
 
 #### Worktree Properties
 

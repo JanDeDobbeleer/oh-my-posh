@@ -274,13 +274,19 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 			JSON: `{
 				"cwd": "/repo/project",
 				"session_name": "release-check",
+				"prompt_id": "prompt-456",
 				"transcript_path": "/repo/project/.claude/transcript.jsonl",
 				"version": "2.1.123",
 				"output_style": {
 					"name": "default"
 				},
 				"workspace": {
-					"added_dirs": ["/repo/shared", "/repo/docs"]
+					"added_dirs": ["/repo/shared", "/repo/docs"],
+					"repo": {
+						"host": "github.com",
+						"owner": "anthropics",
+						"name": "claude-code"
+					}
 				},
 				"exceeds_200k_tokens": true,
 				"vim": {
@@ -288,6 +294,11 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 				},
 				"agent": {
 					"name": "security-reviewer"
+				},
+				"pr": {
+					"number": 1234,
+					"url": "https://github.com/anthropics/claude-code/pull/1234",
+					"review_state": "pending"
 				},
 				"worktree": {
 					"name": "my-feature",
@@ -299,15 +310,28 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 				"fast_mode": true
 			}`,
 			Expected: ClaudeData{
-				CWD:               "/repo/project",
-				SessionName:       "release-check",
-				TranscriptPath:    "/repo/project/.claude/transcript.jsonl",
-				Version:           "2.1.123",
-				OutputStyle:       ClaudeOutputStyle{Name: defaultStr},
-				Workspace:         ClaudeWorkspace{AddedDirs: []string{"/repo/shared", "/repo/docs"}},
+				CWD:            "/repo/project",
+				SessionName:    "release-check",
+				PromptID:       "prompt-456",
+				TranscriptPath: "/repo/project/.claude/transcript.jsonl",
+				Version:        "2.1.123",
+				OutputStyle:    ClaudeOutputStyle{Name: defaultStr},
+				Workspace: ClaudeWorkspace{
+					AddedDirs: []string{"/repo/shared", "/repo/docs"},
+					Repo: &ClaudeRepo{
+						Host:  "github.com",
+						Owner: "anthropics",
+						Name:  "claude-code",
+					},
+				},
 				Exceeds200KTokens: true,
 				Vim:               ClaudeVim{Mode: "NORMAL"},
 				Agent:             ClaudeAgent{Name: "security-reviewer"},
+				PR: &ClaudePR{
+					Number:      "1234",
+					URL:         "https://github.com/anthropics/claude-code/pull/1234",
+					ReviewState: "pending",
+				},
 				Worktree: ClaudeWorktree{
 					Name:           "my-feature",
 					Path:           "/repo/project/.claude/worktrees/my-feature",
@@ -325,15 +349,30 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 			ExpectedAddedDirsNil: true,
 		},
 		{
+			Case: "PR number provided as string",
+			JSON: `{"pr":{"number":"1234"}}`,
+			Expected: ClaudeData{
+				PR: &ClaudePR{Number: "1234"},
+			},
+			ExpectedAddedDirsNil: true,
+		},
+		{
+			Case:                 "PR number explicitly null",
+			JSON:                 `{"pr":{"number":null}}`,
+			Expected:             ClaudeData{PR: &ClaudePR{}},
+			ExpectedAddedDirsNil: true,
+		},
+		{
 			Case: "Nested objects empty",
 			JSON: `{
 				"output_style": {},
 				"workspace": {},
 				"vim": {},
 				"agent": {},
+				"pr": {},
 				"worktree": {}
 			}`,
-			Expected:             ClaudeData{},
+			Expected:             ClaudeData{PR: &ClaudePR{}},
 			ExpectedAddedDirsNil: true,
 		},
 		{
@@ -377,6 +416,7 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 		assert.NoError(t, err, tc.Case)
 		assert.Equal(t, tc.Expected.CWD, data.CWD, tc.Case)
 		assert.Equal(t, tc.Expected.SessionName, data.SessionName, tc.Case)
+		assert.Equal(t, tc.Expected.PromptID, data.PromptID, tc.Case)
 		assert.Equal(t, tc.Expected.TranscriptPath, data.TranscriptPath, tc.Case)
 		assert.Equal(t, tc.Expected.Version, data.Version, tc.Case)
 		assert.Equal(t, tc.Expected.OutputStyle.Name, data.OutputStyle.Name, tc.Case)
@@ -388,6 +428,8 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 		assert.Equal(t, tc.Expected.Exceeds200KTokens, data.Exceeds200KTokens, tc.Case)
 		assert.Equal(t, tc.Expected.Vim.Mode, data.Vim.Mode, tc.Case)
 		assert.Equal(t, tc.Expected.Agent.Name, data.Agent.Name, tc.Case)
+		assert.Equal(t, tc.Expected.Workspace.Repo, data.Workspace.Repo, tc.Case)
+		assert.Equal(t, tc.Expected.PR, data.PR, tc.Case)
 		assert.Equal(t, tc.Expected.Worktree.Name, data.Worktree.Name, tc.Case)
 		assert.Equal(t, tc.Expected.Worktree.Path, data.Worktree.Path, tc.Case)
 		assert.Equal(t, tc.Expected.Worktree.Branch, data.Worktree.Branch, tc.Case)

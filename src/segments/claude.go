@@ -22,25 +22,25 @@ type Claude struct {
 
 // ClaudeData represents the parsed Claude JSON data
 type ClaudeData struct {
+	Effort            *ClaudeEffort       `json:"effort"`
+	Worktree          *ClaudeWorktree     `json:"worktree"`
+	OutputStyle       *ClaudeOutputStyle  `json:"output_style"`
+	Vim               *ClaudeVim          `json:"vim"`
 	RateLimits        *ClaudeRateLimits   `json:"rate_limits"`
-	Worktree          ClaudeWorktree      `json:"worktree"`
-	Model             AIModel             `json:"model"`
-	OutputStyle       ClaudeOutputStyle   `json:"output_style"`
-	Vim               ClaudeVim           `json:"vim"`
-	TranscriptPath    string              `json:"transcript_path"`
-	CWD               string              `json:"cwd"`
-	Version           string              `json:"version"`
-	SessionID         string              `json:"session_id"`
-	PromptID          string              `json:"prompt_id"`
-	Effort            ClaudeEffort        `json:"effort"`
-	SessionName       string              `json:"session_name"`
-	Agent             ClaudeAgent         `json:"agent"`
+	Thinking          *ClaudeThinking     `json:"thinking"`
 	PR                *ClaudePR           `json:"pr"`
+	Agent             *ClaudeAgent        `json:"agent"`
+	Model             AIModel             `json:"model"`
+	TranscriptPath    string              `json:"transcript_path"`
+	PromptID          string              `json:"prompt_id"`
+	SessionName       string              `json:"session_name"`
+	SessionID         string              `json:"session_id"`
+	Version           string              `json:"version"`
+	CWD               string              `json:"cwd"`
 	Workspace         ClaudeWorkspace     `json:"workspace"`
 	ContextWindow     ClaudeContextWindow `json:"context_window"`
 	Cost              ClaudeCost          `json:"cost"`
 	Exceeds200KTokens bool                `json:"exceeds_200k_tokens"`
-	Thinking          ClaudeThinking      `json:"thinking"`
 	FastMode          bool                `json:"fast_mode"`
 }
 
@@ -67,27 +67,31 @@ type ClaudeRepo struct {
 }
 
 // ClaudeOutputStyle represents the current output style.
+// Nil when the statusline payload does not report an output style.
 type ClaudeOutputStyle struct {
 	Name string `json:"name"`
 }
 
 // ClaudeEffort represents reasoning effort information for the current session.
-// Level is empty when the active model does not support reasoning effort.
+// Nil when the active model does not support reasoning effort.
 type ClaudeEffort struct {
 	Level string `json:"level"`
 }
 
 // ClaudeThinking represents extended thinking state for the current session.
+// Nil when the statusline payload does not report thinking state.
 type ClaudeThinking struct {
 	Enabled bool `json:"enabled"`
 }
 
 // ClaudeVim represents vim mode state.
+// Nil when vim mode is disabled.
 type ClaudeVim struct {
 	Mode string `json:"mode"`
 }
 
 // ClaudeAgent represents the active agent.
+// Nil when no agent is active.
 type ClaudeAgent struct {
 	Name string `json:"name"`
 }
@@ -134,6 +138,7 @@ func (p *ClaudePR) UnmarshalJSON(data []byte) error {
 }
 
 // ClaudeWorktree represents Claude Code --worktree session information.
+// Nil when the session is not running inside a Claude Code worktree.
 type ClaudeWorktree struct {
 	Name           string `json:"name"`
 	Path           string `json:"path"`

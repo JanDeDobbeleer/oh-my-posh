@@ -170,29 +170,29 @@ func TestClaudeEffortAndThinking(t *testing.T) {
 	})
 
 	cases := []struct {
+		Effort           *ClaudeEffort
+		Thinking         *ClaudeThinking
 		Case             string
-		Effort           ClaudeEffort
 		ExpectedLevel    string
-		Thinking         ClaudeThinking
 		ExpectedThinking bool
 	}{
 		{
 			Case:             "Reasoning effort active, thinking enabled",
-			Effort:           ClaudeEffort{Level: "xhigh"},
+			Effort:           &ClaudeEffort{Level: "xhigh"},
 			ExpectedLevel:    "xhigh",
-			Thinking:         ClaudeThinking{Enabled: true},
+			Thinking:         &ClaudeThinking{Enabled: true},
 			ExpectedThinking: true,
 		},
 		{
 			Case:             "Reasoning effort active, thinking disabled",
-			Effort:           ClaudeEffort{Level: "high"},
+			Effort:           &ClaudeEffort{Level: "high"},
 			ExpectedLevel:    "high",
 			ExpectedThinking: false,
 		},
 		{
 			Case:             "Reasoning effort absent, thinking enabled",
 			ExpectedLevel:    "",
-			Thinking:         ClaudeThinking{Enabled: true},
+			Thinking:         &ClaudeThinking{Enabled: true},
 			ExpectedThinking: true,
 		},
 		{
@@ -217,8 +217,19 @@ func TestClaudeEffortAndThinking(t *testing.T) {
 		}
 
 		assert.True(t, claude.Enabled(), tc.Case)
-		assert.Equal(t, tc.ExpectedLevel, claude.Effort.Level, tc.Case)
-		assert.Equal(t, tc.ExpectedThinking, claude.Thinking.Enabled, tc.Case)
+
+		level := ""
+		if claude.Effort != nil {
+			level = claude.Effort.Level
+		}
+
+		thinking := false
+		if claude.Thinking != nil {
+			thinking = claude.Thinking.Enabled
+		}
+
+		assert.Equal(t, tc.ExpectedLevel, level, tc.Case)
+		assert.Equal(t, tc.ExpectedThinking, thinking, tc.Case)
 	}
 }
 
@@ -253,8 +264,19 @@ func TestClaudeEffortAndThinkingJSONShape(t *testing.T) {
 		var data ClaudeData
 		err := json.Unmarshal([]byte(tc.JSON), &data)
 		assert.NoError(t, err, tc.Case)
-		assert.Equal(t, tc.ExpectedLevel, data.Effort.Level, tc.Case)
-		assert.Equal(t, tc.ExpectedThinking, data.Thinking.Enabled, tc.Case)
+
+		level := ""
+		if data.Effort != nil {
+			level = data.Effort.Level
+		}
+
+		thinking := false
+		if data.Thinking != nil {
+			thinking = data.Thinking.Enabled
+		}
+
+		assert.Equal(t, tc.ExpectedLevel, level, tc.Case)
+		assert.Equal(t, tc.ExpectedThinking, thinking, tc.Case)
 	}
 }
 
@@ -315,7 +337,7 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 				PromptID:       "prompt-456",
 				TranscriptPath: "/repo/project/.claude/transcript.jsonl",
 				Version:        "2.1.123",
-				OutputStyle:    ClaudeOutputStyle{Name: defaultStr},
+				OutputStyle:    &ClaudeOutputStyle{Name: defaultStr},
 				Workspace: ClaudeWorkspace{
 					AddedDirs: []string{"/repo/shared", "/repo/docs"},
 					Repo: &ClaudeRepo{
@@ -325,14 +347,14 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 					},
 				},
 				Exceeds200KTokens: true,
-				Vim:               ClaudeVim{Mode: "NORMAL"},
-				Agent:             ClaudeAgent{Name: "security-reviewer"},
+				Vim:               &ClaudeVim{Mode: "NORMAL"},
+				Agent:             &ClaudeAgent{Name: "security-reviewer"},
 				PR: &ClaudePR{
 					Number:      "1234",
 					URL:         "https://github.com/anthropics/claude-code/pull/1234",
 					ReviewState: "pending",
 				},
-				Worktree: ClaudeWorktree{
+				Worktree: &ClaudeWorktree{
 					Name:           "my-feature",
 					Path:           "/repo/project/.claude/worktrees/my-feature",
 					Branch:         "worktree-my-feature",
@@ -372,7 +394,13 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 				"pr": {},
 				"worktree": {}
 			}`,
-			Expected:             ClaudeData{PR: &ClaudePR{}},
+			Expected: ClaudeData{
+				OutputStyle: &ClaudeOutputStyle{},
+				Vim:         &ClaudeVim{},
+				Agent:       &ClaudeAgent{},
+				PR:          &ClaudePR{},
+				Worktree:    &ClaudeWorktree{},
+			},
 			ExpectedAddedDirsNil: true,
 		},
 		{
@@ -388,7 +416,7 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 			}`,
 			Expected: ClaudeData{
 				Workspace: ClaudeWorkspace{AddedDirs: []string{"/repo/shared"}},
-				Worktree: ClaudeWorktree{
+				Worktree: &ClaudeWorktree{
 					Name: "review",
 					Path: "/repo/project/.claude/worktrees/review",
 				},
@@ -419,22 +447,18 @@ func TestClaudeAdditionalStatusLineFieldsJSONShape(t *testing.T) {
 		assert.Equal(t, tc.Expected.PromptID, data.PromptID, tc.Case)
 		assert.Equal(t, tc.Expected.TranscriptPath, data.TranscriptPath, tc.Case)
 		assert.Equal(t, tc.Expected.Version, data.Version, tc.Case)
-		assert.Equal(t, tc.Expected.OutputStyle.Name, data.OutputStyle.Name, tc.Case)
+		assert.Equal(t, tc.Expected.OutputStyle, data.OutputStyle, tc.Case)
 		if tc.ExpectedAddedDirsNil {
 			assert.Nil(t, data.Workspace.AddedDirs, tc.Case)
 		} else {
 			assert.Equal(t, tc.Expected.Workspace.AddedDirs, data.Workspace.AddedDirs, tc.Case)
 		}
 		assert.Equal(t, tc.Expected.Exceeds200KTokens, data.Exceeds200KTokens, tc.Case)
-		assert.Equal(t, tc.Expected.Vim.Mode, data.Vim.Mode, tc.Case)
-		assert.Equal(t, tc.Expected.Agent.Name, data.Agent.Name, tc.Case)
+		assert.Equal(t, tc.Expected.Vim, data.Vim, tc.Case)
+		assert.Equal(t, tc.Expected.Agent, data.Agent, tc.Case)
 		assert.Equal(t, tc.Expected.Workspace.Repo, data.Workspace.Repo, tc.Case)
 		assert.Equal(t, tc.Expected.PR, data.PR, tc.Case)
-		assert.Equal(t, tc.Expected.Worktree.Name, data.Worktree.Name, tc.Case)
-		assert.Equal(t, tc.Expected.Worktree.Path, data.Worktree.Path, tc.Case)
-		assert.Equal(t, tc.Expected.Worktree.Branch, data.Worktree.Branch, tc.Case)
-		assert.Equal(t, tc.Expected.Worktree.OriginalCWD, data.Worktree.OriginalCWD, tc.Case)
-		assert.Equal(t, tc.Expected.Worktree.OriginalBranch, data.Worktree.OriginalBranch, tc.Case)
+		assert.Equal(t, tc.Expected.Worktree, data.Worktree, tc.Case)
 		assert.Equal(t, tc.Expected.FastMode, data.FastMode, tc.Case)
 	}
 }

@@ -58,16 +58,16 @@ import Config from "@site/src/components/Config.js";
 | `.Model`                | `Model`         | AI model information                                                                 |
 | `.Workspace`            | `Workspace`     | Workspace directory information                                                      |
 | `.Version`              | `string`        | Claude Code version                                                                  |
-| `.OutputStyle`          | `OutputStyle`   | Current output style information                                                     |
-| `.Effort`               | `Effort`        | Reasoning effort information                                                         |
-| `.Thinking`             | `Thinking`      | Extended thinking state                                                              |
+| `.OutputStyle`          | `OutputStyle`   | Current output style information; nil when absent                                   |
+| `.Effort`               | `Effort`        | Reasoning effort information; nil when absent or unsupported                         |
+| `.Thinking`             | `Thinking`      | Extended thinking state; nil when absent                                            |
 | `.Cost`                 | `Cost`          | Cost and duration information                                                        |
 | `.ContextWindow`        | `ContextWindow` | Token usage information                                                              |
 | `.Exceeds200KTokens`    | `bool`          | Whether the most recent API response exceeded 200K total tokens                      |
-| `.Vim`                  | `Vim`           | Vim mode information; empty when absent                                              |
-| `.Agent`                | `Agent`         | Agent information; empty when absent                                                 |
+| `.Vim`                  | `Vim`           | Vim mode information; nil when absent                                                |
+| `.Agent`                | `Agent`         | Agent information; nil when absent                                                   |
 | `.PR`                   | `PR`            | Pull request information for the current branch; nil when absent                     |
-| `.Worktree`             | `Worktree`      | Claude Code worktree information; empty when absent                                  |
+| `.Worktree`             | `Worktree`      | Claude Code worktree information; nil when absent                                    |
 | `.FastMode`             | `bool`          | Whether fast mode is enabled; `false` when absent or unsupported                     |
 | `.TokenUsagePercent`    | `Percentage`    | Percentage of context window used (0-100)                                            |
 | `.TokenGauge`           | `string`        | Gauge showing remaining context capacity using configured characters (e.g., `▰▰▰▱▱`) |
@@ -109,6 +109,12 @@ import Config from "@site/src/components/Config.js";
 | `.Host`  | `string` | Repository host, for example `github.com`; empty when absent |
 | `.Owner` | `string` | Repository owner or organization; empty when absent          |
 | `.Name`  | `string` | Repository name; empty when absent                           |
+
+:::tip nil pointer fields
+`.OutputStyle`, `.Effort`, `.Thinking`, `.Vim`, `.Agent`, `.PR`, `.Worktree`, and `.Workspace.Repo`
+are all `nil` when the underlying data is absent. Guard direct field access with
+`{{if .Effort}}{{.Effort.Level}}{{end}}` to avoid template errors.
+:::
 
 #### OutputStyle Properties
 

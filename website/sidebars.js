@@ -62,6 +62,7 @@ export default {
             "segments/cli/bun",
             "segments/cli/claude",
             "segments/cli/cmake",
+            "segments/cli/codex",
             "segments/cli/copilot",
             "segments/cli/copilot-cli",
             "segments/cli/deno",

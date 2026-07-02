@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,6 +18,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type statuslineDataSource func(*cobra.Command) ([]byte, error)
+
 // statuslineRun returns a cobra Run function for statusline commands.
 // T is the type of the JSON data read from stdin.
 // shellConst identifies the shell (used for cache init and terminal init).
@@ -24,16 +27,34 @@ import (
 // sessionID extracts the session ID from parsed data so it can be set as POSH_SESSION_ID.
 // defaultCfg is called when no --config flag is provided or parsing fails.
 func statuslineRun[T any](shellConst, cacheKey string, sessionID func(*T) string, defaultCfg func() *config.Config) func(*cobra.Command, []string) {
+	return statuslineRunWithDataSource[T](shellConst, cacheKey, sessionID, defaultCfg, nil)
+}
+
+func statuslineRunWithDataSource[T any](
+	shellConst, cacheKey string,
+	sessionID func(*T) string,
+	defaultCfg func() *config.Config,
+	dataSource statuslineDataSource,
+) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, _ []string) {
 		log.Debugf("%s command started", shellConst)
 
-		stdinData, err := io.ReadAll(os.Stdin)
+		stdinData, err := readStatuslineStdin()
 		if err != nil {
 			log.Error(err)
 			return
 		}
 
-		log.Debugf("received data from stdin: %s", string(stdinData))
+		if len(stdinData) > 0 {
+			log.Debugf("received %d bytes from stdin", len(stdinData))
+		}
+
+		if len(bytes.TrimSpace(stdinData)) == 0 && dataSource != nil {
+			stdinData, err = dataSource(cmd)
+			if err != nil {
+				log.Error(err)
+			}
+		}
 
 		processStatuslineData(stdinData, shellConst, cacheKey, sessionID)
 
@@ -77,6 +98,19 @@ func statuslineRun[T any](shellConst, cacheKey string, sessionID func(*T) string
 
 		fmt.Print(eng.Status())
 	}
+}
+
+func readStatuslineStdin() ([]byte, error) {
+	info, err := os.Stdin.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	if info.Mode()&os.ModeCharDevice != 0 {
+		return nil, nil
+	}
+
+	return io.ReadAll(os.Stdin)
 }
 
 // processStatuslineData parses stdin JSON into T and stores it in the session cache.

@@ -1,0 +1,287 @@
+---
+id: codex
+title: OpenAI Codex
+sidebar_label: OpenAI Codex
+---
+
+## What
+
+Display OpenAI Codex session information including the current model, token usage,
+context window usage, and available rate-limit data. Shows visual gauges for context
+usage, five-hour usage, and weekly usage.
+
+The segment reads the latest Codex `token_count` event from local Codex session
+transcripts under `$CODEX_HOME/sessions`, or `~/.codex/sessions` when `CODEX_HOME`
+is not set. It does not read Codex auth files or call Codex APIs.
+
+For setup instructions, see [Change your prompt](/docs/installation/prompt?shell=codex).
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "codex",
+    style: "diamond",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b4",
+    foreground: "#111111",
+    background: "#10A37F",
+    template:
+      " \ue7cf {{ .ModelName }} \uf2d0 {{ .TokenGauge }}{{ if .FormattedWeeklyRemaining }} \uf017 {{ .WeeklyLimitLabel }} {{ .FormattedWeeklyRemaining }}{{ end }} ",
+    cache: {
+      duration: "15m",
+      strategy: "device",
+    },
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ if .ModelName }} {{ .ModelName }}{{ end }}{{ if .TokenGauge }}  {{ .TokenGauge }}{{ end }}{{ if .FormattedWeeklyRemaining }}  {{ .WeeklyLimitLabel }} {{ .FormattedWeeklyRemaining }}{{ end }}
+```
+
+:::
+
+:::tip preset helper
+
+Use `{{ .FormattedText }}` if you want a compact preset controlled by the
+`display_*` options. The default template uses explicit template fields so it
+matches other CLI status segments and remains easy to customize directly.
+
+:::
+
+## Caching
+
+The sample uses Oh My Posh's standard segment `cache` setting with a `15m` duration. The Codex
+segment does not define a separate cache default; without `cache`, local discovery runs whenever the
+segment renders.
+
+## Options
+
+| Name | Type | Default | Description |
+| ---- | ---- | ------- | ----------- |
+| `display_model` | `boolean` | `true` | Display the model name in the `.FormattedText` preset |
+| `display_reasoning` | `boolean` | `false` | Display the reasoning level in the `.FormattedText` preset |
+| `display_context` | `boolean` | `true` | Display context window usage in the `.FormattedText` preset |
+| `display_tokens` | `boolean` | `false` | Display total token usage in the `.FormattedText` preset |
+| `display_five_hour_limit` | `boolean` | `false` | Display the 5-hour limit in the `.FormattedText` preset |
+| `display_weekly_limit` | `boolean` | `true` | Display the 7-day limit in the `.FormattedText` preset |
+| `discover_local_status` | `boolean` | `true` | Discover Codex status from local session transcripts when no explicit status data is available |
+| `codex_home` | `string` | `CODEX_HOME` or `~/.codex` | Codex home directory |
+| `session_root` | `string` | `<codex_home>/sessions` | Codex sessions directory |
+| `session_id` | `string` | `""` | Codex session/thread ID to render; defaults to the newest session with token usage |
+| `status_file` | `string` | `""` | Path to a JSON file containing Codex status data |
+| `status_file_env` | `string` | `POSH_CODEX_STATUS_FILE` | Environment variable containing a Codex status file path |
+| `status_json_env` | `string` | `POSH_CODEX_STATUS` | Environment variable containing Codex status JSON |
+| `gauge_marked_char` | `string` | `▰` | Character used for filled blocks in gauge visualizations |
+| `gauge_unmarked_char` | `string` | `▱` | Character used for empty blocks in gauge visualizations |
+
+### Properties
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| `.Type` | `string` | Codex event type, commonly `token_count` |
+| `.ThreadID` | `string` | Unique identifier for the Codex thread |
+| `.CWD` | `string` | Current working directory |
+| `.Version` | `string` | Codex CLI version |
+| `.ReasoningEffort` | `string` | Configured reasoning effort |
+| `.ApprovalMode` | `string` | Active approval mode |
+| `.SandboxPolicy` | `string` | Active sandbox policy |
+| `.Model` | `Model` | AI model information |
+| `.Info` | `TokenInfo` | Token usage information |
+| `.RateLimits` | `RateLimits` | Rate limit information; `nil` when Codex does not provide it |
+| `.DisplayModel` | `boolean` | Whether the `.FormattedText` preset displays the model name |
+| `.DisplayReasoning` | `boolean` | Whether the `.FormattedText` preset displays the reasoning level |
+| `.DisplayContext` | `boolean` | Whether the `.FormattedText` preset displays context usage |
+| `.DisplayTokens` | `boolean` | Whether the `.FormattedText` preset displays total tokens |
+| `.DisplayFiveHourLimit` | `boolean` | Whether the `.FormattedText` preset displays the 5-hour limit |
+| `.DisplayWeeklyLimit` | `boolean` | Whether the `.FormattedText` preset displays the 7-day limit |
+| `.FormattedText` | `string` | Preset Codex segment text assembled from display options |
+| `.ModelName` | `string` | Model display name, falling back to the model ID |
+| `.FormattedModel` | `string` | Model text assembled from `display_model` and `display_reasoning`; useful with the `.FormattedText` preset |
+| `.TokenUsagePercent` | `Percentage` | Percentage of model context window used by the latest token usage snapshot (0-100) |
+| `.TokenGauge` | `string` | Gauge showing remaining context capacity; empty when context usage is unavailable |
+| `.TokenGaugeUsed` | `string` | Gauge showing used context capacity; empty when context usage is unavailable |
+| `.RemainingPercent` | `Percentage` | Percentage of model context window remaining (0-100) |
+| `.RemainingTokensCount` | `int` | Number of remaining context window tokens; 0 when unavailable |
+| `.FormattedTokens` | `string` | Human-readable total token count |
+| `.FormattedInputTokens` | `string` | Human-readable input token count |
+| `.FormattedOutputTokens` | `string` | Human-readable output token count |
+| `.FormattedReasoningTokens` | `string` | Human-readable reasoning output token count |
+| `.FormattedCachedInputTokens` | `string` | Human-readable cached input token count |
+| `.FormattedLastTokens` | `string` | Human-readable token count for the latest response |
+| `.FiveHourUsage` | `Percentage` | Primary rolling window usage percentage (0-100) |
+| `.WeeklyUsage` | `Percentage` | Secondary rolling window usage percentage (0-100) |
+| `.FiveHourRemaining` | `Percentage` | Primary rolling window remaining percentage (0-100) |
+| `.WeeklyRemaining` | `Percentage` | Secondary rolling window remaining percentage (0-100) |
+| `.FiveHourGauge` | `string` | Gauge showing primary rolling window usage; empty when unavailable |
+| `.WeeklyGauge` | `string` | Gauge showing weekly rolling window usage; empty when unavailable |
+| `.FiveHourRemainingGauge` | `string` | Gauge showing primary rolling quota remaining; empty when unavailable |
+| `.WeeklyRemainingGauge` | `string` | Gauge showing weekly quota remaining; empty when unavailable |
+| `.FormattedFiveHourRemaining` | `string` | Primary rolling window remaining with a percent sign; empty when unavailable |
+| `.FormattedWeeklyRemaining` | `string` | Weekly rolling window remaining with a percent sign; empty when unavailable |
+| `.FiveHourLimitLabel` | `string` | Primary rolling window label derived from `WindowMinutes`, falling back to `5h` |
+| `.WeeklyLimitLabel` | `string` | Secondary rolling window label derived from `WindowMinutes`, falling back to `7d` |
+| `.FormattedLimits` | `string` | Default remaining-limit text, controlled by available limit data and display options |
+| `.FiveHourResetsAt` | `time.Time` | Reset time for the primary rolling window, or zero when unavailable |
+| `.WeeklyResetsAt` | `time.Time` | Reset time for the weekly rolling window, or zero when unavailable |
+| `.FiveHourResetsIn` | `time.Duration` | Time until the primary rolling window resets; 0 when unavailable |
+| `.WeeklyResetsIn` | `time.Duration` | Time until the weekly rolling window resets; 0 when unavailable |
+
+#### Model Properties
+
+| Name           | Type     | Description                 |
+| -------------- | -------- | --------------------------- |
+| `.ID`          | `string` | Technical model identifier  |
+| `.DisplayName` | `string` | Human-readable model name   |
+
+#### TokenInfo Properties
+
+| Name                  | Type         | Description                       |
+| --------------------- | ------------ | --------------------------------- |
+| `.TotalTokenUsage`    | `TokenUsage` | Total token usage for the session |
+| `.LastTokenUsage`     | `TokenUsage` | Token usage for the latest call   |
+| `.ModelContextWindow` | `int`        | Active model context window size  |
+
+#### TokenUsage Properties
+
+| Name                     | Type  | Description                   |
+| ------------------------ | ----- | ----------------------------- |
+| `.InputTokens`           | `int` | Input tokens                  |
+| `.CachedInputTokens`     | `int` | Cached input tokens           |
+| `.OutputTokens`          | `int` | Output tokens                 |
+| `.ReasoningOutputTokens` | `int` | Reasoning output tokens       |
+| `.TotalTokens`           | `int` | Total tokens                  |
+
+#### RateLimits Properties
+
+| Name                    | Type              | Description                                   |
+| ----------------------- | ----------------- | --------------------------------------------- |
+| `.LimitID`              | `string`          | Rate limit identifier                         |
+| `.LimitName`            | `string`          | Human-readable rate limit name                |
+| `.Primary`              | `RateLimitWindow` | Primary rolling limit window                  |
+| `.Secondary`            | `RateLimitWindow` | Secondary rolling limit window, usually weekly |
+| `.PlanType`             | `string`          | Active plan type                              |
+| `.RateLimitReachedType` | `string`          | Reached limit type; empty when not limited    |
+
+#### RateLimitWindow Properties
+
+| Name             | Type       | Description                                       |
+| ---------------- | ---------- | ------------------------------------------------- |
+| `.UsedPercent`   | `*float64` | Percentage used (0-100); `nil` when unavailable   |
+| `.WindowMinutes` | `int`      | Window size in minutes                            |
+| `.ResetsAt`      | `*int64`   | Unix timestamp when the window resets             |
+
+### Percentage Methods
+
+The `Percentage` type provides additional methods for direct use in templates:
+
+| Method       | Returns  | Description                                                               |
+| ------------ | -------- | ------------------------------------------------------------------------- |
+| `.Gauge`     | `string` | Visual gauge showing remaining capacity using hardcoded `▰`/`▱` characters |
+| `.GaugeUsed` | `string` | Visual gauge showing used capacity using hardcoded `▰`/`▱` characters     |
+| `.String`    | `string` | Numeric percentage value (e.g., "75")                                     |
+
+:::tip Custom gauge characters
+Use the segment gauge methods instead of raw `.Percentage` methods when you want
+the `gauge_marked_char` and `gauge_unmarked_char` options to apply.
+:::
+
+## How it works
+
+When the segment is added to a normal Oh My Posh config, it automatically reads the latest local
+Codex session `token_count` event.
+
+Use the standard segment `cache` setting to control how often local discovery refreshes. A
+minutes-scale cache avoids scanning local session files on every prompt render.
+
+Explicit status data from `status_file`, `POSH_CODEX_STATUS_FILE`, or `POSH_CODEX_STATUS` takes
+precedence over local discovery. Set `discover_local_status` to `false` when you only want to render
+those explicit sources.
+
+The segment is only visible when Codex status data is available.
+
+The parser accepts either a direct Codex token-count payload or a Codex rollout
+`event_msg` wrapper whose `payload.type` is `token_count`.
+
+## Advanced
+
+### Status Payload
+
+The segment discovers this payload from local Codex JSONL session transcripts by default. It also
+accepts either a direct `token_count` payload or a Codex rollout `event_msg` wrapper whose
+`payload.type` is `token_count`.
+
+```json
+{
+  "type": "token_count",
+  "thread_id": "019e9eac-83ec-7393-ae18-cc2e566394d5",
+  "version": "0.137.0",
+  "reasoning_effort": "high",
+  "model": {
+    "id": "gpt-5",
+    "display_name": "gpt-5"
+  },
+  "info": {
+    "total_token_usage": {
+      "input_tokens": 420000,
+      "cached_input_tokens": 300000,
+      "output_tokens": 24000,
+      "reasoning_output_tokens": 8000,
+      "total_tokens": 444000
+    },
+    "last_token_usage": {
+      "input_tokens": 150000,
+      "cached_input_tokens": 120000,
+      "output_tokens": 4000,
+      "reasoning_output_tokens": 1500,
+      "total_tokens": 154000
+    },
+    "model_context_window": 258000
+  },
+  "rate_limits": {
+    "primary": {
+      "used_percent": 12,
+      "window_minutes": 300,
+      "resets_at": 1780794869
+    },
+    "secondary": {
+      "used_percent": 28,
+      "window_minutes": 10080,
+      "resets_at": 1781137565
+    },
+    "plan_type": "pro"
+  }
+}
+```
+
+### Command Options
+
+These options apply to the standalone `oh-my-posh codex` command, which is primarily useful for
+testing and scripts that already emit Codex status data. Regular shell prompts only need the segment
+configuration above.
+
+| Name | Description |
+| ---- | ----------- |
+| `--session <id>` | Render a specific Codex session/thread ID instead of the newest session with token usage |
+| `--codex-home <path>` | Override the Codex home directory; defaults to `CODEX_HOME` or `~/.codex` |
+| `--session-root <path>` | Override the Codex sessions directory; defaults to `<codex-home>/sessions` |
+
+### Hooks and Explicit Status
+
+Codex hooks can run commands on lifecycle events, but they should not be used to update Oh My Posh's
+internal segment cache directly. That cache is implementation-specific and scoped to Oh My Posh's
+runtime/session.
+
+If a hook or another script already emits Codex status data, write it to a file and point
+`status_file` or `POSH_CODEX_STATUS_FILE` at that file. Keep `discover_local_status` enabled to fall
+back to transcript discovery when the file is missing, invalid, or empty. A valid explicit file wins
+over local discovery, so remove or update stale hook output when you want newer transcript data to
+show. The standard segment cache still controls when the prompt sees either source.
+
+[templates]: /docs/configuration/templates

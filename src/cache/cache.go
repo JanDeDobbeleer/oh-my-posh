@@ -24,6 +24,7 @@ const (
 	ENGINECACHE      = "engine_cache"
 	FONTLISTCACHE    = "font_list_cache"
 	CLAUDECACHE      = "claude_cache"
+	CODEXCACHE       = "codex_cache"
 	COPILOTCLICACHE  = "copilot_cli_cache"
 )
 

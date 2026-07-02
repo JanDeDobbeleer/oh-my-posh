@@ -47,6 +47,8 @@ func init() {
 	gob.Register(&segments.CfTarget{})
 	gob.Register(&segments.Claude{})
 	gob.Register(&segments.ClaudeData{})
+	gob.Register(&segments.Codex{})
+	gob.Register(&segments.CodexData{})
 	gob.Register(&segments.Clojure{})
 	gob.Register(&segments.Cmake{})
 	gob.Register(&segments.Connection{})
@@ -202,6 +204,8 @@ const (
 	CFTARGET SegmentType = "cftarget"
 	// CLAUDE writes Claude Code session information
 	CLAUDE SegmentType = "claude"
+	// CODEX writes OpenAI Codex session information
+	CODEX SegmentType = "codex"
 	// CLOJURE writes the active clojure version
 	CLOJURE SegmentType = "clojure"
 	// CMAKE writes the active cmake version
@@ -417,6 +421,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CF:              func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:        func() SegmentWriter { return &segments.CfTarget{} },
 	CLAUDE:          func() SegmentWriter { return &segments.Claude{} },
+	CODEX:           func() SegmentWriter { return &segments.Codex{} },
 	CLOJURE:         func() SegmentWriter { return &segments.Clojure{} },
 	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },

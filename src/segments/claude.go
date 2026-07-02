@@ -3,7 +3,6 @@ package segments
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -98,43 +97,9 @@ type ClaudeAgent struct {
 
 // ClaudePR represents the open pull request for the current branch.
 type ClaudePR struct {
-	Number      string `json:"number"`
-	URL         string `json:"url"`
-	ReviewState string `json:"review_state"`
-}
-
-func (p *ClaudePR) UnmarshalJSON(data []byte) error {
-	var raw struct {
-		URL         string          `json:"url"`
-		ReviewState string          `json:"review_state"`
-		Number      json.RawMessage `json:"number"`
-	}
-
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
-	}
-
-	p.URL = raw.URL
-	p.ReviewState = raw.ReviewState
-
-	if len(raw.Number) == 0 || string(raw.Number) == "null" {
-		return nil
-	}
-
-	var number string
-	if err := json.Unmarshal(raw.Number, &number); err == nil {
-		p.Number = number
-		return nil
-	}
-
-	var numberValue int64
-	if err := json.Unmarshal(raw.Number, &numberValue); err != nil {
-		return err
-	}
-
-	p.Number = strconv.FormatInt(numberValue, 10)
-
-	return nil
+	Number      json.Number `json:"number"`
+	URL         string      `json:"url"`
+	ReviewState string      `json:"review_state"`
 }
 
 // ClaudeWorktree represents Claude Code --worktree session information.

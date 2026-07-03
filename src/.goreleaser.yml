@@ -54,5 +54,14 @@ signs:
       - "-c"
       - "& '{{ .Env.OPENSSL }}' pkeyutl -sign -inkey '{{ .Env.SHA_SIGNING_KEY_LOCATION }}' -out '${artifact}.sig' -rawin -in '${artifact}'"
     artifacts: checksum
+  - cmd: cosign
+    args:
+      - sign-blob
+      - --bundle=${signature}
+      - --yes
+      - ${artifact}
+    artifacts: checksum
+    signature: ${artifact}.sigstore.json
+
 changelog:
   disable: true

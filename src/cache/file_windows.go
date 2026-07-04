@@ -92,3 +92,11 @@ func openFile(filePath string) (io.ReadWriteCloser, error) {
 
 	return NewPersistentStringRWCloser(pss), nil
 }
+
+// openFileForWrite mirrors openFile on Windows: the memory-mapped file
+// already handles safe read-modify-write (including growth) internally, so
+// there's no separate atomic-write path needed here (see file_unix.go for
+// why POSIX needs one).
+func openFileForWrite(filePath string) (io.WriteCloser, error) {
+	return openFile(filePath)
+}

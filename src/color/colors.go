@@ -173,17 +173,36 @@ func MakeColors(palette Palette, cacheEnabled bool, accentColor Ansi, env runtim
 	return
 }
 
+// unresolvedAccent is the negative marker cached when the OS accent color
+// cannot be resolved, so we don't keep retrying the (expensive) OS query
+// on every prompt render.
+var unresolvedAccent = &Set{}
+
 func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 	defer log.Trace(time.Now())
 
-	// get accent color from session cache first
-	if accent, OK := cache.Get[*Set](cache.Device, accentColor); OK {
-		d.accent = accent
-		return
+	// get the resolved OS accent color from the device cache first, regardless
+	// of whether a default was configured, so we never repeat the underlying
+	// OS query (e.g. a DWM registry read) once we know the answer.
+	accent, OK := cache.Get[*Set](cache.Device, accentColor)
+	if !OK {
+		rgb, err := GetAccentColor(env)
+		if err != nil {
+			accent = unresolvedAccent
+		} else {
+			foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
+			background := color.RGB(rgb.R, rgb.G, rgb.B, true)
+
+			accent = &Set{
+				Foreground: Ansi(foreground.String()),
+				Background: Ansi(background.String()),
+			}
+		}
+
+		cache.Set(cache.Device, accentColor, accent, cache.INFINITE)
 	}
 
-	rgb, err := GetAccentColor(env)
-	if err != nil {
+	if accent.Foreground.IsEmpty() && accent.Background.IsEmpty() {
 		d.accent = &Set{
 			Foreground: d.ToAnsi(defaultColor, false),
 			Background: d.ToAnsi(defaultColor, true),
@@ -192,19 +211,7 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 		return
 	}
 
-	if defaultColor == "" {
-		return
-	}
-
-	foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
-	background := color.RGB(rgb.R, rgb.G, rgb.B, true)
-
-	d.accent = &Set{
-		Foreground: Ansi(foreground.String()),
-		Background: Ansi(background.String()),
-	}
-
-	cache.Set(cache.Device, accentColor, d.accent, cache.INFINITE)
+	d.accent = accent
 }
 
 type RGB struct {

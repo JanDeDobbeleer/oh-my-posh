@@ -148,7 +148,7 @@ func (s Store) close() {
 
 	cache := store.cache.ToSimple()
 
-	file, err := openFile(store.filePath)
+	file, err := openFileForWrite(store.filePath)
 	if err != nil {
 		if errors.Is(err, ErrLocked) {
 			// Became locked between init and close (e.g. another process

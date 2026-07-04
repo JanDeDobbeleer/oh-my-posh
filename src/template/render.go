@@ -3,6 +3,7 @@ package template
 import (
 	"bytes"
 	"errors"
+	"reflect"
 	"strings"
 	"text/template"
 
@@ -29,21 +30,59 @@ var (
 	renderPool *generics.Pool[*renderer]
 )
 
+// renderer holds only per-render mutable state: an output buffer and a context.
+// The parsed template is now looked up from the shared parsedTemplates cache.
 type renderer struct {
-	template *template.Template
-	context  *context
-	buffer   bytes.Buffer
+	context *context
+	buffer  bytes.Buffer
 }
 
 func (t *renderer) release() {
 	t.buffer.Reset()
 	t.context.Data = nil
-	t.template.New("cache")
 	renderPool.Put(t)
 }
 
+// templateCacheKey returns the key used to look up a cached *template.Template.
+// It encodes the patched template text and, when context is non-nil, the
+// reflect.Type of the context so that two different struct types whose
+// patchTemplate output differs (via hasField) get separate cache entries.
+func templateCacheKey(patchedText string, ctx any) string {
+	if ctx == nil {
+		return patchedText
+	}
+	return patchedText + "\x00" + reflect.TypeOf(ctx).String()
+}
+
+// parsedTemplate returns a fully-parsed *template.Template for text.
+// The first call for a given key parses and stores it; subsequent calls
+// return the cached value. Concurrent first-renders of the same template
+// may both parse, but LoadOrStore ensures only one result is shared.
+func parsedTemplate(text *Text) (*template.Template, error) {
+	// patchTemplate rewrites the raw template string into the patched form
+	// and stores it back in text.template. We need the patched text as part
+	// of the cache key, so we must patch first.
+	text.patchTemplate()
+
+	key := templateCacheKey(text.template, text.context)
+
+	if cached, ok := parsedTemplates.Load(key); ok {
+		return cached.(*template.Template), nil
+	}
+
+	// Parse into a fresh template with the shared func map and settings.
+	tmpl, err := template.New("cache").Funcs(funcMap()).Parse(text.template)
+	if err != nil {
+		return nil, err
+	}
+
+	// Store; if another goroutine already stored an equivalent template, use theirs.
+	actual, _ := parsedTemplates.LoadOrStore(key, tmpl)
+	return actual.(*template.Template), nil
+}
+
 func (t *renderer) execute(text *Text) (string, error) {
-	tmpl, err := t.template.Parse(text.template)
+	tmpl, err := parsedTemplate(text)
 	if err != nil {
 		log.Error(err)
 		return "", errors.New(InvalidTemplate)

@@ -2,7 +2,6 @@ package template
 
 import (
 	"sync"
-	"text/template"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/generics"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
@@ -23,19 +22,26 @@ const (
 var (
 	shell       string
 	env         runtime.Environment
-	knownFields sync.Map
+	knownFields sync.Map // keyed by reflect.Type → fieldSet (immutable once stored)
 	textPool    *generics.Pool[*Text]
+
+	// parsedTemplates caches fully-parsed *template.Template values keyed by
+	// a string that encodes both the patched template text and the context type.
+	// Execute on a cached template is concurrency-safe; we never re-Parse it.
+	parsedTemplates sync.Map
 )
 
 func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.Config) {
 	env = environment
 	shell = env.Shell()
+
+	// Reset per-process caches so tests that call Init multiple times stay isolated.
 	knownFields = sync.Map{}
+	parsedTemplates = sync.Map{}
 
 	renderPool = generics.NewPool(func() *renderer {
 		return &renderer{
-			template: template.New("cache").Funcs(funcMap()),
-			context:  &context{},
+			context: &context{},
 		}
 	})
 

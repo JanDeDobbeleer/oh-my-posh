@@ -36,6 +36,18 @@ func TestGetPersistedCommandPathMiss(t *testing.T) {
 	assert.False(t, ok)
 }
 
+func TestGetPersistedCommandPathStalePathHashIsAMiss(t *testing.T) {
+	session = Session.new()
+
+	// Simulate an entry persisted under a different PATH environment (or a
+	// pre-PathHash entry, which decodes with PathHash == 0).
+	entry := commandPathEntry{Path: "/usr/bin/git", PathHash: pathEnvHash() + 1, Found: true}
+	Set(Session, commandPathKey("git"), entry, CommandPathTTL)
+
+	_, _, ok := GetPersistedCommandPath("git")
+	assert.False(t, ok, "entry persisted under a different PATH must be treated as a miss")
+}
+
 func TestCommandPathKeyIsPrefixed(t *testing.T) {
 	assert.Equal(t, "command_path_git", commandPathKey("git"))
 }

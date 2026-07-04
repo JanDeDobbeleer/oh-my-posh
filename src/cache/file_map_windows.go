@@ -3,6 +3,7 @@ package cache
 import (
 	"fmt"
 	"syscall"
+	"time"
 	"unsafe"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -23,6 +24,16 @@ const (
 	createAlways        = 2
 	openExisting        = 3
 	fileAttributeNormal = 0x80
+	fileShareRead       = 0x00000001
+	fileShareWrite      = 0x00000002
+)
+
+// Windows error codes surfaced via GetLastError.
+const (
+	errorFileNotFound     = 2
+	errorSharingViolation = 32
+	sharingViolationTries = 3
+	sharingViolationSleep = 5 * time.Millisecond
 )
 
 // Windows API functions
@@ -70,24 +81,55 @@ func createOrOpenPersistentStringWithSize(filePath string, requiredSize int) (*P
 	return createNewFileWithSize(filePath, requiredSize)
 }
 
-// openExistingFileWithSize attempts to open an existing memory-mapped file
-// openExistingFileWithSize attempts to open an existing memory-mapped file
+// openExistingFileWithSize attempts to open an existing memory-mapped file.
+// The file is opened with FILE_SHARE_READ|FILE_SHARE_WRITE so concurrent
+// oh-my-posh processes (split panes, tooltip renders, etc.) don't lock each
+// other out. If the file is momentarily locked (ERROR_SHARING_VIOLATION) we
+// retry briefly; if it's still locked after that we return ErrLocked so the
+// caller can fall back to an in-memory-only store instead of recreating the
+// file (which would truncate the other process's data).
 func openExistingFileWithSize(filePath string, requiredSize int) (*PersistentSharedString, error) {
 	filePathPtr, err := syscall.UTF16PtrFromString(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert file path to UTF16: %v", err)
 	}
 
-	// Try to open existing file
-	fileHandle, _, _ := createFileW.Call(
-		uintptr(unsafe.Pointer(filePathPtr)), // lpFileName
-		genericRead|genericWrite,             // dwDesiredAccess
-		0,                                    // dwShareMode
-		0,                                    // lpSecurityAttributes
-		openExisting,                         // dwCreationDisposition
-		fileAttributeNormal,                  // dwFlagsAndAttributes
-		0,                                    // hTemplateFile
-	)
+	var fileHandle uintptr
+	var lastErr syscall.Errno
+
+	for attempt := 1; attempt <= sharingViolationTries; attempt++ {
+		var e error
+		fileHandle, _, e = createFileW.Call(
+			uintptr(unsafe.Pointer(filePathPtr)), // lpFileName
+			genericRead|genericWrite,             // dwDesiredAccess
+			fileShareRead|fileShareWrite,         // dwShareMode
+			0,                                    // lpSecurityAttributes
+			openExisting,                         // dwCreationDisposition
+			fileAttributeNormal,                  // dwFlagsAndAttributes
+			0,                                    // hTemplateFile
+		)
+
+		if fileHandle != uintptr(0xFFFFFFFFFFFFFFFF) { // INVALID_HANDLE_VALUE
+			break
+		}
+
+		lastErr, _ = e.(syscall.Errno)
+
+		switch uintptr(lastErr) {
+		case errorFileNotFound:
+			return nil, fmt.Errorf("file does not exist")
+		case errorSharingViolation:
+			if attempt < sharingViolationTries {
+				time.Sleep(sharingViolationSleep)
+				continue
+			}
+
+			log.Debugf("cache file %s locked by another process after %d attempts", filePath, attempt)
+			return nil, ErrLocked
+		default:
+			return nil, fmt.Errorf("file does not exist")
+		}
+	}
 
 	if fileHandle == uintptr(0xFFFFFFFFFFFFFFFF) { // INVALID_HANDLE_VALUE
 		return nil, fmt.Errorf("file does not exist")
@@ -111,7 +153,9 @@ func openExistingFileWithSize(filePath string, requiredSize int) (*PersistentSha
 	return createMappingFromFileWithSize(filePath, fileHandle, actualSize)
 }
 
-// createNewFileWithSize creates a new memory-mapped file with the specified size
+// createNewFileWithSize creates a new memory-mapped file with the specified size.
+// The file is created with FILE_SHARE_READ|FILE_SHARE_WRITE so subsequent
+// concurrent opens by other processes don't fail with a sharing violation.
 func createNewFileWithSize(filePath string, size int) (*PersistentSharedString, error) {
 	filePathPtr, err := syscall.UTF16PtrFromString(filePath)
 	if err != nil {
@@ -122,7 +166,7 @@ func createNewFileWithSize(filePath string, size int) (*PersistentSharedString, 
 	fileHandle, _, err := createFileW.Call(
 		uintptr(unsafe.Pointer(filePathPtr)), // lpFileName
 		genericRead|genericWrite,             // dwDesiredAccess
-		0,                                    // dwShareMode
+		fileShareRead|fileShareWrite,         // dwShareMode
 		0,                                    // lpSecurityAttributes
 		createAlways,                         // dwCreationDisposition (overwrites if exists)
 		fileAttributeNormal,                  // dwFlagsAndAttributes
@@ -130,6 +174,11 @@ func createNewFileWithSize(filePath string, size int) (*PersistentSharedString, 
 	)
 
 	if fileHandle == uintptr(0xFFFFFFFFFFFFFFFF) { // INVALID_HANDLE_VALUE
+		if errno, ok := err.(syscall.Errno); ok && uintptr(errno) == errorSharingViolation {
+			log.Debugf("cache file %s locked by another process during create", filePath)
+			return nil, ErrLocked
+		}
+
 		return nil, fmt.Errorf("CreateFileW failed: %v", err)
 	}
 

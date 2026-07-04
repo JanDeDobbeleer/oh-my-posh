@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"errors"
 	"reflect"
+	"sort"
 	"strings"
 	"text/template"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/generics"
@@ -44,14 +47,31 @@ func (t *renderer) release() {
 }
 
 // templateCacheKey returns the key used to look up a cached *template.Template.
-// It encodes the patched template text and, when context is non-nil, the
-// reflect.Type of the context so that two different struct types whose
-// patchTemplate output differs (via hasField) get separate cache entries.
-func templateCacheKey(patchedText string, ctx any) string {
+// It encodes the raw (unpatched) template text and, when context is non-nil,
+// the reflect.Type of the context so that two different struct types whose
+// patchTemplate output would differ (via hasField) get separate cache entries.
+// For map[string]any contexts the key also includes the sorted exported key
+// names, since patchTemplate output depends on which keys are present.
+func templateCacheKey(rawText string, ctx any) string {
 	if ctx == nil {
-		return patchedText
+		return rawText
 	}
-	return patchedText + "\x00" + reflect.TypeOf(ctx).String()
+
+	t := reflect.TypeOf(ctx)
+	if t.Kind() == reflect.Map {
+		if m, ok := ctx.(map[string]any); ok {
+			keys := make([]string, 0, len(m))
+			for k := range m {
+				if r, _ := utf8.DecodeRuneInString(k); unicode.IsUpper(r) {
+					keys = append(keys, k)
+				}
+			}
+			sort.Strings(keys)
+			return rawText + "\x00" + t.String() + "\x00" + strings.Join(keys, "\x01")
+		}
+	}
+
+	return rawText + "\x00" + t.String()
 }
 
 // parsedTemplate returns a fully-parsed *template.Template for text.
@@ -59,16 +79,17 @@ func templateCacheKey(patchedText string, ctx any) string {
 // return the cached value. Concurrent first-renders of the same template
 // may both parse, but LoadOrStore ensures only one result is shared.
 func parsedTemplate(text *Text) (*template.Template, error) {
-	// patchTemplate rewrites the raw template string into the patched form
-	// and stores it back in text.template. We need the patched text as part
-	// of the cache key, so we must patch first.
-	text.patchTemplate()
-
+	// Key on the raw, unpatched template text plus the context type so that
+	// cache hits can skip patchTemplate entirely: patching is only needed
+	// the first time a given (raw template, context type) pair is seen.
 	key := templateCacheKey(text.template, text.context)
 
 	if cached, ok := parsedTemplates.Load(key); ok {
 		return cached.(*template.Template), nil
 	}
+
+	// Cache miss: patch the raw template into its executable form.
+	text.patchTemplate()
 
 	// Parse into a fresh template with the shared func map and settings.
 	tmpl, err := template.New("cache").Funcs(funcMap()).Parse(text.template)

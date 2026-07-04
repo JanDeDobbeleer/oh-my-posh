@@ -196,9 +196,15 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		}
 	}()
 
-	// Create Job for this goroutine so child processes can be tracked and killed on timeout
-	if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
-		log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
+	// Only segments with a timeout can ever be killed via
+	// KillGoroutineChildren (see prompt/segments.go executeSegmentWithTimeout),
+	// so only those need a Job object to track/terminate their child
+	// processes. Skipping this for the common case (no timeout configured)
+	// avoids two syscalls + a map insert per segment per prompt.
+	if segment.Timeout > 0 {
+		if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
+			log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
+		}
 	}
 
 	segment.Enabled = segment.writer.Enabled()

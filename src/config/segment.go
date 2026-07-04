@@ -205,6 +205,16 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
 			log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
 		}
+
+		// Release the Job object (Windows) once this goroutine is done
+		// spawning/waiting on children. cmd.Run blocks until its child exits,
+		// so by the time Execute returns - on any path below, including a
+		// panic unwind - no process we intended to keep alive is still
+		// assigned to the job, making it safe to close despite
+		// JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE. If the timeout path already
+		// terminated/closed the job concurrently, this is a no-op; see the
+		// ownership invariant documented on jobs.CloseGoroutineJob.
+		defer runjobs.CloseGoroutineJob()
 	}
 
 	segment.Enabled = segment.writer.Enabled()

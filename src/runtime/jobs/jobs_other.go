@@ -18,6 +18,11 @@ var (
 func CreateJobForGoroutine(_ string) error { return nil }
 func AssignPidToGoroutineJob(_ int) error  { return nil }
 
+// CloseGoroutineJob is a no-op on non-Windows platforms; there is no Job
+// object to release. It exists so callers (e.g. config.Segment.Execute) can
+// unconditionally defer the close without platform-specific branching.
+func CloseGoroutineJob() {}
+
 // setProcessGroup ensures the child process runs in its own process group so
 // it can be killed with a group kill (negative pid).
 func SetProcessGroup(cmd *exec.Cmd) {

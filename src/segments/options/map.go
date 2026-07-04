@@ -73,14 +73,26 @@ const (
 
 type Map map[Option]any
 
+// debugf logs a formatted debug message, skipping the fmt.Sprintf call entirely
+// when logging is disabled. Accessor methods below are on the segment render hot
+// path and are called several times per segment per render, so avoiding the
+// eager formatting matters.
+func debugf(format string, args ...any) {
+	if !log.Enabled() {
+		return
+	}
+
+	log.Debug(fmt.Sprintf(format, args...))
+}
+
 func (m Map) String(option Option, defaultValue string) string {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %s", option, defaultValue))
+		debugf("%s: %s", option, defaultValue)
 		return defaultValue
 	}
 	value := fmt.Sprint(val)
-	log.Debug(fmt.Sprintf("%s: %s", option, value))
+	debugf("%s: %s", option, value)
 	return value
 }
 
@@ -95,79 +107,79 @@ func (m Map) Template(option Option, defaultValue string, context any) string {
 
 	resolved, err := template.Render(value, context)
 	if err != nil {
-		log.Debug(fmt.Sprintf("%s: template error, using raw value: %s", option, err))
+		debugf("%s: template error, using raw value: %s", option, err)
 		return value
 	}
 
-	log.Debug(fmt.Sprintf("%s (template resolved): %s", option, resolved))
+	debugf("%s (template resolved): %s", option, resolved)
 	return resolved
 }
 
 func (m Map) Color(option Option, defaultValue color.Ansi) color.Ansi {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %s", option, defaultValue))
+		debugf("%s: %s", option, defaultValue)
 		return defaultValue
 	}
 
 	colorString := color.Ansi(fmt.Sprint(val))
 	if color.IsAnsiColorName(colorString) {
-		log.Debug(fmt.Sprintf("%s: %s", option, colorString))
+		debugf("%s: %s", option, colorString)
 		return colorString
 	}
 
 	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString.String())
 	if values != nil && values["color"] != "" {
 		value := color.Ansi(values["color"])
-		log.Debug(fmt.Sprintf("%s: %s", option, value))
+		debugf("%s: %s", option, value)
 		return value
 	}
 
-	log.Debug(fmt.Sprintf("%s: %s", option, defaultValue))
+	debugf("%s: %s", option, defaultValue)
 	return defaultValue
 }
 
 func (m Map) Bool(option Option, defaultValue bool) bool {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %t", option, defaultValue))
+		debugf("%s: %t", option, defaultValue)
 		return defaultValue
 	}
 	boolValue, ok := val.(bool)
 	if !ok {
-		log.Debug(fmt.Sprintf("%s: %t", option, defaultValue))
+		debugf("%s: %t", option, defaultValue)
 		return defaultValue
 	}
-	log.Debug(fmt.Sprintf("%s: %t", option, boolValue))
+	debugf("%s: %t", option, boolValue)
 	return boolValue
 }
 
 func (m Map) Float64(option Option, defaultValue float64) float64 {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %f", option, defaultValue))
+		debugf("%s: %f", option, defaultValue)
 		return defaultValue
 	}
 
 	// Direct type conversions for common numeric types
 	switch v := val.(type) {
 	case float64:
-		log.Debug(fmt.Sprintf("%s: %f", option, v))
+		debugf("%s: %f", option, v)
 		return v
 	case int:
 		value := float64(v)
-		log.Debug(fmt.Sprintf("%s: %f", option, value))
+		debugf("%s: %f", option, value)
 		return value
 	case int64:
 		value := float64(v)
-		log.Debug(fmt.Sprintf("%s: %f", option, value))
+		debugf("%s: %f", option, value)
 		return value
 	case uint64:
 		value := float64(v)
-		log.Debug(fmt.Sprintf("%s: %f", option, value))
+		debugf("%s: %f", option, value)
 		return value
 	default:
-		log.Debug(fmt.Sprintf("%s: %f", option, defaultValue))
+		debugf("%s: %f", option, defaultValue)
 		return defaultValue
 	}
 }
@@ -175,29 +187,29 @@ func (m Map) Float64(option Option, defaultValue float64) float64 {
 func (m Map) Int(option Option, defaultValue int) int {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %d", option, defaultValue))
+		debugf("%s: %d", option, defaultValue)
 		return defaultValue
 	}
 
 	// Direct type conversions for common numeric types
 	switch v := val.(type) {
 	case int:
-		log.Debug(fmt.Sprintf("%s: %d", option, v))
+		debugf("%s: %d", option, v)
 		return v
 	case int64:
 		value := int(v)
-		log.Debug(fmt.Sprintf("%s: %d", option, value))
+		debugf("%s: %d", option, value)
 		return value
 	case uint64:
 		value := int(v)
-		log.Debug(fmt.Sprintf("%s: %d", option, value))
+		debugf("%s: %d", option, value)
 		return value
 	case float64:
 		value := int(v)
-		log.Debug(fmt.Sprintf("%s: %d", option, value))
+		debugf("%s: %d", option, value)
 		return value
 	default:
-		log.Debug(fmt.Sprintf("%s: %d", option, defaultValue))
+		debugf("%s: %d", option, defaultValue)
 		return defaultValue
 	}
 }
@@ -205,35 +217,35 @@ func (m Map) Int(option Option, defaultValue int) int {
 func (m Map) KeyValueMap(option Option, defaultValue map[string]string) map[string]string {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %v", option, defaultValue))
+		debugf("%s: %v", option, defaultValue)
 		return defaultValue
 	}
 
 	keyValues := parseKeyValueArray(val)
-	log.Debug(fmt.Sprintf("%s: %v", option, keyValues))
+	debugf("%s: %v", option, keyValues)
 	return keyValues
 }
 
 func (m Map) StringArray(option Option, defaultValue []string) []string {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %v", option, defaultValue))
+		debugf("%s: %v", option, defaultValue)
 		return defaultValue
 	}
 
 	keyValues := ParseStringArray(val)
-	log.Debug(fmt.Sprintf("%s: %v", option, keyValues))
+	debugf("%s: %v", option, keyValues)
 	return keyValues
 }
 
 func (m Map) Any(option Option, defaultValue any) any {
 	val, found := m[option]
 	if !found {
-		log.Debug(fmt.Sprintf("%s: %v", option, defaultValue))
+		debugf("%s: %v", option, defaultValue)
 		return defaultValue
 	}
 
-	log.Debug(fmt.Sprintf("%s: %v", option, val))
+	debugf("%s: %v", option, val)
 	return val
 }
 

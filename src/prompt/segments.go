@@ -15,17 +15,46 @@ type result struct {
 }
 
 func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
+	out := e.launchBlockSegments(block)
+	if out == nil {
+		return "", 0
+	}
+
+	// A single standalone block (RPrompt/Tooltip) only ever needs to resolve
+	// dependencies against its own segments, matching a fresh executed map.
+	executed := make(map[string]bool, len(block.Segments))
+
+	return e.renderBlockSegments(out, block, executed)
+}
+
+// launchBlockSegments starts execution for every segment in the block and
+// returns the channel that will receive their results as they complete.
+// Callers may consume the channel immediately or defer consumption to
+// allow other blocks' segments to execute concurrently in the meantime.
+// Returns nil when the block has no segments.
+func (e *Engine) launchBlockSegments(block *config.Block) chan result {
 	length := len(block.Segments)
 
 	if length == 0 {
-		return "", 0
+		return nil
 	}
 
 	out := make(chan result, length)
 
 	e.writeSegmentsConcurrently(block.Segments, out)
 
-	e.writeSegments(out, block)
+	return out
+}
+
+// renderBlockSegments consumes the results of a previously launched block
+// (see launchBlockSegments) in dependency order and renders them to the
+// terminal writer. Rendering itself remains strictly sequential. executed
+// tracks which segment names have completed execution; callers rendering
+// multiple blocks from a single prompt pass the same map across blocks so
+// cross-block .Segments.X dependencies resolve regardless of which block
+// defines them.
+func (e *Engine) renderBlockSegments(out chan result, block *config.Block, executed map[string]bool) (string, int) {
+	e.writeSegments(out, block, executed)
 
 	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
 		e.activeSegment.TrailingDiamond = block.TrailingDiamond
@@ -79,10 +108,13 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 
 	gid := <-gidChan
 
+	timer := time.NewTimer(time.Duration(segment.Timeout) * time.Millisecond)
+	defer timer.Stop()
+
 	select {
 	case <-done:
 		// Completed before timeout - nothing extra to do
-	case <-time.After(time.Duration(segment.Timeout) * time.Millisecond):
+	case <-timer.C:
 		log.Errorf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
 
 		// When streaming is enabled, don't kill goroutines - let them continue executing
@@ -103,13 +135,11 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 	}
 }
 
-func (e *Engine) writeSegments(out chan result, block *config.Block) {
+func (e *Engine) writeSegments(out chan result, block *config.Block, executed map[string]bool) {
 	count := len(block.Segments)
 	current := 0
 	executedCount := 0
 	results := make([]*config.Segment, count)
-	// Pre-allocate map with known capacity to reduce allocations
-	executed := make(map[string]bool, count)
 	segmentIndex := 0
 
 	// Process results as they come in, eliminating busy waiting

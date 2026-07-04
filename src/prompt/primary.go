@@ -70,6 +70,27 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		blocks = e.allBlocks
 	}
 
+	// Launch execution for every segment of every block up front so they all
+	// run concurrently; blocks are still rendered sequentially afterward, in
+	// order, so wall-clock latency becomes max(slowest segment) instead of
+	// sum(slowest segment per block). The cache path re-renders segment data
+	// that was already executed, so there's nothing to launch there.
+	var launched []chan result
+	if !fromCache {
+		launched = make([]chan result, len(blocks))
+		for i, block := range blocks {
+			if block.Type == config.RPrompt && !needsPrimaryRPrompt {
+				continue
+			}
+
+			launched[i] = e.launchBlockSegments(block)
+		}
+	}
+
+	// Shared across blocks so cross-block .Segments.X dependencies resolve
+	// regardless of which block defines them.
+	executed := make(map[string]bool)
+
 	for i, block := range blocks {
 		// do not print a leading newline when we're at the first row and the prompt is cleared
 		if i == 0 {
@@ -90,18 +111,19 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		if fromCache {
 			rendered = e.renderBlockFromCache(block, cancelNewline)
 		} else {
-			rendered = e.renderBlock(block, cancelNewline)
+			rendered = e.renderLaunchedBlock(block, launched[i], executed, cancelNewline)
 		}
 
 		if rendered {
 			didRender = true
 		}
+	}
 
-		// Only handle tooltip caching in regular (non-cached) rendering
-		if !fromCache && !e.Config.ToolTipsAction.IsDefault() {
-			cache.Set(cache.Session, RPromptKey, e.rprompt, cache.INFINITE)
-			cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
-		}
+	// Only handle tooltip caching in regular (non-cached) rendering, once per
+	// prompt rather than once per block.
+	if !fromCache && !e.Config.ToolTipsAction.IsDefault() {
+		cache.Set(cache.Session, RPromptKey, e.rprompt, cache.INFINITE)
+		cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {

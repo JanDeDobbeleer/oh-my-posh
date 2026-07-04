@@ -43,6 +43,8 @@ type Segment struct {
 	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
 	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
+	foregroundCache        color.Ansi
+	backgroundCache        color.Ansi
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty" yaml:"trailing_diamond,omitempty"`
@@ -77,6 +79,9 @@ type Segment struct {
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
 	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	foregroundResolved     bool
+	backgroundResolved     bool
+	needsEvaluated         bool
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -209,13 +214,18 @@ func (segment *Segment) Render(index int, force bool) bool {
 		segment.Force = true
 	}
 
+	// Foreground/background may be overridden directly (e.g. color cycling) between
+	// render passes, so the memoized values must not survive across calls to Render.
+	segment.foregroundResolved = false
+	segment.backgroundResolved = false
+
 	segment.writer.SetIndex(index)
 
 	text := segment.string()
 
 	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
 	if !segment.Pending {
-		segment.Enabled = segment.Force || len(strings.ReplaceAll(text, " ", "")) > 0
+		segment.Enabled = segment.Force || strings.ContainsFunc(text, func(r rune) bool { return r != ' ' })
 
 		if !segment.Enabled {
 			template.Cache.RemoveSegmentData(segment.Name())
@@ -241,21 +251,35 @@ func (segment *Segment) SetText(text string) {
 }
 
 func (segment *Segment) ResolveForeground() color.Ansi {
+	if segment.foregroundResolved {
+		return segment.foregroundCache
+	}
+
 	if len(segment.ForegroundTemplates) != 0 {
 		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
 		segment.Foreground = color.Ansi(match)
 	}
 
-	return segment.Foreground
+	segment.foregroundCache = segment.Foreground
+	segment.foregroundResolved = true
+
+	return segment.foregroundCache
 }
 
 func (segment *Segment) ResolveBackground() color.Ansi {
+	if segment.backgroundResolved {
+		return segment.backgroundCache
+	}
+
 	if len(segment.BackgroundTemplates) != 0 {
 		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
 		segment.Background = color.Ansi(match)
 	}
 
-	return segment.Background
+	segment.backgroundCache = segment.Background
+	segment.backgroundResolved = true
+
+	return segment.backgroundCache
 }
 
 func (segment *Segment) ResolveStyle() SegmentStyle {
@@ -429,6 +453,12 @@ func (segment *Segment) cwdExcluded() bool {
 }
 
 func (segment *Segment) evaluateNeeds() {
+	if segment.needsEvaluated {
+		return
+	}
+
+	segment.needsEvaluated = true
+
 	value := segment.Template
 
 	if len(segment.ForegroundTemplates) != 0 {

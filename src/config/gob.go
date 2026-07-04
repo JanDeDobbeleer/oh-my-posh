@@ -37,13 +37,17 @@ func Get(configFile string, reload bool) *Config {
 	base64String, found := cache.Get[string](cache.Session, configKey)
 	if !found {
 		log.Debug("no cached config found")
-		return Load(configFile)
+		cfg := Load(configFile)
+		cfg.Store()
+		return cfg
 	}
 
 	var cfg Config
 	if err := cfg.Restore(base64String); err != nil {
 		log.Debug("failed to restore config from cache")
-		return Load(configFile)
+		loaded := Load(configFile)
+		loaded.Store()
+		return loaded
 	}
 
 	return &cfg

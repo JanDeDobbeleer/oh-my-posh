@@ -201,8 +201,17 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
-func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
-	blockText, length := e.writeBlockSegments(block)
+// renderLaunchedBlock renders a block whose segment execution has already
+// been launched (see launchBlockSegments). executed is shared across all
+// blocks rendered within the same prompt pass so cross-block .Segments.X
+// dependencies resolve regardless of which block defines them.
+func (e *Engine) renderLaunchedBlock(block *config.Block, out chan result, executed map[string]bool, cancelNewline bool) bool {
+	var blockText string
+	var length int
+
+	if out != nil {
+		blockText, length = e.renderBlockSegments(out, block, executed)
+	}
 
 	// do not print anything when we don't have any text unless forced
 	if !block.Force && length == 0 {

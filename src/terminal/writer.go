@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -53,7 +54,7 @@ var (
 	foregroundColor color.Ansi
 	backgroundColor color.Ansi
 	currentColor    color.History
-	runes           []rune
+	textLen         int
 
 	isTransparent bool
 	isInvisible   bool
@@ -63,14 +64,30 @@ var (
 	Program string
 
 	formats *shell.Formats
+
+	// escapePrefix/escapeSuffix are formats.Escape ("...%s...") split around its
+	// single %s placeholder, precomputed once so writeEscapedAnsiString can
+	// concatenate via the builder instead of allocating through fmt.Sprintf.
+	escapePrefix string
+	escapeSuffix string
 )
 
 const (
-	AnchorRegex      = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
-	colorise         = "\x1b[%sm"
-	transparentStart = "\x1b[0m\x1b[%s;49m\x1b[7m"
-	transparentEnd   = "\x1b[27m"
-	backgroundEnd    = "\x1b[49m"
+	AnchorRegex = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
+
+	// colorisePrefix/coloriseSuffix and transparentStartPrefix/transparentStartSuffix
+	// are the fixed parts of the colorise ("\x1b[%sm") and transparentStart
+	// ("\x1b[0m\x1b[%s;49m\x1b[7m") formats, split around their single %s
+	// placeholder so callers can write them directly via the builder instead
+	// of allocating through fmt.Sprintf.
+	colorisePrefix = "\x1b["
+	coloriseSuffix = "m"
+
+	transparentStartPrefix = "\x1b[0m\x1b["
+	transparentStartSuffix = ";49m\x1b[7m"
+
+	transparentEnd = "\x1b[27m"
+	backgroundEnd  = "\x1b[49m"
 
 	AnsiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 
@@ -100,6 +117,52 @@ const (
 	Unknown         = "Unknown"
 )
 
+// anchorMatch describes a single `<...>` anchor token found while scanning
+// segment text, mirroring the named groups of AnchorRegex without allocating
+// a map or invoking the regexp engine.
+type anchorMatch struct {
+	Anchor string
+	FG     string
+	BG     string
+	ok     bool
+}
+
+// scanAnchor looks for an AnchorRegex-shaped token at the start of txt, i.e.
+// `<` + zero or more non `<>` characters + `>`, with the inner text optionally
+// split on the first comma into FG (before) and BG (after, which may itself
+// contain further commas). It operates on the zero-copy slice txt[i:] and
+// performs no allocations.
+func scanAnchor(txt string) anchorMatch {
+	if len(txt) == 0 || txt[0] != '<' {
+		return anchorMatch{}
+	}
+
+	end := strings.IndexByte(txt, '>')
+	if end < 0 {
+		return anchorMatch{}
+	}
+
+	inner := txt[1:end]
+	if strings.IndexByte(inner, '<') >= 0 {
+		return anchorMatch{}
+	}
+
+	fg := inner
+	bg := ""
+
+	if before, after, ok := strings.Cut(inner, ","); ok {
+		fg = before
+		bg = after
+	}
+
+	return anchorMatch{
+		Anchor: txt[:end+1],
+		FG:     fg,
+		BG:     bg,
+		ok:     true,
+	}
+}
+
 func Init(sh string) {
 	Shell = sh
 	Program = getTerminalName()
@@ -110,6 +173,15 @@ func Init(sh string) {
 	color.TrueColor = Program != AppleTerminal
 
 	formats = shell.GetFormats(Shell)
+
+	escapePrefix, escapeSuffix = "", ""
+	if before, after, found := strings.Cut(formats.Escape, "%s"); found {
+		// formats.Escape is a fmt.Sprintf format string, so any literal "%"
+		// in the surrounding text is escaped as "%%" (e.g. zsh's "%%{%s%%}").
+		// Unescape it now since we no longer route through fmt.Sprintf.
+		escapePrefix = strings.ReplaceAll(before, "%%", "%")
+		escapeSuffix = strings.ReplaceAll(after, "%%", "%")
+	}
 }
 
 func getTerminalName() string {
@@ -284,11 +356,11 @@ func Write(background, foreground color.Ansi, txt string) {
 	}
 
 	// validate if we start with a color override
-	match := regex.FindNamedRegexMatch(AnchorRegex, txt)
-	if len(match) != 0 && match[ANCHOR] != hyperLinkStart {
+	match := scanAnchor(txt)
+	if match.ok && match.Anchor != hyperLinkStart {
 		colorOverride := true
 		for _, style := range knownStyles {
-			if match[ANCHOR] != style.AnchorStart {
+			if match.Anchor != style.AnchorStart {
 				continue
 			}
 
@@ -297,61 +369,62 @@ func Write(background, foreground color.Ansi, txt string) {
 		}
 
 		if colorOverride {
-			currentColor.Add(asAnsiColors(color.Ansi(match[BG]), color.Ansi(match[FG])))
+			currentColor.Add(asAnsiColors(color.Ansi(match.BG), color.Ansi(match.FG)))
 		}
 	}
 
 	writeSegmentColors()
 
 	// print the hyperlink part AFTER the coloring
-	if match[ANCHOR] == hyperLinkStart {
+	if match.ok && match.Anchor == hyperLinkStart {
 		isHyperlink = true
 		builder.WriteString(formats.HyperlinkStart)
 	}
 
-	txt = txt[len(match[ANCHOR]):]
-	runes = []rune(txt)
+	txt = txt[len(match.Anchor):]
+	textLen = len(txt)
 	hyperlinkTextPosition := 0
 
-	for i := 0; i < len(runes); i++ {
-		s := runes[i]
+	for i := 0; i < len(txt); {
+		s, size := utf8.DecodeRuneInString(txt[i:])
+
 		// ignore everything which isn't overriding
 		if s != '<' {
 			write(s)
+			i += size
 			continue
 		}
 
 		// color/end overrides first
-		txt = string(runes[i:])
-		match = regex.FindNamedRegexMatch(AnchorRegex, txt)
-		if len(match) > 0 {
+		match = scanAnchor(txt[i:])
+		if match.ok {
 			// check for hyperlinks first
-			switch match[ANCHOR] {
+			switch match.Anchor {
 			case hyperLinkStart:
 				isHyperlink = true
-				i += len([]rune(match[ANCHOR])) - 1
+				i += len(match.Anchor)
 				builder.WriteString(formats.HyperlinkStart)
 				continue
 			case hyperLinkText:
 				isHyperlink = false
-				i += len([]rune(match[ANCHOR])) - 1
+				i += len(match.Anchor)
 				hyperlinkTextPosition = i
 				builder.WriteString(formats.HyperlinkCenter)
 				continue
 			case hyperLinkTextEnd:
 				// this implies there's no text in the hyperlink
-				if hyperlinkTextPosition+1 == i {
+				if hyperlinkTextPosition == i {
 					builder.WriteString("link")
 					length += 4
 				}
-				i += len([]rune(match[ANCHOR])) - 1
+				i += len(match.Anchor)
 				continue
 			case hyperLinkEnd:
-				i += len([]rune(match[ANCHOR])) - 1
+				i += len(match.Anchor)
 				builder.WriteString(formats.HyperlinkEnd)
 				continue
 			case empty:
-				i += len([]rune(match[ANCHOR])) - 1
+				i += len(match.Anchor)
 				continue
 			}
 
@@ -360,6 +433,7 @@ func Write(background, foreground color.Ansi, txt string) {
 		}
 
 		write(s)
+		i += size
 	}
 
 	// reset colors
@@ -390,11 +464,48 @@ func writeEscapedAnsiString(txt string) {
 		return
 	}
 
-	if len(formats.Escape) != 0 {
-		txt = fmt.Sprintf(formats.Escape, txt)
+	if len(escapePrefix) != 0 {
+		builder.WriteString(escapePrefix)
 	}
 
 	builder.WriteString(txt)
+
+	if len(escapeSuffix) != 0 {
+		builder.WriteString(escapeSuffix)
+	}
+}
+
+// writeEscapedAnsiParts writes prefix+payload+suffix wrapped in the shell escape
+// sequence, avoiding the intermediate string concatenation that a
+// fmt.Sprintf(colorise/transparentStart, ...) call would otherwise require.
+func writeEscapedAnsiParts(prefix string, payload color.Ansi, suffix string) {
+	if Plain {
+		return
+	}
+
+	if len(escapePrefix) != 0 {
+		builder.WriteString(escapePrefix)
+	}
+
+	builder.WriteString(prefix)
+	builder.WriteString(payload.String())
+	builder.WriteString(suffix)
+
+	if len(escapeSuffix) != 0 {
+		builder.WriteString(escapeSuffix)
+	}
+}
+
+// writeColorise writes the equivalent of fmt.Sprintf(colorise, c) wrapped in
+// the shell escape sequence, without allocating an intermediate string.
+func writeColorise(c color.Ansi) {
+	writeEscapedAnsiParts(colorisePrefix, c, coloriseSuffix)
+}
+
+// writeTransparentStart writes the equivalent of fmt.Sprintf(transparentStart, c)
+// wrapped in the shell escape sequence, without allocating an intermediate string.
+func writeTransparentStart(c color.Ansi) {
+	writeEscapedAnsiParts(transparentStartPrefix, c, transparentStartSuffix)
 }
 
 func write(s rune) {
@@ -442,18 +553,18 @@ func writeSegmentColors() {
 	switch {
 	case fg.IsTransparent() && len(BackgroundColor) != 0:
 		background := Colors.ToAnsi(BackgroundColor, false)
-		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
+		writeColorise(background)
+		writeColorise(bg.ToForeground())
 	case fg.IsTransparent() && !bg.IsEmpty():
 		isTransparent = true
-		writeEscapedAnsiString(fmt.Sprintf(transparentStart, bg))
+		writeTransparentStart(bg)
 	default:
 		if !bg.IsEmpty() && !bg.IsTransparent() {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
+			writeColorise(bg)
 		}
 
 		if !fg.IsEmpty() && !fg.IsTransparent() {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, fg))
+			writeColorise(fg)
 		}
 	}
 
@@ -461,28 +572,28 @@ func writeSegmentColors() {
 	currentColor.Add(bg, fg)
 }
 
-func writeAnchorOverride(match map[string]string, background color.Ansi, i int) int {
+func writeAnchorOverride(match anchorMatch, background color.Ansi, i int) int {
 	position := i
 	// check color reset first
-	if match[ANCHOR] == resetStyle.AnchorEnd {
+	if match.Anchor == resetStyle.AnchorEnd {
 		return endColorOverride(position)
 	}
 
-	position += len([]rune(match[ANCHOR])) - 1
+	position += len(match.Anchor)
 
 	for _, style := range knownStyles {
-		if style.AnchorEnd == match[ANCHOR] {
+		if style.AnchorEnd == match.Anchor {
 			writeEscapedAnsiString(style.End)
 			return position
 		}
-		if style.AnchorStart == match[ANCHOR] {
+		if style.AnchorStart == match.Anchor {
 			writeEscapedAnsiString(style.Start)
 			return position
 		}
 	}
 
-	bgColor := color.Ansi(match[BG])
-	fgColor := color.Ansi(match[FG])
+	bgColor := color.Ansi(match.BG)
+	fgColor := color.Ansi(match.FG)
 
 	if fgColor.IsTransparent() && bgColor.IsEmpty() {
 		bgColor = background
@@ -508,14 +619,14 @@ func writeAnchorOverride(match map[string]string, background color.Ansi, i int) 
 
 	if currentColor.Foreground().IsTransparent() && len(BackgroundColor) != 0 {
 		background := Colors.ToAnsi(BackgroundColor, false)
-		writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background().ToForeground()))
+		writeColorise(background)
+		writeColorise(currentColor.Background().ToForeground())
 		return position
 	}
 
 	if currentColor.Foreground().IsTransparent() && !currentColor.Background().IsTransparent() {
 		isTransparent = true
-		writeEscapedAnsiString(fmt.Sprintf(transparentStart, currentColor.Background()))
+		writeTransparentStart(currentColor.Background())
 		return position
 	}
 
@@ -524,12 +635,12 @@ func writeAnchorOverride(match map[string]string, background color.Ansi, i int) 
 		if currentColor.Background().IsTransparent() {
 			writeEscapedAnsiString(backgroundEnd)
 		} else {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Background()))
+			writeColorise(currentColor.Background())
 		}
 	}
 
 	if currentColor.Foreground() != foregroundColor {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, currentColor.Foreground()))
+		writeColorise(currentColor.Foreground())
 	}
 
 	return position
@@ -537,10 +648,10 @@ func writeAnchorOverride(match map[string]string, background color.Ansi, i int) 
 
 func endColorOverride(position int) int {
 	// make sure to reset the colors if needed
-	position += len([]rune(resetStyle.AnchorEnd)) - 1
+	position += len(resetStyle.AnchorEnd)
 
 	// do not restore colors at the end of the string, we print it anyways
-	if position == len(runes)-1 {
+	if position == textLen {
 		currentColor.Pop()
 		return position
 	}
@@ -562,16 +673,15 @@ func endColorOverride(position int) int {
 		}
 
 		if previousBg != bg {
-			background := fmt.Sprintf(colorise, previousBg)
 			if previousBg.IsClear() {
-				background = backgroundStyle.End
+				writeEscapedAnsiString(backgroundStyle.End)
+			} else {
+				writeColorise(previousBg)
 			}
-
-			writeEscapedAnsiString(background)
 		}
 
 		if previousFg != fg {
-			writeEscapedAnsiString(fmt.Sprintf(colorise, previousFg))
+			writeColorise(previousFg)
 		}
 
 		return position
@@ -594,11 +704,11 @@ func endColorOverride(position int) int {
 	}
 
 	if currentColor.Background() != backgroundColor && !backgroundColor.IsClear() {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, backgroundColor))
+		writeColorise(backgroundColor)
 	}
 
 	if (currentColor.Foreground() != foregroundColor || isTransparent) && !foregroundColor.IsClear() {
-		writeEscapedAnsiString(fmt.Sprintf(colorise, foregroundColor))
+		writeColorise(foregroundColor)
 	}
 
 	isTransparent = false

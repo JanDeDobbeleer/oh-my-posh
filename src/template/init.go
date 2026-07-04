@@ -26,7 +26,8 @@ var (
 	textPool    *generics.Pool[*Text]
 
 	// parsedTemplates caches fully-parsed *template.Template values keyed by
-	// a string that encodes both the patched template text and the context type.
+	// a string that encodes both the raw (unpatched) template text and the
+	// context type, so cache hits can skip patchTemplate entirely.
 	// Execute on a cached template is concurrency-safe; we never re-Parse it.
 	parsedTemplates sync.Map
 )

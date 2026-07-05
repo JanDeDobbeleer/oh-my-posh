@@ -38,16 +38,18 @@ def --wrapped _omp_get_prompt [
         $ms => { $ms | into int }
     }
 
-    ^$_omp_executable print $type
-        --save-cache
-        --shell=nu
-        $"--shell-version=($env.POSH_SHELL_VERSION)"
-        $"--status=($env.LAST_EXIT_CODE)"
-        $"--no-status=($execution_time < 0)"
-        $"--execution-time=($execution_time)"
-        $"--terminal-width=((term size).columns)"
-        $"--job-count=(job list | length)"
-        ...$args
+    (
+        ^$_omp_executable print $type
+            --save-cache
+            --shell=nu
+            $"--shell-version=($env.POSH_SHELL_VERSION)"
+            $"--status=($env.LAST_EXIT_CODE)"
+            $"--no-status=($execution_time < 0)"
+            $"--execution-time=($execution_time)"
+            $"--terminal-width=((term size).columns)"
+            $"--job-count=(job list | length)"
+            ...$args
+    )
 }
 
 $env.PROMPT_MULTILINE_INDICATOR = (

@@ -49,7 +49,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             AsyncResult = $null
             Prompt      = ''
             State       = 'NEW'
+            Dirty       = $false
         })
+    # Engine-event actions can't receive state via -MessageData (arrives as $null) and lose
+    # closure bindings when created inside a module function, so expose the streaming state
+    # globally for the OnIdle action to pick up.
+    $global:_ompStreamingState = $script:Streaming
+    $script:StreamingOnIdleJob = $null
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL = "pwsh"
@@ -273,10 +279,49 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         $script:Streaming.Process = $null
         $script:Streaming.State = 'NEW'
+        $script:Streaming.Dirty = $false
     }
 
     function Get-PoshStreamingPrompt {
-        # Start streaming process (State stays 'NEW' until initial prompt fully rendered)
+        if ($null -eq $script:StreamingOnIdleJob) {
+            # PSReadLine anchors the prompt position when ReadLine starts, and PowerShell.OnIdle
+            # can only fire while ReadLine is waiting for input, i.e. after that anchor exists.
+            # That makes OnIdle the earliest safe point to allow redraws (State = 'RUNNING') and
+            # to flush updates that arrived before the anchor existed. Calling InvokePrompt()
+            # any earlier redraws at the previous prompt's coordinates.
+            $script:StreamingOnIdleJob = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -Action {
+                $s = $global:_ompStreamingState
+
+                # No active streaming prompt cycle.
+                if ($null -eq $s.Process) {
+                    return
+                }
+
+                if ($s.State -eq 'NEW') {
+                    $s.State = 'RUNNING'
+                }
+
+                if (-not $s.Dirty) {
+                    return
+                }
+
+                $s.Dirty = $false
+
+                $previousOutputEncoding = [Console]::OutputEncoding
+
+                try {
+                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                }
+                catch {}
+                finally {
+                    [Console]::OutputEncoding = $previousOutputEncoding
+                }
+            }
+        }
+
+        # Start streaming process (State stays 'NEW' until the first OnIdle event confirms
+        # PSReadLine has rendered the initial prompt)
         $script:Streaming.Process = New-Object System.Diagnostics.Process
         $StartInfo = $script:Streaming.Process.StartInfo
         $StartInfo.FileName = $global:_ompExecutable
@@ -347,24 +392,35 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 }
             }).AddArgument($script:Streaming.Process.StandardOutput.BaseStream)
 
-        $ps.BeginInvoke($inputData, $output) | Out-Null
-
-        # Update prompt when output arrives
+        # Update prompt when output arrives.
+        # Register before starting the reader so no DataAdded event can fire without a subscriber.
         Register-ObjectEvent -InputObject $output -EventName DataAdded -SourceIdentifier "OhMyPoshStreaming" -MessageData @{
             Streaming = $script:Streaming
         } -Action {
             $s = $event.MessageData.Streaming
             $index = $event.SourceEventArgs.Index
 
-            if ($index -eq 0 -or $s.State -ne 'RUNNING') {
+            # Index 0 is the initial prompt, consumed synchronously by Get-PoshStreamingPrompt.
+            if ($index -eq 0) {
                 return
             }
+
+            $s.Prompt = $event.SourceArgs[0][$index]
+
+            # Until the first OnIdle event marks the state as RUNNING, PSReadLine hasn't
+            # anchored the current prompt's position yet and InvokePrompt() would redraw at
+            # the previous prompt's coordinates - defer the update instead of rendering.
+            if ($s.State -ne 'RUNNING') {
+                $s.Dirty = $true
+                return
+            }
+
+            $s.Dirty = $false
 
             $previousOutputEncoding = [Console]::OutputEncoding
 
             try {
                 [Console]::OutputEncoding = [Text.Encoding]::UTF8
-                $s.Prompt = $event.SourceArgs[0][$index]
                 [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
             }
             catch {}
@@ -372,6 +428,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Console]::OutputEncoding = $previousOutputEncoding
             }
         } | Out-Null
+
+        $ps.BeginInvoke($inputData, $output) | Out-Null
 
         while ($output.Count -eq 0) {
             Start-Sleep -Milliseconds 1
@@ -394,9 +452,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # store the original last exit code
         $script:OriginalLastExitCode = $global:LASTEXITCODE
 
-        # Only return cached prompt if we're in a streaming redraw (RUNNING state)
-        # AND it's not a transient prompt. Don't use cached prompt for FINAL state
-        # as that means the previous prompt is complete and we need a fresh one.
+        # Only return the cached prompt when this is a streaming redraw, that is an
+        # InvokePrompt() call during an active streaming cycle (RUNNING state) which
+        # isn't rendering a transient prompt.
         if ($script:PromptType -ne 'transient' -and $script:Streaming.State -ne 'NEW') {
             # Update ExtraPromptLineCount for PSReadLine to properly clear previous prompt
             Set-PSReadLineOption -ExtraPromptLineCount (($script:Streaming.Prompt | Measure-Object -Line).Lines - 1)
@@ -442,11 +500,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             if ($command) {
                 $output += "  `b`b"
             }
-        }
-
-        # Now that we're about to return, mark streaming as ready for updates
-        if ($global:_ompStreaming -and $script:PromptType -eq 'primary') {
-            $script:Streaming.State = 'RUNNING'
         }
 
         $output
@@ -624,6 +677,17 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $ExecutionContext.SessionState.Module.OnRemove += {
             # Clean up streaming process
             Stop-StreamingProcess
+
+            if ($null -ne $script:StreamingOnIdleJob) {
+                # only remove our own PowerShell.OnIdle subscriber, other modules may have theirs
+                Get-EventSubscriber -SourceIdentifier PowerShell.OnIdle -ErrorAction Ignore |
+                    Where-Object { $null -ne $_.Action -and $_.Action.InstanceId -eq $script:StreamingOnIdleJob.InstanceId } |
+                    Unregister-Event -ErrorAction Ignore
+                Remove-Job $script:StreamingOnIdleJob -Force -ErrorAction Ignore
+                $script:StreamingOnIdleJob = $null
+            }
+
+            Remove-Variable -Name _ompStreamingState -Scope Global -ErrorAction Ignore
 
             Remove-Item Function:Get-PoshStackCount -ErrorAction SilentlyContinue
 

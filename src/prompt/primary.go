@@ -87,9 +87,22 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		}
 	}
 
-	// Shared across blocks so cross-block .Segments.X dependencies resolve
-	// regardless of which block defines them.
+	// Drain every block's channel before rendering any block so that executed
+	// is fully populated up front. This allows cross-block .Segments.X
+	// dependencies to resolve in both directions — an earlier block can
+	// reference a segment from a later block and vice versa.
 	executed := make(map[string]bool)
+	allResults := make([][]*config.Segment, len(blocks))
+
+	if !fromCache {
+		for i, block := range blocks {
+			if launched[i] == nil {
+				continue
+			}
+
+			allResults[i] = drainBlockResults(launched[i], len(block.Segments), executed)
+		}
+	}
 
 	for i, block := range blocks {
 		// do not print a leading newline when we're at the first row and the prompt is cleared
@@ -111,7 +124,7 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		if fromCache {
 			rendered = e.renderBlockFromCache(block, cancelNewline)
 		} else {
-			rendered = e.renderLaunchedBlock(block, launched[i], executed, cancelNewline)
+			rendered = e.renderLaunchedBlock(block, allResults[i], executed, cancelNewline)
 		}
 
 		if rendered {

@@ -23,8 +23,9 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 	// A single standalone block (RPrompt/Tooltip) only ever needs to resolve
 	// dependencies against its own segments, matching a fresh executed map.
 	executed := make(map[string]bool, len(block.Segments))
+	results := drainBlockResults(out, len(block.Segments), executed)
 
-	return e.renderBlockSegments(out, block, executed)
+	return e.renderBlockSegments(results, block, executed)
 }
 
 // launchBlockSegments starts execution for every segment in the block and
@@ -46,15 +47,27 @@ func (e *Engine) launchBlockSegments(block *config.Block) chan result {
 	return out
 }
 
-// renderBlockSegments consumes the results of a previously launched block
-// (see launchBlockSegments) in dependency order and renders them to the
-// terminal writer. Rendering itself remains strictly sequential. executed
-// tracks which segment names have completed execution; callers rendering
-// multiple blocks from a single prompt pass the same map across blocks so
-// cross-block .Segments.X dependencies resolve regardless of which block
-// defines them.
-func (e *Engine) renderBlockSegments(out chan result, block *config.Block, executed map[string]bool) (string, int) {
-	e.writeSegments(out, block, executed)
+// drainBlockResults drains a result channel and records each completed segment
+// in executed. Calling this for every block before any rendering begins ensures
+// the executed map is fully populated, so cross-block .Segments.X dependencies
+// resolve in both directions (an earlier block can reference a later block's
+// segment and vice versa).
+func drainBlockResults(out chan result, count int, executed map[string]bool) []*config.Segment {
+	results := make([]*config.Segment, count)
+	for range count {
+		res := <-out
+		results[res.index] = res.segment
+		executed[res.segment.Name()] = true
+	}
+	return results
+}
+
+// renderBlockSegments renders pre-collected segment results in dependency order.
+// Rendering is strictly sequential. For multi-block prompts, executed must be
+// fully populated for all blocks before this is called (via drainBlockResults),
+// so that cross-block .Segments.X dependencies resolve in both directions.
+func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Block, executed map[string]bool) (string, int) {
+	e.writeSegments(results, block, executed)
 
 	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
 		e.activeSegment.TrailingDiamond = block.TrailingDiamond
@@ -135,39 +148,15 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 	}
 }
 
-func (e *Engine) writeSegments(out chan result, block *config.Block, executed map[string]bool) {
-	count := len(block.Segments)
+func (e *Engine) writeSegments(results []*config.Segment, block *config.Block, executed map[string]bool) {
+	count := len(results)
 	current := 0
-	executedCount := 0
-	results := make([]*config.Segment, count)
 	segmentIndex := 0
 
-	// Process results as they come in, eliminating busy waiting
-	for executedCount < count {
-		res := <-out // Block until result is available
-		executedCount++
-
-		results[res.index] = res.segment
-		executed[res.segment.Name()] = true
-
-		// Process segments that can now be rendered
-		for current < count && results[current] != nil {
-			segment := results[current]
-			if !e.canRenderSegment(segment, executed) {
-				break
-			}
-
-			if segment.Render(segmentIndex, e.forceRender) {
-				segmentIndex++
-			}
-
-			e.writeSegment(block, segment)
-			current++
-		}
-	}
-
-	// render all remaining segments where the needs can't be resolved
-	for current < executedCount {
+	// Render segments in index order while their dependencies are satisfied.
+	// executed is fully pre-populated before rendering begins (via drainBlockResults),
+	// so all resolvable cross-block and same-block dependencies are already available.
+	for current < count && e.canRenderSegment(results[current], executed) {
 		segment := results[current]
 		if segment.Render(segmentIndex, e.forceRender) {
 			segmentIndex++
@@ -175,6 +164,16 @@ func (e *Engine) writeSegments(out chan result, block *config.Block, executed ma
 
 		e.writeSegment(block, segment)
 		current++
+	}
+
+	// Render remaining segments whose Needs could not be resolved
+	for ; current < count; current++ {
+		segment := results[current]
+		if segment.Render(segmentIndex, e.forceRender) {
+			segmentIndex++
+		}
+
+		e.writeSegment(block, segment)
 	}
 }
 

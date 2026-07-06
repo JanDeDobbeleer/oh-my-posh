@@ -16,6 +16,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// requestPipe is the path to a named pipe (fifo) to read requests from
+// instead of stdin. Unix only - used by shells that cannot hold a child's
+// stdin open across prompts (fish).
+var requestPipe string
+
 // serveCmd represents the serve command
 var serveCmd = createServeCmd()
 
@@ -41,6 +46,13 @@ type serveRequest struct {
 	ExecutionTime float64           `json:"execution-time"`
 	NoStatus      bool              `json:"no-status"`
 	Cleared       bool              `json:"cleared"`
+	// Wait makes the render synchronous: every segment resolves (bounded by
+	// the regular per-segment timeouts, like print primary) and exactly two
+	// records are emitted - the final primary and the transient. For shells
+	// without an async record consumer (bash): incremental updates would pile
+	// up unread in the pipe buffer, and a full pipe blocks the record copier,
+	// which stopActiveCycle waits on.
+	Wait bool `json:"wait"`
 }
 
 const (
@@ -67,6 +79,11 @@ func createServeCmd() *cobra.Command {
 				shellName = shell.GENERIC
 			}
 
+			in, err := openServeInput(requestPipe)
+			if err != nil {
+				os.Exit(1)
+			}
+
 			options := []cache.Option{cache.Persist}
 
 			cache.Init(shellName, options...)
@@ -77,15 +94,36 @@ func createServeCmd() *cobra.Command {
 			// least once (it reads package-level state set there); if the
 			// daemon quits/hits EOF before ever handling a render request,
 			// skip it instead of panicking on that unset state.
-			if renderedAtLeastOnce := runServeLoop(os.Stdin, os.Stdout); renderedAtLeastOnce {
+			if renderedAtLeastOnce := runServeLoop(in, os.Stdout); renderedAtLeastOnce {
 				template.SaveCache()
 			}
 		},
 	}
 
 	serveCmd.Flags().StringVar(&shellName, "shell", "", "the shell to serve for")
+	serveCmd.Flags().StringVar(&requestPipe, "request-pipe", "", "named pipe (fifo) to read requests from instead of stdin")
+
+	// Hide flags that are for internal use only.
+	_ = serveCmd.Flags().MarkHidden("request-pipe")
 
 	return serveCmd
+}
+
+// openServeInput returns the request source: stdin by default, or the given
+// named pipe (fifo) opened read-write. O_RDWR is the load-bearing detail: the
+// daemon itself keeps a writer on the fifo, so a client doing
+// open-write-close per request (the only write primitive fish has) never
+// EOFs the read side. Unix only - the shell owns the fifo's lifecycle.
+//
+// Clients must write each request in a single write(2) call; requests from a
+// single sequential writer (one shell session) never interleave regardless
+// of size.
+func openServeInput(pipePath string) (*os.File, error) {
+	if pipePath == "" {
+		return os.Stdin, nil
+	}
+
+	return os.OpenFile(pipePath, os.O_RDWR, 0)
 }
 
 // serveActiveCycle tracks the currently rendering cycle so a new render
@@ -140,12 +178,15 @@ func runServeLoop(in, out *os.File) bool {
 
 		// Abort blocks until the previous cycle's producer goroutine has
 		// fully exited, guaranteeing no two cycles ever render concurrently.
+		// For a Wait cycle (renderComplete) Abort is a no-op - there the
+		// wait on copierDone below provides the same guarantee, since the
+		// record channel only closes when the render goroutine is done.
 		active.engine.Abort()
 
-		// The copier goroutine is the sole reader of the engine's record
-		// channel; wait for it to observe the channel close (which Abort
-		// guarantees happens) so we never have two goroutines reading it and
-		// never race the next cycle's stdout writes against this one's.
+		// The copier goroutine is the sole reader of the cycle's record
+		// channel; wait for it to observe the channel close so we never have
+		// two goroutines reading it and never race the next cycle's stdout
+		// writes against this one's.
 		<-active.copierDone
 
 		active = nil
@@ -269,24 +310,63 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 		JobCount:      req.JobCount,
 		IsPrimary:     true,
 		Escape:        true,
-		Streaming:     true,
+		Streaming:     !req.Wait,
 	}
 
 	eng := prompt.New(flags)
 
-	id := fmt.Sprintf("%d", req.ID)
+	var records <-chan string
+	if req.Wait {
+		records = renderComplete(eng)
+	} else {
+		records = eng.StreamPrimary()
+	}
 
-	streamOut := eng.StreamPrimary()
-	copierDone := make(chan struct{})
+	return &serveActiveCycle{
+		engine:     eng,
+		copierDone: copyRecords(req.ID, records, out),
+	}
+}
+
+// renderComplete produces the two records of a Wait render: the fully
+// resolved primary prompt (Streaming is off, so segments block until done,
+// bounded by their regular timeouts - print primary semantics) and the
+// transient prompt. Rendered in a single goroutine for the same
+// thread-safety reasons as StreamPrimary, with the same panic containment.
+func renderComplete(eng *prompt.Engine) <-chan string {
+	records := make(chan string, 2)
 
 	go func() {
-		defer close(copierDone)
+		defer close(records)
+		defer func() {
+			_ = recover()
+		}()
 
-		for record := range streamOut {
+		records <- eng.Primary()
+		records <- prompt.TransientMarker + eng.ExtraPrompt(prompt.Transient)
+	}()
+
+	return records
+}
+
+// copyRecords copies prompt records to out prefixed with the cycle id and
+// closes the returned channel once the source channel is exhausted.
+func copyRecords(id int64, records <-chan string, out *os.File) chan struct{} {
+	done := make(chan struct{})
+
+	go func() {
+		defer close(done)
+
+		for record := range records {
 			// Single Fprintf call so each record is written to stdout
 			// atomically with respect to other os.Stdout writers in this
 			// process (there are none today, but keep the invariant).
-			fmt.Fprintf(out, "%s%s%s\x00", id, serveIDMarker, record)
+			// The write error is deliberately unchecked: on Unix, a broken
+			// stdout pipe raises SIGPIPE (default disposition on fd 1) and
+			// terminates the daemon - the desired lifecycle when the shell
+			// disappears without sending quit, and the only exit signal in
+			// the request-pipe transport where stdin EOF never arrives.
+			fmt.Fprintf(out, "%d%s%s\x00", id, serveIDMarker, record)
 		}
 
 		// Deliberately no cache persistence here: unlike stream/print
@@ -297,8 +377,5 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 		// template.SaveCache() defer in createServeCmd.
 	}()
 
-	return &serveActiveCycle{
-		engine:     eng,
-		copierDone: copierDone,
-	}
+	return done
 }

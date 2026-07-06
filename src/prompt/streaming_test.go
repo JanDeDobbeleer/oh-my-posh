@@ -1,6 +1,7 @@
 package prompt
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -33,6 +34,7 @@ func TestStreamPrimary_NoSegments(t *testing.T) {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -44,8 +46,75 @@ func TestStreamPrimary_NoSegments(t *testing.T) {
 	out := engine.StreamPrimary()
 	prompts := collectChannelOutput(out, 100*time.Millisecond)
 
-	// Should get exactly one prompt (initial) with no pending segments
-	assert.Len(t, prompts, 1)
+	// Initial prompt and the transient record with no pending segments
+	assert.Len(t, prompts, 2)
+}
+
+func TestStreamPrimary_TransientRecord(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{},
+		},
+		Env: env,
+	}
+
+	out := engine.StreamPrimary()
+	prompts := collectChannelOutput(out, 100*time.Millisecond)
+
+	// Initial prompt followed by a marker-prefixed transient record
+	assert.Len(t, prompts, 2)
+	assert.False(t, strings.HasPrefix(prompts[0], TransientMarker), "Initial prompt should not carry the transient marker")
+	assert.True(t, strings.HasPrefix(prompts[1], TransientMarker), "Second record should carry the transient marker")
+	assert.NotEmpty(t, strings.TrimPrefix(prompts[1], TransientMarker), "Transient record should contain the rendered prompt")
+}
+
+func TestStreamPrimary_TransientRecord_RefreshedAfterCompletion(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	slowSegment := &config.Segment{
+		Type:       "text",
+		Template:   "SLOW",
+		Pending:    true,
+		Foreground: "#ffffff",
+		Background: "#000000",
+	}
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{
+				{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{slowSegment},
+				},
+			},
+		},
+		Env:              env,
+		streamingResults: make(chan *config.Segment, 10),
+	}
+
+	err := slowSegment.MapSegmentWithWriter(env)
+	require.NoError(t, err)
+
+	engine.pendingSegments.Store(slowSegment.Name(), true)
+
+	out := engine.StreamPrimary()
+
+	go func() {
+		time.Sleep(50 * time.Millisecond)
+		slowSegment.Pending = false
+		engine.notifySegmentCompletion(slowSegment)
+	}()
+
+	prompts := collectChannelOutput(out, 200*time.Millisecond)
+
+	// initial prompt, initial transient, primary update, refreshed transient
+	assert.Len(t, prompts, 4)
+	assert.True(t, strings.HasPrefix(prompts[1], TransientMarker), "Second record should be the initial transient prompt")
+	assert.False(t, strings.HasPrefix(prompts[2], TransientMarker), "Third record should be the primary prompt update")
+	assert.True(t, strings.HasPrefix(prompts[len(prompts)-1], TransientMarker), "Last record should be the refreshed transient prompt")
 }
 
 func TestStreamPrimary_WithPendingSegments(t *testing.T) {
@@ -497,6 +566,7 @@ func setupBasicStreamingTestEnv() *Engine {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -518,8 +588,8 @@ func TestStreamPrimary_EarlyChannelClosure(t *testing.T) {
 	// Should be able to read from output channel without panic
 	prompts := collectChannelOutput(out, 100*time.Millisecond)
 
-	// Should get exactly one prompt (initial) with no pending segments
-	assert.Len(t, prompts, 1, "Should receive initial prompt")
+	// Initial prompt and the transient record with no pending segments
+	assert.Len(t, prompts, 2, "Should receive initial prompt and transient record")
 }
 
 func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
@@ -532,7 +602,7 @@ func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
 	out := engine.StreamPrimary()
 	prompts := collectChannelOutput(out, 100*time.Millisecond)
 
-	assert.Len(t, prompts, 1, "Should get exactly one prompt with no pending segments")
+	assert.Len(t, prompts, 2, "Should get the initial prompt and transient record with no pending segments")
 }
 
 // TestStreamPrimary_RaceConditionFix validates that the streaming loop
@@ -553,6 +623,7 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -603,10 +674,18 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	// Collect all prompts with sufficient timeout
 	prompts := collectChannelOutput(out, 200*time.Millisecond)
 
+	// Only count primary prompt records, transient records don't reflect segment updates
+	var primaryPrompts []string
+	for _, record := range prompts {
+		if !strings.HasPrefix(record, TransientMarker) {
+			primaryPrompts = append(primaryPrompts, record)
+		}
+	}
+
 	// With the fix, we should receive updates for all three segments
 	// Initial prompt + 3 updates (A, B, C) = 4 total
 	// Without the fix, we might only get Initial + 2 updates and exit early
-	assert.GreaterOrEqual(t, len(prompts), 3, "Should receive updates for all pending segments")
+	assert.GreaterOrEqual(t, len(primaryPrompts), 3, "Should receive updates for all pending segments")
 
 	// Verify all segments were properly cleaned up
 	count := engine.countPendingSegments()

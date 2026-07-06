@@ -2,7 +2,13 @@ package prompt
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
+
+// TransientMarker prefixes a streamed record that contains the transient prompt
+// rather than a primary prompt update. Shells cache such a record so rendering
+// the transient prompt on Enter needs no additional CLI call.
+const TransientMarker = "\x1e"
 
 // StreamPrimary returns a channel that yields prompt updates as segments complete.
 func (e *Engine) StreamPrimary() <-chan string {
@@ -13,6 +19,21 @@ func (e *Engine) StreamPrimary() <-chan string {
 
 	out := make(chan string, 10)
 
+	// The transient prompt must render in the same goroutine as the primary
+	// updates: both write to the engine's prompt builder and the terminal
+	// package's global state.
+	sendTransient := func() {
+		// The zsh script renders the transient prompt one column narrower to avoid
+		// a redundant blank line when a filler is configured and the input is empty
+		// (see _omp_zle-line-init in omp.zsh), mirror that for the streamed record.
+		if e.Env.Shell() == shell.ZSH {
+			e.rectifyTerminalWidth(-1)
+			defer e.rectifyTerminalWidth(1)
+		}
+
+		out <- TransientMarker + e.ExtraPrompt(Transient)
+	}
+
 	go func() {
 		defer close(out)
 		defer close(e.streamingResults)
@@ -20,6 +41,7 @@ func (e *Engine) StreamPrimary() <-chan string {
 		// Render and send initial prompt with pending segments
 		initialPrompt := e.Primary()
 		out <- initialPrompt
+		sendTransient()
 
 		if e.countPendingSegments() == 0 {
 			return
@@ -30,6 +52,8 @@ func (e *Engine) StreamPrimary() <-chan string {
 			out <- e.renderFromBlocks()
 
 			if e.countPendingSegments() == 0 {
+				// refresh the transient prompt now the context is fully resolved
+				sendTransient()
 				return
 			}
 		}

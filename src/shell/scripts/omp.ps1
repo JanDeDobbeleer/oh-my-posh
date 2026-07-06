@@ -51,6 +51,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             # Runspace    = $null
             AsyncResult = $null
             Prompt      = ''
+            Transient   = ''
             State       = 'NEW'
             Dirty       = $false
         })
@@ -329,6 +330,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $StartInfo = $script:Streaming.Process.StartInfo
         $StartInfo.FileName = $global:_ompExecutable
 
+        # The transient prompt for this cycle streams in alongside the primary
+        # prompt updates, invalidate the previous cycle's version.
+        $script:Streaming.Transient = ''
+
         # Build arguments array
         $Arguments = @(
             "stream"
@@ -408,7 +413,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 return
             }
 
-            $s.Prompt = $event.SourceArgs[0][$index]
+            $record = $event.SourceArgs[0][$index]
+
+            # A record prefixed with U+001E carries the transient prompt: cache it
+            # for the Enter/Ctrl+C key handlers instead of redrawing the prompt.
+            if ($record -and $record[0] -eq [char]0x1E) {
+                $s.Transient = $record.Substring(1)
+                return
+            }
+
+            $s.Prompt = $record
 
             # Until the first OnIdle event marks the state as RUNNING, PSReadLine hasn't
             # anchored the current prompt's position yet and InvokePrompt() would redraw at
@@ -485,6 +499,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # Use streaming prompt if enabled, otherwise use regular prompt
         if ($global:_ompStreaming -and $script:PromptType -eq 'primary') {
             $output = Get-PoshStreamingPrompt
+        }
+        elseif ($script:PromptType -eq 'transient' -and $script:Streaming.Transient) {
+            # rendered ahead of time by the streaming process, saves a CLI call on Enter
+            $output = $script:Streaming.Transient
         }
         else {
             $output = Get-PoshPrompt $script:PromptType

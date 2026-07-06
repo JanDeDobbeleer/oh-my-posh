@@ -864,9 +864,9 @@ func TestFishPath(t *testing.T) {
 
 func TestTerminalWidth(t *testing.T) {
 	cases := []struct {
+		Err      error
 		Case     string
 		Width    int
-		Err      error
 		Expected int
 	}{
 		{Case: "success", Width: 120, Err: nil, Expected: 120},

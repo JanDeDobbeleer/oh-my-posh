@@ -23,7 +23,7 @@ $global:_ompTransientPrompt = $true
 $global:_ompFTCSMarks = $true
 & $global:_ompExecutable upgrade --auto
 & $global:_ompExecutable notice
-$global:_ompStreaming = $true
+Enable-PoshStreaming
 Enable-KeyHandlers
 Enable-PoshVIMode`
 

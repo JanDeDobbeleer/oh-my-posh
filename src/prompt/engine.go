@@ -20,6 +20,8 @@ var cycle *color.Cycle = &color.Cycle{}
 type Engine struct {
 	Env                   runtime.Environment
 	streamingResults      chan *config.Segment
+	abort                 chan struct{}
+	done                  chan struct{}
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment

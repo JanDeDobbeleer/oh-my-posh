@@ -23,7 +23,7 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # start timer on command start
-PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_command_start)'
+PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_milliseconds)",0))}$(_omp_ftcs_command_start)'
 
 # set secondary prompt
 _omp_secondary_prompt=$(
@@ -52,7 +52,16 @@ function _omp_set_cursor_position() {
     export POSH_CURSOR_COLUMN=${COL}
 }
 
-function _omp_start_timer() {
+function _omp_milliseconds() {
+    if ((BASH_VERSINFO[0] >= 5)); then
+        # EPOCHREALTIME is epoch time with microsecond precision and a
+        # locale-dependent decimal separator, strip anything but the digits
+        local epoch_micros=${EPOCHREALTIME//[!0-9]/}
+        echo $((epoch_micros / 1000))
+        return
+    fi
+
+    # EPOCHREALTIME requires bash 5.0 or newer
     "$_omp_executable" get millis
 }
 
@@ -122,7 +131,7 @@ function _omp_hook() {
 
     _omp_execution_time=-1
     if [[ $_omp_start_time ]]; then
-        local omp_now=$("$_omp_executable" get millis)
+        local omp_now=$(_omp_milliseconds)
         _omp_execution_time=$((omp_now - _omp_start_time))
         _omp_no_status=false
     fi

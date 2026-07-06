@@ -374,7 +374,7 @@ const (
 	V SegmentType = "v"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
-	// VIMODE writes the active ZSH Vi mode (insert/normal/visual)
+	// VIMODE writes the active Vi mode (insert/normal/visual)
 	VIMODE SegmentType = "vimode"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"

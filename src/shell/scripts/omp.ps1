@@ -32,8 +32,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     # Prompt related backup.
     $script:OriginalPromptFunction = $Function:prompt
-    $script:OriginalContinuationPrompt = (Get-PSReadLineOption).ContinuationPrompt
-    $script:OriginalPromptText = (Get-PSReadLineOption).PromptText
+    $originalPSReadLineOptions = Get-PSReadLineOption
+    $script:OriginalContinuationPrompt = $originalPSReadLineOptions.ContinuationPrompt
+    $script:OriginalPromptText = $originalPSReadLineOptions.PromptText
+    $script:OriginalViModeIndicator = $originalPSReadLineOptions.ViModeIndicator
+    $script:OriginalViModeChangeHandler = $originalPSReadLineOptions.ViModeChangeHandler
 
     $script:NoExitCode = $true
     $script:ErrorCode = 0
@@ -672,6 +675,44 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
+    function Enable-PoshVIMode {
+        if ($script:ConstrainedLanguageMode) {
+            return
+        }
+
+        if ((Get-PSReadLineOption).EditMode -ne "Vi") {
+            return
+        }
+
+        if (-not (Get-Command Set-PSReadLineOption).Parameters.ContainsKey('ViModeChangeHandler')) {
+            return
+        }
+
+        $env:POSH_VI_MODE = "viins"
+        Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler {
+            param($mode)
+
+            if ($mode -eq "Command") {
+                $env:POSH_VI_MODE = "vicmd"
+            }
+            else {
+                $env:POSH_VI_MODE = "viins"
+            }
+
+            $previousOutputEncoding = [Console]::OutputEncoding
+            try {
+                $script:Streaming.State = 'NEW'
+                [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+            }
+            catch {
+            }
+            finally {
+                [Console]::OutputEncoding = $previousOutputEncoding
+            }
+        }
+    }
+
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {
         $ExecutionContext.SessionState.Module.OnRemove += {
@@ -695,6 +736,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
             (Get-PSReadLineOption).ContinuationPrompt = $script:OriginalContinuationPrompt
             (Get-PSReadLineOption).PromptText = $script:OriginalPromptText
+
+            if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('ViModeChangeHandler')) {
+                Set-PSReadLineOption -ViModeIndicator $script:OriginalViModeIndicator -ViModeChangeHandler $script:OriginalViModeChangeHandler
+            }
+
+            Remove-Item Env:POSH_VI_MODE -ErrorAction Ignore
 
             if ((Get-PSReadLineKeyHandler Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
                 Remove-PSReadLineKeyHandler Spacebar
@@ -721,6 +768,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "Enable-PoshTooltips"
         "Enable-KeyHandlers"
         "Enable-PoshLineError"
+        "Enable-PoshVIMode"
         "Set-TransientPrompt"
         "prompt"
     )

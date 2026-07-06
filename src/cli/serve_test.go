@@ -18,7 +18,7 @@ import (
 type serveHarness struct {
 	t        *testing.T
 	stdin    *os.File
-	stdout   *os.File
+	reader   *recordReader
 	done     chan struct{}
 	rendered bool
 }
@@ -37,7 +37,7 @@ func startServeHarness(t *testing.T) *serveHarness {
 	h := &serveHarness{
 		t:      t,
 		stdin:  stdinW,
-		stdout: stdoutR,
+		reader: newRecordReader(stdoutR),
 		done:   make(chan struct{}),
 	}
 
@@ -71,7 +71,7 @@ func (h *serveHarness) render(id int, pwd string) {
 }
 
 func (h *serveHarness) records(timeout time.Duration) []serveRecord {
-	return readServeRecords(h.stdout, timeout)
+	return h.reader.collect(timeout)
 }
 
 // quitAndWait sends the quit command and fails the test when the loop does
@@ -114,14 +114,18 @@ type serveRecord struct {
 	transient bool
 }
 
-// readServeRecords reads NUL-delimited records from r until timeout elapses
-// with no new record, or the reader is closed.
-func readServeRecords(r *os.File, timeout time.Duration) []serveRecord {
-	recCh := make(chan serveRecord)
-	done := make(chan struct{})
+// recordReader parses NUL-delimited protocol records off a pipe. One reader
+// per pipe for its whole lifetime: a bufio.Scanner buffers past record
+// boundaries, so a second scanner on the same pipe would lose data.
+type recordReader struct {
+	ch chan serveRecord
+}
+
+func newRecordReader(r *os.File) *recordReader {
+	rr := &recordReader{ch: make(chan serveRecord, 64)}
 
 	go func() {
-		defer close(done)
+		defer close(rr.ch)
 
 		scanner := bufio.NewScanner(r)
 		// Match the daemon's request scanner: a record carries a full prompt
@@ -143,29 +147,32 @@ func readServeRecords(r *os.File, timeout time.Duration) []serveRecord {
 				rec.payload = strings.TrimPrefix(payload, "\x1e")
 			}
 
-			select {
-			case recCh <- rec:
-			case <-done:
-				return
-			}
+			rr.ch <- rec
 		}
 	}()
 
+	return rr
+}
+
+// collect returns records until timeout elapses with no new record arriving,
+// or the pipe closes.
+func (rr *recordReader) collect(timeout time.Duration) []serveRecord {
 	var records []serveRecord
 	timer := time.NewTimer(timeout)
 	defer timer.Stop()
 
 	for {
 		select {
-		case rec := <-recCh:
+		case rec, ok := <-rr.ch:
+			if !ok {
+				return records
+			}
 			records = append(records, rec)
 			if !timer.Stop() {
 				<-timer.C
 			}
 			timer.Reset(timeout)
 		case <-timer.C:
-			return records
-		case <-done:
 			return records
 		}
 	}
@@ -249,6 +256,30 @@ func TestServeLoop_AbortStopsRecordFlowThenNewRenderWorks(t *testing.T) {
 		}
 	}
 	assert.True(t, seenTwo, "expected to see cycle 2 records")
+
+	h.quitAndWait()
+}
+
+func TestServeLoop_WaitRenderEmitsExactlyTwoRecords(t *testing.T) {
+	h := startServeHarness(t)
+	pwd := t.TempDir()
+	chdirBackToWD(t)
+
+	h.send(map[string]any{"command": "render", "id": 1, "shell": "bash", "pwd": pwd, "wait": true})
+
+	records := h.records(500 * time.Millisecond)
+	require.Len(t, records, 2, "a wait render emits exactly the final primary and the transient")
+	assert.Equal(t, "1", records[0].id)
+	assert.False(t, records[0].transient, "first record is the fully resolved primary")
+	assert.True(t, records[1].transient, "second record is the transient")
+	assert.NotEmpty(t, records[0].payload)
+	assert.NotEmpty(t, records[1].payload)
+
+	// A regular streaming render must still work after a wait render.
+	h.render(2, pwd)
+	records = h.records(500 * time.Millisecond)
+	require.NotEmpty(t, records, "streaming render after a wait render must still produce records")
+	assert.Equal(t, "2", records[0].id)
 
 	h.quitAndWait()
 }

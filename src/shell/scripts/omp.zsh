@@ -12,6 +12,9 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 _omp_executable=::OMP::
 _omp_tooltip_command=''
 
+# zsh/datetime provides the epochtime array for native millisecond timestamps
+zmodload zsh/datetime 2>/dev/null
+
 # switches to enable/disable features
 _omp_cursor_positioning=0
 _omp_ftcs_marks=0
@@ -132,12 +135,27 @@ function _omp_exit_handler() {
 # register exit handler
 zshexit_functions+=(_omp_exit_handler)
 
+# sets _omp_millis instead of printing to avoid forking a subshell
+function _omp_milliseconds() {
+  if (( ${+epochtime} )); then
+    # copy first: every expansion of epochtime reads the clock again,
+    # so referencing it twice in one expression can straddle a second boundary
+    local -a now=("${epochtime[@]}")
+    _omp_millis=$((now[1] * 1000 + now[2] / 1000000))
+    return
+  fi
+
+  # zsh/datetime is unavailable
+  _omp_millis=$($_omp_executable get millis)
+}
+
 function _omp_preexec() {
   if [[ $_omp_ftcs_marks == 1 ]]; then
     printf '\033]133;C\007'
   fi
 
-  _omp_start_time=$($_omp_executable get millis)
+  _omp_milliseconds
+  _omp_start_time=$_omp_millis
 }
 
 function _omp_precmd() {
@@ -150,8 +168,8 @@ function _omp_precmd() {
   _omp_tooltip_command=''
 
   if [[ -n $_omp_start_time ]]; then
-    local omp_now=$($_omp_executable get millis)
-    _omp_execution_time=$(($omp_now - $_omp_start_time))
+    _omp_milliseconds
+    _omp_execution_time=$(($_omp_millis - $_omp_start_time))
     _omp_no_status=false
   fi
 

@@ -71,6 +71,10 @@ end
 # shell exit handler
 function _omp_exit_handler --on-event fish_exit
     _omp_cleanup_stream
+    # the transient prompt cache outlives stream cleanup by design, remove it on exit
+    if test -n "$_omp_streaming_tempfile"
+        rm -f "$_omp_streaming_tempfile.transient" 2>/dev/null
+    end
 end
 
 # streaming background reader: reads null-delimited prompts and signals parent
@@ -78,9 +82,17 @@ function _omp_streaming_reader
     set --local parent_pid $argv[1]
     set --local tempfile $argv[2]
     set --local count 0
+    set --local marker (printf '\x1e')
 
     # read null-delimited prompts from oh-my-posh stream
     while read --null --local prompt
+        # a record prefixed with U+001E carries the transient prompt: cache it
+        # for the key handlers so rendering the transient prompt needs no CLI call
+        if test (string sub --length 1 -- $prompt | string collect) = "$marker"
+            printf '%s' (string sub --start 2 -- $prompt | string collect) >"$tempfile.transient"
+            continue
+        end
+
         # write to temp file (atomic via printf)
         printf '%s' "$prompt" >$tempfile
 
@@ -123,7 +135,8 @@ function _omp_start_streaming
         set tmpdir /tmp
     end
     set --global _omp_streaming_tempfile "$tmpdir/omp-fish-$fish_pid.txt"
-    rm -f "$_omp_streaming_tempfile" 2>/dev/null
+    # also invalidate the previous cycle's transient prompt
+    rm -f "$_omp_streaming_tempfile" "$_omp_streaming_tempfile.transient" 2>/dev/null
 
     # build stream command with all context
     set --local stream_cmd $_omp_executable stream \
@@ -186,7 +199,13 @@ function fish_prompt
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
     if test "$_omp_transient" = 1
-        _omp_get_prompt transient
+        # prefer the transient prompt rendered ahead of time by the streaming
+        # process, saves a CLI call
+        if test $_omp_enable_streaming -eq 1; and test -n "$_omp_streaming_tempfile"; and test -s "$_omp_streaming_tempfile.transient"
+            cat "$_omp_streaming_tempfile.transient"
+        else
+            _omp_get_prompt transient
+        end
         return
     end
     if test "$_omp_new_prompt" = 0

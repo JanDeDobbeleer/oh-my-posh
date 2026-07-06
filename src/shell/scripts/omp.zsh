@@ -24,6 +24,7 @@ _omp_ftcs_marks=0
 _omp_stream_fd=${_omp_stream_fd:--1}
 _omp_enable_streaming=0
 _omp_primary_prompt=""
+_omp_transient_prompt=""
 _omp_streaming_supported=""
 
 # set secondary prompt
@@ -70,6 +71,10 @@ function _omp_start_streaming() {
   # cleanup any stale streams
   _omp_cleanup_stream
 
+  # the transient prompt for this cycle streams in alongside the primary
+  # prompt updates, invalidate the previous cycle's version
+  _omp_transient_prompt=""
+
   # build command with all context
   local -a stream_cmd=(
     "$_omp_executable" stream
@@ -109,11 +114,12 @@ function _omp_start_streaming() {
 # async handler: called when data available on fd (reads single value)
 function _omp_async_handler() {
   local fd=$1
+  local record
 
-  # read single null-delimited prompt (stream emits one value per \0)
-  IFS= read -r -u $fd -d $'\0' _omp_primary_prompt
+  # read single null-delimited record (stream emits one value per \0)
+  IFS= read -r -u $fd -d $'\0' record
   if [[ $? -ne 0 ]]; then
-    if [[ -z "$_omp_primary_prompt" ]]; then
+    if [[ -z "$record" ]]; then
       # EOF — only clean up if this is still the active stream fd.
       # A stale handler from a previous prompt cycle must not close the current stream.
       [[ $_omp_stream_fd -eq $fd ]] && _omp_cleanup_stream
@@ -121,6 +127,14 @@ function _omp_async_handler() {
     fi
   fi
 
+  # a record prefixed with U+001E carries the transient prompt: cache it for
+  # the line-init widget so rendering the transient prompt needs no CLI call
+  if [[ $record == $'\x1e'* ]]; then
+    _omp_transient_prompt=${record#$'\x1e'}
+    return 0
+  fi
+
+  _omp_primary_prompt=$record
   PS1="$_omp_primary_prompt"
   zle reset-prompt 2>/dev/null
 
@@ -315,7 +329,14 @@ function _omp_zle-line-init() {
   # kill streaming before transient prompt to prevent handler overwriting it
   _omp_cleanup_stream
 
-  eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
+  if [[ -n $_omp_transient_prompt ]]; then
+    # rendered ahead of time by the streaming process (one column narrower,
+    # mirroring the empty-buffer workaround above), saves a CLI call
+    PS1=$_omp_transient_prompt
+    RPROMPT=''
+  else
+    eval "$(_omp_get_prompt transient --eval $terminal_width_option)"
+  fi
   zle .reset-prompt
 
   if ((ret)); then

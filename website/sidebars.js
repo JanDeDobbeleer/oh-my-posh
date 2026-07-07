@@ -38,6 +38,7 @@ export default {
         "configuration/secondary-prompt",
         "configuration/debug-prompt",
         "configuration/transient",
+        "configuration/streaming",
         "configuration/line-error",
         "configuration/tooltips",
         "configuration/sample",
@@ -239,14 +240,6 @@ export default {
       collapsed: true,
       items: [
         "advanced/mcp-server",
-      ],
-    },
-    {
-      type: "category",
-      label: "🧪 Experimental",
-      collapsed: true,
-      items: [
-        "experimental/streaming",
       ],
     },
     "faq",

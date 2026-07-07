@@ -29,6 +29,11 @@ func TestStreamPrimary_NoSegments(t *testing.T) {
 	env.On("Flags").Return(&runtime.Flags{Streaming: true})
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
+	// Mock accent color retrieval for both Windows and macOS. The mock
+	// forwards RunCommand as Called(command, args), so the expectation
+	// takes two arguments: the command and the args slice.
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything).Return("4", nil)
+	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
@@ -838,6 +843,63 @@ func TestStreamPrimary_Abort_StopsRenderingAndDrains(t *testing.T) {
 	// post-abort notification; it must not panic (send on closed channel)
 	// or otherwise crash the test binary.
 	time.Sleep(40 * time.Millisecond)
+}
+
+// TestStreamPrimary_NoStreamingTimeout_ChannelCloses guards against the
+// pending-segment leak: with the Streaming flag set but no top-level
+// "streaming" timeout in the config (Config.Streaming == 0), every segment
+// used to be pre-registered in pendingSegments and never cleaned up (the
+// cleanup in writeSegmentsConcurrently only ran for Timeout > 0), so
+// countPendingSegments never reached 0, the producer goroutine waited on
+// streamingResults forever, and the stream CLI command never exited.
+func TestStreamPrimary_NoStreamingTimeout_ChannelCloses(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	segment := &config.Segment{
+		Type:       "text",
+		Template:   "TEXT",
+		Foreground: "#ffffff",
+		Background: "#000000",
+	}
+
+	engine := &Engine{
+		Config: &config.Config{
+			// Streaming (the global segment timeout) deliberately left at 0
+			Blocks: []*config.Block{
+				{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{segment},
+				},
+			},
+		},
+		Env: env,
+	}
+
+	require.NoError(t, segment.MapSegmentWithWriter(env))
+
+	out := engine.StreamPrimary()
+
+	// collectChannelOutput cannot distinguish a closed channel from a timeout,
+	// so assert closure explicitly - that is the whole point of this test.
+	var prompts []string
+	deadline := time.After(2 * time.Second)
+
+	for {
+		select {
+		case record, ok := <-out:
+			if !ok {
+				// Initial prompt + transient record, then a clean close.
+				assert.Len(t, prompts, 2)
+				assert.Equal(t, 0, engine.countPendingSegments(), "no segment may stay pending without a streaming timeout")
+				return
+			}
+
+			prompts = append(prompts, record)
+		case <-deadline:
+			t.Fatal("output channel never closed: segments leaked into pendingSegments without a streaming timeout")
+		}
+	}
 }
 
 // TestStreamPrimary_Abort_BeforeAnyRender validates that Abort can be called

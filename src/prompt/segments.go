@@ -85,8 +85,12 @@ func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Bl
 func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan result) {
 	for i, segment := range segments {
 		// In streaming mode, pre-register all segments as pending
-		// This ensures countPendingSegments() sees them before timeout occurs
-		if e.Env.Flags().Streaming {
+		// This ensures countPendingSegments() sees them before timeout occurs.
+		// Without a positive streaming timeout no segment can ever time out
+		// into the pending state, so pre-registering would leak entries (the
+		// cleanup below only runs for segment.Timeout > 0) and keep the
+		// StreamPrimary producer waiting forever.
+		if e.Env.Flags().Streaming && e.Config.Streaming > 0 {
 			segment.Timeout = e.Config.Streaming
 			e.pendingSegments.Store(segment.Name(), true)
 		}

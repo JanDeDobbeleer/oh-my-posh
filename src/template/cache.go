@@ -25,54 +25,59 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 		}
 	}
 
-	Cache = new(cache.Template)
+	// Build fully before assigning: a long-lived process (serve) rebuilds
+	// this per prompt while goroutines from an abandoned render cycle may
+	// still read the global - they must only ever observe a complete object.
+	tmpl := new(cache.Template)
 
-	Cache.Root = env.Root()
-	Cache.Shell = aliases.GetShellName(env.Shell())
-	Cache.ShellVersion = env.Flags().ShellVersion
-	Cache.Code, _ = env.StatusCodes()
-	Cache.WSL = env.IsWsl()
-	Cache.Segments = maps.NewConcurrent[any]()
-	Cache.PromptCount = env.Flags().PromptCount
-	Cache.Var = make(map[string]any)
-	Cache.Jobs = env.Flags().JobCount
-	Cache.Version = build.Version
+	tmpl.Root = env.Root()
+	tmpl.Shell = aliases.GetShellName(env.Shell())
+	tmpl.ShellVersion = env.Flags().ShellVersion
+	tmpl.Code, _ = env.StatusCodes()
+	tmpl.WSL = env.IsWsl()
+	tmpl.Segments = maps.NewConcurrent[any]()
+	tmpl.PromptCount = env.Flags().PromptCount
+	tmpl.Var = make(map[string]any)
+	tmpl.Jobs = env.Flags().JobCount
+	tmpl.Version = build.Version
 
 	if vars != nil {
-		Cache.Var = vars
+		tmpl.Var = vars
 	}
 
 	pwd := env.Pwd()
-	Cache.PWD = path.ReplaceHomeDirPrefixWithTilde(pwd)
+	tmpl.PWD = path.ReplaceHomeDirPrefixWithTilde(pwd)
 
-	Cache.AbsolutePWD = pwd
+	tmpl.AbsolutePWD = pwd
 	if env.IsWsl() {
-		Cache.AbsolutePWD, _ = env.RunCommand("wslpath", "-m", pwd)
+		tmpl.AbsolutePWD, _ = env.RunCommand("wslpath", "-m", pwd)
 	}
 
-	env.Flags().AbsolutePWD = Cache.AbsolutePWD
-	Cache.PSWD = env.Flags().PSWD
+	env.Flags().AbsolutePWD = tmpl.AbsolutePWD
+	tmpl.PSWD = env.Flags().PSWD
 
-	Cache.Folder = path.Base(pwd)
-	if env.GOOS() == runtime.WINDOWS && strings.HasSuffix(Cache.Folder, ":") {
-		Cache.Folder += `\`
+	tmpl.Folder = path.Base(pwd)
+	if env.GOOS() == runtime.WINDOWS && strings.HasSuffix(tmpl.Folder, ":") {
+		tmpl.Folder += `\`
 	}
 
-	Cache.UserName = aliases.GetUserName(env.User())
+	tmpl.UserName = aliases.GetUserName(env.User())
 	if host, err := env.Host(); err == nil {
-		Cache.HostName = aliases.GetHostName(host)
+		tmpl.HostName = aliases.GetHostName(host)
 	}
 
 	goos := env.GOOS()
-	Cache.OS = goos
+	tmpl.OS = goos
 	if goos == runtime.LINUX {
-		Cache.OS = env.Platform()
+		tmpl.OS = env.Platform()
 	}
 
 	val := env.Getenv("SHLVL")
 	if shlvl, err := strconv.Atoi(val); err == nil {
-		Cache.SHLVL = shlvl
+		tmpl.SHLVL = shlvl
 	}
+
+	Cache = tmpl
 }
 
 func restoreCache() bool {

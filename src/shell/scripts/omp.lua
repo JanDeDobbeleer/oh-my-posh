@@ -36,6 +36,7 @@ local last_duration = 0
 local rprompt_enabled = false
 local transient_enabled = false
 local ftcs_marks_enabled = false
+local serve_enabled = false
 local no_exit_code = true
 
 local cached_prompt = {}
@@ -145,6 +146,191 @@ local function duration_onendedit(input)
     end
 end
 
+-- Serve daemon
+--
+-- A persistent `oh-my-posh serve` process renders prompts on request over a
+-- bidirectional pipe (io.popenrw, Clink v1.1.42+), replacing a process spawn
+-- per prompt with an in-memory render. Requests use the protocol's "wait"
+-- mode: the daemon replies with exactly two NUL-delimited records - the fully
+-- resolved primary prompt and the transient prompt - so the blocking reads
+-- below always terminate (the daemon guarantees both records even when a
+-- render fails). Clink's Lua has no non-blocking pipe reads, but the risk
+-- profile matches the legacy path: io.popen blocks the same way.
+
+local serve = {
+    r = nil, -- daemon stdout (records)
+    w = nil, -- daemon stdin (requests)
+    cycle = 0, -- request id, used to discard records from earlier cycles
+    failures = 0, -- daemon failures; at 3 serve is disabled for the session
+    transient = nil, -- transient prompt cached from the last render's reply
+}
+
+local function serve_supported()
+    return serve_enabled and io.popenrw ~= nil and serve.failures < 3
+end
+
+local function serve_stop()
+    if serve.w then
+        serve.w:close()
+    end
+    if serve.r then
+        serve.r:close()
+    end
+    serve.w = nil
+    serve.r = nil
+end
+
+local function serve_start()
+    -- io.popenrw runs the command via %COMSPEC% /c and the child inherits the
+    -- console's stderr, so 2>nul is required: a Go panic must never print
+    -- into the terminal. Binary mode keeps records out of text-mode
+    -- translation.
+    local r, w = io.popenrw(string.format('""%s" serve --shell=cmd 2>nul"', omp_executable), 'b')
+    if not r then
+        return false
+    end
+
+    serve.r = r
+    serve.w = w
+    return true
+end
+
+local function json_escape(str)
+    str = str:gsub('[\\"]', '\\%0')
+    str = str:gsub('\r', '\\r'):gsub('\n', '\\n'):gsub('\t', '\\t')
+    -- strip any remaining control characters, JSON forbids them raw
+    return (str:gsub('%c', ''))
+end
+
+local function serve_env_json()
+    local parts = {}
+
+    local function add(name, value)
+        if value then
+            parts[#parts + 1] = string.format('"%s":"%s"', name, json_escape(value))
+        end
+    end
+
+    add('PATH', os.getenv('PATH'))
+    add('VIRTUAL_ENV', os.getenv('VIRTUAL_ENV'))
+    add('CONDA_PROMPT_MODIFIER', os.getenv('CONDA_PROMPT_MODIFIER'))
+
+    if os.getenvnames then
+        for _, name in ipairs(os.getenvnames()) do
+            if name:sub(1, 5) == 'POSH_' then
+                add(name, os.getenv(name))
+            end
+        end
+    end
+
+    return '{' .. table.concat(parts, ',') .. '}'
+end
+
+local function serve_write_request()
+    serve.cycle = serve.cycle + 1
+    serve.transient = nil
+
+    -- Forwarded to the daemon through the POSH_* env overlay below.
+    os.setenv('POSH_CURSOR_LINE', console.getnumlines())
+
+    local status = 0
+    if os.geterrorlevel ~= nil and settings.get('cmd.get_errorlevel') then
+        status = os.geterrorlevel()
+    end
+
+    local request = string.format(
+        '{"command":"render","id":%d,"shell":"cmd","status":%d,"no-status":%s,"execution-time":%d,"pwd":"%s","terminal-width":%d,"wait":true,"env":%s}\n',
+        serve.cycle,
+        status,
+        no_exit_code and 'true' or 'false',
+        last_duration or 0,
+        json_escape(os.getcwd() or ''),
+        console.getwidth() or 0,
+        serve_env_json()
+    )
+
+    return (pcall(function()
+        assert(serve.w:write(request))
+        serve.w:flush()
+    end))
+end
+
+local function serve_read_record()
+    local ok, record = pcall(function()
+        local bytes = {}
+        while true do
+            local b = serve.r:read(1)
+            if b == nil then
+                return nil -- EOF: the daemon died
+            end
+            if b == '\0' then
+                return table.concat(bytes)
+            end
+            bytes[#bytes + 1] = b
+        end
+    end)
+
+    if not ok then
+        return nil
+    end
+    return record
+end
+
+-- Renders the primary prompt through the daemon. Returns nil on failure, in
+-- which case the caller falls back to the one-shot CLI for this prompt. The
+-- transient prompt arrives as the second record of the same reply and is
+-- cached for the transient filter.
+local function serve_render()
+    if not serve.r and not serve_start() then
+        serve.failures = serve.failures + 1
+        return nil
+    end
+
+    if not serve_write_request() then
+        -- The daemon died since the last prompt - restart it once.
+        serve_stop()
+        if not serve_start() or not serve_write_request() then
+            serve.failures = serve.failures + 1
+            serve_stop()
+            return nil
+        end
+    end
+
+    local id = tostring(serve.cycle)
+    local primary
+
+    -- A wait reply is exactly two records for this id: the primary prompt,
+    -- then the transient (payload prefixed with \30). The id check discards
+    -- leftovers from an earlier, partially read reply as a cheap defense;
+    -- a healthy session always consumes replies in full.
+    while true do
+        local record = serve_read_record()
+        if record == nil then
+            serve.failures = serve.failures + 1
+            serve_stop()
+            return nil
+        end
+
+        local sep = record:find('\31', 1, true)
+        if sep and record:sub(1, sep - 1) == id then
+            local payload = record:sub(sep + 1)
+            if payload:sub(1, 1) == '\30' then
+                serve.transient = payload:sub(2)
+                break -- the transient is the final record of a reply
+            end
+            primary = payload
+        end
+    end
+
+    if not primary or primary == '' then
+        -- An empty primary is the daemon's fallback signal (failed render).
+        serve.failures = serve.failures + 1
+        return nil
+    end
+
+    return primary
+end
+
 -- Prompt functions
 
 local function execution_time_option()
@@ -219,6 +405,31 @@ end
 local zl_prompt_priority = get_priority_number('_ZL_CLINK_PROMPT_PRIORITY', 0)
 local p = clink.promptfilter(zl_prompt_priority + 1)
 function p:filter(prompt)
+    -- Serve path: the daemon renders in-memory, so the left prompt is fetched
+    -- synchronously and always fresh - no stale cwd cache, no refresh
+    -- coroutine needed for it.
+    if serve_supported() and not cached_prompt.only_use_cache then
+        local left = serve_render()
+        if left then
+            cached_prompt.left = left
+
+            -- The right prompt still renders through the one-shot CLI,
+            -- asynchronously when possible.
+            if rprompt_enabled then
+                if can_async() then
+                    clink.promptcoroutine(function()
+                        cached_prompt.right = get_posh_prompt('right')
+                    end)
+                else
+                    cached_prompt.right = get_posh_prompt('right')
+                end
+            end
+
+            return cached_prompt.left
+        end
+        -- Serve failed; fall through to the one-shot path for this prompt.
+    end
+
     local need_left = true
 
     -- Get a left prompt immediately if nothing is available yet.
@@ -280,7 +491,13 @@ function p:transientfilter(prompt)
         return nil
     end
 
-    prompt = get_posh_prompt('transient')
+    if serve.transient and serve.transient ~= '' then
+        -- Rendered ahead of time by the daemon as part of the last reply -
+        -- saves a process spawn per accepted line.
+        prompt = serve.transient
+    else
+        prompt = get_posh_prompt('transient')
+    end
 
     if prompt == '' then
         prompt = nil

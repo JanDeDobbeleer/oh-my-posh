@@ -50,9 +50,24 @@ func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.
 		return &Text{}
 	})
 
-	if Cache != nil {
+	if Cache != nil && !refreshCache {
 		return
 	}
 
+	refreshCache = false
 	loadCache(vars, aliases)
+}
+
+var refreshCache bool
+
+// ResetCache marks the template cache stale so the next Init rebuilds it.
+// One-shot commands never need this - the cache is per-process by design
+// (and tests rely on injecting a canned Cache before Init). The serve daemon
+// does: its process outlives many prompts, and a surviving Cache pins
+// per-prompt context (PWD, Folder, Code, Jobs, ...) to the values of the
+// first render. The rebuild is deferred to Init (not done here) so Cache is
+// never nil or partially built under a template render from an abandoned
+// cycle's segment goroutine.
+func ResetCache() {
+	refreshCache = true
 }

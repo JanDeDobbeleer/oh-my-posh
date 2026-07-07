@@ -38,6 +38,7 @@ type serveRequest struct {
 	ShellVersion  string            `json:"shell-version"`
 	PWD           string            `json:"pwd"`
 	PSWD          string            `json:"pswd"`
+	PipeStatus    string            `json:"pipestatus"`
 	ID            int64             `json:"id"`
 	Status        int               `json:"status"`
 	StackCount    int               `json:"stack-count"`
@@ -283,6 +284,12 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 		}
 	}
 
+	// The template cache is per-prompt context (PWD, Folder, Code, Jobs, ...)
+	// built once per PROCESS by template.Init - in a daemon that would pin
+	// every render to the first request's context (e.g. cd never updating the
+	// path segment). Drop it so prompt.New rebuilds it for this request.
+	template.ResetCache()
+
 	// prompt.New decodes a FRESH config graph from the session cache on every
 	// cycle. Do not memoize or share it across cycles: segment structs carry
 	// runtime state, and goroutines abandoned by an aborted cycle still hold
@@ -297,6 +304,7 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 		ConfigPath:    configFlag,
 		PWD:           req.PWD,
 		PSWD:          req.PSWD,
+		PipeStatus:    req.PipeStatus,
 		ErrorCode:     req.Status,
 		ExecutionTime: req.ExecutionTime,
 		StackCount:    req.StackCount,
@@ -332,18 +340,37 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 // resolved primary prompt (Streaming is off, so segments block until done,
 // bounded by their regular timeouts - print primary semantics) and the
 // transient prompt. Rendered in a single goroutine for the same
-// thread-safety reasons as StreamPrimary, with the same panic containment.
+// thread-safety reasons as StreamPrimary.
+//
+// Exactly two records are emitted even when the render panics: wait-mode
+// clients (Clink) block-read both records with no timeout mechanism, so a
+// short reply would leave them hung on a silent daemon. An empty primary
+// tells the client to fall back to its one-shot path for this prompt.
 func renderComplete(eng *prompt.Engine) <-chan string {
 	records := make(chan string, 2)
 
 	go func() {
 		defer close(records)
+
+		sent := 0
 		defer func() {
-			_ = recover()
+			if recover() == nil {
+				return
+			}
+
+			if sent == 0 {
+				records <- ""
+			}
+
+			if sent <= 1 {
+				records <- prompt.TransientMarker
+			}
 		}()
 
 		records <- eng.Primary()
+		sent++
 		records <- prompt.TransientMarker + eng.ExtraPrompt(prompt.Transient)
+		sent++
 	}()
 
 	return records

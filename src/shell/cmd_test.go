@@ -26,7 +26,8 @@ if clink.onbeginedit then
 else
     os.execute(string.format('"%s" notice', omp_executable))
 end
-rprompt_enabled = true`
+rprompt_enabled = true
+serve_enabled = true`
 
 	assert.Equal(t, want, got)
 }

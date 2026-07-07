@@ -5,9 +5,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -260,6 +263,31 @@ func TestServeLoop_AbortStopsRecordFlowThenNewRenderWorks(t *testing.T) {
 	h.quitAndWait()
 }
 
+func TestRenderCompleteEmitsTwoRecordsOnPanic(t *testing.T) {
+	// A zero-value engine panics inside Primary(). Wait-mode clients (Clink)
+	// block-read exactly two records with no timeout, so the reply must still
+	// contain both: an empty primary (the fallback signal) and an empty
+	// transient carrying its marker.
+	records := renderComplete(&prompt.Engine{})
+
+	var got []string
+	timeout := time.After(2 * time.Second)
+	for {
+		select {
+		case rec, ok := <-records:
+			if !ok {
+				require.Len(t, got, 2, "a panicked wait render must still emit exactly two records")
+				assert.Empty(t, got[0], "the primary slot is empty on panic")
+				assert.Equal(t, prompt.TransientMarker, got[1], "the transient slot carries only the marker on panic")
+				return
+			}
+			got = append(got, rec)
+		case <-timeout:
+			t.Fatal("renderComplete did not close its channel")
+		}
+	}
+}
+
 func TestServeLoop_WaitRenderEmitsExactlyTwoRecords(t *testing.T) {
 	h := startServeHarness(t)
 	pwd := t.TempDir()
@@ -280,6 +308,33 @@ func TestServeLoop_WaitRenderEmitsExactlyTwoRecords(t *testing.T) {
 	records = h.records(500 * time.Millisecond)
 	require.NotEmpty(t, records, "streaming render after a wait render must still produce records")
 	assert.Equal(t, "2", records[0].id)
+
+	h.quitAndWait()
+}
+
+// TestServeLoop_RendersFollowDirectoryChanges guards against per-process
+// state pinning the prompt to the first request's context: template.Init
+// builds the template cache (PWD, Folder, ...) once per process, which in
+// the daemon froze the path segment to the first render's directory until
+// startRenderCycle started resetting it per request.
+func TestServeLoop_RendersFollowDirectoryChanges(t *testing.T) {
+	h := startServeHarness(t)
+	pwdOne := filepath.Join(t.TempDir(), "first-dir")
+	pwdTwo := filepath.Join(t.TempDir(), "second-dir")
+	require.NoError(t, os.Mkdir(pwdOne, 0o755))
+	require.NoError(t, os.Mkdir(pwdTwo, 0o755))
+	chdirBackToWD(t)
+
+	h.render(1, pwdOne)
+	records := h.records(500 * time.Millisecond)
+	require.NotEmpty(t, records, "expected records for the first directory")
+	assert.Contains(t, records[0].payload, "first-dir", "first render should show the first directory")
+
+	h.render(2, pwdTwo)
+	records = h.records(500 * time.Millisecond)
+	require.NotEmpty(t, records, "expected records for the second directory")
+	assert.Contains(t, records[0].payload, "second-dir", "second render must follow the directory change")
+	assert.NotContains(t, records[0].payload, "first-dir", "second render must not be pinned to the first directory")
 
 	h.quitAndWait()
 }

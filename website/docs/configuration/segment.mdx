@@ -143,12 +143,10 @@ converted to the target type (integer, float, or boolean). If resolution fails, 
 is used.
 
 Available template functions include `add`, `sub`, `mul`, `div`, and all other
-[sprig](http://masterminds.github.io/sprig/) functions. The template context is the segment
-writer itself: any exported method or field on the writer is reachable as `{{ .FieldName }}`.
-For example, the `path` segment exposes `.TerminalWidth` (the terminal column count, or `0`
-when it cannot be determined). Other segments expose their own fields — see the segment's
-documentation page for what is available. A field that does not exist on the writer resolves
-to the zero value, in which case the option falls back to its default.
+[sprig](http://masterminds.github.io/sprig/) functions. The template context is the
+[global context][global-properties]: `.Env.VAR_NAME` for environment variables, `.TerminalWidth`,
+`.Shell`, `.PWD`, and so on. Segment-specific properties are **not** available in option
+templates.
 
 :::note
 This applies to **segment options** (inside `[blocks.segments.options]`), not to top-level segment
@@ -289,6 +287,7 @@ To list the currently toggled segments, use `oh-my-posh get toggles`.
 [sprig]: https://masterminds.github.io/sprig/
 [regex]: https://www.regular-expressions.info/tutorial.html
 [templates]: templates.mdx
+[global-properties]: /docs/configuration/templates#global-properties
 [color-templates]: /docs/configuration/colors#color-templates
 [cstp]: templates.mdx#cross-segment-template-properties
 [cache]: #cache

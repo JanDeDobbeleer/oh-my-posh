@@ -23,6 +23,7 @@ type SimpleTemplate struct {
 	OS            string
 	Version       string
 	PromptCount   int
+	TerminalWidth int
 	SHLVL         int
 	Jobs          int
 	Code          int

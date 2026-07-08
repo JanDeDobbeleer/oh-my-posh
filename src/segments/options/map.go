@@ -40,7 +40,6 @@ type Provider interface {
 	KeyValueMap(option Option, defaultValue map[string]string) map[string]string
 	StringArray(option Option, defaultValue []string) []string
 	Any(option Option, defaultValue any) any
-	SetContext(ctx any)
 }
 
 var _ Provider = Map{}
@@ -90,27 +89,15 @@ func debugf(format string, args ...any) {
 	log.Debug(fmt.Sprintf(format, args...))
 }
 
-const TemplateContextKey Option = "__template_context__"
-
-func (m Map) SetContext(ctx any) {
-	m[TemplateContextKey] = ctx
-}
-
-func (m Map) getContext() any {
-	return m[TemplateContextKey]
-}
-
-func (m Map) resolveTemplate(option Option, raw string) (string, bool) {
+// resolveTemplate renders raw as a template against the global template
+// context (.Env, .TerminalWidth, .Shell, ...). Typed accessors use it so
+// option values can be computed, e.g. max_width = '{{ sub .TerminalWidth 30 }}'.
+func resolveTemplate(option Option, raw string) (string, bool) {
 	if !strings.Contains(raw, "{{") {
 		return raw, false
 	}
 
-	ctx := m.getContext()
-	if ctx == nil {
-		return raw, false
-	}
-
-	resolved, err := template.Render(raw, ctx)
+	resolved, err := template.Render(raw, nil)
 	if err != nil {
 		debugf("%s: template resolution failed: %s", option, err)
 		return raw, false
@@ -158,7 +145,7 @@ func (m Map) Color(option Option, defaultValue color.Ansi) color.Ansi {
 
 	colorString := fmt.Sprint(val)
 
-	if resolved, wasTemplate := m.resolveTemplate(option, colorString); wasTemplate {
+	if resolved, wasTemplate := resolveTemplate(option, colorString); wasTemplate {
 		colorString = resolved
 	}
 
@@ -191,7 +178,7 @@ func (m Map) Bool(option Option, defaultValue bool) bool {
 		debugf("%s: %t", option, v)
 		return v
 	case string:
-		resolved, wasTemplate := m.resolveTemplate(option, v)
+		resolved, wasTemplate := resolveTemplate(option, v)
 		if value, err := strconv.ParseBool(resolved); err == nil {
 			debugf("%s: %t", option, value)
 			return value
@@ -229,7 +216,7 @@ func (m Map) Float64(option Option, defaultValue float64) float64 {
 		debugf("%s: %f", option, value)
 		return value
 	case string:
-		resolved, wasTemplate := m.resolveTemplate(option, v)
+		resolved, wasTemplate := resolveTemplate(option, v)
 		if value, err := strconv.ParseFloat(resolved, 64); err == nil {
 			debugf("%s: %f", option, value)
 			return value
@@ -267,7 +254,7 @@ func (m Map) Int(option Option, defaultValue int) int {
 		debugf("%s: %d", option, value)
 		return value
 	case string:
-		resolved, wasTemplate := m.resolveTemplate(option, v)
+		resolved, wasTemplate := resolveTemplate(option, v)
 		if value, err := strconv.Atoi(resolved); err == nil {
 			debugf("%s: %d", option, value)
 			return value

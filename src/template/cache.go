@@ -86,6 +86,10 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 		tmpl.SHLVL = shlvl
 	}
 
+	if width, err := env.TerminalWidth(); err == nil {
+		tmpl.TerminalWidth = width
+	}
+
 	overlayEnvData(tmpl)
 
 	// Alias mapping must apply to a data-provided value exactly as it does to

@@ -1,7 +1,6 @@
 package segments
 
 import (
-	"errors"
 	"strings"
 	"testing"
 
@@ -482,9 +481,9 @@ func TestGetMaxWidth(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("Getenv", "MAX_WIDTH").Return("120")
 		env.On("Shell").Return(shell.BASH)
-		env.On("TerminalWidth").Return(120, nil)
 
 		template.Cache = new(cache.Template)
+		template.Cache.TerminalWidth = 120
 		template.Init(env, nil, nil)
 
 		props := options.Map{
@@ -493,9 +492,6 @@ func TestGetMaxWidth(t *testing.T) {
 
 		path := &Path{}
 		path.Init(props, env)
-
-		// Set the path as its own context so templates can resolve
-		props.SetContext(path)
 
 		got := path.getMaxWidth()
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -859,28 +855,5 @@ func TestFishPath(t *testing.T) {
 
 			assert.Equal(t, result, tc.expected, tc.name)
 		})
-	}
-}
-
-func TestTerminalWidth(t *testing.T) {
-	cases := []struct {
-		Err      error
-		Case     string
-		Width    int
-		Expected int
-	}{
-		{Case: "success", Width: 120, Err: nil, Expected: 120},
-		{Case: "error returns 0", Width: 0, Err: errors.New("no tty"), Expected: 0},
-		{Case: "zero width", Width: 0, Err: nil, Expected: 0},
-	}
-
-	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("TerminalWidth").Return(tc.Width, tc.Err)
-
-		path := &Path{}
-		path.Init(options.Map{}, env)
-
-		assert.Equal(t, tc.Expected, path.TerminalWidth(), tc.Case)
 	}
 }

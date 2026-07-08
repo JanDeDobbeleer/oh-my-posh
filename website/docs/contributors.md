@@ -509,6 +509,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/swmarks"><img src="https://avatars.githubusercontent.com/u/9942801?v=4?s=100" width="100px;" alt="swmarks"/><br /><sub><b>swmarks</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=swmarks" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/pheenty"><img src="https://avatars.githubusercontent.com/u/66275205?v=4?s=100" width="100px;" alt="Ted Lukin"/><br /><sub><b>Ted Lukin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=pheenty" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/acdtrx"><img src="https://avatars.githubusercontent.com/u/1003990?v=4?s=100" width="100px;" alt="acdtrx"/><br /><sub><b>acdtrx</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=acdtrx" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

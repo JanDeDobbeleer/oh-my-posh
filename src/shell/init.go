@@ -71,7 +71,7 @@ func Init(env runtime.Environment, feats Features) string {
 // This is used by the --print flag to output the script to stdout.
 func Script(env runtime.Environment, feats Features) string {
 	script := generateScript(env, feats)
-	return fmt.Sprintf("%s\n%s", sessionScript(env.Flags().Shell), script)
+	return fmt.Sprintf("%s\n%s", sessionScript(env), script)
 }
 
 // Debug writes the init script and returns debug information.
@@ -165,6 +165,11 @@ func generateScript(env runtime.Environment, feats Features) string {
 
 	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
 
+	// Only nu consumes the ::CONFIG:: placeholder: it has no eval'd session
+	// script to export POSH_CONFIG from, so the value is baked into its init
+	// script instead. All other shells get it via sessionScript.
+	var config string
+
 	var script string
 
 	switch env.Flags().Shell {
@@ -185,6 +190,7 @@ func generateScript(env runtime.Environment, feats Features) string {
 		script = cmdInit
 	case NU:
 		executable = quoteNuStr(executable)
+		config = quoteNuStr(env.Flags().ConfigPath)
 		script = nuInit
 	case ELVISH:
 		executable = quotePwshOrElvishStr(executable)
@@ -202,6 +208,7 @@ func generateScript(env runtime.Environment, feats Features) string {
 	init := strings.NewReplacer(
 		"::OMP::", executable,
 		"::SESSION_ID::", cache.SessionID(),
+		"::CONFIG::", config,
 	).Replace(script)
 
 	return feats.Lines(env.Flags().Shell).String(init)
@@ -219,6 +226,7 @@ func generateNuScript(env runtime.Environment, feats Features) string {
 	init := strings.NewReplacer(
 		"::OMP::", executable,
 		"::SESSION_ID::", cache.SessionID(),
+		"::CONFIG::", quoteNuStr(env.Flags().ConfigPath),
 	).Replace(nuInit)
 
 	return feats.Lines(NU).String(init)
@@ -235,7 +243,7 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 		}
 	}
 
-	script := sessionScript(env.Flags().Shell)
+	script := sessionScript(env)
 
 	if async {
 		return script + sourceCommandAsync(env.Flags().Shell, scriptPath)
@@ -289,20 +297,28 @@ func printDebugInfo(env runtime.Environment, startTime *time.Time) string {
 	return builder.String()
 }
 
-func sessionScript(shell string) string {
-	switch shell {
+// sessionScript exports the session's environment variables: POSH_SESSION_ID
+// identifies the session cache, and POSH_CONFIG is pinned to the session's
+// resolved configuration source so it can be recovered when the session cache
+// is lost. A healthy session cache always wins, so POSH_CONFIG can not be used
+// to change the configuration mid-session.
+func sessionScript(env runtime.Environment) string {
+	sessionID := cache.SessionID()
+	config := env.Flags().ConfigPath
+
+	switch env.Flags().Shell {
 	case PWSH:
-		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\";", cache.SessionID())
+		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s;", sessionID, quotePwshOrElvishStr(config))
 	case ZSH, BASH:
-		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\";", cache.SessionID())
+		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, QuotePosixStr(config))
 	case XONSH:
-		return fmt.Sprintf("$POSH_SESSION_ID = \"%s\";", cache.SessionID())
+		return fmt.Sprintf("$POSH_SESSION_ID = \"%s\"; $POSH_CONFIG = %s;", sessionID, quotePythonStr(config))
 	case FISH:
-		return fmt.Sprintf("set --export --global POSH_SESSION_ID \"%s\";", cache.SessionID())
+		return fmt.Sprintf("set --export --global POSH_SESSION_ID \"%s\"; set --export --global POSH_CONFIG %s;", sessionID, quoteFishStr(config))
 	case ELVISH:
-		return fmt.Sprintf("set-env POSH_SESSION_ID \"%s\";", cache.SessionID())
+		return fmt.Sprintf("set-env POSH_SESSION_ID \"%s\"; set-env POSH_CONFIG %s;", sessionID, quotePwshOrElvishStr(config))
 	case CMD:
-		return fmt.Sprintf(`os.setenv('POSH_SESSION_ID', '%s');`, cache.SessionID())
+		return fmt.Sprintf(`os.setenv('POSH_SESSION_ID', '%s'); os.setenv('POSH_CONFIG', '%s');`, sessionID, escapeLuaStr(config))
 	}
 	return ""
 }

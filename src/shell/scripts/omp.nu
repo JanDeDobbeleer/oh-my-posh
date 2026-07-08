@@ -18,6 +18,8 @@ if ($env.config? | is-not-empty) {
 $env.POWERLINE_COMMAND = 'oh-my-posh'
 $env.PROMPT_INDICATOR = ""
 $env.POSH_SESSION_ID = "::SESSION_ID::"
+# pinned to the session's configuration so it can be recovered when the session cache is lost
+$env.POSH_CONFIG = ::CONFIG::
 $env.POSH_SHELL = "nu"
 $env.POSH_SHELL_VERSION = (version | get version)
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/gob"
+	"os"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -13,6 +14,13 @@ import (
 const (
 	configKey = "CONFIG"
 	SourceKey = "CONFIG_SOURCE"
+
+	// envKey is resolved into the --config flag by the root command when no
+	// explicit flag is given. The shell's init script pins it to the session's
+	// resolved configuration source so the configuration can be recovered when
+	// the session cache is lost or corrupted. A healthy session cache always
+	// wins, so it can not be used to change the configuration mid-session.
+	envKey = "POSH_CONFIG"
 )
 
 func (cfg *Config) Store() {
@@ -45,55 +53,30 @@ func Get(configFile string, reload bool) *Config {
 		log.Debug("no cached config found")
 	}
 
-	// A prompt render relies on the session cache for its configuration: it's
-	// invoked without an explicit --config, so configFile is empty here. When the
-	// session cache is missing or corrupt - the file got purged (e.g. under disk
-	// pressure) or clobbered by a concurrent writer sharing the session - falling
-	// back to Load("") silently renders the default theme for the rest of the
-	// session. Recover the previously initialized source first so the configured
-	// theme keeps rendering and the session cache self-heals.
-	if configFile == "" {
-		if source := recoverSource(); source != "" {
-			if cfg, err := Parse(source); err == nil {
-				log.Debug("recovered configuration from source: ", source)
-				cfg.Store()
-				return cfg
-			}
-
-			log.Debug("failed to recover configuration from source: ", source)
+	// A prompt render is invoked without an explicit --config and relies on the
+	// session cache for its configuration. When that cache is missing or corrupt
+	// - the file got purged (e.g. under disk pressure) or clobbered by a
+	// concurrent writer sharing the session - the shell session still knows its
+	// source: init exported it as POSH_CONFIG, and the root command resolved it
+	// into configFile. Store the parsed result again so the session cache
+	// self-heals. When the source is unavailable, return the default without
+	// caching it so the next render retries the recovery instead of pinning
+	// the default theme for the rest of the session.
+	if configFile != "" && configFile == os.Getenv(envKey) {
+		cfg, err := Parse(configFile)
+		if err == nil {
+			log.Debug("recovered configuration from environment: ", configFile)
+			cfg.Store()
+			return cfg
 		}
+
+		log.Debug("failed to recover configuration from environment: ", configFile)
+		return Default(err)
 	}
 
 	cfg := Load(configFile)
 	cfg.Store()
 	return cfg
-}
-
-// recoverSource locates the most recently initialized configuration source when
-// the session config cache is unavailable. It first checks the session source,
-// which survives when only the config blob is corrupt, then falls back to the
-// device-level DSC, which persists across sessions with an infinite TTL and is
-// populated on every init (where --config is required).
-func recoverSource() string {
-	defer log.Trace(time.Now())
-
-	if source, OK := cache.Get[string](cache.Session, SourceKey); OK && source != "" {
-		return source
-	}
-
-	resource := DSC()
-	resource.Load()
-
-	if len(resource.States) == 0 {
-		return ""
-	}
-
-	// the last added state reflects the most recent init.
-	if last := resource.States[len(resource.States)-1]; last != nil {
-		return last.Source
-	}
-
-	return ""
 }
 
 func (cfg *Config) Base64() string {

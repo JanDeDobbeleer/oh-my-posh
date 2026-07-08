@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func writeTestConfig(t *testing.T) string {
+func writeTestConfig(t *testing.T, name string) string {
 	t.Helper()
 
-	file := filepath.Join(t.TempDir(), "theme.omp.json")
+	file := filepath.Join(t.TempDir(), name)
 	if err := os.WriteFile(file, []byte(`{"version": 3, "final_space": true}`), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -21,57 +21,80 @@ func writeTestConfig(t *testing.T) string {
 	return file
 }
 
-func TestGetRecoversFromDSCWhenSessionCacheLost(t *testing.T) {
-	defer func() {
-		cache.DeleteAll(cache.Device)
+func resetCache(t *testing.T) {
+	t.Helper()
+
+	reset := func() {
 		cache.DeleteAll(cache.Session)
-	}()
+		cache.DeleteAll(cache.Device)
+	}
 
-	file := writeTestConfig(t)
+	reset()
+	t.Cleanup(reset)
+}
 
-	// Simulate a prior init: the source is tracked in the device-level DSC, which
-	// survives the loss of the session cache.
-	resource := DSC()
-	resource.Add(file)
-	resource.Save()
+func TestGetRecoversFromEnvironmentWhenSessionCacheLost(t *testing.T) {
+	resetCache(t)
 
-	// A prompt render: no --config, and the session cache no longer holds the config.
-	cfg := Get("", false)
+	file := writeTestConfig(t, "theme.omp.json")
+
+	// Simulate a prompt render after the session cache is lost: init pinned the
+	// source in POSH_CONFIG and the root command resolved it into the config flag.
+	t.Setenv(envKey, file)
+
+	cfg := Get(file, false)
 
 	assert.NotNil(t, cfg)
-	assert.Equal(t, file, cfg.Source, "should recover the configured theme instead of the default")
+	assert.Equal(t, file, cfg.Source, "should render the configured theme instead of the default")
 
 	// Recovery should self-heal the session cache so subsequent renders are fast.
 	_, found := cache.Get[string](cache.Session, configKey)
 	assert.True(t, found, "recovery should repopulate the session config cache")
 }
 
-func TestGetRecoversFromSessionSourceWhenConfigBlobMissing(t *testing.T) {
-	defer func() {
-		cache.DeleteAll(cache.Device)
-		cache.DeleteAll(cache.Session)
-	}()
+func TestGetPrefersSessionCacheOverEnvironment(t *testing.T) {
+	resetCache(t)
 
-	file := writeTestConfig(t)
+	cached := writeTestConfig(t, "cached.omp.json")
+	other := writeTestConfig(t, "other.omp.json")
 
-	// The session source survives even when the config blob is corrupt or absent.
-	cache.Set(cache.Session, SourceKey, file, cache.INFINITE)
+	Load(cached).Store()
 
-	cfg := Get("", false)
+	// POSH_CONFIG can not change the configuration mid-session:
+	// a healthy session cache always wins.
+	t.Setenv(envKey, other)
+
+	cfg := Get(other, false)
 
 	assert.NotNil(t, cfg)
-	assert.Equal(t, file, cfg.Source)
+	assert.Equal(t, cached, cfg.Source)
 }
 
-func TestGetFallsBackToDefaultWithoutSource(t *testing.T) {
-	defer func() {
-		cache.DeleteAll(cache.Device)
-		cache.DeleteAll(cache.Session)
-	}()
+func TestGetFallsBackToDefaultWithoutRecoverySource(t *testing.T) {
+	resetCache(t)
 
-	// No --config, no session cache, and no DSC: there is nothing to recover.
+	// No --config, no session cache, and no environment: there is nothing to recover.
+	t.Setenv(envKey, "")
+
 	cfg := Get("", false)
 
 	assert.NotNil(t, cfg)
 	assert.Empty(t, cfg.Source, "should fall back to the default built-in config")
+}
+
+func TestGetFallsBackToDefaultWhenRecoverySourceInvalid(t *testing.T) {
+	resetCache(t)
+
+	file := filepath.Join(t.TempDir(), "missing.omp.json")
+	t.Setenv(envKey, file)
+
+	cfg := Get(file, false)
+
+	assert.NotNil(t, cfg)
+	assert.Empty(t, cfg.Source, "should fall back to the default built-in config")
+
+	// The source may only be temporarily unavailable: the default must not be
+	// cached, otherwise the next render can no longer retry the recovery.
+	_, found := cache.Get[string](cache.Session, configKey)
+	assert.False(t, found, "a failed recovery should not pin the default in the session cache")
 }

@@ -65,6 +65,9 @@ Exports the config to an image file using customized output settings.`,
 			ConfigPath:    cfg.Source,
 			Shell:         shell.GENERIC,
 			TerminalWidth: 120,
+			PWD:           pwd,
+			ErrorCode:     status,
+			ExecutionTime: timing,
 		}
 
 		env := &runtime.Terminal{}
@@ -79,7 +82,6 @@ Exports the config to an image file using customized output settings.`,
 
 		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""
-		cfg.PWD = ""
 		cfg.ShellIntegration = false
 
 		terminal.Init(shell.GENERIC)
@@ -137,6 +139,9 @@ func init() {
 	imageCmd.Flags().StringVar(&bgColor, "background-color", "", "image background color")
 	imageCmd.Flags().StringVarP(&outputImage, "output", "o", "", "image file (.png) to export to")
 	imageCmd.Flags().StringVar(&colorSettingsFile, "settings", "", "color settings file to override ANSI color codes and metadata")
+	imageCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
+	imageCmd.Flags().IntVar(&status, "status", 0, "last known status code")
+	imageCmd.Flags().Float64Var(&timing, "execution-time", 0, "timing of the last command")
 
 	// deprecated flags
 	_ = imageCmd.Flags().MarkHidden("author")

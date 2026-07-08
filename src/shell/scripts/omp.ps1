@@ -146,6 +146,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # globally for the OnIdle action to pick up.
     $global:_ompStreamingState = $script:Streaming
     $script:StreamingOnIdleJob = $null
+    $script:StreamingExitingJob = $null
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL = "pwsh"
@@ -952,14 +953,67 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     function Enable-PoshStreaming {
         $global:_ompStreaming = $true
 
+        if (-not $script:ServeSupported) {
+            return
+        }
+
+        # A normal `exit` never runs the module's OnRemove handler, so nothing
+        # would tell the serve daemon to quit - and it only exits on stdin EOF,
+        # which requires this process to be gone. But pwsh's shutdown in turn
+        # waits for the reader runspace's pipeline thread, which is blocked on
+        # the daemon's stdout: a circular wait that hangs the terminal on exit.
+        # Break the cycle on PowerShell.Exiting: ask the daemon to quit (so it
+        # flushes its caches) and close its stdin - the EOF signal that works
+        # even if the quit line is lost - then kill it if it lingers. Its
+        # stdout then EOFs, the reader returns, and shutdown proceeds.
+        #
+        # Engine-event actions receive $null MessageData and lose module-scope
+        # closures, so state comes from $global:_ompStreamingState, like the
+        # OnIdle action.
+        if ($null -eq $script:StreamingExitingJob) {
+            $script:StreamingExitingJob = Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+                $s = $global:_ompStreamingState
+
+                if ($null -eq $s) {
+                    return
+                }
+
+                if ($null -ne $s.ServeProcess -and -not $s.ServeProcess.HasExited) {
+                    try {
+                        $s.StdIn.WriteLine('{"command":"quit"}')
+                        $s.StdIn.Flush()
+                        $s.StdIn.Close()
+                    }
+                    catch {
+                    }
+
+                    if (-not $s.ServeProcess.WaitForExit(500)) {
+                        try {
+                            $s.ServeProcess.Kill()
+                        }
+                        catch {
+                        }
+                    }
+                }
+
+                # A lingering legacy per-prompt stream process exits by itself
+                # after its render, but don't let it outlive the session either.
+                if ($null -ne $s.Process -and -not $s.Process.HasExited) {
+                    try {
+                        $s.Process.Kill()
+                    }
+                    catch {
+                    }
+                }
+            }
+        }
+
         # Start the daemon during shell init rather than at the first prompt:
         # Process.Start() returns quickly and the spawn + engine warmup then
         # overlaps with the rest of the profile instead of delaying the first
         # prompt. Failure is fine - the first prompt retries and can still
         # fall back to the legacy per-prompt stream.
-        if ($script:ServeSupported) {
-            [void](Start-PoshServe)
-        }
+        [void](Start-PoshServe)
     }
 
     function Enable-PoshTooltips {
@@ -1187,6 +1241,15 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     Unregister-Event -ErrorAction Ignore
                 Remove-Job $script:StreamingOnIdleJob -Force -ErrorAction Ignore
                 $script:StreamingOnIdleJob = $null
+            }
+
+            if ($null -ne $script:StreamingExitingJob) {
+                # only remove our own PowerShell.Exiting subscriber, other modules may have theirs
+                Get-EventSubscriber -SourceIdentifier PowerShell.Exiting -ErrorAction Ignore |
+                    Where-Object { $null -ne $_.Action -and $_.Action.InstanceId -eq $script:StreamingExitingJob.InstanceId } |
+                    Unregister-Event -ErrorAction Ignore
+                Remove-Job $script:StreamingExitingJob -Force -ErrorAction Ignore
+                $script:StreamingExitingJob = $null
             }
 
             Remove-Variable -Name _ompStreamingState -Scope Global -ErrorAction Ignore

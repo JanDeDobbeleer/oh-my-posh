@@ -10,7 +10,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -28,23 +27,6 @@ jobs:
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 20.9.0
-        # Create Kind cluster to have a Kubernetes context for cloud-native-azure theme
-        # Images are defined on every Kind release
-        # See https://github.com/kubernetes-sigs/kind/releases
-      - name: Create k8s v1.23 Kind Cluster
-        uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc
-        with:
-          node_image: kindest/node:v1.23.4@sha256:0e34f0d0fd448aa2f2819cfd74e99fe5793a6e4938b328f657c8e3f81ee0dfb9
-          cluster_name: posh
-      - name: Create Kubernetes namespace
-        run: |
-          kubectl create ns demo
-      - name: Set default Kubernetes namespace
-        run: |
-          kubectl config set-context posh --namespace demo
-      - uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build oh-my-posh 🔧
         run: |
           cd src

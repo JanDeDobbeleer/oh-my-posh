@@ -7,18 +7,30 @@ sidebar_label: Vi mode
 ## What
 
 Display the current Vi mode (insert / normal / visual …) in the prompt. Useful
-when using ZSH [keymaps][zsh-vi-mode] via `bindkey -v` or PowerShell PSReadLine
-`-EditMode Vi` so you can tell at a glance which mode you are in.
+when using ZSH [keymaps][zsh-vi-mode] via `bindkey -v`, PowerShell PSReadLine
+`-EditMode Vi`, or fish [vi key bindings][fish-vi-mode] so you can tell at a
+glance which mode you are in.
 
 In ZSH, adding this segment automatically registers a `zle-keymap-select` hook.
 In PowerShell, it registers a PSReadLine [Vi mode change handler][pwsh-vi-mode].
-Both re-render the prompt every time the active mode changes.
+In fish, it registers an [`--on-variable fish_bind_mode`][fish-bind-mode] handler
+(only when vi or hybrid key bindings are active). All of them re-render the
+prompt every time the active mode changes.
 
 :::caution PowerShell cursor indicator
 
 PowerShell support sets PSReadLine's `ViModeIndicator` to `Script`, replacing
 cursor-shape mode indicators such as `Cursor`. The mode is then shown by this
 segment in the prompt instead.
+
+:::
+
+:::caution fish mode prompt
+
+fish support overrides `fish_mode_prompt` with an empty function so fish's
+built-in `[N]` / `[I]` mode indicator does not show up next to the mode
+rendered by this segment. Make sure vi key bindings are enabled (e.g.
+`fish_vi_key_bindings`) for the segment to display.
 
 :::
 
@@ -51,9 +63,11 @@ import Config from "@site/src/components/Config.js";
 | Name      |   Type   | Description                                                                                                                                    |
 | --------- | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.Mode`   | `string` | the normalized mode: `insert`, `normal`, `visual`, `viopp`, `replace`, or the raw keymap when unmapped                                         |
-| `.Keymap` | `string` | the raw mode value ([`$KEYMAP`][zsh-keymap] in ZSH, e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`; `viins` or `vicmd` in PowerShell PSReadLine) |
+| `.Keymap` | `string` | the raw mode value ([`$KEYMAP`][zsh-keymap] in ZSH, e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`; `viins` or `vicmd` in PowerShell PSReadLine; `viins`, `vicmd`, `visual` or `replace` in fish) |
 
 [templates]: /docs/configuration/templates
 [zsh-vi-mode]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps
 [zsh-keymap]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-KEYMAP
 [pwsh-vi-mode]: https://learn.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption#-vimodechangehandler
+[fish-vi-mode]: https://fishshell.com/docs/current/interactive.html#vi-mode-commands
+[fish-bind-mode]: https://fishshell.com/docs/current/language.html#the-fish-bind-mode-variable

@@ -49,7 +49,7 @@ Exports the config to an image file ~/mytheme.png.
 
 Exports the config to an image file using customized output settings.`,
 	Args: cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		cache.Init(os.Getenv("POSH_SHELL"))
 
 		err := setConfigFlag()
@@ -65,6 +65,12 @@ Exports the config to an image file using customized output settings.`,
 			ConfigPath:    cfg.Source,
 			Shell:         shell.GENERIC,
 			TerminalWidth: 120,
+		}
+
+		if err := applyDataFile(flags, cmd.Flags().Changed); err != nil {
+			exitcode = 666
+			fmt.Println(err.Error())
+			return
 		}
 
 		env := &runtime.Terminal{}
@@ -137,6 +143,7 @@ func init() {
 	imageCmd.Flags().StringVar(&bgColor, "background-color", "", "image background color")
 	imageCmd.Flags().StringVarP(&outputImage, "output", "o", "", "image file (.png) to export to")
 	imageCmd.Flags().StringVar(&colorSettingsFile, "settings", "", "color settings file to override ANSI color codes and metadata")
+	imageCmd.Flags().StringVar(&dataPath, "data", "", "path to a template data file (json/yaml/toml) to render with")
 
 	// deprecated flags
 	_ = imageCmd.Flags().MarkHidden("author")

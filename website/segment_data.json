@@ -1,0 +1,171 @@
+{
+  "env": {
+    "UserName": "alice",
+    "HostName": "contoso-devbox",
+    "PWD": "~/dev/oh-my-posh"
+  },
+  "segments": {
+    "aws": {
+      "Profile": "anycompany-prod",
+      "Region": "us-east-1",
+      "AccountID": "111122223333",
+      "AccessKeyID": ""
+    },
+    "az": {
+      "Name": "Contoso Production",
+      "EnvironmentName": "AzureCloud",
+      "Origin": "CLI"
+    },
+    "azd": {
+      "DefaultEnvironment": "zava-prod",
+      "Version": 1
+    },
+    "azfunc": {
+      "Full": "4.0.6280",
+      "Major": "4",
+      "Minor": "0",
+      "Patch": "6280",
+      "Error": ""
+    },
+    "battery": {
+      "Percentage": 70,
+      "State": 3,
+      "Icon": ""
+    },
+    "cds": {
+      "Full": "8.5.0",
+      "Major": "8",
+      "Minor": "5",
+      "Patch": "0",
+      "Error": ""
+    },
+    "cf": {
+      "Full": "8.8.0",
+      "Major": "8",
+      "Minor": "8",
+      "Patch": "0",
+      "Error": ""
+    },
+    "cftarget": {
+      "URL": "https://api.cf.example.com",
+      "User": "demo@example.com",
+      "Org": "example-org",
+      "Space": "production"
+    },
+    "docker": {
+      "Context": "cymbal-cluster"
+    },
+    "firebase": {
+      "Project": "cymbal-superstore"
+    },
+    "gcp": {
+      "Project": "cymbal-bank-prod",
+      "Account": "demo@cymbal-bank-prod.iam.gserviceaccount.com",
+      "Region": "us-central1",
+      "ActiveConfig": "cymbal"
+    },
+    "git": {
+      "HEAD": "main",
+      "BranchStatus": "↑1",
+      "Ref": "main",
+      "ShortHash": "1a2b3c4",
+      "Hash": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
+      "Ahead": 1,
+      "Behind": 0,
+      "Upstream": "origin/main",
+      "UpstreamIcon": "",
+      "UpstreamURL": "https://github.com/JanDeDobbeleer/oh-my-posh",
+      "UpstreamGone": false,
+      "RepoName": "oh-my-posh",
+      "Detached": false,
+      "Working": {
+        "Added": 2,
+        "Modified": 1
+      },
+      "Staging": {
+        "Added": 1
+      }
+    },
+    "kubectl": {
+      "Context": "kind-cymbal",
+      "Cluster": "kind-cymbal",
+      "User": "kind-cymbal"
+    },
+    "node": {
+      "Full": "24.12.0",
+      "Major": "24",
+      "Minor": "12",
+      "Patch": "0",
+      "PackageManagerIcon": "",
+      "PackageManagerName": "",
+      "Error": ""
+    },
+    "npm": {
+      "Full": "11.6.0",
+      "Major": "11",
+      "Minor": "6",
+      "Patch": "0",
+      "Error": ""
+    },
+    "project": {
+      "Type": "node",
+      "Version": "1.4.2",
+      "Name": "oh-my-posh",
+      "Target": "",
+      "Error": ""
+    },
+    "python": {
+      "Full": "3.12.4",
+      "Major": "3",
+      "Minor": "12",
+      "Patch": "4",
+      "Venv": ".venv",
+      "Error": ""
+    },
+    "spotify": {
+      "Status": "playing",
+      "Artist": "Tycho",
+      "Track": "Easy",
+      "Icon": " "
+    },
+    "strava": {
+      "name": "Morning Ride",
+      "type": "Ride",
+      "Ago": "2h",
+      "Icon": "",
+      "Hours": 2,
+      "Error": ""
+    },
+    "sysinfo": {
+      "Precision": 2,
+      "PhysicalTotalMemory": 34359738368,
+      "PhysicalAvailableMemory": 12884901888,
+      "PhysicalFreeMemory": 12884901888,
+      "PhysicalPercentUsed": 62.5,
+      "Load1": 0.52,
+      "Load5": 0.48,
+      "Load15": 0.42
+    },
+    "talosctl": {
+      "Context": "cymbal-cluster"
+    },
+    "terraform": {
+      "WorkspaceName": "example_corp-prod",
+      "terraform_version": "1.9.0"
+    },
+    "wakatime": {
+      "start": "2026-07-09T00:00:00Z",
+      "end": "2026-07-09T23:59:59Z",
+      "cumulative_total": {
+        "text": "4 hrs 30 mins",
+        "seconds": 16200
+      }
+    },
+    "ytm": {
+      "Status": "playing",
+      "Artist": "Men I Trust",
+      "Track": "Show Me How",
+      "Icon": " "
+    }
+  }
+}

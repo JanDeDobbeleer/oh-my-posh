@@ -16,6 +16,7 @@ const CONFIG = {
   CONCURRENCY: 8,
   DEFAULT_BG_COLOR: '#151515',
   THEME_EXTENSIONS: ['.omp.json', '.omp.toml', '.omp.yaml'],
+  SEGMENT_DATA_FILE: join(__dirname, 'segment_data.json'),
   GITHUB_BASE_URL: 'https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes'
 };
 
@@ -83,6 +84,7 @@ function buildPoshCommand(configPath, outputImage, config) {
     `--config=${configPath}`,
     `--output=${outputImage}`,
     `--background-color=${config.bgColor}`,
+    `--data=${CONFIG.SEGMENT_DATA_FILE}`,
   ];
 
   if (config.author) {

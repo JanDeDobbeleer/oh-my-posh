@@ -68,6 +68,7 @@
           "type": "az"
         },
         {
+          "alias": "azpwsh",
           "background": "p:background-color",
           "foreground": "p:cloud-text-azure",
           "options": {

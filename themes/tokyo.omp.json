@@ -81,7 +81,7 @@
         {
           "foreground": "#7eb8da",
           "style": "diamond",
-          "template": "[{{ if .Error }}{{ .Error }}{{ else }}<#ffffff>\uf1a0</> <#ffff00>{{ .Project }}</> :: <#ffff00>{{.Account}}</>{{ end }}]",
+          "template": "[<#ffffff>\uf1a0</> <#ffff00>{{ .Project }}</> :: <#ffff00>{{.Account}}</>]",
           "type": "gcp"
         },
         {

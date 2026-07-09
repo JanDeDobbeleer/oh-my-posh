@@ -104,6 +104,20 @@ func TestLoadSettings(t *testing.T) {
 			expectError: false,
 		},
 		{
+			name: "Valid settings with columns",
+			jsonContent: `{
+				"author": "Grid Author",
+				"columns": 100
+			}`,
+			expectedResult: &Settings{
+				Colors:          nil,
+				Author:          "Grid Author",
+				BackgroundColor: "",
+				Columns:         100,
+			},
+			expectError: false,
+		},
+		{
 			name: "JSON with extended color names",
 			jsonContent: `{
 				"colors": {

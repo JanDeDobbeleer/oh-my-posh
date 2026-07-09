@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+// defaultColumns is the fixed canvas text width, in columns, used when
+// Settings.Columns is not set (zero value). It matches the default
+// --terminal-width the prompt engine renders with.
+const defaultColumns = 120
+
 // Settings represents the structure for base 16 color overrides and other image settings.
 // Expected JSON format:
 //
@@ -18,7 +23,8 @@ import (
 //	    "green": "#00FF00"
 //	  },
 //	  "author": "Your Name",
-//	  "background_color": "#FFFFFF"
+//	  "background_color": "#FFFFFF",
+//	  "columns": 120
 //	}
 type Settings struct {
 	Colors          Colors `json:"colors"`
@@ -26,6 +32,11 @@ type Settings struct {
 	BackgroundColor string `json:"background_color"`
 	Fonts           *Fonts `json:"fonts"`
 	Cursor          string `json:"cursor,omitempty"`
+	// Columns is the fixed canvas text width, in columns. It should match
+	// the --terminal-width the config was rendered with so alignment
+	// padding produced by the prompt engine lines up with the image.
+	// A zero value falls back to defaultColumns.
+	Columns int `json:"columns,omitempty"`
 }
 
 type Colors map[string]HexColor

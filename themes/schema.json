@@ -4698,7 +4698,7 @@
                   "fetch_version": {
                     "type": "boolean",
                     "title": "Fetch Version",
-                    "description": "Fetch the version number",
+                    "description": "Fetch the version number from tenv (TFENV_TERRAFORM_VERSION / TOFUENV_TOFU_VERSION or .terraform-version / .opentofu-version), versions.tf, main.tf or terraform.tfstate",
                     "default": false
                   }
                 },

@@ -76,6 +76,11 @@ Values are resolved in this order, highest priority first:
 Each key is a segment's `alias` if it has one, otherwise its `type` (for example `git` or `az`). The value is
 an object whose keys are that segment's template properties, as documented on the segment's page.
 
+A few segments store a property under a different name than the template exposes. The [wakatime] segment, for
+example, stores `.CumulativeTotal` as `cumulative_total`. When a property you wrote by hand has no effect, run
+[`config export data`](#recording-data) and copy the names from its output: the recorder always uses the
+stored names.
+
 A segment listed here is force-enabled and rendered purely from the supplied data; its runtime detection is
 skipped entirely. A segment left out of the file executes normally against the live environment.
 
@@ -169,3 +174,4 @@ oh-my-posh config export image --config mytheme.omp.json --data data.json
 [executiontime]: /docs/segments/system/executiontime
 [git]: /docs/segments/scm/git
 [cache]: /docs/configuration/segment#cache
+[wakatime]: /docs/segments/web/wakatime

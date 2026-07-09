@@ -733,3 +733,38 @@ function omp_repaint_prompt
     set --global _omp_new_prompt 1
     commandline --function repaint
 end
+
+# vi mode tracking — mirror the active fish bind mode into POSH_VI_MODE and
+# re-render the prompt whenever it changes. Enabled through the vimode segment.
+function _omp_enable_vimode
+    # only track when vi (or hybrid) key bindings are active
+    contains -- "$fish_key_bindings" fish_vi_key_bindings fish_hybrid_key_bindings
+    or return
+
+    # translate fish's bind mode into the keymap names the vimode segment expects
+    function _omp_set_vimode
+        switch $fish_bind_mode
+            case default
+                set --global --export POSH_VI_MODE vicmd
+            case replace replace_one
+                set --global --export POSH_VI_MODE replace
+            case insert
+                set --global --export POSH_VI_MODE viins
+            case '*'
+                set --global --export POSH_VI_MODE $fish_bind_mode
+        end
+    end
+
+    # re-render the prompt on every mode change
+    function _omp_render_vimode --on-variable fish_bind_mode
+        _omp_set_vimode
+        omp_repaint_prompt
+    end
+
+    # oh-my-posh renders the mode through the vimode segment, so silence fish's
+    # built-in mode indicator to avoid a duplicate
+    function fish_mode_prompt
+    end
+
+    _omp_set_vimode
+end

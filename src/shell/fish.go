@@ -27,7 +27,9 @@ func (f Features) Fish() Code {
 		return unixUpgrade
 	case Notice:
 		return unixNotice
-	case RPrompt, PoshGit, Azure, LineError, Jobs, Async, KeyHandlers, VIMode:
+	case VIMode:
+		return "_omp_enable_vimode"
+	case RPrompt, PoshGit, Azure, LineError, Jobs, Async, KeyHandlers:
 		fallthrough
 	default:
 		return ""

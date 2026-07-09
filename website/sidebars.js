@@ -35,6 +35,7 @@ export default {
         "configuration/title",
         "configuration/colors",
         "configuration/templates",
+        "configuration/data",
         "configuration/secondary-prompt",
         "configuration/debug-prompt",
         "configuration/transient",

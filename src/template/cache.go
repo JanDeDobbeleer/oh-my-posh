@@ -1,6 +1,7 @@
 package template
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +16,14 @@ import (
 
 var (
 	Cache *cache.Template
+
+	// routedEnvDataKeys are env-section keys the CLI layer already routes into
+	// runtime.Flags before Init runs (see runtime.Flags.EnvData), so by the
+	// time loadCache runs, env.Pwd()/StatusCodes()/ExecutionTime() already
+	// reflect the flag-precedence-resolved value (CLI flag > data file >
+	// live). They must never be applied a second time here, or a raw file
+	// value could clobber that resolved value.
+	routedEnvDataKeys = []string{"PWD", "Code", "ExecutionTime", "PipeStatus"}
 )
 
 func loadCache(vars maps.Simple[any], aliases *maps.Config) {
@@ -31,7 +40,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	tmpl := new(cache.Template)
 
 	tmpl.Root = env.Root()
-	tmpl.Shell = aliases.GetShellName(env.Shell())
+	tmpl.Shell = env.Shell()
 	tmpl.ShellVersion = env.Flags().ShellVersion
 	tmpl.Code, _ = env.StatusCodes()
 	tmpl.WSL = env.IsWsl()
@@ -61,9 +70,9 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 		tmpl.Folder += `\`
 	}
 
-	tmpl.UserName = aliases.GetUserName(env.User())
+	tmpl.UserName = env.User()
 	if host, err := env.Host(); err == nil {
-		tmpl.HostName = aliases.GetHostName(host)
+		tmpl.HostName = host
 	}
 
 	goos := env.GOOS()
@@ -77,7 +86,55 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 		tmpl.SHLVL = shlvl
 	}
 
+	overlayEnvData(tmpl)
+
+	// Alias mapping must apply to a data-provided value exactly as it does to
+	// a live one, so it runs after the overlay, on whichever value won.
+	tmpl.Shell = aliases.GetShellName(tmpl.Shell)
+	tmpl.UserName = aliases.GetUserName(tmpl.UserName)
+	tmpl.HostName = aliases.GetHostName(tmpl.HostName)
+
 	Cache = tmpl
+}
+
+// overlayEnvData merges the data file's env section onto an already-built
+// template cache. It only touches keys present in the data, so anything not
+// specified keeps its live value. Keys the CLI layer already routed into
+// runtime.Flags (see routedEnvDataKeys) are stripped first so a raw file
+// value can never clobber the flag-precedence-resolved value. Failures are
+// logged, never fatal - the prompt renders with live values regardless.
+func overlayEnvData(tmpl *cache.Template) {
+	data := env.Flags().EnvData
+	if len(data) == 0 {
+		return
+	}
+
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &fields); err != nil {
+		log.Error(err)
+		return
+	}
+
+	for _, key := range routedEnvDataKeys {
+		delete(fields, key)
+	}
+
+	// SegmentsCache/Segments are internal cache plumbing, not user-facing
+	// template data; a data file must never be able to overwrite them. Var
+	// (template vars) is left alone - overriding it from the data file is
+	// intentional and useful.
+	delete(fields, "SegmentsCache")
+	delete(fields, "Segments")
+
+	overlay, err := json.Marshal(fields)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if err := json.Unmarshal(overlay, &tmpl.SimpleTemplate); err != nil {
+		log.Error(err)
+	}
 }
 
 func restoreCache() bool {

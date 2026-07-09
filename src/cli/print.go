@@ -90,6 +90,12 @@ func createPrintCmd() *cobra.Command {
 				Force:         force,
 			}
 
+			if err := applyDataFile(flags, cmd.Flags().Changed); err != nil {
+				exitcode = 666
+				fmt.Println(err.Error())
+				return
+			}
+
 			options := []cache.Option{}
 			if saveCache {
 				options = append(options, cache.Persist)
@@ -147,6 +153,7 @@ func createPrintCmd() *cobra.Command {
 	printCmd.Flags().BoolVar(&saveCache, "save-cache", false, "save updated cache to file")
 	printCmd.Flags().BoolVar(&escape, "escape", true, "escape the ANSI sequences for the shell")
 	printCmd.Flags().BoolVarP(&force, "force", "f", false, "force rendering the segments")
+	printCmd.Flags().StringVar(&dataPath, "data", "", "path to a template data file (json/yaml/toml) to render with")
 
 	// Hide flags that are for internal use only.
 	_ = printCmd.Flags().MarkHidden("save-cache")

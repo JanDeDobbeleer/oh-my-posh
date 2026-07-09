@@ -99,6 +99,7 @@ func init() {
 	gob.Register(&segments.Npm{})
 	gob.Register(&segments.Nx{})
 	gob.Register(&segments.OCaml{})
+	gob.Register(&segments.OrthodoxCal{})
 	gob.Register(&segments.Os{})
 	gob.Register(&segments.Owm{})
 	gob.Register(&segments.Path{})
@@ -296,6 +297,8 @@ const (
 	NX SegmentType = "nx"
 	// OCAML writes the active Ocaml version
 	OCAML SegmentType = "ocaml"
+	// ORTHODOXCAL displays Orthodox fasting and feast information
+	ORTHODOXCAL SegmentType = "orthodoxcal"
 	// OS write os specific icon
 	OS SegmentType = "os"
 	// OWM writes the weather coming from openweatherdata
@@ -467,6 +470,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
 	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
+	ORTHODOXCAL:     func() SegmentWriter { return &segments.OrthodoxCal{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },
 	PATH:            func() SegmentWriter { return &segments.Path{} },

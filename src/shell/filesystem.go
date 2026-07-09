@@ -82,30 +82,45 @@ func writeFileAtomic(path string, data []byte, perm os.FileMode) error {
 	return os.Rename(tmp.Name(), path)
 }
 
+// writeFile writes data to path, atomically when possible.
+//
+// On Windows, replacing a file via rename requires that no process has the
+// target open: MoveFileEx(MOVEFILE_REPLACE_EXISTING) fails with
+// ERROR_ACCESS_DENIED as long as a single handle exists, even one opened
+// with full sharing. Shells source the init script on startup (and every
+// prompt in async mode), so brief holds are normal — retry those. When the
+// file is still held after the retries (a shell keeping it open), fall back
+// to an in-place write: sharing rules allow overwriting a file others are
+// reading, we only lose atomicity for this write.
+func writeFile(path string, data []byte, perm os.FileMode) error {
+	const attempts = 4
+	wait := 50 * time.Millisecond
+
+	var err error
+
+	for attempt := 1; ; attempt++ {
+		if err = writeFileAtomic(path, data, perm); !canRetryWrite(err) || attempt == attempts {
+			break
+		}
+
+		time.Sleep(wait)
+		wait *= 2
+	}
+
+	if err == nil || !canRetryWrite(err) {
+		return err
+	}
+
+	return os.WriteFile(path, data, perm)
+}
+
 func writeScript(env runtime.Environment, script string) (string, error) {
 	path, err := scriptPath(env)
 	if err != nil {
 		return "", err
 	}
 
-	data := []byte(script)
-
-	// another process can hold the script (or its target) open on Windows,
-	// making the rename fail with a sharing violation; retry with backoff
-	// until it lets go — all other errors are persistent, fail fast
-	const attempts = 8
-	wait := 50 * time.Millisecond
-
-	for attempt := 1; ; attempt++ {
-		if err = writeFileAtomic(path, data, 0o644); !canRetryWrite(err) || attempt == attempts {
-			break
-		}
-
-		time.Sleep(wait)
-		wait = min(wait*2, time.Second)
-	}
-
-	if err != nil {
+	if err = writeFile(path, []byte(script), 0o644); err != nil {
 		log.Error(err)
 		return "", err
 	}

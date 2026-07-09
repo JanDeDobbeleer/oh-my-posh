@@ -118,6 +118,7 @@ export default {
           collapsed: true,
           items: [
             "segments/health/nightscout",
+            "segments/health/orthodoxcal",
             "segments/health/ramadan",
             "segments/health/strava",
             "segments/health/withings",

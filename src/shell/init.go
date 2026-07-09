@@ -261,7 +261,9 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 	case ELVISH:
 		script += fmt.Sprintf("eval (slurp < %s)", quotePwshOrElvishStr(scriptPath))
 	case CMD:
-		script += fmt.Sprintf(`load(io.open('%s', "r"):read("*a"))()`, escapeLuaStr(scriptPath))
+		// dofile closes the file handle when done, io.open would leak it
+		// until the Lua GC kicks in, blocking script updates on Windows
+		script += fmt.Sprintf(`dofile('%s')`, escapeLuaStr(scriptPath))
 	default:
 		return fmt.Sprintf("echo \"No source command available for %s\"", env.Flags().Shell)
 	}

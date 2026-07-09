@@ -394,6 +394,7 @@
             "deno",
             "docker",
             "dotnet",
+            "dvc",
             "elixir",
             "executiontime",
             "firebase",
@@ -1699,6 +1700,32 @@
                     "default": false
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dvc"
+              }
+            }
+          },
+          "then": {
+            "title": "DVC Segment",
+            "description": "https://ohmyposh.dev/docs/segments/scm/dvc",
+            "properties": {
+              "options": {
+                "properties": {
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
+                  },
+                  "native_fallback": {
+                    "$ref": "#/definitions/native_fallback"
+                  }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

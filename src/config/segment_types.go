@@ -55,6 +55,8 @@ func init() {
 	gob.Register(&segments.Deno{})
 	gob.Register(&segments.Docker{})
 	gob.Register(&segments.Dotnet{})
+	gob.Register(&segments.Dvc{})
+	gob.Register(&segments.DvcStatus{})
 	gob.Register(&segments.Elixir{})
 	gob.Register(&segments.Executiontime{})
 	gob.Register(&segments.Status{})
@@ -222,6 +224,8 @@ const (
 	DOCKER SegmentType = "docker"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
+	// DVC writes the dvc status
+	DVC SegmentType = "dvc"
 	// ELIXIR writes the elixir version
 	ELIXIR SegmentType = "elixir"
 	// EXECUTIONTIME writes the execution time of the last run command
@@ -427,6 +431,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	DENO:            func() SegmentWriter { return &segments.Deno{} },
 	DOCKER:          func() SegmentWriter { return &segments.Docker{} },
 	DOTNET:          func() SegmentWriter { return &segments.Dotnet{} },
+	DVC:             func() SegmentWriter { return &segments.Dvc{} },
 	ELIXIR:          func() SegmentWriter { return &segments.Elixir{} },
 	EXECUTIONTIME:   func() SegmentWriter { return &segments.Executiontime{} },
 	EXIT:            func() SegmentWriter { return &segments.Status{} },

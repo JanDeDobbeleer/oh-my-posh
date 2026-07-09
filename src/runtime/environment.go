@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"encoding/json"
 	"io"
 	"io/fs"
 
@@ -82,6 +83,7 @@ type Environment interface {
 }
 
 type Flags struct {
+	SegmentData   map[string]json.RawMessage
 	Type          string
 	PipeStatus    string
 	ConfigPath    string
@@ -90,18 +92,19 @@ type Flags struct {
 	ShellVersion  string
 	PWD           string
 	AbsolutePWD   string
-	ErrorCode     int
+	EnvData       json.RawMessage
+	ExecutionTime float64
 	PromptCount   int
 	Column        int
 	TerminalWidth int
-	ExecutionTime float64
+	ErrorCode     int
 	StackCount    int
 	ConfigHash    uint64
 	JobCount      int
-	HasExtra      bool
+	Cleared       bool
 	Strict        bool
 	Debug         bool
-	Cleared       bool
+	HasExtra      bool
 	NoExitCode    bool
 	Init          bool
 	Migrate       bool

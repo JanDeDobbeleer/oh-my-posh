@@ -181,6 +181,10 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
+	if segment.restoreData() {
+		return
+	}
+
 	cacheRestored := segment.restoreCache()
 	if cacheRestored && !env.Flags().Streaming {
 		return
@@ -325,6 +329,21 @@ func (segment *Segment) hasCache() bool {
 	return segment.Cache != nil && !segment.Cache.Duration.IsEmpty()
 }
 
+// DataKey returns the identity used to look up segment data: the segment's
+// alias if set, falling back to its type.
+func (segment *Segment) DataKey() string {
+	if segment.Alias != "" {
+		return segment.Alias
+	}
+
+	return string(segment.Type)
+}
+
+// Writer returns the segment's underlying SegmentWriter.
+func (segment *Segment) Writer() SegmentWriter {
+	return segment.writer
+}
+
 func (segment *Segment) isToggled() bool {
 	togglesMap, OK := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
 	if !OK || len(togglesMap) == 0 {
@@ -332,12 +351,7 @@ func (segment *Segment) isToggled() bool {
 		return false
 	}
 
-	segmentName := segment.Alias
-	if segmentName == "" {
-		segmentName = string(segment.Type)
-	}
-
-	if togglesMap[segmentName] {
+	if togglesMap[segment.DataKey()] {
 		log.Debugf("segment toggled off: %s", segment.Name())
 		return true
 	}
@@ -368,6 +382,31 @@ func (segment *Segment) restoreCache() bool {
 	log.Debug("restored segment from cache: ", segment.Name())
 
 	segment.restored = true
+
+	return true
+}
+
+// restoreData replays a segment's writer state from the data file supplied via
+// runtime.Flags.SegmentData, bypassing the real runtime entirely. This lets
+// segments render from a recorded fixture instead of probing the environment.
+func (segment *Segment) restoreData() bool {
+	data, OK := segment.env.Flags().SegmentData[segment.DataKey()]
+	if !OK {
+		return false
+	}
+
+	err := json.Unmarshal(data, &segment.writer)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	segment.Enabled = true
+	segment.restored = true
+
+	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+
+	log.Debug("restored segment from data: ", segment.Name())
 
 	return true
 }

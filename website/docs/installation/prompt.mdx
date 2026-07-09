@@ -119,17 +119,8 @@ There's no out-of-the-box support for Windows CMD when it comes to custom prompt
 There is however a way to do it using [Clink][clink], which at the same time supercharges
 your cmd experience. Follow the installation instructions and make sure you select autostart.
 
-Integrating Oh My Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
-scripts directory (run `clink info` inside cmd to find that file's location).
-
-```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh init cmd'):read("*a"))()
-```
-
-Once added, restart cmd for the changes to take effect.
-
-:::info
-Clink has builtin support for Oh My Posh. It allows you to set the prompt using the `clink` command.
+Since Clink v1.7.0, Clink has builtin support for Oh My Posh. This is the recommended way to
+integrate the two, as it lets Clink manage the prompt for you:
 
 ```bash
 clink config prompt use oh-my-posh
@@ -141,6 +132,16 @@ To set the configuration file, use the following command:
 clink set ohmyposh.theme <path>
 ```
 
+:::info
+If you're on an older version of Clink without builtin support, you can integrate Oh My Posh
+manually: create a new file called oh-my-posh.lua in your Clink scripts directory (run
+`clink info` inside cmd to find that file's location).
+
+```lua title="oh-my-posh.lua"
+load(io.popen('oh-my-posh init cmd'):read("*a"))()
+```
+
+Once added, restart cmd for the changes to take effect.
 :::
 
 </TabItem>

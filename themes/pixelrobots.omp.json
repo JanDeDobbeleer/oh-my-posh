@@ -30,6 +30,7 @@
           "type": "az"
         },
         {
+          "alias": "azpwsh",
           "background": "#012456",
           "foreground": "#FFFFFF",
           "powerline_symbol": "\ue0b0",

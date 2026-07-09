@@ -116,7 +116,7 @@ blocks:
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+        template: "  {{ .Full }} "
       - type: project
         style: powerline
         powerline_symbol: 

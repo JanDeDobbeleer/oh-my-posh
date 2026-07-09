@@ -1,10 +1,194 @@
 package image
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/gofont/gomono"
+	"golang.org/x/image/font/opentype"
 )
+
+// loadTestFont returns a font face backed by the Go Mono TTF bundled with
+// golang.org/x/image: monospaced like the real Hack Nerd Font, so a column
+// corresponds to one consistent advance, without needing network access.
+func loadTestFont(t *testing.T) font.Face {
+	t.Helper()
+
+	fnt, err := opentype.Parse(gomono.TTF)
+	if err != nil {
+		t.Fatalf("failed to parse test font: %v", err)
+	}
+
+	face, err := opentype.NewFace(fnt, &opentype.FaceOptions{Size: 24, DPI: 144})
+	if err != nil {
+		t.Fatalf("failed to create test font face: %v", err)
+	}
+
+	return face
+}
+
+// newLayoutTestRenderer builds a Renderer with the given content and column
+// count, wired up with a real (test) font face and the ANSI regex map, but
+// without the file/watermark side effects of Init/cleanContent, so layout
+// tests can assert on exactly the content they provide.
+func newLayoutTestRenderer(t *testing.T, columns int, content string) *Renderer {
+	t.Helper()
+
+	face := loadTestFont(t)
+
+	r := &Renderer{
+		Settings:   Settings{Columns: columns},
+		AnsiString: content,
+	}
+	r.regular, r.bold, r.italic = face, face, face
+	r.initDefaults()
+
+	return r
+}
+
+func testSpaceAdvance(t *testing.T) float64 {
+	t.Helper()
+
+	drawer := &font.Drawer{Face: loadTestFont(t)}
+	return float64(drawer.MeasureString(" ") >> 6)
+}
+
+func glyphString(glyphs []glyphPlan) string {
+	runes := make([]rune, len(glyphs))
+	for i, g := range glyphs {
+		runes[i] = g.r
+	}
+	return string(runes)
+}
+
+func TestMeasureContentIsAlwaysFixedWidth(t *testing.T) {
+	spaceAdvance := testSpaceAdvance(t)
+
+	cases := []struct {
+		name    string
+		content string
+	}{
+		{name: "short content", content: "hi"},
+		{name: "empty content", content: ""},
+		{name: "long content that would have widened the old canvas", content: strings.Repeat("x", 300)},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := newLayoutTestRenderer(t, 40, tc.content)
+
+			width, _ := r.measureContent()
+
+			assert.Equal(t, float64(40)*spaceAdvance, width, "canvas width must always be exactly Columns x spaceAdvance")
+		})
+	}
+}
+
+func TestLongLineWithoutPaddingWrapsAndAddsARow(t *testing.T) {
+	r := newLayoutTestRenderer(t, 20, strings.Repeat("x", 60))
+
+	plan := r.buildLayout()
+
+	assert.Greater(t, len(plan.rows), 1, "a line with no alignment padding that exceeds the column count must wrap onto extra rows")
+
+	maxWidth := float64(20) * plan.spaceAdvance
+
+	var rebuilt strings.Builder
+	for _, row := range plan.rows {
+		assert.LessOrEqual(t, row.width(), maxWidth+0.001, "no wrapped row may exceed the fixed canvas width")
+		rebuilt.WriteString(glyphString(row.glyphs))
+	}
+
+	assert.Equal(t, strings.Repeat("x", 60), rebuilt.String(), "wrapping must not drop or duplicate runes")
+}
+
+func TestAlignedLineWithPaddingRunCollapsesInsteadOfWrapping(t *testing.T) {
+	left := "left"
+	right := "right"
+	content := left + strings.Repeat(" ", 20) + right
+
+	r := newLayoutTestRenderer(t, 20, content)
+
+	plan := r.buildLayout()
+
+	assert.Len(t, plan.rows, 1, "an engine-aligned line with a long padding run must collapse, not wrap onto a new row")
+
+	maxWidth := float64(20) * plan.spaceAdvance
+	row := plan.rows[0]
+
+	assert.LessOrEqual(t, row.width(), maxWidth, "the collapsed row must fit within the fixed canvas width")
+	assert.Greater(t, row.width(), maxWidth-plan.spaceAdvance, "the collapsed row should end close to the right edge, not far short of it")
+
+	result := glyphString(row.glyphs)
+	assert.True(t, strings.HasPrefix(result, left), "left-aligned content must be preserved")
+	assert.True(t, strings.HasSuffix(result, right), "the right-aligned segment must stay flush against the right edge")
+}
+
+func TestDoubleWidthGlyphNeverSplitsAcrossWrapBoundary(t *testing.T) {
+	icon := '' // Font Awesome range, double width (see doubleWidthRunes)
+	content := strings.Repeat("a", 15) + string(icon) + strings.Repeat("b", 15)
+
+	r := newLayoutTestRenderer(t, 10, content)
+
+	plan := r.buildLayout()
+
+	assert.Greater(t, len(plan.rows), 1, "content this long at 10 columns must wrap")
+
+	maxWidth := float64(10) * plan.spaceAdvance
+
+	var rebuilt strings.Builder
+	iconCount := 0
+
+	for _, row := range plan.rows {
+		assert.LessOrEqual(t, row.width(), maxWidth+0.001, "no wrapped row may exceed the fixed canvas width")
+
+		for _, g := range row.glyphs {
+			if g.r == icon {
+				iconCount++
+			}
+		}
+
+		rebuilt.WriteString(glyphString(row.glyphs))
+	}
+
+	assert.Equal(t, content, rebuilt.String(), "wrapping must not drop or duplicate runes")
+	assert.Equal(t, 1, iconCount, "the double-width glyph must appear exactly once, whole, never split across rows")
+}
+
+func TestResolvedColumnsDefaultsTo120WhenUnset(t *testing.T) {
+	cases := []struct {
+		name     string
+		columns  int
+		expected int
+	}{
+		{name: "unset falls back to default", columns: 0, expected: defaultColumns},
+		{name: "negative falls back to default", columns: -1, expected: defaultColumns},
+		{name: "explicit value is respected", columns: 90, expected: 90},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := &Renderer{Settings: Settings{Columns: tc.columns}}
+			assert.Equal(t, tc.expected, r.resolvedColumns())
+		})
+	}
+}
+
+func TestSettingsWithoutColumnsStillLoadsWithDefault120(t *testing.T) {
+	tempFile := createTempFile(t, `{"author": "no columns specified"}`)
+	defer os.Remove(tempFile)
+
+	settings, err := LoadSettings(tempFile)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, settings.Columns, "Columns is the JSON zero value when absent from an older settings file")
+
+	r := &Renderer{Settings: *settings}
+	assert.Equal(t, defaultColumns, r.resolvedColumns(), "a settings file predating Columns must still render at the default width")
+}
 
 func TestSetOutputPath(t *testing.T) {
 	cases := []struct {

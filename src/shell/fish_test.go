@@ -19,6 +19,7 @@ set --global _omp_ftcs_marks 1
 set --global _omp_prompt_mark 1
 set --global _omp_cursor_positioning 1
 set --global _omp_enable_streaming 1
+_omp_enable_vimode
 set --global _omp_transient_rprompt 1`
 
 	assert.Equal(t, want, got)

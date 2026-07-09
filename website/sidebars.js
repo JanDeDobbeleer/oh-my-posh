@@ -170,6 +170,7 @@ export default {
           label: "🗂️ Source control",
           collapsed: true,
           items: [
+            "segments/scm/dvc",
             "segments/scm/fossil",
             "segments/scm/git",
             "segments/scm/jujutsu",

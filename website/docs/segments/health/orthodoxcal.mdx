@@ -1,0 +1,66 @@
+---
+id: orthodoxcal
+title: Orthodox Calendar
+sidebar_label: Orthodox Calendar
+---
+
+## What
+
+Displays the Orthodox fasting level and feast information for the current day.
+Data comes from the [orthocal.info](https://orthocal.info) API, which follows OCA rubrics.
+This is the same data source used by [meatandright.com](https://www.meatandright.com).
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "orthodoxcal",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#8B0000",
+    options: {
+      calendar: "gregorian",
+    },
+  }}
+/>
+
+## Options
+
+| Name | Type | Description | Default |
+| ---- | ---- | ----------- | ------- |
+| `calendar` | `string` | Calendar type: `gregorian` or `julian` | `gregorian` |
+| `http_timeout` | `int` | Timeout for the API request in milliseconds | `20` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+☦ {{ .FastLevelDesc }}{{ if .FastExceptionDesc }} ({{ .FastExceptionDesc }}){{ end }} · {{ .SummaryTitle }}
+```
+
+:::
+
+### Properties
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| `.FastLevel` | `int` | Numeric fasting level (0 = no fast, 1-5 = increasing strictness) |
+| `.FastLevelDesc` | `string` | Human-readable fasting description (e.g., "No Fast", "Strict Fast") |
+| `.FastException` | `int` | Numeric exception code |
+| `.FastExceptionDesc` | `string` | Exception detail (e.g., "Wine and Oil are Allowed") |
+| `.SummaryTitle` | `string` | Best title for the day (feast or saint commemoration) |
+| `.FeastLevel` | `int` | Numeric feast level |
+| `.FeastLevelDesc` | `string` | Feast level description (e.g., "Liturgy", "Great Feast") |
+| `.Feasts` | `[]string` | List of feast names |
+| `.Saints` | `[]string` | List of commemorated saints |
+| `.Titles` | `[]string` | Liturgical titles for the day |
+| `.Tone` | `int` | Liturgical tone (1-8) |
+| `.IsFasting` | `bool` | `true` when the day has any fasting requirement |
+| `.FeastNames` | `string` | All feasts joined with commas |
+| `.SaintNames` | `string` | All saints joined with commas |
+
+[templates]: /docs/configuration/templates

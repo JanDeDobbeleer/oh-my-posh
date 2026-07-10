@@ -48,6 +48,27 @@ func TestGetPersistedCommandPathStalePathHashIsAMiss(t *testing.T) {
 	assert.False(t, ok, "entry persisted under a different PATH must be treated as a miss")
 }
 
+func TestGetPersistedCommandPathInProcessPathChangeIsAMiss(t *testing.T) {
+	session = Session.new()
+
+	// The serve daemon applies each render request's env overlay (PATH
+	// included) in-process, so the hash must track the CURRENT environment:
+	// an entry persisted before a venv activation changed PATH must not be
+	// served afterwards, even within the same process.
+	t.Setenv("PATH", "/project-a/.venv/bin")
+	PersistCommandPath("python", "/project-a/.venv/bin/python", true)
+
+	path, found, ok := GetPersistedCommandPath("python")
+	assert.True(t, ok)
+	assert.True(t, found)
+	assert.Equal(t, "/project-a/.venv/bin/python", path)
+
+	t.Setenv("PATH", "/project-b/.venv/bin")
+
+	_, _, ok = GetPersistedCommandPath("python")
+	assert.False(t, ok, "entry persisted under a previous PATH must be a miss after PATH changes in-process")
+}
+
 func TestCommandPathKeyIsPrefixed(t *testing.T) {
 	assert.Equal(t, "command_path_git", commandPathKey("git"))
 }

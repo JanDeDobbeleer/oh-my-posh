@@ -165,6 +165,13 @@ function _omp_serve_stop() {
 function _omp_serve_start() {
   _omp_serve_stop
 
+  # With job control active, an interactive zsh announces the coproc on the
+  # terminal like any background job ("[1] 12345"). Disabling MONITOR for the
+  # spawn suppresses the notice; as a side effect the daemon starts with
+  # SIGINT/SIGQUIT ignored (POSIX no-job-control semantics), so Ctrl+C at the
+  # prompt cannot take it down.
+  setopt localoptions no_monitor
+
   # The daemon's stderr must never reach the terminal (a Go panic would
   # corrupt the display).
   coproc "$_omp_executable" serve --shell=zsh 2>/dev/null

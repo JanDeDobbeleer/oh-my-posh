@@ -172,8 +172,12 @@ function _omp_serve_start() {
   _omp_serve_pid=$!
 
   # Duplicate both directions to session fds: the duplicates survive a later
-  # `coproc` (ours or the user's) replacing the coproc slot.
-  exec {_omp_serve_fd_out}<&p {_omp_serve_fd_in}>&p 2>/dev/null
+  # `coproc` (ours or the user's) replacing the coproc slot. The stderr
+  # redirect (suppressing "no coprocess" when the daemon failed to start) must
+  # be scoped to a block: on a redirection-only `exec`, zsh applies every
+  # listed redirection to the shell permanently, which would silence the
+  # session's stderr for good.
+  { exec {_omp_serve_fd_out}<&p {_omp_serve_fd_in}>&p } 2>/dev/null
   if [[ $_omp_serve_fd_in -lt 0 || $_omp_serve_fd_out -lt 0 ]]; then
     _omp_serve_stop
     return 1

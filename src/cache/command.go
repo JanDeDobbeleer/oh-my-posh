@@ -3,7 +3,6 @@ package cache
 import (
 	"hash/fnv"
 	"os"
-	"sync"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
@@ -14,15 +13,19 @@ const commandPathKeyPrefix = "command_path_"
 
 // pathEnvHash returns an FNV-1a hash of the environment that determines how
 // exec.LookPath resolves a command: PATH, plus PATHEXT on Windows (unset and
-// therefore a no-op elsewhere). It's computed once per process -- the
-// environment can't change under us in a short-lived prompt render.
-var pathEnvHash = sync.OnceValue(func() uint64 {
+// therefore a no-op elsewhere). Computed on every call, NOT memoized: the
+// serve daemon lives across prompts and applies each request's env overlay
+// (PATH included) in-process, so a per-process hash would keep matching
+// entries persisted under an earlier PATH and pin e.g. `python` to a
+// previous virtual environment's interpreter for the daemon's lifetime -
+// the old binary still exists, so the os.Stat revalidation never catches it.
+func pathEnvHash() uint64 {
 	h := fnv.New64a()
 	_, _ = h.Write([]byte(os.Getenv("PATH")))
 	_, _ = h.Write([]byte{0})
 	_, _ = h.Write([]byte(os.Getenv("PATHEXT")))
 	return h.Sum64()
-})
+}
 
 // Command lookup TTLs for the session-persisted layer (L2). The in-memory
 // layer (L1, Commands below) is unbounded for the lifetime of the process,

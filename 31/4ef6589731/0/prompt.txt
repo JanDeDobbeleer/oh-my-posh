@@ -1,1 +1,9 @@
 analyse this issue: https://github.com/JanDeDobbeleer/oh-my-posh/issues/7660
+
+---
+
+Can we not capture the Ctrl+C or exit in a way and kill the daemon prior to the shell exit?
+
+---
+
+Okay, you can comment on the issue for me. I agree with the observations, and I agree with only doing the actual fix for the job that gets printed. Do a proper explanation only of the things you know, not anything you cannot actually verify, like which settings are available, etc. Just explain the behavior, why that's happening, and why we can't really fix that on our end because of the way the terminal is quit.  Fix that one issue, create a commit. I'll do the pull request creation.

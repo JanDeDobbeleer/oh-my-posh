@@ -1,0 +1,1 @@
+analyse this issue: https://github.com/JanDeDobbeleer/oh-my-posh/issues/7660

@@ -1,0 +1,75 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "314ef6589731",
+  "session_id": "8521e3ab-d00f-4fdc-b013-609c00860cc3",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-10T13:59:58.4402275Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "343bbb1550a1",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 11667,
+    "cache_creation_tokens": 163892,
+    "cache_read_tokens": 1772691,
+    "output_tokens": 28080,
+    "api_call_count": 27
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01ET2Yx6xTEtAY94AaaqxpxE",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "anthropic-skills:writing-clearly-and-concisely"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "343bbb1550a1",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 86,
+        "end": 87,
+        "entry_ids": [
+          "2c6f72a3-95f0-47d8-9e9a-7a8054c5a309"
+        ],
+        "tool_use_id": "toolu_01ET2Yx6xTEtAY94AaaqxpxE"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01ET2Yx6xTEtAY94AaaqxpxE"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: anthropic-skills:writing-clearly-and-concisely",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

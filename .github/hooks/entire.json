@@ -1,0 +1,61 @@
+{
+  "hooks": {
+    "agentStop": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli agent-stop'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "errorOccurred": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli error-occurred'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli post-tool-use'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli pre-tool-use'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli session-end'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli session-start'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "subagentStop": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli subagent-stop'",
+        "comment": "Entire CLI"
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "sh -c 'if ! command -v entire >/dev/null 2>&1; then exit 0; fi; exec entire hooks copilot-cli user-prompt-submitted'",
+        "comment": "Entire CLI"
+      }
+    ]
+  },
+  "version": 1
+}

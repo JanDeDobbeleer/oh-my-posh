@@ -146,6 +146,7 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) {
 		}
 
 		// For non-streaming mode, kill the goroutine
+		segment.Killed = true
 		if err := runjobs.KillGoroutineChildren(gid); err != nil {
 			log.Errorf("failed to kill child processes for goroutine %d (segment: %s): %v", gid, segment.Name(), err)
 		}

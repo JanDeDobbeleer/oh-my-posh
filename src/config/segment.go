@@ -79,11 +79,14 @@ type Segment struct {
 	restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	foregroundResolved     bool
-	backgroundResolved     bool
-	needsEvaluated         bool
-	evaluated              bool
+	// Killed is set by the engine when the segment's timeout expired and its
+	// child processes were killed; it blocks fallback_template rendering.
+	Killed             bool `json:"-" toml:"-" yaml:"-"`
+	Interactive        bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	foregroundResolved bool
+	backgroundResolved bool
+	needsEvaluated     bool
+	evaluated          bool
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -223,8 +226,8 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		defer runjobs.CloseGoroutineJob()
 	}
 
-	segment.evaluated = true
 	segment.Enabled = segment.writer.Enabled()
+	segment.evaluated = true
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
@@ -266,13 +269,15 @@ func (segment *Segment) Render(index int, force bool) bool {
 }
 
 // renderFallback attempts to render FallbackTemplate when a segment would
-// otherwise be hidden because its writer's Enabled() returned false. It only
-// fires when the writer was actually evaluated; segments hidden for other
-// reasons (toggled off, folder include/exclude, width constraints, a killed
-// timeout, or a writer mapping error) never reach this point with evaluated
-// set, so they keep today's silent-omission behavior.
+// otherwise be hidden because its writer's Enabled() returned false. It
+// requires the writer to have completed its evaluation; segments hidden for other
+// reasons (toggled off, folder include/exclude, width constraints, or a
+// writer mapping error) never set evaluated, so they keep the silent-omission
+// behavior. Segments killed by their timeout are excluded via Killed rather
+// than evaluated, because their Execute goroutine keeps running after the
+// kill and may still complete the evaluation before rendering starts.
 func (segment *Segment) renderFallback(index int) bool {
-	if segment.FallbackTemplate == "" || !segment.evaluated {
+	if segment.FallbackTemplate == "" || !segment.evaluated || segment.Killed {
 		return false
 	}
 

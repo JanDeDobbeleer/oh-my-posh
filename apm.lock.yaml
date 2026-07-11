@@ -1,10 +1,33 @@
 lockfile_version: '1'
-generated_at: '2026-07-11T06:21:35.781382+00:00'
-apm_version: 0.12.3
+generated_at: '2026-07-11T11:54:13.541117+00:00'
+apm_version: 0.24.1
 dependencies:
-- repo_url: JanDeDobbeleer/agentic
+- repo_url: ast-grep/agent-skill
+  name: agent-skill
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: c2a9bc154f4ffe08b25d28d5e852dfac8c0d0d8a
+  version: unknown
+  virtual_path: ast-grep/skills/ast-grep
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/ast-grep
+  - .agents/skills/ast-grep/SKILL.md
+  - .agents/skills/ast-grep/references/rule_reference.md
+  - .claude/skills/ast-grep
+  - .claude/skills/ast-grep/SKILL.md
+  - .claude/skills/ast-grep/references/rule_reference.md
+  deployed_file_hashes:
+    .agents/skills/ast-grep/SKILL.md: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+    .agents/skills/ast-grep/references/rule_reference.md: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
+    .claude/skills/ast-grep/SKILL.md: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+    .claude/skills/ast-grep/references/rule_reference.md: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
+  content_hash: sha256:e812630c21ec2215bd0abfe33835ae382059112e990411b588b84bb24c4f0a4f
+- repo_url: jandedobbeleer/agentic
+  name: agentic-golang
+  host: github.com
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
   package_type: apm_package
@@ -12,12 +35,14 @@ dependencies:
   - .claude/rules/golang.md
   - .github/instructions/golang.instructions.md
   deployed_file_hashes:
-    .claude/rules/golang.md: sha256:ddbfccc2ac09b9e35682f4075420816a7a0a3c9f64a3dd05bf35c4dda522cf50
-    .github/instructions/golang.instructions.md: sha256:89b03e000879a36a4b68f37136d1dcad039a908f242dd412f59a71e5c159cbb3
-  content_hash: sha256:94556f47cd95ee4c76dec6f7e53aad1948a1a51c6c85a810b320ecf3ebe075b4
-- repo_url: JanDeDobbeleer/agentic
+    .claude/rules/golang.md: sha256:6ebdb015cdee3b2b834cf794f3851d84113ee381025e5554a9fa814c1d54c4ad
+    .github/instructions/golang.instructions.md: sha256:1f477c4204be1cc8b704ed3cddad0d3c3f1b9d4db3270ae9787de7c975807053
+  content_hash: sha256:cc899928ca2b32bcb7b5d59e8d151e430bc388d244261c97794e1b262dd5f320
+- repo_url: jandedobbeleer/agentic
+  name: agentic-markdown
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
   package_type: apm_package
@@ -25,12 +50,14 @@ dependencies:
   - .claude/rules/markdown.md
   - .github/instructions/markdown.instructions.md
   deployed_file_hashes:
-    .claude/rules/markdown.md: sha256:57bf0ca445a533614ffda0792c88536bfe8c738bfa7d8ca27ec2bcaadfd64db1
-    .github/instructions/markdown.instructions.md: sha256:e16f52f4e7f24c8b59caef5b423332690e5bf95d3f3cd37f86eb782b36e6ea82
-  content_hash: sha256:0f47d924eba5b69635958c5fe13194a39deb56fa1e9cab3f556f0d810ac283cd
-- repo_url: JanDeDobbeleer/agentic
+    .claude/rules/markdown.md: sha256:223315c67ebf00bfb7ae7a0d288f1991a3ae8f736b8b2b0fd8468a5104b47893
+    .github/instructions/markdown.instructions.md: sha256:91d656b4d6c90a8ae10ca520e2f5c9444a4b6add5520328f24ad2a919e0f4747
+  content_hash: sha256:1862a115c834b4b8f4d9e036c2f05fa934304f3f3f1b20e235da515b8f0dc44b
+- repo_url: jandedobbeleer/agentic
+  name: agentic-powershell
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
   package_type: apm_package
@@ -38,66 +65,119 @@ dependencies:
   - .claude/rules/powershell.md
   - .github/instructions/powershell.instructions.md
   deployed_file_hashes:
-    .claude/rules/powershell.md: sha256:61cfc8b13ec8b9c234477d4ca4b165973e77229daf8315e8a4da582f535bfb46
-    .github/instructions/powershell.instructions.md: sha256:8a6d0340bb63944ad6b318051a412a380275aa5750e2a9d0d50e2e78b3ecac3f
-  content_hash: sha256:0b75b2bb281c733a5beb1503104c164649d5d2dbc386a4aac3f784da6420c590
-- repo_url: JanDeDobbeleer/agentic
+    .claude/rules/powershell.md: sha256:f17d5edda5ecc2aac8c86a32c03d32c8eccf0d945983ee70b404062d61f10a27
+    .github/instructions/powershell.instructions.md: sha256:ae92d1111d4183847df527525c73d706fa1ef003d515964270f858eecf659449
+  content_hash: sha256:f159d7b75e7ecf3fa2c0cdf1d568799558320e06bcba5263c05e28487db68e5c
+- repo_url: jandedobbeleer/agentic
+  name: agentic
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: unknown
   virtual_path: skills/conventional-commit
   is_virtual: true
   package_type: claude_skill
   deployed_files:
   - .agents/skills/conventional-commit
+  - .agents/skills/conventional-commit/SKILL.md
   - .claude/skills/conventional-commit
+  - .claude/skills/conventional-commit/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/conventional-commit/SKILL.md: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
+    .claude/skills/conventional-commit/SKILL.md: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
   content_hash: sha256:44bd33d20c6122489d0eedaa292dcf9b155439d021661e7ae84ce9b6f812d363
-- repo_url: JanDeDobbeleer/agentic
+- repo_url: jandedobbeleer/agentic
+  name: agentic
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: unknown
   virtual_path: skills/golang
   is_virtual: true
   package_type: claude_skill
   deployed_files:
   - .agents/skills/golang
+  - .agents/skills/golang/SKILL.md
   - .claude/skills/golang
+  - .claude/skills/golang/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/golang/SKILL.md: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
+    .claude/skills/golang/SKILL.md: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
   content_hash: sha256:07880827704871c541bf76a940ea39f5c0057ddf65c88de451bc3b7acb920903
-- repo_url: JanDeDobbeleer/agentic
+- repo_url: jandedobbeleer/agentic
+  name: agentic
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: unknown
   virtual_path: skills/markdown
   is_virtual: true
   package_type: claude_skill
   deployed_files:
   - .agents/skills/markdown
+  - .agents/skills/markdown/SKILL.md
   - .claude/skills/markdown
+  - .claude/skills/markdown/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/markdown/SKILL.md: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
+    .claude/skills/markdown/SKILL.md: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
   content_hash: sha256:fa25f4f36faa33fa51ec6e9a3b5bf7cde618d8d7dfb572dd8f55733dc1813265
-- repo_url: JanDeDobbeleer/agentic
+- repo_url: jandedobbeleer/agentic
+  name: agentic
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: unknown
   virtual_path: skills/powershell
   is_virtual: true
   package_type: claude_skill
   deployed_files:
   - .agents/skills/powershell
+  - .agents/skills/powershell/SKILL.md
   - .claude/skills/powershell
+  - .claude/skills/powershell/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/powershell/SKILL.md: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
+    .claude/skills/powershell/SKILL.md: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
   content_hash: sha256:bc844acc1cf9ccc5d2d10e1c889b8b5b69b92f743e3bc11e0bc9a386770fc864
-- repo_url: JanDeDobbeleer/agentic
+- repo_url: jandedobbeleer/agentic
+  name: agentic
   host: github.com
-  resolved_commit: 0db05ad6c12436055ec1beb2177a8d8763d1a833
-  virtual_path: skills/vale-user-facing-text
+  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  version: unknown
+  virtual_path: skills/writing-clearly-and-concisely
   is_virtual: true
   package_type: claude_skill
   deployed_files:
-  - .agents/skills/vale-user-facing-text
-  - .claude/skills/vale-user-facing-text
-  content_hash: sha256:7676bf19dc93149f469655ffb0b166db7c953fe0483b8a96e763ce024b1c8a59
-- repo_url: ast-grep/agent-skill
-  host: github.com
-  resolved_commit: c2a9bc154f4ffe08b25d28d5e852dfac8c0d0d8a
-  virtual_path: ast-grep/skills/ast-grep
-  is_virtual: true
-  package_type: claude_skill
-  deployed_files:
-  - .agents/skills/ast-grep
-  - .claude/skills/ast-grep
-  content_hash: sha256:e812630c21ec2215bd0abfe33835ae382059112e990411b588b84bb24c4f0a4f
+  - .agents/skills/writing-clearly-and-concisely
+  - .agents/skills/writing-clearly-and-concisely/README.md
+  - .agents/skills/writing-clearly-and-concisely/SKILL.md
+  - .agents/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md
+  - .agents/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md
+  - .agents/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md
+  - .agents/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md
+  - .agents/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md
+  - .agents/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
+  - .claude/skills/writing-clearly-and-concisely
+  - .claude/skills/writing-clearly-and-concisely/README.md
+  - .claude/skills/writing-clearly-and-concisely/SKILL.md
+  - .claude/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md
+  - .claude/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md
+  - .claude/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md
+  - .claude/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md
+  - .claude/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md
+  - .claude/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
+  deployed_file_hashes:
+    .agents/skills/writing-clearly-and-concisely/README.md: sha256:cd8241146abf3e7514fdb07a6db2e06c8535a4f78dd1ab471901b2e7fe4db089
+    .agents/skills/writing-clearly-and-concisely/SKILL.md: sha256:d2b345fcfc61e8143136e27b1ca2db9585c5fc46c63f0abd89a8547391349c36
+    .agents/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md: sha256:248b18596fa18cf63605182688565d25d115c859f602068185f6014c26addbfe
+    .agents/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md: sha256:8cead3fc56b54ab5fc22e52c14423182fdce2d9535d4c1dda1f8319cac542027
+    .agents/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md: sha256:3867f33512ff2f0e965386dbb558579aab43ca10f070bd48d732584b9b5119e0
+    .agents/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md: sha256:150feae0c201def056a96dd25fa5d23e015f53632b21f3bcd7b7266f8197c563
+    .agents/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
+    .agents/skills/writing-clearly-and-concisely/signs-of-ai-writing.md: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
+    .claude/skills/writing-clearly-and-concisely/README.md: sha256:cd8241146abf3e7514fdb07a6db2e06c8535a4f78dd1ab471901b2e7fe4db089
+    .claude/skills/writing-clearly-and-concisely/SKILL.md: sha256:d2b345fcfc61e8143136e27b1ca2db9585c5fc46c63f0abd89a8547391349c36
+    .claude/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md: sha256:248b18596fa18cf63605182688565d25d115c859f602068185f6014c26addbfe
+    .claude/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md: sha256:8cead3fc56b54ab5fc22e52c14423182fdce2d9535d4c1dda1f8319cac542027
+    .claude/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md: sha256:3867f33512ff2f0e965386dbb558579aab43ca10f070bd48d732584b9b5119e0
+    .claude/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md: sha256:150feae0c201def056a96dd25fa5d23e015f53632b21f3bcd7b7266f8197c563
+    .claude/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
+    .claude/skills/writing-clearly-and-concisely/signs-of-ai-writing.md: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
+  content_hash: sha256:f2651cddb46c9695f38a30a75e9c247c41518a9d47f63256f6cafafe94d2a1ff

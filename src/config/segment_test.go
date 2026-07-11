@@ -502,6 +502,7 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 		WriterEnabled    bool
 		Evaluated        bool
 		Enabled          bool
+		Killed           bool
 		ExpectedRendered bool
 		ExpectedEnabled  bool
 	}{
@@ -528,6 +529,14 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 			Case:             "whitespace-only result keeps segment hidden",
 			FallbackTemplate: "   ",
 			Evaluated:        true,
+		},
+		{
+			// A timed-out segment's goroutine may still complete the
+			// evaluation after the kill, so Killed must win over evaluated.
+			Case:             "killed by timeout keeps segment hidden",
+			FallbackTemplate: " disconnected ",
+			Evaluated:        true,
+			Killed:           true,
 		},
 		{
 			Case:             "does not write to the segment cache",
@@ -560,6 +569,7 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 			FallbackTemplate: tc.FallbackTemplate,
 			Cache:            tc.Cache,
 			Enabled:          tc.Enabled,
+			Killed:           tc.Killed,
 			writer:           &fallbackWriter{enabled: tc.WriterEnabled, template: tc.Template},
 		}
 		segment.evaluated = tc.Evaluated

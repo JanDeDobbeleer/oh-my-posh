@@ -1,0 +1,1 @@
+There is a file called nul in the work tree here that was added by something that I'm unable to remove because it cannot be found. However, when I look at it and explore, etc., I can see it has zero bytes and was made in 1970. Can you find it and remove that for me?

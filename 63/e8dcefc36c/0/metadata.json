@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "63e8dcefc36c",
+  "session_id": "88e16f61-d1b7-47a3-84f1-057e0f96521a",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-11T11:55:29.1367482Z",
+  "branch": "copilot/add-support-for-progress-terminals",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "apm.lock.yaml"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "b17aa7025ea7",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 11327,
+    "cache_creation_tokens": 17283,
+    "cache_read_tokens": 55284,
+    "output_tokens": 814,
+    "api_call_count": 2
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-11T11:55:29.0910674Z",
+    "agent_lines": 0,
+    "agent_removed": 41,
+    "human_added": 81,
+    "human_modified": 103,
+    "human_removed": 0,
+    "total_committed": 184,
+    "total_lines_changed": 226,
+    "agent_percentage": 18.141592920353983,
+    "metric_version": 2
+  }
+}

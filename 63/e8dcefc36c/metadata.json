@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "63e8dcefc36c",
+  "strategy": "manual-commit",
+  "branch": "copilot/add-support-for-progress-terminals",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "apm.lock.yaml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/63/e8dcefc36c/0/metadata.json",
+      "transcript": "/63/e8dcefc36c/0/full.jsonl",
+      "compact_transcript": "/63/e8dcefc36c/0/transcript.jsonl",
+      "content_hash": "/63/e8dcefc36c/0/content_hash.txt",
+      "prompt": "/63/e8dcefc36c/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 11327,
+    "cache_creation_tokens": 17283,
+    "cache_read_tokens": 55284,
+    "output_tokens": 814,
+    "api_call_count": 2
+  }
+}

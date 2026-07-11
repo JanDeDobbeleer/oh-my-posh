@@ -1,8 +1,1 @@
-Investigate how we can solve https://github.com/JanDeDobbeleer/oh-my-posh/issues/7581. No code changes yes, just the analysis. The rules are:
-- pragmatic solution
-- no breaking changes
-- something that is easily maintainable architecturally
-
----
-
-Do it, delegate the implementation to sonnet 5 on the current branch and create a commit when done + push
+can't the tests bedesigned as table driven?

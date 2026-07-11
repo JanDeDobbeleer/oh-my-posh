@@ -5,10 +5,7 @@
   "branch": "copilot/add-support-for-progress-terminals",
   "checkpoints_count": 1,
   "files_touched": [
-    "src/config/segment.go",
-    "src/config/segment_test.go",
-    "themes/schema.json",
-    "website/docs/configuration/segment.mdx"
+    "src/config/segment_test.go"
   ],
   "sessions": [
     {
@@ -20,10 +17,10 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 12566,
-    "cache_creation_tokens": 93085,
-    "cache_read_tokens": 993643,
-    "output_tokens": 12709,
-    "api_call_count": 17
+    "input_tokens": 334,
+    "cache_creation_tokens": 69632,
+    "cache_read_tokens": 736230,
+    "output_tokens": 7157,
+    "api_call_count": 9
   }
 }

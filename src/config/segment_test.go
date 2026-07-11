@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	toml "github.com/pelletier/go-toml/v2"
@@ -459,4 +460,126 @@ func TestSegment_RestoreDataToggledOffStaysDisabled(t *testing.T) {
 
 	assert.False(t, segment.Enabled, "toggled-off segment must stay disabled even with data available")
 	assert.False(t, segment.restored, "toggle check happens before data replay")
+}
+
+// fallbackWriter is a minimal SegmentWriter used to drive Segment.Render's
+// fallback_template behavior without depending on a concrete segment type.
+type fallbackWriter struct {
+	template string
+	text     string
+	enabled  bool
+}
+
+func (w *fallbackWriter) Enabled() bool                                  { return w.enabled }
+func (w *fallbackWriter) Template() string                               { return w.template }
+func (w *fallbackWriter) SetText(text string)                            { w.text = text }
+func (w *fallbackWriter) SetIndex(_ int)                                 {}
+func (w *fallbackWriter) Text() string                                   { return w.text }
+func (w *fallbackWriter) Init(_ options.Provider, _ runtime.Environment) {}
+func (w *fallbackWriter) CacheKey() (string, bool)                       { return "", false }
+
+// initTemplateCache initializes template.Cache for the duration of a test and
+// restores the previous value afterward, since AddSegmentData/RemoveSegmentData
+// dereference it directly.
+func initTemplateCache(t *testing.T) {
+	t.Helper()
+
+	orig := template.Cache
+	t.Cleanup(func() { template.Cache = orig })
+
+	template.Cache = &cache.Template{
+		Segments: maps.NewConcurrent[any](),
+	}
+}
+
+func TestSegment_FallbackTemplate(t *testing.T) {
+	cases := []struct {
+		Cache            *Cache
+		Case             string
+		FallbackTemplate string
+		Template         string
+		ExpectedText     string
+		WriterEnabled    bool
+		Evaluated        bool
+		Enabled          bool
+		ExpectedRendered bool
+		ExpectedEnabled  bool
+	}{
+		{
+			Case:             "renders when writer disabled",
+			FallbackTemplate: " disconnected ",
+			Evaluated:        true,
+			ExpectedRendered: true,
+			ExpectedEnabled:  true,
+			ExpectedText:     " disconnected ",
+		},
+		{
+			Case:      "unset keeps segment hidden",
+			Evaluated: true,
+		},
+		{
+			// evaluated is left false, simulating a segment hidden for another
+			// reason (toggled off, folder include/exclude, width, timeout kill)
+			// where Execute never reached the writer.Enabled() call.
+			Case:             "not evaluated keeps segment hidden",
+			FallbackTemplate: " disconnected ",
+		},
+		{
+			Case:             "whitespace-only result keeps segment hidden",
+			FallbackTemplate: "   ",
+			Evaluated:        true,
+		},
+		{
+			Case:             "does not write to the segment cache",
+			FallbackTemplate: " disconnected ",
+			Evaluated:        true,
+			Cache:            &Cache{Duration: "5h", Strategy: Session},
+			ExpectedRendered: true,
+			ExpectedEnabled:  true,
+			ExpectedText:     " disconnected ",
+		},
+		{
+			Case:             "does not affect an enabled segment",
+			Template:         "primary",
+			FallbackTemplate: " disconnected ",
+			WriterEnabled:    true,
+			Enabled:          true,
+			Evaluated:        true,
+			ExpectedRendered: true,
+			ExpectedEnabled:  true,
+			ExpectedText:     "primary",
+		},
+	}
+
+	initTemplateCache(t)
+
+	for _, tc := range cases {
+		segment := &Segment{
+			Type:             TEXT,
+			Template:         tc.Template,
+			FallbackTemplate: tc.FallbackTemplate,
+			Cache:            tc.Cache,
+			Enabled:          tc.Enabled,
+			writer:           &fallbackWriter{enabled: tc.WriterEnabled, template: tc.Template},
+		}
+		segment.evaluated = tc.Evaluated
+
+		rendered := segment.Render(0, false)
+
+		assert.Equal(t, tc.ExpectedRendered, rendered, tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, segment.Enabled, tc.Case)
+
+		if tc.ExpectedText != "" {
+			assert.Equal(t, tc.ExpectedText, segment.Text(), tc.Case)
+		}
+
+		if tc.Cache == nil {
+			continue
+		}
+
+		key, store := segment.cacheKeyAndStore()
+		_, found := cache.Get[string](store, key)
+		cache.Delete(store, key)
+		assert.False(t, found, tc.Case)
+	}
 }

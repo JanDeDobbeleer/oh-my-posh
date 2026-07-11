@@ -58,6 +58,7 @@ type Segment struct {
 	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty" yaml:"style,omitempty"`
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty" yaml:"leading_powerline_symbol,omitempty"`
 	Placeholder            string         `json:"placeholder,omitempty" toml:"placeholder,omitempty" yaml:"placeholder,omitempty"`
+	FallbackTemplate       string         `json:"fallback_template,omitempty" toml:"fallback_template,omitempty" yaml:"fallback_template,omitempty"`
 	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty" yaml:"tips,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty" yaml:"background_templates,omitempty"`
 	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty" yaml:"templates,omitempty"`
@@ -82,6 +83,7 @@ type Segment struct {
 	foregroundResolved     bool
 	backgroundResolved     bool
 	needsEvaluated         bool
+	evaluated              bool
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -221,13 +223,14 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		defer runjobs.CloseGoroutineJob()
 	}
 
+	segment.evaluated = true
 	segment.Enabled = segment.writer.Enabled()
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
 	// Allow pending segments to render (they'll show "..." text)
 	if !segment.Pending && !segment.Enabled && !force {
-		return false
+		return segment.renderFallback(index)
 	}
 
 	if force {
@@ -257,6 +260,44 @@ func (segment *Segment) Render(index int, force bool) bool {
 	segment.setCache()
 
 	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
+	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+
+	return true
+}
+
+// renderFallback attempts to render FallbackTemplate when a segment would
+// otherwise be hidden because its writer's Enabled() returned false. It only
+// fires when the writer was actually evaluated; segments hidden for other
+// reasons (toggled off, folder include/exclude, width constraints, a killed
+// timeout, or a writer mapping error) never reach this point with evaluated
+// set, so they keep today's silent-omission behavior.
+func (segment *Segment) renderFallback(index int) bool {
+	if segment.FallbackTemplate == "" || !segment.evaluated {
+		return false
+	}
+
+	text, err := template.Render(segment.FallbackTemplate, segment.writer)
+	if err != nil {
+		text = err.Error()
+	}
+
+	if !strings.ContainsFunc(text, func(r rune) bool { return r != ' ' }) {
+		return false
+	}
+
+	// Foreground/background may be overridden directly (e.g. color cycling) between
+	// render passes, so the memoized values must not survive across calls to Render.
+	segment.foregroundResolved = false
+	segment.backgroundResolved = false
+
+	segment.writer.SetIndex(index)
+	segment.Enabled = true
+	segment.SetText(text)
+
+	// Intentionally skip setCache(): the writer is zero/partially hydrated
+	// here, and caching it would make restoreCache() later resurrect a
+	// disabled writer as enabled while rendering the main template against
+	// empty data.
 	template.Cache.AddSegmentData(segment.Name(), segment.writer)
 
 	return true
@@ -529,6 +570,10 @@ func (segment *Segment) evaluateNeeds() {
 
 	if len(segment.Templates) != 0 {
 		value += strings.Join(segment.Templates, "")
+	}
+
+	if segment.FallbackTemplate != "" {
+		value += segment.FallbackTemplate
 	}
 
 	if !strings.Contains(value, ".Segments.") {

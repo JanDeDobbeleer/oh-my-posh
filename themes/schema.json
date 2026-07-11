@@ -611,6 +611,12 @@
           "title": "Placeholder text",
           "description": "Text to display while the segment is loading in streaming mode. See https://ohmyposh.dev/docs/experimental/streaming",
           "default": "..."
+        },
+        "fallback_template": {
+          "type": "string",
+          "title": "Fallback template text",
+          "description": "https://ohmyposh.dev/docs/configuration/templates",
+          "default": ""
         }
       },
       "allOf": [

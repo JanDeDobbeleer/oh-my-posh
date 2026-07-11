@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "239b63dda932",
+  "strategy": "manual-commit",
+  "branch": "copilot/add-support-for-progress-terminals",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/config/segment.go",
+    "src/config/segment_test.go",
+    "themes/schema.json",
+    "website/docs/configuration/segment.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/23/9b63dda932/0/metadata.json",
+      "transcript": "/23/9b63dda932/0/full.jsonl",
+      "compact_transcript": "/23/9b63dda932/0/transcript.jsonl",
+      "content_hash": "/23/9b63dda932/0/content_hash.txt",
+      "prompt": "/23/9b63dda932/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 12566,
+    "cache_creation_tokens": 93085,
+    "cache_read_tokens": 993643,
+    "output_tokens": 12709,
+    "api_call_count": 17
+  }
+}

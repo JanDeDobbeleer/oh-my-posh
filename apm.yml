@@ -11,7 +11,7 @@ dependencies:
     - JanDeDobbeleer/agentic/skills/golang
     - JanDeDobbeleer/agentic/skills/markdown
     - JanDeDobbeleer/agentic/skills/powershell
-    - JanDeDobbeleer/agentic/skills/vale-user-facing-text
+    - JanDeDobbeleer/agentic/skills/writing-clearly-and-concisely
     - ast-grep/agent-skill/ast-grep/skills/ast-grep
 
 targets:

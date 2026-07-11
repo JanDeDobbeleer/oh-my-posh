@@ -1,0 +1,5 @@
+I checked out PR https://github.com/JanDeDobbeleer/oh-my-posh/pull/7542 which introduces changes for https://github.com/JanDeDobbeleer/oh-my-posh/issues/7379 Do a thorough review of the changes and provide the analysis back to me.
+
+---
+
+fix everything and add it to the current commit(s).

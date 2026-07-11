@@ -1,0 +1,5 @@
+there's still a comment on pr https://github.com/JanDeDobbeleer/oh-my-posh/pull/7542 be aware, thw worktree already changed to next which is up to date with main after this pr got merged. I want to know if the comment is accurate.
+
+---
+
+yes

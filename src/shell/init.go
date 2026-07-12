@@ -60,7 +60,7 @@ func Init(env runtime.Environment, feats Features) string {
 		return recurseInitCommand(env)
 	case NU:
 		return initNu(env, feats)
-	case ZSH, BASH, FISH, CMD, XONSH:
+	case ZSH, BASH, FISH, CMD, XONSH, YASH:
 		return generateAndSourceScript(env, feats)
 	default:
 		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, env.Flags().Shell)
@@ -198,6 +198,9 @@ func generateScript(env runtime.Environment, feats Features) string {
 	case XONSH:
 		executable = quotePythonStr(executable)
 		script = xonshInit
+	case YASH:
+		executable = quoteYashStr(executable)
+		script = yashInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", env.Flags().Shell)
 	}
@@ -258,6 +261,9 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 		script += fmt.Sprintf("source %s", quotePythonStr(scriptPath))
 	case FISH:
 		script += fmt.Sprintf("source %s", quoteFishStr(scriptPath))
+	case YASH:
+		// yash has no source builtin, use the dot command instead
+		script += fmt.Sprintf(". %s", quoteYashStr(scriptPath))
 	case ELVISH:
 		script += fmt.Sprintf("eval (slurp < %s)", quotePwshOrElvishStr(scriptPath))
 	case CMD:
@@ -313,6 +319,8 @@ func sessionScript(env runtime.Environment) string {
 		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s;", sessionID, quotePwshOrElvishStr(config))
 	case ZSH, BASH:
 		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, QuotePosixStr(config))
+	case YASH:
+		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, quoteYashStr(config))
 	case XONSH:
 		return fmt.Sprintf("$POSH_SESSION_ID = \"%s\"; $POSH_CONFIG = %s;", sessionID, quotePythonStr(config))
 	case FISH:

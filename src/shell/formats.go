@@ -31,7 +31,7 @@ func GetFormats(shell string) *Formats {
 	var formats *Formats
 
 	switch shell {
-	case BASH:
+	case BASH, YASH:
 		formats = &Formats{
 			Escape:                "\\[%s\\]",
 			Linechange:            "\\[\x1b[%d%s\\]",

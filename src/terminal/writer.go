@@ -265,7 +265,7 @@ func FormatTitle(title string) string {
 	// These shells don't support setting the console title.
 	case shell.ELVISH, shell.XONSH:
 		return ""
-	case shell.BASH, shell.ZSH:
+	case shell.BASH, shell.ZSH, shell.YASH:
 		title = trimAnsi(title)
 
 		sb := text.NewBuilder()

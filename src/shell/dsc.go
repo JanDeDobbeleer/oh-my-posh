@@ -105,6 +105,8 @@ func (s *Shell) getShellConfigPath() (string, error) {
 		return filepath.Join(home, ".elvish", "rc.elv"), nil
 	case XONSH:
 		return filepath.Join(home, ".xonshrc"), nil
+	case YASH:
+		return filepath.Join(home, ".yashrc"), nil
 	default:
 		return "", fmt.Errorf("unsupported shell type: %s", s.Name)
 	}
@@ -192,7 +194,7 @@ func (s *Shell) getLastInitLinePosition(lines []string) int {
 
 func (s *Shell) shellCommand() string {
 	switch s.Name {
-	case BASH, ZSH:
+	case BASH, ZSH, YASH:
 		return fmt.Sprintf(`eval "$(%s)"`, s.Command)
 	case FISH:
 		return s.Command + " | source"

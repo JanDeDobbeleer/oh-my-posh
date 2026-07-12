@@ -14,8 +14,7 @@ apm_modules/
 src/test/umbraco/obj/
 src/keys
 *.prof
-*.wixpdb
-packages/msi/Microsoft.Trusted.Signing.Client
+packages/msix/Microsoft.Trusted.Signing.Client
 .claude
 .styles
 

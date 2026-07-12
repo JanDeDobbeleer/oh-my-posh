@@ -91,7 +91,7 @@ jobs:
             src/dist/posh-*
             src/dist/themes.*
             src/dist/checksums.*
-  msi:
+  msix:
     needs:
       - changelog
       - artifacts
@@ -102,7 +102,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: ${{ github.workspace }}/packages/msi
+        working-directory: ${{ github.workspace }}/packages/msix
     steps:
       - name: Checkout code 👋
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -110,8 +110,6 @@ jobs:
         with:
           name: build-artifacts
           path: dist
-      - name: Install Wix Toolset 🛠
-        run: dotnet tool install --global wix
       - name: Build installer 📦
         id: build
         env:
@@ -123,16 +121,15 @@ jobs:
           ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign -SDKVersion "10.0.26100.0"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: msi-artifact-${{ matrix.arch }}
+          name: msix-artifact-${{ matrix.arch }}
           path: |
-            packages/msi/out/install-${{ matrix.arch }}.msi
-            packages/msi/out/install-${{ matrix.arch }}.msix
+            packages/msix/out/install-${{ matrix.arch }}.msix
   release:
     runs-on: ubuntu-latest
     needs:
       - changelog
       - artifacts
-      - msi
+      - msix
       - android
     steps:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -193,9 +190,7 @@ jobs:
         $version = $version.TrimStart('v')
 
         $urls = @(
-            "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-x64.msi|x64",
             "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-x64.msix|x64",
-            "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-arm64.msi|arm64",
             "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/install-arm64.msix|arm64"
         )
 

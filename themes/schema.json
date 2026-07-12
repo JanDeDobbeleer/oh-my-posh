@@ -5429,6 +5429,11 @@
               "title": "Newline",
               "description": "Add a newline before the prompt",
               "default": false
+            },
+            "right_template": {
+              "type": "string",
+              "title": "Right Template",
+              "description": "The right-aligned template to render next to the transient prompt, supported in zsh and PowerShell only"
             }
           }
         }

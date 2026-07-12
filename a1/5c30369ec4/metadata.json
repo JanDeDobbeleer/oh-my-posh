@@ -3,7 +3,7 @@
   "checkpoint_id": "a15c30369ec4",
   "strategy": "manual-commit",
   "branch": "next",
-  "checkpoints_count": 1,
+  "checkpoints_count": 4,
   "files_touched": [
     ".github/workflows/delete_store_submission.yml",
     ".github/workflows/microsoft_store.yml",
@@ -39,13 +39,20 @@
       "compact_transcript": "/a1/5c30369ec4/0/transcript.jsonl",
       "content_hash": "/a1/5c30369ec4/0/content_hash.txt",
       "prompt": "/a1/5c30369ec4/0/prompt.txt"
+    },
+    {
+      "metadata": "/a1/5c30369ec4/1/metadata.json",
+      "transcript": "/a1/5c30369ec4/1/full.jsonl",
+      "compact_transcript": "/a1/5c30369ec4/1/transcript.jsonl",
+      "content_hash": "/a1/5c30369ec4/1/content_hash.txt",
+      "prompt": "/a1/5c30369ec4/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 12219,
-    "cache_creation_tokens": 51338,
-    "cache_read_tokens": 615717,
-    "output_tokens": 11465,
-    "api_call_count": 12
+    "input_tokens": 33092,
+    "cache_creation_tokens": 214754,
+    "cache_read_tokens": 3592407,
+    "output_tokens": 38183,
+    "api_call_count": 47
   }
 }

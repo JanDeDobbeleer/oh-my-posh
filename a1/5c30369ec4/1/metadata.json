@@ -1,0 +1,124 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "a15c30369ec4",
+  "session_id": "b342582f-94b9-4dbd-a7eb-21b2fe4b63c5",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-12T08:54:14.6742139Z",
+  "branch": "next",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    ".github/workflows/delete_store_submission.yml",
+    ".github/workflows/microsoft_store.yml",
+    ".github/workflows/release.yml",
+    ".gitignore",
+    "packages/msi/README.md",
+    "packages/msi/appxmanifest.xml",
+    "packages/msi/build.ps1",
+    "packages/msi/dsc/oh-my-posh.config.dsc.resource.json",
+    "packages/msi/dsc/oh-my-posh.font.dsc.resource.json",
+    "packages/msi/dsc/oh-my-posh.shell.dsc.resource.json",
+    "packages/msi/icon.ico",
+    "packages/msi/icons/44.png",
+    "packages/msi/icons/icon.png",
+    "packages/msi/mapping.txt",
+    "packages/msi/oh-my-posh.wxs",
+    "packages/msix/README.md",
+    "packages/msix/appxmanifest.xml",
+    "packages/msix/build.ps1",
+    "packages/msix/dsc/oh-my-posh.config.dsc.resource.json",
+    "packages/msix/dsc/oh-my-posh.font.dsc.resource.json",
+    "packages/msix/dsc/oh-my-posh.shell.dsc.resource.json",
+    "packages/msix/icons/44.png",
+    "packages/msix/icons/icon.png",
+    "packages/msix/mapping.txt",
+    "src/cli/upgrade/notice.go",
+    "src/cli/upgrade/notice_test.go"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "44bc4d9bfebe",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 20873,
+    "cache_creation_tokens": 163416,
+    "cache_read_tokens": 2976690,
+    "output_tokens": 26718,
+    "api_call_count": 35
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_016Ud7DBVsKEkpmE15icHxTh",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "powershell"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "44bc4d9bfebe",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 93,
+        "end": 94,
+        "entry_ids": [
+          "571d7c91-cdf7-4de3-b6ef-5a6181d5dd72"
+        ],
+        "tool_use_id": "toolu_016Ud7DBVsKEkpmE15icHxTh"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_016Ud7DBVsKEkpmE15icHxTh"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: powershell",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-12T08:54:14.6271028Z",
+    "agent_lines": 608,
+    "agent_removed": 792,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 1,
+    "total_committed": 608,
+    "total_lines_changed": 1401,
+    "agent_percentage": 99.92862241256245,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_removed_per_file": {
+        ".github/workflows/release.yml": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 609,
+      "agent_lines_removed": 793
+    }
+  ]
+}

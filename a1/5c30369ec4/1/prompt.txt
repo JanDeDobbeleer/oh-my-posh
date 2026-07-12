@@ -1,0 +1,9 @@
+Drop support for the MSI Windows package. I only want to keep MSI X as of now, so we need to do an analysis of what needs to be removed entirely. We also no longer publish to the Windows Store, so that can also be dropped.
+
+---
+
+go ahead, including the rename
+
+---
+
+Did we adjust the WinGet package manifest file because we do construct it here and then create a pull request?

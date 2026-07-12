@@ -55,6 +55,7 @@ to reflect your configuration file, local or remote.
     { label: 'nu', value: 'nu', },
     { label: 'powershell', value: 'powershell', },
     { label: 'xonsh', value: 'xonsh', },
+    { label: 'yash', value: 'yash', },
     { label: 'zsh', value: 'zsh', },
   ]
 }>
@@ -184,6 +185,21 @@ Once added, reload your profile for the changes to take effect.
 
 ```bash
 exec xonsh
+```
+
+</TabItem>
+<TabItem value="yash">
+
+Adjust the Oh My Posh init line in `~/.yashrc` by adding the `--config` flag with the location of your configuration.
+
+```bash
+eval "$(oh-my-posh init yash --config ~/jandedobbeleer.omp.json)"
+```
+
+Once altered, reload your profile for the changes to take effect.
+
+```bash
+exec yash
 ```
 
 </TabItem>

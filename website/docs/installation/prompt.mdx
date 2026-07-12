@@ -29,6 +29,7 @@ oh-my-posh get shell
     { label: 'nu', value: 'nu', },
     { label: 'powershell', value: 'powershell', },
     { label: 'xonsh', value: 'xonsh', },
+    { label: 'yash', value: 'yash', },
     { label: 'zsh', value: 'zsh', },
   ]
 }>
@@ -249,6 +250,21 @@ Once added, reload your profile for the changes to take effect.
 
 ```bash
 exec xonsh
+```
+
+</TabItem>
+<TabItem value="yash">
+
+Add the following snippet as the last line to `~/.yashrc`:
+
+```bash
+eval "$(oh-my-posh init yash)"
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec yash
 ```
 
 </TabItem>

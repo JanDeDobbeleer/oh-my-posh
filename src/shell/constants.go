@@ -10,6 +10,7 @@ const (
 	GENERIC    = "shell"
 	ELVISH     = "elvish"
 	XONSH      = "xonsh"
+	YASH       = "yash"
 	CLAUDE     = "claude"
 	COPILOTCLI = "copilot-cli"
 )

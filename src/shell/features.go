@@ -76,6 +76,8 @@ func (f Features) Lines(shell string) Lines {
 			code = feature.Nu()
 		case XONSH:
 			code = feature.Xonsh()
+		case YASH:
+			code = feature.Yash()
 		}
 
 		if len(code) > 0 {

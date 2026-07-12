@@ -168,6 +168,11 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
+	if padLength < 0 {
+		log.Debug("padding length is negative")
+		return "", false
+	}
+
 	e.Padding = padLength
 
 	defer func() {

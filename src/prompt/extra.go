@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
@@ -78,34 +79,101 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 
 	str, length := terminal.String()
 
-	if promptType == Transient && len(prompt.Filler) != 0 {
+	if promptType != Transient {
+		return str
+	}
+
+	rightStr, rightLength := e.renderRightTemplate(prompt, background, foreground)
+
+	var padText string
+	if len(prompt.Filler) != 0 {
 		consoleWidth, err := e.Env.TerminalWidth()
 		if err == nil || consoleWidth != 0 {
-			if padText, OK := e.shouldFill(prompt.Filler, consoleWidth-length); OK {
-				str += padText
-			}
+			padText, _ = e.shouldFill(prompt.Filler, consoleWidth-length-rightLength)
 		}
+	}
+
+	// for pwsh, the padding moves inside the cursor save/restore sequence
+	// when a right-aligned template is rendered, see transientPWSH
+	if e.Env.Shell() != shell.PWSH || rightLength == 0 {
+		str += padText
 	}
 
 	switch e.Env.Shell() {
 	case shell.ZSH:
-		if promptType == Transient {
-			if !e.Env.Flags().Eval {
-				break
-			}
+		if !e.Env.Flags().Eval {
+			return str
+		}
 
-			prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
-			// empty RPROMPT
-			prompt += "\nRPROMPT=''"
-			return prompt
-		}
+		return e.transientZSH(str, rightStr)
 	case shell.PWSH:
-		if promptType == Transient {
-			// clear the line afterwards to prevent text from being written on the same line
-			// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
-			return str + terminal.ClearAfter()
-		}
+		return e.transientPWSH(str, padText, rightStr, length, rightLength)
 	}
 
 	return str
+}
+
+// transientZSH returns the transient prompt as an eval statement setting
+// both PS1 and RPROMPT, letting zsh align the right-aligned template natively.
+func (e *Engine) transientZSH(str, rightStr string) string {
+	// Warp doesn't support RPROMPT
+	if e.isWarp() {
+		rightStr = ""
+	}
+
+	prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(str))
+	prompt += fmt.Sprintf("\nRPROMPT=%s", shell.QuotePosixStr(rightStr))
+	return prompt
+}
+
+// transientPWSH appends the right-aligned template to the transient prompt by
+// writing the gap and the right-aligned text, then restoring the cursor to
+// right after the left part so the accepted command is drawn there,
+// mirroring writePrimaryRightPrompt.
+func (e *Engine) transientPWSH(str, padText, rightStr string, length, rightLength int) string {
+	// clear the line afterwards to prevent text from being written on the same line
+	// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
+	str += terminal.ClearAfter()
+
+	if rightLength == 0 {
+		return str
+	}
+
+	consoleWidth, err := e.Env.TerminalWidth()
+	if err != nil || consoleWidth == 0 {
+		return str
+	}
+
+	gap := consoleWidth - length - rightLength
+	if gap < 0 {
+		return str
+	}
+
+	if len(padText) == 0 {
+		padText = strings.Repeat(" ", gap)
+	}
+
+	return str + terminal.SaveCursorPosition() + padText + rightStr + terminal.RestoreCursorPosition()
+}
+
+// renderRightTemplate renders the transient prompt's right-aligned template.
+// Only zsh (via RPROMPT) and pwsh (via cursor save/restore) can display it.
+func (e *Engine) renderRightTemplate(prompt *config.Segment, background, foreground color.Ansi) (string, int) {
+	if len(prompt.RightTemplate) == 0 {
+		return "", 0
+	}
+
+	switch e.Env.Shell() {
+	case shell.ZSH, shell.PWSH:
+	default:
+		return "", 0
+	}
+
+	text, err := template.Render(prompt.RightTemplate, nil)
+	if err != nil {
+		text = err.Error()
+	}
+
+	terminal.Write(background, foreground, text)
+	return terminal.String()
 }

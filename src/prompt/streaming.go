@@ -62,6 +62,14 @@ func (e *Engine) StreamPrimary() <-chan string {
 			return
 		}
 
+		// The zsh script caches a streamed transient record as PS1 only and
+		// resets RPROMPT (see _omp_zle-line-init in omp.zsh), so the record
+		// cannot carry a right-aligned template. Skip it to make the script
+		// fall back to the eval path which sets both PS1 and RPROMPT.
+		if e.Env.Shell() == shell.ZSH && e.Config.TransientPrompt != nil && len(e.Config.TransientPrompt.RightTemplate) != 0 {
+			return
+		}
+
 		// The zsh script renders the transient prompt one column narrower to avoid
 		// a redundant blank line when a filler is configured and the input is empty
 		// (see _omp_zle-line-init in omp.zsh), mirror that for the streamed record.

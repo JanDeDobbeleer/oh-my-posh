@@ -5,17 +5,9 @@
   "branch": "next",
   "checkpoints_count": 2,
   "files_touched": [
-    "src/cli/init.go",
-    "src/shell/constants.go",
-    "src/shell/dsc.go",
-    "src/shell/features.go",
-    "src/shell/formats.go",
     "src/shell/init.go",
-    "src/terminal/writer.go",
-    "website/docs/dsc.md",
-    "website/docs/installation/customize.mdx",
-    "website/docs/installation/prompt.mdx",
-    "website/static/skills/ohmyposh/SKILL.md"
+    "src/shell/scripts/omp.yash",
+    "src/shell/yash.go"
   ],
   "sessions": [
     {
@@ -27,10 +19,10 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 475,
-    "cache_creation_tokens": 35440,
-    "cache_read_tokens": 1177255,
-    "output_tokens": 21157,
-    "api_call_count": 13
+    "input_tokens": 149,
+    "cache_creation_tokens": 12041,
+    "cache_read_tokens": 1168641,
+    "output_tokens": 9151,
+    "api_call_count": 10
   }
 }

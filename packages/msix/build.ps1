@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Builds MSI and MSIX packages for Oh My Posh.
+    Builds the MSIX package for Oh My Posh.
 
 .DESCRIPTION
-    This script creates MSI and MSIX installer packages for Oh My Posh with the specified architecture and version.
-    It can optionally copy the executable, sign the packages, and generate hash files for verification.
+    This script creates the MSIX installer package for Oh My Posh with the specified architecture and version.
+    It can optionally copy the executable and sign the package.
 
 .PARAMETER Architecture
     The target architecture for the package. Must be either 'x64' or 'arm64'.
@@ -16,7 +16,7 @@
     The Windows SDK version to use for signing and packaging tools. Defaults to "10.0.26100.0".
 
 .PARAMETER Sign
-    When specified, signs the MSI and MSIX packages using Azure Code Signing.
+    When specified, signs the MSIX package using Azure Code Signing.
 
 .PARAMETER Copy
     When specified, copies the appropriate executable from the dist folder before packaging.
@@ -24,21 +24,18 @@
 .EXAMPLE
     .\build.ps1 -Architecture x64 -Version "1.2.3" -Copy
 
-    Creates MSI and MSIX packages for x64 architecture with version 1.2.3, copying the executable first.
+    Creates the MSIX package for x64 architecture with version 1.2.3, copying the executable first.
 
 .EXAMPLE
     .\build.ps1 -Architecture arm64 -Version "1.2.3" -Sign -Copy
 
-    Creates and signs MSI and MSIX packages for arm64 architecture with version 1.2.3.
+    Creates and signs the MSIX package for arm64 architecture with version 1.2.3.
 
 .OUTPUTS
-    Creates the following files in the 'out' directory:
-    - install-{Architecture}.msi
-    - install-{Architecture}.msix
-    - Hash files (.sha256) for verification
+    Creates install-{Architecture}.msix in the 'out' directory.
 
 .NOTES
-    Requires WiX toolset for MSI creation and Windows SDK for MSIX packaging and signing.
+    Requires the Windows SDK for MSIX packaging and signing.
 #>
 
 [CmdletBinding()]
@@ -156,7 +153,7 @@ function Invoke-PackageSigning {
 
 #region Main Script
 
-Write-Verbose "Building MSI for $Architecture with version $Version" -Verbose
+Write-Verbose "Building MSIX for $Architecture with version $Version" -Verbose
 Write-Verbose "Setting up output directories" -Verbose
 
 try {
@@ -189,33 +186,6 @@ if ($Copy) {
     }
 }
 
-# Set version environment variable for WiX
-$env:VERSION = $Version
-
-Write-Verbose "Creating MSI package" -Verbose
-
-try {
-    # Define MSI package paths
-    $msiFileName = "install-$Architecture.msi"
-    $msiPackagePath = "$PWD/out/$msiFileName" -replace '\\', '/'
-
-    Write-Verbose "Building MSI: $msiPackagePath" -Verbose
-    wix build -acceptEula wix7 -arch $Architecture -out $msiPackagePath .\oh-my-posh.wxs
-
-    if (-not (Test-Path $msiPackagePath)) {
-        throw "MSI package was not created successfully"
-    }
-}
-catch {
-    Write-Error "Failed to create MSI package: ${_}"
-    throw
-}
-
-if ($Sign) {
-    $signingTools = Initialize-SigningEnvironment -SDKVersion $SDKVersion
-    Invoke-PackageSigning -PackagePath $msiPackagePath -SigningTools $signingTools
-}
-
 Write-Verbose "Creating MSIX package" -Verbose
 
 try {
@@ -223,7 +193,7 @@ try {
     $currentPath = $PWD -replace '\\', '/'
     $manifestPath = "$currentPath/appxmanifest.xml"
     $mappingFilePath = "$currentPath/mapping.txt"
-    $msixPackagePath = "$currentPath/out/$($msiFileName)x"
+    $msixPackagePath = "$currentPath/out/install-$Architecture.msix"
     $makeappxPath = "C:/Program Files (x86)/Windows Kits/10/bin/$SDKVersion/x64/makeappx.exe"
 
     # Validate required files exist
@@ -257,12 +227,10 @@ catch {
 }
 
 if ($Sign) {
-    if ($null -eq $signingTools) {
-        $signingTools = Initialize-SigningEnvironment -SDKVersion $SDKVersion
-    }
+    $signingTools = Initialize-SigningEnvironment -SDKVersion $SDKVersion
     Invoke-PackageSigning -PackagePath $msixPackagePath -SigningTools $signingTools
 }
 
-Write-Verbose "Successfully completed building MSI and MSIX packages" -Verbose
+Write-Verbose "Successfully completed building the MSIX package" -Verbose
 
 #endregion

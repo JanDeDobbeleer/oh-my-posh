@@ -1,0 +1,137 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "0911216ed051",
+  "session_id": "e3c445a1-7bce-4ed8-ac91-5aa08adc027f",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-13T10:54:01.9734355Z",
+  "branch": "next",
+  "checkpoints_count": 4,
+  "save_step_count": 4,
+  "files_touched": [
+    ".github/workflows/release.yml"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "b0923e275a53",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 12452,
+    "cache_creation_tokens": 44277,
+    "cache_read_tokens": 1133631,
+    "output_tokens": 15612,
+    "api_call_count": 17
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_015wjkf2gJhSsRFPoTXScuLs",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "writing-clearly-and-concisely"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "b0923e275a53",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 55,
+        "end": 56,
+        "entry_ids": [
+          "d156192c-88ae-4be3-b36a-128b7aab380a"
+        ],
+        "tool_use_id": "toolu_015wjkf2gJhSsRFPoTXScuLs"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_015wjkf2gJhSsRFPoTXScuLs"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: writing-clearly-and-concisely",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01TzBudvPPho3DRN3yxs7JN5",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "writing-clearly-and-concisely"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "b0923e275a53",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 67,
+        "end": 68,
+        "entry_ids": [
+          "3b662612-5a58-4697-98d2-5f0d2ed42c87"
+        ],
+        "tool_use_id": "toolu_01TzBudvPPho3DRN3yxs7JN5"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01TzBudvPPho3DRN3yxs7JN5"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: writing-clearly-and-concisely",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-13T10:54:01.9479336Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 8,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/workflows/release.yml": 8
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 8,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 8,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 8,
+      "agent_lines_removed": 0
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+https://github.com/JanDeDobbeleer/oh-my-posh/issues/7668  investigate how this can be resolved, and also maybe this is already a go releaser functionality we can leverage, so find the most optimal path to achieve this.

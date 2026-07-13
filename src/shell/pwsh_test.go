@@ -8,7 +8,7 @@ import (
 )
 
 var allFeatures = Tooltips | LineError | Transient | Jobs | Azure | PoshGit | FTCSMarks |
-	Upgrade | Notice | PromptMark | RPrompt | CursorPositioning | KeyHandlers | Streaming | VIMode
+	Upgrade | Notice | PromptMark | RPrompt | CursorPositioning | KeyHandlers | Streaming | VIMode | TransientRPrompt
 
 func TestPwshFeatures(t *testing.T) {
 	got := allFeatures.Lines(PWSH).String("")

@@ -43,7 +43,7 @@ func init() {
 
 func createPrintCmd() *cobra.Command {
 	printCmd := &cobra.Command{
-		Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error|preview]",
+		Use:   "print [debug|primary|secondary|transient|transient-right|right|tooltip|valid|error|preview]",
 		Short: "Print the prompt/context",
 		Long:  "Print one of the prompts based on the location/use-case.",
 		ValidArgs: []string{
@@ -51,6 +51,7 @@ func createPrintCmd() *cobra.Command {
 			prompt.PRIMARY,
 			prompt.SECONDARY,
 			prompt.TRANSIENT,
+			prompt.TRANSIENT_RIGHT,
 			prompt.RIGHT,
 			prompt.TOOLTIP,
 			prompt.VALID,
@@ -121,6 +122,8 @@ func createPrintCmd() *cobra.Command {
 				fmt.Print(eng.ExtraPrompt(prompt.Secondary))
 			case prompt.TRANSIENT:
 				fmt.Print(eng.ExtraPrompt(prompt.Transient))
+			case prompt.TRANSIENT_RIGHT:
+				fmt.Print(eng.TransientRPrompt())
 			case prompt.RIGHT:
 				fmt.Print(eng.RPrompt())
 			case prompt.TOOLTIP:

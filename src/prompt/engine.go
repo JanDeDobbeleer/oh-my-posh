@@ -38,15 +38,16 @@ type Engine struct {
 }
 
 const (
-	PRIMARY   = "primary"
-	TRANSIENT = "transient"
-	DEBUG     = "debug"
-	SECONDARY = "secondary"
-	RIGHT     = "right"
-	TOOLTIP   = "tooltip"
-	VALID     = "valid"
-	ERROR     = "error"
-	PREVIEW   = "preview"
+	PRIMARY         = "primary"
+	TRANSIENT       = "transient"
+	TRANSIENT_RIGHT = "transient-right"
+	DEBUG           = "debug"
+	SECONDARY       = "secondary"
+	RIGHT           = "right"
+	TOOLTIP         = "tooltip"
+	VALID           = "valid"
+	ERROR           = "error"
+	PREVIEW         = "preview"
 )
 
 func (e *Engine) write(txt string) {

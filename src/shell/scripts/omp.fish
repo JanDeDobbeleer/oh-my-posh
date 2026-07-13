@@ -10,6 +10,7 @@ set --global _omp_executable ::OMP::
 set --global _omp_cursor_positioning 0
 set --global _omp_ftcs_marks 0
 set --global _omp_transient_prompt 0
+set --global _omp_transient_rprompt 0
 set --global _omp_prompt_mark 0
 
 # streaming support variables
@@ -550,6 +551,11 @@ end
 function fish_right_prompt
     if test "$_omp_transient" = 1
         set --global _omp_transient 0
+
+        if test $_omp_transient_rprompt = 1
+            _omp_get_prompt transient-right
+        end
+
         return
     end
 

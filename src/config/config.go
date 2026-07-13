@@ -131,6 +131,11 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 	if cfg.TransientPrompt != nil {
 		log.Debug("transient prompt enabled")
 		feats |= shell.Transient
+
+		if env.Shell() == shell.FISH && len(cfg.TransientPrompt.RightTemplate) != 0 {
+			log.Debug("transient right prompt enabled")
+			feats |= shell.TransientRPrompt
+		}
 	}
 
 	if cfg.Streaming > 0 {

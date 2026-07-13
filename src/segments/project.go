@@ -325,6 +325,18 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		}
 	}
 
+	// mirror MSBuild's implicit import of Directory.Build.props when the
+	// project/solution itself does not define a TargetFramework
+	if target == "" {
+		if props, err := n.env.HasParentFilePath("Directory.Build.props", false); err == nil {
+			propsContent := n.env.FileContent(props.Path)
+			values = regex.FindNamedRegexMatch(tag, propsContent)
+			if len(values) != 0 {
+				target = values["TFM"]
+			}
+		}
+	}
+
 	if target == "" {
 		log.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
 	}

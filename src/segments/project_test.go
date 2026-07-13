@@ -1,11 +1,13 @@
 package segments
 
 import (
+	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
@@ -642,6 +644,7 @@ func TestDotnetProject(t *testing.T) {
 			},
 		})
 		env.On("FileContent", tc.FileName).Return(tc.ProjectContents)
+		env.On("HasParentFilePath", "Directory.Build.props", false).Return((*runtime.FileInfo)(nil), errors.New("not found"))
 		pkg := &Project{}
 		pkg.Init(options.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
@@ -653,13 +656,14 @@ func TestDotnetProject(t *testing.T) {
 
 func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 	cases := []struct {
-		Case            string
-		SolutionFile    string
-		SubDirs         map[string][]fs.DirEntry // path -> entries returned by LsDir
-		FileContents    map[string]string        // path -> file content
-		Options         options.Map
-		ExpectedString  string
-		ExpectedEnabled bool
+		SubDirs             map[string][]fs.DirEntry
+		FileContents        map[string]string
+		Options             options.Map
+		DirectoryBuildProps *runtime.FileInfo
+		Case                string
+		SolutionFile        string
+		ExpectedString      string
+		ExpectedEnabled     bool
 	}{
 		{
 			Case:         ".sln with .csproj one level deep",
@@ -811,6 +815,49 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 			ExpectedEnabled: true,
 			ExpectedString:  "MyApp",
 		},
+		{
+			Case:         "TFM defined centrally in Directory.Build.props",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "App", isDir: true},
+				},
+				filepath.Join("posh", "App"): {
+					&MockDirEntry{name: "App.csproj"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln":                                    "",
+				filepath.Join("App", "App.csproj"):             "<Project><PropertyGroup></PropertyGroup></Project>",
+				filepath.Join("posh", "Directory.Build.props"): "<Project><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>",
+			},
+			DirectoryBuildProps: &runtime.FileInfo{
+				Path:         filepath.Join("posh", "Directory.Build.props"),
+				ParentFolder: "posh",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp  net10.0",
+		},
+		{
+			Case:         "no TFM anywhere, Directory.Build.props not found",
+			SolutionFile: "MyApp.sln",
+			SubDirs: map[string][]fs.DirEntry{
+				"posh": {
+					&MockDirEntry{name: "MyApp.sln"},
+					&MockDirEntry{name: "App", isDir: true},
+				},
+				filepath.Join("posh", "App"): {
+					&MockDirEntry{name: "App.csproj"},
+				},
+			},
+			FileContents: map[string]string{
+				"MyApp.sln":                        "",
+				filepath.Join("App", "App.csproj"): "<Project><PropertyGroup></PropertyGroup></Project>",
+			},
+			ExpectedEnabled: true,
+			ExpectedString:  "MyApp",
+		},
 	}
 
 	for _, tc := range cases {
@@ -833,6 +880,12 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 		// Set up FileContent mocks
 		for path, content := range tc.FileContents {
 			env.On("FileContent", path).Return(content)
+		}
+
+		if tc.DirectoryBuildProps != nil {
+			env.On("HasParentFilePath", "Directory.Build.props", false).Return(tc.DirectoryBuildProps, nil)
+		} else {
+			env.On("HasParentFilePath", "Directory.Build.props", false).Return((*runtime.FileInfo)(nil), errors.New("not found"))
 		}
 
 		opts := tc.Options

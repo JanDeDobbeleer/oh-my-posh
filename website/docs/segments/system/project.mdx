@@ -19,7 +19,8 @@ Supports:
 - PHP project (`composer.json`)
 - Dart project (`pubspec.yaml`)
 - Any nuspec based project (`*.nuspec`, first file match info is displayed)
-- .NET project (`*.sln`, `*.slnf`, `*.slnx`, `*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
+- .NET project (`*.sln`, `*.slnf`, `*.slnx`, `*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed). When the
+  matched project doesn't define a `TargetFramework`, it's resolved from the nearest `Directory.Build.props` up the directory tree
 - Julia project (`JuliaProject.toml`, `Project.toml`)
 - PowerShell project (`*.psd1`, first file match info is displayed)
 - Lean 4 project (`lakefile.lean`, `lakefile.toml`)

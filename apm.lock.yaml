@@ -1,6 +1,6 @@
 lockfile_version: '1'
-generated_at: '2026-07-11T11:54:13.541117+00:00'
-apm_version: 0.24.1
+generated_at: '2026-07-13T00:32:44.566495+00:00'
+apm_version: 0.25.0
 dependencies:
 - repo_url: ast-grep/agent-skill
   name: agent-skill
@@ -37,7 +37,7 @@ dependencies:
   deployed_file_hashes:
     .claude/rules/golang.md: sha256:6ebdb015cdee3b2b834cf794f3851d84113ee381025e5554a9fa814c1d54c4ad
     .github/instructions/golang.instructions.md: sha256:1f477c4204be1cc8b704ed3cddad0d3c3f1b9d4db3270ae9787de7c975807053
-  content_hash: sha256:cc899928ca2b32bcb7b5d59e8d151e430bc388d244261c97794e1b262dd5f320
+  content_hash: sha256:3ea7e0cefb98f178f2552d51b14906d4bac9028c42467b70f22d2ecbee08015e
 - repo_url: jandedobbeleer/agentic
   name: agentic-markdown
   host: github.com
@@ -52,7 +52,7 @@ dependencies:
   deployed_file_hashes:
     .claude/rules/markdown.md: sha256:223315c67ebf00bfb7ae7a0d288f1991a3ae8f736b8b2b0fd8468a5104b47893
     .github/instructions/markdown.instructions.md: sha256:91d656b4d6c90a8ae10ca520e2f5c9444a4b6add5520328f24ad2a919e0f4747
-  content_hash: sha256:1862a115c834b4b8f4d9e036c2f05fa934304f3f3f1b20e235da515b8f0dc44b
+  content_hash: sha256:95283b86401c5cc052eaaa4e9f71b34a673f1e1f311a70ed93937d4deba2d272
 - repo_url: jandedobbeleer/agentic
   name: agentic-powershell
   host: github.com
@@ -67,7 +67,7 @@ dependencies:
   deployed_file_hashes:
     .claude/rules/powershell.md: sha256:f17d5edda5ecc2aac8c86a32c03d32c8eccf0d945983ee70b404062d61f10a27
     .github/instructions/powershell.instructions.md: sha256:ae92d1111d4183847df527525c73d706fa1ef003d515964270f858eecf659449
-  content_hash: sha256:f159d7b75e7ecf3fa2c0cdf1d568799558320e06bcba5263c05e28487db68e5c
+  content_hash: sha256:b64a000548bd18ac79d7d5f5afbefaec3bb94b31765470a87a2e1ab5bb0749dd
 - repo_url: jandedobbeleer/agentic
   name: agentic
   host: github.com
@@ -181,3 +181,418 @@ dependencies:
     .claude/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
     .claude/skills/writing-clearly-and-concisely/signs-of-ai-writing.md: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
   content_hash: sha256:f2651cddb46c9695f38a30a75e9c247c41518a9d47f63256f6cafafe94d2a1ff
+deployments:
+- kind: project-relative
+  target: agents
+  value: .agents/skills/ast-grep
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: null
+- kind: project-relative
+  target: agents
+  value: .agents/skills/ast-grep/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+- kind: project-relative
+  target: agents
+  value: .agents/skills/ast-grep/references/rule_reference.md
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
+- kind: project-relative
+  target: agents
+  value: .agents/skills/conventional-commit
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/conventional-commit
+  active_owner: jandedobbeleer/agentic/skills/conventional-commit
+  content_hash: null
+- kind: project-relative
+  target: agents
+  value: .agents/skills/conventional-commit/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/conventional-commit
+  active_owner: jandedobbeleer/agentic/skills/conventional-commit
+  content_hash: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
+- kind: project-relative
+  target: agents
+  value: .agents/skills/golang
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/golang
+  active_owner: jandedobbeleer/agentic/skills/golang
+  content_hash: null
+- kind: project-relative
+  target: agents
+  value: .agents/skills/golang/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/golang
+  active_owner: jandedobbeleer/agentic/skills/golang
+  content_hash: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
+- kind: project-relative
+  target: agents
+  value: .agents/skills/markdown
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/markdown
+  active_owner: jandedobbeleer/agentic/skills/markdown
+  content_hash: null
+- kind: project-relative
+  target: agents
+  value: .agents/skills/markdown/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/markdown
+  active_owner: jandedobbeleer/agentic/skills/markdown
+  content_hash: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
+- kind: project-relative
+  target: agents
+  value: .agents/skills/powershell
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/powershell
+  active_owner: jandedobbeleer/agentic/skills/powershell
+  content_hash: null
+- kind: project-relative
+  target: agents
+  value: .agents/skills/powershell/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/powershell
+  active_owner: jandedobbeleer/agentic/skills/powershell
+  content_hash: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: null
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/README.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:cd8241146abf3e7514fdb07a6db2e06c8535a4f78dd1ab471901b2e7fe4db089
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:d2b345fcfc61e8143136e27b1ca2db9585c5fc46c63f0abd89a8547391349c36
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:248b18596fa18cf63605182688565d25d115c859f602068185f6014c26addbfe
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:8cead3fc56b54ab5fc22e52c14423182fdce2d9535d4c1dda1f8319cac542027
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:3867f33512ff2f0e965386dbb558579aab43ca10f070bd48d732584b9b5119e0
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:150feae0c201def056a96dd25fa5d23e015f53632b21f3bcd7b7266f8197c563
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
+- kind: project-relative
+  target: agents
+  value: .agents/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
+- kind: project-relative
+  target: claude
+  value: .claude/rules/golang.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/instructions/golang.instructions.md
+  active_owner: jandedobbeleer/agentic/instructions/golang.instructions.md
+  content_hash: sha256:6ebdb015cdee3b2b834cf794f3851d84113ee381025e5554a9fa814c1d54c4ad
+- kind: project-relative
+  target: claude
+  value: .claude/rules/markdown.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/instructions/markdown.instructions.md
+  active_owner: jandedobbeleer/agentic/instructions/markdown.instructions.md
+  content_hash: sha256:223315c67ebf00bfb7ae7a0d288f1991a3ae8f736b8b2b0fd8468a5104b47893
+- kind: project-relative
+  target: claude
+  value: .claude/rules/powershell.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/instructions/powershell.instructions.md
+  active_owner: jandedobbeleer/agentic/instructions/powershell.instructions.md
+  content_hash: sha256:f17d5edda5ecc2aac8c86a32c03d32c8eccf0d945983ee70b404062d61f10a27
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ast-grep
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ast-grep/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+- kind: project-relative
+  target: claude
+  value: .claude/skills/ast-grep/references/rule_reference.md
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
+- kind: project-relative
+  target: claude
+  value: .claude/skills/conventional-commit
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/conventional-commit
+  active_owner: jandedobbeleer/agentic/skills/conventional-commit
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/conventional-commit/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/conventional-commit
+  active_owner: jandedobbeleer/agentic/skills/conventional-commit
+  content_hash: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
+- kind: project-relative
+  target: claude
+  value: .claude/skills/golang
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/golang
+  active_owner: jandedobbeleer/agentic/skills/golang
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/golang/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/golang
+  active_owner: jandedobbeleer/agentic/skills/golang
+  content_hash: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
+- kind: project-relative
+  target: claude
+  value: .claude/skills/markdown
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/markdown
+  active_owner: jandedobbeleer/agentic/skills/markdown
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/markdown/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/markdown
+  active_owner: jandedobbeleer/agentic/skills/markdown
+  content_hash: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/powershell
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/powershell
+  active_owner: jandedobbeleer/agentic/skills/powershell
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/powershell/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/powershell
+  active_owner: jandedobbeleer/agentic/skills/powershell
+  content_hash: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/README.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:cd8241146abf3e7514fdb07a6db2e06c8535a4f78dd1ab471901b2e7fe4db089
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:d2b345fcfc61e8143136e27b1ca2db9585c5fc46c63f0abd89a8547391349c36
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:248b18596fa18cf63605182688565d25d115c859f602068185f6014c26addbfe
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:8cead3fc56b54ab5fc22e52c14423182fdce2d9535d4c1dda1f8319cac542027
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:3867f33512ff2f0e965386dbb558579aab43ca10f070bd48d732584b9b5119e0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:150feae0c201def056a96dd25fa5d23e015f53632b21f3bcd7b7266f8197c563
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
+- kind: project-relative
+  target: copilot
+  value: .github/instructions/golang.instructions.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/instructions/golang.instructions.md
+  active_owner: jandedobbeleer/agentic/instructions/golang.instructions.md
+  content_hash: sha256:1f477c4204be1cc8b704ed3cddad0d3c3f1b9d4db3270ae9787de7c975807053
+- kind: project-relative
+  target: copilot
+  value: .github/instructions/markdown.instructions.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/instructions/markdown.instructions.md
+  active_owner: jandedobbeleer/agentic/instructions/markdown.instructions.md
+  content_hash: sha256:91d656b4d6c90a8ae10ca520e2f5c9444a4b6add5520328f24ad2a919e0f4747
+- kind: project-relative
+  target: copilot
+  value: .github/instructions/powershell.instructions.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/instructions/powershell.instructions.md
+  active_owner: jandedobbeleer/agentic/instructions/powershell.instructions.md
+  content_hash: sha256:ae92d1111d4183847df527525c73d706fa1ef003d515964270f858eecf659449

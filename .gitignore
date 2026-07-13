@@ -181,6 +181,7 @@ Output/
 
 # go releaser
 /src/dist
+/src/gomodcache
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos

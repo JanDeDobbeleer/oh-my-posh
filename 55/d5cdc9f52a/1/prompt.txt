@@ -1,0 +1,1 @@
+review this PR: https://github.com/JanDeDobbeleer/oh-my-posh/pull/7369

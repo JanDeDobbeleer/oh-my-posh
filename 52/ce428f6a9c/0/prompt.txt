@@ -1,0 +1,14 @@
+The release pipeline fails because we did a recent change, and now apparently Go Releaser cannot work anymore. What is the proper fix?  GoReleaser v2.3.2 installed successfully
+Using src as working directory
+C:\hostedtoolcache\windows\goreleaser-action\2.3.2\x64\goreleaser.exe release --clean --skip publish
+  • skipping announce and publish...
+  • cleaning distribution directory
+  • loading environment variables
+  • getting and validating git state
+    • couldn't find any tags before "29.27.0"
+    • git state                                      commit=552e38f85077118f0d7780131cf1d2cb7d5af8d9 branch=main current_tag=29.27.0 previous_tag=<unknown> dirty=true
+  ⨯ release failed after 0s                  error=git is in a dirty state
+Please check in your pipeline what can be changing the following files:
+?? src/gomodcache/
+
+Learn more at https://goreleaser.com/errors/dirty

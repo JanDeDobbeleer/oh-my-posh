@@ -156,15 +156,32 @@ func (e *Engine) transientPWSH(str, padText, rightStr string, length, rightLengt
 	return str + terminal.SaveCursorPosition() + padText + rightStr + terminal.RestoreCursorPosition()
 }
 
+// TransientRPrompt renders only the transient prompt's right-aligned template.
+// Shells with a native right prompt function use this independently from the
+// transient prompt's left side.
+func (e *Engine) TransientRPrompt() string {
+	prompt := e.Config.TransientPrompt
+	if prompt == nil {
+		return ""
+	}
+
+	foreground := color.Ansi(prompt.ForegroundTemplates.FirstMatch(nil, string(prompt.Foreground)))
+	background := color.Ansi(prompt.BackgroundTemplates.FirstMatch(nil, string(prompt.Background)))
+	terminal.SetColors(background, foreground)
+
+	str, _ := e.renderRightTemplate(prompt, background, foreground)
+	return str
+}
+
 // renderRightTemplate renders the transient prompt's right-aligned template.
-// Only zsh (via RPROMPT) and pwsh (via cursor save/restore) can display it.
+// Only shells with a supported native or emulated right prompt can display it.
 func (e *Engine) renderRightTemplate(prompt *config.Segment, background, foreground color.Ansi) (string, int) {
 	if len(prompt.RightTemplate) == 0 {
 		return "", 0
 	}
 
 	switch e.Env.Shell() {
-	case shell.ZSH, shell.PWSH:
+	case shell.ZSH, shell.PWSH, shell.FISH:
 	default:
 		return "", 0
 	}

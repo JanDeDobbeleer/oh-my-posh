@@ -226,8 +226,86 @@ func TestExtraPromptTransientPWSHNewline(t *testing.T) {
 	assert.Equal(t, expected, got)
 }
 
-func TestExtraPromptRightTemplateUnsupportedShell(t *testing.T) {
+func TestExtraPromptTransientFish(t *testing.T) {
+	cases := []struct {
+		TerminalErr   error
+		Case          string
+		RightTemplate string
+		Filler        string
+		ExpectedLeft  string
+		ExpectedRight string
+		TerminalWidth int
+	}{
+		{
+			Case:         "no right template - byte identical to previous behavior",
+			ExpectedLeft: "L>",
+		},
+		{
+			Case:          "right template is returned separately",
+			RightTemplate: "R>",
+			ExpectedLeft:  "L>",
+			ExpectedRight: "R>",
+		},
+		{
+			Case:          "right template and filler",
+			RightTemplate: "R>",
+			Filler:        "-",
+			TerminalWidth: 20,
+			ExpectedLeft:  "L>" + strings.Repeat("-", 16),
+			ExpectedRight: "R>",
+		},
+		{
+			Case:          "right template and filler with unknown terminal width",
+			RightTemplate: "R>",
+			Filler:        "-",
+			TerminalErr:   errors.New("burp"),
+			ExpectedLeft:  "L>",
+			ExpectedRight: "R>",
+		},
+		{
+			Case:          "right template and filler with insufficient width",
+			RightTemplate: "R>",
+			Filler:        "-",
+			TerminalWidth: 3,
+			ExpectedLeft:  "L>",
+			ExpectedRight: "R>",
+		},
+	}
+
+	for _, tc := range cases {
+		env := setupExtraPromptTest(shell.FISH, &runtime.Flags{})
+		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalErr)
+
+		engine := &Engine{
+			Config: &config.Config{
+				TransientPrompt: &config.Segment{
+					Template:      "L>",
+					RightTemplate: tc.RightTemplate,
+					Filler:        tc.Filler,
+				},
+			},
+			Env: env,
+		}
+
+		assert.Equal(t, tc.ExpectedLeft, engine.ExtraPrompt(Transient), tc.Case)
+		assert.Equal(t, tc.ExpectedRight, engine.TransientRPrompt(), tc.Case)
+	}
+}
+
+func TestTransientRPromptTemplateError(t *testing.T) {
 	env := setupExtraPromptTest(shell.FISH, &runtime.Flags{})
+	engine := &Engine{
+		Config: &config.Config{
+			TransientPrompt: &config.Segment{RightTemplate: "{{"},
+		},
+		Env: env,
+	}
+
+	assert.NotEmpty(t, engine.TransientRPrompt())
+}
+
+func TestExtraPromptRightTemplateUnsupportedShell(t *testing.T) {
+	env := setupExtraPromptTest(shell.BASH, &runtime.Flags{})
 
 	engine := &Engine{
 		Config: &config.Config{

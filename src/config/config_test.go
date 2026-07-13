@@ -165,6 +165,37 @@ func TestFeaturesShellIntegration(t *testing.T) {
 	}
 }
 
+func TestFeaturesTransientRightPrompt(t *testing.T) {
+	cases := []struct {
+		Case          string
+		RightTemplate string
+		ExpectedFeats shell.Features
+	}{
+		{
+			Case:          "transient prompt without right template",
+			ExpectedFeats: shell.Transient | shell.KeyHandlers,
+		},
+		{
+			Case:          "transient prompt with right template",
+			RightTemplate: "R>",
+			ExpectedFeats: shell.Transient | shell.TransientRPrompt | shell.KeyHandlers,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return(shell.FISH)
+
+		cfg := &Config{
+			TransientPrompt: &Segment{RightTemplate: tc.RightTemplate},
+			Upgrade:         &upgrade.Config{},
+		}
+
+		got := cfg.Features(env)
+		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
+	}
+}
+
 func TestFeaturesVIMode(t *testing.T) {
 	cases := []struct {
 		Case          string

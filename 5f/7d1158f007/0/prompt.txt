@@ -1,0 +1,1 @@
+still an issue here https://github.com/JanDeDobbeleer/oh-my-posh/actions/runs/29260087477/job/86850737756 should we just moved the part AFTER we build the binaries?

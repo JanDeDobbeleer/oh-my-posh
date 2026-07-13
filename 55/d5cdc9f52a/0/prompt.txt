@@ -1,0 +1,5 @@
+create a PR aginst next to solve this issue: https://github.com/JanDeDobbeleer/oh-my-posh/issues/7670 analyse and use sonnet 5 to do the changes
+
+---
+
+don't create a pr, just a commit

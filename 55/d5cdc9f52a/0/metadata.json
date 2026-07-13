@@ -1,0 +1,53 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "55d5cdc9f52a",
+  "session_id": "3b64e48c-b2c8-45bb-a948-4ad6366272ac",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-13T10:59:43.1269231Z",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/segments/project.go",
+    "src/segments/project_test.go",
+    "website/docs/segments/system/project.mdx"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "e78458c4348e",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 17387,
+    "cache_creation_tokens": 78715,
+    "cache_read_tokens": 4229920,
+    "output_tokens": 16155,
+    "api_call_count": 51
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-13T10:59:43.054404Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 2,
+    "human_removed": 6,
+    "total_committed": 0,
+    "total_lines_changed": 8,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 72,
+      "user_lines_removed": 7,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/segments/project.go": 12,
+        "src/segments/project_test.go": 60
+      },
+      "user_removed_per_file": {
+        "src/segments/project_test.go": 7
+      }
+    }
+  ]
+}

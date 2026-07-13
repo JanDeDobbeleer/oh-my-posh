@@ -3666,6 +3666,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kovjanos",
+      "name": "Janos Kovacs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3199212?v=4",
+      "profile": "https://github.com/kovjanos",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

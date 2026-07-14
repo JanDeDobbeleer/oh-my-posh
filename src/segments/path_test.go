@@ -201,11 +201,12 @@ func TestFullAndFolderPath(t *testing.T) {
 }
 
 type testFullPathCustomMappedLocationsCase struct {
-	Pwd             string
-	MappedLocations map[string]string
-	GOOS            string
-	PathSeparator   string
-	Expected        string
+	Pwd                        string
+	MappedLocations            map[string]string
+	GOOS                       string
+	PathSeparator              string
+	Expected                   string
+	MappedLocationsRegexExpand bool
 }
 
 func TestFullPathCustomMappedLocations(t *testing.T) {
@@ -219,6 +220,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		}
 
 		env.On("GOOS").Return(tc.GOOS)
+		env.On("IsWsl").Return(false)
 
 		if tc.PathSeparator == "" {
 			tc.PathSeparator = "/"
@@ -237,9 +239,10 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		template.Init(env, nil, nil)
 
 		props := options.Map{
-			options.Style:          Full,
-			MappedLocationsEnabled: false,
-			MappedLocations:        tc.MappedLocations,
+			options.Style:              Full,
+			MappedLocationsEnabled:     false,
+			MappedLocations:            tc.MappedLocations,
+			MappedLocationsRegexExpand: tc.MappedLocationsRegexExpand,
 		}
 
 		path := &Path{}

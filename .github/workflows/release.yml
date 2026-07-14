@@ -70,13 +70,6 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         run: |
           ./pre.ps1 -Version ${{ needs.changelog.outputs.version }} -SDKVersion "10.0.26100.0"
-      - name: Package Go module dependencies 📦
-        working-directory: ${{ github.workspace }}/src
-        run: |
-          $env:GOMODCACHE = Join-Path $env:RUNNER_TEMP "gomodcache"
-          go mod download -modcacherw
-          New-Item -ItemType Directory -Force -Path dist | Out-Null
-          tar -acf "dist/oh-my-posh-${{ needs.changelog.outputs.version }}-deps.tar.xz" -C $env:RUNNER_TEMP gomodcache
       - name: Run GoReleaser 🚀
         uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94
         with:
@@ -88,6 +81,13 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      - name: Package Go module dependencies 📦
+        working-directory: ${{ github.workspace }}/src
+        run: |
+          $env:GOMODCACHE = Join-Path $env:RUNNER_TEMP "gomodcache"
+          go mod download -modcacherw
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          tar -acf "dist/oh-my-posh-${{ needs.changelog.outputs.version }}-deps.tar.xz" -C $env:RUNNER_TEMP gomodcache
       - name: Post Build 🤐
         run: |
           ./post.ps1

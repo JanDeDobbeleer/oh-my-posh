@@ -6,8 +6,6 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
 type PlasticStatus struct {
@@ -34,11 +32,6 @@ type Plastic struct {
 	Scm
 	Behind       bool
 	MergePending bool
-}
-
-func (p *Plastic) Init(props options.Provider, env runtime.Environment) {
-	p.options = props
-	p.env = env
 }
 
 func (p *Plastic) Template() string {

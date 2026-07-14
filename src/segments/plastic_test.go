@@ -332,3 +332,17 @@ func TestPlasticTemplateString(t *testing.T) {
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Plastic), tc.Case)
 	}
 }
+
+func TestPlasticInitializesBaseSegment(t *testing.T) {
+	env := new(mock.Environment)
+
+	p := &Plastic{}
+	p.Init(options.Map{}, env)
+
+	// Plastic used to shadow Base.Init without setting Base.Segment, making
+	// SetText panic with a nil pointer dereference once the segment rendered.
+	p.SetText("main")
+	p.SetIndex(1)
+
+	assert.Equal(t, "main", p.Text())
+}

@@ -67,6 +67,10 @@ func drainBlockResults(out chan result, count int, executed map[string]bool) []*
 // fully populated for all blocks before this is called (via drainBlockResults),
 // so that cross-block .Segments.X dependencies resolve in both directions.
 func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Block, executed map[string]bool) (string, int) {
+	if block.RestartCycle {
+		cycle = &e.Config.Cycle
+	}
+
 	e.writeSegments(results, block, executed)
 
 	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {

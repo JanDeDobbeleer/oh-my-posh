@@ -37,6 +37,7 @@ type Block struct {
 	Segments        []*Segment     `json:"segments,omitempty" toml:"segments,omitempty" yaml:"segments,omitempty"`
 	Newline         bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
 	Force           bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+	RestartCycle    bool           `json:"restart_cycle,omitempty" toml:"restart_cycle,omitempty" yaml:"restart_cycle,omitempty"`
 	Index           int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
 }
 

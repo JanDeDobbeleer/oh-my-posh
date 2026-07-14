@@ -301,6 +301,10 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 
 // renderBlockFromCache re-renders a block using existing segment data without re-execution
 func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) bool {
+	if block.RestartCycle {
+		cycle = &e.Config.Cycle
+	}
+
 	// Re-render all segments in the block
 	for segmentIndex, segment := range block.Segments {
 		// Allow pending segments to render (they show "..." text)

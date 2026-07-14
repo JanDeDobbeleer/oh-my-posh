@@ -344,6 +344,12 @@
           "description": "https://ohmyposh.dev/docs/configuration/block#force",
           "default": false
         },
+        "restart_cycle": {
+          "type": "boolean",
+          "title": "Restart cycle",
+          "description": "https://ohmyposh.dev/docs/configuration/block#restart-cycle",
+          "default": false
+        },
         "index": {
           "type": "integer",
           "title": "Index",

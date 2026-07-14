@@ -245,12 +245,103 @@ func read(configFile string, h hashWriter) (*Config, error) {
 		return nil, ErrParse
 	}
 
+	populatePresence(&cfg, data)
+
 	_, err = h.Write(data)
 	if err != nil {
 		log.Error(err)
 	}
 
 	return &cfg, nil
+}
+
+// populatePresence records which top-level keys - and, within them, which
+// block and segment keys - were present in the decoded source config. merge()
+// consults this to distinguish an explicitly set zero value from a field the
+// source never mentioned for bool/int/uint/float fields (see merge.go).
+// It re-decodes data generically using the same per-format decoder already
+// selected for cfg.Format; a decode failure here is non-fatal and only means
+// presence tracking is skipped for this config (cfg keeps its already-parsed
+// values, merge falls back to legacy isZeroValue semantics for it).
+func populatePresence(cfg *Config, data []byte) {
+	var generic map[string]any
+
+	var err error
+	switch cfg.Format {
+	case YAML:
+		err = yaml.Unmarshal(data, &generic)
+	case JSON:
+		err = json.Unmarshal(data, &generic)
+	case TOML:
+		err = toml.Unmarshal(data, &generic)
+	}
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	root, err := normalize(generic)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	cfg.presentFields = presenceSet(root)
+
+	populateBlockPresence(cfg, root)
+}
+
+func populateBlockPresence(cfg *Config, root map[string]json.RawMessage) {
+	blocksRaw, OK := root["blocks"]
+	if !OK {
+		return
+	}
+
+	var rawBlocks []map[string]json.RawMessage
+	if err := json.Unmarshal(blocksRaw, &rawBlocks); err != nil {
+		log.Error(err)
+		return
+	}
+
+	if len(rawBlocks) != len(cfg.Blocks) {
+		return
+	}
+
+	for i, rawBlock := range rawBlocks {
+		cfg.Blocks[i].presentFields = presenceSet(rawBlock)
+		populateSegmentPresence(cfg.Blocks[i], rawBlock)
+	}
+}
+
+func populateSegmentPresence(block *Block, rawBlock map[string]json.RawMessage) {
+	segmentsRaw, OK := rawBlock["segments"]
+	if !OK {
+		return
+	}
+
+	var rawSegments []map[string]json.RawMessage
+	if err := json.Unmarshal(segmentsRaw, &rawSegments); err != nil {
+		log.Error(err)
+		return
+	}
+
+	if len(rawSegments) != len(block.Segments) {
+		return
+	}
+
+	for i, rawSegment := range rawSegments {
+		block.Segments[i].presentFields = presenceSet(rawSegment)
+	}
+}
+
+func presenceSet(root map[string]json.RawMessage) map[string]bool {
+	presence := make(map[string]bool, len(root))
+	for key := range root {
+		presence[key] = true
+	}
+
+	return presence
 }
 
 func getData(configFile string) ([]byte, error) {

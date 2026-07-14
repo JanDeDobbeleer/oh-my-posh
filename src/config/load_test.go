@@ -127,3 +127,107 @@ func TestParseExtendsCycleDoesNotHang(t *testing.T) {
 		t.Fatal("Parse did not return, circular extends was not detected")
 	}
 }
+
+// writeConfigFile writes contents to name inside dir and fails the test on error.
+func writeConfigFile(t *testing.T, dir, name, contents string) string {
+	t.Helper()
+
+	file := filepath.Join(dir, name)
+	if err := os.WriteFile(file, []byte(contents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	return file
+}
+
+// TestParseExtendsPreservesUnsetScalarFields exercises merge() through the
+// real Parse() pipeline (not hand-built structs), because presence tracking
+// only exists once a config has gone through read()'s decode step. It proves
+// two things for a bool field (Config.FinalSpace) and an int field
+// (Segment.MinWidth):
+//   - a field the extending (override) config never mentions no longer
+//     clobbers the base config's explicitly set value (the reported bug).
+//   - a field the extending config explicitly sets - including to its zero
+//     value - still overrides the base config's value, unchanged behavior.
+//
+// Config, Block, and Segment have no exported uint/float scalar field, so the
+// explicit-zero-override case is demonstrated with Segment.MinWidth (an int)
+// instead; the same presence-aware code path (skipField/isScalarKind in
+// merge.go) handles bool/int/uint/float identically.
+func TestParseExtendsPreservesUnsetScalarFields(t *testing.T) {
+	const base = `{
+		"version": 3,
+		"final_space": true,
+		"blocks": [
+			{
+				"type": "prompt",
+				"alignment": "left",
+				"segments": [
+					{ "type": "path", "min_width": 5 }
+				]
+			}
+		]
+	}`
+
+	cases := []struct {
+		name               string
+		override           string
+		expectedFinalSpace bool
+		expectedMinWidth   int
+	}{
+		{
+			name: "omitted fields fall back to the base config's values",
+			override: `{
+				"version": 3,
+				"extends": "base.json",
+				"blocks": [
+					{
+						"type": "prompt",
+						"alignment": "left",
+						"segments": [
+							{ "type": "path" }
+						]
+					}
+				]
+			}`,
+			expectedFinalSpace: true,
+			expectedMinWidth:   5,
+		},
+		{
+			name: "explicit false/zero overrides still win",
+			override: `{
+				"version": 3,
+				"extends": "base.json",
+				"final_space": false,
+				"blocks": [
+					{
+						"type": "prompt",
+						"alignment": "left",
+						"segments": [
+							{ "type": "path", "min_width": 0 }
+						]
+					}
+				]
+			}`,
+			expectedFinalSpace: false,
+			expectedMinWidth:   0,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+
+			writeConfigFile(t, dir, "base.json", base)
+			overridePath := writeConfigFile(t, dir, "override.json", tc.override)
+
+			cfg, err := Parse(overridePath)
+			require.NoError(t, err)
+
+			assert.Equal(t, tc.expectedFinalSpace, cfg.FinalSpace)
+			require.Len(t, cfg.Blocks, 1)
+			require.Len(t, cfg.Blocks[0].Segments, 1)
+			assert.Equal(t, tc.expectedMinWidth, cfg.Blocks[0].Segments[0].MinWidth)
+		})
+	}
+}

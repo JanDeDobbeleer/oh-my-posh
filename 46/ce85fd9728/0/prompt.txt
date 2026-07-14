@@ -1,0 +1,1 @@
+Ideally, we only point in the co-pilot-instructions.md to agent.md, but maybe there is information in co-pilot instructions that needs to be added into agent.md first before doing so. Validate that whatever is in the co-parted structure might not be relevant in the memory instead of here.

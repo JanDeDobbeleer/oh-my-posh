@@ -43,7 +43,8 @@ type Segment struct {
 	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
 	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
-	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
+	presentFields          map[string]bool
+	Alias                  string `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
 	foregroundCache        color.Ansi
 	backgroundCache        color.Ansi
@@ -90,6 +91,18 @@ type Segment struct {
 	backgroundResolved bool
 	needsEvaluated     bool
 	evaluated          bool
+}
+
+// fieldPresent reports whether name (a json tag key) was present in the
+// source segment entry. A nil presentFields map means presence was never
+// recorded, in which case every field is treated as present, preserving
+// merge's legacy unconditional-overwrite behavior for such segments.
+func (segment *Segment) fieldPresent(name string) bool {
+	if segment.presentFields == nil {
+		return true
+	}
+
+	return segment.presentFields[name]
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling

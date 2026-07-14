@@ -50,32 +50,33 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Palette                 color.Palette          `json:"palette,omitempty" toml:"palette,omitempty" yaml:"palette,omitempty"`
-	DebugPrompt             *Segment               `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty" yaml:"debug_prompt,omitempty"`
-	Var                     map[string]any         `json:"var,omitempty" toml:"var,omitempty" yaml:"var,omitempty"`
-	Palettes                *color.Palettes        `json:"palettes,omitempty" toml:"palettes,omitempty" yaml:"palettes,omitempty"`
-	ValidLine               *Segment               `json:"valid_line,omitempty" toml:"valid_line,omitempty" yaml:"valid_line,omitempty"`
-	SecondaryPrompt         *Segment               `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty" yaml:"secondary_prompt,omitempty"`
-	TransientPrompt         *Segment               `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty" yaml:"transient_prompt,omitempty"`
-	ErrorLine               *Segment               `json:"error_line,omitempty" toml:"error_line,omitempty" yaml:"error_line,omitempty"`
-	Maps                    *maps.Config           `json:"maps,omitempty" toml:"maps,omitempty" yaml:"maps,omitempty"`
-	Upgrade                 *upgrade.Config        `json:"upgrade,omitempty" toml:"upgrade,omitempty" yaml:"upgrade,omitempty"`
+	Palette                 color.Palette      `json:"palette,omitempty" toml:"palette,omitempty" yaml:"palette,omitempty"`
+	DebugPrompt             *Segment           `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty" yaml:"debug_prompt,omitempty"`
+	Var                     map[string]any     `json:"var,omitempty" toml:"var,omitempty" yaml:"var,omitempty"`
+	Palettes                *color.Palettes    `json:"palettes,omitempty" toml:"palettes,omitempty" yaml:"palettes,omitempty"`
+	ValidLine               *Segment           `json:"valid_line,omitempty" toml:"valid_line,omitempty" yaml:"valid_line,omitempty"`
+	SecondaryPrompt         *Segment           `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty" yaml:"secondary_prompt,omitempty"`
+	TransientPrompt         *Segment           `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty" yaml:"transient_prompt,omitempty"`
+	ErrorLine               *Segment           `json:"error_line,omitempty" toml:"error_line,omitempty" yaml:"error_line,omitempty"`
+	Maps                    *maps.Config       `json:"maps,omitempty" toml:"maps,omitempty" yaml:"maps,omitempty"`
+	Upgrade                 *upgrade.Config    `json:"upgrade,omitempty" toml:"upgrade,omitempty" yaml:"upgrade,omitempty"`
+	TerminalFeatures        *terminal.Features `json:"terminal_features,omitempty" toml:"terminal_features,omitempty" yaml:"terminal_features,omitempty"`
+	presentFields           map[string]bool
 	Extends                 string                 `json:"extends,omitempty" toml:"extends,omitempty" yaml:"extends,omitempty"`
-	AccentColor             color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty" yaml:"accent_color,omitempty"`
-	ConsoleTitleTemplate    string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty" yaml:"console_title_template,omitempty"`
 	PWD                     string                 `json:"pwd,omitempty" toml:"pwd,omitempty" yaml:"pwd,omitempty"`
 	Source                  string                 `json:"-" toml:"-" yaml:"-"`
 	Format                  string                 `json:"-" toml:"-" yaml:"-"`
 	TerminalBackground      color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty" yaml:"terminal_background,omitempty"`
 	ToolTipsAction          Action                 `json:"tooltips_action,omitempty" toml:"tooltips_action,omitempty" yaml:"tooltips_action,omitempty"`
+	ConsoleTitleTemplate    string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty" yaml:"console_title_template,omitempty"`
+	AccentColor             color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty" yaml:"accent_color,omitempty"`
 	Blocks                  []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty" yaml:"blocks,omitempty"`
-	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`
 	ITermFeatures           terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty" yaml:"iterm_features,omitempty"`
-	TerminalFeatures        *terminal.Features     `json:"terminal_features,omitempty" toml:"terminal_features,omitempty" yaml:"terminal_features,omitempty"`
 	Tooltips                []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty" yaml:"tooltips,omitempty"`
+	Cycle                   color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty" yaml:"cycle,omitempty"`
 	hash                    uint64
 	Version                 int  `json:"version" toml:"version" yaml:"version"`
-	MigrateGlyphs           bool `json:"-" toml:"-" yaml:"-"`
+	Streaming               int  `json:"streaming,omitempty" toml:"streaming,omitempty" yaml:"streaming,omitempty"`
 	Async                   bool `json:"async,omitempty" toml:"async,omitempty" yaml:"async,omitempty"`
 	ShellIntegration        bool `json:"shell_integration,omitempty" toml:"shell_integration,omitempty" yaml:"shell_integration,omitempty"`
 	FinalSpace              bool `json:"final_space,omitempty" toml:"final_space,omitempty" yaml:"final_space,omitempty"`
@@ -84,7 +85,7 @@ type Config struct {
 	PatchPwshBleed          bool `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty" yaml:"patch_pwsh_bleed,omitempty"`
 	AutoUpgrade             bool `json:"-" toml:"-" yaml:"-"`
 	EnableCursorPositioning bool `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty" yaml:"enable_cursor_positioning,omitempty"`
-	Streaming               int  `json:"streaming,omitempty" toml:"streaming,omitempty" yaml:"streaming,omitempty"`
+	MigrateGlyphs           bool `json:"-" toml:"-" yaml:"-"`
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {
@@ -250,6 +251,19 @@ func (cfg *Config) upgradeFeatures() shell.Features {
 
 func (cfg *Config) Hash() uint64 {
 	return cfg.hash
+}
+
+// fieldPresent reports whether name (a json tag key) was present in the
+// source config file. A nil presentFields map means presence was never
+// recorded (e.g. a struct literal built without read()), in which case every
+// field is treated as present, preserving merge's legacy unconditional-
+// overwrite behavior for such configs.
+func (cfg *Config) fieldPresent(name string) bool {
+	if cfg.presentFields == nil {
+		return true
+	}
+
+	return cfg.presentFields[name]
 }
 
 // migrateSegmentProperties migrates the deprecated Properties field to Options for all segments.

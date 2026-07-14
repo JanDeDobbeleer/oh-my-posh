@@ -4,9 +4,19 @@ import (
 	"errors"
 	"reflect"
 	"slices"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
+
+// presenceAware is implemented by config types (Config, Block, Segment) that
+// record which of their fields were present in the source file. merge() uses
+// it to tell "the source explicitly set this scalar to its zero value" apart
+// from "the source never mentioned this field", a distinction bool/int/uint/
+// float fields otherwise lose once decoded into their Go zero value.
+type presenceAware interface {
+	fieldPresent(name string) bool
+}
 
 type matcher interface {
 	key() any
@@ -133,8 +143,12 @@ func merge(override, base any, skipFields ...string) error {
 		overrideField := overrideValue.Field(i)
 		baseField := baseValue.FieldByName(field.Name)
 
-		// Skip unexported fields or fields that can't be set
-		if isZeroValue(overrideField) || !baseField.CanSet() {
+		// Skip fields that can't be set
+		if !baseField.CanSet() {
+			continue
+		}
+
+		if skipField(override, overrideField, &field) {
 			continue
 		}
 
@@ -155,12 +169,56 @@ func merge(override, base any, skipFields ...string) error {
 			continue
 		}
 
-		if baseField.CanSet() {
-			baseField.Set(overrideField)
-		}
+		baseField.Set(overrideField)
 	}
 
 	return nil
+}
+
+// skipField decides whether overrideField should be left alone during merge.
+// For scalar kinds (bool/int/uint/float) whose zero value is ambiguous between
+// "explicitly set" and "absent from the source", it consults override's
+// field-presence data (when available) instead of isZeroValue. All other
+// kinds keep the original isZeroValue behavior unchanged.
+func skipField(override any, overrideField reflect.Value, field *reflect.StructField) bool {
+	if !isScalarKind(overrideField.Kind()) {
+		return isZeroValue(overrideField)
+	}
+
+	jsonKey := jsonFieldName(field)
+	if jsonKey == "" || jsonKey == "-" {
+		// No source key to look up presence for (internal/runtime-only field
+		// that is never decoded from a config file) - fall back to legacy
+		// behavior.
+		return isZeroValue(overrideField)
+	}
+
+	pa, OK := override.(presenceAware)
+	if !OK {
+		return isZeroValue(overrideField)
+	}
+
+	return !pa.fieldPresent(jsonKey)
+}
+
+func isScalarKind(k reflect.Kind) bool {
+	switch k {
+	case reflect.Bool,
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64:
+		return true
+	default:
+		return false
+	}
+}
+
+// jsonFieldName returns the source key name a struct field decodes from,
+// derived from its json tag (e.g. "final_space,omitempty" -> "final_space").
+func jsonFieldName(field *reflect.StructField) string {
+	tag := field.Tag.Get("json")
+	name, _, _ := strings.Cut(tag, ",")
+	return name
 }
 
 func isZeroValue(v reflect.Value) bool {

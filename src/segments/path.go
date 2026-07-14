@@ -102,6 +102,10 @@ const (
 	MappedLocations options.Option = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
 	MappedLocationsEnabled options.Option = "mapped_locations_enabled"
+	// MappedLocationsRegexExpand enables expanding capture group references ($1, ${name}, ...)
+	// in a regex mapped_locations value using the full regex match, instead of only substituting
+	// the first capture group.
+	MappedLocationsRegexExpand options.Option = "mapped_locations_regex_expand"
 	// MaxDepth Maximum path depth to display without shortening
 	MaxDepth options.Option = "max_depth"
 	// MaxWidth Maximum path width to display for powerlevel style
@@ -711,6 +715,18 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 		// Add (?i) at the start of the pattern for case-insensitive matching on Windows
 		if pt.windowsPath || (pt.env.IsWsl() && strings.HasPrefix(input, "/mnt/")) {
 			pattern = "(?i)" + pattern
+		}
+
+		if pt.options.Bool(MappedLocationsRegexExpand, false) {
+			if !regex.MatchString(pattern, input) {
+				return "", false
+			}
+
+			// Replace the full match, expanding $1, ${name}, etc. from the mapped location.
+			input = regex.ReplaceAllString(pattern, input, pt.mappedLocations[key])
+			input = path.Clean(input)
+
+			return input, true
 		}
 
 		match, OK := regex.FindStringMatch(pattern, input, 1)

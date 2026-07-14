@@ -60,12 +60,11 @@ Allows you to override a location with an icon/string.
 It validates if the current path **starts with the specific elements** and replaces it with the icon/string if there's a match.
 To avoid issues with nested overrides, Oh My Posh will sort the list of mapped locations before doing a replacement.
 
-| Name                       |   Type    | Default | Description                                                                              |
-| -------------------------- | :-------: | :-----: | ---------------------------------------------------------------------------------------- |
-| `mapped_locations_enabled` | `boolean` | `true`  | replace known locations in the path with the replacements before applying the style      |
-| `mapped_locations`         | `object`  |         | custom glyph/text for specific paths. Works regardless of the `mapped_locations_enabled` |
-
-setting.
+| Name                            |    Type   | Default | Description                                                                                       |
+| ------------------------------- | :-------: | :-----: | ------------------------------------------------------------------------------------------------- |
+| `mapped_locations_enabled`      | `boolean` |  `true` | replace known locations in the path with the replacements before applying the style               |
+| `mapped_locations`              |  `object` |         | custom glyph/text for specific paths. Works regardless of the `mapped_locations_enabled` setting  |
+| `mapped_locations_regex_expand` | `boolean` | `false` | expand `$1`, `${name}`, etc. in a `re:` replacement value, see [below](#expanding-capture-groups) |
 
 For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do the following:
 
@@ -104,6 +103,33 @@ will always use `/`, regardless of the operating system, allowing cross platform
 
 Same as for standard replacements, the match is case insensitive on Windows and WSL mounted drives, but case-sensitive on
 other operating systems.
+
+### Expanding capture groups
+
+By default, only the first capture group is used, and its matched text is replaced as-is; additional groups, whether
+positional or named, are ignored. Set `mapped_locations_regex_expand` to `true` to reference capture groups in the
+replacement value instead, using `$1`, `$2`, or `${name}` for named groups. When enabled, the full regex match (not
+just the first capture group) is replaced with the expanded value.
+
+For example, to display the repository name instead of the Git worktree folder, you can capture it in a named group
+and reference it in the replacement:
+
+<!-- markdownlint-disable MD033 MD049 -->
+
+<Config
+  data={{
+    options: {
+      mapped_locations_regex_expand: true,
+      mapped_locations: {
+        "re:(.*/GitHub/(?P<repo>.*)\\.worktrees/.*)": "\uF09B ${repo}",
+      },
+    },
+  }}
+/>
+
+<!-- markdownlint-enable MD033 MD049 -->
+
+This turns `~/GitHub/oh-my-posh.worktrees/feature-branch` into the GitHub icon followed by `oh-my-posh`.
 
 ## Style
 

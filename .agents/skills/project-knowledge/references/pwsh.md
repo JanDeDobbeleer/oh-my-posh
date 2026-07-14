@@ -16,7 +16,8 @@
   appended by a background runspace) can re-enter `RunspaceBase.Pulse()` and **crash the host**
   with InvalidPipelineStateException under rapid prompt cycles. Consume records only on the engine
   thread: sync waiter plus OnIdle drain.
-- Whether `Register-ObjectEvent` actions fire during a busy-wait is CONTEXT-DEPENDENT. Never share
+- Whether `Register-ObjectEvent` actions fire during a busy-wait depends on where the wait runs
+  (top-level script vs busy pipeline thread) - it is not a given either way. Never share
   a consume-cursor between an event action and a synchronous waiter - give the waiter a private
   cursor (records stay in the PSDataCollection) and make the action idempotent.
 - OnIdle needs ~300ms of idle time. Anything the user can trigger sooner (transient prompt on a
@@ -26,7 +27,7 @@
 
 - pwsh cannot exit while a `[powershell]::Create()` pipeline thread runs - pipeline threads are
   foreground threads. A reader runspace blocked in `ReadByte()` on a child's stdout deadlocks
-  `exit` when that child only terminates on stdin EOF (issue #7643).
+  `exit` when that child exits only on stdin EOF (issue #7643).
 - Module `OnRemove` only runs on `Remove-Module`, never on normal `exit` - it cannot be a
   daemon's teardown path. Use a `Register-EngineEvent PowerShell.Exiting` handler that writes
   `quit`, **closes the child's stdin** (the guaranteed EOF signal), and kills after a short
@@ -43,7 +44,7 @@
   API requires `[Console]::OutputEncoding = UTF8` once at init.
 - Serve daemon warm render ~10ms; warm prompt cost 18-23ms vs 160-220ms for the per-prompt
   streaming cycle it replaced (runspace creation ~35ms + event churn + 15.6ms-quantized sleeps).
-- Windows sleep granularity: each `Start-Sleep -Milliseconds 1` is a ~15.6ms tick - sleep-polling
+- Windows timer resolution: each `Start-Sleep -Milliseconds 1` is a ~15.6ms tick - sleep-polling
   loops are ~16x slower than intended. Prefer a `ManualResetEventSlim` signaled by the reader.
 
 ## Testing

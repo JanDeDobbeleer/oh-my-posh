@@ -512,6 +512,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/acdtrx"><img src="https://avatars.githubusercontent.com/u/1003990?v=4?s=100" width="100px;" alt="acdtrx"/><br /><sub><b>acdtrx</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=acdtrx" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kovjanos"><img src="https://avatars.githubusercontent.com/u/3199212?v=4?s=100" width="100px;" alt="Janos Kovacs"/><br /><sub><b>Janos Kovacs</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kovjanos" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kovjanos" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mertozturkk"><img src="https://avatars.githubusercontent.com/u/42963332?v=4?s=100" width="100px;" alt="Mert Öztürk"/><br /><sub><b>Mert Öztürk</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Mertozturkk" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ceilidhboy"><img src="https://avatars.githubusercontent.com/u/334791?v=4?s=100" width="100px;" alt="Mike Scott"/><br /><sub><b>Mike Scott</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ceilidhboy" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

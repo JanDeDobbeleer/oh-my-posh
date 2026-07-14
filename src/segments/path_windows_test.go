@@ -462,6 +462,15 @@ var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocations
 		PathSeparator:              `\`,
 		Expected:                   `\myrepo`,
 	},
+	// legacy path replaces the occurrence at the actual match position, not the first
+	// textual occurrence of the captured substring anywhere in the input.
+	{
+		Pwd:             `\home\src\project\src\deep`,
+		MappedLocations: map[string]string{`re:.*/(src)/deep`: "#"},
+		GOOS:            runtime.WINDOWS,
+		PathSeparator:   `\`,
+		Expected:        `\home\src\project\#\deep`,
+	},
 }
 
 var testSplitPathCases = []testSplitPathCase{

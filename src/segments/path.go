@@ -729,13 +729,13 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 			return input, true
 		}
 
-		match, OK := regex.FindStringMatch(pattern, input, 1)
+		start, end, OK := regex.FindStringMatchIndex(pattern, input, 1)
 		if !OK {
 			return "", false
 		}
 
-		// Replace the first match with the mapped location.
-		input = strings.Replace(input, match, pt.mappedLocations[key], 1)
+		// Replace the matched span with the mapped location.
+		input = input[:start] + pt.mappedLocations[key] + input[end:]
 		input = path.Clean(input)
 
 		return input, true

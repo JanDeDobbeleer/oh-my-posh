@@ -662,6 +662,9 @@ var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocations
 		MappedLocationsRegexExpand: true,
 		Expected:                   "#/a/b-1234",
 	},
+	// legacy path replaces the occurrence at the actual match position, not the first
+	// textual occurrence of the captured substring anywhere in the input.
+	{Pwd: "/home/src/project/src/deep", MappedLocations: map[string]string{"re:.*/(src)/deep": "#"}, Expected: "/home/src/project/#/deep"},
 }
 
 var testSplitPathCases = []testSplitPathCase{

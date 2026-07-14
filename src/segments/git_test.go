@@ -136,6 +136,16 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRealFolder:    TestRootPath + "dev/worktree",
 			ExpectedRootFolder:    TestRootPath + dotGit,
 		},
+		{
+			Case:                  "worktree with relative gitdir path, no trailing newline",
+			ExpectedEnabled:       true,
+			WorkingFolder:         TestRootPath + "dev/.git/worktrees/folder_worktree",
+			WorkingFolderAddon:    "gitdir",
+			WorkingFolderContent:  "../../../worktree/.git",
+			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
+			ExpectedRealFolder:    TestRootPath + "dev/worktree",
+			ExpectedRootFolder:    TestRootPath + dotGit,
+		},
 	}
 	fileInfo := &runtime.FileInfo{
 		Path:         TestRootPath + dotGit,

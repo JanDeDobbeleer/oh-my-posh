@@ -1,5 +1,16 @@
 # Codebase
 
+## Docs linting
+
+- Two markdown gates with different coverage (verified 2026-07-14): the Vale CI workflow
+  (`.github/workflows/vale.yml`) explicitly lints `AGENTS.md`, `.github/copilot-instructions.md`,
+  and `.agents/skills`, while `markdownlint-cli2` skips dot-directories entirely - its globs never
+  match `.agents/` or `.github/`, even when passed explicit paths. Lint skill docs with Vale
+  before pushing; for markdownlint, copy them to a non-dot directory alongside
+  `.markdownlint-cli2.yaml`.
+- Vale fails CI on error-level findings only; warnings pass. Justified terms (Go interface
+  wording, zsh feature names) get file-scoped rule overrides in `.vale.ini`, each with a comment.
+
 ## Dev environment
 
 - The Go module root is `src/`, not the repo root - run all `go` commands from there.

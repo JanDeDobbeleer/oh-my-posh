@@ -389,9 +389,34 @@ function _omp_milliseconds() {
   _omp_millis=$($_omp_executable get millis)
 }
 
+# percent-encode $1 into REPLY, byte-wise, keeping RFC 3986 unreserved characters literal
+function _omp_urlencode() {
+  emulate -L zsh
+  setopt no_multibyte
+  local str=$1 ch
+  local -i i
+  REPLY=''
+  for (( i = 1; i <= ${#str}; i++ )); do
+    ch=$str[i]
+    if [[ $ch == [A-Za-z0-9._~-] ]]; then
+      REPLY+=$ch
+      continue
+    fi
+    printf -v ch '%%%02X' "'$ch"
+    REPLY+=$ch
+  done
+}
+
 function _omp_preexec() {
   if [[ $_omp_ftcs_marks == 1 ]]; then
-    printf '\033]133;C\007'
+    if [[ -n $1 ]]; then
+      # advertise the command line via kitty's cmdline_url= extension
+      local REPLY
+      _omp_urlencode "$1"
+      printf '\033]133;C;cmdline_url=%s\007' "$REPLY"
+    else
+      printf '\033]133;C\007'
+    fi
   fi
 
   _omp_milliseconds

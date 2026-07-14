@@ -65,10 +65,48 @@ function _omp_milliseconds() {
     "$_omp_executable" get millis
 }
 
+# percent-encode $1, byte-wise, keeping RFC 3986 unreserved characters literal
+function _omp_urlencode() {
+    local LC_ALL=C
+    local str=$1 encoded='' ch i
+    for ((i = 0; i < ${#str}; i++)); do
+        ch=${str:i:1}
+        case $ch in
+        [A-Za-z0-9._~-])
+            encoded+=$ch
+            ;;
+        *)
+            printf -v ch '%%%02X' "'$ch"
+            encoded+=$ch
+            ;;
+        esac
+    done
+    printf '%s' "$encoded"
+}
+
 function _omp_ftcs_command_start() {
-    if [[ $_omp_ftcs_marks == 1 ]]; then
-        printf '\e]133;C\a'
+    if [[ $_omp_ftcs_marks != 1 ]]; then
+        return
     fi
+
+    # the command comes from history: format is "  501  command", or
+    # "  501* command" when the entry was modified; commands are missing
+    # entirely when history is off or HISTCONTROL ignores them
+    local cmd=''
+    if [[ -o history ]]; then
+        cmd=$(HISTTIMEFORMAT='' builtin history 1)
+        cmd=${cmd#"${cmd%%[![:space:]]*}"} # strip the leading padding
+        cmd=${cmd#"${cmd%%[!0-9]*}"}       # strip the history number
+        cmd=${cmd#??}                      # strip the modified flag and separator
+    fi
+
+    if [[ -n $cmd ]]; then
+        # advertise the command line via kitty's cmdline_url= extension
+        printf '\e]133;C;cmdline_url=%s\a' "$(_omp_urlencode "$cmd")"
+        return
+    fi
+
+    printf '\e]133;C\a'
 }
 
 # template function for context loading

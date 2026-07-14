@@ -578,9 +578,17 @@ function _omp_postexec --on-event fish_postexec
 end
 
 function _omp_preexec --on-event fish_preexec
-    if test $_omp_ftcs_marks = 1
-        echo -ne "\e]133;C\a"
+    if test $_omp_ftcs_marks != 1
+        return
     end
+
+    if test -n "$argv"
+        # advertise the command line via kitty's cmdline_url= extension
+        echo -ne "\e]133;C;cmdline_url="(string escape --style=url -- "$argv")"\a"
+        return
+    end
+
+    echo -ne "\e]133;C\a"
 end
 
 # perform cleanup so a new initialization in current session works

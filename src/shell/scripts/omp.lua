@@ -391,13 +391,29 @@ local function display_cached_prompt()
     cached_prompt.only_use_cache = nil
 end
 
+local function url_encode(str)
+    -- percent-encode everything but RFC 3986 unreserved characters
+    return (string.gsub(str, '[^%w%-%._~]', function(ch)
+        return string.format('%%%02X', string.byte(ch))
+    end))
+end
+
 local function command_executed_mark(input)
     if string.gsub(input, '^%s*(.-)%s*$', '%1') ~= '' then
         no_exit_code = false
     end
-    if ftcs_marks_enabled then
-        clink.print('\x1b]133;C\007', NONL)
+
+    if not ftcs_marks_enabled then
+        return
     end
+
+    -- advertise the command line via kitty's cmdline_url= extension
+    local cmdline = ''
+    if input and input ~= '' then
+        cmdline = ';cmdline_url=' .. url_encode(input)
+    end
+
+    clink.print('\x1b]133;C' .. cmdline .. '\007', NONL)
 end
 
 -- set priority lower than z.lua

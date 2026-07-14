@@ -1107,8 +1107,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             return {
                 try {
                     $Streaming.State = 'NEW'
+                    $ast = $null
                     $parseErrors = $null
-                    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
+                    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$ast, [ref]$null, [ref]$parseErrors, [ref]$null)
                     $executingCommand = $parseErrors.Count -eq 0
                     if ($global:_ompTransientPrompt -and $executingCommand) {
                         Set-TransientPrompt
@@ -1117,8 +1118,15 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 finally {
                     & $AcceptLineFunction
                     if ($global:_ompFTCSMarks -and $executingCommand) {
-                        # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
-                        Write-Host "$([char]27)]133;C$([char]7)" -NoNewline
+                        # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution.
+                        # The command line rides along as kitty's cmdline_url= extension, percent-encoded.
+                        # Windows PowerShell's Uri.EscapeDataString throws beyond 32766 characters, hence the length cap.
+                        $cmdline = ''
+                        $command = $ast.Extent.Text
+                        if ($command -and $command.Length -lt 32000) {
+                            $cmdline = ";cmdline_url=$([Uri]::EscapeDataString($command))"
+                        }
+                        Write-Host "$([char]27)]133;C$cmdline$([char]7)" -NoNewline
                     }
                 }
             }.GetNewClosure()

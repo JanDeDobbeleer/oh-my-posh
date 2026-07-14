@@ -18,10 +18,23 @@ _omp_executable=::OMP::
 # switches to enable/disable features
 _omp_ftcs_marks=0
 
+# percent-encode every byte of $1; over-encoding is still valid URL encoding
+_omp_urlencode() {
+    printf '%s' "$1" | od -v -An -tx1 | tr -d ' \n' | sed 's/../%&/g'
+}
+
 _omp_ftcs_command_start() {
-    if [ "$_omp_ftcs_marks" = 1 ]; then
-        printf '\033]133;C\007'
+    if [ "$_omp_ftcs_marks" != 1 ]; then
+        return
     fi
+
+    if [ -n "$COMMAND" ]; then
+        # advertise the command line via kitty's cmdline_url= extension
+        printf '\033]133;C;cmdline_url=%s\007' "$(_omp_urlencode "$COMMAND")"
+        return
+    fi
+
+    printf '\033]133;C\007'
 }
 
 # template function for context loading

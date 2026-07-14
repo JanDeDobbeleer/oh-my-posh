@@ -1,0 +1,1 @@
+https://github.com/JanDeDobbeleer/oh-my-posh/pull/7316 current branch checked out version of this pull request. Go through all the review comments, analyze and fix them, as well as doing a full review analysis of this change, because I did notice some side effects. Sometimes the prompt was no longer rendered at all, and there was no way to recover it. It just gave a blank prompt.

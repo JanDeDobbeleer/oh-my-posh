@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "d710d5fd0af3",
+  "strategy": "manual-commit",
+  "branch": "refactor/generic-segment-writer",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/config/segment.go",
+    "src/config/segment_cache_test.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d7/10d5fd0af3/0/metadata.json",
+      "transcript": "/d7/10d5fd0af3/0/full.jsonl",
+      "compact_transcript": "/d7/10d5fd0af3/0/transcript.jsonl",
+      "content_hash": "/d7/10d5fd0af3/0/content_hash.txt",
+      "prompt": "/d7/10d5fd0af3/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 23097,
+    "cache_creation_tokens": 90778,
+    "cache_read_tokens": 3173516,
+    "output_tokens": 36647,
+    "api_call_count": 37
+  }
+}

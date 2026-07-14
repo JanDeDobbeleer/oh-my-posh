@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "eea3a34195eb",
+  "strategy": "manual-commit",
+  "branch": "fix/plastic-init-base-segment",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/segments/plastic.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/ee/a3a34195eb/0/metadata.json",
+      "transcript": "/ee/a3a34195eb/0/full.jsonl",
+      "compact_transcript": "/ee/a3a34195eb/0/transcript.jsonl",
+      "content_hash": "/ee/a3a34195eb/0/content_hash.txt",
+      "prompt": "/ee/a3a34195eb/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 284,
+    "cache_creation_tokens": 7087,
+    "cache_read_tokens": 2127904,
+    "output_tokens": 4059,
+    "api_call_count": 13
+  }
+}

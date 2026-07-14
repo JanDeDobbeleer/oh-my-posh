@@ -1,0 +1,196 @@
+https://github.com/JanDeDobbeleer/oh-my-posh/issues which of the issues are feasible to solve?
+
+---
+
+Do the analysis using Fable 5 and then follow the same delivery pattern as defined in the skills. Do that for each of the issues except for 7572 and 7427
+
+---
+
+<task-notification>
+<task-id>ad70d75254a7e64b2</task-id>
+<tool-use-id>toolu_01AYKoTUEfoBSUjLzs1SYQFW</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\ad70d75254a7e64b2.output</output-file>
+<status>completed</status>
+<summary>Agent "Analyze issue 6334 path capture groups" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I've verified everything directly in the source. Here is the analysis.
+
+### Issue #6334 — path segment multiple capture groups
+
+**Root cause / gap:** In `replaceMappedLocations` (D:\oh-my-posh\src\segments\path.go:675), the `handleRegex` closure (path.go:703-726) calls `regex.FindStringMatch(pattern, input, 1)` (path.go:716) with hardcoded index 1 — `FindStringMatch` (D:\oh-my-posh\src\regex\regex.go:113-130) runs `re.FindStringSubmatch` and returns `matches[index]`, i.e. only capture group 1's text. The mapped value is then substituted via `strings.Replace(input, match, pt.mappedLocations[key], 1)` (path.go:722). There is no way to reference `$1`, `$2`, or named groups in the value, and only group 1's region is replaced.
+
+**Latent bug (confirmed, independent of this request):** path.go:722 replaces the *first occurrence* of the captured text, not the occurrence at the match position. `FindStringSubmatch` returns substring text without indices, so for pattern `re:.*/(src)/deep` on `/home/src/project/src/deep`, group 1 captures the second `src` but `strings.Replace` rewrites the first one. A position-aware fix (e.g. `Expand` with `FindStringSubmatchIndex`, or `ReplaceAllString`) fixes this too.
+
+**Proposed change:** Reporter's option 2, opt-in via a new per-segment boolean option `mapped_locations_regex_expand` (default `false`), read with the existing `pt.options.Bool(...)` pattern next to `MappedLocationsEnabled` (path.go:101-104). In `handleRegex`, when enabled: skip `FindStringMatch`, instead verify a match (`regex.MatchString`) and do `input = regex.ReplaceAllString(pattern, input, pt.mappedLocations[key])` — `regex.ReplaceAllString` already exists (regex.go:95-102) and gives Go `$1`/`${name}` expansion over the full match. The `(?i)` Windows/WSL prefix at path.go:711-714 composes unchanged since it prepends to `pattern` before either call. Example config: `"re:(?i).*/GitHub/(?P&lt;repo&gt;.*?)\\.worktrees/.*": "\ue709/${repo}"` with `mapped_locations_regex_expand: true`. Files: src/segments/path.go, plus themes/schema.json and website docs for the new option.
+
+**Out of scope:** legacy single-group behavior stays the default (no change when the toggle is off); option 1 (positional multi-group replacement) and option 3 / issue #6166 (sequential all-mappings iteration); fixing the latent first-occurrence bug in the legacy path (worth its own follow-up decision).
+
+**Open questions:**
+1. Final option name/scope — per-segment bool vs. a value or key prefix (per-mapping granularity)?
+2. Should literal `$` in existing values be documented as needing `$$` when the toggle is on?
+3. Fix the latent first-occurrence bug in legacy mode too, or leave behavior frozen?
+4. Does `ReplaceAllString` (all matches) vs. first-match-only matter for any realistic path config?</result>
+<usage><subagent_tokens>41635</subagent_tokens><tool_uses>3</tool_uses><duration_ms>42899</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>adbcf2918680e593d</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\adbcf2918680e593d.output</output-file>
+<status>completed</status>
+<summary>Agent "Analyze issue 5442 color cycle exclusion" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>### Issue #5442 — color cycle exclusion/reset
+
+**Root cause / gap:** The cycle is one shared, mutable, package-level pointer consumed across all blocks in render order. `color.Cycle` is `[]*Set`; `Loop()` returns the head plus a rotated copy (src/color/cycle.go:5-11 — no index, it rotates the slice). The global lives at src/prompt/engine.go:18 (`var cycle *color.Cycle` — not segments.go:18 as previously claimed) and is reset once per prompt to `&amp;e.Config.Cycle` (src/prompt/primary.go:64). Every rendered segment then consumes and advances it unconditionally: src/prompt/segments.go:191-195 (`writeSegment`, live path) and src/prompt/engine.go:316-320 (`renderBlockFromCache`, cache/streaming path). So when block 1 renders N segments (git showing vs. hidden changes N), block 2 starts N rotations into the cycle — exactly the reported behavior. There is no per-block or per-segment opt-out. Note `Loop()` never mutates `e.Config.Cycle` itself, so the pristine cycle is always available to reset to.
+
+**Proposed change:** Option (b), a per-block reset flag — cheapest because resetting is just re-pointing the global at the untouched config cycle. Add `RestartCycle bool` (`json/toml/yaml: "restart_cycle"`) to `Block` (src/config/block.go:30-41). Apply it at the top of both block-render entry points: `renderBlockSegments` (src/prompt/segments.go:69, which all live paths — primary via `renderLaunchedBlock`, rprompt, tooltip — funnel through) and `renderBlockFromCache` (src/prompt/engine.go:303), as `if block.RestartCycle { cycle = &amp;e.Config.Cycle }`. Example config: second-line block gets `"restart_cycle": true` and always starts at the cycle's first color. Option (c) exclusion would need a skip branch at both `Loop()` call sites plus answers about what colors excluded segments fall back to; option (a) per-block cycles duplicates config plumbing for no extra benefit to this report.
+
+**Out of scope:** the rotation algorithm itself (`Loop()` semantics), per-segment cycle control, transient/secondary/debug prompts (they don't consume the cycle), and any change to how `Foreground`/`Background` are overwritten.
+
+**Open questions:**
+- Field name: `restart_cycle` vs `cycle_restart` vs reusing a string enum (`"cycle": "restart" | "off"`) that would cover exclusion later?
+- Should exclusion (option c) ship in the same PR, or wait for demand?
+- Block-level only, or per-segment too? Issue only needs block-level.
+- Docs/schema updates required: themes/schema.json and website block docs (website/docs/configuration/block.mdx or equivalent).</result>
+<usage><subagent_tokens>54283</subagent_tokens><tool_uses>9</tool_uses><duration_ms>64913</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ab7e1f2e92d75d881</task-id>
+<tool-use-id>toolu_01TGu56BuxVc1zRwVMWtcKok</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\ab7e1f2e92d75d881.output</output-file>
+<status>completed</status>
+<summary>Agent "Implement issue 5442 restart_cycle" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>This matches the decided approach precisely. Implementation is complete.
+
+## Report
+
+**Files changed:**
+
+1. `src/config/block.go` — added `RestartCycle bool` field to the `Block` struct (json/toml/yaml tag `restart_cycle,omitempty`), placed after `Force` to match struct/tag style.
+2. `src/prompt/segments.go` — `renderBlockSegments` (the single choke point for the primary/rprompt/tooltip live-render paths, confirmed both `writeBlockSegments` and `renderLaunchedBlock` funnel through it) now does `if block.RestartCycle { cycle = &amp;e.Config.Cycle }` before `e.writeSegments`.
+3. `src/prompt/engine.go` — `renderBlockFromCache` (the cached/streaming render path) gets the identical reset check before its segment loop.
+4. `src/prompt/segments_test.go` — added `TestRenderBlockRestartCycle`, a table-driven subtest with two cases: (a) no flag — second block continues the cycle from where the first block left off (gets color index 2 of 3); (b) `RestartCycle: true` — second block gets color index 0 again. Mirrors `writePrimaryPromptInternal`'s `cycle = &amp;e.Config.Cycle` setup, and saves/restores the package-level `cycle` var via `t.Cleanup` per the repo's global-state test convention.
+5. `themes/schema.json` — added `restart_cycle` boolean property to the single shared `block` schema definition (~line 341), following the `force` property's pattern (title/description/default).
+6. `website/docs/configuration/block.mdx` — added `restart_cycle` to the settings table and a new "Restart Cycle" section with a two-line-prompt example (second line has `restart_cycle: true`), linking to the existing colors-page `## Cycle` section.
+
+**Judgment call — `Loop()` mutation question (per your instruction to flag this explicitly):** Verified `Cycle.Loop()` (`src/color/cycle.go`) never mutates the underlying config slice's visible elements. `append(c[1:], c[0])` either allocates a new backing array (when `cap(c) == len(c)`, the common case) or, if there's spare capacity, writes only to the slot at index `len(c)` — beyond the original slice's visible range `[0, len(c))`. Either way, `e.Config.Cycle`'s own elements at indices `0..n-1` are never overwritten. This confirms re-pointing `cycle = &amp;e.Config.Cycle` is a safe, correct way to reset to the pristine, unmutated order. No rethink needed; proceeded as planned.
+
+**Verification commands run (all from `src/`), all passed:**
+```
+go build ./...                                    → pass, no output
+go test ./prompt/... ./config/... -v               → pass, all tests green including new TestRenderBlockRestartCycle
+modernize --fix "./..."                            → pass, no changes (no output)
+fieldalignment --fix "./..."                       → reordered fields in segments_test.go's anonymous test-case struct (uses named fields, so order-safe); no changes to block.go/engine.go/segments.go
+go mod tidy                                        → pass, no changes
+gofmt -w .                                          → pass; gofmt -l . afterward shows zero files needing formatting
+golangci-lint run ./prompt/... ./config/...        → "0 issues."
+```
+
+`git status --porcelain` after all steps shows exactly the 6 files listed above changed repo-wide — nothing unexpected was rewritten. `git diff` on the three core Go files matches the decided approach exactly. No commits were made; everything is left as uncommitted working-tree changes for your review.</result>
+<usage><subagent_tokens>109810</subagent_tokens><tool_uses>56</tool_uses><duration_ms>398150</duration_ms></usage>
+<worktree><worktreePath>D:\oh-my-posh\.claude\worktrees\agent-ab7e1f2e92d75d881</worktreePath><worktreeBranch>worktree-agent-ab7e1f2e92d75d881</worktreeBranch></worktree>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>abd9fbd75118fe56c</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\abd9fbd75118fe56c.output</output-file>
+<status>completed</status>
+<summary>Agent "Implement issue 7594 project priority" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All work is complete and verified. Here's the summary:
+
+## Files changed
+
+1. **`src/segments/project.go`** — Added `Priority options.Option = "priority"` constant. In `Enabled()`, after building the fixed-order `n.projects` slice, added a call to a new `reorderByPriority(items []*ProjectItem, priority []string) []*ProjectItem` helper when the `priority` option is non-empty. The helper promotes items named in `priority` to the front (in the given order), keeps unmentioned items in their original relative order appended after, and silently skips unrecognized names — matching the spec exactly.
+
+2. **`src/segments/project_test.go`** — Added `TestProjectPriority` with three table-driven cases against a directory containing both `package.json` (node) and `composer.json` (php): (a) no `priority` set → node wins (default order preserved), (b) `priority: ["php"]` → php wins, (c) `priority: ["does-not-exist"]` → default order preserved, unknown name ignored harmlessly.
+
+3. **`website/docs/segments/system/project.mdx`** — Added a `priority` row to the Options table (`[]string`, default `[]`) plus a short explanatory paragraph with an example, following the existing `&lt;type&gt;_files` documentation style.
+
+4. **`themes/schema.json`** — The project segment's fixed options (`always_enabled`, `resolve_target_from_solution`, `solution_search_depth`) ARE individually schema'd under `options.properties`, so I added `priority` there as a `type: array` / `items: string` property, following the existing string-array pattern used elsewhere in the schema (e.g. `tooling`, `extensions`, `folders`).
+
+## Verification (all run from `src/`)
+
+```
+go build ./...                          → PASS
+go test ./segments/... -run TestProject -v   → PASS (TestProjectPriority)
+modernize --fix "./..."                 → no changes
+fieldalignment --fix "./..."            → reordered struct fields in project_test.go only (named-field literals, so safe)
+go mod tidy                             → PASS, no changes
+gofmt -w .                              → no files needed reformatting
+golangci-lint run ./segments/...        → 0 issues
+```
+
+`git status --short` after all steps shows only the 4 intended files modified — no unrelated rewrites. Also ran `npx markdownlint-cli2` on the doc file: the only lint category I could have introduced (MD060 table alignment) is clean on my new/edited rows; remaining MD013 line-length warnings are pre-existing in that file (verified by diffing lint output against the unmodified file via `git stash`).
+
+## Judgment calls (not fully specified in the task)
+
+- Named the option constant `Priority` (mirroring `ResolveTargetFromSolution`/`SolutionSearchDepth` naming) with string value `"priority"`.
+- For the schema.json addition, treated `priority` as a fixed/enumerable key (unlike the dynamic `&lt;type&gt;_files` pattern, which isn't schema'd since its key name varies) — this matched the existing convention of enumerating fixed options individually.
+- Table realignment: adding the `priority` row shifted column widths in the Options table, which would have introduced a new MD060 (table-column-style) lint violation; I recomputed alignment for the whole table so all pipes line up, rather than just appending a row.
+
+No commits were made — all changes are left as uncommitted modifications in the worktree per instructions.</result>
+<usage><subagent_tokens>112643</subagent_tokens><tool_uses>51</tool_uses><duration_ms>467057</duration_ms></usage>
+<worktree><worktreePath>D:\oh-my-posh\.claude\worktrees\agent-abd9fbd75118fe56c</worktreePath><worktreeBranch>worktree-agent-abd9fbd75118fe56c</worktreeBranch></worktree>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a976d04bd43c93770</task-id>
+<tool-use-id>toolu_01C8WLJ4zZ1cEyZTCYodDEuS</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\a976d04bd43c93770.output</output-file>
+<status>completed</status>
+<summary>Agent "Implement issue 6334 path regex expand" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All green. Here's the final report.
+
+## Summary
+
+**Files changed:**
+
+1. **`src/segments/path.go`** — Added `MappedLocationsRegexExpand options.Option = "mapped_locations_regex_expand"` constant (mirrors `MappedLocationsEnabled`), and branched `handleRegex` in `replaceMappedLocations`: when `pt.options.Bool(MappedLocationsRegexExpand, false)` is true, it uses `regex.MatchString` to confirm a match then `regex.ReplaceAllString(pattern, input, pt.mappedLocations[key])` to replace the full match with an expanded value (`$1`, `${name}`, etc.). The `(?i)` Windows/WSL prefix logic is untouched and applies to `pattern` before either branch runs, so it composes automatically. Default path (option unset/false) is byte-for-byte unchanged — same `regex.FindStringMatch(pattern, input, 1)` + `strings.Replace` logic as before.
+
+2. **`src/segments/path_test.go`** — Added `MappedLocationsRegexExpand bool` field to `testFullPathCustomMappedLocationsCase` and wired it into the `props` map in `TestFullPathCustomMappedLocations`.
+
+3. **`src/segments/path_unix_test.go`** — Added 3 cases: (a) option unset — a `$1` in the value stays literal (proves legacy behavior unchanged), (b) `MappedLocationsRegexExpand: true` with named group `${repo}` (the issue's git-worktree use case), (c) same with positional `$1`/`$2`.
+
+4. **`src/segments/path_windows_test.go`** — Added 1 case confirming `MappedLocationsRegexExpand: true` composes correctly with the Windows `(?i)` case-insensitivity prefix (pattern uses lowercase `github`, actual path has `GitHub`).
+
+5. **`themes/schema.json`** — Added `mapped_locations_regex_expand` boolean property (type/title/description/default false) following the exact pattern of `mapped_locations_enabled`.
+
+6. **`website/docs/segments/system/path.mdx`** — Added a `mapped_locations_regex_expand` row to the Mapped Locations options table, and a new "Expanding capture groups" subsection with a before/after example using the GitHub icon (`\uF09B`, already used earlier in the file) and the exact worktree-folder-name use case from issue #6334.
+
+**Verification commands run (all from `src/`), all passed:**
+```
+go build ./...                                          → clean
+go test ./segments/... -run &lt;all Path*-named tests&gt; -v  → PASS (used explicit test names since no function literally matches substring "TestPath")
+modernize --fix "./..."                                 → no changes
+fieldalignment --fix "./..."                             → no changes
+go mod tidy                                              → no changes
+gofmt -w . / gofmt -l .                                  → 1 file reformatted (path_test.go struct alignment), then clean
+golangci-lint run ./segments/...                         → 0 issues
+go test ./segments/...                                   → ok (both segments and segments/options)
+```
+`git status --porcelain` confirms only the 6 intended files are modified.
+
+**Judgment calls / things to flag:**
+
+- **Self-inflicted near-miss, caught and fixed:** while iterating on markdownlint fixes, I ran `git stash` to compare baseline lint output and immediately `git stash pop`'d to restore — no data lost, but worth noting. Separately, `npx markdownlint-cli2 --fix` corrupted content twice: it rewrote `.*` to `._` inside the regex example (mangling the actual regex) and stripped table padding to zero, and a follow-up regex-based repair script I wrote was too greedy and deleted the entire original 20-row "Options" table plus the "## Mapped Locations" heading/intro. I caught this immediately via `git diff`/`Read`, recovered the exact original text via `git show HEAD:...`, and reconstructed the file surgically. Final `git diff` on the doc file is clean and minimal — confirmed by pasting it above.
+- **`regex.ReplaceAllString` replaces all non-overlapping matches**, not just the first — this is standard Go `regexp.ReplaceAllString` semantics and is what the task explicitly designated as the helper to use, but it's worth knowing this differs from `FindStringMatch`'s single-match semantics in the legacy path.
+- **`-run TestPath` matches nothing** in this codebase — no test function is literally named with that as a substring (they're `TestFullPathCustomMappedLocations`, `TestAgnosterPathStyles`, etc.). I ran the actual set of path-related test functions instead and confirmed all pass, including the new cases.
+- **Confirmed-but-untouched bug** (per instructions): the legacy `strings.Replace(input, match, value, 1)` in the `false` branch replaces the first *textual* occurrence of the captured substring anywhere in `input`, not the occurrence at the actual regex match position. Left exactly as specified — out of scope for this task.
+- Cleaned up a pre-existing minor doc glitch while touching that exact table (a sentence fragment "setting." was orphaned outside the table on its own paragraph in the original file) as part of reconstructing the Mapped Locations table — this was directly in the region I was editing, not unrelated scope creep.</result>
+<usage><subagent_tokens>170421</subagent_tokens><tool_uses>105</tool_uses><duration_ms>974383</duration_ms></usage>
+<worktree><worktreePath>D:\oh-my-posh\.claude\worktrees\agent-a976d04bd43c93770</worktreePath><worktreeBranch>worktree-agent-a976d04bd43c93770</worktreeBranch></worktree>
+</task-notification>

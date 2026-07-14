@@ -515,6 +515,54 @@ func TestDenoProjectUsesJsrMetadata(t *testing.T) {
 	assert.Equal(t, "\uf487 1.0.0 @scope/library", renderTemplate(env, pkg.Template(), pkg))
 }
 
+func TestProjectPriority(t *testing.T) {
+	cases := []struct {
+		Case           string
+		ExpectedString string
+		Priority       []string
+	}{
+		{
+			Case:           "no priority set keeps default order (node before php)",
+			ExpectedString: " 1.0.0 node-pkg",
+		},
+		{
+			Case:           "priority promotes php over node",
+			Priority:       []string{"php"},
+			ExpectedString: " 2.0.0 php-pkg",
+		},
+		{
+			Case:           "unknown name in priority is ignored, default order preserved",
+			Priority:       []string{"does-not-exist"},
+			ExpectedString: " 1.0.0 node-pkg",
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
+			for _, c := range env.ExpectedCalls {
+				if c.Method != hasFiles {
+					continue
+				}
+				file := args.Get(0).(string)
+				c.ReturnArguments = testify_.Arguments{file == fileName || file == "composer.json"}
+			}
+		})
+		env.On("FileContent", fileName).Return("{\"version\":\"1.0.0\",\"name\":\"node-pkg\"}")
+		env.On("FileContent", "composer.json").Return("{\"version\":\"2.0.0\",\"name\":\"php-pkg\"}")
+
+		opts := options.Map{}
+		if len(tc.Priority) > 0 {
+			opts[Priority] = tc.Priority
+		}
+
+		pkg := &Project{}
+		pkg.Init(opts, env)
+		assert.True(t, pkg.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
+	}
+}
+
 func TestNuspecPackage(t *testing.T) {
 	cases := []struct {
 		Case            string

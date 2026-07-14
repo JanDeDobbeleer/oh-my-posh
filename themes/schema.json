@@ -3939,6 +3939,15 @@
                     "description": "Always show the segment",
                     "default": false
                   },
+                  "priority": {
+                    "type": "array",
+                    "title": "Priority",
+                    "description": "Reorder the project types to check first, using the .Type values (e.g. node, php, cargo)",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "resolve_target_from_solution": {
                     "type": "boolean",
                     "title": "Resolve Target from Solution",

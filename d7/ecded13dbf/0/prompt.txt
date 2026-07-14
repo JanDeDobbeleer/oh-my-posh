@@ -1,0 +1,5 @@
+We last made a vendor zip and added that to the lrease but it seems this isn't part of the release artficats as stated in https://github.com/JanDeDobbeleer/oh-my-posh/issues/7668#issuecomment-4968903322
+
+---
+
+yes

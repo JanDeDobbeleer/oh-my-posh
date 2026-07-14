@@ -1,0 +1,130 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "3234d8490687",
+  "session_id": "db8d3dd4-4827-4596-b83e-d7c9e0842ff6",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-14T14:41:46.7930469Z",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "14a6fed2b22c",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 415,
+    "cache_creation_tokens": 290617,
+    "cache_read_tokens": 41984412,
+    "output_tokens": 125913,
+    "api_call_count": 209
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_012VjQ9v5K4wEJaLxWsm4tPd",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "14a6fed2b22c",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 95,
+        "end": 96,
+        "entry_ids": [
+          "12a6eaae-3c0d-42d7-a9d0-ec5fb8abd9aa"
+        ],
+        "tool_use_id": "toolu_012VjQ9v5K4wEJaLxWsm4tPd"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_012VjQ9v5K4wEJaLxWsm4tPd"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_016f2eVkngitt5cshZkRGTGf",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "golang"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "14a6fed2b22c",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 196,
+        "end": 197,
+        "entry_ids": [
+          "6fcf14e7-5b7c-40a5-9331-74774817aad1"
+        ],
+        "tool_use_id": "toolu_016f2eVkngitt5cshZkRGTGf"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_016f2eVkngitt5cshZkRGTGf"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: golang",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01B1A2vyCDE8G8Da3ACRhrPt",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "14a6fed2b22c",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 420,
+        "end": 421,
+        "entry_ids": [
+          "d9668196-1fb4-4508-8c1b-eed786884734"
+        ],
+        "tool_use_id": "toolu_01B1A2vyCDE8G8Da3ACRhrPt"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01B1A2vyCDE8G8Da3ACRhrPt"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 12
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

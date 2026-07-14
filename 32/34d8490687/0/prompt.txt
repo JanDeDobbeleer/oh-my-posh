@@ -1,0 +1,147 @@
+You can fix the two bugs as well here.
+
+---
+
+<task-notification>
+<task-id>a54bd114d659d4225</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\a54bd114d659d4225.output</output-file>
+<status>completed</status>
+<summary>Agent "Analyze path.go replace occurrence bug" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I've confirmed everything. Analysis complete.
+
+### Bug — path.go legacy mapped_locations regex replaces wrong occurrence
+
+**Root cause:** `D:\oh-my-posh\src\segments\path.go:732-738` (`handleRegex`, default path). `regex.FindStringMatch(pattern, input, 1)` (`src/regex/regex.go:113-130`) returns only the *text* of capture group 1 via `FindStringSubmatch` — no position. Line 738 then does `strings.Replace(input, match, value, 1)`, which rewrites the first *textual* occurrence of that substring anywhere in the path, not the occurrence the regex actually captured.
+
+**Concrete repro:** Pwd `/home/src/project/src/deep`, mapped location `re:.*/(src)/deep` → `#`. Greedy `.*` makes group 1 the second `src`. Current output: `/home/#/project/src/deep` (first `src` replaced). Expected: `/home/src/project/#/deep`. Same shape: `/b/x/b/c` with `re:.*(/b)/c` → `#` gives `#/x/b/c` instead of `/b/x/#/c`.
+
+**Recommended fix:** Option (a), position-based splice. Add a small helper in `src/regex/regex.go` (e.g. `FindStringMatchIndex(pattern, text, index) (start, end int, bool)` wrapping `re.FindStringSubmatchIndex`, offsets `[2*index]`,`[2*index+1]`), then in `path.go:732-738` replace the `strings.Replace` with `input[:start] + pt.mappedLocations[key] + input[end:]`. Option (b) (`regex.ReplaceAllString` with a template) is ruled out on two counts: it replaces the *full* match rather than only group 1's span, and it expands `$`-references in the mapped value — the existing legacy test (`src/segments/path_unix_test.go:645-649`) explicitly asserts `#$1` stays literal. It also replaces all matches vs. count=1. Option (a) changes only the position, nothing else.
+
+**Safety of fixing default behavior:** Safe. Depending on the current behavior requires the captured text to appear verbatim *earlier* in the path than where it was captured — and the config author to want the earlier copy rewritten. That's pathological; typical patterns anchor from the string start, where both behaviors coincide. Ship as a plain fix.
+
+**Open questions:** None blocking. Test coverage: add the repro above to `testFullPathCustomMappedLocationsCases` in `path_unix_test.go` (~line 649) and a backslash-input sibling in `path_windows_test.go` (~line 436) — parallel structures already exist for regex mapped locations.</result>
+<usage><subagent_tokens>44098</subagent_tokens><tool_uses>6</tool_uses><duration_ms>53218</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a49aa460b11196325</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\a49aa460b11196325.output</output-file>
+<status>completed</status>
+<summary>Agent "Analyze merge.go zero-value bug" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All investigation done. Here is the report.
+
+### Bug — merge.go isZeroValue clobbers unset bool/int fields
+
+**Root cause:** `src/config/merge.go:166-179` — `isZeroValue` returns `false` unconditionally for `reflect.Bool` and signed-int kinds (lines 174-175), so the skip at line 137 (`if isZeroValue(overrideField) ... continue`) never fires for them and `merge()` always copies the override's value. Since `read()` (`src/config/load.go:195-254`) unmarshals each file straight into a typed `Config` via `yaml.Unmarshal`/`json.Decoder`/`toml.Unmarshal`, "field absent" and "field explicitly false/0" are identical by merge time — presence info is fully discarded. Confirmed: child extending a base with `final_space: true` but omitting `final_space` yields `false`. `merge_test.go:20-41` encodes this clobbering as *expected*. Bonus inconsistency: uint/float fall into the `default: v.IsZero()` branch, so they have the opposite bug (explicit `0` override is ignored).
+
+**Blast radius:** 20 source-settable fields: Config — `Async`, `ShellIntegration`, `FinalSpace`, `PatchPwshBleed`, `EnableCursorPositioning`, `Version`, `Streaming`; Block — `Newline`, `Force`, `RestartCycle`, `Index`; Segment — `Newline`, `InvertPowerline`, `Force`, `Toggled`, `Interactive`, `Index`, `MinWidth`, `MaxWidth`, `Timeout`. Pointer-ifying them (option b) touches ~60+ read sites across `src/` plus gob caching, defaults, DSC, the JSON schema, and docs — disproportionate. No presence signal exists in the config path today, but `src/config/data.go` already has the exact generic-decode machinery needed (`normalize`/`sanitize` convert YAML/TOML/JSON uniformly to generic maps); custom unmarshalers are not an option because go-toml/v2 doesn't support them (noted at `load.go:155-156`).
+
+**Recommended fix:** Option a, scoped. In `read()`, decode the raw bytes a second time into a generic map (reusing `data.go`'s `sanitize` pattern) and record key-presence sets in unexported fields on `Config`, `Block`, and `Segment` (arrays pair positionally with the parsed slices — all three decoders preserve order). In `merge()`, for scalar kinds consult the override's presence set (via the field's `json` tag) instead of the bool/int `false` special case; nil presence set falls back to current semantics so direct struct-level callers/tests keep working. Files: `merge.go`, `load.go`, small additions to `config.go`/`block.go`/`segment.go`; roughly 150-250 lines plus test updates (including flipping the expectation in `merge_test.go:20-41`).
+
+**Feasibility verdict:** moderate — not a contained one-liner because presence must be captured at decode time and threaded through the block/segment matching in `Config.merge`, but it reuses existing generic-decode helpers and stays inside `src/config` with no ripple into field readers.
+
+**Open questions:** (1) Fix strings/uints uniformly (explicit `""`/`0` overrides would start working — a behavior change) or bool/int only? (2) Should `Version` be exempt (always present in practice)? (3) Presence for the deprecated `properties`→`options` TOML migration path needs a look during implementation.</result>
+<usage><subagent_tokens>61624</subagent_tokens><tool_uses>12</tool_uses><duration_ms>124241</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a48a0140c3d406531</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\a48a0140c3d406531.output</output-file>
+<status>completed</status>
+<summary>Agent "Fix path.go wrong-occurrence bug" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All verification steps pass. Here is the summary.
+
+## Files changed
+
+1. **`src/regex/regex.go`** — added `FindStringMatchIndex(pattern, text string, index int) (start, end int, ok bool)`, mirroring `FindStringMatch`'s cache lookup and guard style but using `FindStringSubmatchIndex` and checking for `-1` sentinel offsets (non-participating capture group), returning byte-offset pairs instead of the substring text.
+
+2. **`src/regex/regex_test.go`** — added `TestFindStringMatchIndex` with cases for full match, capture group, no match, invalid pattern, out-of-bounds index, non-participating group, and the specific duplicate-text repro (`.*/(src)/deep` against `/home/src/project/src/deep`) confirming the returned span points at the second `src` occurrence, not the first.
+
+3. **`src/segments/path.go`** — in `handleRegex`'s legacy branch (the only branch present in this worktree — see note below), replaced `regex.FindStringMatch` + `strings.Replace` with `regex.FindStringMatchIndex` + a direct slice splice (`input[:start] + pt.mappedLocations[key] + input[end:]`). `path.Clean(input)` and the return shape are unchanged.
+
+4. **`src/segments/path_unix_test.go`** — added the confirmed repro case to `testFullPathCustomMappedLocationsCases`: `Pwd: "/home/src/project/src/deep"`, `MappedLocations: {"re:.*/(src)/deep": "#"}`, `Expected: "/home/src/project/#/deep"`.
+
+5. **`src/segments/path_windows_test.go`** — added a backslash-input sibling case to the same slice, following the file's existing style (`GOOS: runtime.WINDOWS`, `PathSeparator: `\``): `Pwd: `\home\src\project\src\deep``, same regex key, `Expected: `\home\src\project\#\deep``.
+
+## Judgment call — flagging explicitly
+
+The task brief assumes a `mapped_locations_regex_expand=true` sibling branch already exists in `handleRegex` (added by a prior commit) that must be left untouched. That commit (`982337b8 feat(segments): add mapped_locations_regex_expand to path segment`) exists in the repo's overall history but is **not an ancestor of this worktree's HEAD** (`ba1b9eb1`) — `git merge-base --is-ancestor` confirms it. In this checkout, `handleRegex` has only the single legacy branch shown in the bug report; there is no expand branch to avoid touching, and no parallel test structure to mirror in the two test files (I followed the general table style instead). I did not attempt to merge/cherry-pick that unrelated commit in — doing so was out of scope and risked pulling in unrelated changes. If the orchestrator expected this worktree to already include that feature, that's a worktree/base-commit mismatch worth checking before merging this fix.
+
+## Verification (all run from `src/`)
+
+```
+go build ./...                                          → pass, no output
+go test ./regex/... ./segments/... -v                    → ok (regex), ok (segments), ok (segments/options)
+modernize --fix "./..."                                  → no changes
+fieldalignment --fix "./..."                              → reordered fields in regex_test.go only (all struct literals in that file use named fields, so no positional-literal breakage)
+go mod tidy                                               → no output/changes
+gofmt -w .                                                → no output/changes
+golangci-lint run ./regex/... ./segments/...              → 0 issues
+```
+
+`git status --porcelain` after all steps shows only the 5 intended files modified — nothing unexpected rewritten elsewhere.</result>
+<usage><subagent_tokens>78576</subagent_tokens><tool_uses>35</tool_uses><duration_ms>279758</duration_ms></usage>
+<worktree><worktreePath>D:\oh-my-posh\.claude\worktrees\agent-a48a0140c3d406531</worktreePath><worktreeBranch>worktree-agent-a48a0140c3d406531</worktreeBranch></worktree>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a407974e3874000da</task-id>
+<tool-use-id>toolu_014RkP6hVD3CGHiARsAHHtnx</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\db8d3dd4-4827-4596-b83e-d7c9e0842ff6\tasks\a407974e3874000da.output</output-file>
+<status>completed</status>
+<summary>Agent "Fix merge.go presence-tracking bug" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>These vet warnings are in `src/cache/file_map_windows.go`, a file untouched by this change — pre-existing and unrelated to the fix. Not something to address here.
+
+## Summary
+
+**Files changed:**
+- `src/config/merge.go` — added `presenceAware` interface, `skipField`/`isScalarKind`/`jsonFieldName` helpers; `merge()`'s loop now routes bool/int/uint/float fields through presence data (when the override implements `presenceAware` and has a non-nil `presentFields` map) instead of the old always-false/`IsZero()` branches in `isZeroValue`, which is otherwise untouched.
+- `src/config/config.go` — added unexported `presentFields map[string]bool` and `(*Config).fieldPresent(name string) bool` (nil map → always present, preserving legacy behavior).
+- `src/config/block.go` — same addition for `Block`.
+- `src/config/segment.go` — same addition for `Segment`.
+- `src/config/load.go` — `read()` now calls `populatePresence(&amp;cfg, data)` after a successful decode; it re-decodes `data` generically per-format, runs it through `data.go`'s existing `normalize`/`sanitize`, and derives presence sets for the config's top-level keys and, positionally, each block's and each block's segments' keys (length-guarded, skipped rather than panicking on mismatch).
+- `src/config/load_test.go` (new) — `TestParseExtendsPreservesUnsetScalarFields`, driving the real `Parse()` pipeline with `t.TempDir()` fixtures, proving both bugs are fixed for a bool field (`FinalSpace`) and an int field (`Segment.MinWidth`).
+
+**Verification commands run from `src/`, all pass:**
+```
+go build ./...                          → OK
+go test ./config/... -v                 → OK, all tests pass including new ones
+modernize --fix "./..."                 → no changes needed beyond touched files
+fieldalignment --fix "./..."            → reordered fields in config.go/block.go/segment.go (expected); also touched src/prompt/engine_test.go, which I reverted (out of scope, unrelated struct)
+go mod tidy                             → no changes
+gofmt -w . / gofmt -l .                 → clean
+golangci-lint run ./config/...          → 0 issues (fixed one hugeParam finding by passing *reflect.StructField)
+go build ./... &amp;&amp; go test ./...         → all packages pass
+```
+
+`merge_test.go`'s existing cases needed **zero edits** — confirmed by reading the file in full before starting (all cases use hand-built `*Config` literals with nil `presentFields`, which fall back to legacy `isZeroValue` semantics exactly as before) and by the test run showing all pre-existing subtests still pass unchanged.
+
+**Judgment calls / things flagged, not improvised on silently:**
+1. `fieldalignment --fix ./...` rewrote an unrelated file, `src/prompt/engine_test.go` (reordering a local test struct). I reverted that file since it's outside this task's scope — confirmed via `git diff` review before finishing, per the verification instructions.
+2. `fieldalignment` also silently dropped a doc comment (on `Segment.Killed`, explaining its engine-timeout semantics) when reordering fields. I restored it manually and re-ran `gofmt`. Worth knowing this tool can lose comments during reordering — I checked the whole diff for other such drops and found none.
+3. Two `golangci-lint` `hugeParam` (gocritic) findings on `skipField`/`jsonFieldName` taking `reflect.StructField` by value (104 bytes) — fixed by taking `*reflect.StructField` instead; behavior-neutral.
+4. The bug report's "Fields affected today" list mentions `Block.RestartCycle`, but no such field exists in the current `block.go` — likely stale/aspirational in the task description. This didn't block anything since my fix is generic (scoped by `reflect.Kind`, not a hardcoded field list).
+5. The spec's test-plan bullet asking for a float/uint explicit-zero-override test (bug 2) assumes such a field exists on `Config`/`Block`/`Segment` — I verified none of the three structs has an exported float or uint field (only unexported `hash uint64`, never reached by `merge()`'s exported-field loop). I substituted an **int** field (`Segment.MinWidth`) for the explicit-zero-override case in `load_test.go`, since `isScalarKind` treats bool/int/uint/float identically — the code path is the same, just not exercisable against a real uint/float production field today. Documented this substitution directly in the test's doc comment.
+6. The spec also referenced a pre-existing `TestParseExtendsChainThreeLevels`-style test in `load_test.go` "from a recent commit" to follow the pattern of — no `load_test.go` file existed at all before this change, and no such test exists anywhere in the repo history I could find. I followed the closest actual precedent in the package (`data_test.go`'s table-driven `t.TempDir()` fixture pattern) instead.
+
+No commits were made — all changes are uncommitted in the worktree as instructed.</result>
+<usage><subagent_tokens>159965</subagent_tokens><tool_uses>63</tool_uses><duration_ms>689239</duration_ms></usage>
+<worktree><worktreePath>D:\oh-my-posh\.claude\worktrees\agent-a407974e3874000da</worktreePath><worktreeBranch>worktree-agent-a407974e3874000da</worktreeBranch></worktree>
+</task-notification>
+
+---
+
+pipeline fails now: https://github.com/JanDeDobbeleer/oh-my-posh/actions/runs/29339084745/job/87105782808?pr=7678

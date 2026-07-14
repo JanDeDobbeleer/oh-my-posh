@@ -547,6 +547,18 @@ function _omp_restore_rprompt() {
 function _omp_zle-line-init() {
   [[ $CONTEXT == start ]] || return 0
 
+  # zsh-vi-mode wraps this widget, so its own line-init runs after ours - that
+  # is, after .recursive-edit below has consumed the entire editing session.
+  # Run it up front to align the keymap and ZVM's mode bookkeeping before
+  # editing starts. See https://github.com/JanDeDobbeleer/oh-my-posh/issues/5992
+  # The empty rawfunc shadows the like-named local in zvm_widget_wrapper:
+  # zvm_reset_prompt resolves rawfunc dynamically and would otherwise re-enter
+  # this widget through it.
+  local rawfunc=
+  if (( $+functions[zvm_zle-line-init] )) && [[ $ZVM_INIT_DONE == true ]]; then
+    zvm_zle-line-init
+  fi
+
   # Start regular line editor.
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
   zle .recursive-edit

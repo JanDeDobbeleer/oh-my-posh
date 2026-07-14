@@ -1,6 +1,6 @@
-# GitHub Copilot Instructions
+# Agent Instructions
 
-For general coding guidelines, commit conventions, and agent workflows, see [AGENTS.md](../AGENTS.md).
+General coding guidelines, commit conventions, and agent workflows for this repository.
 
 ## Tech Stack
 
@@ -65,6 +65,27 @@ PowerShell helper scripts live in `packages/` and `build/`. Follow the `powershe
 Themes are plain JSON files in `themes/`. New themes must validate against
 `website/static/schema.json`. Do not introduce breaking schema changes without updating the
 schema file.
+
+## Skills
+
+Agent skills live in `.agents/skills/` - the vendor-neutral Agent Skills location that Copilot,
+Codex, Claude Code, and most other agents discover automatically. Most skills are installed via
+APM (see [CONTRIBUTING.md](CONTRIBUTING.md)) and gitignored; the repository embeds three of its
+own: `segment-create`, `segment-docs`, and `project-knowledge`.
+
+## Project Knowledge
+
+The `project-knowledge` skill (`.agents/skills/project-knowledge/`) is the project's durable
+memory: verified gotchas about the codebase, shells, terminals, and test harnesses. Before working
+in any of those areas, read the matching topic file - it exists to keep you out of known rabbit
+holes.
+
+Reading it is half the contract; writing to it is the other half. When a session uncovers
+something a future session should know before going down the same rabbit hole - a platform quirk,
+a non-obvious root cause, a failed approach worth not retrying - append it (dated, verified) to
+the matching file in
+`.agents/skills/project-knowledge/references/`. Create a new topic file plus an index row in its
+`SKILL.md` when none fits. Commit the knowledge update together with the change it relates to.
 
 ## Pull Request Reviews
 

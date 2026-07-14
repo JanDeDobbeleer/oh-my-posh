@@ -1,0 +1,17 @@
+Based on your memory, can we create a skill inside this project that we can use for future sessions as a memory to store all of this information, but then make a modular design? The skill is just an entry point that should talk about these gotchas or knowledge you need to know about:
+- terminal
+- shell
+- codebase
+- anything that's relevant for future sessions to read
+Create a Markdown file per topic. For example, in this case, separate one for Z shell, but we can do the same for PowerShell, etc., for all of the other topics that require a separate section. If the agent reads it whenever it tries to do something with that specific shell terminal use case, whatever, basically to build a memory of things we should know prior to starting something
+
+---
+
+what location should we add these skills to so that any tool can read it, like Copilot, Codex, Claude, whatever? Is dotagents the right place to put these because we currently already have two skills inside dotgithub/skills, which probably is only read by Copilot, but I want these, at least the repository-specific skills, to be available to any tool out there?
+
+---
+
+On bullet 1, do not unignore the full folder, but only add the two skills that are already in this repo:
+- the tracked ones, like `segment_create` and `segment_docs`
+- the new one we just created
+You can add them there. By default, the folder is ignored, but we override for the specific skills we want to embed in the repository because all of the other skills are installed using `apm` CLI in this codebase. We can delete `.github/skills` and `.claude/skills` is also installed by `apm`. It does that. Yes, bullet 3 and bullet 4 are okay. Plus, we also need to add the instruction in agent.md that whenever new challenges emerge during a session that a next session would benefit from knowing before going down a rabbit hole, it also needs to be committed and added to this new specific skill, the knowledge skill.

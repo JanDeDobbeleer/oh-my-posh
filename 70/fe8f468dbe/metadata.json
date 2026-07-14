@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "70fe8f468dbe",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".agents/skills/project-knowledge/SKILL.md",
+    ".agents/skills/project-knowledge/references/codebase.md",
+    ".agents/skills/project-knowledge/references/testing.md",
+    ".agents/skills/project-knowledge/references/zsh.md",
+    ".gitignore",
+    "AGENTS.md",
+    "CONTRIBUTING.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/70/fe8f468dbe/0/metadata.json",
+      "transcript": "/70/fe8f468dbe/0/full.jsonl",
+      "compact_transcript": "/70/fe8f468dbe/0/transcript.jsonl",
+      "content_hash": "/70/fe8f468dbe/0/content_hash.txt",
+      "prompt": "/70/fe8f468dbe/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 21684,
+    "cache_creation_tokens": 845529,
+    "cache_read_tokens": 20521776,
+    "output_tokens": 151142,
+    "api_call_count": 118
+  }
+}

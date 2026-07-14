@@ -1,11 +1,12 @@
 # APM
 apm_modules/
-.github/skills/*
-.github/instructions/*
-!.github/skills/segment-create/
-!.github/skills/segment-docs/
 .github/instructions/*
 .agents/*
+!.agents/skills
+.agents/skills/*
+!.agents/skills/segment-create/
+!.agents/skills/segment-docs/
+!.agents/skills/project-knowledge/
 
 # Others
 

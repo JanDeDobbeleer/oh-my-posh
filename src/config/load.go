@@ -115,9 +115,18 @@ func Parse(configFile string) (*Config, error) {
 	}
 
 	parentFolder := filepath.Dir(configFile)
+	visited := map[string]bool{configFile: true}
 
 	for cfg.Extends != "" {
 		cfg.Extends = resolvePath(cfg.Extends, parentFolder)
+
+		if visited[cfg.Extends] {
+			log.Errorf("circular extends detected: %s", cfg.Extends)
+			break
+		}
+
+		visited[cfg.Extends] = true
+
 		base, err := read(cfg.Extends, h)
 		if err != nil {
 			log.Errorf("failed to read extended config: %s", cfg.Extends)
@@ -125,6 +134,12 @@ func Parse(configFile string) (*Config, error) {
 		}
 
 		configDSC.Add(cfg.Extends)
+
+		// anchor the next hop's relative extends path against this hop's own
+		// directory, not the directory of the config that started the chain
+		if !strings.HasPrefix(cfg.Extends, "https://") {
+			parentFolder = filepath.Dir(cfg.Extends)
+		}
 
 		err = base.merge(cfg)
 		if err != nil {

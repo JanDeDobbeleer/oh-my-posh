@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "7f155fd83428",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/shell/scripts/omp.bash",
+    "src/shell/scripts/omp.fish",
+    "src/shell/scripts/omp.lua",
+    "src/shell/scripts/omp.ps1",
+    "src/shell/scripts/omp.yash",
+    "src/shell/scripts/omp.zsh",
+    "website/docs/configuration/general.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/7f/155fd83428/0/metadata.json",
+      "transcript": "/7f/155fd83428/0/full.jsonl",
+      "compact_transcript": "/7f/155fd83428/0/transcript.jsonl",
+      "content_hash": "/7f/155fd83428/0/content_hash.txt",
+      "prompt": "/7f/155fd83428/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 12972,
+    "cache_creation_tokens": 142154,
+    "cache_read_tokens": 3362320,
+    "output_tokens": 48415,
+    "api_call_count": 37
+  }
+}

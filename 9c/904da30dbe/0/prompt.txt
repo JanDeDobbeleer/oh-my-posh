@@ -1,0 +1,5 @@
+Ibvestiaget how we can solve this: https://github.com/JanDeDobbeleer/oh-my-posh/issues/5992
+
+---
+
+yes, and make sonnet 5 rerun it

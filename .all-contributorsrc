@@ -3676,6 +3676,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Mertozturkk",
+      "name": "Mert Öztürk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42963332?v=4",
+      "profile": "https://github.com/Mertozturkk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

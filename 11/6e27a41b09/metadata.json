@@ -2,30 +2,23 @@
   "cli_version": "0.8.42",
   "checkpoint_id": "116e27a41b09",
   "strategy": "manual-commit",
-  "branch": "next",
-  "checkpoints_count": 6,
-  "files_touched": [
-    "src/segments/path.go",
-    "src/segments/path_test.go",
-    "src/segments/path_unix_test.go",
-    "src/segments/path_windows_test.go",
-    "themes/schema.json",
-    "website/docs/segments/system/path.mdx"
-  ],
+  "branch": "tmp-fixup",
+  "checkpoints_count": 1,
+  "files_touched": null,
   "sessions": [
     {
       "metadata": "/11/6e27a41b09/0/metadata.json",
       "transcript": "/11/6e27a41b09/0/full.jsonl",
       "compact_transcript": "/11/6e27a41b09/0/transcript.jsonl",
       "content_hash": "/11/6e27a41b09/0/content_hash.txt",
-      "prompt": ""
+      "prompt": "/11/6e27a41b09/0/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 12,
-    "cache_creation_tokens": 2514,
-    "cache_read_tokens": 1208625,
-    "output_tokens": 1275,
-    "api_call_count": 6
+    "input_tokens": 425,
+    "cache_creation_tokens": 298773,
+    "cache_read_tokens": 43645106,
+    "output_tokens": 132740,
+    "api_call_count": 214
   }
 }

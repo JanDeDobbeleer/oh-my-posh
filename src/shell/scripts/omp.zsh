@@ -591,7 +591,20 @@ function _omp_is_buffer_complete() {
     return 1
   fi
 
-  # 3. An odd number of trailing backslashes escapes the newline that follows the
+  # 3. The SHORT_LOOPS option (on by default) makes `zsh -n` accept a bare loop
+  # header as a complete empty loop - `for i in 1 2`, `while true`, or the
+  # `for i in 1 2 do;` form - even though the line editor keeps waiting for the
+  # body. Re-parse with an explicit `do : done` appended and SHORT_LOOPS off:
+  # an open `for`/`while`/`until`/`select`/`repeat` header absorbs it into a
+  # valid loop, while every genuinely complete command - including the
+  # `for x (...) cmd` and `repeat n cmd` short forms - orphans the `do` into a
+  # syntax error. The keyword test keeps the extra parse off the common path.
+  if [[ $buf == *(for|while|until|select|repeat)* ]] && \
+     print -r -- "$buf"$'\ndo\n:\ndone' | zsh +o shortloops -n 2>/dev/null; then
+    return 1
+  fi
+
+  # 4. An odd number of trailing backslashes escapes the newline that follows the
   # buffer, which parses as a line continuation rather than an incomplete command.
   local trailing=${buf##*[^\\]}
   (( ${#trailing} % 2 )) && return 1

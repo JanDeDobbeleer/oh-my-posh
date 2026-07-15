@@ -1,0 +1,143 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "0dcae3896550",
+  "session_id": "85307e10-87a7-49ab-b5ae-047efbfbd20c",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-15T04:54:59.8580663Z",
+  "branch": "next",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    "src/cache/template.go",
+    "src/cli/data.go",
+    "src/cli/data_test.go",
+    "src/config/data.go",
+    "src/template/cache.go",
+    "src/template/cache_test.go",
+    "website/docs/configuration/templates.mdx",
+    "website/docs/segments/system/status.mdx"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "230d204c92d2",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 77,
+    "cache_creation_tokens": 122863,
+    "cache_read_tokens": 4350707,
+    "output_tokens": 42123,
+    "api_call_count": 44
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01R9wchsBWWnh4j4azvnb8FT",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "writing-clearly-and-concisely"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "230d204c92d2",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 66,
+        "end": 67,
+        "entry_ids": [
+          "fcb61085-61f4-4f8b-b0d8-84379f42d44d"
+        ],
+        "tool_use_id": "toolu_01R9wchsBWWnh4j4azvnb8FT"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01R9wchsBWWnh4j4azvnb8FT"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: writing-clearly-and-concisely",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01JDGCBrbu9N7TYR1gWiiMze",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "vale-user-facing-text"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "230d204c92d2",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 71,
+        "end": 72,
+        "entry_ids": [
+          "05eff4cb-e364-47ab-82f0-8b7d3f6bd9c0"
+        ],
+        "tool_use_id": "toolu_01JDGCBrbu9N7TYR1gWiiMze"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01JDGCBrbu9N7TYR1gWiiMze"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: vale-user-facing-text",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-15T04:54:59.7057135Z",
+    "agent_lines": 62,
+    "agent_removed": 15,
+    "human_added": 12,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 75,
+    "total_lines_changed": 90,
+    "agent_percentage": 85.55555555555556,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 15,
+      "user_lines_removed": 3,
+      "agent_lines_added": 64,
+      "agent_lines_removed": 16,
+      "user_added_per_file": {
+        "apm.yml": 2,
+        "website/docs/configuration/templates.mdx": 1,
+        "website/docs/segments/system/status.mdx": 12
+      },
+      "user_removed_per_file": {
+        "apm.yml": 2,
+        "website/docs/configuration/templates.mdx": 1
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 76,
+      "agent_lines_removed": 16
+    }
+  ]
+}

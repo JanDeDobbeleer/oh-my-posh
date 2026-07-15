@@ -1,0 +1,13 @@
+I want to provide support for the streaming configuration in NuShell, but the problem is that NuShell does not support it. We investigated this previously. I want to create an issue on the NuGet GitHub repository asking for support. Obviously, I would need to explain what this feature is in oh-my-posh and what type of functionality would be needed from them so that we can support it. Can you write a detailed analysis in markdown or an explanation I can share with them, with a sequence flow, etc., explaining where it touches the current new initialization script and what would need to be added on their end if you wanted to support this?
+
+---
+
+This also includes the serve functionality, because we still use stream, but we also have serve. When you enable streaming in the configuration, it votes user serve to set up a long-lived executable as well as the streaming functionality to stream individual parts.
+
+---
+
+Use the writing clearly and concisely skill.
+
+---
+
+What would a good issue title be like, because probably we're initiating a feature request now?

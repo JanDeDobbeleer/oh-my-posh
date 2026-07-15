@@ -1,0 +1,9 @@
+What's the most straightforward way to support this? https://github.com/JanDeDobbeleer/oh-my-posh/issues/7572
+
+---
+
+maybe the transparent keyword isn't allowed in the schema for palette?
+
+---
+
+go ahead and implement it

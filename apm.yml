@@ -12,6 +12,7 @@ dependencies:
     - JanDeDobbeleer/agentic/skills/markdown
     - JanDeDobbeleer/agentic/skills/powershell
     - JanDeDobbeleer/agentic/skills/writing-clearly-and-concisely
+    - JanDeDobbeleer/agentic/skills/code-changes
     - ast-grep/agent-skill/ast-grep/skills/ast-grep
 
 targets:

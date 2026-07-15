@@ -36,7 +36,7 @@ pip install apm-cli
 After cloning the repository, run:
 
 ```bash
-apm install
+apm install --frozen
 ```
 
 This pulls in the shared skills from [JanDeDobbeleer/agentic][agentic] (conventional commits,

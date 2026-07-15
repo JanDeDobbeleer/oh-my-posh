@@ -1,7 +1,7 @@
 scripts:
 - name: Install Dependencies
   command: |
-    apm install
+    apm install --frozen
     git restore apm.lock.yaml
     pip install ast-grep-cli
   triggers:

@@ -71,14 +71,14 @@ Done! Restart the terminal and you're ready to continue below.
 ## Install agents and skills
 
 This project uses [APM (Agent Package Manager)][apm] to manage shared AI agent skills.
-After cloning the repository, install APM and run `apm install` to pull in the shared skills:
+After cloning the repository, install APM and run `apm install --frozen` to pull in the shared skills:
 
 ```powershell
 # Install APM
 pip install apm-cli
 
 # Install shared skills
-apm install
+apm install --frozen
 ```
 
 This pulls in shared coding conventions (Go, PowerShell, Markdown, and conventional commits)

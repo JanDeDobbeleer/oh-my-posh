@@ -23,7 +23,7 @@ jobs:
       - name: Install apm-cli and run apm install
         run: |
           pip install apm-cli
-          apm install
+          apm install --frozen
           git restore apm.lock.yaml
 
       - name: Install ast-grep

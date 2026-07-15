@@ -1,9 +1,13 @@
-What's the most straightforward way to support this? https://github.com/JanDeDobbeleer/oh-my-posh/issues/7572
+why are you still using vale?
 
 ---
 
-maybe the transparent keyword isn't allowed in the schema for palette?
+yes
 
 ---
 
-go ahead and implement it
+how does rendered, err := template.Render(color.String(), nil) solve the user's request when no context is passed?
+
+---
+
+Why aren't we using table-driven tests for these test cases?

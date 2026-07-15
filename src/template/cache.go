@@ -25,7 +25,7 @@ var (
 	// value could clobber that resolved value. A key belongs here if and only
 	// if applyDataFile routes it - listing one it does not route would instead
 	// make that key unsettable from a data file.
-	routedEnvDataKeys = []string{"PWD", "Code", "ExecutionTime", "PipeStatus", "Interrupted"}
+	routedEnvDataKeys = []string{"PWD", "Code", "ExecutionTime", "PipeStatus", "Interrupted", "Executed"}
 )
 
 func loadCache(vars maps.Simple[any], aliases *maps.Config) {
@@ -50,6 +50,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	tmpl.ShellVersion = env.Flags().ShellVersion
 	tmpl.Code, _ = env.StatusCodes()
 	tmpl.Interrupted = env.Flags().Interrupted
+	tmpl.Executed = !env.Flags().NoExitCode
 	tmpl.WSL = env.IsWsl()
 	tmpl.Segments = maps.NewConcurrent[any]()
 	tmpl.PromptCount = env.Flags().PromptCount

@@ -28,6 +28,7 @@ type EnvData struct {
 	ExecutionTime *float64
 	PipeStatus    *string
 	Interrupted   *bool
+	Executed      *bool
 }
 
 // LoadData reads and parses a template data file. The format is derived

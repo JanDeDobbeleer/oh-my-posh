@@ -1,0 +1,168 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "0dcae3896550",
+  "session_id": "30e54c59-c9aa-4d79-a345-1aa40dad2ad4",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-15T04:54:59.0900954Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/cache/template.go",
+    "src/cli/data.go",
+    "src/cli/data_test.go",
+    "src/config/data.go",
+    "src/template/cache.go",
+    "src/template/cache_test.go",
+    "website/docs/configuration/templates.mdx",
+    "website/docs/segments/system/status.mdx"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "cbdb26b9c68f",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 65,
+    "cache_creation_tokens": 84615,
+    "cache_read_tokens": 2847504,
+    "output_tokens": 26614,
+    "api_call_count": 37
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_017yT3wv4F4JPrRwbqPsKFmM",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "cbdb26b9c68f",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 11,
+        "end": 12,
+        "entry_ids": [
+          "5da4528f-7bc5-4da9-8e75-db74a5b5df72"
+        ],
+        "tool_use_id": "toolu_017yT3wv4F4JPrRwbqPsKFmM"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_017yT3wv4F4JPrRwbqPsKFmM"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01Xt6eggfuufZEELmLtmQrgq",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "golang"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "cbdb26b9c68f",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 167,
+        "end": 168,
+        "entry_ids": [
+          "ec25efbd-15ec-4520-828e-73f22891e408"
+        ],
+        "tool_use_id": "toolu_01Xt6eggfuufZEELmLtmQrgq"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01Xt6eggfuufZEELmLtmQrgq"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: golang",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_012RvxePxa1ZvMn9U3A1RjgX",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "cbdb26b9c68f",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 194,
+        "end": 195,
+        "entry_ids": [
+          "6b6be038-afaf-4d9d-b90f-949360e9c51b"
+        ],
+        "tool_use_id": "toolu_012RvxePxa1ZvMn9U3A1RjgX"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_012RvxePxa1ZvMn9U3A1RjgX"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-15T04:54:58.9551179Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 16,
+    "total_committed": 0,
+    "total_lines_changed": 16,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 78,
+      "user_lines_removed": 18,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "apm.yml": 2,
+        "src/cache/template.go": 1,
+        "src/cli/data.go": 7,
+        "src/cli/data_test.go": 27,
+        "src/config/data.go": 1,
+        "src/template/cache.go": 2,
+        "src/template/cache_test.go": 25,
+        "website/docs/configuration/templates.mdx": 1,
+        "website/docs/segments/system/status.mdx": 12
+      },
+      "user_removed_per_file": {
+        "apm.yml": 2,
+        "src/cli/data.go": 3,
+        "src/cli/data_test.go": 8,
+        "src/template/cache.go": 1,
+        "src/template/cache_test.go": 4
+      }
+    }
+  ]
+}

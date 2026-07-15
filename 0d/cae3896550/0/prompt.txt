@@ -1,0 +1,52 @@
+Investigate the following issue and provide me an analysis first. My thinking is that this is default shell behavior that we would override, but I want to validate that statement. https://github.com/JanDeDobbeleer/oh-my-posh/issues/7679
+
+---
+
+Go for option 1, and maybe one other analysis I wanted to look at is in case the user presses Enter in their terminal. My assumption is we can just return the cached prompt instead of recreating everything from scratch, because theoretically they never execute anything that changes something, or maybe that's an assumption on my end. Probably depends on when the latest prompt was rendered.
+
+---
+
+<task-notification>
+<task-id>a4ecc6283494f9bc5</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\30e54c59-c9aa-4d79-a345-1aa40dad2ad4\tasks\a4ecc6283494f9bc5.output</output-file>
+<status>completed</status>
+<summary>Agent "Implement .Executed template property" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## Summary
+
+Implemented the `.Executed` global template property across the full pipeline. All changes match the spec exactly; nothing required deviation.
+
+**Files changed:**
+
+1. `src/cache/template.go` — added `Executed bool` to `SimpleTemplate`, grouped with the other bools (WSL/Root/Interrupted).
+
+2. `src/template/cache.go` — in `loadCache`, added `tmpl.Executed = !env.Flags().NoExitCode` next to the `Interrupted` assignment; added `"Executed"` to `routedEnvDataKeys`. `restoreCache` was left untouched as instructed.
+
+3. `src/config/data.go` — added `Executed *bool` to `EnvData`.
+
+4. `src/cli/data.go` — added the routing block:
+   ```go
+   if envFlags.Executed != nil &amp;&amp; !changed("no-status") {
+       flags.NoExitCode = !*envFlags.Executed
+   }
+   ```
+   Reworded the `applyDataFile` doc comment to stop hardcoding "the four env keys," pointing instead to `routedEnvDataKeys` in the template package.
+
+5. Tests:
+   - `src/template/cache_test.go` — two new tests (`TestLoadCacheExecutedReflectsNoExitCode`, `TestLoadCacheExecutedTrueWhenExitCodeValid`) plus extended `TestLoadCacheEnvDataIgnoresRoutedKeys` to cover `Executed` being stripped by the overlay.
+   - `src/cli/data_test.go` — extended the existing routing tests (`RoutesEveryKeyWhenNoFlagsChanged`, `ExplicitCLIFlagWinsOverDataFile`, `PerKeyPrecedence`, `MissingEnvKeysLeaveFlagsUntouched`) to also exercise `Executed`/`NoExitCode`, and added `TestApplyDataFile_ExecutedFalseIsRoutedNotTreatedAsAbsent` mirroring the `Interrupted` inversion test (`Executed: false` in data → `flags.NoExitCode == true`).
+
+6. Docs:
+   - `website/docs/configuration/templates.mdx` — added a `.Executed` row to the global properties table, realigned to match the table's fixed pipe width (126 chars, matching all sibling rows).
+   - `website/docs/segments/system/status.mdx` — added a `:::tip hide stale exit codes` admonition after the "reason" example, showing `{{ if .Executed }}{{ .Code }}{{ end }}`.
+
+**Verification (from `D:\oh-my-posh\src`):**
+- `go build ./...` — clean, no output.
+- `go test ./template/... ./cli/... ./config/... ./cache/...` — all packages `ok`.
+- `gofmt -l .` — no output (all files formatted).
+- `npx markdownlint-cli2` on both edited docs files — same 50 pre-existing errors as before my edit (verified via `git stash`/`stash pop` diff), no new violations introduced by the added lines.
+
+**Note (not part of the task):** `git status` also shows `apm.yml` modified (dependency list reordering) — this was not touched intentionally by me; it appears to be a side effect of the `Skill`/`apm` tooling itself, not a manual edit. Flagging it since it's an unexpected diff outside the requested scope, in case the orchestrator wants to revert it before committing.</result>
+<usage><subagent_tokens>97528</subagent_tokens><tool_uses>43</tool_uses><duration_ms>266221</duration_ms></usage>
+</task-notification>

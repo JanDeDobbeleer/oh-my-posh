@@ -28,6 +28,19 @@
       "title": "Palette reference",
       "description": "https://ohmyposh.dev/docs/configuration/colors#palette"
     },
+    "palette_color": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/color"
+        },
+        {
+          "type": "string",
+          "pattern": "\\{\\{.*\\}\\}",
+          "title": "Color template",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#palette"
+        }
+      ]
+    },
     "templates": {
       "type": "array",
       "title": "An array of templates",
@@ -5501,7 +5514,7 @@
       "default": {},
       "patternProperties": {
         ".*": {
-          "$ref": "#/definitions/color"
+          "$ref": "#/definitions/palette_color"
         }
       }
     },

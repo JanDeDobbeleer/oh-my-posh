@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 var (
@@ -200,6 +203,66 @@ func TestPaletteShouldHandleEmptyKey(t *testing.T) {
 
 	assert.Nil(t, err, "expected no error")
 	assert.Equal(t, Ansi("#000000"), actual, "expected different color value")
+}
+
+func TestPaletteShouldResolveTemplateValues(t *testing.T) {
+	cases := []struct {
+		Palette       Palette
+		Case          string
+		Request       Ansi
+		Expected      Ansi
+		ExpectedError bool
+	}{
+		{
+			Case:     "Template resolves to a literal color",
+			Palette:  Palette{"accent": `{{ if eq .Shell "foo" }}#123456{{ else }}#654321{{ end }}`},
+			Request:  "p:accent",
+			Expected: "#123456",
+		},
+		{
+			Case: "Template resolves to a palette reference",
+			Palette: Palette{
+				"accent": `{{ if eq .Shell "foo" }}p:green{{ else }}p:red{{ end }}`,
+				"green":  "#00FF00",
+				"red":    "#FF0000",
+			},
+			Request:  "p:accent",
+			Expected: "#00FF00",
+		},
+		{
+			Case:     "Template output is trimmed",
+			Palette:  Palette{"accent": "\n  {{ if eq .Shell \"foo\" }}\n  #123456\n  {{ end }}\n  "},
+			Request:  "p:accent",
+			Expected: "#123456",
+		},
+		{
+			Case:          "Invalid template returns an error",
+			Palette:       Palette{"accent": `{{ if eq .Shell "foo" }}#123456{{ end`},
+			Request:       "p:accent",
+			ExpectedError: true,
+		},
+	}
+
+	env := new(mock.Environment)
+	env.On("Shell").Return("foo")
+
+	template.Cache = new(cache.Template)
+	template.Cache.Shell = "foo"
+	template.Init(env, nil, nil)
+
+	for _, tc := range cases {
+		actual, err := tc.Palette.ResolveColor(tc.Request)
+
+		if tc.ExpectedError {
+			assert.NotNil(t, err, tc.Case)
+			assert.Equal(t, Ansi(""), actual, tc.Case)
+			assert.Equal(t, Ansi(""), tc.Palette.MaybeResolveColor(tc.Request), tc.Case)
+			continue
+		}
+
+		assert.Nil(t, err, tc.Case)
+		assert.Equal(t, tc.Expected, actual, tc.Case)
+	}
 }
 
 func BenchmarkPaletteMixedCaseResolution(b *testing.B) {

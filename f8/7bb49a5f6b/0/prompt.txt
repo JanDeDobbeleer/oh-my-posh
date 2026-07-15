@@ -1,0 +1,2 @@
+I want  Invoke-PoshPromptRepaint
+Yes, scope confirmed

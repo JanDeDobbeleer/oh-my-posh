@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-07-13T00:32:44.566495+00:00'
+generated_at: '2026-07-15T05:50:35.123972+00:00'
 apm_version: 0.25.0
 dependencies:
 - repo_url: ast-grep/agent-skill
@@ -26,7 +26,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic-golang
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
@@ -37,11 +37,11 @@ dependencies:
   deployed_file_hashes:
     .claude/rules/golang.md: sha256:6ebdb015cdee3b2b834cf794f3851d84113ee381025e5554a9fa814c1d54c4ad
     .github/instructions/golang.instructions.md: sha256:1f477c4204be1cc8b704ed3cddad0d3c3f1b9d4db3270ae9787de7c975807053
-  content_hash: sha256:3ea7e0cefb98f178f2552d51b14906d4bac9028c42467b70f22d2ecbee08015e
+  content_hash: sha256:cc899928ca2b32bcb7b5d59e8d151e430bc388d244261c97794e1b262dd5f320
 - repo_url: jandedobbeleer/agentic
   name: agentic-markdown
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
@@ -52,11 +52,11 @@ dependencies:
   deployed_file_hashes:
     .claude/rules/markdown.md: sha256:223315c67ebf00bfb7ae7a0d288f1991a3ae8f736b8b2b0fd8468a5104b47893
     .github/instructions/markdown.instructions.md: sha256:91d656b4d6c90a8ae10ca520e2f5c9444a4b6add5520328f24ad2a919e0f4747
-  content_hash: sha256:95283b86401c5cc052eaaa4e9f71b34a673f1e1f311a70ed93937d4deba2d272
+  content_hash: sha256:1862a115c834b4b8f4d9e036c2f05fa934304f3f3f1b20e235da515b8f0dc44b
 - repo_url: jandedobbeleer/agentic
   name: agentic-powershell
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
@@ -67,11 +67,11 @@ dependencies:
   deployed_file_hashes:
     .claude/rules/powershell.md: sha256:f17d5edda5ecc2aac8c86a32c03d32c8eccf0d945983ee70b404062d61f10a27
     .github/instructions/powershell.instructions.md: sha256:ae92d1111d4183847df527525c73d706fa1ef003d515964270f858eecf659449
-  content_hash: sha256:b64a000548bd18ac79d7d5f5afbefaec3bb94b31765470a87a2e1ab5bb0749dd
+  content_hash: sha256:f159d7b75e7ecf3fa2c0cdf1d568799558320e06bcba5263c05e28487db68e5c
 - repo_url: jandedobbeleer/agentic
   name: agentic
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: unknown
   virtual_path: skills/conventional-commit
   is_virtual: true
@@ -88,7 +88,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: unknown
   virtual_path: skills/golang
   is_virtual: true
@@ -99,13 +99,13 @@ dependencies:
   - .claude/skills/golang
   - .claude/skills/golang/SKILL.md
   deployed_file_hashes:
-    .agents/skills/golang/SKILL.md: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
-    .claude/skills/golang/SKILL.md: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
-  content_hash: sha256:07880827704871c541bf76a940ea39f5c0057ddf65c88de451bc3b7acb920903
+    .agents/skills/golang/SKILL.md: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
+    .claude/skills/golang/SKILL.md: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
+  content_hash: sha256:0b6572070aff3e4c6b61f6d9b5cf844756676d4a9669c16544f28e911eafc224
 - repo_url: jandedobbeleer/agentic
   name: agentic
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: unknown
   virtual_path: skills/markdown
   is_virtual: true
@@ -122,7 +122,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: unknown
   virtual_path: skills/powershell
   is_virtual: true
@@ -139,7 +139,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic
   host: github.com
-  resolved_commit: 74ac6d1c5adbb5a107d56a7cba030109e1fab4c8
+  resolved_commit: bd8f0f72ff2136e64a56f15ff138642cd26974e5
   version: unknown
   virtual_path: skills/writing-clearly-and-concisely
   is_virtual: true
@@ -244,7 +244,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/golang
   active_owner: jandedobbeleer/agentic/skills/golang
-  content_hash: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
+  content_hash: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
 - kind: project-relative
   target: agents
   value: .agents/skills/markdown
@@ -451,7 +451,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/golang
   active_owner: jandedobbeleer/agentic/skills/golang
-  content_hash: sha256:642aa8ad54a244f581c9afac0fdc71f5f9b7b5c93471ec71fc5fea0155c4b334
+  content_hash: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
 - kind: project-relative
   target: claude
   value: .claude/skills/markdown

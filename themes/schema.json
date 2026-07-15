@@ -379,6 +379,7 @@
             "brewfather",
             "buf",
             "bun",
+            "c",
             "carbonintensity",
             "cds",
             "cf",
@@ -1123,6 +1124,43 @@
                   "tooling": {
                     "default": [
                       "bun"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { 
+                "const": "c"
+              }
+            }
+          },
+          "then": {
+            "title": "C Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/c",
+              "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.c",
+                      "*.cpp",
+                      "*.h",
+                      "CMakeLists.txt"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "gcc"
                     ]
                   }
                 }

@@ -119,7 +119,20 @@ at the top level of your configuration:
 />
 
 Color names (palette keys) can have any string value, so be creative.
-Color values, on the other hand, should adhere to the **Standard color** format.
+Color values, on the other hand, should adhere to the **Standard color** format, including `transparent`.
+
+Alternatively, a palette value can be a [template][templates] that resolves to any valid color value, including
+a _Palette reference_. The template is rendered every time the color is resolved, so it can use any of the
+[global template properties][template-properties] to switch colors based on context. For example, to use a
+different color when a `Git` segment is active in the prompt:
+
+<Config
+  data={{
+    palette: {
+      "separator-git": '{{ if .Segments.Contains "Git" }}p:bg0{{ else }}p:green{{ end }}',
+    },
+  }}
+/>
 
 ### Using a Palette
 
@@ -177,8 +190,10 @@ rendered with incorrect colors, and you are using a Palette, be sure to check th
 
 ### Recursive resolution
 
-Palette allows for recursive _Palette reference_ resolution. You can use a _Palette reference_ as a color
-value in Palette. This allows you to define named colors, and use references to those colors as Palette values.
+Palette allows for recursive _Palette reference_ resolution, up to 3 levels deep. You can use a _Palette
+reference_ as a color value in Palette. This allows you to define named colors, and use references to those
+colors as Palette values. A template value that resolves to a _Palette reference_ follows the same rules,
+and the referenced value can itself be a template.
 For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F80" and "#023E8A":
 
 <Config

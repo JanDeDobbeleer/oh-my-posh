@@ -1,0 +1,13 @@
+where does the ReedlineEvent::Repaint come from?
+
+---
+
+yes and do not wrap long lines in the markdown as that ruins the rendering on GitHub (it renders this as actual newlines)
+
+---
+
+can we rewrite the spec to only keep the most relevant info? It's quite verbose and repeats things.
+
+---
+
+Now use the writing clearly skills on this document

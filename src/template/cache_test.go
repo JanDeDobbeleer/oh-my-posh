@@ -55,19 +55,20 @@ func TestLoadCacheEnvDataOverlay(t *testing.T) {
 
 func TestLoadCacheEnvDataIgnoresRoutedKeys(t *testing.T) {
 	flags := &runtime.Flags{
-		EnvData: json.RawMessage(`{"PWD":"/bogus/path","Code":99,"ExecutionTime":42.5,"PipeStatus":"1 0","Interrupted":true}`),
+		EnvData: json.RawMessage(`{"PWD":"/bogus/path","Code":99,"ExecutionTime":42.5,"PipeStatus":"1 0","Interrupted":true,"Executed":false}`),
 	}
 
 	env = newLoadCacheMockEnv(flags)
 
 	loadCache(nil, &maps.Config{})
 
-	// The routed keys must be ignored by the overlay: PWD/Code/Interrupted keep
-	// the value already resolved by the CLI layer (here, the live mock values),
-	// never the raw file value.
+	// The routed keys must be ignored by the overlay: PWD/Code/Interrupted/Executed
+	// keep the value already resolved by the CLI layer (here, the live mock
+	// values), never the raw file value.
 	assert.Equal(t, "/tmp/omp-test/project", Cache.PWD)
 	assert.Equal(t, 0, Cache.Code)
 	assert.False(t, Cache.Interrupted)
+	assert.True(t, Cache.Executed)
 }
 
 func TestLoadCacheEnvDataAliasAppliesToOverlaidValue(t *testing.T) {
@@ -97,6 +98,26 @@ func TestLoadCacheEnvDataFolderOverride(t *testing.T) {
 
 	// Derived from pwd it would be "project"; the explicit override wins.
 	assert.Equal(t, "custom-folder", Cache.Folder)
+}
+
+func TestLoadCacheExecutedReflectsNoExitCode(t *testing.T) {
+	flags := &runtime.Flags{NoExitCode: true}
+
+	env = newLoadCacheMockEnv(flags)
+
+	loadCache(nil, &maps.Config{})
+
+	assert.False(t, Cache.Executed)
+}
+
+func TestLoadCacheExecutedTrueWhenExitCodeValid(t *testing.T) {
+	flags := &runtime.Flags{NoExitCode: false}
+
+	env = newLoadCacheMockEnv(flags)
+
+	loadCache(nil, &maps.Config{})
+
+	assert.True(t, Cache.Executed)
 }
 
 func TestLoadCacheNoEnvData(t *testing.T) {

@@ -15,9 +15,9 @@ var dataPath string
 //
 // SegmentData and EnvData are copied onto flags verbatim - the rest of the
 // pipeline (segment replay, template cache overlay) consumes them from
-// there. The four env keys that map directly onto runtime.Flags fields
-// (PWD, Code, ExecutionTime, PipeStatus) are routed here explicitly, with
-// precedence explicit CLI flag > data file > live environment: changed
+// there. The env keys that map directly onto runtime.Flags fields (see
+// routedEnvDataKeys in the template package) are routed here explicitly,
+// with precedence explicit CLI flag > data file > live environment: changed
 // reports whether the corresponding CLI flag (by name) was set explicitly,
 // in which case the data file's value is skipped.
 func applyDataFile(flags *runtime.Flags, changed func(name string) bool) error {
@@ -56,6 +56,10 @@ func applyDataFile(flags *runtime.Flags, changed func(name string) bool) error {
 
 	if envFlags.Interrupted != nil && !changed("interrupted") {
 		flags.Interrupted = *envFlags.Interrupted
+	}
+
+	if envFlags.Executed != nil && !changed("no-status") {
+		flags.NoExitCode = !*envFlags.Executed
 	}
 
 	return nil

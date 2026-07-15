@@ -31,6 +31,7 @@ it with `.$` to reference it directly.
 | `.UserName`     | `string`              | the current user name                                                            |
 | `.HostName`     | `string`              | the host name                                                                    |
 | `.Code`         | `int`                 | the last exit code                                                               |
+| `.Executed`     | `boolean`             | false when the shell just started or enter was pressed without a command         |
 | `.Jobs`         | `int`                 | number of background jobs (only available for zsh, PowerShell, and Nushell)      |
 | `.OS`           | `string`              | the operating system                                                             |
 | `.WSL`          | `boolean`             | in WSL yes/no                                                                    |

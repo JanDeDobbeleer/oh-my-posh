@@ -744,5 +744,14 @@ function _omp_enable_vimode() {
   _omp_create_widget zle-keymap-select _omp_render_vimode
 }
 
+# This can be called by the user whenever re-rendering is required.
+function omp_repaint_prompt() {
+  eval "$(_omp_get_prompt primary --eval)"
+  zle .reset-prompt 2>/dev/null
+}
+
+# Allow direct key binding: bindkey '^B' omp_repaint_prompt
+zle -N omp_repaint_prompt
+
 # legacy functions
 function enable_poshtransientprompt() {}

@@ -1213,6 +1213,24 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
+    function Invoke-PoshPromptRepaint {
+        if ($script:ConstrainedLanguageMode) {
+            return
+        }
+
+        $previousOutputEncoding = [Console]::OutputEncoding
+        try {
+            $script:Streaming.State = 'NEW'
+            [Console]::OutputEncoding = [Text.Encoding]::UTF8
+            [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+        }
+        catch {
+        }
+        finally {
+            [Console]::OutputEncoding = $previousOutputEncoding
+        }
+    }
+
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {
         $ExecutionContext.SessionState.Module.OnRemove += {
@@ -1303,6 +1321,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         "Enable-PoshVIMode"
         "Enable-PoshStreaming"
         "Set-TransientPrompt"
+        "Invoke-PoshPromptRepaint"
         "prompt"
     )
 } | Import-Module -Global

@@ -3694,6 +3694,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ajpinedam",
+      "name": "Andres Pineda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1900897?v=4",
+      "profile": "https://ajpinedam.dev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

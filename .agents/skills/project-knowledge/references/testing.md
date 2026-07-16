@@ -3,6 +3,25 @@
 Patterns for functionally driving omp's shell integrations, mostly in WSL (verified on aarch64,
 zsh 5.9, fish 4.1.2).
 
+## The e2e module (`e2e/`)
+
+A separate Go module with a cross-platform pty harness (go-pty + vt10x) that runs three layers
+(syntax check, interactive smoke, feature scenarios) for bash/zsh/fish/pwsh/nu. See `e2e/README.md`
+for usage. Gotchas baked into it, relevant to any future pty work:
+
+- PSReadLine on a raw Unix pty floods `CSI 6n` (DSR cursor-position) queries and wedges without a
+  reply; ConPTY answers them internally on Windows. The harness's reader goroutine answers with
+  the vt10x cursor position (`harness/session.go`).
+- nu autoloads every `.nu` under `$nu.vendor-autoload-dirs` AFTER `--config`, so a dev machine's
+  real oh-my-posh nu integration clobbers the test prompt. Isolate with `XDG_DATA_HOME` pointed
+  at an empty dir (works on Windows too).
+- go-pty's Windows `Cmd` resolves bare executable names relative to `Cmd.Dir` when `Dir` is set.
+  Always pass an absolute binary path.
+- Windows PATH resolves `bash` to System32's WSL launcher, not Git Bash; it fails on Windows-style
+  paths. `harness.LookupShellBinary` derives Git Bash from `git.exe`'s location.
+- bash transient and rprompt are ble.sh-only (`bashBLEsession`, gated on `BLE_SESSION_ID` in
+  `src/shell/bash.go`). Plain interactive bash gets no code for either feature.
+
 ## WSL basics
 
 - WSL `/tmp` is wiped between separate `wsl.exe` invocations (instance auto-shutdown). Either make

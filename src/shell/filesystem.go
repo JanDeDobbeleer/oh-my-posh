@@ -36,7 +36,7 @@ func hasScript(env runtime.Environment) (string, bool) {
 	}
 
 	// check if we have the same context
-	if val, _ := cache.Get[string](cache.Device, cacheKey(env.Flags().Shell)); val != cacheValue(env) {
+	if val, _ := cache.Get[string](cache.Device, cacheKey(env.Flags())); val != cacheValue(env) {
 		log.Debug("script context has changed")
 		return "", false
 	}
@@ -126,13 +126,18 @@ func writeScript(env runtime.Environment, script string) (string, error) {
 	}
 
 	log.Debug("init script written successfully")
-	cache.Set(cache.Device, cacheKey(env.Flags().Shell), cacheValue(env), cache.INFINITE)
+	cache.Set(cache.Device, cacheKey(env.Flags()), cacheValue(env), cache.INFINITE)
 
 	return path, nil
 }
 
-func cacheKey(sh string) string {
-	return fmt.Sprintf("INITVERSION%s", strings.ToUpper(sh))
+func cacheKey(flags *runtime.Flags) string {
+	key := fmt.Sprintf("INITVERSION%s", strings.ToUpper(flags.Shell))
+	if flags.Strict {
+		key += "STRICT"
+	}
+
+	return key
 }
 
 func cacheValue(env runtime.Environment) string {
@@ -161,6 +166,9 @@ func InitScriptName(flags *runtime.Flags) string {
 	h := fnv.New64a()
 	h.Write([]byte(flags.ConfigPath))
 	hash := h.Sum64()
+	if flags.Strict {
+		return fmt.Sprintf("init.%d.strict.%s", hash, sh)
+	}
 
 	return fmt.Sprintf("init.%d.%s", hash, sh)
 }

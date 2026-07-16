@@ -62,7 +62,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	}
 
 	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
-	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
+	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "resolve the executable through PATH")
 	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
 	initCmd.Flags().BoolVar(&eval, "eval", false, "output the full init script for eval")
 

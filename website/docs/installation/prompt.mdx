@@ -297,6 +297,21 @@ exec zsh
 </TabItem>
 </Tabs>
 
+## Version managers
+
+By default, the generated init script for most Oh My Posh installations uses the executable's
+absolute path. A version manager that removes the previous version during an upgrade can leave an
+existing shell pointing to a path that no longer exists.
+
+Add `--strict` to resolve `oh-my-posh` through `PATH` instead:
+
+```bash
+eval "$(oh-my-posh init bash --strict)"
+```
+
+Use the equivalent init command for your shell. This keeps the prompt working when the version
+manager updates `PATH` to a new Oh My Posh installation.
+
 [Copilot CLI segment documentation]: /docs/segments/cli/copilot-cli
 [clink]: https://chrisant996.github.io/clink/
 [iterm2]: https://iterm2.com/

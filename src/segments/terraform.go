@@ -5,6 +5,7 @@ import (
 	"errors"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclparse"
@@ -47,11 +48,56 @@ func (tf *Terraform) Enabled() bool {
 		return true
 	}
 
+	// tenv (https://github.com/tofuutils/tenv) pins the version through an
+	// environment variable or a version file, which takes precedence over the
+	// version declared in the terraform files or the state file.
+	if tf.setVersionFromTenv() {
+		return true
+	}
+
 	if err := tf.setVersionFromTfFiles(); err == nil {
 		return true
 	}
 
 	tf.setVersionFromTfStateFile()
+	return true
+}
+
+// tenvSources returns the environment variable and version file tenv uses to
+// pin the version, based on whether the segment targets terraform or tofu.
+func (tf *Terraform) tenvSources() (envVar, versionFile string) {
+	cmd := tf.options.String(Command, "terraform")
+	if strings.Contains(cmd, "tofu") {
+		return "TOFUENV_TOFU_VERSION", ".opentofu-version"
+	}
+
+	return "TFENV_TERRAFORM_VERSION", ".terraform-version"
+}
+
+func (tf *Terraform) setVersionFromTenv() bool {
+	envVar, versionFile := tf.tenvSources()
+
+	// the environment variable takes precedence over the version file
+	if version := strings.TrimSpace(tf.env.Getenv(envVar)); version != "" {
+		tf.Version = &version
+		return true
+	}
+
+	if !tf.env.HasFiles(versionFile) {
+		return false
+	}
+
+	version := strings.TrimSpace(tf.env.FileContent(versionFile))
+	// a version file holds a single version reference, guard against trailing content
+	if line, _, found := strings.Cut(version, "\n"); found {
+		version = strings.TrimSpace(line)
+	}
+
+	if version == "" {
+		return false
+	}
+
+	tf.Version = &version
 	return true
 }
 
@@ -71,7 +117,8 @@ func (tf *Terraform) inContext(fetchVersion bool) bool {
 		return false
 	}
 
-	versionFiles := []string{"versions.tf", "main.tf", "terraform.tfstate"}
+	_, tenvVersionFile := tf.tenvSources()
+	versionFiles := []string{"versions.tf", "main.tf", "terraform.tfstate", tenvVersionFile}
 	return slices.ContainsFunc(versionFiles, tf.env.HasFiles)
 }
 

@@ -32,6 +32,7 @@ var (
 		"nu",
 		"elvish",
 		"xonsh",
+		"yash",
 	}
 
 	initCmd = createInitCmd()
@@ -43,7 +44,7 @@ func init() {
 
 func createInitCmd() *cobra.Command {
 	initCmd := &cobra.Command{
-		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|elvish|xonsh]",
+		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|elvish|xonsh|yash]",
 		Short: "Initialize your shell and config",
 		Long: `Initialize your shell and config.
 

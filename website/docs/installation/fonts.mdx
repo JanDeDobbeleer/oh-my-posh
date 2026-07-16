@@ -159,7 +159,30 @@ The `minimal` themes do not make use of Nerd Font icons.
 
 [Creating your own theme][configuration] is always an option too 😊
 
+## Referencing glyphs in your config
+
+[Templates][templates] reference Nerd Font glyphs using Unicode escape sequences. Glyphs with code points up to
+U+FFFF use the standard `\uXXXX` (4 hex digits) form, which works in all config formats.
+
+Glyphs above U+FFFF (supplementary characters) require a format-specific escape:
+
+| Escape form | JSON | YAML | TOML |
+|---|---|---|---|
+| `\uDB82\uDFC9` (surrogate pair) | ✅ | ❌ | ❌ |
+| `\U000F0BC9` (8-digit `\U`) | ❌ | ✅ | ✅ |
+| literal glyph | ✅ | ✅ | ✅ |
+
+JSON combines a surrogate pair like `\uDB82\uDFC9` into the single code point U+F0BC9. YAML and TOML reject
+surrogate pairs; use the 8-digit `\U` form instead. To avoid format-specific escapes altogether, embed the
+literal character directly.
+
+:::tip
+[FileFormat.info][fileformat] lists every representation for a given glyph.
+:::
+
 [nerdfonts]: https://www.nerdfonts.com/
 [nerdfonts-ps]: https://psmodule.io/NerdFonts
 [configuration]: /docs/installation/customize
 [vs-otf]: https://stackoverflow.com/questions/75252606/is-it-possible-to-use-nerd-fonts-as-the-font-for-terminals-in-visual-studio
+[templates]: /docs/configuration/templates
+[fileformat]: https://www.fileformat.info/info/unicode/char/F0BC9/index.htm

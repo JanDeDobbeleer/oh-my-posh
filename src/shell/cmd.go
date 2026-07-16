@@ -32,7 +32,9 @@ func (f Features) Cmd() Code {
 else
     os.execute(string.format('"%s" notice', omp_executable))
 end`
-	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, Streaming, KeyHandlers, VIMode:
+	case Streaming:
+		return "serve_enabled = true"
+	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, KeyHandlers, VIMode:
 		fallthrough
 	default:
 		return ""

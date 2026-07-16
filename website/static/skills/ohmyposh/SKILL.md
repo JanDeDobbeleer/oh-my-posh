@@ -25,6 +25,7 @@ description: "Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell ini
    - [Cmd (via Clink)](/skills/ohmyposh/shell/cmd.md)
    - [Elvish](/skills/ohmyposh/shell/elvish.md)
    - [Xonsh](/skills/ohmyposh/shell/xonsh.md)
+   - [Yash](/skills/ohmyposh/shell/yash.md)
 
 3. **Install a Nerd Font** — required for icons and glyphs:
 

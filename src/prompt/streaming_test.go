@@ -1,6 +1,8 @@
 package prompt
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -27,12 +29,18 @@ func TestStreamPrimary_NoSegments(t *testing.T) {
 	env.On("Flags").Return(&runtime.Flags{Streaming: true})
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
+	// Mock accent color retrieval for both Windows and macOS. The mock
+	// forwards RunCommand as Called(command, args), so the expectation
+	// takes two arguments: the command and the args slice.
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything).Return("4", nil)
+	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -44,8 +52,155 @@ func TestStreamPrimary_NoSegments(t *testing.T) {
 	out := engine.StreamPrimary()
 	prompts := collectChannelOutput(out, 100*time.Millisecond)
 
-	// Should get exactly one prompt (initial) with no pending segments
-	assert.Len(t, prompts, 1)
+	// Initial prompt and the transient record with no pending segments
+	assert.Len(t, prompts, 2)
+}
+
+func TestStreamPrimary_TransientRecord(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{},
+		},
+		Env: env,
+	}
+
+	out := engine.StreamPrimary()
+	prompts := collectChannelOutput(out, 100*time.Millisecond)
+
+	// Initial prompt followed by a marker-prefixed transient record
+	assert.Len(t, prompts, 2)
+	assert.False(t, strings.HasPrefix(prompts[0], TransientMarker), "Initial prompt should not carry the transient marker")
+	assert.True(t, strings.HasPrefix(prompts[1], TransientMarker), "Second record should carry the transient marker")
+	assert.NotEmpty(t, strings.TrimPrefix(prompts[1], TransientMarker), "Transient record should contain the rendered prompt")
+}
+
+func TestStreamPrimary_TransientRecord_RefreshedAfterCompletion(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	slowSegment := &config.Segment{
+		Type:       "text",
+		Template:   "SLOW",
+		Pending:    true,
+		Foreground: "#ffffff",
+		Background: "#000000",
+	}
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{
+				{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{slowSegment},
+				},
+			},
+		},
+		Env:              env,
+		streamingResults: make(chan *config.Segment, 10),
+	}
+
+	err := slowSegment.MapSegmentWithWriter(env)
+	require.NoError(t, err)
+
+	engine.pendingSegments.Store(slowSegment.Name(), true)
+
+	out := engine.StreamPrimary()
+
+	go func() {
+		time.Sleep(50 * time.Millisecond)
+		slowSegment.Pending = false
+		engine.notifySegmentCompletion(slowSegment)
+	}()
+
+	prompts := collectChannelOutput(out, 200*time.Millisecond)
+
+	// initial prompt, initial transient, primary update, refreshed transient
+	assert.Len(t, prompts, 4)
+	assert.True(t, strings.HasPrefix(prompts[1], TransientMarker), "Second record should be the initial transient prompt")
+	assert.False(t, strings.HasPrefix(prompts[2], TransientMarker), "Third record should be the primary prompt update")
+	assert.True(t, strings.HasPrefix(prompts[len(prompts)-1], TransientMarker), "Last record should be the refreshed transient prompt")
+}
+
+func TestStreamPrimary_RecoversFromRenderPanic(t *testing.T) {
+	// No Env: e.Primary() nil-dereferences, which must be recovered by the
+	// producer goroutine - a panicking render costs one cycle, not the
+	// process (the serve daemon relies on this).
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{},
+		},
+	}
+
+	out := engine.StreamPrimary()
+	prompts := collectChannelOutput(out, 100*time.Millisecond)
+
+	// The panic aborts the cycle before any record is produced, and the
+	// channel still closes cleanly.
+	assert.Empty(t, prompts)
+
+	// Abort must not hang after a panicked cycle.
+	done := make(chan struct{})
+	go func() {
+		engine.Abort()
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("Abort should return after a panicked cycle")
+	}
+}
+
+// TestStreamPrimary_AbortUnblocksSaturatedProducer guards against the abort
+// deadlock: when the record channel fills against a stalled consumer, the
+// producer blocks in a send; Abort() must still unblock it (via the
+// abort-aware send) instead of waiting forever for the goroutine to exit.
+func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{},
+		},
+		Env:              env,
+		streamingResults: make(chan *config.Segment, 100),
+	}
+
+	// Pre-register pending segments that never get removed, so the producer
+	// keeps looping over completions instead of finishing the cycle.
+	segments := make([]*config.Segment, 20)
+	for i := range segments {
+		segments[i] = &config.Segment{Type: config.SegmentType(fmt.Sprintf("test-%d", i)), Pending: true}
+		engine.pendingSegments.Store(segments[i].Name(), true)
+	}
+
+	// Nothing reads from the channel: the producer will saturate the record
+	// buffer and block in a send while processing the completions. Feed them
+	// directly (bypassing notifySegmentCompletion, which would drain
+	// pendingSegments and end the cycle early).
+	_ = engine.StreamPrimary()
+
+	for _, segment := range segments {
+		segment.Pending = false
+		engine.streamingResults <- segment
+	}
+
+	// Give the producer time to fill the record buffer and block.
+	time.Sleep(100 * time.Millisecond)
+
+	done := make(chan struct{})
+	go func() {
+		engine.Abort()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("Abort must unblock a producer stuck in a record send")
+	}
 }
 
 func TestStreamPrimary_WithPendingSegments(t *testing.T) {
@@ -342,8 +497,10 @@ func setupStreamingTestEnv() *mock.Environment {
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
 	env.On("DirMatchesOneOf", testifymock.Anything, testifymock.Anything).Return(false)
-	// Mock accent color retrieval for both Windows and macOS
-	env.On("RunCommand", testifymock.Anything, testifymock.Anything, testifymock.Anything, testifymock.Anything).Return("4", nil)
+	// Mock accent color retrieval for both Windows and macOS. The mock
+	// forwards RunCommand as Called(command, args), so the expectation
+	// takes two arguments: the command and the args slice.
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything).Return("4", nil)
 	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
@@ -497,6 +654,7 @@ func setupBasicStreamingTestEnv() *Engine {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -518,8 +676,8 @@ func TestStreamPrimary_EarlyChannelClosure(t *testing.T) {
 	// Should be able to read from output channel without panic
 	prompts := collectChannelOutput(out, 100*time.Millisecond)
 
-	// Should get exactly one prompt (initial) with no pending segments
-	assert.Len(t, prompts, 1, "Should receive initial prompt")
+	// Initial prompt and the transient record with no pending segments
+	assert.Len(t, prompts, 2, "Should receive initial prompt and transient record")
 }
 
 func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
@@ -532,7 +690,7 @@ func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
 	out := engine.StreamPrimary()
 	prompts := collectChannelOutput(out, 100*time.Millisecond)
 
-	assert.Len(t, prompts, 1, "Should get exactly one prompt with no pending segments")
+	assert.Len(t, prompts, 2, "Should get the initial prompt and transient record with no pending segments")
 }
 
 // TestStreamPrimary_RaceConditionFix validates that the streaming loop
@@ -553,6 +711,7 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(shell.PWSH)
+	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -603,12 +762,169 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	// Collect all prompts with sufficient timeout
 	prompts := collectChannelOutput(out, 200*time.Millisecond)
 
+	// Only count primary prompt records, transient records don't reflect segment updates
+	var primaryPrompts []string
+	for _, record := range prompts {
+		if !strings.HasPrefix(record, TransientMarker) {
+			primaryPrompts = append(primaryPrompts, record)
+		}
+	}
+
 	// With the fix, we should receive updates for all three segments
 	// Initial prompt + 3 updates (A, B, C) = 4 total
 	// Without the fix, we might only get Initial + 2 updates and exit early
-	assert.GreaterOrEqual(t, len(prompts), 3, "Should receive updates for all pending segments")
+	assert.GreaterOrEqual(t, len(primaryPrompts), 3, "Should receive updates for all pending segments")
 
 	// Verify all segments were properly cleaned up
 	count := engine.countPendingSegments()
 	assert.Equal(t, 0, count, "All pending segments should be cleared")
+}
+
+// TestStreamPrimary_Abort_StopsRenderingAndDrains validates that Abort() stops
+// the producer from emitting further records and blocks until the producer
+// goroutine has fully exited, even when a segment completes (and tries to
+// notify) after the abort was issued - that late notification must not panic
+// or deadlock.
+func TestStreamPrimary_Abort_StopsRenderingAndDrains(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	slowSegment := &config.Segment{
+		Type:       "text",
+		Template:   "SLOW",
+		Pending:    true,
+		Foreground: "#ffffff",
+		Background: "#000000",
+	}
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{
+				{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{slowSegment},
+				},
+			},
+		},
+		Env: env,
+	}
+
+	require.NoError(t, slowSegment.MapSegmentWithWriter(env))
+	engine.pendingSegments.Store(slowSegment.Name(), true)
+
+	out := engine.StreamPrimary()
+
+	// Consume the initial prompt + transient record before aborting, mirroring
+	// how a server would start draining a cycle immediately.
+	<-out
+	<-out
+
+	// Complete the segment AFTER abort is issued: the drain loop must consume
+	// this notification without rendering (and without blocking the sender).
+	go func() {
+		time.Sleep(20 * time.Millisecond)
+		slowSegment.Pending = false
+		engine.notifySegmentCompletion(slowSegment)
+	}()
+
+	engine.Abort()
+
+	// Abort must not return until the producer has exited, which implies out
+	// and streamingResults are both closed.
+	select {
+	case _, ok := <-out:
+		assert.False(t, ok, "out channel should be closed after Abort returns")
+	default:
+		t.Error("out channel should be closed (readable as closed) after Abort returns")
+	}
+
+	// A second Abort() call must be a safe no-op.
+	assert.NotPanics(t, func() { engine.Abort() })
+
+	// Give the delayed segment-completion goroutine time to fire its late,
+	// post-abort notification; it must not panic (send on closed channel)
+	// or otherwise crash the test binary.
+	time.Sleep(40 * time.Millisecond)
+}
+
+// TestStreamPrimary_NoStreamingTimeout_ChannelCloses guards against the
+// pending-segment leak: with the Streaming flag set but no top-level
+// "streaming" timeout in the config (Config.Streaming == 0), every segment
+// used to be pre-registered in pendingSegments and never cleaned up (the
+// cleanup in writeSegmentsConcurrently only ran for Timeout > 0), so
+// countPendingSegments never reached 0, the producer goroutine waited on
+// streamingResults forever, and the stream CLI command never exited.
+func TestStreamPrimary_NoStreamingTimeout_ChannelCloses(t *testing.T) {
+	env := setupStreamingTestEnv()
+
+	segment := &config.Segment{
+		Type:       "text",
+		Template:   "TEXT",
+		Foreground: "#ffffff",
+		Background: "#000000",
+	}
+
+	engine := &Engine{
+		Config: &config.Config{
+			// Streaming (the global segment timeout) deliberately left at 0
+			Blocks: []*config.Block{
+				{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{segment},
+				},
+			},
+		},
+		Env: env,
+	}
+
+	require.NoError(t, segment.MapSegmentWithWriter(env))
+
+	out := engine.StreamPrimary()
+
+	// collectChannelOutput cannot distinguish a closed channel from a timeout,
+	// so assert closure explicitly - that is the whole point of this test.
+	var prompts []string
+	deadline := time.After(2 * time.Second)
+
+	for {
+		select {
+		case record, ok := <-out:
+			if !ok {
+				// Initial prompt + transient record, then a clean close.
+				assert.Len(t, prompts, 2)
+				assert.Equal(t, 0, engine.countPendingSegments(), "no segment may stay pending without a streaming timeout")
+				return
+			}
+
+			prompts = append(prompts, record)
+		case <-deadline:
+			t.Fatal("output channel never closed: segments leaked into pendingSegments without a streaming timeout")
+		}
+	}
+}
+
+// TestStreamPrimary_Abort_BeforeAnyRender validates that Abort can be called
+// (and is a safe no-op) when no cycle has ever been started.
+func TestStreamPrimary_Abort_NoCycleStarted(t *testing.T) {
+	engine := &Engine{}
+	assert.NotPanics(t, func() { engine.Abort() })
+}
+
+// TestStreamPrimary_Abort_ThenNewCycleWorks validates that a fresh
+// StreamPrimary cycle works correctly after a previous cycle was aborted -
+// this is the serialization guarantee the serve command depends on.
+func TestStreamPrimary_Abort_ThenNewCycleWorks(t *testing.T) {
+	engine := setupBasicStreamingTestEnv()
+
+	firstOut := engine.StreamPrimary()
+	engine.Abort()
+	// Drain any buffered records from the aborted cycle.
+	for range firstOut {
+	}
+
+	secondOut := engine.StreamPrimary()
+	prompts := collectChannelOutput(secondOut, 100*time.Millisecond)
+
+	assert.Len(t, prompts, 2, "A new cycle after abort should render normally")
 }

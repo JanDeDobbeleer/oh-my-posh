@@ -280,6 +280,21 @@ setopt appendhistory
 
 This is most likely caused by two Oh My Posh init lines in your `.zshrc`, remove one of them. See [here][zsh-init].
 
+## Repaint the prompt on demand
+
+Oh My Posh renders the prompt once per command. When something changes while the prompt is displayed,
+for example a theme reload or an environment variable set by a script, you can force a re-render
+by calling a shell-specific function:
+
+- Fish: `omp_repaint_prompt`
+- Zsh: `omp_repaint_prompt`. It's also registered as a zle widget, so it can be bound to a key:
+
+  ```zsh
+  bindkey '^B' omp_repaint_prompt
+  ```
+
+- PowerShell: `Invoke-PoshPromptRepaint`
+
 ## Fish: Display current bind (Vim) mode
 
 By default, Oh My Posh will not re-render the prompt (i.e., generate a new prompt) until a new command is run, so you should

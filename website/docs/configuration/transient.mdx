@@ -25,6 +25,10 @@ By enabling Transient Prompt, you can replace the prompt with some other content
 
 ![After Transient](/img/transient-after.gif)
 
+:::tip
+In Zsh, enabling [`multiline_keepprompt`][secondary-prompt] on the secondary prompt keeps the full prompt in place while you type a multi-line command, so the transient prompt takes over once the whole command is submitted rather than on its first line.
+:::
+
 ## Configuration
 
 You need to extend or create a custom theme with your transient prompt. For example:
@@ -48,8 +52,31 @@ You need to extend or create a custom theme with your transient prompt. For exam
 | `background`           | `string`  | [color][colors]                                                                                                                                |
 | `background_templates` | `array`   | [color templates][color-templates]                                                                                                             |
 | `template`             | `string`  | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{ .Shell }}> `     |
+| `right_template`       | `string`  | a go [text/template][go-text-template] template extended with [sprig][sprig], right-aligned at the end of the line. Supported in `zsh`, `powershell`, and `fish`, designed for single line transient prompts |
 | `filler`               | `string`  | when you want to create a line with a repeated set of characters spanning the width of the terminal. Will be added _after_ the `template` text |
 | `newline`              | `boolean` | add a newline before the prompt. The newline will not be printed under the same conditions as for primary prompt [newlines][block-newline].    |
+
+## Template ([info][templates])
+
+On top of the [global template properties][templates], the transient prompt exposes:
+
+| Name           | Type      | Description                                                       |
+| -------------- | --------- | ---------------------------------------------------------------- |
+| `.Interrupted` | `boolean` | whether the previous command was interrupted (e.g. via `Ctrl-C`) |
+
+:::caution
+`.Interrupted` is only set in `zsh`. Every other shell reports `false`, even after a real `Ctrl-C`.
+:::
+
+For example, to show a red `^C` in front of the transient prompt when a command was interrupted:
+
+```json
+{
+  "transient_prompt": {
+    "template": "{{ if .Interrupted }}<red>^C </>{{ end }}{{ .Shell }}> "
+  }
+}
+```
 
 ## Enable the feature
 
@@ -68,3 +95,4 @@ clink set prompt.transient always
 [color-templates]: /docs/configuration/colors#color-templates
 [cstp]: /docs/configuration/templates#cross-segment-template-properties
 [block-newline]: /docs/configuration/block#newline
+[secondary-prompt]: /docs/configuration/secondary-prompt

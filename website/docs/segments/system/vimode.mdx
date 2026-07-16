@@ -6,14 +6,20 @@ sidebar_label: Vi mode
 
 ## What
 
-Display the current ZSH [Vi mode][zsh-vi-mode] (insert / normal / visual …) in
-the prompt. Useful when using `bindkey -v` so you can tell at a glance which
-mode you are in.
+Display the current Vi mode (insert / normal / visual …) in the prompt. Useful
+when using ZSH [keymaps][zsh-vi-mode] via `bindkey -v` or PowerShell PSReadLine
+`-EditMode Vi` so you can tell at a glance which mode you are in.
 
-:::caution
-This segment is currently only supported in **ZSH**. Adding it to your
-configuration will automatically register a `zle-keymap-select` hook that
-re-renders the prompt every time the keymap changes.
+In ZSH, adding this segment automatically registers a `zle-keymap-select` hook.
+In PowerShell, it registers a PSReadLine [Vi mode change handler][pwsh-vi-mode].
+Both re-render the prompt every time the active mode changes.
+
+:::caution PowerShell cursor indicator
+
+PowerShell support sets PSReadLine's `ViModeIndicator` to `Script`, replacing
+cursor-shape mode indicators such as `Cursor`. The mode is then shown by this
+segment in the prompt instead.
+
 :::
 
 ## Sample Configuration
@@ -42,11 +48,12 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name      |   Type   | Description                                                                                              |
-| --------- | :------: | -------------------------------------------------------------------------------------------------------- |
-| `.Mode`   | `string` | the normalized mode: `insert`, `normal`, `visual`, `viopp`, `replace`, or the raw keymap when unmapped   |
-| `.Keymap` | `string` | the raw [`$KEYMAP`][zsh-keymap] value reported by ZSH (e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`) |
+| Name      |   Type   | Description                                                                                                                                    |
+| --------- | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.Mode`   | `string` | the normalized mode: `insert`, `normal`, `visual`, `viopp`, `replace`, or the raw keymap when unmapped                                         |
+| `.Keymap` | `string` | the raw mode value ([`$KEYMAP`][zsh-keymap] in ZSH, e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`; `viins` or `vicmd` in PowerShell PSReadLine) |
 
 [templates]: /docs/configuration/templates
 [zsh-vi-mode]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps
 [zsh-keymap]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-KEYMAP
+[pwsh-vi-mode]: https://learn.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption#-vimodechangehandler

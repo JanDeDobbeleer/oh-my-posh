@@ -84,7 +84,7 @@
             "http_timeout": 2000
           },
           "style": "diamond",
-          "template": "{{ if and (.Env.WAKATIME_API_KEY) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_WAKATIME))) (gt .CumulativeTotal.Seconds 0) }}\uFA19 {{ secondsRound .CumulativeTotal.Seconds }}.{{ end }}",
+          "template": "{{ if and (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_WAKATIME))) (gt .CumulativeTotal.Seconds 0) }}\uFA19 {{ secondsRound .CumulativeTotal.Seconds }}.{{ end }}",
           "trailing_diamond": "\uE0B4 ",
           "type": "wakatime",
           "cache": {

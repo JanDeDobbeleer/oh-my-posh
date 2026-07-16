@@ -2,6 +2,7 @@ package cache
 
 import (
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -17,6 +18,13 @@ type store struct {
 	filePath string
 	dirty    bool
 	persist  bool
+	// locked is set when the on-disk cache file could not be opened because
+	// another process holds it (e.g. Windows sharing violation that
+	// persisted past the retry window). When true, the store operates
+	// purely in-memory for the lifetime of this process: close() must not
+	// attempt to (re)create the file, since doing so would truncate the
+	// other process's data.
+	locked bool
 }
 
 var (
@@ -64,9 +72,20 @@ func (s Store) init(filePath string, persist bool) {
 	store.cache = maps.NewConcurrent[*Entry[any]]()
 	store.filePath = filepath.Join(Path(), filePath)
 	store.persist = persist
+	store.dirty = false
+	store.locked = false
 
 	reader, err := openFile(store.filePath)
 	if err != nil {
+		if errors.Is(err, ErrLocked) {
+			// Another process holds the file. Leave it alone: run this
+			// session purely in-memory, don't mark dirty, don't recreate
+			// on close.
+			log.Debugf("(%s) cache file is locked, running in-memory only", string(s))
+			store.locked = true
+			return
+		}
+
 		// set to dirty so we create it on close
 		log.Error(err)
 		store.dirty = true
@@ -118,8 +137,8 @@ func (s Store) close() {
 	defer log.Trace(time.Now(), string(s))
 
 	store := s.get()
-	if store == nil || !store.persist || !store.dirty {
-		if s == Session && store != nil && store.filePath != "" {
+	if store == nil || store.locked || !store.persist || !store.dirty {
+		if s == Session && store != nil && !store.locked && store.filePath != "" {
 			touchSessionFile(store.filePath)
 		}
 
@@ -129,8 +148,15 @@ func (s Store) close() {
 
 	cache := store.cache.ToSimple()
 
-	file, err := openFile(store.filePath)
+	file, err := openFileForWrite(store.filePath)
 	if err != nil {
+		if errors.Is(err, ErrLocked) {
+			// Became locked between init and close (e.g. another process
+			// started writing meanwhile) — do not recreate/truncate.
+			log.Debugf("(%s) cache file locked on close, skipping persist", string(s))
+			return
+		}
+
 		log.Error(err)
 		return
 	}

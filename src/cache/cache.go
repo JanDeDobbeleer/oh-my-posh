@@ -2,8 +2,16 @@ package cache
 
 import (
 	"encoding/gob"
+	"errors"
 	"time"
 )
+
+// ErrLocked is returned by openFile when the cache file is held exclusively
+// by another process (e.g. a Windows sharing violation that persisted past
+// the retry window). Callers must treat this as "leave the file alone":
+// operate purely in-memory for this run and do not recreate/truncate the
+// file on close.
+var ErrLocked = errors.New("cache file is locked by another process")
 
 func init() {
 	gob.Register(&Entry[any]{})
@@ -11,6 +19,7 @@ func init() {
 	gob.Register(SimpleTemplate{})
 	gob.Register((*Duration)(nil))
 	gob.Register(map[string]bool{})
+	gob.Register(commandPathEntry{})
 }
 
 const (

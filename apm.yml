@@ -4,13 +4,17 @@ description: A prompt theme engine for any shell.
 
 dependencies:
   apm:
-    - JanDeDobbeleer/agentic/skills/conventional-commit
     - JanDeDobbeleer/agentic/instructions/golang.instructions.md
     - JanDeDobbeleer/agentic/instructions/markdown.instructions.md
     - JanDeDobbeleer/agentic/instructions/powershell.instructions.md
+    - JanDeDobbeleer/agentic/skills/conventional-commit
     - JanDeDobbeleer/agentic/skills/golang
     - JanDeDobbeleer/agentic/skills/markdown
     - JanDeDobbeleer/agentic/skills/powershell
-    - JanDeDobbeleer/agentic/skills/vale-user-facing-text
+    - JanDeDobbeleer/agentic/skills/writing-clearly-and-concisely
+    - JanDeDobbeleer/agentic/skills/code-changes
     - ast-grep/agent-skill/ast-grep/skills/ast-grep
-    - github/awesome-copilot/skills/gh-cli
+
+targets:
+  - claude
+  - copilot

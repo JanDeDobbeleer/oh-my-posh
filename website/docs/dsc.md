@@ -454,6 +454,7 @@ DSC shell configuration supports the following shells:
 - **nu**: Configures `~/.config/nushell/config.nu`
 - **elvish**: Configures `.elvish/rc.elv`
 - **xonsh**: Configures `.xonshrc`
+- **yash**: Configures `.yashrc`
 
 The shell integration automatically:
 

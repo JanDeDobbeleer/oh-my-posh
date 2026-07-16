@@ -1,0 +1,98 @@
+export POSH_SHELL='yash'
+export POSH_SHELL_VERSION=$YASH_VERSION
+export POWERLINE_COMMAND='oh-my-posh'
+export CONDA_PROMPT_MODIFIER=false
+
+# disable all known python virtual environment prompts
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+# global variables
+_omp_start_time=''
+_omp_execution_time=-1
+_omp_no_status=true
+_omp_status=0
+_omp_job_count=0
+_omp_executable=::OMP::
+
+# switches to enable/disable features
+_omp_ftcs_marks=0
+
+# percent-encode every byte of $1; over-encoding is still valid URL encoding
+_omp_urlencode() {
+    printf '%s' "$1" | od -v -An -tx1 | tr -d ' \n' | sed 's/../%&/g'
+}
+
+_omp_ftcs_command_start() {
+    if [ "$_omp_ftcs_marks" != 1 ]; then
+        return
+    fi
+
+    if [ -n "$COMMAND" ]; then
+        # advertise the command line via kitty's cmdline_url= extension
+        printf '\033]133;C;cmdline_url=%s\007' "$(_omp_urlencode "$COMMAND")"
+        return
+    fi
+
+    printf '\033]133;C\007'
+}
+
+# template function for context loading
+set_poshcontext() {
+    return
+}
+
+# runs after a line is read, before it executes; $COMMAND holds the input line
+_omp_preexec() {
+    if [ -n "$COMMAND" ]; then
+        _omp_start_time=$("$_omp_executable" get millis)
+        _omp_ftcs_command_start
+    fi
+}
+
+_omp_hook() {
+    _omp_status=$?
+
+    _omp_execution_time=-1
+    if [ -n "$_omp_start_time" ]; then
+        _omp_execution_time=$(($("$_omp_executable" get millis) - _omp_start_time))
+        _omp_no_status=false
+    fi
+    _omp_start_time=''
+
+    # finished jobs stay in the job list until reported, count only running and stopped ones
+    _omp_job_count=$(($(jobs -r | grep -c .) + $(jobs -s | grep -c .)))
+
+    set_poshcontext
+
+    return $_omp_status
+}
+
+# install the hooks, skip when already installed
+case ";$PROMPT_COMMAND;" in
+*";_omp_hook;"*) ;;
+*) PROMPT_COMMAND="_omp_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
+esac
+
+case ";$POST_PROMPT_COMMAND;" in
+*";_omp_preexec;"*) ;;
+*) POST_PROMPT_COMMAND="${POST_PROMPT_COMMAND:+$POST_PROMPT_COMMAND;}_omp_preexec" ;;
+esac
+
+YASH_PS1='$(
+    "$_omp_executable" print primary \
+        --save-cache \
+        --shell=yash \
+        --shell-version="$YASH_VERSION" \
+        --status="$_omp_status" \
+        --no-status="$_omp_no_status" \
+        --execution-time="$_omp_execution_time" \
+        --job-count="$_omp_job_count" \
+        --terminal-width="${COLUMNS:-0}"
+)'
+
+YASH_PS2='$(
+    "$_omp_executable" print secondary \
+        --shell=yash \
+        --shell-version="$YASH_VERSION"
+)'

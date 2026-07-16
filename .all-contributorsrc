@@ -3648,6 +3648,63 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "pheenty",
+      "name": "Ted Lukin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66275205?v=4",
+      "profile": "https://github.com/pheenty",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "acdtrx",
+      "name": "acdtrx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1003990?v=4",
+      "profile": "https://github.com/acdtrx",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "kovjanos",
+      "name": "Janos Kovacs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3199212?v=4",
+      "profile": "https://github.com/kovjanos",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Mertozturkk",
+      "name": "Mert Öztürk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42963332?v=4",
+      "profile": "https://github.com/Mertozturkk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ceilidhboy",
+      "name": "Mike Scott",
+      "avatar_url": "https://avatars.githubusercontent.com/u/334791?v=4",
+      "profile": "https://github.com/ceilidhboy",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ajpinedam",
+      "name": "Andres Pineda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1900897?v=4",
+      "profile": "https://ajpinedam.dev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

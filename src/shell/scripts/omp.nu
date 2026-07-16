@@ -18,6 +18,8 @@ if ($env.config? | is-not-empty) {
 $env.POWERLINE_COMMAND = 'oh-my-posh'
 $env.PROMPT_INDICATOR = ""
 $env.POSH_SESSION_ID = "::SESSION_ID::"
+# pinned to the session's configuration so it can be recovered when the session cache is lost
+$env.POSH_CONFIG = ::CONFIG::
 $env.POSH_SHELL = "nu"
 $env.POSH_SHELL_VERSION = (version | get version)
 
@@ -31,13 +33,11 @@ def --wrapped _omp_get_prompt [
     type: string,
     ...args: string
 ] {
-    mut execution_time = -1
-    mut no_status = true
     # We have to do this because the initial value of `$env.CMD_DURATION_MS` is always `0823`, which is an official setting.
     # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
-    if $env.CMD_DURATION_MS != '0823' {
-        $execution_time = $env.CMD_DURATION_MS
-        $no_status = false
+    let execution_time = match $env.CMD_DURATION_MS {
+        '0823' => -1
+        $ms => { $ms | into int }
     }
 
     (
@@ -46,7 +46,7 @@ def --wrapped _omp_get_prompt [
             --shell=nu
             $"--shell-version=($env.POSH_SHELL_VERSION)"
             $"--status=($env.LAST_EXIT_CODE)"
-            $"--no-status=($no_status)"
+            $"--no-status=($execution_time < 0)"
             $"--execution-time=($execution_time)"
             $"--terminal-width=((term size).columns)"
             $"--job-count=(job list | length)"
@@ -63,10 +63,10 @@ $env.PROMPT_MULTILINE_INDICATOR = (
 $env.PROMPT_COMMAND = {||
     # hack to set the cursor line to 1 when the user clears the screen
     # this obviously isn't bulletproof, but it's a start
-    mut clear = false
-    if $nu.history-enabled {
-        $clear = (history | is-empty) or ((history | last 1 | get 0.command) == "clear")
-    }
+    let clear = $nu.history-enabled and (
+        (history | is-empty)
+        or (history | last | get command?) == "clear"
+    )
 
     if ($env.SET_POSHCONTEXT? | is-not-empty) {
         do --env $env.SET_POSHCONTEXT

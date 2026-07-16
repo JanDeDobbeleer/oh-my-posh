@@ -14,8 +14,8 @@ can be a good starting point.
 ## Setting Up Agents and Skills
 
 This project uses [APM (Agent Package Manager)][apm] to manage shared AI agent skills.
-Project-specific skills live in `.github/skills/`, while shared skills are declared
-in `apm.yml` and installed via APM.
+Project-specific skills are embedded in `.agents/skills/`, while shared skills are declared
+in `apm.yml` and installed via APM into the gitignored parts of that same directory.
 
 ### Install APM
 
@@ -36,7 +36,7 @@ pip install apm-cli
 After cloning the repository, run:
 
 ```bash
-apm install
+apm install --frozen
 ```
 
 This pulls in the shared skills from [JanDeDobbeleer/agentic][agentic] (conventional commits,

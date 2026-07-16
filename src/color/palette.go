@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Palette map[Ansi]Ansi
@@ -32,6 +34,15 @@ func (p Palette) resolveColor(colorName Ansi, depth int, originalColorName *Ansi
 	color, ok := p[key]
 	if !ok {
 		return "", &PaletteKeyError{Key: key, palette: p}
+	}
+
+	if strings.Contains(color.String(), "{{") {
+		rendered, err := template.Render(color.String(), nil)
+		if err != nil {
+			return "", err
+		}
+
+		color = Ansi(strings.TrimSpace(rendered))
 	}
 
 	if _, isKey := isPaletteKey(color); isKey {

@@ -67,4 +67,15 @@ oh-my-posh config export image --settings ~/.image.settings.json
 
 This will export your prompt image using the custom colors and settings from the file.
 
+## Rendering From Recorded Data
+
+The `--data` flag renders the image from a recorded data file instead of the live environment, so the export
+needs no configured git repository, cloud CLI, or other tooling. See [Template data][data] for the file
+format and how to record one.
+
+```powershell
+oh-my-posh config export image --config mytheme.omp.json --data data.json
+```
+
 [colors]: /docs/configuration/colors#standard-colors
+[data]: /docs/configuration/data

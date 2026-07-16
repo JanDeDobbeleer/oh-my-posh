@@ -1,11 +1,12 @@
 # APM
 apm_modules/
-.github/skills/*
-.github/instructions/*
-!.github/skills/segment-create/
-!.github/skills/segment-docs/
 .github/instructions/*
 .agents/*
+!.agents/skills
+.agents/skills/*
+!.agents/skills/segment-create/
+!.agents/skills/segment-docs/
+!.agents/skills/project-knowledge/
 
 # Others
 
@@ -14,8 +15,7 @@ apm_modules/
 src/test/umbraco/obj/
 src/keys
 *.prof
-*.wixpdb
-packages/msi/Microsoft.Trusted.Signing.Client
+packages/msix/Microsoft.Trusted.Signing.Client
 .claude
 .styles
 
@@ -182,6 +182,7 @@ Output/
 
 # go releaser
 /src/dist
+/src/gomodcache
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos

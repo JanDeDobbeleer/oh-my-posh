@@ -35,9 +35,11 @@ export default {
         "configuration/title",
         "configuration/colors",
         "configuration/templates",
+        "configuration/data",
         "configuration/secondary-prompt",
         "configuration/debug-prompt",
         "configuration/transient",
+        "configuration/streaming",
         "configuration/line-error",
         "configuration/tooltips",
         "configuration/sample",
@@ -87,6 +89,7 @@ export default {
             "segments/cli/terraform",
             "segments/cli/ui5tooling",
             "segments/cli/umbraco",
+            "segments/cli/uno",
             "segments/cli/unity",
             "segments/cli/xmake",
             "segments/cli/yarn",
@@ -116,6 +119,7 @@ export default {
           collapsed: true,
           items: [
             "segments/health/nightscout",
+            "segments/health/orthodoxcal",
             "segments/health/ramadan",
             "segments/health/strava",
             "segments/health/withings",
@@ -169,6 +173,7 @@ export default {
           label: "🗂️ Source control",
           collapsed: true,
           items: [
+            "segments/scm/dvc",
             "segments/scm/fossil",
             "segments/scm/git",
             "segments/scm/jujutsu",
@@ -239,14 +244,6 @@ export default {
       collapsed: true,
       items: [
         "advanced/mcp-server",
-      ],
-    },
-    {
-      type: "category",
-      label: "🧪 Experimental",
-      collapsed: true,
-      items: [
-        "experimental/streaming",
       ],
     },
     "faq",

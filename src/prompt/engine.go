@@ -20,6 +20,8 @@ var cycle *color.Cycle = &color.Cycle{}
 type Engine struct {
 	Env                   runtime.Environment
 	streamingResults      chan *config.Segment
+	abort                 chan struct{}
+	done                  chan struct{}
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
@@ -36,15 +38,16 @@ type Engine struct {
 }
 
 const (
-	PRIMARY   = "primary"
-	TRANSIENT = "transient"
-	DEBUG     = "debug"
-	SECONDARY = "secondary"
-	RIGHT     = "right"
-	TOOLTIP   = "tooltip"
-	VALID     = "valid"
-	ERROR     = "error"
-	PREVIEW   = "preview"
+	PRIMARY         = "primary"
+	TRANSIENT       = "transient"
+	TRANSIENT_RIGHT = "transient-right"
+	DEBUG           = "debug"
+	SECONDARY       = "secondary"
+	RIGHT           = "right"
+	TOOLTIP         = "tooltip"
+	VALID           = "valid"
+	ERROR           = "error"
+	PREVIEW         = "preview"
 )
 
 func (e *Engine) write(txt string) {
@@ -166,6 +169,11 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 		return "", false
 	}
 
+	if padLength < 0 {
+		log.Debug("padding length is negative")
+		return "", false
+	}
+
 	e.Padding = padLength
 
 	defer func() {
@@ -201,8 +209,17 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
-func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
-	blockText, length := e.writeBlockSegments(block)
+// renderLaunchedBlock renders a block using pre-collected segment results
+// (see drainBlockResults). executed must be fully populated for every block
+// in the prompt before this is called so that cross-block .Segments.X
+// dependencies resolve in both directions.
+func (e *Engine) renderLaunchedBlock(block *config.Block, results []*config.Segment, executed map[string]bool, cancelNewline bool) bool {
+	var blockText string
+	var length int
+
+	if results != nil {
+		blockText, length = e.renderBlockSegments(results, block, executed)
+	}
 
 	// do not print anything when we don't have any text unless forced
 	if !block.Force && length == 0 {
@@ -284,6 +301,10 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 
 // renderBlockFromCache re-renders a block using existing segment data without re-execution
 func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) bool {
+	if block.RestartCycle {
+		cycle = &e.Config.Cycle
+	}
+
 	// Re-render all segments in the block
 	for segmentIndex, segment := range block.Segments {
 		// Allow pending segments to render (they show "..." text)

@@ -56,6 +56,8 @@ func init() {
 	gob.Register(&segments.Deno{})
 	gob.Register(&segments.Docker{})
 	gob.Register(&segments.Dotnet{})
+	gob.Register(&segments.Dvc{})
+	gob.Register(&segments.DvcStatus{})
 	gob.Register(&segments.Elixir{})
 	gob.Register(&segments.Executiontime{})
 	gob.Register(&segments.Status{})
@@ -98,6 +100,7 @@ func init() {
 	gob.Register(&segments.Npm{})
 	gob.Register(&segments.Nx{})
 	gob.Register(&segments.OCaml{})
+	gob.Register(&segments.OrthodoxCal{})
 	gob.Register(&segments.Os{})
 	gob.Register(&segments.Owm{})
 	gob.Register(&segments.Path{})
@@ -140,6 +143,7 @@ func init() {
 	gob.Register(&segments.Todoist{})
 	gob.Register(&segments.UI5Tooling{})
 	gob.Register(&segments.Umbraco{})
+	gob.Register(&segments.Uno{})
 	gob.Register(&segments.Unity{})
 	gob.Register(&segments.Upgrade{})
 	gob.Register(&segments.UpgradeCache{})
@@ -225,6 +229,8 @@ const (
 	DOCKER SegmentType = "docker"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
+	// DVC writes the dvc status
+	DVC SegmentType = "dvc"
 	// ELIXIR writes the elixir version
 	ELIXIR SegmentType = "elixir"
 	// EXECUTIONTIME writes the execution time of the last run command
@@ -295,6 +301,8 @@ const (
 	NX SegmentType = "nx"
 	// OCAML writes the active Ocaml version
 	OCAML SegmentType = "ocaml"
+	// ORTHODOXCAL displays Orthodox fasting and feast information
+	ORTHODOXCAL SegmentType = "orthodoxcal"
 	// OS write os specific icon
 	OS SegmentType = "os"
 	// OWM writes the weather coming from openweatherdata
@@ -369,6 +377,8 @@ const (
 	UI5TOOLING SegmentType = "ui5tooling"
 	// UMBRACO writes the Umbraco version if Umbraco is present
 	UMBRACO SegmentType = "umbraco"
+	// UNO writes the Uno.Sdk version from global.json
+	UNO SegmentType = "uno"
 	// UNITY writes which Unity version is currently active
 	UNITY SegmentType = "unity"
 	// UPGRADE lets you know if you can upgrade Oh My Posh
@@ -377,7 +387,7 @@ const (
 	V SegmentType = "v"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
-	// VIMODE writes the active ZSH Vi mode (insert/normal/visual)
+	// VIMODE writes the active Vi mode (insert/normal/visual)
 	VIMODE SegmentType = "vimode"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"
@@ -431,6 +441,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	DENO:            func() SegmentWriter { return &segments.Deno{} },
 	DOCKER:          func() SegmentWriter { return &segments.Docker{} },
 	DOTNET:          func() SegmentWriter { return &segments.Dotnet{} },
+	DVC:             func() SegmentWriter { return &segments.Dvc{} },
 	ELIXIR:          func() SegmentWriter { return &segments.Elixir{} },
 	EXECUTIONTIME:   func() SegmentWriter { return &segments.Executiontime{} },
 	EXIT:            func() SegmentWriter { return &segments.Status{} },
@@ -466,6 +477,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
 	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
+	ORTHODOXCAL:     func() SegmentWriter { return &segments.OrthodoxCal{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },
 	PATH:            func() SegmentWriter { return &segments.Path{} },
@@ -503,6 +515,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TODOIST:         func() SegmentWriter { return &segments.Todoist{} },
 	UI5TOOLING:      func() SegmentWriter { return &segments.UI5Tooling{} },
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
+	UNO:             func() SegmentWriter { return &segments.Uno{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
 	V:               func() SegmentWriter { return &segments.V{} },

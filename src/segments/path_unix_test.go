@@ -640,6 +640,31 @@ var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocations
 	{Pwd: homeDir + abcd, MappedLocations: map[string]string{"~/a/b": "#"}, Expected: "#/c/d"},
 	{Pwd: "/a" + homeDir + "/b/c/d", MappedLocations: map[string]string{"/a~": "#"}, Expected: "/a" + homeDir + "/b/c/d"},
 	{Pwd: homeDir + abcd, MappedLocations: map[string]string{"/a/b": "#"}, Expected: homeDir + abcd},
+	// mapped_locations_regex_expand=false (default): only group 1's matched text is substituted
+	// literally, so a "$1" in the mapped value is NOT expanded.
+	{
+		Pwd:             "/a/b/1234/d/e",
+		MappedLocations: map[string]string{"re:(/a/b/[0-9]+/d).*": "#$1"},
+		Expected:        "#$1/e",
+	},
+	// mapped_locations_regex_expand=true with a named capture group: the mapped value expands
+	// ${repo} using the full regex match, per the git worktree folder use case from issue #6334.
+	{
+		Pwd:                        "/Users/taylo/GitHub/myrepo.worktrees/feature-branch",
+		MappedLocations:            map[string]string{`re:(.*/GitHub/(?P<repo>.*)\.worktrees/.*)`: "/${repo}"},
+		MappedLocationsRegexExpand: true,
+		Expected:                   "/myrepo",
+	},
+	// mapped_locations_regex_expand=true with positional capture groups ($1, $2).
+	{
+		Pwd:                        "/a/b/1234/d/e",
+		MappedLocations:            map[string]string{"re:(/a/b)/([0-9]+)/d.*": "#$1-$2"},
+		MappedLocationsRegexExpand: true,
+		Expected:                   "#/a/b-1234",
+	},
+	// legacy path replaces the occurrence at the actual match position, not the first
+	// textual occurrence of the captured substring anywhere in the input.
+	{Pwd: "/home/src/project/src/deep", MappedLocations: map[string]string{"re:.*/(src)/deep": "#"}, Expected: "/home/src/project/#/deep"},
 }
 
 var testSplitPathCases = []testSplitPathCase{

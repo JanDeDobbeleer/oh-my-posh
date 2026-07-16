@@ -1,0 +1,177 @@
+---
+id: data
+title: Template data
+sidebar_label: Template data
+---
+
+import Config from "@site/src/components/Config.js";
+
+The `--data` flag supplies template properties from a file instead of the live environment. Use it to render
+a prompt deterministically, without the git repository, Azure CLI, kubectl, or any other tooling a segment
+normally detects: take prompt screenshots, build demos, or test a config on a machine that lacks your usual
+setup.
+
+`--data` is available on `oh-my-posh print` (every prompt type) and `oh-my-posh config export image`.
+
+## File format
+
+A data file has two top-level sections: `env` for global template properties and `segments` for
+per-segment template properties. The format is JSON, YAML, or TOML, decided by the file extension.
+
+<Config
+  data={{
+    env: {
+      PWD: "~/dev/oh-my-posh",
+      Code: 1,
+      ExecutionTime: 341.0,
+      UserName: "jan",
+      HostName: "demo",
+      Shell: "pwsh",
+      Root: false,
+    },
+    segments: {
+      git: {
+        HEAD: "main",
+        Working: { Added: 2, Modified: 1 },
+        Staging: {},
+        UpstreamIcon: "",
+      },
+      az: {
+        Name: "posh-subscription",
+        EnvironmentName: "AzureCloud",
+        Origin: "CLI",
+      },
+    },
+  }}
+/>
+
+## The `env` section
+
+Keys are the [global template properties][templates] you already use in templates (`PWD`, `AbsolutePWD`,
+`PSWD`, `Folder`, `UserName`, `HostName`, `Shell`, `ShellVersion`, `Root`, `OS`, `WSL`, `SHLVL`, `Jobs`,
+`Code`, `PromptCount`, `Version`, and `Var`), plus `ExecutionTime` and `PipeStatus`.
+
+A key present in the file overrides the live value. A key left out falls back to the real environment, so
+specify only the properties your config depends on.
+
+`Folder` derives from the effective `PWD` automatically. Set an explicit `Folder` key to override it.
+
+The [`maps`][maps] aliases (`user_name`, `host_name`, `shell_name`) apply to data values as they do to live
+ones.
+
+### Precedence
+
+`PWD`, `Code`, `ExecutionTime`, and `PipeStatus` feed the runtime itself, not just the template context. Live
+segments that compute from them, such as [path][path], [status][status], and [executiontime][executiontime],
+also see the overridden values.
+
+Values are resolved in this order, highest priority first:
+
+1. An explicit CLI flag on `print` (`--pwd`, `--status`, `--execution-time`, ...)
+2. The data file
+3. The live environment
+
+## The `segments` section
+
+Each key is a segment's `alias` if it has one, otherwise its `type` (for example `git` or `az`). The value is
+an object whose keys are that segment's template properties, as documented on the segment's page.
+
+A few segments store a property under a different name than the template exposes. The [wakatime] segment, for
+example, stores `.CumulativeTotal` as `cumulative_total`. When a property you wrote by hand has no effect, run
+[`config export data`](#recording-data) and copy the names from its output: the recorder always uses the
+stored names.
+
+A segment listed here is force-enabled and rendered purely from the supplied data; its runtime detection is
+skipped entirely. A segment left out of the file executes normally against the live environment.
+
+:::caution
+If your config has two segments of the same type, give each an `alias`. Without one, both segments match the
+same `type` key in the `segments` section and can't receive distinct data.
+:::
+
+For example, this config has two `path` segments distinguished by `alias`:
+
+<Config
+  data={{
+    segments: [
+      {
+        type: "path",
+        alias: "PathMain",
+        style: "plain",
+        foreground: "#ffffff",
+      },
+      {
+        type: "path",
+        alias: "PathSecondary",
+        style: "plain",
+        foreground: "#ffffff",
+      },
+    ],
+  }}
+/>
+
+The matching data file targets each segment by its alias:
+
+<Config
+  data={{
+    segments: {
+      PathMain: { Path: "~/dev/oh-my-posh" },
+      PathSecondary: { Path: "~/dev/site" },
+    },
+  }}
+/>
+
+## Template and method fidelity
+
+Templates evaluate over the data you supply, so template methods and functions work as expected.
+`.Working.String` on the [git][git] segment, for example, computes from the `Working` property in the file,
+just as it would from a live repository. Only logic that reads live runtime state at render time can't be
+reproduced this way. This matches how a [cached][cache] segment behaves: it also renders from stored
+properties instead of re-detecting them.
+
+## Recording data
+
+`oh-my-posh config export data` renders your prompt against the real environment and writes a complete data
+file: the `env` section plus every enabled segment. The recorder omits `Var`: the config's own `var` section
+already defines those values, though you can still set `Var` in the file by hand to override them.
+
+```bash
+oh-my-posh config export data --config mytheme.omp.json --output data.json
+```
+
+| Flag       | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `--config` | the configuration to render                    |
+| `--output` | file to write the data to, defaults to stdout  |
+
+The output format is JSON.
+
+This gives you a record-once, replay-forever workflow. Run the command on a machine where everything (git,
+cloud CLIs, language runtimes) is set up the way you want it to look. Then tweak values by hand and replay the
+result anywhere with `--data`, without needing that setup again.
+
+## End-to-end example
+
+Record a data file from a fully configured machine:
+
+```bash
+oh-my-posh config export data --config mytheme.omp.json --output data.json
+```
+
+Edit `data.json` to adjust the values you want to show: the branch name, the exit code, the Azure
+subscription, and so on.
+
+Render an image from the edited data, without touching git, Azure CLI, or anything else the config depends on:
+
+```bash
+oh-my-posh config export image --config mytheme.omp.json --data data.json
+```
+
+[templates]: /docs/configuration/templates#global-properties
+[maps]: /docs/configuration/general#maps
+[path]: /docs/segments/system/path
+[status]: /docs/segments/system/status
+[executiontime]: /docs/segments/system/executiontime
+[git]: /docs/segments/scm/git
+[cache]: /docs/configuration/segment#cache
+[wakatime]: /docs/segments/web/wakatime

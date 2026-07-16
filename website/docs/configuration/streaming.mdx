@@ -1,0 +1,128 @@
+---
+id: streaming
+title: Streaming
+sidebar_label: Streaming
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import Config from "@site/src/components/Config.js";
+
+:::warning Beta Feature
+Streaming is a **beta feature** under active development. The behavior and configuration
+may change in future releases.
+:::
+
+Streaming renders your prompt progressively instead of waiting for every segment to finish.
+The prompt is displayed immediately, slow segments show a placeholder, and the prompt updates
+in place as their data becomes available.
+
+In addition, streaming runs a single background `oh-my-posh serve` process per shell session
+which renders every prompt on request. This removes the process start per prompt (the largest
+cost on Windows) and keeps segment caches warm in memory, making every prompt faster.
+The process lives and dies with your shell session, restarts automatically when it fails,
+and Oh My Posh falls back to the classic per-prompt rendering when it can't be used.
+
+## Configuration
+
+Set the `streaming` property to a positive integer representing the timeout in milliseconds
+for pending segments. Segments that don't complete within the timeout render the segment's
+`placeholder` property (default `...`) and update in place once resolved.
+
+<Config
+  data={{
+    streaming: 100,
+  }}
+/>
+
+| Name          | Type     | Default | Description                                                                                                        |
+| ------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| `streaming`   | `int`    |         | enable streaming mode with a timeout in milliseconds for pending segments                                          |
+| `placeholder` | `string` | `...`   | [segment][segment] level - the text to display while the segment is still resolving                                |
+
+:::warning
+Setting a very low timeout (e.g., 0 or 50ms) may cause visual glitches depending on the shell's rendering capabilities.
+We recommend starting with a timeout of around 100ms and adjusting based on your experience.
+:::
+
+## Shell support
+
+Streaming is supported in `powershell`, `zsh`, `fish` and `cmd`. For any other shell, the
+setting has no effect and prompts render the classic way. The available functionality
+differs per shell:
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'fish', value: 'fish', },
+    { label: 'cmd', value: 'cmd', },
+  ]
+}>
+<TabItem value="powershell">
+
+Requires PowerShell 6 or later for the background process; Windows PowerShell 5.1 and
+sessions in `ConstrainedLanguage` mode use a streaming process per prompt instead.
+
+- **live updates**: the prompt repaints in place as pending segments resolve, even while
+  you're already typing
+- **transient prompt**: streamed along with the primary prompt and cached, so pressing
+  <kbd>Enter</kbd> renders the [transient prompt][transient] without starting a process
+- **background process**: started during shell initialization so the first prompt is fast,
+  restarted automatically when it fails, and abandoned for the session in favor of
+  per-prompt rendering after repeated failures
+
+</TabItem>
+<TabItem value="zsh">
+
+- **live updates**: the prompt repaints in place as pending segments resolve, even while
+  you're already typing
+- **transient prompt**: streamed along with the primary prompt and cached, so pressing
+  <kbd>Enter</kbd> renders the [transient prompt][transient] without starting a process
+- **background process**: runs over a zsh coprocess. The coprocess slot remains available
+  for your own use, and the process is hidden from `jobs` (it does not influence the job
+  count either). It restarts automatically when it fails, and is abandoned for the session
+  in favor of per-prompt rendering after repeated failures
+- the right prompt (`RPROMPT`) renders synchronously per prompt and is not streamed
+
+</TabItem>
+<TabItem value="fish">
+
+- **live updates**: the prompt repaints in place as pending segments resolve, even while
+  you're already typing
+- **transient prompt**: streamed along with the primary prompt and cached, so pressing
+  <kbd>Enter</kbd> renders the [transient prompt][transient] without starting a process
+- **background process**: receives render requests through a named pipe in the temporary
+  directory, cleaned up when the shell exits. It restarts automatically when it fails, and
+  is abandoned for the session in favor of per-prompt rendering after repeated failures
+- the right prompt renders per prompt and is not streamed
+
+</TabItem>
+<TabItem value="cmd">
+
+Requires [Clink][clink] v1.1.42 or later.
+
+- **synchronous rendering**: Clink can't read from the background process without blocking,
+  so every prompt is rendered fully resolved in a single reply - there are no placeholders
+  or incremental updates in `cmd`. The benefit is speed: no process start per prompt and
+  warm in-memory segment caches
+- **transient prompt**: delivered with the primary prompt and cached, so pressing
+  <kbd>Enter</kbd> renders the [transient prompt][transient] without starting a process
+- **background process**: restarted automatically when it fails, and abandoned for the
+  session in favor of the classic per-prompt rendering after repeated failures
+- the right prompt renders asynchronously per prompt and is not streamed
+
+</TabItem>
+</Tabs>
+
+## Feedback
+
+If you encounter issues or have suggestions for the streaming feature, please open an issue on the
+[Oh My Posh GitHub repository][issues].
+
+[segment]: /docs/configuration/segment
+[transient]: /docs/configuration/transient
+[clink]: https://chrisant996.github.io/clink/
+[issues]: https://github.com/JanDeDobbeleer/oh-my-posh/issues

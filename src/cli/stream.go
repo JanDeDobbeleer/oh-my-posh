@@ -26,6 +26,8 @@ func createStreamCmd() *cobra.Command {
 		Long: `Stream the primary prompt with incremental updates as segments complete.
 Output format: null-byte delimited prompt strings (each complete prompt separated by \0).
 This allows multi-line prompts to be handled correctly.
+Records prefixed with a record separator byte (\x1e) carry the transient prompt,
+which shells cache so no additional CLI call is needed on line acceptance.
 The shell can read records incrementally and update the display.
 Command exits when all segments are resolved.`,
 		Args: cobra.NoArgs,

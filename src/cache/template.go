@@ -28,6 +28,8 @@ type SimpleTemplate struct {
 	Code          int
 	WSL           bool
 	Root          bool
+	Interrupted   bool
+	Executed      bool
 }
 
 func (t *Template) AddSegmentData(key string, value any) {

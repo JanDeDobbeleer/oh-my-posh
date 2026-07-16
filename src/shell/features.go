@@ -21,6 +21,7 @@ const (
 	Streaming
 	KeyHandlers
 	VIMode
+	TransientRPrompt
 )
 
 // getAllFeatures returns all defined feature flags by iterating through bit positions
@@ -32,7 +33,7 @@ func getAllFeatures() []Features {
 		feature := Features(1 << i)
 
 		// Stop when we reach a power of 2 greater than our highest defined feature
-		if feature > VIMode*2 {
+		if feature > TransientRPrompt {
 			break
 		}
 
@@ -76,6 +77,8 @@ func (f Features) Lines(shell string) Lines {
 			code = feature.Nu()
 		case XONSH:
 			code = feature.Xonsh()
+		case YASH:
+			code = feature.Yash()
 		}
 
 		if len(code) > 0 {

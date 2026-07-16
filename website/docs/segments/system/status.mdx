@@ -70,5 +70,17 @@ In case you want the reason for the exit code instead of code itself, you can us
 {{ if eq .Code 0 }}\uf00c{{ else }}\uf071 {{ reason .Code }}{{ end }}
 ```
 
+:::tip hide stale exit codes
+
+Pressing enter on an empty line does not run a command, so `.Code` still holds the previous
+command's exit code. Use the global [`.Executed`][templates] property in a `template` override to
+hide the segment when no command ran:
+
+```template
+{{ if .Executed }}{{ .Code }}{{ end }}
+```
+
+:::
+
 [templates]: /docs/configuration/templates
 [status-template]: #status-template

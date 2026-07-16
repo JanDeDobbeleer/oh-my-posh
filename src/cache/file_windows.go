@@ -2,6 +2,7 @@ package cache
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 
@@ -79,9 +80,23 @@ func (rw *persistentStringRWCloser) Close() error {
 func openFile(filePath string) (io.ReadWriteCloser, error) {
 	pss, err := createOrOpenPersistentString(filePath)
 	if err != nil {
+		if errors.Is(err, ErrLocked) {
+			// Expected under concurrent access; not an error condition.
+			log.Debug(err.Error())
+			return nil, err
+		}
+
 		log.Error(err)
 		return nil, err
 	}
 
 	return NewPersistentStringRWCloser(pss), nil
+}
+
+// openFileForWrite mirrors openFile on Windows: the memory-mapped file
+// already handles safe read-modify-write (including growth) internally, so
+// there's no separate atomic-write path needed here (see file_unix.go for
+// why POSIX needs one).
+func openFileForWrite(filePath string) (io.WriteCloser, error) {
+	return openFile(filePath)
 }

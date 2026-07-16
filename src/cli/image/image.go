@@ -31,7 +31,6 @@ import (
 	"math"
 	stdOS "os"
 	"path/filepath"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -117,20 +116,18 @@ type Renderer struct {
 	foregroundColor        *RGB
 	defaultBackgroundColor *RGB
 	defaultForegroundColor *RGB
+	AnsiString             string
+	Path                   string
+	shadowBaseColor        string
+	style                  string
 	Settings
-	Path            string
-	AnsiString      string
-	shadowBaseColor string
-	style           string
-	shadowOffsetX   float64
-	margin          float64
-	factor          float64
-	shadowOffsetY   float64
-	rows            int
-	lineSpacing     float64
-	columns         int
-	padding         float64
-	shadowRadius    uint8
+	shadowOffsetX float64
+	margin        float64
+	factor        float64
+	shadowOffsetY float64
+	lineSpacing   float64
+	padding       float64
+	shadowRadius  uint8
 }
 
 func (ir *Renderer) Init(env runtime.Environment) error {
@@ -169,8 +166,6 @@ func (ir *Renderer) initDefaults() {
 	ir.defaultBackgroundColor = &RGB{21, 21, 21}
 
 	ir.factor = 2.0
-	ir.columns = 80
-	ir.rows = 25
 
 	ir.margin = ir.factor * 48
 	ir.padding = ir.factor * 24
@@ -316,6 +311,17 @@ func (ir *Renderer) fontHeight() float64 {
 	return float64(ir.regular.Metrics().Height >> 6)
 }
 
+// resolvedColumns returns the fixed canvas text width, in columns, falling
+// back to defaultColumns when Settings.Columns is unset (zero or negative),
+// e.g. when loading a settings file written before Columns existed.
+func (ir *Renderer) resolvedColumns() int {
+	if ir.Columns <= 0 {
+		return defaultColumns
+	}
+
+	return ir.Columns
+}
+
 type RuneRange struct {
 	Start rune
 	End   rune
@@ -339,11 +345,12 @@ var doubleWidthRunes = []RuneRange{
 	{Start: '\uf400', End: '\uf532'},
 	{Start: '\u2665', End: '\u2665'},
 	{Start: '\u26A1', End: '\u26A1'},
-	// Powerline Extra Symbols (intentionally excluding single width bubbles (e0b4-e0b7) and pixelated (e0c4-e0c7))
+	// Powerline Extra Symbols: only the column-number glyph. The separator
+	// shapes (bubbles e0b4-e0b7, triangles e0b8-e0bf, flames e0c0-e0c3,
+	// pixelated e0c4-e0c7, honeycomb and friends e0c8-e0d4) are designed to
+	// fill exactly one cell, so doubling them adds phantom width that pushes
+	// otherwise-fitting lines across the wrap boundary.
 	{Start: '\ue0a3', End: '\ue0a3'},
-	{Start: '\ue0b4', End: '\ue0c8'},
-	{Start: '\ue0ca', End: '\ue0ca'},
-	{Start: '\ue0cc', End: '\ue0d4'},
 	// IEC Power Symbols
 	{Start: '\u23fb', End: '\u23fe'},
 	{Start: '\u2b58', End: '\u2b58'},
@@ -359,12 +366,6 @@ var doubleWidthRunes = []RuneRange{
 // e.g. for characters that are 2 or more wide. A standard character will return 0
 // Nerd Font glyphs will return 1, since most are double width
 func (ir *Renderer) runeAdditionalWidth(r rune) int {
-	// exclude the round leading diamond
-	singles := []rune{'\ue0b6', '\ue0ba', '\ue0bc'}
-	if slices.Contains(singles, r) {
-		return 0
-	}
-
 	for _, runeRange := range doubleWidthRunes {
 		if runeRange.Start <= r && r <= runeRange.End {
 			return 1
@@ -402,19 +403,69 @@ func (ir *Renderer) cleanContent() {
 	}
 }
 
-func (ir *Renderer) measureContent() (width, height float64) {
-	// Use actual rendering logic for accurate width measurement
-	// This simulates the exact same process as the actual drawing to ensure
-	// the canvas width perfectly matches the rendered content width
-	var maxX float64
-	var x float64
+// glyphPlan is a single positioned, styled rune ready to be measured or drawn.
+// width is the pixel advance the glyph occupies on the canvas, already
+// inflated for double-width Nerd Font glyphs (see runeAdditionalWidth).
+type glyphPlan struct {
+	foreground *RGB
+	background *RGB
+	style      string
+	r          rune
+	width      float64
+}
 
-	// Save original ansi string and style state
+// rowPlan is one physical row of the canvas, i.e. one line as it will
+// actually be drawn after wrapping/collapsing has been applied.
+type rowPlan struct {
+	glyphs []glyphPlan
+}
+
+func (row rowPlan) width() float64 {
+	var w float64
+	for _, g := range row.glyphs {
+		w += g.width
+	}
+	return w
+}
+
+// layoutPlan is the single source of truth for both measurement and
+// drawing: it is built once per render by walking the ANSI string, and both
+// measureContent and SavePNG derive their output from it instead of
+// duplicating the walk.
+type layoutPlan struct {
+	rows         []rowPlan
+	spaceAdvance float64
+}
+
+// minPaddingRun is the minimum length of a run of literal space runes that
+// is treated as alignment padding inserted by the prompt engine for
+// right-aligned blocks/rprompts, as opposed to incidental whitespace in
+// genuine content.
+const minPaddingRun = 5
+
+// buildLayout walks the ANSI string once, resolving styles/colors exactly
+// like processAnsiSequence always has, and produces the logical rows
+// (one per newline in the source). It then fits each logical row to the
+// fixed canvas width: rows that fit are kept as-is, rows that overflow
+// because of a long engine-inserted padding run get that padding collapsed,
+// and any other overflowing row is hard-wrapped, never splitting a glyph.
+func (ir *Renderer) buildLayout() *layoutPlan {
+	// Save/restore so buildLayout is non-destructive and can be called
+	// repeatedly (e.g. once for measurement, once for drawing, or from tests).
 	originalAnsi := ir.AnsiString
 	originalStyle := ir.style
-	ir.style = ""
+	originalFg := ir.foregroundColor
+	originalBg := ir.backgroundColor
 
-	tmpDrawer := &font.Drawer{Face: ir.regular}
+	ir.style = ""
+	ir.foregroundColor = nil
+	ir.backgroundColor = nil
+
+	drawer := &font.Drawer{Face: ir.regular}
+	spaceAdvance := float64(drawer.MeasureString(" ") >> 6)
+
+	var logicalRows []rowPlan
+	var current rowPlan
 
 	for ir.AnsiString != "" {
 		if !ir.processAnsiSequence() {
@@ -426,10 +477,15 @@ func (ir *Renderer) measureContent() (width, height float64) {
 			continue
 		}
 
-		str := string(runes[0:1])
+		r := runes[0]
 		ir.AnsiString = string(runes[1:])
 
-		// Use appropriate font face for measurement
+		if r == '\n' {
+			logicalRows = append(logicalRows, current)
+			current = rowPlan{}
+			continue
+		}
+
 		var face font.Face
 		switch ir.style {
 		case bold:
@@ -440,35 +496,138 @@ func (ir *Renderer) measureContent() (width, height float64) {
 			face = ir.regular
 		}
 
-		tmpDrawer.Face = face
-		advance := tmpDrawer.MeasureString(str)
-		w := float64(advance >> 6)
+		drawer.Face = face
+		advance := float64(drawer.MeasureString(string(r)) >> 6)
+		// Add additional width for Nerd Font glyphs; the gg library returns
+		// a single character width for *all* glyphs in a font, so if we know
+		// the glyph occupies n additional characters of width, allocate it here.
+		advance += advance * float64(ir.runeAdditionalWidth(r))
 
-		// Add additional width for Nerd Font glyphs
-		w += (w * float64(ir.runeAdditionalWidth(runes[0])))
-
-		if str == "\n" {
-			x = 0
-			continue
-		}
-
-		x += w
-		if x > maxX {
-			maxX = x
-		}
+		current.glyphs = append(current.glyphs, glyphPlan{
+			r:          r,
+			width:      advance,
+			foreground: ir.foregroundColor,
+			background: ir.backgroundColor,
+			style:      ir.style,
+		})
 	}
+
+	logicalRows = append(logicalRows, current)
 
 	// Restore original state
 	ir.AnsiString = originalAnsi
 	ir.style = originalStyle
+	ir.foregroundColor = originalFg
+	ir.backgroundColor = originalBg
 
-	// Ensure we have a minimum width for very short content
-	minWidth := tmpDrawer.MeasureString(strings.Repeat(" ", 80))
-	width = math.Max(maxX, float64(minWidth>>6))
+	maxWidth := float64(ir.resolvedColumns()) * spaceAdvance
 
-	// height, lines times font height and line spacing
-	lines := strings.Split(originalAnsi, "\n")
-	height = float64(len(lines)) * ir.fontHeight() * ir.lineSpacing
+	var rows []rowPlan
+	for _, row := range logicalRows {
+		rows = append(rows, fitRow(row, maxWidth, spaceAdvance)...)
+	}
+
+	return &layoutPlan{rows: rows, spaceAdvance: spaceAdvance}
+}
+
+// fitRow fits a single logical row (a line as produced by the prompt
+// engine) to maxWidth pixels, per the approved design:
+//   - a row that already fits is returned unchanged
+//   - a row that overflows because it contains a long (>=minPaddingRun) run
+//     of literal padding spaces has spaces removed from that run until it
+//     fits, keeping right-aligned segments flush against the right edge
+//   - any other overflowing row is hard-wrapped at the column boundary,
+//     never splitting a glyph (glyphs are atomic units here, so this is
+//     structural rather than an extra check)
+func fitRow(row rowPlan, maxWidth, spaceAdvance float64) []rowPlan {
+	if row.width() <= maxWidth {
+		return []rowPlan{row}
+	}
+
+	if start, length, ok := longestPaddingRun(row, minPaddingRun); ok {
+		overflow := row.width() - maxWidth
+		remove := min(int(math.Ceil(overflow/spaceAdvance)), length)
+
+		collapsed := rowPlan{glyphs: make([]glyphPlan, 0, len(row.glyphs)-remove)}
+		collapsed.glyphs = append(collapsed.glyphs, row.glyphs[:start]...)
+		collapsed.glyphs = append(collapsed.glyphs, row.glyphs[start+remove:]...)
+
+		if collapsed.width() <= maxWidth {
+			return []rowPlan{collapsed}
+		}
+
+		// The padding run alone wasn't enough to make it fit (unusual,
+		// e.g. an already very long line); wrap what's left of it.
+		row = collapsed
+	}
+
+	return wrapRow(row, maxWidth)
+}
+
+// longestPaddingRun finds the longest run of consecutive literal space
+// glyphs of at least minLen runes, returning its start index and length.
+func longestPaddingRun(row rowPlan, minLen int) (start, length int, ok bool) {
+	bestStart, bestLen := -1, 0
+	curStart, curLen := -1, 0
+
+	flush := func() {
+		if curLen >= minLen && curLen > bestLen {
+			bestStart, bestLen = curStart, curLen
+		}
+	}
+
+	for i, g := range row.glyphs {
+		if g.r == ' ' {
+			if curLen == 0 {
+				curStart = i
+			}
+			curLen++
+			continue
+		}
+
+		flush()
+		curLen = 0
+	}
+
+	flush()
+
+	if bestLen == 0 {
+		return 0, 0, false
+	}
+
+	return bestStart, bestLen, true
+}
+
+// wrapRow hard-wraps row into as many rows as needed so that each one is at
+// most maxWidth pixels wide, exactly like a real terminal would. Glyphs are
+// never split since they are moved as whole units between rows.
+func wrapRow(row rowPlan, maxWidth float64) []rowPlan {
+	var rows []rowPlan
+	var current rowPlan
+	var width float64
+
+	for _, g := range row.glyphs {
+		if width+g.width > maxWidth && len(current.glyphs) > 0 {
+			rows = append(rows, current)
+			current = rowPlan{}
+			width = 0
+		}
+
+		current.glyphs = append(current.glyphs, g)
+		width += g.width
+	}
+
+	rows = append(rows, current)
+
+	return rows
+}
+
+func (ir *Renderer) measureContent() (width, height float64) {
+	plan := ir.buildLayout()
+
+	width = float64(ir.resolvedColumns()) * plan.spaceAdvance
+	height = float64(len(plan.rows)) * ir.fontHeight() * ir.lineSpacing
+
 	return width, height
 }
 
@@ -481,7 +640,9 @@ func (ir *Renderer) SavePNG() error {
 		distance = scale(25)
 	)
 
-	contentWidth, contentHeight := ir.measureContent()
+	plan := ir.buildLayout()
+	contentWidth := float64(ir.resolvedColumns()) * plan.spaceAdvance
+	contentHeight := float64(len(plan.rows)) * ir.fontHeight() * ir.lineSpacing
 
 	// Make sure the output window is big enough in case no content or very few
 	// content will be rendered. Also account for potential font variations.
@@ -543,78 +704,64 @@ func (ir *Renderer) SavePNG() error {
 		dc.Fill()
 	}
 
-	// Apply the actual text into the prepared content area of the window
-	var x, y = xOffset + paddingX, yOffset + paddingY + titleOffset + ir.fontHeight()
+	// Apply the actual text into the prepared content area of the window,
+	// replaying the layout plan built above instead of re-walking the ANSI
+	// string: measurement and drawing now share a single pass.
+	y := yOffset + paddingY + titleOffset + ir.fontHeight()
 
-	for ir.AnsiString != "" {
-		if !ir.processAnsiSequence() {
-			continue
+	for _, row := range plan.rows {
+		x := xOffset + paddingX
+
+		for _, g := range row.glyphs {
+			switch g.style {
+			case bold:
+				dc.SetFontFace(ir.bold)
+			case italic:
+				dc.SetFontFace(ir.italic)
+			default:
+				dc.SetFontFace(ir.regular)
+			}
+
+			w := g.width
+
+			if g.background != nil {
+				dc.SetRGB255(g.background.r, g.background.g, g.background.b)
+				// Use consistent line height for all background rectangles
+				fontLineHeight := ir.fontHeight() * ir.lineSpacing
+
+				// Center all characters (including powerline glyphs) within the line height
+				// Position background to align properly with text baseline and ensure consistent height
+				bgY := y - fontLineHeight*0.75 // Adjusted for better centering with text
+				bgHeight := fontLineHeight
+
+				dc.DrawRectangle(x, bgY, w, bgHeight)
+				dc.Fill()
+			}
+
+			if g.foreground != nil {
+				dc.SetRGB255(g.foreground.r, g.foreground.g, g.foreground.b)
+			} else {
+				dc.SetRGB255(ir.defaultForegroundColor.r, ir.defaultForegroundColor.g, ir.defaultForegroundColor.b)
+			}
+
+			dc.DrawString(string(g.r), x, y)
+
+			if g.style == underline {
+				dc.DrawLine(x, y+scale(4), x+w, y+scale(4))
+				dc.SetLineWidth(scale(1))
+				dc.Stroke()
+			}
+
+			if g.style == overline {
+				dc.DrawLine(x, y-scale(22), x+w, y-scale(22))
+				dc.SetLineWidth(scale(1))
+				dc.Stroke()
+			}
+
+			x += w
 		}
 
-		runes := []rune(ir.AnsiString)
-		if len(runes) == 0 {
-			continue
-		}
-
-		str := string(runes[0:1])
-		ir.AnsiString = string(runes[1:])
-		switch ir.style {
-		case bold:
-			dc.SetFontFace(ir.bold)
-		case italic:
-			dc.SetFontFace(ir.italic)
-		default:
-			dc.SetFontFace(ir.regular)
-		}
-
-		w, _ := dc.MeasureString(str)
-		// The gg library unfortunately returns a single character width for *all* glyphs in a font.
-		// So if we know the glyph to occupy n additional characters in width, allocate that area
-		// e.g. this will double the space for Nerd Fonts, but some could even be 3 or 4 wide
-		// If there's 0 additional characters of width (the common case), this won't add anything
-		w += (w * float64(ir.runeAdditionalWidth(runes[0])))
-
-		if ir.backgroundColor != nil {
-			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
-			// Use consistent line height for all background rectangles
-			fontLineHeight := ir.fontHeight() * ir.lineSpacing
-
-			// Center all characters (including powerline glyphs) within the line height
-			// Position background to align properly with text baseline and ensure consistent height
-			bgY := y - fontLineHeight*0.75 // Adjusted for better centering with text
-			bgHeight := fontLineHeight
-
-			dc.DrawRectangle(x, bgY, w, bgHeight)
-			dc.Fill()
-		}
-
-		if ir.foregroundColor != nil {
-			dc.SetRGB255(ir.foregroundColor.r, ir.foregroundColor.g, ir.foregroundColor.b)
-		} else {
-			dc.SetRGB255(ir.defaultForegroundColor.r, ir.defaultForegroundColor.g, ir.defaultForegroundColor.b)
-		}
-
-		if str == "\n" {
-			x = xOffset + paddingX
-			y += ir.fontHeight() * ir.lineSpacing // Use consistent line height instead of character height
-			continue
-		}
-
-		dc.DrawString(str, x, y)
-
-		if ir.style == underline {
-			dc.DrawLine(x, y+scale(4), x+w, y+scale(4))
-			dc.SetLineWidth(scale(1))
-			dc.Stroke()
-		}
-
-		if ir.style == overline {
-			dc.DrawLine(x, y-scale(22), x+w, y-scale(22))
-			dc.SetLineWidth(scale(1))
-			dc.Stroke()
-		}
-
-		x += w
+		y += ir.fontHeight() * ir.lineSpacing // Use consistent line height instead of character height
 	}
 
 	return dc.SavePNG(ir.Path)

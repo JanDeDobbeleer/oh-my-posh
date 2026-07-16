@@ -1,6 +1,8 @@
 package config
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -41,12 +43,16 @@ type Segment struct {
 	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
 	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
-	Alias                  string      `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
+	presentFields          map[string]bool
+	Alias                  string `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
+	foregroundCache        color.Ansi
+	backgroundCache        color.Ansi
 	name                   string
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty" yaml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty" yaml:"trailing_diamond,omitempty"`
 	Template               string         `json:"template,omitempty" toml:"template,omitempty" yaml:"template,omitempty"`
+	RightTemplate          string         `json:"right_template,omitempty" toml:"right_template,omitempty" yaml:"right_template,omitempty"`
 	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty" yaml:"foreground,omitempty"`
 	TemplatesLogic         template.Logic `json:"templates_logic,omitempty" toml:"templates_logic,omitempty" yaml:"templates_logic,omitempty"`
 	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty" yaml:"powerline_symbol,omitempty"`
@@ -56,6 +62,7 @@ type Segment struct {
 	Style                  SegmentStyle   `json:"style,omitempty" toml:"style,omitempty" yaml:"style,omitempty"`
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty" yaml:"leading_powerline_symbol,omitempty"`
 	Placeholder            string         `json:"placeholder,omitempty" toml:"placeholder,omitempty" yaml:"placeholder,omitempty"`
+	FallbackTemplate       string         `json:"fallback_template,omitempty" toml:"fallback_template,omitempty" yaml:"fallback_template,omitempty"`
 	Tips                   []string       `json:"tips,omitempty" toml:"tips,omitempty" yaml:"tips,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty" yaml:"background_templates,omitempty"`
 	Templates              template.List  `json:"templates,omitempty" toml:"templates,omitempty" yaml:"templates,omitempty"`
@@ -76,7 +83,27 @@ type Segment struct {
 	restored               bool           `json:"-" toml:"-" yaml:"-"`
 	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Pending                bool           `json:"-" toml:"-" yaml:"-"`
-	Interactive            bool           `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	// Killed is set by the engine when the segment's timeout expired and its
+	// child processes were killed; it blocks fallback_template rendering.
+	Killed              bool `json:"-" toml:"-" yaml:"-"`
+	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt bool `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
+	foregroundResolved  bool
+	backgroundResolved  bool
+	needsEvaluated      bool
+	evaluated           bool
+}
+
+// fieldPresent reports whether name (a json tag key) was present in the
+// source segment entry. A nil presentFields map means presence was never
+// recorded, in which case every field is treated as present, preserving
+// merge's legacy unconditional-overwrite behavior for such segments.
+func (segment *Segment) fieldPresent(name string) bool {
+	if segment.presentFields == nil {
+		return true
+	}
+
+	return segment.presentFields[name]
 }
 
 // segmentAlias is used to avoid recursion during unmarshaling
@@ -176,6 +203,10 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
+	if segment.restoreData() {
+		return
+	}
+
 	cacheRestored := segment.restoreCache()
 	if cacheRestored && !env.Flags().Streaming {
 		return
@@ -191,23 +222,45 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		}
 	}()
 
-	// Create Job for this goroutine so child processes can be tracked and killed on timeout
-	if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
-		log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
+	// Only segments with a timeout can ever be killed via
+	// KillGoroutineChildren (see prompt/segments.go executeSegmentWithTimeout),
+	// so only those need a Job object to track/terminate their child
+	// processes. Skipping this for the common case (no timeout configured)
+	// avoids two syscalls + a map insert per segment per prompt.
+	if segment.Timeout > 0 {
+		if err := runjobs.CreateJobForGoroutine(segment.Name()); err != nil {
+			log.Errorf("failed to create job for goroutine (segment: %s): %v", segment.Name(), err)
+		}
+
+		// Release the Job object (Windows) once this goroutine is done
+		// spawning/waiting on children. cmd.Run blocks until its child exits,
+		// so by the time Execute returns - on any path below, including a
+		// panic unwind - no process we intended to keep alive is still
+		// assigned to the job, making it safe to close despite
+		// JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE. If the timeout path already
+		// terminated/closed the job concurrently, this is a no-op; see the
+		// ownership invariant documented on jobs.CloseGoroutineJob.
+		defer runjobs.CloseGoroutineJob()
 	}
 
 	segment.Enabled = segment.writer.Enabled()
+	segment.evaluated = true
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
 	// Allow pending segments to render (they'll show "..." text)
 	if !segment.Pending && !segment.Enabled && !force {
-		return false
+		return segment.renderFallback(index)
 	}
 
 	if force {
 		segment.Force = true
 	}
+
+	// Foreground/background may be overridden directly (e.g. color cycling) between
+	// render passes, so the memoized values must not survive across calls to Render.
+	segment.foregroundResolved = false
+	segment.backgroundResolved = false
 
 	segment.writer.SetIndex(index)
 
@@ -215,7 +268,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 
 	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
 	if !segment.Pending {
-		segment.Enabled = segment.Force || len(strings.ReplaceAll(text, " ", "")) > 0
+		segment.Enabled = segment.Force || strings.ContainsFunc(text, func(r rune) bool { return r != ' ' })
 
 		if !segment.Enabled {
 			template.Cache.RemoveSegmentData(segment.Name())
@@ -232,6 +285,46 @@ func (segment *Segment) Render(index int, force bool) bool {
 	return true
 }
 
+// renderFallback attempts to render FallbackTemplate when a segment would
+// otherwise be hidden because its writer's Enabled() returned false. It
+// requires the writer to have completed its evaluation; segments hidden for other
+// reasons (toggled off, folder include/exclude, width constraints, or a
+// writer mapping error) never set evaluated, so they keep the silent-omission
+// behavior. Segments killed by their timeout are excluded via Killed rather
+// than evaluated, because their Execute goroutine keeps running after the
+// kill and may still complete the evaluation before rendering starts.
+func (segment *Segment) renderFallback(index int) bool {
+	if segment.FallbackTemplate == "" || !segment.evaluated || segment.Killed {
+		return false
+	}
+
+	text, err := template.Render(segment.FallbackTemplate, segment.writer)
+	if err != nil {
+		text = err.Error()
+	}
+
+	if !strings.ContainsFunc(text, func(r rune) bool { return r != ' ' }) {
+		return false
+	}
+
+	// Foreground/background may be overridden directly (e.g. color cycling) between
+	// render passes, so the memoized values must not survive across calls to Render.
+	segment.foregroundResolved = false
+	segment.backgroundResolved = false
+
+	segment.writer.SetIndex(index)
+	segment.Enabled = true
+	segment.SetText(text)
+
+	// Intentionally skip setCache(): the writer is zero/partially hydrated
+	// here, and caching it would make restoreCache() later resurrect a
+	// disabled writer as enabled while rendering the main template against
+	// empty data.
+	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+
+	return true
+}
+
 func (segment *Segment) Text() string {
 	return segment.writer.Text()
 }
@@ -241,21 +334,35 @@ func (segment *Segment) SetText(text string) {
 }
 
 func (segment *Segment) ResolveForeground() color.Ansi {
+	if segment.foregroundResolved {
+		return segment.foregroundCache
+	}
+
 	if len(segment.ForegroundTemplates) != 0 {
 		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
 		segment.Foreground = color.Ansi(match)
 	}
 
-	return segment.Foreground
+	segment.foregroundCache = segment.Foreground
+	segment.foregroundResolved = true
+
+	return segment.foregroundCache
 }
 
 func (segment *Segment) ResolveBackground() color.Ansi {
+	if segment.backgroundResolved {
+		return segment.backgroundCache
+	}
+
 	if len(segment.BackgroundTemplates) != 0 {
 		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
 		segment.Background = color.Ansi(match)
 	}
 
-	return segment.Background
+	segment.backgroundCache = segment.Background
+	segment.backgroundResolved = true
+
+	return segment.backgroundCache
 }
 
 func (segment *Segment) ResolveStyle() SegmentStyle {
@@ -285,6 +392,21 @@ func (segment *Segment) hasCache() bool {
 	return segment.Cache != nil && !segment.Cache.Duration.IsEmpty()
 }
 
+// DataKey returns the identity used to look up segment data: the segment's
+// alias if set, falling back to its type.
+func (segment *Segment) DataKey() string {
+	if segment.Alias != "" {
+		return segment.Alias
+	}
+
+	return string(segment.Type)
+}
+
+// Writer returns the segment's underlying SegmentWriter.
+func (segment *Segment) Writer() SegmentWriter {
+	return segment.writer
+}
+
 func (segment *Segment) isToggled() bool {
 	togglesMap, OK := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
 	if !OK || len(togglesMap) == 0 {
@@ -292,12 +414,7 @@ func (segment *Segment) isToggled() bool {
 		return false
 	}
 
-	segmentName := segment.Alias
-	if segmentName == "" {
-		segmentName = string(segment.Type)
-	}
-
-	if togglesMap[segmentName] {
+	if togglesMap[segment.DataKey()] {
 		log.Debugf("segment toggled off: %s", segment.Name())
 		return true
 	}
@@ -311,15 +428,33 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	key, store := segment.cacheKeyAndStore()
-	data, OK := cache.Get[string](store, key)
+
+	data, OK := cache.Get[any](store, key)
 	if !OK {
 		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
 		return false
 	}
 
-	err := json.Unmarshal([]byte(data), &segment.writer)
-	if err != nil {
-		log.Error(err)
+	switch v := data.(type) {
+	case []byte:
+		// Decode into the writer initialized by MapSegmentWithWriter instead of
+		// replacing it: the snapshot only carries exported fields, while the
+		// writer's unexported runtime state (env, options) must stay intact or
+		// any method relying on it panics after a restore.
+		if err := gob.NewDecoder(bytes.NewReader(v)).Decode(segment.writer); err != nil {
+			log.Error(err)
+			cache.Delete(store, key)
+			return false
+		}
+	case string:
+		// legacy JSON cache entry, remove it so it gets re-cached in the new format
+		log.Debugf("removing legacy cache key: %s", key)
+		cache.Delete(store, key)
+		return false
+	default:
+		log.Debugf("unexpected cache type for segment: %s, key: %s", segment.Name(), key)
+		cache.Delete(store, key)
+		return false
 	}
 
 	segment.Enabled = true
@@ -328,6 +463,31 @@ func (segment *Segment) restoreCache() bool {
 	log.Debug("restored segment from cache: ", segment.Name())
 
 	segment.restored = true
+
+	return true
+}
+
+// restoreData replays a segment's writer state from the data file supplied via
+// runtime.Flags.SegmentData, bypassing the real runtime entirely. This lets
+// segments render from a recorded fixture instead of probing the environment.
+func (segment *Segment) restoreData() bool {
+	data, OK := segment.env.Flags().SegmentData[segment.DataKey()]
+	if !OK {
+		return false
+	}
+
+	err := json.Unmarshal(data, &segment.writer)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	segment.Enabled = true
+	segment.restored = true
+
+	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+
+	log.Debug("restored segment from data: ", segment.Name())
 
 	return true
 }
@@ -342,17 +502,20 @@ func (segment *Segment) setCache() {
 		return
 	}
 
-	data, err := json.Marshal(segment.writer)
-	if err != nil {
+	// Store a gob snapshot rather than the writer itself. The writer is a live
+	// object that render passes keep mutating, so caching it directly would
+	// share mutable state through the cache; and once persisted to disk it
+	// would come back without its unexported runtime state (env, options).
+	// The snapshot is immutable and restoreCache overlays it onto a freshly
+	// initialized writer. An encode failure only skips caching this segment.
+	var data bytes.Buffer
+	if err := gob.NewEncoder(&data).Encode(segment.writer); err != nil {
 		log.Error(err)
 		return
 	}
 
-	// TODO: check if we can make segmentwriter a generic Type indicator
-	// that way we can actually get the value straight from cache.Get
-	// and marchalling is obsolete
 	key, store := segment.cacheKeyAndStore()
-	cache.Set(store, key, string(data), segment.Cache.Duration)
+	cache.Set(store, key, data.Bytes(), segment.Cache.Duration)
 }
 
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
@@ -429,7 +592,16 @@ func (segment *Segment) cwdExcluded() bool {
 }
 
 func (segment *Segment) evaluateNeeds() {
+	if segment.needsEvaluated {
+		return
+	}
+
+	segment.needsEvaluated = true
+
 	value := segment.Template
+	if value == "" && segment.writer != nil {
+		value = segment.writer.Template()
+	}
 
 	if len(segment.ForegroundTemplates) != 0 {
 		value += strings.Join(segment.ForegroundTemplates, "")
@@ -441,6 +613,10 @@ func (segment *Segment) evaluateNeeds() {
 
 	if len(segment.Templates) != 0 {
 		value += strings.Join(segment.Templates, "")
+	}
+
+	if segment.FallbackTemplate != "" {
+		value += segment.FallbackTemplate
 	}
 
 	if !strings.Contains(value, ".Segments.") {

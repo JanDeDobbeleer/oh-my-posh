@@ -452,6 +452,25 @@ var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocations
 		PathSeparator:   `\`,
 		Expected:        `github\project`,
 	},
+	// mapped_locations_regex_expand=true composes with the (?i) Windows/WSL case-insensitivity
+	// prefix: the pattern uses lowercase "github" while the actual path has "GitHub".
+	{
+		Pwd:                        `C:\Users\taylo\GitHub\myrepo.worktrees\feature-branch`,
+		MappedLocations:            map[string]string{`re:(.*/github/(?P<repo>.*)\.worktrees/.*)`: "/${repo}"},
+		MappedLocationsRegexExpand: true,
+		GOOS:                       runtime.WINDOWS,
+		PathSeparator:              `\`,
+		Expected:                   `\myrepo`,
+	},
+	// legacy path replaces the occurrence at the actual match position, not the first
+	// textual occurrence of the captured substring anywhere in the input.
+	{
+		Pwd:             `\home\src\project\src\deep`,
+		MappedLocations: map[string]string{`re:.*/(src)/deep`: "#"},
+		GOOS:            runtime.WINDOWS,
+		PathSeparator:   `\`,
+		Expected:        `\home\src\project\#\deep`,
+	},
 }
 
 var testSplitPathCases = []testSplitPathCase{

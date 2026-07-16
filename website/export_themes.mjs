@@ -1,5 +1,6 @@
 import { exec } from 'node:child_process';
 import { promises } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
@@ -16,8 +17,22 @@ const CONFIG = {
   CONCURRENCY: 8,
   DEFAULT_BG_COLOR: '#151515',
   THEME_EXTENSIONS: ['.omp.json', '.omp.toml', '.omp.yaml'],
+  SEGMENT_DATA_FILE: join(__dirname, 'segment_data.json'),
   GITHUB_BASE_URL: 'https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes'
 };
+
+/**
+ * Sources used to fetch a trending track for segment previews, in fallback order
+ */
+const TRENDING_FETCH_TIMEOUT_MS = 4000;
+
+/**
+ * Small, tasteful deny-list used as a safety net behind each source's own
+ * explicit-content flag. Matched word-boundary aware so substrings inside
+ * unrelated words (e.g. "sex" in "Essex") don't trigger a false positive.
+ */
+const CONTENT_DENY_LIST = ['fuck', 'shit', 'bitch', 'nigga', 'cunt', 'motherfucker'];
+const CONTENT_DENY_REGEX = new RegExp(`\\b(${CONTENT_DENY_LIST.join('|')})\\b`, 'i');
 
 /**
  * Theme configuration overrides for specific themes
@@ -71,6 +86,138 @@ function getThemeNameFromFile(fileName) {
 }
 
 /**
+ * Fetches JSON from a URL, aborting if it takes longer than the configured timeout
+ * @param {string} url - URL to fetch
+ * @returns {Promise<Object>} Parsed JSON response body
+ */
+async function fetchJsonWithTimeout(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TRENDING_FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+
+    if (!response.ok) {
+      throw new Error(`request failed with status ${response.status}`);
+    }
+
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/**
+ * Checks whether a track/artist combination is safe to feature in previews.
+ * This is a plain-text safety net behind each source's own explicit flag, so it
+ * intentionally stays short rather than trying to be a comprehensive filter.
+ * @param {string} title - Track title
+ * @param {string} artist - Artist name
+ * @returns {boolean} True if the track passes the deny-list check
+ */
+function isClean(title, artist) {
+  return !CONTENT_DENY_REGEX.test(`${title} ${artist}`);
+}
+
+/**
+ * Fetches the current #1 non-explicit track from the Deezer top chart
+ * @returns {Promise<{artist: string, track: string}>} Trending track
+ */
+async function trendingFromDeezer() {
+  const body = await fetchJsonWithTimeout('https://api.deezer.com/chart/0/tracks?limit=25');
+  const tracks = body?.data;
+
+  if (!Array.isArray(tracks) || tracks.length === 0) {
+    throw new Error('no tracks returned');
+  }
+
+  const track = tracks.find((entry) => !entry.explicit_lyrics && isClean(entry.title, entry.artist?.name));
+
+  if (!track) {
+    throw new Error('no clean track found in chart');
+  }
+
+  return { artist: track.artist.name, track: track.title };
+}
+
+/**
+ * Fetches the current #1 non-explicit track from the Apple Music most-played RSS feed
+ * @returns {Promise<{artist: string, track: string}>} Trending track
+ */
+async function trendingFromAppleRSS() {
+  const body = await fetchJsonWithTimeout('https://rss.marketingtools.apple.com/api/v2/us/music/most-played/25/songs.json');
+  const tracks = body?.feed?.results;
+
+  if (!Array.isArray(tracks) || tracks.length === 0) {
+    throw new Error('no tracks returned');
+  }
+
+  // Apple only includes contentAdvisoryRating when a track is explicit, so presence of the key
+  // (not its value) is the signal to filter on. The value is the literal string "Explict" (sic),
+  // Apple's own misspelling, verified against the live feed - do not "correct" it here.
+  const track = tracks.find((entry) => !('contentAdvisoryRating' in entry) && isClean(entry.name, entry.artistName));
+
+  if (!track) {
+    throw new Error('no clean track found in feed');
+  }
+
+  return { artist: track.artistName, track: track.name };
+}
+
+/**
+ * Builds the segment data file used for theme preview rendering. Fetches a trending
+ * track (Deezer, then Apple Music RSS as a fallback) and injects it into the spotify
+ * and ytm segment payloads of a temporary copy of the committed data file. The
+ * committed file is never modified; on any failure the committed file is used as-is.
+ * @returns {Promise<string>} Path to the data file to pass to --data
+ */
+async function buildDataFileWithTrending() {
+  let trending;
+
+  try {
+    trending = await trendingFromDeezer();
+  } catch (error) {
+    console.warn(`Trending track lookup via Deezer failed: ${error.message}`);
+
+    try {
+      trending = await trendingFromAppleRSS();
+    } catch (fallbackError) {
+      console.warn(`Trending track lookup via Apple Music RSS failed: ${fallbackError.message}`);
+    }
+  }
+
+  if (!trending) {
+    return CONFIG.SEGMENT_DATA_FILE;
+  }
+
+  try {
+    const raw = await promises.readFile(CONFIG.SEGMENT_DATA_FILE, 'utf8');
+    const data = JSON.parse(raw);
+
+    for (const key of ['spotify', 'ytm']) {
+      const segment = data.segments?.[key];
+
+      if (!segment) {
+        continue;
+      }
+
+      segment.Artist = trending.artist;
+      segment.Track = trending.track;
+    }
+
+    const tempPath = join(tmpdir(), `segment_data.${process.pid}.${Date.now()}.json`);
+    await promises.writeFile(tempPath, JSON.stringify(data, null, 2));
+
+    console.log(`Using trending track "${trending.track}" by ${trending.artist} for previews`);
+
+    return tempPath;
+  } catch (error) {
+    console.warn(`Unable to build data file with trending track: ${error.message}`);
+    return CONFIG.SEGMENT_DATA_FILE;
+  }
+}
+
+/**
  * Builds the oh-my-posh command for exporting theme image
  * @param {string} configPath - Path to theme config file
  * @param {string} outputImage - Output image file name
@@ -83,6 +230,7 @@ function buildPoshCommand(configPath, outputImage, config) {
     `--config=${configPath}`,
     `--output=${outputImage}`,
     `--background-color=${config.bgColor}`,
+    `--data=${CONFIG.SEGMENT_DATA_FILE}`,
   ];
 
   if (config.author) {
@@ -198,6 +346,8 @@ async function main() {
 
     await ensureDirectories();
 
+    CONFIG.SEGMENT_DATA_FILE = await buildDataFileWithTrending();
+
     const themes = await promises.readdir(CONFIG.THEMES_CONFIG_DIR);
     const validThemes = themes.filter(isValidTheme);
 
@@ -252,4 +402,9 @@ export {
   generateThemeMarkdown,
   asyncPool,
   main,
+  fetchJsonWithTimeout,
+  trendingFromDeezer,
+  trendingFromAppleRSS,
+  isClean,
+  buildDataFileWithTrending,
 };

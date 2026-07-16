@@ -17,10 +17,11 @@ import (
 )
 
 var (
-	author            string
-	colorSettingsFile string
-	bgColor           string
-	outputImage       string
+	author             string
+	colorSettingsFile  string
+	bgColor            string
+	outputImage        string
+	imageTerminalWidth int
 )
 
 // imageCmd represents the image command
@@ -31,9 +32,14 @@ var imageCmd = &cobra.Command{
 
 You can tweak the output by using additional flags:
 
-- cursor-padding: the padding of the prompt cursor
-- rprompt-offset: the offset of the right prompt
-- settings: JSON file with overrides
+- author: name to display as the config's author
+- background-color: background color of the exported image
+- terminal-width: number of columns the image canvas is rendered at; this
+  is also the width the prompt is rendered with, so right-aligned blocks
+  and rprompts line up with the image the same way they would in a real
+  terminal of that width (default 120). Lines that still don't fit either
+  collapse their alignment padding or wrap onto the next row
+- settings: JSON file overriding colors, author, background_color, fonts and cursor
 
 Example usage:
 
@@ -49,7 +55,7 @@ Exports the config to an image file ~/mytheme.png.
 
 Exports the config to an image file using customized output settings.`,
 	Args: cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		cache.Init(os.Getenv("POSH_SHELL"))
 
 		err := setConfigFlag()
@@ -64,7 +70,13 @@ Exports the config to an image file using customized output settings.`,
 		flags := &runtime.Flags{
 			ConfigPath:    cfg.Source,
 			Shell:         shell.GENERIC,
-			TerminalWidth: 120,
+			TerminalWidth: imageTerminalWidth,
+		}
+
+		if err := applyDataFile(flags, cmd.Flags().Changed); err != nil {
+			exitcode = 666
+			fmt.Println(err.Error())
+			return
 		}
 
 		env := &runtime.Terminal{}
@@ -108,6 +120,19 @@ Exports the config to an image file using customized output settings.`,
 			settings.Cursor = "_"
 		}
 
+		// --terminal-width beats the settings file's columns, and the settings
+		// file beats the default.
+		if !cmd.Flags().Changed("terminal-width") && settings.Columns > 0 {
+			imageTerminalWidth = settings.Columns
+		}
+
+		// The engine pads right-aligned blocks/rprompts to TerminalWidth, so the
+		// image must clamp to the same column count or the two disagree on
+		// where content should land. TerminalWidth is read lazily at render
+		// time, so updating the flags here still reaches the engine.
+		flags.TerminalWidth = imageTerminalWidth
+		settings.Columns = imageTerminalWidth
+
 		primaryPrompt := eng.Primary()
 
 		imageCreator := &image.Renderer{
@@ -137,6 +162,8 @@ func init() {
 	imageCmd.Flags().StringVar(&bgColor, "background-color", "", "image background color")
 	imageCmd.Flags().StringVarP(&outputImage, "output", "o", "", "image file (.png) to export to")
 	imageCmd.Flags().StringVar(&colorSettingsFile, "settings", "", "color settings file to override ANSI color codes and metadata")
+	imageCmd.Flags().StringVar(&dataPath, "data", "", "path to a template data file (json/yaml/toml) to render with")
+	imageCmd.Flags().IntVar(&imageTerminalWidth, "terminal-width", 120, "number of columns to render the prompt and image at")
 
 	// deprecated flags
 	_ = imageCmd.Flags().MarkHidden("author")

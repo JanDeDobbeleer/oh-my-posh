@@ -165,6 +165,87 @@ func TestFeaturesShellIntegration(t *testing.T) {
 	}
 }
 
+func TestFeaturesTransientRightPrompt(t *testing.T) {
+	cases := []struct {
+		Case          string
+		RightTemplate string
+		ExpectedFeats shell.Features
+	}{
+		{
+			Case:          "transient prompt without right template",
+			ExpectedFeats: shell.Transient | shell.KeyHandlers,
+		},
+		{
+			Case:          "transient prompt with right template",
+			RightTemplate: "R>",
+			ExpectedFeats: shell.Transient | shell.TransientRPrompt | shell.KeyHandlers,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return(shell.FISH)
+
+		cfg := &Config{
+			TransientPrompt: &Segment{RightTemplate: tc.RightTemplate},
+			Upgrade:         &upgrade.Config{},
+		}
+
+		got := cfg.Features(env)
+		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
+	}
+}
+
+func TestFeaturesVIMode(t *testing.T) {
+	cases := []struct {
+		Case          string
+		Shell         string
+		ExpectedFeats shell.Features
+	}{
+		{
+			Case:          "zsh enables vi mode tracking",
+			Shell:         shell.ZSH,
+			ExpectedFeats: shell.VIMode,
+		},
+		{
+			Case:          "pwsh enables vi mode tracking",
+			Shell:         shell.PWSH,
+			ExpectedFeats: shell.VIMode,
+		},
+		{
+			Case:          "bash does not enable vi mode tracking",
+			Shell:         shell.BASH,
+			ExpectedFeats: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return(tc.Shell)
+
+		template.Cache = &cache.Template{
+			SimpleTemplate: cache.SimpleTemplate{
+				Shell: tc.Shell,
+			},
+		}
+		template.Init(env, nil, nil)
+
+		cfg := &Config{
+			Upgrade: &upgrade.Config{},
+			Blocks: []*Block{
+				{
+					Segments: []*Segment{
+						{Type: VIMODE},
+					},
+				},
+			},
+		}
+
+		got := cfg.Features(env)
+		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
+	}
+}
+
 func TestUpgradeFeatures(t *testing.T) {
 	cases := []struct {
 		Case                  string

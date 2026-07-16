@@ -22,6 +22,13 @@ func Enable(plain bool) {
 	Debugf("logging enabled, raw mode: %t", plain)
 }
 
+// Enabled reports whether logging is currently enabled. Call sites that build
+// an expensive message (e.g. via fmt.Sprintf) before calling Debug/Trace should
+// guard with this check so the formatting is skipped when logging is disabled.
+func Enabled() bool {
+	return enabled
+}
+
 func Trace(start time.Time, args ...string) {
 	if !enabled {
 		return

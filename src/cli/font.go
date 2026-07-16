@@ -6,6 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/font"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -54,6 +55,9 @@ This command is used to install fonts and configure the font in your terminal.
 				}()
 
 				terminal.Init(sh)
+
+				cfg := config.Get(configFlag, false)
+				cfg.TerminalFeatures.Apply()
 
 				if !strings.HasPrefix(zipFolder, "/") {
 					zipFolder += "/"

@@ -25,10 +25,27 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name            |   Type    |   Default   | Description                                                                        |
-| --------------- | :-------: | :---------: | ---------------------------------------------------------------------------------- |
-| `fetch_version` | `boolean` |   `false`   | fetch the version information from `versions.tf`, `main.tf` or `terraform.tfstate` |
-| `command`       | `string`  | `terraform` | the command(s) to run, allows support for `tofu`                                   |
+| Name            |   Type    |   Default   | Description                                                                                                          |
+| --------------- | :-------: | :---------: | ------------------------------------------------------------------------------------------------------------------ |
+| `fetch_version` | `boolean` |   `false`   | fetch the version information, see [Version detection][version-detection] for the sources and their priority        |
+| `command`       | `string`  | `terraform` | the command(s) to run, allows support for `tofu`                                                                    |
+
+### Version detection
+
+When `fetch_version` is enabled, the version is resolved from the first source
+that yields a value, in this order:
+
+1. the [tenv][tenv] environment variable — `TFENV_TERRAFORM_VERSION` (or
+   `TOFUENV_TOFU_VERSION` when `command` is `tofu`)
+2. the [tenv][tenv] version file — `.terraform-version` (or `.opentofu-version`
+   when `command` is `tofu`)
+3. the `required_version` declared in `versions.tf` or `main.tf`
+4. the `terraform_version` stored in `terraform.tfstate`
+
+The tenv sources let the segment show the pinned version even when you don't use
+`main.tf` / `versions.tf`. The environment variable and version file are only
+used to read the version; a project file (a `.terraform` folder or one of the
+files above) is still required for the segment to activate.
 
 ## Template ([info][templates])
 
@@ -49,3 +66,5 @@ import Config from "@site/src/components/Config.js";
 
 [templates]: /docs/configuration/templates
 [terraform]: https://developer.hashicorp.com/terraform
+[tenv]: https://github.com/tofuutils/tenv
+[version-detection]: #version-detection

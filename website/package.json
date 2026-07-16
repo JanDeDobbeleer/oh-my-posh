@@ -10,15 +10,15 @@
     "clear": "docusaurus clear"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.10.0",
-    "@docusaurus/preset-classic": "^3.10.0",
-    "@docusaurus/theme-search-algolia": "^3.10.0",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/theme-search-algolia": "^3.10.2",
     "@mdx-js/react": "^3.1.1",
     "classnames": "^2.5.1",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "smol-toml": "^1.6.1",
-    "yaml": "^2.8.3"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "smol-toml": "^1.7.0",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "cross-env": "^10.1.0"

@@ -1,0 +1,13 @@
+add the two gaps as well with correct test cases, use table driven tests where possible (also for already created tests un e2e)
+
+---
+
+Execute a code review with Opus in a subagent
+
+---
+
+yes
+
+---
+
+delegate, make it continue

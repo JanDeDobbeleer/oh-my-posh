@@ -1,0 +1,6 @@
+docker isn't relevant, we can solve that using GitHub Runners on PR's. How long does the test execute?
+
+---
+
+* Add a README into the e2e dir with the detailed ifmormation instead of in the global README.
+* does it really test the output?

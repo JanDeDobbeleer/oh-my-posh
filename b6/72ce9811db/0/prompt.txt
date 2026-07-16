@@ -1,0 +1,5 @@
+What are the options to set up a full test suite for all shells, not the Go side, so that we can have actual end-to-end tests running, validating the behavior of the shell based on a standard configuration that contains different features that we can toggle?
+
+---
+
+big five, separate and don't couple./ I want you to build 1. and 2. (the recommendation) already here.

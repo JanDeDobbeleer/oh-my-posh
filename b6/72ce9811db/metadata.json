@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "b672ce9811db",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".github/workflows/e2e.yml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b6/72ce9811db/0/metadata.json",
+      "transcript": "/b6/72ce9811db/0/full.jsonl",
+      "compact_transcript": "/b6/72ce9811db/0/transcript.jsonl",
+      "content_hash": "/b6/72ce9811db/0/content_hash.txt",
+      "prompt": "/b6/72ce9811db/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1122,
+    "cache_creation_tokens": 127004,
+    "cache_read_tokens": 6632329,
+    "output_tokens": 54750,
+    "api_call_count": 63
+  }
+}

@@ -11,8 +11,8 @@ func (f *Flutter) Template() string {
 const flutterToolName = "flutter"
 
 func (f *Flutter) Enabled() bool {
-	f.extensions = dartExtensions
-	f.folders = dartFolders
+	f.extensions = []string{"*.dart", pubspecFileName, "pubspec.yml", "pubspec.lock"}
+	f.folders = []string{".dart_tool"}
 	f.tooling = map[string]*cmd{
 		fvmToolName: {
 			executable: fvmToolName,

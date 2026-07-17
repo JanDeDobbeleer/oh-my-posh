@@ -47,22 +47,18 @@ func init() {
 	gob.Register(&segments.CfTarget{})
 	gob.Register(&segments.Claude{})
 	gob.Register(&segments.ClaudeData{})
-	gob.Register(&segments.Clojure{})
 	gob.Register(&segments.Cmake{})
+	gob.Register(&segments.ConfiguredLanguage{})
 	gob.Register(&segments.Connection{})
-	gob.Register(&segments.Crystal{})
-	gob.Register(&segments.Dart{})
 	gob.Register(&segments.Deno{})
 	gob.Register(&segments.Docker{})
 	gob.Register(&segments.Dotnet{})
 	gob.Register(&segments.Dvc{})
 	gob.Register(&segments.DvcStatus{})
-	gob.Register(&segments.Elixir{})
 	gob.Register(&segments.Executiontime{})
 	gob.Register(&segments.Status{})
 	gob.Register(&segments.Firebase{})
 	gob.Register(&segments.Flutter{})
-	gob.Register(&segments.Fortran{})
 	gob.Register(&segments.Fossil{})
 	gob.Register(&segments.FossilStatus{})
 	gob.Register(&segments.Gcp{})
@@ -81,11 +77,8 @@ func init() {
 	gob.Register(&segments.HTTP{})
 	gob.Register(&segments.Jujutsu{})
 	gob.Register(&segments.JujutsuStatus{})
-	gob.Register(&segments.Julia{})
-	gob.Register(&segments.Kotlin{})
 	gob.Register(&segments.Kubectl{})
 	gob.Register(&segments.LastFM{})
-	gob.Register(&segments.Lua{})
 	gob.Register(&segments.Mercurial{})
 	gob.Register(&segments.MercurialStatus{})
 	gob.Register(&segments.Mojo{})
@@ -94,18 +87,14 @@ func init() {
 	gob.Register(&segments.Nbgv{})
 	gob.Register(&segments.Nightscout{})
 	gob.Register(&segments.NixShell{})
-	gob.Register(&segments.Nim{})
 	gob.Register(&segments.Node{})
 	gob.Register(&segments.Npm{})
 	gob.Register(&segments.Nx{})
-	gob.Register(&segments.OCaml{})
 	gob.Register(&segments.OrthodoxCal{})
 	gob.Register(&segments.Os{})
 	gob.Register(&segments.Owm{})
 	gob.Register(&segments.Path{})
 	gob.Register(&segments.Folders{})
-	gob.Register(&segments.Perl{})
-	gob.Register(&segments.Php{})
 	gob.Register(&segments.Plastic{})
 	gob.Register(&segments.PlasticStatus{})
 	gob.Register(&segments.Pnpm{})
@@ -114,12 +103,9 @@ func init() {
 	gob.Register(&segments.Python{})
 	gob.Register(&segments.Quasar{})
 	gob.Register(&segments.Package{})
-	gob.Register(&segments.R{})
 	gob.Register(&segments.Ramadan{})
 	gob.Register(&segments.React{})
 	gob.Register(&segments.Root{})
-	gob.Register(&segments.Ruby{})
-	gob.Register(&segments.Rust{})
 	gob.Register(&segments.Sapling{})
 	gob.Register(&segments.SaplingStatus{})
 	gob.Register(&segments.Session{})
@@ -131,7 +117,6 @@ func init() {
 	gob.Register(&segments.Svelte{})
 	gob.Register(&segments.Svn{})
 	gob.Register(&segments.SvnStatus{})
-	gob.Register(&segments.Swift{})
 	gob.Register(&segments.SystemInfo{})
 	gob.Register(&segments.TalosCTL{})
 	gob.Register(&segments.Taskwarrior{})
@@ -146,8 +131,6 @@ func init() {
 	gob.Register(&segments.Unity{})
 	gob.Register(&segments.Upgrade{})
 	gob.Register(&segments.UpgradeCache{})
-	gob.Register(&segments.V{})
-	gob.Register(&segments.Vala{})
 	gob.Register(&segments.VIMode{})
 	gob.Register(&segments.Wakatime{})
 	gob.Register(&segments.WinGet{})
@@ -157,7 +140,6 @@ func init() {
 	gob.Register(&segments.XMake{})
 	gob.Register(&segments.Yarn{})
 	gob.Register(&segments.Ytm{})
-	gob.Register(&segments.Zig{})
 	gob.Register(&segments.Segment{})
 }
 
@@ -427,23 +409,23 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CF:              func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:        func() SegmentWriter { return &segments.CfTarget{} },
 	CLAUDE:          func() SegmentWriter { return &segments.Claude{} },
-	CLOJURE:         func() SegmentWriter { return &segments.Clojure{} },
+	CLOJURE:         func() SegmentWriter { return segments.NewLanguage(string(CLOJURE)) },
 	CMAKE:           func() SegmentWriter { return &segments.Cmake{} },
 	CONNECTION:      func() SegmentWriter { return &segments.Connection{} },
 	COPILOT:         func() SegmentWriter { return &segments.Copilot{} },
 	COPILOTCLI:      func() SegmentWriter { return &segments.CopilotCLI{} },
-	CRYSTAL:         func() SegmentWriter { return &segments.Crystal{} },
-	DART:            func() SegmentWriter { return &segments.Dart{} },
+	CRYSTAL:         func() SegmentWriter { return segments.NewLanguage(string(CRYSTAL)) },
+	DART:            func() SegmentWriter { return segments.NewLanguage(string(DART)) },
 	DENO:            func() SegmentWriter { return &segments.Deno{} },
 	DOCKER:          func() SegmentWriter { return &segments.Docker{} },
 	DOTNET:          func() SegmentWriter { return &segments.Dotnet{} },
 	DVC:             func() SegmentWriter { return &segments.Dvc{} },
-	ELIXIR:          func() SegmentWriter { return &segments.Elixir{} },
+	ELIXIR:          func() SegmentWriter { return segments.NewLanguage(string(ELIXIR)) },
 	EXECUTIONTIME:   func() SegmentWriter { return &segments.Executiontime{} },
 	EXIT:            func() SegmentWriter { return &segments.Status{} },
 	FIREBASE:        func() SegmentWriter { return &segments.Firebase{} },
 	FLUTTER:         func() SegmentWriter { return &segments.Flutter{} },
-	FORTRAN:         func() SegmentWriter { return &segments.Fortran{} },
+	FORTRAN:         func() SegmentWriter { return segments.NewLanguage(string(FORTRAN)) },
 	FOSSIL:          func() SegmentWriter { return &segments.Fossil{} },
 	GCP:             func() SegmentWriter { return &segments.Gcp{} },
 	GIT:             func() SegmentWriter { return &segments.Git{} },
@@ -456,11 +438,11 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	JAVA:            func() SegmentWriter { return &segments.Java{} },
 	HTTP:            func() SegmentWriter { return &segments.HTTP{} },
 	JUJUTSU:         func() SegmentWriter { return &segments.Jujutsu{} },
-	JULIA:           func() SegmentWriter { return &segments.Julia{} },
-	KOTLIN:          func() SegmentWriter { return &segments.Kotlin{} },
+	JULIA:           func() SegmentWriter { return segments.NewLanguage(string(JULIA)) },
+	KOTLIN:          func() SegmentWriter { return segments.NewLanguage(string(KOTLIN)) },
 	KUBECTL:         func() SegmentWriter { return &segments.Kubectl{} },
 	LASTFM:          func() SegmentWriter { return &segments.LastFM{} },
-	LUA:             func() SegmentWriter { return &segments.Lua{} },
+	LUA:             func() SegmentWriter { return segments.NewLanguage(string(LUA)) },
 	MERCURIAL:       func() SegmentWriter { return &segments.Mercurial{} },
 	MOJO:            func() SegmentWriter { return &segments.Mojo{} },
 	MVN:             func() SegmentWriter { return &segments.Mvn{} },
@@ -468,29 +450,29 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NBGV:            func() SegmentWriter { return &segments.Nbgv{} },
 	NIGHTSCOUT:      func() SegmentWriter { return &segments.Nightscout{} },
 	NIXSHELL:        func() SegmentWriter { return &segments.NixShell{} },
-	NIM:             func() SegmentWriter { return &segments.Nim{} },
+	NIM:             func() SegmentWriter { return segments.NewLanguage(string(NIM)) },
 	NODE:            func() SegmentWriter { return &segments.Node{} },
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
-	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
+	OCAML:           func() SegmentWriter { return segments.NewLanguage(string(OCAML)) },
 	ORTHODOXCAL:     func() SegmentWriter { return &segments.OrthodoxCal{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },
 	PATH:            func() SegmentWriter { return &segments.Path{} },
-	PERL:            func() SegmentWriter { return &segments.Perl{} },
-	PHP:             func() SegmentWriter { return &segments.Php{} },
+	PERL:            func() SegmentWriter { return segments.NewLanguage(string(PERL)) },
+	PHP:             func() SegmentWriter { return segments.NewLanguage(string(PHP)) },
 	PLASTIC:         func() SegmentWriter { return &segments.Plastic{} },
 	PNPM:            func() SegmentWriter { return &segments.Pnpm{} },
 	PROJECT:         func() SegmentWriter { return &segments.Project{} },
 	PULUMI:          func() SegmentWriter { return &segments.Pulumi{} },
 	PYTHON:          func() SegmentWriter { return &segments.Python{} },
 	QUASAR:          func() SegmentWriter { return &segments.Quasar{} },
-	R:               func() SegmentWriter { return &segments.R{} },
+	R:               func() SegmentWriter { return segments.NewLanguage(string(R)) },
 	RAMADAN:         func() SegmentWriter { return &segments.Ramadan{} },
 	REACT:           func() SegmentWriter { return &segments.React{} },
 	ROOT:            func() SegmentWriter { return &segments.Root{} },
-	RUBY:            func() SegmentWriter { return &segments.Ruby{} },
-	RUST:            func() SegmentWriter { return &segments.Rust{} },
+	RUBY:            func() SegmentWriter { return segments.NewLanguage(string(RUBY)) },
+	RUST:            func() SegmentWriter { return segments.NewLanguage(string(RUST)) },
 	SAPLING:         func() SegmentWriter { return &segments.Sapling{} },
 	SESSION:         func() SegmentWriter { return &segments.Session{} },
 	SHELL:           func() SegmentWriter { return &segments.Shell{} },
@@ -500,7 +482,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	STRAVA:          func() SegmentWriter { return &segments.Strava{} },
 	SVELTE:          func() SegmentWriter { return &segments.Svelte{} },
 	SVN:             func() SegmentWriter { return &segments.Svn{} },
-	SWIFT:           func() SegmentWriter { return &segments.Swift{} },
+	SWIFT:           func() SegmentWriter { return segments.NewLanguage(string(SWIFT)) },
 	SYSTEMINFO:      func() SegmentWriter { return &segments.SystemInfo{} },
 	TALOSCTL:        func() SegmentWriter { return &segments.TalosCTL{} },
 	TASKWARRIOR:     func() SegmentWriter { return &segments.Taskwarrior{} },
@@ -514,8 +496,8 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	UNO:             func() SegmentWriter { return &segments.Uno{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
-	V:               func() SegmentWriter { return &segments.V{} },
-	VALA:            func() SegmentWriter { return &segments.Vala{} },
+	V:               func() SegmentWriter { return segments.NewLanguage(string(V)) },
+	VALA:            func() SegmentWriter { return segments.NewLanguage(string(VALA)) },
 	VIMODE:          func() SegmentWriter { return &segments.VIMode{} },
 	WAKATIME:        func() SegmentWriter { return &segments.Wakatime{} },
 	WINGET:          func() SegmentWriter { return &segments.WinGet{} },
@@ -524,7 +506,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	XMAKE:           func() SegmentWriter { return &segments.XMake{} },
 	YARN:            func() SegmentWriter { return &segments.Yarn{} },
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
-	ZIG:             func() SegmentWriter { return &segments.Zig{} },
+	ZIG:             func() SegmentWriter { return segments.NewLanguage(string(ZIG)) },
 	ZVM:             func() SegmentWriter { return &segments.Zvm{} },
 }
 

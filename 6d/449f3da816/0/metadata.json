@@ -1,0 +1,253 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "6d449f3da816",
+  "session_id": "03ce845f-8c1c-45a5-a3f6-0314463c8387",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-17T07:23:38.2279546Z",
+  "branch": "next",
+  "checkpoints_count": 9,
+  "save_step_count": 5,
+  "files_touched": [
+    "src/config/segment_types.go",
+    "src/segments/clojure.go",
+    "src/segments/clojure_test.go",
+    "src/segments/crystal.go",
+    "src/segments/crystal_test.go",
+    "src/segments/dart.go",
+    "src/segments/dart_test.go",
+    "src/segments/elixir.go",
+    "src/segments/elixir_test.go",
+    "src/segments/flutter.go",
+    "src/segments/fortran.go",
+    "src/segments/fortran_test.go",
+    "src/segments/julia.go",
+    "src/segments/julia_test.go",
+    "src/segments/kotlin.go",
+    "src/segments/kotlin_test.go",
+    "src/segments/language.go",
+    "src/segments/languages.go",
+    "src/segments/languages_test.go",
+    "src/segments/lua.go",
+    "src/segments/lua_test.go",
+    "src/segments/nim.go",
+    "src/segments/nim_test.go",
+    "src/segments/ocaml.go",
+    "src/segments/ocaml_test.go",
+    "src/segments/perl.go",
+    "src/segments/perl_test.go",
+    "src/segments/php.go",
+    "src/segments/php_test.go",
+    "src/segments/project.go",
+    "src/segments/r.go",
+    "src/segments/r_test.go",
+    "src/segments/ruby.go",
+    "src/segments/ruby_test.go",
+    "src/segments/rust.go",
+    "src/segments/rust_test.go",
+    "src/segments/swift.go",
+    "src/segments/swift_test.go",
+    "src/segments/v.go",
+    "src/segments/v_test.go",
+    "src/segments/vala.go",
+    "src/segments/vala_test.go",
+    "src/segments/zig.go",
+    "src/segments/zig_test.go"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "485baa5b281b",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 1714,
+    "cache_creation_tokens": 580522,
+    "cache_read_tokens": 46477727,
+    "output_tokens": 135780,
+    "api_call_count": 225
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_013mbSXFTRwwonqwvaoRg1hw",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 46,
+        "end": 47,
+        "entry_ids": [
+          "1b7c309f-ea03-4bb3-aab5-5c57d0cb4a11"
+        ],
+        "tool_use_id": "toolu_013mbSXFTRwwonqwvaoRg1hw"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_013mbSXFTRwwonqwvaoRg1hw"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_014YFZnhTo9ccSzHHnXLAK3d",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "golang"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 265,
+        "end": 266,
+        "entry_ids": [
+          "2136789a-f63a-4008-a45a-560e96fb56a1"
+        ],
+        "tool_use_id": "toolu_014YFZnhTo9ccSzHHnXLAK3d"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_014YFZnhTo9ccSzHHnXLAK3d"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: golang",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01ScSBWWoHSiuHKxTiXeH3Bi",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "markdown"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 761,
+        "end": 762,
+        "entry_ids": [
+          "fbcd02eb-5112-40be-bce7-cbc24682c123"
+        ],
+        "tool_use_id": "toolu_01ScSBWWoHSiuHKxTiXeH3Bi"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01ScSBWWoHSiuHKxTiXeH3Bi"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: markdown",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01BTPjzFPjm5V81UiG8e1PML",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 857,
+        "end": 858,
+        "entry_ids": [
+          "892a8787-8783-4972-b754-5b3c75f5ec48"
+        ],
+        "tool_use_id": "toolu_01BTPjzFPjm5V81UiG8e1PML"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01BTPjzFPjm5V81UiG8e1PML"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-17T07:23:38.0779893Z",
+    "agent_lines": 1347,
+    "agent_removed": 1567,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 3,
+    "total_committed": 1347,
+    "total_lines_changed": 2917,
+    "agent_percentage": 99.89715461090161,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 399,
+      "agent_lines_removed": 246
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 399,
+      "agent_lines_removed": 246
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1347,
+      "agent_lines_removed": 1567
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1347,
+      "agent_lines_removed": 1567
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1534,
+      "agent_lines_removed": 1567
+    }
+  ]
+}

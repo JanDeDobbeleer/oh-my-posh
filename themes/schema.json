@@ -177,6 +177,15 @@
             "type": "string"
           }
         },
+        "project_files": {
+          "type": "array",
+          "title": "Project Files",
+          "description": "The files to look for in a parent directory when determining if the current directory is part of a project",
+          "default": [],
+          "items": {
+            "type": "string"
+          }
+        },
         "folders": {
           "type": "array",
           "title": "Folders",
@@ -2653,6 +2662,82 @@
                   }
                 },
                 "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "language"
+              }
+            }
+          },
+          "then": {
+            "title": "Language Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/language",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Name",
+                    "description": "Unique identifier for the segment, used as its version cache key",
+                    "default": ""
+                  },
+                  "tools": {
+                    "type": "array",
+                    "title": "Tools",
+                    "description": "The executables that can report this language's version, tried in order until one succeeds",
+                    "default": [],
+                    "items": {
+                      "type": "object",
+                      "title": "Tool",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "title": "Name",
+                          "description": "Unique identifier for this tool"
+                        },
+                        "executable": {
+                          "type": "string",
+                          "title": "Executable",
+                          "description": "The executable to run to fetch the version"
+                        },
+                        "args": {
+                          "type": "array",
+                          "title": "Arguments",
+                          "description": "The arguments to pass to the executable",
+                          "default": [],
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "regex": {
+                          "type": "string",
+                          "title": "Regex",
+                          "description": "The regex used to parse the version from the executable's output; must contain a named `version` capture group, and may include `major`, `minor`, `patch`, `prerelease` and `buildmetadata` groups"
+                        },
+                        "version_url_template": {
+                          "type": "string",
+                          "title": "Version Url Template",
+                          "description": "Template that creates the URL of the version info / release notes for this tool"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "executable",
+                        "regex"
+                      ]
+                    }
+                  }
+                }
               }
             }
           }

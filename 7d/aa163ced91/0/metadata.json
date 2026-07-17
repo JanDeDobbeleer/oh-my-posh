@@ -1,0 +1,168 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "7daa163ced91",
+  "session_id": "03ce845f-8c1c-45a5-a3f6-0314463c8387",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-17T07:24:25.05983Z",
+  "branch": "next",
+  "checkpoints_count": 9,
+  "save_step_count": 1,
+  "files_touched": [
+    "themes/schema.json",
+    "website/docs/segments/languages/language.mdx",
+    "website/sidebars.js"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "485baa5b281b",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 1724,
+    "cache_creation_tokens": 584486,
+    "cache_read_tokens": 48105212,
+    "output_tokens": 137060,
+    "api_call_count": 230
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_013mbSXFTRwwonqwvaoRg1hw",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 46,
+        "end": 47,
+        "entry_ids": [
+          "1b7c309f-ea03-4bb3-aab5-5c57d0cb4a11"
+        ],
+        "tool_use_id": "toolu_013mbSXFTRwwonqwvaoRg1hw"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_013mbSXFTRwwonqwvaoRg1hw"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_014YFZnhTo9ccSzHHnXLAK3d",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "golang"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 265,
+        "end": 266,
+        "entry_ids": [
+          "2136789a-f63a-4008-a45a-560e96fb56a1"
+        ],
+        "tool_use_id": "toolu_014YFZnhTo9ccSzHHnXLAK3d"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_014YFZnhTo9ccSzHHnXLAK3d"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: golang",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01ScSBWWoHSiuHKxTiXeH3Bi",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "markdown"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 761,
+        "end": 762,
+        "entry_ids": [
+          "fbcd02eb-5112-40be-bce7-cbc24682c123"
+        ],
+        "tool_use_id": "toolu_01ScSBWWoHSiuHKxTiXeH3Bi"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01ScSBWWoHSiuHKxTiXeH3Bi"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: markdown",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01BTPjzFPjm5V81UiG8e1PML",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "485baa5b281b",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 857,
+        "end": 858,
+        "entry_ids": [
+          "892a8787-8783-4972-b754-5b3c75f5ec48"
+        ],
+        "tool_use_id": "toolu_01BTPjzFPjm5V81UiG8e1PML"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01BTPjzFPjm5V81UiG8e1PML"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-17T07:24:24.9019828Z",
+    "agent_lines": 184,
+    "agent_removed": 0,
+    "human_added": 3,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 187,
+    "total_lines_changed": 187,
+    "agent_percentage": 98.3957219251337,
+    "metric_version": 2
+  }
+}

@@ -1,0 +1,43 @@
+For the languages which are just simple configurations, like in the following pull request, wouldn't it be more logical to have a way to set up any language segment just using configuration in Oh My Posh and not pollute our segment landscape? We just resolve any possible executable with a version using a generic language segment that exposes the properties set in this PR? https://github.com/JanDeDobbeleer/oh-my-posh/pull/7691
+
+---
+
+You are absolutely right. What would we then need to change, and which segments can we replace with a configuration instead? What would a good name be for that segment?
+
+---
+
+Create a plan for B and review with Fable 5
+
+---
+
+<task-notification>
+<task-id>bndxnvpi2</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\03ce845f-8c1c-45a5-a3f6-0314463c8387\tasks\bndxnvpi2.output</output-file>
+<status>completed</status>
+<summary>Background command "Check if Zig's InProjectDir is referenced in docs or elsewhere" completed (exit code 0)</summary>
+</task-notification>
+
+---
+
+Yes, start with Task 1, use the /code-changes workflow
+
+---
+
+why aren'tyou sune sibagents per phase? Isn't this listed in the /code-changes skill?
+
+---
+
+yes, hand batches of the more mechanical language entries to Haiku once the pattern from Task 1 is proven out
+
+---
+
+I would call configured_language languages and NewConfiguredLanguage NewLanguage
+
+---
+
+pick up Task 2
+
+---
+
+yes, logical usits

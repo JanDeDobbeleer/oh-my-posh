@@ -252,6 +252,8 @@ const (
 	KOTLIN SegmentType = "kotlin"
 	// KUBECTL writes the Kubernetes context we're currently in
 	KUBECTL SegmentType = "kubectl"
+	// LANGUAGE writes the version of a user-configured language/tool, detected via custom tools
+	LANGUAGE SegmentType = "language"
 	// LASTFM writes the lastfm status
 	LASTFM SegmentType = "lastfm"
 	// LUA writes the active lua version
@@ -441,6 +443,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	JULIA:           func() SegmentWriter { return segments.NewLanguage(string(JULIA)) },
 	KOTLIN:          func() SegmentWriter { return segments.NewLanguage(string(KOTLIN)) },
 	KUBECTL:         func() SegmentWriter { return &segments.Kubectl{} },
+	LANGUAGE:        func() SegmentWriter { return &segments.ConfiguredLanguage{} },
 	LASTFM:          func() SegmentWriter { return &segments.LastFM{} },
 	LUA:             func() SegmentWriter { return segments.NewLanguage(string(LUA)) },
 	MERCURIAL:       func() SegmentWriter { return &segments.Mercurial{} },

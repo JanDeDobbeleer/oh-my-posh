@@ -141,6 +141,7 @@ export default {
             "segments/languages/java",
             "segments/languages/julia",
             "segments/languages/kotlin",
+            "segments/languages/language",
             "segments/languages/lua",
             "segments/languages/mojo",
             "segments/languages/nim",

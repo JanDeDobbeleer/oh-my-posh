@@ -61,6 +61,29 @@ func TestZshIsBufferComplete(t *testing.T) {
 		{Case: "Trailing pipe", Buffer: "echo hi |", Expected: false},
 		{Case: "Open for loop", Buffer: "for i in 1 2; do", Expected: false},
 		{Case: "Closed for loop", Buffer: "for i in 1 2; do\necho $i\ndone", Expected: true},
+		// A bare loop header parses as a complete empty loop under SHORT_LOOPS,
+		// but the line editor still waits for the body - it must stay open.
+		{Case: "Bare for header", Buffer: "for i in 1 2", Expected: false},
+		{Case: "Bare while header", Buffer: "while true", Expected: false},
+		{Case: "Bare until header", Buffer: "until false", Expected: false},
+		{Case: "Bare select header", Buffer: "select x in a b", Expected: false},
+		// The `<keyword> ... do;` form (a `do` immediately closed by `;`) is the
+		// same SHORT_LOOPS leniency; it must stay open for every loop keyword.
+		{Case: "for header with do;", Buffer: "for i in 1 2 do;", Expected: false},
+		{Case: "while header with do;", Buffer: "while true do;", Expected: false},
+		{Case: "until header with do;", Buffer: "until false do;", Expected: false},
+		{Case: "select header with do;", Buffer: "select x in a b do;", Expected: false},
+		// The keyword gate matches substrings ("before" contains "for"), so a
+		// plain command that merely embeds a loop keyword must stay complete.
+		{Case: "Keyword substring in a plain command", Buffer: "echo before", Expected: true},
+		// Genuine zsh short-loop forms are complete and must not be held open.
+		{Case: "for short-loop form", Buffer: "for i (1 2) echo $i", Expected: true},
+		{Case: "C-style for short-loop form", Buffer: "for ((i = 0; i < 2; i++)) echo $i", Expected: true},
+		{Case: "repeat short-loop form", Buffer: "repeat 2 echo hi", Expected: true},
+		// foreach uses `end`, not `do`/`done`, so it needs no special handling -
+		// but the keyword gate matches it (via "for"), so pin both ends.
+		{Case: "Open foreach header", Buffer: "foreach i (1 2)", Expected: false},
+		{Case: "Closed foreach loop", Buffer: "foreach i (1 2)\necho $i\nend", Expected: true},
 		{Case: "Open case", Buffer: "case x in a) echo 1", Expected: false},
 		{Case: "Closed case", Buffer: "case x in a) echo 1;; esac", Expected: true},
 		{Case: "Odd trailing backslash", Buffer: `echo a \`, Expected: false},

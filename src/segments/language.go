@@ -29,7 +29,8 @@ const (
 	versionRegexPrefixed = `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`
 	versionRegexSemver   = `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)(-(?P<prerelease>[a-z]+).(?P<buildmetadata>[0-9]+))?)))`
 
-	fileName = "package.json"
+	fileName        = "package.json"
+	pubspecFileName = "pubspec.yaml"
 
 	asdfToolName   = "asdf"
 	bunToolName    = "bun"
@@ -134,8 +135,14 @@ const (
 	LanguageExtensions options.Option = "extensions"
 	// LanguageFolders the list of folders to validate
 	LanguageFolders options.Option = "folders"
+	// LanguageProjectFiles the list of project files to validate
+	LanguageProjectFiles options.Option = "project_files"
 	// Tooling allows enabling additional version fetching tools
 	Tooling options.Option = "tooling"
+	// Tools defines custom tools (executable, args, regex) for a configured language
+	Tools options.Option = "tools"
+	// LanguageName identifies a configured language segment; used as its cache key and preset lookup key
+	LanguageName options.Option = "name"
 )
 
 func (l *Language) getName() string {
@@ -145,10 +152,13 @@ func (l *Language) getName() string {
 }
 
 func (l *Language) Enabled() bool {
-	l.name = l.getName()
+	if l.name == "" {
+		l.name = l.getName()
+	}
 	// override default extensions if needed
 	l.extensions = l.options.StringArray(LanguageExtensions, l.extensions)
 	l.folders = l.options.StringArray(LanguageFolders, l.folders)
+	l.projectFiles = l.options.StringArray(LanguageProjectFiles, l.projectFiles)
 	inHomeDir := func() bool {
 		return l.env.Pwd() == l.env.Home()
 	}
@@ -241,6 +251,12 @@ func (l *Language) hasProjectFiles() bool {
 	}
 
 	return false
+}
+
+// InProjectDir reports whether the working directory is within a project
+// matched by one of the segment's projectFiles.
+func (l *Language) InProjectDir() bool {
+	return l.projectRoot != nil
 }
 
 func (l *Language) hasLanguageFolders() bool {

@@ -112,7 +112,7 @@ func (n *Project) Enabled() bool {
 		},
 		{
 			Name:    dartToolName,
-			Files:   []string{"pubspec.yaml"},
+			Files:   []string{pubspecFileName},
 			Fetcher: n.getDartPackage,
 		},
 		{

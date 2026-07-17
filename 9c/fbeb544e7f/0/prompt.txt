@@ -1,0 +1,5 @@
+can't we reuse the SegmentType as a string in NewLanguage instead of creating new strings? Relates to the change in language segments in @src/config/segment_types.go
+
+---
+
+yes, and fixup in the right commit + force push with lease

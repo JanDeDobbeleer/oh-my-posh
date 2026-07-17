@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestC(t *testing.T) {
+func TestGcc(t *testing.T) {
 	cases := []struct {
 		Case           string
 		ExpectedString string
@@ -58,10 +58,10 @@ func TestC(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("HasCommand", cToolName).Return(tc.Enabled)
+		env.On("HasCommand", gccToolName).Return(tc.Enabled)
 
 		// Mock version output
-		env.On("RunCommandWithEnv", cToolName, []string(nil), []string{versionFlagArg}).Return(tc.Version, nil)
+		env.On("RunCommandWithEnv", gccToolName, []string(nil), []string{versionFlagArg}).Return(tc.Version, nil)
 
 		// Mock file checks
 		env.On("HasFiles", "*.c").Return(contains(tc.Files, "*.c"))
@@ -82,12 +82,12 @@ func TestC(t *testing.T) {
 			options.FetchVersion: true,
 		}
 
-		c := &C{}
-		c.Init(props, env)
+		gcc := &Gcc{}
+		gcc.Init(props, env)
 
-		assert.Equal(t, tc.Enabled, c.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.Enabled, gcc.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		if tc.Enabled {
-			assert.Equal(t, tc.ExpectedString, renderTemplate(env, c.Template(), c), fmt.Sprintf("Failed in case: %s", tc.Case))
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, gcc.Template(), gcc), fmt.Sprintf("Failed in case: %s", tc.Case))
 		}
 	}
 }

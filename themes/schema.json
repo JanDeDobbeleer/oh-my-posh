@@ -398,7 +398,6 @@
             "brewfather",
             "buf",
             "bun",
-            "c",
             "carbonintensity",
             "cds",
             "cf",
@@ -421,6 +420,7 @@
             "flutter",
             "fortran",
             "fossil",
+            "gcc",
             "gcp",
             "git",
             "gitversion",
@@ -1152,43 +1152,6 @@
                   "tooling": {
                     "default": [
                       "bun"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": { 
-                "const": "c"
-              }
-            }
-          },
-          "then": {
-            "title": "C Segment",
-            "description": "https://ohmyposh.dev/docs/segments/languages/c",
-              "properties": {
-              "options": {
-                "allOf": [
-                  {
-                    "$ref": "#/definitions/language_options"
-                  }
-                ],
-                "properties": {
-                  "extensions": {
-                    "default": [
-                      "*.c",
-                      "*.cpp",
-                      "*.h",
-                      "CMakeLists.txt"
-                    ]
-                  },
-                  "tooling": {
-                    "default": [
-                      "gcc"
                     ]
                   }
                 }
@@ -2007,6 +1970,43 @@
                   }
                 },
                 "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { 
+                "const": "gcc"
+              }
+            }
+          },
+          "then": {
+            "title": "GCC Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/gcc",
+              "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.c",
+                      "*.cpp",
+                      "*.h",
+                      "CMakeLists.txt"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "gcc"
+                    ]
+                  }
+                }
               }
             }
           }

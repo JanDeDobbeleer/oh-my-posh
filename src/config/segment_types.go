@@ -38,7 +38,6 @@ func init() {
 	gob.Register(&segments.Brewfather{})
 	gob.Register(&segments.Buf{})
 	gob.Register(&segments.Bun{})
-	gob.Register(&segments.C{})
 	gob.Register(&segments.CarbonIntensity{})
 	gob.Register(&segments.Cds{})
 	gob.Register(&segments.Copilot{})
@@ -66,6 +65,7 @@ func init() {
 	gob.Register(&segments.Fortran{})
 	gob.Register(&segments.Fossil{})
 	gob.Register(&segments.FossilStatus{})
+	gob.Register(&segments.Gcc{})
 	gob.Register(&segments.Gcp{})
 	gob.Register(&segments.Git{})
 	gob.Register(&segments.GitStatus{})
@@ -197,8 +197,6 @@ const (
 	BUF SegmentType = "buf"
 	// BUN writes the active bun version
 	BUN SegmentType = "bun"
-	// C writes the active gcc version
-	C SegmentType = "c"
 	// CARBONINTENSITY writes the actual and forecast carbon intensity in gCO2/kWh
 	CARBONINTENSITY SegmentType = "carbonintensity"
 	// cds (SAP CAP) version
@@ -245,6 +243,8 @@ const (
 	FORTRAN SegmentType = "fortran"
 	// FOSSIL writes the fossil status
 	FOSSIL SegmentType = "fossil"
+	// GCC writes the active GCC version
+	GCC SegmentType = "gcc"
 	// GCP writes the active GCP context
 	GCP SegmentType = "gcp"
 	// GIT represents the git status and information
@@ -425,7 +425,6 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	BREWFATHER:      func() SegmentWriter { return &segments.Brewfather{} },
 	BUF:             func() SegmentWriter { return &segments.Buf{} },
 	BUN:             func() SegmentWriter { return &segments.Bun{} },
-	C:               func() SegmentWriter { return &segments.C{} },
 	CARBONINTENSITY: func() SegmentWriter { return &segments.CarbonIntensity{} },
 	CDS:             func() SegmentWriter { return &segments.Cds{} },
 	CF:              func() SegmentWriter { return &segments.Cf{} },
@@ -449,6 +448,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	FLUTTER:         func() SegmentWriter { return &segments.Flutter{} },
 	FORTRAN:         func() SegmentWriter { return &segments.Fortran{} },
 	FOSSIL:          func() SegmentWriter { return &segments.Fossil{} },
+	GCC:             func() SegmentWriter { return &segments.Gcc{} },
 	GCP:             func() SegmentWriter { return &segments.Gcp{} },
 	GIT:             func() SegmentWriter { return &segments.Git{} },
 	GITVERSION:      func() SegmentWriter { return &segments.GitVersion{} },

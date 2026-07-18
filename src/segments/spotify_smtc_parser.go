@@ -1,11 +1,8 @@
-//go:build windows || (linux && !darwin)
-
 package segments
 
 import "github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
-// applyMediaInfo maps a media session read from SMTC (native WinRT on Windows
-// via runtime.QueryMediaPlayer, or the WSL PowerShell script in spotify_smtc.go)
+// applyMediaInfo maps media information read from the platform player API
 // onto s and returns whether the segment should be displayed.
 func (s *Spotify) applyMediaInfo(info *runtime.MediaInfo) bool {
 	if info == nil {

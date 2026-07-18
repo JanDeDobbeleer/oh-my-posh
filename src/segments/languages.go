@@ -34,6 +34,7 @@ const (
 	luajitToolName    = "luajit"
 	nimToolName       = "nim"
 	ocamlToolName     = "ocaml"
+	odinToolName      = "odin"
 	perlToolName      = "perl"
 	rscriptToolName   = "Rscript"
 	rExeToolName      = "R.exe"
@@ -312,6 +313,19 @@ var languageDefinitions = map[string]languageDefinition{
 		},
 		defaultTooling:     []string{valaToolName},
 		versionURLTemplate: "https://gitlab.gnome.org/GNOME/vala/raw/{{ .Major }}.{{ .Minor }}/NEWS",
+	},
+	"odin": {
+		extensions:   []string{"*.odin"},
+		projectFiles: []string{"ols.json"},
+		tooling: map[string]*cmd{
+			odinToolName: {
+				executable: odinToolName,
+				args:       []string{versionArg},
+				regex:      `odin version (?P<version>dev-(?P<major>\d+)-(?P<minor>\d+)(?::[\w_]+)?)`,
+			},
+		},
+		defaultTooling:     []string{odinToolName},
+		versionURLTemplate: "https://github.com/odin-lang/Odin/releases/tag/dev-{{ .Major }}-{{ .Minor }}",
 	},
 	"zig": {
 		extensions:   []string{"*.zig", "*.zon"},

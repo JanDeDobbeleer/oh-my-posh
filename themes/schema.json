@@ -457,6 +457,7 @@
             "npm",
             "nx",
             "ocaml",
+            "odin",
             "orthodoxcal",
             "os",
             "owm",
@@ -3285,6 +3286,40 @@
                   "tooling": {
                     "default": [
                       "nx"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "odin"
+              }
+            }
+          },
+          "then": {
+            "title": "Odin Segment",
+            "description": "https://ohmyposh.dev/docs/segments/languages/odin",
+            "properties": {
+              "options": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/language_options"
+                  }
+                ],
+                "properties": {
+                  "extensions": {
+                    "default": [
+                      "*.odin"
+                    ]
+                  },
+                  "tooling": {
+                    "default": [
+                      "odin"
                     ]
                   }
                 }

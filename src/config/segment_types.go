@@ -282,6 +282,8 @@ const (
 	NX SegmentType = "nx"
 	// OCAML writes the active Ocaml version
 	OCAML SegmentType = "ocaml"
+	// ODIN writes the active Odin version
+	ODIN SegmentType = "odin"
 	// ORTHODOXCAL displays Orthodox fasting and feast information
 	ORTHODOXCAL SegmentType = "orthodoxcal"
 	// OS write os specific icon
@@ -458,6 +460,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
 	OCAML:           func() SegmentWriter { return segments.NewLanguage(string(OCAML)) },
+	ODIN:            func() SegmentWriter { return segments.NewLanguage(string(ODIN)) },
 	ORTHODOXCAL:     func() SegmentWriter { return &segments.OrthodoxCal{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },

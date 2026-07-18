@@ -147,6 +147,7 @@ export default {
             "segments/languages/nim",
             "segments/languages/node",
             "segments/languages/ocaml",
+            "segments/languages/odin",
             "segments/languages/perl",
             "segments/languages/php",
             "segments/languages/python",

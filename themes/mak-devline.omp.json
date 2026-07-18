@@ -1,0 +1,94 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 4,
+  "final_space": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#89B4FA",
+          "template": "{{ if .Error }}<#FFD43B> </><#F38BA8>{{ .Error }}</>{{ else }}<#FFD43B> </><b>{{ .Full }}</b>{{ if .Venv }} <#CBA6F7>({{ .Venv }})</>{{ end }}{{ end }}",
+          "options": {
+            "display_mode": "always",
+            "fetch_virtual_env": true,
+            "fetch_version": true,
+            "display_default": true,
+            "missing_command_text": "not found"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#A6E3A1",
+          "template": " <#CDD6F4> </><b>{{ .HEAD }}</b>{{ if .BranchStatus }} <#CBA6F7>{{ .BranchStatus }}</>{{ end }}{{ if .Working.Changed }} <#<#F9E2AF>{{ .Working.String }}</>{{ end }}{{ if .Staging.Changed }} <#94E2D5>{{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} <#FAB387> {{ .StashCount }}</>{{ end }}",
+          "options": {
+            "fetch_status": true,
+            "fetch_push_status": true,
+            "fetch_upstream_icon": false,
+            "branch_icon": "",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_identical_icon": "≡",
+            "branch_gone_icon": "≢"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#89B4FA",
+          "template": "  {{ .Path }}",
+          "options": {
+            "style": "full",
+            "home_icon": "~",
+            "folder_separator_icon": "/"
+          }
+        },
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "#A6E3A1",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#F38BA8{{ end }}"
+          ],
+          "template": "{{ if eq .Code 0 }} {{ else }}  {{ .Code }}{{ end }}",
+          "options": {
+            "always_enabled": true
+          }
+        },
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#A6ADC8",
+          "template": "  {{ .FormattedMs }}",
+          "options": {
+            "threshold": 0,
+            "style": "austin"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "status",
+          "style": "plain",
+          "foreground": "#89B4FA",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#F38BA8{{ end }}"
+          ],
+          "template": "❯",
+          "options": {
+            "always_enabled": true
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -19,22 +19,32 @@ func TestSpotifyLinux(t *testing.T) {
 		Status          string
 		Artist          string
 		Track           string
+		Album           string
+		TrackNumber     string
 		Expected        string
 		ExpectedEnabled bool
 	}{
 		{Case: "no data", ExpectedEnabled: false},
 		{Case: "error", ExpectedEnabled: false, Status: "Error.ServiceUnknown"},
-		{Case: "paused", ExpectedEnabled: true, Expected: "\uf04c Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
-		{Case: "playing", ExpectedEnabled: true, Expected: "\ue602 Candlemass - Spellbreaker", Status: "playing", Artist: "Candlemass", Track: "Spellbreaker"},
+		{
+			Case: "paused", ExpectedEnabled: true, Expected: "\uf04c Candlemass - Spellbreaker",
+			Status: "paused", Artist: "Candlemass", Track: "Spellbreaker", Album: "Nightfall", TrackNumber: "3",
+		},
+		{
+			Case: "playing", ExpectedEnabled: true, Expected: "\ue602 Candlemass - Spellbreaker",
+			Status: "playing", Artist: "Candlemass", Track: "Spellbreaker", Album: "Nightfall", TrackNumber: "3",
+		},
+		{Case: "ad", ExpectedEnabled: true, Expected: "\ueebb Spotify - Try Premium for free", Status: "playing", Artist: "Spotify", Track: "Try Premium for free"},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("IsWsl").Return(false)
 
-		dbusCMD := "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player"
-		env.On("RunShellCommand", shell.BASH, dbusCMD+" string:PlaybackStatus | awk -F '\"' '/string/ {print tolower($2)}'").Return(tc.Status)
-		env.On("RunShellCommand", shell.BASH, dbusCMD+" string:Metadata | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:artist'/ {a=$4} END {print a}'").Return(tc.Artist)
-		env.On("RunShellCommand", shell.BASH, dbusCMD+" string:Metadata | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:title'/ {t=$4} END {print t}'").Return(tc.Track)
+		env.On("RunShellCommand", shell.BASH, spotifyDBusCommand+spotifyPlaybackStatusCommand).Return(tc.Status)
+		env.On("RunShellCommand", shell.BASH, spotifyDBusCommand+spotifyArtistCommand).Return(tc.Artist)
+		env.On("RunShellCommand", shell.BASH, spotifyDBusCommand+spotifyTrackCommand).Return(tc.Track)
+		env.On("RunShellCommand", shell.BASH, spotifyDBusCommand+spotifyAlbumCommand).Return(tc.Album)
+		env.On("RunShellCommand", shell.BASH, spotifyDBusCommand+spotifyTrackNumberCommand).Return(tc.TrackNumber)
 
 		s := &Spotify{}
 		s.Init(options.Map{}, env)

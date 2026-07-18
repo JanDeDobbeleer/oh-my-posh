@@ -19,10 +19,12 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 		Expected    string
 		Enabled     bool
 	}{
-		{BatchedCase: "false|||", Expected: "", Enabled: false},
+		{BatchedCase: "false|||||0", Expected: "", Enabled: false},
 		{BatchedCase: "false||", Expected: "", Error: errors.New("oops"), Enabled: false},
-		{BatchedCase: "true|playing|Candlemass|Spellbreaker", Expected: "\ue602 Candlemass - Spellbreaker", Enabled: true},
-		{BatchedCase: "true|paused|Candlemass|Spellbreaker", Expected: "\uf04c Candlemass - Spellbreaker", Enabled: true},
+		{BatchedCase: "true|playing|Candlemass|Spellbreaker|Nightfall|3", Expected: "\ue602 Candlemass - Spellbreaker", Enabled: true},
+		{BatchedCase: "true|paused|Candlemass|Spellbreaker|Nightfall|3", Expected: "\uf04c Candlemass - Spellbreaker", Enabled: true},
+		{BatchedCase: "true|playing||アコム【公式】||0", Expected: "\ueebb  - アコム【公式】", Enabled: true},
+		{BatchedCase: "true|stopped||||0", Expected: "", Enabled: false},
 	}
 	batchedCommand := `
 	if application "Spotify" is running then
@@ -30,14 +32,26 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 			set playerState to player state as string
 			set artistName to ""
 			set trackName to ""
+			set albumName to ""
+			set trackNumber to 0
 			if playerState is not "stopped" then
-				set artistName to artist of current track as string
-				set trackName to name of current track as string
+				try
+					set artistName to artist of current track as string
+				end try
+				try
+					set trackName to name of current track as string
+				end try
+				try
+					set albumName to album of current track as string
+				end try
+				try
+					set trackNumber to track number of current track as integer
+				end try
 			end if
-			return "true|" & playerState & "|" & artistName & "|" & trackName
+			return "true|" & playerState & "|" & artistName & "|" & trackName & "|" & albumName & "|" & trackNumber
 		end tell
 	else
-		return "false|||"
+		return "false|||||0"
 	end if
 	`
 	for _, tc := range cases {

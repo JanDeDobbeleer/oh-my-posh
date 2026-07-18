@@ -11,8 +11,7 @@ Show the currently playing song in the [Spotify][spotify] client.
 :::caution
 Be aware this can make the prompt a tad bit slower as it needs to get a response from the Spotify player.
 
-All playback states are supported on every platform (playing/paused/stopped, and an optional `ad` state on
-Windows and WSL). On _Windows_ the data is read from the [System Media Transport Controls][smtc], which
+All playback states are supported on every platform (playing/paused/stopped and `ad`). On _Windows_ the data is read from the [System Media Transport Controls][smtc], which
 covers both the native Spotify client and the Microsoft Store version, with a fall-back to scraping the
 Edge PWA window title. On _WSL_ the same SMTC session is queried via the Windows interop `powershell.exe`,
 so the Linux side sees the same information the Windows host does.
@@ -45,7 +44,7 @@ import Config from "@site/src/components/Config.js";
 | `playing_icon` | `string` | `\ue602 ` | text/icon to show when playing                                   |
 | `paused_icon`  | `string` | `\uf04c ` | text/icon to show when paused                                    |
 | `stopped_icon` | `string` | `\uf04d ` | text/icon to show when stopped                                   |
-| `ad_icon`      | `string` | `\ueebb ` | text/icon to show when an advertisement is playing (Windows/WSL) |
+| `ad_icon`      | `string` | `\ueebb ` | text/icon to show when an advertisement is playing             |
 
 ## Template ([info][templates])
 

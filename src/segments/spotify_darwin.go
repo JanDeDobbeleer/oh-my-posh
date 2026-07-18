@@ -2,7 +2,12 @@
 
 package segments
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+)
 
 func (s *Spotify) Enabled() bool {
 	// Batching commands to reduce latency. Each individual call to `osascript` creates additional delays.
@@ -14,42 +19,50 @@ func (s *Spotify) Enabled() bool {
 			set playerState to player state as string
 			set artistName to ""
 			set trackName to ""
+			set albumName to ""
+			set trackNumber to 0
 			if playerState is not "stopped" then
-				set artistName to artist of current track as string
-				set trackName to name of current track as string
+				try
+					set artistName to artist of current track as string
+				end try
+				try
+					set trackName to name of current track as string
+				end try
+				try
+					set albumName to album of current track as string
+				end try
+				try
+					set trackNumber to track number of current track as integer
+				end try
 			end if
-			return "true|" & playerState & "|" & artistName & "|" & trackName
+			return "true|" & playerState & "|" & artistName & "|" & trackName & "|" & albumName & "|" & trackNumber
 		end tell
 	else
-		return "false|||"
+		return "false|||||0"
 	end if
 	`
 
 	batchedOutput := s.runAppleScriptCommand(batchedCommand)
 
-	outputStrings := strings.SplitN(batchedOutput, "|", 4)
-	if outputStrings[0] == "false" || outputStrings[0] == "" || len(outputStrings) != 4 {
+	outputStrings := strings.SplitN(batchedOutput, "|", 6)
+	if len(outputStrings) != 6 || outputStrings[0] == "false" || outputStrings[0] == "" {
 		s.Status = stopped
 		return false
 	}
 
-	s.Status = outputStrings[1]
-
-	// Check if running
-	if s.Status == "" {
+	if outputStrings[1] == "" {
 		s.Status = stopped
 		return false
 	}
 
-	if s.Status == stopped {
-		return false
-	}
-
-	s.Artist = outputStrings[2]
-	s.Track = outputStrings[3]
-	s.resolveIcon()
-
-	return true
+	trackNumber, _ := strconv.Atoi(outputStrings[5])
+	return s.applyMediaInfo(&runtime.MediaInfo{
+		Status:      outputStrings[1],
+		Artist:      outputStrings[2],
+		Title:       outputStrings[3],
+		Album:       outputStrings[4],
+		TrackNumber: trackNumber,
+	})
 }
 
 func (s *Spotify) runAppleScriptCommand(command string) string {

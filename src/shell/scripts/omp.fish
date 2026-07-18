@@ -666,6 +666,25 @@ function enable_poshtooltips
     bind \x7f _omp_backspace_key_handler -M insert
 end
 
+function _omp_export_bind_mode
+    if not contains -- "$fish_key_bindings" fish_vi_key_bindings fish_hybrid_key_bindings
+        set --export --global POSH_VI_MODE "emacs"
+    else
+        set --export --global POSH_VI_MODE "$fish_bind_mode"
+    end
+end
+
+function _omp_enable_vimode
+    _omp_export_bind_mode
+    # fish calls `fish_mode_prompt` when the bind mode is changed. if it
+    # produces no output, fish will then call `fish_prompt` so there's no need
+    # to repaint as long as `fish_mode_prompt` outputs nothing
+    function fish_mode_prompt
+        _omp_export_bind_mode
+        set --global _omp_new_prompt 1
+    end
+end
+
 # transient prompt
 
 function _omp_enter_key_handler

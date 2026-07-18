@@ -7,18 +7,27 @@ sidebar_label: Vi mode
 ## What
 
 Display the current Vi mode (insert / normal / visual …) in the prompt. Useful
-when using ZSH [keymaps][zsh-vi-mode] via `bindkey -v` or PowerShell PSReadLine
-`-EditMode Vi` so you can tell at a glance which mode you are in.
+when using ZSH [keymaps][zsh-vi-mode] via `bindkey -v`, PowerShell PSReadLine
+`-EditMode Vi`, or fish [`fish_key_bindings`][fish-key-bindings] so you can
+tell at a glance which mode you are in.
 
 In ZSH, adding this segment automatically registers a `zle-keymap-select` hook.
 In PowerShell, it registers a PSReadLine [Vi mode change handler][pwsh-vi-mode].
-Both re-render the prompt every time the active mode changes.
+In fish, it overrides [`fish_mode_prompt`][fish-mode-prompt].
+All three re-render the prompt every time the active mode changes.
 
 :::caution PowerShell cursor indicator
 
 PowerShell support sets PSReadLine's `ViModeIndicator` to `Script`, replacing
 cursor-shape mode indicators such as `Cursor`. The mode is then shown by this
 segment in the prompt instead.
+
+:::
+
+:::caution `fish_mode_prompt`
+
+Make sure nothing else in your fish config overrides `fish_mode_prompt`, as
+this will interfere with this segment's functionality.
 
 :::
 
@@ -57,3 +66,5 @@ import Config from "@site/src/components/Config.js";
 [zsh-vi-mode]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps
 [zsh-keymap]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-KEYMAP
 [pwsh-vi-mode]: https://learn.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption#-vimodechangehandler
+[fish-key-bindings]: https://fishshell.com/docs/current/language.html#envvar-fish_key_bindings
+[fish-mode-prompt]: https://fishshell.com/docs/current/cmds/fish_mode_prompt.html

@@ -27,15 +27,15 @@ func (v *VIMode) Enabled() bool {
 
 func mapVIModeKeymap(keymap string) string {
 	switch keymap {
-	case "main", "viins", "emacs":
+	case "main", "viins", "emacs", "insert":
 		return "insert"
-	case "vicmd":
+	case "vicmd", "default":
 		return "normal"
 	case "visual":
 		return "visual"
-	case "viopp":
+	case "viopp", "operator", "f", "F", "t", "T":
 		return "viopp"
-	case "replace":
+	case "replace", "replace_one":
 		return "replace"
 	default:
 		return keymap

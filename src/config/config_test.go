@@ -213,6 +213,11 @@ func TestFeaturesVIMode(t *testing.T) {
 			ExpectedFeats: shell.VIMode,
 		},
 		{
+			Case:          "fish enables vi mode tracking",
+			Shell:         shell.FISH,
+			ExpectedFeats: shell.VIMode,
+		},
+		{
 			Case:          "bash does not enable vi mode tracking",
 			Shell:         shell.BASH,
 			ExpectedFeats: 0,

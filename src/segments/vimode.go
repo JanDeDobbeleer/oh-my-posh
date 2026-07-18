@@ -33,9 +33,9 @@ func mapVIModeKeymap(keymap string) string {
 		return "normal"
 	case "visual":
 		return "visual"
-	case "viopp":
+	case "viopp", "f", "F", "t", "T":
 		return "viopp"
-	case "replace":
+	case "replace", "replace_one":
 		return "replace"
 	default:
 		return keymap

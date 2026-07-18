@@ -27,10 +27,10 @@ segment in the prompt instead.
 
 :::caution fish mode prompt
 
-fish support overrides `fish_mode_prompt` with an empty function so fish's
-built-in `[N]` / `[I]` mode indicator does not show up next to the mode
-rendered by this segment. Make sure vi key bindings are enabled (e.g.
-`fish_vi_key_bindings`) for the segment to display.
+fish support overrides `fish_mode_prompt` to hook into bind mode changes and so
+that fish's built-in `[N]` / `[I]` mode indicator does not show up next to the
+mode rendered by this segment. Make sure nothing else in your config overrides
+`fish_mode_prompt`.
 
 :::
 

@@ -23,7 +23,12 @@ func TestVIMode(t *testing.T) {
 		{Case: "vicmd keymap maps to normal", Env: "vicmd", ExpectedMode: "normal", ExpectedKeymap: "vicmd", ExpectedEnabled: true},
 		{Case: "visual keymap is preserved", Env: "visual", ExpectedMode: "visual", ExpectedKeymap: "visual", ExpectedEnabled: true},
 		{Case: "viopp keymap is preserved", Env: "viopp", ExpectedMode: "viopp", ExpectedKeymap: "viopp", ExpectedEnabled: true},
+		{Case: "f keymap maps to viopp", Env: "f", ExpectedMode: "viopp", ExpectedKeymap: "f", ExpectedEnabled: true},
+		{Case: "F keymap maps to viopp", Env: "F", ExpectedMode: "viopp", ExpectedKeymap: "F", ExpectedEnabled: true},
+		{Case: "t keymap maps to viopp", Env: "t", ExpectedMode: "viopp", ExpectedKeymap: "t", ExpectedEnabled: true},
+		{Case: "T keymap maps to viopp", Env: "T", ExpectedMode: "viopp", ExpectedKeymap: "T", ExpectedEnabled: true},
 		{Case: "replace keymap is preserved", Env: "replace", ExpectedMode: "replace", ExpectedKeymap: "replace", ExpectedEnabled: true},
+		{Case: "replace_one keymap maps to replace", Env: "replace_one", ExpectedMode: "replace", ExpectedKeymap: "replace_one", ExpectedEnabled: true},
 		{Case: "unknown keymap falls through", Env: "custom", ExpectedMode: "custom", ExpectedKeymap: "custom", ExpectedEnabled: true},
 		{Case: "empty env disables segment", Env: "", ExpectedEnabled: false},
 	}

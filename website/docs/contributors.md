@@ -517,6 +517,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/14096"><img src="https://avatars.githubusercontent.com/u/11175503?v=4?s=100" width="100px;" alt="14096"/><br /><sub><b>14096</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=14096" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/onyxx72"><img src="https://avatars.githubusercontent.com/u/59670938?v=4?s=100" width="100px;" alt="onyxx"/><br /><sub><b>onyxx</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=onyxx72" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

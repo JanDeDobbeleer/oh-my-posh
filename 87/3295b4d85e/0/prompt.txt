@@ -1,0 +1,1 @@
+https://github.com/JanDeDobbeleer/oh-my-posh/pull/7697 Instead of adding yet another language configuration, add this to the documentation of the generic language segment as Examples. Same for gcc in #7691. Do this change so I can push it.

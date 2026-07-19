@@ -13,7 +13,9 @@ their version output, and the files or folders that should trigger it.
 Reach for a dedicated segment (like [Fortran] or [Rust]) when one already exists; use `language`
 for anything not already built in.
 
-## Sample Configuration
+## Examples
+
+### GCC
 
 This example reproduces a GCC version segment purely through configuration.
 
@@ -33,6 +35,31 @@ import Config from "@site/src/components/Config.js";
           executable: "gcc",
           args: ["--version"],
           regex: "(?P<version>(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+))",
+        },
+      ],
+    },
+  }}
+/>
+
+### Odin
+
+This example reproduces an [Odin][odin] version segment purely through configuration.
+
+<Config
+  data={{
+    type: "language",
+    style: "plain",
+    template: "{{ if .Error }}{{ else }}  {{ .Full }}{{ end }}",
+    options: {
+      name: "odin",
+      extensions: ["*.odin"],
+      project_files: ["ols.json"],
+      tools: [
+        {
+          name: "odin",
+          executable: "odin",
+          args: ["version"],
+          regex: "odin version (?P<version>dev-(?P<major>\\d+)-(?P<minor>\\d+)(?::[\\w_]+)?)",
         },
       ],
     },
@@ -96,3 +123,4 @@ Each entry in `tools` describes one executable that can report the segment's ver
 [time.ParseDuration]: https://golang.org/pkg/time/#ParseDuration
 [Fortran]: /docs/segments/languages/fortran
 [Rust]: /docs/segments/languages/rust
+[odin]: https://odin-lang.org/

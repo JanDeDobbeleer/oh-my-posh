@@ -30,7 +30,147 @@
 }
 
 .hero {
-  background-color: #173448;
+  background-color: #000;
+}
+
+/* Black theme — navbar, footer, page background */
+.navbar {
+  background-color: #000;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Footer — links on black, flickering-grid text banner below */
+.footerWrap {
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #000;
+}
+
+.footer {
+  padding-top: 1rem;
+}
+
+.footerGridBanner {
+  position: relative;
+  height: 16rem;
+  margin: 0 1.5rem;
+  z-index: 0;
+}
+
+.footerGridFade {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(to top, transparent 40%, #000 100%);
+}
+
+@media screen and (max-width: 768px) {
+  .footerGridBanner {
+    height: 12rem;
+  }
+}
+
+/* glassy divider below the banner */
+.footerDivider {
+  position: relative;
+  height: 1px;
+  max-width: 72rem;
+  margin: 0 auto 3rem;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+}
+
+.footerDivider::after {
+  content: "";
+  position: absolute;
+  inset: -3px 0;
+  background: linear-gradient(
+    90deg,
+    transparent 15%,
+    rgba(60, 162, 250, 0.35) 50%,
+    transparent 85%
+  );
+  filter: blur(6px);
+}
+
+/* copyright — breathing room + hover thumbnail previews */
+.footer .footer__bottom {
+  padding-top: 3rem;
+}
+
+.footer__copyright a {
+  position: relative;
+}
+
+.footer__copyright a[href*="JanDeDobbeleer"]::after,
+.footer__copyright a[href*="contributors"]::after {
+  content: "";
+  position: absolute;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px) scale(0.96);
+  width: 240px;
+  height: 140px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: top center;
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 60;
+}
+
+.footer__copyright a[href*="JanDeDobbeleer"]::after {
+  background-image: url("https://res.cloudinary.com/dakrfj1oh/image/upload/v1784615348/Screenshot_2026-07-21_at_11.57.57_AM_gzuby5.png");
+}
+
+.footer__copyright a[href*="contributors"]::after {
+  background-image: url("https://res.cloudinary.com/dakrfj1oh/image/upload/v1784615348/Screenshot_2026-07-21_at_11.58.36_AM_dcgbbo.png");
+}
+
+.footer__copyright a[href*="JanDeDobbeleer"]:hover::after,
+.footer__copyright a[href*="contributors"]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.footer,
+.footer--dark {
+  --ifm-footer-background-color: transparent;
+  background-color: transparent;
+}
+
+.footer .footer__title {
+  color: #fff;
+}
+
+.footer .footer__link-item {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footer .footer__link-item:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer .footer__copyright {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+html[data-theme="dark"] {
+  --ifm-background-color: #000;
+  --ifm-navbar-background-color: #000;
+  --ifm-footer-background-color: #000;
 }
 
 .hero--image {

@@ -15,9 +15,11 @@
     "@docusaurus/theme-search-algolia": "^3.10.2",
     "@mdx-js/react": "^3.1.1",
     "classnames": "^2.5.1",
+    "framer-motion": "^12.42.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "smol-toml": "^1.7.0",
+    "unicornstudio-react": "^2.2.8",
     "yaml": "^2.9.0"
   },
   "devDependencies": {

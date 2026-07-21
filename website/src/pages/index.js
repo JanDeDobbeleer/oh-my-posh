@@ -4,11 +4,40 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import Head from "@docusaurus/Head";
 import classnames from "classnames";
+import { useState } from "react";
+import { motion, useMotionValue, useMotionTemplate } from "framer-motion";
+import CubeScene from "../components/CubeScene";
+import FlickeringGrid from "../components/FlickeringGrid";
 import styles from "./styles.module.css";
+
+const fadeUp = (delay) => ({
+  initial: { opacity: 0, y: 24, filter: "blur(10px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1], delay },
+});
+
+function BoxIcon() {
+  return (
+    <svg
+      className={styles.cardIcon}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </svg>
+  );
+}
 
 const features = [
   {
-    title: <>🎨 Beautiful & Intelligent</>,
+    title: <>Beautiful &amp; Intelligent</>,
     description: (
       <>
         Transform your terminal with stunning themes and intelligent segments that display
@@ -18,7 +47,7 @@ const features = [
     ),
   },
   {
-    title: <>⚡ Lightning Fast</>,
+    title: <>Lightning Fast</>,
     description: (
       <>
         Built with Go for blazing performance. Smart caching and async operations ensure
@@ -28,7 +57,7 @@ const features = [
     ),
   },
   {
-    title: <>🌍 Universal Compatibility</>,
+    title: <>Universal Compatibility</>,
     description: (
       <>
         One configuration works everywhere - PowerShell, Bash, Zsh, Fish, Nu Shell, and more.
@@ -39,17 +68,45 @@ const features = [
   },
 ];
 
-function Feature({ imageUrl, title, description }) {
-  const imgUrl = useBaseUrl(imageUrl);
+function Feature({ title, description }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const [isHovering, setIsHovering] = useState(false);
+  const mask = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, white, transparent 80%)`;
+
+  function handleMouseMove({ currentTarget, clientX, clientY }) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
   return (
     <div className={classnames("col col--4", styles.feature)}>
-      {imgUrl && (
-        <div className="text--center">
-          <img className={styles.featureImage} src={imgUrl} alt={title} />
-        </div>
-      )}
-      <h3>{title}</h3>
-      <p>{description}</p>
+      <div
+        className={styles.featureCard}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        <motion.div
+          className={styles.spotlight}
+          style={{ maskImage: mask, WebkitMaskImage: mask }}
+        >
+          {isHovering && (
+            <FlickeringGrid
+              className={styles.spotlightGrid}
+              squareSize={2}
+              gridGap={1}
+              colors={["#3b82f6", "#6366f1", "#8b5cf6", "#1e40af"]}
+              maxOpacity={0.85}
+              flickerChance={0.35}
+            />
+          )}
+        </motion.div>
+        <BoxIcon />
+        <h3 className={styles.featureTitle}>{title}</h3>
+        <p className={styles.featureDescription}>{description}</p>
+      </div>
     </div>
   );
 }
@@ -84,37 +141,44 @@ function Home() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: websiteJsonLd}} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: organizationJsonLd}} />
       </Head>
-      <header className={classnames("hero hero--primary", styles.heroBanner)}>
-        <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
-          <div className={styles.buttons}>
-            <Link
-              className={classnames(
-                "button button--primary button--lg",
-                styles.getStarted
-              )}
-              to={useBaseUrl("docs/")}
-            >
-              Get Started &rarr;
+      <header className={classnames("hero", styles.heroBanner)}>
+        <div className={styles.heroScene}>
+          <CubeScene />
+        </div>
+        <div className={classnames("container", styles.heroContent)}>
+          <motion.p className={styles.eyebrow} {...fadeUp(0.1)}>
+            Open source &middot; Cross-shell prompt engine
+          </motion.p>
+          <motion.h1 className={styles.heroTitle} {...fadeUp(0.25)}>
+            {siteConfig.title}
+          </motion.h1>
+          <motion.p className={styles.heroSubtitle} {...fadeUp(0.4)}>
+            {siteConfig.tagline}
+          </motion.p>
+          <motion.div className={styles.buttons} {...fadeUp(0.55)}>
+            <Link className={styles.btnPrimary} to={useBaseUrl("docs/")}>
+              Get Started
             </Link>
-            <Link
-              className={classnames(
-                "button button--outline button--lg",
-                styles.getStarted
-              )}
-              to={useBaseUrl("docs/themes")}
-            >
-              See themes &rarr;
+            <Link className={styles.btnGhost} to={useBaseUrl("docs/themes")}>
+              Browse Themes &rarr;
             </Link>
-          </div>
-          <img className="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
+          </motion.div>
+          <motion.img
+            className={styles.heroImage}
+            src="https://res.cloudinary.com/dakrfj1oh/image/upload/v1784611431/s_j1e5sd.png"
+            alt="Oh My Posh prompt"
+            {...fadeUp(0.7)}
+          />
         </div>
       </header>
       <main>
         {features && features.length > 0 && (
           <section className={styles.features}>
             <div className="container">
+              <div className={styles.sectionHead}>
+                <p className={styles.eyebrow}>Why Oh My Posh</p>
+                <h2 className={styles.sectionTitle}>Built for the modern terminal.</h2>
+              </div>
               <div className="row">
                 {features.map((props, idx) => (
                   <Feature key={idx} {...props} />

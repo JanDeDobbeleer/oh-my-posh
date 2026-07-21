@@ -5,41 +5,249 @@
  * and scoped locally.
  */
 
+/* ---------- Hero ---------- */
+
 .heroBanner {
-  padding: 4rem 0;
-  min-height: 60vh;
-  text-align: center;
   position: relative;
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 96px);
+  padding: 6rem 0 5rem;
+  text-align: center;
   overflow: hidden;
+  background: #000;
 }
 
 @media screen and (max-width: 966px) {
   .heroBanner {
-    padding: 2rem 0;
+    padding: 3rem 0;
+    min-height: auto;
   }
+}
+
+.heroScene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.55;
+}
+
+/* light vignette: fades only the extreme top/bottom edges */
+.heroScene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.15) 22%,
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.3) 88%,
+    #000 100%
+  );
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 1.5rem;
+}
+
+.heroTitle {
+  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  margin-bottom: 1.75rem;
+  background: linear-gradient(180deg, #ffffff 55%, rgba(255, 255, 255, 0.4) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #fff;
+}
+
+.heroSubtitle {
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 34rem;
+  margin: 0 auto 2.75rem;
 }
 
 .buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 1.5rem;
+  gap: 1rem 1.25rem;
   align-items: center;
   justify-content: center;
 }
 
-.features {
-  display: flex;
+.btnPrimary {
+  display: inline-flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 0.85rem 2rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid #fff;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btnPrimary:hover {
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.85rem 2rem;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btnGhost:hover {
+  border-color: #fff;
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.heroImage {
+  display: block;
+  width: min(920px, 92%);
+  margin: 5rem auto 0;
+}
+
+/* ---------- Features ---------- */
+
+.features {
+  padding: 7rem 0 2rem;
   width: 100%;
+  background-color: #000;
 }
 
-.featureImage {
-  height: 200px;
-  width: 200px;
+.sectionHead {
+  text-align: center;
+  margin-bottom: 4rem;
 }
 
-.getStarted {
-  border-style: solid;
-  border-width: 1px;
+.sectionTitle {
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.feature {
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+
+.featureCard {
+  position: relative;
+  width: 92%;
+  margin: 0 auto;
+  min-height: 22rem;
+  padding: 2.75rem 2.25rem;
+  border-radius: 16px;
+  background: #000;
+  border: 1px solid #262626;
+  overflow: hidden;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  border-color: #3f3f3f;
+}
+
+/* mouse-following spotlight (CardSpotlight port) */
+.spotlight {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  background: #262626;
+}
+
+/* dense flickering pixel grid — vignetted to the top of the card only */
+.spotlightGrid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 45%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 45%,
+    transparent 100%
+  );
+}
+
+.featureCard:hover .spotlight {
+  opacity: 1;
+}
+
+.cardIcon {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 30px;
+  height: 30px;
+  color: #fff;
+  opacity: 0.9;
+  margin-bottom: 1.2rem;
+}
+
+.featureTitle {
+  position: relative;
+  z-index: 1;
+  color: #f5f5f5;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.95rem;
+}
+
+.featureDescription {
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  margin-bottom: 0;
 }

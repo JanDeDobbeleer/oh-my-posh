@@ -33,9 +33,9 @@ export default {
       {property: 'og:type', content: 'website'},
     ],
     colorMode: {
-      defaultMode: 'light',
-      disableSwitch: false,
-      respectPrefersColorScheme: true,
+      defaultMode: 'dark',
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
     },
     prism: {
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],

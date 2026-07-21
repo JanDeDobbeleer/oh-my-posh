@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -73,8 +74,15 @@ func (h *serveHarness) render(id int, pwd string) {
 	h.send(map[string]any{"command": "render", "id": id, "shell": "pwsh", "pwd": pwd})
 }
 
-func (h *serveHarness) records(timeout time.Duration) []serveRecord {
-	return h.reader.collect(timeout)
+func (h *serveHarness) records(idle time.Duration) []serveRecord {
+	return h.reader.collect(idle)
+}
+
+// recordsFor collects until cycle id has produced a record. Use it instead of
+// records when an earlier cycle may never reach its transient record, so
+// waiting for a completed cycle would stop at the wrong one.
+func (h *serveHarness) recordsFor(id string, idle time.Duration) []serveRecord {
+	return h.reader.collectUntil(idle, carriesID(id))
 }
 
 // quitAndWait sends the quit command and fails the test when the loop does
@@ -157,12 +165,55 @@ func newRecordReader(r *os.File) *recordReader {
 	return rr
 }
 
-// collect returns records until timeout elapses with no new record arriving,
-// or the pipe closes.
-func (rr *recordReader) collect(timeout time.Duration) []serveRecord {
+// recordTimeout bounds every wait for a record the caller still needs. It is
+// generous on purpose: it only exists so a daemon that stops producing fails
+// the test instead of hanging the suite, never to decide that enough records
+// have arrived.
+const recordTimeout = 30 * time.Second
+
+// endOfCycle reports whether the records seen so far end at a cycle's
+// transient record, which is the last record a completed cycle emits.
+func endOfCycle(records []serveRecord) bool {
+	return len(records) > 0 && records[len(records)-1].transient
+}
+
+// carriesID returns a condition satisfied once a record of cycle id arrived.
+// Use it when the assertions need a specific cycle's records and an earlier
+// cycle may still be emitting, e.g. after an abort.
+func carriesID(id string) func([]serveRecord) bool {
+	return func(records []serveRecord) bool {
+		return slices.ContainsFunc(records, func(rec serveRecord) bool {
+			return rec.id == id
+		})
+	}
+}
+
+// collect returns the records of a completed cycle: it waits for records to
+// arrive and stops at the transient record that ends the cycle. See
+// collectUntil for what idle covers.
+func (rr *recordReader) collect(idle time.Duration) []serveRecord {
+	return rr.collectUntil(idle, endOfCycle)
+}
+
+// collectUntil returns records once done reports the caller has what it waited
+// for, plus whatever else arrives within idle of the previous record. Waiting
+// on done rather than on wall-clock silence is what keeps these tests stable:
+// `go test ./...` renders under the load of every other package's tests, where
+// the gap before a cycle's first record routinely exceeds any idle window a
+// test would pick, and collecting on a timer alone then returns too early -
+// empty, or holding only the previous cycle's records.
+//
+// idle still terminates the collection when done never becomes true within a
+// cycle, which is what an aborted cycle (no transient record) looks like.
+func (rr *recordReader) collectUntil(idle time.Duration, done func([]serveRecord) bool) []serveRecord {
 	var records []serveRecord
-	timer := time.NewTimer(timeout)
+
+	timer := time.NewTimer(recordTimeout)
 	defer timer.Stop()
+
+	// Until done is satisfied, a record is still owed and only recordTimeout
+	// bounds the wait for it. After that, idle decides when the flow is over.
+	satisfied := false
 
 	for {
 		select {
@@ -170,11 +221,20 @@ func (rr *recordReader) collect(timeout time.Duration) []serveRecord {
 			if !ok {
 				return records
 			}
+
 			records = append(records, rec)
+
 			if !timer.Stop() {
 				<-timer.C
 			}
-			timer.Reset(timeout)
+
+			satisfied = satisfied || done(records)
+			if satisfied {
+				timer.Reset(idle)
+				continue
+			}
+
+			timer.Reset(recordTimeout)
 		case <-timer.C:
 			return records
 		}
@@ -242,7 +302,7 @@ func TestServeLoop_AbortStopsRecordFlowThenNewRenderWorks(t *testing.T) {
 
 	h.render(2, pwd)
 
-	records := h.records(500 * time.Millisecond)
+	records := h.recordsFor("2", 500*time.Millisecond)
 	require.NotEmpty(t, records, "expected records for cycle 2 after abort+re-render")
 
 	// No record from cycle 1 should appear once cycle 2 begins - cycle 1 had

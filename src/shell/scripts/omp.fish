@@ -751,33 +751,37 @@ end
 # vi mode tracking — mirror the active fish bind mode into POSH_VI_MODE and
 # re-render the prompt whenever it changes. Enabled through the vimode segment.
 function _omp_enable_vimode
-    # only track when vi (or hybrid) key bindings are active
-    contains -- "$fish_key_bindings" fish_vi_key_bindings fish_hybrid_key_bindings
-    or return
-
-    # translate fish's bind mode into the keymap names the vimode segment expects
     function _omp_set_vimode
-        switch $fish_bind_mode
-            case default
-                set --global --export POSH_VI_MODE vicmd
-            case replace replace_one
-                set --global --export POSH_VI_MODE replace
-            case insert
-                set --global --export POSH_VI_MODE viins
-            case '*'
-                set --global --export POSH_VI_MODE $fish_bind_mode
+        # fish uses "default" for emacs mode as well as normal/command mode in
+        # vi mode; to avoid confusion, explicitly map to the "emacs" value known
+        # by the vimode segment
+        if not contains -- "$fish_key_bindings" fish_vi_key_bindings fish_hybrid_key_bindings
+            set --export --global POSH_VI_MODE "emacs"
+        else
+            # translate fish's bind mode into the keymap names the vimode
+            # segment expects
+            switch $fish_bind_mode
+                case default
+                    set --global --export POSH_VI_MODE vicmd
+                case insert
+                    set --global --export POSH_VI_MODE viins
+                case operator
+                    set --global --export POSH_VI_MODE viopp
+                case '*'
+                    set --global --export POSH_VI_MODE $fish_bind_mode
+            end
         end
-    end
-
-    # re-render the prompt on every mode change
-    function _omp_render_vimode --on-variable fish_bind_mode
-        _omp_set_vimode
-        omp_repaint_prompt
     end
 
     # oh-my-posh renders the mode through the vimode segment, so silence fish's
     # built-in mode indicator to avoid a duplicate
+    # fish calls `fish_mode_prompt` when the bind mode is changed, and this is
+    # more reliable than `function --on-variable`.
     function fish_mode_prompt
+        _omp_set_vimode
+        # if `fish_mode_prompt` produces no output, fish will then call
+        # `fish_prompt` so there's no need for full repaint
+        set --global _omp_new_prompt 1
     end
 
     _omp_set_vimode

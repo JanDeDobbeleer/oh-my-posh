@@ -72,3 +72,13 @@ for usage. Gotchas baked into it, relevant to any future pty work:
 
 - One `bufio.Scanner` per pipe, ever - a second scanner on the same pipe loses buffered data
   (use a shared reader helper in Go tests).
+- Never decide "the records are done" from wall-clock silence (verified 2026-07-21). The serve
+  harness collected until a 500 ms gap with no record, which made every assertion a race against
+  render latency: under `go test ./...` with a cold build cache (i.e. CI), the first record of a
+  cycle regularly lands later than that, so `collect` returned empty and
+  `TestServeLoop_RenderProducesIDPrefixedRecords`, `_WaitRenderEmitsExactlyTwoRecords` and
+  `_AbortStopsRecordFlowThenNewRenderWorks` failed at exactly the 500 ms mark on an unmodified
+  tree. Reproduce with `go clean -cache && go test -count=1 ./...`; the package on its own always
+  passes, so the failure reads as a phantom. Wait on a record that proves what the test is
+  asserting instead - the cycle's transient record (always last) for a completed cycle, the cycle
+  id for a specific cycle - and keep a timeout only as a hang bound.

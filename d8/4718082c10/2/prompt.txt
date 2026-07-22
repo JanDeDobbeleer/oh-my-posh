@@ -1,1 +1,0 @@
-When using streaming, the placeholder background color also isn't correctly calculated as a gradient.

@@ -1,0 +1,9 @@
+<system-reminder>
+The user started your suggested background task task_71faea4b ("Include .mdx files in markdownlint CI glob") in a separate local session. It is running independently. You will be notified here when it ends.
+</system-reminder>
+
+Can we somehow create a guide on which gradients, like from and to color, are supported? Are there any limitations depending on the length of the segments, or what do we need to populate for how efficient the gradient will be? Doesn't that really matter?
+
+---
+
+Yes, please add it.

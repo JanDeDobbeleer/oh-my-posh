@@ -11,9 +11,12 @@
     "src/color/gradient_test.go",
     "src/color/keywords.go",
     "src/color/keywords_test.go",
+    "src/config/segment.go",
     "src/go.mod",
     "src/prompt/engine.go",
+    "src/prompt/gradient_collapse_test.go",
     "src/prompt/gradient_test.go",
+    "src/terminal/gradient_bench_test.go",
     "src/terminal/writer.go",
     "src/terminal/writer_gradient_test.go",
     "themes/schema.json",
@@ -39,15 +42,15 @@
       "transcript": "/d8/4718082c10/2/full.jsonl",
       "compact_transcript": "/d8/4718082c10/2/transcript.jsonl",
       "content_hash": "/d8/4718082c10/2/content_hash.txt",
-      "prompt": ""
+      "prompt": "/d8/4718082c10/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 36,
-    "cache_creation_tokens": 17616,
-    "cache_read_tokens": 5444550,
-    "output_tokens": 14148,
-    "api_call_count": 19
+    "input_tokens": 40,
+    "cache_creation_tokens": 20496,
+    "cache_read_tokens": 6184590,
+    "output_tokens": 16925,
+    "api_call_count": 21
   },
   "combined_attribution": {
     "calculated_at": "2026-07-22T10:37:58.1866969Z",

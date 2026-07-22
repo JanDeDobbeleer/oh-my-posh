@@ -1,0 +1,1 @@
+I have the impression this makes the prompt rendering slower. Is that a gut feeling, or is this true?

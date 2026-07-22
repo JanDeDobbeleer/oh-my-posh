@@ -2,15 +2,22 @@
   "cli_version": "0.8.42",
   "checkpoint_id": "d84718082c10",
   "strategy": "manual-commit",
-  "branch": "main",
-  "checkpoints_count": 5,
+  "branch": "feat/gradient-colors",
+  "checkpoints_count": 2,
   "files_touched": [
     "src/color/colors.go",
     "src/color/colors_test.go",
+    "src/color/gradient.go",
+    "src/color/gradient_test.go",
     "src/color/keywords.go",
+    "src/color/keywords_test.go",
     "src/go.mod",
     "src/prompt/engine.go",
-    "src/terminal/writer.go"
+    "src/prompt/gradient_test.go",
+    "src/terminal/writer.go",
+    "src/terminal/writer_gradient_test.go",
+    "themes/schema.json",
+    "website/docs/configuration/colors.mdx"
   ],
   "sessions": [
     {
@@ -18,14 +25,14 @@
       "transcript": "/d8/4718082c10/0/full.jsonl",
       "compact_transcript": "/d8/4718082c10/0/transcript.jsonl",
       "content_hash": "/d8/4718082c10/0/content_hash.txt",
-      "prompt": "/d8/4718082c10/0/prompt.txt"
+      "prompt": ""
     }
   ],
   "token_usage": {
-    "input_tokens": 913,
-    "cache_creation_tokens": 105766,
-    "cache_read_tokens": 5486106,
-    "output_tokens": 34679,
-    "api_call_count": 51
+    "input_tokens": 2,
+    "cache_creation_tokens": 586,
+    "cache_read_tokens": 153909,
+    "output_tokens": 986,
+    "api_call_count": 1
   }
 }

@@ -3,7 +3,7 @@
   "checkpoint_id": "d84718082c10",
   "strategy": "manual-commit",
   "branch": "feat/gradient-colors",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "src/color/colors.go",
     "src/color/colors_test.go",
@@ -26,13 +26,20 @@
       "compact_transcript": "/d8/4718082c10/0/transcript.jsonl",
       "content_hash": "/d8/4718082c10/0/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/d8/4718082c10/1/metadata.json",
+      "transcript": "/d8/4718082c10/1/full.jsonl",
+      "compact_transcript": "/d8/4718082c10/1/transcript.jsonl",
+      "content_hash": "/d8/4718082c10/1/content_hash.txt",
+      "prompt": "/d8/4718082c10/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 2,
-    "cache_creation_tokens": 586,
-    "cache_read_tokens": 153909,
-    "output_tokens": 986,
-    "api_call_count": 1
+    "input_tokens": 973,
+    "cache_creation_tokens": 380107,
+    "cache_read_tokens": 10456095,
+    "output_tokens": 62949,
+    "api_call_count": 83
   }
 }

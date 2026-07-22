@@ -648,6 +648,10 @@ func setupBasicStreamingTestEnv() *Engine {
 	env.On("Flags").Return(&runtime.Flags{Streaming: true})
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
+	// MakeColors resolves the accent color, which reads the registry on Windows
+	// and shells out on macOS. Without these the helper panics on those hosts.
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything).Return("4", nil)
+	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
@@ -705,6 +709,10 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	env.On("Flags").Return(&runtime.Flags{Streaming: true})
 	env.On("CursorPosition").Return(1, 1)
 	env.On("StatusCodes").Return(0, "0")
+	// MakeColors resolves the accent color, which reads the registry on Windows
+	// and shells out on macOS. Without these the setup panics on those hosts.
+	env.On("RunCommand", testifymock.Anything, testifymock.Anything).Return("4", nil)
+	env.On("WindowsRegistryKeyValue", testifymock.Anything).Return(&runtime.WindowsRegistryValue{ValueType: runtime.DWORD, DWord: 0xFF0078D7}, nil)
 
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),

@@ -1,1 +1,1 @@
-full config is at ~/.posh.omp.jsonc, can we log errors when we can't use the gradient?
+Yes, please create that because it makes sense to have that support.

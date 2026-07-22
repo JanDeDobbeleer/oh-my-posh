@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "9bdd12391c14",
+  "strategy": "manual-commit",
+  "branch": "claude/heuristic-robinson-e44709",
+  "checkpoints_count": 3,
+  "files_touched": [
+    ".github/workflows/markdown.yml",
+    ".markdownlint-cli2.yaml"
+  ],
+  "sessions": [
+    {
+      "metadata": "/9b/dd12391c14/0/metadata.json",
+      "transcript": "/9b/dd12391c14/0/full.jsonl",
+      "compact_transcript": "/9b/dd12391c14/0/transcript.jsonl",
+      "content_hash": "/9b/dd12391c14/0/content_hash.txt",
+      "prompt": "/9b/dd12391c14/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 248,
+    "cache_creation_tokens": 106988,
+    "cache_read_tokens": 5841146,
+    "output_tokens": 38124,
+    "api_call_count": 58
+  }
+}

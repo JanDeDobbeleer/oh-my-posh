@@ -1,0 +1,107 @@
+In D:\oh-my-posh, the markdownlint-cli2 GitHub workflow (uses DavidAnson/markdownlint-cli2-action) globs `**/*.md` only, so website docs written as `.mdx` (e.g. website/docs/configuration/colors.mdx) are never linted in CI. Extend the glob to include `**/*.mdx`, run markdownlint-cli2 locally with the repo root .markdownlint-cli2.yaml against the website docs, and fix or explicitly ignore any pre-existing violations that surface (colors.mdx is known to have ~6 pre-existing issues around lines 72, 280-285, 321-322). Keep fixes mechanical; don't rewrite prose meaning.
+
+---
+
+<task-notification>
+<task-id>a5e3b72a59fdc51fd</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh--claude-worktrees-heuristic-robinson-e44709\ba3fb03b-d148-40c0-b443-eb152fde44d5\tasks\a5e3b72a59fdc51fd.output</output-file>
+<status>completed</status>
+<summary>Agent "Fix mdx lint: configuration+blog" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All target violations are fixed and verified clean. Final verification run confirms 0 issues across all 6 files.
+
+**Files changed** (my edits only):
+- `website/blog/2022-03-20-whats-new-1.mdx`
+- `website/docs/configuration/colors.mdx`
+- `website/docs/configuration/general.mdx`
+- `website/docs/configuration/segment.mdx`
+- `website/docs/configuration/tooltips.mdx`
+- `website/docs/configuration/transient.mdx`
+
+**Deviations from a literal reading of the instructions:**
+
+1. **`2022-03-20-whats-new-1.mdx:48`** — The underscore emphasis wasn't a plain `_text_`; it was nested inside bold as `**_not in a very sustainable way_**` (bold+italic combined). Converting only the inner marker to asterisk would have produced `**not in a very sustainable way**`, silently dropping the italic. Instead I changed it to `***not in a very sustainable way***`, which preserves both bold and italic while eliminating the underscore style (satisfies MD049).
+
+2. **`tooltips.mdx:40`** — This 211-char line is not prose; it's a JS string literal inside a `&lt;Config data={{...}}&gt;` JSX block (a Go template pattern). A literal word-wrap would insert a raw newline into the quoted string, which is invalid/changes the value. Instead I split it into three adjacent string literals joined with `+` (a common pattern already used elsewhere in these docs for long templates), which is semantically identical and keeps every line ≤120 chars.
+
+Note: `git diff` on these six files also shows a handful of unrelated hunks (e.g., blog heading punctuation, a truncate-comment tweak, a removed `[sprig]` reference in segment.mdx, a trailing-space removal in a transient.mdx table) that I did not make — those appear to be uncommitted changes from other concurrent work in this shared worktree, not part of my edits.</result>
+<usage><subagent_tokens>85463</subagent_tokens><tool_uses>31</tool_uses><duration_ms>268031</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>aea6f594ee477308b</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh--claude-worktrees-heuristic-robinson-e44709\ba3fb03b-d148-40c0-b443-eb152fde44d5\tasks\aea6f594ee477308b.output</output-file>
+<status>completed</status>
+<summary>Agent "Fix mdx lint: segments" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All 17 target files were fixed and verified clean with `npx markdownlint-cli2 --config .markdownlint-cli2.yaml "website/docs/segments/**/*.mdx"` — **0 issues in 117 files** (also re-verified scoped to just the 17 target files: 0 issues).
+
+## Files changed (all under `website/docs/segments/`)
+
+- `cli/claude.mdx` (line 227, MD013) — split the "segment reads session info" sentence across 2 lines
+- `cli/copilot.mdx` (line 9, MD013) — split the "Display your GitHub Copilot" sentence
+- `cli/gitversion.mdx` (line 42, MD013) — split the "leverage all variables" sentence
+- `cli/kubectl.mdx` (line 67, MD040) — added `template` language tag to the bare fence (matches the convention already used elsewhere in the same file, e.g. line 47)
+- `health/nightscout.mdx` (line 59, MD013) — split the long JS template-string literal into two string-concatenated (`+`) lines
+- `health/strava.mdx` (line 26, MD013) — rewrapped the whole 3-line paragraph
+- `music/lastfm.mdx` (line 12, MD013) — split the caution-block sentence
+- `music/spotify.mdx` (line 14, MD013) — split the "playback states" sentence
+- `scm/git.mdx` (line 30, 335 chars, MD013) — split the long Go-template string into 4 concatenated string literals at `}}` boundaries
+- `system/path.mdx` (lines 60, 98, MD013) — split both sentences
+- `system/project.mdx` (lines 22–23, 40, MD013) — rewrapped the `.NET project` bullet, and split the template string literal
+- `system/status.mdx` (line 38, MD012) — removed one of two consecutive blank lines
+- `system/vimode.mdx` (line 47, MD013) — moved `template:` value onto its own indented line
+- `web/brewfather.mdx` (line 147, 310 chars, MD013) — split the long template string (single-quoted, contains embedded `"..."`) into 4 concatenated pieces
+- `web/carbonintensity.mdx` (line 12, MD013) — split the note-block sentence
+- `web/nba.mdx` (line 24, MD059) — changed link text `[here]` → `[team color schemes]`
+- `web/wakatime.mdx` (line 56, MD013) — split the note-block sentence
+
+## Deviations / things worth flagging
+
+- Two of the long template-string lines (`git.mdx` line 30, `nightscout.mdx` line 59, `project.mdx` line 40, `brewfather.mdx` line 147) are single-quoted JS string literals inside `&lt;Config data={{...}}&gt;` blocks with no internal spaces I could break at without altering the code. Since a raw newline isn't valid inside a JS string, I split them using string concatenation (`"..." + "..."`) at `{{ }}` template-tag boundaries. I verified programmatically (via PowerShell string rebuild-and-compare) that the concatenated pieces reconstruct byte-for-byte to the original string, so the rendered template output is unchanged — only line breaks moved, same as the instruction requires for prose.
+- `system/vimode.mdx` line 47 originally contained an actual embedded Unicode PUA glyph (not literal `\uXXXX` text) between the template tags — my first two Edit attempts failed because the text I retyped didn't include that invisible glyph. I resolved it by reading/writing the file via a byte-preserving PowerShell script (slicing the original line rather than retyping it) so the glyph was carried over exactly.
+- I found three unrelated, pre-existing changes already in the working tree that I did **not** make (verified against my own Edit calls): `music/spotify.mdx` and `music/lastfm.mdx` have trailing spaces removed from icon values in unrelated table rows (e.g. `` `\ue602 ` `` → `` `\ue602` ``), and `system/status.mdx` has an unrelated `[colors]: /docs/configuration/colors` reference-link line removed. These weren't in my assigned violation list and weren't introduced by any of my edits — likely leftover from other work already in this shared worktree before I started. Flagging in case they need separate review.</result>
+<usage><subagent_tokens>124686</subagent_tokens><tool_uses>116</tool_uses><duration_ms>900780</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ac46c31ab6821d090</task-id>
+<tool-use-id>toolu_019Qc94RZSGRK9QW97rbE77m</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh--claude-worktrees-heuristic-robinson-e44709\ba3fb03b-d148-40c0-b443-eb152fde44d5\tasks\ac46c31ab6821d090.output</output-file>
+<status>completed</status>
+<summary>Agent "Fix mdx lint: contributing+faq+installation" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>My edits are correctly in place. Final verification confirms zero lint errors across all target files.
+
+## Summary
+
+Fixed all listed markdownlint violations (MD013 line-length, MD059 descriptive-link-text, MD040 fenced-code-language, MD036 no-emphasis-as-heading) in:
+
+- `website/docs/contributing/git.mdx`
+- `website/docs/contributing/plastic.mdx`
+- `website/docs/contributing/segment.mdx`
+- `website/docs/contributing/started.mdx`
+- `website/docs/faq.mdx`
+- `website/docs/installation/customize.mdx`
+- `website/docs/installation/fonts.mdx`
+- `website/docs/installation/macos.mdx`
+- `website/docs/installation/prompt.mdx`
+
+Verification command reports zero errors across all nine files.
+
+Deviations worth flagging:
+
+1. **git.mdx MD036 headings**: converted `**I only have 1 commit**` and `**I added more than commit**` to `### I only have 1 commit` / `### I added more than commit` (h3, matching the existing `### Add the remote...` sibling pattern under the same `##` section), rather than the `####` I first tried.
+2. **git.mdx pre-existing MD012**: the original file already had a double blank line before `### Add the remote to your local git repository` (a pre-existing, unlisted lint violation, confirmed by linting the file at `HEAD`). My rewrap of the adjacent paragraph initially collapsed it to one blank line. Since the task requires the verification command to report zero errors, I left it collapsed to a single blank line rather than restoring the two-blank-line original — a minor whitespace change outside the listed violations, done only because it was an unavoidable side effect of a rule not in scope but caught by the same verify command.
+3. **MD059 fixes required more than swapping link text** in two spots because the surrounding sentence exceeded 120 chars afterward, so I rewrapped: `faq.mdx` ("the steps to export your config to a local file") and `fonts.mdx` ("the Stack Overflow answer on this limitation").
+4. **`faq.mdx` line 327** (Fish bind-mode template literal) was flagged for length but is a JS/JSX string inside `&lt;Config&gt;`, not prose — I split it into three string-literal chunks joined with `+` so the value is byte-for-byte identical, since word-wrapping would have altered the template string.
+5. Files contain `\uXXXX`-style escape sequences (e.g. `\u2800`, `\ueba2`) that are easy to accidentally corrupt into literal Unicode characters via tool-parameter encoding; those specific edits were done through a Python script writing the file directly (using `chr(92)` for the backslash) to guarantee the literal escape text was preserved exactly.
+6. Unrelated to my edits: many other files in the working tree (and unrelated sections of `segment.mdx`, `fonts.mdx`, `customize.mdx`, `macos.mdx`, `prompt.mdx` — e.g. Go code tab→space conversion, removed unused link references, added blank lines around `:::` fences, table pipe spacing) were modified by a background process during the session, not by me. This was flagged by the system as intentional/expected, so I left it untouched and only verified my own target sections still lint clean, which they do.</result>
+<usage><subagent_tokens>190292</subagent_tokens><tool_uses>111</tool_uses><duration_ms>1152539</duration_ms></usage>
+</task-notification>

@@ -1,0 +1,105 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "9bdd12391c14",
+  "session_id": "ba3fb03b-d148-40c0-b443-eb152fde44d5",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-22T09:54:17.761284Z",
+  "branch": "claude/heuristic-robinson-e44709",
+  "checkpoints_count": 3,
+  "save_step_count": 1,
+  "files_touched": [
+    ".github/workflows/markdown.yml",
+    ".markdownlint-cli2.yaml"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "b409e00358d6",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 248,
+    "cache_creation_tokens": 106988,
+    "cache_read_tokens": 5841146,
+    "output_tokens": 38124,
+    "api_call_count": 58
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01QJmNMk5QXUp2StL2fFdKbE",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "b409e00358d6",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 13,
+        "end": 14,
+        "entry_ids": [
+          "1c3cdaee-057f-4271-ac3c-7a5570ad3e15"
+        ],
+        "tool_use_id": "toolu_01QJmNMk5QXUp2StL2fFdKbE"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01QJmNMk5QXUp2StL2fFdKbE"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01AyDvwShZ8qY1LfF5VdFvGJ",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "b409e00358d6",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 287,
+        "end": 288,
+        "entry_ids": [
+          "3700fb1d-a217-43fc-8895-549c7d0d9e6e"
+        ],
+        "tool_use_id": "toolu_01AyDvwShZ8qY1LfF5VdFvGJ"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01AyDvwShZ8qY1LfF5VdFvGJ"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-22T09:54:17.689208Z",
+    "agent_lines": 13,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 13,
+    "total_lines_changed": 14,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}

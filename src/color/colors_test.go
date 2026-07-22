@@ -31,6 +31,10 @@ func TestGetAnsiFromColorString(t *testing.T) {
 		{Case: "Base 16 background", Expected: Ansi("101"), Color: "lightRed", Background: true},
 		{Case: "Non true color TERM", Expected: Ansi("38;5;146"), Color: "#AABBCC", Color256: true},
 	}
+
+	origTrueColor := TrueColor
+	t.Cleanup(func() { TrueColor = origTrueColor })
+
 	for _, tc := range cases {
 		ansiColors := &Defaults{}
 		TrueColor = !tc.Color256

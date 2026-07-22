@@ -21,7 +21,11 @@ import (
 	testifymock "github.com/stretchr/testify/mock"
 )
 
-func setupExtraPromptTest(sh string, flags *runtime.Flags) *mock.Environment {
+func setupExtraPromptTest(t *testing.T, sh string, flags *runtime.Flags) *mock.Environment {
+	t.Helper()
+	// terminal.Plain is a package-level global; restore it for later tests.
+	t.Cleanup(func() { terminal.Plain = false })
+
 	env := new(mock.Environment)
 	env.On("Shell").Return(sh)
 	env.On("Flags").Return(flags)
@@ -36,6 +40,9 @@ func setupExtraPromptTest(sh string, flags *runtime.Flags) *mock.Environment {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(sh)
+	// These tests assert on uncolored output, so ask for it rather than
+	// inheriting whatever an earlier test left in this global.
+	terminal.Plain = true
 	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	return env
@@ -99,7 +106,7 @@ func TestExtraPromptTransientZSH(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := setupExtraPromptTest(shell.ZSH, &runtime.Flags{Eval: tc.Eval})
+		env := setupExtraPromptTest(t, shell.ZSH, &runtime.Flags{Eval: tc.Eval})
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalErr)
 
 		engine := &Engine{
@@ -119,7 +126,11 @@ func TestExtraPromptTransientZSH(t *testing.T) {
 }
 
 func TestExtraPromptTransientPWSH(t *testing.T) {
-	// initialize the terminal for pwsh before resolving the expected sequences
+	// initialize the terminal for pwsh before resolving the expected sequences.
+	// Plain has to match what setupExtraPromptTest uses, otherwise the expected
+	// sequences are resolved under a different mode than the ones under test.
+	t.Cleanup(func() { terminal.Plain = false })
+	terminal.Plain = true
 	terminal.Init(shell.PWSH)
 	saveCursor := terminal.SaveCursorPosition()
 	restoreCursor := terminal.RestoreCursorPosition()
@@ -185,7 +196,7 @@ func TestExtraPromptTransientPWSH(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := setupExtraPromptTest(shell.PWSH, &runtime.Flags{})
+		env := setupExtraPromptTest(t, shell.PWSH, &runtime.Flags{})
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalErr)
 
 		engine := &Engine{
@@ -205,7 +216,7 @@ func TestExtraPromptTransientPWSH(t *testing.T) {
 }
 
 func TestExtraPromptTransientPWSHNewline(t *testing.T) {
-	env := setupExtraPromptTest(shell.PWSH, &runtime.Flags{PromptCount: 2})
+	env := setupExtraPromptTest(t, shell.PWSH, &runtime.Flags{PromptCount: 2})
 	env.On("TerminalWidth").Return(20, nil)
 	env.On("CursorPosition").Return(2, 1)
 
@@ -273,7 +284,7 @@ func TestExtraPromptTransientFish(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := setupExtraPromptTest(shell.FISH, &runtime.Flags{})
+		env := setupExtraPromptTest(t, shell.FISH, &runtime.Flags{})
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalErr)
 
 		engine := &Engine{
@@ -293,7 +304,7 @@ func TestExtraPromptTransientFish(t *testing.T) {
 }
 
 func TestTransientRPromptTemplateError(t *testing.T) {
-	env := setupExtraPromptTest(shell.FISH, &runtime.Flags{})
+	env := setupExtraPromptTest(t, shell.FISH, &runtime.Flags{})
 	engine := &Engine{
 		Config: &config.Config{
 			TransientPrompt: &config.Segment{RightTemplate: "{{"},
@@ -305,7 +316,7 @@ func TestTransientRPromptTemplateError(t *testing.T) {
 }
 
 func TestExtraPromptRightTemplateUnsupportedShell(t *testing.T) {
-	env := setupExtraPromptTest(shell.BASH, &runtime.Flags{})
+	env := setupExtraPromptTest(t, shell.BASH, &runtime.Flags{})
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -330,7 +341,11 @@ func TestShouldFillNegativePadLength(t *testing.T) {
 	assert.Empty(t, got)
 }
 
-func setupExtraStreamingTestEnv(sh string) *mock.Environment {
+func setupExtraStreamingTestEnv(t *testing.T, sh string) *mock.Environment {
+	t.Helper()
+	// terminal.Plain is a package-level global; restore it for later tests.
+	t.Cleanup(func() { terminal.Plain = false })
+
 	env := new(mock.Environment)
 	env.On("Pwd").Return("/test")
 	env.On("Home").Return("/home")
@@ -348,13 +363,16 @@ func setupExtraStreamingTestEnv(sh string) *mock.Environment {
 	}
 	template.Init(env, nil, nil)
 	terminal.Init(sh)
+	// These tests assert on uncolored output, so ask for it rather than
+	// inheriting whatever an earlier test left in this global.
+	terminal.Plain = true
 	terminal.Colors = color.MakeColors(nil, false, "", env)
 
 	return env
 }
 
 func TestStreamPrimary_TransientRecordSkippedForZSHRightTemplate(t *testing.T) {
-	env := setupExtraStreamingTestEnv(shell.ZSH)
+	env := setupExtraStreamingTestEnv(t, shell.ZSH)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -376,7 +394,7 @@ func TestStreamPrimary_TransientRecordSkippedForZSHRightTemplate(t *testing.T) {
 }
 
 func TestStreamPrimary_TransientRecordSentForZSHWithoutRightTemplate(t *testing.T) {
-	env := setupExtraStreamingTestEnv(shell.ZSH)
+	env := setupExtraStreamingTestEnv(t, shell.ZSH)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -402,7 +420,7 @@ func TestStreamPrimary_TransientRecordSentForZSHWithoutRightTemplate(t *testing.
 }
 
 func TestStreamPrimary_TransientRecordContainsRightTemplateForPWSH(t *testing.T) {
-	env := setupExtraStreamingTestEnv(shell.PWSH)
+	env := setupExtraStreamingTestEnv(t, shell.PWSH)
 
 	engine := &Engine{
 		Config: &config.Config{

@@ -4,10 +4,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -222,6 +226,14 @@ func TestExecuteSegmentWithTimeout_CachedValueFallback(t *testing.T) {
 	// This test verifies that a pending segment's Text() returns "..." placeholder
 	env := new(mock.Environment)
 	env.On("Flags").Return(&runtime.Flags{})
+	env.On("Shell").Return(shell.GENERIC)
+
+	// Render writes through the template cache, so it has to exist rather than
+	// be inherited from whichever test happened to run first.
+	template.Cache = &cache.Template{
+		Segments: maps.NewConcurrent[any](),
+	}
+	template.Init(env, nil, nil)
 
 	segment := &config.Segment{
 		Type:     "text",

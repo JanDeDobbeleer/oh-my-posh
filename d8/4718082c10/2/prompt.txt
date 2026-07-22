@@ -1,17 +1,1 @@
-Can we use different colors for the right front gradients because they are pretty harsh in transition, resulting in another nicely flowing gradient color? We need to use colors that are closer to each other.
-
----
-
-You can say the same for the color and gradient we use in the shell segment in the R prompt because that's also pretty harsh.
-
----
-
-still too hard.
-
----
-
-The transient prompt does not seem to end in the correct color.
-
----
-
-When using the background keyboard for a color, it seems to not resolve to the current background color. The last one that was printed should follow the gradient color as well so that it's always correct when printed as a background color. Can we solve this? You can look at my current configuration for the transient prompt, which has this exact issue. The screenshot shows the problem.
+When using streaming, the placeholder background color also isn't correctly calculated as a gradient.

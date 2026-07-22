@@ -3,7 +3,7 @@
   "checkpoint_id": "d84718082c10",
   "strategy": "manual-commit",
   "branch": "feat/gradient-colors",
-  "checkpoints_count": 4,
+  "checkpoints_count": 6,
   "files_touched": [
     "src/color/colors.go",
     "src/color/colors_test.go",
@@ -11,6 +11,7 @@
     "src/color/gradient_test.go",
     "src/color/keywords.go",
     "src/color/keywords_test.go",
+    "src/config/segment.go",
     "src/go.mod",
     "src/prompt/engine.go",
     "src/prompt/gradient_test.go",
@@ -36,10 +37,10 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 19,
-    "cache_creation_tokens": 7513,
-    "cache_read_tokens": 2140058,
-    "output_tokens": 8264,
-    "api_call_count": 10
+    "input_tokens": 22,
+    "cache_creation_tokens": 23376,
+    "cache_read_tokens": 2518144,
+    "output_tokens": 14737,
+    "api_call_count": 11
   }
 }

@@ -1,17 +1,1 @@
-The gradient coloring works, but it doesn't seem to correctly color the power line starting symbol. The end symbol is correct, but the starting symbol is not right.
-
-        {
-          "options": {
-            "dir_length": 3,
-            "enable_cygpath": true,
-            "folder_separator_icon": "\ue0bb",
-            "style": "fish"
-          },
-          "template": "{{ if .Segments.Git.Dir }} \uf1d2 <i><b>{{ .Segments.Git.RepoName }}{{ if .Segments.Git.IsWorkTree }} \ue21c{{ end }}</b></i>{{ $rel :=  .Segments.Git.RelativeDir }}{{ if $rel }} \ueaf7 {{ .Format $rel }}{{ end }}{{ else }} \uea83 {{ path .Path .Location }}{{ end }} ",
-          "foreground": "p:white",
-          "powerline_symbol": "\ue0b0",
-          // "background": "p:orange",
-          "background": "linear-gradient(#abf9fc, #a3aef7)",
-          "type": "path",
-          "style": "powerline"
-        },
+full config is at ~/.posh.omp.jsonc, can we log errors when we can't use the gradient?

@@ -67,3 +67,41 @@ Note: `git diff` on these six files also shows a handful of unrelated hunks (e.g
 - I found three unrelated, pre-existing changes already in the working tree that I did **not** make (verified against my own Edit calls): `music/spotify.mdx` and `music/lastfm.mdx` have trailing spaces removed from icon values in unrelated table rows (e.g. `` `\ue602 ` `` → `` `\ue602` ``), and `system/status.mdx` has an unrelated `[colors]: /docs/configuration/colors` reference-link line removed. These weren't in my assigned violation list and weren't introduced by any of my edits — likely leftover from other work already in this shared worktree before I started. Flagging in case they need separate review.</result>
 <usage><subagent_tokens>124686</subagent_tokens><tool_uses>116</tool_uses><duration_ms>900780</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>ac46c31ab6821d090</task-id>
+<tool-use-id>toolu_019Qc94RZSGRK9QW97rbE77m</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh--claude-worktrees-heuristic-robinson-e44709\ba3fb03b-d148-40c0-b443-eb152fde44d5\tasks\ac46c31ab6821d090.output</output-file>
+<status>completed</status>
+<summary>Agent "Fix mdx lint: contributing+faq+installation" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>My edits are correctly in place. Final verification confirms zero lint errors across all target files.
+
+## Summary
+
+Fixed all listed markdownlint violations (MD013 line-length, MD059 descriptive-link-text, MD040 fenced-code-language, MD036 no-emphasis-as-heading) in:
+
+- `website/docs/contributing/git.mdx`
+- `website/docs/contributing/plastic.mdx`
+- `website/docs/contributing/segment.mdx`
+- `website/docs/contributing/started.mdx`
+- `website/docs/faq.mdx`
+- `website/docs/installation/customize.mdx`
+- `website/docs/installation/fonts.mdx`
+- `website/docs/installation/macos.mdx`
+- `website/docs/installation/prompt.mdx`
+
+Verification command reports zero errors across all nine files.
+
+Deviations worth flagging:
+
+1. **git.mdx MD036 headings**: converted `**I only have 1 commit**` and `**I added more than commit**` to `### I only have 1 commit` / `### I added more than commit` (h3, matching the existing `### Add the remote...` sibling pattern under the same `##` section), rather than the `####` I first tried.
+2. **git.mdx pre-existing MD012**: the original file already had a double blank line before `### Add the remote to your local git repository` (a pre-existing, unlisted lint violation, confirmed by linting the file at `HEAD`). My rewrap of the adjacent paragraph initially collapsed it to one blank line. Since the task requires the verification command to report zero errors, I left it collapsed to a single blank line rather than restoring the two-blank-line original — a minor whitespace change outside the listed violations, done only because it was an unavoidable side effect of a rule not in scope but caught by the same verify command.
+3. **MD059 fixes required more than swapping link text** in two spots because the surrounding sentence exceeded 120 chars afterward, so I rewrapped: `faq.mdx` ("the steps to export your config to a local file") and `fonts.mdx` ("the Stack Overflow answer on this limitation").
+4. **`faq.mdx` line 327** (Fish bind-mode template literal) was flagged for length but is a JS/JSX string inside `&lt;Config&gt;`, not prose — I split it into three string-literal chunks joined with `+` so the value is byte-for-byte identical, since word-wrapping would have altered the template string.
+5. Files contain `\uXXXX`-style escape sequences (e.g. `\u2800`, `\ueba2`) that are easy to accidentally corrupt into literal Unicode characters via tool-parameter encoding; those specific edits were done through a Python script writing the file directly (using `chr(92)` for the backslash) to guarantee the literal escape text was preserved exactly.
+6. Unrelated to my edits: many other files in the working tree (and unrelated sections of `segment.mdx`, `fonts.mdx`, `customize.mdx`, `macos.mdx`, `prompt.mdx` — e.g. Go code tab→space conversion, removed unused link references, added blank lines around `:::` fences, table pipe spacing) were modified by a background process during the session, not by me. This was flagged by the system as intentional/expected, so I left it untouched and only verified my own target sections still lint clean, which they do.</result>
+<usage><subagent_tokens>190292</subagent_tokens><tool_uses>111</tool_uses><duration_ms>1152539</duration_ms></usage>
+</task-notification>

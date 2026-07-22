@@ -3,7 +3,7 @@
   "checkpoint_id": "d84718082c10",
   "session_id": "e0a6db83-6641-4699-ac03-2286e8aa073f",
   "strategy": "manual-commit",
-  "created_at": "2026-07-22T10:55:54.094671Z",
+  "created_at": "2026-07-22T11:02:39.7225178Z",
   "branch": "feat/gradient-colors",
   "checkpoints_count": 2,
   "files_touched": [
@@ -11,16 +11,16 @@
   ],
   "agent": "Claude Code",
   "model": "",
-  "turn_id": "28e8ff4eeafd",
-  "checkpoint_transcript_start": 547,
-  "transcript_lines_at_start": 547,
-  "compact_transcript_start": 155,
+  "turn_id": "17384226f76d",
+  "checkpoint_transcript_start": 597,
+  "transcript_lines_at_start": 597,
+  "compact_transcript_start": 166,
   "token_usage": {
-    "input_tokens": 15,
-    "cache_creation_tokens": 22446,
-    "cache_read_tokens": 2106136,
-    "output_tokens": 17964,
-    "api_call_count": 8
+    "input_tokens": 30,
+    "cache_creation_tokens": 15898,
+    "cache_read_tokens": 4561443,
+    "output_tokens": 12643,
+    "api_call_count": 16
   },
   "skill_events_version": 1,
   "skill_events": [
@@ -35,7 +35,7 @@
         "signal": "skill_tool_use",
         "confidence": "explicit"
       },
-      "turn_id": "28e8ff4eeafd",
+      "turn_id": "17384226f76d",
       "transcript_anchor": {
         "unit": "line",
         "start": 15,
@@ -66,7 +66,7 @@
         "signal": "skill_tool_use",
         "confidence": "explicit"
       },
-      "turn_id": "28e8ff4eeafd",
+      "turn_id": "17384226f76d",
       "transcript_anchor": {
         "unit": "line",
         "start": 172,
@@ -88,18 +88,18 @@
     }
   ],
   "session_metrics": {
-    "turn_count": 10
+    "turn_count": 12
   },
   "initial_attribution": {
-    "calculated_at": "2026-07-22T10:55:53.9731754Z",
-    "agent_lines": 8,
-    "agent_removed": 0,
-    "human_added": 1300,
+    "calculated_at": "2026-07-22T11:02:39.4677832Z",
+    "agent_lines": 32,
+    "agent_removed": 9,
+    "human_added": 1322,
     "human_modified": 0,
     "human_removed": 0,
-    "total_committed": 1308,
-    "total_lines_changed": 1317,
-    "agent_percentage": 0.6074411541381929,
+    "total_committed": 1354,
+    "total_lines_changed": 1372,
+    "agent_percentage": 2.988338192419825,
     "metric_version": 2
   },
   "prompt_attributions": [

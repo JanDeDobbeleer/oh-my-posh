@@ -40,15 +40,39 @@ func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 				if keyword == "" {
 					return Transparent
 				}
-				return keyword
+				return keyword.GradientLast()
 			}
+
+			if !keyword.IsGradient() {
+				continue
+			}
+
+			// a parent gradient collapses to its last stop; a keyword stop refers to
+			// that SAME parent's colors, never to the child segment asking for the
+			// parent color. A parentBackground/parentForeground stop walks further up
+			// through the next iteration; an unresolvable self-reference degrades to
+			// transparent instead of leaking a keyword the child would misresolve.
+			stop := keyword.GradientLast()
+
+			switch stop { //nolint:exhaustive
+			case Foreground:
+				stop = parentColor.Foreground.GradientLast()
+			case Background:
+				stop = parentColor.Background.GradientLast()
+			}
+
+			if stop.isKeyword() && stop != ParentBackground && stop != ParentForeground && stop != Transparent {
+				return Transparent
+			}
+
+			keyword = stop
 		}
 
 		if keyword == "" {
 			return Transparent
 		}
 
-		return keyword
+		return keyword.GradientLast()
 	}
 
 	resolveKeyword := func(keyword Ansi) Ansi {

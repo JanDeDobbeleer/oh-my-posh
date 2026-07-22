@@ -366,10 +366,112 @@ func (e *Engine) applyPowerShellBleedPatch() {
 	e.write(terminal.ClearAfter())
 }
 
+// minGradientCellsPerStop is the minimum number of visible cells a gradient stop needs to
+// render as a smooth blend rather than a discrete color block; see Amendment 3 in the
+// gradient spec. Below cells < minGradientCellsPerStop*stops, collapseGradient replaces the
+// whole channel with the gradient's last stop.
+const minGradientCellsPerStop = 2
+
 func (e *Engine) setActiveSegment(segment *config.Segment) {
 	e.activeSegment = segment
 	terminal.Interactive = segment.Interactive
-	terminal.SetColors(segment.ResolveBackground(), segment.ResolveForeground())
+
+	background := resolvePaletteReference(segment.ResolveBackground())
+	foreground := resolvePaletteReference(segment.ResolveForeground())
+
+	// palette-resolved values are written back to the segment's resolved-color cache
+	// so a palette entry holding a gradient is visible to every downstream consumer
+	// (separators, diamonds, parent color references), not just this render call.
+	if background != segment.ResolveBackground() {
+		segment.CollapseBackground(background)
+	}
+
+	if foreground != segment.ResolveForeground() {
+		segment.CollapseForeground(foreground)
+	}
+
+	// the collapse decision is made once per segment, before anything renders, so every
+	// consumer of the segment's resolved colors (this Write call, separators, diamonds,
+	// parent color references) agrees on the same solid color; see collapseGradient.
+	// Pending placeholders are exempt: they are transient and should preview the
+	// segment's gradient rather than flash a collapsed solid color mid-stream.
+	if !segment.Pending && (background.IsGradient() || foreground.IsGradient()) {
+		cells := terminal.VisibleCells(segment.Text())
+
+		if collapsed, ok := collapseGradient(background, cells); ok {
+			background = collapsed
+			segment.CollapseBackground(background)
+		}
+
+		if collapsed, ok := collapseGradient(foreground, cells); ok {
+			foreground = collapsed
+			segment.CollapseForeground(foreground)
+		}
+	}
+
+	terminal.SetColors(background, foreground)
+}
+
+// resolvePaletteReference expands a palette reference (p:name) so a palette entry
+// holding a gradient is visible to the engine's gradient handling; without this,
+// IsGradient/GradientLast run on the literal "p:name" string and every gradient
+// rule is silently skipped for palette-referenced gradients.
+func resolvePaletteReference(c color.Ansi) color.Ansi {
+	if terminal.Colors == nil {
+		return c
+	}
+
+	resolved, err := terminal.Colors.Resolve(c)
+	if err != nil {
+		return c
+	}
+
+	return resolved
+}
+
+// collapseGradient reports whether c must collapse to a single solid color because the
+// segment has fewer than minGradientCellsPerStop visible cells per stop, returning that
+// color (the gradient's last stop) when so. A non-gradient value, or a syntactically invalid
+// gradient (nil GradientStops), is left untouched: the writer's existing per-call fallback
+// handles those.
+func collapseGradient(c color.Ansi, cells int) (color.Ansi, bool) {
+	if !c.IsGradient() {
+		return c, false
+	}
+
+	stops := c.GradientStops()
+	if len(stops) < 2 {
+		return c, false
+	}
+
+	if cells >= minGradientCellsPerStop*len(stops) {
+		return c, false
+	}
+
+	return stops[len(stops)-1], true
+}
+
+// backgroundEdge collapses a segment's background gradient to its last stop,
+// resolving a keyword stop (foreground, background) against the SAME segment's
+// colors so edge consumers never leak a keyword into the wrong context.
+func backgroundEdge(segment *config.Segment) color.Ansi {
+	background := resolvePaletteReference(segment.ResolveBackground())
+
+	stop := background.GradientLast()
+
+	switch stop { //nolint:exhaustive
+	case color.Foreground:
+		stop = resolvePaletteReference(segment.ResolveForeground()).GradientLast()
+	case color.Background:
+		// self-reference has no resolvable edge
+		return color.Transparent
+	}
+
+	if stop == color.Foreground || stop == color.Background {
+		return color.Transparent
+	}
+
+	return stop
 }
 
 func (e *Engine) renderActiveSegment() {
@@ -382,7 +484,8 @@ func (e *Engine) renderActiveSegment() {
 		background := color.Transparent
 
 		if e.previousActiveSegment != nil && e.previousActiveSegment.HasEmptyDiamondAtEnd() {
-			background = e.previousActiveSegment.ResolveBackground()
+			// this is the previous segment's right edge; a gradient must show its last stop.
+			background = backgroundEdge(e.previousActiveSegment)
 		}
 
 		terminal.Write(background, color.Background, e.activeSegment.LeadingDiamond)
@@ -406,7 +509,14 @@ func (e *Engine) writeSeparator(final bool) {
 
 	isCurrentDiamond := e.activeSegment.ResolveStyle() == config.Diamond
 	if final && isCurrentDiamond {
-		terminal.Write(color.Transparent, color.Background, e.activeSegment.TrailingDiamond)
+		// the trailing diamond sits at the segment's right edge; a gradient
+		// background must render as its last stop, not the writer's cells==1 default.
+		diamondColor := color.Background
+		if resolvePaletteReference(e.activeSegment.ResolveBackground()).IsGradient() {
+			diamondColor = backgroundEdge(e.activeSegment)
+		}
+
+		terminal.Write(color.Transparent, diamondColor, e.resolveTrailingDiamond())
 		return
 	}
 
@@ -481,24 +591,58 @@ func (e *Engine) writeSeparator(final bool) {
 	terminal.Write(bgColor, e.getPowerlineColor(), symbol)
 }
 
+// getPowerlineColor resolves the separator symbol's color, which always sits at the
+// previous segment's right edge; a gradient background must collapse to its last stop,
+// resolved against the previous segment's own context (see backgroundEdge).
 func (e *Engine) getPowerlineColor() color.Ansi {
 	if e.previousActiveSegment == nil {
 		return color.Transparent
 	}
 
 	if e.previousActiveSegment.ResolveStyle() == config.Diamond && e.previousActiveSegment.TrailingDiamond == "" {
-		return e.previousActiveSegment.ResolveBackground()
+		return backgroundEdge(e.previousActiveSegment)
 	}
 
 	if e.activeSegment.ResolveStyle() == config.Diamond && e.activeSegment.LeadingDiamond == "" {
-		return e.previousActiveSegment.ResolveBackground()
+		return backgroundEdge(e.previousActiveSegment)
 	}
 
 	if !e.previousActiveSegment.IsPowerline() {
 		return color.Transparent
 	}
 
-	return e.previousActiveSegment.ResolveBackground()
+	return backgroundEdge(e.previousActiveSegment)
+}
+
+// resolveTrailingDiamond rewrites a `background` keyword inside the active segment's
+// trailing diamond template to the gradient's resolved last stop. The diamond renders
+// in its own Write with no gradient cell context, so the keyword would otherwise
+// collapse to the FIRST stop — a visible seam at the segment's right edge.
+func (e *Engine) resolveTrailingDiamond() string {
+	diamond := e.activeSegment.TrailingDiamond
+
+	if !strings.Contains(diamond, string(color.Background)) {
+		return diamond
+	}
+
+	if !resolvePaletteReference(e.activeSegment.ResolveBackground()).IsGradient() {
+		return diamond
+	}
+
+	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, diamond)
+	if len(match) == 0 {
+		return diamond
+	}
+
+	edge := backgroundEdge(e.activeSegment)
+	if edge.IsClear() {
+		return diamond
+	}
+
+	anchor := match[terminal.ANCHOR]
+	adjusted := strings.ReplaceAll(anchor, string(color.Background), edge.String())
+
+	return strings.Replace(diamond, anchor, adjusted, 1)
 }
 
 func (e *Engine) adjustTrailingDiamondColorOverrides() {

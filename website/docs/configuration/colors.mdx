@@ -30,6 +30,81 @@ Oh My Posh supports multiple different color references, being:
 - The `parentBackground` keyword which can be used to inherit the previous active segment's background color.
 - The `accent` keyword which references the OS accent color (Windows and macOS only).
 
+## Gradients
+
+Anywhere a **Standard color** is expected, you can instead use a `linear-gradient` with two or
+more comma-separated stops:
+
+<Config
+  data={{
+    type: "text",
+    style: "plain",
+    foreground: "linear-gradient(#FF0000, #0000FF)",
+  }}
+/>
+
+The stops are spread evenly across the segment's visible text and interpolated per character cell.
+Each stop can be a hex color or a [Palette reference][palette] (`p:name`), so gradients work with
+`palette` and `palettes` the same way **Standard colors** do. This applies to `foreground`,
+`background`, `foreground_templates`, `background_templates`, Palette entries, and `cycle` colors.
+
+Powerline separators, diamond caps, and the `parentBackground`/`parentForeground` keywords
+automatically pick up the matching edge of the gradient, so a segment next to a gradient still
+connects with the right color.
+
+### Supported stops
+
+A stop must resolve to a hex color before it can be interpolated:
+
+| Stop                                                               | Supported |
+| ------------------------------------------------------------------ | --------- |
+| Hex color (`#CB4B16`, `#F0A`)                                      | yes       |
+| [Palette reference][palette] to a hex color (`p:blue`)             | yes       |
+| `parentBackground`, `parentForeground`, `background`, `foreground` | yes       |
+| `accent` (Windows and macOS only)                                  | yes       |
+| ANSI color name (`red`, `lightBlue`)                               | no        |
+| 256 color palette number (`146`)                                   | no        |
+| `transparent`                                                      | no        |
+
+Keyword stops resolve against the surrounding segments at render time and must land on a hex
+color; when the previous segment uses a gradient itself, `parentBackground` picks up its last
+stop, so `linear-gradient(parentBackground, p:yellow)` connects seamlessly to it. On platforms
+where the OS accent color is unavailable, an `accent` stop is invalid and the gradient falls
+back like any other invalid stop.
+
+A `background` or `foreground` keyword in a [color override](#color-overrides) inside a gradient
+segment resolves to the gradient's color at that position in the text: a leading
+`<background,transparent>` cap picks up the first stop, a trailing one the color where the
+gradient ends, so template caps stay seamless without hardcoding edge colors.
+
+A gradient without at least two supported stops renders as a solid color: the last stop goes through
+the regular color pipeline, so `linear-gradient(red, blue)` renders solid blue rather than failing —
+matching the color its separators and width-collapsed form already use. Rejected stops are reported
+in `oh-my-posh debug` output.
+
+### Stops and segment width
+
+The gradient always starts and ends exactly on the configured colors: the first stop lands on the
+first visible cell, the last stop on the last. Everything in between is interpolated, so a narrow
+segment simply shows a coarser gradient. A gradient needs at least two visible cells per stop to
+render per cell; narrower segments render the last stop as a solid color across the whole segment,
+including its caps and separators, rather than a coarse blend. Streaming placeholders are
+exempt: a pending segment's `...` placeholder previews the gradient per cell regardless of its
+width. Rendering cost is negligible; the
+only overhead is the per-cell color escape, which grows the prompt string by a few bytes per
+character.
+
+:::caution
+
+- Gradients aren't supported on segments with `interactive: true`; shell-expanded text throws off
+  the cell count the gradient interpolates across.
+- A gradient can't span multiple segments; each segment's gradient is self-contained.
+- Only the stop-list syntax is supported. Angle or direction keywords (for example `to right`) are
+  reserved but not implemented.
+- Terminals without truecolor support fall back to a banded 256-color approximation.
+
+:::
+
 ## Color templates
 
 Array of string [templates][templates] to define the color based on the current context.
@@ -317,3 +392,4 @@ cycle always gets precedence over everything else.
 [segment]: /docs/configuration/segment
 [sprig]: https://masterminds.github.io/sprig/
 [templates]: templates.mdx
+[palette]: #palette

@@ -136,6 +136,21 @@ func (c Ansi) ToForeground() Ansi {
 	return c
 }
 
+// ToChannel returns the color code adjusted for the requested channel, converting
+// between the foreground (38;...) and background (48;...) escape payload prefixes.
+func (c Ansi) ToChannel(isBackground bool) Ansi {
+	colorString := c.String()
+
+	switch {
+	case isBackground && strings.HasPrefix(colorString, "38;"):
+		return Ansi("48;" + colorString[3:])
+	case !isBackground && strings.HasPrefix(colorString, "48;"):
+		return Ansi("38;" + colorString[3:])
+	default:
+		return c
+	}
+}
+
 func (c Ansi) ResolveTemplate() Ansi {
 	if c.IsEmpty() {
 		return c
@@ -180,6 +195,12 @@ var unresolvedAccent = &Set{}
 
 func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 	defer log.Trace(time.Now())
+
+	// a gradient accent_color cannot serve as the single accent value; collapse to
+	// its first stop so the cached accent Set never holds a raw gradient string.
+	if defaultColor.IsGradient() {
+		defaultColor = defaultColor.GradientFirst()
+	}
 
 	// get the resolved OS accent color from the device cache first, regardless
 	// of whether a default was configured, so we never repeat the underlying
@@ -252,6 +273,12 @@ func (d *Defaults) ToAnsi(ansiColor Ansi, isBackground bool) Ansi {
 	}
 
 	if ansiColor.IsTransparent() {
+		return ansiColor
+	}
+
+	// a gradient rides the ANSI plumbing as a plain string; the terminal writer detects
+	// and renders it per cell, so it must never be mangled into hex/256 parsing here.
+	if ansiColor.IsGradient() {
 		return ansiColor
 	}
 
@@ -329,6 +356,12 @@ type PaletteColors struct {
 }
 
 func (p *PaletteColors) ToAnsi(colorString Ansi, isBackground bool) Ansi {
+	// a gradient string is not a palette key; guard it explicitly so it never round-trips
+	// through palette resolution and reaches the next decorator untouched.
+	if colorString.IsGradient() {
+		return colorString
+	}
+
 	paletteColor, err := p.palette.ResolveColor(colorString)
 	if err != nil {
 		return emptyColor

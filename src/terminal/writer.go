@@ -57,6 +57,15 @@ var (
 	currentColor    color.History
 	textLen         int
 
+	// bgGradientCells/fgGradientCells hold one ready-to-print ANSI code per visible
+	// cell of the segment being written, populated by color.GradientCells when the
+	// corresponding channel is a gradient. cellIndex is the shared cursor into both
+	// slices, advanced once per visible rune regardless of which channel(s) stamp.
+	// See stampGradient/writeVisibleRune.
+	bgGradientCells []color.Ansi
+	fgGradientCells []color.Ansi
+	cellIndex       int
+
 	isTransparent bool
 	isInvisible   bool
 	isHyperlink   bool
@@ -365,8 +374,35 @@ func Write(background, foreground color.Ansi, txt string) {
 		foregroundColor = Colors.ToAnsi("white", false)
 	}
 
+	// reset gradient state left over from a previous Write call
+	bgGradientCells, fgGradientCells = nil, nil
+	cellIndex = 0
+
+	// isTransparent is per-segment state: a previous Write's transparent rendering
+	// must not suppress gradient stamping (or trigger a spurious transparentEnd in
+	// endColorOverride) for this one.
+	isTransparent = false
+
+	// asAnsiColors resolves an inverted background (transparent foreground) with a
+	// foreground code for writeTransparentStart; a gradient bypasses that conversion,
+	// so collapse it here and take the regular transparent path: a valid gradient
+	// shows its first stop (this glyph is the segment's left edge), an invalid one
+	// its last stop, matching the solid color the body falls back to.
+	if foregroundColor.IsTransparent() && backgroundColor.IsGradient() {
+		if color.GradientCells(backgroundColor, 1, Colors, false, CurrentColors, ParentColors) != nil {
+			backgroundColor = collapseGradientFirst(backgroundColor, false)
+		} else {
+			backgroundColor = collapseGradientLast(backgroundColor, false)
+		}
+	}
+
+	bgGradient := backgroundColor.IsGradient()
+	fgGradient := foregroundColor.IsGradient()
+
 	// validate if we start with a color override
 	match := scanAnchor(txt)
+	body := txt[len(match.Anchor):]
+
 	if match.ok && match.Anchor != hyperLinkStart {
 		colorOverride := true
 		for _, style := range knownStyles {
@@ -383,6 +419,31 @@ func Write(background, foreground color.Ansi, txt string) {
 		}
 	}
 
+	// a gradient needs the segment's visible cell count before anything streams,
+	// so GradientCells can hand back one color per cell up front.
+	if bgGradient || fgGradient {
+		cells := countVisibleCells(body, match.Anchor == hyperLinkStart)
+
+		if bgGradient {
+			bgGradientCells = color.GradientCells(backgroundColor, cells, Colors, true, CurrentColors, ParentColors)
+			if bgGradientCells == nil {
+				// invalid gradient (e.g. a single resolvable stop): collapse to the
+				// LAST stop so the body matches the engine's width collapse and the
+				// last-stop edges separators and parent keywords already render.
+				backgroundColor = collapseGradientLast(backgroundColor, true)
+				bgGradient = false
+			}
+		}
+
+		if fgGradient {
+			fgGradientCells = color.GradientCells(foregroundColor, cells, Colors, false, CurrentColors, ParentColors)
+			if fgGradientCells == nil {
+				foregroundColor = collapseGradientLast(foregroundColor, false)
+				fgGradient = false
+			}
+		}
+	}
+
 	writeSegmentColors()
 
 	// print the hyperlink part AFTER the coloring
@@ -391,8 +452,27 @@ func Write(background, foreground color.Ansi, txt string) {
 		builder.WriteString(formats.HyperlinkStart)
 	}
 
-	txt = txt[len(match.Anchor):]
+	txt = body
 	textLen = len(txt)
+
+	if bgGradient || fgGradient {
+		writeBodyGradient(txt, background)
+	} else {
+		writeBody(txt, background)
+	}
+
+	// reset colors
+	writeEscapedAnsiString(resetStyle.End)
+
+	// pop last color from the stack
+	currentColor.Pop()
+}
+
+// writeBody streams txt's visible runes, style/color overrides and hyperlink
+// tokens to the builder. It is the fast path used whenever neither channel of
+// the segment being written is a gradient: no per-rune branching beyond what
+// existed before gradients were added.
+func writeBody(txt string, background color.Ansi) {
 	hyperlinkTextPosition := 0
 
 	for i := 0; i < len(txt); {
@@ -406,7 +486,7 @@ func Write(background, foreground color.Ansi, txt string) {
 		}
 
 		// color/end overrides first
-		match = scanAnchor(txt[i:])
+		match := scanAnchor(txt[i:])
 		if match.ok {
 			// check for hyperlinks first
 			switch match.Anchor {
@@ -445,12 +525,67 @@ func Write(background, foreground color.Ansi, txt string) {
 		write(s)
 		i += size
 	}
+}
 
-	// reset colors
-	writeEscapedAnsiString(resetStyle.End)
+// writeBodyGradient is writeBody's counterpart for when at least one channel is
+// a gradient. It stamps the interpolated color for the active, non-overridden
+// channel(s) before every visible rune (and the hyperlink no-text fallback),
+// advancing cellIndex in lockstep with countVisibleCells's pre-pass count.
+func writeBodyGradient(txt string, background color.Ansi) {
+	hyperlinkTextPosition := 0
 
-	// pop last color from the stack
-	currentColor.Pop()
+	for i := 0; i < len(txt); {
+		s, size := utf8.DecodeRuneInString(txt[i:])
+
+		// ignore everything which isn't overriding
+		if s != '<' {
+			writeVisibleRune(s)
+			i += size
+			continue
+		}
+
+		// color/end overrides first
+		match := scanAnchor(txt[i:])
+		if match.ok {
+			// check for hyperlinks first
+			switch match.Anchor {
+			case hyperLinkStart:
+				isHyperlink = true
+				i += len(match.Anchor)
+				builder.WriteString(formats.HyperlinkStart)
+				continue
+			case hyperLinkText:
+				isHyperlink = false
+				i += len(match.Anchor)
+				hyperlinkTextPosition = i
+				builder.WriteString(formats.HyperlinkCenter)
+				continue
+			case hyperLinkTextEnd:
+				// this implies there's no text in the hyperlink
+				if hyperlinkTextPosition == i {
+					stampGradient()
+					builder.WriteString("link")
+					length += 4
+					cellIndex += 4
+				}
+				i += len(match.Anchor)
+				continue
+			case hyperLinkEnd:
+				i += len(match.Anchor)
+				builder.WriteString(formats.HyperlinkEnd)
+				continue
+			case empty:
+				i += len(match.Anchor)
+				continue
+			}
+
+			i = writeAnchorOverride(match, background, i)
+			continue
+		}
+
+		writeVisibleRune(s)
+		i += size
+	}
 }
 
 func Len() int {
@@ -464,6 +599,9 @@ func String() (string, int) {
 
 		isTransparent = false
 		isInvisible = false
+
+		bgGradientCells, fgGradientCells = nil, nil
+		cellIndex = 0
 	}()
 
 	return builder.String(), length
@@ -508,13 +646,26 @@ func writeEscapedAnsiParts(prefix string, payload color.Ansi, suffix string) {
 
 // writeColorise writes the equivalent of fmt.Sprintf(colorise, c) wrapped in
 // the shell escape sequence, without allocating an intermediate string.
+// An empty payload would emit a bare \x1b[m (a full SGR reset) and a raw
+// gradient string would emit garbage; both degrade to writing nothing so a
+// missed guard upstream costs a color, never corrupted output.
 func writeColorise(c color.Ansi) {
+	if c.IsEmpty() || c.IsGradient() {
+		return
+	}
+
 	writeEscapedAnsiParts(colorisePrefix, c, coloriseSuffix)
 }
 
 // writeTransparentStart writes the equivalent of fmt.Sprintf(transparentStart, c)
 // wrapped in the shell escape sequence, without allocating an intermediate string.
+// The empty/gradient guard mirrors writeColorise: \x1b[;49m\x1b[7m would run
+// reverse video against default colors instead of the intended payload.
 func writeTransparentStart(c color.Ansi) {
+	if c.IsEmpty() || c.IsGradient() {
+		return
+	}
+
 	writeEscapedAnsiParts(transparentStartPrefix, c, transparentStartSuffix)
 }
 
@@ -543,6 +694,246 @@ func write(s rune) {
 	builder.WriteRune(s)
 }
 
+// writeVisibleRune stamps the active gradient color(s) for the current cell
+// before writing s, then advances cellIndex by s's rune width. It is only
+// called from writeBodyGradient, so isInvisible/isHyperlink runes are
+// excluded from stamping and the index exactly like write() excludes them
+// from length.
+func writeVisibleRune(s rune) {
+	visible := !isInvisible && !isHyperlink
+
+	if visible {
+		stampGradient()
+	}
+
+	write(s)
+
+	if visible {
+		cellIndex += runewidth.RuneWidth(s)
+	}
+}
+
+// stampGradient writes the truecolor/256-color escape for the current cell of
+// each channel that has a gradient AND is not currently suppressed by an
+// inline override. A channel counts as overridden when the color history's
+// top entry (or the segment base, when the history is empty) no longer
+// matches the channel's original gradient value; endColorOverride restores
+// that match on `</>`, which is what makes stamping resume automatically.
+func stampGradient() {
+	// transparent (reverse video) rendering collapses a gradient to a single edge
+	// color; stamping a background escape here would corrupt the inverted state.
+	if isTransparent {
+		return
+	}
+
+	if len(bgGradientCells) != 0 && activeBackground() == backgroundColor {
+		writeColorise(bgGradientCells[clampCellIndex(len(bgGradientCells))])
+	}
+
+	if len(fgGradientCells) != 0 && activeForeground() == foregroundColor {
+		writeColorise(fgGradientCells[clampCellIndex(len(fgGradientCells))])
+	}
+}
+
+// clampCellIndex guards against cellIndex reaching n on a trailing zero-width
+// rune (e.g. a newline after the last printable cell), which would otherwise
+// index one past the end of a gradient's cell slice.
+func clampCellIndex(n int) int {
+	if cellIndex >= n {
+		return n - 1
+	}
+
+	return cellIndex
+}
+
+// activeBackground/activeForeground return the color currently in effect for
+// each channel: the top of the override history, or the segment base color
+// when no override is active.
+func activeBackground() color.Ansi {
+	if bg := currentColor.Background(); !bg.IsEmpty() {
+		return bg
+	}
+
+	return backgroundColor
+}
+
+func activeForeground() color.Ansi {
+	if fg := currentColor.Foreground(); !fg.IsEmpty() {
+		return fg
+	}
+
+	return foregroundColor
+}
+
+// gradientCell resolves c to the stamped gradient color at the current cell when c
+// is the segment's own gradient for either channel (a `background`/`foreground`
+// keyword override resolves to exactly that string), converting the code to the
+// requested channel. This is what makes a trailing `<background,transparent>` cap
+// follow the gradient to its last stop instead of collapsing to the first.
+func gradientCell(c color.Ansi, isBackground bool) (color.Ansi, bool) {
+	var cell color.Ansi
+
+	switch {
+	case c == backgroundColor && len(bgGradientCells) != 0:
+		cell = bgGradientCells[clampCellIndex(len(bgGradientCells))]
+	case c == foregroundColor && len(fgGradientCells) != 0:
+		cell = fgGradientCells[clampCellIndex(len(fgGradientCells))]
+	default:
+		return "", false
+	}
+
+	return cell.ToChannel(isBackground), true
+}
+
+// collapseGradientEdge resolves a gradient override to the stamped color at the
+// current cell when it matches the segment's own gradient, and to its first stop
+// otherwise (foreign gradients, invalid context).
+func collapseGradientEdge(c color.Ansi, isBackground bool) color.Ansi {
+	if cell, ok := gradientCell(c, isBackground); ok {
+		return cell
+	}
+
+	return collapseGradientFirst(c, isBackground)
+}
+
+// collapseGradientFirst resolves a gradient's first stop through the same
+// Colors.Resolve/ToAnsi pipeline asAnsiColors applies to a literal color,
+// producing a ready-to-print ANSI code. Used wherever a gradient must
+// collapse to a single edge color instead of per-cell rendering: an invalid
+// gradient (color.GradientCells returned nil) and the transparent-foreground
+// paths, which never render gradients per cell.
+func collapseGradientFirst(c color.Ansi, isBackground bool) color.Ansi {
+	return collapseGradientStop(c.GradientFirst(), isBackground)
+}
+
+// collapseGradientLast is collapseGradientFirst's right-edge counterpart, used for
+// the invalid-gradient fallback so the body matches the last-stop color the engine's
+// width collapse and every edge consumer (separators, parent keywords) already use.
+func collapseGradientLast(c color.Ansi, isBackground bool) color.Ansi {
+	return collapseGradientStop(c.GradientLast(), isBackground)
+}
+
+func collapseGradientStop(stop color.Ansi, isBackground bool) color.Ansi {
+	// a syntactically invalid gradient has no stop to fall back to; return
+	// an empty color rather than letting the raw string reach an escape sequence.
+	if stop.IsGradient() {
+		return ""
+	}
+
+	// a keyword stop (parentBackground, ...) resolves against the segment context,
+	// like GradientCells does for per-cell rendering; without this the keyword string
+	// reaches ToAnsi, fails, and the glyph renders colorless.
+	stop = stop.Resolve(CurrentColors, ParentColors)
+	if stop.IsTransparent() {
+		return ""
+	}
+
+	if resolved, err := Colors.Resolve(stop); err == nil {
+		stop = resolved
+	}
+
+	resolved := Colors.ToAnsi(stop, isBackground)
+
+	// a stop that RESOLVED to a gradient (palette entry or keyword whose target is
+	// itself a gradient) must never leave as a raw string; degrade to no color.
+	if resolved.IsGradient() {
+		return ""
+	}
+
+	return resolved
+}
+
+// countVisibleCells is the pre-pass a gradient channel needs before streaming
+// starts: it walks txt with the exact same tokenization rules as
+// writeBody/writeBodyGradient (scanAnchor, the hyperlink tokens, the "link"
+// no-text fallback) and sums runewidth.RuneWidth over every rune write()
+// would count toward length, so color.GradientCells gets the right cell
+// count and the streaming loop's cellIndex never drifts from it.
+// startHyperlink mirrors the loop having already consumed a leading
+// hyperLinkStart anchor before txt begins.
+func countVisibleCells(txt string, startHyperlink bool) int {
+	cells := 0
+	hyperlink := startHyperlink
+	invisible := false
+	hyperlinkTextPosition := 0
+
+	// isStyleOrReset reports whether the anchor is a style tag or reset, which
+	// never change the invisible state in writeAnchorOverride.
+	isStyleOrReset := func(anchor string) bool {
+		if anchor == resetStyle.AnchorEnd {
+			return true
+		}
+
+		for _, style := range knownStyles {
+			if anchor == style.AnchorStart || anchor == style.AnchorEnd {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	for i := 0; i < len(txt); {
+		s, size := utf8.DecodeRuneInString(txt[i:])
+
+		if s != '<' {
+			if !hyperlink && !invisible {
+				cells += runewidth.RuneWidth(s)
+			}
+			i += size
+			continue
+		}
+
+		match := scanAnchor(txt[i:])
+		if !match.ok {
+			if !hyperlink && !invisible {
+				cells += runewidth.RuneWidth(s)
+			}
+			i += size
+			continue
+		}
+
+		switch match.Anchor {
+		case hyperLinkStart:
+			hyperlink = true
+		case hyperLinkText:
+			hyperlink = false
+			hyperlinkTextPosition = i + len(match.Anchor)
+		case hyperLinkTextEnd:
+			if hyperlinkTextPosition == i {
+				cells += 4
+			}
+		case empty:
+			// no state change
+		default:
+			// a color override anchor sets the invisible state exactly like
+			// writeAnchorOverride's isInvisible: both channels transparent hide the
+			// runes from write() and from cellIndex, so they must not be counted.
+			// This models the literal `<transparent,transparent>` form; a keyword
+			// that RESOLVES to transparent is not visible to this pre-pass.
+			if !isStyleOrReset(match.Anchor) {
+				invisible = match.FG == string(color.Transparent) && match.BG == string(color.Transparent)
+			}
+		}
+
+		i += len(match.Anchor)
+	}
+
+	return cells
+}
+
+// VisibleCells returns the number of visible cells txt would render, using the exact same
+// tokenization rules as Write's own pre-pass (scanAnchor, hyperlink tokens, the "link" no-text
+// fallback): it strips a leading hyperlink anchor the same way Write does before delegating to
+// countVisibleCells, so a caller that needs a segment's width before Write runs (e.g. the prompt
+// engine's gradient minimum-width collapse) gets the identical count Write itself would use.
+func VisibleCells(txt string) int {
+	match := scanAnchor(txt)
+	body := txt[len(match.Anchor):]
+
+	return countVisibleCells(body, match.Anchor == hyperLinkStart)
+}
+
 func writeSegmentColors() {
 	// use correct starting colors
 	bg := backgroundColor
@@ -564,17 +955,43 @@ func writeSegmentColors() {
 	case fg.IsTransparent() && len(BackgroundColor) != 0:
 		background := Colors.ToAnsi(BackgroundColor, false)
 		writeColorise(background)
-		writeColorise(bg.ToForeground())
+
+		invertBg := bg
+		if invertBg.IsGradient() {
+			invertBg = collapseGradientEdge(invertBg, false)
+		}
+		writeColorise(invertBg.ToForeground())
 	case fg.IsTransparent() && !bg.IsEmpty():
 		isTransparent = true
-		writeTransparentStart(bg)
+
+		transparentBg := bg
+		if transparentBg.IsGradient() {
+			// the transparentStart format takes a foreground code, matching how
+			// asAnsiColors resolves an inverted (transparent foreground) background.
+			transparentBg = collapseGradientEdge(transparentBg, false)
+		}
+		writeTransparentStart(transparentBg)
 	default:
+		// the segment's own gradient channel is stamped per cell by
+		// writeBodyGradient/stampGradient instead of once here; any other gradient
+		// (e.g. a <background,...> anchor override) collapses to its first stop so
+		// the raw "linear-gradient(...)" value never reaches an escape sequence.
 		if !bg.IsEmpty() && !bg.IsTransparent() {
-			writeColorise(bg)
+			switch {
+			case !bg.IsGradient():
+				writeColorise(bg)
+			case len(bgGradientCells) == 0 || bg != backgroundColor:
+				writeColorise(collapseGradientEdge(bg, true))
+			}
 		}
 
 		if !fg.IsEmpty() && !fg.IsTransparent() {
-			writeColorise(fg)
+			switch {
+			case !fg.IsGradient():
+				writeColorise(fg)
+			case len(fgGradientCells) == 0 || fg != foregroundColor:
+				writeColorise(collapseGradientEdge(fg, false))
+			}
 		}
 	}
 
@@ -630,27 +1047,50 @@ func writeAnchorOverride(match anchorMatch, background color.Ansi, i int) int {
 	if currentColor.Foreground().IsTransparent() && len(BackgroundColor) != 0 {
 		background := Colors.ToAnsi(BackgroundColor, false)
 		writeColorise(background)
-		writeColorise(currentColor.Background().ToForeground())
+
+		invertBg := currentColor.Background()
+		if invertBg.IsGradient() {
+			invertBg = collapseGradientEdge(invertBg, false)
+		}
+		writeColorise(invertBg.ToForeground())
 		return position
 	}
 
 	if currentColor.Foreground().IsTransparent() && !currentColor.Background().IsTransparent() {
 		isTransparent = true
-		writeTransparentStart(currentColor.Background())
+
+		transparentBg := currentColor.Background()
+		if transparentBg.IsGradient() {
+			// the transparentStart format takes a foreground code, matching how
+			// asAnsiColors resolves an inverted (transparent foreground) background.
+			transparentBg = collapseGradientEdge(transparentBg, false)
+		}
+		writeTransparentStart(transparentBg)
 		return position
 	}
 
 	if currentColor.Background() != backgroundColor {
 		// end the colors in case we have a transparent background
-		if currentColor.Background().IsTransparent() {
+		switch {
+		case currentColor.Background().IsTransparent():
 			writeEscapedAnsiString(backgroundEnd)
-		} else {
+		case currentColor.Background().IsGradient():
+			// an override resolving to a gradient (e.g. a <background,...> anchor in a
+			// gradient segment) collapses to its first stop; a matching gradient is
+			// handled by stamping and never reaches this branch.
+			writeColorise(collapseGradientEdge(currentColor.Background(), true))
+		default:
 			writeColorise(currentColor.Background())
 		}
 	}
 
 	if currentColor.Foreground() != foregroundColor {
-		writeColorise(currentColor.Foreground())
+		fg := currentColor.Foreground()
+		if fg.IsGradient() {
+			fg = collapseGradientEdge(fg, false)
+		}
+
+		writeColorise(fg)
 	}
 
 	return position
@@ -680,9 +1120,14 @@ func endColorOverride(position int) int {
 
 		if isTransparent {
 			writeEscapedAnsiString(transparentEnd)
+			// the transparent override has ended; without this reset stampGradient
+			// stays suppressed and a gradient background never resumes stamping.
+			isTransparent = false
 		}
 
-		if previousBg != bg {
+		// a gradient previousBg/previousFg is restored by stamping resuming on the
+		// next visible rune, never by printing its raw "linear-gradient(...)" value.
+		if previousBg != bg && !previousBg.IsGradient() {
 			if previousBg.IsClear() {
 				writeEscapedAnsiString(backgroundStyle.End)
 			} else {
@@ -690,7 +1135,7 @@ func endColorOverride(position int) int {
 			}
 		}
 
-		if previousFg != fg {
+		if previousFg != fg && !previousFg.IsGradient() {
 			writeColorise(previousFg)
 		}
 
@@ -713,11 +1158,13 @@ func endColorOverride(position int) int {
 		writeEscapedAnsiString(backgroundStyle.End)
 	}
 
-	if currentColor.Background() != backgroundColor && !backgroundColor.IsClear() {
+	// a gradient backgroundColor/foregroundColor is restored by stamping resuming
+	// on the next visible rune, never printed here directly.
+	if currentColor.Background() != backgroundColor && !backgroundColor.IsClear() && !backgroundColor.IsGradient() {
 		writeColorise(backgroundColor)
 	}
 
-	if (currentColor.Foreground() != foregroundColor || isTransparent) && !foregroundColor.IsClear() {
+	if (currentColor.Foreground() != foregroundColor || isTransparent) && !foregroundColor.IsClear() && !foregroundColor.IsGradient() {
 		writeColorise(foregroundColor)
 	}
 

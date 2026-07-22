@@ -248,6 +248,14 @@ func (segment *Segment) Execute(env runtime.Environment) {
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
+	// Foreground/background may be overridden directly (e.g. color cycling) between
+	// render passes, so the memoized values must not survive across calls to Render.
+	// This reset must precede the early return below: a disabled segment without a
+	// fallback template would otherwise serve a stale collapsed color from a prior
+	// pass to parent-color and separator consumers.
+	segment.foregroundResolved = false
+	segment.backgroundResolved = false
+
 	// Allow pending segments to render (they'll show "..." text)
 	if !segment.Pending && !segment.Enabled && !force {
 		return segment.renderFallback(index)
@@ -256,11 +264,6 @@ func (segment *Segment) Render(index int, force bool) bool {
 	if force {
 		segment.Force = true
 	}
-
-	// Foreground/background may be overridden directly (e.g. color cycling) between
-	// render passes, so the memoized values must not survive across calls to Render.
-	segment.foregroundResolved = false
-	segment.backgroundResolved = false
 
 	segment.writer.SetIndex(index)
 
@@ -363,6 +366,23 @@ func (segment *Segment) ResolveBackground() color.Ansi {
 	segment.backgroundResolved = true
 
 	return segment.backgroundCache
+}
+
+// CollapseBackground overrides the segment's resolved background color cache, bypassing
+// template resolution, without touching the raw Background field (which ResolveBackground
+// falls back to as a template-miss default on a later render pass). It is used by the prompt
+// engine to collapse a gradient background to a solid color once per segment, before anything
+// renders, so every later call to ResolveBackground this render (separators, diamonds, parent
+// color references) sees the same solid color instead of the raw gradient string.
+func (segment *Segment) CollapseBackground(background color.Ansi) {
+	segment.backgroundCache = background
+	segment.backgroundResolved = true
+}
+
+// CollapseForeground is CollapseBackground's foreground counterpart.
+func (segment *Segment) CollapseForeground(foreground color.Ansi) {
+	segment.foregroundCache = foreground
+	segment.foregroundResolved = true
 }
 
 func (segment *Segment) ResolveStyle() SegmentStyle {

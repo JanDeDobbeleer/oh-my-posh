@@ -67,6 +67,27 @@ func TestMakeColors(t *testing.T) {
 	assert.IsType(t, &Defaults{}, colors.(*Cached).ansiColors.(*PaletteColors).ansiColors)
 }
 
+// TestGradientPassesThroughAnsiColorDecorators verifies a gradient string is never mangled
+// by hex/256 parsing or palette resolution; it must round-trip untouched through every
+// String decorator so the terminal writer can render it per cell.
+func TestGradientPassesThroughAnsiColorDecorators(t *testing.T) {
+	gradient := Ansi("linear-gradient(#FF0000, #0000FF)")
+
+	cases := []struct {
+		Colors String
+		Case   string
+	}{
+		{Case: "Defaults", Colors: &Defaults{}},
+		{Case: "PaletteColors", Colors: &PaletteColors{ansiColors: &Defaults{}, palette: testPalette}},
+		{Case: "Cached", Colors: &Cached{ansiColors: &Defaults{}}},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, gradient, tc.Colors.ToAnsi(gradient, false), tc.Case)
+		assert.Equal(t, gradient, tc.Colors.ToAnsi(gradient, true), tc.Case)
+	}
+}
+
 func TestAnsiRender(t *testing.T) {
 	cases := []struct {
 		Case     string

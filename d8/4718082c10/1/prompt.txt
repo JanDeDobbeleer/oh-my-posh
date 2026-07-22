@@ -1,1 +1,5 @@
-Yes, please create that because it makes sense to have that support.
+why doesn't accent work as a color? Isn't that also a hex color?
+
+---
+
+Yes, please add it.

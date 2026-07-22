@@ -294,3 +294,310 @@ SCENARIO: `background: "linear-gradient(#FF0000, #0000FF)"`, `foreground: "linea
 Chain checks that came back clean (no finding): `Cached.ToAnsi` caching the gradient passthrough is harmless — it stores an identity mapping keyed per channel, and `Cached.Resolve`/`PaletteColors.Resolve` forward correctly (plain hex survives every decorator's Resolve as-is with nil error; an unknown `p:` ref returns a real error, so the stop is skipped and logged rather than producing `colorful.Hex("")`). Config export/serialization reads the untouched raw fields, which is the desired behavior; the cycle raw-field writes happen before first resolution (and the stale-cache-on-repass behavior is pre-existing). `keywords.Resolve` cannot loop forever through gradient values: a gradient string is never `isKeyword()`, and the `resolved == color` break covers the self-referential keyword cases.</result>
 <usage><subagent_tokens>122887</subagent_tokens><tool_uses>16</tool_uses><duration_ms>385482</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>adb710467b4beed0d</task-id>
+<tool-use-id>toolu_0154cKnWqbcqoBahUb7aNhgH</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\adb710467b4beed0d.output</output-file>
+<status>completed</status>
+<summary>Agent "Angle C: cross-file tracer" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>FILE: D:\oh-my-posh\src\terminal\writer.go
+LINE: 891
+SUMMARY: `Colors.ToAnsi(BackgroundColor, false)` can now return a raw `linear-gradient(...)` string (the new ToAnsi passthrough) which `writeColorise` emits verbatim as an escape payload; same at line 983 in writeAnchorOverride.
+SCENARIO: Set `"terminal_background": "linear-gradient(#000000, #222222)"` — schema.json now validates this because `terminal_background` `$ref`s `#/definitions/color` which gained the gradient variant — and use any segment/anchor with a transparent foreground (every powerline arrow when terminal_background is set). Pre-change ToAnsi returned emptyColor; now the terminal receives `\x1b[linear-gradient(#000000, #222222)m`, printing garbage and corrupting the prompt.
+---
+FILE: D:\oh-my-posh\src\terminal\writer.go
+LINE: 817
+SUMMARY: `countVisibleCells` tracks hyperlink state but not the invisible state (`isInvisible` from a `&lt;transparent,transparent&gt;` override, set at line 967), so invisible runes are counted in the gradient pre-pass but never advance `cellIndex` in `writeVisibleRune`.
+SCENARIO: A gradient segment whose template contains an invisible section, e.g. `ab&lt;transparent,transparent&gt;hidden&lt;/&gt;cd`: GradientCells is sized for 10 cells but only 4 are stamped, so the visible text ends mid-ramp (never reaches the last stop) and a trailing `&lt;background,transparent&gt;` cap resolves via `gradientCell` at a stale index — the segment's right edge no longer matches the configured end color or adjacent separators.
+---
+FILE: D:\oh-my-posh\src\color\keywords.go
+LINE: 43
+SUMMARY: The parent-keyword collapse returns `keyword.GradientLast()` — the raw, unresolved last stop — but `Resolve` has already returned, so a last stop that is itself a keyword (`foreground`, `background`) is never re-resolved (or, when re-resolved by `asAnsiColors` for engine callers like `getPowerlineColor().GradientLast()` at engine.go:552/563, resolves against the wrong segment's Set).
+SCENARIO: Previous segment `background: "linear-gradient(#FF0000, foreground)"`; next segment uses `parentBackground` (or a powerline separator). The literal string `foreground` reaches `Defaults.ToAnsi`, which returns emptyColor — the separator/next-segment background renders colorless — or, via the engine path, resolves to the *current* segment's foreground instead of the previous segment's.
+---
+FILE: D:\oh-my-posh\src\prompt\engine.go
+LINE: 468
+SUMMARY: The final trailing diamond's `fg` is correctly collapsed to `GradientLast`, but any `&lt;background,...&gt;` anchor inside the `trailing_diamond` template itself resolves to the gradient in a Write whose `backgroundColor` is `Transparent`, so `collapseGradientEdge` falls to `collapseGradientFirst` — the first stop — at the segment's right edge.
+SCENARIO: Diamond segment with `background: "linear-gradient(#FF0000, #0000FF)"` and `"trailing_diamond": "&lt;background,transparent&gt;\ue0b4&lt;/&gt;"`: the cap glyph renders red (first stop) directly against the body's blue right edge, a visible seam; the same template inside the body (transient-cap test pattern) correctly picks the last cell.
+---
+FILE: D:\oh-my-posh\src\prompt\extra.go
+LINE: 78
+SUMMARY: Transient/secondary/debug/valid/error prompts call `terminal.Write` directly and never apply the engine's Amendment-3 minimum-width collapse (`collapseGradient` lives only in `setActiveSegment`), diverging from the documented "narrower segments render the last stop as a solid color" rule.
+SCENARIO: `transient_prompt` with `foreground: "linear-gradient(#FF0000, #00FF00, #0000FF)"` and template `"&gt; "` (2 cells, below the 6-cell threshold): the writer renders a 2-cell coarse red-to-blue block instead of collapsing to solid blue as the docs and primary-prompt behavior promise; same for `TransientRPrompt` at line 200.
+---
+FILE: D:\oh-my-posh\src\color\colors.go
+LINE: 222
+SUMMARY: `SetAccentColor`'s fallback stores `d.ToAnsi(defaultColor, ...)` which — with the new gradient passthrough — caches a raw gradient string as the accent Set when `accent_color` is configured as a gradient (schema-valid via the shared color definition).
+SCENARIO: On Linux (no OS accent), `"accent_color": "linear-gradient(#FF0000, #0000FF)"` plus an `accent` gradient stop elsewhere: `resolver.ToAnsi(Accent, false)` in GradientCells returns the raw gradient, `colorful.Hex`/`parseTrueColor` both fail, and the stop is silently invalidated; if `terminal_background: "accent"` is also set, the raw gradient reaches `writeColorise` at writer.go:891 exactly like finding 1.
+---</result>
+<usage><subagent_tokens>130220</subagent_tokens><tool_uses>27</tool_uses><duration_ms>446919</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a00974beeb6b492d2</task-id>
+<tool-use-id>toolu_01PNQeteznBeTG8nqxk6NNS8</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\a00974beeb6b492d2.output</output-file>
+<status>completed</status>
+<summary>Agent "Angle D: Go pitfalls" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Verification work done: read the full diff, then checked the live sources — `src/terminal/writer.go` (writeColorise/writeEscapedAnsiParts, transparentStart format constants), `src/prompt/streaming.go` (producer model, `trackPendingSegment`), `src/prompt/engine.go` (setActiveSegment, getPowerlineColor), `src/config/segment.go` (Render/Execute, Collapse*), gob registrations, and `Ansi` helpers. Items I checked and cleared: `ToChannel` on `38;5;146` produces the correct `48;5;146` background 256-code (not a bug); `parseTrueColor` uses `ParseUint(...,8)` so no truncation; interpolation position math is exact at both endpoints and cannot go negative; gradient strings are plain `Ansi` strings so gob cache round-trips are safe; slices are freshly allocated per `Write` with no aliasing; `countVisibleCells` and `writeBodyGradient` tokenize identically so `cellIndex` cannot drift.
+
+FILE: D:\oh-my-posh\src\terminal\writer.go
+LINE: 1016 (root cause at 785, also call sites 919, 928, 990, 1025)
+SUMMARY: `collapseGradientEdge`/`collapseGradientFirst` can return the empty color, and `writeColorise(emptyColor)` emits a bare `\x1b[m` — a full SGR reset — because none of the new gradient call sites guard `IsEmpty()` the way pre-existing code paths do.
+SCENARIO: A template override whose gradient first stop resolves to transparent or nothing, e.g. `&lt;linear-gradient(parentBackground,#FFF)&gt;X&lt;/&gt;` on the first segment (no parents: `parentBackground` → `Transparent` → `""`), reaches `writeAnchorOverride` line 1016 → `writeColorise("")` → `\x1b[m` resets ALL active attributes (background, bold) mid-segment instead of applying a color, so the rest of the override span renders unstyled.
+---
+FILE: D:\oh-my-posh\src\prompt\engine.go
+LINE: 387
+SUMMARY: New unsynchronized read of `segment.Pending` in `setActiveSegment` races with the `segment.Pending = false` write in `trackPendingSegment`'s goroutine (src/prompt/streaming.go:215), extending an existing race pattern into the gradient collapse decision.
+SCENARIO: Streaming prompt with two timed-out segments A and B: A completes → producer goroutine runs `renderFromBlocks`, which calls `setActiveSegment(B)` and reads `B.Pending` while B's tracker goroutine concurrently writes `B.Pending = false` with no happens-before edge (the channel send only synchronizes the segment that was sent). `go test -race` flags it in the serve daemon; a stale read makes the collapse/exempt decision act on inconsistent state (collapsed solid vs per-cell placeholder) within one pass.
+---
+FILE: D:\oh-my-posh\src\terminal\writer.go
+LINE: 785 (vs D:\oh-my-posh\src\prompt\engine.go:546-565 and src/color/keywords.go:43,51)
+SUMMARY: Invalid-gradient fallback is inconsistent — the writer collapses the segment body to the FIRST stop (`collapseGradientFirst`), while separators, diamonds, and `parentBackground` collapse to the LAST stop (`GradientLast`), producing mismatched colors for the same segment.
+SCENARIO: `background: linear-gradient(red, blue)` (ANSI names are unsupported stops, so `GradientCells` returns nil): the body renders solid red (first stop through the regular pipeline, as documented), but `getPowerlineColor()` returns `GradientLast()` = `blue`, so the powerline arrow after the segment renders blue against a red body — a visibly broken edge whenever a syntactically valid gradient has unresolvable stops.
+---
+FILE: D:\oh-my-posh\src\terminal\writer.go
+LINE: 1003 (also 908)
+SUMMARY: `writeTransparentStart` with the empty color from a failed gradient collapse emits `\x1b[0m\x1b[;49m\x1b[7m` — the empty SGR parameter parses as `0` (reset) and the intended foreground code is missing, so reverse video runs with default colors.
+SCENARIO: A powerline separator rendered with transparent foreground over a gradient override whose collapse yields `""` (first stop transparent/unresolvable, e.g. an inline `&lt;linear-gradient(transparent,#FFF),transparent&gt;` or a chained gradient with no parent context on the anchor path): instead of skipping the escape, the writer prints reverse-video-with-defaults, rendering the arrow glyph as a default-colored inverted block.
+---
+FILE: D:\oh-my-posh\src\terminal\writer.go
+LINE: 384
+SUMMARY: The new unconditional `isTransparent = false` at the top of `Write` changes cross-Write behavior for non-gradient prompts too — previously the flag persisted across Writes until `String()`, and `endColorOverride` consulted it (`\x1b[27m` emission and the forced foreground re-colorise at line ~1094).
+SCENARIO: Existing prompt: transparent-foreground powerline separator (Write A sets `isTransparent`) followed by a segment whose template contains `&lt;red&gt;x&lt;/&gt;` (Write B, same String() batch): before the diff, B's `endColorOverride` took the `isTransparent` branch and emitted `\x1b[27m` plus a foreground restore; after the diff it does not — byte output of existing non-gradient themes changes, which golden/regression tests or shells diffing prompt strings (transient caching) may notice even though it is visually a fix.
+---</result>
+<usage><subagent_tokens>120617</subagent_tokens><tool_uses>17</tool_uses><duration_ms>490958</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>aa8420bb58afda54e</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\aa8420bb58afda54e.output</output-file>
+<status>completed</status>
+<summary>Agent "Angle B: removed-behavior audit" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Temp test file removed, build clean. Audit complete — all findings verified empirically against the actual writer.
+
+FILE: src/terminal/writer.go
+LINE: 1047-1074 (endColorOverride, `currentColor.Len() &gt; 1` branch) with src/terminal/writer.go:705 (stampGradient)
+SUMMARY: The old branch unconditionally restored `previousBg` via `writeColorise`; the new `!previousBg.IsGradient()` guard delegates restoration to stamping, but this branch never clears `isTransparent`, and `stampGradient` returns early while `isTransparent` is true — so after a mid-text transparent-foreground override the gradient background is never re-established for the rest of the segment.
+SCENARIO: Gradient-background segment whose template contains the very common in-template separator pattern `&lt;transparent,background&gt;\ue0b1&lt;/&gt;` mid-text (used by aliens, blueish, cloud-native-azure, agnoster-style themes). Verified with `Write(gradient, "#eff1f5", "ab&lt;transparent,#112233&gt;X&lt;/&gt;cd")`: output is `...b \x1b[0m\x1b[38;2;17;34;51;49m\x1b[7mX \x1b[27m \x1b[38;2;239;241;245m cd` — "cd" gets zero background escapes and renders on the terminal's default background, punching a hole in the segment. Old code wrote `previousBg` here, restoring a solid background.
+---
+FILE: src/prompt/engine.go
+LINE: 461-468 (writeSeparator, final trailing-diamond branch)
+SUMMARY: The gradient fix passes `diamondColor = background.GradientLast()` only as the Write foreground parameter; a `background` keyword inside the TrailingDiamond template itself still resolves to the raw gradient, misses `gradientCell` (this Write's base colors are Transparent/last-stop, not the gradient), and collapses via `collapseGradientFirst` to the FIRST stop — the old invariant was that `background` in a trailing diamond always equaled the segment's edge color.
+SCENARIO: Diamond segment with `background: linear-gradient(#FF0000, #0000FF)` and a templated trailing diamond like `&lt;background,transparent&gt;\ue0b4&lt;/&gt;` (the keyword-in-diamond pattern `adjustTrailingDiamondColorOverrides` exists to support). Verified: `Write(color.Transparent, gradient.GradientLast(), "&lt;background,transparent&gt;\ue0b4&lt;/&gt;")` renders `\x1b[38;2;255;0;0m\ue0b4` — a red (first-stop) cap glued to the blue right edge of the segment.
+---
+FILE: src/terminal/writer.go
+LINE: 785-807 (collapseGradientFirst returning "") reaching writeColorise at 898, 919, 928, 990, 1016, 1028 and writeTransparentStart at 908, 1003
+SUMMARY: Old code only ever passed non-empty colors to `writeColorise`/`writeTransparentStart`; `collapseGradientFirst` can now return `""` (syntactically invalid gradient, or first stop resolving to transparent), and an empty payload makes `writeColorise` emit a bare `\x1b[m` — a full SGR reset that wipes the color written immediately before it instead of being a no-op.
+SCENARIO: First segment in the prompt with `background: linear-gradient(parentBackground, #EA76CB)` (no parent, so the first stop resolves to transparent) and a transparent foreground with `BackgroundColor` set. Verified: output is `\x1b[38;2;0;0;0m\x1b[mX` — the `\x1b[m` resets the just-written terminal background color, so the glyph renders in default colors rather than the intended inverted background.
+---
+FILE: src/terminal/writer.go
+LINE: 817-858 (countVisibleCells)
+SUMMARY: The pre-pass counts every non-hyperlink rune but cannot model `isInvisible` spans (`&lt;transparent,transparent&gt;...&lt;/&gt;` overrides), while `writeVisibleRune` skips both stamping and cellIndex advancement for invisible runes — so cells is over-counted, cellIndex never reaches the end of the slice, and the documented invariant "the last stop lands on the last visible cell" is broken.
+SCENARIO: Gradient segment whose template hides text conditionally, e.g. `a&lt;transparent,transparent&gt;hidden&lt;/&gt;&lt;#ff0000,&gt;b&lt;/&gt;cd`: GradientCells is sized for the hidden runes too, so the rightmost rendered cell gets an interpolated mid-color and the configured last stop never appears; the visible gradient ends short of its configured end color.
+---</result>
+<usage><subagent_tokens>152117</subagent_tokens><tool_uses>20</tool_uses><duration_ms>735996</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a7c1ee4906e39c49c</task-id>
+<tool-use-id>toolu_01AXhVv2iXuwEooePqiiuSfN</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\a7c1ee4906e39c49c.output</output-file>
+<status>completed</status>
+<summary>Agent "Angle A: line-by-line scan" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>FILE: src/terminal/writer.go
+LINE: 1057
+SUMMARY: endColorOverride's stack-depth&gt;1 branch never resets isTransparent, so after a mid-text transparent override ends, the stale flag makes stampGradient skip every remaining cell while the gradient guards also skip restoring previousBg — the rest of a gradient segment renders with no background at all.
+SCENARIO: Segment with background "linear-gradient(#FF0000, #0000FF)" and template "a&lt;transparent,red&gt;X&lt;/&gt;bcd": the anchor sets isTransparent=true and pushes a second history entry; "&lt;/&gt;" mid-text takes the Len()&gt;1 branch (writer.go:1047-1075) which writes transparentEnd but leaves isTransparent=true (only the Len()==1 branch at line 1103 resets it) and skips restoring the gradient previousBg; for "bcd" stampGradient returns at its isTransparent guard (line 705), so no background escape is ever emitted for the remainder of the segment.
+---
+FILE: src/terminal/writer.go
+LINE: 806
+SUMMARY: collapseGradientFirst checks IsGradient only on the raw first stop, not after Resolve/palette resolution, so a stop that resolves to another gradient is passed to Colors.ToAnsi (which passes gradients through untouched) and the literal "linear-gradient(...)" string is written into an ANSI escape sequence.
+SCENARIO: Palette {"primary": "linear-gradient(#A, #B)"} with segment background "linear-gradient(p:primary, #FFFFFF)" (or self-referential "linear-gradient(background, #FFFFFF)"): GradientCells rejects the gradient-valued stop, returns nil; Write falls back to collapseGradientFirst, where stop="p:primary" survives the IsGradient check at line 790, Colors.Resolve at line 802 expands it to the gradient string, and line 806 returns it verbatim; writeSegmentColors then emits "\x1b[linear-gradient(#A, #B)m", visibly corrupting the prompt — exactly what the function's own comment promises cannot happen.
+---
+FILE: src/prompt/engine.go
+LINE: 563
+SUMMARY: getPowerlineColor (and the diamond paths at lines 437/465) returns GradientLast's raw stop without resolving it, so a keyword last stop either fails to resolve (parentBackground self-loop yields empty, then Write's white default) or resolves against the wrong segment's context (background/foreground resolve against the active segment instead of the previous one).
+SCENARIO: First segment background "linear-gradient(#FF0000, parentBackground)" (documented as supported) followed by a powerline segment: getPowerlineColor returns the literal "parentBackground"; in Write, Ansi.Resolve walks parents[0].Background (the gradient), GradientLast returns "parentBackground" again, the resolved==color check in keywords.go:69 breaks the loop, ToAnsi yields emptyColor, and Write's empty-foreground fallback (writer.go:373) paints the separator arrow white instead of the segment color.
+---
+FILE: src/color/keywords.go
+LINE: 51
+SUMMARY: resolveParentColor collapses a parent gradient via GradientLast but returns the raw stop unresolved, so a following segment configured with parentBackground/parentForeground inherits an unresolvable keyword and renders with no background when the parent gradient's last stop is itself a keyword.
+SCENARIO: Segment A background "linear-gradient(#FF0000, parentBackground)", segment B background "parentBackground": B's Resolve substitutes A's gradient, GradientLast returns "parentBackground", the outer loop's resolved==color guard exits, and asAnsiColors' ToAnsi maps the leftover keyword string to emptyColor — segment B renders with the terminal default background instead of A's edge color.
+---
+FILE: src/terminal/writer.go
+LINE: 817
+SUMMARY: countVisibleCells does not model isInvisible, so runes hidden by a &lt;transparent,transparent&gt; override are counted in the pre-pass but never advance cellIndex during streaming, inflating the gradient cell slice so the visible text only ever shows the early portion of the gradient.
+SCENARIO: Background "linear-gradient(#000000, #FFFFFF)" with template "AB&lt;transparent,transparent&gt;xxxx&lt;red,&gt;CD&lt;/&gt;": the pre-pass counts 8 cells but writeVisibleRune skips the 4 invisible runes (visible=false, writer.go:683), so C and D stamp cells[2] and cells[3] of 8 (~30% gray) instead of ending at white; the segment's right edge then mismatches separators and parentBackground consumers colored with GradientLast (#FFFFFF), leaving a visible seam. VisibleCells feeds the same inflated count into the engine's collapse threshold.
+---
+FILE: src/prompt/engine.go
+LINE: 423
+SUMMARY: collapseGradient validates only syntax (GradientStops) before collapsing to the last stop, while the writer's runtime fallback for gradients whose stops do not resolve collapses to the first stop, so the same invalid gradient renders as two different solid colors depending on segment width.
+SCENARIO: Background "linear-gradient(red, blue)" (ANSI-name stops, unsupported per docs): with 3-cell text the engine collapses to GradientLast "blue" and the segment renders solid blue; with 6-cell text GradientCells rejects both stops, returns nil, and Write's fallback (writer.go:426) renders collapseGradientFirst "red" — solid red. The color flips as the segment text length crosses the threshold, and the narrow case contradicts the documented "renders the first stop as a solid color" rule (also the log message in gradient.go:230).
+---</result>
+<usage><subagent_tokens>172199</subagent_tokens><tool_uses>11</tool_uses><duration_ms>845027</duration_ms></usage>
+</task-notification>
+
+---
+
+continue but use sonnet 5 as subagents
+
+---
+
+continue but use sonnet 5 as subagents
+
+---
+
+<task-notification>
+<task-id>a6eeaa537f06a7933</task-id>
+<tool-use-id>toolu_01BKVKKuKicTSEk6EqWkdEP4</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\a6eeaa537f06a7933.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: Pending read race" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>CONFIRMED
+
+Not NEW — this is an extension of a pre-existing race, not a new race class.
+
+- Diff-only new read: engine.go setActiveSegment (`if !segment.Pending &amp;&amp; ...`), reached from writeSegment (segments.go:205 calls setActiveSegment).
+- Pre-existing unsynchronized read of the *same field*, *same call chain*, on main already: segments.go:191 `if !segment.Pending &amp;&amp; !segment.Enabled ...` inside writeSegment itself, 14 lines before it calls setActiveSegment. Also engine.go main:311/392 (renderBlockFromCache) read Pending the same way.
+- Writer: streaming.go:207-217 `trackPendingSegment`'s spawned goroutine does `segment.Pending = false` (plain write, line 215) then calls `notifySegmentCompletion`, which sends on `e.streamingResults` via `select{case e.streamingResults&lt;-segment: default:}` — a non-blocking send.
+- Happens-before gap: the consumer goroutine's `&lt;-e.streamingResults` receive (streaming.go:128) discards the value (`_, ok :=`) and just triggers `renderFromBlocks()`, which re-renders *all* segments, not only the one whose send it received. So a render pass triggered by segment B's completion can read segment A's `.Pending` while A's background goroutine concurrently executes the unguarded write at line 215 — no channel op links that specific writer/reader pair. The non-blocking `default` send can also drop the message entirely, leaving no sync edge at all for that completion.
+- `sync.Map` (`pendingSegments`) only guards membership, not the `Pending` bool itself.
+- `-race` unavailable on this machine (windows/arm64, confirmed: `go test -race` errors "not supported on windows/arm64"), so verified by happens-before reasoning only, no dynamic run performed.
+
+File paths: src/prompt/engine.go (setActiveSegment ~L375, writeSegment call site), src/prompt/segments.go:189-206 (writeSegment), src/prompt/streaming.go:206-235 (trackPendingSegment/notifySegmentCompletion).</result>
+<usage><subagent_tokens>62012</subagent_tokens><tool_uses>8</tool_uses><duration_ms>105342</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a99e3ed7186ce728c</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\a99e3ed7186ce728c.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: collapse cache ratchet" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>CONFIRMED
+
+Decisive chain: `src/config/segment.go:251-253` — `Render()`'s early-return guard `if !segment.Pending &amp;&amp; !segment.Enabled &amp;&amp; !force { return segment.renderFallback(index) }` fires before the unconditional `foregroundResolved/backgroundResolved = false` reset at lines 262-263. `renderFallback` (`segment.go:296-299`) itself only resets those flags *after* checking `segment.FallbackTemplate == ""` — with no fallback template (the common case) it returns `false` immediately, skipping the reset entirely.
+
+`src/prompt/segments.go:189-206` `writeSegment` normally skips disabled segments (`!segment.Pending &amp;&amp; !segment.Enabled &amp;&amp; style != Accordion → return`), which is why disabled segments are usually harmless — but for `config.Accordion` style that guard is bypassed, so it falls through to `e.setActiveSegment(segment)` → `segment.ResolveBackground()`/`ResolveForeground()` (`engine.go:379-380`) with `*Resolved` still `true` from a prior enabled pass.
+
+Reproduced with a scratch test: an Accordion segment with a 2-stop gradient background collapses to `#0000FF` while `Enabled=true`/text="abc" (3 cells). Setting `Enabled=false` (no `FallbackTemplate`) and calling `Render(1, false)` returns `false` without resetting the flags; `ResolveBackground()` afterward still returns the stale `#0000FF` instead of re-evaluating. That stale color then feeds `renderActiveSegment` → `terminal.SetParentColors(...)` (`engine.go:449-451`), so the next segment's separator/`getPowerlineColor` (`engine.go:546-563`) can render against a stale collapsed value even though the disabled segment itself draws no text.
+
+Note: the claim's original narrow→wide narrative (same enabled segment, growing text across streaming passes) is REFUTED — `renderBlockFromCache`/`writeSegments`/`writeBlockSegments` all call `segment.Render()` on every enabled segment every pass, unconditionally resetting the flags before any `Resolve*`/`Collapse*` call, and `previousActiveSegment`/`ExtraPrompt`/`Tooltip` never reuse a cross-pass resolve without an intervening `Render()`. The ratchet only survives via the disabled-Accordion-without-fallback gap above.</result>
+<usage><subagent_tokens>90748</subagent_tokens><tool_uses>23</tool_uses><duration_ms>237494</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a1156b5cc01f993c9</task-id>
+<tool-use-id>toolu_014HHvmnotoni9uk3AbBrJUu</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\a1156b5cc01f993c9.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: invalid-gradient color flip" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>CONFIRMED
+
+Config: two powerline segments, segment2 background `linear-gradient(red, blue)` (fg white), template `xyz` (narrow, 3 cells) vs `xyzxyzxyz` (wide, 9 cells). Same config, only text length differs.
+
+Narrow (3 cells, `cat -v`):
+`^[[44m^[[33m&gt;^[[0m^[[44m^[[37mxyz^[[0m^[[34m&gt;^[[0m`
+→ leading separator bg **44 (blue)**, body bg **44 (blue)** fg37 white, trailing separator fg **34 (blue)**. Entire segment renders solid blue — engine's `collapseGradient` (engine.go ~409-423) collapsed to `GradientLast()` = "blue" (a valid ANSI keyword), cached via `segment.CollapseBackground`, so every consumer (body + both separators) agrees.
+
+Wide (9 cells, `cat -v`):
+`^[[41m^[[33m&gt;^[[0m^[[41m^[[37mxyzxyzxyz^[[0m^[[34m&gt;^[[0m`
+→ leading separator bg **41 (red)**, body bg **41 (red)** fg37 white, but trailing separator fg **34 (blue)**. Body renders solid red (writer's `GradientCells` returned nil because "red"/"blue" don't parse via `colorful.Hex`, fallback `collapseGradientFirst` = "red"), while `getPowerlineColor()` (engine.go ~545-563) calls `ResolveBackground().GradientLast()` on the *uncollapsed* segment — since wide-mode never caches a collapsed value — yielding "blue".
+
+Two confirmed defects from one config: (1) same gradient flips solid red↔blue purely by crossing the `minGradientCellsPerStop*stops` text-length threshold; (2) in the wide case, the trailing separator (blue) visibly mismatches its own segment body (red).
+
+Scratch files: `narrow.json`, `wide.json` left in the scratchpad dir for reference; the built binary `omp-verify.exe` was deleted after testing.</result>
+<usage><subagent_tokens>76180</subagent_tokens><tool_uses>32</tool_uses><duration_ms>318426</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a578c112eedbc28f2</task-id>
+<tool-use-id>toolu_01HTE5ZRkrzysoJQ4ZbtnvTR</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\a578c112eedbc28f2.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: p:grad engine bypass" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>CONFIRMED
+
+Decisive escape output (palette `p:grad` vs literal `linear-gradient(...)`, same layout, `WIDESEG1234567890` → separator `` → parentBackground segment):
+
+**Separator color** (previous segment's right edge, should be last stop = blue 0,0,255):
+```
+PALETTE:  ...[38;2;255;0;0m&lt;sep&gt;[0m   &lt;- FIRST stop (red) — wrong
+INLINE:   ...[38;2;0;0;255m&lt;sep&gt;[0m   &lt;- LAST stop (blue) — correct
+```
+
+**Narrow-segment (3 cells, "abc") collapse** (2 stops × min 2 cells = 4 needed → should collapse):
+```
+PALETTE:  [48;2;255;0;0ma[48;2;251;0;128mb[48;2;0;0;255mc   &lt;- full gradient rendered, collapse skipped
+INLINE:   [48;2;0;0;255mabc                                  &lt;- collapsed to solid last stop, correct
+```
+
+**parentBackground repaint** (following segment `" AFTER "`, should be solid last stop):
+```
+PALETTE:  [48;2;255;0;0m [48;2;255;0;50mA...[48;2;0;0;255m   &lt;- full gradient repainted red→blue across text
+INLINE:   [48;2;0;0;255m AFTER                                &lt;- solid last stop, correct
+```
+
+All three claimed effects reproduce exactly as described when the gradient is referenced via palette (`background: "p:grad"`) and disappear when the identical gradient is inlined directly.
+
+Root cause matches the candidate's code pointers:
+- `src/prompt/engine.go:387` (`setActiveSegment`) and `src/config/segment.go:352` (`ResolveBackground`) return the raw, unresolved `segment.Background` field — palette substitution (`src/color/palette.go`) never runs on it at that point, so `color.Ansi.IsGradient()`/`GradientLast()` (`src/color/gradient.go:18,70`) see the literal string `"p:grad"`, not `"linear-gradient(...)"`.
+- Palette substitution only happens later, inside `terminal.asAnsiColors` (`src/terminal/writer.go:1107-1132`) via `Colors.Resolve`/`Colors.ToAnsi`, which is reached separately for the segment's own text, the separator glyph, and any `parentBackground`-resolving segment — each of those calls re-resolves `"p:grad"` to the full gradient independently, so `IsGradient()` flips true too late (post-resolution, inside `terminal.Write`, `src/terminal/writer.go:393-394`) for the separator and parentBackground paths, and never at all for the pre-render collapse decision in `engine.go` (which runs before `terminal.Write` is called).
+
+Temp binary `scratch.exe` removed from the scratchpad; the four temp config files (`palette-grad.omp.json`, `inline-grad.omp.json`, `palette-grad-narrow.omp.json`, `inline-grad-narrow.omp.json`) remain in the scratchpad directory (harmless, isolated from the repo) in case you want to re-run them.</result>
+<usage><subagent_tokens>88540</subagent_tokens><tool_uses>37</tool_uses><duration_ms>360652</duration_ms></usage>
+</task-notification>
+
+---
+
+should we intervene in the subagent and point it in the right direction?
+
+---
+
+<task-notification>
+<task-id>acb89ab619592b0a7</task-id>
+<tool-use-id>toolu_01Dj5Xd6sxQkd6UMvdg1JGY6</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\94fab1a1-936d-4b90-8047-49ce4c4fbf69\tasks\acb89ab619592b0a7.output</output-file>
+<status>completed</status>
+<summary>Agent "Sweep: gap finder" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Based on a full read of the diff and the actual source (`src/color/gradient.go`, `src/color/keywords.go`, `src/color/colors.go`, `src/color/palette.go`, `src/config/segment.go`, `src/prompt/engine.go`, `src/terminal/writer.go`, `themes/schema.json`, and the new test files), cross-checked against `go build ./...` and `go test ./terminal/... ./prompt/... ./color/... ./config/...` (all currently green), here are two gaps not already on the found list:
+
+FILE: D:\oh-my-posh\themes\schema.json
+LINE: 34-39
+SUMMARY: The gradient JSON-schema pattern requires at least two comma-separated stops, but the Go parser (and its own test suite) accepts and gracefully degrades a single-stop gradient.
+SCENARIO: `color.Ansi("linear-gradient(#FF0000)").GradientStops()` returns a 1-element slice (no minimum-length check in `GradientStops`), and `GradientCells` explicitly handles this by falling back to a solid color — it's asserted directly in `src/color/gradient_test.go`'s `TestGradientCellsInvalidReturnsNil` ("single stop" case) and the writer's `collapseGradientFirst` renders it fine. But the schema pattern `^linear-gradient\(\s*[^,()]+(\s*,\s*[^,()]+)+\s*\)$` requires the `(\s*,\s*[^,()]+)+` group to match at least once, i.e. &gt;=2 stops; verified with PowerShell regex, `"linear-gradient(#FF0000)"` does not match while `"linear-gradient(#FF0000, #0000FF)"` does. A user (or editor/IDE with schema validation, or `oh-my-posh config export` round-tripping) writing a deliberately single-stop gradient — a value the binary explicitly supports as a documented-adjacent degrade path — gets a spurious schema validation error even though `oh-my-posh` itself renders it correctly.
+
+FILE: D:\oh-my-posh\src\prompt\gradient_test.go
+LINE: 25-42 (and D:\oh-my-posh\src\prompt\gradient_collapse_test.go:23-42)
+SUMMARY: The new prompt-package gradient tests mutate the package-level `terminal.ParentColors` (via `engine.renderActiveSegment()` → `terminal.SetParentColors`, which only ever prepends and is never reset to nil in production code) without saving/restoring it, unlike `src/terminal/writer_gradient_test.go`'s `saveGradientTestGlobals` helper added in the same PR.
+SCENARIO: `terminal.SetParentColors` (`src/terminal/writer.go:221-230`) always prepends to whatever `ParentColors` currently holds; nothing in `engine.go`/`segments.go` ever clears it between renders or between tests. `renderPowerlineSegment` in `gradient_collapse_test.go` and the `render`/`leadingDiamondOutput` closures in `gradient_test.go` call `New(...)` + `setActiveSegment`/`renderActiveSegment` repeatedly but never set `terminal.ParentColors = nil` (grep confirms zero occurrences in either file, versus `writer_gradient_test.go` which resets it in every test). Since Go runs a package's tests sequentially in the same process, any later-added or reordered test in `src/prompt` that asserts `parentBackground` resolution assuming a fresh/empty `ParentColors` (e.g. expecting `Transparent` with no previous segment) can silently inherit a stale entry left by `gradientStops`/`threeStopGradient` fixtures from these files, producing an order-dependent, hard-to-diagnose flaky failure instead of a deterministic one.
+
+Both were verified by reading the actual implementation (not just the diff) and, for the second, by grepping the new test files for the absence of the save/restore pattern present elsewhere in the same PR.</result>
+<usage><subagent_tokens>187293</subagent_tokens><tool_uses>33</tool_uses><duration_ms>817508</duration_ms></usage>
+</task-notification>

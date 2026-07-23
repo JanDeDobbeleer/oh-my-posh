@@ -162,7 +162,7 @@ func TestRenderTemplate(t *testing.T) {
 		Cache = new(cache.Template)
 		Init(env, nil, nil)
 
-		text, err := Render(tc.Template, tc.Context)
+		text, err := RenderTrusted(tc.Template, tc.Context)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
@@ -250,7 +250,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		}
 		Init(env, nil, nil)
 
-		text, err := Render(tc.Template, tc.Context)
+		text, err := RenderTrusted(tc.Template, tc.Context)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
@@ -400,7 +400,7 @@ func TestSegmentContains(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		text, _ := Render(tc.Template, nil)
+		text, _ := RenderTrusted(tc.Template, nil)
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }

@@ -16,12 +16,12 @@ func TestTextPool(t *testing.T) {
 	Init(env, nil, nil)
 
 	// Test rendering
-	result, err := Render("Hello {{ .Name }}", map[string]any{"Name": "World"})
+	result, err := RenderTrusted("Hello {{ .Name }}", map[string]any{"Name": "World"})
 	assert.NoError(t, err)
 	assert.Equal(t, "Hello World", result)
 
 	// Test empty template
-	result2, err := Render("", nil)
+	result2, err := RenderTrusted("", nil)
 	assert.NoError(t, err)
 	assert.Equal(t, "", result2)
 }

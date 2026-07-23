@@ -98,7 +98,7 @@ func (cfg *Config) getPalette() color.Palette {
 		return cfg.Palette
 	}
 
-	key, err := template.Render(cfg.Palettes.Template, nil)
+	key, err := template.RenderTrusted(cfg.Palettes.Template, nil)
 	if err != nil {
 		return cfg.Palette
 	}

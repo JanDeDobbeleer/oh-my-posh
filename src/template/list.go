@@ -42,7 +42,7 @@ func (l List) Join(context any) string {
 	buffer := text.NewBuilder()
 
 	for _, tmpl := range l {
-		value, err := Render(tmpl, context)
+		value, err := RenderTrusted(tmpl, context)
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue
 		}
@@ -59,7 +59,7 @@ func (l List) FirstMatch(context any, defaultValue string) string {
 	}
 
 	for _, tmpl := range l {
-		value, err := Render(tmpl, context)
+		value, err := RenderTrusted(tmpl, context)
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue
 		}

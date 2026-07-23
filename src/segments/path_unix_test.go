@@ -630,6 +630,13 @@ var testFullAndFolderPathCases = []testFullAndFolderPathCase{
 	{Style: Full, Pwd: homeDir + abc, Expected: "~/abc"},
 	{Style: Full, Pwd: homeDir + abc, Expected: homeDir + abc, DisableMappedLocations: true},
 	{Style: Full, Pwd: abcd, Expected: abcd},
+
+	// A folder name containing template syntax must never execute the `cmd` function
+	// once it is spliced into pt.Path and re-rendered in setStyle(): the render uses
+	// the restricted func map, so parsing fails and pt.Path keeps its raw, unexecuted
+	// text instead.
+	{Style: Full, Pwd: homeDir + "/{{ cmd `whoami` }}", Expected: "~/{{ cmd `whoami` }}"},
+	{Style: FolderType, Pwd: homeDir + "/{{ cmd `whoami` }}", Expected: "{{ cmd `whoami` }}"},
 }
 
 var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocationsCase{

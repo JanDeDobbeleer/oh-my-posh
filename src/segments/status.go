@@ -48,7 +48,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 	}
 
 	if pipeStatus == "" {
-		if txt, err := template.Render(statusTemplate, s); err == nil {
+		if txt, err := template.RenderTrusted(statusTemplate, s); err == nil {
 			return txt
 		}
 
@@ -87,7 +87,7 @@ func (s *Status) formatStatus(status int, pipeStatus string) string {
 
 		context.Code = code
 
-		txt, err := template.Render(statusTemplate, context)
+		txt, err := template.RenderTrusted(statusTemplate, context)
 		if err != nil {
 			write(codeStr)
 			continue

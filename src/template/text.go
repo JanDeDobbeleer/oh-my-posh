@@ -13,24 +13,46 @@ import (
 type Text struct {
 	context  Data
 	template string
+	trusted  bool
 }
 
 // New returns a Text instance from the pool with the given template and context
-func get(template string, context any) *Text {
+func get(template string, trusted bool, context any) *Text {
 	if textPool == nil {
 		// Fallback if pool is not initialized yet
-		return &Text{context: context, template: template}
+		return &Text{context: context, template: template, trusted: trusted}
 	}
 
 	text := textPool.Get()
 	text.template = template
+	text.trusted = trusted
 	text.context = context
 
 	return text
 }
 
-func Render(template string, context any) (string, error) {
-	t := get(template, context)
+// RenderTrusted executes a template the caller has verified was authored by
+// the user in their own configuration (a segment/block/palette/etc. template
+// field), as opposed to text assembled at runtime from external data
+// (filesystem names, command output, API responses, ...). The full func map
+// is available, including cmd/readFile/stat/glob.
+//
+// Only call this with a string read verbatim from a config field — passing
+// runtime-composed text here defeats the whole point of the split with
+// RenderUntrusted.
+func RenderTrusted(template string, context any) (string, error) {
+	return render(template, true, context)
+}
+
+// RenderUntrusted executes a template that may contain, or be composed from,
+// runtime data rather than user-authored config text. cmd/readFile/stat/glob
+// and env/expandenv are not available.
+func RenderUntrusted(template string, context any) (string, error) {
+	return render(template, false, context)
+}
+
+func render(template string, trusted bool, context any) (string, error) {
+	t := get(template, trusted, context)
 	defer t.release()
 
 	if !strings.Contains(t.template, "{{") || !strings.Contains(t.template, "}}") {
@@ -47,6 +69,7 @@ func Render(template string, context any) (string, error) {
 func (t *Text) release() {
 	t.context = nil
 	t.template = ""
+	t.trusted = false
 
 	if textPool != nil {
 		textPool.Put(t)

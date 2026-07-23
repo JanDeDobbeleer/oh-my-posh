@@ -70,7 +70,7 @@ func TestDateFromStringEpoch(t *testing.T) {
 		Cache = new(cache.Template)
 		Init(env, nil, nil)
 
-		text, err := Render(tc.Template, tc.Context)
+		text, err := RenderTrusted(tc.Template, tc.Context)
 		assert.NoError(t, err, tc.Case)
 		if tc.Expected != "" {
 			assert.Equal(t, tc.Expected, text, tc.Case)
@@ -114,7 +114,7 @@ func TestDateAndHTMLDateFunctions(t *testing.T) {
 		Cache = new(cache.Template)
 		Init(env, nil, nil)
 
-		text, err := Render(tc.Template, tc.Context)
+		text, err := RenderTrusted(tc.Template, tc.Context)
 		assert.NoError(t, err, tc.Case)
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}

@@ -27,7 +27,7 @@ import (
 type SegmentStyle string
 
 func (s *SegmentStyle) resolve(context any) SegmentStyle {
-	value, err := template.Render(string(*s), context)
+	value, err := template.RenderTrusted(string(*s), context)
 
 	// default to Plain
 	if err != nil || value == "" {
@@ -301,7 +301,7 @@ func (segment *Segment) renderFallback(index int) bool {
 		return false
 	}
 
-	text, err := template.Render(segment.FallbackTemplate, segment.writer)
+	text, err := template.RenderTrusted(segment.FallbackTemplate, segment.writer)
 	if err != nil {
 		text = err.Error()
 	}
@@ -580,7 +580,7 @@ func (segment *Segment) string() string {
 		segment.Template = segment.writer.Template()
 	}
 
-	text, err := template.Render(segment.Template, segment.writer)
+	text, err := template.RenderTrusted(segment.Template, segment.writer)
 	if err != nil {
 		return err.Error()
 	}

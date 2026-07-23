@@ -105,7 +105,7 @@ func (m Map) Template(option Option, defaultValue string, context any) string {
 		return value
 	}
 
-	resolved, err := template.Render(value, context)
+	resolved, err := template.RenderTrusted(value, context)
 	if err != nil {
 		debugf("%s: template error, using raw value: %s", option, err)
 		return value

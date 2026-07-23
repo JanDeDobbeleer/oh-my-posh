@@ -32,7 +32,7 @@ func (h *HTTP) Enabled() bool {
 	method := h.options.String(METHOD, "GET")
 	timeout := h.options.Int(options.HTTPTimeout, 10000)
 
-	if resolved, err := template.Render(url, nil); err == nil {
+	if resolved, err := template.RenderTrusted(url, nil); err == nil {
 		url = resolved
 	}
 

@@ -358,7 +358,7 @@ func (l *Language) buildVersionURL() {
 		return
 	}
 
-	url, err := template.Render(versionURLTemplate, l.Version)
+	url, err := template.RenderTrusted(versionURLTemplate, l.Version)
 	if err != nil {
 		return
 	}

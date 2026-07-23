@@ -674,6 +674,15 @@ func write(s rune) {
 		return
 	}
 
+	// segment content (directory names, git metadata, environment variables,
+	// command output) is potentially attacker-controlled and never passes through
+	// this function when it's Oh My Posh's own styling; drop C0/C1 control runes
+	// (ESC, BEL, CSI, OSC, ...) so they can't be interpreted as escape sequences
+	// by the terminal, including inside a hyperlink target.
+	if isControlRune(s) {
+		return
+	}
+
 	if isHyperlink {
 		builder.WriteRune(s)
 		return
@@ -692,6 +701,21 @@ func write(s rune) {
 	}
 
 	builder.WriteRune(s)
+}
+
+// isControlRune reports whether s is a C0 (0x00-0x1F), DEL (0x7F), or C1
+// (0x80-0x9F) control character. These are the bytes a terminal can interpret
+// as the start of an escape sequence (ESC, BEL, CSI, OSC, ...); no legitimate
+// rendered segment content needs them. '\n' is exempt: Oh My Posh itself
+// prepends a literal newline ahead of the transient prompt (see
+// Engine.getNewline), and unlike ESC/BEL/CSI/OSC a bare LF can't be
+// interpreted as the start of an escape sequence.
+func isControlRune(s rune) bool {
+	if s == '\n' {
+		return false
+	}
+
+	return s <= 0x1f || (s >= 0x7f && s <= 0x9f)
 }
 
 // writeVisibleRune stamps the active gradient color(s) for the current cell

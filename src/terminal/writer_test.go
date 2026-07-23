@@ -219,6 +219,18 @@ func TestWriteANSIColors(t *testing.T) {
 			Expected: "\x1b[33mhello \x1b[48;2;130;170;255m\x1b[38;2;1;22;39mnew\x1b[49m\x1b[33m world\x1b[0m",
 			Colors:   &color.Set{Foreground: "yellow", Background: "transparent"},
 		},
+		{
+			Case:     "OSC injection stripped from segment content",
+			Input:    "before\x1b]0;HACKED\x07after",
+			Expected: "\x1b[47m\x1b[30mbefore]0;HACKEDafter\x1b[0m",
+			Colors:   &color.Set{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "CSI and C1 control runes stripped from segment content",
+			Input:    "before\x1b[31mred\u009bafter",
+			Expected: "\x1b[47m\x1b[30mbefore[31mredafter\x1b[0m",
+			Colors:   &color.Set{Foreground: "black", Background: "white"},
+		},
 	}
 
 	for _, tc := range cases {

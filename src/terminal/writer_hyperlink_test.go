@@ -93,6 +93,11 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 			ShellName: shell.BASH,
 			Expected:  "\\[\x1b[47m\\]\\[\x1b[30m\\]\\[\x1b]8;;http://www.google.be\x1b\\\\\\]link\\[\x1b]8;;\x1b\\\\\\]\\[\x1b[0m\\]",
 		},
+		{
+			Text:      "<LINK>http://evil\x1b]0;HACKED\x07.com<TEXT>google</TEXT></LINK>",
+			ShellName: shell.FISH,
+			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://evil]0;HACKED.com\x1b\\google\x1b]8;;\x1b\\\x1b[0m",
+		},
 	}
 	for _, tc := range cases {
 		Init(tc.ShellName)

@@ -19,7 +19,7 @@ func BenchmarkRenderPlain(b *testing.B) {
 	setupTemplateBench()
 	b.ReportAllocs()
 	for b.Loop() {
-		_, _ = Render("plain text without any template markers at all", nil)
+		_, _ = RenderTrusted("plain text without any template markers at all", nil)
 	}
 }
 
@@ -33,7 +33,7 @@ func BenchmarkRenderSimple(b *testing.B) {
 	data := ctx{Shell: "pwsh", UserName: "jandedobbeleer"}
 	b.ReportAllocs()
 	for b.Loop() {
-		_, _ = Render("{{ .Shell }} {{ .UserName }}", data)
+		_, _ = RenderTrusted("{{ .Shell }} {{ .UserName }}", data)
 	}
 }
 
@@ -56,7 +56,7 @@ func BenchmarkRenderRepeated(b *testing.B) {
 	tmpl := `{{ if .Root }}# {{ end }}{{ .Folder }}{{ if .Branch }} on {{ .Branch }}{{ end }} {{ if .Version }}v{{ .Version }}{{ end }}`
 	b.ReportAllocs()
 	for b.Loop() {
-		_, _ = Render(tmpl, data)
+		_, _ = RenderTrusted(tmpl, data)
 	}
 }
 

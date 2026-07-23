@@ -5,6 +5,7 @@ import (
 	"errors"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 	"text/template"
 	"unicode"
@@ -47,14 +48,19 @@ func (t *renderer) release() {
 }
 
 // templateCacheKey returns the key used to look up a cached *template.Template.
-// It encodes the raw (unpatched) template text and, when context is non-nil,
-// the reflect.Type of the context so that two different struct types whose
-// patchTemplate output would differ (via hasField) get separate cache entries.
-// For map[string]any contexts the key also includes the sorted exported key
-// names, since patchTemplate output depends on which keys are present.
-func templateCacheKey(rawText string, ctx any) string {
+// It encodes the raw (unpatched) template text, the trust level (parsed
+// templates are bound to a func map at Parse time, so a trusted and a
+// restricted render of identical text must never share a cache entry), and,
+// when context is non-nil, the reflect.Type of the context so that two
+// different struct types whose patchTemplate output would differ (via
+// hasField) get separate cache entries. For map[string]any contexts the key
+// also includes the sorted exported key names, since patchTemplate output
+// depends on which keys are present.
+func templateCacheKey(rawText string, trusted bool, ctx any) string {
+	key := rawText + "\x00" + strconv.FormatBool(trusted)
+
 	if ctx == nil {
-		return rawText
+		return key
 	}
 
 	t := reflect.TypeOf(ctx)
@@ -67,11 +73,11 @@ func templateCacheKey(rawText string, ctx any) string {
 				}
 			}
 			sort.Strings(keys)
-			return rawText + "\x00" + t.String() + "\x00" + strings.Join(keys, "\x01")
+			return key + "\x00" + t.String() + "\x00" + strings.Join(keys, "\x01")
 		}
 	}
 
-	return rawText + "\x00" + t.String()
+	return key + "\x00" + t.String()
 }
 
 // parsedTemplate returns a fully-parsed *template.Template for text.
@@ -79,10 +85,11 @@ func templateCacheKey(rawText string, ctx any) string {
 // return the cached value. Concurrent first-renders of the same template
 // may both parse, but LoadOrStore ensures only one result is shared.
 func parsedTemplate(text *Text) (*template.Template, error) {
-	// Key on the raw, unpatched template text plus the context type so that
-	// cache hits can skip patchTemplate entirely: patching is only needed
-	// the first time a given (raw template, context type) pair is seen.
-	key := templateCacheKey(text.template, text.context)
+	// Key on the raw, unpatched template text plus the trust level and context
+	// type so that cache hits can skip patchTemplate entirely: patching is only
+	// needed the first time a given (raw template, trust level, context type)
+	// combination is seen.
+	key := templateCacheKey(text.template, text.trusted, text.context)
 
 	if cached, ok := parsedTemplates.Load(key); ok {
 		return cached.(*template.Template), nil
@@ -91,8 +98,8 @@ func parsedTemplate(text *Text) (*template.Template, error) {
 	// Cache miss: patch the raw template into its executable form.
 	text.patchTemplate()
 
-	// Parse into a fresh template with the shared func map and settings.
-	tmpl, err := template.New("cache").Funcs(funcMap()).Parse(text.template)
+	// Parse into a fresh template with the func map matching this render's trust level.
+	tmpl, err := template.New("cache").Funcs(funcMap(text.trusted)).Parse(text.template)
 	if err != nil {
 		return nil, err
 	}

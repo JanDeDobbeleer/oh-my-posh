@@ -25,7 +25,7 @@ func TestRoundSeconds(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		text, err := Render(tc.Template, nil)
+		text, err := RenderTrusted(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue

@@ -64,7 +64,7 @@ func TestCmd(t *testing.T) {
 		Cache = new(cache.Template)
 		Init(e, nil, nil)
 
-		text, err := Render(tc.Template, nil)
+		text, err := RenderTrusted(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err, tc.Case)
 			continue

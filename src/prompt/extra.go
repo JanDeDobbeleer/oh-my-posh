@@ -57,7 +57,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		}
 	}
 
-	promptText, err := template.Render(getTemplate(prompt.Template), nil)
+	promptText, err := template.RenderTrusted(getTemplate(prompt.Template), nil)
 	if err != nil {
 		promptText = err.Error()
 	}
@@ -192,7 +192,7 @@ func (e *Engine) renderRightTemplate(prompt *config.Segment, background, foregro
 		return "", 0
 	}
 
-	text, err := template.Render(prompt.RightTemplate, nil)
+	text, err := template.RenderTrusted(prompt.RightTemplate, nil)
 	if err != nil {
 		text = err.Error()
 	}

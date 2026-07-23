@@ -8,13 +8,25 @@ import (
 	"github.com/Masterminds/sprig/v3"
 )
 
-// sharedFuncMap is built exactly once and reused across all template constructions.
-var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
+// dangerousFuncs execute host commands or touch the filesystem/environment
+// directly. They are only exposed to templates rendered via RenderTrusted
+// (see text.go) — never to RenderUntrusted, which may contain or be composed
+// from runtime data.
+var dangerousFuncs = map[string]bool{
+	"cmd":       true,
+	"readFile":  true,
+	"stat":      true,
+	"glob":      true,
+	"env":       true,
+	"expandenv": true,
+}
+
+// baseFuncMap returns the funcs available regardless of trust level.
+func baseFuncMap() map[string]any {
 	fm := map[string]any{
 		"secondsRound": secondsRound,
 		"url":          url,
 		"path":         filePath,
-		"glob":         glob,
 		"matchP":       matchP,
 		"findP":        findP,
 		"replaceP":     replaceP,
@@ -25,9 +37,6 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 		"hresult":      hresult,
 		"trunc":        trunc,
 		"truncE":       TruncE,
-		"cmd":          cmd,
-		"readFile":     readFile,
-		"stat":         stat,
 		"dir":          filepath.Dir,
 		"base":         filepath.Base,
 		// Locale-aware date/time formatting using OS regional settings.
@@ -42,15 +51,51 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 	}
 
 	for key, fun := range sprig.TxtFuncMap() {
+		if dangerousFuncs[key] {
+			continue
+		}
+
 		if _, ok := fm[key]; !ok {
 			fm[key] = fun
 		}
 	}
 
+	return fm
+}
+
+// sharedFuncMap is built exactly once and reused across all trusted template constructions.
+var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
+	fm := baseFuncMap()
+
+	fm["cmd"] = cmd
+	fm["readFile"] = readFile
+	fm["stat"] = stat
+	fm["glob"] = glob
+
+	sprigFuncs := sprig.TxtFuncMap()
+	if fn, ok := sprigFuncs["env"]; ok {
+		fm["env"] = fn
+	}
+
+	if fn, ok := sprigFuncs["expandenv"]; ok {
+		fm["expandenv"] = fn
+	}
+
 	return template.FuncMap(fm)
 })
 
-// funcMap returns the shared merged FuncMap (built once, reused everywhere).
-func funcMap() template.FuncMap {
-	return sharedFuncMap()
+// restrictedFuncMap is built exactly once and reused across all restricted template
+// constructions (see RenderRestricted). It never contains dangerousFuncs.
+var restrictedFuncMap = sync.OnceValue(func() template.FuncMap {
+	return template.FuncMap(baseFuncMap())
+})
+
+// funcMap returns the merged FuncMap for the given trust level (built once per
+// level, reused everywhere).
+func funcMap(trusted bool) template.FuncMap {
+	if trusted {
+		return sharedFuncMap()
+	}
+
+	return restrictedFuncMap()
 }

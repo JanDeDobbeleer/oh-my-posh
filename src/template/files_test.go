@@ -28,7 +28,7 @@ func TestGlob(t *testing.T) {
 	Init(env, nil, nil)
 
 	for _, tc := range cases {
-		text, err := Render(tc.Template, nil)
+		text, err := RenderTrusted(tc.Template, nil)
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue

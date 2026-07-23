@@ -282,7 +282,12 @@ func (pt *Path) setStyle() {
 	}
 
 	// make sure we resolve all templates
-	if txt, err := template.Render(pt.Path, pt); err == nil {
+	//
+	// pt.Path is composed from raw filesystem folder names (untrusted) plus
+	// already-rendered config templates, so it must never get the func map
+	// entries that touch the OS (cmd/readFile/stat/glob) — use the restricted
+	// renderer, not template.Render.
+	if txt, err := template.RenderUntrusted(pt.Path, pt); err == nil {
 		pt.Path = txt
 	}
 }
@@ -293,7 +298,7 @@ func (pt *Path) getMaxWidth() int {
 		return 0
 	}
 
-	txt, err := template.Render(width, pt)
+	txt, err := template.RenderTrusted(width, pt)
 	if err != nil {
 		log.Error(err)
 		return 0
@@ -320,7 +325,7 @@ func (pt *Path) getFolderSeparator() string {
 		return separator
 	}
 
-	txt, err := template.Render(separatorTemplate, pt)
+	txt, err := template.RenderTrusted(separatorTemplate, pt)
 	if err != nil {
 		log.Error(err)
 	}
@@ -652,7 +657,7 @@ func (pt *Path) setMappedLocations() {
 			continue
 		}
 
-		location, err := template.Render(key, pt)
+		location, err := template.RenderTrusted(key, pt)
 		if err != nil {
 			log.Error(err)
 		}

@@ -28,7 +28,7 @@ func renderTemplateNoTrimSpace(env *mock.Environment, segmentTemplate string, co
 	}
 	template.Init(env, nil, nil)
 
-	text, err := template.Render(segmentTemplate, context)
+	text, err := template.RenderTrusted(segmentTemplate, context)
 	if err != nil {
 		return err.Error()
 	}

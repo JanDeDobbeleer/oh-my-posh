@@ -120,7 +120,7 @@ func TestLocaleShortDateFallback(t *testing.T) {
 
 	tmpl := `{{ localeShortDate .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(0, 0).UTC()}
-	got, err := Render(tmpl, ctx)
+	got, err := RenderTrusted(tmpl, ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, "1970-01-01", got)
 }
@@ -142,7 +142,7 @@ func TestLocaleShortTimeFallback(t *testing.T) {
 
 	tmpl := `{{ localeShortTime .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(0, 0).UTC()}
-	got, err := Render(tmpl, ctx)
+	got, err := RenderTrusted(tmpl, ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, "00:00", got)
 }
@@ -165,7 +165,7 @@ func TestLocaleShortDateWithISOLayout(t *testing.T) {
 	// knownEpoch = 2019-06-13 20:39:39 UTC (from date_test.go)
 	tmpl := `{{ localeShortDate .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(knownEpoch, 0).UTC()}
-	got, err := Render(tmpl, ctx)
+	got, err := RenderTrusted(tmpl, ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, "2019-06-13", got)
 }
@@ -186,7 +186,7 @@ func TestLocaleShortTimeWith24hLayout(t *testing.T) {
 
 	tmpl := `{{ localeShortTime .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(knownEpoch, 0).UTC()}
-	got, err := Render(tmpl, ctx)
+	got, err := RenderTrusted(tmpl, ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, "20:39", got)
 }
@@ -207,7 +207,7 @@ func TestLocaleShortDateWith12hUSLayout(t *testing.T) {
 
 	tmpl := `{{ localeShortDate .T }} {{ localeShortTime .T }}`
 	ctx := struct{ T time.Time }{T: time.Unix(knownEpoch, 0).UTC()}
-	got, err := Render(tmpl, ctx)
+	got, err := RenderTrusted(tmpl, ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, "6/13/2019 8:39 PM", got)
 }

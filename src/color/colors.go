@@ -160,7 +160,7 @@ func (c Ansi) ResolveTemplate() Ansi {
 		return emptyColor
 	}
 
-	text, err := template.Render(string(c), nil)
+	text, err := template.RenderTrusted(string(c), nil)
 	if err != nil {
 		return Transparent
 	}

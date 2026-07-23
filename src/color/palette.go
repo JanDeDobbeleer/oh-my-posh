@@ -37,7 +37,7 @@ func (p Palette) resolveColor(colorName Ansi, depth int, originalColorName *Ansi
 	}
 
 	if strings.Contains(color.String(), "{{") {
-		rendered, err := template.Render(color.String(), nil)
+		rendered, err := template.RenderTrusted(color.String(), nil)
 		if err != nil {
 			return "", err
 		}

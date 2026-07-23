@@ -421,6 +421,16 @@ var testFullAndFolderPathCases = []testFullAndFolderPathCase{
 	{Style: Full, FolderSeparatorIcon: `\`, Pwd: homeDirWindows, Expected: "~", PathSeparator: `\`, GOOS: runtime.WINDOWS},
 	{Style: Full, FolderSeparatorIcon: `\`, Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: `\`, GOOS: runtime.WINDOWS},
 	{Style: Full, FolderSeparatorIcon: `\`, Pwd: "C:\\Users\\posh", Expected: "C:\\Users\\posh", PathSeparator: `\`, GOOS: runtime.WINDOWS},
+
+	// A folder name containing template syntax must never execute the `cmd` function
+	// once it is spliced into pt.Path and re-rendered in setStyle(): the render uses
+	// the restricted func map, so parsing fails and pt.Path keeps its raw, unexecuted
+	// text instead.
+	{
+		Style: FolderType, FolderSeparatorIcon: `\`,
+		Pwd: homeDirWindows + "\\{{ cmd `whoami` }}", Expected: "{{ cmd `whoami` }}",
+		PathSeparator: `\`, GOOS: runtime.WINDOWS,
+	},
 }
 
 var testFullPathCustomMappedLocationsCases = []testFullPathCustomMappedLocationsCase{

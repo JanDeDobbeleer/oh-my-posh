@@ -1,0 +1,5 @@
+I have the impression that, at least in PowerShell, the streaming functionality has a speed regression somewhere, as in the latest changes, the changes of the past week. It seems to be slower. Can you do an analysis on what could have caused this and provide a test case that supports this?
+
+---
+
+do stack, fix it

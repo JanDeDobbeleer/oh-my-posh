@@ -1,0 +1,9 @@
+Investigate the following report: https://github.com/JanDeDobbeleer/oh-my-posh/security/advisories/GHSA-fwjx-9p69-h25h#advisory-comment-255545
+
+---
+
+yes, investigate with fable
+
+---
+
+go ahead with the plan

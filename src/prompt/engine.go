@@ -1,6 +1,7 @@
 package prompt
 
 import (
+	"slices"
 	"strings"
 	"sync"
 
@@ -25,13 +26,17 @@ type Engine struct {
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
-	// blockTailColors is the last rendered segment's colors, captured just
+	// blockTailColors is a snapshot of terminal.ParentColors captured just
 	// before previousActiveSegment resets to nil at the end of a block. A
 	// block's own Filler (see shouldFill) renders after terminal.String()
 	// has already cleared the parent stack for the next block, so a filler
 	// template using <parentBackground>/<parentForeground> needs this to
 	// resolve against the block it is padding rather than an empty stack.
-	blockTailColors   *color.Set
+	// A full copy, not just the tail entry: the tail segment's own stored
+	// color can itself be an unresolved parentBackground/parentForeground
+	// keyword, and resolving that requires walking the rest of the chain
+	// the same way the block's own last segment did.
+	blockTailColors   []*color.Set
 	pendingSegments   sync.Map
 	rprompt           string
 	Overflow          config.Overflow
@@ -196,10 +201,10 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 	terminal.SetColors("default", "default")
 
 	// the block's own segments already reset the parent stack when their
-	// terminal.String() call produced blockText - reseed the one entry a
+	// terminal.String() call produced blockText - reseed the chain a
 	// <parentBackground>/<parentForeground> anchor in the filler needs.
-	if e.blockTailColors != nil {
-		terminal.ParentColors = append(terminal.ParentColors, e.blockTailColors)
+	if len(e.blockTailColors) != 0 {
+		terminal.ParentColors = append(terminal.ParentColors, e.blockTailColors...)
 	}
 
 	terminal.Write("", "", filler)
@@ -518,21 +523,21 @@ func (e *Engine) renderActiveSegment() {
 	terminal.SetParentColors(e.previousActiveSegment.ResolveBackground(), e.previousActiveSegment.ResolveForeground())
 }
 
-// captureBlockTailColors snapshots the last rendered segment's colors into
-// blockTailColors just before previousActiveSegment resets to nil, so a
-// later shouldFill call for this same block's Filler can still resolve
+// captureBlockTailColors snapshots terminal.ParentColors into blockTailColors
+// just before previousActiveSegment resets to nil, so a later shouldFill call
+// for this same block's Filler can still resolve
 // <parentBackground>/<parentForeground> after terminal.String() has already
-// cleared the parent stack for the next block.
+// cleared the parent stack for the next block. A full copy of the chain, not
+// just the tail entry: the tail segment's own stored color can itself be an
+// unresolved parentBackground/parentForeground keyword, which needs the rest
+// of the chain to resolve the same way it did for the block's own segments.
 func (e *Engine) captureBlockTailColors() {
 	if e.previousActiveSegment == nil {
 		e.blockTailColors = nil
 		return
 	}
 
-	e.blockTailColors = &color.Set{
-		Background: e.previousActiveSegment.ResolveBackground(),
-		Foreground: e.previousActiveSegment.ResolveForeground(),
-	}
+	e.blockTailColors = slices.Clone(terminal.ParentColors)
 }
 
 func (e *Engine) writeSeparator(final bool) {

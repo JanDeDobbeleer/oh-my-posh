@@ -445,30 +445,76 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         Stop-StreamingProcess
     }
 
-    # Byte-level reader for NUL-delimited prompt records, shared by the serve
+    # Chunked reader for NUL-delimited prompt records, shared by the serve
     # daemon (which passes a wake signal) and the legacy per-prompt stream
     # (which passes $null). Runs in its own runspace for the lifetime of the
     # stream it reads.
+    #
+    # Reads in 4KB chunks and splits on NUL via [Array]::IndexOf instead of
+    # one $stream.ReadByte() call per byte: a gradient-heavy prompt record
+    # can run 1-2KB, and a PowerShell method call per byte to drain it was
+    # measured adding tens of ms per cycle - enough to push a spammed Enter
+    # past the ~33ms key-repeat interval and turn "stops instantly on
+    # release" into "keeps draining for seconds".
     $script:StreamingReaderScript = {
         param($stream, $signal)
-        while ($true) {
-            $bytes = [System.Collections.Generic.List[byte]]::new()
-            while (($b = $stream.ReadByte()) -notin -1, 0) {
-                $bytes.Add($b)
-            }
 
-            if ($bytes.Count -gt 0) {
-                Write-Output ([Text.Encoding]::UTF8.GetString($bytes.ToArray()))
-            }
+        $bufferSize = 4096
+        $buffer = [byte[]]::new($bufferSize)
+        $pending = [System.Collections.Generic.List[byte]]::new()
 
-            # Wake the waiter - also on EOF, so a dying daemon triggers the
-            # fallback path immediately instead of after the timeout.
-            if ($signal) {
-                $signal.Set()
-            }
+        $appendSegment = {
+            param($segStart, $segEnd)
 
-            if ($b -eq -1) {
+            $segLen = $segEnd - $segStart
+            if ($segLen -le 0) {
                 return
+            }
+
+            $segment = [byte[]]::new($segLen)
+            [Array]::Copy($buffer, $segStart, $segment, 0, $segLen)
+            $pending.AddRange($segment)
+        }
+
+        while ($true) {
+            $read = $stream.Read($buffer, 0, $bufferSize)
+
+            if ($read -le 0) {
+                if ($pending.Count -gt 0) {
+                    Write-Output ([Text.Encoding]::UTF8.GetString($pending.ToArray()))
+                }
+
+                # Wake the waiter - also on EOF, so a dying daemon triggers
+                # the fallback path immediately instead of after the timeout.
+                if ($signal) {
+                    $signal.Set()
+                }
+
+                return
+            }
+
+            $offset = 0
+            while ($offset -lt $read) {
+                $nul = [Array]::IndexOf($buffer, [byte]0, $offset, $read - $offset)
+
+                if ($nul -lt 0) {
+                    & $appendSegment $offset $read
+                    $offset = $read
+                    continue
+                }
+
+                & $appendSegment $offset $nul
+
+                if ($pending.Count -gt 0) {
+                    Write-Output ([Text.Encoding]::UTF8.GetString($pending.ToArray()))
+                    $pending.Clear()
+                }
+
+                if ($signal) {
+                    $signal.Set()
+                }
+
+                $offset = $nul + 1
             }
         }
     }

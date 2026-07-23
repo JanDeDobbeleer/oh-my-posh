@@ -1,0 +1,13 @@
+Can we make Render accept both trusted and untrusted? That would avoid having to use a second function for this? And we make it explicit for everyone.
+
+---
+
+but Render[T Trusted | Untrusted] would work, no?
+
+---
+
+based on this insight, is there an eever cleaner way to achive this without the template stutter?
+
+---
+
+go ahead

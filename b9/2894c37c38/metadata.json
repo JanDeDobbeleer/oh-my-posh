@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "b92894c37c38",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/color/colors.go",
+    "src/color/palette.go",
+    "src/config/config.go",
+    "src/config/segment.go",
+    "src/prompt/engine.go",
+    "src/prompt/extra.go",
+    "src/segments/http.go",
+    "src/segments/language.go",
+    "src/segments/options/map.go",
+    "src/segments/path.go",
+    "src/segments/path_test.go",
+    "src/segments/path_unix_test.go",
+    "src/segments/path_windows_test.go",
+    "src/segments/scm.go",
+    "src/segments/status.go",
+    "src/template/bench_test.go",
+    "src/template/cmd_test.go",
+    "src/template/date_test.go",
+    "src/template/files_test.go",
+    "src/template/func_map.go",
+    "src/template/link_test.go",
+    "src/template/list.go",
+    "src/template/locale_test.go",
+    "src/template/numbers_test.go",
+    "src/template/pool_test.go",
+    "src/template/render.go",
+    "src/template/round_test.go",
+    "src/template/strings_test.go",
+    "src/template/text.go",
+    "src/template/text_test.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b9/2894c37c38/0/metadata.json",
+      "transcript": "/b9/2894c37c38/0/full.jsonl",
+      "compact_transcript": "/b9/2894c37c38/0/transcript.jsonl",
+      "content_hash": "/b9/2894c37c38/0/content_hash.txt",
+      "prompt": "/b9/2894c37c38/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 4,
+    "cache_creation_tokens": 197016,
+    "cache_read_tokens": 277487,
+    "output_tokens": 1743,
+    "api_call_count": 2
+  }
+}

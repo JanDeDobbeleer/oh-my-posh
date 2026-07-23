@@ -1,0 +1,1 @@
+internal changes are never breaking changes, only configuration behaviour is.

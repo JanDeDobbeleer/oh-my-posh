@@ -1,0 +1,71 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "1b006db4f6c6",
+  "session_id": "df0a6e5d-bba0-4488-b540-8f55f98b5b1b",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-23T12:37:01.0352354Z",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/shell/scripts/omp.ps1"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "1a54f7d521db",
+  "checkpoint_transcript_start": 28,
+  "transcript_lines_at_start": 28,
+  "compact_transcript_start": 6,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01EagW55kGU5BMQxrw5Fkqxz",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "1a54f7d521db",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 14,
+        "end": 15,
+        "entry_ids": [
+          "1ff20443-17b2-45e9-a9dc-53c85d936687"
+        ],
+        "tool_use_id": "toolu_01EagW55kGU5BMQxrw5Fkqxz"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01EagW55kGU5BMQxrw5Fkqxz"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "initial_attribution": {
+    "calculated_at": "2026-07-23T12:37:01.015823Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 46,
+    "human_modified": 14,
+    "human_removed": 0,
+    "total_committed": 46,
+    "total_lines_changed": 60,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

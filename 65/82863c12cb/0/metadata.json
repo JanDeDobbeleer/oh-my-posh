@@ -1,0 +1,121 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "6582863c12cb",
+  "session_id": "c0fff321-13d9-40df-a7e8-0ec69ff04b78",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-23T12:57:44.5868547Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/color/keywords.go",
+    "src/prompt/engine.go"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "ae4b739a4e4c",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 305,
+    "cache_creation_tokens": 360351,
+    "cache_read_tokens": 24899899,
+    "output_tokens": 103806,
+    "api_call_count": 153
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01DEhdKAp4YuBf15E7YAMCFS",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "ae4b739a4e4c",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 15,
+        "end": 16,
+        "entry_ids": [
+          "339d9732-1e9c-4cea-bb06-36556e266ad6"
+        ],
+        "tool_use_id": "toolu_01DEhdKAp4YuBf15E7YAMCFS"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01DEhdKAp4YuBf15E7YAMCFS"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01Nqkj1rnWZknZyx8aEooG34",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "ae4b739a4e4c",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 266,
+        "end": 267,
+        "entry_ids": [
+          "c1d29c16-3ea2-475d-a898-5afc43083f80"
+        ],
+        "tool_use_id": "toolu_01Nqkj1rnWZknZyx8aEooG34"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01Nqkj1rnWZknZyx8aEooG34"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-23T12:57:44.3941508Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 5,
+    "human_modified": 14,
+    "human_removed": 0,
+    "total_committed": 5,
+    "total_lines_changed": 19,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

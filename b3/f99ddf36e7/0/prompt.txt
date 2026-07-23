@@ -15,3 +15,11 @@ review the implementation with Fable.
 ---
 
 fix both
+
+---
+
+Do we have the same issue in other shells when you look at what we fixed in the PowerShell script?
+
+---
+
+yes

@@ -1,0 +1,5 @@
+while this solves this specific case, the issue is that you can inject {{ cmd xxx }} from multiple sources if you want. Analyse how we could avoid running malicious command from cmd directly, how do we know the use added this and it's not coming from elsewhere? Maybe validate if this in the configuration?
+
+---
+
+go ahead with the type-based fix, skip the opt-in flag and remove breakBraceRuns as it's no longer needed. I favor this solution.

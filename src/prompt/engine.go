@@ -25,16 +25,23 @@ type Engine struct {
 	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
-	pendingSegments       sync.Map
-	rprompt               string
-	Overflow              config.Overflow
-	prompt                strings.Builder
-	allBlocks             []*config.Block
-	currentLineLength     int
-	Padding               int
-	rpromptLength         int
-	Plain                 bool
-	forceRender           bool
+	// blockTailColors is the last rendered segment's colors, captured just
+	// before previousActiveSegment resets to nil at the end of a block. A
+	// block's own Filler (see shouldFill) renders after terminal.String()
+	// has already cleared the parent stack for the next block, so a filler
+	// template using <parentBackground>/<parentForeground> needs this to
+	// resolve against the block it is padding rather than an empty stack.
+	blockTailColors   *color.Set
+	pendingSegments   sync.Map
+	rprompt           string
+	Overflow          config.Overflow
+	prompt            strings.Builder
+	allBlocks         []*config.Block
+	currentLineLength int
+	Padding           int
+	rpromptLength     int
+	Plain             bool
+	forceRender       bool
 }
 
 const (
@@ -187,6 +194,14 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 
 	// allow for easy color overrides and templates
 	terminal.SetColors("default", "default")
+
+	// the block's own segments already reset the parent stack when their
+	// terminal.String() call produced blockText - reseed the one entry a
+	// <parentBackground>/<parentForeground> anchor in the filler needs.
+	if e.blockTailColors != nil {
+		terminal.ParentColors = append(terminal.ParentColors, e.blockTailColors)
+	}
+
 	terminal.Write("", "", filler)
 	filler, lenFiller := terminal.String()
 	if lenFiller == 0 {
@@ -337,6 +352,7 @@ func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) b
 
 	e.writeSeparator(true)
 	e.activeSegment = nil
+	e.captureBlockTailColors()
 	e.previousActiveSegment = nil
 
 	blockText, length := terminal.String()
@@ -500,6 +516,23 @@ func (e *Engine) renderActiveSegment() {
 	e.previousActiveSegment = e.activeSegment
 
 	terminal.SetParentColors(e.previousActiveSegment.ResolveBackground(), e.previousActiveSegment.ResolveForeground())
+}
+
+// captureBlockTailColors snapshots the last rendered segment's colors into
+// blockTailColors just before previousActiveSegment resets to nil, so a
+// later shouldFill call for this same block's Filler can still resolve
+// <parentBackground>/<parentForeground> after terminal.String() has already
+// cleared the parent stack for the next block.
+func (e *Engine) captureBlockTailColors() {
+	if e.previousActiveSegment == nil {
+		e.blockTailColors = nil
+		return
+	}
+
+	e.blockTailColors = &color.Set{
+		Background: e.previousActiveSegment.ResolveBackground(),
+		Foreground: e.previousActiveSegment.ResolveForeground(),
+	}
 }
 
 func (e *Engine) writeSeparator(final bool) {

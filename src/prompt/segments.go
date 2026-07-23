@@ -80,6 +80,7 @@ func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Bl
 	e.writeSeparator(true)
 
 	e.activeSegment = nil
+	e.captureBlockTailColors()
 	e.previousActiveSegment = nil
 
 	return terminal.String()

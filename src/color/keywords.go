@@ -1,5 +1,7 @@
 package color
 
+import "slices"
+
 const (
 	// Transparent implies a transparent color
 	Transparent Ansi = "transparent"
@@ -28,8 +30,8 @@ func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 	resolveParentColor := func(keyword Ansi) Ansi {
 		// parents is a stack pushed tail-first (see terminal.SetParentColors):
 		// the nearest ancestor is the last element, so walk back-to-front.
-		for i := len(parents) - 1; i >= 0; i-- {
-			parentColor := parents[i]
+		for _, parentColor := range slices.Backward(parents) {
+
 			if parentColor == nil {
 				return Transparent
 			}
@@ -84,7 +86,7 @@ func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 			return current.Background
 		case keyword == Foreground && current != nil:
 			return current.Foreground
-		case (keyword == ParentBackground || keyword == ParentForeground) && parents != nil:
+		case (keyword == ParentBackground || keyword == ParentForeground) && len(parents) != 0:
 			return resolveParentColor(keyword)
 		default:
 			return Transparent

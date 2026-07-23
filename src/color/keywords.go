@@ -26,7 +26,10 @@ func (color Ansi) isKeyword() bool {
 
 func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 	resolveParentColor := func(keyword Ansi) Ansi {
-		for _, parentColor := range parents {
+		// parents is a stack pushed tail-first (see terminal.SetParentColors):
+		// the nearest ancestor is the last element, so walk back-to-front.
+		for i := len(parents) - 1; i >= 0; i-- {
+			parentColor := parents[i]
 			if parentColor == nil {
 				return Transparent
 			}

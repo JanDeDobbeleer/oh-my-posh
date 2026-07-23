@@ -218,15 +218,15 @@ func SetColors(background, foreground color.Ansi) {
 	}
 }
 
+// SetParentColors pushes the completed segment's colors onto the parent
+// stack; the most recent entry (nearest ancestor) sits at the tail. Cleared
+// per block by String() - see resolveParentColor in color/keywords.go for
+// the matching tail-to-head walk.
 func SetParentColors(background, foreground color.Ansi) {
-	if ParentColors == nil {
-		ParentColors = make([]*color.Set, 0)
-	}
-
-	ParentColors = append([]*color.Set{{
+	ParentColors = append(ParentColors, &color.Set{
 		Background: background,
 		Foreground: foreground,
-	}}, ParentColors...)
+	})
 }
 
 func ChangeLine(numberOfLines int) string {
@@ -602,6 +602,11 @@ func String() (string, int) {
 
 		bgGradientCells, fgGradientCells = nil, nil
 		cellIndex = 0
+
+		// the parent stack is scoped to one block; each new block starts a
+		// fresh ancestor chain. Slicing to zero keeps the backing array so
+		// same-size blocks (the common case) push without reallocating.
+		ParentColors = ParentColors[:0]
 	}()
 
 	return builder.String(), length

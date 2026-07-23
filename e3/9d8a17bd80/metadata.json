@@ -3,8 +3,10 @@
   "checkpoint_id": "e39d8a17bd80",
   "strategy": "manual-commit",
   "branch": "next",
-  "checkpoints_count": 1,
-  "files_touched": null,
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/shell/scripts/omp.lua"
+  ],
   "sessions": [
     {
       "metadata": "/e3/9d8a17bd80/0/metadata.json",
@@ -12,6 +14,13 @@
       "compact_transcript": "/e3/9d8a17bd80/0/transcript.jsonl",
       "content_hash": "/e3/9d8a17bd80/0/content_hash.txt",
       "prompt": "/e3/9d8a17bd80/0/prompt.txt"
+    },
+    {
+      "metadata": "/e3/9d8a17bd80/1/metadata.json",
+      "transcript": "/e3/9d8a17bd80/1/full.jsonl",
+      "compact_transcript": "/e3/9d8a17bd80/1/transcript.jsonl",
+      "content_hash": "/e3/9d8a17bd80/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {

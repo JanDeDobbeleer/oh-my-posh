@@ -31,7 +31,6 @@ func (color Ansi) Resolve(current *Set, parents []*Set) Ansi {
 		// parents is a stack pushed tail-first (see terminal.SetParentColors):
 		// the nearest ancestor is the last element, so walk back-to-front.
 		for _, parentColor := range slices.Backward(parents) {
-
 			if parentColor == nil {
 				return Transparent
 			}

@@ -247,8 +247,8 @@ func TestWithGradientStops(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Color    Ansi
-		Stops    []Ansi
 		Expected Ansi
+		Stops    []Ansi
 	}{
 		{Case: "linear-gradient", Color: "linear-gradient(#FF0000, #0000FF)", Stops: []Ansi{"#111111", "#222222"}, Expected: "linear-gradient(#111111, #222222)"},
 		{Case: "dark-gradient", Color: "dark-gradient(p:teal)", Stops: []Ansi{"#179299"}, Expected: "dark-gradient(#179299)"},

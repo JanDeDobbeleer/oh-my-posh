@@ -217,25 +217,26 @@ As these are arrays of strings, you can join them using the `join` function:
 
 ## posh-git
 
-If you want to display the default [posh-git][poshgit] output, **do not** use this segment
-but add the following snippet after initializing Oh My Posh in your `$PROFILE`:
-
-```powershell
-function Set-PoshGitStatus {
-    $global:GitStatus = Get-GitStatus
-    $env:POSH_GIT_STRING = Write-GitStatus -Status $global:GitStatus
-}
-New-Alias -Name 'Set-PoshContext' -Value 'Set-PoshGitStatus' -Scope Global -Force
-```
-
-You can then use the `POSH_GIT_STRING` environment variable in a [text segment][text]:
+Use the `source: pwsh` option to fetch status information from the [posh-git][poshgit] PowerShell
+module instead of the `git` CLI. This populates the same template properties as above, so you're
+not limited to what `Write-GitStatus` prints, and nothing relies on ANSI escape sequences.
 
 <Config
   data={{
+    type: "git",
+    style: "plain",
     template:
-      "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}",
+      "[{{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Staging.Changed }} +{{ .Staging.Added }} ~{{ .Staging.Modified }} -{{ .Staging.Deleted }}{{ if gt .Staging.Unmerged 0 }} !{{ .Staging.Unmerged }}{{ end }}{{ end }}{{ if and .Staging.Changed .Working.Changed }} |{{ end }}{{ if .Working.Changed }} +{{ add .Working.Added .Working.Untracked }} ~{{ .Working.Modified }} -{{ .Working.Deleted }}{{ if gt .Working.Unmerged 0 }} !{{ .Working.Unmerged }}{{ end }}{{ end }}{{ if .Working.Changed }} !{{ else if .Staging.Changed }} ~{{ end }}]",
+    options: {
+      fetch_status: true,
+      source: "pwsh",
+    },
   }}
 />
+
+The template above reproduces posh-git's default `[branch status | staged changes | working changes]` format,
+counting untracked files as added in the working tree, the same way posh-git does. Adjust icons, order, or
+gating to taste, it's a regular [template][templates] now.
 
 [git]: https://git-scm.com/
 [poshgit]: https://github.com/dahlbyk/posh-git
@@ -247,3 +248,4 @@ You can then use the `POSH_GIT_STRING` environment variable in a [text segment][
 [text]: /docs/segments/system/text
 [exclude_folders]: /docs/configuration/segment#include--exclude-folders
 [Jujutsu]: https://www.jj-vcs.dev/
+[faq-posh-git]: /docs/faq#my-posh-git-prompt-string-doesnt-render-anymore

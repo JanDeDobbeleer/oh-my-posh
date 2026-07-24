@@ -354,6 +354,21 @@ oh-my-posh config migrate glyphs --write
 This will update your configuration file to use the new glyph locations. Do know they might look different, as they also
 updated the icons themselves. A backup of the current config can be found in the same location with a `.bak` extension.
 
+## My posh-git prompt string doesn't render anymore
+
+You're relying on the `POSH_GIT_STRING` environment variable, set via `Write-GitStatus` and shown through a
+[text segment][text], and instead of your git status you now see raw escape codes like `[93m[[39m...`.
+
+`POSH_GIT_STRING` carries ANSI escape sequences, and Oh My Posh strips ANSI escape sequences from environment
+variable values before rendering them, so the string can no longer display as intended. This isn't a
+regression to revert, environment variables aren't meant to carry raw ANSI, and stripping them closes a
+class of prompt-injection issues.
+
+Migrate to the git segment's `source: pwsh` option instead. It fetches the same data from the [posh-git][poshgit]
+module, but through the segment's regular template properties (`.Staging`, `.Working`, `.BranchStatus`, ...)
+rather than a pre-rendered, ANSI-laden string, so nothing gets stripped. See the [posh-git section][git-poshgit]
+of the git segment docs for a sample template that reproduces posh-git's default output.
+
 ## Xonsh: Right prompt jumps to bottom of the screen
 
 This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
@@ -380,3 +395,6 @@ This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 [xonsh-issue]: https://github.com/xonsh/xonsh/issues/3810
 [zsh-init]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/3462#discussioncomment-5155790
 [fish-mode-prompt]: https://fishshell.com/docs/current/cmds/fish_mode_prompt.html#example
+[text]: /docs/segments/system/text
+[poshgit]: https://github.com/dahlbyk/posh-git
+[git-poshgit]: /docs/segments/scm/git#posh-git

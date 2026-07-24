@@ -1,0 +1,1 @@
+The shading is now correct, but I still feel the individual cell steps are too large (I can see anctual visual difference per shell rather than a smooth gradient).

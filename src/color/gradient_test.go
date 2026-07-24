@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
 func TestIsGradient(t *testing.T) {
@@ -14,6 +15,8 @@ func TestIsGradient(t *testing.T) {
 		Expected bool
 	}{
 		{Case: "gradient", Color: "linear-gradient(#FF0000, #0000FF)", Expected: true},
+		{Case: "dark-gradient", Color: "dark-gradient(#3465A4)", Expected: true},
+		{Case: "light-gradient", Color: "light-gradient(#3465A4)", Expected: true},
 		{Case: "hex", Color: "#FF0000", Expected: false},
 		{Case: "empty", Color: "", Expected: false},
 		{Case: "keyword", Color: Background, Expected: false},
@@ -34,6 +37,8 @@ func TestGradientStops(t *testing.T) {
 		{Case: "three stops", Color: "linear-gradient(#FF0000, #00FF00, #0000FF)", Expected: []Ansi{"#FF0000", "#00FF00", "#0000FF"}},
 		{Case: "whitespace variants", Color: "linear-gradient( #FF0000  ,  #0000FF )", Expected: []Ansi{"#FF0000", "#0000FF"}},
 		{Case: "palette ref stops", Color: "linear-gradient(p:red, p:blue)", Expected: []Ansi{"p:red", "p:blue"}},
+		{Case: "dark-gradient single stop", Color: "dark-gradient(#3465A4)", Expected: []Ansi{"#3465A4"}},
+		{Case: "light-gradient single stop", Color: "light-gradient(#3465A4)", Expected: []Ansi{"#3465A4"}},
 		{Case: "not a gradient", Color: "#FF0000", Expected: nil},
 		{Case: "empty string", Color: "", Expected: nil},
 		{Case: "no closing paren", Color: "linear-gradient(#FF0000, #0000FF", Expected: nil},
@@ -145,7 +150,10 @@ func TestGradientCellsInvalidReturnsNil(t *testing.T) {
 		Cells int
 	}{
 		{Case: "one invalid stop of two", Color: "linear-gradient(#FF0000, notacolor)", Cells: 3},
-		{Case: "single stop", Color: "linear-gradient(#FF0000)", Cells: 3},
+		{Case: "linear-gradient with a single stop needs a real second stop", Color: "linear-gradient(#FF0000)", Cells: 3},
+		{Case: "dark-gradient unresolvable stop", Color: "dark-gradient(notacolor)", Cells: 3},
+		{Case: "light-gradient unresolvable stop", Color: "light-gradient(notacolor)", Cells: 3},
+		{Case: "dark-gradient rejects more than one stop", Color: "dark-gradient(#FF0000, #0000FF)", Cells: 3},
 		{Case: "not a gradient", Color: "#FF0000", Cells: 3},
 		{Case: "invalid syntax", Color: "linear-gradient(#FF0000, #0000FF", Cells: 3},
 		{Case: "zero cells", Color: "linear-gradient(#FF0000, #0000FF)", Cells: 0},
@@ -154,6 +162,102 @@ func TestGradientCellsInvalidReturnsNil(t *testing.T) {
 	for _, tc := range cases {
 		result := GradientCells(tc.Color, tc.Cells, &Defaults{}, false, nil, nil)
 		assert.Nil(t, result, tc.Case)
+	}
+}
+
+// TestGradientCellsAutoShade verifies dark-gradient(#color)/light-gradient(#color) — a
+// single explicit stop — spreads into a two-stop gradient running from the exact
+// configured color to a darker/lighter shade of it, instead of collapsing like an
+// ordinary invalid (< 2 stop) linear-gradient. The first cell must be the unmodified
+// configured color (matching GradientFirst) and the last must match
+// GradientLastForCells for the SAME cell count, so separators/caps line up.
+func TestGradientCellsAutoShade(t *testing.T) {
+	cases := []struct {
+		Case string
+		Kind string
+	}{
+		{Case: "dark-gradient darkens", Kind: "dark"},
+		{Case: "light-gradient lightens", Kind: "light"},
+	}
+
+	for _, tc := range cases {
+		gradient := Ansi(tc.Kind + "-gradient(#3465A4)")
+		result := GradientCells(gradient, 5, &Defaults{}, false, nil, nil)
+		assert.Len(t, result, 5, tc.Case)
+
+		assert.Equal(t, Ansi("38;2;52;101;164"), result[0], tc.Case+": the first cell must be the unmodified configured color")
+
+		expectedLast := GradientCells(Ansi("linear-gradient(#3465A4, "+gradient.GradientLastForCells(5).String()+")"), 5, &Defaults{}, false, nil, nil)
+		assert.Equal(t, expectedLast[len(expectedLast)-1], result[len(result)-1], tc.Case+": the last cell must match GradientLastForCells(5), the color separators/caps use")
+
+		assert.NotEqual(t, result[0], result[len(result)-1], tc.Case+": the segment must actually shade, not render solid")
+	}
+}
+
+// TestGradientCellsAutoShadeScalesWithWidth verifies the total base-to-shade delta
+// grows with the segment's cell count instead of staying fixed: a wide segment must
+// end further from its base color than a narrow one, so a wide gradient still reads
+// as a clear effect instead of fading into an imperceptibly fine ramp - the report
+// behind this fix was that a wide segment's gradient looked completely flat.
+func TestGradientCellsAutoShadeScalesWithWidth(t *testing.T) {
+	narrow := GradientCells("dark-gradient(#179299)", 3, &Defaults{}, true, nil, nil)
+	wide := GradientCells("dark-gradient(#179299)", 15, &Defaults{}, true, nil, nil)
+
+	base, err := colorful.Hex("#179299")
+	assert.Nil(t, err)
+
+	narrowLast, ok := parseTrueColor(narrow[len(narrow)-1])
+	assert.True(t, ok)
+
+	wideLast, ok := parseTrueColor(wide[len(wide)-1])
+	assert.True(t, ok)
+
+	assert.True(t, base.DistanceLab(wideLast) > base.DistanceLab(narrowLast), "a 15-cell segment must end further from the base color than a 3-cell one")
+}
+
+// TestGradientCellsAutoShadeSingleCell verifies a single-cell segment (too narrow to
+// show any blend) renders the configured color unmodified, not a shaded endpoint.
+func TestGradientCellsAutoShadeSingleCell(t *testing.T) {
+	result := GradientCells("dark-gradient(#3465A4)", 1, &Defaults{}, false, nil, nil)
+	assert.Equal(t, []Ansi{"38;2;52;101;164"}, result)
+}
+
+// TestGradientLastAutoShade verifies GradientLast (width unknown, the gentlest single-
+// step shade) and GradientLastForCells (matching GradientCells for a given cell count)
+// darken for dark-gradient and lighten for light-gradient, and fall back to the raw
+// stop for one that can't be shaded without a resolver (keyword, palette reference).
+func TestGradientLastAutoShade(t *testing.T) {
+	unshadeable := "can't be shaded without a resolver, so it passes through unchanged"
+
+	assert.Equal(t, Ansi("#2b5f9d"), Ansi("dark-gradient(#3465A4)").GradientLast(), "dark-gradient's width-unknown shade uses the gentlest (single-step) delta")
+	assert.Equal(t, Ansi("#3f6eae"), Ansi("light-gradient(#3465A4)").GradientLast(), "light-gradient's width-unknown shade uses the gentlest (single-step) delta")
+	assert.Equal(t, Ansi("#245a98"), Ansi("dark-gradient(#3465A4)").GradientLastForCells(5), "dark-gradient at 5 cells shades further than the width-unknown fallback")
+	assert.Equal(t, Ansi("parentBackground"), Ansi("dark-gradient(parentBackground)").GradientLast(), "a keyword "+unshadeable)
+	assert.Equal(t, Ansi("p:red"), Ansi("dark-gradient(p:red)").GradientLast(), "a palette reference "+unshadeable)
+
+	// linear-gradient with a single stop is not an auto-shade request; it degrades like
+	// any other invalid (< 2 stop) gradient, returning the lone stop unshaded.
+	assert.Equal(t, Ansi("#3465A4"), Ansi("linear-gradient(#3465A4)").GradientLast(), "a single-stop linear-gradient is not auto-shaded")
+}
+
+// TestWithGradientStops verifies the rebuilt string keeps c's own prefix, so a palette
+// reference resolved inside a dark-gradient/light-gradient stays that same kind instead
+// of silently becoming a plain linear-gradient.
+func TestWithGradientStops(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Color    Ansi
+		Stops    []Ansi
+		Expected Ansi
+	}{
+		{Case: "linear-gradient", Color: "linear-gradient(#FF0000, #0000FF)", Stops: []Ansi{"#111111", "#222222"}, Expected: "linear-gradient(#111111, #222222)"},
+		{Case: "dark-gradient", Color: "dark-gradient(p:teal)", Stops: []Ansi{"#179299"}, Expected: "dark-gradient(#179299)"},
+		{Case: "light-gradient", Color: "light-gradient(p:teal)", Stops: []Ansi{"#179299"}, Expected: "light-gradient(#179299)"},
+		{Case: "not a gradient", Color: "#FF0000", Stops: []Ansi{"#111111"}, Expected: "#FF0000"},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, tc.Color.WithGradientStops(tc.Stops), tc.Case)
 	}
 }
 

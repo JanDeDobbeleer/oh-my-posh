@@ -33,7 +33,7 @@
     },
     "gradient": {
       "type": "string",
-      "pattern": "^linear-gradient\\(\\s*[^,()]+(\\s*,\\s*[^,()]+)*\\s*\\)$",
+      "pattern": "^(linear|dark|light)-gradient\\(\\s*[^,()]+(\\s*,\\s*[^,()]+)*\\s*\\)$",
       "title": "Gradient color",
       "description": "https://ohmyposh.dev/docs/configuration/colors#gradients"
     },

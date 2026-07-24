@@ -52,6 +52,27 @@ Powerline separators, diamond caps, and the `parentBackground`/`parentForeground
 automatically pick up the matching edge of the gradient, so a segment next to a gradient still
 connects with the right color.
 
+### Auto-shade from a single color
+
+`dark-gradient(#3465A4)` and `light-gradient(#3465A4)` take a single color and run from that
+exact color to a darker or lighter shade of it, letting one configured color produce a gradient
+effect on a segment too narrow for a real two-stop gradient to render as anything but a solid
+color, see [Stops and segment width](#stops-and-segment-width).
+
+<Config
+  data={{
+    type: "text",
+    style: "plain",
+    background: "dark-gradient(#3465A4)",
+  }}
+/>
+
+The first cell always renders the exact configured color; the last renders the shade. Everything
+in between interpolates the same way a two-stop gradient does, so a wide segment shows a gentler
+ramp and a narrow one a coarser one. A single-cell segment renders the configured color unmodified.
+Each takes exactly one color; `dark-gradient`/`light-gradient` with more than one stop is invalid,
+same as a `linear-gradient` with fewer than two.
+
 ### Supported stops
 
 A stop must resolve to a hex color before it can be interpolated:
@@ -77,10 +98,13 @@ segment resolves to the gradient's color at that position in the text: a leading
 `<background,transparent>` cap picks up the first stop, a trailing one the color where the
 gradient ends, so template caps stay seamless without hardcoding edge colors.
 
-A gradient without at least two supported stops renders as a solid color: the last stop goes through
-the regular color pipeline, so `linear-gradient(red, blue)` renders solid blue rather than failing —
-matching the color its separators and width-collapsed form already use. Rejected stops are reported
-in `oh-my-posh debug` output.
+A `linear-gradient` that resolves to fewer than two supported colors — including a `linear-gradient`
+written with only one stop — renders as a solid color: the last stop goes through the regular color
+pipeline, so `linear-gradient(red, blue)` renders solid blue rather than failing, and
+`linear-gradient(#3465A4)` renders solid `#3465A4` rather than shading — matching the color its
+separators and width-collapsed form already use. Rejected stops are reported in `oh-my-posh debug`
+output. Use [`dark-gradient`/`light-gradient`](#auto-shade-from-a-single-color) for a one-color
+gradient effect instead.
 
 ### Stops and segment width
 

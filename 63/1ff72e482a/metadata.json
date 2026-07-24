@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "631ff72e482a",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "website/docs/faq.mdx",
+    "website/docs/segments/scm/git.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/63/1ff72e482a/0/metadata.json",
+      "transcript": "/63/1ff72e482a/0/full.jsonl",
+      "compact_transcript": "/63/1ff72e482a/0/transcript.jsonl",
+      "content_hash": "/63/1ff72e482a/0/content_hash.txt",
+      "prompt": "/63/1ff72e482a/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 77,
+    "cache_creation_tokens": 138556,
+    "cache_read_tokens": 3955733,
+    "output_tokens": 17829,
+    "api_call_count": 39
+  }
+}

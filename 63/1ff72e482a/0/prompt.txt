@@ -1,0 +1,106 @@
+go ahead and we should also add a sample segment that reproduces the way posh-git displays the git changes by default. Execute the default prompt analysis by looking at the posh-git source code using a sub-agent.
+
+---
+
+<task-notification>
+<task-id>abb9ed837cf743d26</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\9ccc706b-585f-4d19-8f25-3d3169ec579c\tasks\abb9ed837cf743d26.output</output-file>
+<status>completed</status>
+<summary>Agent "Research posh-git default prompt format" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## posh-git default prompt status string — research findings
+
+### Source files (dahlbyk/posh-git, `master` branch — this is still posh-git's actual default branch name, not renamed to `main`)
+
+- **`src/GitPrompt.ps1`** (https://raw.githubusercontent.com/dahlbyk/posh-git/master/src/GitPrompt.ps1) — contains `Write-GitStatus`, `Write-GitBranchName`, `Write-GitBranchStatus`, `Write-GitIndexStatus`, `Write-GitWorkingDirStatus`, `Write-GitWorkingDirStatusSummary`, `Write-GitStashCount`, `Write-VcsStatus`, and the `$PoshGitVcsPrompt` script block. There is no separate `GitPromptScriptBlock.ps1` or `WriteGitStatus.ps1` — it's all in this one file.
+- **`src/PoshGitTypes.ps1`** (https://raw.githubusercontent.com/dahlbyk/posh-git/master/src/PoshGitTypes.ps1) — defines the `PoshGitPromptSettings` class with all default property values. There is no `GitPromptDefaults.ps1` / `GitPromptSettings.ps1` (both 404) — defaults live directly in this class constructor.
+- **`src/GitUtils.ps1`** — confirms untracked files (`??` porcelain status) are folded into `Working.Added`, same bucket as newly-added-but-unstaged files.
+
+### Composition algorithm (`Write-GitStatus`, `GitPrompt.ps1` lines 202–256)
+
+In order, with default settings:
+
+1. `PathStatusSeparator` (default `' '`) — written **before** `[` since `DefaultPromptWriteStatusFirst` defaults to `$false` (prompt path comes first, so a space separates path from status).
+2. `BeforeStatus` → `'['` (Yellow)
+3. Branch name, **no leading space** (`Write-GitBranchName -NoLeadingSpace`), colored via branch status color.
+4. Branch ahead/behind indicator, **with** leading space (`Write-GitBranchStatus`, no `-NoLeadingSpace`).
+5. `BeforeIndex` → `''` (empty — contributes nothing by default).
+6. If `EnableFileStatus` (default `$true`) and `Status.HasIndex`: staged/index status (`Write-GitIndexStatus`), each field prefixed with a space.
+7. If `Status.HasWorking` too: `DelimStatus` → `' |'`.
+8. If `EnableFileStatus` and `Status.HasWorking`: unstaged/working status (`Write-GitWorkingDirStatus`), each field space-prefixed.
+9. `Write-GitWorkingDirStatusSummary` → one trailing symbol (space-prefixed) summarizing overall dirty state.
+10. If `EnableStashStatus` (default **`$false`**) and stash count &gt; 0: stash count wrapped in `BeforeStash`/`AfterStash`.
+11. `AfterStatus` → `']'` (Yellow)
+
+### Key default settings (verbatim from `PoshGitTypes.ps1`, `PoshGitPromptSettings` class)
+
+```powershell
+[PoshGitCellColor]$BranchColor  = [PoshGitCellColor]::new([ConsoleColor]::Cyan)
+[PoshGitCellColor]$IndexColor   = [PoshGitCellColor]::new([ConsoleColor]::DarkGreen)
+[PoshGitCellColor]$WorkingColor = [PoshGitCellColor]::new([ConsoleColor]::DarkRed)
+[PoshGitCellColor]$StashColor   = [PoshGitCellColor]::new([ConsoleColor]::Red)
+
+[PoshGitTextSpan]$BeforeStatus = [PoshGitTextSpan]::new('[', [ConsoleColor]::Yellow)
+[PoshGitTextSpan]$DelimStatus  = [PoshGitTextSpan]::new(' |', [ConsoleColor]::Yellow)
+[PoshGitTextSpan]$AfterStatus  = [PoshGitTextSpan]::new(']', [ConsoleColor]::Yellow)
+[PoshGitTextSpan]$BeforeIndex  = [PoshGitTextSpan]::new('', [ConsoleColor]::DarkGreen)
+[PoshGitTextSpan]$BeforeStash  = [PoshGitTextSpan]::new(' (', [ConsoleColor]::Red)
+[PoshGitTextSpan]$AfterStash   = [PoshGitTextSpan]::new(')', [ConsoleColor]::Red)
+
+[PoshGitTextSpan]$LocalDefaultStatusSymbol = [PoshGitTextSpan]::new('', [ConsoleColor]::DarkGreen)
+[PoshGitTextSpan]$LocalWorkingStatusSymbol = [PoshGitTextSpan]::new('!', [ConsoleColor]::DarkRed)
+[PoshGitTextSpan]$LocalStagedStatusSymbol  = [PoshGitTextSpan]::new('~', [ConsoleColor]::Cyan)
+
+[PoshGitTextSpan]$BranchGoneStatusSymbol           = [PoshGitTextSpan]::new([char]0x00D7, DarkCyan) # ×
+[PoshGitTextSpan]$BranchIdenticalStatusSymbol      = [PoshGitTextSpan]::new([char]0x2261, Cyan)      # ≡
+[PoshGitTextSpan]$BranchAheadStatusSymbol          = [PoshGitTextSpan]::new([char]0x2191, Green)     # ↑
+[PoshGitTextSpan]$BranchBehindStatusSymbol         = [PoshGitTextSpan]::new([char]0x2193, Red)       # ↓
+[PoshGitTextSpan]$BranchBehindAndAheadStatusSymbol = [PoshGitTextSpan]::new([char]0x2195, Yellow)    # ↕
+
+[BranchBehindAndAheadDisplayOptions]$BranchBehindAndAheadDisplay = ::Full   # enum: Full; Compact; Minimal
+
+[string]$FileAddedText       = '+'
+[string]$FileModifiedText    = '~'
+[string]$FileRemovedText     = '-'
+[string]$FileConflictedText  = '!'
+[string]$BranchUntrackedText = ''    # nothing shown when no upstream configured
+
+[bool]$EnableStashStatus  = $false   # stash count hidden by default
+[bool]$ShowStatusWhenZero = $true    # ← IMPORTANT: +/~/- counters show even when 0, by default
+```
+
+Field order within both the index (staged) and working (unstaged) blocks is fixed: **Added(`+`), Modified(`~`), Deleted(`-`), Unmerged(`!`)** — Unmerged is the only one *not* gated by `ShowStatusWhenZero` (it only appears when count &gt; 0).
+
+Ahead/behind rendering (`Write-GitBranchStatus`, `BranchBehindAndAheadDisplay = Full`, the default):
+- Ahead only: `"{0}{1}"` → e.g. `↑2`
+- Behind only: `"{0}{1}"` → e.g. `↓3`
+- Both: `"{0}{1} {2}{3}"` → e.g. `↓3 ↑2`
+- No upstream: empty (`BranchUntrackedText = ''`)
+- Upstream gone: `×`
+- Identical to upstream: `≡`
+
+The overall trailing summary symbol (`Write-GitWorkingDirStatusSummary`) is **not** "before the branch" — it's appended at the very end of the whole status string, after index/working counters: `!` if there are any unstaged (working) changes, else `~` if there are staged-but-uncommitted changes, else nothing (`LocalDefaultStatusSymbol` is empty text). There is no separate "stale/error" symbol before the branch in default settings — a fetch/status error instead replaces the whole bracketed status with `[PoshGitVcsPrompt error: ...]` in `ErrorColor` (Red).
+
+### Worked example for your scenario
+
+Branch `main`, 2 commits ahead of `origin/main`, 0 behind; staged: 2 added + 1 modified; unstaged: 3 modified + 1 untracked (untracked counts as `Working.Added`):
+
+```
+[main ↑2 +2 ~1 -0 | +1 ~3 -0 !]
+```
+
+Char-by-char build: `[` + `main` + ` ↑2` + (`BeforeIndex` empty) + ` +2 ~1 -0` (index: Added=2, Modified=1, Deleted=0 shown because `ShowStatusWhenZero=$true`; Unmerged=0 omitted) + ` |` (DelimStatus) + ` +1 ~3 -0` (working: Added/untracked=1, Modified=3, Deleted=0; Unmerged omitted) + ` !` (LocalWorkingStatusSymbol, since working changes exist) + `]`.
+
+Colors applied (console-color names, for reference only): `[`/`|`/`]` Yellow, branch name Green (ahead-only uses `BranchAheadStatusSymbol`'s color, which also recolors the whole branch span per `Get-GitBranchStatusColor`), `↑2` Green, staged counters DarkGreen (`IndexColor`), unstaged counters DarkRed (`WorkingColor`), trailing `!` DarkRed (`LocalWorkingStatusSymbol`).
+
+If this repo also had a full path prefix in the default posh-git prompt, a literal space (`PathStatusSeparator`) precedes the `[` — e.g. `C:\repo [main ↑2 +2 ~1 -0 | +1 ~3 -0 !]&gt;`. For an oh-my-posh git-segment template that just reproduces the bracketed status text itself, start at `[`.
+
+### Notes for building the oh-my-posh template
+
+- Every counter (`+N ~N -N`) shows even at zero by default — don't gate on `&gt; 0` unless you intend to deviate from posh-git's actual default (a very common misconception is that it hides zeros; it doesn't, per `ShowStatusWhenZero = $true`).
+- Unmerged/conflicted (`!`) is the one exception — only shown when count &gt; 0, in both staged and unstaged sections.
+- The separator between the "index" (staged) and "working" (unstaged) groups is `' |'` (space + pipe) and only appears when there ARE working-tree changes (`HasWorking`); if working tree is fully clean, the index group is followed directly by the trailing summary symbol and `]`.
+- The trailing single-char summary (`!` / `~` / nothing) is independent of, and additional to, the itemized `+/~/-` counts — it's not a replacement for them.</result>
+<usage><subagent_tokens>76489</subagent_tokens><tool_uses>11</tool_uses><duration_ms>183113</duration_ms></usage>
+</task-notification>

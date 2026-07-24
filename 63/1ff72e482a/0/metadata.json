@@ -1,0 +1,83 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "631ff72e482a",
+  "session_id": "9ccc706b-585f-4d19-8f25-3d3169ec579c",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-24T12:15:57.352834Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "website/docs/faq.mdx",
+    "website/docs/segments/scm/git.mdx"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "961c0f6f17ac",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 77,
+    "cache_creation_tokens": 138556,
+    "cache_read_tokens": 3955733,
+    "output_tokens": 17829,
+    "api_call_count": 39
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01SVcAzhjisB7vdhSd7aYqwY",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "961c0f6f17ac",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 14,
+        "end": 15,
+        "entry_ids": [
+          "8b46a6d2-331c-44d7-8a05-a21fbe77e725"
+        ],
+        "tool_use_id": "toolu_01SVcAzhjisB7vdhSd7aYqwY"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01SVcAzhjisB7vdhSd7aYqwY"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-24T12:15:57.3135755Z",
+    "agent_lines": 42,
+    "agent_removed": 13,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 42,
+    "total_lines_changed": 55,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

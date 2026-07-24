@@ -1,0 +1,1 @@
+currently in my config the status segment is too small to enable a gradient. Could we introduce a keyword that uses the segment's available space to create a gradient effect based on a single color to work around that?

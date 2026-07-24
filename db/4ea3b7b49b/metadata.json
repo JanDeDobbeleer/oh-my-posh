@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "db4ea3b7b49b",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/color/gradient.go",
+    "src/color/gradient_test.go",
+    "src/terminal/writer_gradient_test.go",
+    "website/docs/configuration/colors.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/db/4ea3b7b49b/0/metadata.json",
+      "transcript": "/db/4ea3b7b49b/0/full.jsonl",
+      "compact_transcript": "/db/4ea3b7b49b/0/transcript.jsonl",
+      "content_hash": "/db/4ea3b7b49b/0/content_hash.txt",
+      "prompt": "/db/4ea3b7b49b/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 96,
+    "cache_creation_tokens": 86721,
+    "cache_read_tokens": 4998757,
+    "output_tokens": 25720,
+    "api_call_count": 49
+  }
+}

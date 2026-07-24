@@ -1,0 +1,9 @@
+review this proposal with Fable and have it fill in the gaps and report back.
+
+---
+
+Fold it into a Phase 2 implementation plan
+
+---
+
+go ahead with implementation

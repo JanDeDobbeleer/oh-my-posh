@@ -1,0 +1,5 @@
+is still loading lazily?
+
+---
+
+previously the prompt displayed black and I could start typing, that seems to be gone now?

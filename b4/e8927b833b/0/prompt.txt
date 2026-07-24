@@ -1,0 +1,474 @@
+/code-review  medium the commit with fable
+
+---
+
+<task-notification>
+<task-id>ae71e06ee335c821b</task-id>
+<tool-use-id>toolu_0126Ma8d21u9eigDYGGjva8G</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\ae71e06ee335c821b.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: reuse angle" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Analysis complete. The commit's new machinery mostly follows existing conventions in the file, but the pattern is split across two files in ways the file's existing conventions would have kept together. Four candidate findings, ordered by strength.
+
+**1. `$global:_ompAsyncInit` breaks the "global enablers" declaration convention — omp.ps1:21-27 vs 44-45**
+Every other `$global:_omp*` flag (`_ompJobCount`, `_ompFTCSMarks`, `_ompPoshGit`, `_ompAzure`, `_ompTransientPrompt`, `_ompStreaming`) is declared with a `$false` default in the "global enablers" block at omp.ps1:21-27, then flipped by one-line feature snippets in src/shell/pwsh.go:19-27. `_ompAsyncInit` is instead created ad hoc inside the Go format string in init.go:285-287 and never appears in the enablers block. There is a real reason it can't be declared there (line 21-27 runs at the top of the deferred script itself, so a `$false` default would clobber the trampoline's `$true` before line 44 consumes it), but that reason is documented nowhere near the enablers block. failure_scenario: a future contributor "tidying" the globals adds `$global:_ompAsyncInit = $false` to the enablers block for consistency, silently making the module always take the sync branch in async mode and reintroducing the exact prompt-clobbering bug #7714 fixed.
+
+**2. `$global:_ompOriginalPromptFunction` is a second, bespoke "original prompt" backup living in a different file and language — init.go:285 vs omp.ps1:52 and 1360**
+The file already has an established capture/restore family: `$script:OriginalPromptFunction`, `OriginalContinuationPrompt`, `OriginalPromptText`, `OriginalViModeIndicator`, `OriginalViModeChangeHandler` (omp.ps1:52-57), each restored in OnRemove (1360-1368). The new capture duplicates `$script:OriginalPromptFunction`'s purpose but is emitted from a Go string in init.go, so the two twins of the same concept live in different files. The commit does document why both exist (omp.ps1:47-51), which mitigates this, but the guard (`if (-not $global:_ompOriginalPromptFunction)`) and capture logic are invisible to anyone editing the Original* family in omp.ps1. failure_scenario: a refactor of the Original*/restore block in omp.ps1 (e.g. consolidating captures into a hashtable, or changing what "original prompt" means) won't touch the init.go copy, leaving async-mode restore semantics diverged from sync-mode with no test covering the interaction.
+
+**3. New globals are exempt from the file's OnRemove cleanup convention — omp.ps1:1348 vs 1352-1361**
+The existing convention for module-lifetime globals is explicit removal in OnRemove: `Remove-Variable -Name _ompStreamingState -Scope Global -ErrorAction Ignore` (1348). None of the three new globals (`_ompAsyncInit`, `_ompPromptFunction`, `_ompOriginalPromptFunction`) get this treatment. For `_ompPromptFunction`/`_ompOriginalPromptFunction` persistence is load-bearing (the trampoline stays installed after Remove-Module and reads them), but that exemption is only explained for the restore value, not for why the variables themselves must outlive the module. failure_scenario: a contributor extending OnRemove cleanup adds the three new names to the Remove-Variable line "for symmetry," which breaks the post-removal trampoline (it would re-trigger a full async re-init on the next prompt draw instead of running the restored original prompt).
+
+**4. Multi-statement PowerShell logic embedded as a Go string, duplicated verbatim in the test — init.go:284-289, pwsh_test.go:33-43**
+The repo's convention is that PowerShell logic lives in src/shell/scripts/omp.ps1 with placeholder substitution (`::OMP::` at omp.ps1:25), and `sourceCommandAsync` entries for other shells are trivial one-liners (`precmd() { source %s }`). The PWSH case is now a three-statement program with branching, maintained as a Go format string whose exact text is copy-pasted into `TestSourceCommandAsyncPwsh` — the test asserts the string equals itself rather than asserting behavior, so it can never catch a logic bug, only an accidental edit. The trampoline's semantics are additionally re-described in prose comments at omp.ps1:40-51, giving three places that must stay in sync. failure_scenario: someone fixing a quoting or logic issue in the trampoline updates init.go and mechanically mirrors the same text into pwsh_test.go (the test forces this, adding zero safety), while the explanatory comments in omp.ps1 drift stale.
+
+No existing function-pointer-indirection helper was reinvented: the closest precedent, `$global:_ompStreamingState` (omp.ps1:158, used at 384/1042 because engine-event runspaces don't inherit closures), is the same "global variable to cross a scope boundary" convention, and `_ompPromptFunction` follows it faithfully rather than duplicating it. Findings 1-3 are consistency/documentation-placement costs with genuine technical justifications behind each deviation; finding 4 is the most actionable reuse gap (the trampoline could be a small script template like the rest of the PowerShell in this repo, or at minimum the test could exercise semantics instead of string equality).</result>
+<usage><subagent_tokens>47168</subagent_tokens><tool_uses>6</tool_uses><duration_ms>75493</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a595785495136e089</task-id>
+<tool-use-id>toolu_01LwhsWSd3vo24KRts2vuqoG</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\a595785495136e089.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: efficiency angle" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Analysis complete. I read the diff (commit 8912eada) and the surrounding regions of `omp.ps1`. Findings below, per-draw vs. per-session separated, with honest sizing.
+
+## Key structural fact first (corrects the premise of question 4)
+
+In the emitted init line (`D:\oh-my-posh\src\shell\init.go:284-289`), the `if (-not $global:_ompOriginalPromptFunction) { ... }` guard and `$global:_ompPromptFunction = $null` are **outside** the `function prompt() { ... }` definition — they are statement-separated prelude that executes once when the profile evaluates the init line, not on every draw. The trampoline body contains only the two `_ompPromptFunction` checks. So the original-prompt capture costs nothing per draw; the guard exists so a re-run of the init line (re-init) doesn't overwrite the true original with the trampoline itself. No restructuring needed.
+
+## Findings
+
+1. **`src/shell/init.go:287` — steady-state trampoline adds one call frame + two global reads per draw; negligible.**
+   What's wasted, per draw forever: old async code let the deferred script clobber `$Function:prompt` with `$promptFunction` directly, so steady state was one function invocation with zero indirection. New steady state is: trampoline invocation → global read (`-not` check) → global read (second `if`) → `&amp; scriptblock` invocation of `$promptFunction`. The extra work is one PowerShell command-invocation frame and two hashtable lookups in the global scope table (`$global:` is a direct scope hit, no chain walk) — order of 10–50µs total. The prompt render itself does `Get-PoshPrompt` (IPC/daemon read or process work), `Set-PSReadLineOption`, `Measure-Object` — multiple milliseconds (spawn floor ~70ms in legacy mode per project notes). Overhead is well under 0.1% of a draw. This is the unavoidable price of the fix (the trampoline must own the binding permanently) and is genuinely negligible; no action warranted.
+
+2. **`src/shell/init.go:287` — second `if ($global:_ompPromptFunction)` is a redundant global read on the steady-state path; trivially removable.**
+   Per draw forever, the warm path evaluates both conditions: the first `if (-not ...)` (false) and the second `if (...)` (true). Reordering to fast-path-first collapses it to one read: `function prompt() { if ($global:_ompPromptFunction) { &amp; $global:_ompPromptFunction; return }; $global:_ompAsyncInit = $true; &amp; '&lt;script&gt;' }`. This also preserves the current guard semantics (if init fails to set the variable, the next draw retries init instead of silently emitting nothing — arguably better behavior than today's blank return). Saves one global lookup per draw — microseconds; worth taking only because it's free and slightly clearer, not because it's measurable.
+
+3. **`src/shell/scripts/omp.ps1:44` — `[bool]$global:_ompAsyncInit` cast: runs once per import, harmless, and not removable without weakening semantics.**
+   A direct boolean cannot be guaranteed: on the sync path the global is never set, so the raw value is `$null`. All consumers are truthiness `if`s, so the cast is technically optional, but it costs one conversion once per module import and stores a typed value instead of leaking `$null` into `$script:AsyncInit`. Keep it; zero hot-path relevance.
+
+4. **`src/shell/scripts/omp.ps1:40-45, 1000-1010, 1352-1361` — all new omp.ps1 branches are once-per-session (import) or once-per-removal; none touch the per-draw path.**
+   The `AsyncInit` capture/clear runs once at import; the conditional prompt install runs once at import; the OnRemove conditional restore runs once at module removal. `$promptFunction` itself is unchanged. No new allocations, string work, or lookups were added inside the prompt scriptblock. Nothing to fix.
+
+5. **`src/shell/init.go:286` — `$global:_ompPromptFunction = $null` in the prelude forces a full init-script re-source on the next draw whenever the init line re-runs.**
+   Per re-init (not per draw): re-evaluating the profile/init line resets the pointer, so the next Enter pays the full deferred-init cost (`&amp; '&lt;script&gt;'` — the expensive part) even if the module is already loaded and functional. This mirrors old behavior (old code also reinstalled the lazy `prompt` on re-init) and is intentional for config reload, so it's a note, not a defect. Frequency: once per explicit re-init, essentially never in a normal session.
+
+6. **Residual global state (`_ompAsyncInit`, `_ompOriginalPromptFunction`, `_ompPromptFunction`) persists for the session.**
+   Three global variables (one bool, two scriptblock refs) — bytes, not an efficiency issue; only namespace footprint. OnRemove intentionally leaves `_ompOriginalPromptFunction` and the trampoline in place so the restored chain keeps working. No action.
+
+## Bottom line
+
+The only recurring per-draw cost this commit adds is finding 1 (one extra call frame + two global reads), and it is negligible against a multi-millisecond prompt render. Finding 2 is the single concrete micro-improvement available (drop the second global read by reordering the trampoline branches), and it doubles as a small robustness improvement. Question 4's concern does not apply — that guard is prelude, not trampoline body.</result>
+<usage><subagent_tokens>44165</subagent_tokens><tool_uses>4</tool_uses><duration_ms>89322</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>abafc049f93602346</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\abafc049f93602346.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: simplification angle" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Findings (simplification review of commit 8912eada, fix #7714):
+
+**1. Redundant second guard in the trampoline**
+- File: `D:\oh-my-posh\src\shell\init.go`, line 287 (mirrored verbatim in `D:\oh-my-posh\src\shell\pwsh_test.go` lines 36-39)
+- Summary: `if ($global:_ompPromptFunction) { &amp; $global:_ompPromptFunction }` re-checks a condition that is provably true at that point.
+- Failure scenario: The first block ends in `return`, so the second statement is only ever reached when `_ompPromptFunction` is truthy — the guard can never be false. A reader (or future editor) will assume it protects against a real third state ("init ran but didn't set the pointer, and we fell through") and reason about a path that doesn't exist. `if (-not $X) { $global:_ompAsyncInit = $true; &amp; &lt;script&gt;; return }; &amp; $X` is the same machine with one fewer conditional. This preserves both deliberate constraints: the blank-first-draw `return` stays, and dropping a variable-test `if` does not alter `$?` on the steady-state path (a bare variable evaluation never sets `$?` anyway).
+
+**2. `_ompAsyncInit` is a mailbox global that could be a script argument**
+- File: `D:\oh-my-posh\src\shell\init.go` line 287 (producer) + `D:\oh-my-posh\src\shell\scripts\omp.ps1` lines 40-45 (consume-and-reset)
+- Summary: The third global exists only to pass one boolean from the trampoline into a script it invokes on the same line — a `param([switch]$AsyncInit)` on omp.ps1 (or `&amp; &lt;script&gt; $true` positionally) threads the state directly.
+- Failure scenario: The set/consume/clear dance requires a 4-line comment (omp.ps1:40-43) explaining its lifecycle, and the clear-on-consume is a hidden ordering invariant: anything else sourcing omp.ps1 between the trampoline's set and the module body's read inherits the wrong mode, and forgetting the reset silently flips a later sync re-source into async mode. An explicit invocation argument has no lifecycle, no reset step, and no cross-init leakage — two globals (`_ompPromptFunction`, `_ompOriginalPromptFunction`) would remain, both genuinely needing global lifetime. Caveat: omp.ps1 currently has no `param` block and one would have to become the file's first statement (before the line-1 comment/Remove-Module preamble), so this trades a global for a small structural change to the script header.
+
+**3. Poisoned-but-kept capture of `$script:OriginalPromptFunction`**
+- File: `D:\oh-my-posh\src\shell\scripts\omp.ps1`, lines 47-52
+- Summary: In async mode the capture at line 52 is dead — its only consumer is the sync branch of OnRemove (line 1360) — yet it is captured unconditionally and a 5-line comment explains why the value must not be trusted.
+- Failure scenario: A maintainer 1300 lines away must remember "this variable exists in async mode but holds the wrapper chain and is forbidden to use" — the comment at 1353-1356 exists precisely because that trap is live. Guarding the capture (`if (-not $script:AsyncInit) { $script:OriginalPromptFunction = $Function:prompt }`) makes the poisoned state unrepresentable: the variable either exists and is authoritative, or doesn't exist. Both multi-line warning comments then collapse to one line each, and a future accidental use in the async path fails loudly ($null) instead of recursing.
+
+**4. The same invariant is narrated three times**
+- File: `D:\oh-my-posh\src\shell\scripts\omp.ps1`, lines 40-51, 1001-1005, 1353-1356
+- Summary: All three comment blocks re-explain the one invariant — "in async mode the trampoline owns the `prompt` binding forever; never write `$Function:prompt`; wrappers (e.g. another tool's prompt hook) must keep a valid reference" — including the same zoxide-style example verbatim in each.
+- Failure scenario: When the design changes, three prose copies must be updated in lockstep or they drift into contradiction (the classic fate of duplicated comments). One authoritative block at the `$script:AsyncInit` capture (lines 40-45, already the natural home) plus one-line pointers at the two branch sites ("async: trampoline owns the binding — see AsyncInit note at top") says the same thing in roughly half the lines with a single source of truth. Roughly 18 comment lines become ~8.
+
+**5. `$script:AsyncInit` itself is fine — read once, used twice, no re-derivation**
+- File: `D:\oh-my-posh\src\shell\scripts\omp.ps1`, lines 44, 1000, 1352
+- Summary: No dead branch here: the OnRemove closure correctly reads the module-scope capture rather than re-deriving from the (already-cleared) global, and both `if ($script:AsyncInit)` sites are reachable. The `_ompOriginalPromptFunction` idempotency guard in the trampoline (init.go:285) is also load-bearing (protects the original across profile re-sources), not redundancy.
+
+Not flagged, per the stated constraints: the `return` that keeps the first draw blank, and the absence of any `$?`-touching statement on the steady-state path — both branches of the trampoline are shaped by those deliberate requirements. The `Export-ModuleMember "prompt"` silent no-op reliance (omp.ps1:1401) is implicit coupling but the alternative (conditionally building the export list) would be more code, not less; the existing comment is the right call.
+
+Strongest candidates in order of value: 1 (pure deletion, zero risk), 3 and 4 (comment/state hygiene), 2 (real simplification but touches the script's header structure).</result>
+<usage><subagent_tokens>51631</subagent_tokens><tool_uses>7</tool_uses><duration_ms>136896</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a09cc88b9bb2fb40e</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\a09cc88b9bb2fb40e.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: removed-behavior auditor" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I have everything I need. Verified the diff, the full OnRemove handler (omp.ps1:1303-1389), the module header (lines 1-57), and all references to the new variables.
+
+## Angle B — removed-behavior audit
+
+**Deleted behavior 1** — `$Function:prompt = $promptFunction` (old omp.ps1:989) unconditionally made the module's prompt the live global binding, and (because it was a module-exported function) tied the prompt's lifetime to the module's. In async this is now only reachable through the trampoline via `$global:_ompPromptFunction`.
+
+**Deleted behavior 2** — `$Function:prompt = $script:OriginalPromptFunction` (old omp.ps1:1331) unconditionally restored *some* direct prompt binding on every removal. Now async removal only mutates a global variable; the trampoline stays installed as `prompt` forever.
+
+**Deleted behavior 3** — the old async placeholder `function prompt() { &amp; &lt;scriptPath&gt; }` re-ran the init script on *every* draw until init succeeded (self-healing retry). The new trampoline retries only while `$global:_ompPromptFunction` is falsy.
+
+### Findings
+
+1. **omp.ps1:1352-1357 — Remove-Module can resurrect the module.** In async mode OnRemove sets `$global:_ompPromptFunction = $global:_ompOriginalPromptFunction` but the trampoline remains the live `prompt`. If `_ompOriginalPromptFunction` is `$null`/falsy (host with no `prompt` function at profile time, or the user did `Remove-Item Function:prompt` before init, or later does `Remove-Variable _ompPromptFunction -Scope Global` while "cleaning up omp globals" after removal), the trampoline's falsy check fires on the next draw and re-runs the full init script, re-importing the module the user just removed. Old code restored `$Function:prompt` directly, so removal always stuck.
+
+2. **omp.ps1:1-3 + 1352-1357 + 1006 — poisoned retry pointer kills the self-healing re-init.** On async re-init (user re-runs `oh-my-posh init pwsh | iex` with async), the deferred script's line 3 `Remove-Module -Force` fires the *old* module's OnRemove, which sets `_ompPromptFunction` to the truthy original *before* the new module loads. If the re-sourced script then errors anywhere before line 1006 (e.g. `Set-PSReadLineOption` or daemon startup failure), the trampoline permanently forwards to the original prompt and never retries — oh-my-posh silently vanishes. Old placeholder retried `&amp; scriptPath` on every draw. (First-ever init keeps the retry, since there's no prior module to poison the pointer.)
+
+3. **init.go:285 (`if (-not $global:_ompOriginalPromptFunction)`) — stale "true original" across re-inits.** The old code recaptured the original prompt fresh at every module load; the guard now captures once per session and never refreshes, and OnRemove never clears it. Failure scenario: async init → `Remove-Module oh-my-posh-core` → user defines a custom `prompt` → user re-runs the async init snippet (guard skips capture because the stale value is truthy, and the snippet's `function prompt()` overwrites the custom prompt *without backing it up*) → later `Remove-Module` restores the session-start prompt, and the user's custom prompt is unrecoverable.
+
+4. **omp.ps1:1302 + 1352 — ConstrainedLanguage async leaves a zombie prompt after Remove-Module.** OnRemove is only registered when not in CLM. Old async: the prompt was a module-exported function, so `Remove-Module` removed it and the host fell back to the default. New async under CLM: the trampoline is a plain global function that survives removal and `_ompPromptFunction` is never reset (no OnRemove), so `Remove-Module oh-my-posh-core` leaves the trampoline invoking a scriptblock bound to the removed module's session state — omp keeps rendering (with cleaned-up/legacy stream state) after the user removed it. Trigger: `async: true` in a ConstrainedLanguage session, then `Remove-Module`. Low-probability config, but init.go emits the trampoline unconditionally.
+
+5. **Point 2 answered — `$script:AsyncInit` is NOT stale at OnRemove: safe.** The OnRemove scriptblock (omp.ps1:1303) is created inside the module scriptblock and bound to the module's session state, which lives exactly as long as the module; `$script:AsyncInit` is set once at line 44 and nothing mutates it afterward (`git grep` confirms lines 44, 1000, 1352 are the only references). Mode can't change within one module instance, so the branch always matches the mode the instance loaded in. No finding.
+
+6. **Point 3/4 answered — rest of OnRemove and the sync backup: clean.** The remainder of the handler (daemon shutdown, OnIdle/Exiting subscriber removal, `Get-PoshStackCount` removal, PSReadLine option/keyhandler restores, omp.ps1:1304-1388) is independent of how `prompt` gets restored; nothing else reads `$Function:prompt`. `$script:OriginalPromptFunction` (line 52) is still captured unconditionally before anything modifies the prompt, and the sync path (lines 1009, 1360) is byte-identical to the old behavior. One deliberate quirk, correctly flagged in the code comment at line 1001: in async mode `Export-ModuleMember "prompt"` (line 1401) silently exports nothing — Export-ModuleMember treats names as patterns and does not error on no match, so this is safe.
+
+**Most actionable:** findings 1 and 2 share a root cause — OnRemove writes a truthy value into the trampoline's "needs init" sentinel, conflating "restored" with "initialized." A dedicated tombstone (e.g. OnRemove also removing the trampoline with `Remove-Item Function:global:prompt` and restoring `$Function:global:prompt = $global:_ompOriginalPromptFunction` directly, wrappers permitting) or a separate `_ompRemoved` flag would restore both old invariants.</result>
+<usage><subagent_tokens>52370</subagent_tokens><tool_uses>5</tool_uses><duration_ms>226143</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ade0728fb16c834b1</task-id>
+<tool-use-id>toolu_01T5LTwD76fF8fnzcY8n6J5Y</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\ade0728fb16c834b1.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: altitude angle" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I have the full picture. Here is the altitude-angle review.
+
+## Context established
+
+The fix lives on a shared surface: `sourceCommandAsync` in `D:\oh-my-posh\src\shell\init.go` (lines 281–300) is one switch statement serving PWSH, ZSH, BASH, and FISH. The pwsh branch got a carefully engineered trampoline + indirection variable; I read the other three branches and their embedded scripts to see how each handles the identical "trampoline installed at init, real hook installed at first draw" problem. Each shell now does something different, and two of them still have the exact bug class #7714 fixed for pwsh.
+
+## Findings
+
+**1. FISH still has the identical clobber bug — the fix is a pwsh-only patch on a shared mechanism.**
+`src/shell/init.go:296` + `src/shell/scripts/omp.fish:461`. The fish trampoline is `function fish_prompt; source omp.fish; end`, and omp.fish's top-level `function fish_prompt` (line 461) rewrites the global binding at first draw — exactly the pre-fix pwsh pattern. Failure scenario: a tool that wraps `fish_prompt` between omp init and first draw (the standard fish pattern is `functions --copy fish_prompt _old; function fish_prompt; ...; _old; end`) gets its wrapper obliterated when the deferred source replaces `fish_prompt` — issue #7714 verbatim, still open for fish. The deeper fix is to solve this once at the `sourceCommandAsync` altitude: a per-shell "permanent trampoline dispatching through a variable/indirection" contract, applied to all branches, rather than a hand-rolled pwsh special case.
+
+**2. BASH async destroys and silently drops third-party PROMPT_COMMAND entries.**
+`src/shell/init.go:293-294` + `src/shell/scripts/omp.bash:205-208`. Two-part clobber: (a) the trampoline `PROMPT_COMMAND='source omp.bash'` is a plain assignment that wipes any PROMPT_COMMAND content set before omp init (including bash 5.1 array entries); (b) at first draw, `_omp_install_hook` rebuilds PROMPT_COMMAND and unconditionally skips **every** entry matching `source*` — so a third party's `source ~/.direnv_hook.sh` entry added after init is silently deleted, not just omp's own trampoline. Failure scenario: user puts `eval "$(zoxide init bash)"` before omp async init, or a plugin appends a `source ...` PROMPT_COMMAND entry before first draw — the hook vanishes with no error. Same class as #7714; the commit fixed one shell of four.
+
+**3. ZSH async trampoline is never removed, so omp.zsh is fully re-sourced before every prompt.**
+`src/shell/init.go:291` + `src/shell/scripts/omp.zsh:488-510`. The trampoline defines a plain `precmd()`; omp.zsh installs itself via `add-zsh-hook precmd _omp_precmd` but never `unfunction`s the plain `precmd` — and zsh calls both the plain function and the `precmd_functions` array every prompt. So async zsh re-executes the entire ~500-line script per prompt, including source-time work like the `print secondary` CLI spawn near the top (the script's re-source tolerance comments confirm this happens). It also overwrites any user-defined plain `precmd` at init with no backup, unlike pwsh's new `_ompOriginalPromptFunction` capture. This is the altitude smell in its purest form: four branches of one switch now embody three different philosophies (pwsh: permanent cheap trampoline + indirection; zsh: permanent expensive trampoline + idempotent re-source; fish: self-replacing trampoline that clobbers; bash: rebuild-and-filter that drops entries).
+
+**4. The sync path keeps the old clobber semantics, so omp.ps1 now maintains two parallel install mechanisms forever.**
+`src/shell/scripts/omp.ps1:1000-1010` and `1352-1361`. The `if ($script:AsyncInit)` branches mean `$Function:prompt` direct-write survives on the sync path, so the same wrapper-destruction bug still exists in sync mode (re-sourcing omp.ps1 after zoxide wraps `prompt` — e.g. config reload or a second `init | iex` — destroys the wrapper). The deeper fix the task hypothesizes is real and cheap here: omp.ps1 could **always** install a trampoline-if-absent and route through `$global:_ompPromptFunction` in both modes, which deletes all three `AsyncInit` conditionals, deletes `$script:OriginalPromptFunction`'s "authoritative only in sync mode" caveat (the 12-line comment at lines 40-52 documenting which of two backups to trust is itself evidence the abstraction is split), and fixes sync-mode clobbering as a side effect. The current shape is a special case grafted onto a mechanism designed for direct binding.
+
+**5. The prompt-dispatch contract is split between a Go format string and omp.ps1 with no cross-check.**
+`src/shell/init.go:284-289` vs `src/shell/scripts/omp.ps1:44, 1006, 1357`. Three variable names (`_ompAsyncInit`, `_ompPromptFunction`, `_ompOriginalPromptFunction`) must agree character-for-character across a Go string literal and an embedded ps1 script. The only test (`pwsh_test.go:33-43`) asserts the Go string against a copy of itself — it can never catch drift against omp.ps1. Failure scenario: a contributor renames `_ompPromptFunction` in omp.ps1 during a cleanup; all Go tests stay green; at runtime the trampoline's `if (-not $global:_ompPromptFunction)` is永 true and the full init script re-runs on **every prompt** (a slow-prompt regression, not a crash, so it ships). Deeper fix: emit the trampoline from a shared source — e.g. define it inside omp.ps1 (or a sibling snippet file) and have init.go embed it, so one file owns the names.
+
+**6. Re-init in a live session still clobbers wrappers, and nothing guards the invariant the fix depends on.**
+`src/shell/init.go:285` + `src/shell/scripts/omp.ps1` (comment-only protection at lines 1000-1004, 1352-1356). Two concrete gaps: (a) the trampoline install itself is an unconditional `function prompt()` global write — if a user runs the async init one-liner a second time *after* a tool has wrapped the trampoline (re-init after config change is a documented workflow), the wrapper is overwritten; worse, the `if (-not $global:_ompOriginalPromptFunction)` guard skips recapturing it, so the wrapper is unrecoverable even via OnRemove. (b) The invariant "never write `$Function:prompt` while async" is enforced only by comments; any future feature (transient-prompt tooling, a `Set-PoshPrompt` helper) that writes `$Function:prompt` silently reintroduces #7714 with no test failing. A deeper fix would make the invariant mechanical: a single sanctioned installer function (`Set-OmpPromptBinding`) as the only writer, plus a regression test that wraps the prompt mid-session and asserts survival — the current pwsh test suite has no test exercising the actual wrapper-survival behavior the commit exists to provide.
+
+## Overall altitude verdict
+
+The fix is correct for the reported repro but sits one level too low. The bug is a property of the *shared async-trampoline design* ("defer full init to first draw; the deferred script must not reinstall the hook the trampoline owns"), and the commit patches it inside one shell's branch while fish and bash retain the same bug class and zsh has a different pathology of the same trampoline. Within pwsh itself, gating on `$script:AsyncInit` instead of making indirection the universal install path preserves the clobber bug on the sync path and creates a dual-backup, dual-mechanism state machine held together by comments.</result>
+<usage><subagent_tokens>51846</subagent_tokens><tool_uses>9</tool_uses><duration_ms>170255</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ac56d32617043bbfa</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\ac56d32617043bbfa.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: line-by-line diff scan" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I have everything needed. Here is the line-by-line scan report.
+
+## Findings
+
+**F1 — HIGH — sync-to-async transition in the same session destroys the trampoline; omp silently reverts to the default prompt**
+- Files: `D:\oh-my-posh\src\shell\init.go` (lines 284-289) interacting with `D:\oh-my-posh\src\shell\scripts\omp.ps1` (lines 2-4, 1359-1361)
+- Summary: the old sync module's OnRemove writes `$Function:prompt = $script:OriginalPromptFunction`, clobbering the freshly installed trampoline during the async first draw.
+- failure_scenario: user has sync omp loaded, flips config to `async: true`, re-sources `$PROFILE`. The snippet's guard captures `$Function:prompt` — which is omp's own sync prompt — into `$global:_ompOriginalPromptFunction` (poisoning the "true original" forever, since the guard never recaptures). Trampoline installs. First draw: trampoline runs the script; script top (`omp.ps1:2-4`) does `Remove-Module -Force` on the old sync module, whose OnRemove takes the sync branch (`$script:AsyncInit` false) and sets `$Function:prompt = $script:OriginalPromptFunction` — replacing the trampoline with the pre-omp prompt. The new module then loads in async mode and only sets `$global:_ompPromptFunction`, which nothing references anymore. From draw 2 onward the user sees the plain default prompt; omp never renders. Secondary effect: a later `Remove-Module oh-my-posh-core` restores the poisoned `_ompOriginalPromptFunction` (omp's dead sync prompt scriptblock) instead of the true original.
+
+**F2 — MEDIUM — `Set-StrictMode` in the profile breaks the trampoline snippet on a never-set global read**
+- File: `D:\oh-my-posh\src\shell\init.go` line 285
+- Summary: `if (-not $global:_ompOriginalPromptFunction)` reads a global that has never been assigned; under `Set-StrictMode -Version 1+` that read throws instead of evaluating falsy.
+- failure_scenario: user's profile runs `Set-StrictMode -Version Latest` before `oh-my-posh init pwsh | iex` (the init output runs in the caller's scope via `iex`). First shell start: "The variable '$global:_ompOriginalPromptFunction' cannot be retrieved because it has not been set" — init aborts before the trampoline is installed. The pre-fix snippet (`function prompt() { &amp; path }`) had no variable reads and was immune. Same class of read exists at `omp.ps1:44` (`[bool]$global:_ompAsyncInit` in sync mode, where the trampoline never set it), though module scope may not inherit the caller's strict mode. Fix pattern: `Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore` or pre-assign `$null` before the guard, as the snippet already does for `_ompPromptFunction`.
+
+**F3 — MEDIUM — null-original never latches the guard: module resurrection after Remove-Module, and self-capture recursion on re-source**
+- File: `D:\oh-my-posh\src\shell\init.go` lines 285-287, with `omp.ps1:1357`
+- Summary: when `$Function:prompt` is `$null` at capture time, `-not $global:_ompOriginalPromptFunction` stays true forever, so the guard misbehaves twice.
+- failure_scenario: user (or a minimal host) has no `prompt` function when the init line runs (`Remove-Item Function:prompt` earlier in the profile). (a) After `Remove-Module oh-my-posh-core`, OnRemove sets `$global:_ompPromptFunction = $null`; the very next draw takes the trampoline's null branch and re-runs the init script — the module the user just removed resurrects itself and cannot be unloaded. (b) On a second profile re-source, the unlatched guard now captures `$Function:prompt` — the trampoline itself — as "original"; a later Remove-Module makes `_ompPromptFunction` point at the trampoline, and the trampoline's `&amp; $global:_ompPromptFunction` recurses into itself until stack overflow. Guard should test "has been captured" (e.g. a separate boolean or `Test-Path Variable:global:_ompOriginalPromptFunction`), not truthiness of the captured value.
+
+**F4 — LOW/MEDIUM — failed async re-import permanently disables the retry branch**
+- Files: `omp.ps1` lines 2-4 + 1352-1358, trampoline in `init.go:287`
+- Summary: during an async re-init draw, the old module's OnRemove sets `$global:_ompPromptFunction` to the non-null original before the new import completes; if the import then throws, the trampoline's `-not $global:_ompPromptFunction` retry branch is dead forever.
+- failure_scenario: async session active; user re-sources the profile (trampoline resets `_ompPromptFunction = $null`); next draw re-runs the script; `Remove-Module` fires OnRemove (async branch sets `_ompPromptFunction = _ompOriginalPromptFunction`, non-null); the new `New-Module` block then throws mid-way (e.g. `Get-PSReadLineOption` failure, corrupted cached script below line 45, omp binary deleted). Result: every subsequent draw silently renders the pre-omp prompt with no retry. Pre-fix behavior retried the import on every draw. Contrast: on a first-ever init the same failure still retries (no OnRemove ran), so behavior is inconsistent between first init and re-init.
+
+**F5 — LOW — first-draw failure before the module consumes `_ompAsyncInit` leaves it stale `$true`, flipping a later sync init into async mode**
+- Files: `init.go:287` (sets `$global:_ompAsyncInit = $true` before `&amp;`), `omp.ps1:44-45` (only reset point)
+- Summary: the flag is only cleared inside the `New-Module` block; any failure between the trampoline setting it and `omp.ps1:45` (script file deleted/unreadable, parse error in the cached script preamble) leaves `_ompAsyncInit = $true` for the session.
+- failure_scenario: async first draw fails to run the cached script (stale cache path after an upgrade). User troubleshoots by running `oh-my-posh init pwsh --config x | iex` (sync). The module block reads the stale `$true`, takes the async branch at `omp.ps1:1000-1006`, and never executes `$Function:prompt = $promptFunction`. It only works by accident if the broken trampoline is still installed; if the user first reset their prompt (`function prompt { ... }` or fresh `Remove-Item Function:prompt`), the sync init completes without ever installing an omp prompt — no error, no prompt.
+
+**F6 — INFO (verified consistent, no action)** — ConstrainedLanguage: the OnRemove block (`omp.ps1:1302`) is still gated on non-CL mode; in async CL mode a `Remove-Module` gets no restore, but that is exact parity with the pre-existing sync CL behavior, and the re-init path self-heals when line 1006 overwrites `_ompPromptFunction`. Also verified: `Export-ModuleMember ... "prompt"` with no module-scope `prompt` function in async mode is a silent no-op (pattern-matching semantics), as the comment at `omp.ps1:1003-1005` claims; the trampoline's trailing `return` (blank first draw) matches pre-fix behavior; the new test at `src/shell/pwsh_test.go:33` matches the generated string exactly.
+
+The strongest leads for the verify pass are F1 (reachable via a common "edit config, re-source profile" flow) and F2 (StrictMode profiles are common; deterministic breakage).</result>
+<usage><subagent_tokens>68307</subagent_tokens><tool_uses>8</tool_uses><duration_ms>320541</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a5a7b85368185a670</task-id>
+<tool-use-id>toolu_01MGDj2pdW2GWZDK1cu2cith</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\a5a7b85368185a670.output</output-file>
+<status>completed</status>
+<summary>Agent "Finder: cross-file tracer" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All traces done. Here is the report.
+
+## Verified-safe items (traced, no issue)
+
+- **Call sites (task 1):** `sourceCommandAsync` has exactly two callers: `sourceCommand` at `src/shell/init.go:252` (`script + sourceCommandAsync(...)` — `sessionScript` for PWSH ends with `;` at init.go:324, so concatenation is syntactically valid) and the test at `src/shell/pwsh_test.go:34` (updated to the new string). Nothing splits lines, limits length, or re-embeds the returned string in another quoted context; the pwsh consumer (`(@(...) -join "`n") | Invoke-Expression`, init.go:116) handles a longer single line fine.
+- **Export-ModuleMember (task 4):** `src/shell/scripts/omp.ps1:1392-1402` exports `"prompt"` by name. `Export-ModuleMember -Function` treats names as patterns and silently ignores non-matching ones on both Windows PowerShell 5.1 and 7+ — no error, no warning. Repo-wide grep found zero references to a module-qualified `oh-my-posh-core\prompt`, so nothing depends on it being invocable.
+- **Flag consumption (task 2):** `$global:_ompAsyncInit` is written only by the trampoline (init.go:287) and consumed exactly once at omp.ps1:44-45. If `&amp; scriptPath` throws before line 44, the flag and null `_ompPromptFunction` persist, so the next draw simply retries init — self-healing, no double-consume.
+- **InvokePrompt paths (task 3):** All five `InvokePrompt()` calls (omp.ps1:250, 410, 1151, 1273, 1292) go through PSReadLine → global `prompt` → trampoline → `&amp; $global:_ompPromptFunction`. `$promptFunction` is module-bound (created inside the `New-Module` scriptblock), so its `$script:` state resolves correctly. No code invokes `$Function:prompt` or `$promptFunction` directly bypassing the trampoline.
+
+## Candidate findings
+
+**1. Trampoline masks `$?` on every prompt draw in async mode — error segment always shows success.**
+`src/shell/init.go:287` + `src/shell/scripts/omp.ps1:914`. The prompt function's first act is `$script:OriginalLastExecutionStatus = $?`, and `Update-PoshErrorCode` (omp.ps1:312) returns `ErrorCode = 0` whenever that is true. But in async mode PSReadLine now calls the trampoline, whose `if (-not $global:_ompPromptFunction)` condition is a pipeline that resets `$?` to `$true` before `&amp; $global:_ompPromptFunction` runs. Failure scenario: user runs `cat missing-file` (or any failing native/cmdlet command) in an `async: true` session; `$?` is `$true` by the time omp.ps1:914 reads it, so the status/error segment renders success on every prompt. The old code only had this for the single first draw (afterwards the exported `prompt` was bound directly); now it is every draw, forever. Needs a runtime repro to be 100% certain, but the statement-resets-`$?` semantics are the exact mechanism behind the known zoxide-breaks-`$?` bug class.
+
+**2. Sync-to-async switch in a live session destroys the trampoline via the old module's sync OnRemove branch.**
+`src/shell/scripts/omp.ps1:1-3` + `omp.ps1:1360` + `omp.ps1:1000-1006`. Scenario: session initialized sync, user flips `async: true` and re-runs the init line. (a) The trampoline install captures `$Function:prompt` — currently omp's own sync prompt — into `$global:_ompOriginalPromptFunction` (init.go:285). (b) Next draw, the script's preamble runs `Remove-Module oh-my-posh-core -Force`; the old module's `$script:AsyncInit` is `$false`, so OnRemove takes the sync branch (line 1360) and sets `$Function:prompt = $script:OriginalPromptFunction` — the pre-omp default — clobbering the just-installed trampoline. (c) The new module, being async, deliberately never touches `$Function:prompt` (line 1000-1006). Result: global prompt is the vanilla default, `_ompPromptFunction` is set but nothing dispatches to it — omp is dead until a new shell. Bonus: `_ompOriginalPromptFunction` permanently holds a scriptblock bound to the now-removed module.
+
+**3. Strict-mode profiles break the new init line (regression vs. old shape).**
+`src/shell/init.go:285`. The install line reads `$global:_ompOriginalPromptFunction` before it has ever been assigned. Under `Set-StrictMode -Version 2+` (set earlier in the user's profile), referencing an unset variable throws, so the whole `Invoke-Expression` of the init output fails and no prompt is installed at all. The old async line (`function prompt() { &amp; '...' }`) contained no variable reads and was immune. Failure scenario: `Set-StrictMode -Version Latest` at the top of `$PROFILE`, `oh-my-posh init pwsh --async | iex` below it — omp never initializes.
+
+**4. Module removal can silently resurrect the module when `_ompOriginalPromptFunction` is falsy.**
+`src/shell/scripts/omp.ps1:1357` + `init.go:287`. OnRemove's async branch sets `$global:_ompPromptFunction = $global:_ompOriginalPromptFunction`. If that capture was `$null`/empty (host without a `prompt` function at init time, or a prior tool did `Remove-Item Function:prompt`), the still-installed trampoline sees a falsy `_ompPromptFunction` on the next draw, sets `_ompAsyncInit = $true`, and re-runs the full init script — reinstalling the module the user just removed with `Remove-Module oh-my-posh-core`. Narrow edge (default hosts always define `prompt`), but the restore path has no guard distinguishing "restore to original" from "never initialized".
+
+**5. Stale cached init script (dev builds) inverts the fix and orphans the trampoline.**
+`src/shell/filesystem.go:39,143-145`. `hasScript` regeneration is keyed only on `ConfigHash + build.Version`. A dev build whose version string didn't change serves the pre-fix cached `init.&lt;hash&gt;.ps1`, which still does unconditional `$Function:prompt = $promptFunction` at first draw — overwriting the new trampoline and leaving `_ompPromptFunction` forever `$null` (nothing sets it in the old script), while `_ompAsyncInit` stays consumed-never/`$true` depending on path. Release users are safe (version bump regenerates); this only bites same-version binaries with a changed omp.ps1, which is the already-documented dev-cache quirk — listed for completeness since the trampoline/script contract is now bidirectional.
+
+**6. First async draw renders an empty prompt (pre-existing, unchanged — non-blocking note).**
+`init.go:287`: the trampoline's init branch does `&amp; scriptPath; return`, emitting only the script's pipeline output (nothing — `Import-Module -Global` at omp.ps1:1403 returns nothing), so the first draw shows PowerShell's fallback `PS&gt;`. The old `function prompt() { &amp; scriptPath }` behaved identically, so this is parity, not a regression — noted only because reviewers may mistake it for one.
+
+Findings 1 and 2 are the ones I'd act on; 3 is cheap to fix (guard the read with `Test-Path Variable:` or pre-assign `$null`); 4-6 are edge/informational.</result>
+<usage><subagent_tokens>71766</subagent_tokens><tool_uses>15</tool_uses><duration_ms>320527</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>abe5544db8e8c0615</task-id>
+<tool-use-id>toolu_01YWEzAfXSK2XAK8qG6Y4tdf</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\abe5544db8e8c0615.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: $? masking on every async draw" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>REFUTED.
+
+## What I tested
+
+The literal trampoline from `D:\oh-my-posh\src\shell\init.go` (`sourceCommandAsync`, PWSH case):
+
+```
+function prompt() { if (-not $global:_ompPromptFunction) { $global:_ompAsyncInit = $true; &amp; %s; return }; if ($global:_ompPromptFunction) { &amp; $global:_ompPromptFunction } }
+```
+
+and the real delegation shape from `D:\oh-my-posh\src\shell\scripts\omp.ps1` line 1006 (`$global:_ompPromptFunction = $promptFunction`, a module-bound scriptblock whose first real statement stores `$?` — line ~915).
+
+Ran in `pwsh -NoProfile` on this machine, with the delegated function reading `$?` as its first statement after a failed `Get-Item 'Z:\does-not-exist-xyz' -ErrorAction SilentlyContinue`, in four shapes: plain scriptblock, module-bound scriptblock (via `New-Module`, matching omp.ps1 exactly), engine-style `$ExecutionContext.SessionState.InvokeCommand.InvokeScript('prompt')`, and a native-command failure (`cmd /c "exit 5"`).
+
+## Actual output
+
+```
+=== Test A: module-bound scriptblock through exact trampoline ===
+  [module fn] OriginalLastExecutionStatus = False
+=== Test B: sanity, after a SUCCESSFUL command ===
+  [module fn] OriginalLastExecutionStatus = True
+=== Test C: engine-style invocation (InvokeCommand on 'prompt'), after failure ===
+  [module fn] OriginalLastExecutionStatus = False
+=== Test D: native command failure (exit code), after failure ===
+  [module fn] OriginalLastExecutionStatus = False (LASTEXITCODE=5)
+```
+
+`$?` correctly propagates as `$false` through both trampoline `if`s into the delegated real prompt function, in every invocation shape. Success correctly reads `$true` (Test B), so the test isn't stuck-at-false.
+
+## Why the claim is wrong (the interesting part)
+
+The mechanism is half-real, which is presumably what made it convincing. I isolated it:
+
+```
+=== Test 4: does evaluating an if-condition variable test reset $? ===
+  inside condtest: $? on entry = False, $? after if-condition eval = True
+```
+
+The `if (-not $global:_ompPromptFunction)` condition DOES reset `$?` to `$true` — but only as observed by subsequent statements **in the trampoline's own scope**. When `&amp; $global:_ompPromptFunction` invokes the delegated scriptblock, PowerShell gives the callee's first statement the `$?` of the last completed *pipeline* (the user's failed command), not the trampoline's intervening expression evaluations. So the value the omp `$promptFunction` stores in `$script:OriginalLastExecutionStatus` matches the user's real command status.
+
+Confidence in REFUTED is high: exact trampoline text, exact module-bound delegation, engine-style invocation, both failure kinds, plus a positive control — all consistent.</result>
+<usage><subagent_tokens>47358</subagent_tokens><tool_uses>7</tool_uses><duration_ms>130119</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a0c7366ff70fbf737</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\a0c7366ff70fbf737.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: StrictMode breaks trampoline init" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## CONFIRMED
+
+The finding is real and reproduced empirically at every StrictMode level, including 1.0.
+
+### Exact code under test (verbatim from `D:\oh-my-posh\src\shell\init.go`, `sourceCommandAsync`, PWSH case, lines 285-289)
+
+```
+if (-not $global:_ompOriginalPromptFunction) { $global:_ompOriginalPromptFunction = $Function:prompt }; $global:_ompPromptFunction = $null; function prompt() { if (-not $global:_ompPromptFunction) { $global:_ompAsyncInit = $true; &amp; '&lt;scriptPath&gt;'; return }; if ($global:_ompPromptFunction) { &amp; $global:_ompPromptFunction } }
+```
+
+### Test 1 — unset `$global:` read under each StrictMode version (pwsh -NoProfile)
+
+```
+--- StrictMode 1.0 ---
+THREW on global: read -&gt; The variable '$global:_someNeverSetVar_xyz' cannot be retrieved because it has not been set.
+--- StrictMode 2.0 ---
+THREW on global: read -&gt; The variable '$global:_someNeverSetVar_xyz' cannot be retrieved because it has not been set.
+--- StrictMode 3.0 ---
+THREW ...
+--- StrictMode Latest ---
+THREW ...
+```
+
+The explicit `global:` scope qualifier does NOT exempt the read — StrictMode's uninitialized-variable check applies to explicitly-scoped reads too, and even version 1.0 triggers it (1.0 only exempts uninitialized variables inside strings).
+
+### Test 2 — the exact literal init line, `Set-StrictMode -Version Latest` in caller, then `Invoke-Expression` (the real init path)
+
+```
+INSTALL THREW -&gt; The variable '$global:_ompOriginalPromptFunction' cannot be retrieved because it has not been set.
+prompt function exists: "PS $($executionContext.SessionState.Path.Curren...   &lt;- still the DEFAULT pwsh prompt
+ompOriginalPromptFunction set? False
+```
+
+Repeated with `-Version 1.0` and `-Version 2.0`: identical throw both times.
+
+### Key mechanics confirmed
+
+1. **StrictMode set in the calling scope DOES apply inside `Invoke-Expression`'d code** — the IEX'd init line inherits the session's strict mode.
+2. **The failure is at init time, not first-prompt time.** The throw happens in the very first statement (`if (-not $global:_ompOriginalPromptFunction)`), which executes immediately. It is a terminating error, so the rest of the IEX'd text — including the `function prompt() { ... }` definition — never executes. Test 2 proves it: `prompt` remained the built-in default and `_ompOriginalPromptFunction` was never set. oh-my-posh never installs its trampoline at all.
+3. The function *body*'s own reads of `$global:_ompPromptFunction` would be a second, later failure point (at first prompt draw), but it's moot — init aborts before the function is defined.
+4. The old placeholder `function prompt() { &amp; &lt;scriptPath&gt; }` contains no variable reads, so it was immune, matching the finding's claim.
+
+Trivial repro one-liner: `pwsh -NoProfile -Command "Set-StrictMode -Version 1; if (-not \$global:_x) { 'ok' }"` → throws.
+
+Fix direction (not applied): use a read that StrictMode permits, e.g. `if (-not (Test-Path Variable:global:_ompOriginalPromptFunction))` or `Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore`, for every first-read of the three globals (`_ompOriginalPromptFunction`, `_ompPromptFunction`, and `_ompAsyncInit`'s later consumers in the generated script would need the same audit).
+
+Relevant file: `D:\oh-my-posh\src\shell\init.go` (emitting code, lines 284-289); test covering the emitted text: `D:\oh-my-posh\src\shell\pwsh_test.go:34`.</result>
+<usage><subagent_tokens>43365</subagent_tokens><tool_uses>7</tool_uses><duration_ms>108930</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>affab176c19d63b9d</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\affab176c19d63b9d.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: Remove-Module can resurrect the module" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## CONFIRMED
+
+The resurrection bug is real and reproduced end-to-end in live `pwsh -NoProfile`, but only reachable when `prompt` was explicitly removed before init — a fresh session always has a default `prompt` function, so the normal path is safe.
+
+### Observations per step
+
+**Step 1 — fresh session state.** A fresh `pwsh -NoProfile` session DOES have `prompt` already defined as a real function at startup (`Test-Path Function:\prompt -&gt; True`, `Get-Command prompt -&gt; Function` with the standard `"PS $($executionContext...)&gt;"` body). It is not JIT-defined on first draw. So `$Function:prompt` is a non-null, truthy ScriptBlock in any normal session, and the falsy-original scenario is **only reachable via `Remove-Item Function:\prompt` before the init line** (which the test then did: `Test-Path -&gt; False`).
+
+**Steps 2-3.** After the init line, `$global:_ompOriginalPromptFunction` was `null? True; falsy? True` — the `if (-not $global:_ompOriginalPromptFunction) { ... = $Function:prompt }` guard in init.go:285 captured `$null`.
+
+**Step 4.** First `prompt` call triggered the deferred import (module loaded, empty first draw), second call rendered `TESTPROMPT`. Normal async behavior.
+
+**Steps 5-6.** `Remove-Module -Name oh-my-posh-core -Force` succeeded (module gone). But OnRemove's async branch (omp.ps1:1357, `$global:_ompPromptFunction = $global:_ompOriginalPromptFunction`) set `_ompPromptFunction` back to `$null` — `null? True; falsy? True`.
+
+**Step 7 — resurrection.** The very next `prompt` call hit the trampoline's `if (-not $global:_ompPromptFunction)` branch and silently re-ran the full init: `module resurrected? True`, and the call after that rendered `TESTPROMPT` again. No error, no indication.
+
+### Control run (default prompt intact)
+
+Same flow without removing `prompt` first: original capture truthy; after `Remove-Module` the post-removal draw was the restored default `PS D:\oh-my-posh&gt; `, `module resurrected? False`, and it stayed unloaded. Removal sticks cleanly in the normal case.
+
+### Verdict detail
+
+The claimed mechanism is exactly right: the trampoline installed by `sourceCommandAsync` (D:\oh-my-posh\src\shell\init.go:283-289) is a plain global function that survives `Remove-Module`, and it treats a falsy `$global:_ompPromptFunction` as "not yet initialized" — indistinguishable from "user restored a null original". Severity caveat: since PowerShell always defines a default `prompt` at session start, the trigger requires a user who deleted `prompt` (or a profile that does) before running the init line, so it's an edge case, not a mainline regression. A fix would need OnRemove to distinguish "restore null original" — e.g. restore `$Function:prompt` to the original (or remove the trampoline entirely) instead of relying on the sentinel variable.
+
+Cleanup done: `omp-verify2.exe` deleted, `git status` clean. Test scripts live only in the session scratchpad.</result>
+<usage><subagent_tokens>47666</subagent_tokens><tool_uses>11</tool_uses><duration_ms>121626</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a2bf0828d535ba2f4</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\15735695-7dd4-4367-9b11-3a8b95dfbbac\tasks\a2bf0828d535ba2f4.output</output-file>
+<status>completed</status>
+<summary>Agent "Verify: sync-to-async switch destroys trampoline" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## CONFIRMED
+
+The finding reproduces exactly as described, on a real build of HEAD in a clean `pwsh -NoProfile` session. After a sync-to-async transition, omp stops rendering entirely: the prompt reverts to the pre-omp prompt and stays there.
+
+### Test output (verbatim)
+
+Harness: pre-omp prompt is `function global:prompt { "PREOMP&gt; " }`; sync config renders `TESTPROMPT`; async config is identical plus `async: true`; isolated cache via `OMP_CACHE_DIR`.
+
+```
+STEP 1 prompt output: &lt;&lt;TESTPROMPT&gt;&gt;                 (sync init works)
+STEP 2 _ompOriginalPromptFunction captured:
+  "# store the original last command execution status / if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS ..."
+                                                     (that's omp's OWN sync prompt body, not PREOMP)
+STEP 3 first draw output: &lt;&lt;&gt;&gt;                       (trampoline fires deferred import)
+STEP 3 function:prompt definition after first draw:
+  "PREOMP&gt; "                                         (trampoline is GONE, replaced by pre-omp prompt)
+STEP 4 second draw output: &lt;&lt;PREOMP&gt; &gt;&gt;
+STEP 4 contains TESTPROMPT: False
+STEP 4 _ompPromptFunction set: True
+STEP 4 direct _ompPromptFunction call output: &lt;&lt;TESTPROMPT&gt;&gt;
+STEP 4 is function:prompt the trampoline: False
+```
+
+### Every sub-claim verified
+
+- (a) Stale original capture: after the async re-source, `$global:_ompOriginalPromptFunction` holds omp's own sync prompt function (its body contains omp internals like `NVS_ORIGINAL_LASTEXECUTIONSTATUS`), not the true pre-omp prompt. Confirmed at STEP 2.
+- (b) Trampoline installs correctly at STEP 2 (`$Function:prompt` is the trampoline).
+- (c) On first draw the trampoline runs the deferred init script; its preamble (`D:\oh-my-posh\src\shell\scripts\omp.ps1` lines 1-4) does `Remove-Module -Name "oh-my-posh-core" -Force`. The OLD module instance has `$script:AsyncInit = $false`, so its OnRemove handler (omp.ps1 line 1352-1361) takes the sync branch: `$Function:prompt = $script:OriginalPromptFunction`, clobbering the just-installed trampoline with the old module's backup of the pre-omp prompt. Confirmed at STEP 3: `$Function:prompt` is literally `"PREOMP&gt; "` after the first draw.
+- (d) The new module loads with `AsyncInit = $true` and only writes `$global:_ompPromptFunction` (omp.ps1 line 1000-1007), never `$Function:prompt`. `_ompPromptFunction` is populated and renders `TESTPROMPT` when called directly, but nothing ever calls it — the second draw outputs `PREOMP&gt; `. Confirmed at STEP 4.
+
+### Notes
+
+- The reverse transition (async → sync) is not affected by this exact mechanism: the async-mode OnRemove branch only touches `$global:_ompPromptFunction`, and the sync init path unconditionally sets `$Function:prompt` (line 1009).
+- A natural fix location: the OnRemove sync branch could skip restoring `$Function:prompt` when the current `$Function:prompt` is no longer this module's own prompt function (i.e., a trampoline or something else already replaced it), or the async trampoline's first-draw path could reinstall itself after the deferred import.
+- `omp-verify.exe` deleted; no lingering daemons (sync mode here used the streaming/serve path only within the killed session; process list showed none).</result>
+<usage><subagent_tokens>58696</subagent_tokens><tool_uses>18</tool_uses><duration_ms>226090</duration_ms></usage>
+</task-notification>
+
+---
+
+Yes

@@ -281,7 +281,17 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 func sourceCommandAsync(shell, scriptPath string) string {
 	switch shell {
 	case PWSH:
-		return fmt.Sprintf("function prompt() { & %s }", quotePwshOrElvishStr(scriptPath))
+		// Get-Variable, not a bare $global: dereference, for the "has this
+		// ever run before" check - on the very first run nothing has set
+		// $global:_ompOriginalPromptFunction yet, and a bare read of an
+		// unset variable throws under Set-StrictMode.
+		return fmt.Sprintf(
+			"if (-not (Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore -ValueOnly)) { $global:_ompOriginalPromptFunction = $Function:prompt }; "+
+				"$global:_ompPromptFunction = $null; "+
+				"$global:_ompInitialized = $false; "+
+				"function prompt() { if (-not $global:_ompInitialized) { $global:_ompAsyncInit = $true; & %s; return }; if ($global:_ompPromptFunction) { & $global:_ompPromptFunction } }",
+			quotePwshOrElvishStr(scriptPath),
+		)
 	case ZSH:
 		return fmt.Sprintf("precmd() { source %s }", QuotePosixStr(scriptPath))
 	case BASH:

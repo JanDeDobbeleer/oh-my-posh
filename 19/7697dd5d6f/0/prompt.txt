@@ -1,0 +1,5 @@
+Still not absolutely perfect. Provide this information, including the screenshot, to Fable to do a detailed analysis on how we could solve this problem. Point Fable at the configuration that I have to show the status segment that is comfy. Make it do a correct proposal to fix how we could make a pretty gradient for all lengths when they only use one gradient color.
+
+---
+
+do both

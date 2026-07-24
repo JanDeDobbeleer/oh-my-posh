@@ -1,0 +1,9 @@
+<ci-monitor-event>CI check "test (ubuntu-latest)" failed on JanDeDobbeleer/oh-my-posh PR #7716. Run `gh pr checks 7716 --repo JanDeDobbeleer/oh-my-posh` to see details, then fix the failing check.
+
+JanDeDobbeleer/oh-my-posh PR #7716 has 1 new review comment:
+- cursor[bot]: <!-- BUGBOT_FREE_TIER_DISABLED_UPSELL -->
+Bugbot is not enabled for your account, so this pull request was not reviewed.
+
+Enable Bugbot in the [Cursor dashboard](https://www.cursor.com/dashboard/bugbot) to get automatic reviews on future PRs.
+
+Please address the feedback and push a fix. Then, for each inline comment you addressed (those with a comment_id), post a one-line reply on the thread via `gh api` saying what you changed (or why you didn't). End each reply with the line "_🤖 Addressed by [Claude Code](https://claude.com/claude-code)_" so reviewers can see it was automated. Then resolve the thread. Skip replies for comments you didn't act on.</ci-monitor-event>

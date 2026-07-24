@@ -1,0 +1,79 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "631ff72e482a",
+  "session_id": "d1d5001b-3b79-4ea4-8067-6b1128d8be8d",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-24T12:16:31.869968Z",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "website/docs/faq.mdx",
+    "website/docs/segments/scm/git.mdx"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "e4849dc8aea9",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 2,
+    "cache_creation_tokens": 23862,
+    "cache_read_tokens": 40895,
+    "output_tokens": 119,
+    "api_call_count": 1
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01DaBgAvTxU2jRRY3jhY95JP",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "e4849dc8aea9",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 15,
+        "end": 16,
+        "entry_ids": [
+          "da3c117a-7bf7-4aea-a3b2-65ae6ed69a3d"
+        ],
+        "tool_use_id": "toolu_01DaBgAvTxU2jRRY3jhY95JP"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01DaBgAvTxU2jRRY3jhY95JP"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "initial_attribution": {
+    "calculated_at": "2026-07-24T12:16:31.8604976Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

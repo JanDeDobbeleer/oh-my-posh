@@ -447,7 +447,56 @@ func resolvePaletteReference(c color.Ansi) color.Ansi {
 		return c
 	}
 
-	return resolved
+	if !resolved.IsGradient() {
+		return resolved
+	}
+
+	return resolveGradientStopReferences(resolved)
+}
+
+// resolveGradientStopReferences expands a palette reference (p:name) used as an
+// individual STOP inside a gradient, e.g. dark-gradient(p:teal): the whole-string
+// resolve above only catches a bare "p:name" that itself resolves to a gradient, so a
+// palette-referenced stop reaches GradientLast, separators, diamond caps, and the
+// parentBackground/parentForeground chain in keywords.go as a raw, unresolvable
+// "p:name" string — none of those have resolver access to expand it themselves. A
+// keyword stop (parentBackground, foreground, accent, ...) or literal hex stop is not
+// a palette key and passes through Resolve unchanged, so this only ever rewrites actual
+// palette references. A stop that resolves to a gradient itself (a palette entry holding
+// a gradient) is left as its raw "p:name" text: GradientStops already rejects a nested
+// gradient, so it must degrade through the normal per-stop resolve-and-skip path in
+// GradientCells instead, same as before this function existed.
+func resolveGradientStopReferences(c color.Ansi) color.Ansi {
+	stops := c.GradientStops()
+	if len(stops) == 0 {
+		return c
+	}
+
+	resolvedStops := make([]color.Ansi, len(stops))
+	changed := false
+
+	for i, stop := range stops {
+		resolved, err := terminal.Colors.Resolve(stop)
+		if err != nil || resolved.IsGradient() {
+			resolvedStops[i] = stop
+			continue
+		}
+
+		if resolved != stop {
+			changed = true
+		}
+
+		resolvedStops[i] = resolved
+	}
+
+	if !changed {
+		return c
+	}
+
+	// WithGradientStops preserves c's own prefix (linear-gradient, dark-gradient, or
+	// light-gradient), so a resolved dark-gradient(p:teal) stays a dark-gradient with
+	// its darken semantics, not a plain linear-gradient.
+	return c.WithGradientStops(resolvedStops)
 }
 
 // collapseGradient reports whether c must collapse to a single solid color because the
@@ -474,15 +523,19 @@ func collapseGradient(c color.Ansi, cells int) (color.Ansi, bool) {
 
 // backgroundEdge collapses a segment's background gradient to its last stop,
 // resolving a keyword stop (foreground, background) against the SAME segment's
-// colors so edge consumers never leak a keyword into the wrong context.
+// colors so edge consumers never leak a keyword into the wrong context. Uses the
+// segment's own visible cell count so a dark-gradient/light-gradient's edge matches
+// the actual last cell GradientCells renders it as (see GradientLastForCells).
 func backgroundEdge(segment *config.Segment) color.Ansi {
+	cells := terminal.VisibleCells(segment.Text())
+
 	background := resolvePaletteReference(segment.ResolveBackground())
 
-	stop := background.GradientLast()
+	stop := background.GradientLastForCells(cells)
 
 	switch stop { //nolint:exhaustive
 	case color.Foreground:
-		stop = resolvePaletteReference(segment.ResolveForeground()).GradientLast()
+		stop = resolvePaletteReference(segment.ResolveForeground()).GradientLastForCells(cells)
 	case color.Background:
 		// self-reference has no resolvable edge
 		return color.Transparent

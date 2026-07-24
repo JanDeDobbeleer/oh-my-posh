@@ -44,7 +44,7 @@ func TestWriteGradientRendering(t *testing.T) {
 
 	bgGradient := color.Ansi("linear-gradient(#FF0000, #0000FF)")
 	fgGradient := color.Ansi("linear-gradient(#00FF00, #FF00FF)")
-	invalidGradient := color.Ansi("linear-gradient(#FF0000)")
+	singleStopGradient := color.Ansi("dark-gradient(#FF0000)")
 
 	resolver := &color.Defaults{}
 
@@ -88,10 +88,10 @@ func TestWriteGradientRendering(t *testing.T) {
 			Expected: colorise("37") + colorise(bgCells4[0]) + "a" + colorise(bgCells4[1]) + "漢" + colorise(bgCells4[3]) + "b" + gradientReset,
 		},
 		{
-			Case:     "single-stop gradient falls back to its only stop",
+			Case:     "single-stop gradient auto-shades across cells",
 			Input:    "ab",
-			Colors:   &color.Set{Foreground: "white", Background: invalidGradient},
-			Expected: colorise("48;2;255;0;0") + colorise("37") + "ab" + gradientReset,
+			Colors:   &color.Set{Foreground: "white", Background: singleStopGradient},
+			Expected: colorise("37") + colorise("48;2;255;0;0") + "a" + colorise("48;2;238;3;1") + "b" + gradientReset,
 		},
 		{
 			Case:     "syntactically invalid gradient renders no background escape",

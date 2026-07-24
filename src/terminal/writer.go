@@ -66,6 +66,13 @@ var (
 	fgGradientCells []color.Ansi
 	cellIndex       int
 
+	// gradientRenderCells is the segment currently being written's visible cell count,
+	// set once cells is known (see Write). collapseGradientLast reads it so a
+	// dark-gradient/light-gradient color override edge mid-body matches the same shade
+	// GradientCells rendered the segment's actual last cell as (see GradientLastForCells).
+	// Zero (its reset value) falls back to GradientLast's gentlest single-step shade.
+	gradientRenderCells int
+
 	isTransparent bool
 	isInvisible   bool
 	isHyperlink   bool
@@ -377,6 +384,7 @@ func Write(background, foreground color.Ansi, txt string) {
 	// reset gradient state left over from a previous Write call
 	bgGradientCells, fgGradientCells = nil, nil
 	cellIndex = 0
+	gradientRenderCells = 0
 
 	// isTransparent is per-segment state: a previous Write's transparent rendering
 	// must not suppress gradient stamping (or trigger a spurious transparentEnd in
@@ -423,6 +431,7 @@ func Write(background, foreground color.Ansi, txt string) {
 	// so GradientCells can hand back one color per cell up front.
 	if bgGradient || fgGradient {
 		cells := countVisibleCells(body, match.Anchor == hyperLinkStart)
+		gradientRenderCells = cells
 
 		if bgGradient {
 			bgGradientCells = color.GradientCells(backgroundColor, cells, Colors, true, CurrentColors, ParentColors)
@@ -838,8 +847,10 @@ func collapseGradientFirst(c color.Ansi, isBackground bool) color.Ansi {
 // collapseGradientLast is collapseGradientFirst's right-edge counterpart, used for
 // the invalid-gradient fallback so the body matches the last-stop color the engine's
 // width collapse and every edge consumer (separators, parent keywords) already use.
+// Uses gradientRenderCells so a dark-gradient/light-gradient edge matches the actual
+// last cell GradientCells rendered THIS segment's body as (see GradientLastForCells).
 func collapseGradientLast(c color.Ansi, isBackground bool) color.Ansi {
-	return collapseGradientStop(c.GradientLast(), isBackground)
+	return collapseGradientStop(c.GradientLastForCells(gradientRenderCells), isBackground)
 }
 
 func collapseGradientStop(stop color.Ansi, isBackground bool) color.Ansi {

@@ -1,0 +1,1 @@
+if the segment becomes larger, the gradient doesn't work anymore.

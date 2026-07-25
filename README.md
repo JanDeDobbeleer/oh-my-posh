@@ -1,3 +1,5 @@
+[![MCP Toplist](https://mcptoplist.com/badge/dev.ohmyposh%2Fvalidator.svg)](https://mcptoplist.com/server/dev.ohmyposh%2Fvalidator)
+
 <!-- markdownlint-disable -->
 <p align="center">
   <img

@@ -108,3 +108,71 @@ All three matched the plan exactly; no mismatches to report.
 No build was run, per instructions — the coordinator owns that step.</result>
 <usage><subagent_tokens>79721</subagent_tokens><tool_uses>22</tool_uses><duration_ms>171192</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>a5d7f5f92dfb2b342</task-id>
+<tool-use-id>toolu_01TgyuTwNBTkgzjEAQGuzFFs</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a5d7f5f92dfb2b342.output</output-file>
+<status>completed</status>
+<summary>Agent "Task F nav and footer" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I read the whole plan (Decisions, Non-goals, all tasks) and implemented F1, F3, F4, plus the unambiguous parts of F2 in `D:\oh-my-posh\website\docusaurus.config.js`. I stopped short of one part of F2 because the spec contradicts itself — details below.
+
+## F1 — Navbar (done)
+Left side is now exactly: `Docs` (`to: 'docs'`, `activeBasePath: 'docs'`) · `Segments` (`to: 'docs/segments/overview'`) · `Themes` (`to: 'docs/themes'`) · `Blog` (`to: 'blog'`). Verified both doc pages exist on disk (`website/docs/segments/overview.mdx`, `website/docs/themes.md`). `Sponsor` and `Swag` removed from the navbar. Right side (GitHub/Discord/Bluesky icon links) untouched.
+
+## F3 — Announcement bar (done)
+Entire `announcementBar` object deleted, including `backgroundColor: '#2c7ae0'` and the sponsor link embedded in its `content` string.
+
+## F4 — Social card metadata (done)
+Removed `og:image:width` (1200) and `og:image:height` (630) from `metadata`. Left `og:image` and `og:type` untouched.
+
+## F2 — Footer: partially done, one item blocked
+
+Done:
+- Renamed `Sponsors` → `Our sponsors`, kept `CodeRabbit`.
+- Added new `Support` group with `GitHub Sponsors` (`https://github.com/sponsors/JanDeDobbeleer`) and `Product spotlight` (the existing Polar link), both removed from `Links`.
+- `Links` now holds only `Docusaurus` and `Privacy`, matching the stated end state exactly.
+
+Blocked — spec self-contradiction, not a disk mismatch: F2's own text says both of these, and they can't both be true:
+- Bullet 1: "Add `Swag` (`https://swag.ohmyposh.dev`) to the existing `Links` group."
+- Closing line: "After the change, `Links` holds only `Docusaurus` and `Privacy`."
+
+If Swag is added to `Links` and then `Sponsor`/`Product spotlight` are moved out as F2 also requires, `Links` ends up with three items (`Docusaurus`, `Privacy`, `Swag`), not two. There's no other group named in F2 for Swag to land in instead. Since `Swag` was previously reachable via the navbar (now removed per F1) and was never in the footer before, guessing wrong here either duplicates nothing (if I skip it — safe but drops reachability) or silently invents a placement not in the spec (if I add it to `Support` or `Our sponsors`). I left `https://swag.ohmyposh.dev` out of the file entirely rather than guess — it is currently **not present anywhere** in the config.
+
+I need a decision: should Swag go into `Support`, into `Our sponsors`, stay out of the footer, or something else? Once told, it's a one-line addition.
+
+## Verification
+- `node --check docusaurus.config.js` passes (exit 0).
+- Confirmed untouched: `onBrokenLinks: 'throw'`, `presets`, `plugins`, `algolia`, `appInsights`, `headTags`, `stylesheets`.
+- Only file touched: `website/docusaurus.config.js`.
+
+## Before/after URL sets
+
+**Before:**
+- Navbar left: `docs`, `blog`, `https://github.com/sponsors/JanDeDobbeleer` (Sponsor), `https://swag.ohmyposh.dev` (Swag)
+- Navbar right: `https://github.com/jandedobbeleer/oh-my-posh`, `https://discord.gg/n7E3DkXssv`, `https://staging.bsky.app/profile/ohmyposh.dev`
+- Footer "How to": `docs/`, `docs/contributing/started`
+- Footer "Social": github, discord, bluesky (same three URLs as navbar right)
+- Footer "Links": `https://github.com/sponsors/JanDeDobbeleer` (Sponsor), polar Product spotlight URL, `https://github.com/facebook/docusaurus`, `/privacy`
+- Footer "Sponsors": `https://coderabbit.link/posh`
+- `metadata`: `https://ohmyposh.dev/img/hero.png` (+ width 1200 / height 630, not URLs)
+- `announcementBar.content`: embedded `https://github.com/sponsors/JanDeDobbeleer`
+- `copyright`: `https://github.com/sponsors/JanDeDobbeleer`, `/docs/contributors` (untouched, not in scope)
+
+**After:**
+- Navbar left: `docs`, `docs/segments/overview`, `docs/themes`, `blog` — Sponsor and Swag URLs gone from navbar
+- Navbar right: unchanged
+- Footer "How to" / "Social": unchanged
+- Footer "Links": `https://github.com/facebook/docusaurus`, `/privacy`
+- Footer "Support" (new): `https://github.com/sponsors/JanDeDobbeleer`, polar Product spotlight URL
+- Footer "Our sponsors" (renamed): `https://coderabbit.link/posh`
+- `metadata`: `https://ohmyposh.dev/img/hero.png` only (width/height entries removed)
+- `announcementBar`: gone entirely, including its embedded sponsors URL
+- `copyright`: unchanged
+
+Net effect versus a fully-consistent F2: every URL from the original file is preserved exactly once **except** `https://swag.ohmyposh.dev`, which is currently unplaced pending your decision.</result>
+<usage><subagent_tokens>70830</subagent_tokens><tool_uses>11</tool_uses><duration_ms>206256</duration_ms></usage>
+</task-notification>

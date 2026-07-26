@@ -1,0 +1,149 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "fca82b5754ef",
+  "session_id": "6c0a282a-886f-458d-a426-93d95104b4a6",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-26T14:57:25.3588784Z",
+  "branch": "next",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    "website/src/pages/index.js",
+    "website/src/pages/styles.module.css"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "99edd1afd0e8",
+  "checkpoint_transcript_start": 354,
+  "transcript_lines_at_start": 354,
+  "compact_transcript_start": 103,
+  "token_usage": {
+    "input_tokens": 77,
+    "cache_creation_tokens": 56789,
+    "cache_read_tokens": 10995563,
+    "output_tokens": 37144,
+    "api_call_count": 41
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01HRsL11ZbQAZUBiD1yvUqEK",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "99edd1afd0e8",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 13,
+        "end": 14,
+        "entry_ids": [
+          "8d47cd96-c223-4876-a4e8-1f711a712802"
+        ],
+        "tool_use_id": "toolu_01HRsL11ZbQAZUBiD1yvUqEK"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01HRsL11ZbQAZUBiD1yvUqEK"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01JUwhdEzjEKkN1tMQ3nYvEz",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "artifact-design"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "99edd1afd0e8",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 125,
+        "end": 126,
+        "entry_ids": [
+          "3ec6dc11-47a4-4957-b66a-4af73fb37725"
+        ],
+        "tool_use_id": "toolu_01JUwhdEzjEKkN1tMQ3nYvEz"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01JUwhdEzjEKkN1tMQ3nYvEz"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: artifact-design",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-26T14:57:25.2241039Z",
+    "agent_lines": 68,
+    "agent_removed": 33,
+    "human_added": 30,
+    "human_modified": 10,
+    "human_removed": 0,
+    "total_committed": 108,
+    "total_lines_changed": 141,
+    "agent_percentage": 71.63120567375887,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 40,
+      "user_lines_removed": 10,
+      "agent_lines_added": 114,
+      "agent_lines_removed": 61,
+      "user_added_per_file": {
+        "website/src/pages/styles.module.css": 40
+      },
+      "user_removed_per_file": {
+        "website/src/pages/styles.module.css": 10
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 15,
+      "user_lines_removed": 10,
+      "agent_lines_added": 162,
+      "agent_lines_removed": 89,
+      "user_added_per_file": {
+        "website/docusaurus.config.js": 15
+      },
+      "user_removed_per_file": {
+        "website/docusaurus.config.js": 10
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 176,
+      "agent_lines_removed": 99
+    }
+  ]
+}

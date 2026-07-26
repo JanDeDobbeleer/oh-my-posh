@@ -698,6 +698,18 @@ var testSplitPathCases = []testSplitPathCase{
 			{Name: "d", Path: "~/c/d"},
 		},
 	},
+	{
+		Case:         "Home directory - linked git worktree",
+		Root:         "~",
+		Relative:     "c/d",
+		GOOS:         runtime.DARWIN,
+		GitDir:       &runtime.FileInfo{ParentFolder: "/a/b/c"},
+		GitDirFormat: "<b>%s</b>",
+		Expected: Folders{
+			{Name: "<b>c</b>", Path: "~/c", Display: true},
+			{Name: "d", Path: "~/c/d"},
+		},
+	},
 }
 
 var testNormalizePathCases = []testNormalizePathCase{

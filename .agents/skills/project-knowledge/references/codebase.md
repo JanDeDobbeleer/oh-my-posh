@@ -40,9 +40,10 @@
 - Segment writers gob-encode only exported fields. `segments.Base.env/options` are unexported and
   MUST survive a cache restore: overlay the restored data onto the writer initialized by
   `MapSegmentWithWriter`, never replace the writer.
-- `runtime/cmd.RunWithEnv` trims leading and trailing whitespace from command output (verified
-  2026-07-26). Segment machine protocols cannot encode meaningful trailing empty fields as blank
-  lines; use a non-whitespace delimiter and parse it defensively.
+- `runtime/cmd.RunWithEnv` applies `strings.TrimSpace` to the complete command output before
+  returning it (verified 2026-07-26). If a segment encodes an empty final field as a trailing blank
+  line, that field is lost. Use a record format that retains a final non-whitespace delimiter or
+  sentinel, and validate the record before assigning parsed state.
 
 ## Cache
 

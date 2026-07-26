@@ -1,0 +1,604 @@
+By default, any interaction with an LLM in a task that starts a lot of text as comments is added to functions, etc. I want to create instructions that state that it is not allowed to write elaborate comments on functions and only keep it to the minimal information that needs to be available to understand the scope and responsibility of the function. If the function is self-explanatory, no comment is needed at all because the function signature, function name, and code should read naturally. That is the main focus, so it is understandable when reading through the code what happens. Only when there is actual relevant information that is not directly clear reading through the code, a comment should be added. I want you to go through all of the generated comments in the history of the codebase and remove what doesn't need to be there based on those rules.
+
+---
+
+<task-notification>
+<task-id>a62a9a8c7f1850bf3</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a62a9a8c7f1850bf3.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 7 (runtime battery/cmd/http)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt reports no issues. All files are clean.
+
+Files edited:
+- `D:\oh-my-posh\src\runtime\battery\battery_windows_nix.go` — removed 1, trimmed 1
+- `D:\oh-my-posh\src\runtime\cmd\run.go` — removed 1, trimmed 1
+- `D:\oh-my-posh\src\runtime\environment.go` — trimmed 1
+- `D:\oh-my-posh\src\runtime\http\connection.go` — trimmed 1
+
+Note: in `battery_windows_nix.go`, the `Get()` doc comment was removed rather than trimmed — it referenced a nonexistent `ErrFatal` type and described a "two returned slices" contract that doesn't match the current `(*Info, error)` signature (stale from an earlier API shape), so there was no accurate non-obvious content left to preserve.</result>
+<usage><subagent_tokens>67870</subagent_tokens><tool_uses>18</tool_uses><duration_ms>110600</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a898a92f457f11452</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a898a92f457f11452.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 6 (prompt, runtime/battery)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt reports no issues. Final results:
+
+prompt/primary.go — removed 2, trimmed 0
+prompt/segments.go — removed 3, trimmed 3
+prompt/streaming.go — removed 4, trimmed 1
+prompt/streaming_test.go — removed 1, trimmed 6
+regex/regex.go — removed 0, trimmed 1
+runtime/battery/battery.go — removed 1, trimmed 1
+
+Files left untouched (no qualifying doc comments to change): prompt/rprompt.go, prompt/segments_test.go, prompt/tooltip.go, prompt/tooltip_test.go, runtime/battery/battery_darwin.go, runtime/battery/battery_linux.go, runtime/battery/battery_openandfreebsd.go.</result>
+<usage><subagent_tokens>98467</subagent_tokens><tool_uses>37</tool_uses><duration_ms>141769</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a47caf46a58772fc0</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a47caf46a58772fc0.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 15 (segments u-z, shell a-f)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt output confirmed and file is clean.
+
+**Files edited:**
+
+- `segments/unity_test.go` — trimmed 1
+- `segments/winreg.go` — removed 1
+- `segments/withings.go` — removed 2
+- `segments/zvm.go` — removed 2, trimmed 1
+- `shell/features.go` — removed 1
+- `shell/filesystem.go` — trimmed 1
+
+All other files in the batch (ui5tooling_test.go, umbraco.go, umbraco_test.go, uno_test.go, upgrade.go, winget.go, shell/cmd.go, shell/code.go, shell/dsc.go, shell/filesystem_other.go) had no declaration-level doc comments needing changes and were left untouched. `gofmt -l` flagged only `winreg.go` (const-block alignment after removal); fixed with `gofmt -w`.</result>
+<usage><subagent_tokens>81829</subagent_tokens><tool_uses>26</tool_uses><duration_ms>102155</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ab8efba4e94ee4e01</task-id>
+<tool-use-id>toolu_01D2tKofL4MogtT5j1PwmEzi</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\ab8efba4e94ee4e01.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 8 (runtime http/jobs/path/smtc)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt reported no issues (empty output). No `gofmt -w` needed.
+
+Report:
+
+- `runtime/jobs/jobs_common.go` — trimmed 1
+- `runtime/jobs/jobs_other.go` — removed 2, trimmed 2
+- `runtime/jobs/jobs_windows.go` — removed 2, trimmed 3
+- `runtime/jobs/jobs_windows_test.go` — trimmed 2
+- `runtime/path/clean.go` — trimmed 1
+- `runtime/smtc_windows.go` — removed 1, trimmed 2
+- `runtime/terminal_windows.go` — trimmed 1
+
+Files left untouched (no doc comments to change, or comments already minimal/non-obvious): `runtime/http/oauth.go`, `runtime/networks_windows.go`, `runtime/path/home.go`, `runtime/terminal.go`, `runtime/terminal_test.go`, `runtime/terminal_unix.go`. Note `smtc_windows.go`'s large `queryMediaPlayer` doc block (WinRT vtable layout, verification methodology) was kept as-is — it's dense with genuinely non-obvious content, not restatement.</result>
+<usage><subagent_tokens>95820</subagent_tokens><tool_uses>28</tool_uses><duration_ms>148166</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>af0cf2283bf7c0ff0</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\af0cf2283bf7c0ff0.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 16 (shell, template a-f)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds. Final report:
+
+shell/filesystem_windows.go — trimmed 1
+shell/init.go — removed 6, trimmed 4
+shell/yash.go — trimmed 1
+shell/zsh_test.go — trimmed 1
+template/bench_test.go — removed 2, trimmed 2
+template/cache.go — trimmed 1
+template/func_map.go — removed 3, trimmed 1
+
+shell/filesystem_windows_test.go, shell/formats.go, template/cache_test.go, template/compare.go, template/compare_test.go, template/date.go, template/date_test.go were left untouched — no comment in them violated the rule (already WHY-focused or non-existent).
+
+`gofmt -l` on all 14 files produced no output (no formatting issues), and `go build ./shell/... ./template/...` succeeded.</result>
+<usage><subagent_tokens>85809</subagent_tokens><tool_uses>38</tool_uses><duration_ms>160346</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a176210299a3b8dd6</task-id>
+<tool-use-id>toolu_01UgL1LTgyNg2Y68HLLb9GiD</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a176210299a3b8dd6.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 4 (config core)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds cleanly. Here's the summary of edits:
+
+config/block.go — removed 8, trimmed 1
+config/config.go — removed 2, trimmed 2
+config/data.go — trimmed 1
+config/default.go — trimmed 1
+config/load.go — removed 2, trimmed 1
+config/load_test.go — removed 2, trimmed 1
+config/merge.go — trimmed 1
+config/segment.go — removed 3, trimmed 2
+
+`gofmt -l` reported no formatting issues on any of the 16 files, and `go build ./config/...` succeeds.</result>
+<usage><subagent_tokens>127383</subagent_tokens><tool_uses>38</tool_uses><duration_ms>238768</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a58419f79f16ca52f</task-id>
+<tool-use-id>toolu_01SekcgHCGNEzZ66C4uZikKZ</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a58419f79f16ca52f.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 2 (cli image/serve)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt reports no issues and the packages build cleanly.
+
+path/to/file — removed N, trimmed M:
+
+- src/cli/get.go — removed 1, trimmed 0
+- src/cli/notice.go — removed 1, trimmed 0
+- src/cli/print.go — removed 1, trimmed 0
+- src/cli/shell.go — removed 1, trimmed 0
+- src/cli/stream.go — removed 1, trimmed 0
+- src/cli/statusline.go — removed 1, trimmed 0
+- src/cli/image/config_test.go — removed 2, trimmed 0
+- src/cli/image/config.go — removed 0, trimmed 2
+- src/cli/image/image.go — removed 1, trimmed 2
+- src/cli/serve.go — removed 1, trimmed 3</result>
+<usage><subagent_tokens>130927</subagent_tokens><tool_uses>35</tool_uses><duration_ms>253612</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ae97b95bc06016b0f</task-id>
+<tool-use-id>toolu_016q9d4tU1LJFtupGqWrQShZ</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\ae97b95bc06016b0f.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 10 (segments d-g)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build passes cleanly.
+
+**Files edited:**
+
+- `segments/docker.go` — removed 2, trimmed 1
+- `segments/dotnet.go` — removed 1
+- `segments/dvc.go` — removed 1, trimmed 1
+- `segments/fossil.go` — removed 1
+- `segments/executiontime.go` — removed 2, trimmed 11
+- `segments/git.go` — removed 24, trimmed 2
+- `segments/git_unix.go` — removed 1
+- `segments/git_windows.go` — removed 1
+- `segments/golang.go` — removed 1
+
+`gofmt -l` was clean after a `gofmt -w` pass on `docker.go` and `git.go` (const-block alignment shifted after comment removal). `go build ./segments/...` succeeds. No files were touched outside the listed batch; `dvc_test.go`, `executiontime_test.go`, `firebase.go`, `gcp_test.go`, `git_test.go`, and `gradle_test.go` had no declaration-level doc comments worth touching (only body-internal comments, out of scope) and were left untouched.</result>
+<usage><subagent_tokens>138499</subagent_tokens><tool_uses>29</tool_uses><duration_ms>201685</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a8e72b07b84e30272</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a8e72b07b84e30272.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 12 (segments o-p)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds. Final report:
+
+- `segments/orthodoxcal.go` — removed 4, trimmed 1
+- `segments/os.go` — removed 5
+- `segments/owm.go` — removed 5
+- `segments/path.go` — removed 24, trimmed 3
+- `segments/project.go` — removed 3, trimmed 2
+
+Files checked with no decl-level doc comments to touch (left untouched): `segments/options/map_test.go`, `segments/path_test.go`, `segments/path_unix_test.go`, `segments/path_windows_test.go`, `segments/plastic.go`, `segments/plastic_test.go`, `segments/posh_git.go`, `segments/project_test.go`.
+
+`gofmt -l` flagged `os.go` and `path.go` after edits (alignment of const blocks); ran `gofmt -w` on both, all files now clean. `go build ./segments/...` succeeds.</result>
+<usage><subagent_tokens>150478</subagent_tokens><tool_uses>25</tool_uses><duration_ms>184778</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a784059e600bb8041</task-id>
+<tool-use-id>toolu_01A2aFhhzk533Y4TZGrrywTT</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a784059e600bb8041.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 5 (config/dsc/generics/prompt)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds cleanly.
+
+Report:
+
+- config/segment_types.go — removed 0, trimmed 1
+- generics/slices.go — removed 2, trimmed 0
+- log/log.go — removed 0, trimmed 1
+- maps/concurrent.go — removed 1, trimmed 0
+- maps/simple.go — removed 1, trimmed 0
+- prompt/engine.go — removed 3, trimmed 1
+- prompt/extra.go — removed 0, trimmed 1
+
+Files reviewed but left untouched (no over-verbose or restating doc comments found — existing comments were either absent or already tight, non-obvious "why" explanations): dsc/resource.go, generics/convert.go, log/print.go, main_test.go, prompt/bench_test.go, prompt/debug.go, prompt/engine_test.go, prompt/extra_test.go, prompt/gradient_collapse_test.go, prompt/gradient_test.go.
+
+`gofmt -l` on all 17 files reported no formatting issues, and `go build` on the touched packages succeeded.</result>
+<usage><subagent_tokens>121509</subagent_tokens><tool_uses>29</tool_uses><duration_ms>234358</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>abb61475a6d79998f</task-id>
+<tool-use-id>toolu_01MDCgt5iQ4guMfDpwqtN5CA</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\abb61475a6d79998f.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 0 (cache, cli auth/config)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds cleanly. Here's the report:
+
+cache/cache.go — removed 0, trimmed 1
+cache/clear.go — removed 1, trimmed 0
+cache/command.go — removed 1, trimmed 5
+cache/file_map_windows.go — removed 6, trimmed 3
+cache/file_windows.go — removed 1, trimmed 1
+cache/store.go — removed 5, trimmed 1
+cache/store_test.go — removed 0, trimmed 1
+cli/auth/cli.go — removed 1, trimmed 0
+cli/auth/copilot.go — removed 2, trimmed 0
+cli/cache.go — removed 1, trimmed 0
+cli/config.go — removed 1, trimmed 0
+
+Files left untouched (no declaration-level doc comments needed changes): cache/command_test.go, cache/file_unix.go, cache/file_unix_test.go, cache/path.go, cache/path_windows.go, cli/auth/ytmda.go.
+
+Note: struct/interface field-level comments and comments above individual entries inside a `const (...)` block (e.g. `store.locked`, `Command.Commands`, `CopilotClientID`'s inline doc) were left untouched — the task's scope list (func/method/type/struct/const block/var block/package) covers whole declarations, not individual members inside them. `gofmt -l` reports no formatting issues, and `go build ./cache/... ./cli/...` succeeds.</result>
+<usage><subagent_tokens>101752</subagent_tokens><tool_uses>50</tool_uses><duration_ms>275204</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ad041b1a0767d23aa</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\ad041b1a0767d23aa.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 14 (segments s-u)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds cleanly.
+
+Report:
+
+- `segments/strava.go` — removed 3, trimmed 0
+- `segments/svn.go` — removed 1, trimmed 0
+- `segments/sysinfo.go` — removed 1, trimmed 0
+- `segments/taskwarrior.go` — removed 1, trimmed 1 (deleted redundant type-level doc comment, condensed the `Commands` field comment to one line)
+- `segments/taskwarrior_test.go` — removed 1, trimmed 0
+- `segments/terraform.go` — removed 1, trimmed 0
+- `segments/time.go` — removed 1, trimmed 0
+
+Files left untouched (no qualifying decl-level comments, or existing comments were already non-obvious/appropriately tight, or comments were body-internal and out of scope): `segments/spotify_windows.go`, `segments/spotify_windows_test.go`, `segments/status.go`, `segments/status_test.go`, `segments/time_test.go`, `segments/ui5tooling.go`.
+
+Note: in `spotify_windows.go` and `ui5tooling.go` I initially flagged comments that turned out to sit inside the function body (right after the opening `{`, not above the `func` line), so per the out-of-scope rule for body-internal comments they were left alone.
+
+`gofmt -l` on all 13 files returned no output (no formatting issues), and `go build ./segments/...` succeeded.</result>
+<usage><subagent_tokens>79221</subagent_tokens><tool_uses>25</tool_uses><duration_ms>182658</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ad3dcea1829a21f64</task-id>
+<tool-use-id>toolu_011B6aYQ7aBaUnQUik6KadPe</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\ad3dcea1829a21f64.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 3 (cli upgrade, color)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt reports no issues and the affected packages build cleanly. Here's the summary of edits:
+
+cli/toggle.go — removed 1
+cli/upgrade.go — removed 1
+cli/upgrade/notice.go — removed 1
+cli/version.go — removed 1
+color/colors.go — removed 3, trimmed 2
+color/colors_test.go — trimmed 1
+color/gradient.go — removed 2, trimmed 2
+color/gradient_test.go — trimmed 8
+color/keywords.go — removed 6
+color/keywords_test.go — trimmed 1
+color/palette.go — removed 2, trimmed 2</result>
+<usage><subagent_tokens>111438</subagent_tokens><tool_uses>48</tool_uses><duration_ms>258367</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>acb1afe17e144a98c</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\acb1afe17e144a98c.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 13 (segments p-s)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds. Here's the summary of edits:
+
+segments/python.go — removed 1
+segments/ramadan.go — removed 6, trimmed 6
+segments/sapling.go — removed 1
+segments/scm.go — removed 4
+segments/shell.go — removed 1
+segments/spotify.go — removed 4
+segments/spotify_linux.go — trimmed 1
+segments/spotify_smtc.go — trimmed 2
+segments/spotify_smtc_parser.go — trimmed 1
+segments/spotify_smtc_parser_test.go — trimmed 1</result>
+<usage><subagent_tokens>105326</subagent_tokens><tool_uses>42</tool_uses><duration_ms>211101</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a82092f5f86a9558d</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a82092f5f86a9558d.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 11 (segments h-o)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Both files are now gofmt-clean and the edits landed correctly. All 15 files are formatted correctly.
+
+## Summary
+
+- `segments/http_test.go` — removed 1
+- `segments/language.go` — removed 8, trimmed 3
+- `segments/lastfm.go` — removed 1
+- `segments/nba.go` — removed 8, trimmed 2
+- `segments/nba_test.go` — removed 1
+- `segments/nightscout.go` — removed 2, trimmed 1
+- `segments/nixshell.go` — trimmed 1
+- `segments/node.go` — removed 5
+- `segments/options/map.go` — removed 12, trimmed 2
+
+`gofmt -l` initially flagged `segments/language.go` and `segments/options/map.go` (const-block alignment after comment removal); ran `gofmt -w` on both and re-verified clean.</result>
+<usage><subagent_tokens>132365</subagent_tokens><tool_uses>43</tool_uses><duration_ms>245290</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ad184d1839f48a5e4</task-id>
+<tool-use-id>toolu_01A2V2YfunmUjBQHWEavAr2U</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\ad184d1839f48a5e4.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 9 (segments a-c)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Build succeeds with no errors.
+
+`gofmt -l` reported no issues, so no `-w` fixes were needed.
+
+Files edited:
+- `src/runtime/win32_windows.go` — removed 2, trimmed 2
+- `src/segments/aws.go` — removed 1, trimmed 2
+- `src/segments/battery.go` — removed 4
+- `src/segments/bazel.go` — removed 1
+- `src/segments/brewfather.go` — removed 2
+- `src/segments/brewfather_test.go` — trimmed 1
+- `src/segments/claude.go` — removed 19, trimmed 12
+- `src/segments/copilot.go` — removed 5
+- `src/segments/copilot_cli.go` — removed 8, trimmed 3
+
+Files left untouched (no qualifying doc comments, or the one present already conveyed non-obvious info and was already concise): `src/segments/argocd.go`, `src/segments/aspire.go`, `src/segments/az.go`, `src/segments/claude_test.go`, `src/segments/copilot_test.go`.</result>
+<usage><subagent_tokens>142174</subagent_tokens><tool_uses>83</tool_uses><duration_ms>295728</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a5afa6d7f9f4ee7a5</task-id>
+<tool-use-id>toolu_01Fa24o41m2TKTZy2KeqTfMN</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a5afa6d7f9f4ee7a5.output</output-file>
+<status>completed</status>
+<summary>Agent "Trim comments batch 17 (template, terminal, text)" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>gofmt reported no issues. Here's the summary of edits made:
+
+template/init.go — removed 1, trimmed 2
+template/link.go — removed 1
+template/locale.go — trimmed 3
+template/locale_test.go — removed 9
+template/render.go — trimmed 2
+template/text.go — removed 2, trimmed 2
+terminal/bench_test.go — removed 2
+text/builder.go — removed 6, trimmed 1
+text/percentage.go — removed 2, trimmed 4
+
+Untouched (no doc comments needed changes): template/locale_unix.go, template/locale_windows.go, template/pool_test.go, terminal/features.go, terminal/writer.go, terminal/writer_gradient_test.go — these already had tight, non-restating comments or none at all.
+
+`gofmt -l` on all 15 files returned no output, confirming no formatting breakage.</result>
+<usage><subagent_tokens>118440</subagent_tokens><tool_uses>50</tool_uses><duration_ms>274984</duration_ms></usage>
+</task-notification>
+
+---
+
+I want the instructions to live in Agents.md, not a skill, because it needs to apply it to every code that we have in every language. We also need to do a review of all the shell initialization scripts. We need to do a review of all the JavaScript we have to see if there's anything in there like it, and then move those instructions, obviously, so they're applied regardless of the context of the language.
+
+---
+
+<task-notification>
+<task-id>a955f7372c0efd91e</task-id>
+<tool-use-id>toolu_017X4GPqoDzo1ktbWKdxZDbR</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a955f7372c0efd91e.output</output-file>
+<status>completed</status>
+<summary>Agent "Comment audit smaller shell scripts" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All five files reviewed and edited in place. No code logic was touched, only comments.
+
+**D:\oh-my-posh\src\shell\scripts\omp.bash** — removed 6, trimmed 2
+Removed: `# disable all known python virtual environment prompts`, `# global variables`, `# switches to enable/disable features`, `# set secondary prompt`, `# Disable in POSIX mode.` (×2 occurrences), `# skip initializing when we're already initialized`. Trimmed: `# check if the command starts with source, if so, do not add it again` + `# this is done to avoid issues with sourcing the same file multiple times` → single line `# avoid re-sourcing the same file multiple times`.
+Kept as risky/non-obvious: the Midnight Commander workaround with GitHub issue #3415 link; the `EPOCHREALTIME` locale/decimal-separator gotcha and bash-5.0 requirement; the VS Code shell-integration ordering comment (`_omp_hook` must run before `__vsc_prompt_cmd_original` wraps PS1); the bash-history-format parsing comment and its per-line strip annotations (cryptic parameter expansions).
+
+**D:\oh-my-posh\src\shell\scripts\omp.yash** — removed 4, trimmed 0
+Removed: `# disable all known python virtual environment prompts`, `# global variables`, `# switches to enable/disable features`, `# install the hooks, skip when already installed`.
+Kept as risky/non-obvious: `# finished jobs stay in the job list until reported, count only running and stopped ones` (a `jobs` builtin quirk that explains the `-r`/`-s` combination); `# runs after a line is read, before it executes; $COMMAND holds the input line` (yash-specific hook timing).
+
+**D:\oh-my-posh\src\shell\scripts\omp.elv** — removed 1, trimmed 0
+Removed: `# disable all known python virtual environment prompts`.
+Kept as risky/non-obvious: both `# Workaround to avoid a race condition in cache access.` comments and the surrounding `# A flag to simulate a mutex.` / `# Now it can start to render the right prompt.` / `# A "prompt rendering period" ends.` — together they document a busy-wait coordination protocol between `edit:prompt` and `edit:rprompt` that isn't inferable from the code alone.
+
+**D:\oh-my-posh\src\shell\scripts\omp.nu** — removed 4, trimmed 1
+Removed: `# Exit early if the oh-my-posh executable is not available`, `# make sure we have the right prompt render correctly`, `# disable all known python virtual environment prompts`, `# PROMPTS`. Trimmed the two-line cursor-clear hack comment into one: `# hack: sets cursor line to 1 on clear; not bulletproof, just a start`.
+Kept as risky/non-obvious: `# We have to do this because the initial value of \`$env.CMD_DURATION_MS\` is always \`0823\`... See https://github.com/nushell/nushell/discussions/6402...` (external bug reference); `# pinned to the session's configuration so it can be recovered when the session cache is lost`.
+
+**D:\oh-my-posh\src\shell\scripts\omp.xsh** — removed 1, trimmed 0
+Removed: `# disable all known python virtual environment prompts`.
+Kept as risky/non-obvious: the two-line comment on `$RIGHT_PROMPT` explaining that multi-line-prompt right-prompt placement is an Xonsh-controlled limitation with no workaround available.
+
+One recurring comment (`# disable all known python virtual environment prompts`) was removed identically from all five files since it only restates what `VIRTUAL_ENV_DISABLE_PROMPT`/`PYENV_VIRTUALENV_DISABLE_PROMPT` already say.</result>
+<usage><subagent_tokens>85272</subagent_tokens><tool_uses>31</tool_uses><duration_ms>191803</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>af6010047e6ad2a32</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\af6010047e6ad2a32.output</output-file>
+<status>completed</status>
+<summary>Agent "Comment audit omp.fish" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Verification passed: the diff touches comment lines only (confirmed via grep excluding `#`-prefixed changed lines — zero non-comment lines changed). Net removed 25 lines across deletions and trims.
+
+## Summary
+
+**Comments removed entirely (22):** restated obvious next-line code — e.g. `# streaming support variables`, `# disable all known python virtual environment prompts`, `# cleanup stream resources`, `# remove temp file`, `# shell exit handler`, `# signal handler: called when streaming process has new prompt`, `# only process if streaming is active`, `# read updated prompt from temp file`, `# trigger repaint`, `# cleanup any prior stream`, `# determine temp file location`, `# build stream command with all context`, `# start background reader process`, `# keep the stream/daemon pipeline out of job notifications` (x2), `# timeout - cleanup and return failure`, `# read first prompt`, `# fall through to sync on failure`, `# Repaint an existing right prompt.`, `# Get the first word of command line as tip.`, `# Ignore an empty/repeated tooltip command.`, `# Render a transient prompt on Ctrl-C with non-empty command line buffer.`
+
+**Comments trimmed (kept substance, cut restating preamble, ~18):** e.g. the serve-daemon-variables intro block, the `_omp_serve_escape` JSON-escaping note, `_omp_serve_render`'s doc comment, the vimode keymap-mapping comment, `omp_repaint_prompt`'s comment, and several others where padding was stripped but the non-obvious rationale kept.
+
+**Kept fully, unmodified (deliberately, as risky/non-obvious):** all comments referencing specific GitHub issues (`#3415` Midnight Commander, fish `#8418` cursor-clear), the two `IMPORTANT: this must run as an external fish -c process` blocks (fish doesn't fork a backgrounded function stage — silent data-corruption trap if violated), the `kill -0 0` self-signaling gotcha, and especially `_omp_serve_start`'s comment on the daemon's fifo/stderr/self-termination contract and `_omp_serve_request`'s "a fifo write with no reader blocks forever" comment — both encode exact failure-mode reasoning (a Go panic reaching the terminal, or a write hanging the shell) that isn't recoverable by reading the code alone.
+
+Section-header comments (`=== serve daemon ===`, `=== STREAMING PATH ===`, `# tooltip`, `# transient prompt`, `# legacy functions`) were left as-is — they're structural markers, not restating comments, so outside the rule's scope.</result>
+<usage><subagent_tokens>95705</subagent_tokens><tool_uses>30</tool_uses><duration_ms>215404</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>acad8704c2d94a730</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\acad8704c2d94a730.output</output-file>
+<status>completed</status>
+<summary>Agent "Comment audit omp.lua" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>The diff confirms only comment lines changed — no code logic was touched.
+
+## Summary
+
+Applied the AGENTS.md `## Comments` rule to `D:\oh-my-posh\src\shell\scripts\omp.lua`.
+
+**22 comments removed** (all pure section headers or restatements of the obvious next line): the `-- Environment variables` / `-- Helper functions` / `-- Local state` / `-- Executable` / `-- Configuration` / `-- Execution helpers` / `-- Duration functions` / `-- Prompt functions` / `-- Event handlers` / `-- Tooltips` navigational headers, plus inline restatements like `-- Start a new table...`, `-- Do not cache an empty tooltip.`, `-- Use what's already cached...`, `-- Get a left prompt immediately...`, `-- Generate left/right prompt, if needed.`, `-- Get the first word of command line as tip.`, `-- Escape special characters properly, if any.`, and `-- Generate a tooltip asynchronously... otherwise generate immediately.`
+
+**2 comments trimmed** (kept the non-obvious "why", cut the restating preamble): the `cache_onbeginedit` cwd-cache comment (dropped "Copy the cached left/right prompt strings..." restatement, kept the "IMPORTANT OPTIMIZATION" rationale), and `p:rightfilter` (dropped "Return cached tooltip if available..." restatement, kept the explanation of the Clink `false`-halts-filtering quirk).
+
+**Everything else kept as-is** — this file is dense with genuinely load-bearing comments and most needed no trimming: the `cached_prompt` field-map doc, the Clink v1.2.30 `os.clock()` bug workaround, the entire "Serve daemon" architecture block, the `2&gt;nul`/binary-mode requirement in `serve_start`, the wait-reply protocol description (`\30`/`\31` framing, id-discard defense), the z.lua priority-ordering comment with its GitHub link, and the `p:filter` coroutine-closure comment.
+
+One comment I deliberately kept in full despite its length, as explicitly non-obvious and risky to touch: the `IMPORTANT: Defining this function inline...` block inside `p:filter` (lines 435–439) — it documents a closure-capture race between concurrent coroutines across successive prompts (stale coroutine could clobber a newer `cached_prompt` table if the function weren't redefined inline each time). That's exactly the kind of hard-won Clink-concurrency invariant the task said to preserve verbatim.</result>
+<usage><subagent_tokens>86488</subagent_tokens><tool_uses>20</tool_uses><duration_ms>230065</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a39f266c97a328be0</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a39f266c97a328be0.output</output-file>
+<status>completed</status>
+<summary>Agent "Comment audit website JS/TS" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Comment cleanup complete. Applied `AGENTS.md`'s "## Comments" rule to every declaration-attached comment in the listed files; body-internal comments (OAuth flow explanations, Apple Music quirk note, cache/promise-reset rationale, etc.) were left untouched as instructed. License headers and the vendor Application Insights snippet were left alone.
+
+Files edited:
+
+- `D:\oh-my-posh\website\api\mcp\index.js` — removed 1, trimmed 0 (deleted a JSDoc that just restated "Azure Function entry point")
+- `D:\oh-my-posh\website\api\mcp\validate-server.js` — removed 1, trimmed 0 (deleted "Download schema if not present" section header above unrelated const declarations)
+- `D:\oh-my-posh\website\api\test\validator.test.js` — removed 1, trimmed 0 (deleted "Test fixtures" above `const fixtures`)
+- `D:\oh-my-posh\website\api\shared\validator.js` — removed 9, trimmed 2. Removed restating JSDoc/section-header comments on `detectFormat`, `parseConfig`, `formatErrors`, `validateConfig`, `validateSegment`, plus "Configuration constants", "Schema cache", "Add custom format for color validation", "Compile validator from schema". Trimmed `loadSchema`'s JSDoc down to the non-obvious GitHub-fallback behavior (dropped the restating `@returns`), and trimmed the AJV init comment to just the non-obvious reason ("oh-my-posh schema uses draft 2020-12"), dropping the "Initialize AJV..." preamble.
+- `D:\oh-my-posh\website\export_themes.mjs` — removed 15, trimmed 2. Removed restating JSDoc from `createThemeConfig`, `isValidTheme`, `getThemeNameFromFile`, `fetchJsonWithTimeout`, `trendingFromDeezer`, `trendingFromAppleRSS`, `buildPoshCommand`, `generateThemeMarkdown`, `asyncPool`, `exportTheme`, `ensureDirectories`, `main`, plus "Configuration constants" and "Theme configuration overrides..." headers. Also removed a JSDoc block above `TRENDING_FETCH_TIMEOUT_MS` whose text ("Sources used to fetch a trending track... in fallback order") didn't even describe the constant it sat on — looked like an orphaned/misplaced comment from an earlier refactor, so I flagged it separately (see below) rather than guessing at a fix. Trimmed `isClean`'s JSDoc to keep only the non-obvious "safety net, intentionally not comprehensive" rationale, and trimmed `buildDataFileWithTrending`'s JSDoc to keep the genuinely non-obvious invariant (committed file never modified, Deezer→Apple fallback, temp copy) while dropping the restating `@returns` line. The well-crafted `CONTENT_DENY_LIST` comment (word-boundary rationale) was already at the right level and left as-is.
+
+Files reviewed with no declaration-attached comments to change (left untouched): `api\auth\index.js`, `api\refresh\index.js`, `api\shared\strava.js`, `api\shared\withings.js`, `docusaurus.config.js`, `plugins\appinsights\analytics.js`, `plugins\appinsights\index.js`, `sidebars.js`, `src\components\Auth.js`, `src\components\Config.js`, `src\pages\index.js`.
+
+I spawned a background task (`task_8182d284`) to investigate the orphaned "Sources used to fetch a trending track... in fallback order" JSDoc I removed from `export_themes.mjs` — it didn't match the constant it was attached to, suggesting a stale leftover from a refactor that's worth a `git blame` check to see if real documentation got lost or misplaced.</result>
+<usage><subagent_tokens>110328</subagent_tokens><tool_uses>50</tool_uses><duration_ms>220528</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ad1b3ce04cd3072ea</task-id>
+<tool-use-id>toolu_01EevRbF8Z1yf7Fbn19pX6oq</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\ad1b3ce04cd3072ea.output</output-file>
+<status>completed</status>
+<summary>Agent "Comment audit omp.zsh" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>The diff confirms only comment lines changed — every removed/modified line starts with `#`, no code logic was touched.
+
+## Summary
+
+Applied the repo's comment rule (`AGENTS.md` "## Comments") to `D:\oh-my-posh\src\shell\scripts\omp.zsh`.
+
+**Removed (20 comments)** — pure restatements of the next line/block, no hidden info: python-venv disable, feature-switch/streaming-var/serve-daemon-var section labels, `_omp_cleanup_stream`/`_omp_start_streaming` restating their own names, "build command with all context", "async handler: called when data available", "shell exit handler" / "register exit handler", "zsh/datetime is unavailable" (else-branch restating the if), "add hook functions", the two widget restore/delete comments in `_omp_cleanup`, "Ignore an empty/repeated tooltip command", "Start regular line editor", the four parameter-restating comments in `_omp_call_widget`/`_omp_create_widget`, and the `_omp_render_vimode` header.
+
+**Trimmed (9 comments)** — kept the non-obvious payload, cut the restating preamble: fd-preservation-on-resource comment, secondary-prompt export side effect, transient-prompt invalidation rationale, process-substitution/SIGPIPE comment, `_omp_serve_escape`'s REPLY-return note, `_omp_create_widget` header, and the zsh-syntax-highlighting workaround comment (kept the version-specific detail, dropped "Back up the original widget").
+
+**Left untouched** — all comments encoding hidden constraints, workarounds, or ordering requirements, per the conservative instruction. Notably kept in full, unedited:
+- The zsh-vi-mode re-entry workaround in `_omp_zle-line-init` (lines ~602-608), referencing GitHub issue #5992 — explains why `zvm_zle-line-init` is invoked up front and why `rawfunc=` must shadow the local to prevent `zvm_reset_prompt` from re-entering the widget.
+- The `_omp_serve_start` job-control/MONITOR workaround (lines ~160-164) — explains a side effect (SIGINT/SIGQUIT ignored) of suppressing the coproc job-announcement notice.
+- The fd-duplication/`exec` block-scoping comment (lines ~173-178) — a genuinely tricky zsh quirk: redirection-only `exec` at top level permanently changes shell fds, so the block must be scoped.
+- The multi-part `_omp_is_buffer_complete` algorithm comments (steps 1-4, lines ~562-594) — dense, non-obvious zsh-parser exploits (here-doc detection via `;;`, `SHORT_LOOPS` detection via `do : done`).
+- The SIGPIPE-on-dead-daemon-write comment in `_omp_serve_request` (lines ~212-216) and the `kill -0 0` footgun comment — both race/edge-case workarounds.
+
+No code logic was changed — verified via `git diff` that every modified/removed line is a `#` comment line.</result>
+<usage><subagent_tokens>94761</subagent_tokens><tool_uses>25</tool_uses><duration_ms>253605</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a790e877a34262168</task-id>
+<tool-use-id>toolu_01SawrE3uDUaoxZctY1C9xFt</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\634355e9-1f7f-4e0a-9d53-7cd289f99fb0\tasks\a790e877a34262168.output</output-file>
+<status>completed</status>
+<summary>Agent "Comment audit omp.ps1" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Comment cleanup complete on `D:\oh-my-posh\src\shell\scripts\omp.ps1` — no code logic touched, only comment lines removed/trimmed (verified via `git diff --stat`: 49 deletions, 9 insertions, net 40 lines removed).
+
+**Removed (35 comments deleted as pure restatements of the next line/obvious code):** e.g. "remove any existing dynamic module of OMP", "disable all known python virtual environment prompts", "global enablers", "Check `ConstrainedLanguage` mode.", "An unchanged prompt needs no repaint.", "make sure we're in a valid directory / if not, go back HOME", "We only need to return a non-filesystem working directory.", "Set a sane default...", "retrieve info of the most recent error", "Kill the streaming process", "Could not start the daemon at all...", "Build arguments array", "escape double quotes" / "quote the argument" (both duplicated occurrences), "Use ArgumentList if available...", "Read output asynchronously", "store the original last command execution status", "store the original last exit code" (x2), "Stop any previous render cycle...", "Reset tooltip command.", "Use streaming prompt if enabled...", "The output can be multi-line...", "remove any posh-git status", "set secondary prompt", tooltip helper restatements, "Helper function to create Enter/Ctrl+C key handler script block" (x2), "Register Enter/Ctrl+C key handlers" (x2), and the OnRemove block's mechanical summary comments.
+
+**Trimmed (6):** dropped restating preambles while keeping the substantive point — "Prompt related backup." prefix removed; "Start streaming process" prefix removed, keeping the State='NEW' rationale; "Hand the collection to the OnIdle drain" reworded to keep only the non-obvious "index 0 already consumed" fact; "Update ExtraPromptLineCount for PSReadLine" trimmed to "So PSReadLine properly clears the previous prompt."; the Serve-mode abort comment had its trailing "Guard on the process still being alive." dropped as restating the `-not HasExited` check.
+
+**Kept untouched (all substantive workaround/race/quirk comments)** — notably the ones most worth flagging as deliberately preserved despite length:
+- The `StreamingReaderScript` comment (NUL-delimited chunked reader) documenting a *measured* per-byte performance regression that broke Enter key-repeat responsiveness.
+- The BOM-less UTF-8 stdin comment — a real, non-obvious daemon-corruption bug if `[System.Text.Encoding]::UTF8` were used instead.
+- The `PowerShell.Exiting` handler comment in `Enable-PoshStreaming` describing the exact circular-wait deadlock on shell exit and how breaking it via stdin EOF avoids hanging the terminal.
+- The `Register-PoshStreamingOnIdle` comments explaining why `OnIdle` (not `DataAdded`) is the only safe consumption point, citing the specific `InvalidPipelineStateException` host crash from cross-thread event delivery.
+- The async-mode prompt-restoration comment in the `OnRemove` handler, which explains an infinite-recursion trap if the wrong backup were restored.
+- The wait-loop comment in `Get-PoshStreamingPrompt` explaining the lost-wakeup-proof scan/signal design.
+- The transient-prompt drain comment citing the ~300ms `PowerShell.OnIdle` idle threshold and its interaction with fast Enter presses.
+
+All GitHub issue references (discussions/2300, issues/2483, 2502, 5153) were left fully intact per the rule.</result>
+<usage><subagent_tokens>131854</subagent_tokens><tool_uses>36</tool_uses><duration_ms>327804</duration_ms></usage>
+</task-notification>

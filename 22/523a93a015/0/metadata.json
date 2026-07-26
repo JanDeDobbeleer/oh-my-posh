@@ -1,0 +1,716 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "22523a93a015",
+  "session_id": "634355e9-1f7f-4e0a-9d53-7cd289f99fb0",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-26T13:39:23.1481347Z",
+  "branch": "next",
+  "checkpoints_count": 25,
+  "save_step_count": 25,
+  "files_touched": [
+    "AGENTS.md",
+    "src/cache/cache.go",
+    "src/cache/clear.go",
+    "src/cache/command.go",
+    "src/cache/file_map_windows.go",
+    "src/cache/file_windows.go",
+    "src/cache/store.go",
+    "src/cache/store_test.go",
+    "src/cli/auth/cli.go",
+    "src/cli/auth/copilot.go",
+    "src/cli/cache.go",
+    "src/cli/config.go",
+    "src/cli/config_export.go",
+    "src/cli/config_export_data.go",
+    "src/cli/config_export_data_test.go",
+    "src/cli/config_export_image.go",
+    "src/cli/data.go",
+    "src/cli/data_test.go",
+    "src/cli/debug.go",
+    "src/cli/disable.go",
+    "src/cli/enable.go",
+    "src/cli/font/font.go",
+    "src/cli/get.go",
+    "src/cli/image/config.go",
+    "src/cli/image/config_test.go",
+    "src/cli/image/image.go",
+    "src/cli/notice.go",
+    "src/cli/print.go",
+    "src/cli/serve.go",
+    "src/cli/shell.go",
+    "src/cli/statusline.go",
+    "src/cli/stream.go",
+    "src/cli/toggle.go",
+    "src/cli/upgrade.go",
+    "src/cli/upgrade/notice.go",
+    "src/cli/version.go",
+    "src/color/colors.go",
+    "src/color/colors_test.go",
+    "src/color/gradient.go",
+    "src/color/gradient_test.go",
+    "src/color/keywords.go",
+    "src/color/keywords_test.go",
+    "src/color/palette.go",
+    "src/config/block.go",
+    "src/config/config.go",
+    "src/config/data.go",
+    "src/config/default.go",
+    "src/config/load.go",
+    "src/config/load_test.go",
+    "src/config/merge.go",
+    "src/config/segment.go",
+    "src/config/segment_types.go",
+    "src/generics/slices.go",
+    "src/log/log.go",
+    "src/maps/concurrent.go",
+    "src/maps/simple.go",
+    "src/prompt/engine.go",
+    "src/prompt/extra.go",
+    "src/prompt/primary.go",
+    "src/prompt/segments.go",
+    "src/prompt/streaming.go",
+    "src/prompt/streaming_test.go",
+    "src/regex/regex.go",
+    "src/runtime/battery/battery.go",
+    "src/runtime/battery/battery_windows_nix.go",
+    "src/runtime/cmd/run.go",
+    "src/runtime/environment.go",
+    "src/runtime/http/connection.go",
+    "src/runtime/jobs/jobs_common.go",
+    "src/runtime/jobs/jobs_other.go",
+    "src/runtime/jobs/jobs_windows.go",
+    "src/runtime/jobs/jobs_windows_test.go",
+    "src/runtime/path/clean.go",
+    "src/runtime/smtc_windows.go",
+    "src/runtime/terminal_windows.go",
+    "src/runtime/win32_windows.go",
+    "src/segments/aws.go",
+    "src/segments/battery.go",
+    "src/segments/bazel.go",
+    "src/segments/brewfather.go",
+    "src/segments/brewfather_test.go",
+    "src/segments/claude.go",
+    "src/segments/copilot.go",
+    "src/segments/copilot_cli.go",
+    "src/segments/docker.go",
+    "src/segments/dotnet.go",
+    "src/segments/dvc.go",
+    "src/segments/executiontime.go",
+    "src/segments/fossil.go",
+    "src/segments/git.go",
+    "src/segments/git_unix.go",
+    "src/segments/git_windows.go",
+    "src/segments/golang.go",
+    "src/segments/http_test.go",
+    "src/segments/language.go",
+    "src/segments/lastfm.go",
+    "src/segments/nba.go",
+    "src/segments/nba_test.go",
+    "src/segments/nightscout.go",
+    "src/segments/nixshell.go",
+    "src/segments/node.go",
+    "src/segments/options/map.go",
+    "src/segments/orthodoxcal.go",
+    "src/segments/os.go",
+    "src/segments/owm.go",
+    "src/segments/path.go",
+    "src/segments/project.go",
+    "src/segments/python.go",
+    "src/segments/ramadan.go",
+    "src/segments/sapling.go",
+    "src/segments/scm.go",
+    "src/segments/shell.go",
+    "src/segments/spotify.go",
+    "src/segments/spotify_linux.go",
+    "src/segments/spotify_smtc.go",
+    "src/segments/spotify_smtc_parser.go",
+    "src/segments/spotify_smtc_parser_test.go",
+    "src/segments/strava.go",
+    "src/segments/svn.go",
+    "src/segments/sysinfo.go",
+    "src/segments/taskwarrior.go",
+    "src/segments/taskwarrior_test.go",
+    "src/segments/terraform.go",
+    "src/segments/time.go",
+    "src/segments/unity_test.go",
+    "src/segments/winreg.go",
+    "src/segments/withings.go",
+    "src/segments/zvm.go",
+    "src/shell/features.go",
+    "src/shell/filesystem.go",
+    "src/shell/filesystem_windows.go",
+    "src/shell/init.go",
+    "src/shell/scripts/omp.bash",
+    "src/shell/scripts/omp.elv",
+    "src/shell/scripts/omp.fish",
+    "src/shell/scripts/omp.lua",
+    "src/shell/scripts/omp.nu",
+    "src/shell/scripts/omp.ps1",
+    "src/shell/scripts/omp.xsh",
+    "src/shell/scripts/omp.yash",
+    "src/shell/scripts/omp.zsh",
+    "src/shell/yash.go",
+    "src/shell/zsh_test.go",
+    "src/template/bench_test.go",
+    "src/template/cache.go",
+    "src/template/func_map.go",
+    "src/template/init.go",
+    "src/template/link.go",
+    "src/template/locale.go",
+    "src/template/locale_test.go",
+    "src/template/render.go",
+    "src/template/text.go",
+    "src/terminal/bench_test.go",
+    "src/text/builder.go",
+    "src/text/percentage.go",
+    "website/api/mcp/index.js",
+    "website/api/mcp/validate-server.js",
+    "website/api/shared/validator.js",
+    "website/api/test/validator.test.js",
+    "website/export_themes.mjs"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "f1f15bd458e6",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 193,
+    "cache_creation_tokens": 454571,
+    "cache_read_tokens": 12462176,
+    "output_tokens": 56593,
+    "api_call_count": 98
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01ANXTrTqr8mNXLNAGpAQZmn",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "f1f15bd458e6",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 14,
+        "end": 15,
+        "entry_ids": [
+          "7cd95278-6d3f-4358-b9cd-27032f2864cf"
+        ],
+        "tool_use_id": "toolu_01ANXTrTqr8mNXLNAGpAQZmn"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01ANXTrTqr8mNXLNAGpAQZmn"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_014PuqJSchNspd4svQZdzULD",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "golang"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "f1f15bd458e6",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 49,
+        "end": 50,
+        "entry_ids": [
+          "7107f87a-ec53-410f-a67d-a505b3f63ff4"
+        ],
+        "tool_use_id": "toolu_014PuqJSchNspd4svQZdzULD"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_014PuqJSchNspd4svQZdzULD"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: golang",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01W8JHnCqKJU1FFKr9VzJq9h",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "f1f15bd458e6",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 482,
+        "end": 483,
+        "entry_ids": [
+          "fa4b212b-6075-4c6b-a42a-0dd4c5cabb56"
+        ],
+        "tool_use_id": "toolu_01W8JHnCqKJU1FFKr9VzJq9h"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01W8JHnCqKJU1FFKr9VzJq9h"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 25
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-26T13:39:23.0394381Z",
+    "agent_lines": 0,
+    "agent_removed": 389,
+    "human_added": 0,
+    "human_modified": 386,
+    "human_removed": 498,
+    "total_committed": 28,
+    "total_lines_changed": 1273,
+    "agent_percentage": 30.557737627651214,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 52,
+      "user_lines_removed": 6,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/cache/store.go": 17,
+        "src/cache/store_test.go": 35
+      },
+      "user_removed_per_file": {
+        "src/cache/store.go": 6
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 13,
+      "user_lines_removed": 40,
+      "agent_lines_added": 9,
+      "agent_lines_removed": 40,
+      "user_added_per_file": {
+        "src/prompt/segments.go": 5,
+        "src/prompt/streaming_test.go": 4,
+        "src/runtime/cmd/run.go": 2,
+        "src/runtime/environment.go": 1,
+        "src/runtime/http/connection.go": 1
+      },
+      "user_removed_per_file": {
+        "src/prompt/primary.go": 2,
+        "src/prompt/segments.go": 12,
+        "src/prompt/streaming.go": 6,
+        "src/prompt/streaming_test.go": 5,
+        "src/runtime/battery/battery_windows_nix.go": 5,
+        "src/runtime/cmd/run.go": 5,
+        "src/runtime/environment.go": 3,
+        "src/runtime/http/connection.go": 2
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 41,
+      "user_lines_removed": 89,
+      "agent_lines_added": 45,
+      "agent_lines_removed": 109,
+      "user_added_per_file": {
+        "src/cache/command.go": 16,
+        "src/config/block.go": 8,
+        "src/runtime/battery/battery.go": 2,
+        "src/runtime/jobs/jobs_other.go": 3,
+        "src/runtime/jobs/jobs_windows.go": 2,
+        "src/runtime/jobs/jobs_windows_test.go": 5,
+        "src/runtime/path/clean.go": 2,
+        "src/segments/unity_test.go": 2,
+        "src/segments/zvm.go": 1
+      },
+      "user_removed_per_file": {
+        "src/cache/clear.go": 6,
+        "src/cache/command.go": 21,
+        "src/config/block.go": 16,
+        "src/runtime/battery/battery.go": 4,
+        "src/runtime/jobs/jobs_other.go": 10,
+        "src/runtime/jobs/jobs_windows.go": 9,
+        "src/runtime/jobs/jobs_windows_test.go": 7,
+        "src/runtime/path/clean.go": 3,
+        "src/segments/unity_test.go": 4,
+        "src/segments/winreg.go": 1,
+        "src/segments/withings.go": 2,
+        "src/segments/zvm.go": 3,
+        "src/shell/features.go": 1,
+        "src/shell/filesystem.go": 2
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 35,
+      "user_lines_removed": 77,
+      "agent_lines_added": 110,
+      "agent_lines_removed": 253,
+      "user_added_per_file": {
+        "src/cache/file_map_windows.go": 9,
+        "src/config/data.go": 1,
+        "src/config/default.go": 2,
+        "src/config/load.go": 1,
+        "src/segments/docker.go": 3,
+        "src/segments/owm.go": 5,
+        "src/segments/spotify.go": 2,
+        "src/segments/spotify_linux.go": 2,
+        "src/segments/spotify_smtc.go": 1,
+        "src/segments/spotify_smtc_parser.go": 1,
+        "src/segments/winreg.go": 1,
+        "src/shell/filesystem_windows.go": 4,
+        "src/shell/init.go": 3
+      },
+      "user_removed_per_file": {
+        "src/cache/file_map_windows.go": 14,
+        "src/cli/toggle.go": 1,
+        "src/cli/upgrade.go": 1,
+        "src/config/config.go": 2,
+        "src/config/data.go": 2,
+        "src/config/default.go": 3,
+        "src/config/load.go": 4,
+        "src/segments/docker.go": 5,
+        "src/segments/dotnet.go": 1,
+        "src/segments/dvc.go": 1,
+        "src/segments/owm.go": 10,
+        "src/segments/shell.go": 1,
+        "src/segments/spotify.go": 6,
+        "src/segments/spotify_linux.go": 3,
+        "src/segments/spotify_smtc.go": 3,
+        "src/segments/spotify_smtc_parser.go": 2,
+        "src/segments/winreg.go": 1,
+        "src/shell/filesystem_windows.go": 6,
+        "src/shell/init.go": 11
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 6,
+      "user_lines_removed": 12,
+      "agent_lines_added": 160,
+      "agent_lines_removed": 387,
+      "user_added_per_file": {
+        "src/color/palette.go": 1,
+        "src/config/segment.go": 3,
+        "src/shell/zsh_test.go": 2
+      },
+      "user_removed_per_file": {
+        "src/cache/store.go": 1,
+        "src/color/palette.go": 2,
+        "src/config/segment.go": 4,
+        "src/maps/simple.go": 1,
+        "src/shell/zsh_test.go": 3,
+        "src/template/bench_test.go": 1
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 239,
+      "user_lines_removed": 379,
+      "agent_lines_added": 208,
+      "agent_lines_removed": 502,
+      "user_added_per_file": {
+        "src/cli/image/config.go": 4,
+        "src/cli/image/image.go": 3,
+        "src/cli/serve.go": 8,
+        "src/color/colors_test.go": 2,
+        "src/color/gradient.go": 7,
+        "src/color/gradient_test.go": 19,
+        "src/color/keywords.go": 4,
+        "src/color/keywords_test.go": 2,
+        "src/segments/aws.go": 3,
+        "src/segments/battery.go": 2,
+        "src/segments/brewfather_test.go": 1,
+        "src/segments/docker.go": 2,
+        "src/segments/git.go": 28,
+        "src/segments/nba.go": 1,
+        "src/segments/nightscout.go": 1,
+        "src/segments/nixshell.go": 2,
+        "src/segments/node.go": 4,
+        "src/segments/os.go": 5,
+        "src/segments/path.go": 18,
+        "src/segments/project.go": 4,
+        "src/segments/ramadan.go": 11,
+        "src/segments/spotify_smtc_parser_test.go": 105,
+        "src/segments/taskwarrior.go": 1,
+        "src/template/func_map.go": 2
+      },
+      "user_removed_per_file": {
+        "src/cli/cache.go": 1,
+        "src/cli/config.go": 1,
+        "src/cli/get.go": 1,
+        "src/cli/image/config.go": 8,
+        "src/cli/image/config_test.go": 2,
+        "src/cli/image/image.go": 7,
+        "src/cli/notice.go": 1,
+        "src/cli/print.go": 1,
+        "src/cli/serve.go": 12,
+        "src/cli/shell.go": 1,
+        "src/cli/statusline.go": 1,
+        "src/cli/stream.go": 1,
+        "src/color/colors_test.go": 3,
+        "src/color/gradient.go": 10,
+        "src/color/gradient_test.go": 29,
+        "src/color/keywords.go": 10,
+        "src/color/keywords_test.go": 3,
+        "src/runtime/win32_windows.go": 4,
+        "src/segments/aws.go": 9,
+        "src/segments/battery.go": 6,
+        "src/segments/bazel.go": 1,
+        "src/segments/brewfather.go": 2,
+        "src/segments/brewfather_test.go": 1,
+        "src/segments/docker.go": 2,
+        "src/segments/git.go": 56,
+        "src/segments/http_test.go": 2,
+        "src/segments/lastfm.go": 1,
+        "src/segments/nba.go": 6,
+        "src/segments/nba_test.go": 1,
+        "src/segments/nightscout.go": 4,
+        "src/segments/nixshell.go": 3,
+        "src/segments/node.go": 9,
+        "src/segments/os.go": 5,
+        "src/segments/path.go": 18,
+        "src/segments/project.go": 7,
+        "src/segments/ramadan.go": 20,
+        "src/segments/spotify_smtc_parser_test.go": 109,
+        "src/segments/strava.go": 3,
+        "src/segments/svn.go": 1,
+        "src/segments/sysinfo.go": 1,
+        "src/segments/taskwarrior.go": 7,
+        "src/segments/taskwarrior_test.go": 1,
+        "src/segments/terraform.go": 2,
+        "src/segments/time.go": 2,
+        "src/template/func_map.go": 4
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 444,
+      "agent_lines_removed": 891,
+      "user_removed_per_file": {
+        "src/segments/claude.go": 1
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 445,
+      "agent_lines_removed": 909,
+      "user_removed_per_file": {
+        "src/segments/claude.go": 1
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 344,
+      "agent_lines_removed": 835,
+      "user_removed_per_file": {
+        "src/segments/claude.go": 1
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 3,
+      "user_lines_removed": 4,
+      "agent_lines_added": 349,
+      "agent_lines_removed": 855,
+      "user_added_per_file": {
+        "src/template/init.go": 3
+      },
+      "user_removed_per_file": {
+        "src/template/init.go": 4
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 2,
+      "user_lines_removed": 4,
+      "agent_lines_added": 374,
+      "agent_lines_removed": 891,
+      "user_added_per_file": {
+        "src/template/locale.go": 2
+      },
+      "user_removed_per_file": {
+        "src/segments/copilot.go": 1,
+        "src/template/locale.go": 3
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 0,
+      "user_lines_removed": 3,
+      "agent_lines_added": 377,
+      "agent_lines_removed": 905,
+      "user_removed_per_file": {
+        "src/segments/copilot_cli.go": 1,
+        "src/template/locale_test.go": 2
+      }
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 379,
+      "agent_lines_removed": 925
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 380,
+      "agent_lines_removed": 930
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 385,
+      "agent_lines_removed": 941,
+      "user_removed_per_file": {
+        "src/text/builder.go": 1
+      }
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 386,
+      "agent_lines_removed": 953
+    },
+    {
+      "checkpoint_number": 17,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 391,
+      "agent_lines_removed": 964
+    },
+    {
+      "checkpoint_number": 18,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 391,
+      "agent_lines_removed": 964
+    },
+    {
+      "checkpoint_number": 19,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 391,
+      "agent_lines_removed": 964
+    },
+    {
+      "checkpoint_number": 20,
+      "user_lines_added": 45,
+      "user_lines_removed": 241,
+      "agent_lines_added": 408,
+      "agent_lines_removed": 964,
+      "user_added_per_file": {
+        "src/shell/scripts/omp.bash": 1,
+        "src/shell/scripts/omp.fish": 24,
+        "src/shell/scripts/omp.lua": 4,
+        "src/shell/scripts/omp.nu": 1,
+        "src/shell/scripts/omp.zsh": 7,
+        "website/api/shared/validator.js": 2,
+        "website/export_themes.mjs": 6
+      },
+      "user_removed_per_file": {
+        "src/shell/scripts/omp.bash": 9,
+        "src/shell/scripts/omp.elv": 1,
+        "src/shell/scripts/omp.fish": 49,
+        "src/shell/scripts/omp.lua": 32,
+        "src/shell/scripts/omp.nu": 7,
+        "src/shell/scripts/omp.xsh": 1,
+        "src/shell/scripts/omp.yash": 4,
+        "src/shell/scripts/omp.zsh": 21,
+        "website/api/mcp/index.js": 3,
+        "website/api/mcp/validate-server.js": 1,
+        "website/api/shared/validator.js": 35,
+        "website/api/test/validator.test.js": 1,
+        "website/export_themes.mjs": 77
+      }
+    },
+    {
+      "checkpoint_number": 21,
+      "user_lines_added": 0,
+      "user_lines_removed": 2,
+      "agent_lines_added": 454,
+      "agent_lines_removed": 1216,
+      "user_removed_per_file": {
+        "src/shell/scripts/omp.zsh": 2
+      }
+    },
+    {
+      "checkpoint_number": 22,
+      "user_lines_added": 0,
+      "user_lines_removed": 3,
+      "agent_lines_added": 462,
+      "agent_lines_removed": 1233,
+      "user_removed_per_file": {
+        "src/shell/scripts/omp.ps1": 3
+      }
+    },
+    {
+      "checkpoint_number": 23,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 462,
+      "agent_lines_removed": 1242
+    },
+    {
+      "checkpoint_number": 24,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 462,
+      "agent_lines_removed": 1248
+    },
+    {
+      "checkpoint_number": 25,
+      "user_lines_added": 2,
+      "user_lines_removed": 20,
+      "agent_lines_added": 464,
+      "agent_lines_removed": 1253,
+      "user_added_per_file": {
+        "src/shell/scripts/omp.ps1": 2
+      },
+      "user_removed_per_file": {
+        "src/shell/scripts/omp.ps1": 20
+      }
+    },
+    {
+      "checkpoint_number": 26,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 466,
+      "agent_lines_removed": 1273
+    }
+  ]
+}

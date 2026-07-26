@@ -1,0 +1,655 @@
+I want you to analyze the website's design and look at our competitors, like Starship and other command-line tools out there with a modern interface. Do some iterations on what the UI could look like to be more modern and streamlined, as well as the navigation architecture on the website. Now we have the homepage and the topics, like documents, whatever, but it should be as straightforward to navigate to where you want to go as possible.
+
+Analyze all of these things and come up with one or multiple proposals based on the direction we can take.Do some proposals around redesigns: some that stick more closely to what we have, and others that may be in a more dramatic direction.
+
+---
+
+<task-notification>
+<task-id>addf6dfa3b8e39528</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\bf77db8f-a917-4fc4-be70-ca1927a57d56\tasks\addf6dfa3b8e39528.output</output-file>
+<status>completed</status>
+<summary>Agent "Map omp website IA" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Mapped the full IA. Report below.
+
+---
+
+# Oh My Posh website — Information Architecture
+
+Root: `D:\oh-my-posh\website` (Docusaurus 3, ESM config, docs at `/docs`, blog at `/blog`, Algolia DocSearch, App Insights telemetry).
+
+## 1. Sidebar tree (verbatim from `D:\oh-my-posh\website\sidebars.js`)
+
+Single sidebar, key `docs`.
+
+```
+💡 Getting Started            (category, collapsed: false)
+├── 📦 Installation           (category, collapsed: false)
+│   ├── installation/windows
+│   ├── installation/macos
+│   └── installation/linux
+├── installation/fonts
+├── installation/prompt
+├── installation/customize
+└── installation/upgrade
+
+⚙️ Configuration              (category, link: doc → configuration/introduction)
+├── configuration/general
+├── configuration/block
+├── configuration/segment
+├── configuration/title
+├── configuration/colors
+├── configuration/templates
+├── configuration/data
+├── configuration/secondary-prompt
+├── configuration/debug-prompt
+├── configuration/transient
+├── configuration/streaming
+├── configuration/line-error
+├── configuration/tooltips
+└── configuration/sample
+
+🌟 Segments                   (category, collapsed: true)
+├── 🧰 CLI                    (category, collapsed: true)
+│   ├── segments/cli/angular
+│   ├── segments/cli/argocd
+│   ├── segments/cli/aspire
+│   ├── segments/cli/aurelia
+│   ├── segments/cli/bazel
+│   ├── segments/cli/buf
+│   ├── segments/cli/bun
+│   ├── segments/cli/claude
+│   ├── segments/cli/cmake
+│   ├── segments/cli/copilot
+│   ├── segments/cli/copilot-cli
+│   ├── segments/cli/deno
+│   ├── segments/cli/docker
+│   ├── segments/cli/firebase
+│   ├── segments/cli/flutter
+│   ├── segments/cli/gitversion
+│   ├── segments/cli/gradle
+│   ├── segments/cli/helm
+│   ├── segments/cli/kubectl
+│   ├── segments/cli/mvn
+│   ├── segments/cli/nbgv
+│   ├── segments/cli/nix-shell
+│   ├── segments/cli/npm
+│   ├── segments/cli/nx
+│   ├── segments/cli/pnpm
+│   ├── segments/cli/quasar
+│   ├── segments/cli/react
+│   ├── segments/cli/svelte
+│   ├── segments/cli/talosctl
+│   ├── segments/cli/taskwarrior
+│   ├── segments/cli/tauri
+│   ├── segments/cli/terraform
+│   ├── segments/cli/ui5tooling
+│   ├── segments/cli/umbraco
+│   ├── segments/cli/uno
+│   ├── segments/cli/unity
+│   ├── segments/cli/xmake
+│   ├── segments/cli/yarn
+│   └── segments/cli/zvm
+├── ☁️ Cloud                  (category, collapsed: true)
+│   ├── segments/cloud/aws
+│   ├── segments/cloud/az
+│   ├── segments/cloud/azd
+│   ├── segments/cloud/azfunc
+│   ├── segments/cloud/cds
+│   ├── segments/cloud/cf
+│   ├── segments/cloud/cftarget
+│   ├── segments/cloud/gcp
+│   ├── segments/cloud/pulumi
+│   └── segments/cloud/sitecore
+├── 🩺 Health                 (category, collapsed: true)
+│   ├── segments/health/nightscout
+│   ├── segments/health/orthodoxcal
+│   ├── segments/health/ramadan
+│   ├── segments/health/strava
+│   └── segments/health/withings
+├── ✍️ Languages              (category, collapsed: true)
+│   ├── segments/languages/clojure
+│   ├── segments/languages/crystal
+│   ├── segments/languages/dart
+│   ├── segments/languages/dotnet
+│   ├── segments/languages/elixir
+│   ├── segments/languages/fortran
+│   ├── segments/languages/golang
+│   ├── segments/languages/haskell
+│   ├── segments/languages/java
+│   ├── segments/languages/julia
+│   ├── segments/languages/kotlin
+│   ├── segments/languages/language
+│   ├── segments/languages/lua
+│   ├── segments/languages/mojo
+│   ├── segments/languages/nim
+│   ├── segments/languages/node
+│   ├── segments/languages/ocaml
+│   ├── segments/languages/perl
+│   ├── segments/languages/php
+│   ├── segments/languages/python
+│   ├── segments/languages/r
+│   ├── segments/languages/ruby
+│   ├── segments/languages/rust
+│   ├── segments/languages/swift
+│   ├── segments/languages/v
+│   ├── segments/languages/vala
+│   └── segments/languages/zig
+├── 🎧 Music                  (category, collapsed: true)
+│   ├── segments/music/lastfm
+│   ├── segments/music/spotify
+│   └── segments/music/ytm
+├── 🗂️ Source control         (category, collapsed: true)
+│   ├── segments/scm/dvc
+│   ├── segments/scm/fossil
+│   ├── segments/scm/git
+│   ├── segments/scm/jujutsu
+│   ├── segments/scm/mercurial
+│   ├── segments/scm/plastic
+│   ├── segments/scm/sapling
+│   └── segments/scm/svn
+├── 🖥️ System                 (category, collapsed: true)
+│   ├── segments/system/battery
+│   ├── segments/system/connection
+│   ├── segments/system/executiontime
+│   ├── segments/system/os
+│   ├── segments/system/path
+│   ├── segments/system/project
+│   ├── segments/system/root
+│   ├── segments/system/session
+│   ├── segments/system/shell
+│   ├── segments/system/status
+│   ├── segments/system/sysinfo
+│   ├── segments/system/text
+│   ├── segments/system/time
+│   ├── segments/system/upgrade
+│   ├── segments/system/vimode
+│   ├── segments/system/winget
+│   └── segments/system/winreg
+└── 🌐 Web                    (category, collapsed: true)
+    ├── segments/web/brewfather
+    ├── segments/web/carbonintensity
+    ├── segments/web/http
+    ├── segments/web/ipify
+    ├── segments/web/nba
+    ├── segments/web/owm
+    ├── segments/web/todoist
+    └── segments/web/wakatime
+
+🤝 Contributing               (category, collapsed: true)
+├── contributing/started
+├── contributing/segment
+├── contributing/git
+└── contributing/plastic
+
+dsc                           (top-level doc)
+themes                        (top-level doc)
+share                         (top-level doc)
+
+🛠️ Advanced                   (category, collapsed: true)
+└── advanced/mcp-server
+
+faq                           (top-level doc)
+migrating                     (top-level doc)
+contributors                  (top-level doc)
+```
+
+Top-level order is: Getting Started, Configuration, Segments, Contributing, dsc, themes, share, Advanced, faq, migrating, contributors.
+
+## 2. Docs inventory (path | id | title | sidebar_label)
+
+**Root-level** (`D:\oh-my-posh\website\docs\`)
+| file | id | title | sidebar_label |
+|---|---|---|---|
+| auth.mdx | auth | Segment Authentication | Authentication |
+| contributors.md | contributors | Contributors | 🙏 Contributors |
+| dsc.md | dsc | Desired State Configuration | 🖥️ Desired State Configuration |
+| faq.mdx | faq | FAQ | 🤔 FAQ |
+| migrating-module.md | migrating | PowerShell module | ⚰️ PowerShell Module |
+| share-theme.md | share | Share theme | 📸 Share theme |
+| themes.md | themes | Themes | 🎨 Themes |
+
+**installation/**
+| file | id | title | sidebar_label |
+|---|---|---|---|
+| windows.mdx | windows | Windows | 🪟 Windows |
+| macos.mdx | macos | macOS | 🍏 macOS |
+| linux.mdx | linux | Linux | 🐧 Linux |
+| fonts.mdx | fonts | Fonts | 🔤 Fonts |
+| prompt.mdx | prompt | Change your prompt | ✨ Prompt |
+| customize.mdx | customize | Customize | 🧩 Customize |
+| upgrade.mdx | upgrade | Upgrade | ♻️ Upgrade |
+| homebrew.md | — | — | — (partial, no frontmatter; imported by macos.mdx) |
+| next.md | — | — | — (partial; imported by windows/macos/linux) |
+
+**configuration/** (all ids match filename stem)
+introduction (`slug: /` — this is the site's `/docs` landing page, label `👋 Introduction`), general, block, segment, title (*Console title*), colors, templates, data (*Template data*), secondary-prompt, debug-prompt, transient (*Transient prompt*), streaming, line-error, tooltips, sample.
+
+**advanced/**: `mcp-server.mdx` | mcp-server | MCP Server | MCP Server.
+
+**contributing/**: started (*Get Started*), segment (*Add Segment*), git (*Git commands for contributors* / label `Git Commands`), plastic (*Setup for Plastic SCM testing* / label `Plastic SCM testing`).
+
+**segments/**: every file has `id` = filename stem, and `title`/`sidebar_label` are the display name (e.g. `kubectl.mdx` → title `Kubernetes`, `nbgv.mdx` → title `Nerdbank.GitVersioning`, label `Nbgv`; `owm.mdx` → `Open Weather Map`; `status.mdx` → `Status Code`; `winreg.mdx` → `Windows Registry Key Query`).
+
+Only `slug` in the whole docs tree is `slug: /` on `configuration/introduction.mdx`.
+
+## 3. Segment doc counts — 117 total
+
+| subdir | count |
+|---|---|
+| cli | 39 |
+| languages | 27 |
+| system | 17 |
+| cloud | 10 |
+| scm | 8 |
+| web | 8 |
+| health | 5 |
+| music | 3 |
+
+Every segment file appears in the sidebar; no orphans, no dead sidebar refs. (Homepage copy claims "180+" segments — actual doc count is 117.)
+
+## 4. Homepage (`src/pages/index.js` + `src/pages/styles.module.css`)
+
+Extremely thin — one hero + one three-column feature row, nothing else.
+
+- **Hero** (`hero hero--primary`, `.heroBanner`: 4rem padding, `min-height: 60vh`, centered, `overflow: hidden`; 2rem padding under 966px). Title = `siteConfig.title` ("Oh My Posh"); subtitle = tagline "The most customizable and fastest prompt engine for any shell."
+- **CTAs** (`.buttons` flex, gap `1rem 1.5rem`): primary "Get Started →" → `/docs/`; outline "See themes →" → `/docs/themes`. Both get `.getStarted` (1px solid border) and are forced white text via `custom.css`.
+- **Imagery**: single `&lt;img class="hero--image" src="/img/hero.png"&gt;` inside the hero container, `margin-top: 4rem`. No lazy-loading, no width/height attrs, absolute path (bypasses `useBaseUrl`).
+- **Features** (`.features`, 2rem vertical padding; each `col col--4`): "🎨 Beautiful &amp; Intelligent" (themes/segments, "180+ other contextual details"), "⚡ Lightning Fast" (Go, caching, async), "🌍 Universal Compatibility" (PowerShell/Bash/Zsh/Fish/Nu; Windows/macOS/Linux/WSL/containers/SSH; "zero vendor lock-in").
+- The `Feature` component supports an `imageUrl` prop and `.featureImage` (200×200) but **no feature passes one** — dead code, features render as text only.
+- SEO: two inline JSON-LD blocks (`WebSite` + `Organization`) via `&lt;Head&gt;`. `og:image` = hero.png (declared 1200×630 in `docusaurus.config.js`, but the actual file is only 20 KB).
+- No social proof, no install snippet, no shell/OS picker, no theme gallery preview, no footer CTA. The whole page is ~130 lines.
+
+## 5. `src/css/custom.css`
+
+- **Colors**: `--ifm-color-primary: #2c7ae0` with dark/darker/darkest `rgb(38,103,189) / (28,75,138) / (19,51,94)` and light/lighter `rgb(74,143,232) / (95,157,237)`. **`--ifm-color-primary-lightest` is `rgb(8,9,10)` — near-black, clearly a mistake.** `--ifm-pre-background: #232136` (Rosé Pine Moon base). `.hero` background hardcoded `#173448` (dark navy, unrelated to the primary blue). Announcement bar `#2c7ae0` on `#ffffff` (in `docusaurus.config.js`). Tip admonition overridden to `#9ccfd8` bg / `#56949f` border with `#102445` text in dark mode. Code-line highlight `rgb(72,77,91)`. Table borders drawn with `box-shadow: 0 0 0 1px #c8c9cc` (hardcoded, not theme-aware) plus `border-spacing: 1px` and 6.4px corner radii.
+- **Fonts**: `--ifm-font-family-base` and `--ifm-font-family-monospace` both set to `"Inter"` — i.e. **the mono variable is not monospace**. `code` and `[class*="language-"]` are separately forced to `"Victor Mono", monospace`. `@font-face` for Victor Mono points at `/static/fonts/VictorMono.ttf`, which is the **wrong runtime path** (should be `/fonts/VictorMono.ttf`); the file exists at `static/fonts/VictorMono.ttf`. `docusaurus.config.js` also loads Inter from `rsms.me` and Fira Code from Google Fonts — Fira Code is fetched but never referenced in CSS.
+- **Custom components**: navbar icon links rendered as CSS `::before` data-URI SVGs — `.header-github-link`, `.header-bluesky-link`, `.header-affiliate-link` (Polar logo; **defined but no navbar item uses this class**), `.header-discord-link`; each 24×24 with light/dark variants and `:hover { opacity: .6 }`. `.winstore` (200px, 8px radius). `.withings` (inverted black/white chip + SVG path fill flipping per theme). `iframe.youtube` responsive heights (200/300/400px at 350/600px breakpoints). `.hero--image` margin.
+- **Notable overrides / smells**: `.badge { display: none !important }` hides all Docusaurus badges (e.g. version badges). Hardcoded CSS-module hash selectors — `a.getStarted_Sjon`, `.themedImage_ToTc`, plus a "Dev settings" block duplicating them with full `node_modules-@docusaurus-...` class names and `a.getStarted_src-pages-styles-module`. These are build-hash-dependent and silently break on Docusaurus upgrades. `h1.hero__title` / `p.hero__subtitle` forced white — safe only because `.hero` is hardcoded dark.
+
+## 6. Components
+
+- **`src/components/Config.js`** — the docs' workhorse. Takes `data` (a JS object) and optional `metastring`, renders a `&lt;Tabs groupId="sample"&gt;` with three `&lt;CodeBlock&gt;` tabs: JSON (`JSON.stringify`, default), YAML (`yaml` package), TOML (`smol-toml`). `patchTomlData()` rewrites a top-level `properties` key into `blocks.segments.properties` before TOML serialization, because TOML can't represent the flat shape the docs use. This is what gives every segment/configuration page its multi-format config sample; the tab choice is synced site-wide by the shared `groupId`.
+- **`src/components/Auth.js`** — renders the OAuth callback landing page, used only by `docs/auth.mdx` (which is literally just an import plus `&lt;CodeBlock /&gt;`). Reads query params from `useLocation()`. On `?error=` it base64-decodes the value and shows it in a `jsstacktrace` code block with a link to file a GitHub issue. Otherwise it emits a `config.omp.json` JSON snippet containing `type`, `access_token`, `refresh_token`, `expires_in` from the query string, with `highlight-start/end` markers. Note: tokens arrive in the URL query string and are rendered into the page — that's the existing OAuth handoff design for Strava/Withings/Spotify segments.
+
+## 7. Blog (`website/blog`, 6 posts)
+
+| date | title | slug | tags |
+|---|---|---|---|
+| 2022-03-20 | What's new #1 (.mdx) | whats-new-1 | weekly, ohmyposh |
+| 2022-03-27 | What's new #2 | whats-new-2 | weekly, ohmyposh |
+| 2022-03-28 | What idiot wrote this code? | idiots-everywhere | weekly, ohmyposh |
+| 2022-05-19 | What's new #3 | whats-new-3 | weekly, ohmyposh |
+| 2024-07-22 | Deprecating the bash rprompt | deprecating-bash-rprompt | breaking, ohmyposh |
+| 2025-12-28 | Oh My Posh Meets Claude Code: AI-Powered Terminal Prompts | oh-my-posh-claude-code-integration | claude, ai, terminal, prompt, statusline, integration, customization |
+
+All authored inline by Jan De Dobbeleer (`onInlineAuthors: 'ignore'`). The blog is effectively dormant — one post per 1–2 years since 2022, yet it occupies a top-level navbar slot.
+
+## 8. Static assets that matter for design
+
+`static/img/`:
+- **`hero.png`** (20 KB) — the only homepage image, also the `og:image` (declared 1200×630). Small file for that claim; likely low-res for social cards.
+- **`logo-dark.svg` / `logo-light.svg`** (~1.2 KB each) — navbar logo pair (note the config maps `src: logo-dark.svg`, `srcDark: logo-light.svg`). **`logo.png`** (20 KB) is used only in the JSON-LD `Organization.logo`. **`favicons.svg`** is the favicon.
+- **`themes/` — 124 PNG screenshots**, one per theme, consumed by the auto-generated section of `docs/themes.md` (generated by `export_themes.mjs`). This is by far the heaviest asset directory and the site's main gallery, yet it lives inside a single long scrolling doc page.
+- **`accordeon.png`** (192 KB, largest single image) — used **only** by the 2022 blog post, not by any doc. **`claude.png`** (52 KB) — only the 2025 blog post. **`transient-color.png`** (239 KB) — only blog post #2, and referenced via a relative `../static/...` path.
+- Docs imagery is sparse: `posh-tooltip.gif` (tooltips), `transient-before.gif` / `transient-after.gif` (transient prompt), `msstore-dark.svg` / `msstore-light.svg` (Windows install), `strava_connect.svg`, `withings.svg`.
+
+Other static: `fonts/VictorMono.ttf` + `fonts/fonts.zip`, `codepoints.csv` (47 KB), `install.ps1` / `install.sh` (the curl-able installers), `robots.txt`, `llms.txt` + `llms-full.txt` (also advertised via a `headTags` `&lt;link rel="alternate"&gt;`), `skill.md`, `skills/ohmyposh/` (SKILL.md, configuration.md, installation/{linux,macos,windows}.md, shell/{bash,cmd,elvish,fish,nu}.md), `.well-known/mcp.json`, `.nojekyll`.
+
+## 9. `plugins/appinsights`
+
+A local Docusaurus plugin (`docusaurus-plugin-app-insights`), registered as `./plugins/appinsights`.
+
+- `index.js` reads `themeConfig.appInsights.instrumentationKey` (currently `51741aa7-…` in `docusaurus.config.js`) and throws at build time if the object or key is missing.
+- Production only (`NODE_ENV !== 'development'`): `injectHtmlTags()` inlines the Microsoft Application Insights JS snippet (loads `https://js.monitor.azure.com/scripts/b/ai.2.min.js`, `crossOrigin: anonymous`) into `&lt;head&gt;`, and `getClientModules()` registers `analytics.js`.
+- `analytics.js` hooks `onRouteUpdate` and calls `window.appInsights.trackPageView({name: location.pathname})` on a `setTimeout(…, 0)`, so SPA navigations are counted. That's the whole thing — page views only, no custom events. Note this is a third-party script in `&lt;head&gt;` that fires with no consent gate.
+
+## 10. IA problems
+
+1. **The `/docs` landing page is a Configuration doc.** `configuration/introduction.mdx` carries `slug: /`, so the homepage "Get Started →" button drops users into a conceptual "Introduction" about blocks and segments — which is simultaneously the Configuration category's `link` target. Meanwhile the sidebar's *first* item is "💡 Getting Started → 📦 Installation → Windows". A new user's landing page is not the first sidebar entry, and the Introduction is reachable by two different routes that render the same page. This is the single biggest IA defect.
+2. **"Getting Started" has no landing page.** It's a bare category with no `link`, so clicking it just expands. Same for "🌟 Segments", "🧰 CLI"/"☁️ Cloud"/etc. (8 subcategories), "🤝 Contributing", and "🛠️ Advanced". Only Configuration has a landing doc. There is no segment index, no "browse all segments" page, and no way to see the 117 segments at once.
+3. **Segments are three levels deep and only findable by category guess.** `Segments → CLI → Talosctl` requires knowing that Talosctl is "CLI" and not "Cloud" (it's a Kubernetes/Talos tool; `kubectl` and `helm` and `argocd` are also under CLI, not Cloud). Similar ambiguity: `gitversion`/`nbgv` (CLI vs Source control), `docker` (CLI vs Cloud), `winget`/`upgrade` (System vs CLI), `claude`/`copilot`/`copilot-cli` (CLI). All Segments categories default to `collapsed: true`, so the default view hides everything. Discovery effectively depends on Algolia search.
+4. **"🩺 Health" is a mis-scoped bucket.** It holds `nightscout`, `strava`, `withings` (health) alongside `orthodoxcal` and `ramadan` (religious calendars). Those two belong nowhere in the current taxonomy.
+5. **Orphaned doc: `docs/auth.mdx`** (id `auth`, "Segment Authentication") is not in the sidebar at all. It's reachable only via the OAuth redirect URL, so users who land there have no navigational context, and segments that need OAuth (Strava, Withings, Spotify, LastFM) have no linked, browsable auth guide.
+6. **Flat top-level docs with no grouping.** `dsc`, `themes`, `share`, `faq`, `migrating`, `contributors` sit loose at root, and `Advanced` (a category with exactly one child, `mcp-server`) is wedged *between* `share` and `faq`. `dsc` and `mcp-server` are both advanced/automation topics but live at different depths. `themes` and `share` are both theme-related but aren't grouped. A one-item category is pure overhead.
+7. **Duplicated/ambiguous entry points and ids.** Three "upgrade" concepts: `installation/upgrade` (upgrading the binary), `segments/system/upgrade` (the upgrade-notice segment), and the FAQ's "I want to disable the upgrade notice". Also `configuration/segment` (how a segment is configured) vs `contributing/segment` (how to write one) vs the whole `Segments` category — three different things named "segment". Two docs share the bare id `segment`, two share `upgrade`, two share `plastic`, two share `git`.
+8. **Filename/id/URL drift.** `share-theme.md` → id `share` → URL `/docs/share`; `migrating-module.md` → id `migrating`. Editors searching for "migrating" or "share" by filename won't find the URL, and vice versa.
+9. **The FAQ is a 24-heading dumping ground** covering PowerShell, fonts, Windows Terminal, Jetbrains, Conda, venv, Zsh, Fish, Xonsh, Vim, and posh-git. Much of this is real troubleshooting content that has no home in the IA — there is no Troubleshooting section, no per-shell page, and no per-terminal page, so everything lands in one flat scroll.
+10. **`themes.md` is a 124-image single page.** The site's most visually compelling asset (the theme gallery) is one enormous auto-generated document with no filtering, no search, no tags (the Nerd-Font-vs-minimal distinction is a sentence of prose), and is one of only two homepage CTAs.
+11. **Homepage does no navigational work.** Two buttons and three paragraphs. It doesn't route by OS or shell, doesn't surface install commands (which exist as `static/install.ps1` / `install.sh`), and doesn't preview themes — despite "See themes" being a top CTA.
+12. **Navbar priorities are off.** "Sponsor" and "Swag" occupy left-side primary nav next to "Docs" and "Blog"; the blog has averaged well under one post a year since 2022. Meanwhile a non-closeable sponsor announcement bar (`isCloseable: false`) sits above every page.
+13. **`onBrokenLinks: 'ignore'`** in `docusaurus.config.js` means broken doc links never fail the build — with cross-links written in three different styles (`/docs/...` absolute, relative `fonts.mdx` in `next.md`, and reference-style link defs), link rot is invisible.
+14. **CLI sidebar order breaks alphabetization** at `umbraco, uno, unity` (should be `unity, uno`) — trivial, but in a 39-item alphabetical list a user scanning for "Unity" will overshoot.</result>
+<usage><subagent_tokens>71573</subagent_tokens><tool_uses>19</tool_uses><duration_ms>266750</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>aa4b9326f6fe65f96</task-id>
+<tool-use-id>toolu_01DMPWtUcWvPwAxdVeAfJ1vV</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\bf77db8f-a917-4fc4-be70-ca1927a57d56\tasks\aa4b9326f6fe65f96.output</output-file>
+<status>completed</status>
+<summary>Agent "Research CLI tool website design" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Research complete. Here is the report.
+
+---
+
+# 2026 Dev-Tool Site Research — Marketing + Docs IA
+
+Methodology note: WebFetch converts to Markdown (strips CSS), so palettes/fonts were extracted separately from raw HTML and stylesheet downloads. Two caveats flagged inline: **ghostty.org's homepage is fully client-rendered and its `&lt;main&gt;` stayed empty in a headless browser** (only shell tokens recoverable), and **fig.io is dead** (Fig sunset 2024-09-01, redirected into Amazon Q Developer CLI — remove it from any competitive set).
+
+---
+
+## 1. starship.rs — the direct competitor
+
+**Above the fold** (https://starship.rs/)
+- Hero is the **stock VitePress `layout: home`**: centered `logo.svg`, tagline *"The minimal, blazing-fast, and infinitely customizable prompt for any shell!"*, single action button **"Get Started →"** → `/guide/`.
+- **No hero screenshot, no terminal demo, no animation.** For a product whose entire value is visual, this is the single biggest miss.
+- Three VitePress feature cards: *Compatibility First* / *Rust-Powered* / *Customizable*.
+- Below fold: **Prerequisites** (Nerd Font) then **Quick Install** — install commands and per-shell init snippets for 11 shells inlined directly on the homepage. Effectively the homepage *is* the getting-started page.
+
+**Navigation**: `Configuration` · `Advanced Configuration` · `FAQ` · `Presets` · language switcher (13 locales) · GitHub · appearance toggle. Docs are **landing-page-first for install, sidebar-first thereafter**. Search: Algolia DocSearch in the header (`⌘K`), confirmed in markup.
+
+**Visual language** (extracted from `/assets/style.DFqZBrzq.css`)
+- Brand: light `--vp-c-brand-1: #dd0b78`, `-2: #f31186`, `-3: #9b0854`; dark `#ff33b8` / `#ff14ad` / `#ff70cd`. Magenta/pink on otherwise stock VitePress neutrals (`--vp-c-bg: #ffffff` / dark `#1b1b1f`, `--vp-c-bg-alt: #161618`).
+- Type: `Inter` for body; **mono stack is prefixed with `"Nerd Font"`** — a nice touch, glyphs in code blocks render correctly.
+- Syntax theme in the raw HTML is GitHub-dark-ish: `#9ecbff`, `#b392f0`, `#79b8ff`, `#f97583`, `#6a737d`.
+- Dark/light toggle, system default. No gradients, no glass, no grain, no motion. VitePress default radii.
+
+**Doc tech**: VitePress (`#VPContent`, `--vp-*` tokens, `/vp-icons.css`).
+
+**Reference surface**: https://starship.rs/config/ is **one enormous single page** holding ~100 modules. Each module = H2 + Options table (Option/Default/Description) + Variables table + TOML example. Navigation is the right-hand "On this page" TOC + in-page anchors. At this length the right TOC is unusable and browser-find becomes the real interface.
+
+**Preset gallery**: https://starship.rs/presets/ — screenshot cards, each image links to a per-preset page. Copy literally says *"To get details on how to use a preset, simply click on the image."* No filtering, no tags, no live preview, no one-click apply.
+
+**Steal**: Nerd Font in the mono stack; presets-as-images-first; 13-locale i18n.
+**Dated**: logo-only hero for a visual product; monolithic config page; unfiltered preset list; zero motion; visibly "default VitePress with a brand color swapped".
+
+---
+
+## 2. zed.dev
+
+**Above the fold**: announcement bar (*"Early Access: DeltaDB, a new kind of version control"*), headline **"Your last next editor"**, subhead *"Zed is a minimal code editor crafted for speed and collaboration with humans and AI."*, CTAs **"Download now"** (primary) + **"Clone source"** (secondary, GitHub), microcopy *"Available for macOS, Linux, and Windows"*.
+
+**Hero visual**: not a screenshot — a **simulated live product surface**. A recreated Zed chrome with a search field, a scrolling "recent activity" feed of branch names + diff stats + relative timestamps across three repos (`zed`, `cloud`, `zed.dev`), an agent transcript, and a code pane with **real inline diagnostics rendered as text** (`'couldHaveBeenAnEmail' is declared but its value is never read.`). It is DOM, not an image — selectable, crisp at any DPI, and it doubles as a "the project is alive" signal.
+
+**Nav**: `Product` · `Resources` · `Extensions` · `Docs` · `Business` · `Pricing` · `Sign up` · `Download`.
+
+**Below fold**: Fast / Agentic / Collaborative triad → testimonial wall (José Valim, Dan Abramov, Mike Bostock) → "Zed Just Works" video cards → feature card grid → extensions grid → founders' letter → blog.
+
+**Visual language**: Tailwind + Next.js. Brand blue `#084ccf` / `#4482f8`; neutrals `#1b1e23`, `#dae4f8`, `#c6cad0`. **Typography is the differentiator**: self-hosted `IBM Plex Sans`, `IBM Plex Serif` (variable + italic), **`iA Writer Quattro S`** (the duospace face — very unusual on a dev site, gives editorial warmth) and **`Lilex`** for mono. Four families, deliberately.
+
+**Docs**: https://zed.dev/docs/ is **mdBook output (elasticlunr search index) re-skinned inside the Next.js shell**. `S` keyboard shortcut for "Search docs…", light/dark toggle in the docs header. Settings reference is deliberately *not* a giant table — docs push you to the in-app Settings Editor ("search for any setting and change it directly", e.g. `buffer_font_family`). **Agent affordance**: `/docs/llms.txt` index plus Markdown versions of every docs page, advertised in-page.
+
+**Steal**: DOM-rendered product hero; the llms.txt + `.md`-per-page pattern; four-family type system as brand.
+**Dated**: nothing much; page weight is enormous (2.7 MB HTML).
+
+---
+
+## 3. bun.com
+
+**Above the fold**: **"Bun is a fast JavaScript all-in-one toolkit"**; subhead *"Bun is a fast, incrementally adoptable all-in-one JavaScript, TypeScript &amp; JSX toolkit."*
+
+**Hero visual = the install command itself.** A copy box with a **Linux&amp;macOS / Windows platform toggle**, a labelled primary button *"Install Bun v1.3.14"* (version in the button — always current, doubles as a release signal), and a secondary *"View install script"*. Immediately under: a customer logo bar (Lovable, CodeRabbit, Replit, Cursor) and a **benchmark bar chart with real numbers** ("Bundling 10,000 React components — Bun: 269.1ms").
+
+**Nav**: `Build` · `Docs` · **`Reference`** · `Guides` · `Blog` · Discord · GitHub. The **three-way Docs / Reference / Guides split** is the important IA move.
+
+**Below fold**: "Four tools, one toolkit" → benchmarks → "Who uses Bun?" (Claude Code, Railway, Midjourney) → comparison tables → API overview → framework interop → per-subcommand benchmark sections (`$ bun install`, `$ bun test`) → API carousel → testimonial carousel.
+
+**Visual language** (from `/_assets/site-fe5bbc3c.css`): brand cream `#fbf0df`, `--black: #0b0a08`, `--pink: #ee81c3`, `--orange: #f89b4b`, `--blue: #00a6e1`, greys `#0d0e11`→`#f9fafb`, plus a bright accent ramp (`#ec4899 #a855f7 #60a5fa #34d399 #06b6d4`). `font-family: system-ui, sans-serif` — **no webfont for body**, mono via `--monospace-font`. Terminal chrome dots `#ff5f57 / #febc2e` appear as decoration.
+
+**Reference**: https://bun.com/reference is **auto-generated from `packages/bun-types` TypeScript definitions**, with its own dedicated search field ("Search the reference…") and a module-tree sidebar, color-coded by type. **A separately-searchable, machine-generated reference portal, structurally distinct from hand-written docs.** Docs advertise `https://bun.com/docs/llms.txt` for agents.
+
+**Steal**: install box *as* the hero with platform toggle and version-in-button; generated reference as its own searchable app; benchmarks with hard numbers above the fold.
+**Dated**: system-ui body type reads generic; the homepage is extremely long.
+
+---
+
+## 4. biomejs.dev
+
+**Above the fold**: **"One toolchain for your web project"** / *"Format, lint, and more in a fraction of a second."* CTAs **"Get started"** + **"View on GitHub"**. Hero visual = logo lockup only — same weakness as Starship.
+
+**Nav**: `Docs` · `Enterprise` · `Playground` · `Blog` + theme/lang selectors + version switcher (v1.x / v2.x / next).
+
+**Below fold**: Formatter with before/after code → Linter with a **real rendered diagnostic** (the terminal-style error block with source excerpt, caret, and suggestion — the strongest section) → unified `check` → 6 feature callouts → org logo grid (Astro, AWS, Cloudflare, Discord, Google, Microsoft, Vercel) → contributor avatars → sponsors.
+
+**Doc tech**: **Astro v7.1.0 + Starlight v0.41.3** (confirmed via dual `&lt;meta name="generator"&gt;`), **Pagefind** for search (fully static, no Algolia dependency).
+
+**Visual language**: Starlight tokens overridden — `--sl-color-accent: #3d50f5` (light) / `#3369ff` (dark), `-high: #0f1c8a` / `#b3c7ff`, `-low: #cfd4fc` / `#131e4f`, greys `#23262f`/`#24272f`. Radii are conservative: `.25rem`, `.3rem`, `.5rem`, `8px`, `12px`. Syntax theme is **Night Owl** (`#403f53`, `#d6deeb`, `#c792ea`, `#7fdbca`, `#82aaff`, `#ecc48d`). Diagnostic colors `#b23834`/`#e2817f`/`#d9f5dd`/`#caece6`.
+
+**Reference surface (511 rules)** — https://biomejs.dev/linter/javascript/rules/
+- **Split by language first** (`/linter/javascript/rules`, `/css/rules`, `/json/rules`, `/graphql/rules`, `/html/rules`), then by **9 semantic groups** (a11y, complexity, correctness, nursery, performance, security, style, suspicious).
+- Each group = a **table**: rule name (link) · one-line description · **badge column** (✓ recommended, 🔧 safe fix, ⚠️ unsafe fix, 🔮 next release), with a legend.
+- A trailing **"Recommended rules"** section re-cuts the same set by severity — a *second view of the same data* for a different intent.
+- **No client-side filtering.** Discovery is Pagefind + browser find.
+
+**Steal**: two-axis split (language × group) before a flat list; badge column as scannable metadata; second re-cut view of the same catalog; Pagefind (zero-infra static search); the rendered-diagnostic hero block.
+**Dated**: logo-only hero; a static table is straining at 511 rows.
+
+---
+
+## 5. astro.build
+
+**Above the fold**: **"The web framework for content-driven websites"** / *"Astro powers the world's fastest marketing sites, blogs, e-commerce websites, and more."* CTA = **copyable `npm create astro@latest`** with "Copied!" feedback plus "Get Started". Hero background: abstract gradient.
+
+**Nav**: `Documentation` · `Blog` · `Resources` (Themes, Integrations, Site showcase, Tutorials) · `Community` · `Enterprise` · GitHub.
+
+**Below fold**: Server-First / Content-Driven / Customizable → **Core Web Vitals comparison chart** (66% vs 28–48%) → framework logo interop → 12 feature cards → theme ecosystem → partner agencies → sponsors → newsletter.
+
+**Visual language**: Astro v7.1.3, Tailwind. `#6b7aab`, `#eef0f9`, `#2f3854`, `#17191e`, accents `#54b9ff` and mint `#4bf3c8`; framework brand colors (`#3178c6` TS, `#41b883` Vue, `#ff3e00` Svelte, `#61dafb` React) used as ecosystem signal.
+
+**Theme gallery** — https://astro.build/themes/ — I rendered it in a browser: it is a **curated grid, not a faceted catalog**. Cards carry screenshot / title / description / author avatar+name / **Free|Paid pill**. The only real controls on the page are category *browse links* (Blog, E-commerce, Landing pages, Portfolio, Documentation) and a newsletter input — **no search input, no filter checkboxes, no sort control in the DOM**. Featured/sponsored themes occupy the top slots.
+
+**Steal**: copy-command as CTA; measured comparison chart; card anatomy (thumb + title + desc + author + pill).
+**Dated**: gallery has no in-page filtering despite hundreds of entries; sponsored-first ordering buries free/community work.
+
+---
+
+## 6. tauri.app
+
+**Above the fold**: headline is just **"Tauri 2.0"**, subhead *"Create small, fast, secure, cross-platform applications"*. CTAs "Get started" + "Tauri 1.0 Documentation".
+
+**Hero visual = a tabbed create-command widget** spanning 9 package managers/shells (Bash, PowerShell, Fish, npm, Yarn, pnpm, deno, bun, Cargo). Meets every user where they are, in one component.
+
+**Nav**: `Guides` · `References` · `Blog` · `Releases` + socials. **Guides/References split at the top level** — same idiom as Bun.
+
+**Doc tech**: **Astro v7.1.3 + Starlight v0.41.4**, search via **Meilisearch** with Pagefind also present, hosted on Netlify.
+
+**Visual language**: `#21004b` deep purple, `#191919`, accents `#ff5caa`, `#ff4e62`, `#32e6e2`, `#05bdba`, `#ffc131`, `#24c8db`; Night Owl syntax again (`#403f53`, `#d6deeb`, `#82aaff`, `#ecc48d`).
+
+**Large-surface handling** — https://tauri.app/plugin/ has the **best filtering primitive I found in this cohort**: official plugins as a **card grid with a platform filter dropdown** (All / Windows / Linux / macOS / iOS / Android) plus `Ctrl+K` search, backed by a **support matrix table** (plugin × 5 platforms with footnote markers). Community plugins are demoted to plain link lists. Reference splits into CLI / JavaScript API / config file.
+
+**Steal**: multi-package-manager tabbed install widget; **facet dropdown over a card grid**; capability matrix table; official-vs-community tiering.
+**Dated**: "Tauri 2.0" as the headline says nothing to a newcomer.
+
+---
+
+## 7. warp.dev
+
+**Above the fold**: **"From the terminal to the cloud, with any agent"** / *"Warp is an open agentic development environment born from the terminal. Build your software factory with a flexible system designed to outlast whatever comes next."* CTAs **"Download Warp"** + **"Contact Sales"**.
+
+Hero visual is a **configurator-style interactive panel** — pick model (OpenAI, Gemini), connectivity, inference provider (Bedrock, LiteLLM, OpenRouter).
+
+**Nav** is a full enterprise mega-menu: `Products` (Warp Terminal / Warp Agent / Oz Agent Platform) · `Solutions` (Use Cases × Industry) · `Resources` (Docs, Blog, Community, Agent Kits, Events, Changelog, Roadmap, Support) · `Company` · `Enterprise` (Overview, Customers, Pricing).
+
+**Below fold**: four tabbed product showcases → open-source announcement video → exec testimonial carousel (Microsoft, OpenAI, Stripe) → logo wall → "Start shipping with agents" → per-OS download.
+
+**Visual language**: Next.js + **Sanity CMS** (`cdn.sanity.io` image pipeline). Near-black stack `#0b0b0b` / `#111111` / `#1f1f1f` / `#1c1a26` / `#373245`, lavender accents `#c7aeff` / `#bda6f7`, and a set of **tinted section washes** (`#1e142a`, `#141e30`, `#1a2a1a`, `#201a14`, `#1a1410`) used to color-code content zones on a dark ground. `Inter` throughout.
+
+**Steal**: tinted-dark section washes for zoning; tabbed product showcase.
+**Avoid**: the enterprise mega-menu and Solutions/Industry taxonomy are wrong for an OSS tool — Warp has visibly drifted from "terminal" to "agentic development environment", and the headline no longer says what you'd download.
+
+---
+
+## 8. ghostty.org
+
+⚠️ **Caveat**: the homepage is Next.js App Router with a fully client-rendered `&lt;main class="home-content-module__…homePage"&gt;` that **stayed empty** in my headless browser (no canvas, no video, no wasm in the resource log — only two font requests). WebFetch also returned title-only. So no verified hero copy.
+
+What is verifiable:
+- Body background `rgb(15, 15, 17)` = **`#0f0f11`, dark-only**; body font **`Pretendard Std Variable`** (self-hosted variable woff2) — a distinctive, non-Inter choice. Next.js + CSS Modules.
+- Positioning line used across the site: *"Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration."*
+- Nav: `Docs` · `Discord` · `GitHub` · `Download`.
+- **Docs sidebar** (https://ghostty.org/docs): About Ghostty · Install · Configuration · Linux · Features · Terminal API (VT) · Help · Financial Support. Landing uses feature cards into each section.
+- **Download page** is per-OS *sections* (macOS / Linux), version prominent ("Version 1.3.1"), links to release notes and to package-manager/build-from-source docs — **no inline copy-command**, which is weaker than Bun/Atuin.
+- **Config reference** (https://ghostty.org/docs/config/reference): a **single page with hundreds of options**, ordered "roughly by how common they are… grouped with related options". Each entry: name heading, description, valid values, platform notes, **"Available since: 1.2.0"**, cross-references. The page explicitly tells you to *"utilize your browser's search functionality"* and admits *"In the future, we'll have a more user-friendly way to view and organize these options."*
+
+**Steal**: per-option **"Available since: x.y.z"** version metadata; platform-scope notes per option; ordering by frequency-of-use rather than alphabetically; the Pretendard/`#0f0f11` dark-only restraint.
+**Avoid**: a JS-only homepage that renders nothing without hydration (bad for crawlers, agents, and my own tooling); a config reference whose own maintainers call it unfit.
+
+---
+
+## 9. atuin.sh — **the most directly transferable site in this set**
+
+**Above the fold**: **"Making your terminal magical"** / *"Sync, search, and back up your shell history with end-to-end encryption. Ask Atuin AI for help without leaving your prompt."*
+- Dual CTA: a **copy-box with the install command** (`curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh` + "Copy") and a button styled as a shell command, **`$ get-started`**. The nav CTA is the same `$ get-started` token — the brand's button language *is* a prompt.
+- Microcopy: *"Available for macOS, Linux, and Windows · bash, zsh, fish, and more"*.
+- **Stat row**: `30K+ GitHub Stars` · `300+ Contributors` · `600M+ Synced Commands` — then a "Used by developers at" logo wall.
+
+**Hero visual — the key finding.** Atuin ships a hand-built **`demo-term/demo-term.css` + `demo-term.js`**: an animated terminal **rendered in DOM, not a screenshot or asciinema cast**. Its content is literally a prompt line —
+
+&gt; `~/src/api  on main  via 🦀 v1.92  ❯` … `ctrl` `+` `r` … `&lt;tab&gt; edit · &lt;enter&gt; run · synced 78,594`
+
+…followed by animated history rows with duration/recency columns (`git pull --rebase 2s 8h ago`, `kubectl rollout status deploy/api 12s now`). **A competitor is already rendering an Oh-My-Posh/Starship-style prompt in HTML on their homepage.**
+
+**Nav**: `History` · `AI` · `Blog` · `Docs` · GitHub · `$ get-started`. Feature sections use numbered `01/02/03` eyebrows.
+
+**Visual language**: `--bg-deep: #0f1722`, greens `#38c85a` / `#a8ecba` / `#d4f5de`, text ramp `#e8f0e9` / `#8fa1a8` / `#5a6870`, warm secondary `#f2d08a` / `#f0e8d3` / `#c4d86f` / `#d8d0bc`, terminal ANSI accents `#ffb86c` `#f06d5f` `#97c4bd`. Fonts: **`DM Sans`** body + **`Space Mono`** mono — both non-default, both cheap, and the pairing does more brand work than Starship's Inter.
+
+**Doc tech**: hand-rolled static HTML, very light. Docs on a subdomain.
+
+**Steal**: essentially everything — DOM-rendered animated terminal hero, prompt-as-button-language, copy-box + stats + logo wall stack, numbered feature eyebrows, self-host escape hatch inline (*"Prefer your own infra? The sync server is open source — self-host it."*).
+
+---
+
+## 10. charm.land (charm.sh 301s here)
+
+**Above the fold**: **"We make the command line glamorous."** Featured product slot: **Crush** — *"Your new coding bestie, now available in your favourite terminal."*, CTA **"Get Crush"**, microcopy *"Available now for macOS, Linux, Windows, and BSD."* Hero visual is mascot illustration.
+
+**Nav**: `Home` · `Libs` · `Apps` · `Enterprise` · `Blog` + 7 socials. Note: **the catalog is split into Libs vs Apps** — the only navigation the site needs.
+
+**Product catalog** ("Build with Charm — Everything you need to build great stuff for the terminal. Always open-source."): an **8-card grid** — Bubble Tea, Huh, Lip Gloss, Wish, Glamour, Bubbles, Log, Harmonica. Each card = **mascot illustration + name + a two-word flavor/attribute pair + one-line description + GitHub link**. The flavor pairs are the trick: *"Flavor: Taro"*, *"Glossiness: Very"*, *"Type: Tapioca"*, *"Hot: Totally"* — pure personality occupying the slot where a boring metadata chip would sit.
+
+Then **"More stuff"**: 4 large feature cards (Mods, gum, Glow, Skate) with per-product CTAs in-voice — *"Chew Gum"*, *"Get Glow"*, *"Let's Roll"*.
+
+Social proof is one line, no logo wall: *"Industrial grade. Charm technology lives in over 25,000 applications."* Footer signs off `vt100@charm.land` / `haters &gt; /dev/null™`.
+
+**Visual language**: cream ground `#fffdf5` / `#fffaf1` (**light-first — the outlier in this cohort**), pink/purple applied via illustration rather than CSS tokens; heavy custom mascot art.
+
+**Steal**: card metadata slot repurposed for voice; per-product CTA copy; two-bucket catalog split; one-line credibility instead of a logo wall.
+**Avoid**: illustration-heavy identity is expensive and doesn't survive a maintainer handoff; near-zero product screenshots for products whose whole point is how they look.
+
+---
+
+## 11. Astral: uv + ruff (Material for MkDocs)
+
+**uv** (https://docs.astral.sh/uv/) — **no marketing site at all**; the docs *are* the homepage. Headline *"An extremely fast Python package and project manager, written in Rust"*, hero = **benchmark bar charts** (Trio dependency resolution), install commands split macOS/Linux vs Windows.
+Sidebar: `Introduction` · `Getting started` · `Guides` · `Concepts` · `Reference`, with Integrations (Docker, Jupyter, GitHub Actions, AWS Lambda), Authentication, Troubleshooting nested. **Reference is flat**: Commands / Settings / Environment variables / Storage as sibling generated pages. Search sits at the top of the nav (Material's standard). Footer credits **Material for MkDocs**.
+
+**ruff** (https://docs.astral.sh/ruff/) — same stack. Landing = logo, benchmark bar chart, bullets, developer testimonials, playground link.
+**Reference surface (900+ rules)** at `/rules/`: **grouped by originating linter/plugin — ~50 sections** (flake8-bugbear (B), isort (I), Pylint (PL) with Convention/Error/Refactor/Warning sub-splits, Ruff-specific (RUF)…), each a table with **Code · Name · Message · Status** where status carries stable/preview/deprecated/removed **and** "🛠️ Automatic fix available". Navigation = a TOC of the ~50 groups + anchors. **No client-side filtering.** Separate `/settings/` reference and a `/rules/#default-rules` cut.
+
+**Steal**: grouping the reference by *provenance* (which upstream it came from) — for Oh My Posh the analogue is grouping segments by domain; the stable/preview/deprecated lifecycle badge; docs-as-homepage when the audience is 100% technical.
+**Dated**: Material for MkDocs is instantly recognizable and carries zero brand; 900 rows across 50 tables with no filter is the same wall Starship and Ghostty hit.
+
+## 11b. mise.jdx.dev
+
+Headline **"Your dev environment, prepped and ready"** / *"One tool that manages dev tools, env vars, and tasks per project."*, CTAs "Getting Started" + "Demo", hero includes a live `mise.toml` example with `[tools]` / `[env]` / `[tasks.test]`. VitePress (`#VPContent`).
+
+**Registry of 1000+ tools** (https://mise.jdx.dev/registry.html) is a **plain static three-column table** (Short · Full · OS) with **no search box**. mise explicitly **offloads discovery to the CLI**: *"`mise registry` can be used to list all tools… `mise use` without any arguments will show a `tui` to select a tool to install."* That is a legitimate architectural answer (the TUI is the filter) but it means the *web* catalog is close to useless for browsing — and it's the exact failure mode to avoid if the website is meant to be a discovery surface.
+
+---
+
+## 12. Baseline: ohmyposh.dev today
+
+- **Docusaurus v3.10.2**, Algolia DocSearch, Inter loaded from `rsms.me/inter/inter.css`, ~19 KB HTML.
+- Homepage: *"The most customizable and fastest prompt engine for any shell"*, CTAs **"Get Started →"** + **"See themes →"**, static hero image. Nav: Docs · Blog · Sponsor · Swag + GitHub/Discord/Bluesky.
+- Segment pages (e.g. `/docs/segments/cli/argocd`) follow a rigid template: **What** → **Sample Configuration** (JSON/YAML/TOML tabs) → **Template** → **Properties** table (Name/Type/Description). Sidebar groups segments by CLI / Cloud / Health / Languages / Music / Source control / System / Web, alphabetical within.
+- **Segment pages contain no visual preview whatsoever** — for a product that renders pixels, every reference page is text-only.
+- Themes gallery (`/docs/themes`): ~150+ entries, **alphabetical list of name + PNG screenshot**, links to the GitHub raw file, **no search, no filter, no tags, no live preview, no one-click apply**, and it defers to GitHub for the current list.
+- Install docs use per-shell tabs; heavy emoji in sidebar labels (`💡 Getting Started &gt; ✨ Prompt`).
+
+Relative to this cohort the gaps are: no hero demo, no theme filtering/preview, no visual on reference pages, no llms.txt/agent affordance, and an unmodified-Docusaurus visual identity.
+
+---
+
+# Synthesis
+
+## A. The 3–4 dominant idioms in 2026
+
+**1. The hero *is* the install command, and the version number lives in the button.**
+Bun (`Install Bun v1.3.14` + Linux/macOS↔Windows toggle), Atuin (copy-box + `$ get-started`), Astro (`npm create astro@latest`, "Copied!"), Tauri (9-way package-manager tabs), Starship (install block inlined on the homepage). Nobody makes you click through to a getting-started page to see the command. Corollary: **Ghostty's download page, which offers no copy-command, is the outlier and it reads as friction.**
+
+**2. Product surfaces are re-rendered in the DOM, not screenshotted.**
+Zed's activity feed + code pane with real inline diagnostics; Atuin's `demo-term`; Biome's rendered diagnostic block; Warp's interactive configurator; Bun's syntax-highlighted API carousel. Benefits: crisp at every DPI, selectable/copyable, themeable, dark/light-reactive, diffable in git, and localizable. **PNG screenshots now read as dated** — which is precisely what Starship's presets page and Oh My Posh's theme gallery both are.
+
+**3. Dark-first, but with *zoned* dark rather than one flat black.**
+Ghostty `#0f0f11` dark-only; ray.so `#0d0d0d`; Warp stacks `#0b0b0b`/`#111111`/`#1f1f1f` and then adds **tinted section washes** (`#1e142a` purple, `#141e30` blue, `#1a2a1a` green, `#201a14` amber) to color-code content zones; Atuin `#0f1722` with a green/warm-cream dual accent. The 2026 refinement over 2023 is calibrated multi-step neutral ramps plus one saturated accent — **not** gradient-mesh, not glassmorphism, not noise/grain (I found essentially none of those in this cohort). Motion is minimal and confined to hero and section transitions.
+
+**4. Typography is now the brand.**
+Zed runs four self-hosted families (IBM Plex Sans, IBM Plex Serif, iA Writer Quattro S, Lilex). Ghostty picked Pretendard Variable. Atuin picked DM Sans + Space Mono. Bun deliberately uses `system-ui`. The tools that read as "default template" are exactly the ones on stock Inter over a stock generator theme — **Starship and Oh My Posh both sit in that bucket.** For a prompt engine specifically: **Starship prepends `"Nerd Font"` to its mono stack** so glyphs render in code blocks; that is a one-line, high-leverage steal.
+
+**Emerging fifth idiom — the agent affordance.** Bun (`/docs/llms.txt`), Zed (`/docs/llms.txt` **plus a `.md` version of every page**, advertised in-page). This is becoming table stakes and is cheap on any generator.
+
+## B. Navigating a large reference surface — what actually works
+
+Observed strategies, ranked by how well they hold up:
+
+| Strategy | Who | Verdict |
+|---|---|---|
+| **Split the reference by axis before listing** (language × category) | Biome: 5 language pages × 9 groups | **Best.** No single page exceeds ~80 rows. |
+| **Facet dropdown over a card grid** | Tauri plugins (platform filter + `Ctrl+K`) | **Best-in-cohort interaction.** Only site that filters in the browser. |
+| **Group by provenance/domain, table per group** | Ruff (~50 linter groups), Biome | Scales to ~900 rows but is scroll-and-find, not filter. |
+| **Generated reference as its own searchable app** | Bun `/reference` (from TS types, own search field) | **Strong** — separates hand-written prose from machine truth, and never drifts. |
+| **Second re-cut of the same catalog** | Biome "Recommended rules" by severity; Ruff "Default rules" | Cheap, high value — serves a different intent from the same data. |
+| **Capability matrix table** | Tauri plugin × 5 platforms | Excellent for cross-cutting support questions. |
+| Single giant page + right-hand TOC | Starship `/config/` (~100 modules) | **Breaks.** TOC is unusable at this length. |
+| Single giant page + "use browser find" | Ghostty config reference | **Breaks, and maintainers say so in the page.** |
+| Static table, discovery offloaded to CLI/TUI | mise registry (1000+ tools) | Defensible for a CLI, **fails as a web discovery surface.** |
+
+**The pattern that keeps recurring in the ones that work**: metadata rendered as a **badge column** rather than prose — Biome (✓ recommended / 🔧 safe fix / ⚠️ unsafe fix / 🔮 next release, with a legend), Ruff (stable/preview/deprecated/removed + 🛠️ auto-fix), Ghostty (**"Available since: 1.2.0"** and platform-scope notes per option). Badges are scannable, filterable if you later add JS, and answer "can I use this yet?" without opening the page.
+
+**Ordering**: Ghostty orders options **by frequency of use and semantic grouping, not alphabetically**. Oh My Posh's segment sidebar is alphabetical-within-category; frequency ordering (or a "most used" cluster) would surface `git`, `path`, `python`, `node` above `argocd`.
+
+## C. Theme gallery / showcase patterns
+
+**The reference implementation is ray.so/themes** (Raycast's Theme Explorer, open source at `raycast/ray-so`). Verified in-browser:
+- **Live-rendered preview, not a screenshot** — the actual app chrome ("Search for apps and commands…", list rows, primary text) rendered in the theme's own colors, in DOM.
+- **Dark / Light segmented toggle** at gallery level, each linking to a representative theme (`/chris/almost-cyan`, `/luxonauta/alucard`).
+- **URL is `/{author}/{theme-slug}`** — every theme is individually addressable and shareable; theme state is encoded in the URL.
+- **One-click "Add to Raycast"** deep-link — zero copy-paste between browse and apply. This is the single biggest conversion lever and nothing in the Oh My Posh cohort has it.
+- Authoring loop closed: Theme Studio → right-click → *Copy as URL* (produces a gallery link) or *Copy as JSON*. **The gallery is the sharing format.**
+- Dark `#0d0d0d`, Inter, Radix-style grey scales (`gray-2`…`gray-12`, `gray-a4`…`gray-a11`), pill/`rounded-md` radii.
+
+Supporting patterns:
+- **Card anatomy** (Astro themes, Vercel templates): thumbnail · title · 1–2 line description · **author avatar + name** · status pill. Authorship is what makes a community gallery feel like a community.
+- **Faceted sidebar with per-facet counts and a global "Clear"**, URL-driven so filter state is shareable/bookmarkable — Vercel `/templates` is the model (Use Case / Framework / CSS / Database / Auth / CMS, each with a selected-count indicator).
+- **Tiering**: Tauri's official-cards-vs-community-links, Astro's featured/sponsor row. Useful, but see anti-patterns.
+- **Screenshot cards linking to per-item pages** — Starship presets. Minimum viable; what Oh My Posh has today, minus even the per-item page.
+
+**Concrete implication for an Oh My Posh theme gallery**: render prompts as HTML/CSS from the theme JSON (segments, colors, powerline separators, Nerd Font glyphs) instead of committing 150 PNGs; give each theme `/themes/{name}`; facet by *needs Nerd Font · has powerline · segment count · light/dark · segments used*; add a one-click apply (copy `oh-my-posh init pwsh --config &lt;url&gt;` or a deep link); and let the same renderer power previews on segment reference pages.
+
+## D. Anti-patterns to avoid
+
+1. **Logo-only hero for a visual product.** Starship and Biome both lead with a logo. If the product's value is what appears on screen, the hero must show it. Atuin, Zed, and Bun all do.
+2. **Screenshot galleries.** 150 PNGs are stale on merge, unfilterable, un-themeable, invisible to search, and heavy. Render from source data.
+3. **The monolithic reference page.** Starship's `/config/` and Ghostty's config reference are the two clearest failures in this study — and Ghostty's own docs concede it.
+4. **Catalogs with no in-browser filter.** Ruff (900 rules), Biome (511), mise (1000 tools), Astro themes (hundreds) — all rely on browser find or an external search. Tauri's platform dropdown is the lone counterexample and it's trivially cheap.
+5. **A JS-only homepage.** ghostty.org served me an empty `&lt;main&gt;` with a browser attached. Whatever agents, crawlers, and link previews see, that's what they see too. Anything above the fold should be in the HTML.
+6. **Enterprise mega-menu drift.** Warp's `Solutions › Industry › Insurance` taxonomy on what people still install as a terminal. For an OSS tool, a 4–6 item nav (Atuin: History · AI · Blog · Docs; Ghostty: Docs · Discord · GitHub · Download) is correct.
+7. **Sponsored-first gallery ordering.** Astro's themes page is 12+ "Paid" cards deep before community work appears. Corrosive to an OSS community gallery.
+8. **Version-number headlines.** "Tauri 2.0" tells a first-time visitor nothing. Put the version in the install button (Bun) instead.
+9. **Un-themed default generators.** Stock VitePress with one swapped brand color (Starship), stock Material for MkDocs (uv, ruff), stock Docusaurus (Oh My Posh). Instantly legible as "we didn't design this." The cheapest fix with the largest return is **type + a calibrated neutral ramp**, not illustration.
+10. **Emoji as sidebar taxonomy.** Oh My Posh's `💡 Getting Started` / `✨ Prompt` doesn't survive translation, search indexing, or scanning at density.
+
+## Reference URLs
+
+starship.rs · starship.rs/config/ · starship.rs/presets/ · zed.dev · zed.dev/docs/ · zed.dev/docs/llms.txt · bun.com · bun.com/docs · bun.com/reference · bun.com/docs/llms.txt · biomejs.dev · biomejs.dev/linter/javascript/rules/ · astro.build · astro.build/themes/ · tauri.app · tauri.app/plugin/ · warp.dev · ghostty.org · ghostty.org/docs · ghostty.org/docs/config/reference · ghostty.org/download · atuin.sh · charm.land · docs.astral.sh/uv/ · docs.astral.sh/ruff/ · docs.astral.sh/ruff/rules/ · mise.jdx.dev · mise.jdx.dev/registry.html · ray.so/themes · github.com/raycast/ray-so · vercel.com/templates · ohmyposh.dev · ohmyposh.dev/docs/themes · ohmyposh.dev/docs/segments/cli/argocd</result>
+<usage><subagent_tokens>97143</subagent_tokens><tool_uses>75</tool_uses><duration_ms>725863</duration_ms></usage>
+</task-notification>
+
+---
+
+Where does the studio logic come from to generate the themes?

@@ -1,0 +1,33 @@
+Is there a difference in efficiency with using gradients and not using gradients? Previously, when I spammed Enter in my terminal and I let it go, the prompt would stop, so it was able to follow my Enter press. Now, when I press Enter and I let go, the prompt still continues for a few seconds and then stops. This is a different behavior compared to what we had initially when we built a streaming and serve daemon.
+
+---
+
+ask Fable to do this analysis instead.
+
+---
+
+fix all
+
+---
+
+review the implementation with Fable.
+
+---
+
+fix both
+
+---
+
+Do we have the same issue in other shells when you look at what we fixed in the PowerShell script?
+
+---
+
+yes
+
+---
+
+Seems like CMD is now broken. I don't see a prompt anymore at all.
+
+---
+
+fix the CI issue: https://github.com/JanDeDobbeleer/oh-my-posh/pull/7713

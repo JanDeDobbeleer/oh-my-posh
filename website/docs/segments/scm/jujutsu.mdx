@@ -57,11 +57,15 @@ Set `status_formats` to `true` to enable fetching additional information (and po
 
 ### Properties
 
-| Name                | Type     | Description                                                                                  |
-| ------------------- | -------- | -------------------------------------------------------------------------------------------- |
-| `.Working`          | `Status` | changes in the working copy (see below)                                                      |
-| `.ChangeID`         | `string` | The shortest unique prefix of the working copy change that's at least change_id_min_len long |
-| `.ClosestBookmarks` | `string` | Closest bookmark(s) on ancestors                                                             |
+| Name                | Type     | Description                                                                                                                                                                      |
+| ------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.Working`          | `Status` | changes in the working copy (see below)                                                                                                                                          |
+| `.ChangeID`         | `string` | The shortest unique prefix of the working copy change that's at least change_id_min_len long                                                                                     |
+| `.ChangeIDPrefix`   | `string` | The shortest unique prefix of the working copy change ID                                                                                                                         |
+| `.ChangeIDRest`     | `string` | The additional portion displayed after `.ChangeIDPrefix` to satisfy `change_id_min_len`; empty when the unique prefix already meets or exceeds that minimum                      |
+| `.ClosestBookmarks` | `string` | Closest bookmark(s) on ancestors                                                                                                                                                 |
+
+`.ChangeIDRest` is not the remainder of the full canonical change ID and isn't independently usable as an identifier.
 
 ### Status
 

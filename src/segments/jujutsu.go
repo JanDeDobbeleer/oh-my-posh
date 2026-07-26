@@ -38,8 +38,10 @@ func (s *JujutsuStatus) add(code byte) {
 }
 
 type Jujutsu struct {
-	Working  *JujutsuStatus
-	ChangeID string
+	Working        *JujutsuStatus
+	ChangeID       string
+	ChangeIDPrefix string
+	ChangeIDRest   string
 	Scm
 }
 
@@ -159,10 +161,19 @@ func (jj *Jujutsu) setJujutsuStatus() {
 		return
 	}
 
-	lines := strings.Split(statusString, "\n")
-	jj.ChangeID = lines[0]
+	header, statusString, _ := strings.Cut(statusString, "\n")
+	prefix, rest, found := strings.Cut(header, "|")
+	// Jujutsu change IDs contain only canonical ID characters, so "|" is a safe
+	// separator that survives RunCommand's trimming when rest is empty.
+	if !found || len(prefix) == 0 || strings.Contains(rest, "|") {
+		return
+	}
 
-	for _, line := range lines[1:] {
+	jj.ChangeIDPrefix = prefix
+	jj.ChangeIDRest = rest
+	jj.ChangeID = prefix + rest
+
+	for line := range strings.SplitSeq(statusString, "\n") {
 		if len(line) > 0 {
 			jj.Working.add(line[0])
 		}
@@ -171,7 +182,12 @@ func (jj *Jujutsu) setJujutsuStatus() {
 
 func (jj *Jujutsu) logTemplate() string {
 	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
-	return fmt.Sprintf(`change_id.shortest(%d) ++ "\n" ++ diff.summary()`, jj.options.Int(ChangeIDMinLen, 0))
+	minLength := jj.options.Int(ChangeIDMinLen, 0)
+	return fmt.Sprintf(
+		`change_id.shortest(%d).prefix() ++ "|" ++ change_id.shortest(%d).rest() ++ "\n" ++ diff.summary()`,
+		minLength,
+		minLength,
+	)
 }
 
 func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (string, error) {

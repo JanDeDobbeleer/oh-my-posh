@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "b79c547cad96",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "website/docs/auth.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b7/9c547cad96/0/metadata.json",
+      "transcript": "/b7/9c547cad96/0/full.jsonl",
+      "compact_transcript": "/b7/9c547cad96/0/transcript.jsonl",
+      "content_hash": "/b7/9c547cad96/0/content_hash.txt",
+      "prompt": "/b7/9c547cad96/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3174,
+    "cache_creation_tokens": 362825,
+    "cache_read_tokens": 10618666,
+    "output_tokens": 99715,
+    "api_call_count": 82
+  }
+}

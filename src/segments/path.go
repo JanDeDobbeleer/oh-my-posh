@@ -993,7 +993,8 @@ func (pt *Path) makeFolderFormatMap() map[string]string {
 
 	if gitDirFormat := pt.options.String(GitDirFormat, ""); len(gitDirFormat) != 0 {
 		dir, err := pt.env.HasParentFilePath(".git", false)
-		if err == nil && dir.IsDir {
+		if err == nil {
+			// Linked worktrees use a .git file instead of a directory.
 			// Make it consistent with the modified parent.
 			parent := pt.join(pt.replaceMappedLocations(dir.ParentFolder))
 			folderFormatMap[parent] = gitDirFormat

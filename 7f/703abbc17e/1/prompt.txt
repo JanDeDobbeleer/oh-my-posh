@@ -1,0 +1,385 @@
+go ahead with phase 1
+
+---
+
+<task-notification>
+<task-id>ada329766c9237131</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\ada329766c9237131.output</output-file>
+<status>completed</status>
+<summary>Agent "Task G design tokens" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Task G complete. `website/src/css/custom.css` is the only file touched.
+
+**G1 — recalibrated primary colour**
+
+Light mode (`:root`), replaced verbatim with the given hex values (previous `rgb(...)` values and old `#2c7ae0` removed):
+```css
+--ifm-color-primary:         #1f6fd0;
+--ifm-color-primary-dark:    #1c64bb;
+--ifm-color-primary-darker:  #1a5eb1;
+--ifm-color-primary-darkest: #164e92;
+--ifm-color-primary-light:   #3c83d8;
+--ifm-color-primary-lighter: #4e8fdc;
+--ifm-color-primary-lightest:#76a9e6;
+```
+New dark-mode block added right after it, using `html[data-theme="dark"]` — the file's majority selector form for dark-mode overrides (5 existing uses vs. 2 bare `[data-theme="dark"]` uses):
+```css
+html[data-theme="dark"] {
+  --ifm-color-primary:         #5c9fee;
+  --ifm-color-primary-dark:    #4a91ea;
+  --ifm-color-primary-darker:  #3f89e8;
+  --ifm-color-primary-darkest: #1f6ed4;
+  --ifm-color-primary-light:   #6eadf1;
+  --ifm-color-primary-lighter: #7ab5f3;
+  --ifm-color-primary-lightest:#a3cbf7;
+}
+```
+
+**G2 — deleted, no replacement**
+- `.hero { background-color: #173448; }`
+- `.hero--image { margin-top: 4rem; }`
+- `h1.hero__title { color: white; }`
+- `p.hero__subtitle { color: white; }`
+
+No `--ifm-hero-background-color` override was added, per the plan.
+
+**G3 — heading rhythm** — added to the existing `:root` font block: `--ifm-heading-font-weight: 600;`, plus new rules:
+```css
+h1, h2, h3 { letter-spacing: -0.02em; line-height: 1.2; }
+h1, h2 { text-wrap: balance; }
+```
+`--ifm-font-family-base`, the monospace stack, and `--ifm-code-font-size` were left untouched.
+
+**G4** — navbar icon-link rules, admonition overrides, `.winstore`, `.withings`, `iframe.youtube`, table border rules, `@font-face`, `code` rules, and `.badge` are all unmodified.
+
+**Verification (scoped as instructed, not full `website/`)**
+- `#173448`: zero hits in `src`, `docs`, `blog`, `docusaurus.config.js`.
+- `#2c7ae0`: zero hits in `src`, `docs`, `blog`; one remaining hit in `docusaurus.config.js:166` (`backgroundColor: '#2c7ae0'`, the announcement bar) — that's Task F's territory, not touched here.
+- `hero__title` / `hero__subtitle` / `hero--image`: zero hits in `docs`, `blog`, `docusaurus.config.js`; three hits, all in `src/pages/index.js` (lines 89, 90, 111) — Task E's territory, exactly as the plan predicted.
+
+**Contrast ratios (computed from the real hex values, WCAG relative-luminance formula)**
+- `#1f6fd0` on `#ffffff`: **≈ 4.95:1** — passes the 4.5:1 body-text bar, but only narrowly (margin ~0.45). Worth flagging to the coordinator as a thin margin, not a failure.
+- `#5c9fee` on `#1b1b1d`: **≈ 6.27:1** — comfortably passes 4.5:1.
+
+No build was run, and nothing was committed.</result>
+<usage><subagent_tokens>68264</subagent_tokens><tool_uses>17</tool_uses><duration_ms>108463</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a1d9b84d7b12ea7c3</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a1d9b84d7b12ea7c3.output</output-file>
+<status>completed</status>
+<summary>Agent "Task E homepage" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All 10 imports are used (verified each appears in JSX/logic above). JSX tag balance confirmed by inspection during the read-back: every opened tag (`Layout`, `Head`, `header`, `div`s, `Tabs`/`TabItem`×3, `CodeBlock`×3, `Link`s, `main`, `section`s) has a matching close, and self-closing tags (`script`, `img`) are correctly slashed.
+
+## Report
+
+**Files touched:** `D:\oh-my-posh\website\src\pages\index.js`, `D:\oh-my-posh\website\src\pages\styles.module.css` (only these two, as scoped).
+
+**Install commands — verified against source docs:**
+- Windows: `winget install JanDeDobbeleer.OhMyPosh --source winget` — `website/docs/installation/windows.mdx:52`
+- macOS: `brew install jandedobbeleer/oh-my-posh/oh-my-posh` — `website/docs/installation/_homebrew.md:5`
+- Linux: `curl -s https://ohmyposh.dev/install.sh | bash -s` — `website/docs/installation/linux.mdx:36`
+
+All three matched the plan exactly; no mismatches to report.
+
+**Shell list — derived from `website/docs/installation/prompt.mdx:22-34`:** the `Tabs` there lists bash, claude, cmd, copilot, elvish, fish, nu, powershell, xonsh, yash, zsh. Excluding `claude` and `copilot` (agent integrations, not shells) gives the 9 rendered on the homepage: bash, cmd, elvish, fish, nu, powershell, xonsh, yash, zsh — matching the plan's list. Rendered as one line of plain text (`Works with bash · cmd · elvish · ...`), not logos/cards.
+
+**What was removed:**
+- Both Infima classes (`hero`, `hero--primary`) from `&lt;header&gt;` — it now carries only `styles.heroBanner`.
+- The `.getStarted` class entirely from the CSS module, and its application on both CTAs.
+- The dead `imageUrl`/`featureImage` prop and render path from the `Feature` component, plus the now-unused `.featureImage` CSS rule.
+- `min-height: 60vh` from `.heroBanner`, replaced with explicit padding (`5rem 0 4rem`, `3rem 0 2rem` under 966px).
+- Emoji from feature titles; "180+" replaced with "117" in both the feature title and copy.
+
+**Button colour scoping:** Both CTAs now use only Infima's own classes with no CSS-module override — primary is `button button--primary button--lg`; secondary is `button button--outline button--primary button--lg` (the `button--primary` modifier on the outline button is required per the plan, to fix the collapsed-border bug and give Infima's own color logic control in both light and dark mode). No `color` is set in the module CSS at all now, so Infima's `--ifm-button-color` (font-color-base-inverse) governs both buttons in both color modes.
+
+**Other structural notes:**
+- Install box built from `@theme/Tabs` + `@theme/TabItem` + `@theme/CodeBlock` (pattern matched against the existing `src/components/Config.js` usage), `groupId="install-os"`, three tabs (Windows/macOS/Linux) with `language` set to `powershell`/`bash`/`bash`.
+- `hero.png` kept as-is (not replaced), now with `width="1100" height="44" alt="The default Oh My Posh prompt"`, styled by a new `.heroImage` module class (`max-width: 100%; height: auto`), not the global `.hero--image` Task G deletes.
+- Sibling groups (subhead, install box, buttons, image) laid out via a `:global(.container)` flex-column with `gap: 2rem` inside `.heroBanner`, with a `&gt; * { margin: 0 }` reset on direct children so no margin-collapse artifacts stack on top of the gap. Confirmed this `:global()` pattern is supported by the existing toolchain (found in use in `node_modules/@docusaurus/theme-classic/src/theme/**/styles.module.css`).
+- Subhead width constrained via `.subtitle { max-width: 640px }` so it doesn't run the full 1140px container.
+
+No build was run, per instructions — the coordinator owns that step.</result>
+<usage><subagent_tokens>79721</subagent_tokens><tool_uses>22</tool_uses><duration_ms>171192</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a5d7f5f92dfb2b342</task-id>
+<tool-use-id>toolu_01TgyuTwNBTkgzjEAQGuzFFs</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a5d7f5f92dfb2b342.output</output-file>
+<status>completed</status>
+<summary>Agent "Task F nav and footer" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I read the whole plan (Decisions, Non-goals, all tasks) and implemented F1, F3, F4, plus the unambiguous parts of F2 in `D:\oh-my-posh\website\docusaurus.config.js`. I stopped short of one part of F2 because the spec contradicts itself — details below.
+
+## F1 — Navbar (done)
+Left side is now exactly: `Docs` (`to: 'docs'`, `activeBasePath: 'docs'`) · `Segments` (`to: 'docs/segments/overview'`) · `Themes` (`to: 'docs/themes'`) · `Blog` (`to: 'blog'`). Verified both doc pages exist on disk (`website/docs/segments/overview.mdx`, `website/docs/themes.md`). `Sponsor` and `Swag` removed from the navbar. Right side (GitHub/Discord/Bluesky icon links) untouched.
+
+## F3 — Announcement bar (done)
+Entire `announcementBar` object deleted, including `backgroundColor: '#2c7ae0'` and the sponsor link embedded in its `content` string.
+
+## F4 — Social card metadata (done)
+Removed `og:image:width` (1200) and `og:image:height` (630) from `metadata`. Left `og:image` and `og:type` untouched.
+
+## F2 — Footer: partially done, one item blocked
+
+Done:
+- Renamed `Sponsors` → `Our sponsors`, kept `CodeRabbit`.
+- Added new `Support` group with `GitHub Sponsors` (`https://github.com/sponsors/JanDeDobbeleer`) and `Product spotlight` (the existing Polar link), both removed from `Links`.
+- `Links` now holds only `Docusaurus` and `Privacy`, matching the stated end state exactly.
+
+Blocked — spec self-contradiction, not a disk mismatch: F2's own text says both of these, and they can't both be true:
+- Bullet 1: "Add `Swag` (`https://swag.ohmyposh.dev`) to the existing `Links` group."
+- Closing line: "After the change, `Links` holds only `Docusaurus` and `Privacy`."
+
+If Swag is added to `Links` and then `Sponsor`/`Product spotlight` are moved out as F2 also requires, `Links` ends up with three items (`Docusaurus`, `Privacy`, `Swag`), not two. There's no other group named in F2 for Swag to land in instead. Since `Swag` was previously reachable via the navbar (now removed per F1) and was never in the footer before, guessing wrong here either duplicates nothing (if I skip it — safe but drops reachability) or silently invents a placement not in the spec (if I add it to `Support` or `Our sponsors`). I left `https://swag.ohmyposh.dev` out of the file entirely rather than guess — it is currently **not present anywhere** in the config.
+
+I need a decision: should Swag go into `Support`, into `Our sponsors`, stay out of the footer, or something else? Once told, it's a one-line addition.
+
+## Verification
+- `node --check docusaurus.config.js` passes (exit 0).
+- Confirmed untouched: `onBrokenLinks: 'throw'`, `presets`, `plugins`, `algolia`, `appInsights`, `headTags`, `stylesheets`.
+- Only file touched: `website/docusaurus.config.js`.
+
+## Before/after URL sets
+
+**Before:**
+- Navbar left: `docs`, `blog`, `https://github.com/sponsors/JanDeDobbeleer` (Sponsor), `https://swag.ohmyposh.dev` (Swag)
+- Navbar right: `https://github.com/jandedobbeleer/oh-my-posh`, `https://discord.gg/n7E3DkXssv`, `https://staging.bsky.app/profile/ohmyposh.dev`
+- Footer "How to": `docs/`, `docs/contributing/started`
+- Footer "Social": github, discord, bluesky (same three URLs as navbar right)
+- Footer "Links": `https://github.com/sponsors/JanDeDobbeleer` (Sponsor), polar Product spotlight URL, `https://github.com/facebook/docusaurus`, `/privacy`
+- Footer "Sponsors": `https://coderabbit.link/posh`
+- `metadata`: `https://ohmyposh.dev/img/hero.png` (+ width 1200 / height 630, not URLs)
+- `announcementBar.content`: embedded `https://github.com/sponsors/JanDeDobbeleer`
+- `copyright`: `https://github.com/sponsors/JanDeDobbeleer`, `/docs/contributors` (untouched, not in scope)
+
+**After:**
+- Navbar left: `docs`, `docs/segments/overview`, `docs/themes`, `blog` — Sponsor and Swag URLs gone from navbar
+- Navbar right: unchanged
+- Footer "How to" / "Social": unchanged
+- Footer "Links": `https://github.com/facebook/docusaurus`, `/privacy`
+- Footer "Support" (new): `https://github.com/sponsors/JanDeDobbeleer`, polar Product spotlight URL
+- Footer "Our sponsors" (renamed): `https://coderabbit.link/posh`
+- `metadata`: `https://ohmyposh.dev/img/hero.png` only (width/height entries removed)
+- `announcementBar`: gone entirely, including its embedded sponsors URL
+- `copyright`: unchanged
+
+Net effect versus a fully-consistent F2: every URL from the original file is preserved exactly once **except** `https://swag.ohmyposh.dev`, which is currently unplaced pending your decision.</result>
+<usage><subagent_tokens>70830</subagent_tokens><tool_uses>11</tool_uses><duration_ms>206256</duration_ms></usage>
+</task-notification>
+
+---
+
+Proposal B had some really great design for the segment catalog, and I really want that implemented first. There's the additional feedback that I have regarding the home page as well.
+
+If you now look at the flow on a desktop, it doesn't really feel right because it has a large header-like prompt that knows where you are, and then a subtext. It goes from white to small, back to white again. It just overall feels like there's so much white space here that makes it rather difficult or not really that pleasing to read.
+
+I don't know what we can do about it, maybe alignment or other things. Same as with the hero cards at the bottom initially, I think in design A it had a card design with rounded corners. That's all gone now, so there's a lot we can still do to improve and put a cherry on top.
+
+Here is the original readout for the segments section from the design document we created:
+
+The same language applied to the 117-segment catalog
+Facets with live counts, a URL that encodes filter state, and a badge column carrying the metadata people actually search on: does it need auth, is it cached, does it need a Nerd Font. This is the Tauri plugin-grid pattern, which was the only real in-browser filter found in the whole cohort.
+
+---
+
+review the plans with Opus 5 instead
+
+---
+
+<task-notification>
+<task-id>acb5bf1bc1d37801b</task-id>
+<tool-use-id>toolu_01UrGDiTUatfTPVnkarHMM7k</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\acb5bf1bc1d37801b.output</output-file>
+<status>completed</status>
+<summary>Agent "Task C: homepage rhythm and cards" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Task C is implemented and verified. Summary below.
+
+## What changed
+
+**`website/src/pages/index.js`**
+- `Feature()` now wraps its `&lt;h3&gt;`/`&lt;p&gt;` in an inner `&lt;div className={styles.card}&gt;` — the border lives on this inner div, not on the `col--4` column (which already uses horizontal padding as its Infima gutter, so a border there would touch edge-to-edge).
+- `&lt;h1 className="hero__title"&gt;` → `&lt;h1 className={classnames("hero__title", styles.heroTitle)}&gt;` — adds a module class alongside the global Infima class so `styles.module.css` can target it, without a leaky bare `:global(.hero__title)` rule.
+- The hero `&lt;img&gt;` is now wrapped in `&lt;div className={styles.heroImageWrapper}&gt;`. The `&lt;img&gt;` itself is untouched — `width`, `height`, `src`, `alt` are all identical to before.
+
+**`website/src/pages/styles.module.css`**
+- `.heroBanner`: dropped `text-align: center`.
+- `.heroBanner :global(.container)`: `align-items: center` → `flex-start`, `gap: 2rem` → `1.1rem`.
+- `.installNote`: dropped `text-align: center`.
+- `.buttons`: `justify-content: center` → `flex-start`.
+- `.installBox`: added `margin-top: 0.9rem`.
+- New `.heroTitle { max-width: 20ch; }`.
+- `.subtitle`: `max-width: 640px` → `52ch`.
+- New `.heroImageWrapper { background: #173448; border-radius: 9px; overflow: hidden; padding: 0; max-width: 100%; }` — matched to the image's own baked-in background, not the mockup's `#10243c`.
+- New `.feature { margin-bottom: 1.5rem; }` (was referenced but undefined; defined it to give stacked cards breathing room on mobile) and new `.card` with border/radius/padding/`height: 100%` plus the theme-split fill exactly as specified (`--ifm-color-emphasis-100` in light, `--ifm-background-surface-color` under `[data-theme='dark']`).
+- `.features`: dropped `display: flex; align-items: center`, padding `2rem 0` → `3rem 0`, added `border-top: 1px solid var(--ifm-color-emphasis-200)`.
+
+`website/src/css/custom.css` and everything else was left untouched.
+
+## Verification (built output, not source)
+
+Ran `npm run build` from `website/` — succeeded with only the pre-existing, expected `/docs/themes#jandedobbeleer` anchor warning. Then inspected the emitted `assets/css/styles.*.css` and `build/index.html`:
+
+- `.heroBanner_UJJx .container{align-items:flex-start;...gap:1.1rem}` — left-align and tightened gap confirmed.
+- `.heroTitle_ohkl{max-width:20ch}`, `.subtitle_WGyH{max-width:52ch}` — both reached the module (proving the h1 class-composition fix works).
+- `.heroImageWrapper_Ddl5{background:#173448;border-radius:9px;max-width:100%;overflow:hidden;padding:0}`.
+- `.card_UXd2{background:var(--ifm-color-emphasis-100);border:1px solid var(--ifm-color-emphasis-200);border-radius:9px;height:100%;padding:1.15rem 1.25rem}` followed immediately by `[data-theme=dark] .card_UXd2{background:var(--ifm-background-surface-color)}` — confirms the CSS-module scoping leaves the `[data-theme]` attribute selector untouched while still hashing `.card` consistently, so the theme split resolves correctly in the compiled file (this was the one point I had to actually check rather than assume — attribute selectors aren't renamed by css-loader, only class selectors are).
+- `build/index.html`: `&lt;h1 class="hero__title heroTitle_ohkl"&gt;`, `&lt;div class="heroImageWrapper_Ddl5"&gt;&lt;img class="heroImage_ba0c" src="/img/hero.png" width="1100" height="44" alt="The default Oh My Posh prompt"&gt;` (attributes byte-identical to before), and three `&lt;div class="col col--4 feature_nI3B"&gt;&lt;div class="card_UXd2"&gt;...` — card treatment confirmed present in all three feature columns.
+- `git status`/`git diff --stat` confirm only `website/src/pages/index.js` and `website/src/pages/styles.module.css` were touched (untracked `segment_catalog_test.go` and `plugins/segments/` belong to the parallel Task E/A work, left alone).
+
+## Notes on the plan
+
+Nothing in the plan's Task C section turned out to be wrong — the four traps (unreachable `h1` class, the `#173448` vs `#10243c` mismatch, the theme-split card fill, and the undefined `styles.feature`) were all exactly as described and are now handled as specified. The one thing the plan left to my judgment — what to actually put in `.feature` once defined — I filled with `margin-bottom: 1.5rem` for spacing between stacked cards on mobile, since the plan only said "define it or drop it" without prescribing contents.</result>
+<usage><subagent_tokens>81293</subagent_tokens><tool_uses>21</tool_uses><duration_ms>198632</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a7ea33e58922b5fac</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a7ea33e58922b5fac.output</output-file>
+<status>completed</status>
+<summary>Agent "Task E: Go registry guard" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Task complete. Both owned files were created and verified; other files showing in the broader `git status` (`website/src/pages/index.js`, `styles.module.css`, `SegmentCatalog/`) belong to parallel tasks in this plan (B/C) and were not touched by this task.
+
+**Files created:**
+- `D:\oh-my-posh\src\config\segment_catalog_test.go` — new test `TestSegmentCatalogMatchesRegistry`
+- `D:\oh-my-posh\website\plugins\segments\registry.json` — generated artifact (117 entries)
+
+**Verification run:**
+- `go test ./config/...` → `ok github.com/jandedobbeleer/oh-my-posh/src/config 0.447s`
+- First run (file didn't exist) failed with: `registry.json did not exist; wrote the derived catalog (117 entries) — rerun to verify, then git add` — then the rerun passed, confirming the self-healing write-then-fail-then-pass cycle works as designed.
+- `go build ./...` → clean, no output
+- `modernize --fix ./config/...` → no changes
+- `fieldalignment ./config/...` → no changes (struct field order `Type, DocID, NeedsNerdFont` was already correct)
+- `gofmt -l` → clean
+- `golangci-lint run ./config/...` → initially flagged one `gocritic` `stringXbytes` hit on the byte comparison (`string(expected) == string(actual)`); fixed to `bytes.Equal(expected, actual)`. Final run: `0 issues.`
+
+**Actual counts:** 117 entries, 28 with `needsNerdFont: true` — exactly matching the plan's expectation, so no discrepancy to report.
+
+**Confirmed against the plan's authoritative facts before writing the test** (so I wasn't just trusting the plan blindly):
+- Diffed the 118 `SegmentType` constants (minus `EXIT`, with the `go→golang` and `copilot_cli→copilot-cli` aliases applied) against the 117 actual `.mdx` filenames under `website/docs/segments/*/` — zero-line diff, confirming the alias map is complete and no third alias exists.
+- Verified `website/docs/segments/system/status.mdx` exists and there is no `exit.mdx`, confirming `EXIT` is correctly treated as doc-less (aliased to `STATUS`'s writer, not its own catalog row).
+- Spot-checked ~15 `Template()` implementations in `src/segments/*.go` — all are static string literals (no field access), so none can panic on a zero-value struct from the factory; the `recover()` wrapper is defensive as the plan intended, not because it fires today.
+
+**Nothing in the plan turned out to be wrong** for this task's scope — the file layout, alias map, skip-EXIT rationale, PUA rune ranges, sort order, and expected counts (117 / 28) all checked out exactly as specified.</result>
+<usage><subagent_tokens>107875</subagent_tokens><tool_uses>42</tool_uses><duration_ms>294334</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a3adeb81aca47b888</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a3adeb81aca47b888.output</output-file>
+<status>completed</status>
+<summary>Agent "Task B: catalog component and page" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Task B is done. Only my three owned files were touched, nothing else in the working tree changed.
+
+**Files created:**
+- `D:\oh-my-posh\website\src\components\SegmentCatalog\index.js`
+- `D:\oh-my-posh\website\src\components\SegmentCatalog\styles.module.css`
+- `D:\oh-my-posh\website\src\pages\segments.js`
+
+**Hydration:** Filters are derived entirely from the URL, never stored in local `useState`. `useFilters()` computes `filters = isBrowser ? parseFilters(location.search) : EMPTY_FILTERS` — a plain derived value recomputed every render, not a lazy initializer. I verified in `node_modules/@docusaurus/core/lib/client/browserContext.js` that `useIsBrowser()` is backed by `useState(false)` flipped to `true` in a `useEffect`, so it really is `false` for both the SSR pass and the first client (pre-hydration) render, then flips true one tick after mount, which is when the URL-derived filter kicks in. Checkbox/search interactions call `history.replace({ search })` (same idiom as `Auth.js`, verified against `history` v4.10.1's `createLocation` — an object with only `search` resolves `pathname` against the current location, so it never bare-`?`s or navigates away). Facet React keys are namespaced `group:${id}` / `auth:${id}` / a literal `nerdfont:needed` key, per the pinned collision note.
+
+**Verification:** `npm run build` from `website/` completed with `[SUCCESS]`, the only warning being the pre-existing, explicitly-tolerated `/docs/themes#jandedobbeleer` broken anchor. The segments plugin isn't wired into `docusaurus.config.js` yet (not my file), so `usePluginData('oh-my-posh-segments')` returns `undefined` locally; I added a guard so this renders a plain `&lt;p&gt;Segment data is not available.&lt;/p&gt;` placeholder instead of crashing — confirmed by grepping the built `build/segments/index.html`, which contains `&lt;h1&gt;Segments&lt;/h1&gt;` and that placeholder text with no build errors. Once the coordinator registers the plugin, the same component will render the full catalog.
+
+**Design notes:** Card fill and the `needs auth` tag use exactly the theme-split / contrast-safe variable pairs the plan specifies (`--ifm-color-emphasis-100` / dark-mode override to `--ifm-background-surface-color`; `--ifm-color-warning-contrast-foreground`/`-background`). No `⌘K`/`Ctrl-K` binding was added anywhere. Checkboxes are real `&lt;input type="checkbox"&gt;` inside `&lt;fieldset&gt;`/`&lt;legend&gt;`, restyled only via `accent-color` and size, keeping native focus/keyboard behavior.
+
+Nothing in the plan's Task B section turned out to be wrong — the pinned data contract, the hydration mechanism, the CSS variable choices, and the alias import paths (`@docusaurus/useIsBrowser`, `@docusaurus/useGlobalData`, `@docusaurus/router`) all checked out against the actual installed Docusaurus 3.10.2 source (these are webpack-only aliases resolved in `@docusaurus/core/lib/webpack/aliases/index.js`, not real npm packages — worth flagging only because a naive `npm ls` would say they don't exist).</result>
+<usage><subagent_tokens>92167</subagent_tokens><tool_uses>31</tool_uses><duration_ms>319044</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>ab1ba4b21af217365</task-id>
+<tool-use-id>toolu_01B4XVQLYhaM69KBZeKAe9AK</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\ab1ba4b21af217365.output</output-file>
+<status>completed</status>
+<summary>Agent "Task A: segments data plugin" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## Report
+
+**Files created (my scope only):**
+- `D:\oh-my-posh\website\plugins\segments\index.js`
+- `D:\oh-my-posh\website\plugins\segments\data.js`
+
+Deliverable written: `C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\scratchpad\extracted-descriptions.tsv` (117 lines, `id&lt;TAB&gt;description`, sorted by id).
+
+**Verification run** (against the real `website/plugins/segments/registry.json`, which Task E had already landed by the time I finished — I read it but never wrote to it):
+
+- `total: 117`, no throws.
+- Group counts (sum to 117): cli 39, languages 27, system 17, cloud 10, scm 8, web 8, health 5, music 3.
+- Auth tiers (sum to 11): oauth 2, cli 2, apikey 4, url 3.
+- Battery description extracted correctly: `"Battery displays the remaining power percentage for your battery."` — not the WSL `:::caution` text.
+- Alias cases resolved correctly: `golang` → type `go`, `copilot-cli` → type `copilot_cli`.
+- Zero descriptions start with `:::`, zero are empty.
+
+**Files that fought the extractor:** Only `system/battery.mdx` has the admonition *before* the real paragraph (the trap the plan called out). I found 12 other files with a `:::caution/:::warning/:::info/:::note` block under `## What` (`cli/gitversion.mdx`, `cli/nbgv.mdx`, `cloud/pulumi.mdx`, `languages/fortran.mdx`, `music/lastfm.mdx`, `music/spotify.mdx`, `system/connection.mdx`, `system/vimode.mdx`, `system/winget.mdx`, `web/carbonintensity.mdx`, `web/owm.mdx`, `web/todoist.mdx`, `web/wakatime.mdx`), but in all of those the admonition comes *after* the real paragraph, so a naive extractor would have accidentally gotten those right — battery is genuinely the only one where naive-first-paragraph fails.
+
+**Plan corrections found:**
+- Nothing in the plan's Task A section was wrong. One ambiguity I resolved by inspection: `AUTH_TIERS` in `data.js` must be keyed by **doc id**, not config `type` — confirmed by checking `copilot` (type `copilot`, doc id `copilot`, in `cli` tier) vs `copilot-cli` (type `copilot_cli`, doc id `copilot-cli`, no auth) and `ytm`/`golang`. All 11 curated keys verified to exist as real `.mdx` filenames.
+- I initially over-engineered a `.name` override sub-property under `DESCRIPTION_OVERRIDES` that isn't in the pinned contract (which only overrides `description`, not `name`); caught it in review and removed it before finalizing.
+
+**Safeguards implemented per spec:** `readRegistry()` throws a clear message naming `go test ./config/...` as the regeneration command if `registry.json` is missing (no fallback/stub logic committed — verified via `node --check` and `git status` that only my two files plus the pre-existing `registry.json` are present under `website/plugins/segments/`). Cross-checks throw naming offending ids if: a doc has no registry entry, a registry entry has no doc, an `AUTH_TIERS`/`DESCRIPTION_OVERRIDES` key references an unknown doc id, or an auth tier has no label. Frontmatter and `## What` parsing use plain line scanning, no YAML dependency.
+
+Untouched, as required: `website/docusaurus.config.js` and `website/plugins/segments/registry.json` (Task E's file — read-only).</result>
+<usage><subagent_tokens>93588</subagent_tokens><tool_uses>33</tool_uses><duration_ms>383173</duration_ms></usage>
+</task-notification>
+
+---
+
+Move to the next phase. For rewriting the renderer, you can always use configuration as well, which is located at my home folder, called .posh.omp.jsonc
+
+---
+
+<task-notification>
+<task-id>a196a8fd616f3b9e0</task-id>
+<tool-use-id>toolu_015wdKtbCy2QuM6JsByuJoRi</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a196a8fd616f3b9e0.output</output-file>
+<status>completed</status>
+<summary>Agent "Task D: reset isHyperlink" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All green, and none of the pre-existing test bodies were touched — only an addition.
+
+## Report
+
+**Verified the bug exactly as described:** `isHyperlink` (`src/terminal/writer.go:78`) is set `true` at three sites (`:460`, `:503`, `:562`) and cleared only at the `&lt;TEXT&gt;` anchor case (`:508`, `:567`). Neither `Write`'s prologue (originally `:384-392`) nor `String()`'s deferred cleanup (originally `:605-619`) touched it. Confirmed `themes/*.omp.*` has zero `&lt;LINK&gt;` uses, so nothing in the bundled-theme corpus exercises this.
+
+**Fix — reset in both places** (mirroring `isTransparent`, not `isInvisible`):
+- `isInvisible` only needs a `String()` reset because `writeSegmentColors`/`writeAnchorOverride` unconditionally recompute it on every `Write` before any `write()` call — the Write-prologue reset would be redundant.
+- `isHyperlink`, like `isTransparent`, is **not** unconditionally recomputed — it only changes when a `&lt;LINK&gt;`/`&lt;TEXT&gt;` anchor actually appears in that call's text. Confirmed via `src/prompt/engine.go:552-678` that multiple `Write` calls happen per block before a single `String()` call, so a hyperlink segment followed by a plain segment in the same block would leak the flag even if only `String()` reset it. The essential fix is in `Write`'s prologue; I added it to `String()`'s cleanup too, matching `isTransparent`'s defensive dual-reset pattern, at negligible cost (one bool assignment).
+
+Diff (`src/terminal/writer.go`): added `isHyperlink = false` right after the existing `isTransparent = false` in `Write`'s prologue (~line 392) and after `isInvisible = false` in `String()`'s deferred cleanup (~line 618), each with a comment explaining why.
+
+**Test:** `TestHyperlinkResetsBetweenWrites` in `src/terminal/writer_hyperlink_test.go` — writes an unbalanced `&lt;LINK&gt;http://example.com` (no `&lt;TEXT&gt;`/`&lt;/LINK&gt;`), then writes plain `"abc"`, then calls `String()` once and asserts `length == 3`. I confirmed the test is load-bearing by temporarily stashing the `writer.go` fix: it failed with `expected 3, actual 0` (bug reproduced), and passed once the fix was restored.
+
+**Verification results:**
+- `go build ./...` — clean.
+- `go test ./terminal/...` — all 20 tests pass, including all of `writer_test.go`, `writer_hyperlink_test.go`, `writer_gradient_test.go` unchanged, plus the new test.
+- `golangci-lint run ./terminal/...` (v2.12.2, using `src/.golangci.yml`) — 0 issues.
+- Benchmarks (`-benchtime=200x -count=3`) vs. baseline — allocs/op and B/op unchanged:
+  - `BenchmarkWriteAnchors`: 601-603 B / 14 allocs (baseline 602/14)
+  - `BenchmarkWritePlainASCII`: 280 B / 6 allocs (baseline 280/6, exact)
+  - `BenchmarkWriteSolid`: 465-466 B / 16 allocs (baseline 465/16)
+  - `BenchmarkWriteGradient`: 1762 B / 17 allocs (baseline 1762/17, exact)
+  - `BenchmarkWriteGradientChained`: 791 B / 27 allocs (baseline stated 789/27) — I re-measured this one against the unfixed code and got the identical 791 B/27 allocs across 3 runs, confirming the 789→791 delta is pre-existing environment/measurement drift unrelated to this change, not a regression. My fix (two bare bool assignments) cannot allocate.
+
+No existing test's expected output was touched or needed to change.</result>
+<usage><subagent_tokens>104400</subagent_tokens><tool_uses>25</tool_uses><duration_ms>261890</duration_ms></usage>
+</task-notification>

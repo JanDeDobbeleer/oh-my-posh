@@ -597,3 +597,38 @@ Implemented Task B (sanitized fixtures + golden harness) with the hash-manifest/
 One caveat: this sandbox is Windows-only, so I could not execute the harness on Linux/macOS directly. I relied on varying `TZ`/`TERM_PROGRAM`/`WT_SESSION`/`POSH_SESSION_ID` locally as the closest available proxy for the CI matrix, per the ambient-input list in the brief.</result>
 <usage><subagent_tokens>271535</subagent_tokens><tool_uses>172</tool_uses><duration_ms>1843971</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>a22bba61c7ca32515</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a22bba61c7ca32515.output</output-file>
+<status>completed</status>
+<summary>Agent "Task B: golden harness" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Everything is clean. Here's the report on the fix.
+
+## Fix report
+
+**Confirmed the leak, then found what caused it.** `az.User.Name`/`ID`/`TenantID`/`HomeTenantID` were scrubbed by Go field name, but `AzureSubscription`/`AzureUser` (`segments/az.go`) carry explicit json tags — `json:"user"`, `json:"id"`, `json:"tenantId"`, `json:"homeTenantId"`, `json:"name"` — so the recorded document actually serializes lowercase/camelCase. Every one of those four `az` scrubs was a silent no-op; `data["User"]`, `data["ID"]`, etc. never matched anything in the real JSON. That's exactly how `jan.de.dobbeleer@gmail.com` rode straight through into `segments.az.data.user.name` in the 8 az-enabled fixtures (`cloud-context`, `cloud-native-azure`, `devious-diamonds`, `jonnychipz`, `night-owl`, `pixelrobots`, `tiwahu`, `tokyo` — matches your list exactly).
+
+**Audited every other scrub against real recordings instead of re-reading struct definitions** (recorded `atomic`, `1_shell`, `cloud-context` unsanitized and inspected the raw JSON directly): `git.User.Name/Email`, `git.Dir`, `aws.AccessKeyID`, `path.Path/Location/Folders[].Path`, `battery.Percentage/State/Icon`, and the sysinfo memory/load fields all have **no** json tags on their structs, so they serialize as plain Go field names — those scrubs were doing real work and needed no change. One thing was missing entirely, not mis-cased: `sysinfo.Disks` (a real, per-machine map of drive → I/O stats with its own `serialNumber`/`label` fields) wasn't in the original scrub list at all — added it (dropped rather than partially scrubbed, since no bundled theme template references `.Disks`).
+
+**Fixed `src/cli/sanitize.go`:** corrected the `az` case to the real keys (`id`, `tenantId`, `homeTenantId`, `user.name`), added the `Disks` strip, rewrote `src/cli/sanitize_test.go`'s az/sysinfo fixtures to mirror an actual recording's shape rather than my prior (wrong) assumption.
+
+**Made the backstop structural**, per your instruction — `src/prompt/fixtures_sanitized_test.go` now has `TestFixturesContainNoIdentityByShape`, which walks every fixture's full decoded JSON tree and checks each string value by shape (whole-string email regex — anchored so `git@github.com:...` SSH remotes aren't false-flagged; Windows/UNC/Unix absolute-path prefixes; word-bounded username/hostname), independent of which key holds it. Verified it's load-bearing, not assumed: hand-edited a fixture to add an email and separately an absolute path under invented field names (`arbitraryNewField`, `someOtherNewField`) — both failed with the exact value and JSON path, both passed clean after reverting. Kept the old raw-byte identity scan alongside it (it catches the home directory, which isn't a distinguishable "shape").
+
+**Regenerated all 124 fixtures and the whole harness:**
+- Independently audited via a throwaway Python walker (same three shape checks) against a full raw-vs-sanitized recording of all 124 themes: raw showed the expected leaks (env identity, `git.Dir`, `path.*`, `Segment.Text`) on every file; sanitized showed **zero hits** on all 124, and zero `gmail.com`/`jan.de.dobbeleer` anywhere.
+- Confirmed the fix isn't cosmetic: swapping the old (buggy) fixtures back in for the 8 affected themes reproduced hash/golden mismatches against the corrected manifest — the leaked email was actually rendering into visible prompt output for those themes, not just sitting inert in unused JSON.
+- Manifest + all 12 representative goldens are byte-identical across two regenerations of the corrected set.
+- `go test ./... -count=1` and `golangci-lint run` both clean.
+- `TZ=Asia/Tokyo TERM_PROGRAM=Apple_Terminal POSH_SESSION_ID=live-session WT_SESSION=xyz` combined — harness still passes.
+- Cleaned up scratchpad copies that held the real email in plaintext (outside the repo, never committed, but no reason to leave them).
+
+**Manifest did change**, as expected: 8 lines (the az-enabled themes), 3 of which are in the representative-golden set (`devious-diamonds`, `night-owl`, `tokyo`) and got new `.golden` files too. It's now restabilized — identical across repeat regenerations.
+
+**Files touched by this fix:** `src/cli/sanitize.go`, `src/cli/sanitize_test.go`, `src/prompt/fixtures_sanitized_test.go`, and all 124 files under `src/prompt/testdata/fixtures/` (8 of them materially, since only the az data changed) plus `src/prompt/testdata/goldens/manifest.txt` and the 3 affected `.golden` files.</result>
+<usage><subagent_tokens>351196</subagent_tokens><tool_uses>52</tool_uses><duration_ms>756990</duration_ms></usage>
+</task-notification>

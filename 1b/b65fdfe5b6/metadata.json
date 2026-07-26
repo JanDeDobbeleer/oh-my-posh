@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "1bb65fdfe5b6",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "website/static/llms-full.txt",
+    "website/static/llms.txt",
+    "website/static/skill.md",
+    "website/static/skills/ohmyposh/SKILL.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/1b/b65fdfe5b6/0/metadata.json",
+      "transcript": "/1b/b65fdfe5b6/0/full.jsonl",
+      "compact_transcript": "/1b/b65fdfe5b6/0/transcript.jsonl",
+      "content_hash": "/1b/b65fdfe5b6/0/content_hash.txt",
+      "prompt": "/1b/b65fdfe5b6/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3253,
+    "cache_creation_tokens": 420934,
+    "cache_read_tokens": 21848365,
+    "output_tokens": 137813,
+    "api_call_count": 124
+  }
+}

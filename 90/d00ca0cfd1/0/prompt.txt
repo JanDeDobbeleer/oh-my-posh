@@ -1,0 +1,1 @@
+https://github.com/JanDeDobbeleer/oh-my-posh/issues/7340#issuecomment-5082568173 Investigate this issue again and try to find the root cause. Do the investigation with Vail. The last issue comment is relevant, and the history of changes as well.

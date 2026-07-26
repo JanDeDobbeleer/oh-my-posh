@@ -1,0 +1,178 @@
+go ahead with phase 1
+
+---
+
+<task-notification>
+<task-id>ada329766c9237131</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\ada329766c9237131.output</output-file>
+<status>completed</status>
+<summary>Agent "Task G design tokens" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Task G complete. `website/src/css/custom.css` is the only file touched.
+
+**G1 — recalibrated primary colour**
+
+Light mode (`:root`), replaced verbatim with the given hex values (previous `rgb(...)` values and old `#2c7ae0` removed):
+```css
+--ifm-color-primary:         #1f6fd0;
+--ifm-color-primary-dark:    #1c64bb;
+--ifm-color-primary-darker:  #1a5eb1;
+--ifm-color-primary-darkest: #164e92;
+--ifm-color-primary-light:   #3c83d8;
+--ifm-color-primary-lighter: #4e8fdc;
+--ifm-color-primary-lightest:#76a9e6;
+```
+New dark-mode block added right after it, using `html[data-theme="dark"]` — the file's majority selector form for dark-mode overrides (5 existing uses vs. 2 bare `[data-theme="dark"]` uses):
+```css
+html[data-theme="dark"] {
+  --ifm-color-primary:         #5c9fee;
+  --ifm-color-primary-dark:    #4a91ea;
+  --ifm-color-primary-darker:  #3f89e8;
+  --ifm-color-primary-darkest: #1f6ed4;
+  --ifm-color-primary-light:   #6eadf1;
+  --ifm-color-primary-lighter: #7ab5f3;
+  --ifm-color-primary-lightest:#a3cbf7;
+}
+```
+
+**G2 — deleted, no replacement**
+- `.hero { background-color: #173448; }`
+- `.hero--image { margin-top: 4rem; }`
+- `h1.hero__title { color: white; }`
+- `p.hero__subtitle { color: white; }`
+
+No `--ifm-hero-background-color` override was added, per the plan.
+
+**G3 — heading rhythm** — added to the existing `:root` font block: `--ifm-heading-font-weight: 600;`, plus new rules:
+```css
+h1, h2, h3 { letter-spacing: -0.02em; line-height: 1.2; }
+h1, h2 { text-wrap: balance; }
+```
+`--ifm-font-family-base`, the monospace stack, and `--ifm-code-font-size` were left untouched.
+
+**G4** — navbar icon-link rules, admonition overrides, `.winstore`, `.withings`, `iframe.youtube`, table border rules, `@font-face`, `code` rules, and `.badge` are all unmodified.
+
+**Verification (scoped as instructed, not full `website/`)**
+- `#173448`: zero hits in `src`, `docs`, `blog`, `docusaurus.config.js`.
+- `#2c7ae0`: zero hits in `src`, `docs`, `blog`; one remaining hit in `docusaurus.config.js:166` (`backgroundColor: '#2c7ae0'`, the announcement bar) — that's Task F's territory, not touched here.
+- `hero__title` / `hero__subtitle` / `hero--image`: zero hits in `docs`, `blog`, `docusaurus.config.js`; three hits, all in `src/pages/index.js` (lines 89, 90, 111) — Task E's territory, exactly as the plan predicted.
+
+**Contrast ratios (computed from the real hex values, WCAG relative-luminance formula)**
+- `#1f6fd0` on `#ffffff`: **≈ 4.95:1** — passes the 4.5:1 body-text bar, but only narrowly (margin ~0.45). Worth flagging to the coordinator as a thin margin, not a failure.
+- `#5c9fee` on `#1b1b1d`: **≈ 6.27:1** — comfortably passes 4.5:1.
+
+No build was run, and nothing was committed.</result>
+<usage><subagent_tokens>68264</subagent_tokens><tool_uses>17</tool_uses><duration_ms>108463</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a1d9b84d7b12ea7c3</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a1d9b84d7b12ea7c3.output</output-file>
+<status>completed</status>
+<summary>Agent "Task E homepage" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All 10 imports are used (verified each appears in JSX/logic above). JSX tag balance confirmed by inspection during the read-back: every opened tag (`Layout`, `Head`, `header`, `div`s, `Tabs`/`TabItem`×3, `CodeBlock`×3, `Link`s, `main`, `section`s) has a matching close, and self-closing tags (`script`, `img`) are correctly slashed.
+
+## Report
+
+**Files touched:** `D:\oh-my-posh\website\src\pages\index.js`, `D:\oh-my-posh\website\src\pages\styles.module.css` (only these two, as scoped).
+
+**Install commands — verified against source docs:**
+- Windows: `winget install JanDeDobbeleer.OhMyPosh --source winget` — `website/docs/installation/windows.mdx:52`
+- macOS: `brew install jandedobbeleer/oh-my-posh/oh-my-posh` — `website/docs/installation/_homebrew.md:5`
+- Linux: `curl -s https://ohmyposh.dev/install.sh | bash -s` — `website/docs/installation/linux.mdx:36`
+
+All three matched the plan exactly; no mismatches to report.
+
+**Shell list — derived from `website/docs/installation/prompt.mdx:22-34`:** the `Tabs` there lists bash, claude, cmd, copilot, elvish, fish, nu, powershell, xonsh, yash, zsh. Excluding `claude` and `copilot` (agent integrations, not shells) gives the 9 rendered on the homepage: bash, cmd, elvish, fish, nu, powershell, xonsh, yash, zsh — matching the plan's list. Rendered as one line of plain text (`Works with bash · cmd · elvish · ...`), not logos/cards.
+
+**What was removed:**
+- Both Infima classes (`hero`, `hero--primary`) from `&lt;header&gt;` — it now carries only `styles.heroBanner`.
+- The `.getStarted` class entirely from the CSS module, and its application on both CTAs.
+- The dead `imageUrl`/`featureImage` prop and render path from the `Feature` component, plus the now-unused `.featureImage` CSS rule.
+- `min-height: 60vh` from `.heroBanner`, replaced with explicit padding (`5rem 0 4rem`, `3rem 0 2rem` under 966px).
+- Emoji from feature titles; "180+" replaced with "117" in both the feature title and copy.
+
+**Button colour scoping:** Both CTAs now use only Infima's own classes with no CSS-module override — primary is `button button--primary button--lg`; secondary is `button button--outline button--primary button--lg` (the `button--primary` modifier on the outline button is required per the plan, to fix the collapsed-border bug and give Infima's own color logic control in both light and dark mode). No `color` is set in the module CSS at all now, so Infima's `--ifm-button-color` (font-color-base-inverse) governs both buttons in both color modes.
+
+**Other structural notes:**
+- Install box built from `@theme/Tabs` + `@theme/TabItem` + `@theme/CodeBlock` (pattern matched against the existing `src/components/Config.js` usage), `groupId="install-os"`, three tabs (Windows/macOS/Linux) with `language` set to `powershell`/`bash`/`bash`.
+- `hero.png` kept as-is (not replaced), now with `width="1100" height="44" alt="The default Oh My Posh prompt"`, styled by a new `.heroImage` module class (`max-width: 100%; height: auto`), not the global `.hero--image` Task G deletes.
+- Sibling groups (subhead, install box, buttons, image) laid out via a `:global(.container)` flex-column with `gap: 2rem` inside `.heroBanner`, with a `&gt; * { margin: 0 }` reset on direct children so no margin-collapse artifacts stack on top of the gap. Confirmed this `:global()` pattern is supported by the existing toolchain (found in use in `node_modules/@docusaurus/theme-classic/src/theme/**/styles.module.css`).
+- Subhead width constrained via `.subtitle { max-width: 640px }` so it doesn't run the full 1140px container.
+
+No build was run, per instructions — the coordinator owns that step.</result>
+<usage><subagent_tokens>79721</subagent_tokens><tool_uses>22</tool_uses><duration_ms>171192</duration_ms></usage>
+</task-notification>
+
+---
+
+<task-notification>
+<task-id>a5d7f5f92dfb2b342</task-id>
+<tool-use-id>toolu_01TgyuTwNBTkgzjEAQGuzFFs</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a5d7f5f92dfb2b342.output</output-file>
+<status>completed</status>
+<summary>Agent "Task F nav and footer" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>I read the whole plan (Decisions, Non-goals, all tasks) and implemented F1, F3, F4, plus the unambiguous parts of F2 in `D:\oh-my-posh\website\docusaurus.config.js`. I stopped short of one part of F2 because the spec contradicts itself — details below.
+
+## F1 — Navbar (done)
+Left side is now exactly: `Docs` (`to: 'docs'`, `activeBasePath: 'docs'`) · `Segments` (`to: 'docs/segments/overview'`) · `Themes` (`to: 'docs/themes'`) · `Blog` (`to: 'blog'`). Verified both doc pages exist on disk (`website/docs/segments/overview.mdx`, `website/docs/themes.md`). `Sponsor` and `Swag` removed from the navbar. Right side (GitHub/Discord/Bluesky icon links) untouched.
+
+## F3 — Announcement bar (done)
+Entire `announcementBar` object deleted, including `backgroundColor: '#2c7ae0'` and the sponsor link embedded in its `content` string.
+
+## F4 — Social card metadata (done)
+Removed `og:image:width` (1200) and `og:image:height` (630) from `metadata`. Left `og:image` and `og:type` untouched.
+
+## F2 — Footer: partially done, one item blocked
+
+Done:
+- Renamed `Sponsors` → `Our sponsors`, kept `CodeRabbit`.
+- Added new `Support` group with `GitHub Sponsors` (`https://github.com/sponsors/JanDeDobbeleer`) and `Product spotlight` (the existing Polar link), both removed from `Links`.
+- `Links` now holds only `Docusaurus` and `Privacy`, matching the stated end state exactly.
+
+Blocked — spec self-contradiction, not a disk mismatch: F2's own text says both of these, and they can't both be true:
+- Bullet 1: "Add `Swag` (`https://swag.ohmyposh.dev`) to the existing `Links` group."
+- Closing line: "After the change, `Links` holds only `Docusaurus` and `Privacy`."
+
+If Swag is added to `Links` and then `Sponsor`/`Product spotlight` are moved out as F2 also requires, `Links` ends up with three items (`Docusaurus`, `Privacy`, `Swag`), not two. There's no other group named in F2 for Swag to land in instead. Since `Swag` was previously reachable via the navbar (now removed per F1) and was never in the footer before, guessing wrong here either duplicates nothing (if I skip it — safe but drops reachability) or silently invents a placement not in the spec (if I add it to `Support` or `Our sponsors`). I left `https://swag.ohmyposh.dev` out of the file entirely rather than guess — it is currently **not present anywhere** in the config.
+
+I need a decision: should Swag go into `Support`, into `Our sponsors`, stay out of the footer, or something else? Once told, it's a one-line addition.
+
+## Verification
+- `node --check docusaurus.config.js` passes (exit 0).
+- Confirmed untouched: `onBrokenLinks: 'throw'`, `presets`, `plugins`, `algolia`, `appInsights`, `headTags`, `stylesheets`.
+- Only file touched: `website/docusaurus.config.js`.
+
+## Before/after URL sets
+
+**Before:**
+- Navbar left: `docs`, `blog`, `https://github.com/sponsors/JanDeDobbeleer` (Sponsor), `https://swag.ohmyposh.dev` (Swag)
+- Navbar right: `https://github.com/jandedobbeleer/oh-my-posh`, `https://discord.gg/n7E3DkXssv`, `https://staging.bsky.app/profile/ohmyposh.dev`
+- Footer "How to": `docs/`, `docs/contributing/started`
+- Footer "Social": github, discord, bluesky (same three URLs as navbar right)
+- Footer "Links": `https://github.com/sponsors/JanDeDobbeleer` (Sponsor), polar Product spotlight URL, `https://github.com/facebook/docusaurus`, `/privacy`
+- Footer "Sponsors": `https://coderabbit.link/posh`
+- `metadata`: `https://ohmyposh.dev/img/hero.png` (+ width 1200 / height 630, not URLs)
+- `announcementBar.content`: embedded `https://github.com/sponsors/JanDeDobbeleer`
+- `copyright`: `https://github.com/sponsors/JanDeDobbeleer`, `/docs/contributors` (untouched, not in scope)
+
+**After:**
+- Navbar left: `docs`, `docs/segments/overview`, `docs/themes`, `blog` — Sponsor and Swag URLs gone from navbar
+- Navbar right: unchanged
+- Footer "How to" / "Social": unchanged
+- Footer "Links": `https://github.com/facebook/docusaurus`, `/privacy`
+- Footer "Support" (new): `https://github.com/sponsors/JanDeDobbeleer`, polar Product spotlight URL
+- Footer "Our sponsors" (renamed): `https://coderabbit.link/posh`
+- `metadata`: `https://ohmyposh.dev/img/hero.png` only (width/height entries removed)
+- `announcementBar`: gone entirely, including its embedded sponsors URL
+- `copyright`: unchanged
+
+Net effect versus a fully-consistent F2: every URL from the original file is preserved exactly once **except** `https://swag.ohmyposh.dev`, which is currently unplaced pending your decision.</result>
+<usage><subagent_tokens>70830</subagent_tokens><tool_uses>11</tool_uses><duration_ms>206256</duration_ms></usage>
+</task-notification>

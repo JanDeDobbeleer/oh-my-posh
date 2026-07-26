@@ -1,0 +1,158 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "8cb7fcfcbb16",
+  "session_id": "7072595a-75b0-4521-805d-26329675245d",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-26T08:44:45.8818522Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/cache/store.go",
+    "src/cache/store_test.go"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "20dabecb7b68",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 91,
+    "cache_creation_tokens": 126869,
+    "cache_read_tokens": 5597482,
+    "output_tokens": 41490,
+    "api_call_count": 47
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_0176nWJBpjgYSnk8GMvWSQnp",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "20dabecb7b68",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 13,
+        "end": 14,
+        "entry_ids": [
+          "bc21689e-5a9c-4c01-9629-107398695046"
+        ],
+        "tool_use_id": "toolu_0176nWJBpjgYSnk8GMvWSQnp"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_0176nWJBpjgYSnk8GMvWSQnp"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01EYadwHZj5DwJdJazTgLVHh",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "writing-clearly-and-concisely"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "20dabecb7b68",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 150,
+        "end": 151,
+        "entry_ids": [
+          "1e4ec5bf-5006-49c3-a63f-1910a8ce8f36"
+        ],
+        "tool_use_id": "toolu_01EYadwHZj5DwJdJazTgLVHh"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01EYadwHZj5DwJdJazTgLVHh"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: writing-clearly-and-concisely",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_0116xzduiN2QRMBe8YaVXPkU",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "20dabecb7b68",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 205,
+        "end": 206,
+        "entry_ids": [
+          "ec5d3c0d-bf6c-43bb-8443-fdc3abd52b13"
+        ],
+        "tool_use_id": "toolu_0116xzduiN2QRMBe8YaVXPkU"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_0116xzduiN2QRMBe8YaVXPkU"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-26T08:44:45.8027062Z",
+    "agent_lines": 29,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 6,
+    "total_committed": 29,
+    "total_lines_changed": 35,
+    "agent_percentage": 82.85714285714286,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 17,
+      "user_lines_removed": 6,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/cache/store.go": 17
+      },
+      "user_removed_per_file": {
+        "src/cache/store.go": 6
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 52,
+      "agent_lines_removed": 6
+    }
+  ]
+}

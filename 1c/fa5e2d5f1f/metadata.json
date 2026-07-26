@@ -1,0 +1,47 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "1cfa5e2d5f1f",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "website/docs/configuration/introduction.mdx",
+    "website/docs/contributors.md",
+    "website/docs/dsc.md",
+    "website/docs/faq.mdx",
+    "website/docs/installation/_homebrew.md",
+    "website/docs/installation/_next.md",
+    "website/docs/installation/customize.mdx",
+    "website/docs/installation/fonts.mdx",
+    "website/docs/installation/homebrew.md",
+    "website/docs/installation/linux.mdx",
+    "website/docs/installation/macos.mdx",
+    "website/docs/installation/next.md",
+    "website/docs/installation/prompt.mdx",
+    "website/docs/installation/upgrade.mdx",
+    "website/docs/installation/windows.mdx",
+    "website/docs/migrating-module.md",
+    "website/docs/share-theme.md",
+    "website/docs/themes.md",
+    "website/sidebars.js",
+    "website/static/llms-full.txt",
+    "website/static/llms.txt",
+    "website/static/skills/ohmyposh/configuration.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/1c/fa5e2d5f1f/0/metadata.json",
+      "transcript": "/1c/fa5e2d5f1f/0/full.jsonl",
+      "compact_transcript": "/1c/fa5e2d5f1f/0/transcript.jsonl",
+      "content_hash": "/1c/fa5e2d5f1f/0/content_hash.txt",
+      "prompt": "/1c/fa5e2d5f1f/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3170,
+    "cache_creation_tokens": 360113,
+    "cache_read_tokens": 10153605,
+    "output_tokens": 98320,
+    "api_call_count": 80
+  }
+}

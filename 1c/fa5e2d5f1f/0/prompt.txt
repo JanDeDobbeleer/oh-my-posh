@@ -1,0 +1,47 @@
+start with the phase 0 website fixes, build a good plan, review the plan with Fable, and do the execution with Sonnet 5 in parallel where you can. And for the website design, I actually prefer the visual appearance of direction A. It's a lot cleaner, together with the segment catalog and the studio direction of B.
+
+---
+
+<task-notification>
+<task-id>a7f8c69a352e8cddb</task-id>
+<tool-use-id>toolu_01BJ22Q2y9BmgwZtvvn8eYX3</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a7f8c69a352e8cddb.output</output-file>
+<status>completed</status>
+<summary>Agent "Task B CSS hygiene" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Task B is complete. Summary:
+
+**Files changed** (only the three permitted): `website/src/css/custom.css`, `website/src/pages/styles.module.css`, `website/docusaurus.config.js` (stylesheets array only).
+
+**Rules removed** (B1, no replacement):
+- `a.getStarted_Sjon`
+- `[data-theme="light"] .themedImage_ToTc` and its dark counterpart
+- the entire `/* Dev settings */` block (both `themedImage_node_modules-\@docusaurus-theme-classic-...` selectors)
+- `a.getStarted_src-pages-styles-module`
+- `.header-affiliate-link:hover`, `.header-affiliate-link:before`, and `html[data-theme="dark"] .header-affiliate-link:before` (B4)
+
+No image filters were reintroduced under a new class, per the note about the Microsoft Store badge already theme-swapping its source.
+
+**Rules added/changed:**
+- `styles.module.css`: `.getStarted { color: #fff; }` added alongside the existing `border-style`/`border-width` (preserves the get-started link colour at class-only specificity, as instructed).
+- `--ifm-color-primary-lightest` → `rgb(120, 175, 240)`.
+- Table `box-shadow` now uses `var(--ifm-table-border-color)` instead of the hardcoded `#c8c9cc` (only occurrence, confirmed).
+- `@font-face` src fixed from `/static/fonts/VictorMono.ttf` to `/fonts/VictorMono.ttf`, plus `font-display: swap;`.
+- `code` and `code[class*="language-"], pre[class*="language-"]` now reference `var(--ifm-font-family-monospace)` and both gained `font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;`.
+- Fira Code entry removed from `stylesheets` in `docusaurus.config.js`; Inter entry untouched.
+
+**Exact monospace stack set:**
+```
+--ifm-font-family-monospace: "Victor Mono", "Symbols Nerd Font Mono",
+  "Symbols Nerd Font", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+```
+
+**Verification performed:**
+- `node --check website/docusaurus.config.js` passes.
+- Ripgrep across all of `website/` (via the Grep tool, which respects `.gitignore` and skips `node_modules`) for `getStarted_Sjon`, `themedImage_ToTc`, `themedImage_node_modules`, `getStarted_src-pages-styles-module`, and `header-affiliate-link` — zero remaining matches anywhere, before and after edit confirmed each lived only in `custom.css`.
+- Confirmed `website/static/fonts/VictorMono.ttf` exists (2,440,352 bytes).
+- No build was run.
+
+**Mismatches vs. spec:** none. Everything on disk matched the plan's description exactly (line numbers, selector names, `.header-affiliate-link` absent from navbar config, font file present at the expected path).</result>
+<usage><subagent_tokens>70955</subagent_tokens><tool_uses>16</tool_uses><duration_ms>202371</duration_ms></usage>
+</task-notification>

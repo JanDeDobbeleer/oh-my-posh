@@ -1,0 +1,199 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "1cfa5e2d5f1f",
+  "session_id": "6c0a282a-886f-458d-a426-93d95104b4a6",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-26T14:17:56.2460382Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "website/docs/configuration/introduction.mdx",
+    "website/docs/contributors.md",
+    "website/docs/dsc.md",
+    "website/docs/faq.mdx",
+    "website/docs/installation/_homebrew.md",
+    "website/docs/installation/_next.md",
+    "website/docs/installation/customize.mdx",
+    "website/docs/installation/fonts.mdx",
+    "website/docs/installation/homebrew.md",
+    "website/docs/installation/linux.mdx",
+    "website/docs/installation/macos.mdx",
+    "website/docs/installation/next.md",
+    "website/docs/installation/prompt.mdx",
+    "website/docs/installation/upgrade.mdx",
+    "website/docs/installation/windows.mdx",
+    "website/docs/migrating-module.md",
+    "website/docs/share-theme.md",
+    "website/docs/themes.md",
+    "website/sidebars.js",
+    "website/static/llms-full.txt",
+    "website/static/llms.txt",
+    "website/static/skills/ohmyposh/configuration.md"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "aeecd0701177",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 3170,
+    "cache_creation_tokens": 360113,
+    "cache_read_tokens": 10153605,
+    "output_tokens": 98320,
+    "api_call_count": 80
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01HRsL11ZbQAZUBiD1yvUqEK",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "aeecd0701177",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 13,
+        "end": 14,
+        "entry_ids": [
+          "8d47cd96-c223-4876-a4e8-1f711a712802"
+        ],
+        "tool_use_id": "toolu_01HRsL11ZbQAZUBiD1yvUqEK"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01HRsL11ZbQAZUBiD1yvUqEK"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01JUwhdEzjEKkN1tMQ3nYvEz",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "artifact-design"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "aeecd0701177",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 125,
+        "end": 126,
+        "entry_ids": [
+          "3ec6dc11-47a4-4957-b66a-4af73fb37725"
+        ],
+        "tool_use_id": "toolu_01JUwhdEzjEKkN1tMQ3nYvEz"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01JUwhdEzjEKkN1tMQ3nYvEz"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: artifact-design",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-26T14:17:56.1489203Z",
+    "agent_lines": 0,
+    "agent_removed": 3,
+    "human_added": 421,
+    "human_modified": 95,
+    "human_removed": 0,
+    "total_committed": 424,
+    "total_lines_changed": 519,
+    "agent_percentage": 0.5780346820809248,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 360,
+      "user_lines_removed": 153,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "website/docs/configuration/introduction.mdx": 1,
+        "website/docs/contributors.md": 1,
+        "website/docs/dsc.md": 1,
+        "website/docs/faq.mdx": 1,
+        "website/docs/index.mdx": 18,
+        "website/docs/installation/_homebrew.md": 25,
+        "website/docs/installation/_next.md": 14,
+        "website/docs/installation/customize.mdx": 1,
+        "website/docs/installation/fonts.mdx": 1,
+        "website/docs/installation/linux.mdx": 2,
+        "website/docs/installation/macos.mdx": 3,
+        "website/docs/installation/prompt.mdx": 1,
+        "website/docs/installation/upgrade.mdx": 1,
+        "website/docs/installation/windows.mdx": 2,
+        "website/docs/migrating-module.md": 1,
+        "website/docs/segments/overview.mdx": 152,
+        "website/docs/share-theme.md": 1,
+        "website/docs/themes.md": 1,
+        "website/docusaurus.config.js": 1,
+        "website/sidebars.js": 115,
+        "website/src/css/custom.css": 12,
+        "website/src/pages/styles.module.css": 1,
+        "website/static/llms.txt": 4
+      },
+      "user_removed_per_file": {
+        "website/docs/configuration/introduction.mdx": 2,
+        "website/docs/contributors.md": 1,
+        "website/docs/dsc.md": 1,
+        "website/docs/faq.mdx": 1,
+        "website/docs/installation/customize.mdx": 1,
+        "website/docs/installation/fonts.mdx": 1,
+        "website/docs/installation/homebrew.md": 25,
+        "website/docs/installation/linux.mdx": 2,
+        "website/docs/installation/macos.mdx": 3,
+        "website/docs/installation/next.md": 14,
+        "website/docs/installation/prompt.mdx": 1,
+        "website/docs/installation/upgrade.mdx": 1,
+        "website/docs/installation/windows.mdx": 2,
+        "website/docs/migrating-module.md": 1,
+        "website/docs/share-theme.md": 1,
+        "website/docs/themes.md": 1,
+        "website/docusaurus.config.js": 2,
+        "website/sidebars.js": 33,
+        "website/src/css/custom.css": 56,
+        "website/static/llms.txt": 4
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 170,
+      "user_lines_removed": 0,
+      "agent_lines_added": 194,
+      "agent_lines_removed": 156,
+      "user_added_per_file": {
+        "website/docs/index.mdx": 18,
+        "website/docs/segments/overview.mdx": 152
+      }
+    }
+  ]
+}

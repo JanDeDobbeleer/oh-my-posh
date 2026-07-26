@@ -432,3 +432,46 @@ The plan's design (envelope shape, version marker, "don't move the `:203` short-
 One thing worth flagging separately (not fixed, out of the literal plan scope): `restoreCache` sits between `restoreData` and the `Enabled()` call in `Execute`, and if a segment present in a hand-written file also has a `cache` section with a live cache hit, `restoreCache` would short-circuit before the A3 derive/overlay ever runs. None of the themes I tested hit this, and the plan only calls out moving the `:203` short-circuit, not `restoreCache`'s — flagging it here rather than silently fixing (or silently ignoring) it.</result>
 <usage><subagent_tokens>273162</subagent_tokens><tool_uses>147</tool_uses><duration_ms>1748717</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>a40f1de3c3f062919</task-id>
+<tool-use-id>toolu_01Max3Q93SSZuXx5oa29KHVd</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a40f1de3c3f062919.output</output-file>
+<status>completed</status>
+<summary>Agent "Task A: hermetic replay" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All confirmed. Here's the summary of this fix.
+
+## The fix
+
+`src/config/segment.go`, `Execute()` — one line added plus a comment, at the `restoreCache` cache-hit branch:
+
+```go
+cacheRestored := segment.restoreCache()
+if cacheRestored &amp;&amp; !env.Flags().Streaming {
+    // ... comment explaining why ...
+    segment.overlayData()
+    return
+}
+```
+
+`overlayData()` is safe to call here: `json.Unmarshal(segment.pendingData, &amp;segment.writer)` only touches fields present in the pinned JSON, leaving the cache-restored writer's other fields untouched (same in-place-interface-unmarshal mechanism already used elsewhere in this file), and it's a no-op when `pendingData` is empty — the common case, no hand-written override for that segment. `restoreCache()` already called `template.Cache.AddSegmentData` with the same writer pointer, so the in-place mutation is visible through that cache reference without a second `AddSegmentData` call.
+
+## Regression test
+
+Added `TestSegment_RestoreDataOverlaysOnTopOfACacheHit` in `src/config/segment_test.go`: warms the session cache for a `SESSION` segment with `SSHSession: false`, then runs `Execute` with a hand-written data file pinning `SSHSession: true`. Asserts the pinned value wins. The mock environment has no `Getenv`/`Platform` stub, so if the fix ever regressed to falling through to a live probe, the test would panic, not just fail silently.
+
+I verified the test is load-bearing, not just passing by construction: temporarily reverted the one-line fix, reran the test — it failed (`the pinned value must win over the warm cache hit`) — then restored the fix and confirmed it passes again.
+
+## Re-run results
+
+- `go build ./...` — clean.
+- `go test ./...` — clean, all packages pass including the new test.
+- `golangci-lint run ./...` — 0 issues. `gofmt -l .` and `fieldalignment --fix ./...` — no changes needed.
+- Chips timing, rebuilt binary, re-recorded fixture: **0.107s / 0.098s / 0.079s / 0.077s** across 4 runs — unchanged from before this fix (~0.08–0.11s), confirming the `restoreCache` change didn't reintroduce the ~1.2s wakatime network delay. That's expected: the hermetic recorded-and-disabled path in `restoreData` still short-circuits before `restoreCache` is ever reached for that segment.
+
+`git diff --stat` now shows `src/config/segment.go` at +146/-16 and `src/config/segment_test.go` at +201/-1 (net of this fix's test addition), all other files unchanged from the prior report.</result>
+<usage><subagent_tokens>290599</subagent_tokens><tool_uses>32</tool_uses><duration_ms>328255</duration_ms></usage>
+</task-notification>

@@ -303,3 +303,41 @@ Nothing in the plan's Task C section turned out to be wrong — the four traps (
 Nothing in the plan's Task B section turned out to be wrong — the pinned data contract, the hydration mechanism, the CSS variable choices, and the alias import paths (`@docusaurus/useIsBrowser`, `@docusaurus/useGlobalData`, `@docusaurus/router`) all checked out against the actual installed Docusaurus 3.10.2 source (these are webpack-only aliases resolved in `@docusaurus/core/lib/webpack/aliases/index.js`, not real npm packages — worth flagging only because a naive `npm ls` would say they don't exist).</result>
 <usage><subagent_tokens>92167</subagent_tokens><tool_uses>31</tool_uses><duration_ms>319044</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>ab1ba4b21af217365</task-id>
+<tool-use-id>toolu_01B4XVQLYhaM69KBZeKAe9AK</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\ab1ba4b21af217365.output</output-file>
+<status>completed</status>
+<summary>Agent "Task A: segments data plugin" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## Report
+
+**Files created (my scope only):**
+- `D:\oh-my-posh\website\plugins\segments\index.js`
+- `D:\oh-my-posh\website\plugins\segments\data.js`
+
+Deliverable written: `C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\scratchpad\extracted-descriptions.tsv` (117 lines, `id&lt;TAB&gt;description`, sorted by id).
+
+**Verification run** (against the real `website/plugins/segments/registry.json`, which Task E had already landed by the time I finished — I read it but never wrote to it):
+
+- `total: 117`, no throws.
+- Group counts (sum to 117): cli 39, languages 27, system 17, cloud 10, scm 8, web 8, health 5, music 3.
+- Auth tiers (sum to 11): oauth 2, cli 2, apikey 4, url 3.
+- Battery description extracted correctly: `"Battery displays the remaining power percentage for your battery."` — not the WSL `:::caution` text.
+- Alias cases resolved correctly: `golang` → type `go`, `copilot-cli` → type `copilot_cli`.
+- Zero descriptions start with `:::`, zero are empty.
+
+**Files that fought the extractor:** Only `system/battery.mdx` has the admonition *before* the real paragraph (the trap the plan called out). I found 12 other files with a `:::caution/:::warning/:::info/:::note` block under `## What` (`cli/gitversion.mdx`, `cli/nbgv.mdx`, `cloud/pulumi.mdx`, `languages/fortran.mdx`, `music/lastfm.mdx`, `music/spotify.mdx`, `system/connection.mdx`, `system/vimode.mdx`, `system/winget.mdx`, `web/carbonintensity.mdx`, `web/owm.mdx`, `web/todoist.mdx`, `web/wakatime.mdx`), but in all of those the admonition comes *after* the real paragraph, so a naive extractor would have accidentally gotten those right — battery is genuinely the only one where naive-first-paragraph fails.
+
+**Plan corrections found:**
+- Nothing in the plan's Task A section was wrong. One ambiguity I resolved by inspection: `AUTH_TIERS` in `data.js` must be keyed by **doc id**, not config `type` — confirmed by checking `copilot` (type `copilot`, doc id `copilot`, in `cli` tier) vs `copilot-cli` (type `copilot_cli`, doc id `copilot-cli`, no auth) and `ytm`/`golang`. All 11 curated keys verified to exist as real `.mdx` filenames.
+- I initially over-engineered a `.name` override sub-property under `DESCRIPTION_OVERRIDES` that isn't in the pinned contract (which only overrides `description`, not `name`); caught it in review and removed it before finalizing.
+
+**Safeguards implemented per spec:** `readRegistry()` throws a clear message naming `go test ./config/...` as the regeneration command if `registry.json` is missing (no fallback/stub logic committed — verified via `node --check` and `git status` that only my two files plus the pre-existing `registry.json` are present under `website/plugins/segments/`). Cross-checks throw naming offending ids if: a doc has no registry entry, a registry entry has no doc, an `AUTH_TIERS`/`DESCRIPTION_OVERRIDES` key references an unknown doc id, or an auth tier has no label. Frontmatter and `## What` parsing use plain line scanning, no YAML dependency.
+
+Untouched, as required: `website/docusaurus.config.js` and `website/plugins/segments/registry.json` (Task E's file — read-only).</result>
+<usage><subagent_tokens>93588</subagent_tokens><tool_uses>33</tool_uses><duration_ms>383173</duration_ms></usage>
+</task-notification>

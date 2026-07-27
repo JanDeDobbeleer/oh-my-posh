@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "052b47469fee",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "tools/svg-png-compare/shot.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/05/2b47469fee/0/metadata.json",
+      "transcript": "/05/2b47469fee/0/full.jsonl",
+      "compact_transcript": "/05/2b47469fee/0/transcript.jsonl",
+      "content_hash": "/05/2b47469fee/0/content_hash.txt",
+      "prompt": "/05/2b47469fee/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1131,
+    "cache_creation_tokens": 4085668,
+    "cache_read_tokens": 234831302,
+    "output_tokens": 518772,
+    "api_call_count": 613
+  }
+}

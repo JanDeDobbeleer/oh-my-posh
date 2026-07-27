@@ -282,6 +282,17 @@ func (d *Defaults) ToAnsi(ansiColor Ansi, isBackground bool) Ansi {
 		return ansiColor
 	}
 
+	if dir, inner, percent, ok := ansiColor.ShadeArgs(); ok {
+		hex, ok := shadeHex(inner, dir, percent)
+		if !ok {
+			log.Errorf("%s: darken()/lighten() only support hex colors and palette references resolving to one; "+
+				"named ANSI/terminal colors have no fixed RGB oh-my-posh can shift, define the color in your palette with a hex value instead", ansiColor)
+			return emptyColor
+		}
+
+		ansiColor = Ansi(hex)
+	}
+
 	if ansiColor == Accent {
 		if d.accent == nil {
 			return emptyColor
@@ -362,6 +373,13 @@ func (p *PaletteColors) ToAnsi(colorString Ansi, isBackground bool) Ansi {
 		return colorString
 	}
 
+	// a shade call's color argument may itself be a palette reference; resolve it here
+	// so Defaults.ToAnsi only ever sees a concrete color inside darken()/lighten().
+	colorString, err := p.palette.resolveShade(colorString)
+	if err != nil {
+		return emptyColor
+	}
+
 	paletteColor, err := p.palette.ResolveColor(colorString)
 	if err != nil {
 		return emptyColor
@@ -373,6 +391,11 @@ func (p *PaletteColors) ToAnsi(colorString Ansi, isBackground bool) Ansi {
 }
 
 func (p *PaletteColors) Resolve(colorString Ansi) (Ansi, error) {
+	colorString, err := p.palette.resolveShade(colorString)
+	if err != nil {
+		return "", err
+	}
+
 	return p.palette.ResolveColor(colorString)
 }
 

@@ -15,6 +15,9 @@
         },
         {
           "$ref": "#/definitions/gradient"
+        },
+        {
+          "$ref": "#/definitions/shade"
         }
       ]
     },
@@ -36,6 +39,12 @@
       "pattern": "^(linear|dark|light)-gradient\\(\\s*[^,()]+(\\s*,\\s*[^,()]+)*\\s*\\)$",
       "title": "Gradient color",
       "description": "https://ohmyposh.dev/docs/configuration/colors#gradients"
+    },
+    "shade": {
+      "type": "string",
+      "pattern": "^(darken|lighten)\\(\\s*[^,()]+\\s*,\\s*[^,()]+\\s*\\)$",
+      "title": "Shade color",
+      "description": "https://ohmyposh.dev/docs/configuration/colors#shades"
     },
     "palette_color": {
       "anyOf": [

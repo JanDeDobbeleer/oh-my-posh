@@ -733,3 +733,38 @@ Added a new helper `leadingAnchorInvisible(match anchorMatch) bool` that mirrors
 Nothing in the plan turned out to be wrong — both root causes and the exported/internal-path relationship were exactly as described.</result>
 <usage><subagent_tokens>118659</subagent_tokens><tool_uses>43</tool_uses><duration_ms>484726</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>aefe5863bb65ea668</task-id>
+<tool-use-id>toolu_01CuEx8L5UWibhxuPUTpkcjp</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\aefe5863bb65ea668.output</output-file>
+<status>completed</status>
+<summary>Agent "Task C: Plain hyperlink output" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Everything is clean. Task C is complete.
+
+## Report
+
+**Fix implemented in `D:\oh-my-posh\src\terminal\writer.go`** (per the spec's exact prescription — guard the 7 OSC 8 emitter sites AND make `write()` return early on `isHyperlink &amp;&amp; Plain`):
+
+- Added a `writeHyperlinkEscape(txt string)` helper (guards on `Plain`, writes unescaped since these bracket the URL/text that streams separately) and routed all 7 emission sites through it: `Write()`'s leading `&lt;LINK&gt;` prologue, plus `HyperlinkStart`/`HyperlinkCenter`/`HyperlinkEnd` in both `writeBody` and `writeBodyGradient`.
+- Fixed `write()`'s `isHyperlink` branch (the actual trap) to `return` before `builder.WriteRune(s)` when `Plain` is set, so the URL text between `&lt;LINK&gt;` and `&lt;TEXT&gt;` is suppressed and never streams in uncounted.
+- Left the no-text "link" fallback (`builder.WriteString("link")`, `length += 4`) untouched — it already counts correctly regardless of `Plain` and isn't part of the OSC 8 wrapper.
+
+**Test added** in `writer_hyperlink_test.go`: `TestGenerateHyperlinkPlainMode`, using `saveGradientTestGlobals(t)` for save/restore of `Plain`/`Colors`/`ParentColors`. Asserts the Plain render of `&lt;LINK&gt;http://www.google.be&lt;TEXT&gt;google&lt;/TEXT&gt;&lt;/LINK&gt;` is exactly `"google"` with `length == 6`, and that the URL never leaks in.
+
+**Verification:**
+1. `go build ./...` and `go test ./...` — clean.
+2. Plain render: `got = "google"`, `length = 6` (matches spec exactly; the naive "emitters-only" version would have produced `"http://www.google.begoogle"` with `length=6, visible=26`).
+3. `go test ./prompt/ -run TestGoldenThemes -count=1` — all 124 goldens byte-identical.
+4. `git diff` on `writer_hyperlink_test.go` — additions only (24 new lines, nothing removed).
+5. Coverage on the five gated functions after the change: `classifyAnchor`, `writeBodyGradient`, `writeVisibleRune`, `stampGradient`, `countVisibleCells` — all still 100.0%.
+6. Benchmarks: allocs/op and B/op are **exact matches** to baseline across three separate post-fix runs: WriteAnchors 592B/14, WritePlainASCII 280B/6, WriteSolid 456B/16, WriteGradient 1753B/17, WriteGradientChained 776B/28, EnginePrimary ~9147-9148B/95. For ns/op I ran the same-session alternating A/B (stash fix → measure B1 → restore → measure A2 → stash → measure B2 → restore → measure A3) twice as required: WriteAnchors/WritePlainASCII/WriteSolid/WriteGradientChained showed no consistent delta beyond session noise (medians overlapped between A and B runs); WriteGradient showed a small, consistent ~2-3% increase (median ~2917-2939ns baseline vs ~2990-3002ns fixed) — expected, since `write()` gained one untaken-branch check that runs per visible rune in the gradient path, exactly as the task flagged to watch for.
+7. `golangci-lint run ./terminal/...` — 0 issues (checked both before and after the benchmark stash round-trips).
+8. Full `./terminal/` package run together (`-v -count=1`) — all tests pass, no state leakage into neighboring tests.
+
+Nothing in the plan turned out to be wrong for this task; the described trap (guarding emitters alone corrupts `length`) was confirmed exactly as specified, and the two-part fix resolved it cleanly. Diff touches only `src/terminal/writer.go` (7 call-site edits + one new 12-line helper + the `write()` early return) and `src/terminal/writer_hyperlink_test.go` (one new test, additions only).</result>
+<usage><subagent_tokens>138621</subagent_tokens><tool_uses>41</tool_uses><duration_ms>848320</duration_ms></usage>
+</task-notification>

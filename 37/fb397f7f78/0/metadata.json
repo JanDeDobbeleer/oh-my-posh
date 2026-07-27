@@ -1,0 +1,148 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "37fb397f7f78",
+  "session_id": "6c0a282a-886f-458d-a426-93d95104b4a6",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-27T14:32:13.3110849Z",
+  "branch": "next",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [],
+  "agent": "Claude Code",
+  "model": "claude-opus-5",
+  "turn_id": "cd94afb45cb0",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 4028,
+    "cache_creation_tokens": 3255334,
+    "cache_read_tokens": 202637247,
+    "output_tokens": 531494,
+    "api_call_count": 544
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01HRsL11ZbQAZUBiD1yvUqEK",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "cd94afb45cb0",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 13,
+        "end": 14,
+        "entry_ids": [
+          "8d47cd96-c223-4876-a4e8-1f711a712802"
+        ],
+        "tool_use_id": "toolu_01HRsL11ZbQAZUBiD1yvUqEK"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01HRsL11ZbQAZUBiD1yvUqEK"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01JUwhdEzjEKkN1tMQ3nYvEz",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "artifact-design"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "cd94afb45cb0",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 125,
+        "end": 126,
+        "entry_ids": [
+          "3ec6dc11-47a4-4957-b66a-4af73fb37725"
+        ],
+        "tool_use_id": "toolu_01JUwhdEzjEKkN1tMQ3nYvEz"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01JUwhdEzjEKkN1tMQ3nYvEz"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: artifact-design",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01AUV4u4moG5TtnGdE4eGaeB",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "cd94afb45cb0",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 565,
+        "end": 566,
+        "entry_ids": [
+          "fbd5e423-6a49-47df-af45-86e6e0f97fbe"
+        ],
+        "tool_use_id": "toolu_01AUV4u4moG5TtnGdE4eGaeB"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01AUV4u4moG5TtnGdE4eGaeB"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 49
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 1215,
+      "user_lines_removed": 50,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/svg/doublewidth.go": 138,
+        "src/svg/doublewidth_test.go": 83,
+        "src/svg/fit.go": 66,
+        "src/svg/fit_test.go": 40,
+        "src/svg/svg.go": 92,
+        "src/svg/svg_test.go": 61,
+        "tools/svg-png-compare/.gitignore": 4,
+        "tools/svg-png-compare/compare.mjs": 551,
+        "tools/svg-png-compare/package-lock.json": 87,
+        "tools/svg-png-compare/package.json": 15,
+        "tools/svg-png-compare/zip.mjs": 78
+      },
+      "user_removed_per_file": {
+        "src/svg/fit.go": 28,
+        "src/svg/svg.go": 16,
+        "src/svg/svg_test.go": 6
+      }
+    }
+  ]
+}

@@ -807,3 +807,45 @@ Replaced the golden harness's 124 per-theme fixtures with one shared, committed 
 **Verification performed** (all passed): `go build ./...`, `go test ./...`, `golangci-lint run ./...` (0 issues); golden `-update` run twice produces a byte-identical manifest; harness passes with `TZ=Asia/Tokyo TERM_PROGRAM=Apple_Terminal POSH_SESSION_ID=live WT_SESSION=x`; a built binary renders `chips` via `--data` in ~0.14-0.19s (well under 0.5s, confirming no live probe leaks in); planting an email under an invented fixture key made `TestFixturesContainNoIdentityByShape` fail naming the exact path/value, and reverting restored a pass; corrupting one byte of `chips.golden` made `TestGoldenThemes` fail naming the theme, byte offset, and an escaped context window, and restoring it passed again; `git status` shows exactly 124 deletions, 1 new fixture, 3 modified source/test files, and 11 modified goldens/manifest — nothing else.</result>
 <usage><subagent_tokens>213332</subagent_tokens><tool_uses>133</tool_uses><duration_ms>1580961</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>aab28ca50e42e5691</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\aab28ca50e42e5691.output</output-file>
+<status>completed</status>
+<summary>Agent "Consolidate fixtures to one file" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## Summary of the fix
+
+You were right, and there was a second bug hiding inside the fix: my initial `mergeRichest` counted every recorded segment's `Segment.Index` field (and `Segment.Text`, already always `""`) as a "populated leaf." That field is pure engine bookkeeping — `segment.Render` (`config/segment.go:306`) calls `writer.SetIndex(index)` unconditionally on every render, overwriting whatever the fixture carried before the template ever executes. Counting it meant richness ties were being broken by which theme's git/os/session/shell/etc. segment happened to sit later in its own block, not by any real data difference. I excluded the `"Segment"` key from `countPopulated` (`src/cli/config_export_data.go`, the `map[string]any` case) before finalizing anything.
+
+**Net effect after the fix**: of the 13 segment keys with more than one distinct recorded variant across the 124 themes, only **3** actually change which value gets picked once `Segment.Index` noise is removed:
+
+| key | variants | mostCommon (populated fields, count) | richest (populated fields, count) | what changed |
+|---|---|---|---|---|
+| `git` | 40 | 7 populated, picked by 16 themes | 18 populated, picked by 14 themes | `Ahead:21`, `BranchStatus:"↑21"`, real `Working`/`Staging` counts, upstream URL/hash — vs. all-zero/empty |
+| `status` | 8 | 2 populated, picked by 29 themes (**enabled: false**) | 3 populated, picked by 19 themes (**enabled: true**) | segment goes from entirely suppressed to rendering `Meaning:"0"`/`String:"0"` |
+| `executiontime` | 11 | 0 populated, picked by 14 themes (enabled: false, `FormattedMs:""`) | 2 populated, picked by 7 themes (enabled: true, `FormattedMs:"0ms"`) | segment goes from suppressed to rendering real formatted text |
+| `az`, `battery`, `go`, `os`, `path`, `session`, `shell`, `sysinfo`, `text`, `time` | 4–66 each | — | — | **same pick both ways** — once Index noise is removed, richness ties exactly, so most-common-among-equally-rich (my tie-break) lands on the identical value mostCommon already had |
+
+`time`'s 66 variants all tie at the same richness (every recording has exactly `CurrentDate` + `Format` populated, regardless of which format string), so it degenerates to the same deterministic pick either way — worth noting since it's the key you specifically flagged as high-variance.
+
+**Verification (re-ran everything, plus your new asks):**
+- `go build ./...`, `go test ./...`, `golangci-lint run ./...` — all clean.
+- All 124 themes still render non-empty; still 124 pairwise-distinct outputs.
+- Regenerating the fixture twice in a row (`--themes` merge) differs in exactly one field: `time.CurrentDate` (live wall-clock, expected — same as the original per-theme fixtures always had). Everything else, including every tie-break, is byte-identical.
+- Regenerating goldens/manifest twice in a row from the fixed fixture is fully byte-identical (no live probing there, so no timestamp caveat).
+- `TZ=Asia/Tokyo TERM_PROGRAM=Apple_Terminal POSH_SESSION_ID=live WT_SESSION=x` — still passes.
+- `chips` via a built binary + `--data`: ~0.15–0.22s (well under 0.5s, no live probe leaking in).
+- Planting an email under an invented key → `TestFixturesContainNoIdentityByShape` failed naming the path/value; reverted → passes.
+- Corrupting one golden byte → failure named the theme, byte offset, and readable escape context; restored → passes.
+
+**Themes changed vs. the most-common-based state I had before your message**: 113 of 124 (11 unchanged: `aliens`, `bubblesline`, `catppuccin*` ×4, `json`, `lambda`, `space`, `spaceship` — all configure `git` but their templates only reference `.HEAD`/`.StashCount`, fields identical under both rules, so their render is untouched). One theme, `glowsticks`, is worth calling out: its golden is now **byte-identical to the original pre-refactor commit** — its `always_enabled: true` executiontime/status segments happen to reproduce exactly what glowsticks' own original per-theme recording had, so richest fully restored a render that mostCommon had silently degraded to empty text.
+
+**On "absurd" data**: I checked. The winning `git` variant has `Working.Deleted: 124, Modified: 15` — large numbers, but not nonsensical; they're a real (if unusually large) snapshot of this repo's working tree during this exact refactor (deleting 124 fixture files). It'll look different on the next regeneration against whatever the tree looks like then, same as the original 124 fixtures always did. `executiontime`'s `Ms:0/FormattedMs:"0ms"` and `status`'s `Meaning:"0"/String:"0"/enabled:true` are both ordinary, expected values. Nothing here needed a special case.
+
+Fixture is now 23,904 bytes (63 segment keys, 18 env keys), goldens/manifest regenerated, and `git status` shows the same 140 paths as before (124 deletions, 1 new fixture, 3 source files, 11 goldens + manifest) — no stray files left from the debug harnesses I used along the way.</result>
+<usage><subagent_tokens>283842</subagent_tokens><tool_uses>74</tool_uses><duration_ms>1095661</duration_ms></usage>
+</task-notification>

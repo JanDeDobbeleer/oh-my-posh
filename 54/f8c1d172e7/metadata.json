@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "54f8c1d172e7",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 7,
+  "files_touched": [
+    "src/cli/config_export_image.go",
+    "src/cli/config_export_svg.go",
+    "src/svg/svg.go",
+    "src/svg/svg_test.go",
+    "website/.gitignore",
+    "website/docs/themes.md",
+    "website/docs/themes.mdx",
+    "website/docusaurus.config.js",
+    "website/export_themes.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/54/f8c1d172e7/0/metadata.json",
+      "transcript": "/54/f8c1d172e7/0/full.jsonl",
+      "compact_transcript": "/54/f8c1d172e7/0/transcript.jsonl",
+      "content_hash": "/54/f8c1d172e7/0/content_hash.txt",
+      "prompt": "/54/f8c1d172e7/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3948,
+    "cache_creation_tokens": 1837022,
+    "cache_read_tokens": 173062220,
+    "output_tokens": 491029,
+    "api_call_count": 501
+  }
+}

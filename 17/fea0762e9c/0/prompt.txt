@@ -653,3 +653,44 @@ go ahead with phase 2.1
 ---
 
 continue with task B and C when A lands
+
+---
+
+continue
+
+---
+
+<task-notification>
+<task-id>a0c319e9d1f3d396c</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a0c319e9d1f3d396c.output</output-file>
+<status>completed</status>
+<summary>Agent "Task A: extract anchor classifier" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>This is the complete, final diff. Everything checks out. Here's my report.
+
+## Summary
+
+Implemented Task A exactly as specified: extracted the shared anchor classification from the three consumers (`writeBody`, `writeBodyGradient`, `countVisibleCells`) in `D:\oh-my-posh\src\terminal\writer.go` into a new `anchorKind` enum and `classifyAnchor` helper (placed right after `scanAnchor`, lines 185-228).
+
+**Design**: `classifyAnchor(txt string) (anchorMatch, anchorKind)` wraps `scanAnchor` and returns one of `anchorNone`, `anchorHyperlinkStart`, `anchorHyperlinkText`, `anchorHyperlinkTextEnd`, `anchorHyperlinkEnd`, `anchorEmpty`, `anchorOverride`. Each consumer keeps its own `switch kind { ... }` for its differing action (emit / emit+stamp / count-only) and keeps full ownership of `i` bookkeeping and `continue`. The `s != '&lt;'` fast path was left untouched in all three loops, calling `classifyAnchor` only once `&lt;` is seen — exactly the "1.1x, do this" design point from the plan.
+
+Both known bugs are preserved intentionally:
+1. `countVisibleCells`'s inner switch has no `case anchorHyperlinkEnd`, so it silently falls to `default` (same branch as `anchorOverride`) and re-evaluates `invisible = FG==transparent &amp;&amp; BG==transparent` on `&lt;/LINK&gt;`, exactly reproducing the reset-invisibility bug.
+2. Untouched: the leading-anchor prologue in `Write`/`VisibleCells` is unchanged, so the second bug is preserved as-is.
+
+**Verification performed:**
+- `go build ./...`, `go vet ./terminal/...`, `go test ./...` — all clean.
+- `go test ./prompt/ -run TestGoldenThemes -count=1` — PASS, all 124 goldens byte-identical.
+- Coverage on `src/terminal`: `writeBodyGradient`, `writeVisibleRune`, `stampGradient`, `countVisibleCells` all still 100%; new `classifyAnchor` also 100%; `writeBody` 93.8% (unchanged, matches pre-existing gap).
+- `golangci-lint run ./terminal/...`: found one real issue — `exhaustive` flagged the `writeBody`/`writeBodyGradient` switches for missing `anchorNone`. Fixed by adding an explicit no-op `case anchorNone:` (falls through to the plain-rune write, identical behavior). Lint is now clean (0 issues).
+- Inlining check: `go build -gcflags='-m' ./terminal/...` (single `-m`) emits **no** "cannot inline" lines at all in this Go toolchain (it only reports positive "can inline" results) — this matches the literal instruction with an empty result. I additionally ran `-gcflags='-m -m'` to get real detail: `classifyAnchor` costs 103 (budget 80) and is not inlined, called only off the `&lt;`-triggered path — matching the plan's accepted tradeoff. `scanAnchor`/`writeBody`/`writeBodyGradient`/`countVisibleCells` were already non-inlinable before this change (large loop bodies far over budget); nothing newly became non-inlinable.
+- `git diff --stat`: only `src/terminal/writer.go`, 121 insertions / 71 deletions.
+
+**Benchmarks — the one thing that turned out wrong in the plan**: ns/op on this machine, this session, is far noisier than the committed baseline implies. I did a same-machine, same-session A/B by swapping `writer.go` content via plain file copies (not git — `git stash` was blocked by the auto-mode classifier) between the pre-change and Task A code, back to back:
+- allocs/op and B/op were **exactly identical** to the committed baseline in every run (592/14, 280/6, 456/16, 1753/17, 776/28 for the four terminal benchmarks; 95 allocs/~9148 B for `EnginePrimary`) — the hard gate is met.
+- ns/op swung by 20-30% between two back-to-back runs of the *identical* Task A code (before vs. after an unrelated lint fix), and the freshly-measured "before" baseline on this machine came out *slower* than my "after" Task A run. That rules out a real regression — a real 6x-class regression (the kind the plan's cursor-design table warns about) would show up consistently regardless of this noise; a same-direction consistent slowdown never appeared. This machine's ns/op noise floor for this session is roughly ±30%, well above what's needed to hide or fabricate the 1.1x this design targets.
+
+Nothing else in the plan needed adjustment — Task 0 (characterization tests, coverage precondition) was already committed in `e279f6a8` before I started, so I only touched `writer.go` as instructed.</result>
+<usage><subagent_tokens>165929</subagent_tokens><tool_uses>52</tool_uses><duration_ms>1150110</duration_ms></usage>
+</task-notification>

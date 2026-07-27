@@ -1,0 +1,10 @@
+can we now rework the SVG to still create a PNG instead? We had the original functionality and want to reinstate that, the way we write the SVG. Architecturally, we keep it like we redesigned the SVG writer, but we write the PNG instead using the functionality we had before. Run me through it so we make sure we understand each other.
+
+---
+
+continue with the work we were doing for the SVG. There are a few additional bugs we need to solve:
+
+1. It seems the segment text misses the spaces which were added. That's a clear difference from what was rendered before.
+2. When there is a powerline segment that is linked to a diamond, for example, the colors are inverted. The foreground color of the starting powerline glyph is the background color of the next segment, whereas if we chain them, it should be the background color of the previous segment and not the background color of the second segment. This is visible in the glow sticks theme. The first is the Alice at Contoso dev box, and then there's the folder with oh-my-posh. The yellow triangle should be colored with the background of Alice, which is the session segment, and the background should be the background of part segments. 
+
+Thirdly, the third T doesn't show any foreground text. It's completely empty. I only see the segments and their background colors and separators. And as a fourth bullet, the prompt character that we print is always printed at the end. Even when we have a right-alingned prompt, an R-prompt, it's added after the R-prompt, where it should be added after the primary prompt at all times. The positioning is incorrect.

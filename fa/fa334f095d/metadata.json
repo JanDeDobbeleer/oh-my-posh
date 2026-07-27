@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "fafa334f095d",
+  "strategy": "manual-commit",
+  "branch": "next",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "tools/svg-png-compare/probe-whitespace.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/fa/fa334f095d/0/metadata.json",
+      "transcript": "/fa/fa334f095d/0/full.jsonl",
+      "compact_transcript": "/fa/fa334f095d/0/transcript.jsonl",
+      "content_hash": "/fa/fa334f095d/0/content_hash.txt",
+      "prompt": "/fa/fa334f095d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1126,
+    "cache_creation_tokens": 4084453,
+    "cache_read_tokens": 234042144,
+    "output_tokens": 517869,
+    "api_call_count": 610
+  }
+}

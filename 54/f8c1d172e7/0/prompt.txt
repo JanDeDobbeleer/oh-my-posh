@@ -1316,3 +1316,38 @@ Updated `svg_test.go`: the blink test now asserts the `omp-blink-` prefix instea
 Verification checklist: `go build`/`go test ./...` clean; `TestGoldenThemes` byte-identical; ran the real pipeline for a temporarily-narrowed 5-theme subset then restored the full 124-theme list (confirmed via `git diff` the file returned to its original state); `npm run build` succeeds with `onBrokenLinks: 'throw'` unchanged (one pre-existing-pattern `onBrokenAnchors` warning for a dynamically-rendered heading anchor — separate setting, defaults to warn, doesn't fail the build); `golangci-lint run ./...` clean; `markdownlint-cli2` clean on `themes.mdx` aside from the one `MD033/no-inline-html` hit every other JSX-using `.mdx` file in this repo already has (CI's markdown workflow globs `**/*.md` only, never `.mdx`); `git status` shows exactly the intended file set, no stray files.</result>
 <usage><subagent_tokens>249794</subagent_tokens><tool_uses>157</tool_uses><duration_ms>2165633</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>a2460a58fb4e76451</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\6c0a282a-886f-458d-a426-93d95104b4a6\tasks\a2460a58fb4e76451.output</output-file>
+<status>completed</status>
+<summary>Agent "Migrate theme gallery to inline SVG" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>## Fixed — moved off the shared bundle, with one real dead-end along the way
+
+**Numbers, re-measured against a rebuilt baseline (theme plugin fully removed) for an apples-to-apples comparison:**
+
+| | `main.js` (site-wide, every page) | `/docs/themes` page total |
+|---|---|---|
+| Baseline (no theme feature at all) | 560,844 B raw / 165,095 B gzip | — |
+| Your flagged version (`setGlobalData`) | 996,080 B raw / 199,316 B gzip (**+34.2 KB gzip**) | 412 KB HTML |
+| **Now (route-scoped)** | **560,912 B raw / 165,103 B gzip (+8 B — noise)** | 412 KB HTML + a separate 437,643 B raw / **34,477 B gzip** chunk, fetched only for this page |
+
+`main.js` is back to baseline. The ~34 KB gzip didn't disappear — it moved into its own chunk (`0295d810.*.js`) that only downloads when a visitor actually goes to `/docs/themes`.
+
+**How I verified "only this page pays for it," concretely (headless, via the Browser tool's network log, since the pane's screenshot compositing still isn't available in this session):** loaded the homepage fresh, confirmed zero requests matching that chunk's hash; clicked through to `/docs/themes` via client-side SPA navigation; confirmed exactly one `GET .../0295d810.73e2ec36.js → 200` fired at that point, and not before.
+
+**Your SSR/no-JS constraint — I hit a real dead end here, worth reporting rather than glossing over.** My first attempt used `react-loadable` (Docusaurus's own fork, already a dependency of `@docusaurus/core` — it's literally what `ComponentCreator` uses for every route) directly inside `ThemeGallery`, reasoning that its recursive `Loadable.preloadAll()` sweep should catch a nested `Loadable()` call transitively. Built it, measured `main.js` (correctly back to baseline — the code-splitting half worked) — but `build/docs/themes/index.html` had **zero** `&lt;svg xmlns` in it. The static HTML shrank to 28 KB: the SSR pass rendered the loading fallback, not the content. Exactly the hydration-only regression you told me to check for. I did not paper over it — I removed that approach entirely (including the added `react-loadable` dependency; `package.json`/`package-lock.json` are back to their original, untouched state) and used something simpler instead:
+
+`ThemeGallery` now does a **plain static `import themes from '../../../generated/themes.json'`** (not dynamic, no `usePluginData`, no `addRoute`, no `Loadable`). Since that module is only ever reachable through `ThemeGallery`, which is only ever reachable through `docs/themes.mdx`, webpack's ordinary chunking keeps it inside that page's already-independent per-route chunk (the same chunking every other MDX doc page already gets from `plugin-content-docs`'s own `addRoute`/`modules` machinery) — no extra plugin API needed, and nothing async to resolve, so `ReactDOMServer` renders the real markup synchronously at build time, same as any other prop. `plugins/themes/index.js` still exists but now does only one thing: fail the build early with an actionable message if `generated/themes.json` is missing/malformed (parity with `plugins/segments`' own guard) — it no longer calls `setGlobalData`.
+
+**Everything you verified before still holds**, re-checked against this version: 124 `&lt;svg font-family="Victor Mono" ...&gt;` elements in the static HTML; zero `&lt;style&gt;` tags anywhere in the document; `h1`/nav/paragraph `font-family` still `"Inter"`; no console errors on load or after SPA navigation.
+
+`plugins/segments` — untouched, confirmed by `git status` (only `src/cli/*.go`, `src/svg/*.go`, `website/.gitignore`, `website/docusaurus.config.js`, `website/export_themes.mjs`, `website/docs/themes.md→.mdx`, and the two new `plugins/themes/` / `src/components/ThemeGallery/` dirs are touched).
+
+Go build/test/lint all still pass (unaffected by this round — no Go files changed here). `git status` is clean, no stray files. Understood on `static/img/themes/` — not touching it.</result>
+<usage><subagent_tokens>301836</subagent_tokens><tool_uses>41</tool_uses><duration_ms>731445</duration_ms></usage>
+</task-notification>

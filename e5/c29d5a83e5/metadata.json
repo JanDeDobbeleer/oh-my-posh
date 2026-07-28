@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "e5c29d5a83e5",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "website/package-lock.json",
+    "website/package.json",
+    "website/src/components/SegmentCatalog/styles.module.css",
+    "website/src/components/Studio/index.js",
+    "website/src/components/Studio/styles.module.css",
+    "website/src/css/custom.css",
+    "website/src/pages/segments.js",
+    "website/src/pages/studio.js",
+    "website/src/pages/styles.module.css"
+  ],
+  "sessions": [
+    {
+      "metadata": "/e5/c29d5a83e5/0/metadata.json",
+      "transcript": "/e5/c29d5a83e5/0/full.jsonl",
+      "compact_transcript": "/e5/c29d5a83e5/0/transcript.jsonl",
+      "content_hash": "/e5/c29d5a83e5/0/content_hash.txt",
+      "prompt": "/e5/c29d5a83e5/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3095,
+    "cache_creation_tokens": 6292111,
+    "cache_read_tokens": 434521281,
+    "output_tokens": 785672,
+    "api_call_count": 1014
+  }
+}

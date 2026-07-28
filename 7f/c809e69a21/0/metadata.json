@@ -1,0 +1,191 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "7fc809e69a21",
+  "session_id": "b9b935d0-2ccd-4cb3-b53e-1c2719355c19",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-28T08:39:14.1339817Z",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/runtime/battery/battery_js.go",
+    "src/runtime/battery/battery_windows_nix.go",
+    "src/runtime/jobs/jobs_js.go",
+    "src/runtime/jobs/jobs_other.go",
+    "src/runtime/terminal_unix.go"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-5",
+  "turn_id": "6e83b40df0e2",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 2787,
+    "cache_creation_tokens": 4858180,
+    "cache_read_tokens": 329744742,
+    "output_tokens": 683539,
+    "api_call_count": 850
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01AUV4u4moG5TtnGdE4eGaeB",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "6e83b40df0e2",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 24,
+        "end": 25,
+        "entry_ids": [
+          "fbd5e423-6a49-47df-af45-86e6e0f97fbe"
+        ],
+        "tool_use_id": "toolu_01AUV4u4moG5TtnGdE4eGaeB"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01AUV4u4moG5TtnGdE4eGaeB"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01UFQaDF6hCmpt3eV1QUk4gd",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "6e83b40df0e2",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 1714,
+        "end": 1715,
+        "entry_ids": [
+          "8e721683-4da6-435e-863a-0135896121f5"
+        ],
+        "tool_use_id": "toolu_01UFQaDF6hCmpt3eV1QUk4gd"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01UFQaDF6hCmpt3eV1QUk4gd"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01YQvKbEnQcPpXbGr3Woxt2H",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "6e83b40df0e2",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 2237,
+        "end": 2238,
+        "entry_ids": [
+          "2aae4ec6-85c8-4264-8d79-b4296711ac45"
+        ],
+        "tool_use_id": "toolu_01YQvKbEnQcPpXbGr3Woxt2H"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01YQvKbEnQcPpXbGr3Woxt2H"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 21
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-28T08:39:13.2771925Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 151,
+    "human_modified": 816,
+    "human_removed": 0,
+    "total_committed": 179,
+    "total_lines_changed": 1743,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 954,
+      "user_lines_removed": 796,
+      "agent_lines_added": 41,
+      "agent_lines_removed": 8,
+      "user_added_per_file": {
+        "src/cli/auth.go": 5,
+        "src/cli/auth/copilot.go": 8,
+        "src/cli/auth/tui/copilot.go": 216,
+        "src/cli/auth/tui/tui.go": 115,
+        "src/cli/auth/tui/ytmda.go": 150,
+        "src/cli/auth/tui/ytmda_test.go": 108,
+        "src/cli/auth/ytmda.go": 8,
+        "src/cli/upgrade.go": 2,
+        "src/cli/upgrade/config.go": 1,
+        "src/cli/upgrade/install.go": 7,
+        "src/cli/upgrade/report.go": 76,
+        "src/cli/upgrade/tui/tui.go": 167,
+        "src/cli/upgrade/verify.go": 1,
+        "src/cli/upgrade/version.go": 22,
+        "src/cli/upgrade/version_test.go": 25,
+        "src/runtime/battery/battery_js.go": 7,
+        "src/runtime/jobs/jobs_js.go": 6,
+        "src/runtime/terminal_writable_js.go": 11,
+        "src/runtime/terminal_writable_unix.go": 19
+      },
+      "user_removed_per_file": {
+        "src/cli/auth.go": 5,
+        "src/cli/auth/cli.go": 104,
+        "src/cli/auth/copilot.go": 215,
+        "src/cli/auth/ytmda.go": 146,
+        "src/cli/auth/ytmda_test.go": 107,
+        "src/cli/upgrade.go": 1,
+        "src/cli/upgrade/config.go": 2,
+        "src/cli/upgrade/install.go": 4,
+        "src/cli/upgrade/tui.go": 166,
+        "src/cli/upgrade/tui_test.go": 25,
+        "src/cli/upgrade/verify.go": 1,
+        "src/runtime/battery/battery_js.go": 9,
+        "src/runtime/jobs/jobs_js.go": 11
+      }
+    }
+  ]
+}

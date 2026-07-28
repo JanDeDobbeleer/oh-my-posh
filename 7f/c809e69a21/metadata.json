@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "7fc809e69a21",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/runtime/battery/battery_js.go",
+    "src/runtime/battery/battery_windows_nix.go",
+    "src/runtime/jobs/jobs_js.go",
+    "src/runtime/jobs/jobs_other.go",
+    "src/runtime/terminal_unix.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/7f/c809e69a21/0/metadata.json",
+      "transcript": "/7f/c809e69a21/0/full.jsonl",
+      "compact_transcript": "/7f/c809e69a21/0/transcript.jsonl",
+      "content_hash": "/7f/c809e69a21/0/content_hash.txt",
+      "prompt": "/7f/c809e69a21/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2787,
+    "cache_creation_tokens": 4858180,
+    "cache_read_tokens": 329744742,
+    "output_tokens": 683539,
+    "api_call_count": 850
+  }
+}

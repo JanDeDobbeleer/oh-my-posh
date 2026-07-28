@@ -1,0 +1,1 @@
+One final fix in the rendering: if you look at the height of the power line glyphs in the image I provided, this is the bubbles line theme. You can see that the background color of the segment itself is higher than the height of the power line glyphs. Can we make it so that the height of the background coloring is the same height as the height of the power line glyphs?

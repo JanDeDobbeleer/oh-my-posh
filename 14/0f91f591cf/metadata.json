@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "140f91f591cf",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/cli/config_export_image.go",
+    "src/cli/config_export_svg.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/14/0f91f591cf/0/metadata.json",
+      "transcript": "/14/0f91f591cf/0/full.jsonl",
+      "compact_transcript": "/14/0f91f591cf/0/transcript.jsonl",
+      "content_hash": "/14/0f91f591cf/0/content_hash.txt",
+      "prompt": "/14/0f91f591cf/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2827,
+    "cache_creation_tokens": 4882254,
+    "cache_read_tokens": 341868380,
+    "output_tokens": 699554,
+    "api_call_count": 871
+  }
+}

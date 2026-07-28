@@ -129,6 +129,52 @@ character.
 
 :::
 
+## Shades
+
+Anywhere a **Standard color** is expected, you can instead use `darken(color, percent)` or
+`lighten(color, percent)` to shift a single color's lightness toward black or white:
+
+<Config
+  data={{
+    type: "text",
+    style: "plain",
+    foreground: "#3465A4",
+    background: "darken(#3465A4, 20)",
+  }}
+/>
+
+`percent` is a number from `0` to `100`. It shifts the color's lightness toward black
+(`darken`) or white (`lighten`) by that share of the remaining distance to it, in the same HCL
+color space `dark-gradient`/`light-gradient` use, so hue stays exact and the result doesn't read
+as muddy. `0` leaves the color unchanged, `100` reaches (near-)black or (near-)white.
+
+The color argument must resolve to a hex color: a literal hex value (`darken(#3465A4, 20)`) or a
+[Palette reference][palette] to one (`darken(p:accent, 20)`). **ANSI color names** (`green`,
+`lightBlue`), **256 color palette numbers**, and keywords (`foreground`, `accent`, ...) are not
+supported and render no color, with the reason logged in `oh-my-posh debug` output.
+
+This is a deliberate limitation, not a missing feature: a named ANSI/terminal color's actual RGB
+value is decided by the terminal's own color scheme, and oh-my-posh has no reliable, fast way to
+ask the terminal what that value is on every prompt render. If you want a color that's a shade of
+one of your terminal's named colors, define its real hex value once as a
+[Palette][palette] entry and shade that:
+
+<Config
+  data={{
+    palette: {
+      accent: "#3465A4",
+    },
+    type: "text",
+    style: "plain",
+    foreground: "p:accent",
+    background: "darken(p:accent, 20)",
+  }}
+/>
+
+`darken`/`lighten` calls cannot be nested inside each other or inside a `linear-gradient`/
+`dark-gradient`/`light-gradient`, and do not themselves support gradient stops or segment-context
+keywords like `parentBackground`.
+
 ## Color templates
 
 Array of string [templates][templates] to define the color based on the current context.

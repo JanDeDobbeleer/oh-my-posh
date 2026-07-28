@@ -1,0 +1,14 @@
+The standalone segment page is still visually very different from what we have in the rest of the website. The text seems smaller, especially compared to the sidebar. When you select a segment, you're immediately jumped back to the page with the whole sidebar, etc., which does not really work well.
+
+What I would do is move that segment's interface without the sidebar, so the search ability and the overview of all the segments are underneath the segments page in the sidebar itself. The sidebar currently has a flat list of all the segments. If we have the query ability there, that would be cool, because then you can use the current sidebar to quickly find the segment that you want instead.
+
+Same for Studio: we should still be able to see the sidebar so people can easily go back to segments, take what they want, copy it back and forth, and continue. That would be the best solution.
+
+Additionally, for Overview, we can drop that page and just move straight to Getting Started, because Overview does not provide anything else that the sidebar does not already have. Next to that, there are two or a few things which are still annoying:
+
+* If you look at the sidebar, the collapsed sidebar chevron is just way too present on the page. It's too big, and it's not pretty. It's not nicely aligned.
+* Previous and next are also rather big. I don't know if it's because the footer is so large now, but something is visually off. I know we have this in the production side as well, but it just feels weird.
+
+ I think we can do a better design for those elements as well.
+
+And on the studio page, if you look at a config block, it's nicely styled now, but the text is all the way to the left of the block. It needs a bit of spacing and, ideally, also line numbers so it's easy to follow along or take a screenshot and pinpoint something. It should feel maybe more like a lightweight editor-style window instead of this flat, "Okay, here's a text box. You can add something." We can make the experience, the UX, a lot better there.

@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "5f9ce2c80926",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "website/docusaurus.config.js",
+    "website/sidebars.js",
+    "website/src/components/Studio/index.js",
+    "website/src/components/Studio/styles.module.css",
+    "website/src/css/custom.css",
+    "website/src/pages/studio.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5f/9ce2c80926/0/metadata.json",
+      "transcript": "/5f/9ce2c80926/0/full.jsonl",
+      "compact_transcript": "/5f/9ce2c80926/0/transcript.jsonl",
+      "content_hash": "/5f/9ce2c80926/0/content_hash.txt",
+      "prompt": "/5f/9ce2c80926/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2321,
+    "cache_creation_tokens": 3416335,
+    "cache_read_tokens": 252336502,
+    "output_tokens": 383270,
+    "api_call_count": 593
+  }
+}

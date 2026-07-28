@@ -11,10 +11,10 @@ func TestShadeArgs(t *testing.T) {
 	cases := []struct {
 		Case            string
 		Color           Ansi
-		ExpectedOK      bool
-		ExpectedDir     shadeDirection
 		ExpectedInner   Ansi
+		ExpectedDir     shadeDirection
 		ExpectedPercent float64
+		ExpectedOK      bool
 	}{
 		{Case: "darken", Color: "darken(#3465A4, 20)", ExpectedOK: true, ExpectedDir: shadeDark, ExpectedInner: "#3465A4", ExpectedPercent: 20},
 		{Case: "lighten", Color: "lighten(#3465A4, 20)", ExpectedOK: true, ExpectedDir: shadeLight, ExpectedInner: "#3465A4", ExpectedPercent: 20},
@@ -123,8 +123,8 @@ func TestDefaultsToAnsiShade(t *testing.T) {
 	cases := []struct {
 		Case       string
 		Color      Ansi
-		Background bool
 		Expected   Ansi
+		Background bool
 	}{
 		{Case: "darken hex foreground", Color: "darken(#3465A4, 20)", Background: false, Expected: (&Defaults{}).ToAnsi(Ansi(expectedHex), false)},
 		{Case: "darken hex background", Color: "darken(#3465A4, 20)", Background: true, Expected: (&Defaults{}).ToAnsi(Ansi(expectedHex), true)},

@@ -88,10 +88,9 @@ func withShadeCall(dir shadeDirection, inner Ansi, percent float64) Ansi {
 	return Ansi(prefix + inner.String() + ", " + strconv.FormatFloat(percent, 'g', -1, 64) + gradientSuffix)
 }
 
-// shadeHex resolves inner as a hex color and shifts its HCL lightness toward black
-// (shadeDark) or white (shadeLight) by percent of its remaining headroom to that end,
-// walking chroma down only as far as the sRGB gamut demands - the same technique as
-// autoShade, for a caller-chosen percentage instead of the auto-tuned curve.
+// shadeHex shifts inner's HCL lightness toward black (shadeDark) or white (shadeLight)
+// by percent - the same technique as autoShade, but driven by a caller-chosen
+// percentage instead of the auto-tuned curve.
 //
 // ok is false when inner isn't a hex color: darken()/lighten() only operate on colors
 // oh-my-posh knows the actual RGB of, which rules out named ANSI/terminal colors, 256

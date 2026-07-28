@@ -373,8 +373,6 @@ func (p *PaletteColors) ToAnsi(colorString Ansi, isBackground bool) Ansi {
 		return colorString
 	}
 
-	// a shade call's color argument may itself be a palette reference; resolve it here
-	// so Defaults.ToAnsi only ever sees a concrete color inside darken()/lighten().
 	colorString, err := p.palette.resolveShade(colorString)
 	if err != nil {
 		return emptyColor

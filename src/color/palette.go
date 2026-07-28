@@ -101,6 +101,23 @@ func (p *PaletteRecursiveKeyError) Error() string {
 	return errorStr
 }
 
+// resolveShade resolves a darken(...)/lighten(...) call's color argument through the
+// palette, so a reference like darken(p:accent, 20) reaches Defaults.ToAnsi with a
+// concrete color. Returns colorString unchanged when it isn't a shade call.
+func (p Palette) resolveShade(colorString Ansi) (Ansi, error) {
+	dir, inner, percent, ok := colorString.ShadeArgs()
+	if !ok {
+		return colorString, nil
+	}
+
+	resolved, err := p.ResolveColor(inner)
+	if err != nil {
+		return "", err
+	}
+
+	return withShadeCall(dir, resolved, percent), nil
+}
+
 // MaybeResolveColor wraps resolveColor and silences possible errors, returning
 // Transparent color by default, as a Block does not know how to handle color errors.
 func (p Palette) MaybeResolveColor(colorName Ansi) Ansi {

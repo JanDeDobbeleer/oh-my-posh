@@ -1,0 +1,279 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "fff890b1beed",
+  "session_id": "b9b935d0-2ccd-4cb3-b53e-1c2719355c19",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-28T06:51:08.0316243Z",
+  "branch": "themes-svg",
+  "checkpoints_count": 10,
+  "save_step_count": 4,
+  "files_touched": [
+    "src/cli/config_export_svg.go",
+    "src/cli/config_export_svg_test.go"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-5",
+  "turn_id": "fa05511aed16",
+  "checkpoint_transcript_start": 2586,
+  "transcript_lines_at_start": 2586,
+  "compact_transcript_start": 801,
+  "token_usage": {
+    "input_tokens": 88,
+    "cache_creation_tokens": 114214,
+    "cache_read_tokens": 18028368,
+    "output_tokens": 51894,
+    "api_call_count": 46
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01AUV4u4moG5TtnGdE4eGaeB",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "fa05511aed16",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 24,
+        "end": 25,
+        "entry_ids": [
+          "fbd5e423-6a49-47df-af45-86e6e0f97fbe"
+        ],
+        "tool_use_id": "toolu_01AUV4u4moG5TtnGdE4eGaeB"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01AUV4u4moG5TtnGdE4eGaeB"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01UFQaDF6hCmpt3eV1QUk4gd",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "code-changes"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "fa05511aed16",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 1714,
+        "end": 1715,
+        "entry_ids": [
+          "8e721683-4da6-435e-863a-0135896121f5"
+        ],
+        "tool_use_id": "toolu_01UFQaDF6hCmpt3eV1QUk4gd"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01UFQaDF6hCmpt3eV1QUk4gd"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: code-changes",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01YQvKbEnQcPpXbGr3Woxt2H",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "fa05511aed16",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 2237,
+        "end": 2238,
+        "entry_ids": [
+          "2aae4ec6-85c8-4264-8d79-b4296711ac45"
+        ],
+        "tool_use_id": "toolu_01YQvKbEnQcPpXbGr3Woxt2H"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01YQvKbEnQcPpXbGr3Woxt2H"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 13
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-28T06:51:07.2660698Z",
+    "agent_lines": 35,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 10,
+    "human_removed": 6,
+    "total_committed": 44,
+    "total_lines_changed": 51,
+    "agent_percentage": 68.62745098039215,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 501,
+      "user_lines_removed": 368,
+      "agent_lines_added": 48,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "src/color/colors.go": 8,
+        "src/terminal/run.go": 14,
+        "src/terminal/writer.go": 41,
+        "tools/svg-png-compare/common.mjs": 103,
+        "tools/svg-png-compare/compare.mjs": 19,
+        "tools/svg-png-compare/shot.mjs": 22,
+        "tools/svg-png-compare/zip.mjs": 2,
+        "website/docs/segments/overview.mdx": 3,
+        "website/export_themes.mjs": 75,
+        "website/plugins/readGeneratedJson.js": 44,
+        "website/plugins/segments/index.js": 45,
+        "website/plugins/themes/index.js": 14,
+        "website/src/components/SegmentCatalog/index.js": 23,
+        "website/src/components/SegmentCatalog/styles.module.css": 6,
+        "website/src/components/SegmentCount/index.js": 13,
+        "website/src/css/custom.css": 16,
+        "website/src/pages/index.js": 47,
+        "website/src/pages/styles.module.css": 6
+      },
+      "user_removed_per_file": {
+        "src/terminal/run.go": 12,
+        "src/terminal/run_test.go": 8,
+        "src/terminal/writer.go": 33,
+        "tools/svg-png-compare/compare.mjs": 95,
+        "tools/svg-png-compare/shot.mjs": 75,
+        "tools/svg-png-compare/zip.mjs": 1,
+        "website/docs/segments/overview.mdx": 1,
+        "website/export_themes.mjs": 48,
+        "website/plugins/segments/index.js": 5,
+        "website/plugins/themes/index.js": 30,
+        "website/src/components/SegmentCatalog/index.js": 5,
+        "website/src/components/SegmentCatalog/styles.module.css": 7,
+        "website/src/pages/index.js": 41,
+        "website/src/pages/styles.module.css": 7
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 160,
+      "user_lines_removed": 0,
+      "agent_lines_added": 396,
+      "agent_lines_removed": 369,
+      "user_added_per_file": {
+        "tools/svg-png-compare/common.mjs": 103,
+        "website/plugins/readGeneratedJson.js": 44,
+        "website/src/components/SegmentCount/index.js": 13
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 403,
+      "user_lines_removed": 314,
+      "agent_lines_added": 396,
+      "agent_lines_removed": 369,
+      "user_added_per_file": {
+        "src/cli/config_export_svg.go": 1,
+        "src/color/colors.go": 34,
+        "src/color/gradient.go": 6,
+        "src/svg/colors.go": 30,
+        "src/svg/fit.go": 5,
+        "src/svg/svg.go": 67,
+        "src/svg/svg_test.go": 52,
+        "src/svg/window.go": 18,
+        "src/svg/window_test.go": 30,
+        "tools/svg-png-compare/common.mjs": 103,
+        "website/plugins/readGeneratedJson.js": 44,
+        "website/src/components/SegmentCount/index.js": 13
+      },
+      "user_removed_per_file": {
+        "src/cli/config_export_svg.go": 4,
+        "src/color/gradient.go": 14,
+        "src/svg/colors.go": 70,
+        "src/svg/fit.go": 4,
+        "src/svg/svg.go": 83,
+        "src/svg/svg_test.go": 61,
+        "src/svg/window.go": 39,
+        "src/svg/window_test.go": 39
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 527,
+      "user_lines_removed": 407,
+      "agent_lines_added": 639,
+      "agent_lines_removed": 683,
+      "user_added_per_file": {
+        "src/cli/config_export_data.go": 79,
+        "src/cli/config_export_image.go": 9,
+        "src/cli/config_export_svg.go": 5,
+        "src/cli/data.go": 5,
+        "src/cli/sanitize.go": 3,
+        "src/config/data.go": 110,
+        "src/prompt/engine.go": 40,
+        "src/prompt/engine_test.go": 1,
+        "src/prompt/extra.go": 1,
+        "src/prompt/extra_test.go": 1,
+        "src/prompt/fixtures_sanitized_test.go": 48,
+        "src/prompt/golden_test.go": 19,
+        "src/prompt/runs.go": 22,
+        "src/prompt/runs_test.go": 9,
+        "src/prompt/segments.go": 7,
+        "src/svg/svg.go": 8,
+        "tools/svg-png-compare/common.mjs": 103,
+        "website/plugins/readGeneratedJson.js": 44,
+        "website/src/components/SegmentCount/index.js": 13
+      },
+      "user_removed_per_file": {
+        "src/cli/config_export_data.go": 97,
+        "src/cli/config_export_image.go": 32,
+        "src/cli/config_export_svg.go": 11,
+        "src/cli/data.go": 40,
+        "src/cli/sanitize.go": 3,
+        "src/config/data.go": 13,
+        "src/prompt/engine.go": 32,
+        "src/prompt/engine_test.go": 1,
+        "src/prompt/extra.go": 1,
+        "src/prompt/extra_test.go": 1,
+        "src/prompt/fixtures_sanitized_test.go": 61,
+        "src/prompt/golden_test.go": 66,
+        "src/prompt/runs.go": 32,
+        "src/prompt/runs_test.go": 11,
+        "src/prompt/segments.go": 4,
+        "src/svg/svg.go": 2
+      }
+    }
+  ]
+}

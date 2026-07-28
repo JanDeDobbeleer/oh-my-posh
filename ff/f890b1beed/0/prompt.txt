@@ -399,3 +399,45 @@ Touched only the files permitted: `src/svg/*`, `src/color/gradient.go`, `src/col
 `FillAscent`/`FillDescent`, `CellWidth`/`LineHeight` collapse, `insertCursor`/`collapseGap` coupling, and `GradientCells`/`GradientCellsRGB` changes beyond task 9 — none of these were touched, as directed.</result>
 <usage><subagent_tokens>230017</subagent_tokens><tool_uses>146</tool_uses><duration_ms>1213561</duration_ms></usage>
 </task-notification>
+
+---
+
+<task-notification>
+<task-id>a027dd019de5e689f</task-id>
+<tool-use-id>toolu_014qUFGutZd475SmzN2fYGNf</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\b9b935d0-2ccd-4cb3-b53e-1c2719355c19\tasks\a027dd019de5e689f.output</output-file>
+<status>completed</status>
+<summary>Agent "Apply cli prompt config dedup" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>All 7 tasks are implemented and fully verified. Summary:
+
+## Changes per file
+
+**Task 1 — extracted duplicated render setup** (`src/cli/config_export_data.go`, `src/cli/config_export_image.go`): New helper `renderConfigForExport(cfg *config.Config, terminalWidth int, resetTemplateCache bool, applyData func(*runtime.Flags) error) (*prompt.Engine, error)` in `config_export_data.go`, covering `runtime.Flags` → `env.Init` → optional `template.ResetCache` → `template.Init` → clearing `ConsoleTitleTemplate`/`PWD`/`ShellIntegration` → `terminal.Init`/`BackgroundColor`/`Colors` → build `Engine` → `Primary()`. `recordThemeSanitized` now passes `resetTemplateCache=true`; the two single-config call sites pass `false`. `terminal.CaptureRuns = true` stays at the image command's own call site. `config.Load` stays at each call site (its error handling genuinely differs per site).
+
+**Task 2 — shrunk engine capture state** (`src/prompt/engine.go`, `segments.go`, `runs.go`, `runs_test.go`, `extra.go`, `extra_test.go`, `engine_test.go`): Deleted `pendingBlockRuns`/`pendingFillerRuns` fields. `captureBlockRuns()` now returns `[]terminal.Run`; `renderBlockSegments` returns a third `[]terminal.Run` value threaded through `renderLaunchedBlock`/`renderBlockFromCache` into `writeBlock`. `shouldFill` now returns `(string, []terminal.Run, bool)`, folding in what `captureFillerRuns`/`fillerCaptureRuns` did (deleted, replaced by a plain function `expandFillerRuns`). Verified nil-slice/zero-alloc behavior when `CaptureRuns` is false.
+
+**Task 3 — deduplicated env-flag routing** (`src/config/data.go`, `src/cli/data.go`, `src/prompt/golden_test.go`): New `(*Data) ApplyFlags(flags *runtime.Flags, changed func(string) bool) error` on `config.Data` (nil `changed` = never overridden). `cli.applyDataFile` shrank to load + version warning + `--data-derive`. `golden_test.go`'s `applyFixtureData` now calls `data.ApplyFlags(flags, nil)`.
+
+**Task 4 — exported font-size constant** (`src/svg/svg.go`, `src/cli/config_export_svg.go`): `defaultFontSize` → exported `DefaultFontSize` (only permitted svg/ edit); CLI's mirrored `svgFontSize` constant and apology comment deleted, call sites use `svg.DefaultFontSize`.
+
+**Task 5** (`src/cli/sanitize.go`): `sanitizeEnv`'s three `"~/dev/oh-my-posh"` literals now use the existing `sanitizedPath` constant.
+
+**Task 6** (`src/config/data.go`, `src/cli/config_export_data.go`, `src/prompt/golden_test.go`): Added `config.DataVersionKey/DataEnvKey/DataSegmentsKey` and `config.ThemeFileExtensions`/`config.ThemeFiles(dir)`, used by `LoadData` (fixing the previously-false "shared by config.LoadData" comment) and by both former duplicate sites.
+
+**Task 7** (`src/prompt/fixtures_sanitized_test.go`, `golden_test.go`): Inlined `fixturePath`, deleted `fixtureFiles` and its loops. Removed "Task A"/"Task D" references, replaced with the actual facts (chips makes a live wakatime call; no bundled theme uses `&lt;LINK&gt;`). No matching pattern found in `config_export_data.go`. For the `map[any]any` branch in `config/data.go`'s `sanitize`: wrote a temporary probe test round-tripping nested-map YAML (`go.yaml.in/yaml/v3`) and TOML (`go-toml/v2`) through the real decoders into `map[string]any` (exactly as `LoadData` does) — both produced `map[string]interface{}` for the nested value, never `map[any]any`. Deleted the probe test and the dead branch.
+
+## Verification (all commands run, actual output)
+
+1. `go build ./... &amp;&amp; go vet ./cli/... ./prompt/... ./config/...` — clean, no output.
+2. `go test ./... -count=1` — all packages `ok`, including `prompt` (golden harness over all 124 themes).
+3. `golangci-lint run ./...` — `0 issues`.
+4. Benchmarks (5 runs each) matched the known-good baseline exactly, no regression: WriteAnchors 688B/14, WritePlainASCII 312B/6, WriteSolid 488B/16, WriteGradient 1785B/17, WriteGradientChained 808B/28 (all B/op and allocs/op).
+5. Output gate: rebuilt, re-exported all 124 themes to `/tmp/cli-after`, `diff -rq /tmp/cli-before /tmp/cli-after` — **empty**.
+6. `go run . config export data --config ../themes/jandedobbeleer.omp.json -o /tmp/probe.json` — file contains populated `"env"`, `"segments"`, and `"version": 1` at the end (map key ordering is alphabetical).
+
+## Note on the working tree
+
+`git status` shows substantial uncommitted changes in `src/color`, `src/svg` (beyond my one line), `src/terminal`, `tools/`, `website/` that I did not make — consistent with the task's warning that other concurrent work exists in this tree. I verified my own diffs in every file I touched are scoped to exactly the described changes, layered cleanly on top of that pre-existing work, and did not revert or interfere with it (per the DO NOT DO list). Nothing was committed, per instructions.</result>
+<usage><subagent_tokens>241241</subagent_tokens><tool_uses>146</tool_uses><duration_ms>1319383</duration_ms></usage>
+</task-notification>

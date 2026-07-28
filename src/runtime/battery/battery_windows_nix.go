@@ -1,4 +1,4 @@
-//go:build !darwin && !netbsd && !openbsd && !freebsd && !js
+//go:build !darwin && !netbsd && !openbsd && !freebsd && !js && !illumos && !solaris
 
 package battery
 

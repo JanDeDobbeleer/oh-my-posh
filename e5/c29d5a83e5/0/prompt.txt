@@ -730,3 +730,60 @@ For the next delegation, can we make sure that we give the sub-agent enough inst
 ---
 
 the Auth is only used to navigate when you do an authentication from Strava or any other OAuth application that shows you the client secrets to use in the configuration of the segments. That should stay hidden. It's a functionality, definitely not a navigation item.  Share theme can be dropped.
+
+---
+
+<task-notification>
+<task-id>a2646c50868e7ca47</task-id>
+<tool-use-id>toolu_0199jtTgxWUdWLSsYwvodfjF</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\b9b935d0-2ccd-4cb3-b53e-1c2719355c19\tasks\a2646c50868e7ca47.output</output-file>
+<status>completed</status>
+<summary>Agent "Apply styling refinements and editor highlighting" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Clean. Here's the full report.
+
+## Summary
+
+All four jobs implemented, verified against a real build, and screenshot-compared. Not committed (per instructions).
+
+### Files changed
+- `website/src/css/custom.css` — new token block (`--omp-text-sm/md`, `--omp-label-size/tracking`, `--omp-text-secondary`, `--omp-radius-sm`, `--omp-space-1/2/3`), page-header classes (`.pageTitle`/`.pageIntro`), font-family fallback fix
+- `website/src/components/SegmentCatalog/styles.module.css` — token consumption, `.name`/`.ds` differentiation, checkbox alignment fix
+- `website/src/components/Studio/styles.module.css` — token consumption, `.srOnly` label, `.editor` reworked for the new wrapper, `:focus` → `:focus-within`
+- `website/src/components/Studio/index.js` — syntax-highlighting editor
+- `website/src/pages/studio.js`, `website/src/pages/segments.js` — `pageTitle`/`pageIntro` classes
+- `website/src/pages/styles.module.css` — `.heroImageWrapper` radius → `var(--omp-card-radius)`
+- `website/package.json`/`package-lock.json` — added `react-simple-code-editor` (`prism-react-renderer` was already a dependency; no new Prism package needed since it re-exports `Prism`)
+
+### Token mapping applied
+Sizes: `.ds`/`.name`/`.opt` → `--omp-text-sm`; `.nm`/`.search`/`.editor` → `--omp-text-md`; `.lbl`/`.ct`/`.paneLabel` → `--omp-label-size`+`--omp-label-tracking`. Colors: all six emphasis-600 secondary-text rules → `--omp-text-secondary` (emphasis-700, 5.72:1). Radii: `.search`→card radius, `.tag`→`--omp-radius-sm`, `heroImageWrapper` 9px→card radius (8px). Borders: `.search`/`.tag` emphasis-300→card border token. Spacing: gaps/paddings that were clearly one of 0.375/0.75/1.25 got mapped (`.grp`, `.opt`, `.item`, `.pane`, `.searchRow`, `.tags`, `.content`, `.grid`, `.empty`, `.editor`/`.preview` padding, `.studio` gap).
+
+**Left alone (reported, not silently dropped):** `.facets`/`.content` 1rem padding (equidistant between steps, sidebar/content inset — structural); `.studio` margin-top and `.empty` padding-top 1.5rem (no step exists for it, would shrink layout spacing); `.resultsLine` and `.tag` font-size (0.78rem/0.6rem — the spec's size-mapping list didn't include them, only their color); `.search` inner padding 0.45/0.65rem (form-control padding, not a scale gap); mobile `.editor` font-size 0.75rem (a responsive override, not a scale step).
+
+### Job 3 fixes
+- `.name` now `--ifm-font-color-base` + weight 500, visually distinct from `.ds`
+- `.opt` checkbox: `align-items: flex-start` + `margin-top: 0.15rem`, fixes float on wrapped labels
+- `--ifm-font-family-base` gets `system-ui, -apple-system, "Segoe UI", Roboto, sans-serif` fallback
+
+### Job 4 — syntax highlighting (finding worth flagging)
+The task assumed docs code blocks use `prism-rose-pine-moon.css` with a light/dark pair. I verified this against the actual rendered DOM (a live docs page) and it's **not what's happening**: `docusaurus.config.js` sets no `theme`/`darkTheme`, so Docusaurus falls back to `prism-react-renderer`'s default **palenight** theme for both light and dark mode (confirmed by computed styles: background `#292d3e`, punctuation `#c792ea` — palenight's values, not rose-pine's). `prism-rose-pine-moon.css`'s `.token` rules are dead CSS for these React-rendered blocks, overridden by prism-react-renderer's inline per-token styling.
+
+Given that, and the explicit requirement that the editor must adapt between light/dark (which the docs currently don't), I implemented the editor using `prism-react-renderer`'s actual `Highlight`/tokenizer pipeline directly (same mechanism as `@theme/CodeBlock`): **palenight** for dark mode (pixel-identical to real doc code blocks, verified by computed style) and **github** for light mode (a sensible adapting counterpart, since none exists site-wide). `react-simple-code-editor` stays a controlled component; `onValueChange`/debounce pipeline is untouched aside from adapting from an event to a raw string. Format stays fixed to `yaml` per `CONFIG_FORMAT`, as instructed.
+
+Accessibility: `react-simple-code-editor` doesn't accept an `aria-label`, so I added a visually-hidden `&lt;label htmlFor&gt;` wired to `textareaId`.
+
+### Verification
+1. `npm run build` — succeeds twice (before and after a follow-up fix). Only the pre-existing `/docs/themes#jandedobbeleer` broken-anchor warning; no new warnings.
+2. Screenshots via this repo's own Playwright install (`tools/svg-png-compare`, since the interactive Browser pane wouldn't composite in this environment) at 1440px, light+dark, for `/segments` and `/studio` (waited for the wasm-loaded preview selector rather than a fixed sleep): `C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\b9b935d0-2ccd-4cb3-b53e-1c2719355c19\scratchpad\review-after\{segments,studio}-{light,dark}.png`, plus `studio-after-typing.png` and detail crops (`facets-crop2.png`, `card-crop-fixed.png`).
+3. Visual comparison against the before shots:
+   - `Studio`/`Segments` h1 went from Infima's default 2rem to 3rem, matching the homepage hero's weight; intro paragraph now wraps at ~62ch instead of running the full container width.
+   - `.name`/`.ds` are now visually distinct (bold dark vs. lighter gray) instead of reading as one blended block.
+   - The "Sign in via ohmyposh.dev" checkbox now sits at the top of its two-line label instead of floating mid-text.
+   - The editor went from unstyled plain text to full syntax highlighting, confirmed adapting between palenight (dark) and github (light) via computed styles, not just eyeballing.
+   Nothing regressed in the comparison.
+4. Editor interaction, scripted: typed a value change via `fill()` (typing multi-line indented text key-by-key triggers the editor's own auto-indent-on-Enter and corrupts YAML indentation — a pre-existing, expected behavior of `react-simple-code-editor`, not a bug) — confirmed `tokenCount: 183` (highlighting present), `stillEditable: true` (value updates), `changed: true` (preview SVG updates to show the new text).
+5. `OMP_BIN=&lt;repo's own src/bin/oh-my-posh.exe&gt; npm run themes` — "Successfully exported 124 themes", no regression.
+
+No console errors were introduced; the only page errors present (`ERR_NAME_NOT_RESOLVED` for `js.monitor.azure.com`/`dc.services.visualstudio.com`) are the pre-existing Application Insights telemetry calls, unrelated and expected to fail offline.</result>
+<usage><subagent_tokens>240809</subagent_tokens><tool_uses>142</tool_uses><duration_ms>1579296</duration_ms></usage>
+</task-notification>

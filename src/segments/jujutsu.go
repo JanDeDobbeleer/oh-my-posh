@@ -16,8 +16,12 @@ const (
 
 	IgnoreWorkingCopy options.Option = "ignore_working_copy"
 	ChangeIDMinLen    options.Option = "change_id_min_len"
+	CommitIDMinLen    options.Option = "commit_id_min_len"
 	FetchAhead        options.Option = "fetch_ahead_counter"
 	AheadIcon         options.Option = "ahead_icon"
+
+	jujutsuStatusFrameHeader = "OMPJJ1:5"
+	jujutsuStatusFieldCount  = 5
 )
 
 type JujutsuStatus struct {
@@ -42,6 +46,9 @@ type Jujutsu struct {
 	ChangeID       string
 	ChangeIDPrefix string
 	ChangeIDRest   string
+	CommitID       string
+	CommitIDPrefix string
+	CommitIDRest   string
 	Scm
 }
 
@@ -161,32 +168,49 @@ func (jj *Jujutsu) setJujutsuStatus() {
 		return
 	}
 
-	header, statusString, _ := strings.Cut(statusString, "\n")
-	prefix, rest, found := strings.Cut(header, "|")
-	// Jujutsu change IDs contain only canonical ID characters, so "|" is a safe
-	// separator that survives RunCommand's trimming when rest is empty.
-	if !found || len(prefix) == 0 || strings.Contains(rest, "|") {
+	fields := strings.Split(statusString, "\x00")
+	if len(fields) != jujutsuStatusFieldCount+2 ||
+		fields[0] != jujutsuStatusFrameHeader ||
+		fields[len(fields)-1] != "" ||
+		fields[1] == "" ||
+		fields[3] == "" {
 		return
 	}
 
-	jj.ChangeIDPrefix = prefix
-	jj.ChangeIDRest = rest
-	jj.ChangeID = prefix + rest
+	changeIDPrefix := fields[1]
+	changeIDRest := fields[2]
+	commitIDPrefix := fields[3]
+	commitIDRest := fields[4]
+	statusString = fields[5]
 
 	for line := range strings.SplitSeq(statusString, "\n") {
 		if len(line) > 0 {
 			jj.Working.add(line[0])
 		}
 	}
+
+	jj.ChangeIDPrefix = changeIDPrefix
+	jj.ChangeIDRest = changeIDRest
+	jj.ChangeID = changeIDPrefix + changeIDRest
+	jj.CommitIDPrefix = commitIDPrefix
+	jj.CommitIDRest = commitIDRest
+	jj.CommitID = commitIDPrefix + commitIDRest
 }
 
 func (jj *Jujutsu) logTemplate() string {
 	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
-	minLength := jj.options.Int(ChangeIDMinLen, 0)
+	changeIDMinLength := jj.options.Int(ChangeIDMinLen, 0)
+	commitIDMinLength := jj.options.Int(CommitIDMinLen, 0)
+	template := `"%s\0" ++ change_id.shortest(%d).prefix() ++ "\0" ++ ` +
+		`change_id.shortest(%d).rest() ++ "\0" ++ commit_id.shortest(%d).prefix() ++ "\0" ++ ` +
+		`commit_id.shortest(%d).rest() ++ "\0" ++ diff.summary() ++ "\0"`
 	return fmt.Sprintf(
-		`change_id.shortest(%d).prefix() ++ "|" ++ change_id.shortest(%d).rest() ++ "\n" ++ diff.summary()`,
-		minLength,
-		minLength,
+		template,
+		jujutsuStatusFrameHeader,
+		changeIDMinLength,
+		changeIDMinLength,
+		commitIDMinLength,
+		commitIDMinLength,
 	)
 }
 

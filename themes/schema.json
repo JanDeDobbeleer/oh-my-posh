@@ -2534,6 +2534,12 @@
                     "description": "Minimum length of the change ID to display",
                     "default": 0
                   },
+                  "commit_id_min_len": {
+                    "type": "integer",
+                    "title": "Commit ID Minimum Length",
+                    "description": "Minimum length of the commit ID to display",
+                    "default": 0
+                  },
                   "fetch_status": {
                     "type": "boolean",
                     "title": "Display Status",

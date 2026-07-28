@@ -33,11 +33,12 @@ import Config from "@site/src/components/Config.js";
 ### Fetching information
 
 As doing Jujutsu (jj) calls can slow down the prompt experience, we do not fetch information by default.
-Set `status_formats` to `true` to enable fetching additional information (and populate the template).
+Set `fetch_status` to `true` to enable fetching additional information (and populate the template).
 
 | Name                  |        Type         | Default  | Description                                                                                                                                                                                                                                                      |
 | --------------------- | :-----------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `change_id_min_len`   |        `int`        |   `0`    | `ChangeID` will be at least this many characters, even if a shorter one would be unique                                                                                                                                                                          |
+| `commit_id_min_len`   |        `int`        |   `0`    | `CommitID` will be at least this many characters, even if a shorter one would be unique                                                                                                                                                                          |
 | `fetch_status`        |      `boolean`      | `false`  | fetch the local changes                                                                                                                                                                                                                                          |
 | `ignore_working_copy` |      `boolean`      |  `true`  | don't snapshot/update the working copy                                                                                                                                                                                                                           |
 | `fetch_ahead_counter` |      `boolean`      | `false`  | fetch a counter for number of changes between working copy and closest bookmark                                                                                                                                                                                  |
@@ -63,9 +64,12 @@ Set `status_formats` to `true` to enable fetching additional information (and po
 | `.ChangeID`         | `string` | The shortest unique prefix of the working copy change that's at least change_id_min_len long                                                                                     |
 | `.ChangeIDPrefix`   | `string` | The shortest unique prefix of the working copy change ID                                                                                                                         |
 | `.ChangeIDRest`     | `string` | The additional portion displayed after `.ChangeIDPrefix` to satisfy `change_id_min_len`; empty when the unique prefix already meets or exceeds that minimum                      |
+| `.CommitID`         | `string` | The shortest unique prefix of the working copy commit that's at least commit_id_min_len long                                                                                     |
+| `.CommitIDPrefix`   | `string` | The shortest unique prefix of the working copy commit ID                                                                                                                         |
+| `.CommitIDRest`     | `string` | The additional portion displayed after `.CommitIDPrefix` to satisfy `commit_id_min_len`; empty when the unique prefix already meets or exceeds that minimum                      |
 | `.ClosestBookmarks` | `string` | Closest bookmark(s) on ancestors                                                                                                                                                 |
 
-`.ChangeIDRest` is not the remainder of the full canonical change ID and isn't independently usable as an identifier.
+`.ChangeIDRest` and `.CommitIDRest` are not remainders of the full canonical IDs and aren't independently usable as identifiers.
 
 ### Status
 

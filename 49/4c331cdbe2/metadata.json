@@ -3,7 +3,7 @@
   "checkpoint_id": "494c331cdbe2",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 4,
   "files_touched": [
     "website/export_themes.mjs",
     "website/font-metrics.mjs",
@@ -23,6 +23,13 @@
       "compact_transcript": "/49/4c331cdbe2/1/transcript.jsonl",
       "content_hash": "/49/4c331cdbe2/1/content_hash.txt",
       "prompt": "/49/4c331cdbe2/1/prompt.txt"
+    },
+    {
+      "metadata": "/49/4c331cdbe2/2/metadata.json",
+      "transcript": "/49/4c331cdbe2/2/full.jsonl",
+      "compact_transcript": "/49/4c331cdbe2/2/transcript.jsonl",
+      "content_hash": "/49/4c331cdbe2/2/content_hash.txt",
+      "prompt": "/49/4c331cdbe2/2/prompt.txt"
     }
   ],
   "token_usage": {

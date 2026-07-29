@@ -1,0 +1,152 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "45d88f946e4a",
+  "session_id": "030df228-1b4b-482d-b343-0fc9c13a3d1a",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-29T05:39:21.9209979Z",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "website/src/components/Config.js",
+    "website/src/components/ConfigEditor/serialize.js",
+    "website/src/components/Studio/config.js",
+    "website/src/components/Studio/index.js"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "e8f97e2b8b64",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 464,
+    "cache_creation_tokens": 734598,
+    "cache_read_tokens": 36378433,
+    "output_tokens": 87529,
+    "api_call_count": 245
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_017GY5aRu5fQLpkqLEWLy1Tg",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "conventional-commit"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "e8f97e2b8b64",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 270,
+        "end": 271,
+        "entry_ids": [
+          "aca8c722-e4d7-485b-9a24-6cacdbbe4ab5"
+        ],
+        "tool_use_id": "toolu_017GY5aRu5fQLpkqLEWLy1Tg"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_017GY5aRu5fQLpkqLEWLy1Tg"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: conventional-commit",
+        "default_collapsed": true
+      }
+    },
+    {
+      "id": "claude-skill-toolu_01QMCoPw62dxo3vHzAbfN53T",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "writing-clearly-and-concisely"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "e8f97e2b8b64",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 439,
+        "end": 440,
+        "entry_ids": [
+          "44988d4e-2cca-48aa-8ceb-4e594d819851"
+        ],
+        "tool_use_id": "toolu_01QMCoPw62dxo3vHzAbfN53T"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01QMCoPw62dxo3vHzAbfN53T"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: writing-clearly-and-concisely",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-29T05:39:21.7919888Z",
+    "agent_lines": 66,
+    "agent_removed": 58,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 66,
+    "total_lines_changed": 124,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 199,
+      "user_lines_removed": 532,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "website/docs/configuration/colors.mdx": 12,
+        "website/docs/configuration/data.mdx": 28,
+        "website/docs/installation/prompt.mdx": 2,
+        "website/docs/segments/overview.mdx": 3,
+        "website/docs/studio.mdx": 3,
+        "website/docusaurus.config.js": 8,
+        "website/plugins/segments/index.js": 1,
+        "website/plugins/segments/registry.json": 117,
+        "website/sidebars.js": 1,
+        "website/src/css/custom.css": 17,
+        "website/src/pages/index.js": 7
+      },
+      "user_removed_per_file": {
+        "website/docs/configuration/colors.mdx": 15,
+        "website/docs/configuration/data.mdx": 30,
+        "website/docs/installation/prompt.mdx": 2,
+        "website/docs/installation/windows.mdx": 12,
+        "website/docs/segments/overview.mdx": 3,
+        "website/docs/studio.mdx": 3,
+        "website/docusaurus.config.js": 2,
+        "website/plugins/segments/index.js": 2,
+        "website/plugins/segments/registry.json": 234,
+        "website/sidebars.js": 3,
+        "website/src/components/SegmentCatalog/index.js": 1,
+        "website/src/pages/index.js": 7,
+        "website/static/img/msstore-dark.svg": 109,
+        "website/static/img/msstore-light.svg": 109
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 265,
+      "agent_lines_removed": 590
+    }
+  ]
+}

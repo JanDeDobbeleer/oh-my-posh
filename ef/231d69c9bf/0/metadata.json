@@ -1,0 +1,44 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "ef231d69c9bf",
+  "session_id": "021119e5-0c91-4195-aa2d-b4109a88bc90",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-29T18:19:24.6133575Z",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/cli/font.go",
+    "src/cli/font/download.go",
+    "src/cli/font/run.go",
+    "src/cli/font/tui.go",
+    "src/cli/progress/model.go",
+    "src/cli/progress/reader.go",
+    "src/go.mod",
+    "src/go.sum"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "8723d9066561",
+  "checkpoint_transcript_start": 16,
+  "transcript_lines_at_start": 16,
+  "compact_transcript_start": 2,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-29T18:19:24.5950051Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 179,
+    "human_removed": 375,
+    "total_committed": 0,
+    "total_lines_changed": 554,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

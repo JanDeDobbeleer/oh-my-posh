@@ -1,0 +1,32 @@
+Do both because the SVG removal is not necessarily a breaking change for my posh functionality. Do the commits first. Make sure all changes flow into the most relevant commits, or put separately as a separate commit.
+
+1. Move on to SVG removal in the production build and move that only to the WASM.
+2. Once that is done and committed, move to replacing bubbletea.
+
+---
+
+commit what's there and start on bubbletea
+
+---
+
+continue with the migration
+
+---
+
+I want to rework the font CLI to have a list and install command (don't think we have that now) which is more aligned to an actual CLI and remove the need for a complicated TUI.
+
+---
+
+update the docs for the new font commands
+
+---
+
+bin it
+
+---
+
+Config export image: isn't that the one we wanted to remove out of the production build and only have this functionality in the WASM build?
+
+---
+
+Do an analysis of why the teams are failing before we jump to conclusions.

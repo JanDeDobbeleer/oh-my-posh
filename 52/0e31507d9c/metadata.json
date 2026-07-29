@@ -3,7 +3,7 @@
   "checkpoint_id": "520e31507d9c",
   "strategy": "manual-commit",
   "branch": "rewrite",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "src/cli/config_export_image.go",
     "src/cli/config_export_svg.go",
@@ -49,6 +49,13 @@
       "transcript": "/52/0e31507d9c/0/full.jsonl",
       "compact_transcript": "/52/0e31507d9c/0/transcript.jsonl",
       "content_hash": "/52/0e31507d9c/0/content_hash.txt",
+      "prompt": ""
+    },
+    {
+      "metadata": "/52/0e31507d9c/1/metadata.json",
+      "transcript": "/52/0e31507d9c/1/full.jsonl",
+      "compact_transcript": "/52/0e31507d9c/1/transcript.jsonl",
+      "content_hash": "/52/0e31507d9c/1/content_hash.txt",
       "prompt": ""
     }
   ],

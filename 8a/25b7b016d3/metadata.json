@@ -3,7 +3,7 @@
   "checkpoint_id": "8a25b7b016d3",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 4,
   "files_touched": [
     "src/svg/svg.go",
     "src/svg/svg_test.go",
@@ -24,6 +24,13 @@
       "compact_transcript": "/8a/25b7b016d3/1/transcript.jsonl",
       "content_hash": "/8a/25b7b016d3/1/content_hash.txt",
       "prompt": "/8a/25b7b016d3/1/prompt.txt"
+    },
+    {
+      "metadata": "/8a/25b7b016d3/2/metadata.json",
+      "transcript": "/8a/25b7b016d3/2/full.jsonl",
+      "compact_transcript": "/8a/25b7b016d3/2/transcript.jsonl",
+      "content_hash": "/8a/25b7b016d3/2/content_hash.txt",
+      "prompt": "/8a/25b7b016d3/2/prompt.txt"
     }
   ],
   "token_usage": {

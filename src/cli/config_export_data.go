@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/render"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/spf13/cobra"
@@ -47,7 +48,7 @@ segment key wins), and writes it to the given output path. --config is
 ignored in this mode. This is the single command that regenerates
 src/prompt/testdata/fixtures - run from src/.`,
 	Args: cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		cache.Init(os.Getenv("POSH_SHELL"))
 
 		if themesDir != "" {
@@ -81,7 +82,9 @@ src/prompt/testdata/fixtures - run from src/.`,
 		// render.Config's own eng.Primary() call runs every segment against the
 		// real environment and populates both the template cache and each segment's
 		// writer, which is what we record below.
-		if _, err := render.Config(cfg, 120, false, nil); err != nil {
+		if _, err := render.Config(cfg, 120, false, func(flags *runtime.Flags) error {
+			return applyDataFile(flags, cmd.Flags().Changed)
+		}); err != nil {
 			exitcode = 666
 			fmt.Println(err.Error())
 			return
@@ -153,7 +156,7 @@ func buildDataDocument(cfg *config.Config) ([]byte, error) {
 				continue
 			}
 
-			raw, err := json.Marshal(writer)
+			raw, err := recordSegmentData(writer)
 			if err != nil {
 				return nil, fmt.Errorf("failed to marshal segment %s: %w", segment.DataKey(), err)
 			}
@@ -187,6 +190,11 @@ func init() {
 	dataCmd.Flags().StringVarP(&outputData, "output", "o", "", "data file to export to")
 	dataCmd.Flags().BoolVar(&sanitize, "sanitize", false,
 		"scrub identity (username, hostname, paths, git/cloud identity, sysinfo, battery) from the recorded data, for sharing or committing fixtures")
+	// The same flag the image and print commands carry, for the same reason plus one: a fixture
+	// recorded once can be re-recorded through the writers to pick up whatever the data format
+	// has since gained - method results, say - without giving up the values it was curated with.
+	dataCmd.Flags().StringVar(&dataPath, "data", "",
+		"path to a template data file to seed the recording with, instead of the live environment")
 	dataCmd.Flags().StringVar(&themesDir, "themes", "",
 		"record every theme in this directory and merge them into one sanitized fixture, ignoring --config (requires --sanitize)")
 
@@ -206,7 +214,12 @@ func recordThemeSanitized(themePath string) (env, segments map[string]json.RawMe
 		return nil, nil, fmt.Errorf("failed to parse theme %s", themePath)
 	}
 
-	if _, err := render.Config(cfg, 120, true, nil); err != nil {
+	// --data seeds the writers with a fixture's own values before they render, so re-recording an
+	// existing file keeps what it was curated with and only adds what the format has since gained.
+	// Without it every theme would record whatever this machine happens to look like.
+	if _, err := render.Config(cfg, 120, true, func(flags *runtime.Flags) error {
+		return applyDataFile(flags, func(string) bool { return false })
+	}); err != nil {
 		return nil, nil, fmt.Errorf("failed to record theme %s: %w", themePath, err)
 	}
 

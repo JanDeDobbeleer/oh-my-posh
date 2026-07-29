@@ -1,11 +1,14 @@
 package cache
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStore(t *testing.T) {
@@ -86,4 +89,36 @@ func TestStore(t *testing.T) {
 			tc.testFunc(t)
 		})
 	}
+}
+
+// TestStoreCloseTouchesSessionFileMTime verifies that closing a dirty,
+// persisting session store bumps the on-disk file's mtime after a real
+// persist. This guards against #7340: on Windows the mmap-backed write path
+// doesn't reliably update the file's last-write-time on its own, which could
+// cause an actively-used session cache to look stale and get swept up by
+// cache.Clear().
+func TestStoreCloseTouchesSessionFileMTime(t *testing.T) {
+	origSession := session
+	t.Cleanup(func() { session = origSession })
+
+	filePath := filepath.Join(t.TempDir(), "session.cache")
+
+	testStore := Session.new()
+	testStore.filePath = filePath
+	testStore.persist = true
+	testStore.dirty = true
+	testStore.cache.Set("test_key", &Entry[any]{
+		Value:     "test_value",
+		Timestamp: time.Now().Unix(),
+		TTL:       3600,
+	})
+	session = testStore
+
+	before := time.Now()
+	Session.close()
+
+	info, err := os.Stat(filePath)
+	require.NoError(t, err)
+	assert.False(t, info.ModTime().Before(before), "mtime should be bumped to the close time, not left stale")
+	assert.WithinDuration(t, time.Now(), info.ModTime(), time.Minute)
 }

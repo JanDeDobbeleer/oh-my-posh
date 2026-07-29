@@ -7,18 +7,35 @@
   "segments": {
     "time": {
       "data": {
-        "CurrentDate": "2026-03-17T09:41:00+01:00"
+        "CurrentDate": "2026-03-17T09:41:00+01:00",
+        "Format": "",
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "Text": " ♥  "
       },
       "enabled": true
     },
     "angular": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "18.2.7",
+        "InProjectDir": false,
         "Major": "18",
         "Minor": "2",
+        "Mismatch": false,
         "Patch": "7",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 7,
+          "Text": ""
+        },
+        "Text": " 18.2.7",
+        "URL": ""
       },
       "enabled": true
     },
@@ -42,34 +59,71 @@
     },
     "aurelia": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.0.0-beta.23",
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "0",
+        "Mismatch": false,
         "Patch": "0",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 8,
+          "Text": ""
+        },
+        "Text": "<#ffffff>(</>2.0.0-beta.23<#ffffff>)</>",
+        "URL": ""
       },
       "enabled": true
     },
     "aws": {
       "data": {
+        "AccessKeyID": "",
+        "AccountID": "111122223333",
         "Profile": "anycompany-prod",
         "Region": "us-east-1",
-        "AccountID": "111122223333",
-        "AccessKeyID": ""
+        "RegionAlias": "use1",
+        "SSOSession": null,
+        "Segment": {
+          "Index": 12,
+          "Text": ""
+        },
+        "Settings": null,
+        "Text": " anycompany-prod@us-east-1"
       },
       "enabled": true
     },
     "az": {
       "data": {
-        "name": "Contoso Production",
+        "Origin": "CLI",
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "Text": " <p:symbol-color></> Contoso Production",
         "environmentName": "AzureCloud",
-        "Origin": "CLI"
+        "homeTenantId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isDefault": false,
+        "managedByTenants": null,
+        "name": "Contoso Production",
+        "state": "",
+        "tenantDisplayName": "",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "user": null
       },
       "enabled": true
     },
     "azd": {
       "data": {
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "Text": "[<#ffffff></> Azure Developer CLI Environment: <#ffff00>zava-prod</> :: <#ffff00>1</>]",
         "defaultEnvironment": "zava-prod",
         "version": 1
       },
@@ -77,19 +131,37 @@
     },
     "azfunc": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "4.0.6280",
+        "InProjectDir": false,
         "Major": "4",
         "Minor": "0",
+        "Mismatch": false,
         "Patch": "6280",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 11,
+          "Text": ""
+        },
+        "Text": "<#f5bf45></> 4.0.6280",
+        "URL": ""
       },
       "enabled": true
     },
     "battery": {
       "data": {
+        "Error": "",
+        "Icon": "",
         "Percentage": 70,
+        "Segment": {
+          "Index": 9,
+          "Text": ""
+        },
         "State": 3,
-        "Icon": ""
+        "Text": "70"
       },
       "enabled": true
     },
@@ -156,30 +228,60 @@
     },
     "cds": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "8.5.0",
+        "HasDependency": false,
+        "InProjectDir": false,
         "Major": "8",
         "Minor": "5",
+        "Mismatch": false,
         "Patch": "0",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 7,
+          "Text": ""
+        },
+        "Text": "  cds 8.5.0 ",
+        "URL": ""
       },
       "enabled": true
     },
     "cf": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "8.8.0",
+        "InProjectDir": false,
         "Major": "8",
         "Minor": "8",
+        "Mismatch": false,
         "Patch": "0",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 9,
+          "Text": ""
+        },
+        "Text": "  cf 8.8.0 ",
+        "URL": ""
       },
       "enabled": true
     },
     "cftarget": {
       "data": {
-        "URL": "https://api.cf.example.com",
-        "User": "demo@example.com",
         "Org": "example-org",
-        "Space": "production"
+        "Segment": {
+          "Index": 10,
+          "Text": ""
+        },
+        "Space": "production",
+        "Text": " example-org/production ",
+        "URL": "https://api.cf.example.com",
+        "User": "demo@example.com"
       },
       "enabled": true
     },
@@ -214,22 +316,45 @@
     },
     "clojure": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.11.1",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "11",
+        "Mismatch": false,
         "Patch": "1",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 6,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
     "cmake": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.31.1",
+        "InProjectDir": false,
         "Major": "3",
         "Minor": "31",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 3,
+          "Text": ""
+        },
+        "Text": "   cmake 3.31.1 ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -298,23 +423,45 @@
     },
     "crystal": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.14.0",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "14",
+        "Mismatch": false,
         "Patch": "0",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "Text": " 1.14.0",
+        "URL": ""
       },
       "enabled": true
     },
     "dart": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.6.0",
+        "InProjectDir": false,
         "Major": "3",
         "Minor": "6",
+        "Mismatch": false,
         "Patch": "0",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 6,
+          "Text": ""
+        },
+        "Text": " 3.6.0",
+        "URL": ""
       },
       "enabled": true
     },
@@ -331,21 +478,37 @@
     },
     "docker": {
       "data": {
-        "Context": "cymbal-cluster"
+        "Containers": null,
+        "Context": "cymbal-cluster",
+        "Segment": {
+          "Index": 5,
+          "Text": ""
+        },
+        "Text": "  "
       },
       "enabled": true
     },
     "dotnet": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "9.0.101",
+        "InProjectDir": false,
         "Major": "9",
         "Minor": "0",
+        "Mismatch": false,
         "Patch": "101",
         "Prerelease": "",
-        "BuildMetadata": "",
-        "URL": "",
         "SDKVersion": "9.0.101",
-        "Error": ""
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "Text": "  9.0.101<#7a7a7a> </>",
+        "URL": "",
+        "Unsupported": false
       },
       "enabled": true
     },
@@ -360,45 +523,90 @@
     },
     "elixir": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.17.3",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "17",
-        "URL": "",
-        "Error": ""
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 10,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
     "executiontime": {
       "data": {
+        "FormattedMs": "734ms",
         "Ms": 734,
-        "FormattedMs": "734ms"
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "Text": " 734mss "
       },
       "enabled": true
     },
     "firebase": {
       "data": {
-        "Project": "cymbal-superstore"
+        "Project": "cymbal-superstore",
+        "Segment": {
+          "Index": 6,
+          "Text": ""
+        },
+        "Text": " <p:symbol-color>󰥧</> cymbal-superstore"
       },
       "enabled": true
     },
     "flutter": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.27.1",
+        "InProjectDir": false,
         "Major": "3",
         "Minor": "27",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 14,
+          "Text": ""
+        },
+        "Text": " 3.27.1 ",
+        "URL": ""
       },
       "enabled": true
     },
     "fortran": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "13.2.0",
+        "InProjectDir": false,
         "Major": "13",
         "Minor": "2",
-        "URL": "",
-        "Error": ""
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 11,
+          "Text": ""
+        },
+        "Text": " 󱈚 ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -413,35 +621,105 @@
     },
     "gcp": {
       "data": {
-        "Project": "cymbal-bank-prod",
         "Account": "alice@contoso.com",
+        "ActiveConfig": "cymbal",
+        "Project": "cymbal-bank-prod",
         "Region": "us-central1",
-        "ActiveConfig": "cymbal"
+        "Segment": {
+          "Index": 5,
+          "Text": ""
+        },
+        "Text": " <p:symbol-color>󱇶</> cymbal-bank-prod"
       },
       "enabled": true
     },
     "git": {
       "data": {
-        "HEAD": "main",
-        "BranchStatus": "↑1",
-        "Ref": "main",
-        "ShortHash": "1a2b3c4",
-        "Hash": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
         "Ahead": 1,
         "Behind": 0,
+        "BranchStatus": "↑1",
+        "CherryPick": false,
+        "CommandMissing": false,
+        "Commit": {
+          "Author": {
+            "Email": "",
+            "Name": ""
+          },
+          "Committer": {
+            "Email": "",
+            "Name": ""
+          },
+          "Refs": {
+            "Heads": null,
+            "Remotes": null,
+            "Tags": null
+          },
+          "Sha": "",
+          "Subject": "",
+          "Timestamp": "0001-01-01T00:00:00Z"
+        },
+        "Detached": false,
+        "Dir": "~/dev/oh-my-posh",
+        "HEAD": "main",
+        "Hash": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
+        "IsBare": false,
+        "IsWorkTree": false,
+        "IsWslSharedPath": false,
+        "Kraken": "gitkraken://repolink//commit/1a2b3c4d5e6f7890abcdef1234567890abcdef12?url=",
+        "LatestTag": "",
+        "Merge": false,
+        "PushAhead": 0,
+        "PushBehind": 0,
+        "RawUpstreamURL": "",
+        "Rebase": null,
+        "Ref": "main",
+        "RelativeDir": "",
+        "Remotes": {},
+        "RepoName": "oh-my-posh",
+        "Revert": false,
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "ShortHash": "1a2b3c4",
+        "Staging": {
+          "Added": 1,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": {},
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 0,
+          "Moved": 0,
+          "String": "+1",
+          "Unmerged": 0,
+          "Untracked": 0
+        },
+        "StashCount": 0,
+        "Text": " main ↑1  +2 ~1 |  +1 ",
         "Upstream": "origin/main",
+        "UpstreamGone": false,
         "UpstreamIcon": "",
         "UpstreamURL": "https://github.com/JanDeDobbeleer/oh-my-posh",
-        "UpstreamGone": false,
-        "RepoName": "oh-my-posh",
-        "Detached": false,
+        "User": null,
         "Working": {
           "Added": 2,
-          "Modified": 1
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": {},
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 1,
+          "Moved": 0,
+          "String": "+2 ~1",
+          "Unmerged": 0,
+          "Untracked": 0
         },
-        "Staging": {
-          "Added": 1
-        }
+        "WorktreeCount": 0
       },
       "enabled": true
     },
@@ -461,12 +739,23 @@
     },
     "go": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.23.4",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "23",
+        "Mismatch": false,
         "Patch": "4",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 3,
+          "Text": ""
+        },
+        "Text": "1.23.4",
+        "URL": ""
       },
       "enabled": true
     },
@@ -487,13 +776,24 @@
     },
     "haskell": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "9.10.1",
+        "InProjectDir": false,
         "Major": "9",
         "Minor": "10",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": "",
-        "StackGhc": false
+        "Prerelease": "",
+        "Segment": {
+          "Index": 16,
+          "Text": ""
+        },
+        "StackGhc": false,
+        "Text": " 9.10.1 ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -519,11 +819,23 @@
     },
     "java": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "21.0.5",
+        "InProjectDir": false,
         "Major": "21",
         "Minor": "0",
+        "Mismatch": false,
         "Patch": "5",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 6,
+          "Text": ""
+        },
+        "Text": "21.0.5",
+        "URL": ""
       },
       "enabled": true
     },
@@ -541,31 +853,59 @@
     },
     "julia": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.11.2",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "11",
+        "Mismatch": false,
         "Patch": "2",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 9,
+          "Text": ""
+        },
+        "Text": "<#ca3c34></> 1.11.2",
+        "URL": ""
       },
       "enabled": true
     },
     "kotlin": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.1.0",
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "1",
+        "Mismatch": false,
         "Patch": "0",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 19,
+          "Text": ""
+        },
+        "Text": "K 2.1.0 ",
+        "URL": ""
       },
       "enabled": true
     },
     "kubectl": {
       "data": {
         "Cluster": "kind-cymbal",
-        "User": "kind-cymbal",
-        "Context": "kind-cymbal"
+        "Context": "kind-cymbal",
+        "Namespace": "",
+        "Segment": {
+          "Index": 13,
+          "Text": ""
+        },
+        "Text": " kind-cymbal",
+        "User": "kind-cymbal"
       },
       "enabled": true
     },
@@ -594,13 +934,23 @@
     },
     "lua": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "lua",
+        "Expected": "",
         "Full": "5.4.7",
+        "InProjectDir": false,
         "Major": "5",
         "Minor": "4",
+        "Mismatch": false,
         "Patch": "7",
-        "URL": "",
-        "Error": "",
-        "Executable": "lua"
+        "Prerelease": "",
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "Text": " 5.4.7",
+        "URL": ""
       },
       "enabled": true
     },
@@ -624,12 +974,24 @@
     },
     "mojo": {
       "data": {
-        "Venv": ".venv",
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "24.6.0",
+        "InProjectDir": false,
         "Major": "24",
         "Minor": "6",
+        "Mismatch": false,
         "Patch": "0",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 18,
+          "Text": ""
+        },
+        "Text": " 🔥 ",
+        "URL": "",
+        "Venv": ".venv"
       },
       "enabled": true
     },
@@ -690,11 +1052,23 @@
     },
     "nim": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.2.0",
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "2",
+        "Mismatch": false,
         "Patch": "0",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 19,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -706,45 +1080,91 @@
     },
     "node": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "24.12.0",
+        "InProjectDir": false,
         "Major": "24",
         "Minor": "12",
-        "Patch": "0",
+        "Mismatch": false,
         "PackageManagerIcon": "",
         "PackageManagerName": "",
-        "Error": ""
+        "Patch": "0",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 3,
+          "Text": ""
+        },
+        "Text": "  24.12.0 ",
+        "URL": ""
       },
       "enabled": true
     },
     "npm": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "11.6.0",
+        "InProjectDir": false,
         "Major": "11",
         "Minor": "6",
+        "Mismatch": false,
         "Patch": "0",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 3,
+          "Text": ""
+        },
+        "Text": "<#cc7eda> | </><#7eb8da> </> 11.6.0",
+        "URL": ""
       },
       "enabled": true
     },
     "nx": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "20.2.2",
+        "InProjectDir": false,
         "Major": "20",
         "Minor": "2",
+        "Mismatch": false,
         "Patch": "2",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 8,
+          "Text": ""
+        },
+        "Text": "Nx 20.2.2",
+        "URL": ""
       },
       "enabled": true
     },
     "ocaml": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "5.2.1",
+        "InProjectDir": false,
         "Major": "5",
         "Minor": "2",
+        "Mismatch": false,
         "Patch": "1",
         "Prerelease": "",
-        "Error": ""
+        "Segment": {
+          "Index": 21,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -770,7 +1190,12 @@
     },
     "os": {
       "data": {
-        "Icon": ""
+        "Icon": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Text": " "
       },
       "enabled": true
     },
@@ -785,32 +1210,62 @@
     },
     "path": {
       "data": {
-        "Path": "~/dev/oh-my-posh",
+        "Folders": null,
         "Location": "~/dev/oh-my-posh",
+        "Parent": "",
+        "Path": "~/dev/oh-my-posh",
+        "RootDir": false,
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
         "StackCount": 0,
-        "Writable": true,
-        "RootDir": false
+        "Text": " ~/dev/oh-my-posh ",
+        "Writable": true
       },
       "enabled": true
     },
     "perl": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "5.40.0",
+        "InProjectDir": false,
         "Major": "5",
         "Minor": "40",
+        "Mismatch": false,
         "Patch": "0",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 24,
+          "Text": ""
+        },
+        "Text": " 5.40.0 ",
+        "URL": ""
       },
       "enabled": true
     },
     "php": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "8.4.1",
+        "InProjectDir": false,
         "Major": "8",
         "Minor": "4",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 8,
+          "Text": ""
+        },
+        "Text": " 8.4.1 ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -838,11 +1293,16 @@
     },
     "project": {
       "data": {
-        "Type": "node",
-        "Version": "1.4.2",
+        "Error": "",
         "Name": "oh-my-posh",
+        "Segment": {
+          "Index": 14,
+          "Text": ""
+        },
         "Target": "",
-        "Error": ""
+        "Text": "  1.4.2 oh-my-posh ",
+        "Type": "node",
+        "Version": "1.4.2"
       },
       "enabled": true
     },
@@ -857,12 +1317,24 @@
     },
     "python": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.12.4",
+        "InProjectDir": false,
         "Major": "3",
         "Minor": "12",
+        "Mismatch": false,
         "Patch": "4",
-        "Venv": ".venv",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "Text": "  .venv 3.12.4 ",
+        "URL": "",
+        "Venv": ".venv"
       },
       "enabled": true
     },
@@ -888,12 +1360,23 @@
     },
     "r": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "4.4.2",
+        "InProjectDir": false,
         "Major": "4",
         "Minor": "4",
+        "Mismatch": false,
         "Patch": "2",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 27,
+          "Text": ""
+        },
+        "Text": "R 4.4.2 ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -921,24 +1404,56 @@
       "enabled": true
     },
     "root": {
-      "data": {},
+      "data": {
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "Text": "  "
+      },
       "enabled": true
     },
     "ruby": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.3.6",
-        "Error": ""
+        "InProjectDir": false,
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 5,
+          "Text": ""
+        },
+        "Text": "3.3.6",
+        "URL": ""
       },
       "enabled": true
     },
     "rust": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.83.0",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "83",
+        "Mismatch": false,
         "Patch": "0",
         "Prerelease": "",
-        "Error": ""
+        "Segment": {
+          "Index": 5,
+          "Text": ""
+        },
+        "Text": " 1.83.0",
+        "URL": ""
       },
       "enabled": true
     },
@@ -961,13 +1476,23 @@
     },
     "session": {
       "data": {
-        "SSHSession": false
+        "SSHSession": false,
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Text": "alice "
       },
       "enabled": true
     },
     "shell": {
       "data": {
         "Name": "zsh",
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "Text": "  zsh ",
         "Version": "5.9"
       },
       "enabled": true
@@ -981,28 +1506,56 @@
     },
     "spotify": {
       "data": {
-        "Status": "playing",
         "Artist": "Tycho",
-        "Track": "Easy",
-        "Icon": " "
+        "Icon": " ",
+        "Segment": {
+          "Index": 3,
+          "Text": ""
+        },
+        "Status": "playing",
+        "Text": "   Tycho - Easy ",
+        "Track": "Easy"
       },
       "enabled": true
     },
     "status": {
       "data": {
+        "Error": false,
+        "Meaning": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
         "String": "0",
-        "Error": false
+        "Text": "❯ "
       },
       "enabled": true
     },
     "strava": {
       "data": {
-        "name": "Morning Ride",
-        "type": "Ride",
         "Ago": "2h",
-        "Icon": "",
+        "Authenticate": false,
+        "Error": "",
         "Hours": 2,
-        "Error": ""
+        "Icon": "",
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "Text": " Morning Ride 2h  ",
+        "URL": "",
+        "average_heartrate": 0,
+        "average_watts": 0,
+        "device_watts": false,
+        "distance": 0,
+        "id": 0,
+        "kudos_count": 0,
+        "max_heartrate": 0,
+        "moving_time": 0,
+        "name": "Morning Ride",
+        "start_date": "0001-01-01T00:00:00Z",
+        "type": "Ride",
+        "weighted_average_watts": 0
       },
       "enabled": true
     },
@@ -1029,31 +1582,56 @@
     },
     "swift": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "6.0.3",
+        "InProjectDir": false,
         "Major": "6",
         "Minor": "0",
+        "Mismatch": false,
         "Patch": "3",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 18,
+          "Text": ""
+        },
+        "Text": "  6.0.3 ",
+        "URL": ""
       },
       "enabled": true
     },
     "sysinfo": {
       "data": {
-        "Precision": 2,
-        "PhysicalTotalMemory": 34359738368,
+        "Disks": {},
+        "Load1": 0.52,
+        "Load15": 0.42,
+        "Load5": 0.48,
         "PhysicalAvailableMemory": 12884901888,
         "PhysicalFreeMemory": 12884901888,
         "PhysicalPercentUsed": 62.5,
-        "Load1": 0.52,
-        "Load5": 0.48,
-        "Load15": 0.42
+        "PhysicalTotalMemory": 34359738368,
+        "Precision": 2,
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "SwapFreeMemory": 0,
+        "SwapPercentUsed": 0,
+        "SwapTotalMemory": 0,
+        "Text": " <#ffffff>MEM:</> 62.5% (20/32GB)"
       },
       "enabled": true
     },
     "talosctl": {
       "data": {
-        "Context": "cymbal-cluster"
+        "Context": "cymbal-cluster",
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "Text": "<p:symbol-color>󱃾</> cymbal-cluster"
       },
       "enabled": true
     },
@@ -1081,13 +1659,24 @@
     },
     "terraform": {
       "data": {
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "Text": " example_corp-prod ",
         "WorkspaceName": "example_corp-prod",
         "terraform_version": "1.9.0"
       },
       "enabled": true
     },
     "text": {
-      "data": {},
+      "data": {
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Text": "╰─"
+      },
       "enabled": true
     },
     "todoist": {
@@ -1136,21 +1725,45 @@
     },
     "v": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "0.4.9",
+        "InProjectDir": false,
         "Major": "0",
         "Minor": "4",
+        "Mismatch": false,
         "Patch": "9",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 29,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
     "vala": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "0.56.17",
+        "InProjectDir": false,
         "Major": "0",
         "Minor": "56",
-        "URL": "",
-        "Error": ""
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 30,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -1163,12 +1776,17 @@
     },
     "wakatime": {
       "data": {
-        "start": "2026-07-09T00:00:00Z",
-        "end": "2026-07-09T23:59:59Z",
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "Text": "神 4h 30m.",
         "cumulative_total": {
-          "text": "4 hrs 30 mins",
-          "seconds": 16200
-        }
+          "seconds": 16200,
+          "text": "4 hrs 30 mins"
+        },
+        "end": "2026-07-09T23:59:59Z",
+        "start": "2026-07-09T00:00:00Z"
       },
       "enabled": true
     },
@@ -1229,23 +1847,37 @@
     },
     "ytm": {
       "data": {
-        "Status": "playing",
         "Artist": "Men I Trust",
-        "Track": "Show Me How",
-        "Icon": " "
+        "Icon": " ",
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "Status": "playing",
+        "Text": "   Men I Trust - Show Me How ",
+        "Track": "Show Me How"
       },
       "enabled": true
     },
     "zig": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "0.13.0",
+        "InProjectDir": false,
         "Major": "0",
         "Minor": "13",
+        "Mismatch": false,
         "Patch": "0",
         "Prerelease": "",
-        "BuildMetadata": "",
-        "URL": "",
-        "Error": ""
+        "Segment": {
+          "Index": 31,
+          "Text": ""
+        },
+        "Text": "  ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -1255,6 +1887,27 @@
         "ZigIcon": "ZVM"
       },
       "enabled": true
+    },
+    "azpwsh": {
+      "data": {
+        "Origin": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Text": "",
+        "environmentName": "",
+        "homeTenantId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isDefault": false,
+        "managedByTenants": null,
+        "name": "",
+        "state": "",
+        "tenantDisplayName": "",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "user": null
+      },
+      "enabled": false
     }
   },
   "version": 1

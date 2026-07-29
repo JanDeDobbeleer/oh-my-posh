@@ -46,12 +46,7 @@ Exports the current config to "~/new_config.omp.json" (in JSON format).`,
 
 		cache.Init(os.Getenv("POSH_SHELL"))
 
-		err := setConfigFlag()
-		if err != nil {
-			exitcode = 666
-			fmt.Println(err.Error())
-			return
-		}
+		setConfigFlag()
 
 		cfg := config.Load(configFlag)
 

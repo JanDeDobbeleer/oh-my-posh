@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
@@ -111,7 +110,7 @@ func (cfg *Config) Download(url string) ([]byte, error) {
 
 	defer resp.Body.Close()
 
-	reader := progress.NewReader(resp.Body, resp.ContentLength, program)
+	reader := &downloadProgressReader{reader: resp.Body, total: resp.ContentLength}
 
 	data, err := io.ReadAll(reader)
 	if err != nil {

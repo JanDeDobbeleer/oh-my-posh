@@ -18,12 +18,22 @@ import (
 
 var cycle *color.Cycle = &color.Cycle{}
 
+// DefaultRPromptBreathingRoom is how many cells a shell keeps free between the end of the prompt
+// and an rprompt: room for the command being typed, so it does not run into the right-aligned
+// block as the line fills. See Engine.RPromptBreathingRoom for who asks for less.
+const DefaultRPromptBreathingRoom = 30
+
 type Engine struct {
 	Env                   runtime.Environment
 	streamingResults      chan *config.Segment
 	abort                 chan struct{}
 	done                  chan struct{}
 	Config                *config.Config
+	// RPromptBreathingRoom overrides how many cells canWriteRightBlock insists on leaving free
+	// between the prompt and an rprompt. Zero keeps the interactive default. An export has no
+	// one typing into it, which is the only thing that margin protects, so a renderer can ask
+	// for a smaller one - see render.Config.
+	RPromptBreathingRoom int
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
 	// blockTailColors is a snapshot of terminal.ParentColors captured just
@@ -116,7 +126,11 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 
 	promptBreathingRoom := 5
 	if rprompt {
-		promptBreathingRoom = 30
+		promptBreathingRoom = DefaultRPromptBreathingRoom
+
+		if e.RPromptBreathingRoom > 0 {
+			promptBreathingRoom = e.RPromptBreathingRoom
+		}
 	}
 
 	canWrite := availableSpace >= promptBreathingRoom

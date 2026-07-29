@@ -199,9 +199,7 @@ func read(configFile string, h hashWriter) (*Config, error) {
 		return Default(nil), nil
 	}
 
-	var cfg Config
-	cfg.Source = configFile
-	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
+	format := strings.TrimPrefix(filepath.Ext(configFile), ".")
 
 	data, err := getData(configFile)
 	if err != nil {
@@ -218,7 +216,59 @@ func read(configFile string, h hashWriter) (*Config, error) {
 		return nil, ErrFileNotFound
 	}
 
+	cfg, err := ParseBytes(format, data)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg.Source = configFile
+
+	// Hashed over the bytes exactly as fetched, not the JSONC-with-comments-
+	// stripped form ParseBytes parses internally: this hash only has to be a
+	// stable per-content fingerprint (cli/init.go uses it as ConfigHash, a
+	// cache key for the generated init script), and hashing the fetched bytes
+	// directly means read never has to reach back into ParseBytes for the
+	// normalized copy it produced for itself. The one observable difference
+	// is that editing only a comment in a JSONC config now changes the hash
+	// too (it previously didn't, since the stripped bytes were identical) -
+	// a strictly harmless extra cache miss, not a correctness issue, and
+	// nothing pins the old behavior in a test.
+	if _, err := h.Write(data); err != nil {
+		log.Error(err)
+	}
+
+	return cfg, nil
+}
+
+// ParseBytes parses config data already in memory: the format switch and the
+// presence/normalisation work read used to do inline once it had the file's
+// bytes in hand, split out so a caller with no file to read from - the
+// js/wasm entrypoint (wasm/main.go), handed a studio's config text directly -
+// can reach the exact same decode path without going through read's own
+// file/URL fetch. format is the config's file-extension label (json, jsonc,
+// yaml, yml, toml, tml), the same value read derives from a config path's
+// own extension; ParseBytes never derives it itself, since a caller parsing
+// from memory usually has no file path to derive it from - the wasm
+// entrypoint's caller (the studio) already knows its own format.
+//
+// This only reaches as far as read's own single-file decode: the Parse
+// extends loop, migrateSegmentProperties, toggleSegments, and the Upgrade
+// defaulting all happen one level up in Parse, after read (or a caller of
+// ParseBytes) has already produced a *Config - none of that runs here.
+// Concretely, a config built through ParseBytes can never pull in a remote
+// config via "extends" (parsing from memory bypasses the loop that walks it
+// entirely) and a legacy TOML config's segment "properties" never get
+// migrated to "options". The wasm entrypoint's studio config is expected to
+// be self-contained and current, so neither gap matters for that caller; do
+// not wire an extends fetch onto this path to close the first one - a
+// caller that must not touch the network at all is the entire reason this
+// path exists.
+func ParseBytes(format string, data []byte) (*Config, error) {
+	var cfg Config
+	cfg.Format = format
+
 	var parseErr error
+
 	switch cfg.Format {
 	case YAML, YML:
 		cfg.Format = YAML
@@ -245,11 +295,6 @@ func read(configFile string, h hashWriter) (*Config, error) {
 	}
 
 	populatePresence(&cfg, data)
-
-	_, err = h.Write(data)
-	if err != nil {
-		log.Error(err)
-	}
 
 	return &cfg, nil
 }

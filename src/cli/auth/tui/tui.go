@@ -1,4 +1,15 @@
-package auth
+// Package tui implements the interactive device-code authentication flow for
+// `oh-my-posh auth`: a Bubble Tea spinner that walks GitHub Copilot's and the
+// YouTube Music Desktop App's device-code exchange through to a stored
+// token. It lives one level below cli/auth because cli/auth holds only the
+// plain cache-key constants (CopilotTokenKey, YTMDABASEURL, YTMDATOKEN) that
+// the segments package needs to read a token back out of the cache, and that
+// import graph also has to compile for wasm — a target with no terminal to
+// authenticate against, and one that bubbletea itself does not build for at
+// all. Keeping the device-flow logic and its bubbletea Model implementation
+// here means importing cli/auth for its constants never drags bubbletea
+// along; this package imports cli/auth, never the other way around.
+package tui
 
 import (
 	"fmt"

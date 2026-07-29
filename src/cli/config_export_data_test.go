@@ -61,7 +61,20 @@ func TestBuildDataDocument_EnvSectionDropsInternalKeysKeepsRest(t *testing.T) {
 	assert.Contains(t, env, "UserName")
 }
 
-func TestBuildDataDocument_SkipsDisabledAndNilWriterSegments(t *testing.T) {
+// unwrapRecorded decodes a segment's raw message as the RecordedSegment
+// envelope {"enabled":...,"data":...} that buildDataDocument now always writes,
+// and returns its enabled flag plus the inner writer data unmarshaled into out.
+func unwrapRecorded(t *testing.T, raw json.RawMessage, out any) bool {
+	t.Helper()
+
+	var envelope config.RecordedSegment
+	require.NoError(t, json.Unmarshal(raw, &envelope))
+	require.NoError(t, json.Unmarshal(envelope.Data, out))
+
+	return envelope.Enabled
+}
+
+func TestBuildDataDocument_RecordsEveryConfiguredSegmentWithItsEnabledState(t *testing.T) {
 	template.Cache = &cache.Template{Segments: maps.NewConcurrent[any]()}
 
 	enabled := newRecordedSessionSegment(t, "")
@@ -84,16 +97,28 @@ func TestBuildDataDocument_SkipsDisabledAndNilWriterSegments(t *testing.T) {
 	var parsed map[string]json.RawMessage
 	require.NoError(t, json.Unmarshal(doc, &parsed))
 
+	require.Contains(t, parsed, "version", "the recorder must stamp a version marker so replay is hermetic")
+
+	var version int
+	require.NoError(t, json.Unmarshal(parsed["version"], &version))
+	assert.Equal(t, config.DataVersion, version)
+
 	var segs map[string]json.RawMessage
 	require.NoError(t, json.Unmarshal(parsed["segments"], &segs))
 
 	assert.Contains(t, segs, "session")
-	assert.NotContains(t, segs, "disabled-alias", "disabled segments must not be recorded")
+	assert.Contains(t, segs, "disabled-alias", "a segment that wasn't enabled at record time must still be recorded, "+
+		"so replay can suppress it without a live probe instead of falling through to one")
 	assert.NotContains(t, segs, "no-writer", "a segment with a nil writer must be skipped")
 
 	var session map[string]json.RawMessage
-	require.NoError(t, json.Unmarshal(segs["session"], &session))
+	enabled1 := unwrapRecorded(t, segs["session"], &session)
+	assert.True(t, enabled1)
 	assert.JSONEq(t, `true`, string(session["SSHSession"]))
+
+	var disabledSession map[string]json.RawMessage
+	enabled2 := unwrapRecorded(t, segs["disabled-alias"], &disabledSession)
+	assert.False(t, enabled2, "the recorded enabled flag must reflect the segment's own state, not force true")
 }
 
 func TestBuildDataDocument_CollisionWarnsAndLastWriterWins(t *testing.T) {
@@ -138,7 +163,7 @@ func TestBuildDataDocument_CollisionWarnsAndLastWriterWins(t *testing.T) {
 	require.NoError(t, json.Unmarshal(parsed["segments"], &segs))
 
 	var session map[string]json.RawMessage
-	require.NoError(t, json.Unmarshal(segs["session"], &session))
+	unwrapRecorded(t, segs["session"], &session)
 	assert.JSONEq(t, `true`, string(session["SSHSession"]), "the last segment sharing the key should win")
 }
 

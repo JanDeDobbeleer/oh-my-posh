@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth/tui"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
@@ -46,14 +46,14 @@ Available services:
 
 		switch args[0] {
 		case copilotServiceName:
-			authenticator := auth.NewCopilot(env)
-			if err := auth.Run(authenticator); err != nil {
+			authenticator := tui.NewCopilot(env)
+			if err := tui.Run(authenticator); err != nil {
 				log.Error(err)
 				exitcode = 70
 			}
 		case "ytmda":
-			authenticator := auth.NewYtmda(env)
-			if err := auth.Run(authenticator); err != nil {
+			authenticator := tui.NewYtmda(env)
+			if err := tui.Run(authenticator); err != nil {
 				log.Error(err)
 				exitcode = 70
 			}

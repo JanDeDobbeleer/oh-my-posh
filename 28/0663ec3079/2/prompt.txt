@@ -86,3 +86,7 @@ continue, then replace it entirely
 ---
 
 continue, then replace it entirely
+
+---
+
+yes, commit and fold the catalog fix back

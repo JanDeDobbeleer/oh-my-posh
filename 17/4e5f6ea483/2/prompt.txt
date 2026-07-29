@@ -106,3 +106,7 @@ commit and continue with phase 2, add the changes into the right comits if relev
 ---
 
 the default templat eisn't relevant, we do not support configurations without a template.
+
+---
+
+option 1, fix the themes and revert the table

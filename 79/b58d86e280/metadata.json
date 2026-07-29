@@ -3,7 +3,7 @@
   "checkpoint_id": "79b58d86e280",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 5,
   "files_touched": [
     "website/docusaurus.config.js",
     "website/sidebars.js",
@@ -23,6 +23,13 @@
       "compact_transcript": "/79/b58d86e280/1/transcript.jsonl",
       "content_hash": "/79/b58d86e280/1/content_hash.txt",
       "prompt": "/79/b58d86e280/1/prompt.txt"
+    },
+    {
+      "metadata": "/79/b58d86e280/2/metadata.json",
+      "transcript": "/79/b58d86e280/2/full.jsonl",
+      "compact_transcript": "/79/b58d86e280/2/transcript.jsonl",
+      "content_hash": "/79/b58d86e280/2/content_hash.txt",
+      "prompt": "/79/b58d86e280/2/prompt.txt"
     }
   ],
   "token_usage": {

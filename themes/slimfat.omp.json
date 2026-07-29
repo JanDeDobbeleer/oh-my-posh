@@ -75,6 +75,7 @@
           "foreground": "#fafafa",
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
+          "template": "  ",
           "type": "text"
         }
       ],
@@ -88,6 +89,7 @@
           "foreground": "#fafafa",
           "leading_diamond": "\ue0b2",
           "style": "diamond",
+          "template": "  ",
           "type": "text"
         },
         {

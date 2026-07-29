@@ -9,6 +9,7 @@
           "foreground": "#000000",
           "leading_diamond": "\ue0c2\ue0c2",
           "style": "diamond",
+          "template": "  ",
           "type": "text"
         },
         {
@@ -123,6 +124,7 @@
           "foreground": "#000000",
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
+          "template": "  ",
           "type": "text"
         }
       ],

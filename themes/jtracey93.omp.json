@@ -66,6 +66,7 @@
           "type": "executiontime"
         },
         {
+          "template": " {{ .String }} ",
           "type": "status",
           "style": "diamond",
           "foreground": "#ffffff",

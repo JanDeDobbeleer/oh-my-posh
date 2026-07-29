@@ -38,6 +38,7 @@
           {
             "foreground": "#fff",
             "style": "plain",
+            "template": "  ",
             "type": "text"
           },
           {

@@ -8,6 +8,7 @@
         {
           "foreground": "#ffffff",
           "style": "plain",
+          "template": "  ",
           "type": "text"
         }
       ],
@@ -76,6 +77,7 @@
           "leading_diamond": "<transparent,#49404f>\ue0b0</>",
           "style": "plain",
           "trailing_diamond": "\ue0b0",
+          "template": "  ",
           "type": "text"
         },
         {

@@ -23,7 +23,6 @@ var (
 	auto  bool
 )
 
-// upgradeCmd represents the upgrade command
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
 	Short: "Upgrade when a new version is available.",

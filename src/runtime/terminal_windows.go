@@ -121,8 +121,6 @@ func (term *Terminal) Platform() string {
 // The last part of the path is the key to retrieve.
 //
 // If the path ends in "\", the "(Default)" key in that path is retrieved.
-//
-// Returns a variant type if successful; nil and an error if not.
 func (term *Terminal) WindowsRegistryKeyValue(input string) (*WindowsRegistryValue, error) {
 	defer log.Trace(time.Now(), input)
 

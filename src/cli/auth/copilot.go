@@ -24,7 +24,6 @@ const (
 	CopilotTokenKey = "copilot_token"
 )
 
-// DeviceCodeResponse represents the response from GitHub's device code endpoint.
 type DeviceCodeResponse struct {
 	DeviceCode      string `json:"device_code"`
 	UserCode        string `json:"user_code"`
@@ -33,7 +32,6 @@ type DeviceCodeResponse struct {
 	Interval        int    `json:"interval"`
 }
 
-// AccessTokenResponse represents the response from GitHub's access token endpoint.
 type AccessTokenResponse struct {
 	AccessToken      string `json:"access_token"`
 	TokenType        string `json:"token_type"`

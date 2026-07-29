@@ -12,15 +12,10 @@ type Os struct {
 }
 
 const (
-	// MacOS the string/icon to use for MacOS
-	MacOS options.Option = "macos"
-	// Linux the string/icon to use for linux
-	Linux options.Option = "linux"
-	// Windows the string/icon to use for windows
-	Windows options.Option = "windows"
-	// Android the string/icon to use for android
-	Android options.Option = "android"
-	// DisplayDistroName display the distro name or not
+	MacOS             options.Option = "macos"
+	Linux             options.Option = "linux"
+	Windows           options.Option = "windows"
+	Android           options.Option = "android"
 	DisplayDistroName options.Option = "display_distro_name"
 )
 

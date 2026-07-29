@@ -224,9 +224,8 @@ func CopilotCLI() *Config {
 	return statuslineCLIConfig(1234567891, COPILOTCLI, " \uec1e {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ")
 }
 
-// statuslineCLIConfig builds the shared default config for AI CLI statusline integrations
-// (e.g. Claude, Copilot CLI). The left block is always PATH + GIT; the right block
-// contains a single segment of the given type and template.
+// The left block is always PATH + GIT; the right block contains a single
+// segment of the given type and template.
 func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) *Config {
 	return &Config{
 		hash:    hash,

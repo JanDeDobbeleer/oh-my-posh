@@ -18,10 +18,6 @@ To enable automated upgrades, run: 'oh-my-posh enable upgrade'.
 `
 )
 
-// Returns the upgrade notice if a new version is available
-// that should be displayed to the user.
-//
-// The upgrade check is only performed every other week.
 func (cfg *Config) Notice() (string, bool) {
 	if !http.IsConnected() {
 		return "", false

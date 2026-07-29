@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
-// SvnStatus represents part of the status of a Svn repository
 type SvnStatus struct {
 	ScmStatus
 }

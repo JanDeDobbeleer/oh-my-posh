@@ -23,9 +23,7 @@ const (
 	PRIMARY = "primary"
 )
 
-// MediaInfo holds a single media session read from the OS media-transport
-// layer (e.g. Windows System Media Transport Controls). It is player-agnostic:
-// the SMTC mechanism can surface any app that publishes a session.
+// Player-agnostic: the OS media-transport layer (e.g. Windows SMTC) can surface any app that publishes a session.
 type MediaInfo struct {
 	// Status is the lowercased playback status: playing/paused/stopped/closed/opened/changing.
 	Status      string

@@ -21,7 +21,7 @@ const (
 
 var (
 	TimeNow = time.Now()
-	// Create a fake timeline for the fake json, all in Unix milliseconds, to be used in all fake json responses
+	// All timestamps are in Unix milliseconds, matching what the fake JSON responses use.
 	FakeBrewDate              = TimeNow.Add(-time.Hour * 24 * 20)
 	FakeFermentationStartDate = FakeBrewDate.Add(time.Hour * 24)                   // 1 day after brew date = 19 days ago
 	FakeReading1Date          = FakeFermentationStartDate.Add(time.Minute * 35)    // first reading 35 minutes

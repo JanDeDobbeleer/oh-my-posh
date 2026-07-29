@@ -4,10 +4,9 @@ package jobs
 
 import "testing"
 
-// TestCloseGoroutineJob verifies that CloseGoroutineJob removes both the job
-// and its recorded pids for the current goroutine, closes the underlying
-// handle exactly once, and is a safe no-op if called again (e.g. because
-// KillGoroutineChildren already won the race and closed it first).
+// Removes both the job and its recorded pids for the current goroutine, closes the underlying
+// handle exactly once, and is safe to call again (e.g. if KillGoroutineChildren already won the
+// race and closed it first).
 func TestCloseGoroutineJob(t *testing.T) {
 	if err := CreateJobForGoroutine("test"); err != nil {
 		t.Fatalf("CreateJobForGoroutine returned error: %v", err)
@@ -50,9 +49,8 @@ func TestCloseGoroutineJob(t *testing.T) {
 	CloseGoroutineJob()
 }
 
-// TestCloseGoroutineJobNoJob verifies calling CloseGoroutineJob without a
-// prior CreateJobForGoroutine call (e.g. a segment with no timeout) is a
-// harmless no-op.
+// Calling CloseGoroutineJob without a prior CreateJobForGoroutine call (e.g. a segment with no
+// timeout) must be a harmless no-op.
 func TestCloseGoroutineJobNoJob(t *testing.T) {
 	CloseGoroutineJob()
 }

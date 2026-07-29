@@ -14,7 +14,6 @@ func setupTemplateBench() {
 	Init(env, nil, nil)
 }
 
-// BenchmarkRenderPlain benchmarks the fast-path: no {{ }} in the string.
 func BenchmarkRenderPlain(b *testing.B) {
 	setupTemplateBench()
 	b.ReportAllocs()
@@ -23,7 +22,6 @@ func BenchmarkRenderPlain(b *testing.B) {
 	}
 }
 
-// BenchmarkRenderSimple benchmarks a minimal two-field template.
 func BenchmarkRenderSimple(b *testing.B) {
 	setupTemplateBench()
 	type ctx struct {
@@ -37,8 +35,8 @@ func BenchmarkRenderSimple(b *testing.B) {
 	}
 }
 
-// BenchmarkRenderRepeated benchmarks repeated renders of an identical ~200-char
-// template with conditionals and a function call — models per-folder path segments.
+// Models per-folder path segments: an identical ~200-char template with
+// conditionals and a function call, rendered repeatedly.
 func BenchmarkRenderRepeated(b *testing.B) {
 	setupTemplateBench()
 	type ctx struct {
@@ -60,8 +58,9 @@ func BenchmarkRenderRepeated(b *testing.B) {
 	}
 }
 
-// BenchmarkPatchTemplate benchmarks patchTemplate alone on a ~300-char template
-// that exercises property rewriting (Env vars, struct fields, Segments).
+// Benchmarks patchTemplate alone (not the full render pipeline) on a
+// ~300-char template exercising property rewriting (Env vars, struct
+// fields, Segments).
 func BenchmarkPatchTemplate(b *testing.B) {
 	setupTemplateBench()
 	context := map[string]any{

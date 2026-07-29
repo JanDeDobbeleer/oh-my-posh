@@ -24,7 +24,6 @@ const (
 	TransientRPrompt
 )
 
-// getAllFeatures returns all defined feature flags by iterating through bit positions
 func getAllFeatures() []Features {
 	var features []Features
 

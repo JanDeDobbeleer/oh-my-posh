@@ -5,18 +5,13 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
-// dataPath is the shared --data flag value used by printCmd and imageCmd to
-// render deterministically from a recorded template data file instead of
-// the live environment.
+// Shared between printCmd and imageCmd.
 var dataPath string
 
-// applyDataFile loads the template data file referenced by --data (if any)
-// and routes it onto flags. It is a no-op when dataPath is empty.
-//
-// SegmentData and EnvData are copied onto flags verbatim - the rest of the
-// pipeline (segment replay, template cache overlay) consumes them from
-// there. The env keys that map directly onto runtime.Flags fields (see
-// routedEnvDataKeys in the template package) are routed here explicitly,
+// No-op when dataPath is empty. SegmentData and EnvData are copied onto flags
+// verbatim - the rest of the pipeline (segment replay, template cache overlay)
+// consumes them from there. Env keys that map directly onto runtime.Flags fields
+// (see routedEnvDataKeys in the template package) are routed here explicitly,
 // with precedence explicit CLI flag > data file > live environment: changed
 // reports whether the corresponding CLI flag (by name) was set explicitly,
 // in which case the data file's value is skipped.

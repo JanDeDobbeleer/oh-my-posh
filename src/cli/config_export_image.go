@@ -24,7 +24,6 @@ var (
 	imageTerminalWidth int
 )
 
-// imageCmd represents the image command
 var imageCmd = &cobra.Command{
 	Use:   "image",
 	Short: "Export your config to an image",

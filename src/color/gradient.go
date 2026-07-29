@@ -17,7 +17,6 @@ const (
 	gradientSuffix       = ")"
 )
 
-// gradientPrefixes lists every recognized gradient prefix, checked in order.
 var gradientPrefixes = [...]string{linearGradientPrefix, darkGradientPrefix, lightGradientPrefix}
 
 // IsGradient reports whether c is a gradient definition: a multi-stop
@@ -28,7 +27,6 @@ func (c Ansi) IsGradient() bool {
 	return ok
 }
 
-// gradientPrefix returns the gradient prefix c starts with, and whether it matched any.
 func (c Ansi) gradientPrefix() (string, bool) {
 	s := c.String()
 
@@ -118,8 +116,7 @@ func (c Ansi) WithGradientStops(stops []Ansi) Ansi {
 	return Ansi(prefix + strings.Join(parts, ", ") + gradientSuffix)
 }
 
-// GradientFirst returns the first stop of the gradient. It returns c unchanged when c is not
-// a gradient, or when the gradient syntax is invalid.
+// Returns c unchanged when c is not a gradient, or the gradient syntax is invalid.
 func (c Ansi) GradientFirst() Ansi {
 	stops := c.GradientStops()
 	if len(stops) == 0 {
@@ -129,12 +126,12 @@ func (c Ansi) GradientFirst() Ansi {
 	return stops[0]
 }
 
-// GradientLast returns the last stop of the gradient. It returns c unchanged when c is not
-// a gradient, or when the gradient syntax is invalid. Equivalent to GradientLastForCells(0):
-// a dark-gradient/light-gradient shades using the narrowest (gentlest) auto-shade step, since
-// the segment's actual width isn't known here. Callers that know it — the segment's own
-// separators, diamond caps, and inline overrides — should call GradientLastForCells instead,
-// so the edge matches the actual last cell GradientCells renders rather than the fallback.
+// Returns c unchanged when c is not a gradient, or the gradient syntax is invalid.
+// Equivalent to GradientLastForCells(0): a dark-gradient/light-gradient shades using the
+// narrowest (gentlest) auto-shade step, since the segment's actual width isn't known here.
+// Callers that know it — the segment's own separators, diamond caps, and inline overrides —
+// should call GradientLastForCells instead, so the edge matches the actual last cell
+// GradientCells renders rather than the fallback.
 func (c Ansi) GradientLast() Ansi {
 	return c.GradientLastForCells(0)
 }

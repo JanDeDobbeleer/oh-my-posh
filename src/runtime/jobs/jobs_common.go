@@ -6,9 +6,7 @@ import (
 	"strings"
 )
 
-// CurrentGID returns the current goroutine's id. We expose this here so
-// callers can register PIDs without parsing runtime.Stack in multiple
-// places.
+// Exposed here so callers can register PIDs without parsing runtime.Stack in multiple places.
 func CurrentGID() uint64 {
 	buf := make([]byte, 64)
 	n := runtime.Stack(buf, false)

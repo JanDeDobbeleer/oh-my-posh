@@ -18,7 +18,6 @@ import (
 
 var outputData string
 
-// dataCmd represents the "config export data" command
 var dataCmd = &cobra.Command{
 	Use:   "data",
 	Short: "Export a template data file for your config",
@@ -105,10 +104,7 @@ Prints the recorded data to stdout.`,
 	},
 }
 
-// buildDataDocument builds the recorder's output document from an
-// already-rendered config: the template cache's simple fields (env) plus
-// every enabled segment's writer, keyed by DataKey (segments). Extracted
-// from dataCmd's Run so it can be unit tested without a real environment.
+// Extracted from dataCmd's Run so it can be unit tested without a real environment.
 func buildDataDocument(cfg *config.Config) ([]byte, error) {
 	envRaw, err := json.Marshal(template.Cache.SimpleTemplate)
 	if err != nil {

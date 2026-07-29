@@ -48,7 +48,6 @@ const (
 	Extend  Action = "extend"
 )
 
-// Config holds all the theme for rendering the prompt
 type Config struct {
 	Palette                 color.Palette      `json:"palette,omitempty" toml:"palette,omitempty" yaml:"palette,omitempty"`
 	DebugPrompt             *Segment           `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty" yaml:"debug_prompt,omitempty"`
@@ -253,11 +252,10 @@ func (cfg *Config) Hash() uint64 {
 	return cfg.hash
 }
 
-// fieldPresent reports whether name (a json tag key) was present in the
-// source config file. A nil presentFields map means presence was never
-// recorded (e.g. a struct literal built without read()), in which case every
-// field is treated as present, preserving merge's legacy unconditional-
-// overwrite behavior for such configs.
+// A nil presentFields map means presence was never recorded (e.g. a struct
+// literal built without read()), in which case every field is treated as
+// present, preserving merge's legacy unconditional-overwrite behavior for
+// such configs. name is the json tag key.
 func (cfg *Config) fieldPresent(name string) bool {
 	if cfg.presentFields == nil {
 		return true
@@ -266,8 +264,7 @@ func (cfg *Config) fieldPresent(name string) bool {
 	return cfg.presentFields[name]
 }
 
-// migrateSegmentProperties migrates the deprecated Properties field to Options for all segments.
-// This is needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
+// Needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
 func (cfg *Config) migrateSegmentProperties() {
 	for _, block := range cfg.Blocks {
 		for _, segment := range block.Segments {
@@ -276,8 +273,6 @@ func (cfg *Config) migrateSegmentProperties() {
 	}
 }
 
-// toggleSegments processes all segments in all blocks and adds segments
-// with Toggled == true to the toggle cache, effectively toggling them off.
 func (cfg *Config) toggleSegments() {
 	currentToggleSet, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
 	if currentToggleSet == nil {

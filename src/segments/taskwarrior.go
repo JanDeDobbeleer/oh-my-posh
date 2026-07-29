@@ -10,21 +10,15 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// Taskwarrior option constants
 const (
 	TaskwarriorCommand  options.Option = "command"
 	TaskwarriorCommands options.Option = "commands"
 )
 
-// Taskwarrior displays task counts and context from Taskwarrior.
-// The Commands field is a map from capitalized command name to the raw output
-// of the corresponding Taskwarrior invocation. Each entry in the config map
-// has the command name as key and a full Taskwarrior argument string as value.
 type Taskwarrior struct {
 	Base
 
-	// Commands holds the raw output of each configured command, keyed by name
-	// with the first letter uppercased.
+	// Commands is keyed by the capitalized command name.
 	Commands map[string]string
 }
 

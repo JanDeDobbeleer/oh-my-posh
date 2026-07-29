@@ -2,7 +2,6 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const validator = require('../shared/validator.js');
 
-// Test fixtures
 const fixtures = {
   validConfig: `{
     "version": 3,

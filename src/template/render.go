@@ -47,8 +47,7 @@ func (t *renderer) release() {
 	renderPool.Put(t)
 }
 
-// templateCacheKey returns the key used to look up a cached *template.Template.
-// It encodes the raw (unpatched) template text, the trust level (parsed
+// Encodes the raw (unpatched) template text, the trust level (parsed
 // templates are bound to a func map at Parse time, so a trusted and a
 // restricted render of identical text must never share a cache entry), and,
 // when context is non-nil, the reflect.Type of the context so that two
@@ -80,7 +79,6 @@ func templateCacheKey(rawText string, trusted bool, ctx any) string {
 	return key + "\x00" + t.String()
 }
 
-// parsedTemplate returns a fully-parsed *template.Template for text.
 // The first call for a given key parses and stores it; subsequent calls
 // return the cached value. Concurrent first-renders of the same template
 // may both parse, but LoadOrStore ensures only one result is shared.

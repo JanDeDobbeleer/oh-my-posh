@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// noticeCmd represents the notice command
 var noticeCmd = &cobra.Command{
 	Use:   "notice",
 	Short: "Print the upgrade notice when a new version is available.",

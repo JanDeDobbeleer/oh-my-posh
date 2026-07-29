@@ -7,10 +7,8 @@ let _omp_executable_is_path = (
     or ($_omp_executable | str starts-with "~")
 )
 
-# Exit early if the oh-my-posh executable is not available
 if not (($_omp_executable_is_path and ($_omp_executable | path exists)) or (which $_omp_executable | is-not-empty)) { return }
 
-# make sure we have the right prompt render correctly
 if ($env.config? | is-not-empty) {
     $env.config = ($env.config | upsert render_right_prompt_on_last_line true)
 }
@@ -23,11 +21,8 @@ $env.POSH_CONFIG = ::CONFIG::
 $env.POSH_SHELL = "nu"
 $env.POSH_SHELL_VERSION = (version | get version)
 
-# disable all known python virtual environment prompts
 $env.VIRTUAL_ENV_DISABLE_PROMPT = 1
 $env.PYENV_VIRTUALENV_DISABLE_PROMPT = 1
-
-# PROMPTS
 
 def --wrapped _omp_get_prompt [
     type: string,
@@ -61,8 +56,7 @@ $env.PROMPT_MULTILINE_INDICATOR = (
 )
 
 $env.PROMPT_COMMAND = {||
-    # hack to set the cursor line to 1 when the user clears the screen
-    # this obviously isn't bulletproof, but it's a start
+    # hack: sets cursor line to 1 on clear; not bulletproof, just a start
     let clear = $nu.history-enabled and (
         (history | is-empty)
         or (history | last | get command?) == "clear"

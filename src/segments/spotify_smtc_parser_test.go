@@ -11,11 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestParseSMTCLineAndApply exercises the WSL PowerShell path: a
-// "<status>|<title>|<artist>|<album>|<trackNumber>" line is parsed into a
-// *runtime.MediaInfo and applied to the segment. The expected strings carry
-// the default Nerd Font icons resolveIcon assigns (playing , paused
-// , ad ).
+// Expected strings carry the default Nerd Font icons resolveIcon assigns (playing , paused , ad ).
 func TestParseSMTCLineAndApply(t *testing.T) {
 	cases := []struct {
 		Case            string

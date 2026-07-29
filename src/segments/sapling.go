@@ -7,7 +7,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
 
-// SaplingStatus represents part of the status of a Sapling repository
 type SaplingStatus struct {
 	ScmStatus
 }

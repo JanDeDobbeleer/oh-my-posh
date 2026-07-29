@@ -8,7 +8,6 @@ type Bazel struct {
 }
 
 const (
-	// Bazel's icon
 	Icon options.Option = "icon"
 )
 

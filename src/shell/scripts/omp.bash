@@ -4,11 +4,9 @@ export POWERLINE_COMMAND='oh-my-posh'
 export CONDA_PROMPT_MODIFIER=false
 export OSTYPE=$OSTYPE
 
-# disable all known python virtual environment prompts
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
-# global variables
 _omp_start_time=''
 _omp_stack_count=0
 _omp_job_count=0
@@ -18,14 +16,12 @@ _omp_status=0
 _omp_pipestatus=0
 _omp_executable=::OMP::
 
-# switches to enable/disable features
 _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # start timer on command start
 PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_milliseconds)",0))}$(_omp_ftcs_command_start)'
 
-# set secondary prompt
 _omp_secondary_prompt=$(
     "$_omp_executable" print secondary \
         --shell=bash \
@@ -121,7 +117,6 @@ function _omp_get_primary() {
 
     local prompt
     if shopt -oq posix; then
-        # Disable in POSIX mode.
         prompt='[NOTICE: Oh My Posh prompt is not supported in POSIX mode]\n\u@\h:\w\$ '
     else
         prompt=$(
@@ -148,7 +143,6 @@ function _omp_get_secondary() {
     trap 'shopt -s promptvars' RETURN
 
     if shopt -oq posix; then
-        # Disable in POSIX mode.
         echo '> '
     else
         echo "${_omp_secondary_prompt@P}"
@@ -196,13 +190,11 @@ function _omp_install_hook() {
     local prompt_command
 
     for cmd in "${PROMPT_COMMAND[@]}"; do
-        # skip initializing when we're already initialized
         if [[ $cmd = _omp_hook ]]; then
             return
         fi
 
-        # check if the command starts with source, if so, do not add it again
-        # this is done to avoid issues with sourcing the same file multiple times
+        # avoid re-sourcing the same file multiple times
         if [[ $cmd = source* ]]; then
             continue
         fi

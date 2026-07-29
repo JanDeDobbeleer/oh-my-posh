@@ -10,7 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// segment struct, makes templating easier
 type Nightscout struct {
 	Base
 
@@ -32,7 +31,6 @@ const (
 	DoubleDownIcon    options.Option = "doubledown_icon"
 )
 
-// NightscoutData struct contains the API data
 type NightscoutData struct {
 	DateString time.Time `json:"dateString"`
 	SysTime    time.Time `json:"sysTime"`
@@ -47,8 +45,7 @@ type NightscoutData struct {
 	Mills      int64     `json:"mills"`
 }
 
-// UnmarshalJSON handles both integer and floating-point JSON numbers for the date field.
-// Some Nightscout API providers (e.g. T1Pal) return the date as a float.
+// Some Nightscout API providers (e.g. T1Pal) return the date field as a float instead of an integer.
 func (n *NightscoutData) UnmarshalJSON(data []byte) error {
 	type Alias NightscoutData
 	aux := &struct {

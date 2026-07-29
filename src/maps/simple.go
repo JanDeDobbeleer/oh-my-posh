@@ -1,6 +1,5 @@
 package maps
 
-// Simple is a generic map type that can be specialized for different value types
 type Simple[V any] map[string]V
 
 func (m Simple[V]) ToConcurrent() *Concurrent[V] {

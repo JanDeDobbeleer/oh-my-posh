@@ -6,7 +6,6 @@ import (
 	"math"
 )
 
-// battery type represents a single battery entry information.
 type battery struct {
 	// Current battery state.
 	State State
@@ -37,10 +36,6 @@ func mapMostLogicalState(currentState, newState State) State {
 	return newState
 }
 
-// Get returns information about all batteries in the system.
-//
-// If error != nil, it will be either ErrFatal or Errors.
-// If error is of type Errors, it is guaranteed that length of both returned slices is the same and that i-th error corresponds with i-th battery structure.
 func Get() (*Info, error) {
 	parseBatteryInfo := func(batteries []*battery) *Info {
 		var info Info

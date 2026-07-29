@@ -14,7 +14,6 @@ func (e *Engine) Primary() string {
 	return e.primaryInternal(false)
 }
 
-// primaryInternal handles both regular and streaming prompt rendering
 func (e *Engine) primaryInternal(fromCache bool) string {
 	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
 
@@ -52,7 +51,6 @@ func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
 	e.writePrimaryPromptInternal(needsPrimaryRPrompt, false)
 }
 
-// writePrimaryPromptInternal handles both regular and streaming prompt rendering
 func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool) {
 	if e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()

@@ -10,9 +10,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
-// Base returns the last element of path.
-// Trailing path separators are removed before extracting the last element.
-// If the path consists entirely of separators, Base returns a single separator.
+// Trailing separators are removed before extracting the last element; if the path consists
+// entirely of separators, a single separator is returned.
 func Base(input string) string {
 	volumeName := filepath.VolumeName(input)
 	// Strip trailing slashes.

@@ -14,7 +14,6 @@ type globalJSON struct {
 }
 
 const (
-	// FetchSDKVersion fetches the SDK version in global.json
 	FetchSDKVersion options.Option = "fetch_sdk_version"
 )
 

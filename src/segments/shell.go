@@ -14,7 +14,6 @@ type Shell struct {
 }
 
 const (
-	// MappedShellNames allows for custom text in place of shell names
 	MappedShellNames options.Option = "mapped_shell_names"
 )
 

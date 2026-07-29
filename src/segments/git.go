@@ -38,7 +38,6 @@ type User struct {
 	Email string
 }
 
-// GitStatus represents part of the status of a git repository
 type GitStatus struct {
 	ScmStatus
 }
@@ -61,66 +60,38 @@ func (s *GitStatus) add(code string) {
 }
 
 const (
-	// FetchStatus fetches the status of the repository
-	FetchStatus options.Option = "fetch_status"
-	// FetchPushStatus fetches the push-remote status
-	FetchPushStatus options.Option = "fetch_push_status"
-	// IgnoreStatus allows to ignore certain repo's for status information
-	IgnoreStatus options.Option = "ignore_status"
-	// FetchUpstreamIcon fetches the upstream icon
+	FetchStatus       options.Option = "fetch_status"
+	FetchPushStatus   options.Option = "fetch_push_status"
+	IgnoreStatus      options.Option = "ignore_status"
 	FetchUpstreamIcon options.Option = "fetch_upstream_icon"
-	// FetchBareInfo fetches the bare repo status
-	FetchBareInfo options.Option = "fetch_bare_info"
-	// FetchUser fetches the current user for the repo
-	FetchUser options.Option = "fetch_user"
-	// UntrackedModes list the optional untracked files mode per repo
-	UntrackedModes options.Option = "untracked_modes"
-	// IgnoreSubmodules list the optional ignore-submodules mode per repo
-	IgnoreSubmodules options.Option = "ignore_submodules"
-	// MappedBranches allows overriding certain branches with an icon/text
-	MappedBranches options.Option = "mapped_branches"
-	// DisableWithJJ disables the git segment when there's a .jj directory in the parent file path
+	FetchBareInfo     options.Option = "fetch_bare_info"
+	FetchUser         options.Option = "fetch_user"
+	UntrackedModes    options.Option = "untracked_modes"
+	IgnoreSubmodules  options.Option = "ignore_submodules"
+	MappedBranches    options.Option = "mapped_branches"
+	// Disables the git segment when a .jj directory exists in the parent file path
 	DisableWithJJ options.Option = "disable_with_jj"
 
-	// BranchIcon the icon to use as branch indicator
-	BranchIcon options.Option = "branch_icon"
-	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
+	BranchIcon          options.Option = "branch_icon"
 	BranchIdenticalIcon options.Option = "branch_identical_icon"
-	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
-	BranchAheadIcon options.Option = "branch_ahead_icon"
-	// BranchBehindIcon the icon to display when the local branch is behind the remote
-	BranchBehindIcon options.Option = "branch_behind_icon"
-	// BranchGoneIcon the icon to use when ther's no remote
-	BranchGoneIcon options.Option = "branch_gone_icon"
-	// RebaseIcon shows before the rebase context
-	RebaseIcon options.Option = "rebase_icon"
-	// CherryPickIcon shows before the cherry-pick context
-	CherryPickIcon options.Option = "cherry_pick_icon"
-	// RevertIcon shows before the revert context
-	RevertIcon options.Option = "revert_icon"
-	// CommitIcon shows before the detached context
-	CommitIcon options.Option = "commit_icon"
-	// NoCommitsIcon shows when there are no commits in the repo yet
-	NoCommitsIcon options.Option = "no_commits_icon"
-	// TagIcon shows before the tag context
-	TagIcon options.Option = "tag_icon"
-	// MergeIcon shows before the merge context
-	MergeIcon options.Option = "merge_icon"
-	// UpstreamIcons allows to add custom upstream icons
-	UpstreamIcons options.Option = "upstream_icons"
-	// GithubIcon shows when upstream is github
-	GithubIcon options.Option = "github_icon"
-	// BitbucketIcon shows  when upstream is bitbucket
-	BitbucketIcon options.Option = "bitbucket_icon"
-	// AzureDevOpsIcon shows  when upstream is azure devops
-	AzureDevOpsIcon options.Option = "azure_devops_icon"
-	// CodeCommit shows  when upstream is aws codecommit
-	CodeCommit options.Option = "codecommit_icon"
-	// CodebergIcon shows when upstream is codeberg
-	CodebergIcon options.Option = "codeberg_icon"
-	// GitlabIcon shows when upstream is gitlab
-	GitlabIcon options.Option = "gitlab_icon"
-	// GitIcon shows when the upstream can't be identified
+	BranchAheadIcon     options.Option = "branch_ahead_icon"
+	BranchBehindIcon    options.Option = "branch_behind_icon"
+	BranchGoneIcon      options.Option = "branch_gone_icon"
+	RebaseIcon          options.Option = "rebase_icon"
+	CherryPickIcon      options.Option = "cherry_pick_icon"
+	RevertIcon          options.Option = "revert_icon"
+	CommitIcon          options.Option = "commit_icon"
+	NoCommitsIcon       options.Option = "no_commits_icon"
+	TagIcon             options.Option = "tag_icon"
+	MergeIcon           options.Option = "merge_icon"
+	UpstreamIcons       options.Option = "upstream_icons"
+	GithubIcon          options.Option = "github_icon"
+	BitbucketIcon       options.Option = "bitbucket_icon"
+	AzureDevOpsIcon     options.Option = "azure_devops_icon"
+	CodeCommit          options.Option = "codecommit_icon"
+	CodebergIcon        options.Option = "codeberg_icon"
+	GitlabIcon          options.Option = "gitlab_icon"
+	// Fallback icon when the upstream host can't be identified
 	GitIcon options.Option = "git_icon"
 
 	DETACHED     = "(detached)"

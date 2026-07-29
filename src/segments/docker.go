@@ -12,11 +12,9 @@ import (
 )
 
 const (
-	// FetchContext is the property used to fetch the current docker context
-	FetchContext options.Option = "fetch_context"
-	// DockerCommand is the property used to specify the docker command to use
+	FetchContext  options.Option = "fetch_context"
 	DockerCommand options.Option = "docker_command"
-	// Filter is the property used to specify a filter to apply to docker ps results in environment mode, see https://docs.docker.com/reference/cli/docker/container/ls/#filter
+	// Filter applies to docker ps results in environment mode, see https://docs.docker.com/reference/cli/docker/container/ls/#filter
 	Filter options.Option = "filter"
 )
 

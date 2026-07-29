@@ -11,7 +11,6 @@ var (
 	verbose bool
 )
 
-// versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version",

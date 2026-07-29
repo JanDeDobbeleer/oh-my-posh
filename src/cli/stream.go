@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// streamCmd represents the stream command
 var streamCmd = createStreamCmd()
 
 func init() {

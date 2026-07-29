@@ -2,7 +2,6 @@ $POWERLINE_COMMAND = "oh-my-posh"
 $POSH_SHELL = "xonsh"
 $POSH_SHELL_VERSION = $XONSH_VERSION
 
-# disable all known python virtual environment prompts
 $VIRTUAL_ENV_DISABLE_PROMPT = 1
 $PYENV_VIRTUALENV_DISABLE_PROMPT = 1
 

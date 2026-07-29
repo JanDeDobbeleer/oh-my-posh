@@ -9,7 +9,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// StravaAPI is a wrapper around http.Oauth
 type StravaAPI interface {
 	GetActivities() ([]*StravaData, error)
 }
@@ -23,7 +22,6 @@ func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 	return http.OauthResult[[]*StravaData](&s.OAuthRequest, url, nil)
 }
 
-// segment struct, makes templating easier
 type Strava struct {
 	Base
 
@@ -50,7 +48,6 @@ const (
 	noActivitiesFound = "No activities found"
 )
 
-// StravaData struct contains the API data
 type StravaData struct {
 	StartDate            time.Time `json:"start_date"`
 	Type                 string    `json:"type"`

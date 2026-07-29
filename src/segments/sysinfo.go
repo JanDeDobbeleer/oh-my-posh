@@ -13,7 +13,6 @@ type SystemInfo struct {
 }
 
 const (
-	// Precision number of decimal places to show
 	Precision options.Option = "precision"
 )
 

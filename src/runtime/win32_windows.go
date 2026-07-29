@@ -16,7 +16,6 @@ import (
 
 // win32 specific code
 
-// win32 dll load and function definitions
 var (
 	user32                       = syscall.NewLazyDLL("user32.dll")
 	procEnumWindows              = user32.NewProc("EnumWindows")
@@ -30,7 +29,6 @@ var (
 	hGetIfTable2 = iphlpapi.NewProc("GetIfTable2")
 )
 
-// enumWindows call enumWindows from user32 and returns all active windows
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindows
 func enumWindows(enumFunc, lparam uintptr) (err error) {
 	r1, _, e1 := syscall.SyscallN(procEnumWindows.Addr(), enumFunc, lparam, 0)
@@ -44,7 +42,6 @@ func enumWindows(enumFunc, lparam uintptr) (err error) {
 	return
 }
 
-// getWindowText returns the title and text of a window from a window handle
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
 func getWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (length int32, err error) {
 	r0, _, e1 := syscall.SyscallN(procGetWindowTextW.Addr(), uintptr(hwnd), uintptr(unsafe.Pointer(str)), uintptr(maxCount))
@@ -73,7 +70,6 @@ func getWindowFileName(handle syscall.Handle) (string, error) {
 	return strings.ToLower(filename), nil
 }
 
-// GetWindowTitle searches for a window attached to the pid
 func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	var title string
 	// callback for EnumWindows

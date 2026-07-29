@@ -10,15 +10,12 @@ import (
 	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
 )
 
-// Run executes a command while ensuring the OS process is started in its own
-// process group; the started process is recorded so callers can request a
-// cleanup (KillGoroutineChildren) if they decide to abort waiting for the
-// goroutine that spawned it.
+// Starts the process in its own process group and records it so callers can request
+// cleanup via KillGoroutineChildren if they abort waiting for the spawning goroutine.
 func Run(command string, args ...string) (string, error) {
 	return RunWithEnv(command, nil, args...)
 }
 
-// RunWithEnv executes a command with additional environment variables.
 func RunWithEnv(command string, envs []string, args ...string) (string, error) {
 	cmd := exec.CommandContext(context.Background(), command, args...)
 	if len(envs) > 0 {

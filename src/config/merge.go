@@ -175,7 +175,6 @@ func merge(override, base any, skipFields ...string) error {
 	return nil
 }
 
-// skipField decides whether overrideField should be left alone during merge.
 // For scalar kinds (bool/int/uint/float) whose zero value is ambiguous between
 // "explicitly set" and "absent from the source", it consults override's
 // field-presence data (when available) instead of isZeroValue. All other

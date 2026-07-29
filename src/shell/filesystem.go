@@ -82,8 +82,6 @@ func writeFileAtomic(path string, data []byte, perm os.FileMode) error {
 	return os.Rename(tmp.Name(), path)
 }
 
-// writeFile writes data to path, atomically when possible.
-//
 // On Windows, replacing a file via rename requires that no process has the
 // target open: MoveFileEx(MOVEFILE_REPLACE_EXISTING) fails with
 // ERROR_ACCESS_DENIED as long as a single handle exists, even one opened

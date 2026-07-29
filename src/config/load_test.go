@@ -17,10 +17,6 @@ func writeExtendsFixture(t *testing.T, path, contents string) {
 	require.NoError(t, os.WriteFile(path, []byte(contents), 0o644))
 }
 
-// TestParseExtendsChainThreeLevels proves that a multi-hop extends chain
-// (A extends B extends C), with every config in the same directory, still
-// merges every level correctly.
-//
 // The distinguishing fields are all strings: merge() only skips a field when
 // it is the Go zero value (see isZeroValue in merge.go), and for bool/int
 // fields the zero value (false/0) is indistinguishable from "not set in this
@@ -128,7 +124,6 @@ func TestParseExtendsCycleDoesNotHang(t *testing.T) {
 	}
 }
 
-// writeConfigFile writes contents to name inside dir and fails the test on error.
 func writeConfigFile(t *testing.T, dir, name, contents string) string {
 	t.Helper()
 

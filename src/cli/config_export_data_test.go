@@ -16,10 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// newRecordedSessionSegment builds a config.Segment with a real *segments.Session
-// writer attached (via MapSegmentWithWriter, exactly like normal execution
-// does), so buildDataDocument has something concrete to marshal. It does not
-// run Execute/Enabled(), so the caller controls Enabled and the writer's
+// Does not run Execute/Enabled(), so the caller controls Enabled and the writer's
 // fields directly, keeping the test hermetic (no real environment probing).
 func newRecordedSessionSegment(t *testing.T, alias string) *config.Segment {
 	t.Helper()

@@ -29,11 +29,8 @@ const (
 
 var TrueColor = true
 
-// String is the interface that wraps ToColor method.
-//
-// ToColor gets the ANSI color code for a given color string.
-// This can include a valid hex color in the format `#FFFFFF`,
-// but also a name of one of the first 16 ANSI colors like `lightBlue`.
+// String converts a color string — a hex color like `#FFFFFF`, or one of the
+// first 16 ANSI color names like `lightBlue` — to an ANSI code.
 type String interface {
 	ToAnsi(colorString Ansi, isBackground bool) Ansi
 	Resolve(colorString Ansi) (Ansi, error)
@@ -239,7 +236,6 @@ type RGB struct {
 	R, G, B uint8
 }
 
-// Defaults is the default AnsiColors implementation.
 type Defaults struct {
 	accent *Set
 }
@@ -344,8 +340,6 @@ func (d *Defaults) Resolve(colorString Ansi) (Ansi, error) {
 	return colorString, nil
 }
 
-// getAnsiColorFromName returns the color code for a given color name if the name is
-// known ANSI color name.
 func getAnsiColorFromName(colorValue Ansi, isBackground bool) (Ansi, error) {
 	if colorCodes, found := ansiColorCodes[colorValue]; found {
 		return colorCodes[generics.ToInt[int](isBackground)], nil
@@ -398,8 +392,7 @@ func (p *PaletteColors) Resolve(colorString Ansi) (Ansi, error) {
 }
 
 // Cached is the AnsiColors Decorator that does simple color lookup caching.
-// ToColor calls are cheap, but not free, and having a simple cache in
-// has measurable positive effect on performance.
+// ToAnsi calls are cheap but not free, and caching has a measurable positive effect on performance.
 type Cached struct {
 	ansiColors String
 	colorCache map[cachedColorKey]Ansi

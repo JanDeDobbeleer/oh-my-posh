@@ -3,11 +3,9 @@ export POSH_SHELL_VERSION=$YASH_VERSION
 export POWERLINE_COMMAND='oh-my-posh'
 export CONDA_PROMPT_MODIFIER=false
 
-# disable all known python virtual environment prompts
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
-# global variables
 _omp_start_time=''
 _omp_execution_time=-1
 _omp_no_status=true
@@ -15,7 +13,6 @@ _omp_status=0
 _omp_job_count=0
 _omp_executable=::OMP::
 
-# switches to enable/disable features
 _omp_ftcs_marks=0
 
 # percent-encode every byte of $1; over-encoding is still valid URL encoding
@@ -68,7 +65,6 @@ _omp_hook() {
     return $_omp_status
 }
 
-# install the hooks, skip when already installed
 case ";$PROMPT_COMMAND;" in
 *";_omp_hook;"*) ;;
 *) PROMPT_COMMAND="_omp_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;

@@ -110,6 +110,22 @@ cache logic. It supports TTL-based key/value storage, file-based persistence, an
 caching. Do not introduce new cache packages unless `src/cache/` genuinely cannot meet the
 requirement.
 
+## Comments
+
+Applies to every language in this repository (Go, shell scripts, PowerShell, JavaScript/TypeScript,
+Lua, etc.) - not just the primary language of whatever file you're touching.
+
+- Default to no comment. Add one only when the code cannot say it on its own.
+- Never restate what a function/type/variable already makes obvious from its name, signature,
+  and body. A comment that just paraphrases the name is noise - delete it.
+- Only comment the WHY: a hidden constraint, a non-obvious invariant, a workaround for a specific
+  bug, an external requirement, or a caveat that would surprise a reader. If there's nothing like
+  that to say, leave the declaration uncommented - even exported/public ones.
+- When a comment is warranted, keep it to the minimum needed to convey that non-obvious point.
+  Don't pad it with restating context the code already shows.
+- Language-specific skills (e.g. `golang`) may add formatting conventions (complete sentences,
+  doc-comment placement) on top of this rule as a stricter minimum, but must not relax it.
+
 ## Go Conventions
 
 Follow the `golang` skill for project-specific Go standards.

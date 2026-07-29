@@ -16,33 +16,31 @@ type Executiontime struct {
 	Ms          int64
 }
 
-// DurationStyle how to display the time
 type DurationStyle string
 
 const (
-	// ThresholdProperty represents minimum duration (milliseconds) required to enable this segment
+	// Minimum duration in milliseconds required to enable this segment
 	ThresholdProperty options.Option = "threshold"
-	// Austin milliseconds short
+	// Milliseconds short
 	Austin DurationStyle = "austin"
-	// Roundrock milliseconds long
+	// Milliseconds long
 	Roundrock DurationStyle = "roundrock"
-	// Dallas milliseconds full
+	// Milliseconds full
 	Dallas DurationStyle = "dallas"
-	// Galveston hour
+	// Hour
 	Galveston DurationStyle = "galveston"
-	// Galveston hour
+	// Hour
 	GalvestonMs DurationStyle = "galvestonms"
-	// Houston hour and milliseconds
+	// Hour and milliseconds
 	Houston DurationStyle = "houston"
-	// Amarillo seconds
+	// Seconds
 	Amarillo DurationStyle = "amarillo"
-	// Round will round the output of the format
-	Round DurationStyle = "round"
+	Round    DurationStyle = "round"
 	// Always 7 character width
 	Lucky7 = "lucky7"
-	// ISO8601 ISO 8601 duration format (seconds)
+	// ISO 8601 duration format (seconds)
 	ISO8601 DurationStyle = "iso8601"
-	// ISO8601Ms ISO 8601 duration format with milliseconds
+	// ISO 8601 duration format with milliseconds
 	ISO8601Ms DurationStyle = "iso8601ms"
 
 	second           = 1000

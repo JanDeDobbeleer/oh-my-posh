@@ -153,10 +153,10 @@ func TestStreamPrimary_RecoversFromRenderPanic(t *testing.T) {
 	}
 }
 
-// TestStreamPrimary_AbortUnblocksSaturatedProducer guards against the abort
-// deadlock: when the record channel fills against a stalled consumer, the
-// producer blocks in a send; Abort() must still unblock it (via the
-// abort-aware send) instead of waiting forever for the goroutine to exit.
+// Guards against the abort deadlock: when the record channel fills against a
+// stalled consumer, the producer blocks in a send; Abort() must still unblock
+// it (via the abort-aware send) instead of waiting forever for the goroutine
+// to exit.
 func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
 	env := setupStreamingTestEnv()
 
@@ -429,7 +429,6 @@ func TestSegmentPendingState(t *testing.T) {
 	assert.NotEqual(t, "...", text, "Non-pending segment should show actual content")
 }
 
-// Helper function to collect all output from a channel with timeout
 func collectChannelOutput(ch <-chan string, timeout time.Duration) []string {
 	var results []string
 	timer := time.NewTimer(timeout)
@@ -697,10 +696,9 @@ func TestStreamPrimary_NoStreamingResults_Channel(t *testing.T) {
 	assert.Len(t, prompts, 2, "Should get the initial prompt and transient record with no pending segments")
 }
 
-// TestStreamPrimary_RaceConditionFix validates that the streaming loop
-// correctly handles segments that complete after Primary() but before/during
-// the counting phase. This tests the fix for the race where pendingCount
-// could get out of sync with actual pending segments.
+// Validates that the streaming loop correctly handles segments that complete
+// after Primary() but before/during the counting phase - the fix for the race
+// where pendingCount could get out of sync with actual pending segments.
 func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("Pwd").Return("/test")
@@ -788,11 +786,10 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	assert.Equal(t, 0, count, "All pending segments should be cleared")
 }
 
-// TestStreamPrimary_Abort_StopsRenderingAndDrains validates that Abort() stops
-// the producer from emitting further records and blocks until the producer
-// goroutine has fully exited, even when a segment completes (and tries to
-// notify) after the abort was issued - that late notification must not panic
-// or deadlock.
+// Validates that Abort() stops the producer from emitting further records and
+// blocks until the producer goroutine has fully exited, even when a segment
+// completes (and tries to notify) after the abort was issued - that late
+// notification must not panic or deadlock.
 func TestStreamPrimary_Abort_StopsRenderingAndDrains(t *testing.T) {
 	env := setupStreamingTestEnv()
 
@@ -855,11 +852,10 @@ func TestStreamPrimary_Abort_StopsRenderingAndDrains(t *testing.T) {
 	time.Sleep(40 * time.Millisecond)
 }
 
-// TestStreamPrimary_NoStreamingTimeout_ChannelCloses guards against the
-// pending-segment leak: with the Streaming flag set but no top-level
-// "streaming" timeout in the config (Config.Streaming == 0), every segment
-// used to be pre-registered in pendingSegments and never cleaned up (the
-// cleanup in writeSegmentsConcurrently only ran for Timeout > 0), so
+// Guards against the pending-segment leak: with the Streaming flag set but no
+// top-level "streaming" timeout in the config (Config.Streaming == 0), every
+// segment used to be pre-registered in pendingSegments and never cleaned up
+// (the cleanup in writeSegmentsConcurrently only ran for Timeout > 0), so
 // countPendingSegments never reached 0, the producer goroutine waited on
 // streamingResults forever, and the stream CLI command never exited.
 func TestStreamPrimary_NoStreamingTimeout_ChannelCloses(t *testing.T) {
@@ -912,16 +908,16 @@ func TestStreamPrimary_NoStreamingTimeout_ChannelCloses(t *testing.T) {
 	}
 }
 
-// TestStreamPrimary_Abort_BeforeAnyRender validates that Abort can be called
-// (and is a safe no-op) when no cycle has ever been started.
+// Validates that Abort can be called (and is a safe no-op) when no cycle has
+// ever been started.
 func TestStreamPrimary_Abort_NoCycleStarted(t *testing.T) {
 	engine := &Engine{}
 	assert.NotPanics(t, func() { engine.Abort() })
 }
 
-// TestStreamPrimary_Abort_ThenNewCycleWorks validates that a fresh
-// StreamPrimary cycle works correctly after a previous cycle was aborted -
-// this is the serialization guarantee the serve command depends on.
+// Validates that a fresh StreamPrimary cycle works correctly after a previous
+// cycle was aborted - this is the serialization guarantee the serve command
+// depends on.
 func TestStreamPrimary_Abort_ThenNewCycleWorks(t *testing.T) {
 	engine := setupBasicStreamingTestEnv()
 

@@ -40,43 +40,29 @@ type Provider interface {
 	Any(option Option, defaultValue any) any
 }
 
-// Option defines one property of a segment for context
 type Option string
 
 // general options used across Segments
 const (
-	// Style indicates the style to use
-	Style Option = "style"
-	// FetchVersion decides whether to fetch the version number or not
-	FetchVersion Option = "fetch_version"
-	// AlwaysEnabled decides whether or not to always display the info
+	Style         Option = "style"
+	FetchVersion  Option = "fetch_version"
 	AlwaysEnabled Option = "always_enabled"
 	// VersionURLTemplate is the template to use when building language segment hyperlink
 	VersionURLTemplate Option = "version_url_template"
-	// DisplayError decides whether to display when an error occurs or not
-	DisplayError Option = "display_error"
-	// DisplayDefault hides or shows the default
-	DisplayDefault Option = "display_default"
-	// AccessToken is the access token to use for an API
-	AccessToken Option = "access_token"
-	// RefreshToken is the refresh token to use for an API
-	RefreshToken Option = "refresh_token"
-	// HTTPTimeout timeout used when executing http request
-	HTTPTimeout Option = "http_timeout"
-	// DefaultHTTPTimeout default timeout used when executing http request
-	DefaultHTTPTimeout = 20
-	// Files to trigger the segment on
-	Files Option = "files"
-	// Duration of the cache
-	CacheDuration Option = "cache_duration"
+	DisplayError       Option = "display_error"
+	DisplayDefault     Option = "display_default"
+	AccessToken        Option = "access_token"
+	RefreshToken       Option = "refresh_token"
+	HTTPTimeout        Option = "http_timeout"
+	DefaultHTTPTimeout        = 20
+	Files              Option = "files"
+	CacheDuration      Option = "cache_duration"
 )
 
 type Map map[Option]any
 
-// debugf logs a formatted debug message, skipping the fmt.Sprintf call entirely
-// when logging is disabled. Accessor methods below are on the segment render hot
-// path and are called several times per segment per render, so avoiding the
-// eager formatting matters.
+// Skips the fmt.Sprintf call when logging is disabled: accessor methods below are on the
+// segment render hot path and are called several times per segment per render.
 func debugf(format string, args ...any) {
 	if !log.Enabled() {
 		return
@@ -96,9 +82,8 @@ func (m Map) String(option Option, defaultValue string) string {
 	return value
 }
 
-// Template resolves the option value as a template and returns the resolved string.
-// This allows using template syntax like {{ .Env.MY_API_KEY }} in configuration values.
-// If template rendering fails, it returns the original string value.
+// Supports template syntax like {{ .Env.MY_API_KEY }} in configuration values; falls back to
+// the original string if rendering fails.
 func (m Map) Template(option Option, defaultValue string, context any) string {
 	value := m.String(option, defaultValue)
 	if value == "" {

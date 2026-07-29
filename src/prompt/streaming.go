@@ -10,8 +10,6 @@ import (
 // the transient prompt on Enter needs no additional CLI call.
 const TransientMarker = "\x1e"
 
-// StreamPrimary returns a channel that yields prompt updates as segments complete.
-//
 // The engine + terminal package globals are not thread-safe, so at most one
 // StreamPrimary producer goroutine may be rendering at any given time. Callers
 // that need to interrupt an in-flight cycle (e.g. a long-lived server handling
@@ -180,7 +178,6 @@ func (e *Engine) Abort() {
 	}
 }
 
-// countPendingSegments counts how many segments are marked as pending
 func (e *Engine) countPendingSegments() int {
 	count := 0
 	e.pendingSegments.Range(func(_, _ any) bool {
@@ -190,7 +187,6 @@ func (e *Engine) countPendingSegments() int {
 	return count
 }
 
-// renderFromBlocks re-renders the complete prompt using stored block data
 func (e *Engine) renderFromBlocks() string {
 	// Reset prompt builder
 	e.prompt.Reset()
@@ -203,7 +199,6 @@ func (e *Engine) renderFromBlocks() string {
 	return e.primaryInternal(true)
 }
 
-// trackPendingSegment continues execution for a timed-out segment in the background
 func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
 	if e.streamingResults == nil {
 		return
@@ -217,7 +212,6 @@ func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
 	}()
 }
 
-// notifySegmentCompletion sends completed segment to the streaming results channel
 func (e *Engine) notifySegmentCompletion(segment *config.Segment) {
 	if e.streamingResults == nil {
 		return

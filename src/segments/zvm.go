@@ -6,10 +6,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// ZigIcon is the icon displayed before the version.
 const ZigIcon options.Option = "zigicon"
 
-// Zvm represents the Zig Version Manager (zvm) segment.
 type Zvm struct {
 	Base
 
@@ -39,7 +37,7 @@ func (z *Zvm) Enabled() bool {
 	return z.Version != ""
 }
 
-// parseActiveZvmVersion extracts the active version, marked with "[x]", from `zvm list` output.
+// The active version is marked with "[x]" in `zvm list` output.
 func parseActiveZvmVersion(output string) string {
 	for line := range strings.SplitSeq(output, "\n") {
 		if !strings.Contains(line, "[x]") {

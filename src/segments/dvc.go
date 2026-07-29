@@ -2,7 +2,6 @@ package segments
 
 import "encoding/json"
 
-// DvcStatus represents the status of a DVC repository
 type DvcStatus struct {
 	ScmStatus
 }
@@ -65,7 +64,7 @@ func (d *Dvc) CacheKey() (string, bool) {
 	return dir.Path, true
 }
 
-// setStatus parses the output of `dvc status --json`, which has the shape:
+// `dvc status --json` has the shape:
 //
 //	{"<stage>": [{"changed outs": {"<file>": "<state>"}}, {"changed deps": {"<file>": "<state>"}}], ...}
 //

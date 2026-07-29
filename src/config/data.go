@@ -31,8 +31,7 @@ type EnvData struct {
 	Executed      *bool
 }
 
-// LoadData reads and parses a template data file. The format is derived
-// from the file extension: .json/.jsonc, .yaml/.yml, or .toml.
+// The format is derived from the file extension: .json/.jsonc, .yaml/.yml, or .toml.
 func LoadData(path string) (*Data, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {

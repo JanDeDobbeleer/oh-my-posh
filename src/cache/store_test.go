@@ -91,11 +91,9 @@ func TestStore(t *testing.T) {
 	}
 }
 
-// TestStoreCloseTouchesSessionFileMTime verifies that closing a dirty,
-// persisting session store bumps the on-disk file's mtime after a real
-// persist. This guards against #7340: on Windows the mmap-backed write path
-// doesn't reliably update the file's last-write-time on its own, which could
-// cause an actively-used session cache to look stale and get swept up by
+// Guards against #7340: on Windows the mmap-backed write path doesn't
+// reliably update the file's last-write-time on its own, which could cause
+// an actively-used session cache to look stale and get swept up by
 // cache.Clear().
 func TestStoreCloseTouchesSessionFileMTime(t *testing.T) {
 	origSession := session

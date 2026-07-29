@@ -6,7 +6,6 @@ const https = require("https");
 const ajv = new Ajv({ strict: false, allErrors: true });
 addFormats(ajv);
 
-// Download schema if not present
 const schemaPath = "server.schema.json";
 const schemaUrl = "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json";
 

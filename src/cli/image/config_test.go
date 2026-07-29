@@ -159,13 +159,11 @@ func TestLoadSettings(t *testing.T) {
 	}
 }
 
-// Helper interface for testing types that have TempDir method
 type testingInterface interface {
 	TempDir() string
 	Helper()
 }
 
-// Helper function to create a temporary file with given content
 func createTempFile(t testingInterface, content string) string {
 	t.Helper()
 	tempDir := t.TempDir()

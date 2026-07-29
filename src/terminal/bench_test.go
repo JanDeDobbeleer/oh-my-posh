@@ -7,8 +7,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
-// BenchmarkWriteAnchors benchmarks the writer with realistic anchor-heavy input
-// containing color overrides, bold, and a hyperlink — 6+ anchor tokens total.
 func BenchmarkWriteAnchors(b *testing.B) {
 	Init(shell.PWSH)
 	Colors = &color.Defaults{}
@@ -23,7 +21,6 @@ func BenchmarkWriteAnchors(b *testing.B) {
 	}
 }
 
-// BenchmarkWritePlainASCII benchmarks the writer with 80 chars of plain ASCII — no anchors.
 func BenchmarkWritePlainASCII(b *testing.B) {
 	Init(shell.PWSH)
 	Colors = &color.Defaults{}

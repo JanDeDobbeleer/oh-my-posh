@@ -34,7 +34,6 @@ var (
 	interrupted  bool
 )
 
-// printCmd represents the print command
 var printCmd = createPrintCmd()
 
 func init() {

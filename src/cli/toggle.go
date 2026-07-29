@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// toggleCmd represents the toggle command
 var toggleCmd = &cobra.Command{
 	Use:   "toggle segment1 segment2 ...",
 	Short: "Toggle one or more segments on/off",

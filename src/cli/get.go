@@ -13,7 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get [shell|millis|accent|toggles|width]",
 	Short: "Get a value from oh-my-posh",

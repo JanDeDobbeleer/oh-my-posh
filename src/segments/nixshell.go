@@ -34,9 +34,8 @@ func (n *NixShell) DetectType() string {
 	}
 }
 
-// Hack to detect if we're in a `nix shell` (in contrast to a `nix-shell`).
-// A better way to do this will be enabled by https://github.com/NixOS/nix/issues/6677
-// so we check if the PATH contains a nix store.
+// Hack to detect a `nix shell` (vs a `nix-shell`) by checking if PATH contains a nix store;
+// a better way will be enabled by https://github.com/NixOS/nix/issues/6677.
 func (n *NixShell) InNewNixShell() bool {
 	paths := filepath.SplitList(n.env.Getenv("PATH"))
 

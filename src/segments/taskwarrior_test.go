@@ -178,7 +178,6 @@ func TestTaskwarrior(t *testing.T) {
 	}
 }
 
-// splitTaskArgs splits a space-separated argument string into a slice.
 func splitTaskArgs(s string) []string {
 	return strings.Fields(s)
 }

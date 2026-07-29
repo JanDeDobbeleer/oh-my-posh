@@ -118,25 +118,16 @@ type Language struct {
 
 const (
 	// DisplayMode sets the display mode (always, when_in_context, never)
-	DisplayMode options.Option = "display_mode"
-	// DisplayModeAlways displays the segment always
-	DisplayModeAlways string = "always"
-	// DisplayModeFiles displays the segment when the current folder contains certain extensions
-	DisplayModeFiles string = "files"
-	// DisplayModeEnvironment displays the segment when the environment has a language's context
-	DisplayModeEnvironment string = "environment"
-	// DisplayModeContext displays the segment when the environment or files is active
-	DisplayModeContext string = "context"
-	// MissingCommandText sets the text to display when the command is not present in the system
-	MissingCommandText options.Option = "missing_command_text"
-	// HomeEnabled displays the segment in the HOME folder or not
-	HomeEnabled options.Option = "home_enabled"
-	// LanguageExtensions the list of extensions to validate
-	LanguageExtensions options.Option = "extensions"
-	// LanguageFolders the list of folders to validate
-	LanguageFolders options.Option = "folders"
-	// LanguageProjectFiles the list of project files to validate
-	LanguageProjectFiles options.Option = "project_files"
+	DisplayMode            options.Option = "display_mode"
+	DisplayModeAlways      string         = "always"
+	DisplayModeFiles       string         = "files"
+	DisplayModeEnvironment string         = "environment"
+	DisplayModeContext     string         = "context"
+	MissingCommandText     options.Option = "missing_command_text"
+	HomeEnabled            options.Option = "home_enabled"
+	LanguageExtensions     options.Option = "extensions"
+	LanguageFolders        options.Option = "folders"
+	LanguageProjectFiles   options.Option = "project_files"
 	// Tooling allows enabling additional version fetching tools
 	Tooling options.Option = "tooling"
 	// Tools defines custom tools (executable, args, regex) for a configured language
@@ -218,10 +209,7 @@ func (l *Language) Enabled() bool {
 	return enabled
 }
 
-// loadTooling builds the commands list from the tooling map based on the tooling configuration.
-// Users can override the default tooling via the Tooling option.
-// This allows specifying which tools should be used to fetch versions
-// (e.g., "uv" for Python to use UV package manager).
+// Users can override the default tooling via the Tooling option (e.g. "uv" for Python to use the UV package manager).
 func (l *Language) loadTooling() {
 	enabledTools := l.options.StringArray(Tooling, l.defaultTooling)
 	if len(enabledTools) == 0 {
@@ -253,8 +241,6 @@ func (l *Language) hasProjectFiles() bool {
 	return false
 }
 
-// InProjectDir reports whether the working directory is within a project
-// matched by one of the segment's projectFiles.
 func (l *Language) InProjectDir() bool {
 	return l.projectRoot != nil
 }
@@ -263,7 +249,6 @@ func (l *Language) hasLanguageFolders() bool {
 	return slices.ContainsFunc(l.folders, l.env.HasFolder)
 }
 
-// setVersion parses the version string returned by the command
 func (l *Language) setVersion() error {
 	var lastError error
 

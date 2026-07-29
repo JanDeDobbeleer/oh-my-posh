@@ -46,7 +46,6 @@ func (s Store) new() *store {
 	}
 }
 
-// getStore returns the appropriate store based on the Store identifier
 func (s Store) get() *store {
 	switch s {
 	case Device:
@@ -64,7 +63,6 @@ func (s Store) get() *store {
 	}
 }
 
-// Init initializes a store with the given file path
 func (s Store) init(filePath string, persist bool) {
 	defer log.Trace(time.Now(), string(s), filePath)
 
@@ -116,8 +114,9 @@ func (s Store) init(filePath string, persist bool) {
 	}
 }
 
-// touchSessionFile updates the session file's modification time if it's older than 1 hour.
-// This prevents stale session cache files from being cleaned up while reducing steady-state overhead.
+// Updates the modification time if older than 1 hour, preventing stale
+// session cache files from being cleaned up while reducing steady-state
+// overhead.
 func touchSessionFile(filePath string) {
 	info, err := os.Stat(filePath)
 	if err != nil {
@@ -184,7 +183,6 @@ func (s Store) close() {
 	}
 }
 
-// Get retrieves a typed value from the specified store
 func Get[T any](s Store, key string) (T, bool) {
 	var zero T
 	defer log.Trace(time.Now(), string(s), key)
@@ -218,7 +216,6 @@ func Get[T any](s Store, key string) (T, bool) {
 	return zero, false
 }
 
-// Set stores a typed value in the specified store
 func Set[T any](s Store, key string, value T, duration Duration) {
 	defer log.Trace(time.Now(), string(s), key)
 
@@ -244,7 +241,6 @@ func Set[T any](s Store, key string, value T, duration Duration) {
 	store.dirty = true
 }
 
-// Delete removes a key from the specified store
 func Delete(s Store, key string) {
 	defer log.Trace(time.Now(), string(s), key)
 

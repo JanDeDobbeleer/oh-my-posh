@@ -20,7 +20,6 @@ type LastFM struct {
 }
 
 const (
-	// LastFM username
 	Username options.Option = "username"
 )
 

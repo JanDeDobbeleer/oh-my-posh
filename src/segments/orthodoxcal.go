@@ -9,8 +9,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// OrthodoxCal displays the Orthodox fasting level and feast information
-// for the current day using the orthocal.info API.
 type OrthodoxCal struct {
 	Base
 
@@ -18,7 +16,7 @@ type OrthodoxCal struct {
 }
 
 const (
-	// OrthodoxCalType selects the calendar type: "gregorian" (default) or "julian".
+	// Calendar type: "gregorian" (default) or "julian".
 	OrthodoxCalType options.Option = "calendar"
 )
 
@@ -63,17 +61,14 @@ func (o *OrthodoxCal) setData() error {
 	return json.Unmarshal(body, &o.orthodoxCalResponse)
 }
 
-// IsFasting returns true when the day has any fasting requirement (fast_level > 0).
 func (o *OrthodoxCal) IsFasting() bool {
 	return o.FastLevel > 0
 }
 
-// FeastNames joins all feasts into a single comma-separated string.
 func (o *OrthodoxCal) FeastNames() string {
 	return strings.Join(o.Feasts, ", ")
 }
 
-// SaintNames joins all saints into a single comma-separated string.
 func (o *OrthodoxCal) SaintNames() string {
 	return strings.Join(o.Saints, ", ")
 }

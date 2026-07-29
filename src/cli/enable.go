@@ -23,7 +23,6 @@ var (
 	toggleLong = strings.Join(append([]string{toggleHelpText}, toggleArgs...), "\n- ")
 )
 
-// enableCmd represents the enable command
 var enableCmd = &cobra.Command{
 	Use:       fmt.Sprintf(toggleUse, "enable"),
 	Short:     "Enable a feature",

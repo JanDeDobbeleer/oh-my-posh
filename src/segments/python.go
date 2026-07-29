@@ -18,7 +18,6 @@ type Python struct {
 }
 
 const (
-	// FetchVirtualEnv fetches the virtual env
 	FetchVirtualEnv      options.Option = "fetch_virtual_env"
 	UsePythonVersionFile options.Option = "use_python_version_file"
 	FolderNameFallback   options.Option = "folder_name_fallback"

@@ -1,0 +1,1 @@
+The svg seems to have quite the padding, is that the svg itself or the website's styling? I don't want any padding.

@@ -3,8 +3,12 @@
   "checkpoint_id": "246020ff8156",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 1,
-  "files_touched": null,
+  "checkpoints_count": 3,
+  "files_touched": [
+    "website/docs/installation/fonts.mdx",
+    "website/static/llms-full.txt",
+    "website/static/skills/ohmyposh/SKILL.md"
+  ],
   "sessions": [
     {
       "metadata": "/24/6020ff8156/0/metadata.json",
@@ -12,6 +16,13 @@
       "compact_transcript": "/24/6020ff8156/0/transcript.jsonl",
       "content_hash": "/24/6020ff8156/0/content_hash.txt",
       "prompt": "/24/6020ff8156/0/prompt.txt"
+    },
+    {
+      "metadata": "/24/6020ff8156/1/metadata.json",
+      "transcript": "/24/6020ff8156/1/full.jsonl",
+      "compact_transcript": "/24/6020ff8156/1/transcript.jsonl",
+      "content_hash": "/24/6020ff8156/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {

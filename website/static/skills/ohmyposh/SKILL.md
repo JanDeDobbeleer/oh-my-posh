@@ -30,10 +30,11 @@ description: "Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell ini
 3. **Install a Nerd Font** — required for icons and glyphs:
 
    ```bash
-   oh-my-posh font install
+   oh-my-posh font install meslo
    ```
 
-   Recommended: **Meslo LGM NF**. Set it in the terminal emulator's font settings after installing.
+   `oh-my-posh font list` prints every installable font. Recommended: **Meslo LGM NF**.
+   Set it in the terminal emulator's font settings after installing.
 
 4. **Customize the prompt** → see [configuration](/skills/ohmyposh/configuration.md)
 

@@ -59,10 +59,10 @@ curl -s https://ohmyposh.dev/install.sh | bash -s
 Oh My Posh themes use glyphs and icons from Nerd Fonts. Install a Nerd Font with:
 
 ```bash
-oh-my-posh font install
+oh-my-posh font install meslo
 ```
 
-Recommended font: Meslo LGM NF. Set the font in your terminal emulator after installation.
+List every installable font with `oh-my-posh font list`. Recommended font: Meslo LGM NF. Set the font in your terminal emulator after installation.
 
 ---
 

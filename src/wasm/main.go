@@ -21,6 +21,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"syscall/js"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
@@ -81,9 +82,21 @@ func renderSVG(args []js.Value) (string, error) {
 	dataJSON := jsString(args[2])
 	options := args[3]
 
-	cfg, err := config.ParseBytes(format, []byte(configText))
-	if err != nil {
-		return "", fmt.Errorf("failed to parse config: %w", err)
+	// An empty config means the built-in default, the same as it does for the CLI: config.Load
+	// with no path returns config.Default(). Parsing "" instead would produce an empty Config and
+	// render nothing, so a caller that wants to see what oh-my-posh looks like out of the box -
+	// the website's own homepage does - has no other way to ask for it.
+	var cfg *config.Config
+
+	var err error
+
+	if strings.TrimSpace(configText) == "" {
+		cfg = config.Default(nil)
+	} else {
+		cfg, err = config.ParseBytes(format, []byte(configText))
+		if err != nil {
+			return "", fmt.Errorf("failed to parse config: %w", err)
+		}
 	}
 
 	var data *config.Data

@@ -3,15 +3,11 @@
   "checkpoint_id": "2d7a4c92b4a5",
   "session_id": "b72324bb-e53d-4d21-a232-8886bcf4cc77",
   "strategy": "manual-commit",
-  "created_at": "2026-07-29T04:58:04.8493582Z",
+  "created_at": "2026-07-29T04:58:56.4739743Z",
   "branch": "themes-svg",
   "checkpoints_count": 2,
   "save_step_count": 1,
-  "files_touched": [
-    "website/sidebars.js",
-    "website/src/components/Studio/index.js",
-    "website/src/components/Studio/styles.module.css"
-  ],
+  "files_touched": [],
   "agent": "Claude Code",
   "model": "",
   "turn_id": "967bc9933aaa",
@@ -90,46 +86,5 @@
   ],
   "session_metrics": {
     "turn_count": 13
-  },
-  "initial_attribution": {
-    "calculated_at": "2026-07-29T04:58:03.8342213Z",
-    "agent_lines": 0,
-    "agent_removed": 17,
-    "human_added": 447,
-    "human_modified": 572,
-    "human_removed": 0,
-    "total_committed": 451,
-    "total_lines_changed": 1168,
-    "agent_percentage": 1.4554794520547945,
-    "metric_version": 2
-  },
-  "prompt_attributions": [
-    {
-      "checkpoint_number": 2,
-      "user_lines_added": 1268,
-      "user_lines_removed": 577,
-      "agent_lines_added": 0,
-      "agent_lines_removed": 0,
-      "user_added_per_file": {
-        "website/src/components/Config.js": 284,
-        "website/src/components/Config.module.css": 53,
-        "website/src/components/ConfigEditor/WasmMessage.js": 26,
-        "website/src/components/ConfigEditor/index.js": 248,
-        "website/src/components/ConfigEditor/renderDefaults.js": 29,
-        "website/src/components/ConfigEditor/serialize.js": 31,
-        "website/src/components/ConfigEditor/studioHandoff.js": 45,
-        "website/src/components/ConfigEditor/styles.module.css": 182,
-        "website/src/components/ConfigEditor/useWasmRenderer.js": 120,
-        "website/src/components/ConfigEditor/wasmLoader.js": 114,
-        "website/src/components/Studio/index.js": 125,
-        "website/src/components/Studio/styles.module.css": 11
-      },
-      "user_removed_per_file": {
-        "website/src/components/Config.js": 8,
-        "website/src/components/Studio/index.js": 287,
-        "website/src/components/Studio/styles.module.css": 169,
-        "website/src/components/Studio/wasmLoader.js": 113
-      }
-    }
-  ]
+  }
 }

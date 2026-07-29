@@ -41,6 +41,7 @@
         {
           "foreground": "#a9ffb4",
           "style": "plain",
+          "template": "  ",
           "type": "text"
         },
         {

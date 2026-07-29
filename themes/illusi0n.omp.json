@@ -49,6 +49,7 @@
             "style": "full"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {

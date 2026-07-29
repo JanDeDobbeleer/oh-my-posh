@@ -3,7 +3,7 @@
   "checkpoint_id": "ef231d69c9bf",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "src/cli/font.go",
     "src/cli/font/download.go",
@@ -21,13 +21,20 @@
       "compact_transcript": "/ef/231d69c9bf/0/transcript.jsonl",
       "content_hash": "/ef/231d69c9bf/0/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/ef/231d69c9bf/1/metadata.json",
+      "transcript": "/ef/231d69c9bf/1/full.jsonl",
+      "compact_transcript": "/ef/231d69c9bf/1/transcript.jsonl",
+      "content_hash": "/ef/231d69c9bf/1/content_hash.txt",
+      "prompt": "/ef/231d69c9bf/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 0,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 0,
-    "output_tokens": 0,
-    "api_call_count": 0
+    "input_tokens": 1149,
+    "cache_creation_tokens": 4281425,
+    "cache_read_tokens": 176225772,
+    "output_tokens": 274317,
+    "api_call_count": 610
   }
 }

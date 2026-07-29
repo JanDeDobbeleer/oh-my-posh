@@ -6,9 +6,11 @@ export default {
   favicon: 'img/favicons.svg',
   organizationName: 'jandedobbeleer',
   projectName: 'oh-my-posh',
-  onBrokenLinks: 'ignore',
+  onBrokenLinks: 'throw',
   plugins: [
-    './plugins/appinsights'
+    './plugins/appinsights',
+    './plugins/segments',
+    './plugins/themes'
   ],
   headTags: [
     {
@@ -22,27 +24,27 @@ export default {
     },
   ],
   stylesheets: [
-    "https://rsms.me/inter/inter.css",
-    "https://fonts.googleapis.com/css2?family=Fira+Code&display=swap"
+    "https://rsms.me/inter/inter.css"
   ],
   themeConfig: {
     metadata: [
       {property: 'og:image', content: 'https://ohmyposh.dev/img/hero.png'},
-      {property: 'og:image:width', content: '1200'},
-      {property: 'og:image:height', content: '630'},
       {property: 'og:type', content: 'website'},
     ],
     colorMode: {
       defaultMode: 'light',
       disableSwitch: false,
-      respectPrefersColorScheme: true,
+      // false, so the toggle is light <-> dark and nothing else. With it on, Docusaurus adds a
+      // third "system" step to the cycle that looks identical to whichever of the two the OS is
+      // already set to - a click that appears to do nothing.
+      respectPrefersColorScheme: false,
     },
     prism: {
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],
     },
     docs: {
         sidebar: {
-          hideable: true,
+          hideable: false,
         },
     },
     navbar: {
@@ -60,19 +62,24 @@ export default {
           position: 'left',
         },
         {
+          to: 'docs/segments/overview',
+          label: 'Segments',
+          position: 'left',
+        },
+        {
+          to: 'docs/themes',
+          label: 'Themes',
+          position: 'left',
+        },
+        {
+          to: 'docs/studio',
+          label: 'Studio',
+          position: 'left',
+        },
+        {
           to: 'blog',
           label: 'Blog',
           position: 'left'
-        },
-        {
-          href: 'https://github.com/sponsors/JanDeDobbeleer',
-          label: 'Sponsor',
-          position: 'left',
-        },
-        {
-          href: 'https://swag.ohmyposh.dev',
-          label: 'Swag',
-          position: 'left',
         },
         {
           href: 'https://github.com/jandedobbeleer/oh-my-posh',
@@ -95,7 +102,10 @@ export default {
       ],
     },
     footer: {
-      style: 'dark',
+      // No `style: 'dark'`: that adds .footer--dark, which pins the footer to one dark palette
+      // in both colour modes, so in light mode the page ended on a slab that matched nothing
+      // else on it. The footer now follows the navbar in whichever mode is active - see .footer
+      // in src/css/custom.css.
       links: [
         {
           title: 'How to',
@@ -131,14 +141,6 @@ export default {
           title: 'Links',
           items: [
             {
-              label: 'Sponsor',
-              href: 'https://github.com/sponsors/JanDeDobbeleer',
-            },
-            {
-              label: 'Product spotlight',
-              href: 'https://buy.polar.sh/polar_cl_qnmZxboq1IDUJo03mk2Jue6ktqZrCXElnzH2s2xbV2R',
-            },
-            {
               label: 'Docusaurus',
               href: 'https://github.com/facebook/docusaurus',
             },
@@ -148,8 +150,25 @@ export default {
             },
           ],
         },
-                {
-          title: 'Sponsors',
+        {
+          title: 'Support',
+          items: [
+            {
+              label: 'GitHub Sponsors',
+              href: 'https://github.com/sponsors/JanDeDobbeleer',
+            },
+            {
+              label: 'Product spotlight',
+              href: 'https://buy.polar.sh/polar_cl_qnmZxboq1IDUJo03mk2Jue6ktqZrCXElnzH2s2xbV2R',
+            },
+            {
+              label: 'Swag',
+              href: 'https://swag.ohmyposh.dev',
+            },
+          ],
+        },
+        {
+          title: 'Our sponsors',
           items: [
             {
               label: 'CodeRabbit',
@@ -159,14 +178,6 @@ export default {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} <a href='https://github.com/sponsors/JanDeDobbeleer' target='_blank'>Jan De Dobbeleer</a> and <a href='/docs/contributors'>contributors</a>.`,
-    },
-    announcementBar: {
-      id: 'support_us',
-      content:
-        'If you\'re enjoying Oh My Posh, consider becoming a <a target="_blank" rel="noopener noreferrer" href="https://github.com/sponsors/JanDeDobbeleer">sponsor</a> to keep the project going strong 💪',
-      backgroundColor: '#2c7ae0',
-      textColor: '#ffffff',
-      isCloseable: false,
     },
     appInsights: {
       instrumentationKey: '51741aa7-e087-4e80-b7b0-0863d467462a',

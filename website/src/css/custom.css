@@ -7,15 +7,106 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2c7ae0;
-  --ifm-color-primary-dark: rgb(38, 103, 189);
-  --ifm-color-primary-darker: rgb(28, 75, 138);
-  --ifm-color-primary-darkest: rgb(19, 51, 94);
-  --ifm-color-primary-light: rgb(74, 143, 232);
-  --ifm-color-primary-lighter: rgb(95, 157, 237);
-  --ifm-color-primary-lightest: rgb(8, 9, 10);
+  --ifm-color-primary: #1f6fd0;
+  --ifm-color-primary-dark: #1c64bb;
+  --ifm-color-primary-darker: #1a5eb1;
+  --ifm-color-primary-darkest: #164e92;
+  --ifm-color-primary-light: #3c83d8;
+  --ifm-color-primary-lighter: #4e8fdc;
+  --ifm-color-primary-lightest: #76a9e6;
   --ifm-code-font-size: 95%;
+  /* Everything on this site is sized in rem off this one value, so the body, the sidebar,
+     the cards and the headings move together rather than each being nudged on its own -
+     which is what had 16px body text sitting next to 12.8px card text and reading as two
+     unrelated scales. 14px was tried and read as too small; the ratios below are what
+     matter and they are unchanged. */
+  --ifm-font-size-base: 100%;
   --ifm-pre-background: #232136;
+}
+
+html[data-theme="dark"] {
+  --ifm-color-primary: #5c9fee;
+  --ifm-color-primary-dark: #4a91ea;
+  --ifm-color-primary-darker: #3f89e8;
+  --ifm-color-primary-darkest: #1f6ed4;
+  --ifm-color-primary-light: #6eadf1;
+  --ifm-color-primary-lighter: #7ab5f3;
+  --ifm-color-primary-lightest: #a3cbf7;
+}
+
+/* Card surface: the border/background/radius recipe shared by the homepage feature cards
+   (src/pages/styles.module.css's .card) and the segment catalog's cards
+   (SegmentCatalog/styles.module.css's .item) - previously spelled out by hand in both places,
+   with radii that had quietly drifted apart (9px vs 8px). --omp-card-radius settles on 8px (the
+   segment catalog's) as the one true value going forward. The dark-mode override is the piece
+   most likely to drift again if left duplicated, so it lives here once instead of per-page. */
+:root {
+  --omp-card-border-color: var(--ifm-color-emphasis-200);
+  --omp-card-background: var(--ifm-color-emphasis-100);
+  --omp-card-radius: 8px;
+}
+
+html[data-theme="dark"] {
+  --omp-card-background: var(--ifm-background-surface-color);
+}
+
+/* Typography and spacing scale for the segment catalog and studio pages (see their own
+   styles.module.css) - collapses the nine near-identical font sizes and the ad-hoc gap values
+   the two pages had each accumulated on their own into one shared set of steps, and points
+   secondary text at emphasis-700 (5.72:1 contrast on white) instead of emphasis-600 (3.06:1,
+   fails WCAG AA). */
+:root {
+  --omp-text-body: 1rem;
+  --omp-label-size: 0.8rem;
+  --omp-label-tracking: 0.12em;
+  --omp-text-secondary: var(--ifm-color-emphasis-700);
+  --omp-radius-sm: 4px;
+  --omp-space-1: 0.375rem;
+  --omp-space-2: 0.75rem;
+  --omp-space-3: 1.25rem;
+}
+
+/* Headings, brought closer to the body. Infima's own steps assume a page title that
+   shouts: .markdown h1:first-child overrides itself to 3rem, three times the body text it
+   sits above. These bring the ratio back to something that reads as the same document
+   rather than a banner stapled to it. */
+:root {
+  --ifm-h1-font-size: 1.85rem;
+  --ifm-h2-font-size: 1.45rem;
+  --ifm-h3-font-size: 1.2rem;
+}
+
+/* Infima re-declares each of these locally on the element rather than reading the :root
+   value, so overriding it at the root alone leaves markdown headings at their original
+   steps - h2 stayed at 2rem, a hair under h1, which is what made the two indistinguishable
+   in the first pass. Each needs matching at the same selector. */
+.markdown h1:first-child {
+  --ifm-h1-font-size: 2.15rem;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 1.5rem;
+}
+
+.markdown > h3 {
+  --ifm-h3-font-size: 1.2rem;
+}
+
+/* Category carets. Infima ships a filled wedge and paints it at a 2rem background size
+   inside a 1.25rem box, so a 24-unit icon is upscaled and reads heavy and soft-edged. This is
+   Lucide's chevron at stroke-width 2 - the shape most doc sites use - rendered at the box's
+   own size so the stroke stays the weight it was drawn at.
+
+   Drawn pointing UP on purpose: Infima rotates it 180deg for the expanded state and 90deg for
+   the collapsed one, so supplying a chevron-down here would invert both. The dark-mode filter
+   Infima already declares handles the colour. */
+:root {
+  --ifm-menu-link-sublist-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>');
+}
+
+.menu__link--sublist-caret:after,
+.menu__caret:before {
+  background-size: 1.25rem 1.25rem;
 }
 
 .docusaurus-highlight-code-line {
@@ -27,14 +118,6 @@
 
 .badge {
   display: none !important;
-}
-
-.hero {
-  background-color: #173448;
-}
-
-.hero--image {
-  margin-top: 4rem;
 }
 
 .header-github-link:hover {
@@ -65,24 +148,6 @@ html[data-theme="dark"] .header-github-link:before {
   height: 24px;
   display: flex;
   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 568 501' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%230085ff' d='M123.121 33.664C188.241 82.553 258.281 181.68 284 234.873c25.719-53.192 95.759-152.32 160.879-201.21C491.866-1.611 568-28.906 568 57.947c0 17.346-9.945 145.713-15.778 166.555-20.275 72.453-94.155 90.933-159.875 79.748C507.222 323.8 536.444 388.56 473.333 453.32c-119.86 122.992-172.272-30.859-185.702-70.281-2.462-7.227-3.614-10.608-3.631-7.733-.017-2.875-1.169.506-3.631 7.733-13.43 39.422-65.842 193.273-185.702 70.281-63.111-64.76-33.89-129.52 80.454-149.07-65.72 11.185-139.6-7.295-159.875-79.748C9.945 203.66 0 75.293 0 57.947 0-28.906 76.135-1.611 123.121 33.664z'/%3E%3C/svg%3E")
-    center / contain no-repeat;
-}
-
-.header-affiliate-link:hover {
-  opacity: 0.6;
-}
-
-.header-affiliate-link:before {
-  content: "";
-  width: 24px;
-  height: 24px;
-  display: flex;
-  background: url("data:image/svg+xml,%3Csvg fill='black' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg' class='css-1hsn8wk'%3E%3Cpath d='M51.0696 4.92194H88.7341C94.8309 4.92194 99.7736 10.0293 99.7736 16.3295V60.6175C99.7736 66.9179 94.8309 72.0252 88.7341 72.0252H34.835L51.0696 4.92194Z' fill='currentColor'%3E%3C/path%3E%3Cpath d='M41.2866 17.6346H10.9455C4.90046 17.6346 0 22.7419 0 29.0421V73.3302C0 79.6305 4.90046 84.7378 10.9455 84.7378H48.2888L49.7863 78.495H26.6878L41.2866 17.6346Z' %3E%3C/path%3E%3C/svg%3E")
-    center / contain no-repeat;
-}
-
-html[data-theme="dark"] .header-affiliate-link:before {
-  background: url("data:image/svg+xml,%3Csvg fill='white' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg' class='css-1hsn8wk'%3E%3Cpath d='M51.0696 4.92194H88.7341C94.8309 4.92194 99.7736 10.0293 99.7736 16.3295V60.6175C99.7736 66.9179 94.8309 72.0252 88.7341 72.0252H34.835L51.0696 4.92194Z' %3E%3C/path%3E%3Cpath d='M41.2866 17.6346H10.9455C4.90046 17.6346 0 22.7419 0 29.0421V73.3302C0 79.6305 4.90046 84.7378 10.9455 84.7378H48.2888L49.7863 78.495H26.6878L41.2866 17.6346Z' %3E%3C/path%3E%3C/svg%3E")
     center / contain no-repeat;
 }
 
@@ -178,65 +243,62 @@ iframe.youtube {
   fill: black;
 }
 
-h1.hero__title {
-  color: white;
-}
-
-p.hero__subtitle {
-  color: white;
-}
-
-a.getStarted_Sjon {
-  color: white;
-}
-
-[data-theme="light"] .themedImage_ToTc {
-  filter: invert(0%) sepia(8%) saturate(2885%) hue-rotate(67deg) brightness(84%)
-    contrast(87%);
-}
-
-[data-theme="dark"] .themedImage_ToTc {
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg)
-    brightness(102%) contrast(101%);
-}
-
 /* Fonts */
 
+/* VictorMono.ttf is the Mono patched Nerd Font variant (VictorMono NFM), not
+   the plain one. Both patch the same 11,658 codepoints at the same advance,
+   so nothing about the grid changes - but the plain variant leaves an icon's
+   ink at its natural width while still advancing one cell, and Nerd Font
+   icons are far wider than a cell: U+F07B (folder) inks 1.693 cells, U+F120
+   (terminal) 1.903. That ink runs over whatever follows the icon, which in
+   the theme gallery is the space each segment template writes after it. The
+   Mono variant scales every icon to exactly one cell. Keep this variant when
+   versioning the font up. */
 @font-face {
   font-family: "Victor Mono";
-  src: url('/static/fonts/VictorMono.ttf') format("truetype");
+  src: url('/fonts/VictorMono.ttf') format("truetype");
+  font-display: swap;
 }
 
 :root {
-  --ifm-font-family-monospace: "Inter";
-  --ifm-font-family-base: "Inter";
+  --ifm-font-family-monospace: "Victor Mono", "Symbols Nerd Font Mono",
+    "Symbols Nerd Font", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ifm-font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ifm-heading-font-weight: 600;
+  --ifm-heading-line-height: 1.2;
 }
 
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+/* Page header parity: studio.js and segments.js each render a bare <h1>+<p> outside the
+   .markdown wrapper that gives docs pages their 3rem heading (Infima's .markdown h1:first-child),
+   so they were falling back to the plain 2rem h1 and reading as sub-pages of nothing next to the
+   homepage hero (.hero__title, also 3rem). One definition, used by both pages, brings them in
+   line; the breakpoint mirrors Infima's own docs breakpoint instead of inventing a new one. The
+   intro paragraph is capped the same way the homepage subtitle is (52ch) - just wider, since these
+   pages needed room for a plugin-computed count inline with prose - to stop it running the full
+   ~1290px container at 150+ characters per line. */
+
 code {
-  font-family: "Victor Mono", monospace;
+  font-family: var(--ifm-font-family-monospace);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
 }
 
 code[class*="language-"],
 pre[class*="language-"] {
-  font-family: "Victor Mono", monospace;
-}
-
-/* Dev settings */
-
-[data-theme="dark"]
-  .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg)
-    brightness(102%) contrast(101%);
-}
-
-[data-theme="light"]
-  .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {
-  filter: invert(0%) sepia(8%) saturate(2885%) hue-rotate(67deg) brightness(84%)
-    contrast(87%);
-}
-
-a.getStarted_src-pages-styles-module {
-  color: white;
+  font-family: var(--ifm-font-family-monospace);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
 }
 
 table {
@@ -253,7 +315,7 @@ table td {
   border: 0;
 
   /* Use the spread value on the box-shadow to set the border width. */
-  box-shadow: 0 0 0 1px #c8c9cc;
+  box-shadow: 0 0 0 1px var(--ifm-table-border-color);
 }
 
 table th:first-child {
@@ -270,4 +332,50 @@ table tr:last-child td:first-child {
 
 table tr:last-child td:last-child {
   border-bottom-right-radius: 6.4px;
+}
+
+/* Docs prev/next pagination (Infima's .pagination-nav, rendered by theme-classic's DocPaginator -
+   global classes, not CSS modules, so no hashed name to work around here). Infima's defaults
+   (1rem padding, a 1rem label, a 0.875rem sublabel) were sized for a generic doc footer and read
+   as oversized next to this site's own type scale. Padding steps down to --omp-space-2, the title
+   to --omp-text-body, and the "Previous"/"Next" sublabel is rebuilt as the same micro-label recipe
+   already used for SegmentCatalog's facet legends and the studio's pane labels (monospace, tracked,
+   uppercase, --omp-text-secondary) instead of a plain semibold line - consistent with the rest of
+   the site rather than a one-off shrink. Padding uses --omp-space-2 rather than --omp-space-1 so
+   the click target stays comfortable on both a long and a short doc page. */
+.pagination-nav__link {
+  padding: var(--omp-space-2);
+  border-color: var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+}
+
+.pagination-nav__label {
+  font-size: var(--omp-text-body);
+}
+
+.pagination-nav__sublabel {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+  color: var(--omp-text-secondary);
+  font-weight: 400;
+  margin-bottom: var(--omp-space-1);
+}
+
+/* The footer takes the navbar's surface, in whichever colour mode is active. Both are chrome
+   bracketing the page, so a footer on its own palette (Infima's .footer--dark, which the config
+   no longer asks for - see docusaurus.config.js) read as a slab bolted to the bottom, especially
+   in light mode where it stayed dark while everything above it was white. Mapping the footer's
+   own tokens to the navbar's, rather than restating colours, means a later navbar change carries
+   to the footer for free. The box-shadow is the navbar's --ifm-navbar-shadow with its offset
+   flipped, so the hairline that separates the navbar from the page below it separates the footer
+   from the page above it - which in light mode is the only thing distinguishing either of them
+   from a white page. */
+.footer {
+  --ifm-footer-background-color: var(--ifm-navbar-background-color);
+  --ifm-footer-color: var(--ifm-navbar-link-color);
+  --ifm-footer-title-color: var(--ifm-navbar-link-color);
+  --ifm-footer-link-color: var(--ifm-navbar-link-color);
+  box-shadow: 0 -1px 2px 0 #0000001a;
 }

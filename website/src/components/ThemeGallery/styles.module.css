@@ -1,0 +1,33 @@
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.heading {
+  margin: 0;
+}
+
+.render {
+  display: block;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.svgWrapper {
+  display: block;
+  width: fit-content;
+}
+
+.svgWrapper :global(svg) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}

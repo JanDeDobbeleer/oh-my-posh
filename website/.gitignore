@@ -8,6 +8,15 @@
 .docusaurus
 .cache-loader
 
+# Theme gallery manifest (see export_themes.mjs / plugins/themes) - regenerated on
+# every build, like the PNGs under static/img/themes/ it replaced.
+/generated
+
+# Studio's wasm module and its Go host shim (see scripts/build-wasm.mjs / the "wasm" npm
+# script) - regenerated on every build, exactly like /generated above.
+/static/omp.wasm
+/static/wasm_exec.js
+
 # Misc
 .DS_Store
 .env.local

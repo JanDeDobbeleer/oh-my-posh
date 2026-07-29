@@ -6,904 +6,1256 @@
   },
   "segments": {
     "time": {
-      "CurrentDate": "2026-03-17T09:41:00+01:00"
+      "data": {
+        "CurrentDate": "2026-03-17T09:41:00+01:00"
+      },
+      "enabled": true
     },
     "angular": {
-      "Full": "18.2.7",
-      "Major": "18",
-      "Minor": "2",
-      "Patch": "7",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "18.2.7",
+        "Major": "18",
+        "Minor": "2",
+        "Patch": "7",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "argocd": {
-      "Name": "contoso-prod",
-      "Server": "argocd.contoso-devbox.internal",
-      "User": "alice"
+      "data": {
+        "Name": "contoso-prod",
+        "Server": "argocd.contoso-devbox.internal",
+        "User": "alice"
+      },
+      "enabled": true
     },
     "aspire": {
-      "AppHostPath": "~/dev/oh-my-posh/AppHost/AppHost.csproj",
-      "Name": "AppHost",
-      "Lang": "cs",
-      "Version": "9.1.0",
-      "Running": true
+      "data": {
+        "AppHostPath": "~/dev/oh-my-posh/AppHost/AppHost.csproj",
+        "Name": "AppHost",
+        "Lang": "cs",
+        "Version": "9.1.0",
+        "Running": true
+      },
+      "enabled": true
     },
     "aurelia": {
-      "Full": "2.0.0-beta.23",
-      "Major": "2",
-      "Minor": "0",
-      "Patch": "0",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "2.0.0-beta.23",
+        "Major": "2",
+        "Minor": "0",
+        "Patch": "0",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "aws": {
-      "Profile": "anycompany-prod",
-      "Region": "us-east-1",
-      "AccountID": "111122223333",
-      "AccessKeyID": ""
+      "data": {
+        "Profile": "anycompany-prod",
+        "Region": "us-east-1",
+        "AccountID": "111122223333",
+        "AccessKeyID": ""
+      },
+      "enabled": true
     },
     "az": {
-      "name": "Contoso Production",
-      "environmentName": "AzureCloud",
-      "Origin": "CLI"
+      "data": {
+        "name": "Contoso Production",
+        "environmentName": "AzureCloud",
+        "Origin": "CLI"
+      },
+      "enabled": true
     },
     "azd": {
-      "defaultEnvironment": "zava-prod",
-      "version": 1
+      "data": {
+        "defaultEnvironment": "zava-prod",
+        "version": 1
+      },
+      "enabled": true
     },
     "azfunc": {
-      "Full": "4.0.6280",
-      "Major": "4",
-      "Minor": "0",
-      "Patch": "6280",
-      "Error": ""
+      "data": {
+        "Full": "4.0.6280",
+        "Major": "4",
+        "Minor": "0",
+        "Patch": "6280",
+        "Error": ""
+      },
+      "enabled": true
     },
     "battery": {
-      "Percentage": 70,
-      "State": 3,
-      "Icon": ""
+      "data": {
+        "Percentage": 70,
+        "State": 3,
+        "Icon": ""
+      },
+      "enabled": true
     },
     "bazel": {
-      "Full": "7.4.1",
-      "Major": "7",
-      "Minor": "4",
-      "Patch": "1",
-      "URL": "",
-      "Error": "",
-      "Icon": ""
+      "data": {
+        "Full": "7.4.1",
+        "Major": "7",
+        "Minor": "4",
+        "Patch": "1",
+        "URL": "",
+        "Error": "",
+        "Icon": ""
+      },
+      "enabled": true
     },
     "brewfather": {
-      "status": "Fermenting",
-      "StatusIcon": "",
-      "TemperatureTrendIcon": "→",
-      "DaysFermenting": 6,
-      "DaysBottled": 0,
-      "DaysBottledOrFermented": 6,
-      "recipe": {
-        "name": "Contoso Pale Ale"
+      "data": {
+        "status": "Fermenting",
+        "StatusIcon": "",
+        "TemperatureTrendIcon": "→",
+        "DaysFermenting": 6,
+        "DaysBottled": 0,
+        "DaysBottledOrFermented": 6,
+        "recipe": {
+          "name": "Contoso Pale Ale"
+        },
+        "name": "Batch 42",
+        "batchNo": 42,
+        "measuredAbv": 5.4,
+        "ReadingAge": 3
       },
-      "name": "Batch 42",
-      "batchNo": 42,
-      "measuredAbv": 5.4,
-      "ReadingAge": 3
+      "enabled": true
     },
     "buf": {
-      "Full": "1.47.2",
-      "Major": "1",
-      "Minor": "47",
-      "Patch": "2",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "1.47.2",
+        "Major": "1",
+        "Minor": "47",
+        "Patch": "2",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "bun": {
-      "Full": "1.1.34",
-      "Major": "1",
-      "Minor": "1",
-      "Patch": "34",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "1.1.34",
+        "Major": "1",
+        "Minor": "1",
+        "Patch": "34",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "carbonintensity": {
-      "index": "moderate",
-      "forecast": 148,
-      "actual": 132,
-      "TrendIcon": "↘"
+      "data": {
+        "index": "moderate",
+        "forecast": 148,
+        "actual": 132,
+        "TrendIcon": "↘"
+      },
+      "enabled": true
     },
     "cds": {
-      "Full": "8.5.0",
-      "Major": "8",
-      "Minor": "5",
-      "Patch": "0",
-      "Error": ""
+      "data": {
+        "Full": "8.5.0",
+        "Major": "8",
+        "Minor": "5",
+        "Patch": "0",
+        "Error": ""
+      },
+      "enabled": true
     },
     "cf": {
-      "Full": "8.8.0",
-      "Major": "8",
-      "Minor": "8",
-      "Patch": "0",
-      "Error": ""
+      "data": {
+        "Full": "8.8.0",
+        "Major": "8",
+        "Minor": "8",
+        "Patch": "0",
+        "Error": ""
+      },
+      "enabled": true
     },
     "cftarget": {
-      "URL": "https://api.cf.example.com",
-      "User": "demo@example.com",
-      "Org": "example-org",
-      "Space": "production"
+      "data": {
+        "URL": "https://api.cf.example.com",
+        "User": "demo@example.com",
+        "Org": "example-org",
+        "Space": "production"
+      },
+      "enabled": true
     },
     "claude": {
-      "model": {
-        "id": "claude-opus-4-5",
-        "display_name": "Opus 4.5"
+      "data": {
+        "model": {
+          "id": "claude-opus-4-5",
+          "display_name": "Opus 4.5"
+        },
+        "session_id": "a1b2c3d4-e5f6-4789-b012-3456789abcde",
+        "session_name": "oh-my-posh",
+        "version": "2.1.0",
+        "cwd": "~/dev/oh-my-posh",
+        "workspace": {
+          "current_dir": "~/dev/oh-my-posh",
+          "project_dir": "~/dev/oh-my-posh"
+        },
+        "context_window": {
+          "used_percentage": 42,
+          "total_input_tokens": 68000,
+          "total_output_tokens": 4200,
+          "context_window_size": 200000
+        },
+        "cost": {
+          "total_cost_usd": 1.82,
+          "total_duration_ms": 734000,
+          "total_lines_added": 118,
+          "total_lines_removed": 26
+        }
       },
-      "session_id": "a1b2c3d4-e5f6-4789-b012-3456789abcde",
-      "session_name": "oh-my-posh",
-      "version": "2.1.0",
-      "cwd": "~/dev/oh-my-posh",
-      "workspace": {
-        "current_dir": "~/dev/oh-my-posh",
-        "project_dir": "~/dev/oh-my-posh"
-      },
-      "context_window": {
-        "used_percentage": 42,
-        "total_input_tokens": 68000,
-        "total_output_tokens": 4200,
-        "context_window_size": 200000
-      },
-      "cost": {
-        "total_cost_usd": 1.82,
-        "total_duration_ms": 734000,
-        "total_lines_added": 118,
-        "total_lines_removed": 26
-      }
+      "enabled": true
     },
     "clojure": {
-      "Full": "1.11.1",
-      "Major": "1",
-      "Minor": "11",
-      "Patch": "1",
-      "Error": ""
+      "data": {
+        "Full": "1.11.1",
+        "Major": "1",
+        "Minor": "11",
+        "Patch": "1",
+        "Error": ""
+      },
+      "enabled": true
     },
     "cmake": {
-      "Full": "3.31.1",
-      "Major": "3",
-      "Minor": "31",
-      "Patch": "1",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "3.31.1",
+        "Major": "3",
+        "Minor": "31",
+        "Patch": "1",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "connection": {
-      "Type": "wifi",
-      "Name": "Contoso-5G"
+      "data": {
+        "Type": "wifi",
+        "Name": "Contoso-5G"
+      },
+      "enabled": true
     },
     "copilot": {
-      "premium": {
-        "used": 120,
-        "limit": 300,
-        "percent": 40,
-        "remaining": 60,
-        "unlimited": false
+      "data": {
+        "premium": {
+          "used": 120,
+          "limit": 300,
+          "percent": 40,
+          "remaining": 60,
+          "unlimited": false
+        },
+        "inline": {
+          "used": 0,
+          "limit": 0,
+          "percent": 0,
+          "remaining": 100,
+          "unlimited": true
+        },
+        "chat": {
+          "used": 34,
+          "limit": 100,
+          "percent": 34,
+          "remaining": 66,
+          "unlimited": false
+        },
+        "billing_cycle_end": "2026-08-01"
       },
-      "inline": {
-        "used": 0,
-        "limit": 0,
-        "percent": 0,
-        "remaining": 100,
-        "unlimited": true
-      },
-      "chat": {
-        "used": 34,
-        "limit": 100,
-        "percent": 34,
-        "remaining": 66,
-        "unlimited": false
-      },
-      "billing_cycle_end": "2026-08-01"
+      "enabled": true
     },
     "copilot_cli": {
-      "model": {
-        "id": "claude-sonnet-4-5",
-        "display_name": "Sonnet 4.5"
+      "data": {
+        "model": {
+          "id": "claude-sonnet-4-5",
+          "display_name": "Sonnet 4.5"
+        },
+        "session_id": "f6e5d4c3-b2a1-4098-9876-543210fedcba",
+        "session_name": "oh-my-posh",
+        "version": "0.0.339",
+        "cwd": "~/dev/oh-my-posh",
+        "username": "alice",
+        "workspace": {
+          "current_dir": "~/dev/oh-my-posh"
+        },
+        "context_window": {
+          "used_percentage": 18,
+          "total_tokens": 36000,
+          "current_context_tokens": 36000,
+          "context_window_size": 200000
+        },
+        "cost": {
+          "total_duration_ms": 214000,
+          "total_lines_added": 9,
+          "total_lines_removed": 2,
+          "total_premium_requests": 3
+        }
       },
-      "session_id": "f6e5d4c3-b2a1-4098-9876-543210fedcba",
-      "session_name": "oh-my-posh",
-      "version": "0.0.339",
-      "cwd": "~/dev/oh-my-posh",
-      "username": "alice",
-      "workspace": {
-        "current_dir": "~/dev/oh-my-posh"
-      },
-      "context_window": {
-        "used_percentage": 18,
-        "total_tokens": 36000,
-        "current_context_tokens": 36000,
-        "context_window_size": 200000
-      },
-      "cost": {
-        "total_duration_ms": 214000,
-        "total_lines_added": 9,
-        "total_lines_removed": 2,
-        "total_premium_requests": 3
-      }
+      "enabled": true
     },
     "crystal": {
-      "Full": "1.14.0",
-      "Major": "1",
-      "Minor": "14",
-      "Patch": "0",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "1.14.0",
+        "Major": "1",
+        "Minor": "14",
+        "Patch": "0",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "dart": {
-      "Full": "3.6.0",
-      "Major": "3",
-      "Minor": "6",
-      "Patch": "0",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "3.6.0",
+        "Major": "3",
+        "Minor": "6",
+        "Patch": "0",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "deno": {
-      "Full": "2.1.4",
-      "Major": "2",
-      "Minor": "1",
-      "Patch": "4",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "2.1.4",
+        "Major": "2",
+        "Minor": "1",
+        "Patch": "4",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "docker": {
-      "Context": "cymbal-cluster"
+      "data": {
+        "Context": "cymbal-cluster"
+      },
+      "enabled": true
     },
     "dotnet": {
-      "Full": "9.0.101",
-      "Major": "9",
-      "Minor": "0",
-      "Patch": "101",
-      "Prerelease": "",
-      "BuildMetadata": "",
-      "URL": "",
-      "SDKVersion": "9.0.101",
-      "Error": ""
+      "data": {
+        "Full": "9.0.101",
+        "Major": "9",
+        "Minor": "0",
+        "Patch": "101",
+        "Prerelease": "",
+        "BuildMetadata": "",
+        "URL": "",
+        "SDKVersion": "9.0.101",
+        "Error": ""
+      },
+      "enabled": true
     },
     "dvc": {
-      "Status": {
-        "Modified": 2,
-        "Added": 1
-      }
+      "data": {
+        "Status": {
+          "Modified": 2,
+          "Added": 1
+        }
+      },
+      "enabled": true
     },
     "elixir": {
-      "Full": "1.17.3",
-      "Major": "1",
-      "Minor": "17",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "1.17.3",
+        "Major": "1",
+        "Minor": "17",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "executiontime": {
-      "Ms": 734,
-      "FormattedMs": "734ms"
+      "data": {
+        "Ms": 734,
+        "FormattedMs": "734ms"
+      },
+      "enabled": true
     },
     "firebase": {
-      "Project": "cymbal-superstore"
+      "data": {
+        "Project": "cymbal-superstore"
+      },
+      "enabled": true
     },
     "flutter": {
-      "Full": "3.27.1",
-      "Major": "3",
-      "Minor": "27",
-      "Patch": "1",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "3.27.1",
+        "Major": "3",
+        "Minor": "27",
+        "Patch": "1",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "fortran": {
-      "Full": "13.2.0",
-      "Major": "13",
-      "Minor": "2",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "13.2.0",
+        "Major": "13",
+        "Minor": "2",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "fossil": {
-      "Status": {
-        "Modified": 1
+      "data": {
+        "Status": {
+          "Modified": 1
+        },
+        "Branch": "trunk"
       },
-      "Branch": "trunk"
+      "enabled": true
     },
     "gcp": {
-      "Project": "cymbal-bank-prod",
-      "Account": "alice@contoso.com",
-      "Region": "us-central1",
-      "ActiveConfig": "cymbal"
+      "data": {
+        "Project": "cymbal-bank-prod",
+        "Account": "alice@contoso.com",
+        "Region": "us-central1",
+        "ActiveConfig": "cymbal"
+      },
+      "enabled": true
     },
     "git": {
-      "HEAD": "main",
-      "BranchStatus": "↑1",
-      "Ref": "main",
-      "ShortHash": "1a2b3c4",
-      "Hash": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
-      "Ahead": 1,
-      "Behind": 0,
-      "Upstream": "origin/main",
-      "UpstreamIcon": "",
-      "UpstreamURL": "https://github.com/JanDeDobbeleer/oh-my-posh",
-      "UpstreamGone": false,
-      "RepoName": "oh-my-posh",
-      "Detached": false,
-      "Working": {
-        "Added": 2,
-        "Modified": 1
+      "data": {
+        "HEAD": "main",
+        "BranchStatus": "↑1",
+        "Ref": "main",
+        "ShortHash": "1a2b3c4",
+        "Hash": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
+        "Ahead": 1,
+        "Behind": 0,
+        "Upstream": "origin/main",
+        "UpstreamIcon": "",
+        "UpstreamURL": "https://github.com/JanDeDobbeleer/oh-my-posh",
+        "UpstreamGone": false,
+        "RepoName": "oh-my-posh",
+        "Detached": false,
+        "Working": {
+          "Added": 2,
+          "Modified": 1
+        },
+        "Staging": {
+          "Added": 1
+        }
       },
-      "Staging": {
-        "Added": 1
-      }
+      "enabled": true
     },
     "gitversion": {
-      "MajorMinorPatch": "1.4.2",
-      "Major": 1,
-      "Minor": 4,
-      "Patch": 2,
-      "FullSemVer": "1.4.2",
-      "SemVer": "1.4.2",
-      "BranchName": "main",
-      "Sha": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
-      "ShortSha": "1a2b3c4"
+      "data": {
+        "MajorMinorPatch": "1.4.2",
+        "Major": 1,
+        "Minor": 4,
+        "Patch": 2,
+        "FullSemVer": "1.4.2",
+        "SemVer": "1.4.2",
+        "BranchName": "main",
+        "Sha": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
+        "ShortSha": "1a2b3c4"
+      },
+      "enabled": true
     },
     "go": {
-      "Full": "1.23.4",
-      "Major": "1",
-      "Minor": "23",
-      "Patch": "4",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "1.23.4",
+        "Major": "1",
+        "Minor": "23",
+        "Patch": "4",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "gradle": {
-      "Full": "8.11.1",
-      "Major": "8",
-      "Minor": "11",
-      "Patch": "1",
-      "KotlinVersion": "2.0.21",
-      "GroovyVersion": "3.0.22",
-      "AntVersion": "1.10.15",
-      "JVMVersion": "21.0.5",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "8.11.1",
+        "Major": "8",
+        "Minor": "11",
+        "Patch": "1",
+        "KotlinVersion": "2.0.21",
+        "GroovyVersion": "3.0.22",
+        "AntVersion": "1.10.15",
+        "JVMVersion": "21.0.5",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "haskell": {
-      "Full": "9.10.1",
-      "Major": "9",
-      "Minor": "10",
-      "Patch": "1",
-      "URL": "",
-      "Error": "",
-      "StackGhc": false
+      "data": {
+        "Full": "9.10.1",
+        "Major": "9",
+        "Minor": "10",
+        "Patch": "1",
+        "URL": "",
+        "Error": "",
+        "StackGhc": false
+      },
+      "enabled": true
     },
     "helm": {
-      "Version": "v3.16.4"
+      "data": {
+        "Version": "v3.16.4"
+      },
+      "enabled": true
     },
     "http": {
-      "Body": {
-        "status": "operational"
-      }
+      "data": {
+        "Body": {
+          "status": "operational"
+        }
+      },
+      "enabled": true
     },
     "ipify": {
-      "IP": "203.0.113.42"
+      "data": {
+        "IP": "203.0.113.42"
+      },
+      "enabled": true
     },
     "java": {
-      "Full": "21.0.5",
-      "Major": "21",
-      "Minor": "0",
-      "Patch": "5",
-      "Error": ""
+      "data": {
+        "Full": "21.0.5",
+        "Major": "21",
+        "Minor": "0",
+        "Patch": "5",
+        "Error": ""
+      },
+      "enabled": true
     },
     "jujutsu": {
-      "Working": {
-        "Modified": 2,
-        "Added": 1
+      "data": {
+        "Working": {
+          "Modified": 2,
+          "Added": 1
+        },
+        "ChangeID": "mzvwutnw",
+        "ChangeIDPrefix": "mz",
+        "ChangeIDRest": "vwutnw"
       },
-      "ChangeID": "mzvwutnw",
-      "ChangeIDPrefix": "mz",
-      "ChangeIDRest": "vwutnw"
+      "enabled": true
     },
     "julia": {
-      "Full": "1.11.2",
-      "Major": "1",
-      "Minor": "11",
-      "Patch": "2",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "1.11.2",
+        "Major": "1",
+        "Minor": "11",
+        "Patch": "2",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "kotlin": {
-      "Full": "2.1.0",
-      "Major": "2",
-      "Minor": "1",
-      "Patch": "0",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "2.1.0",
+        "Major": "2",
+        "Minor": "1",
+        "Patch": "0",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "kubectl": {
-      "Cluster": "kind-cymbal",
-      "User": "kind-cymbal",
-      "Context": "kind-cymbal"
+      "data": {
+        "Cluster": "kind-cymbal",
+        "User": "kind-cymbal",
+        "Context": "kind-cymbal"
+      },
+      "enabled": true
     },
     "language": {
-      "Full": "13.2.0",
-      "Major": "13",
-      "Minor": "2",
-      "Patch": "0",
-      "Prerelease": "",
-      "BuildMetadata": "",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "13.2.0",
+        "Major": "13",
+        "Minor": "2",
+        "Patch": "0",
+        "Prerelease": "",
+        "BuildMetadata": "",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "lastfm": {
-      "Status": "playing",
-      "Artist": "The National",
-      "Track": "Bloodbuzz Ohio",
-      "Full": "The National - Bloodbuzz Ohio",
-      "Icon": " "
+      "data": {
+        "Status": "playing",
+        "Artist": "The National",
+        "Track": "Bloodbuzz Ohio",
+        "Full": "The National - Bloodbuzz Ohio",
+        "Icon": " "
+      },
+      "enabled": true
     },
     "lua": {
-      "Full": "5.4.7",
-      "Major": "5",
-      "Minor": "4",
-      "Patch": "7",
-      "URL": "",
-      "Error": "",
-      "Executable": "lua"
+      "data": {
+        "Full": "5.4.7",
+        "Major": "5",
+        "Minor": "4",
+        "Patch": "7",
+        "URL": "",
+        "Error": "",
+        "Executable": "lua"
+      },
+      "enabled": true
     },
     "mercurial": {
-      "Working": {
-        "Modified": 1
+      "data": {
+        "Working": {
+          "Modified": 1
+        },
+        "IsTip": true,
+        "ChangeSetID": "3f8a1c9d2e4b6f7a8c9d0e1f2a3b4c5d6e7f8a9b",
+        "ChangeSetIDShort": "3f8a1c9d2e4b",
+        "Branch": "default",
+        "Bookmarks": [
+          "dev"
+        ],
+        "Tags": [
+          "tip"
+        ]
       },
-      "IsTip": true,
-      "ChangeSetID": "3f8a1c9d2e4b6f7a8c9d0e1f2a3b4c5d6e7f8a9b",
-      "ChangeSetIDShort": "3f8a1c9d2e4b",
-      "Branch": "default",
-      "Bookmarks": [
-        "dev"
-      ],
-      "Tags": [
-        "tip"
-      ]
+      "enabled": true
     },
     "mojo": {
-      "Venv": ".venv",
-      "Full": "24.6.0",
-      "Major": "24",
-      "Minor": "6",
-      "Patch": "0",
-      "Error": ""
+      "data": {
+        "Venv": ".venv",
+        "Full": "24.6.0",
+        "Major": "24",
+        "Minor": "6",
+        "Patch": "0",
+        "Error": ""
+      },
+      "enabled": true
     },
     "mvn": {
-      "Full": "3.9.9",
-      "Major": "3",
-      "Minor": "9",
-      "Patch": "9",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "3.9.9",
+        "Major": "3",
+        "Minor": "9",
+        "Patch": "9",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "nba": {
-      "HomeTeam": "BOS",
-      "AwayTeam": "NYK",
-      "Time": "Q3 6:42",
-      "GameDate": "01/15/2026",
-      "StartTimeUTC": "2026-01-16T00:00:00Z",
-      "GameStatus": 2,
-      "HomeScore": 78,
-      "AwayScore": 71,
-      "HomeTeamWins": 28,
-      "HomeTeamLosses": 12,
-      "AwayTeamWins": 24,
-      "AwayTeamLosses": 16
+      "data": {
+        "HomeTeam": "BOS",
+        "AwayTeam": "NYK",
+        "Time": "Q3 6:42",
+        "GameDate": "01/15/2026",
+        "StartTimeUTC": "2026-01-16T00:00:00Z",
+        "GameStatus": 2,
+        "HomeScore": 78,
+        "AwayScore": 71,
+        "HomeTeamWins": 28,
+        "HomeTeamLosses": 12,
+        "AwayTeamWins": 24,
+        "AwayTeamLosses": 16
+      },
+      "enabled": true
     },
     "nbgv": {
-      "Version": "1.4.2",
-      "AssemblyVersion": "1.4.2.0",
-      "AssemblyInformationalVersion": "1.4.2+1a2b3c4d5e",
-      "NuGetPackageVersion": "1.4.2",
-      "ChocolateyPackageVersion": "1.4.2",
-      "NpmPackageVersion": "1.4.2",
-      "SimpleVersion": "1.4.2"
+      "data": {
+        "Version": "1.4.2",
+        "AssemblyVersion": "1.4.2.0",
+        "AssemblyInformationalVersion": "1.4.2+1a2b3c4d5e",
+        "NuGetPackageVersion": "1.4.2",
+        "ChocolateyPackageVersion": "1.4.2",
+        "NpmPackageVersion": "1.4.2",
+        "SimpleVersion": "1.4.2"
+      },
+      "enabled": true
     },
     "nightscout": {
-      "sgv": 118,
-      "direction": "Flat",
-      "device": "xDrip-DexcomG6",
-      "type": "sgv",
-      "utcOffset": 60,
-      "date": 1782500000000,
-      "dateString": "2026-07-28T09:33:20.000Z",
-      "sysTime": "2026-07-28T09:33:20.000Z",
-      "mills": 1782500000000,
-      "trend": 4
+      "data": {
+        "sgv": 118,
+        "direction": "Flat",
+        "device": "xDrip-DexcomG6",
+        "type": "sgv",
+        "utcOffset": 60,
+        "date": 1782500000000,
+        "dateString": "2026-07-28T09:33:20.000Z",
+        "sysTime": "2026-07-28T09:33:20.000Z",
+        "mills": 1782500000000,
+        "trend": 4
+      },
+      "enabled": true
     },
     "nim": {
-      "Full": "2.2.0",
-      "Major": "2",
-      "Minor": "2",
-      "Patch": "0",
-      "Error": ""
+      "data": {
+        "Full": "2.2.0",
+        "Major": "2",
+        "Minor": "2",
+        "Patch": "0",
+        "Error": ""
+      },
+      "enabled": true
     },
     "nix-shell": {
-      "Type": "pure"
+      "data": {
+        "Type": "pure"
+      },
+      "enabled": true
     },
     "node": {
-      "Full": "24.12.0",
-      "Major": "24",
-      "Minor": "12",
-      "Patch": "0",
-      "PackageManagerIcon": "",
-      "PackageManagerName": "",
-      "Error": ""
+      "data": {
+        "Full": "24.12.0",
+        "Major": "24",
+        "Minor": "12",
+        "Patch": "0",
+        "PackageManagerIcon": "",
+        "PackageManagerName": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "npm": {
-      "Full": "11.6.0",
-      "Major": "11",
-      "Minor": "6",
-      "Patch": "0",
-      "Error": ""
+      "data": {
+        "Full": "11.6.0",
+        "Major": "11",
+        "Minor": "6",
+        "Patch": "0",
+        "Error": ""
+      },
+      "enabled": true
     },
     "nx": {
-      "Full": "20.2.2",
-      "Major": "20",
-      "Minor": "2",
-      "Patch": "2",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "20.2.2",
+        "Major": "20",
+        "Minor": "2",
+        "Patch": "2",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "ocaml": {
-      "Full": "5.2.1",
-      "Major": "5",
-      "Minor": "2",
-      "Patch": "1",
-      "Prerelease": "",
-      "Error": ""
+      "data": {
+        "Full": "5.2.1",
+        "Major": "5",
+        "Minor": "2",
+        "Patch": "1",
+        "Prerelease": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "orthodoxcal": {
-      "fast_level": 0,
-      "fast_level_desc": "Fast-free",
-      "fast_exception": 0,
-      "fast_exception_desc": "",
-      "summary_title": "Afterfeast of the Transfiguration",
-      "feasts": [
-        "Afterfeast of the Transfiguration"
-      ],
-      "saints": [
-        "Ss. Callinicus of Cernica"
-      ],
-      "titles": [],
-      "feast_level": 4,
-      "feast_level_description": "",
-      "tone": 5
+      "data": {
+        "fast_level": 0,
+        "fast_level_desc": "Fast-free",
+        "fast_exception": 0,
+        "fast_exception_desc": "",
+        "summary_title": "Afterfeast of the Transfiguration",
+        "feasts": [
+          "Afterfeast of the Transfiguration"
+        ],
+        "saints": [
+          "Ss. Callinicus of Cernica"
+        ],
+        "titles": [],
+        "feast_level": 4,
+        "feast_level_description": "",
+        "tone": 5
+      },
+      "enabled": true
     },
     "os": {
-      "Icon": ""
+      "data": {
+        "Icon": ""
+      },
+      "enabled": true
     },
     "owm": {
-      "Weather": "Clouds",
-      "Temperature": 14,
-      "UnitIcon": "°C",
-      "URL": ""
+      "data": {
+        "Weather": "Clouds",
+        "Temperature": 14,
+        "UnitIcon": "°C",
+        "URL": ""
+      },
+      "enabled": true
     },
     "path": {
-      "Path": "~/dev/oh-my-posh",
-      "Location": "~/dev/oh-my-posh",
-      "StackCount": 0,
-      "Writable": true,
-      "RootDir": false
+      "data": {
+        "Path": "~/dev/oh-my-posh",
+        "Location": "~/dev/oh-my-posh",
+        "StackCount": 0,
+        "Writable": true,
+        "RootDir": false
+      },
+      "enabled": true
     },
     "perl": {
-      "Full": "5.40.0",
-      "Major": "5",
-      "Minor": "40",
-      "Patch": "0",
-      "Error": ""
+      "data": {
+        "Full": "5.40.0",
+        "Major": "5",
+        "Minor": "40",
+        "Patch": "0",
+        "Error": ""
+      },
+      "enabled": true
     },
     "php": {
-      "Full": "8.4.1",
-      "Major": "8",
-      "Minor": "4",
-      "Patch": "1",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "8.4.1",
+        "Major": "8",
+        "Minor": "4",
+        "Patch": "1",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "plastic": {
-      "Selector": "main",
-      "Behind": false,
-      "Status": {
-        "Modified": 1
+      "data": {
+        "Selector": "main",
+        "Behind": false,
+        "Status": {
+          "Modified": 1
+        },
+        "MergePending": false
       },
-      "MergePending": false
+      "enabled": true
     },
     "pnpm": {
-      "Full": "9.15.0",
-      "Major": "9",
-      "Minor": "15",
-      "Patch": "0",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "9.15.0",
+        "Major": "9",
+        "Minor": "15",
+        "Patch": "0",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "project": {
-      "Type": "node",
-      "Version": "1.4.2",
-      "Name": "oh-my-posh",
-      "Target": "",
-      "Error": ""
+      "data": {
+        "Type": "node",
+        "Version": "1.4.2",
+        "Name": "oh-my-posh",
+        "Target": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "pulumi": {
-      "Stack": "contoso-prod",
-      "Name": "oh-my-posh-infra",
-      "url": "app.pulumi.com/contoso",
-      "user": "alice"
+      "data": {
+        "Stack": "contoso-prod",
+        "Name": "oh-my-posh-infra",
+        "url": "app.pulumi.com/contoso",
+        "user": "alice"
+      },
+      "enabled": true
     },
     "python": {
-      "Full": "3.12.4",
-      "Major": "3",
-      "Minor": "12",
-      "Patch": "4",
-      "Venv": ".venv",
-      "Error": ""
+      "data": {
+        "Full": "3.12.4",
+        "Major": "3",
+        "Minor": "12",
+        "Patch": "4",
+        "Venv": ".venv",
+        "Error": ""
+      },
+      "enabled": true
     },
     "quasar": {
-      "Full": "2.17.5",
-      "Major": "2",
-      "Minor": "17",
-      "Patch": "5",
-      "URL": "",
-      "Error": "",
-      "HasVite": true,
-      "Vite": {
-        "version": "5.4.11",
-        "dev": true
+      "data": {
+        "Full": "2.17.5",
+        "Major": "2",
+        "Minor": "17",
+        "Patch": "5",
+        "URL": "",
+        "Error": "",
+        "HasVite": true,
+        "Vite": {
+          "version": "5.4.11",
+          "dev": true
+        },
+        "AppVite": {
+          "version": "1.9.3",
+          "dev": true
+        }
       },
-      "AppVite": {
-        "version": "1.9.3",
-        "dev": true
-      }
+      "enabled": true
     },
     "r": {
-      "Full": "4.4.2",
-      "Major": "4",
-      "Minor": "4",
-      "Patch": "2",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "4.4.2",
+        "Major": "4",
+        "Minor": "4",
+        "Patch": "2",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "ramadan": {
-      "Fajr": "04:12",
-      "Iftar": "20:41",
-      "Imsak": "04:02",
-      "NextEvent": "Iftar",
-      "TimeRemaining": "2h 14m",
-      "RozaNumber": 14,
-      "Fasting": true
+      "data": {
+        "Fajr": "04:12",
+        "Iftar": "20:41",
+        "Imsak": "04:02",
+        "NextEvent": "Iftar",
+        "TimeRemaining": "2h 14m",
+        "RozaNumber": 14,
+        "Fasting": true
+      },
+      "enabled": true
     },
     "react": {
-      "Full": "18.3.1",
-      "Major": "18",
-      "Minor": "3",
-      "Patch": "1",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "18.3.1",
+        "Major": "18",
+        "Minor": "3",
+        "Patch": "1",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
-    "root": {},
+    "root": {
+      "data": {},
+      "enabled": true
+    },
     "ruby": {
-      "Full": "3.3.6",
-      "Error": ""
+      "data": {
+        "Full": "3.3.6",
+        "Error": ""
+      },
+      "enabled": true
     },
     "rust": {
-      "Full": "1.83.0",
-      "Major": "1",
-      "Minor": "83",
-      "Patch": "0",
-      "Prerelease": "",
-      "Error": ""
+      "data": {
+        "Full": "1.83.0",
+        "Major": "1",
+        "Minor": "83",
+        "Patch": "0",
+        "Prerelease": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "sapling": {
-      "RepoName": "oh-my-posh",
-      "Working": {
-        "Modified": 1
+      "data": {
+        "RepoName": "oh-my-posh",
+        "Working": {
+          "Modified": 1
+        },
+        "Description": "Add SVG preview data",
+        "Author": "alice",
+        "Hash": "9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b",
+        "ShortHash": "9c8b7a6f5e4d",
+        "When": "2 hours ago",
+        "Bookmark": "feature/svg-preview",
+        "Dir": "~/dev/oh-my-posh",
+        "New": false
       },
-      "Description": "Add SVG preview data",
-      "Author": "alice",
-      "Hash": "9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b",
-      "ShortHash": "9c8b7a6f5e4d",
-      "When": "2 hours ago",
-      "Bookmark": "feature/svg-preview",
-      "Dir": "~/dev/oh-my-posh",
-      "New": false
+      "enabled": true
     },
     "session": {
-      "SSHSession": false
+      "data": {
+        "SSHSession": false
+      },
+      "enabled": true
     },
     "shell": {
-      "Name": "zsh",
-      "Version": "5.9"
+      "data": {
+        "Name": "zsh",
+        "Version": "5.9"
+      },
+      "enabled": true
     },
     "sitecore": {
-      "EndpointName": "production",
-      "CmHost": "contoso-cm.sitecorecloud.io"
+      "data": {
+        "EndpointName": "production",
+        "CmHost": "contoso-cm.sitecorecloud.io"
+      },
+      "enabled": true
     },
     "spotify": {
-      "Status": "playing",
-      "Artist": "Tycho",
-      "Track": "Easy",
-      "Icon": " "
+      "data": {
+        "Status": "playing",
+        "Artist": "Tycho",
+        "Track": "Easy",
+        "Icon": " "
+      },
+      "enabled": true
     },
     "status": {
-      "String": "0",
-      "Error": false
+      "data": {
+        "String": "0",
+        "Error": false
+      },
+      "enabled": true
     },
     "strava": {
-      "name": "Morning Ride",
-      "type": "Ride",
-      "Ago": "2h",
-      "Icon": "",
-      "Hours": 2,
-      "Error": ""
+      "data": {
+        "name": "Morning Ride",
+        "type": "Ride",
+        "Ago": "2h",
+        "Icon": "",
+        "Hours": 2,
+        "Error": ""
+      },
+      "enabled": true
     },
     "svelte": {
-      "Full": "5.8.1",
-      "Major": "5",
-      "Minor": "8",
-      "Patch": "1",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "5.8.1",
+        "Major": "5",
+        "Minor": "8",
+        "Patch": "1",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "svn": {
-      "Working": {
-        "Modified": 2
+      "data": {
+        "Working": {
+          "Modified": 2
+        },
+        "Branch": "trunk",
+        "BaseRev": 4821
       },
-      "Branch": "trunk",
-      "BaseRev": 4821
+      "enabled": true
     },
     "swift": {
-      "Full": "6.0.3",
-      "Major": "6",
-      "Minor": "0",
-      "Patch": "3",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "6.0.3",
+        "Major": "6",
+        "Minor": "0",
+        "Patch": "3",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "sysinfo": {
-      "Precision": 2,
-      "PhysicalTotalMemory": 34359738368,
-      "PhysicalAvailableMemory": 12884901888,
-      "PhysicalFreeMemory": 12884901888,
-      "PhysicalPercentUsed": 62.5,
-      "Load1": 0.52,
-      "Load5": 0.48,
-      "Load15": 0.42
+      "data": {
+        "Precision": 2,
+        "PhysicalTotalMemory": 34359738368,
+        "PhysicalAvailableMemory": 12884901888,
+        "PhysicalFreeMemory": 12884901888,
+        "PhysicalPercentUsed": 62.5,
+        "Load1": 0.52,
+        "Load5": 0.48,
+        "Load15": 0.42
+      },
+      "enabled": true
     },
     "talosctl": {
-      "Context": "cymbal-cluster"
+      "data": {
+        "Context": "cymbal-cluster"
+      },
+      "enabled": true
     },
     "taskwarrior": {
-      "Commands": {
-        "Due": "3",
-        "Scheduled": "1",
-        "Waiting": "2",
-        "Context": "work"
-      }
+      "data": {
+        "Commands": {
+          "Due": "3",
+          "Scheduled": "1",
+          "Waiting": "2",
+          "Context": "work"
+        }
+      },
+      "enabled": true
     },
     "tauri": {
-      "Full": "2.1.1",
-      "Major": "2",
-      "Minor": "1",
-      "Patch": "1",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "2.1.1",
+        "Major": "2",
+        "Minor": "1",
+        "Patch": "1",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "terraform": {
-      "WorkspaceName": "example_corp-prod",
-      "terraform_version": "1.9.0"
+      "data": {
+        "WorkspaceName": "example_corp-prod",
+        "terraform_version": "1.9.0"
+      },
+      "enabled": true
     },
-    "text": {},
+    "text": {
+      "data": {},
+      "enabled": true
+    },
     "todoist": {
-      "TaskCount": 5
+      "data": {
+        "TaskCount": 5
+      },
+      "enabled": true
     },
     "ui5tooling": {
-      "Full": "3.10.0",
-      "Major": "3",
-      "Minor": "10",
-      "Patch": "0",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "3.10.0",
+        "Major": "3",
+        "Minor": "10",
+        "Patch": "0",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "umbraco": {
-      "Version": "15.1.0",
-      "Modern": true
+      "data": {
+        "Version": "15.1.0",
+        "Modern": true
+      },
+      "enabled": true
     },
     "unity": {
-      "UnityVersion": "2022.3.50f1",
-      "CSharpVersion": "C# 9"
+      "data": {
+        "UnityVersion": "2022.3.50f1",
+        "CSharpVersion": "C# 9"
+      },
+      "enabled": true
     },
     "uno": {
-      "Version": "5.5.53"
+      "data": {
+        "Version": "5.5.53"
+      },
+      "enabled": true
     },
     "upgrade": {
-      "current": "26.7.1",
-      "latest": "26.8.0"
+      "data": {
+        "current": "26.7.1",
+        "latest": "26.8.0"
+      },
+      "enabled": true
     },
     "v": {
-      "Full": "0.4.9",
-      "Major": "0",
-      "Minor": "4",
-      "Patch": "9",
-      "Error": ""
+      "data": {
+        "Full": "0.4.9",
+        "Major": "0",
+        "Minor": "4",
+        "Patch": "9",
+        "Error": ""
+      },
+      "enabled": true
     },
     "vala": {
-      "Full": "0.56.17",
-      "Major": "0",
-      "Minor": "56",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "0.56.17",
+        "Major": "0",
+        "Minor": "56",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "vimode": {
-      "Mode": "insert",
-      "Keymap": "main"
+      "data": {
+        "Mode": "insert",
+        "Keymap": "main"
+      },
+      "enabled": true
     },
     "wakatime": {
-      "start": "2026-07-09T00:00:00Z",
-      "end": "2026-07-09T23:59:59Z",
-      "cumulative_total": {
-        "text": "4 hrs 30 mins",
-        "seconds": 16200
-      }
+      "data": {
+        "start": "2026-07-09T00:00:00Z",
+        "end": "2026-07-09T23:59:59Z",
+        "cumulative_total": {
+          "text": "4 hrs 30 mins",
+          "seconds": 16200
+        }
+      },
+      "enabled": true
     },
     "winget": {
-      "Updates": [
-        {
-          "Name": "Microsoft Edge",
-          "ID": "Microsoft.Edge",
-          "Current": "130.0.2849.68",
-          "Available": "131.0.2903.51"
-        },
-        {
-          "Name": "Git",
-          "ID": "Git.Git",
-          "Current": "2.47.0",
-          "Available": "2.47.1"
-        }
-      ],
-      "UpdateCount": 2
+      "data": {
+        "Updates": [
+          {
+            "Name": "Microsoft Edge",
+            "ID": "Microsoft.Edge",
+            "Current": "130.0.2849.68",
+            "Available": "131.0.2903.51"
+          },
+          {
+            "Name": "Git",
+            "ID": "Git.Git",
+            "Current": "2.47.0",
+            "Available": "2.47.1"
+          }
+        ],
+        "UpdateCount": 2
+      },
+      "enabled": true
     },
     "winreg": {
-      "Value": "1"
+      "data": {
+        "Value": "1"
+      },
+      "enabled": true
     },
     "withings": {
-      "SleepHours": "7.3",
-      "Weight": 78.4,
-      "Steps": 8342
+      "data": {
+        "SleepHours": "7.3",
+        "Weight": 78.4,
+        "Steps": 8342
+      },
+      "enabled": true
     },
     "xmake": {
-      "Full": "2.9.6",
-      "Major": "2",
-      "Minor": "9",
-      "Patch": "6",
-      "Error": ""
+      "data": {
+        "Full": "2.9.6",
+        "Major": "2",
+        "Minor": "9",
+        "Patch": "6",
+        "Error": ""
+      },
+      "enabled": true
     },
     "yarn": {
-      "Full": "4.5.3",
-      "Major": "4",
-      "Minor": "5",
-      "Patch": "3",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "4.5.3",
+        "Major": "4",
+        "Minor": "5",
+        "Patch": "3",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "ytm": {
-      "Status": "playing",
-      "Artist": "Men I Trust",
-      "Track": "Show Me How",
-      "Icon": " "
+      "data": {
+        "Status": "playing",
+        "Artist": "Men I Trust",
+        "Track": "Show Me How",
+        "Icon": " "
+      },
+      "enabled": true
     },
     "zig": {
-      "Full": "0.13.0",
-      "Major": "0",
-      "Minor": "13",
-      "Patch": "0",
-      "Prerelease": "",
-      "BuildMetadata": "",
-      "URL": "",
-      "Error": ""
+      "data": {
+        "Full": "0.13.0",
+        "Major": "0",
+        "Minor": "13",
+        "Patch": "0",
+        "Prerelease": "",
+        "BuildMetadata": "",
+        "URL": "",
+        "Error": ""
+      },
+      "enabled": true
     },
     "zvm": {
-      "Version": "0.13.0",
-      "ZigIcon": "ZVM"
+      "data": {
+        "Version": "0.13.0",
+        "ZigIcon": "ZVM"
+      },
+      "enabled": true
     }
-  }
+  },
+  "version": 1
 }

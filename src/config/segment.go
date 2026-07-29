@@ -43,7 +43,10 @@ type Segment struct {
 	// into a writer struct. Nil everywhere else, and templateContext picks whichever of the two is
 	// present. Go templates resolve a name against a map key exactly as they resolve it against a
 	// field or a method, so a recorded value reads the same either way.
-	data                   map[string]any
+	data map[string]any
+	// text is where the rendered text lives when there is no writer to hold it: the writer
+	// normally stores it (SegmentWriter.SetText/Text), which a build with no writers cannot do.
+	text                   string
 	env                    runtime.Environment
 	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
@@ -256,7 +259,12 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		defer runjobs.CloseGoroutineJob()
 	}
 
-	segment.Enabled = segment.writer.Enabled()
+	// With no writer there is nothing to ask: a segment is enabled only if its recorded data said
+	// so, which restoreData has already applied.
+	if segment.writer != nil {
+		segment.Enabled = segment.writer.Enabled()
+	}
+
 	segment.evaluated = true
 
 	segment.overlayData()
@@ -309,7 +317,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 		segment.Force = true
 	}
 
-	segment.writer.SetIndex(index)
+	segment.setIndex(index)
 
 	text := segment.string()
 
@@ -359,7 +367,7 @@ func (segment *Segment) renderFallback(index int) bool {
 	segment.foregroundResolved = false
 	segment.backgroundResolved = false
 
-	segment.writer.SetIndex(index)
+	segment.setIndex(index)
 	segment.Enabled = true
 	segment.SetText(text)
 
@@ -373,11 +381,28 @@ func (segment *Segment) renderFallback(index int) bool {
 }
 
 func (segment *Segment) Text() string {
+	if segment.writer == nil {
+		return segment.text
+	}
+
 	return segment.writer.Text()
 }
 
 func (segment *Segment) SetText(text string) {
+	if segment.writer == nil {
+		segment.text = text
+		return
+	}
+
 	segment.writer.SetText(text)
+}
+
+func (segment *Segment) setIndex(index int) {
+	if segment.writer == nil {
+		return
+	}
+
+	segment.writer.SetIndex(index)
 }
 
 func (segment *Segment) ResolveForeground() color.Ansi {
@@ -680,6 +705,10 @@ func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
 }
 
 func (segment *Segment) folderKey() string {
+	if segment.writer == nil {
+		return segment.env.Pwd()
+	}
+
 	key, ok := segment.writer.CacheKey()
 	if !ok {
 		return segment.env.Pwd()

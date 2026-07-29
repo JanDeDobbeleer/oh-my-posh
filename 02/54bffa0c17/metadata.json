@@ -3,7 +3,7 @@
   "checkpoint_id": "0254bffa0c17",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 2,
+  "checkpoints_count": 4,
   "files_touched": [
     "src/cli/auth/tui/copilot.go",
     "src/cli/auth/tui/tui.go",
@@ -25,6 +25,13 @@
       "compact_transcript": "/02/54bffa0c17/1/transcript.jsonl",
       "content_hash": "/02/54bffa0c17/1/content_hash.txt",
       "prompt": "/02/54bffa0c17/1/prompt.txt"
+    },
+    {
+      "metadata": "/02/54bffa0c17/2/metadata.json",
+      "transcript": "/02/54bffa0c17/2/full.jsonl",
+      "compact_transcript": "/02/54bffa0c17/2/transcript.jsonl",
+      "content_hash": "/02/54bffa0c17/2/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {

@@ -1,0 +1,13 @@
+Can we adjust the home page by removing the "a prompt that knows where you are" text and replacing that with "Oh My Posh" in the right font and bold? Underneath the "Most customizable and fastest prompt engine for any shell", add a rendered SVG of the default theme, which then obviously replaces the leftover PNG image we still had, which was a screenshot. Remove the PNG from the page.
+
+---
+
+The current configuration that is used on the homepage is the jandedobbeleer theme, but oh-my-posh has a built-in theme which is different from the jandedobbeleer theme. I want that default theme to be the one that is rendered.
+
+---
+
+I think there's a bug in the SVG rendering. The final space configuration in the configuration is not applied. The default, I think, has it, and the prompt_ is printed right after the prompt.
+
+---
+
+commit everything, folded into the right commits

@@ -1,0 +1,5 @@
+Stripdesk, on the homepage, the footer still has a different color compared to the header, and the header has the right styling in both dark and light. Apply the same styling and coloring to the footer as well.
+
+---
+
+In the config code editor, it seems that only YAML has the colored styling. JSON and TOML do not, and I want to change the order: I want JSON first, YAML second, TOML last.

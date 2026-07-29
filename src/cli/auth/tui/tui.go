@@ -1,32 +1,21 @@
-// Package tui implements the interactive device-code authentication flow for
-// `oh-my-posh auth`: a Bubble Tea spinner that walks GitHub Copilot's and the
-// YouTube Music Desktop App's device-code exchange through to a stored
-// token. It lives one level below cli/auth because cli/auth holds only the
-// plain cache-key constants (CopilotTokenKey, YTMDABASEURL, YTMDATOKEN) that
-// the segments package needs to read a token back out of the cache, and that
-// import graph also has to compile for wasm — a target with no terminal to
-// authenticate against, and one that bubbletea itself does not build for at
-// all. Keeping the device-flow logic and its bubbletea Model implementation
-// here means importing cli/auth for its constants never drags bubbletea
-// along; this package imports cli/auth, never the other way around.
+// Package tui runs the interactive device-code authentication flow for `oh-my-posh auth`: it
+// walks GitHub Copilot's and the YouTube Music Desktop App's device-code exchange through to a
+// stored token, showing which step it is on.
+//
+// It lives one level below cli/auth because cli/auth holds only the plain cache-key constants
+// (CopilotTokenKey, YTMDABASEURL, YTMDATOKEN) that the segments package needs to read a token back
+// out of the cache, and that import graph also has to compile for wasm - a target with no terminal
+// to authenticate against. Keeping the device flow here means importing cli/auth for its constants
+// never drags a terminal UI along; this package imports cli/auth, never the other way around.
 package tui
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/ui"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
-
-var (
-	program   *tea.Program
-	textStyle = lipgloss.NewStyle().Margin(1, 0, 2, 2)
-)
-
-type stateMsg state
 
 type state int
 
@@ -36,80 +25,80 @@ const (
 	done
 )
 
-type ErrorGetter interface {
-	GetError() error
-}
+// status is the line the running flow paints on. Package-level because the flows report progress
+// from deep inside their own polling loops, the same way they did when this drove a program.
+var status *ui.Status
 
-func setState(message state) {
-	if program == nil {
+// current is the flow being run, so a state change can ask it what to say. The flows word their
+// own steps - GitHub names the device code, YouTube Music names its base URL - so the message is
+// theirs to render, not this file's.
+var current Flow
+
+func setState(next state) {
+	if current == nil || status == nil {
 		return
 	}
 
-	program.Send(stateMsg(message))
+	current.base().state = next
+
+	if next == done {
+		return
+	}
+
+	status.Set(current.message())
 }
 
 type model struct {
-	env     runtime.Environment
-	err     error
-	spinner *spinner.Model
-	status  func(error) string
-	code    string
-	state   state
+	env    runtime.Environment
+	err    error
+	status func(error) string
+	code   string
+	state  state
 }
 
-func (m *model) Init() tea.Cmd {
-	s := spinner.New()
-	s.Spinner = spinner.Globe
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-	m.spinner = &s
-
-	return m.spinner.Tick
+// base lets Run reach the embedded model of whichever flow it was handed. Unexported, so the
+// interface is closed to this package's own flows.
+func (m *model) base() *model {
+	return m
 }
 
-func (m *model) GetError() error {
-	return m.err
-}
-
-func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case stateMsg:
-		m.state = state(msg)
-		if m.state == done {
-			return m, tea.Quit
-		}
-
-		return m, nil
-
-	default:
-		s, cmd := m.spinner.Update(msg)
-		m.spinner = &s
-		return m, cmd
-	}
-}
-
-func (m *model) View() string {
-	var message string
-
+func (m *model) message() string {
 	switch m.state {
 	case code:
-		message = fmt.Sprintf("%s Fetching code for authentication", m.spinner.View())
+		return "Fetching code for authentication"
 	case token:
-		message = fmt.Sprintf("%s Fetching token with code: %s", m.spinner.View(), m.code)
-	case done:
-		message = m.status(m.err)
+		return fmt.Sprintf("Fetching token with code: %s", m.code)
+	default:
+		return ""
 	}
-
-	return textStyle.Render(message)
 }
 
-func Run(m tea.Model) error {
-	program = tea.NewProgram(m)
-	resultModel, _ := program.Run()
+// Flow is one provider's device-code exchange. Authenticate runs it to completion, reporting
+// progress through setState and leaving its outcome on the embedded model.
+type Flow interface {
+	Authenticate()
+	base() *model
+	message() string
+}
 
-	if eg, ok := resultModel.(ErrorGetter); ok {
-		return eg.GetError()
-	}
+func Run(flow Flow) error {
+	current = flow
 
-	log.Debug("model does not implement ErrorGetter")
-	return nil
+	status = ui.NewStatus(os.Stdout)
+	status.Start(flow.message())
+
+	defer func() {
+		current = nil
+		status = nil
+	}()
+
+	// Synchronous: this used to run in a goroutine so a message loop could keep drawing, and the
+	// status line now draws itself from its own ticker.
+	flow.Authenticate()
+
+	base := flow.base()
+
+	status.Stop(base.status(base.err))
+
+	return base.err
 }

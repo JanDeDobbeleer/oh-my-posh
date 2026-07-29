@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -40,11 +39,15 @@ type AccessTokenResponse struct {
 }
 
 func NewCopilot(env runtime.Environment) *CopilotAuth {
-	return &CopilotAuth{
+	flow := &CopilotAuth{
 		model: model{
 			env: env,
 		},
 	}
+
+	flow.model.status = flow.status
+
+	return flow
 }
 
 type CopilotAuth struct {
@@ -52,30 +55,6 @@ type CopilotAuth struct {
 	verificationURI  string
 	model
 	lastState state
-}
-
-func (c *CopilotAuth) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case stateMsg:
-		c.state = state(msg)
-		if c.state == done {
-			return c, tea.Quit
-		}
-
-		return c, nil
-
-	default:
-		s, cmd := c.spinner.Update(msg)
-		c.spinner = &s
-		return c, cmd
-	}
-}
-
-func (c *CopilotAuth) Init() tea.Cmd {
-	c.model.status = c.status
-	cmd := c.model.Init()
-	go c.Authenticate()
-	return cmd
 }
 
 func (c *CopilotAuth) Authenticate() {
@@ -200,17 +179,17 @@ func (c *CopilotAuth) status(err error) string {
 	return fmt.Sprintf("HTTP error %d: %s", httpErr.StatusCode, httpErr.Error())
 }
 
-func (c *CopilotAuth) View() string {
+func (c *CopilotAuth) message() string {
 	var message string
 
 	switch c.state {
 	case code:
-		message = fmt.Sprintf("%s Requesting device code from GitHub", c.spinner.View())
+		message = "Requesting device code from GitHub"
 	case token:
-		message = fmt.Sprintf("%s Please visit %s and enter code: %s", c.spinner.View(), c.verificationURI, c.code)
+		message = fmt.Sprintf("Please visit %s and enter code: %s", c.verificationURI, c.code)
 	case done:
 		message = c.status(c.err)
 	}
 
-	return textStyle.Render(message)
+	return message
 }

@@ -1,167 +1,94 @@
-// Package tui implements the Bubble Tea spinner and progress bar oh-my-posh
-// shows while it upgrades itself. It lives one level below cli/upgrade
-// because cli/upgrade holds the plain Config, CDN, and Source types that the
-// config and segments packages need, and that import graph also has to
-// compile for wasm — a target with no terminal to draw to, and one that
-// bubbletea itself does not build for at all. Keeping this file here means
-// importing cli/upgrade for its types never drags bubbletea along; this
-// package imports cli/upgrade, never the other way around.
+// Package tui draws what oh-my-posh shows while it upgrades itself: a status line naming the
+// stage, and a progress bar while the download runs.
+//
+// It lives one level below cli/upgrade because cli/upgrade holds the plain Config, CDN and Source
+// types that the config and segments packages need, and that import graph also has to compile for
+// wasm - a target with no terminal to draw to. Keeping the drawing here means importing
+// cli/upgrade for its types never drags a terminal UI along; this package imports cli/upgrade,
+// never the other way around.
 package tui
 
 import (
 	"fmt"
+	"os"
 
-	progress_ "github.com/charmbracelet/bubbles/progress"
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/ui"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-var (
-	program   *tea.Program
-	textStyle = lipgloss.NewStyle().Margin(1, 0, 2, 2)
-)
-
-type resultMsg string
-
-type stateMsg upgrade.Stage
-
-type model struct {
-	error    error
-	config   *upgrade.Config
-	spinner  *spinner.Model
-	progress *progress.Model
-	message  string
-	state    upgrade.Stage
-}
-
-func initialModel(cfg *upgrade.Config) *model {
-	s := spinner.New()
-	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-
-	p := progress.NewModel()
-
-	return &model{spinner: &s, config: cfg, progress: p}
-}
-
-func (m *model) Init() tea.Cmd {
-	go m.start()
-
-	return m.spinner.Tick
-}
-
-func (m *model) start() {
-	if err := upgrade.Install(m.config); err != nil {
-		m.error = err
-		log.Debug("failed to install")
-		program.Send(resultMsg(fmt.Sprintf(" ❌ upgrade failed: %v", err)))
-		return
-	}
-
-	current := fmt.Sprintf("v%s", build.Version)
-	message := fmt.Sprintf("🚀 Upgraded from %s to %s", current, m.config.Latest)
-
-	if current != m.config.Latest {
-		log.Debug("new version installed, user needs to restart shell")
-		message += ", restart your shell to take full advantage of the new functionality"
-	}
-
-	program.Send(resultMsg(message))
-}
-
-func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "q", "esc", "ctrl+c":
-			return m, tea.Quit
-		default:
-			return m, nil
-		}
-
-	case resultMsg:
-		m.message = string(msg)
-		return m, tea.Quit
-
-	case stateMsg:
-		m.state = upgrade.Stage(msg)
-		return m, nil
-
-	case progress.Message:
-		return m, m.progress.SetPercent(float64(msg))
-
-	case progress_.FrameMsg:
-		return m, m.progress.Update(msg)
-
-	default:
-		s, cmd := m.spinner.Update(msg)
-		m.spinner = &s
-		return m, cmd
-	}
-}
-
-func (m *model) View() string {
-	if len(m.message) > 0 {
-		return textStyle.Render(m.message)
-	}
-
-	var message string
-	m.spinner.Spinner = spinner.Dot
-
-	switch m.state {
+func stageMessage(cfg *upgrade.Config, stage upgrade.Stage) string {
+	switch stage {
 	case upgrade.StageValidating:
-		message = "Validating current installation"
+		return "Validating current installation"
 	case upgrade.StageDownloading:
-		message = fmt.Sprintf("Downloading %s from %s...\n%s", m.config.Latest, m.config.Source.String(), m.progress.View())
-		return textStyle.Render(message)
+		return fmt.Sprintf("Downloading %s from %s", cfg.Latest, cfg.Source.String())
 	case upgrade.StageVerifying:
-		m.spinner.Spinner = spinner.Moon
-		message = "Verifying download"
+		return "Verifying download"
 	case upgrade.StageInstalling:
-		m.spinner.Spinner = spinner.Jump
-		message = "Installing"
+		return "Installing"
+	default:
+		return "Upgrading"
 	}
-
-	return textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
 }
 
 func Run(cfg *upgrade.Config) error {
-	// Relay cli/upgrade's plain Stage/percent callbacks into this program's
-	// message loop. cli/upgrade cannot send tea.Msg values itself without
-	// importing bubbletea, which it must not do, so this program subscribes
-	// on its behalf for the duration of the run.
+	status := ui.NewStatus(os.Stdout)
+	bar := ui.NewProgress(os.Stdout, "  Downloading")
+
+	// cli/upgrade reports through plain callbacks precisely so it never has to know what is
+	// drawing - see its own report.go. This subscribes for the duration of the run and hands them
+	// back afterwards, so nothing keeps writing to a terminal after the command returns.
+	downloading := false
+
 	upgrade.SetStageReporter(func(stage upgrade.Stage) {
-		if program == nil {
+		// The bar and the status line both own the same line, so only one may paint at a time.
+		// Downloading is the only stage with a bar, and reaching any other stage ends it.
+		if downloading && stage != upgrade.StageDownloading {
+			downloading = false
+
+			bar.Done()
+		}
+
+		if stage == upgrade.StageDownloading {
+			downloading = true
+
+			status.Set(stageMessage(cfg, stage))
+
 			return
 		}
 
-		program.Send(stateMsg(stage))
+		status.Set(stageMessage(cfg, stage))
 	})
 
 	upgrade.SetProgressReporter(func(percent float64) {
-		if program == nil {
-			return
+		if downloading {
+			bar.Set(percent)
 		}
-
-		program.Send(progress.Message(percent))
 	})
 
 	defer upgrade.SetStageReporter(nil)
 	defer upgrade.SetProgressReporter(nil)
 
-	program = tea.NewProgram(initialModel(cfg))
-	resultModel, _ := program.Run()
+	status.Start(stageMessage(cfg, upgrade.StageValidating))
 
-	programModel, OK := resultModel.(*model)
-	if !OK {
-		log.Debug("failed to cast model")
-		return nil
+	if err := upgrade.Install(cfg); err != nil {
+		log.Debug("failed to install")
+		status.Stop(fmt.Sprintf(" ❌ upgrade failed: %v", err))
+
+		return err
 	}
 
-	return programModel.error
+	current := fmt.Sprintf("v%s", build.Version)
+	message := fmt.Sprintf("🚀 Upgraded from %s to %s", current, cfg.Latest)
+
+	if current != cfg.Latest {
+		log.Debug("new version installed, user needs to restart shell")
+		message += ", restart your shell to take full advantage of the new functionality"
+	}
+
+	status.Stop(message)
+
+	return nil
 }

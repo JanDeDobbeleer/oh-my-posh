@@ -3,8 +3,9 @@
   "checkpoint_id": "2d7a4c92b4a5",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 1,
+  "checkpoints_count": 3,
   "files_touched": [
+    "website/sidebars.js",
     "website/src/components/Config.js",
     "website/src/components/Config.module.css",
     "website/src/components/ConfigEditor/index.js",
@@ -21,13 +22,20 @@
       "compact_transcript": "/2d/7a4c92b4a5/0/transcript.jsonl",
       "content_hash": "/2d/7a4c92b4a5/0/content_hash.txt",
       "prompt": "/2d/7a4c92b4a5/0/prompt.txt"
+    },
+    {
+      "metadata": "/2d/7a4c92b4a5/1/metadata.json",
+      "transcript": "/2d/7a4c92b4a5/1/full.jsonl",
+      "compact_transcript": "/2d/7a4c92b4a5/1/transcript.jsonl",
+      "content_hash": "/2d/7a4c92b4a5/1/content_hash.txt",
+      "prompt": "/2d/7a4c92b4a5/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 2855,
-    "cache_creation_tokens": 8047221,
-    "cache_read_tokens": 421988425,
-    "output_tokens": 534033,
-    "api_call_count": 879
+    "input_tokens": 5506,
+    "cache_creation_tokens": 14958476,
+    "cache_read_tokens": 826914913,
+    "output_tokens": 1026334,
+    "api_call_count": 1649
   }
 }

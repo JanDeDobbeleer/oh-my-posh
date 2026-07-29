@@ -1,0 +1,5 @@
+In the studio code editor, when switching to JSON or TOML, it doesn't change the format and pops an error, and I want to change the order: I want JSON first, YAML second, TOML last. It seems different from the ones used in the segment pages because those do work correctly.
+
+---
+
+commit

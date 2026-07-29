@@ -8,7 +8,6 @@ import (
 	httplib "net/http"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
@@ -22,23 +21,20 @@ const (
 )
 
 func NewYtmda(env runtime.Environment) *Ytmda {
-	return &Ytmda{
+	flow := &Ytmda{
 		model: model{
 			env: env,
 		},
 	}
+
+	flow.model.status = flow.status
+
+	return flow
 }
 
 type Ytmda struct {
 	model
 	lastState state
-}
-
-func (y *Ytmda) Init() tea.Cmd {
-	y.model.status = y.status
-	cmd := y.model.Init()
-	go y.Authenticate()
-	return cmd
 }
 
 func (y *Ytmda) Authenticate() {

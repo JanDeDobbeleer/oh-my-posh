@@ -55,3 +55,34 @@ func (p *Progress) Done() {
 
 	fmt.Fprintf(p.writer, "%s%s", eraseLine, terminal.SetProgress(100))
 }
+
+// Reader reports how much of a download has arrived, by counting bytes as they are read.
+//
+// It takes a callback rather than the Progress it drives: cli/font counts bytes deep inside its
+// download path, which has no business knowing whether anything is being displayed at all. The
+// same reasoning already shaped cli/upgrade's reporter callbacks.
+type Reader struct {
+	io.Reader
+
+	report  func(fraction float64)
+	total   int64
+	current int64
+}
+
+func NewReader(reader io.Reader, total int64, report func(fraction float64)) *Reader {
+	return &Reader{Reader: reader, total: total, report: report}
+}
+
+func (r *Reader) Read(p []byte) (int, error) {
+	n, err := r.Reader.Read(p)
+
+	r.current += int64(n)
+
+	// A server that sends no Content-Length reports -1, and dividing by it walks the bar
+	// backwards. Nothing to report until the size is known.
+	if r.report != nil && r.total > 0 {
+		r.report(float64(r.current) / float64(r.total))
+	}
+
+	return n, err
+}

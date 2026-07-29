@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "10906611becd",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "website/docs/installation/prompt.mdx",
+    "website/docs/installation/windows.mdx",
+    "website/static/img/msstore-dark.svg",
+    "website/static/img/msstore-light.svg"
+  ],
+  "sessions": [
+    {
+      "metadata": "/10/906611becd/0/metadata.json",
+      "transcript": "/10/906611becd/0/full.jsonl",
+      "compact_transcript": "/10/906611becd/0/transcript.jsonl",
+      "content_hash": "/10/906611becd/0/content_hash.txt",
+      "prompt": "/10/906611becd/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 473,
+    "cache_creation_tokens": 737624,
+    "cache_read_tokens": 37535603,
+    "output_tokens": 89129,
+    "api_call_count": 250
+  }
+}

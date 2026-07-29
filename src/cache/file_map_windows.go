@@ -10,13 +10,11 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-// Configuration constants
 const (
 	minStringSize = 50 * 1024        // 50KB minimum string size
 	maxStringSize = 10 * 1024 * 1024 // 10MB maximum string size
 )
 
-// Windows API constants
 const (
 	fileMapAllAccess    = 0x001f001f
 	pageReadwrite       = 0x04
@@ -37,7 +35,6 @@ const (
 	sharingViolationSleep = 5 * time.Millisecond
 )
 
-// Windows API functions
 var (
 	kernel32           = syscall.NewLazyDLL("kernel32.dll")
 	createFileW        = kernel32.NewProc("CreateFileW")
@@ -50,7 +47,6 @@ var (
 	getFileSizeEx      = kernel32.NewProc("GetFileSizeEx")
 )
 
-// PersistentSharedString represents a memory-mapped file for storing a single string
 type PersistentSharedString struct {
 	filePath   string
 	fileHandle uintptr
@@ -88,13 +84,12 @@ func createOrOpenPersistentStringWithSize(filePath string, requiredSize int) (*P
 	return createNewFileWithSize(filePath, requiredSize)
 }
 
-// openExistingFileWithSize attempts to open an existing memory-mapped file.
-// The file is opened with FILE_SHARE_READ|FILE_SHARE_WRITE so concurrent
-// oh-my-posh processes (split panes, tooltip renders, etc.) don't lock each
-// other out. If the file is momentarily locked (ERROR_SHARING_VIOLATION) we
-// retry briefly; if it's still locked after that we return ErrLocked so the
-// caller can fall back to an in-memory-only store instead of recreating the
-// file (which would truncate the other process's data).
+// Opened with FILE_SHARE_READ|FILE_SHARE_WRITE so concurrent oh-my-posh
+// processes (split panes, tooltip renders, etc.) don't lock each other out.
+// If the file is momentarily locked (ERROR_SHARING_VIOLATION) it retries
+// briefly; if still locked after that, returns ErrLocked so the caller can
+// fall back to an in-memory-only store instead of recreating the file (which
+// would truncate the other process's data).
 func openExistingFileWithSize(filePath string, requiredSize int) (*PersistentSharedString, error) {
 	filePathPtr, err := syscall.UTF16PtrFromString(filePath)
 	if err != nil {
@@ -160,9 +155,8 @@ func openExistingFileWithSize(filePath string, requiredSize int) (*PersistentSha
 	return createMappingFromFileWithSize(filePath, fileHandle, actualSize)
 }
 
-// createNewFileWithSize creates a new memory-mapped file with the specified size.
-// The file is created with FILE_SHARE_READ|FILE_SHARE_WRITE so subsequent
-// concurrent opens by other processes don't fail with a sharing violation.
+// Created with FILE_SHARE_READ|FILE_SHARE_WRITE so subsequent concurrent
+// opens by other processes don't fail with a sharing violation.
 func createNewFileWithSize(filePath string, size int) (*PersistentSharedString, error) {
 	filePathPtr, err := syscall.UTF16PtrFromString(filePath)
 	if err != nil {
@@ -208,7 +202,6 @@ func createNewFileWithSize(filePath string, size int) (*PersistentSharedString, 
 	return pss, nil
 }
 
-// createMappingFromFileWithSize creates a memory mapping from an open file handle with specified size
 func createMappingFromFileWithSize(filePath string, fileHandle uintptr, size int) (*PersistentSharedString, error) {
 	totalSize := size + 5 // 4 bytes length + size + 1 null terminator
 
@@ -249,7 +242,7 @@ func createMappingFromFileWithSize(filePath string, fileHandle uintptr, size int
 	}, nil
 }
 
-// SetString stores a string in the memory-mapped file (automatically persisted)
+// Automatically persisted; no explicit flush required.
 func (pss *PersistentSharedString) SetString(value string) error {
 	strBytes := []byte(value)
 
@@ -305,7 +298,6 @@ func (pss *PersistentSharedString) bytes() []byte {
 	return result
 }
 
-// Close closes the memory-mapped file and handles
 func (pss *PersistentSharedString) close() error {
 	var err error
 

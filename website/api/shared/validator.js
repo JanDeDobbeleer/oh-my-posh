@@ -6,17 +6,14 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
-// Configuration constants
 const SCHEMA_GITHUB_URL = 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json';
 const SCHEMA_FETCH_TIMEOUT = 10000;
 
-// Schema cache
 let schema = null;
 let schemaLoadPromise = null;
 
 /**
- * Load the schema from the local data folder, with GitHub fallback
- * @returns {Promise<Object>} The loaded schema
+ * Falls back to fetching from GitHub if the local schema file is missing.
  */
 async function loadSchema() {
   // Return cached schema if available
@@ -70,7 +67,7 @@ async function loadSchema() {
   return schemaLoadPromise;
 }
 
-// Initialize AJV with draft 2020-12 support (oh-my-posh schema uses draft 2020-12)
+// oh-my-posh schema uses draft 2020-12
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
@@ -79,7 +76,6 @@ const ajv = new Ajv({
 });
 addFormats(ajv);
 
-// Add custom format for color validation
 ajv.addFormat('color', {
   validate: (data) => {
     if (typeof data !== 'string') return false;
@@ -88,7 +84,6 @@ ajv.addFormat('color', {
   }
 });
 
-// Compile validator from schema
 let validate = null;
 async function getValidator() {
   if (validate) {
@@ -109,11 +104,6 @@ async function getValidator() {
   }
 }
 
-/**
- * Detect the format of the configuration content
- * @param {string} content - The configuration content
- * @returns {string} The detected format (json, yaml, or toml)
- */
 function detectFormat(content) {
   const trimmed = content.trim();
 
@@ -131,12 +121,6 @@ function detectFormat(content) {
   return 'yaml';
 }
 
-/**
- * Parse configuration content based on format
- * @param {string} content - The configuration content
- * @param {string} format - The format (json, yaml, toml, or auto)
- * @returns {Object} Parsed configuration object
- */
 function parseConfig(content, format) {
   if (!content || typeof content !== 'string') {
     throw new Error('Content must be a non-empty string');
@@ -164,11 +148,6 @@ function parseConfig(content, format) {
   }
 }
 
-/**
- * Format validation errors into human-readable messages
- * @param {Array} errors - AJV validation errors
- * @returns {Array} Formatted error messages
- */
 function formatErrors(errors) {
   if (!errors || errors.length === 0) {
     return [];
@@ -207,12 +186,6 @@ function formatErrors(errors) {
   });
 }
 
-/**
- * Validate an oh-my-posh configuration
- * @param {string} content - The configuration content
- * @param {string} format - The format (json, yaml, toml, or auto)
- * @returns {Promise<Object>} Validation result
- */
 async function validateConfig(content, format = 'auto') {
   const result = {
     valid: false,
@@ -288,12 +261,6 @@ async function validateConfig(content, format = 'auto') {
   return result;
 }
 
-/**
- * Validate a segment configuration
- * @param {string} content - The segment content
- * @param {string} format - The format (json, yaml, toml, or auto)
- * @returns {Promise<Object>} Validation result
- */
 async function validateSegment(content, format = 'auto') {
   const result = {
     valid: false,

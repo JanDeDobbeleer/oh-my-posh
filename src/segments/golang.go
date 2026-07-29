@@ -38,10 +38,6 @@ func (g *Golang) Enabled() bool {
 	return g.Language.Enabled()
 }
 
-// getVersion returns the version of the Go language
-// It first checks if the go.mod file is present and if it is, it parses the file to get the version
-// If the go.mod file is not present, it checks if the go.work file is present and if it is, it parses the file to get the version
-// If neither file is present, it returns an empty string
 func (g *Golang) getVersion() (string, error) {
 	if g.options.Bool(ParseModFile, false) {
 		return g.parseModFile()

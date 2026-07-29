@@ -25,7 +25,6 @@ const (
 	done
 )
 
-// ErrorGetter is implemented by auth models to get the error.
 type ErrorGetter interface {
 	GetError() error
 }

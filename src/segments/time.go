@@ -56,8 +56,6 @@ var timeFormatLookup = map[string]string{
 	"TimeOnly":    time.TimeOnly,    // "15:04:05"
 }
 
-// getTimeFormat returns the time format constant if the input matches a known format name,
-// otherwise returns the input unchanged
 func (t *Time) getTimeFormat(format string) string {
 	if timeFormat, exists := timeFormatLookup[format]; exists {
 		return timeFormat

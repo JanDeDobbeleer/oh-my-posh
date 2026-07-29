@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// shellCmd represents the shell command
 var shellCmd = &cobra.Command{
 	Use:   "shell get",
 	Short: "Get the shell name",

@@ -49,9 +49,6 @@ const TOOLS = [
   }
 ];
 
-/**
- * Azure Function entry point for MCP server
- */
 module.exports = async function (context, req) {
   context.log('MCP validator function processed a request');
 

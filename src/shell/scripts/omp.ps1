@@ -1,9 +1,7 @@
-# remove any existing dynamic module of OMP
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
 
-# disable all known python virtual environment prompts
 $env:VIRTUAL_ENV_DISABLE_PROMPT = 1
 $env:PYENV_VIRTUALENV_DISABLE_PROMPT = 1
 
@@ -17,7 +15,6 @@ function global:Get-PoshStackCount {
     return 0
 }
 
-# global enablers
 $global:_ompJobCount = $false
 $global:_ompFTCSMarks = $false
 $global:_ompPoshGit = $false
@@ -27,7 +24,6 @@ $global:_ompTransientPrompt = $false
 $global:_ompStreaming = $false
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
-    # Check `ConstrainedLanguage` mode.
     $script:ConstrainedLanguageMode = $ExecutionContext.SessionState.LanguageMode -eq "ConstrainedLanguage"
 
     # The persistent `oh-my-posh serve` daemon needs ProcessStartInfo.ArgumentList,
@@ -46,11 +42,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:AsyncInit = [bool](Get-Variable -Name _ompAsyncInit -Scope Global -ErrorAction Ignore -ValueOnly)
     $global:_ompAsyncInit = $false
 
-    # Prompt related backup. In async mode this ends up capturing whatever
-    # wraps the trampoline at first-draw time (e.g. another tool's prompt
-    # hook), not the true pre-omp prompt - $global:_ompOriginalPromptFunction
-    # (captured by the trampoline itself, before anything can wrap it) is
-    # authoritative there instead. Kept here unconditionally for the sync path.
+    # In async mode this ends up capturing whatever wraps the trampoline at
+    # first-draw time (e.g. another tool's prompt hook), not the true pre-omp
+    # prompt - $global:_ompOriginalPromptFunction (captured by the trampoline
+    # itself, before anything can wrap it) is authoritative there instead.
+    # Kept here unconditionally for the sync path.
     $script:OriginalPromptFunction = $Function:prompt
     $originalPSReadLineOptions = Get-PSReadLineOption
     $script:OriginalContinuationPrompt = $originalPSReadLineOptions.ContinuationPrompt
@@ -144,7 +140,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                         continue
                     }
 
-                    # An unchanged prompt needs no repaint.
                     if ($payload -ceq $s.Prompt) {
                         continue
                     }
@@ -191,9 +186,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $s = $_ -replace '(\\+)"', '$1$1"'
                 # escape N consecutive backslash(es), which are at the end of the string, to 2N consecutive ones
                 $s = $s -replace '(\\+)$', '$1$1'
-                # escape double quotes
                 $s = $s -replace '"', '\"'
-                # quote the argument
                 "`"$s`""
             }
             $StartInfo.Arguments = $escapedArgs -join ' '
@@ -203,8 +196,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
         $StartInfo.UseShellExecute = $false
         if ($PWD.Provider.Name -eq 'FileSystem') {
-            # make sure we're in a valid directory
-            # if not, go back HOME
             if (-not (Test-Path -LiteralPath $PWD)) {
                 Write-Host "Unable to find the current directory, falling back to $HOME" -ForegroundColor Red
                 Set-Location $HOME
@@ -229,7 +220,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Get-NonFSWD {
-        # We only need to return a non-filesystem working directory.
         if ($PWD.Provider.Name -ne 'FileSystem') {
             return $PWD.ToString()
         }
@@ -237,7 +227,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Get-TerminalWidth {
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-        # Set a sane default when the value can't be retrieved.
         if (-not $terminalWidth) {
             return 0
         }
@@ -317,7 +306,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
 
         $invocationInfo = try {
-            # retrieve info of the most recent error
             $global:Error | Where-Object { $_.GetType().Name -eq 'ErrorRecord' } | Select-Object -First 1 -ExpandProperty InvocationInfo
         }
         catch {
@@ -423,7 +411,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             return
         }
 
-        # Kill the streaming process
         if ($null -ne $script:Streaming.Process -and -not $script:Streaming.Process.HasExited) {
             try {
                 $script:Streaming.Process.Kill()
@@ -439,8 +426,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Stop-ActiveRenderCycle {
         # Serve mode: the daemon persists across cycles, only the in-flight
-        # render needs to be interrupted - write abort instead of killing
-        # anything. Guard on the process still being alive.
+        # render needs to be interrupted - write abort instead of killing anything.
         if ($null -ne $script:Streaming.ServeProcess -and -not $script:Streaming.ServeProcess.HasExited) {
             try {
                 $script:Streaming.StdIn.WriteLine('{"command":"abort"}')
@@ -682,7 +668,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         if ($null -eq $script:Streaming.ServeProcess -or $script:Streaming.ServeProcess.HasExited) {
             if (-not (Start-PoshServe)) {
-                # Could not start the daemon at all - fall back for this cycle.
                 Suspend-PoshServeOnFailure
                 return Get-PoshStreamingPromptLegacy
             }
@@ -827,8 +812,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     function Get-PoshStreamingPromptLegacy {
         Register-PoshStreamingOnIdle
 
-        # Start streaming process (State stays 'NEW' until the first OnIdle event confirms
-        # PSReadLine has rendered the initial prompt)
+        # State stays 'NEW' until the first OnIdle event confirms PSReadLine has rendered the initial prompt.
         $script:Streaming.Process = New-Object System.Diagnostics.Process
         $StartInfo = $script:Streaming.Process.StartInfo
         $StartInfo.FileName = $global:_ompExecutable
@@ -838,7 +822,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $script:Streaming.Transient = ''
         $script:Streaming.CycleStarted = $true
 
-        # Build arguments array
         $Arguments = @(
             "stream"
             "--save-cache"
@@ -853,7 +836,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             "--job-count=$script:JobCount"
         )
 
-        # Use ArgumentList if available (PowerShell 6.1+), otherwise escape manually
         if ($StartInfo.ArgumentList.Add) {
             $Arguments | ForEach-Object -Process { $StartInfo.ArgumentList.Add($_) }
         }
@@ -864,9 +846,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $s = $_ -replace '(\\+)"', '$1$1"'
                 # escape N consecutive backslash(es), which are at the end of the string, to 2N consecutive ones
                 $s = $s -replace '(\\+)$', '$1$1'
-                # escape double quotes
                 $s = $s -replace '"', '\"'
-                # quote the argument
                 "`"$s`""
             }
             $StartInfo.Arguments = $escapedArgs -join ' '
@@ -882,7 +862,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         [void]$script:Streaming.Process.Start()
 
-        # Read output asynchronously
         $output = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
         $inputData = New-Object 'System.Management.Automation.PSDataCollection[PSObject]'
         $inputData.Complete()
@@ -899,7 +878,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         $script:Streaming.Prompt = $output[0]
 
-        # Hand the collection to the OnIdle drain, index 0 already consumed.
+        # Index 0 was already consumed above; hand the rest to the OnIdle drain.
         $script:Streaming.Output = $output
         $script:Streaming.RecordIndex = 1
 
@@ -907,7 +886,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     $promptFunction = {
-        # store the original last command execution status
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
             $script:OriginalLastExecutionStatus = $global:NVS_ORIGINAL_LASTEXECUTIONSTATUS
@@ -916,23 +894,19 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $script:OriginalLastExecutionStatus = $?
         }
 
-        # store the original last exit code
         $script:OriginalLastExitCode = $global:LASTEXITCODE
 
         # Only return the cached prompt when this is a streaming redraw, that is an
         # InvokePrompt() call during an active streaming cycle (RUNNING state) which
         # isn't rendering a transient prompt.
         if ($script:PromptType -ne 'transient' -and $script:Streaming.State -ne 'NEW') {
-            # Update ExtraPromptLineCount for PSReadLine to properly clear previous prompt
+            # So PSReadLine properly clears the previous prompt.
             Set-PSReadLineOption -ExtraPromptLineCount (($script:Streaming.Prompt | Measure-Object -Line).Lines - 1)
             return $script:Streaming.Prompt
         }
 
-        # Stop any previous render cycle (abort the serve daemon's in-flight
-        # cycle, or kill the legacy per-prompt process) and reset state.
         Stop-ActiveRenderCycle
 
-        # Reset tooltip command.
         $script:TooltipCommand = ''
 
         Set-PoshPromptType
@@ -947,7 +921,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
-        # Use streaming prompt if enabled, otherwise use regular prompt
         if ($global:_ompStreaming -and $script:PromptType -eq 'primary') {
             $output = Get-PoshStreamingPrompt
         }
@@ -978,7 +951,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($output | Measure-Object -Line).Lines - 1)
 
-        # The output can be multi-line, joining them ensures proper rendering.
         $output = $output -join "`n"
 
         if ($script:PromptType -eq 'transient') {
@@ -992,10 +964,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         $output
 
-        # remove any posh-git status
         $env:POSH_GIT_STATUS = $null
 
-        # restore the original last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode
     }
 
@@ -1016,7 +986,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $Function:prompt = $promptFunction
     }
 
-    # set secondary prompt
     Set-PSReadLineOption -ContinuationPrompt ((Invoke-Utf8Posh @("print", "secondary", "--shell=$script:ShellName")) -join "`n")
 
     ### Exported Functions ###
@@ -1101,10 +1070,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             try {
                 $command = ''
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
-                # Get the first word of command line as tip.
                 $command = $command.TrimStart().Split(' ', 2) | Select-Object -First 1
 
-                # Ignore an empty/repeated tooltip command.
                 if (!$command -or ($command -eq $script:TooltipCommand)) {
                     return
                 }
@@ -1172,7 +1139,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             return
         }
 
-        # Helper function to create Enter key handler script block
         function New-EnterKeyHandler {
             param(
                 [scriptblock]$AcceptLineFunction,
@@ -1206,7 +1172,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             }.GetNewClosure()
         }
 
-        # Helper function to create Ctrl+C key handler script block
         function New-CtrlCKeyHandler {
             param(
                 [scriptblock]$CancelFunction,
@@ -1228,14 +1193,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             }.GetNewClosure()
         }
 
-        # Register Enter key handlers
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock (New-EnterKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() } $script:Streaming)
 
         if ((Get-PSReadLineOption).EditMode -eq "Vi") {
             Set-PSReadLineKeyHandler -ViMode Command -Key Enter -BriefDescription 'OhMyPoshViEnterKeyHandler' -ScriptBlock (New-EnterKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::ViAcceptLine() } $script:Streaming)
         }
 
-        # Register Ctrl+C key handlers
         Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock (New-CtrlCKeyHandler { [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine() } $script:Streaming)
 
         if ((Get-PSReadLineOption).EditMode -eq "Vi") {
@@ -1308,8 +1271,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {
         $ExecutionContext.SessionState.Module.OnRemove += {
-            # Clean up the serve daemon: ask it to quit and flush its caches,
-            # give it a moment to exit on its own, then kill it if it hasn't.
             if ($null -ne $script:Streaming.ServeProcess -and -not $script:Streaming.ServeProcess.HasExited) {
                 try {
                     $script:Streaming.StdIn.WriteLine('{"command":"quit"}')
@@ -1331,7 +1292,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $script:Streaming.ServeProcess = $null
             $script:Streaming.StdIn = $null
 
-            # Clean up the legacy per-prompt streaming process, if any.
             Stop-StreamingProcess
 
             if ($null -ne $script:StreamingOnIdleJob) {

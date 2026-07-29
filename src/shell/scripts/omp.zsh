@@ -5,7 +5,6 @@ export CONDA_PROMPT_MODIFIER=false
 export ZLE_RPROMPT_INDENT=0
 export OSTYPE=$OSTYPE
 
-# disable all known python virtual environment prompts
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
@@ -15,19 +14,16 @@ _omp_tooltip_command=''
 # zsh/datetime provides the epochtime array for native millisecond timestamps
 zmodload zsh/datetime 2>/dev/null
 
-# switches to enable/disable features
 _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
-# streaming support variables
-# Preserve the current fd value if the script is re-sourced mid-session; default to -1 when unset or empty.
+# Preserve the fd if the script is re-sourced mid-session.
 _omp_stream_fd=${_omp_stream_fd:--1}
 _omp_enable_streaming=0
 _omp_primary_prompt=""
 _omp_transient_prompt=""
 _omp_streaming_supported=""
 
-# serve daemon variables
 # A persistent `oh-my-posh serve` process renders prompts on request, replacing
 # a process spawn per prompt with an in-memory render. Preserve the fds when
 # the script is re-sourced mid-session so the running daemon is reused.
@@ -37,7 +33,7 @@ _omp_serve_pid=${_omp_serve_pid:-0}
 _omp_serve_cycle=0
 _omp_serve_failures=0
 
-# set secondary prompt (also exports POSH_MULTILINE_KEEPPROMPT)
+# also exports POSH_MULTILINE_KEEPPROMPT
 eval "$($_omp_executable print secondary --shell=zsh --eval)"
 
 function _omp_set_cursor_position() {
@@ -67,7 +63,6 @@ function set_poshcontext() {
   return
 }
 
-# cleanup stream resources
 function _omp_cleanup_stream() {
   # unregister handler first (prevents handler firing on closed fd)
   [[ $_omp_stream_fd -ge 0 ]] && zle -F $_omp_stream_fd 2>/dev/null
@@ -76,16 +71,14 @@ function _omp_cleanup_stream() {
   _omp_stream_fd=-1
 }
 
-# start oh-my-posh stream process, block until first prompt arrives
+# blocks until first prompt arrives
 function _omp_start_streaming() {
-  # cleanup any stale streams
   _omp_cleanup_stream
 
-  # the transient prompt for this cycle streams in alongside the primary
-  # prompt updates, invalidate the previous cycle's version
+  # this cycle's transient prompt streams in separately; invalidate the
+  # previous cycle's version
   _omp_transient_prompt=""
 
-  # build command with all context
   local -a stream_cmd=(
     "$_omp_executable" stream
     --save-cache
@@ -100,8 +93,7 @@ function _omp_start_streaming() {
     --terminal-width="${COLUMNS:-0}"
   )
 
-  # start process substitution — no PID tracking needed
-  # closing fd sends SIGPIPE which terminates oh-my-posh
+  # no PID tracking needed — closing fd sends SIGPIPE which terminates oh-my-posh
   # redirect stream process stdin to prevent it from interfering with command output
   exec {_omp_stream_fd}< <(exec "${stream_cmd[@]}" </dev/null 2>/dev/null)
 
@@ -121,7 +113,7 @@ function _omp_start_streaming() {
   return 0
 }
 
-# async handler: called when data available on fd (reads single value)
+# zle invokes this when data is available on fd
 function _omp_async_handler() {
   local fd=$1
   local record
@@ -205,8 +197,7 @@ function _omp_serve_start() {
 }
 
 function _omp_serve_escape() {
-  # JSON string escaping using native parameter expansion; the result is
-  # returned in REPLY. Any control characters left after the named escapes
+  # Returns via REPLY. Any control characters left after the named escapes
   # are stripped - JSON forbids them raw.
   local s=$1
   s=${s//\\/\\\\}
@@ -366,13 +357,11 @@ function _omp_serve_quit() {
   _omp_serve_stop
 }
 
-# shell exit handler
 function _omp_exit_handler() {
   _omp_serve_quit
   _omp_cleanup_stream
 }
 
-# register exit handler
 zshexit_functions+=(_omp_exit_handler)
 
 # sets _omp_millis instead of printing to avoid forking a subshell
@@ -385,7 +374,6 @@ function _omp_milliseconds() {
     return
   fi
 
-  # zsh/datetime is unavailable
   _omp_millis=$($_omp_executable get millis)
 }
 
@@ -483,7 +471,6 @@ function _omp_precmd() {
   unset _omp_start_time
 }
 
-# add hook functions
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd _omp_precmd
 add-zsh-hook preexec _omp_preexec
@@ -498,10 +485,8 @@ function _omp_cleanup() {
   local widget
   for widget in "${omp_widgets[@]}"; do
     if [[ ${widgets[._omp_original::$widget]} ]]; then
-      # Restore the original widget.
       zle -A ._omp_original::$widget $widget
     elif [[ ${widgets[$widget]} = user:_omp_* ]]; then
-      # Delete the OMP-defined widget.
       zle -D $widget
     fi
   done
@@ -536,7 +521,6 @@ function _omp_render_tooltip() {
   # Get the first word of command line as tip.
   local tooltip_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
 
-  # Ignore an empty/repeated tooltip command.
   if [[ -z $tooltip_command ]] || [[ $tooltip_command = "$_omp_tooltip_command" ]]; then
     return
   fi
@@ -627,7 +611,6 @@ function _omp_zle-line-init() {
     zvm_zle-line-init
   fi
 
-  # Start regular line editor.
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
 
   local -i ret=0
@@ -699,20 +682,15 @@ function _omp_zle-line-init() {
 
 # Helper function for calling a widget before the specified OMP function.
 function _omp_call_widget() {
-  # The name of the OMP function.
   local omp_func=$1
-  # The remainder are the widget to call and potential arguments.
   shift
 
   zle "$@" && shift 2 && $omp_func "$@"
 }
 
-# Create a widget with the specified OMP function.
-# An existing widget will be preserved and decorated with the function.
+# An existing widget is preserved and decorated with the function.
 function _omp_create_widget() {
-  # The name of the widget to create/decorate.
   local widget=$1
-  # The name of the OMP function.
   local omp_func=$2
 
   case ${widgets[$widget]:-''} in
@@ -726,7 +704,8 @@ function _omp_create_widget() {
 
   # User-defined or builtin: backup and decorate it.
   *)
-    # Back up the original widget. The leading dot in widget name is to work around bugs when used with zsh-syntax-highlighting in Zsh v5.8 or lower.
+    # The leading dot in the widget name works around bugs with
+    # zsh-syntax-highlighting in Zsh v5.8 or lower.
     zle -A $widget ._omp_original::$widget
     eval "_omp_decorated_${(q)widget}() { _omp_call_widget ${(q)omp_func} ._omp_original::${(q)widget} -- \"\$@\" }"
     zle -N $widget _omp_decorated_$widget
@@ -745,7 +724,6 @@ function enable_poshtooltips() {
   _omp_create_widget backward-delete-char _omp_restore_rprompt
 }
 
-# vi mode tracking — re-render the prompt whenever the active keymap changes
 function _omp_render_vimode() {
   export POSH_VI_MODE=${KEYMAP:-main}
   eval "$(_omp_get_prompt primary --eval)"

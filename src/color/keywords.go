@@ -3,18 +3,12 @@ package color
 import "slices"
 
 const (
-	// Transparent implies a transparent color
-	Transparent Ansi = "transparent"
-	// Accent is the OS accent color
-	Accent Ansi = "accent"
-	// ParentBackground takes the previous segment's background color
+	Transparent      Ansi = "transparent"
+	Accent           Ansi = "accent"
 	ParentBackground Ansi = "parentBackground"
-	// ParentForeground takes the previous segment's color
 	ParentForeground Ansi = "parentForeground"
-	// Background takes the current segment's background color
-	Background Ansi = "background"
-	// Foreground takes the current segment's foreground color
-	Foreground Ansi = "foreground"
+	Background       Ansi = "background"
+	Foreground       Ansi = "foreground"
 )
 
 func (color Ansi) isKeyword() bool {

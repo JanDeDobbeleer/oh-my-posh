@@ -24,7 +24,6 @@ import (
 	yaml "go.yaml.in/yaml/v3"
 )
 
-// Custom error types for config validation
 type Error struct {
 	message string
 }
@@ -352,13 +351,11 @@ func getData(configFile string) ([]byte, error) {
 	return http.Download(configFile, true)
 }
 
-// isCygwin checks if we're running in Cygwin environment
 func isCygwin() bool {
 	return runtimelib.GOOS == "windows" && len(os.Getenv("OSTYPE")) > 0
 }
 
-// themes maps a theme's short name to its file name; it's a package-level
-// var (instead of a local literal) so isTheme doesn't rebuild it on every call.
+// Package-level var (instead of a local literal) so isTheme doesn't rebuild it on every call.
 var themes = map[string]string{
 	"1_shell":                  "1_shell.omp.json",
 	"m365princess":             "M365Princess.omp.json",

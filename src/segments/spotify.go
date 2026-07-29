@@ -16,14 +16,10 @@ type MusicPlayer struct {
 }
 
 const (
-	// PlayingIcon indicates a song is playing
 	PlayingIcon options.Option = "playing_icon"
-	// PausedIcon indicates a song is paused
-	PausedIcon options.Option = "paused_icon"
-	// StoppedIcon indicates a song is stopped
+	PausedIcon  options.Option = "paused_icon"
 	StoppedIcon options.Option = "stopped_icon"
-	// AdIcon indicates an advertisement is playing
-	AdIcon options.Option = "ad_icon"
+	AdIcon      options.Option = "ad_icon"
 
 	playing = "playing"
 	stopped = "stopped"

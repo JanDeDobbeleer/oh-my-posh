@@ -390,7 +390,6 @@ const (
 	ZVM SegmentType = "zvm"
 )
 
-// Segments contains all available prompt segment writers.
 // Consumers of the library can also add their own segment writer.
 var Segments = map[SegmentType]func() SegmentWriter{
 	ANGULAR:         func() SegmentWriter { return &segments.Angular{} },

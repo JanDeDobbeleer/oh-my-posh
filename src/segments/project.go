@@ -37,17 +37,14 @@ type ProjectData struct {
 	Target  string
 }
 
-// Lake file package
 type LakeFileTOML struct {
 	Name string
 }
 
-// Rust Cargo package
 type CargoTOML struct {
 	Package ProjectData
 }
 
-// Python package
 type PyProjectTOML struct {
 	Project ProjectData
 	Tool    PyProjectToolTOML
@@ -176,9 +173,8 @@ func (n *Project) hasProjectFile(p *ProjectItem) bool {
 	return slices.ContainsFunc(p.Files, n.env.HasFiles)
 }
 
-// reorderByPriority moves the items named in priority to the front of items, in the
-// given order. Items not named in priority keep their original relative order and are
-// appended afterward; names in priority that don't match any item are ignored.
+// Items not named in priority keep their original relative order and are appended
+// afterward; names in priority that don't match any item are ignored.
 func reorderByPriority(items []*ProjectItem, priority []string) []*ProjectItem {
 	byName := make(map[string]*ProjectItem, len(items))
 	for _, item := range items {
@@ -385,10 +381,8 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 	}
 }
 
-// findProjectFile scans rootEntries and their subdirectories breadth-first,
-// up to maxDepth levels deep, and returns the content of the first
-// .csproj/.fsproj/.vbproj file found. Paths are kept relative to pwd so
-// FileContent resolves them the same way the caller does.
+// Scans rootEntries and their subdirectories breadth-first, up to maxDepth levels deep.
+// Paths are kept relative to pwd so FileContent resolves them the same way the caller does.
 func (n *Project) findProjectFile(rootEntries []fs.DirEntry, maxDepth int) string {
 	projectExts := []string{".csproj", ".fsproj", ".vbproj"}
 	pwd := n.env.Pwd()

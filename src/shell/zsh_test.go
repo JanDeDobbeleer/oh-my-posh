@@ -42,9 +42,8 @@ func zshIsBufferComplete(t *testing.T) string {
 	return signature + body + "\n}\n"
 }
 
-// TestZshIsBufferComplete covers the check that keeps the primary prompt in place while
-// a multi-line command is still being typed. Zsh reports an unterminated here-document
-// as syntactically fine, so the here-document cases below are the interesting ones.
+// Zsh reports an unterminated here-document as syntactically fine, so the
+// here-document cases below are the interesting ones.
 func TestZshIsBufferComplete(t *testing.T) {
 	if _, err := exec.LookPath("zsh"); err != nil {
 		t.Skip("zsh is not installed")

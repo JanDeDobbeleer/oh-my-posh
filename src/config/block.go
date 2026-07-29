@@ -2,31 +2,24 @@ package config
 
 import "fmt"
 
-// BlockType type of block
 type BlockType string
 
-// BlockAlignment alignment of a Block
 type BlockAlignment string
 
 // Overflow defines how to handle a right block that overflows with the previous block
 type Overflow string
 
 const (
-	// Prompt writes one or more Segments
-	Prompt BlockType = "prompt"
-	// RPrompt is a right aligned prompt
+	Prompt  BlockType = "prompt"
 	RPrompt BlockType = "rprompt"
-	// Left aligns left
-	Left BlockAlignment = "left"
-	// Right aligns right
+
+	Left  BlockAlignment = "left"
 	Right BlockAlignment = "right"
-	// Break adds a line break
+
 	Break Overflow = "break"
-	// Hide hides the block
-	Hide Overflow = "hide"
+	Hide  Overflow = "hide"
 )
 
-// Block defines a part of the prompt with optional segments
 type Block struct {
 	presentFields   map[string]bool
 	Type            BlockType      `json:"type,omitempty" toml:"type,omitempty" yaml:"type,omitempty"`
@@ -50,10 +43,9 @@ func (b *Block) key() any {
 	return fmt.Sprintf("%s-%s", b.Type, b.Alignment)
 }
 
-// fieldPresent reports whether name (a json tag key) was present in the
-// source block entry. A nil presentFields map means presence was never
-// recorded, in which case every field is treated as present, preserving
-// merge's legacy unconditional-overwrite behavior for such blocks.
+// A nil presentFields map means presence was never recorded, in which case every
+// field is treated as present, preserving merge's legacy unconditional-overwrite
+// behavior for such blocks. name is the json tag key.
 func (b *Block) fieldPresent(name string) bool {
 	if b.presentFields == nil {
 		return true

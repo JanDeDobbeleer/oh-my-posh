@@ -9,9 +9,8 @@ import (
 //go:embed scripts/omp.yash
 var yashInit string
 
-// quoteYashStr quotes a string with plain POSIX single quotes.
-// Yash only understands $'...' since it implemented POSIX 2024,
-// so QuotePosixStr's output breaks on older releases.
+// Yash only understands $'...' since it implemented POSIX 2024, so
+// QuotePosixStr's output breaks on older releases.
 func quoteYashStr(str string) string {
 	if str == "" {
 		return "''"

@@ -15,7 +15,6 @@ import (
 	"net/url"
 )
 
-// WithingsData struct contains the API data
 type WithingsData struct {
 	Body   *Body `json:"body"`
 	Status int   `json:"status"`
@@ -70,7 +69,6 @@ type Activity struct {
 	HrZone3       int    `json:"hr_zone_3"`
 }
 
-// WithingsAPI is a wrapper around http.Oauth
 type WithingsAPI interface {
 	GetMeasures(meastypes string) (*WithingsData, error)
 	GetActivities(activities string) (*WithingsData, error)

@@ -11,12 +11,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// errNotRamadan is returned by setData when the segment is disabled because
-// it is not Ramadan and hide_outside_ramadan is true. It is not logged as an error.
+// Not logged as an error — hide_outside_ramadan being true and it not being Ramadan is expected, not a failure.
 var errNotRamadan = errors.New("not in Ramadan")
 
-// Ramadan displays Sehar (Fajr) and Iftar (Maghrib) prayer timings
-// along with a countdown to the next event during Ramadan.
+// Sehar is Fajr, Iftar is Maghrib.
 type Ramadan struct {
 	Base
 	Fajr          string
@@ -29,21 +27,16 @@ type Ramadan struct {
 }
 
 const (
-	// RamadanLatitude is the latitude used for prayer time calculation.
-	RamadanLatitude options.Option = "latitude"
-	// RamadanLongitude is the longitude used for prayer time calculation.
+	RamadanLatitude  options.Option = "latitude"
 	RamadanLongitude options.Option = "longitude"
-	// RamadanCity is the city used for prayer time lookup.
-	RamadanCity options.Option = "city"
-	// RamadanCountry is the country used with city for prayer time lookup.
-	RamadanCountry options.Option = "country"
-	// RamadanMethod is the prayer calculation method (0-23, default 3 = Muslim World League).
+	RamadanCity      options.Option = "city"
+	RamadanCountry   options.Option = "country"
+	// 0-23, default 3 = Muslim World League.
 	RamadanMethod options.Option = "method"
-	// RamadanSchool is the madhab school (0=Shafi, 1=Hanafi).
-	RamadanSchool options.Option = "school"
-	// RamadanHideOutside hides the segment when not in Ramadan.
+	// 0=Shafi, 1=Hanafi.
+	RamadanSchool      options.Option = "school"
 	RamadanHideOutside options.Option = "hide_outside_ramadan"
-	// RamadanFirstRozaDate allows overriding the first day of Ramadan for local moon sighting.
+	// Overrides the first day of Ramadan for local moon sighting differences.
 	RamadanFirstRozaDate options.Option = "first_roza_date"
 )
 
@@ -165,9 +158,7 @@ func (r *Ramadan) setData() error {
 	return nil
 }
 
-// computeNextEvent sets NextEvent, TimeRemaining, and Fasting based on the current time
-// relative to today's Fajr and Iftar times. tomorrowFajrTime must be populated by the
-// caller when now is past Iftar; it is ignored otherwise.
+// tomorrowFajrTime must be populated by the caller when now is past Iftar; it is ignored otherwise.
 func (r *Ramadan) computeNextEvent(now, fajrTime, iftarTime, tomorrowFajrTime time.Time) {
 	r.Fasting = !now.Before(fajrTime) && now.Before(iftarTime)
 
@@ -188,7 +179,6 @@ func (r *Ramadan) computeNextEvent(now, fajrTime, iftarTime, tomorrowFajrTime ti
 	r.TimeRemaining = formatDuration(tomorrowFajrTime.Sub(now))
 }
 
-// fetchFajrTime fetches the Fajr time for the given date from the Aladhan API.
 func (r *Ramadan) fetchFajrTime(date time.Time) (time.Time, error) {
 	dateStr := date.Format("02-01-2006")
 
@@ -212,7 +202,6 @@ func (r *Ramadan) fetchFajrTime(date time.Time) (time.Time, error) {
 	return parseEventTime(date, response.Data.Timings.Fajr)
 }
 
-// buildURL constructs the Aladhan API URL for today's prayer timings.
 // City+country takes precedence over lat/lng when both are provided.
 func (r *Ramadan) buildURL(date string) (string, error) {
 	method := r.options.Int(RamadanMethod, 3)
@@ -245,8 +234,8 @@ func (r *Ramadan) buildURL(date string) (string, error) {
 	), nil
 }
 
-// resolveRamadanDay returns whether today is in Ramadan and the roza (day) number.
-// When first_roza_date is set it overrides the API's Hijri month detection.
+// Returns whether today is in Ramadan and the roza (day) number. When first_roza_date is
+// set it overrides the API's Hijri month detection.
 func (r *Ramadan) resolveRamadanDay(now time.Time, data ramadanData, firstRozaStr string) (bool, int) {
 	if firstRozaStr != "" {
 		firstRoza, err := time.ParseInLocation("2006-01-02", firstRozaStr, now.Location())
@@ -279,7 +268,6 @@ func (r *Ramadan) resolveRamadanDay(now time.Time, data ramadanData, firstRozaSt
 	return true, rozaNumber
 }
 
-// parseEventTime combines today's date with an HH:MM time string from the API.
 func parseEventTime(now time.Time, hhmm string) (time.Time, error) {
 	// The API may return timezone-suffixed values like "05:23 (PKT)"; strip any suffix.
 	timeStr := hhmm
@@ -295,7 +283,7 @@ func parseEventTime(now time.Time, hhmm string) (time.Time, error) {
 	return time.Date(now.Year(), now.Month(), now.Day(), parsed.Hour(), parsed.Minute(), 0, 0, now.Location()), nil
 }
 
-// formatDuration formats a duration as "Xh Ym" or "Ym" when less than an hour.
+// Formats as "Xh Ym", or just "Ym" when under an hour.
 func formatDuration(d time.Duration) string {
 	if d < 0 {
 		d = 0

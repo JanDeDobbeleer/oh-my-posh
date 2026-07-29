@@ -13,22 +13,20 @@ set --global _omp_transient_prompt 0
 set --global _omp_transient_rprompt 0
 set --global _omp_prompt_mark 0
 
-# streaming support variables
 set --global _omp_enable_streaming 0
 set --global _omp_streaming_pid 0
 set --global _omp_streaming_tempfile ''
 set --global _omp_primary_prompt ''
 
-# serve daemon variables
-# A persistent `oh-my-posh serve` process renders prompts on request,
-# replacing a process spawn per prompt with an in-memory render. Requests go
-# through a named pipe (the only way fish can write to a running process);
-# records flow back through a background reader into tempfiles.
+# A persistent `oh-my-posh serve` process renders prompts on request, replacing
+# a process spawn per prompt with an in-memory render. Requests go through a
+# named pipe (the only way fish can write to a running process); records flow
+# back through a background reader into tempfiles.
 set --global _omp_serve_pid 0
 
 # _omp_serve_pid holds every pid of the daemon pipeline (fish's
-# `jobs --last --pid` lists one per stage). The first is the daemon itself
-# and serves as the liveness proxy; kill/stop target all of them.
+# `jobs --last --pid` lists one per stage); the first is the daemon itself and
+# serves as the liveness proxy, so kill/stop target all of them.
 #
 # NEVER pass a possibly-zero pid to kill: `kill -0 0` signals the caller's
 # own process group and always succeeds.
@@ -41,11 +39,10 @@ set --global _omp_serve_tempfile ''
 set --global _omp_serve_cycle 0
 set --global _omp_serve_failures 0
 
-# disable all known python virtual environment prompts
 set --global VIRTUAL_ENV_DISABLE_PROMPT 1
 set --global PYENV_VIRTUALENV_DISABLE_PROMPT 1
 
-# We use this to avoid unnecessary CLI calls for prompt repaint.
+# avoids unnecessary CLI calls for prompt repaint
 set --global _omp_new_prompt 1
 
 function _omp_set_cursor_position
@@ -78,21 +75,18 @@ function set_poshcontext
     return
 end
 
-# cleanup stream resources
 function _omp_cleanup_stream
-    # kill the background pipeline if running; _omp_streaming_pid holds one
-    # pid per pipeline stage, the first serves as the liveness proxy
+    # _omp_streaming_pid holds one pid per pipeline stage; the first serves as
+    # the liveness proxy
     if test -n "$_omp_streaming_pid[1]" -a "$_omp_streaming_pid[1]" -gt 0 2>/dev/null
         kill $_omp_streaming_pid 2>/dev/null
         set --global _omp_streaming_pid 0
     end
-    # remove temp file
     if test -n "$_omp_streaming_tempfile"
         rm -f "$_omp_streaming_tempfile" 2>/dev/null
     end
 end
 
-# shell exit handler
 function _omp_exit_handler --on-event fish_exit
     _omp_serve_quit
     _omp_cleanup_stream
@@ -120,9 +114,9 @@ while read --null prompt
         printf "%s" (string sub --start 2 -- $prompt | string collect) >"$tempfile.transient"
         continue
     end
-    # write to temp file (atomic via printf)
+    # atomic via printf
     printf "%s" "$prompt" >$tempfile
-    # signal parent for updates after first prompt (index > 0)
+    # signal parent for updates after the first prompt (index > 0)
     if test $count -gt 0
         kill -SIGUSR1 $parent_pid 2>/dev/null
     end
@@ -130,16 +124,14 @@ while read --null prompt
 end
 '
 
-# signal handler: called when streaming process has new prompt
 function _omp_streaming_handler --on-signal SIGUSR1
-    # only process if streaming is active
     if test $_omp_enable_streaming -eq 0
         return
     end
 
-    # serve path: records carry a cycle id prefix; discard stale ones and
-    # skip repaints for unchanged content (the synchronously consumed first
-    # record also signals)
+    # serve path: records carry a cycle id prefix; discard stale ones and skip
+    # repaints for unchanged content (the synchronously consumed first record
+    # also signals)
     if test -n "$_omp_serve_tempfile" -a -f "$_omp_serve_tempfile"; and _omp_serve_alive
         set --local us (printf '\x1f')
         set --local record (cat "$_omp_serve_tempfile" | string collect)
@@ -163,20 +155,16 @@ function _omp_streaming_handler --on-signal SIGUSR1
         return
     end
 
-    # read updated prompt from temp file
     set --global _omp_primary_prompt (cat "$_omp_streaming_tempfile")
     set --global _omp_current_prompt "$_omp_primary_prompt"
 
-    # trigger repaint
     commandline --function repaint
 end
 
-# start oh-my-posh stream process, block until first prompt arrives
+# blocks until first prompt arrives
 function _omp_start_streaming
-    # cleanup any prior stream
     _omp_cleanup_stream
 
-    # determine temp file location
     set --local tmpdir $TMPDIR
     if test -z "$tmpdir"
         set tmpdir /tmp
@@ -185,7 +173,6 @@ function _omp_start_streaming
     # also invalidate the previous cycle's transient prompt
     rm -f "$_omp_streaming_tempfile" "$_omp_streaming_tempfile.transient" 2>/dev/null
 
-    # build stream command with all context
     set --local stream_cmd $_omp_executable stream \
         --save-cache \
         --shell=fish \
@@ -196,13 +183,11 @@ function _omp_start_streaming
         --execution-time=$_omp_execution_time \
         --stack-count=$_omp_stack_count
 
-    # start background reader process
     $stream_cmd | fish --no-config -c $_omp_streaming_reader_script $fish_pid "$_omp_streaming_tempfile" &
     # `jobs --last --pid` prints a header line plus one pid per pipeline
     # stage (fish 4.x) - keep only the numbers
     set --global _omp_streaming_pid (jobs --last --pid | string match --regex '^\d+$')
 
-    # keep the stream pipeline out of job notifications
     disown $_omp_streaming_pid 2>/dev/null
 
     # block until first prompt arrives (mirrors zsh's blocking read)
@@ -212,13 +197,11 @@ function _omp_start_streaming
         sleep 0.01
         set elapsed (math $elapsed + 10)
         if test $elapsed -ge $timeout
-            # timeout - cleanup and return failure
             _omp_cleanup_stream
             return 1
         end
     end
 
-    # read first prompt
     set --global _omp_primary_prompt (cat "$_omp_streaming_tempfile")
     set --global _omp_current_prompt "$_omp_primary_prompt"
 
@@ -302,16 +285,14 @@ function _omp_serve_start
         return 1
     end
 
-    # keep the daemon pipeline out of job notifications
     disown $_omp_serve_pid 2>/dev/null
 
     return 0
 end
 
-# JSON string escaping with builtins. Joining the result with '' drops any
-# embedded newlines - the values we send (paths, POSH_* variables) never
-# legitimately contain them, and a raw newline would break the
-# line-delimited request protocol.
+# Joining the result with '' drops any embedded newlines - the values we send
+# (paths, POSH_* variables) never legitimately contain them, and a raw newline
+# would break the line-delimited request protocol.
 function _omp_serve_escape
     string join '' -- (string replace -a -- '\\' '\\\\' "$argv" | string replace -a -- '"' '\\"' | string replace -a -- \t '\\t')
 end
@@ -391,9 +372,9 @@ function _omp_serve_read_primary
     return 1
 end
 
-# renders the primary prompt through the daemon; returns nonzero on failure,
-# in which case the caller falls back to the per-prompt stream. The transient
-# prompt lands in "$_omp_serve_tempfile.transient" via the reader.
+# returns nonzero on failure, in which case the caller falls back to the
+# per-prompt stream. The transient prompt lands in
+# "$_omp_serve_tempfile.transient" via the reader.
 function _omp_serve_render
     if not _omp_serve_alive
         if not _omp_serve_start
@@ -538,11 +519,10 @@ function fish_prompt
             echo -n "$_omp_current_prompt"
             return
         end
-        # fall through to sync on failure
     end
 
     # === FALLBACK PATH ===
-    # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
+    # saved for possible reuse, typically a repaint after clearing the screen buffer
     set --global _omp_current_prompt (_omp_get_prompt primary --cleared=$_omp_cleared | string join \n | string collect)
 
     echo -n "$_omp_current_prompt"
@@ -559,7 +539,6 @@ function fish_right_prompt
         return
     end
 
-    # Repaint an existing right prompt.
     if test "$_omp_new_prompt" = 0
         echo -n "$_omp_current_rprompt"
         return
@@ -621,10 +600,8 @@ function _omp_space_key_handler
     commandline --function expand-abbr
     commandline --insert ' '
 
-    # Get the first word of command line as tip.
     set --local tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
 
-    # Ignore an empty/repeated tooltip command.
     if test -z "$tooltip_command" || test "$tooltip_command" = "$_omp_tooltip_command"
         return
     end
@@ -710,7 +687,6 @@ function _omp_ctrl_c_key_handler
         return
     end
 
-    # Render a transient prompt on Ctrl-C with non-empty command line buffer.
     set --global _omp_new_prompt 1
     set --global _omp_tooltip_command ''
 
@@ -742,7 +718,7 @@ function enable_poshtransientprompt
     return
 end
 
-# This can be called by user whenever re-rendering is required.
+# callable by the user to force a re-render
 function omp_repaint_prompt
     set --global _omp_new_prompt 1
     commandline --function repaint
@@ -758,8 +734,7 @@ function _omp_enable_vimode
         if not contains -- "$fish_key_bindings" fish_vi_key_bindings fish_hybrid_key_bindings
             set --export --global POSH_VI_MODE "emacs"
         else
-            # translate fish's bind mode into the keymap names the vimode
-            # segment expects
+            # map to the keymap names the vimode segment expects
             switch $fish_bind_mode
                 case default
                     set --global --export POSH_VI_MODE vicmd

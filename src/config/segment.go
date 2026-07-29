@@ -23,7 +23,6 @@ import (
 	"golang.org/x/text/language"
 )
 
-// SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
 
 func (s *SegmentStyle) resolve(context any) SegmentStyle {
@@ -94,10 +93,9 @@ type Segment struct {
 	evaluated           bool
 }
 
-// fieldPresent reports whether name (a json tag key) was present in the
-// source segment entry. A nil presentFields map means presence was never
-// recorded, in which case every field is treated as present, preserving
-// merge's legacy unconditional-overwrite behavior for such segments.
+// A nil presentFields map means presence was never recorded, in which case every
+// field is treated as present, preserving merge's legacy unconditional-overwrite
+// behavior for such segments. name is the json tag key.
 func (segment *Segment) fieldPresent(name string) bool {
 	if segment.presentFields == nil {
 		return true
@@ -156,8 +154,7 @@ func (segment *Segment) UnmarshalYAML(node *yaml.Node) error {
 	return modifiedNode.Decode((*segmentAlias)(segment))
 }
 
-// MigratePropertiesToOptions migrates the deprecated Properties field to Options.
-// This is needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
+// Needed for TOML configs since go-toml/v2 doesn't support custom unmarshalers.
 func (segment *Segment) MigratePropertiesToOptions() {
 	if len(segment.Properties) > 0 && len(segment.Options) == 0 {
 		segment.Options = segment.Properties
@@ -412,8 +409,6 @@ func (segment *Segment) hasCache() bool {
 	return segment.Cache != nil && !segment.Cache.Duration.IsEmpty()
 }
 
-// DataKey returns the identity used to look up segment data: the segment's
-// alias if set, falling back to its type.
 func (segment *Segment) DataKey() string {
 	if segment.Alias != "" {
 		return segment.Alias
@@ -422,7 +417,6 @@ func (segment *Segment) DataKey() string {
 	return string(segment.Type)
 }
 
-// Writer returns the segment's underlying SegmentWriter.
 func (segment *Segment) Writer() SegmentWriter {
 	return segment.writer
 }

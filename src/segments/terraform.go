@@ -63,8 +63,6 @@ func (tf *Terraform) Enabled() bool {
 	return true
 }
 
-// tenvSources returns the environment variable and version file tenv uses to
-// pin the version, based on whether the segment targets terraform or tofu.
 func (tf *Terraform) tenvSources() (envVar, versionFile string) {
 	cmd := tf.options.String(Command, "terraform")
 	if strings.Contains(cmd, "tofu") {

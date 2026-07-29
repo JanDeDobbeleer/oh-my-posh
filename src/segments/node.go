@@ -16,15 +16,10 @@ type Node struct {
 }
 
 const (
-	// PnpmIcon illustrates PNPM is used
-	PnpmIcon options.Option = "pnpm_icon"
-	// YarnIcon illustrates Yarn is used
-	YarnIcon options.Option = "yarn_icon"
-	// NPMIcon illustrates NPM is used
-	NPMIcon options.Option = "npm_icon"
-	// BunIcon illustrates Bun is used
-	BunIcon options.Option = "bun_icon"
-	// FetchPackageManager shows if Bun, NPM, PNPM, or Yarn is used
+	PnpmIcon            options.Option = "pnpm_icon"
+	YarnIcon            options.Option = "yarn_icon"
+	NPMIcon             options.Option = "npm_icon"
+	BunIcon             options.Option = "bun_icon"
 	FetchPackageManager options.Option = "fetch_package_manager"
 )
 

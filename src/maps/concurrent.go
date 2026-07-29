@@ -11,7 +11,6 @@ func NewConcurrent[V any]() *Concurrent[V] {
 	return &Concurrent[V]{}
 }
 
-// Concurrent is a generic type-safe concurrent map
 type Concurrent[V any] struct {
 	m sync.Map
 }

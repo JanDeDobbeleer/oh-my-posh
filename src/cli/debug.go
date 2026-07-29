@@ -18,7 +18,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// debugCmd represents the debug command
 var (
 	debugCmd  = createDebugCmd()
 	startTime = time.Now()

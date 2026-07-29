@@ -44,9 +44,8 @@ func TestResolveCurrentKeywordKeepsGradientIntact(t *testing.T) {
 	}
 }
 
-// TestResolveParentGradientKeywordStop pins the review fix: a parent gradient whose
-// last stop is a keyword resolves against the PARENT's colors, never the child's,
-// and unresolvable self-references degrade to transparent.
+// A parent gradient whose last stop is a keyword resolves against the PARENT's colors, never
+// the child's; unresolvable self-references degrade to transparent.
 func TestResolveParentGradientKeywordStop(t *testing.T) {
 	cases := []struct {
 		Case     string

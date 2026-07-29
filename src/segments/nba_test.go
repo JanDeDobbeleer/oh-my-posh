@@ -17,7 +17,6 @@ func getTestData(file string) string {
 	return string(content)
 }
 
-// create Test segment for NBA segment
 func TestNBASegment(t *testing.T) {
 	jsonScheduleData := getTestData("nba/schedule.json")
 	jsonScoreData := getTestData("nba/score.json")

@@ -79,7 +79,6 @@ func statuslineRun[T any](shellConst, cacheKey string, sessionID func(*T) string
 	}
 }
 
-// processStatuslineData parses stdin JSON into T and stores it in the session cache.
 func processStatuslineData[T any](stdinData []byte, shellConst, cacheKey string, sessionID func(*T) string) {
 	if len(stdinData) == 0 {
 		cache.Init(shellConst, cache.Persist, cache.NoSession)

@@ -10,14 +10,12 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// segment struct, makes templating easier
 type Nba struct {
 	Base
 
 	NBAData
 }
 
-// NBA struct contains parsed API data that care about for the segment
 type NBAData struct {
 	HomeTeam       string
 	AwayTeam       string
@@ -59,10 +57,8 @@ const (
 	NBADateFormat    = "02/01/2006"
 )
 
-// Custom type for GameStatus
 type GameStatus int
 
-// Constants for GameStatus values
 const (
 	Scheduled  GameStatus = 1
 	InProgress GameStatus = 2
@@ -70,8 +66,7 @@ const (
 	NotFound   GameStatus = 4
 )
 
-// Int() method for GameStatus to get its integer representation
-// This is a helpful method if people want to come up with their own templates
+// Lets users reference the numeric value in custom templates.
 func (gs GameStatus) Int() int {
 	return int(gs)
 }
@@ -151,7 +146,6 @@ func (nba *Nba) Enabled() bool {
 	return true
 }
 
-// parses through a set of games from the score endpoint and looks for props.team in away or home team
 func (nba *Nba) findGameScoreByTeamTricode(games []Game, teamTricode string) (*Game, error) {
 	for _, game := range games {
 		if game.HomeTeam.TeamTricode == teamTricode || game.AwayTeam.TeamTricode == teamTricode {
@@ -162,7 +156,6 @@ func (nba *Nba) findGameScoreByTeamTricode(games []Game, teamTricode string) (*G
 	return nil, errors.New("no game score found for team")
 }
 
-// parses through a set of games from the schedule endpoint and looks for props.team in away or home team
 func (nba *Nba) findGameSchedulebyTeamTricode(games []ScheduledGame, teamTricode string) (*ScheduledGame, error) {
 	for _, game := range games {
 		if game.VtAbbreviation == teamTricode || game.HtAbbreviation == teamTricode {
@@ -173,7 +166,6 @@ func (nba *Nba) findGameSchedulebyTeamTricode(games []ScheduledGame, teamTricode
 	return nil, errors.New("no scheduled game found for team")
 }
 
-// parses the time and date from the schedule endpoint into a UTC time
 func (nba *Nba) parseTimetoUTC(timeEST, date string) string {
 	combinedTime := date + " " + timeEST
 	timeUTC, err := time.Parse("01/02/2006 03:04 PM", combinedTime)
@@ -184,7 +176,6 @@ func (nba *Nba) parseTimetoUTC(timeEST, date string) string {
 	return timeUTC.UTC().Format("2006-01-02T15:04:05Z")
 }
 
-// retrieves data from the score endpoint
 func (nba *Nba) retrieveScoreData(teamName string, httpTimeout int) (*NBAData, error) {
 	body, err := nba.env.HTTPRequest(NBAScoreURL, nil, httpTimeout)
 	if err != nil {
@@ -218,7 +209,6 @@ func (nba *Nba) retrieveScoreData(teamName string, httpTimeout int) (*NBAData, e
 	}, nil
 }
 
-// Retrieves the data from the schedule endpoint
 func (nba *Nba) retrieveScheduleData(teamName string, httpTimeout int) (*NBAData, error) {
 	// How many days into the future should we look for a game.
 	numDaysToSearch := nba.options.Int(DaysOffset, 8)
@@ -270,8 +260,7 @@ func (nba *Nba) retrieveScheduleData(teamName string, httpTimeout int) (*NBAData
 	return nil, errors.New("no scheduled game found for team within DaysOffset days")
 }
 
-// First try to get the data from the score endpoint, if that fails, try the schedule endpoint
-// The score endpoint usually goes live within 12 hours of a game starting
+// The score endpoint usually goes live within 12 hours of a game starting.
 func (nba *Nba) getAvailableGameData(teamName string, httpTimeout int) (*NBAData, error) {
 	// Get the info from the score endpoint
 	data, err := nba.retrieveScoreData(teamName, httpTimeout)

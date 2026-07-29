@@ -17,8 +17,7 @@ const (
 	paletteRecursiveKeyError = "palette: recursive resolution of color %s returned palette reference %s and reached recursion depth %d"
 )
 
-// ResolveColor gets a color value from the palette using given colorName.
-// If colorName is not a palette reference, it is returned as is.
+// Returns colorName unchanged if it is not a palette reference.
 func (p Palette) ResolveColor(colorName Ansi) (Ansi, error) {
 	return p.resolveColor(colorName, 1, &colorName)
 }
@@ -71,7 +70,6 @@ func isPaletteKey(colorName Ansi) (Ansi, bool) {
 	return paletteKeyPrefix, strings.HasPrefix(colorName.String(), paletteKeyPrefix)
 }
 
-// PaletteKeyError records the missing Palette key.
 type PaletteKeyError struct {
 	palette Palette
 	Key     Ansi
@@ -88,8 +86,6 @@ func (p *PaletteKeyError) Error() string {
 	return errorStr
 }
 
-// PaletteRecursiveKeyError records the Palette key and resolved color value (which
-// is also a Palette key)
 type PaletteRecursiveKeyError struct {
 	Key   Ansi
 	Value Ansi
@@ -118,8 +114,7 @@ func (p Palette) resolveShade(colorString Ansi) (Ansi, error) {
 	return withShadeCall(dir, resolved, percent), nil
 }
 
-// MaybeResolveColor wraps resolveColor and silences possible errors, returning
-// Transparent color by default, as a Block does not know how to handle color errors.
+// Returns emptyColor instead of surfacing errors, since a Block has no way to handle color errors.
 func (p Palette) MaybeResolveColor(colorName Ansi) Ansi {
 	color, err := p.ResolveColor(colorName)
 	if err != nil {

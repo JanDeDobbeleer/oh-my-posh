@@ -14,7 +14,6 @@ var (
 	session bool
 )
 
-// cacheCmd represents the cache command
 var cacheCmd = &cobra.Command{
 	Use:   "cache [path|clear|ttl|show]",
 	Short: "Interact with the oh-my-posh cache",

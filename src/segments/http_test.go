@@ -13,8 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// timeoutCapturingEnv wraps the mock environment to record the timeout argument
-// passed to HTTPRequest, so tests can assert it flows through correctly.
 type timeoutCapturingEnv struct {
 	*mock.Environment
 	capturedTimeout int

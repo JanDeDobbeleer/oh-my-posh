@@ -179,8 +179,7 @@ func (e *Engine) TransientRPrompt() string {
 	return str
 }
 
-// renderRightTemplate renders the transient prompt's right-aligned template.
-// Only shells with a supported native or emulated right prompt can display it.
+// Only shells with a supported native or emulated right prompt can display this.
 func (e *Engine) renderRightTemplate(prompt *config.Segment, background, foreground color.Ansi) (string, int) {
 	if len(prompt.RightTemplate) == 0 {
 		return "", 0

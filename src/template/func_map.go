@@ -21,7 +21,6 @@ var dangerousFuncs = map[string]bool{
 	"expandenv": true,
 }
 
-// baseFuncMap returns the funcs available regardless of trust level.
 func baseFuncMap() map[string]any {
 	fm := map[string]any{
 		"secondsRound": secondsRound,
@@ -63,7 +62,6 @@ func baseFuncMap() map[string]any {
 	return fm
 }
 
-// sharedFuncMap is built exactly once and reused across all trusted template constructions.
 var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 	fm := baseFuncMap()
 
@@ -84,14 +82,12 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 	return template.FuncMap(fm)
 })
 
-// restrictedFuncMap is built exactly once and reused across all restricted template
-// constructions (see RenderRestricted). It never contains dangerousFuncs.
+// Reused across all restricted template constructions (see RenderRestricted);
+// never contains dangerousFuncs.
 var restrictedFuncMap = sync.OnceValue(func() template.FuncMap {
 	return template.FuncMap(baseFuncMap())
 })
 
-// funcMap returns the merged FuncMap for the given trust level (built once per
-// level, reused everywhere).
 func funcMap(trusted bool) template.FuncMap {
 	if trusted {
 		return sharedFuncMap()

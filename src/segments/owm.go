@@ -22,16 +22,11 @@ type Owm struct {
 }
 
 const (
-	// APIKey openweathermap api key
-	APIKey options.Option = "api_key"
-	// Location openweathermap location
-	Location options.Option = "location"
-	// Units openweathermap units
-	Units options.Option = "units"
-	// CacheKeyResponse key used when caching the response
-	CacheKeyResponse string = "owm_response"
-	// CacheKeyURL key used when caching the url responsible for the response
-	CacheKeyURL string = "owm_url"
+	APIKey           options.Option = "api_key"
+	Location         options.Option = "location"
+	Units            options.Option = "units"
+	CacheKeyResponse string         = "owm_response"
+	CacheKeyURL      string         = "owm_url"
 )
 
 type weather struct {

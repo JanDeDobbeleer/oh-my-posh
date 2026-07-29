@@ -38,7 +38,6 @@ $status = $session.GetPlaybackInfo().PlaybackStatus.ToString().ToLower()
 $props = Await ($session.TryGetMediaPropertiesAsync()) ([Windows.Media.Control.GlobalSystemMediaTransportControlsSessionMediaProperties])
 '{0}|{1}|{2}|{3}|{4}' -f $status, $props.Title, $props.Artist, $props.AlbumTitle, $props.TrackNumber`
 
-// querySMTC invokes the SMTC PowerShell script and stores the result in s.
 // Returns true when the segment should be displayed.
 func (s *Spotify) querySMTC() bool {
 	output, err := s.env.RunCommand("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", spotifySMTCScript)
@@ -52,8 +51,7 @@ func (s *Spotify) querySMTC() bool {
 	return s.applyMediaInfo(info)
 }
 
-// parseSMTCLine turns the PowerShell script's
-// "<status>|<title>|<artist>|<album>|<trackNumber>" line into a *MediaInfo.
+// Parses the script's "<status>|<title>|<artist>|<album>|<trackNumber>" line into a *MediaInfo.
 func parseSMTCLine(output string) (*runtime.MediaInfo, bool) {
 	output = strings.TrimSpace(output)
 	if output == "" {

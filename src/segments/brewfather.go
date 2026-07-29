@@ -13,7 +13,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
-// segment struct, makes templating easier
 type Brewfather struct {
 	Base
 
@@ -257,7 +256,6 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 	return &batch, nil
 }
 
-// Unit conversion functions available to template.
 func (bf *Brewfather) DegCToF(degreesC float64) float64 {
 	return math.Round(10*((degreesC*1.8)+32)) / 10 // 1 decimal place
 }

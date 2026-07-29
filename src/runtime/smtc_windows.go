@@ -122,8 +122,7 @@ var (
 	procRtlMoveMemory = kernel32.NewProc("RtlMoveMemory")
 )
 
-// hstring is a WinRT HSTRING handle. Pointer-sized opaque value — must be
-// freed with WindowsDeleteString once the consumer is done with it.
+// Pointer-sized opaque value; must be freed with WindowsDeleteString once the consumer is done with it.
 type hstring uintptr
 
 func newHString(s string) (hstring, error) {
@@ -170,8 +169,6 @@ func (hs hstring) Close() {
 	_, _, _ = procWindowsDeleteString.Call(uintptr(hs))
 }
 
-// comCall invokes vtable[idx] on the COM object at ptr, with `this` and the
-// given arguments.
 func comCall(ptr unsafe.Pointer, idx uintptr, args ...uintptr) uintptr {
 	fn := (*comObj)(ptr).vtable.methods[idx]
 	all := make([]uintptr, 0, 1+len(args))
@@ -188,9 +185,7 @@ func comRelease(ptr unsafe.Pointer) {
 	comCall(ptr, iunknownRelease)
 }
 
-// awaitAsync polls IAsyncInfo::Status until the async operation reaches a
-// terminal state. We poll instead of registering a Completed handler to
-// avoid implementing a COM callback object in Go.
+// Polls instead of registering a Completed handler, to avoid implementing a COM callback object in Go.
 func awaitAsync(asyncOp unsafe.Pointer) error {
 	var asyncInfo unsafe.Pointer
 	hr := comCall(asyncOp, iunknownQueryInterface,

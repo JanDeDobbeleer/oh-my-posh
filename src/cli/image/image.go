@@ -311,9 +311,8 @@ func (ir *Renderer) fontHeight() float64 {
 	return float64(ir.regular.Metrics().Height >> 6)
 }
 
-// resolvedColumns returns the fixed canvas text width, in columns, falling
-// back to defaultColumns when Settings.Columns is unset (zero or negative),
-// e.g. when loading a settings file written before Columns existed.
+// Falls back to defaultColumns when Settings.Columns is unset (zero or
+// negative), e.g. when loading a settings file written before Columns existed.
 func (ir *Renderer) resolvedColumns() int {
 	if ir.Columns <= 0 {
 		return defaultColumns
@@ -362,9 +361,7 @@ var doubleWidthRunes = []RuneRange{
 	{Start: '\uea60', End: '\uebeb'},
 }
 
-// This is getting how many additional characters of width to allocate when drawing
-// e.g. for characters that are 2 or more wide. A standard character will return 0
-// Nerd Font glyphs will return 1, since most are double width
+// Standard characters return 0; Nerd Font glyphs return 1, since most are double width.
 func (ir *Renderer) runeAdditionalWidth(r rune) int {
 	for _, runeRange := range doubleWidthRunes {
 		if runeRange.Start <= r && r <= runeRange.End {
@@ -883,7 +880,6 @@ func (ir *Renderer) setBase16Color(colorStr string) {
 	ir.backgroundColor = tempColor
 }
 
-// colorNameFromCode maps ANSI color codes to color names
 func colorNameFromCode(colorInt int) string {
 	switch colorInt {
 	case 30, 40:

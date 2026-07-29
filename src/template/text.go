@@ -16,7 +16,6 @@ type Text struct {
 	trusted  bool
 }
 
-// New returns a Text instance from the pool with the given template and context
 func get(template string, trusted bool, context any) *Text {
 	if textPool == nil {
 		// Fallback if pool is not initialized yet
@@ -65,7 +64,6 @@ func render(template string, trusted bool, context any) (string, error) {
 	return renderer.execute(t)
 }
 
-// Release resets the Text instance and returns it to the pool
 func (t *Text) release() {
 	t.context = nil
 	t.template = ""
@@ -169,20 +167,17 @@ func (t *Text) patchTemplate() {
 	log.Debug(t.template)
 }
 
-// fieldSet is an immutable set of exported field/method names for a struct type.
-// Once built and stored in knownFields it is never mutated.
+// Immutable once built and stored in knownFields — never mutated afterward.
 type fieldSet map[string]bool
 
-// fields holds the resolved set for the current render context.
-// For struct types the set is shared from knownFields (immutable, no copy needed).
-// For map types it is built locally and not shared.
+// For struct types the set is shared from knownFields (immutable, no copy
+// needed). For map types it is built locally and not shared.
 type fields struct {
 	values fieldSet
 }
 
-// initFromType recursively builds and caches the field set for a struct type.
-// It may be called concurrently for the same type; LoadOrStore ensures only one
-// result is shared.
+// Recursive over embedded struct fields. May be called concurrently for the
+// same type; LoadOrStore ensures only one result is shared.
 func initFromType(typ reflect.Type) fieldSet {
 	if cached, ok := knownFields.Load(typ); ok {
 		return cached.(fieldSet)

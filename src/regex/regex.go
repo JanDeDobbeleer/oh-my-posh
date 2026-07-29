@@ -129,9 +129,9 @@ func FindStringMatch(pattern, text string, index int) (string, bool) {
 	return match, true
 }
 
-// FindStringMatchIndex returns the byte offsets of the submatch at index within text,
-// so the caller can splice the match at its actual position rather than searching for
-// its text elsewhere in the string.
+// Returns byte offsets rather than the matched text so callers can splice at
+// the match's actual position instead of searching for the text elsewhere in
+// the string.
 func FindStringMatchIndex(pattern, text string, index int) (start, end int, ok bool) {
 	re, err := GetCompiledRegex(pattern)
 	if err != nil {

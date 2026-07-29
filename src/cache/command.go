@@ -7,18 +7,14 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
 
-// commandPathKeyPrefix namespaces persisted command lookups in the session
-// store so they can't collide with unrelated cache keys.
 const commandPathKeyPrefix = "command_path_"
 
-// pathEnvHash returns an FNV-1a hash of the environment that determines how
-// exec.LookPath resolves a command: PATH, plus PATHEXT on Windows (unset and
-// therefore a no-op elsewhere). Computed on every call, NOT memoized: the
-// serve daemon lives across prompts and applies each request's env overlay
-// (PATH included) in-process, so a per-process hash would keep matching
-// entries persisted under an earlier PATH and pin e.g. `python` to a
-// previous virtual environment's interpreter for the daemon's lifetime -
-// the old binary still exists, so the os.Stat revalidation never catches it.
+// Hash of PATH (+ PATHEXT on Windows). Computed on every call, NOT memoized:
+// the serve daemon lives across prompts and applies each request's env
+// overlay (PATH included) in-process, so a per-process hash would keep
+// matching entries persisted under an earlier PATH and pin e.g. `python` to a
+// previous virtual environment's interpreter for the daemon's lifetime - the
+// old binary still exists, so the os.Stat revalidation never catches it.
 func pathEnvHash() uint64 {
 	h := fnv.New64a()
 	_, _ = h.Write([]byte(os.Getenv("PATH")))
@@ -35,15 +31,14 @@ const (
 	CommandPathNegativeTTL = Duration("5m")
 )
 
-// commandPathEntry is the value persisted in the session store for a single
-// command lookup. Found distinguishes a cached "does not exist" result
-// (negative cache) from a resolved path. PathHash records the PATH(+PATHEXT)
-// environment the lookup was resolved under; entries from a different
-// environment are treated as misses so a PATH change mid-session (nvm use,
-// venv activate, installing a tool earlier in PATH, ...) re-resolves
-// immediately instead of serving a stale result for the TTL duration.
-// Storing the hash in the entry (not the key) means a PATH change overwrites
-// the entry in place rather than accumulating dead keys in the session store.
+// Found distinguishes a cached "does not exist" result (negative cache) from
+// a resolved path. PathHash records the PATH(+PATHEXT) environment the
+// lookup was resolved under; entries from a different environment are
+// treated as misses so a PATH change mid-session (nvm use, venv activate,
+// installing a tool earlier in PATH, ...) re-resolves immediately instead of
+// serving a stale result for the TTL duration. Storing the hash in the entry
+// (not the key) means a PATH change overwrites the entry in place rather
+// than accumulating dead keys in the session store.
 type commandPathEntry struct {
 	Path     string
 	PathHash uint64
@@ -60,8 +55,8 @@ func commandPathKey(command string) string {
 	return commandPathKeyPrefix + command
 }
 
-// Set stores a resolved command path in the in-memory (L1) cache only. This
-// keeps existing in-process callers/semantics identical.
+// Stores to the in-memory (L1) cache only, keeping existing in-process
+// callers/semantics identical.
 func (c *Command) Set(command, path string) {
 	c.Commands.Set(command, path)
 }
@@ -76,13 +71,13 @@ func (c *Command) Get(command string) (string, bool) {
 	return cacheCommand, true
 }
 
-// Persist stores a positive (path resolved) or negative (command not found)
-// command lookup in the session (L2) store so subsequent prompt processes in
-// the same session skip re-running exec.LookPath. Positive entries use a
-// modest TTL and are revalidated with a cheap os.Stat on read; negative
-// entries use a much shorter TTL so a command installed mid-session is
-// picked up quickly. Entries are tagged with the current PATH(+PATHEXT)
-// hash so they're only served back under the same lookup environment.
+// Stores a positive (path resolved) or negative (command not found) lookup
+// in the session (L2) store so subsequent prompt processes in the same
+// session skip re-running exec.LookPath. Positive entries use a modest TTL
+// and are revalidated with a cheap os.Stat on read; negative entries use a
+// much shorter TTL so a command installed mid-session is picked up quickly.
+// Entries are tagged with the current PATH(+PATHEXT) hash so they're only
+// served back under the same lookup environment.
 func PersistCommandPath(command, path string, found bool) {
 	entry := commandPathEntry{Path: path, PathHash: pathEnvHash(), Found: found}
 
@@ -94,11 +89,9 @@ func PersistCommandPath(command, path string, found bool) {
 	Set(Session, commandPathKey(command), entry, ttl)
 }
 
-// GetPersistedCommandPath returns a previously persisted command lookup
-// result from the session store, if any. An entry persisted under a
-// different PATH(+PATHEXT) environment is treated as a miss so the caller
-// falls through to a fresh exec.LookPath (which overwrites the entry with
-// the current environment's hash).
+// An entry persisted under a different PATH(+PATHEXT) environment is treated
+// as a miss, so the caller falls through to a fresh exec.LookPath (which
+// overwrites the entry with the current environment's hash).
 func GetPersistedCommandPath(command string) (path string, found, ok bool) {
 	entry, exists := Get[commandPathEntry](Session, commandPathKey(command))
 	if !exists {

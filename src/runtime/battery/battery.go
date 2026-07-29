@@ -31,7 +31,6 @@ func (m *NoBatteryError) Error() string {
 	return "no battery"
 }
 
-// State type enumerates possible battery states.
 type State int
 
 var states = [...]string{
@@ -47,9 +46,8 @@ func (s State) String() string {
 	return states[s]
 }
 
-// Possible state values.
-// Unknown can mean either controller returned unknown, or
-// not able to retrieve state due to some error.
+// Unknown can mean either controller returned unknown, or not able to
+// retrieve state due to some error.
 const (
 	Unknown State = iota
 	Empty

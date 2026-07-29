@@ -10,12 +10,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-// Clear removes cache files from the cache directory.
-//
-// If force is true, the entire cache directory is removed.
-// If force is false, only cache files older than 7 days that match certain patterns are deleted.
-// The excludedFiles parameter allows you to specify file names that should not be deleted,
-// even if they would otherwise be eligible for removal.
 func Clear(force bool, excludedFiles ...string) error {
 	defer log.Trace(time.Now())
 

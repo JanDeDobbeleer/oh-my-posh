@@ -6,7 +6,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
-// CopilotCLI segment displays GitHub Copilot CLI session information
 type CopilotCLI struct {
 	Base
 	markedChar   string
@@ -14,7 +13,6 @@ type CopilotCLI struct {
 	CopilotCLIData
 }
 
-// CopilotCLIData represents the parsed Copilot CLI JSON data
 type CopilotCLIData struct {
 	Model          AIModel                 `json:"model"`
 	Workspace      CopilotCLIWorkspace     `json:"workspace"`
@@ -29,17 +27,14 @@ type CopilotCLIData struct {
 	Remote         CopilotCLIRemote        `json:"remote"`
 }
 
-// CopilotCLIWorkspace represents workspace directory information
 type CopilotCLIWorkspace struct {
 	CurrentDir string `json:"current_dir"`
 }
 
-// CopilotCLIRemote represents remote connection state
 type CopilotCLIRemote struct {
 	Connected bool `json:"connected"`
 }
 
-// CopilotCLICost represents cost and duration information
 type CopilotCLICost struct {
 	TotalDurationMS      DurationMS `json:"total_duration_ms"`
 	TotalAPIDurationMS   DurationMS `json:"total_api_duration_ms"`
@@ -48,7 +43,6 @@ type CopilotCLICost struct {
 	TotalPremiumRequests int        `json:"total_premium_requests"`
 }
 
-// CopilotCLIContextWindow represents token usage information
 type CopilotCLIContextWindow struct {
 	ContextWindowSize     *int     `json:"context_window_size"`
 	UsedPercentage        *float64 `json:"used_percentage"`
@@ -89,7 +83,6 @@ func (c *CopilotCLI) Enabled() bool {
 	return true
 }
 
-// TokenUsagePercent returns the percentage of context window used.
 // Uses pre-calculated UsedPercentage when available; falls back to computing
 // from CurrentContextTokens / ContextWindowSize; returns 0 when unavailable.
 func (c *CopilotCLI) TokenUsagePercent() text.Percentage {
@@ -129,17 +122,16 @@ func (c *CopilotCLI) TokenUsagePercent() text.Percentage {
 	return text.Percentage(rounded)
 }
 
-// TokenGauge returns a 5-block gauge showing remaining context window capacity using the configured characters.
+// Shows remaining capacity; see TokenGaugeUsed for the used view.
 func (c *CopilotCLI) TokenGauge() string {
 	return c.TokenUsagePercent().GaugeWith(c.markedChar, c.unmarkedChar)
 }
 
-// TokenGaugeUsed returns a 5-block gauge showing used context window capacity using the configured characters.
+// Shows used capacity, unlike TokenGauge which shows remaining.
 func (c *CopilotCLI) TokenGaugeUsed() string {
 	return c.TokenUsagePercent().GaugeUsedWith(c.markedChar, c.unmarkedChar)
 }
 
-// FormattedTokens returns a human-readable string of current context tokens.
 func (c *CopilotCLI) FormattedTokens() string {
 	tokens := c.ContextWindow.CurrentContextTokens
 	if tokens <= 0 {
@@ -149,17 +141,14 @@ func (c *CopilotCLI) FormattedTokens() string {
 	return formatTokenCount(tokens)
 }
 
-// FormattedDuration returns total session duration as "Xm Ys".
 func (c *CopilotCLI) FormattedDuration() string {
 	return c.Cost.TotalDurationMS.String()
 }
 
-// FormattedAPIDuration returns API wait time as "Xm Ys".
 func (c *CopilotCLI) FormattedAPIDuration() string {
 	return c.Cost.TotalAPIDurationMS.String()
 }
 
-// RemainingPercent returns the percentage of context window remaining (0-100).
 func (c *CopilotCLI) RemainingPercent() text.Percentage {
 	if c.ContextWindow.RemainingPercentage != nil {
 		v := *c.ContextWindow.RemainingPercentage
@@ -183,7 +172,6 @@ func (c *CopilotCLI) RemainingPercent() text.Percentage {
 	return text.Percentage(remaining)
 }
 
-// RemainingTokensCount returns the number of remaining context window tokens.
 func (c *CopilotCLI) RemainingTokensCount() int {
 	if c.ContextWindow.RemainingTokens != nil {
 		return *c.ContextWindow.RemainingTokens

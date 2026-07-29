@@ -17,7 +17,6 @@ func init() {
 	gob.Register([]*Asset{})
 }
 
-// Font describes a font file and the various metadata associated with it.
 type Font struct {
 	Name     string                 `json:"name,omitempty" jsonschema:"title=Font name,description=The name of the font"`
 	Family   string                 `json:"-"`
@@ -31,8 +30,6 @@ func (f *Font) Apply() error {
 	return err
 }
 
-// downloadAndInstall resolves a font by name or URL, downloads it, and installs it.
-// It returns the resolved font name and any error encountered.
 func downloadAndInstall(font, zipFolder string) (string, error) {
 	asset, err := ResolveFontAsset(font)
 	if err != nil {
@@ -64,16 +61,11 @@ func (f *Font) Resolve() (*Font, bool) {
 	return nil, false
 }
 
-// fontExtensions is a list of file extensions that denote fonts.
-// Only files ending with these extensions will be installed.
 var fontExtensions = map[string]bool{
 	".otf": true,
 	".ttf": true,
 }
 
-// newFont creates a newFont Font struct.
-// fileName is the font's file name, and data is a byte slice containing the font file data.
-// It returns a FontData struct describing the font, or an error.
 func newFont(fileName string, data []byte) (*Font, error) {
 	if _, ok := fontExtensions[strings.ToLower(path.Ext(fileName))]; !ok {
 		return nil, fmt.Errorf("not a font: %v", fileName)

@@ -14,8 +14,7 @@ type WindowsRegistry struct {
 const (
 	// full path to the key; if ends in \, gets "(Default)" key in that path
 	RegistryPath options.Option = "path"
-	// Fallback is the text to display if the key is not found
-	Fallback options.Option = "fallback"
+	Fallback     options.Option = "fallback"
 )
 
 func (wr *WindowsRegistry) Template() string {

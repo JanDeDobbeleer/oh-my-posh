@@ -2,7 +2,6 @@ package segments
 
 import "strings"
 
-// FossilStatus represents part of the status of a Svn repository
 type FossilStatus struct {
 	ScmStatus
 }

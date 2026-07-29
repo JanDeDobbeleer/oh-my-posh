@@ -12,8 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// writeDataFile writes a JSON template data file to a temp dir and returns
-// its path.
 func writeDataFile(t *testing.T, content string) string {
 	t.Helper()
 
@@ -23,9 +21,7 @@ func writeDataFile(t *testing.T, content string) string {
 	return path
 }
 
-// withDataPath sets the package-level dataPath var for the duration of the
-// test and restores it afterwards - dataPath is shared with the print/image
-// commands so tests must not leak it across each other.
+// dataPath is shared with the print/image commands so tests must not leak it across each other.
 func withDataPath(t *testing.T, path string) {
 	t.Helper()
 
@@ -35,11 +31,9 @@ func withDataPath(t *testing.T, path string) {
 	t.Cleanup(func() { dataPath = previous })
 }
 
-// noneChanged reports that no CLI flag was explicitly set.
 func noneChanged(string) bool { return false }
 
-// changedSet returns a "Changed" func that reports true only for the given
-// flag names, mimicking cmd.Flags().Changed for an explicitly-set flag.
+// Mimics cmd.Flags().Changed for an explicitly-set flag.
 func changedSet(names ...string) func(string) bool {
 	set := make(map[string]bool, len(names))
 	for _, name := range names {

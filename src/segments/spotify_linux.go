@@ -62,9 +62,8 @@ func (s *Spotify) runLinuxScriptCommand(command string) string {
 	return val
 }
 
-// enabledWsl reads the Windows host's SMTC sessions through the WSL Windows
-// interop powershell.exe. The Linux side sees the same data the native
-// Windows segment does (playing/paused/stopped/ad).
+// Reads the Windows host's SMTC session via WSL interop powershell.exe; the Linux
+// side sees the same data the native Windows segment does (playing/paused/stopped/ad).
 func (s *Spotify) enabledWsl() bool {
 	return s.querySMTC()
 }

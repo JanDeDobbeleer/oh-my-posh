@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	// Errors to show when the template handling fails
 	InvalidTemplate   = "invalid template text"
 	IncorrectTemplate = "unable to create text based on template"
 
@@ -25,10 +24,9 @@ var (
 	knownFields sync.Map // keyed by reflect.Type → fieldSet (immutable once stored)
 	textPool    *generics.Pool[*Text]
 
-	// parsedTemplates caches fully-parsed *template.Template values keyed by
-	// a string that encodes both the raw (unpatched) template text and the
-	// context type, so cache hits can skip patchTemplate entirely.
-	// Execute on a cached template is concurrency-safe; we never re-Parse it.
+	// Keyed by a string encoding the raw (unpatched) template text and context
+	// type, so cache hits can skip patchTemplate entirely. Execute on a cached
+	// template is concurrency-safe; we never re-Parse it.
 	parsedTemplates sync.Map
 )
 
@@ -60,7 +58,6 @@ func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.
 
 var refreshCache bool
 
-// ResetCache marks the template cache stale so the next Init rebuilds it.
 // One-shot commands never need this - the cache is per-process by design
 // (and tests rely on injecting a canned Cache before Init). The serve daemon
 // does: its process outlives many prompts, and a surviving Cache pins

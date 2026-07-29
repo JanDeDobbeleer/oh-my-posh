@@ -126,8 +126,7 @@ func TestGradientCellsInterpolation(t *testing.T) {
 	}
 }
 
-// TestGradientCellsMonotonicProgression checks the red channel never regresses across a
-// black-to-white ramp, where R, G and B move in lockstep.
+// R, G and B move in lockstep across the ramp, so checking the red channel alone suffices.
 func TestGradientCellsMonotonicProgression(t *testing.T) {
 	result := GradientCells("linear-gradient(#000000, #FFFFFF)", 5, &Defaults{}, false, nil, nil)
 	assert.Len(t, result, 5)
@@ -165,12 +164,9 @@ func TestGradientCellsInvalidReturnsNil(t *testing.T) {
 	}
 }
 
-// TestGradientCellsAutoShade verifies dark-gradient(#color)/light-gradient(#color) — a
-// single explicit stop — spreads into a two-stop gradient running from the exact
-// configured color to a darker/lighter shade of it, instead of collapsing like an
-// ordinary invalid (< 2 stop) linear-gradient. The first cell must be the unmodified
-// configured color (matching GradientFirst) and the last must match
-// GradientLastForCells for the SAME cell count, so separators/caps line up.
+// A single-stop dark-gradient/light-gradient spreads into a two-stop gradient running from
+// the exact configured color to a darker/lighter shade of it, instead of collapsing like an
+// ordinary invalid (< 2 stop) linear-gradient.
 func TestGradientCellsAutoShade(t *testing.T) {
 	cases := []struct {
 		Case string
@@ -194,11 +190,8 @@ func TestGradientCellsAutoShade(t *testing.T) {
 	}
 }
 
-// TestGradientCellsAutoShadeScalesWithWidth verifies the total base-to-shade delta
-// grows with the segment's cell count instead of staying fixed: a wide segment must
-// end further from its base color than a narrow one, so a wide gradient still reads
-// as a clear effect instead of fading into an imperceptibly fine ramp - the report
-// behind this fix was that a wide segment's gradient looked completely flat.
+// A wide segment must end further from its base color than a narrow one; the bug behind
+// this fix was that a wide segment's gradient looked completely flat.
 func TestGradientCellsAutoShadeScalesWithWidth(t *testing.T) {
 	narrow := GradientCells("dark-gradient(#179299)", 3, &Defaults{}, true, nil, nil)
 	wide := GradientCells("dark-gradient(#179299)", 15, &Defaults{}, true, nil, nil)
@@ -215,17 +208,16 @@ func TestGradientCellsAutoShadeScalesWithWidth(t *testing.T) {
 	assert.True(t, base.DistanceLab(wideLast) > base.DistanceLab(narrowLast), "a 15-cell segment must end further from the base color than a 3-cell one")
 }
 
-// TestGradientCellsAutoShadeSingleCell verifies a single-cell segment (too narrow to
-// show any blend) renders the configured color unmodified, not a shaded endpoint.
+// A single-cell segment (too narrow to blend) renders the configured color unmodified, not a shaded endpoint.
 func TestGradientCellsAutoShadeSingleCell(t *testing.T) {
 	result := GradientCells("dark-gradient(#3465A4)", 1, &Defaults{}, false, nil, nil)
 	assert.Equal(t, []Ansi{"38;2;52;101;164"}, result)
 }
 
-// TestGradientLastAutoShade verifies GradientLast (width unknown, the gentlest single-
-// step shade) and GradientLastForCells (matching GradientCells for a given cell count)
-// darken for dark-gradient and lighten for light-gradient, and fall back to the raw
-// stop for one that can't be shaded without a resolver (keyword, palette reference).
+// GradientLast (width unknown, the gentlest single-step shade) and GradientLastForCells
+// (matching GradientCells for a given cell count) darken for dark-gradient and lighten for
+// light-gradient, and fall back to the raw stop for one that can't be shaded without a
+// resolver (keyword, palette reference).
 func TestGradientLastAutoShade(t *testing.T) {
 	unshadeable := "can't be shaded without a resolver, so it passes through unchanged"
 
@@ -240,9 +232,9 @@ func TestGradientLastAutoShade(t *testing.T) {
 	assert.Equal(t, Ansi("#3465A4"), Ansi("linear-gradient(#3465A4)").GradientLast(), "a single-stop linear-gradient is not auto-shaded")
 }
 
-// TestWithGradientStops verifies the rebuilt string keeps c's own prefix, so a palette
-// reference resolved inside a dark-gradient/light-gradient stays that same kind instead
-// of silently becoming a plain linear-gradient.
+// The rebuilt string keeps c's own prefix, so a palette reference resolved inside a
+// dark-gradient/light-gradient stays that same kind instead of silently becoming a plain
+// linear-gradient.
 func TestWithGradientStops(t *testing.T) {
 	cases := []struct {
 		Case     string
@@ -274,10 +266,9 @@ func TestGradientCellsColor256Fallback(t *testing.T) {
 	}
 }
 
-// TestGradientCellsKeywordStops verifies keyword stops resolve against the segment
-// context before interpolation: parentBackground picks up the parent's color (a parent
-// gradient collapses to its last stop), and keywords without a hex resolution
-// invalidate the stop.
+// Keyword stops resolve against the segment context before interpolation: parentBackground
+// picks up the parent's color (a parent gradient collapses to its last stop), and keywords
+// without a hex resolution invalidate the stop.
 func TestGradientCellsKeywordStops(t *testing.T) {
 	parents := []*Set{{Background: "#112233", Foreground: "#445566"}}
 	gradientParents := []*Set{{Background: "linear-gradient(#FF0000, #0000FF)", Foreground: "#445566"}}
@@ -323,9 +314,8 @@ func TestGradientCellsKeywordStops(t *testing.T) {
 	assert.Nil(t, GradientCells("linear-gradient(transparent, #FFFFFF)", 2, &Defaults{}, false, current, parents), "transparent is never a valid stop")
 }
 
-// TestGradientCellsAccentStop verifies the accent keyword works as a stop: it resolves
-// through ToAnsi to a truecolor payload, which parseTrueColor recovers. An unresolved
-// accent (empty Set) invalidates the stop instead of erroring hard.
+// The accent keyword resolves through ToAnsi to a truecolor payload, which parseTrueColor
+// recovers. An unresolved accent (empty Set) invalidates the stop instead of erroring hard.
 func TestGradientCellsAccentStop(t *testing.T) {
 	resolver := &Defaults{
 		accent: &Set{

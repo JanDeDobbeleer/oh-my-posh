@@ -229,10 +229,8 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
-// renderLaunchedBlock renders a block using pre-collected segment results
-// (see drainBlockResults). executed must be fully populated for every block
-// in the prompt before this is called so that cross-block .Segments.X
-// dependencies resolve in both directions.
+// executed must be fully populated for every block in the prompt before this is called
+// (see drainBlockResults) so that cross-block .Segments.X dependencies resolve in both directions.
 func (e *Engine) renderLaunchedBlock(block *config.Block, results []*config.Segment, executed map[string]bool, cancelNewline bool) bool {
 	var blockText string
 	var length int
@@ -249,7 +247,6 @@ func (e *Engine) renderLaunchedBlock(block *config.Block, results []*config.Segm
 	return e.writeBlock(block, blockText, length, cancelNewline)
 }
 
-// writeBlock handles the common logic for writing a block to the prompt
 func (e *Engine) writeBlock(block *config.Block, blockText string, length int, cancelNewline bool) bool {
 	defer func() {
 		e.applyPowerShellBleedPatch()
@@ -319,7 +316,6 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 	return true
 }
 
-// renderBlockFromCache re-renders a block using existing segment data without re-execution
 func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) bool {
 	if block.RestartCycle {
 		cycle = &e.Config.Cycle
@@ -802,9 +798,6 @@ func (e *Engine) cancelNewline() bool {
 	return e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
 }
 
-// New returns a prompt engine initialized with the
-// given configuration options, and is ready to print any
-// of the prompt components.
 func New(flags *runtime.Flags) *Engine {
 	env := &runtime.Terminal{}
 	env.Init(flags)

@@ -24,9 +24,7 @@ var (
 	processes   = map[uint64]map[int]struct{}{}
 )
 
-// CreateJobForGoroutine creates a Job object for gid and sets the
-// JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE flag so closing/terminating the job
-// kills all assigned processes.
+// Sets JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE so closing/terminating the job kills all assigned processes.
 func CreateJobForGoroutine(label string) error {
 	gid := CurrentGID()
 	defer log.Trace(time.Now(), fmt.Sprintf("creating job for goroutine(%s): %d", label, gid))
@@ -58,8 +56,6 @@ func CreateJobForGoroutine(label string) error {
 	return nil
 }
 
-// registerProcessWithGID keeps track of a started child process for the
-// given goroutine id and attempts to assign it to the Job object if present.
 func RegisterProcess(pid int) {
 	gid := CurrentGID()
 	processesMu.Lock()
@@ -161,8 +157,6 @@ func CloseGoroutineJob() {
 	log.Debugf("closed job object for goroutine: %d", gid)
 }
 
-// KillGoroutineChildren will first try to terminate a Job if present, and
-// otherwise will fall back to taskkill for each recorded pid.
 func KillGoroutineChildren(gid uint64) error {
 	// if Job exists, prefer terminating the Job
 	jobsMu.Lock()
@@ -220,8 +214,7 @@ func KillGoroutineChildren(gid uint64) error {
 	return nil
 }
 
-// setProcessGroup ensures the child process runs in its own process group
-// (CREATE_NEW_PROCESS_GROUP) so it can be terminated as a group.
+// Uses CREATE_NEW_PROCESS_GROUP so the child can be terminated as a group.
 func SetProcessGroup(cmd *exec.Cmd) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP}
 }

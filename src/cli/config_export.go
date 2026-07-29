@@ -19,7 +19,6 @@ var (
 	output string
 )
 
-// exportCmd represents the export command
 var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export your config",

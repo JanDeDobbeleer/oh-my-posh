@@ -6,10 +6,9 @@ import (
 	"time"
 )
 
-// ErrLocked is returned by openFile when the cache file is held exclusively
-// by another process (e.g. a Windows sharing violation that persisted past
-// the retry window). Callers must treat this as "leave the file alone":
-// operate purely in-memory for this run and do not recreate/truncate the
+// Returned when the cache file is held exclusively by another process (e.g. a
+// Windows sharing violation that persisted past the retry window). Callers
+// must operate purely in-memory for this run and not recreate/truncate the
 // file on close.
 var ErrLocked = errors.New("cache file is locked by another process")
 

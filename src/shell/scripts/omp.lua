@@ -2,14 +2,10 @@
 ---@diagnostic disable: undefined-field
 ---@diagnostic disable: lowercase-global
 
--- Environment variables
 os.setenv('POSH_SHELL', 'cmd')
 
--- disable all known python virtual environment prompts
 os.setenv('VIRTUAL_ENV_DISABLE_PROMPT', '1')
 os.setenv('PYENV_VIRTUALENV_DISABLE_PROMPT', '1')
-
--- Helper functions
 
 local function get_priority_number(name, default)
     local value = os.getenv(name)
@@ -23,13 +19,9 @@ local function get_priority_number(name, default)
     return default
 end
 
--- Environment variables
-
 local function environment_onbeginedit()
 
 end
-
--- Local state
 
 local endedit_time = 0
 local last_duration = 0
@@ -52,27 +44,19 @@ local function cache_onbeginedit()
     local cwd = os.getcwd()
     local old_cache = cached_prompt
 
-    -- Start a new table for the new edit/prompt session.
     cached_prompt = { cwd = cwd }
 
-    -- Copy the cached left/right prompt strings if the cwd hasn't changed.
-    -- IMPORTANT OPTIMIZATION:  This keeps the prompt highly responsive, except
-    -- when changing the current working directory.
+    -- IMPORTANT OPTIMIZATION: reusing the cached left/right prompt when the cwd
+    -- hasn't changed is what keeps the prompt highly responsive.
     if old_cache.cwd == cwd then
         cached_prompt.left = old_cache.left
         cached_prompt.right = old_cache.right
     end
 end
 
--- Executable
-
 local omp_executable = '::OMP::'
 
--- Configuration
-
 os.setenv('POSH_SHELL_VERSION', string.format('clink v%s.%s.%s.%s', clink.version_major, clink.version_minor, clink.version_patch, clink.version_commit))
-
--- Execution helpers
 
 local function can_async()
     if (clink.version_encoded or 0) >= 10030001 then
@@ -109,8 +93,6 @@ local function run_posh_command(command)
     end
     return output
 end
-
--- Duration functions
 
 local function os_clock_millis()
     -- Clink v1.2.30 has a fix for Lua's os.clock() implementation failing after
@@ -331,8 +313,6 @@ local function serve_render()
     return primary
 end
 
--- Prompt functions
-
 local function execution_time_option()
     if last_duration ~= nil then
         return '--execution-time=' .. last_duration
@@ -371,11 +351,9 @@ end
 
 local function set_posh_tooltip(tip_command)
     if tip_command ~= '' and tip_command ~= cached_prompt.tip_command then
-        -- Escape special characters properly, if any.
         local escaped_tip_command = string.gsub(tip_command, '(\\+)"', '%1%1"'):gsub('(\\+)$', '%1%1'):gsub('"', '\\"'):gsub('([&<>%(%)@|%^])', '^%1'):gsub('%%', '%%%%')
         local command_option = string.format('--command "%s"', escaped_tip_command)
         local tooltip = get_posh_prompt('tooltip', command_option)
-        -- Do not cache an empty tooltip.
         if tooltip == '' then
             return
         end
@@ -385,7 +363,6 @@ local function set_posh_tooltip(tip_command)
 end
 
 local function display_cached_prompt()
-    -- Use what's already cached; avoid running oh-my-posh.
     cached_prompt.only_use_cache = true
     clink.refilterprompt()
     cached_prompt.only_use_cache = nil
@@ -448,13 +425,11 @@ function p:filter(prompt)
 
     local need_left = true
 
-    -- Get a left prompt immediately if nothing is available yet.
     if not cached_prompt.left then
         cached_prompt.left = get_posh_prompt('primary')
         need_left = false
     end
 
-    -- Get left/right prompts asynchronously, if possible.
     if not cached_prompt.only_use_cache then
         if can_async() then
             -- IMPORTANT:  Defining this function inline makes sure it only
@@ -463,11 +438,9 @@ function p:filter(prompt)
             -- discards the old coroutine) and a new coroutine starts, the old
             -- coroutine won't stomp on the new cached_prompt table.
             clink.promptcoroutine(function()
-                -- Generate left prompt, if needed.
                 if need_left then
                     cached_prompt.left = get_posh_prompt('primary')
                 end
-                -- Generate right prompt, if needed.
                 if rprompt_enabled then
                     if need_left then
                         -- Show left side while right side is being generated.
@@ -496,9 +469,8 @@ function p:filter(prompt)
 end
 
 function p:rightfilter(prompt)
-    -- Return cached tooltip if available, otherwise return cached rprompt.
-    -- Returning false as the second return value halts further prompt
-    -- filtering, to keep other things from overriding what we generated.
+    -- Returning false as the second value halts further prompt filtering, so
+    -- other filters don't override what we generated.
     return (cached_prompt.tooltip or cached_prompt.right), false
 end
 
@@ -526,8 +498,6 @@ function p:transientrightfilter(prompt)
     return '', false
 end
 
--- Event handlers
-
 local function builtin_modules_onbeginedit()
     cache_onbeginedit()
     duration_onbeginedit()
@@ -544,17 +514,12 @@ if clink.onbeginedit ~= nil and clink.onendedit ~= nil then
     clink.onendedit(builtin_modules_onendedit)
 end
 
--- Tooltips
-
 function _omp_space_keybinding(rl_buffer)
     -- Insert space first, in case it might affect the tip word, e.g. it could
     -- split "gitcommit" into "git commit".
     rl_buffer:insert(' ')
-    -- Get the first word of command line as tip.
     local tip_command = rl_buffer:getbuffer():gsub('^%s*(.-)%s*$', '%1')
 
-    -- Generate a tooltip asynchronously (via coroutine) if available, otherwise
-    -- generate a tooltip immediately.
     if not can_async() then
         set_posh_tooltip(tip_command)
         clink.refilterprompt()

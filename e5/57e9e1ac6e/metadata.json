@@ -3,9 +3,11 @@
   "checkpoint_id": "e557e9e1ac6e",
   "strategy": "manual-commit",
   "branch": "rewrite",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
-    "src/config/segment_test.go"
+    "src/color/gradient_parity_test.go",
+    "src/config/segment_test.go",
+    "src/prompt/fixture_coverage_test.go"
   ],
   "sessions": [
     {
@@ -14,13 +16,20 @@
       "compact_transcript": "/e5/57e9e1ac6e/0/transcript.jsonl",
       "content_hash": "/e5/57e9e1ac6e/0/content_hash.txt",
       "prompt": "/e5/57e9e1ac6e/0/prompt.txt"
+    },
+    {
+      "metadata": "/e5/57e9e1ac6e/1/metadata.json",
+      "transcript": "/e5/57e9e1ac6e/1/full.jsonl",
+      "compact_transcript": "/e5/57e9e1ac6e/1/transcript.jsonl",
+      "content_hash": "/e5/57e9e1ac6e/1/content_hash.txt",
+      "prompt": "/e5/57e9e1ac6e/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 2651,
-    "cache_creation_tokens": 6911255,
-    "cache_read_tokens": 404926488,
-    "output_tokens": 492301,
-    "api_call_count": 770
+    "input_tokens": 5778,
+    "cache_creation_tokens": 13215091,
+    "cache_read_tokens": 852036224,
+    "output_tokens": 1285535,
+    "api_call_count": 1801
   }
 }

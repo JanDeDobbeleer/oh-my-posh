@@ -3,7 +3,7 @@
   "checkpoint_id": "a8b931b06ec3",
   "strategy": "manual-commit",
   "branch": "rewrite",
-  "checkpoints_count": 2,
+  "checkpoints_count": 4,
   "files_touched": [
     "src/svg/colors.go",
     "src/svg/colors_test.go",
@@ -39,6 +39,13 @@
       "transcript": "/a8/b931b06ec3/1/full.jsonl",
       "compact_transcript": "/a8/b931b06ec3/1/transcript.jsonl",
       "content_hash": "/a8/b931b06ec3/1/content_hash.txt",
+      "prompt": ""
+    },
+    {
+      "metadata": "/a8/b931b06ec3/2/metadata.json",
+      "transcript": "/a8/b931b06ec3/2/full.jsonl",
+      "compact_transcript": "/a8/b931b06ec3/2/transcript.jsonl",
+      "content_hash": "/a8/b931b06ec3/2/content_hash.txt",
       "prompt": ""
     }
   ],

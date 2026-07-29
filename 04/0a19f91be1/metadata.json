@@ -3,7 +3,7 @@
   "checkpoint_id": "040a19f91be1",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 2,
+  "checkpoints_count": 4,
   "files_touched": [
     "src/cli/ui/progress.go",
     "src/cli/ui/select.go",
@@ -24,6 +24,13 @@
       "compact_transcript": "/04/0a19f91be1/1/transcript.jsonl",
       "content_hash": "/04/0a19f91be1/1/content_hash.txt",
       "prompt": "/04/0a19f91be1/1/prompt.txt"
+    },
+    {
+      "metadata": "/04/0a19f91be1/2/metadata.json",
+      "transcript": "/04/0a19f91be1/2/full.jsonl",
+      "compact_transcript": "/04/0a19f91be1/2/transcript.jsonl",
+      "content_hash": "/04/0a19f91be1/2/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {

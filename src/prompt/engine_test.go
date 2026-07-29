@@ -475,7 +475,7 @@ func TestShouldFill(t *testing.T) {
 		terminal.Plain = true
 		terminal.Colors = &color.Defaults{}
 
-		gotFiller, gotBool := engine.shouldFill(tc.Block.Filler, tc.Padding)
+		gotFiller, _, gotBool := engine.shouldFill(tc.Block.Filler, tc.Padding)
 
 		assert.Equal(t, tc.ExpectedFiller, gotFiller, tc.Case)
 		assert.Equal(t, tc.ExpectedBool, gotBool, tc.Case)

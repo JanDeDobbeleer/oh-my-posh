@@ -336,7 +336,7 @@ func TestShouldFillNegativePadLength(t *testing.T) {
 	engine := &Engine{}
 
 	// must not panic on a negative padding length
-	got, OK := engine.shouldFill("-", -5)
+	got, _, OK := engine.shouldFill("-", -5)
 	assert.False(t, OK)
 	assert.Empty(t, got)
 }

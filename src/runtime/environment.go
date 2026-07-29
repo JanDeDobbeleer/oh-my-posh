@@ -113,6 +113,24 @@ type Flags struct {
 	Force         bool
 	Streaming     bool
 	Interrupted   bool
+	// DataOnly cuts this environment off from the machine: every method that
+	// would read a file, list a directory, resolve a symlink, run a command,
+	// make a request or read an OS variable answers empty or errDataOnly (see
+	// Terminal's own methods). A segment still executes and still decides for
+	// itself whether it is enabled - it just finds nothing when it reaches
+	// out, so anything that depends on a real machine reports itself absent
+	// while anything derivable from the recorded data renders normally.
+	//
+	// Gating the environment rather than the segments is what makes the
+	// guarantee hold for code nobody audited: git's StashCount reads
+	// logs/refs/stash from a method the template calls, long after the
+	// recorded data has been restored, and no rule about recorded keys would
+	// have caught it.
+	//
+	// Off for an ordinary prompt render, where reaching the machine is the
+	// entire point; on for a caller rendering a config it was handed rather
+	// than one the user owns, such as the studio.
+	DataOnly bool
 }
 
 type CommandError struct {

@@ -393,3 +393,102 @@ func TestProgressFunctions(t *testing.T) {
 		})
 	}
 }
+
+// paletteTestColors is a minimal color.String stand-in for TestAsAnsiColorsWithSourceSurvivesResolution's
+// palette case: it defers ToAnsi to an embedded *color.Defaults and only overrides Resolve to run
+// palette lookup, mirroring color.PaletteColors.Resolve without needing its unexported palette field.
+type paletteTestColors struct {
+	*color.Defaults
+	palette color.Palette
+}
+
+func (p *paletteTestColors) Resolve(colorString color.Ansi) (color.Ansi, error) {
+	return p.palette.ResolveColor(colorString)
+}
+
+// TestAsAnsiColorsWithSourceSurvivesResolution proves the resolve step (resolveAnsiColors,
+// exercised here through asAnsiColorsWithSource) hands back each channel's SOURCE form
+// unmangled, for every shape it can take. This is the value asAnsiColors used to discard
+// before ToAnsi's SGR conversion (writer.go's asAnsiColors historically returned only the
+// SGR pair); Stage 1 of the runs-as-intermediate-representation plan makes it available
+// alongside the SGR pair on the same color.History entry (see color.History.Add) because
+// SGR cannot be inverted back to it reliably.
+func TestAsAnsiColorsWithSourceSurvivesResolution(t *testing.T) {
+	defer func() {
+		Colors = nil
+		CurrentColors = nil
+		ParentColors = nil
+	}()
+
+	cases := []struct {
+		Case       string
+		Input      color.Ansi
+		Colors     color.String
+		WantSource color.Ansi
+	}{
+		{
+			Case:       "#RRGGBB hex",
+			Input:      "#FF5733",
+			Colors:     &color.Defaults{},
+			WantSource: "#FF5733",
+		},
+		{
+			Case:       "colour name from ansiColorCodes",
+			Input:      "red",
+			Colors:     &color.Defaults{},
+			WantSource: "red",
+		},
+		{
+			Case:       "transparent",
+			Input:      color.Transparent,
+			Colors:     &color.Defaults{},
+			WantSource: color.Transparent,
+		},
+		{
+			Case:       "accent",
+			Input:      color.Accent,
+			Colors:     &color.Defaults{},
+			WantSource: color.Accent,
+		},
+		{
+			Case:  "palette reference p:name",
+			Input: "p:myColor",
+			Colors: &paletteTestColors{
+				Defaults: &color.Defaults{},
+				palette:  color.Palette{"myColor": "#123456"},
+			},
+			WantSource: "#123456",
+		},
+		{
+			Case:       "plain numeric 0-255",
+			Input:      "196",
+			Colors:     &color.Defaults{},
+			WantSource: "196",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Colors = tc.Colors
+			CurrentColors = nil
+			ParentColors = nil
+
+			// background is under test; foreground is a fixed, uninteresting "white"
+			// so inverted never triggers and doesn't confound the background assertions.
+			bg, _, bgSource, _ := asAnsiColorsWithSource(tc.Input, "white")
+
+			assert.Equal(t, tc.WantSource, bgSource, "source form must survive resolution unmodified")
+
+			// the returned SGR must be exactly ToAnsi(source): the two representations
+			// must never diverge, or a later encoder reading source could not trust it
+			// describes the same color the SGR pair already printed.
+			assert.Equal(t, tc.Colors.ToAnsi(bgSource, true), bg, "SGR must equal ToAnsi(source)")
+
+			// SGR is a genuinely different (and, for hex/numeric, lossy) encoding of the
+			// same value, except where ToAnsi is an identity function (transparent).
+			if tc.WantSource != color.Transparent {
+				assert.NotEqual(t, string(bgSource), string(bg), "SGR and source must differ")
+			}
+		})
+	}
+}

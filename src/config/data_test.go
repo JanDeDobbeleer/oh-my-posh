@@ -150,6 +150,40 @@ func TestEnvFlagsAbsent(t *testing.T) {
 	assert.Nil(t, envFlags.Interrupted)
 }
 
+func TestLoadDataVersion(t *testing.T) {
+	cases := []struct {
+		Name            string
+		Contents        string
+		ExpectedVersion int
+	}{
+		{Name: "absent means unmarked", Contents: `{"segments": {"git": {"HEAD": "main"}}}`, ExpectedVersion: 0},
+		{Name: "present marks a recorded file", Contents: `{"version": 1, "segments": {}}`, ExpectedVersion: 1},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Name, func(t *testing.T) {
+			dir := t.TempDir()
+			path := filepath.Join(dir, "data.json")
+			require.NoError(t, os.WriteFile(path, []byte(tc.Contents), 0644))
+
+			data, err := LoadData(path)
+			require.NoError(t, err)
+
+			assert.Equal(t, tc.ExpectedVersion, data.Version)
+		})
+	}
+}
+
+func TestLoadDataInvalidVersion(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "data.json")
+	require.NoError(t, os.WriteFile(path, []byte(`{"version": "not-a-number"}`), 0644))
+
+	data, err := LoadData(path)
+	require.Error(t, err)
+	assert.Nil(t, data)
+}
+
 func TestLoadDataUnsupportedExtension(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "data.txt")

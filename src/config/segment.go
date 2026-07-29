@@ -69,28 +69,27 @@ type Segment struct {
 	IncludeFolders         []string       `json:"include_folders,omitempty" toml:"include_folders,omitempty" yaml:"include_folders,omitempty"`
 	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
-	Index                  int            `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
-	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
-	Duration               time.Duration  `json:"-" toml:"-" yaml:"-"`
-	NameLength             int            `json:"-" toml:"-" yaml:"-"`
-	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
-	Timeout                int            `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
-	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
-	Enabled                bool           `json:"-" toml:"-" yaml:"-"`
-	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
-	Force                  bool           `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	restored               bool           `json:"-" toml:"-" yaml:"-"`
-	Toggled                bool           `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
-	Pending                bool           `json:"-" toml:"-" yaml:"-"`
-	// Killed is set by the engine when the segment's timeout expired and its
-	// child processes were killed; it blocks fallback_template rendering.
-	Killed              bool `json:"-" toml:"-" yaml:"-"`
-	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	MultilineKeepPrompt bool `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
-	foregroundResolved  bool
-	backgroundResolved  bool
-	needsEvaluated      bool
-	evaluated           bool
+	pendingData            json.RawMessage
+	Index                  int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
+	MinWidth               int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
+	Duration               time.Duration `json:"-" toml:"-" yaml:"-"`
+	NameLength             int           `json:"-" toml:"-" yaml:"-"`
+	MaxWidth               int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	Timeout                int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	Newline                bool          `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	Enabled                bool          `json:"-" toml:"-" yaml:"-"`
+	InvertPowerline        bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	Force                  bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+	restored               bool          `json:"-" toml:"-" yaml:"-"`
+	Toggled                bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+	Pending                bool          `json:"-" toml:"-" yaml:"-"`
+	Killed                 bool          `json:"-" toml:"-" yaml:"-"`
+	Interactive            bool          `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt    bool          `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
+	foregroundResolved     bool
+	backgroundResolved     bool
+	needsEvaluated         bool
+	evaluated              bool
 }
 
 // A nil presentFields map means presence was never recorded, in which case every
@@ -206,6 +205,17 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	cacheRestored := segment.restoreCache()
 	if cacheRestored && !env.Flags().Streaming {
+		// A hand-written entry stashed itself in pendingData above instead of
+		// short-circuiting, expecting the overlay to run once live/derived
+		// state is available (see overlayData). A cache hit is exactly such
+		// state and returns early right here, before the writer.Enabled() call
+		// further down ever runs - so without this, pinned data would silently
+		// lose to a live cache hit instead of winning as documented. Safe to
+		// call unconditionally: json.Unmarshal into the cache-restored writer
+		// only touches fields pendingData set, and it is a no-op when
+		// pendingData is empty (the common case: no hand-written override for
+		// this segment).
+		segment.overlayData()
 		return
 	}
 
@@ -242,6 +252,37 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	segment.Enabled = segment.writer.Enabled()
 	segment.evaluated = true
+
+	segment.overlayData()
+}
+
+// overlayData applies data pinned in a hand-written (unmarked) file on top of the
+// writer's live-computed state. It must run after writer.Enabled() above, never
+// before: roughly half of all segment writers compute template-visible state
+// inside Enabled() (Time.Format and friends), and overlaying first would only
+// have that live computation clobber the pinned values right back. json.Unmarshal
+// into the already-initialized writer only touches fields present in
+// pendingData, so pinned values win and everything else keeps its live-derived
+// value.
+//
+// Matches restoreData's existing contract for a recorded entry: a pinned
+// segment renders even where its own live check would suppress it (battery on a
+// machine without one, say). That is intentional and stays; it just now also
+// applies to hand-written files.
+func (segment *Segment) overlayData() {
+	if len(segment.pendingData) == 0 {
+		return
+	}
+
+	if err := json.Unmarshal(segment.pendingData, &segment.writer); err != nil {
+		log.Error(err)
+		return
+	}
+
+	segment.Enabled = true
+	segment.restored = true
+
+	log.Debug("derived and overlaid segment from data: ", segment.Name())
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
@@ -484,14 +525,56 @@ func (segment *Segment) restoreCache() bool {
 // restoreData replays a segment's writer state from the data file supplied via
 // runtime.Flags.SegmentData, bypassing the real runtime entirely. This lets
 // segments render from a recorded fixture instead of probing the environment.
+//
+// Two shapes reach here, distinguished by structure rather than a flag threaded
+// through runtime.Flags (which this package does not own, and cannot extend): a
+// RecordedSegment envelope - {"enabled":...,"data":...}, exactly those two keys -
+// written by `config export data` for a versioned file, or the flat writer JSON
+// a hand-written file has always stored directly.
+//
+// A recorded, enabled entry is unmarshaled and returns true here, same as
+// before: no probe. A recorded-but-disabled entry is suppressed here with no
+// probe either - that is what makes replay hermetic. A flat entry cannot be
+// trusted this early: it stashes itself in pendingData and returns false so
+// Execute keeps running - shouldHideForWidth, the Job setup, and
+// writer.Enabled() all still fire - and overlayData applies it afterward.
+// There are two call sites for that overlay, both in Execute: a device/session
+// cache hit in restoreCache also produces state pendingData needs to win
+// over, and returns before writer.Enabled() runs, so it overlays right there;
+// everything else overlays after writer.Enabled() further down.
+//
+// Nothing here is conditional on runtime.Flags.DataOnly, deliberately. That
+// flag makes the *environment* refuse every probe (see runtime.Terminal), so a
+// segment with no recorded entry still runs and still falls through to
+// writer.Enabled() - it simply finds nothing when it reaches for the machine,
+// and reports itself disabled. Suppressing it here as well was tried and
+// backed out: it also killed the segments that need no machine at all. path
+// and session derive from the pinned PWD and user in the data file's env
+// section, so they render correctly under DataOnly, and a rule keyed on
+// "is there an entry under this segment's DataKey" made both vanish from the
+// studio, which is exactly where they matter most.
 func (segment *Segment) restoreData() bool {
-	data, OK := segment.env.Flags().SegmentData[segment.DataKey()]
+	raw, OK := segment.env.Flags().SegmentData[segment.DataKey()]
 	if !OK {
 		return false
 	}
 
-	err := json.Unmarshal(data, &segment.writer)
-	if err != nil {
+	recorded, isRecorded := decodeRecordedSegment(raw)
+	if !isRecorded {
+		segment.pendingData = raw
+		return false
+	}
+
+	if !recorded.Enabled {
+		segment.Enabled = false
+		segment.restored = true
+
+		log.Debug("suppressing recorded-but-disabled segment: ", segment.Name())
+
+		return true
+	}
+
+	if err := json.Unmarshal(recorded.Data, &segment.writer); err != nil {
 		log.Error(err)
 		return false
 	}
@@ -504,6 +587,30 @@ func (segment *Segment) restoreData() bool {
 	log.Debug("restored segment from data: ", segment.Name())
 
 	return true
+}
+
+// decodeRecordedSegment reports whether raw is exactly a RecordedSegment
+// envelope: a JSON object with only "enabled" and "data" keys, nothing else.
+// Anything short of that - a flat hand-written entry, or malformed JSON - is
+// left for the caller to treat as unmarked data.
+func decodeRecordedSegment(raw json.RawMessage) (RecordedSegment, bool) {
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &fields); err != nil || len(fields) != 2 {
+		return RecordedSegment{}, false
+	}
+
+	enabledRaw, hasEnabled := fields["enabled"]
+	dataRaw, hasData := fields["data"]
+	if !hasEnabled || !hasData {
+		return RecordedSegment{}, false
+	}
+
+	var enabled bool
+	if err := json.Unmarshal(enabledRaw, &enabled); err != nil {
+		return RecordedSegment{}, false
+	}
+
+	return RecordedSegment{Data: dataRaw, Enabled: enabled}, true
 }
 
 func (segment *Segment) setCache() {

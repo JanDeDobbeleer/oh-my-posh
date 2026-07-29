@@ -25,7 +25,8 @@ func (e *Engine) writeBlockSegments(block *config.Block) (string, int) {
 	executed := make(map[string]bool, len(block.Segments))
 	results := drainBlockResults(out, len(block.Segments), executed)
 
-	return e.renderBlockSegments(results, block, executed)
+	text, length, _ := e.renderBlockSegments(results, block, executed)
+	return text, length
 }
 
 // Callers may consume the channel immediately or defer consumption to allow
@@ -62,7 +63,7 @@ func drainBlockResults(out chan result, count int, executed map[string]bool) []*
 // Rendering is strictly sequential. For multi-block prompts, executed must be
 // fully populated for all blocks before this is called (via drainBlockResults),
 // so that cross-block .Segments.X dependencies resolve in both directions.
-func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Block, executed map[string]bool) (string, int) {
+func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Block, executed map[string]bool) (string, int, []terminal.Run) {
 	if block.RestartCycle {
 		cycle = &e.Config.Cycle
 	}
@@ -79,7 +80,15 @@ func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Bl
 	e.captureBlockTailColors()
 	e.previousActiveSegment = nil
 
-	return terminal.String()
+	// captureBlockRuns must run before terminal.String(): String's own defer
+	// resets the run stream (runsState.Runs[:0]) before String returns to
+	// this caller, so capturing terminal.Runs() after the call would see it
+	// already truncated.
+	runs := e.captureBlockRuns()
+
+	text, length := terminal.String()
+
+	return text, length, runs
 }
 
 func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan result) {

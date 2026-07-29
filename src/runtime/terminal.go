@@ -60,6 +60,17 @@ func (term *Terminal) Init(flags *Flags) {
 
 func (term *Terminal) Getenv(key string) string {
 	defer log.Trace(time.Now(), key)
+
+	// The data file's env section carries template values (UserName, PWD, ...),
+	// not OS variables, so there is nothing to substitute here - and a browser
+	// has no environment either. Answering empty is what makes the CLI under
+	// DataOnly and the wasm build agree; reading the real environment would
+	// leave a segment keyed on, say, TERM_PROGRAM rendering one thing here and
+	// another there, from the same config and the same data.
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return ""
+	}
+
 	val := os.Getenv(key)
 	log.Debug(val)
 	return val
@@ -102,11 +113,29 @@ func (term *Terminal) setPwd() {
 	log.Debug(term.cwd)
 }
 
+// errDataOnly is what every environment probe answers with when
+// Flags.DataOnly is set. DataOnly started life in config.Segment.restoreData,
+// suppressing a segment the recorded data does not cover - but that only
+// governs the segment's own Enabled(). A writer field computed lazily by a
+// method the template calls still reached the machine long afterwards:
+// segments/git.go's StashCount() reads logs/refs/stash off disk, and
+// stashCount is unexported so no recorded data ever restores it. Rendering
+// jandedobbeleer under wasm, where there is no filesystem, failed that
+// template outright while the CLI happily read the real repository.
+//
+// Gating the environment itself rather than each such method is what makes
+// the guarantee hold for segments nobody has audited: there is no way to
+// write one that probes, because the probe primitives themselves refuse.
+var errDataOnly = errors.New("environment access is disabled: rendering from recorded data only")
+
 func (term *Terminal) HasFiles(pattern string) bool {
 	return term.HasFilesInDir(term.Pwd(), pattern)
 }
 
 func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return false
+	}
 	defer log.Trace(time.Now(), pattern)
 
 	fileSystem := os.DirFS(dir)
@@ -153,6 +182,9 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 }
 
 func (term *Terminal) HasFileInParentDirs(pattern string, depth uint) bool {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return false
+	}
 	defer log.Trace(time.Now(), pattern, fmt.Sprint(depth))
 	currentFolder := term.Pwd()
 
@@ -174,6 +206,9 @@ func (term *Terminal) HasFileInParentDirs(pattern string, depth uint) bool {
 }
 
 func (term *Terminal) HasFolder(folder string) bool {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return false
+	}
 	defer log.Trace(time.Now(), folder)
 	f, err := os.Stat(folder)
 	if err != nil {
@@ -186,6 +221,9 @@ func (term *Terminal) HasFolder(folder string) bool {
 }
 
 func (term *Terminal) ResolveSymlink(input string) (string, error) {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return "", errDataOnly
+	}
 	defer log.Trace(time.Now(), input)
 	link, err := filepath.EvalSymlinks(input)
 	if err != nil {
@@ -197,6 +235,9 @@ func (term *Terminal) ResolveSymlink(input string) (string, error) {
 }
 
 func (term *Terminal) FileContent(file string) string {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return ""
+	}
 	defer log.Trace(time.Now(), file)
 	if !filepath.IsAbs(file) {
 		file = filepath.Join(term.Pwd(), file)
@@ -215,6 +256,9 @@ func (term *Terminal) FileContent(file string) string {
 }
 
 func (term *Terminal) LsDir(input string) []fs.DirEntry {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return nil
+	}
 	defer log.Trace(time.Now(), input)
 
 	entries, err := os.ReadDir(input)
@@ -270,6 +314,9 @@ func (term *Terminal) RunCommand(command string, args ...string) (string, error)
 }
 
 func (term *Terminal) RunCommandWithEnv(command string, envs []string, args ...string) (string, error) {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return "", errDataOnly
+	}
 	defer log.Trace(time.Now(), append([]string{command}, args...)...)
 
 	if cacheCommand, ok := term.cmdCache.Get(command); ok {
@@ -286,6 +333,9 @@ func (term *Terminal) RunCommandWithEnv(command string, envs []string, args ...s
 }
 
 func (term *Terminal) RunShellCommand(shell, command string) string {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return ""
+	}
 	defer log.Trace(time.Now())
 
 	if out, err := term.RunCommand(shell, "-c", command); err == nil {
@@ -296,6 +346,9 @@ func (term *Terminal) RunShellCommand(shell, command string) string {
 }
 
 func (term *Terminal) CommandPath(command string) string {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return ""
+	}
 	defer log.Trace(time.Now(), command)
 
 	// L1: in-memory, unbounded for the lifetime of this process.
@@ -340,6 +393,9 @@ func (term *Terminal) CommandPath(command string) string {
 }
 
 func (term *Terminal) HasCommand(command string) bool {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return false
+	}
 	defer log.Trace(time.Now(), command)
 
 	if cmdPath := term.CommandPath(command); cmdPath != "" {
@@ -414,6 +470,9 @@ func (term *Terminal) unWrapError(err error) error {
 }
 
 func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error) {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return nil, errDataOnly
+	}
 	defer log.Trace(time.Now(), targetURL)
 
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
@@ -462,6 +521,9 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 }
 
 func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*FileInfo, error) {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return nil, errDataOnly
+	}
 	defer log.Trace(time.Now(), parent)
 
 	pwd := term.Pwd()

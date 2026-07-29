@@ -1,0 +1,60 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "2d7a4c92b4a5",
+  "session_id": "021119e5-0c91-4195-aa2d-b4109a88bc90",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-29T04:58:38.235275Z",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "website/docs/configuration/introduction.mdx",
+    "website/docs/segments/overview.mdx",
+    "website/docs/studio.mdx",
+    "website/sidebars.js",
+    "website/src/components/Config.js",
+    "website/src/components/Config.module.css",
+    "website/src/components/ConfigEditor/WasmMessage.js",
+    "website/src/components/ConfigEditor/index.js",
+    "website/src/components/ConfigEditor/renderDefaults.js",
+    "website/src/components/ConfigEditor/serialize.js",
+    "website/src/components/ConfigEditor/studioHandoff.js",
+    "website/src/components/ConfigEditor/styles.module.css",
+    "website/src/components/ConfigEditor/useWasmRenderer.js",
+    "website/src/components/ConfigEditor/wasmLoader.js",
+    "website/src/components/Studio/index.js",
+    "website/src/components/Studio/styles.module.css",
+    "website/src/components/Studio/wasmLoader.js"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "8723d9066561",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 2,
+    "cache_creation_tokens": 21706,
+    "cache_read_tokens": 33510,
+    "output_tokens": 735,
+    "api_call_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-29T04:58:38.2126312Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

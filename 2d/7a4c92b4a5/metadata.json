@@ -3,14 +3,22 @@
   "checkpoint_id": "2d7a4c92b4a5",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 4,
   "files_touched": [
+    "website/docs/configuration/introduction.mdx",
+    "website/docs/segments/overview.mdx",
+    "website/docs/studio.mdx",
     "website/sidebars.js",
     "website/src/components/Config.js",
     "website/src/components/Config.module.css",
+    "website/src/components/ConfigEditor/WasmMessage.js",
     "website/src/components/ConfigEditor/index.js",
+    "website/src/components/ConfigEditor/renderDefaults.js",
     "website/src/components/ConfigEditor/serialize.js",
+    "website/src/components/ConfigEditor/studioHandoff.js",
     "website/src/components/ConfigEditor/styles.module.css",
+    "website/src/components/ConfigEditor/useWasmRenderer.js",
+    "website/src/components/ConfigEditor/wasmLoader.js",
     "website/src/components/Studio/index.js",
     "website/src/components/Studio/styles.module.css",
     "website/src/components/Studio/wasmLoader.js"
@@ -29,14 +37,21 @@
       "compact_transcript": "/2d/7a4c92b4a5/1/transcript.jsonl",
       "content_hash": "/2d/7a4c92b4a5/1/content_hash.txt",
       "prompt": "/2d/7a4c92b4a5/1/prompt.txt"
+    },
+    {
+      "metadata": "/2d/7a4c92b4a5/2/metadata.json",
+      "transcript": "/2d/7a4c92b4a5/2/full.jsonl",
+      "compact_transcript": "/2d/7a4c92b4a5/2/transcript.jsonl",
+      "content_hash": "/2d/7a4c92b4a5/2/content_hash.txt",
+      "prompt": "/2d/7a4c92b4a5/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 5506,
-    "cache_creation_tokens": 14958476,
-    "cache_read_tokens": 826914913,
-    "output_tokens": 1026334,
-    "api_call_count": 1649
+    "input_tokens": 5508,
+    "cache_creation_tokens": 14980182,
+    "cache_read_tokens": 826948423,
+    "output_tokens": 1027069,
+    "api_call_count": 1650
   },
   "combined_attribution": {
     "calculated_at": "2026-07-29T04:58:05.8495622Z",

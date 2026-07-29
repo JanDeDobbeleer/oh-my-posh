@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "0254bffa0c17",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/cli/auth/tui/copilot.go",
+    "src/cli/auth/tui/tui.go",
+    "src/cli/auth/tui/ytmda.go",
+    "src/cli/ui/progress.go",
+    "src/cli/upgrade/tui/tui.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/02/54bffa0c17/0/metadata.json",
+      "transcript": "/02/54bffa0c17/0/full.jsonl",
+      "compact_transcript": "/02/54bffa0c17/0/transcript.jsonl",
+      "content_hash": "/02/54bffa0c17/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}

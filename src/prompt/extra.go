@@ -95,7 +95,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	if len(prompt.Filler) != 0 {
 		consoleWidth, err := e.Env.TerminalWidth()
 		if err == nil || consoleWidth != 0 {
-			padText, _ = e.shouldFill(prompt.Filler, consoleWidth-length-rightLength)
+			padText, _, _ = e.shouldFill(prompt.Filler, consoleWidth-length-rightLength)
 		}
 	}
 

@@ -257,6 +257,92 @@ func GradientCells(c Ansi, cells int, resolver String, isBackground bool, curren
 	return cacheGradientCells(colors, cells, isBackground, result)
 }
 
+// GradientCellsRGB mirrors GradientCells' stop resolution, auto-shading and HCL
+// interpolation exactly, but returns each cell's true RGB triple instead of a
+// ready-to-print ANSI escape. It exists solely for the terminal writer's run-capture
+// path (see CaptureRuns in terminal/writer.go): GradientCells' escape cannot be
+// inverted back to RGB losslessly once TrueColor is off (the 256-color downgrade), so a
+// capturing caller must take the color from colorful.Color directly, at the same point
+// GradientCells itself does — not invert the printed escape back out. Deliberately
+// duplicated rather than factored out of GradientCells: capture is opt-in and off by
+// default, so this must never be on GradientCells' own call path, where an added
+// allocation or branch would show up in the exact allocation gates the ANSI hot path is
+// held to. Returns nil under the same invalid-gradient conditions as GradientCells, and
+// is not cached: it only runs when a caller has opted into capture.
+func GradientCellsRGB(c Ansi, cells int, resolver String, current *Set, parents []*Set) []RGB {
+	if cells <= 0 {
+		return nil
+	}
+
+	stops := c.GradientStops()
+	if len(stops) == 0 {
+		return nil
+	}
+
+	colors := make([]colorful.Color, 0, len(stops))
+
+	for _, stop := range stops {
+		resolved := stop.Resolve(current, parents)
+
+		resolved, err := resolver.Resolve(resolved)
+		if err != nil {
+			continue
+		}
+
+		if resolved == Accent {
+			resolved = resolver.ToAnsi(Accent, false)
+		}
+
+		clr, err := colorful.Hex(resolved.String())
+		if err != nil {
+			var ok bool
+			if clr, ok = parseTrueColor(resolved); !ok {
+				continue
+			}
+		}
+
+		colors = append(colors, clr)
+	}
+
+	if dir := c.shadeDirection(); dir != shadeNone {
+		if len(stops) != 1 || len(colors) == 0 {
+			return nil
+		}
+
+		colors = []colorful.Color{colors[0], autoShade(colors[0], dir, cells)}
+	}
+
+	if len(colors) < 2 {
+		return nil
+	}
+
+	if cells == 1 {
+		return []RGB{rgbFromColorful(colors[0])}
+	}
+
+	segments := len(colors) - 1
+	result := make([]RGB, cells)
+
+	for i := range cells {
+		position := float64(i) / float64(cells-1) * float64(segments)
+
+		segment := int(position)
+		if segment >= segments {
+			segment = segments - 1
+		}
+
+		blended := colors[segment].BlendHcl(colors[segment+1], position-float64(segment)).Clamped()
+		result[i] = rgbFromColorful(blended)
+	}
+
+	return result
+}
+
+func rgbFromColorful(c colorful.Color) RGB {
+	r, g, b := c.RGB255()
+	return RGB{R: r, G: g, B: b}
+}
+
 // autoShadeBaseSlope/Floor/Ceiling shape the lightness shift autoShade targets AT THE
 // REFERENCE WIDTH (2 steps, i.e. a 3-cell segment - the tuned-by-feel narrow case dark-
 // gradient/light-gradient exists for), as a fraction of the base color's own headroom
@@ -365,24 +451,16 @@ func cacheGradientCells(colors []colorful.Color, cells int, isBackground bool, r
 }
 
 // parseTrueColor parses a truecolor ANSI payload ("38;2;r;g;b" or "48;2;r;g;b") back into
-// a colorful.Color. The OS accent color resolves to this form instead of hex.
+// a colorful.Color, on top of ParseTrueColorRGB (colors.go) — the OS accent color resolves
+// to this form instead of hex, and svg/colors.go's ParseTrueColorSGR needs the exact same
+// parse for its own RGB-returning callers, so the byte-level parsing lives there once.
 func parseTrueColor(c Ansi) (colorful.Color, bool) {
-	parts := strings.Split(c.String(), ";")
-	if len(parts) != 5 || (parts[0] != "38" && parts[0] != "48") || parts[1] != "2" {
+	rgb, ok := ParseTrueColorRGB(c)
+	if !ok {
 		return colorful.Color{}, false
 	}
 
-	rgb := make([]uint8, 3)
-	for i, part := range parts[2:] {
-		val, err := strconv.ParseUint(part, 10, 8)
-		if err != nil {
-			return colorful.Color{}, false
-		}
-
-		rgb[i] = uint8(val)
-	}
-
-	return colorful.Color{R: float64(rgb[0]) / 255.0, G: float64(rgb[1]) / 255.0, B: float64(rgb[2]) / 255.0}, true
+	return colorful.Color{R: float64(rgb.R) / 255.0, G: float64(rgb.G) / 255.0, B: float64(rgb.B) / 255.0}, true
 }
 
 // ansiFromColorful converts an interpolated HCL color to a ready-to-print ANSI code, honoring

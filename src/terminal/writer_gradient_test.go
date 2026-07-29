@@ -445,6 +445,54 @@ func TestWriteGradientInvisibleSpanExcluded(t *testing.T) {
 	assert.NotContains(t, got, "hidden")
 }
 
+// TestVisibleCellsMatchesRenderedLength_HyperlinkEnd pins the fix for
+// countVisibleCells's missing anchorHyperlinkEnd case: `</LINK>` used to fall to
+// the anchorOverride default branch, whose FG/BG-transparent check re-enabled
+// invisible (both FG and BG are empty for `</LINK>`), so text after a closing
+// link tag inside a `<transparent,transparent>` span was wrongly counted as
+// visible. VisibleCells and the actual rendered length must agree.
+func TestVisibleCellsMatchesRenderedLength_HyperlinkEnd(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	input := "ab<transparent,transparent>hidden</LINK>tail"
+
+	visible := VisibleCells(input)
+
+	Init(shell.GENERIC)
+	ParentColors = nil
+	CurrentColors = &color.Set{Foreground: "white", Background: "blue"}
+	Colors = &color.Defaults{}
+
+	Write("blue", "white", input)
+	_, rendered := String()
+
+	assert.Equal(t, rendered, visible, "VisibleCells must match Write's actual rendered length")
+}
+
+// TestVisibleCellsMatchesRenderedLength_LeadingTransparentAnchor pins the fix for
+// Write's leading-anchor prologue always seeding countVisibleCells' pre-pass with
+// invisible = false: a fully transparent leading override (`<transparent,transparent>`)
+// used to leave the pre-pass counting every rune that follows as visible, even though
+// write() itself correctly suppresses them once isInvisible is set. VisibleCells and
+// the actual rendered length must agree.
+func TestVisibleCellsMatchesRenderedLength_LeadingTransparentAnchor(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	input := "<transparent,transparent>ababtail"
+
+	visible := VisibleCells(input)
+
+	Init(shell.GENERIC)
+	ParentColors = nil
+	CurrentColors = &color.Set{Foreground: "white", Background: "blue"}
+	Colors = &color.Defaults{}
+
+	Write("blue", "white", input)
+	_, rendered := String()
+
+	assert.Equal(t, rendered, visible, "VisibleCells must match Write's actual rendered length")
+}
+
 // TestWriteGradientInvalidFallsBackToLastStop pins the review fix unifying the
 // invalid-gradient fallback on the LAST stop, matching the engine's width collapse
 // and every edge consumer.
@@ -463,4 +511,146 @@ func TestWriteGradientInvalidFallsBackToLastStop(t *testing.T) {
 
 	assert.Contains(t, got, colorise("44"), "body must render the last stop (blue) as a solid background")
 	assert.NotContains(t, got, colorise("41"), "the first stop (red) must not appear")
+}
+
+// TestWriteGradientHyperlinkAnchors covers writeBodyGradient's <LINK>/<TEXT>/</TEXT>/</LINK>
+// anchor cases on a gradient segment. The URL text runs through writeVisibleRune while
+// isHyperlink is true, so it is written raw and unstamped (visible = false suppresses both
+// stampGradient and the cellIndex advance, matching write()'s length exclusion); gradient
+// stamping resumes for the hyperlink's own text and for text following </LINK>. The leading
+// <LINK> here is consumed by Write's own prologue (:467-470), so this pins the anchor's
+// hyperLinkText/hyperLinkTextEnd(with text)/hyperLinkEnd cases inside writeBodyGradient's loop
+// itself; TestWriteGradientHyperlinkNoTextFallback below covers hyperLinkStart mid-loop.
+func TestWriteGradientHyperlinkAnchors(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	bgGradient := color.Ansi("linear-gradient(#FF0000, #0000FF)")
+	resolver := &color.Defaults{}
+
+	// "ab" (link text) + "cd" (after the link) = 4 visible cells.
+	bgCells := color.GradientCells(bgGradient, 4, resolver, true, nil, nil)
+
+	Init(shell.GENERIC)
+	ParentColors = nil
+	colors := &color.Set{Foreground: "white", Background: bgGradient}
+	CurrentColors = colors
+	Colors = &color.Defaults{}
+
+	Write(colors.Background, colors.Foreground, "<LINK>http://x<TEXT>ab</TEXT></LINK>cd")
+
+	got, length := String()
+
+	expected := colorise("37") +
+		"\x1b]8;;" + "http://x" + "\x1b\\" +
+		colorise(bgCells[0]) + "a" +
+		colorise(bgCells[1]) + "b" +
+		"\x1b]8;;\x1b\\" +
+		colorise(bgCells[2]) + "c" +
+		colorise(bgCells[3]) + "d" +
+		gradientReset
+
+	assert.Equal(t, expected, got)
+	assert.Equal(t, 4, length, "the URL must not count toward length, only the link text and trailing text")
+}
+
+// TestWriteGradientHyperlinkNoTextFallback covers writeBodyGradient's hyperLinkStart case
+// (mid-text, not consumed by Write's leading-anchor prologue) and the </TEXT> immediately
+// following <TEXT> with no text in between: the hyperLinkTextEnd case stamps once for the
+// literal "link" fallback and advances both length and cellIndex by 4 (:583-586). The gradient
+// stops after the link must land 4 cells further along than "ab" alone would put them,
+// which is how this test observes cellIndex += 4 having actually run: if that statement were
+// deleted, "c" would stamp bgCells[2] instead of bgCells[6].
+func TestWriteGradientHyperlinkNoTextFallback(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	bgGradient := color.Ansi("linear-gradient(#FF0000, #0000FF)")
+	resolver := &color.Defaults{}
+
+	// "ab" + the 4-cell "link" fallback + "cd" = 8 visible cells.
+	bgCells := color.GradientCells(bgGradient, 8, resolver, true, nil, nil)
+
+	Init(shell.GENERIC)
+	ParentColors = nil
+	colors := &color.Set{Foreground: "white", Background: bgGradient}
+	CurrentColors = colors
+	Colors = &color.Defaults{}
+
+	Write(colors.Background, colors.Foreground, "ab<LINK>http://x<TEXT></TEXT></LINK>cd")
+
+	got, length := String()
+
+	expected := colorise("37") +
+		colorise(bgCells[0]) + "a" +
+		colorise(bgCells[1]) + "b" +
+		"\x1b]8;;" + "http://x" + "\x1b\\" +
+		colorise(bgCells[2]) + "link" +
+		"\x1b]8;;\x1b\\" +
+		colorise(bgCells[6]) + "c" +
+		colorise(bgCells[7]) + "d" +
+		gradientReset
+
+	assert.Equal(t, expected, got)
+	assert.Equal(t, 8, length)
+}
+
+// TestWriteGradientEmptyAnchor covers writeBodyGradient's `<>` (empty) anchor case: it is
+// consumed with no output and no cellIndex advance, so gradient stamping continues
+// uninterrupted across it exactly as if the anchor were not there.
+func TestWriteGradientEmptyAnchor(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	bgGradient := color.Ansi("linear-gradient(#FF0000, #0000FF)")
+	resolver := &color.Defaults{}
+
+	bgCells := color.GradientCells(bgGradient, 4, resolver, true, nil, nil)
+
+	Init(shell.GENERIC)
+	ParentColors = nil
+	colors := &color.Set{Foreground: "white", Background: bgGradient}
+	CurrentColors = colors
+	Colors = &color.Defaults{}
+
+	Write(colors.Background, colors.Foreground, "ab<>cd")
+
+	got, _ := String()
+
+	expected := colorise("37") +
+		colorise(bgCells[0]) + "a" +
+		colorise(bgCells[1]) + "b" +
+		colorise(bgCells[2]) + "c" +
+		colorise(bgCells[3]) + "d" +
+		gradientReset
+
+	assert.Equal(t, expected, got)
+}
+
+// TestWriteGradientUnterminatedAnchor covers writeBodyGradient's fallback when a '<' does not
+// open a valid anchor (scanAnchor finds no closing '>' for the rest of the string): the rune
+// is written and stamped like any other visible rune instead of being swallowed.
+func TestWriteGradientUnterminatedAnchor(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	bgGradient := color.Ansi("linear-gradient(#FF0000, #0000FF)")
+	resolver := &color.Defaults{}
+
+	bgCells := color.GradientCells(bgGradient, 3, resolver, true, nil, nil)
+
+	Init(shell.GENERIC)
+	ParentColors = nil
+	colors := &color.Set{Foreground: "white", Background: bgGradient}
+	CurrentColors = colors
+	Colors = &color.Defaults{}
+
+	Write(colors.Background, colors.Foreground, "a<b")
+
+	got, length := String()
+
+	expected := colorise("37") +
+		colorise(bgCells[0]) + "a" +
+		colorise(bgCells[1]) + "<" +
+		colorise(bgCells[2]) + "b" +
+		gradientReset
+
+	assert.Equal(t, expected, got)
+	assert.Equal(t, 3, length)
 }

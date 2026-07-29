@@ -47,6 +47,24 @@ type Engine struct {
 	rpromptLength     int
 	Plain             bool
 	forceRender       bool
+
+	// capturedRows/rpromptRuns are the Run stream's engine-side counterpart to
+	// prompt/rprompt above, populated only when terminal.CaptureRuns is set
+	// (see runs.go). rpromptRuns persists on the Engine, mirroring e.rprompt,
+	// because writeBlock's RPrompt case stores it for a later CapturedRuns
+	// consumer to read back; the block/filler runs a single writeBlock call
+	// consumes immediately (formerly pendingBlockRuns/pendingFillerRuns) now
+	// flow as return values instead, the same way blockText/length already do
+	// (renderBlockSegments/captureBlockRuns -> renderLaunchedBlock -> writeBlock,
+	// and shouldFill's own expanded filler runs).
+	capturedRows [][]terminal.Run
+	rpromptRuns  []terminal.Run
+
+	// cursorRow/cursorRun locate the end of the primary prompt's own output
+	// within capturedRows — where the shell leaves the cursor. -1 means
+	// unset; see markCursorAnchor/CursorAnchor.
+	cursorRow int
+	cursorRun int
 }
 
 const (
@@ -165,6 +183,7 @@ func (e *Engine) writeNewline() {
 	}()
 
 	e.write(e.getNewline())
+	e.newCapturedRow()
 }
 
 func (e *Engine) isWarp() bool {
@@ -175,15 +194,15 @@ func (e *Engine) isIterm() bool {
 	return terminal.Program == terminal.ITerm
 }
 
-func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
+func (e *Engine) shouldFill(filler string, padLength int) (string, []terminal.Run, bool) {
 	if filler == "" {
 		log.Debug("no filler specified")
-		return "", false
+		return "", nil, false
 	}
 
 	if padLength < 0 {
 		log.Debug("padding length is negative")
-		return "", false
+		return "", nil, false
 	}
 
 	e.Padding = padLength
@@ -194,7 +213,7 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 
 	var err error
 	if filler, err = template.RenderTrusted(filler, e); err != nil {
-		return "", false
+		return "", nil, false
 	}
 
 	// allow for easy color overrides and templates
@@ -208,17 +227,29 @@ func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 	}
 
 	terminal.Write("", "", filler)
+
+	// the filler pattern's own runs must be captured before terminal.String():
+	// see captureBlockRuns for why capturing after would see an already
+	// truncated run stream. padLength is already in hand here, so
+	// expandFillerRuns can build the caller-ready, repeated Run slice directly
+	// instead of stashing the raw pattern for a later call to re-expand.
+	var pattern []terminal.Run
+	if terminal.CaptureRuns {
+		pattern = slices.Clone(terminal.Runs())
+	}
+
 	filler, lenFiller := terminal.String()
 	if lenFiller == 0 {
 		log.Debug("filler has no length")
-		return "", false
+		return "", nil, false
 	}
 
 	repeat := padLength / lenFiller
 	unfilled := padLength % lenFiller
 	txt := strings.Repeat(filler, repeat) + strings.Repeat(" ", unfilled)
 	log.Debug("filling with", txt)
-	return txt, true
+
+	return txt, expandFillerRuns(pattern, padLength), true
 }
 
 func (e *Engine) getTitleTemplateText() string {
@@ -234,9 +265,10 @@ func (e *Engine) getTitleTemplateText() string {
 func (e *Engine) renderLaunchedBlock(block *config.Block, results []*config.Segment, executed map[string]bool, cancelNewline bool) bool {
 	var blockText string
 	var length int
+	var runs []terminal.Run
 
 	if results != nil {
-		blockText, length = e.renderBlockSegments(results, block, executed)
+		blockText, length, runs = e.renderBlockSegments(results, block, executed)
 	}
 
 	// do not print anything when we don't have any text unless forced
@@ -244,10 +276,10 @@ func (e *Engine) renderLaunchedBlock(block *config.Block, results []*config.Segm
 		return false
 	}
 
-	return e.writeBlock(block, blockText, length, cancelNewline)
+	return e.writeBlock(block, blockText, length, runs, cancelNewline)
 }
 
-func (e *Engine) writeBlock(block *config.Block, blockText string, length int, cancelNewline bool) bool {
+func (e *Engine) writeBlock(block *config.Block, blockText string, length int, runs []terminal.Run, cancelNewline bool) bool {
 	defer func() {
 		e.applyPowerShellBleedPatch()
 	}()
@@ -264,6 +296,7 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 		if block.Alignment == config.Left {
 			e.currentLineLength += length
 			e.write(blockText)
+			e.appendCapturedRuns(nil, runs)
 			return true
 		}
 
@@ -282,8 +315,10 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 				e.writeNewline()
 			case config.Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block.Filler, space+length-e.currentLineLength); OK {
+				fillLength := space + length - e.currentLineLength
+				if padText, fillerRuns, OK := e.shouldFill(block.Filler, fillLength); OK {
 					e.write(padText)
+					e.appendCapturedRuns(fillerRuns, nil)
 				}
 
 				e.currentLineLength = 0
@@ -297,9 +332,10 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 		}()
 
 		// validate if we have a filler and fill if needed
-		if padText, OK := e.shouldFill(block.Filler, space); OK {
+		if padText, fillerRuns, OK := e.shouldFill(block.Filler, space); OK {
 			e.write(padText)
 			e.write(blockText)
+			e.appendCapturedRuns(fillerRuns, runs)
 			return true
 		}
 
@@ -308,9 +344,11 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, c
 		}
 
 		e.write(blockText)
+		e.appendCapturedRuns(gapRun(space), runs)
 	case config.RPrompt:
 		e.rprompt = blockText
 		e.rpromptLength = length
+		e.rpromptRuns = runs
 	}
 
 	return true
@@ -356,6 +394,11 @@ func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) b
 	e.captureBlockTailColors()
 	e.previousActiveSegment = nil
 
+	// captureBlockRuns must run before terminal.String(): see
+	// renderBlockSegments (segments.go) for why capturing after would see an
+	// already truncated run stream.
+	runs := e.captureBlockRuns()
+
 	blockText, length := terminal.String()
 
 	// do not print anything when we don't have any text unless forced
@@ -363,7 +406,7 @@ func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) b
 		return false
 	}
 
-	return e.writeBlock(block, blockText, length, cancelNewline)
+	return e.writeBlock(block, blockText, length, runs, cancelNewline)
 }
 
 func (e *Engine) applyPowerShellBleedPatch() {
@@ -804,6 +847,18 @@ func New(flags *runtime.Flags) *Engine {
 
 	reload, _ := cache.Get[bool](cache.Device, config.RELOAD)
 	cfg := config.Get(flags.ConfigPath, reload)
+
+	return newEngine(cfg, env)
+}
+
+// newEngine builds an Engine from an already-loaded config, performing every step
+// New normally runs after config.Get: template/terminal init, flags.HasExtra,
+// prompt.Grow, and the per-shell rectifyTerminalWidth adjustments. Extracted so a
+// caller that cannot use New - because it must not resolve the path through the
+// session-cached config.Get (config/gob.go), notably the golden-fixture test
+// harness - still gets this behavior instead of silently skipping it.
+func newEngine(cfg *config.Config, env runtime.Environment) *Engine {
+	flags := env.Flags()
 
 	template.Init(env, cfg.Var, cfg.Maps)
 

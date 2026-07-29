@@ -111,6 +111,53 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 	}
 }
 
+// TestHyperlinkResetsBetweenWrites guards against isHyperlink leaking across
+// Write calls. An unbalanced <LINK> - no closing </TEXT> - never clears the
+// flag inside writeBody, so without an explicit reset at the top of Write it
+// stays true for every later Write in the process (the serve daemon keeps the
+// package-level state alive across renders). That routes subsequent runes
+// through write's isHyperlink branch, which skips both length counting and
+// shell-escape handling.
+func TestHyperlinkResetsBetweenWrites(t *testing.T) {
+	Init(shell.PWSH)
+	Colors = &color.Defaults{}
+
+	// unbalanced: <LINK> with no <TEXT>/</LINK> ever closing it.
+	Write("white", "black", "<LINK>http://example.com")
+
+	// a plain follow-up write, as engine.go does for the next segment in the
+	// same block before String() is ever called.
+	Write("white", "black", "abc")
+
+	_, length := String()
+
+	assert.Equal(t, 3, length, "isHyperlink leaked from the unbalanced <LINK> into the next Write")
+}
+
+// TestGenerateHyperlinkPlainMode pins the Plain-mode fix for OSC 8 hyperlinks.
+// Guarding only the escape emitters (formats.HyperlinkStart/Center/End) is not
+// enough: write()'s isHyperlink branch streams the URL between <LINK> and
+// <TEXT> straight to the builder as literal runes without ever counting them
+// toward length, so the URL would leak into the rendered output as invisible
+// (uncounted) text. The full Plain render of a <LINK> must be exactly its
+// visible link text, with length matching it exactly.
+func TestGenerateHyperlinkPlainMode(t *testing.T) {
+	saveGradientTestGlobals(t)
+
+	Init(shell.PWSH)
+	Plain = true
+	ParentColors = nil
+	Colors = &color.Defaults{}
+
+	Write("white", "black", "<LINK>http://www.google.be<TEXT>google</TEXT></LINK>")
+
+	got, length := String()
+
+	assert.Equal(t, "google", got)
+	assert.Equal(t, 6, length)
+	assert.NotContains(t, got, "google.be", "the URL must not leak into Plain output")
+}
+
 func TestGenerateFileLink(t *testing.T) {
 	cases := []struct {
 		Text     string

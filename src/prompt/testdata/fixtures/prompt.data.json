@@ -1,0 +1,1172 @@
+{
+  "env": {
+    "AbsolutePWD": "~/dev/oh-my-posh",
+    "Code": 0,
+    "Executed": true,
+    "Folder": "oh-my-posh",
+    "HostName": "contoso-devbox",
+    "Interrupted": false,
+    "Jobs": 0,
+    "OS": "windows",
+    "PSWD": "~/dev/oh-my-posh",
+    "PWD": "~/dev/oh-my-posh",
+    "PromptCount": 0,
+    "Root": false,
+    "SHLVL": 1,
+    "Shell": "shell",
+    "ShellVersion": "",
+    "UserName": "alice",
+    "Version": "0.0.0-dev",
+    "WSL": false
+  },
+  "segments": {
+    "angular": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "aurelia": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "aws": {
+      "data": {
+        "AccessKeyID": "",
+        "AccountID": "",
+        "Profile": "",
+        "Region": "",
+        "SSOSession": {},
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Settings": {}
+      },
+      "enabled": false
+    },
+    "az": {
+      "data": {
+        "Origin": "CLI",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "environmentName": "AzureCloud",
+        "homeTenantId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isDefault": true,
+        "managedByTenants": [],
+        "name": "MVP",
+        "state": "Enabled",
+        "tenantDisplayName": "",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "user": {
+          "name": "alice@contoso.com",
+          "type": "user"
+        }
+      },
+      "enabled": true
+    },
+    "azd": {
+      "data": {
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "defaultEnvironment": "",
+        "version": 0
+      },
+      "enabled": false
+    },
+    "azfunc": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "azpwsh": {
+      "data": {
+        "Origin": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "environmentName": "",
+        "homeTenantId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isDefault": false,
+        "managedByTenants": null,
+        "name": "",
+        "state": "",
+        "tenantDisplayName": "",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "user": null
+      },
+      "enabled": false
+    },
+    "battery": {
+      "data": {
+        "Error": "",
+        "Icon": "",
+        "Percentage": 70,
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "State": 3
+      },
+      "enabled": true
+    },
+    "cds": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "HasDependency": false,
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "cf": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "cftarget": {
+      "data": {
+        "Org": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Space": "",
+        "URL": "",
+        "User": ""
+      },
+      "enabled": false
+    },
+    "clojure": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "cmake": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "crystal": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "dart": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "docker": {
+      "data": {
+        "Containers": null,
+        "Context": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": false
+    },
+    "dotnet": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "SDKVersion": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": "",
+        "Unsupported": false
+      },
+      "enabled": false
+    },
+    "elixir": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "executiontime": {
+      "data": {
+        "FormattedMs": "0ms",
+        "Ms": 0,
+        "Segment": {
+          "Index": 3,
+          "Text": ""
+        }
+      },
+      "enabled": true
+    },
+    "firebase": {
+      "data": {
+        "Project": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": false
+    },
+    "flutter": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "fortran": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "gcp": {
+      "data": {
+        "Account": "",
+        "ActiveConfig": "",
+        "Project": "",
+        "Region": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": false
+    },
+    "git": {
+      "data": {
+        "Ahead": 21,
+        "Behind": 0,
+        "BranchStatus": "↑21",
+        "CherryPick": false,
+        "CommandMissing": false,
+        "Detached": false,
+        "Dir": "~/dev/oh-my-posh",
+        "HEAD": "next",
+        "Hash": "beaa71607765518e99ce9c4ca6cab42fadab99e1",
+        "IsBare": false,
+        "IsWorkTree": false,
+        "IsWslSharedPath": false,
+        "Merge": false,
+        "PushAhead": 0,
+        "PushBehind": 0,
+        "RawUpstreamURL": "git@github.com:JanDeDobbeleer/oh-my-posh.git",
+        "Rebase": null,
+        "Ref": "next",
+        "RepoName": "oh-my-posh",
+        "Revert": false,
+        "Segment": {
+          "Index": 2,
+          "Text": ""
+        },
+        "ShortHash": "beaa716",
+        "Staging": {
+          "Added": 0,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": {},
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 0,
+          "Moved": 0,
+          "Unmerged": 0,
+          "Untracked": 0
+        },
+        "Upstream": "origin/next",
+        "UpstreamGone": false,
+        "UpstreamIcon": "",
+        "UpstreamURL": "https://github.com/JanDeDobbeleer/oh-my-posh",
+        "User": {
+          "Email": "alice@contoso.com",
+          "Name": "Alice Example"
+        },
+        "Working": {
+          "Added": 0,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 124,
+          "Formats": {},
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 15,
+          "Moved": 0,
+          "Unmerged": 0,
+          "Untracked": 1
+        }
+      },
+      "enabled": true
+    },
+    "go": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "go",
+        "Expected": "",
+        "Full": "1.26.5",
+        "Major": "1",
+        "Minor": "26",
+        "Mismatch": false,
+        "Patch": "5",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": "https://golang.org/doc/go1.26"
+      },
+      "enabled": true
+    },
+    "haskell": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "StackGhc": false,
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "java": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "julia": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "kotlin": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "kubectl": {
+      "data": {
+        "Cluster": "",
+        "Context": "",
+        "Namespace": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "User": ""
+      },
+      "enabled": false
+    },
+    "lua": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "mojo": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": "",
+        "Venv": ""
+      },
+      "enabled": false
+    },
+    "nim": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "node": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "PackageManagerIcon": "",
+        "PackageManagerName": "",
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "npm": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "nx": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "ocaml": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "os": {
+      "data": {
+        "Icon": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": true
+    },
+    "path": {
+      "data": {
+        "Folders": [
+          {
+            "Display": false,
+            "Name": "oh-my-posh",
+            "Path": "~/dev/oh-my-posh"
+          },
+          {
+            "Display": false,
+            "Name": "src",
+            "Path": "~/dev/oh-my-posh"
+          }
+        ],
+        "Location": "~/dev/oh-my-posh",
+        "Path": "~/dev/oh-my-posh",
+        "RootDir": false,
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "StackCount": 0,
+        "Writable": true
+      },
+      "enabled": true
+    },
+    "perl": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "php": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "project": {
+      "data": {
+        "Error": "",
+        "Name": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Target": "",
+        "Type": "",
+        "Version": ""
+      },
+      "enabled": false
+    },
+    "python": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": "",
+        "Venv": ""
+      },
+      "enabled": false
+    },
+    "r": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "root": {
+      "data": {
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": false
+    },
+    "ruby": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "rust": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "session": {
+      "data": {
+        "SSHSession": false,
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": true
+    },
+    "shell": {
+      "data": {
+        "Name": "shell",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Version": ""
+      },
+      "enabled": true
+    },
+    "spotify": {
+      "data": {
+        "Artist": "",
+        "Icon": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Status": "stopped",
+        "Track": ""
+      },
+      "enabled": false
+    },
+    "status": {
+      "data": {
+        "Error": false,
+        "Meaning": "0",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "String": "0"
+      },
+      "enabled": true
+    },
+    "strava": {
+      "data": {
+        "Ago": "",
+        "Authenticate": true,
+        "Error": "invalid refresh token",
+        "Hours": 0,
+        "Icon": "",
+        "Segment": {
+          "Index": 4,
+          "Text": ""
+        },
+        "URL": "",
+        "average_heartrate": 0,
+        "average_watts": 0,
+        "device_watts": false,
+        "distance": 0,
+        "id": 0,
+        "kudos_count": 0,
+        "max_heartrate": 0,
+        "moving_time": 0,
+        "name": "",
+        "start_date": "0001-01-01T00:00:00Z",
+        "type": "",
+        "weighted_average_watts": 0
+      },
+      "enabled": false
+    },
+    "swift": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "sysinfo": {
+      "data": {
+        "Disks": {},
+        "Load1": 0.52,
+        "Load15": 0.42,
+        "Load5": 0.48,
+        "PhysicalAvailableMemory": 12884901888,
+        "PhysicalFreeMemory": 12884901888,
+        "PhysicalPercentUsed": 62.5,
+        "PhysicalTotalMemory": 34359738368,
+        "Precision": 2,
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        },
+        "SwapFreeMemory": 0,
+        "SwapPercentUsed": 0,
+        "SwapTotalMemory": 0
+      },
+      "enabled": true
+    },
+    "talosctl": {
+      "data": {
+        "Context": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": false
+    },
+    "terraform": {
+      "data": {
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "WorkspaceName": "",
+        "terraform_version": null
+      },
+      "enabled": false
+    },
+    "text": {
+      "data": {
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        }
+      },
+      "enabled": true
+    },
+    "time": {
+      "data": {
+        "CurrentDate": "2026-07-27T08:08:32.6714449+02:00",
+        "Format": "Monday \u003c#ffffff\u003eat\u003c/\u003e 3:04 PM",
+        "Segment": {
+          "Index": 1,
+          "Text": ""
+        }
+      },
+      "enabled": true
+    },
+    "v": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "vala": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    },
+    "wakatime": {
+      "data": {
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "cumulative_total": {
+          "seconds": 0,
+          "text": ""
+        },
+        "end": "",
+        "start": ""
+      },
+      "enabled": false
+    },
+    "ytm": {
+      "data": {
+        "Artist": "",
+        "Icon": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "Status": "",
+        "Track": ""
+      },
+      "enabled": false
+    },
+    "zig": {
+      "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
+        "Full": "",
+        "Major": "",
+        "Minor": "",
+        "Mismatch": false,
+        "Patch": "",
+        "Prerelease": "",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "URL": ""
+      },
+      "enabled": false
+    }
+  },
+  "version": 1
+}

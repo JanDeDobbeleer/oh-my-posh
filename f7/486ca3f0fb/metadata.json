@@ -3,7 +3,7 @@
   "checkpoint_id": "f7486ca3f0fb",
   "strategy": "manual-commit",
   "branch": "rewrite",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "website/static/img/msstore-dark.svg",
     "website/static/img/msstore-light.svg"
@@ -15,13 +15,20 @@
       "compact_transcript": "/f7/486ca3f0fb/0/transcript.jsonl",
       "content_hash": "/f7/486ca3f0fb/0/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/f7/486ca3f0fb/1/metadata.json",
+      "transcript": "/f7/486ca3f0fb/1/full.jsonl",
+      "compact_transcript": "/f7/486ca3f0fb/1/transcript.jsonl",
+      "content_hash": "/f7/486ca3f0fb/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
-    "input_tokens": 0,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 0,
-    "output_tokens": 0,
-    "api_call_count": 0
+    "input_tokens": 4,
+    "cache_creation_tokens": 832,
+    "cache_read_tokens": 659179,
+    "output_tokens": 771,
+    "api_call_count": 2
   }
 }

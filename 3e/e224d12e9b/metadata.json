@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "3ee224d12e9b",
+  "strategy": "manual-commit",
+  "branch": "rewrite",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "website/static/img/msstore-dark.svg",
+    "website/static/img/msstore-light.svg"
+  ],
+  "sessions": [
+    {
+      "metadata": "/3e/e224d12e9b/0/metadata.json",
+      "transcript": "/3e/e224d12e9b/0/full.jsonl",
+      "compact_transcript": "/3e/e224d12e9b/0/transcript.jsonl",
+      "content_hash": "/3e/e224d12e9b/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}

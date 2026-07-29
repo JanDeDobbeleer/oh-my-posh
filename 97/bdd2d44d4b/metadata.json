@@ -3,7 +3,7 @@
   "checkpoint_id": "97bdd2d44d4b",
   "strategy": "manual-commit",
   "branch": "rewrite",
-  "checkpoints_count": 2,
+  "checkpoints_count": 4,
   "files_touched": [
     "src/cli/sanitize.go",
     "src/cli/sanitize_test.go",
@@ -63,6 +63,13 @@
       "transcript": "/97/bdd2d44d4b/1/full.jsonl",
       "compact_transcript": "/97/bdd2d44d4b/1/transcript.jsonl",
       "content_hash": "/97/bdd2d44d4b/1/content_hash.txt",
+      "prompt": ""
+    },
+    {
+      "metadata": "/97/bdd2d44d4b/2/metadata.json",
+      "transcript": "/97/bdd2d44d4b/2/full.jsonl",
+      "compact_transcript": "/97/bdd2d44d4b/2/transcript.jsonl",
+      "content_hash": "/97/bdd2d44d4b/2/content_hash.txt",
       "prompt": ""
     }
   ],

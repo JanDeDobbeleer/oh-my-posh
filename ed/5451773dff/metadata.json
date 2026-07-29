@@ -3,7 +3,7 @@
   "checkpoint_id": "ed5451773dff",
   "strategy": "manual-commit",
   "branch": "rewrite",
-  "checkpoints_count": 2,
+  "checkpoints_count": 4,
   "files_touched": [
     "website/static/img/msstore-dark.svg",
     "website/static/img/msstore-light.svg"
@@ -21,6 +21,13 @@
       "transcript": "/ed/5451773dff/1/full.jsonl",
       "compact_transcript": "/ed/5451773dff/1/transcript.jsonl",
       "content_hash": "/ed/5451773dff/1/content_hash.txt",
+      "prompt": ""
+    },
+    {
+      "metadata": "/ed/5451773dff/2/metadata.json",
+      "transcript": "/ed/5451773dff/2/full.jsonl",
+      "compact_transcript": "/ed/5451773dff/2/transcript.jsonl",
+      "content_hash": "/ed/5451773dff/2/content_hash.txt",
       "prompt": ""
     }
   ],

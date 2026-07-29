@@ -1,0 +1,8 @@
+Do both because the SVG removal is not necessarily a breaking change for my posh functionality. Do the commits first. Make sure all changes flow into the most relevant commits, or put separately as a separate commit.
+
+1. Move on to SVG removal in the production build and move that only to the WASM.
+2. Once that is done and committed, move to replacing bubbletea.
+
+---
+
+commit what's there and start on bubbletea

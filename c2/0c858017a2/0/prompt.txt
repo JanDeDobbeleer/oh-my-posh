@@ -7,3 +7,7 @@ The current configuration that is used on the homepage is the jandedobbeleer the
 ---
 
 I think there's a bug in the SVG rendering. The final space configuration in the configuration is not applied. The default, I think, has it, and the prompt_ is printed right after the prompt.
+
+---
+
+commit everything, folded into the right commits

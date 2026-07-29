@@ -3,7 +3,7 @@
   "checkpoint_id": "246020ff8156",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 4,
   "files_touched": [
     "website/docs/installation/fonts.mdx",
     "website/static/llms-full.txt",
@@ -23,13 +23,20 @@
       "compact_transcript": "/24/6020ff8156/1/transcript.jsonl",
       "content_hash": "/24/6020ff8156/1/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/24/6020ff8156/2/metadata.json",
+      "transcript": "/24/6020ff8156/2/full.jsonl",
+      "compact_transcript": "/24/6020ff8156/2/transcript.jsonl",
+      "content_hash": "/24/6020ff8156/2/content_hash.txt",
+      "prompt": "/24/6020ff8156/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1149,
-    "cache_creation_tokens": 4281425,
-    "cache_read_tokens": 176225772,
-    "output_tokens": 274317,
-    "api_call_count": 610
+    "input_tokens": 1175,
+    "cache_creation_tokens": 5162294,
+    "cache_read_tokens": 188096732,
+    "output_tokens": 278603,
+    "api_call_count": 624
   }
 }

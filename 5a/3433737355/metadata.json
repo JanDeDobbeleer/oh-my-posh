@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "5a3433737355",
+  "strategy": "manual-commit",
+  "branch": "rewrite",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/svg/colors.go",
+    "src/svg/colors_test.go",
+    "src/svg/decorate.go",
+    "src/svg/fit.go",
+    "src/svg/fit_test.go",
+    "src/svg/svg.go",
+    "src/svg/svg_test.go",
+    "src/svg/window.go",
+    "src/svg/window_test.go",
+    "website/.gitignore",
+    "website/docs/share-theme.md",
+    "website/docs/themes.mdx",
+    "website/docusaurus.config.js",
+    "website/export_themes.mjs",
+    "website/plugins/themes/index.js",
+    "website/src/components/ThemeGallery/index.js",
+    "website/src/components/ThemeGallery/styles.module.css",
+    "website/src/css/custom.css",
+    "website/static/fonts/VictorMono.ttf",
+    "website/static/img/themes/.keep"
+  ],
+  "sessions": [
+    {
+      "metadata": "/5a/3433737355/0/metadata.json",
+      "transcript": "/5a/3433737355/0/full.jsonl",
+      "compact_transcript": "/5a/3433737355/0/transcript.jsonl",
+      "content_hash": "/5a/3433737355/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 0
+  }
+}

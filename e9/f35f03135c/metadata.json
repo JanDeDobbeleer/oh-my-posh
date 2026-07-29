@@ -3,7 +3,7 @@
   "checkpoint_id": "e9f35f03135c",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 5,
   "files_touched": [
     "website/docs/themes.mdx"
   ],
@@ -21,6 +21,13 @@
       "compact_transcript": "/e9/f35f03135c/1/transcript.jsonl",
       "content_hash": "/e9/f35f03135c/1/content_hash.txt",
       "prompt": ""
+    },
+    {
+      "metadata": "/e9/f35f03135c/2/metadata.json",
+      "transcript": "/e9/f35f03135c/2/full.jsonl",
+      "compact_transcript": "/e9/f35f03135c/2/transcript.jsonl",
+      "content_hash": "/e9/f35f03135c/2/content_hash.txt",
+      "prompt": "/e9/f35f03135c/2/prompt.txt"
     }
   ],
   "token_usage": {

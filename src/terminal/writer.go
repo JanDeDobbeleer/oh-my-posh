@@ -12,12 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
-	"github.com/mattn/go-runewidth"
 )
-
-func init() {
-	runewidth.DefaultCondition.EastAsianWidth = false
-}
 
 type style struct {
 	AnchorStart string
@@ -903,7 +898,7 @@ func write(s rune, isInvisible bool) {
 	}
 
 	// UNSOLVABLE: When "Interactive" is true, the prompt length calculation in Bash/Zsh can be wrong, since the final string expansion is done by shells.
-	length += runewidth.RuneWidth(s)
+	length += runeCells(s)
 	// length += utf8.RuneCountInString(string(s))
 
 	if !Interactive && !Plain {
@@ -956,7 +951,7 @@ func writeVisibleRune(s rune, cs *colorState) {
 	write(s, cs.isInvisible)
 
 	if visible {
-		cs.cellIndex += runewidth.RuneWidth(s)
+		cs.cellIndex += runeCells(s)
 	}
 }
 
@@ -1128,7 +1123,7 @@ func collapseGradientStop(stop color.Ansi, isBackground bool) color.Ansi {
 // countVisibleCells is the pre-pass a gradient channel needs before streaming
 // starts: it walks txt with the exact same tokenization rules as
 // writeBody/writeBodyGradient (scanAnchor, the hyperlink tokens, the "link"
-// no-text fallback) and sums runewidth.RuneWidth over every rune write()
+// no-text fallback) and sums runeCells over every rune write()
 // would count toward length, so color.GradientCells gets the right cell
 // count and the streaming loop's cellIndex never drifts from it.
 // startHyperlink mirrors the loop having already consumed a leading
@@ -1162,7 +1157,7 @@ func countVisibleCells(txt string, startHyperlink, startInvisible bool) int {
 
 		if s != '<' {
 			if !hyperlink && !invisible {
-				cells += runewidth.RuneWidth(s)
+				cells += runeCells(s)
 			}
 			i += size
 			continue
@@ -1171,7 +1166,7 @@ func countVisibleCells(txt string, startHyperlink, startInvisible bool) int {
 		match, kind := classifyAnchor(txt[i:])
 		if kind == anchorNone {
 			if !hyperlink && !invisible {
-				cells += runewidth.RuneWidth(s)
+				cells += runeCells(s)
 			}
 			i += size
 			continue

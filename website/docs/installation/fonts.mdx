@@ -30,7 +30,7 @@ your terminal emulator to use it.
 }>
 <TabItem value="oh-my-posh">
 
-Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts]:
+Oh My Posh has a CLI to install a [Nerd Font][nerdfonts]:
 
 :::info
 When running as root/administrator, the fonts will be installed system-wide.
@@ -39,14 +39,26 @@ By default, Oh My Posh installs the `.ttf` version of the font in case multiple 
 :::
 
 ```bash
-oh-my-posh font install
+oh-my-posh font install meslo
 ```
 
-This will present a list of Nerd Font libraries, from which you can  select `Meslo`, which includes the
-`Meslo LGM NF` font we recommend. Note that you can also install it directly via:
+We recommend `Meslo`, which includes the `Meslo LGM NF` font. To see every font you can install:
 
 ```bash
-oh-my-posh font install meslo
+oh-my-posh font list
+```
+
+That prints one name per line, so you can search it:
+
+```bash
+oh-my-posh font list | grep -i mono
+```
+
+You can also install straight from a URL or a local zip file:
+
+```bash
+oh-my-posh font install https://example.com/font.zip
+oh-my-posh font install ./CascadiaCode.zip
 ```
 
 </TabItem>

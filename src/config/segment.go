@@ -37,7 +37,13 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 }
 
 type Segment struct {
-	writer                 SegmentWriter
+	writer SegmentWriter
+	// data is what templates evaluate against when there is no writer to evaluate against: a
+	// build with no segment packages linked restores recorded data into a plain map instead of
+	// into a writer struct. Nil everywhere else, and templateContext picks whichever of the two is
+	// present. Go templates resolve a name against a map key exactly as they resolve it against a
+	// field or a method, so a recorded value reads the same either way.
+	data                   map[string]any
 	env                    runtime.Environment
 	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
@@ -225,7 +231,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	defer func() {
 		if segment.Enabled {
-			template.Cache.AddSegmentData(segment.Name(), segment.writer)
+			template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 		}
 	}()
 
@@ -321,7 +327,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 	segment.setCache()
 
 	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
-	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	return true
 }
@@ -361,7 +367,7 @@ func (segment *Segment) renderFallback(index int) bool {
 	// here, and caching it would make restoreCache() later resurrect a
 	// disabled writer as enabled while rendering the main template against
 	// empty data.
-	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	return true
 }
@@ -513,7 +519,7 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	segment.Enabled = true
-	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	log.Debug("restored segment from cache: ", segment.Name())
 
@@ -574,7 +580,7 @@ func (segment *Segment) restoreData() bool {
 		return true
 	}
 
-	if err := json.Unmarshal(recorded.Data, &segment.writer); err != nil {
+	if err := segment.restoreInto(recorded.Data); err != nil {
 		log.Error(err)
 		return false
 	}
@@ -582,11 +588,31 @@ func (segment *Segment) restoreData() bool {
 	segment.Enabled = true
 	segment.restored = true
 
-	template.Cache.AddSegmentData(segment.Name(), segment.writer)
+	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	log.Debug("restored segment from data: ", segment.Name())
 
 	return true
+}
+
+// restoreInto unmarshals a recorded segment's data into whatever this build renders from: the
+// writer struct where one was constructed, and a plain map where none was. The map is not a
+// degraded form - a template resolves a name against a map key exactly as it resolves it against
+// a struct field, so both carry the same recorded values to the same templates. What a map cannot
+// carry is a method result, which is why the recorder writes those out as data too.
+func (segment *Segment) restoreInto(raw json.RawMessage) error {
+	if segment.writer != nil {
+		return json.Unmarshal(raw, &segment.writer)
+	}
+
+	data := make(map[string]any)
+	if err := json.Unmarshal(raw, &data); err != nil {
+		return err
+	}
+
+	segment.data = data
+
+	return nil
 }
 
 // decodeRecordedSegment reports whether raw is exactly a RecordedSegment
@@ -662,6 +688,16 @@ func (segment *Segment) folderKey() string {
 	return key
 }
 
+// templateContext is what a template evaluates against: the writer when one was constructed, the
+// recorded data map when none was (see Segment.data).
+func (segment *Segment) templateContext() any {
+	if segment.data != nil {
+		return segment.data
+	}
+
+	return segment.writer
+}
+
 func (segment *Segment) string() string {
 	// Use simple pending text if segment is still pending
 	if segment.Pending {
@@ -672,16 +708,18 @@ func (segment *Segment) string() string {
 		return "..."
 	}
 
-	result := segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
+	context := segment.templateContext()
+
+	result := segment.Templates.Resolve(context, "", segment.TemplatesLogic)
 	if len(result) != 0 {
 		return result
 	}
 
-	if segment.Template == "" {
+	if segment.Template == "" && segment.writer != nil {
 		segment.Template = segment.writer.Template()
 	}
 
-	text, err := template.RenderTrusted(segment.Template, segment.writer)
+	text, err := template.RenderTrusted(segment.Template, context)
 	if err != nil {
 		return err.Error()
 	}

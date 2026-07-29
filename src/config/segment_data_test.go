@@ -3,7 +3,10 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -91,87 +94,171 @@ func TestSegmentDataKeysAreRecognized(t *testing.T) {
 		})
 	}
 
-	// The reverse direction: every entry in the file should correspond to a real, currently
-	// registered segment type, so a rename or removal is caught here instead of leaving a dead
-	// entry that silently stops doing anything.
+	// The reverse direction: every entry should correspond to something that can actually ask for
+	// it, so a rename or removal is caught here instead of leaving a dead entry that silently
+	// stops doing anything.
+	//
+	// An entry is keyed by Segment.DataKey, which is the segment's alias where it has one - that
+	// is how a config with two segments of the same type gives each its own data. So a key that
+	// is not a segment type is not automatically dead: it is dead only if no bundled theme claims
+	// it as an alias either. cloud-context and pixelrobots both alias an az segment to "azpwsh".
+	aliases := themeAliases(t)
+
 	var orphaned []string
 
 	for segmentTypeKey := range data.Segments {
-		if _, ok := Segments[SegmentType(segmentTypeKey)]; !ok {
-			orphaned = append(orphaned, segmentTypeKey)
+		if _, ok := Segments[SegmentType(segmentTypeKey)]; ok {
+			continue
 		}
+
+		if aliases[segmentTypeKey] {
+			continue
+		}
+
+		orphaned = append(orphaned, segmentTypeKey)
 	}
 
-	assert.Empty(t, orphaned, "website/segment_data.json has entry/entries for unknown segment type(s) "+
-		"(renamed or removed segment?): %v", orphaned)
+	assert.Empty(t, orphaned, "website/segment_data.json has entry/entries matching neither a registered "+
+		"segment type nor an alias any bundled theme uses (renamed or removed?): %v", orphaned)
 }
 
-// assertEntryKeysRoundTrip unmarshals entry into a fresh writer built by factory, marshals that
-// writer back out, and asserts every key present anywhere in entry (at any nesting depth) is
-// still present at the same path in the round-tripped JSON. A key that disappears was silently
-// ignored by json.Unmarshal, meaning nothing in the real writer struct claims it.
+// assertEntryKeysRoundTrip checks that every key in an entry names something the writer actually
+// has: a field, or a method whose result the recorder captured.
+//
+// A direct check rather than a JSON round trip. The recorder keys by Go field name (see
+// cli/segment_data.go) while encoding/json marshals by tag, so round-tripping would compare
+// "CumulativeTotal" against "cumulative_total" and call every tagged field a typo.
 func assertEntryKeysRoundTrip(t *testing.T, segmentType string, factory func() SegmentWriter, entry json.RawMessage) {
 	t.Helper()
+
+	// A recorded file wraps each segment as { enabled, data }; the fields being checked are the
+	// ones inside. A hand-written file stores them flat, which is what the unwrap falls back to.
+	if recorded, isRecorded := decodeRecordedSegment(entry); isRecorded {
+		entry = recorded.Data
+	}
 
 	writer := factory()
 
 	require.NoError(t, json.Unmarshal(entry, &writer),
 		"website/segment_data.json's %q entry does not unmarshal into segments.%T", segmentType, writer)
 
-	roundTripped, err := json.Marshal(writer)
-	require.NoError(t, err, "segments.%T failed to marshal back to JSON", writer)
-
-	var original, back any
-
+	var original map[string]any
 	require.NoError(t, json.Unmarshal(entry, &original))
-	require.NoError(t, json.Unmarshal(roundTripped, &back))
 
-	assertKeysSurvived(t, segmentType, original, back)
+	assertNamesExist(t, segmentType, original, reflect.ValueOf(writer))
 }
 
-// assertKeysSurvived recursively compares original (decoded from segment_data.json) against
-// back (decoded from the writer's own re-marshaled JSON), reporting every key or array element
-// present in original but missing from back.
-func assertKeysSurvived(t *testing.T, path string, original, back any) {
+// assertNamesExist walks an entry alongside the writer it describes, reporting any key that names
+// neither a field nor a method.
+func assertNamesExist(t *testing.T, path string, entry map[string]any, value reflect.Value) {
 	t.Helper()
 
-	switch o := original.(type) {
-	case map[string]any:
-		b, ok := back.(map[string]any)
-		if !ok {
-			t.Errorf("%s: not an object after round-tripping through the real struct (got %T) - "+
-				"every key under here was silently dropped", path, back)
-			return
+	names, fields := reachableNames(value)
+
+	for key, nested := range entry {
+		childPath := fmt.Sprintf("%s.%s", path, key)
+
+		if !assert.True(t, names[key], "%s: key %q names neither a field nor a recorded method on "+
+			"the real struct (typo, or a renamed field - see this segment's src/segments/*.go) - "+
+			"it silently renders as if absent", path, key) {
+			continue
 		}
 
-		for key, oVal := range o {
-			childPath := fmt.Sprintf("%s.%s", path, key)
+		// Only a nested object can be walked further, and only where the struct has a field to
+		// walk into: a method result has no struct behind it to check against.
+		nestedEntry, isObject := nested.(map[string]any)
+		field, hasField := fields[key]
 
-			bVal, present := b[key]
-			if !assert.True(t, present, "%s: key %q is not a field the real struct recognizes "+
-				"(typo, or the doc's template name differs from the struct's json tag - see this "+
-				"segment's src/segments/*.go) - it silently renders as if absent", path, key) {
-				continue
-			}
-
-			assertKeysSurvived(t, childPath, oVal, bVal)
+		if isObject && hasField && reflect.Indirect(field).Kind() == reflect.Struct {
+			assertNamesExist(t, childPath, nestedEntry, field)
 		}
-	case []any:
-		b, ok := back.([]any)
-		if !ok {
-			t.Errorf("%s: not an array after round-tripping through the real struct (got %T)", path, back)
-			return
-		}
-
-		for i, oVal := range o {
-			if i >= len(b) {
-				t.Errorf("%s[%d]: element dropped after round-tripping through the real struct", path, i)
-				continue
-			}
-
-			assertKeysSurvived(t, fmt.Sprintf("%s[%d]", path, i), oVal, b[i])
-		}
-	default:
-		// Scalar (string/number/bool) or null: nothing further to check.
 	}
+}
+
+// reachableNames returns every name a recorded entry may legitimately use for this value: its
+// exported fields (which the recorder keys by Go name) and its exported methods (whose results
+// the recorder captures alongside them), plus the fields themselves for walking into.
+func reachableNames(value reflect.Value) (map[string]bool, map[string]reflect.Value) {
+	names := make(map[string]bool)
+	fields := make(map[string]reflect.Value)
+
+	if !value.IsValid() {
+		return names, fields
+	}
+
+	for i := range value.NumMethod() {
+		names[value.Type().Method(i).Name] = true
+	}
+
+	structValue := reflect.Indirect(value)
+	if structValue.Kind() != reflect.Struct {
+		return names, fields
+	}
+
+	var collect func(reflect.Value)
+
+	collect = func(sv reflect.Value) {
+		for i := range sv.NumField() {
+			field := sv.Type().Field(i)
+			if !field.IsExported() {
+				continue
+			}
+
+			// Embedded fields are flattened by the recorder, so their names belong to the outer
+			// struct as far as an entry is concerned.
+			if field.Anonymous && reflect.Indirect(sv.Field(i)).Kind() == reflect.Struct {
+				collect(reflect.Indirect(sv.Field(i)))
+				continue
+			}
+
+			names[field.Name] = true
+			fields[field.Name] = sv.Field(i)
+		}
+	}
+
+	collect(structValue)
+
+	return names, fields
+}
+
+// themeAliases collects every alias the bundled themes declare, so an entry keyed by one is
+// recognised as the deliberate thing it is rather than reported as a dead segment type.
+func themeAliases(t *testing.T) map[string]bool {
+	t.Helper()
+
+	aliases := make(map[string]bool)
+
+	entries, err := os.ReadDir(filepath.Join("..", "..", "themes"))
+	require.NoError(t, err)
+
+	for _, entry := range entries {
+		if !strings.HasSuffix(entry.Name(), ".omp.json") {
+			continue
+		}
+
+		raw, err := os.ReadFile(filepath.Join("..", "..", "themes", entry.Name()))
+		require.NoError(t, err)
+
+		var theme struct {
+			Blocks []struct {
+				Segments []struct {
+					Alias string `json:"alias"`
+				} `json:"segments"`
+			} `json:"blocks"`
+		}
+
+		if err := json.Unmarshal(raw, &theme); err != nil {
+			continue
+		}
+
+		for _, block := range theme.Blocks {
+			for _, segment := range block.Segments {
+				if segment.Alias != "" {
+					aliases[segment.Alias] = true
+				}
+			}
+		}
+	}
+
+	return aliases
 }

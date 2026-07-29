@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
+	"math"
 	"slices"
 	"strings"
 	"time"
@@ -259,10 +260,15 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		defer runjobs.CloseGoroutineJob()
 	}
 
-	// With no writer there is nothing to ask: a segment is enabled only if its recorded data said
-	// so, which restoreData has already applied.
-	if segment.writer != nil {
+	switch {
+	case segment.writer != nil:
 		segment.Enabled = segment.writer.Enabled()
+	case !segment.restored:
+		// No writer to ask and nothing recorded about this one, so the template is the only thing
+		// that can decide. Render already settles it that way - a segment is on when its text is
+		// not blank - and this is what lets a segment needing no data at all, a text segment
+		// being the obvious case, still draw itself.
+		segment.Enabled = true
 	}
 
 	segment.evaluated = true
@@ -635,9 +641,50 @@ func (segment *Segment) restoreInto(raw json.RawMessage) error {
 		return err
 	}
 
-	segment.data = data
+	segment.data = normalizeNumbers(data).(map[string]any)
 
 	return nil
+}
+
+// normalizeNumbers turns whole float64s back into ints.
+//
+// JSON has one number type, so unmarshalling into a map makes every number a float64 - where
+// unmarshalling into a writer struct would have produced whatever the field declared. Templates
+// notice: sysinfo renders `{{ round .PhysicalPercentUsed .Precision }}`, and round wants its
+// precision as an int, so a Precision that arrived as 2.0 fails the whole template where the
+// struct's int 2 succeeded.
+//
+// Whole numbers become int and the rest stay float64. int rather than int64 because a template
+// function's parameter type has to match exactly: sprig's round takes an int for its precision,
+// and Go templates will not narrow an int64 to reach it, so `{{ round .PhysicalPercentUsed
+// .Precision }}` failed on an int64 exactly as it failed on a float64.
+//
+// Lossy in one direction - a float field holding exactly 2.0 marshals as "2" and comes back an
+// int - but the functions taking a float accept an int and widen it, while the ones taking an int
+// reject a float outright. int is the guess that still renders.
+func normalizeNumbers(value any) any {
+	switch typed := value.(type) {
+	case map[string]any:
+		for key, nested := range typed {
+			typed[key] = normalizeNumbers(nested)
+		}
+
+		return typed
+	case []any:
+		for i, nested := range typed {
+			typed[i] = normalizeNumbers(nested)
+		}
+
+		return typed
+	case float64:
+		if typed == math.Trunc(typed) && !math.IsInf(typed, 0) {
+			return int(typed)
+		}
+
+		return typed
+	default:
+		return value
+	}
 }
 
 // decodeRecordedSegment reports whether raw is exactly a RecordedSegment

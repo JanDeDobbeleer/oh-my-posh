@@ -50,26 +50,83 @@ func asDataMap(value reflect.Value, depth int) (any, error) {
 		return nil, nil
 	}
 
-	raw, err := json.Marshal(value.Interface())
-	if err != nil {
-		return nil, err
-	}
+	structValue := reflect.Indirect(value)
 
-	var fields map[string]any
-	// Anything that does not marshal as an object - a slice, a string, a number - has no methods
-	// worth walking into and is returned as it stands.
-	if err := json.Unmarshal(raw, &fields); err != nil {
+	// Anything that is not a plain struct - a string, a number, a slice, or a type with its own
+	// MarshalJSON such as time.Time - is recorded as it marshals. Walking its fields would either
+	// find none or take apart something that knows how to represent itself.
+	if structValue.Kind() != reflect.Struct || marshalsItself(value) {
+		raw, err := json.Marshal(value.Interface())
+		if err != nil {
+			return nil, err
+		}
+
 		return json.RawMessage(raw), nil
 	}
 
-	if depth >= maxMethodDepth {
-		return fields, nil
+	fields := make(map[string]any)
+
+	if depth < maxMethodDepth {
+		addStructFields(structValue, fields, depth)
+		addMethodResults(value, fields, depth)
 	}
 
-	addMethodResults(value, fields, depth)
-	recurseIntoFields(value, fields, depth)
-
 	return fields, nil
+}
+
+// marshalsItself reports whether a type defines its own JSON representation, in which case taking
+// it apart field by field would produce something that does not round-trip - time.Time being the
+// one that matters here.
+func marshalsItself(value reflect.Value) bool {
+	if !value.CanInterface() {
+		return false
+	}
+
+	_, ok := value.Interface().(json.Marshaler)
+
+	return ok
+}
+
+// addStructFields records a struct's exported fields keyed by their Go names rather than their
+// json tags.
+//
+// This is what a template reads. `{{ .Name }}` resolves against a field called Name; the az
+// segment's json tag for it is "name", and wakatime's CumulativeTotal is tagged
+// "cumulative_total". A struct bridges the two because encoding/json knows the tag - a map has no
+// tags, so a recorded file keyed by tags leaves every such template unable to find anything. Since
+// the whole point of recording is to be replayed where no struct exists, the keys have to be the
+// names the templates use.
+func addStructFields(structValue reflect.Value, fields map[string]any, depth int) {
+	for i := range structValue.NumField() {
+		field := structValue.Type().Field(i)
+
+		if !field.IsExported() {
+			continue
+		}
+
+		// A field the writer explicitly keeps out of JSON stays out: those hold internal state
+		// (buffers, handles) rather than anything a prompt renders.
+		if tag, tagged := field.Tag.Lookup("json"); tagged && strings.HasPrefix(tag, "-") {
+			continue
+		}
+
+		if field.Anonymous {
+			// An embedded struct's fields belong to the outer one as far as a template is
+			// concerned, so they are flattened rather than nested under the type name.
+			embedded := reflect.Indirect(structValue.Field(i))
+			if embedded.Kind() == reflect.Struct {
+				addStructFields(embedded, fields, depth)
+				continue
+			}
+		}
+
+		nested, err := asDataMap(structValue.Field(i), depth+1)
+		if err != nil {
+			continue
+		}
+
+		fields[field.Name] = nested
+	}
 }
 
 func addMethodResults(value reflect.Value, fields map[string]any, depth int) {
@@ -105,49 +162,6 @@ func addMethodResults(value reflect.Value, fields map[string]any, depth int) {
 	}
 }
 
-// recurseIntoFields walks the struct fields that are themselves structs, so a method one level
-// down (`.Working.String`) is recorded too. The json key is what the map is keyed on, so the
-// field's own tag decides where the result lands.
-func recurseIntoFields(value reflect.Value, fields map[string]any, depth int) {
-	structValue := reflect.Indirect(value)
-	if structValue.Kind() != reflect.Struct {
-		return
-	}
-
-	for i := range structValue.NumField() {
-		field := structValue.Type().Field(i)
-
-		if !field.IsExported() {
-			continue
-		}
-
-		key := jsonKey(field)
-		if key == "" {
-			continue
-		}
-
-		if _, present := fields[key]; !present {
-			continue
-		}
-
-		fieldValue := structValue.Field(i)
-		if reflect.Indirect(fieldValue).Kind() != reflect.Struct {
-			continue
-		}
-
-		if fieldValue.Kind() == reflect.Pointer && fieldValue.IsNil() {
-			continue
-		}
-
-		nested, err := asDataMap(fieldValue, depth+1)
-		if err != nil {
-			continue
-		}
-
-		fields[key] = nested
-	}
-}
-
 // callRecovered calls a zero-argument method, answering false if it panics. A writer's methods
 // run against the live environment here, the same as they did while the prompt rendered, and one
 // that panics on a machine where its own segment was disabled must not take the whole recording
@@ -160,24 +174,6 @@ func callRecovered(method reflect.Value) (result reflect.Value, ok bool) {
 	}()
 
 	return method.Call(nil)[0], true
-}
-
-func jsonKey(field reflect.StructField) string {
-	tag, tagged := field.Tag.Lookup("json")
-	if !tagged {
-		return field.Name
-	}
-
-	name, _, _ := strings.Cut(tag, ",")
-
-	switch name {
-	case "-":
-		return ""
-	case "":
-		return field.Name
-	default:
-		return name
-	}
 }
 
 func isExported(name string) bool {

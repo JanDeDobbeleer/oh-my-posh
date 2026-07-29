@@ -1,22 +1,25 @@
 {
   "env": {
-    "UserName": "alice",
+    "AbsolutePWD": "~\\dev\\oh-my-posh",
+    "Code": 0,
+    "Executed": true,
+    "Folder": "oh-my-posh",
     "HostName": "contoso-devbox",
-    "PWD": "~/dev/oh-my-posh"
+    "Interrupted": false,
+    "Jobs": 0,
+    "OS": "windows",
+    "PSWD": "",
+    "PWD": "~\\dev\\oh-my-posh",
+    "PromptCount": 0,
+    "Root": false,
+    "SHLVL": 1,
+    "Shell": "shell",
+    "ShellVersion": "",
+    "UserName": "alice",
+    "Version": "0.0.0-dev",
+    "WSL": false
   },
   "segments": {
-    "time": {
-      "data": {
-        "CurrentDate": "2026-03-17T09:41:00+01:00",
-        "Format": "",
-        "Segment": {
-          "Index": 4,
-          "Text": ""
-        },
-        "Text": " ♥  "
-      },
-      "enabled": true
-    },
     "angular": {
       "data": {
         "BuildMetadata": "",
@@ -31,10 +34,10 @@
         "Patch": "7",
         "Prerelease": "",
         "Segment": {
-          "Index": 7,
-          "Text": ""
+          "Index": 0,
+          "Text": " x "
         },
-        "Text": " 18.2.7",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -42,7 +45,12 @@
     "argocd": {
       "data": {
         "Name": "contoso-prod",
+        "Segment": {
+          "Index": 1,
+          "Text": " x "
+        },
         "Server": "argocd.contoso-devbox.internal",
+        "Text": " x ",
         "User": "alice"
       },
       "enabled": true
@@ -50,10 +58,15 @@
     "aspire": {
       "data": {
         "AppHostPath": "~/dev/oh-my-posh/AppHost/AppHost.csproj",
-        "Name": "AppHost",
         "Lang": "cs",
-        "Version": "9.1.0",
-        "Running": true
+        "Name": "AppHost",
+        "Running": true,
+        "Segment": {
+          "Index": 2,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "Version": "9.1.0"
       },
       "enabled": true
     },
@@ -71,10 +84,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 8,
-          "Text": ""
+          "Index": 3,
+          "Text": " x "
         },
-        "Text": "<#ffffff>(</>2.0.0-beta.23<#ffffff>)</>",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -88,44 +101,44 @@
         "RegionAlias": "use1",
         "SSOSession": null,
         "Segment": {
-          "Index": 12,
-          "Text": ""
+          "Index": 4,
+          "Text": " x "
         },
         "Settings": null,
-        "Text": " anycompany-prod@us-east-1"
+        "Text": " x "
       },
       "enabled": true
     },
     "az": {
       "data": {
+        "EnvironmentName": "AzureCloud",
+        "HomeTenantID": "00000000-0000-0000-0000-000000000000",
+        "ID": "00000000-0000-0000-0000-000000000000",
+        "IsDefault": false,
+        "ManagedByTenants": null,
+        "Name": "Contoso Production",
         "Origin": "CLI",
         "Segment": {
-          "Index": 4,
-          "Text": ""
+          "Index": 5,
+          "Text": " x "
         },
-        "Text": " <p:symbol-color></> Contoso Production",
-        "environmentName": "AzureCloud",
-        "homeTenantId": "00000000-0000-0000-0000-000000000000",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "isDefault": false,
-        "managedByTenants": null,
-        "name": "Contoso Production",
-        "state": "",
-        "tenantDisplayName": "",
-        "tenantId": "00000000-0000-0000-0000-000000000000",
-        "user": null
+        "State": "",
+        "TenantDisplayName": "",
+        "TenantID": "00000000-0000-0000-0000-000000000000",
+        "Text": " x ",
+        "User": null
       },
       "enabled": true
     },
     "azd": {
       "data": {
+        "DefaultEnvironment": "zava-prod",
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 6,
+          "Text": " x "
         },
-        "Text": "[<#ffffff></> Azure Developer CLI Environment: <#ffff00>zava-prod</> :: <#ffff00>1</>]",
-        "defaultEnvironment": "zava-prod",
-        "version": 1
+        "Text": " x ",
+        "Version": 1
       },
       "enabled": true
     },
@@ -143,11 +156,32 @@
         "Patch": "6280",
         "Prerelease": "",
         "Segment": {
-          "Index": 11,
-          "Text": ""
+          "Index": 7,
+          "Text": " x "
         },
-        "Text": "<#f5bf45></> 4.0.6280",
+        "Text": " x ",
         "URL": ""
+      },
+      "enabled": true
+    },
+    "azpwsh": {
+      "data": {
+        "EnvironmentName": "AzureCloud",
+        "HomeTenantID": "00000000-0000-0000-0000-000000000000",
+        "ID": "00000000-0000-0000-0000-000000000000",
+        "IsDefault": false,
+        "ManagedByTenants": null,
+        "Name": "Contoso Production",
+        "Origin": "CLI",
+        "Segment": {
+          "Index": 5,
+          "Text": " x "
+        },
+        "State": "",
+        "TenantDisplayName": "",
+        "TenantID": "00000000-0000-0000-0000-000000000000",
+        "Text": " x ",
+        "User": null
       },
       "enabled": true
     },
@@ -157,71 +191,123 @@
         "Icon": "",
         "Percentage": 70,
         "Segment": {
-          "Index": 9,
-          "Text": ""
+          "Index": 8,
+          "Text": " x "
         },
         "State": 3,
-        "Text": "70"
+        "Text": " x "
       },
       "enabled": true
     },
     "bazel": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "7.4.1",
+        "Icon": "",
+        "InProjectDir": false,
         "Major": "7",
         "Minor": "4",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": "",
-        "Icon": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 9,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "brewfather": {
       "data": {
-        "status": "Fermenting",
-        "StatusIcon": "",
-        "TemperatureTrendIcon": "→",
-        "DaysFermenting": 6,
+        "BatchName": "Batch 42",
+        "BatchNumber": 42,
+        "BottlingDate": 0,
+        "BrewDate": 0,
+        "DayIcon": "",
         "DaysBottled": 0,
         "DaysBottledOrFermented": 6,
-        "recipe": {
-          "name": "Contoso Pale Ale"
+        "DaysFermenting": 6,
+        "FermentStartDate": 0,
+        "MeasuredAbv": 5.4,
+        "MeasuredFg": 0,
+        "MeasuredOg": 0,
+        "Reading": null,
+        "ReadingAge": 3,
+        "Recipe": {
+          "Name": "Contoso Pale Ale"
         },
-        "name": "Batch 42",
-        "batchNo": 42,
-        "measuredAbv": 5.4,
-        "ReadingAge": 3
+        "Segment": {
+          "Index": 10,
+          "Text": " x "
+        },
+        "Status": "Fermenting",
+        "StatusIcon": "",
+        "TemperatureTrend": 0,
+        "TemperatureTrendIcon": "→",
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "buf": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.47.2",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "47",
+        "Mismatch": false,
         "Patch": "2",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 11,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "bun": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "1.1.34",
+        "InProjectDir": false,
         "Major": "1",
         "Minor": "1",
+        "Mismatch": false,
         "Patch": "34",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 12,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "carbonintensity": {
       "data": {
-        "index": "moderate",
-        "forecast": 148,
-        "actual": 132,
+        "Actual": 132,
+        "Forecast": 148,
+        "Index": "moderate",
+        "Segment": {
+          "Index": 13,
+          "Text": " x "
+        },
+        "Text": " x ",
         "TrendIcon": "↘"
       },
       "enabled": true
@@ -241,10 +327,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 7,
-          "Text": ""
+          "Index": 14,
+          "Text": " x "
         },
-        "Text": "  cds 8.5.0 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -263,10 +349,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 9,
-          "Text": ""
+          "Index": 15,
+          "Text": " x "
         },
-        "Text": "  cf 8.8.0 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -275,11 +361,11 @@
       "data": {
         "Org": "example-org",
         "Segment": {
-          "Index": 10,
-          "Text": ""
+          "Index": 16,
+          "Text": " x "
         },
         "Space": "production",
-        "Text": " example-org/production ",
+        "Text": " x ",
         "URL": "https://api.cf.example.com",
         "User": "demo@example.com"
       },
@@ -287,30 +373,68 @@
     },
     "claude": {
       "data": {
-        "model": {
-          "id": "claude-opus-4-5",
-          "display_name": "Opus 4.5"
+        "Agent": null,
+        "CWD": "~/dev/oh-my-posh",
+        "ContextWindow": {
+          "ContextWindowSize": 200000,
+          "CurrentUsage": null,
+          "RemainingPercentage": null,
+          "TotalInputTokens": 68000,
+          "TotalOutputTokens": 4200,
+          "UsedPercentage": 42
         },
-        "session_id": "a1b2c3d4-e5f6-4789-b012-3456789abcde",
-        "session_name": "oh-my-posh",
-        "version": "2.1.0",
-        "cwd": "~/dev/oh-my-posh",
-        "workspace": {
-          "current_dir": "~/dev/oh-my-posh",
-          "project_dir": "~/dev/oh-my-posh"
+        "Cost": {
+          "TotalAPIDurationMS": 0,
+          "TotalCostUSD": 1.82,
+          "TotalDurationMS": 734000,
+          "TotalLinesAdded": 118,
+          "TotalLinesRemoved": 26
         },
-        "context_window": {
-          "used_percentage": 42,
-          "total_input_tokens": 68000,
-          "total_output_tokens": 4200,
-          "context_window_size": 200000
+        "Effort": null,
+        "Exceeds200KTokens": false,
+        "FastMode": false,
+        "FiveHourGauge": "",
+        "FiveHourResetsAt": "0001-01-01T00:00:00Z",
+        "FiveHourResetsIn": 0,
+        "FiveHourUsage": 0,
+        "FormattedAPIDuration": "0m 0s",
+        "FormattedCost": "$1.82",
+        "FormattedDuration": "12m 14s",
+        "FormattedTokens": "72.2K",
+        "Model": {
+          "DisplayName": "Opus 4.5",
+          "ID": "claude-opus-4-5"
         },
-        "cost": {
-          "total_cost_usd": 1.82,
-          "total_duration_ms": 734000,
-          "total_lines_added": 118,
-          "total_lines_removed": 26
-        }
+        "OutputStyle": null,
+        "PR": null,
+        "PromptID": "",
+        "RateLimits": null,
+        "Segment": {
+          "Index": 17,
+          "Text": " x "
+        },
+        "SessionID": "a1b2c3d4-e5f6-4789-b012-3456789abcde",
+        "SessionName": "oh-my-posh",
+        "SevenDayGauge": "",
+        "SevenDayResetsAt": "0001-01-01T00:00:00Z",
+        "SevenDayResetsIn": 0,
+        "SevenDayUsage": 0,
+        "Text": " x ",
+        "Thinking": null,
+        "TokenGauge": "",
+        "TokenGaugeUsed": "",
+        "TokenUsagePercent": 42,
+        "TranscriptPath": "",
+        "Version": "2.1.0",
+        "Vim": null,
+        "Workspace": {
+          "AddedDirs": null,
+          "CurrentDir": "~/dev/oh-my-posh",
+          "GitWorktree": "",
+          "ProjectDir": "~/dev/oh-my-posh",
+          "Repo": null
+        },
+        "Worktree": null
       },
       "enabled": true
     },
@@ -328,10 +452,10 @@
         "Patch": "1",
         "Prerelease": "",
         "Segment": {
-          "Index": 6,
-          "Text": ""
+          "Index": 18,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -350,73 +474,113 @@
         "Patch": "1",
         "Prerelease": "",
         "Segment": {
-          "Index": 3,
-          "Text": ""
+          "Index": 19,
+          "Text": " x "
         },
-        "Text": "   cmake 3.31.1 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "connection": {
       "data": {
-        "Type": "wifi",
-        "Name": "Contoso-5G"
+        "Name": "Contoso-5G",
+        "ReceiveRate": 0,
+        "SSID": "",
+        "Segment": {
+          "Index": 20,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "TransmitRate": 0,
+        "Type": "wifi"
       },
       "enabled": true
     },
     "copilot": {
       "data": {
-        "premium": {
-          "used": 120,
-          "limit": 300,
-          "percent": 40,
-          "remaining": 60,
-          "unlimited": false
+        "BillingCycleEnd": "2026-08-01",
+        "Chat": {
+          "Limit": 100,
+          "Percent": 34,
+          "Remaining": 66,
+          "Unlimited": false,
+          "Used": 34
         },
-        "inline": {
-          "used": 0,
-          "limit": 0,
-          "percent": 0,
-          "remaining": 100,
-          "unlimited": true
+        "Inline": {
+          "Limit": 0,
+          "Percent": 0,
+          "Remaining": 100,
+          "Unlimited": true,
+          "Used": 0
         },
-        "chat": {
-          "used": 34,
-          "limit": 100,
-          "percent": 34,
-          "remaining": 66,
-          "unlimited": false
+        "Premium": {
+          "Limit": 300,
+          "Percent": 40,
+          "Remaining": 60,
+          "Unlimited": false,
+          "Used": 120
         },
-        "billing_cycle_end": "2026-08-01"
+        "Segment": {
+          "Index": 21,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
     "copilot_cli": {
       "data": {
-        "model": {
-          "id": "claude-sonnet-4-5",
-          "display_name": "Sonnet 4.5"
+        "CWD": "~/dev/oh-my-posh",
+        "ContextWindow": {
+          "ContextWindowSize": 200000,
+          "CurrentContextTokens": 36000,
+          "LastCallInputTokens": 0,
+          "LastCallOutputTokens": 0,
+          "RemainingPercentage": null,
+          "RemainingTokens": null,
+          "TotalCacheReadTokens": 0,
+          "TotalCacheWriteTokens": 0,
+          "TotalInputTokens": 0,
+          "TotalOutputTokens": 0,
+          "TotalReasoningTokens": 0,
+          "TotalTokens": 36000,
+          "UsedPercentage": 18
         },
-        "session_id": "f6e5d4c3-b2a1-4098-9876-543210fedcba",
-        "session_name": "oh-my-posh",
-        "version": "0.0.339",
-        "cwd": "~/dev/oh-my-posh",
-        "username": "alice",
-        "workspace": {
-          "current_dir": "~/dev/oh-my-posh"
+        "Cost": {
+          "TotalAPIDurationMS": 0,
+          "TotalDurationMS": 214000,
+          "TotalLinesAdded": 9,
+          "TotalLinesRemoved": 2,
+          "TotalPremiumRequests": 3
         },
-        "context_window": {
-          "used_percentage": 18,
-          "total_tokens": 36000,
-          "current_context_tokens": 36000,
-          "context_window_size": 200000
+        "FormattedAPIDuration": "0m 0s",
+        "FormattedDuration": "3m 34s",
+        "FormattedTokens": "36.0K",
+        "Model": {
+          "DisplayName": "Sonnet 4.5",
+          "ID": "claude-sonnet-4-5"
         },
-        "cost": {
-          "total_duration_ms": 214000,
-          "total_lines_added": 9,
-          "total_lines_removed": 2,
-          "total_premium_requests": 3
+        "RemainingPercent": 82,
+        "RemainingTokensCount": 164000,
+        "Remote": {
+          "Connected": false
+        },
+        "Segment": {
+          "Index": 22,
+          "Text": " x "
+        },
+        "SessionID": "f6e5d4c3-b2a1-4098-9876-543210fedcba",
+        "SessionName": "oh-my-posh",
+        "Text": " x ",
+        "TokenGauge": "",
+        "TokenGaugeUsed": "",
+        "TokenUsagePercent": 18,
+        "TranscriptPath": "",
+        "Username": "alice",
+        "Version": "0.0.339",
+        "Workspace": {
+          "CurrentDir": "~/dev/oh-my-posh"
         }
       },
       "enabled": true
@@ -435,10 +599,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 23,
+          "Text": " x "
         },
-        "Text": " 1.14.0",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -457,22 +621,33 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 6,
-          "Text": ""
+          "Index": 24,
+          "Text": " x "
         },
-        "Text": " 3.6.0",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "deno": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.1.4",
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "1",
+        "Mismatch": false,
         "Patch": "4",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 25,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -481,10 +656,10 @@
         "Containers": null,
         "Context": "cymbal-cluster",
         "Segment": {
-          "Index": 5,
-          "Text": ""
+          "Index": 26,
+          "Text": " x "
         },
-        "Text": "  "
+        "Text": " x "
       },
       "enabled": true
     },
@@ -503,10 +678,10 @@
         "Prerelease": "",
         "SDKVersion": "9.0.101",
         "Segment": {
-          "Index": 2,
-          "Text": ""
+          "Index": 27,
+          "Text": " x "
         },
-        "Text": "  9.0.101<#7a7a7a> </>",
+        "Text": " x ",
         "URL": "",
         "Unsupported": false
       },
@@ -514,10 +689,32 @@
     },
     "dvc": {
       "data": {
+        "CommandMissing": false,
+        "Dir": "",
+        "IsWslSharedPath": false,
+        "RelativeDir": "",
+        "RepoName": "",
+        "Segment": {
+          "Index": 28,
+          "Text": " x "
+        },
         "Status": {
+          "Added": 1,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "Ignored": 0,
+          "Missing": 0,
           "Modified": 2,
-          "Added": 1
-        }
+          "Moved": 0,
+          "String": "+1 ~2",
+          "Unmerged": 0,
+          "Untracked": 0
+        },
+        "Text": " x ",
+        "Upstream": ""
       },
       "enabled": true
     },
@@ -535,10 +732,10 @@
         "Patch": "",
         "Prerelease": "",
         "Segment": {
-          "Index": 10,
-          "Text": ""
+          "Index": 29,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -548,10 +745,10 @@
         "FormattedMs": "734ms",
         "Ms": 734,
         "Segment": {
-          "Index": 4,
-          "Text": ""
+          "Index": 30,
+          "Text": " x "
         },
-        "Text": " 734mss "
+        "Text": " x "
       },
       "enabled": true
     },
@@ -559,10 +756,10 @@
       "data": {
         "Project": "cymbal-superstore",
         "Segment": {
-          "Index": 6,
-          "Text": ""
+          "Index": 31,
+          "Text": " x "
         },
-        "Text": " <p:symbol-color>󰥧</> cymbal-superstore"
+        "Text": " x "
       },
       "enabled": true
     },
@@ -580,10 +777,10 @@
         "Patch": "1",
         "Prerelease": "",
         "Segment": {
-          "Index": 14,
-          "Text": ""
+          "Index": 32,
+          "Text": " x "
         },
-        "Text": " 3.27.1 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -602,20 +799,43 @@
         "Patch": "",
         "Prerelease": "",
         "Segment": {
-          "Index": 11,
-          "Text": ""
+          "Index": 33,
+          "Text": " x "
         },
-        "Text": " 󱈚 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "fossil": {
       "data": {
-        "Status": {
-          "Modified": 1
+        "Branch": "trunk",
+        "CommandMissing": false,
+        "Dir": "",
+        "IsWslSharedPath": false,
+        "RelativeDir": "",
+        "RepoName": "",
+        "Segment": {
+          "Index": 34,
+          "Text": " x "
         },
-        "Branch": "trunk"
+        "Status": {
+          "Added": 0,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 1,
+          "Moved": 0,
+          "String": "~1",
+          "Unmerged": 0,
+          "Untracked": 0
+        },
+        "Text": " x ",
+        "Upstream": ""
       },
       "enabled": true
     },
@@ -626,10 +846,10 @@
         "Project": "cymbal-bank-prod",
         "Region": "us-central1",
         "Segment": {
-          "Index": 5,
-          "Text": ""
+          "Index": 35,
+          "Text": " x "
         },
-        "Text": " <p:symbol-color>󱇶</> cymbal-bank-prod"
+        "Text": " x "
       },
       "enabled": true
     },
@@ -678,8 +898,8 @@
         "RepoName": "oh-my-posh",
         "Revert": false,
         "Segment": {
-          "Index": 2,
-          "Text": ""
+          "Index": 36,
+          "Text": " x "
         },
         "ShortHash": "1a2b3c4",
         "Staging": {
@@ -698,7 +918,7 @@
           "Untracked": 0
         },
         "StashCount": 0,
-        "Text": " main ↑1  +2 ~1 |  +1 ",
+        "Text": " x ",
         "Upstream": "origin/main",
         "UpstreamGone": false,
         "UpstreamIcon": "",
@@ -725,15 +945,44 @@
     },
     "gitversion": {
       "data": {
-        "MajorMinorPatch": "1.4.2",
-        "Major": 1,
-        "Minor": 4,
-        "Patch": 2,
-        "FullSemVer": "1.4.2",
-        "SemVer": "1.4.2",
+        "AssemblySemFileVer": "",
+        "AssemblySemVer": "",
         "BranchName": "main",
+        "BuildMetaData": 0,
+        "BuildMetaDataPadded": "",
+        "CommitDate": "",
+        "CommitsSinceVersionSource": 0,
+        "CommitsSinceVersionSourcePadded": "",
+        "EscapedBranchName": "",
+        "FullBuildMetaData": "",
+        "FullSemVer": "1.4.2",
+        "InformationalVersion": "",
+        "LegacySemVer": "",
+        "LegacySemVerPadded": "",
+        "Major": 1,
+        "MajorMinorPatch": "1.4.2",
+        "Minor": 4,
+        "NuGetPreReleaseTag": "",
+        "NuGetPreReleaseTagV2": "",
+        "NuGetVersion": "",
+        "NuGetVersionV2": "",
+        "Patch": 2,
+        "PreReleaseLabel": "",
+        "PreReleaseLabelWithDash": "",
+        "PreReleaseNumber": 0,
+        "PreReleaseTag": "",
+        "PreReleaseTagWithDash": "",
+        "Segment": {
+          "Index": 37,
+          "Text": " x "
+        },
+        "SemVer": "1.4.2",
         "Sha": "1a2b3c4d5e6f7890abcdef1234567890abcdef12",
-        "ShortSha": "1a2b3c4"
+        "ShortSha": "1a2b3c4",
+        "Text": " x ",
+        "UncommittedChanges": 0,
+        "VersionSourceSha": "",
+        "WeightedPreReleaseNumber": 0
       },
       "enabled": true
     },
@@ -751,26 +1000,37 @@
         "Patch": "4",
         "Prerelease": "",
         "Segment": {
-          "Index": 3,
-          "Text": ""
+          "Index": 38,
+          "Text": " x "
         },
-        "Text": "1.23.4",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "gradle": {
       "data": {
+        "AntVersion": "1.10.15",
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "8.11.1",
+        "GroovyVersion": "3.0.22",
+        "InProjectDir": false,
+        "JVMVersion": "21.0.5",
+        "KotlinVersion": "2.0.21",
         "Major": "8",
         "Minor": "11",
+        "Mismatch": false,
         "Patch": "1",
-        "KotlinVersion": "2.0.21",
-        "GroovyVersion": "3.0.22",
-        "AntVersion": "1.10.15",
-        "JVMVersion": "21.0.5",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 39,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -788,17 +1048,22 @@
         "Patch": "1",
         "Prerelease": "",
         "Segment": {
-          "Index": 16,
-          "Text": ""
+          "Index": 40,
+          "Text": " x "
         },
         "StackGhc": false,
-        "Text": " 9.10.1 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "helm": {
       "data": {
+        "Segment": {
+          "Index": 41,
+          "Text": " x "
+        },
+        "Text": " x ",
         "Version": "v3.16.4"
       },
       "enabled": true
@@ -807,13 +1072,23 @@
       "data": {
         "Body": {
           "status": "operational"
-        }
+        },
+        "Segment": {
+          "Index": 42,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
     "ipify": {
       "data": {
-        "IP": "203.0.113.42"
+        "IP": "203.0.113.42",
+        "Segment": {
+          "Index": 43,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
@@ -831,23 +1106,46 @@
         "Patch": "5",
         "Prerelease": "",
         "Segment": {
-          "Index": 6,
-          "Text": ""
+          "Index": 44,
+          "Text": " x "
         },
-        "Text": "21.0.5",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "jujutsu": {
       "data": {
-        "Working": {
-          "Modified": 2,
-          "Added": 1
-        },
         "ChangeID": "mzvwutnw",
         "ChangeIDPrefix": "mz",
-        "ChangeIDRest": "vwutnw"
+        "ChangeIDRest": "vwutnw",
+        "ClosestBookmarks": "",
+        "CommandMissing": false,
+        "Dir": "",
+        "IsWslSharedPath": false,
+        "RelativeDir": "",
+        "RepoName": "",
+        "Segment": {
+          "Index": 45,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "Upstream": "",
+        "Working": {
+          "Added": 1,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 2,
+          "Moved": 0,
+          "String": "+1 ~2",
+          "Unmerged": 0,
+          "Untracked": 0
+        }
       },
       "enabled": true
     },
@@ -865,10 +1163,10 @@
         "Patch": "2",
         "Prerelease": "",
         "Segment": {
-          "Index": 9,
-          "Text": ""
+          "Index": 46,
+          "Text": " x "
         },
-        "Text": "<#ca3c34></> 1.11.2",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -887,10 +1185,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 19,
-          "Text": ""
+          "Index": 47,
+          "Text": " x "
         },
-        "Text": "K 2.1.0 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -901,34 +1199,48 @@
         "Context": "kind-cymbal",
         "Namespace": "",
         "Segment": {
-          "Index": 13,
-          "Text": ""
+          "Index": 48,
+          "Text": " x "
         },
-        "Text": " kind-cymbal",
+        "Text": " x ",
         "User": "kind-cymbal"
       },
       "enabled": true
     },
     "language": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "13.2.0",
+        "InProjectDir": false,
         "Major": "13",
         "Minor": "2",
+        "Mismatch": false,
         "Patch": "0",
         "Prerelease": "",
-        "BuildMetadata": "",
-        "URL": "",
-        "Error": ""
+        "Segment": {
+          "Index": 49,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "lastfm": {
       "data": {
-        "Status": "playing",
         "Artist": "The National",
-        "Track": "Bloodbuzz Ohio",
         "Full": "The National - Bloodbuzz Ohio",
-        "Icon": " "
+        "Icon": " ",
+        "Segment": {
+          "Index": 50,
+          "Text": " x "
+        },
+        "Status": "playing",
+        "Text": " x ",
+        "Track": "Bloodbuzz Ohio"
       },
       "enabled": true
     },
@@ -946,29 +1258,53 @@
         "Patch": "7",
         "Prerelease": "",
         "Segment": {
-          "Index": 2,
-          "Text": ""
+          "Index": 51,
+          "Text": " x "
         },
-        "Text": " 5.4.7",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "mercurial": {
       "data": {
-        "Working": {
-          "Modified": 1
-        },
-        "IsTip": true,
-        "ChangeSetID": "3f8a1c9d2e4b6f7a8c9d0e1f2a3b4c5d6e7f8a9b",
-        "ChangeSetIDShort": "3f8a1c9d2e4b",
-        "Branch": "default",
         "Bookmarks": [
           "dev"
         ],
+        "Branch": "default",
+        "ChangeSetID": "3f8a1c9d2e4b6f7a8c9d0e1f2a3b4c5d6e7f8a9b",
+        "ChangeSetIDShort": "3f8a1c9d2e4b",
+        "CommandMissing": false,
+        "Dir": "",
+        "IsTip": true,
+        "IsWslSharedPath": false,
+        "LocalCommitNumber": "",
+        "RelativeDir": "",
+        "RepoName": "",
+        "Segment": {
+          "Index": 52,
+          "Text": " x "
+        },
         "Tags": [
           "tip"
-        ]
+        ],
+        "Text": " x ",
+        "Upstream": "",
+        "Working": {
+          "Added": 0,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 1,
+          "Moved": 0,
+          "String": "~1",
+          "Unmerged": 0,
+          "Untracked": 0
+        }
       },
       "enabled": true
     },
@@ -986,10 +1322,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 18,
-          "Text": ""
+          "Index": 53,
+          "Text": " x "
         },
-        "Text": " 🔥 ",
+        "Text": " x ",
         "URL": "",
         "Venv": ".venv"
       },
@@ -997,56 +1333,87 @@
     },
     "mvn": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.9.9",
+        "InProjectDir": false,
         "Major": "3",
         "Minor": "9",
+        "Mismatch": false,
         "Patch": "9",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 54,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "nba": {
       "data": {
-        "HomeTeam": "BOS",
-        "AwayTeam": "NYK",
-        "Time": "Q3 6:42",
-        "GameDate": "01/15/2026",
-        "StartTimeUTC": "2026-01-16T00:00:00Z",
-        "GameStatus": 2,
-        "HomeScore": 78,
         "AwayScore": 71,
-        "HomeTeamWins": 28,
-        "HomeTeamLosses": 12,
+        "AwayTeam": "NYK",
+        "AwayTeamLosses": 16,
         "AwayTeamWins": 24,
-        "AwayTeamLosses": 16
+        "GameDate": "01/15/2026",
+        "GameStatus": 2,
+        "HasStats": true,
+        "HomeScore": 78,
+        "HomeTeam": "BOS",
+        "HomeTeamLosses": 12,
+        "HomeTeamWins": 28,
+        "Segment": {
+          "Index": 55,
+          "Text": " x "
+        },
+        "StartTimeUTC": "2026-01-16T00:00:00Z",
+        "Started": true,
+        "Text": " x ",
+        "Time": "Q3 6:42"
       },
       "enabled": true
     },
     "nbgv": {
       "data": {
-        "Version": "1.4.2",
-        "AssemblyVersion": "1.4.2.0",
         "AssemblyInformationalVersion": "1.4.2+1a2b3c4d5e",
-        "NuGetPackageVersion": "1.4.2",
+        "AssemblyVersion": "1.4.2.0",
         "ChocolateyPackageVersion": "1.4.2",
         "NpmPackageVersion": "1.4.2",
-        "SimpleVersion": "1.4.2"
+        "NuGetPackageVersion": "1.4.2",
+        "Segment": {
+          "Index": 56,
+          "Text": " x "
+        },
+        "SimpleVersion": "1.4.2",
+        "Text": " x ",
+        "Version": "1.4.2",
+        "VersionFileFound": false
       },
       "enabled": true
     },
     "nightscout": {
       "data": {
-        "sgv": 118,
-        "direction": "Flat",
-        "device": "xDrip-DexcomG6",
-        "type": "sgv",
-        "utcOffset": 60,
-        "date": 1782500000000,
-        "dateString": "2026-07-28T09:33:20.000Z",
-        "sysTime": "2026-07-28T09:33:20.000Z",
-        "mills": 1782500000000,
-        "trend": 4
+        "Date": 1782500000000,
+        "DateString": "2026-07-28T09:33:20Z",
+        "Device": "xDrip-DexcomG6",
+        "Direction": "Flat",
+        "ID": "",
+        "Mills": 1782500000000,
+        "Segment": {
+          "Index": 57,
+          "Text": " x "
+        },
+        "Sgv": 118,
+        "SysTime": "2026-07-28T09:33:20Z",
+        "Text": " x ",
+        "Trend": 4,
+        "TrendIcon": "",
+        "Type": "sgv",
+        "UtcOffset": 60
       },
       "enabled": true
     },
@@ -1064,16 +1431,23 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 19,
-          "Text": ""
+          "Index": 58,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "nix-shell": {
       "data": {
+        "DetectType": "none",
+        "InNewNixShell": false,
+        "Segment": {
+          "Index": 59,
+          "Text": " x "
+        },
+        "Text": " x ",
         "Type": "pure"
       },
       "enabled": true
@@ -1094,10 +1468,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 3,
-          "Text": ""
+          "Index": 60,
+          "Text": " x "
         },
-        "Text": "  24.12.0 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1116,10 +1490,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 3,
-          "Text": ""
+          "Index": 61,
+          "Text": " x "
         },
-        "Text": "<#cc7eda> | </><#7eb8da> </> 11.6.0",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1138,10 +1512,10 @@
         "Patch": "2",
         "Prerelease": "",
         "Segment": {
-          "Index": 8,
-          "Text": ""
+          "Index": 62,
+          "Text": " x "
         },
-        "Text": "Nx 20.2.2",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1160,31 +1534,24 @@
         "Patch": "1",
         "Prerelease": "",
         "Segment": {
-          "Index": 21,
-          "Text": ""
+          "Index": 63,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "orthodoxcal": {
       "data": {
-        "fast_level": 0,
-        "fast_level_desc": "Fast-free",
-        "fast_exception": 0,
-        "fast_exception_desc": "",
-        "summary_title": "Afterfeast of the Transfiguration",
-        "feasts": [
-          "Afterfeast of the Transfiguration"
-        ],
-        "saints": [
-          "Ss. Callinicus of Cernica"
-        ],
-        "titles": [],
-        "feast_level": 4,
-        "feast_level_description": "",
-        "tone": 5
+        "FeastNames": "Afterfeast of the Transfiguration",
+        "IsFasting": false,
+        "SaintNames": "Ss. Callinicus of Cernica",
+        "Segment": {
+          "Index": 64,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
@@ -1192,19 +1559,24 @@
       "data": {
         "Icon": "",
         "Segment": {
-          "Index": 0,
-          "Text": ""
+          "Index": 65,
+          "Text": " x "
         },
-        "Text": " "
+        "Text": " x "
       },
       "enabled": true
     },
     "owm": {
       "data": {
-        "Weather": "Clouds",
+        "Segment": {
+          "Index": 66,
+          "Text": " x "
+        },
         "Temperature": 14,
+        "Text": " x ",
+        "URL": "",
         "UnitIcon": "°C",
-        "URL": ""
+        "Weather": "Clouds"
       },
       "enabled": true
     },
@@ -1216,11 +1588,11 @@
         "Path": "~/dev/oh-my-posh",
         "RootDir": false,
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 67,
+          "Text": " x "
         },
         "StackCount": 0,
-        "Text": " ~/dev/oh-my-posh ",
+        "Text": " x ",
         "Writable": true
       },
       "enabled": true
@@ -1239,10 +1611,10 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 24,
-          "Text": ""
+          "Index": 68,
+          "Text": " x "
         },
-        "Text": " 5.40.0 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1261,33 +1633,67 @@
         "Patch": "1",
         "Prerelease": "",
         "Segment": {
-          "Index": 8,
-          "Text": ""
+          "Index": 69,
+          "Text": " x "
         },
-        "Text": " 8.4.1 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "plastic": {
       "data": {
-        "Selector": "main",
         "Behind": false,
-        "Status": {
-          "Modified": 1
+        "CommandMissing": false,
+        "Dir": "",
+        "IsWslSharedPath": false,
+        "MergePending": false,
+        "RelativeDir": "",
+        "RepoName": "",
+        "Segment": {
+          "Index": 70,
+          "Text": " x "
         },
-        "MergePending": false
+        "Selector": "main",
+        "Status": {
+          "Added": 0,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 1,
+          "Moved": 0,
+          "String": "~1",
+          "Unmerged": 0,
+          "Untracked": 0
+        },
+        "Text": " x ",
+        "Upstream": ""
       },
       "enabled": true
     },
     "pnpm": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "9.15.0",
+        "InProjectDir": false,
         "Major": "9",
         "Minor": "15",
+        "Mismatch": false,
         "Patch": "0",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 71,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -1296,11 +1702,11 @@
         "Error": "",
         "Name": "oh-my-posh",
         "Segment": {
-          "Index": 14,
-          "Text": ""
+          "Index": 72,
+          "Text": " x "
         },
         "Target": "",
-        "Text": "  1.4.2 oh-my-posh ",
+        "Text": " x ",
         "Type": "node",
         "Version": "1.4.2"
       },
@@ -1308,10 +1714,15 @@
     },
     "pulumi": {
       "data": {
-        "Stack": "contoso-prod",
         "Name": "oh-my-posh-infra",
-        "url": "app.pulumi.com/contoso",
-        "user": "alice"
+        "Segment": {
+          "Index": 73,
+          "Text": " x "
+        },
+        "Stack": "contoso-prod",
+        "Text": " x ",
+        "URL": "app.pulumi.com/contoso",
+        "User": "alice"
       },
       "enabled": true
     },
@@ -1329,10 +1740,10 @@
         "Patch": "4",
         "Prerelease": "",
         "Segment": {
-          "Index": 4,
-          "Text": ""
+          "Index": 74,
+          "Text": " x "
         },
-        "Text": "  .venv 3.12.4 ",
+        "Text": " x ",
         "URL": "",
         "Venv": ".venv"
       },
@@ -1340,20 +1751,31 @@
     },
     "quasar": {
       "data": {
+        "AppVite": {
+          "Dev": true,
+          "Version": "1.9.3"
+        },
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.17.5",
+        "HasVite": true,
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "17",
+        "Mismatch": false,
         "Patch": "5",
-        "URL": "",
-        "Error": "",
-        "HasVite": true,
-        "Vite": {
-          "version": "5.4.11",
-          "dev": true
+        "Prerelease": "",
+        "Segment": {
+          "Index": 75,
+          "Text": " x "
         },
-        "AppVite": {
-          "version": "1.9.3",
-          "dev": true
+        "Text": " x ",
+        "URL": "",
+        "Vite": {
+          "Dev": true,
+          "Version": "5.4.11"
         }
       },
       "enabled": true
@@ -1372,10 +1794,10 @@
         "Patch": "2",
         "Prerelease": "",
         "Segment": {
-          "Index": 27,
-          "Text": ""
+          "Index": 76,
+          "Text": " x "
         },
-        "Text": "R 4.4.2 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1383,33 +1805,49 @@
     "ramadan": {
       "data": {
         "Fajr": "04:12",
+        "Fasting": true,
         "Iftar": "20:41",
         "Imsak": "04:02",
         "NextEvent": "Iftar",
-        "TimeRemaining": "2h 14m",
         "RozaNumber": 14,
-        "Fasting": true
+        "Segment": {
+          "Index": 77,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "TimeRemaining": "2h 14m"
       },
       "enabled": true
     },
     "react": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "18.3.1",
+        "InProjectDir": false,
         "Major": "18",
         "Minor": "3",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 78,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "root": {
       "data": {
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 79,
+          "Text": " x "
         },
-        "Text": "  "
+        "Text": " x "
       },
       "enabled": true
     },
@@ -1427,10 +1865,10 @@
         "Patch": "",
         "Prerelease": "",
         "Segment": {
-          "Index": 5,
-          "Text": ""
+          "Index": 80,
+          "Text": " x "
         },
-        "Text": "3.3.6",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1449,28 +1887,49 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 5,
-          "Text": ""
+          "Index": 81,
+          "Text": " x "
         },
-        "Text": " 1.83.0",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "sapling": {
       "data": {
-        "RepoName": "oh-my-posh",
-        "Working": {
-          "Modified": 1
-        },
-        "Description": "Add SVG preview data",
         "Author": "alice",
-        "Hash": "9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b",
-        "ShortHash": "9c8b7a6f5e4d",
-        "When": "2 hours ago",
         "Bookmark": "feature/svg-preview",
+        "CommandMissing": false,
+        "Description": "Add SVG preview data",
         "Dir": "~/dev/oh-my-posh",
-        "New": false
+        "Hash": "9c8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b",
+        "IsWslSharedPath": false,
+        "New": false,
+        "RelativeDir": "",
+        "RepoName": "oh-my-posh",
+        "Segment": {
+          "Index": 82,
+          "Text": " x "
+        },
+        "ShortHash": "9c8b7a6f5e4d",
+        "Text": " x ",
+        "Upstream": "",
+        "When": "2 hours ago",
+        "Working": {
+          "Added": 0,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 1,
+          "Moved": 0,
+          "String": "~1",
+          "Unmerged": 0,
+          "Untracked": 0
+        }
       },
       "enabled": true
     },
@@ -1478,10 +1937,10 @@
       "data": {
         "SSHSession": false,
         "Segment": {
-          "Index": 0,
-          "Text": ""
+          "Index": 83,
+          "Text": " x "
         },
-        "Text": "alice "
+        "Text": " x "
       },
       "enabled": true
     },
@@ -1489,18 +1948,23 @@
       "data": {
         "Name": "zsh",
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 84,
+          "Text": " x "
         },
-        "Text": "  zsh ",
+        "Text": " x ",
         "Version": "5.9"
       },
       "enabled": true
     },
     "sitecore": {
       "data": {
+        "CmHost": "contoso-cm.sitecorecloud.io",
         "EndpointName": "production",
-        "CmHost": "contoso-cm.sitecorecloud.io"
+        "Segment": {
+          "Index": 85,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
@@ -1509,11 +1973,11 @@
         "Artist": "Tycho",
         "Icon": " ",
         "Segment": {
-          "Index": 3,
-          "Text": ""
+          "Index": 86,
+          "Text": " x "
         },
         "Status": "playing",
-        "Text": "   Tycho - Easy ",
+        "Text": " x ",
         "Track": "Easy"
       },
       "enabled": true
@@ -1523,11 +1987,11 @@
         "Error": false,
         "Meaning": "",
         "Segment": {
-          "Index": 0,
-          "Text": ""
+          "Index": 87,
+          "Text": " x "
         },
         "String": "0",
-        "Text": "❯ "
+        "Text": " x "
       },
       "enabled": true
     },
@@ -1535,48 +1999,84 @@
       "data": {
         "Ago": "2h",
         "Authenticate": false,
+        "AverageHeartRate": 0,
+        "AverageWatts": 0,
+        "DeviceWatts": false,
+        "Distance": 0,
+        "Duration": 0,
         "Error": "",
         "Hours": 2,
+        "ID": 0,
         "Icon": "",
+        "KudosCount": 0,
+        "MaxHeartRate": 0,
+        "Name": "Morning Ride",
         "Segment": {
-          "Index": 4,
-          "Text": ""
+          "Index": 88,
+          "Text": " x "
         },
-        "Text": " Morning Ride 2h  ",
+        "StartDate": "0001-01-01T00:00:00Z",
+        "Text": " x ",
+        "Type": "Ride",
         "URL": "",
-        "average_heartrate": 0,
-        "average_watts": 0,
-        "device_watts": false,
-        "distance": 0,
-        "id": 0,
-        "kudos_count": 0,
-        "max_heartrate": 0,
-        "moving_time": 0,
-        "name": "Morning Ride",
-        "start_date": "0001-01-01T00:00:00Z",
-        "type": "Ride",
-        "weighted_average_watts": 0
+        "WeightedAverageWatts": 0
       },
       "enabled": true
     },
     "svelte": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "5.8.1",
+        "InProjectDir": false,
         "Major": "5",
         "Minor": "8",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 89,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "svn": {
       "data": {
-        "Working": {
-          "Modified": 2
-        },
+        "BaseRev": 4821,
         "Branch": "trunk",
-        "BaseRev": 4821
+        "CommandMissing": false,
+        "Dir": "",
+        "IsWslSharedPath": false,
+        "RelativeDir": "",
+        "Repo": "",
+        "RepoName": "",
+        "Segment": {
+          "Index": 90,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "Upstream": "",
+        "Working": {
+          "Added": 0,
+          "Changed": true,
+          "Clean": 0,
+          "Conflicted": 0,
+          "Deleted": 0,
+          "Formats": null,
+          "HasConflicts": false,
+          "Ignored": 0,
+          "Missing": 0,
+          "Modified": 2,
+          "Moved": 0,
+          "String": "~2",
+          "Unmerged": 0,
+          "Untracked": 0
+        }
       },
       "enabled": true
     },
@@ -1594,10 +2094,10 @@
         "Patch": "3",
         "Prerelease": "",
         "Segment": {
-          "Index": 18,
-          "Text": ""
+          "Index": 91,
+          "Text": " x "
         },
-        "Text": "  6.0.3 ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1614,13 +2114,13 @@
         "PhysicalTotalMemory": 34359738368,
         "Precision": 2,
         "Segment": {
-          "Index": 2,
-          "Text": ""
+          "Index": 92,
+          "Text": " x "
         },
         "SwapFreeMemory": 0,
         "SwapPercentUsed": 0,
         "SwapTotalMemory": 0,
-        "Text": " <#ffffff>MEM:</> 62.5% (20/32GB)"
+        "Text": " x "
       },
       "enabled": true
     },
@@ -1628,98 +2128,165 @@
       "data": {
         "Context": "cymbal-cluster",
         "Segment": {
-          "Index": 2,
-          "Text": ""
+          "Index": 93,
+          "Text": " x "
         },
-        "Text": "<p:symbol-color>󱃾</> cymbal-cluster"
+        "Text": " x "
       },
       "enabled": true
     },
     "taskwarrior": {
       "data": {
         "Commands": {
+          "Context": "work",
           "Due": "3",
           "Scheduled": "1",
-          "Waiting": "2",
-          "Context": "work"
-        }
+          "Waiting": "2"
+        },
+        "Segment": {
+          "Index": 94,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
     "tauri": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.1.1",
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "1",
+        "Mismatch": false,
         "Patch": "1",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 95,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "terraform": {
       "data": {
         "Segment": {
-          "Index": 4,
-          "Text": ""
+          "Index": 96,
+          "Text": " x "
         },
-        "Text": " example_corp-prod ",
-        "WorkspaceName": "example_corp-prod",
-        "terraform_version": "1.9.0"
+        "Text": " x ",
+        "Version": "1.9.0",
+        "WorkspaceName": "example_corp-prod"
       },
       "enabled": true
     },
     "text": {
       "data": {
         "Segment": {
-          "Index": 0,
-          "Text": ""
+          "Index": 97,
+          "Text": " x "
         },
-        "Text": "╰─"
+        "Text": " x "
+      },
+      "enabled": true
+    },
+    "time": {
+      "data": {
+        "CurrentDate": "2026-03-17T09:41:00+01:00",
+        "Format": "",
+        "Segment": {
+          "Index": 98,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
     "todoist": {
       "data": {
-        "TaskCount": 5
+        "GetData": {},
+        "Segment": {
+          "Index": 99,
+          "Text": " x "
+        },
+        "TaskCount": 5,
+        "Text": " x "
       },
       "enabled": true
     },
     "ui5tooling": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "3.10.0",
+        "HasUI5YamlInParentDir": false,
+        "InProjectDir": false,
         "Major": "3",
         "Minor": "10",
+        "Mismatch": false,
         "Patch": "0",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 100,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "umbraco": {
       "data": {
-        "Version": "15.1.0",
-        "Modern": true
+        "Modern": true,
+        "Segment": {
+          "Index": 101,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "Version": "15.1.0"
       },
       "enabled": true
     },
     "unity": {
       "data": {
-        "UnityVersion": "2022.3.50f1",
-        "CSharpVersion": "C# 9"
+        "CSharpVersion": "C# 9",
+        "Segment": {
+          "Index": 102,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "UnityVersion": "2022.3.50f1"
       },
       "enabled": true
     },
     "uno": {
       "data": {
+        "Segment": {
+          "Index": 103,
+          "Text": " x "
+        },
+        "Text": " x ",
         "Version": "5.5.53"
       },
       "enabled": true
     },
     "upgrade": {
       "data": {
-        "current": "26.7.1",
-        "latest": "26.8.0"
+        "Current": "26.7.1",
+        "Latest": "26.8.0",
+        "Segment": {
+          "Index": 104,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "Version": ""
       },
       "enabled": true
     },
@@ -1737,10 +2304,10 @@
         "Patch": "9",
         "Prerelease": "",
         "Segment": {
-          "Index": 29,
-          "Text": ""
+          "Index": 105,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
@@ -1759,39 +2326,50 @@
         "Patch": "",
         "Prerelease": "",
         "Segment": {
-          "Index": 30,
-          "Text": ""
+          "Index": 106,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "vimode": {
       "data": {
+        "Keymap": "main",
         "Mode": "insert",
-        "Keymap": "main"
+        "Segment": {
+          "Index": 107,
+          "Text": " x "
+        },
+        "Text": " x "
       },
       "enabled": true
     },
     "wakatime": {
       "data": {
+        "CumulativeTotal": {
+          "Seconds": 16200,
+          "Text": "4 hrs 30 mins"
+        },
+        "End": "2026-07-09T23:59:59Z",
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 108,
+          "Text": " x "
         },
-        "Text": "神 4h 30m.",
-        "cumulative_total": {
-          "seconds": 16200,
-          "text": "4 hrs 30 mins"
-        },
-        "end": "2026-07-09T23:59:59Z",
-        "start": "2026-07-09T00:00:00Z"
+        "Start": "2026-07-09T00:00:00Z",
+        "Text": " x "
       },
       "enabled": true
     },
     "winget": {
       "data": {
+        "Segment": {
+          "Index": 109,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "UpdateCount": 2,
         "Updates": [
           {
             "Name": "Microsoft Edge",
@@ -1805,43 +2383,75 @@
             "Current": "2.47.0",
             "Available": "2.47.1"
           }
-        ],
-        "UpdateCount": 2
+        ]
       },
       "enabled": true
     },
     "winreg": {
       "data": {
+        "Segment": {
+          "Index": 110,
+          "Text": " x "
+        },
+        "Text": " x ",
         "Value": "1"
       },
       "enabled": true
     },
     "withings": {
       "data": {
+        "Segment": {
+          "Index": 111,
+          "Text": " x "
+        },
         "SleepHours": "7.3",
-        "Weight": 78.4,
-        "Steps": 8342
+        "Steps": 8342,
+        "Text": " x ",
+        "Weight": 78.4
       },
       "enabled": true
     },
     "xmake": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "2.9.6",
+        "InProjectDir": false,
         "Major": "2",
         "Minor": "9",
+        "Mismatch": false,
         "Patch": "6",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 112,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
     "yarn": {
       "data": {
+        "BuildMetadata": "",
+        "Error": "",
+        "Executable": "",
+        "Expected": "",
         "Full": "4.5.3",
+        "InProjectDir": false,
         "Major": "4",
         "Minor": "5",
+        "Mismatch": false,
         "Patch": "3",
-        "URL": "",
-        "Error": ""
+        "Prerelease": "",
+        "Segment": {
+          "Index": 113,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "URL": ""
       },
       "enabled": true
     },
@@ -1850,11 +2460,11 @@
         "Artist": "Men I Trust",
         "Icon": " ",
         "Segment": {
-          "Index": 1,
-          "Text": ""
+          "Index": 114,
+          "Text": " x "
         },
         "Status": "playing",
-        "Text": "   Men I Trust - Show Me How ",
+        "Text": " x ",
         "Track": "Show Me How"
       },
       "enabled": true
@@ -1873,41 +2483,25 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 31,
-          "Text": ""
+          "Index": 115,
+          "Text": " x "
         },
-        "Text": "  ",
+        "Text": " x ",
         "URL": ""
       },
       "enabled": true
     },
     "zvm": {
       "data": {
+        "Segment": {
+          "Index": 116,
+          "Text": " x "
+        },
+        "Text": " x ",
         "Version": "0.13.0",
         "ZigIcon": "ZVM"
       },
       "enabled": true
-    },
-    "azpwsh": {
-      "data": {
-        "Origin": "",
-        "Segment": {
-          "Index": 0,
-          "Text": ""
-        },
-        "Text": "",
-        "environmentName": "",
-        "homeTenantId": "00000000-0000-0000-0000-000000000000",
-        "id": "00000000-0000-0000-0000-000000000000",
-        "isDefault": false,
-        "managedByTenants": null,
-        "name": "",
-        "state": "",
-        "tenantDisplayName": "",
-        "tenantId": "00000000-0000-0000-0000-000000000000",
-        "user": null
-      },
-      "enabled": false
     }
   },
   "version": 1

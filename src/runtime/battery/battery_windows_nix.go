@@ -1,4 +1,4 @@
-//go:build !darwin && !netbsd && !openbsd && !freebsd
+//go:build !darwin && !netbsd && !openbsd && !freebsd && !js
 
 package battery
 

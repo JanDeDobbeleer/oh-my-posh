@@ -1,8 +1,15 @@
-package upgrade
+// Package tui implements the Bubble Tea spinner and progress bar oh-my-posh
+// shows while it upgrades itself. It lives one level below cli/upgrade
+// because cli/upgrade holds the plain Config, CDN, and Source types that the
+// config and segments packages need, and that import graph also has to
+// compile for wasm — a target with no terminal to draw to, and one that
+// bubbletea itself does not build for at all. Keeping this file here means
+// importing cli/upgrade for its types never drags bubbletea along; this
+// package imports cli/upgrade, never the other way around.
+package tui
 
 import (
 	"fmt"
-	"strings"
 
 	progress_ "github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -10,6 +17,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/progress"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
@@ -20,35 +28,18 @@ var (
 
 type resultMsg string
 
-type stateMsg state
-
-type state int
-
-const (
-	validating state = iota
-	downloading
-	verifying
-	installing
-)
-
-func setState(message state) {
-	if program == nil {
-		return
-	}
-
-	program.Send(stateMsg(message))
-}
+type stateMsg upgrade.Stage
 
 type model struct {
 	error    error
-	config   *Config
+	config   *upgrade.Config
 	spinner  *spinner.Model
 	progress *progress.Model
 	message  string
-	state    state
+	state    upgrade.Stage
 }
 
-func initialModel(cfg *Config) *model {
+func initialModel(cfg *upgrade.Config) *model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
@@ -65,7 +56,7 @@ func (m *model) Init() tea.Cmd {
 }
 
 func (m *model) start() {
-	if err := install(m.config); err != nil {
+	if err := upgrade.Install(m.config); err != nil {
 		m.error = err
 		log.Debug("failed to install")
 		program.Send(resultMsg(fmt.Sprintf(" ❌ upgrade failed: %v", err)))
@@ -98,7 +89,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 
 	case stateMsg:
-		m.state = state(msg)
+		m.state = upgrade.Stage(msg)
 		return m, nil
 
 	case progress.Message:
@@ -123,15 +114,15 @@ func (m *model) View() string {
 	m.spinner.Spinner = spinner.Dot
 
 	switch m.state {
-	case validating:
+	case upgrade.StageValidating:
 		message = "Validating current installation"
-	case downloading:
+	case upgrade.StageDownloading:
 		message = fmt.Sprintf("Downloading %s from %s...\n%s", m.config.Latest, m.config.Source.String(), m.progress.View())
 		return textStyle.Render(message)
-	case verifying:
+	case upgrade.StageVerifying:
 		m.spinner.Spinner = spinner.Moon
 		message = "Verifying download"
-	case installing:
+	case upgrade.StageInstalling:
 		m.spinner.Spinner = spinner.Jump
 		message = "Installing"
 	}
@@ -139,7 +130,30 @@ func (m *model) View() string {
 	return textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
 }
 
-func Run(cfg *Config) error {
+func Run(cfg *upgrade.Config) error {
+	// Relay cli/upgrade's plain Stage/percent callbacks into this program's
+	// message loop. cli/upgrade cannot send tea.Msg values itself without
+	// importing bubbletea, which it must not do, so this program subscribes
+	// on its behalf for the duration of the run.
+	upgrade.SetStageReporter(func(stage upgrade.Stage) {
+		if program == nil {
+			return
+		}
+
+		program.Send(stateMsg(stage))
+	})
+
+	upgrade.SetProgressReporter(func(percent float64) {
+		if program == nil {
+			return
+		}
+
+		program.Send(progress.Message(percent))
+	})
+
+	defer upgrade.SetStageReporter(nil)
+	defer upgrade.SetProgressReporter(nil)
+
 	program = tea.NewProgram(initialModel(cfg))
 	resultModel, _ := program.Run()
 
@@ -150,17 +164,4 @@ func Run(cfg *Config) error {
 	}
 
 	return programModel.error
-}
-
-func IsMajorUpgrade(current, latest string) bool {
-	if current == "" {
-		return false
-	}
-
-	getMajorNumber := func(version string) string {
-		major, _, _ := strings.Cut(version, ".")
-		return major
-	}
-
-	return getMajorNumber(current) != getMajorNumber(latest)
 }

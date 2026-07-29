@@ -1,10 +1,11 @@
-package auth
+package tui
 
 import (
 	"errors"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	runtime_ "github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -96,7 +97,7 @@ func TestYtdma_Authenticate(t *testing.T) {
 			}
 
 			if tc.shouldSetToken {
-				token, ok := cache.Get[string](cache.Device, YTMDATOKEN)
+				token, ok := cache.Get[string](cache.Device, auth.YTMDATOKEN)
 				require.True(t, ok)
 				assert.Equal(t, tc.expectedToken, token)
 			}

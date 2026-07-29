@@ -3,7 +3,6 @@
 package runtime
 
 import (
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -13,13 +12,7 @@ import (
 	"github.com/shirou/gopsutil/v4/host"
 	mem "github.com/shirou/gopsutil/v4/mem"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
-	"golang.org/x/sys/unix"
 )
-
-func (term *Terminal) Root() bool {
-	defer log.Trace(time.Now())
-	return os.Geteuid() == 0
-}
 
 func (term *Terminal) QueryWindowTitles(_, _ string) (string, error) {
 	return "", &NotImplemented{}
@@ -161,11 +154,6 @@ func (term *Terminal) ConvertToLinuxPath(input string) string {
 		return linuxPath
 	}
 	return input
-}
-
-func (term *Terminal) DirIsWritable(input string) bool {
-	defer log.Trace(time.Now(), input)
-	return unix.Access(input, unix.W_OK) == nil
 }
 
 func (term *Terminal) Connection(_ ConnectionType) (*Connection, error) {

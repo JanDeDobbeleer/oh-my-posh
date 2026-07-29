@@ -49,7 +49,7 @@ func downloadAndVerify(cfg *Config) ([]byte, error) {
 		return nil, err
 	}
 
-	setState(verifying)
+	setState(StageVerifying)
 
 	err = verify(cfg, asset, data)
 	if err != nil {

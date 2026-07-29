@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	httplib "net/http"
-	"net/http/httputil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -488,8 +487,7 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 	}
 
 	if term.CmdFlags.Debug {
-		dump, _ := httputil.DumpRequestOut(request, true)
-		log.Debug(string(dump))
+		log.Debug(dumpRequest(request))
 	}
 
 	response, err := http.HTTPClient.Do(request)

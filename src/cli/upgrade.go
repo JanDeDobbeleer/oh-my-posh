@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade/tui"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -135,7 +136,7 @@ var upgradeCmd = &cobra.Command{
 }
 
 func executeUpgrade(cfg *upgrade.Config) int {
-	err := upgrade.Run(cfg)
+	err := tui.Run(cfg)
 	if err == nil {
 		return 0
 	}

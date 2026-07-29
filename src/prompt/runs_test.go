@@ -400,3 +400,51 @@ func TestCapturedRunsWithoutFinalSpace(t *testing.T) {
 	assert.Equal(t, 2, cells, "AB only")
 	assert.Equal(t, "AB", rows[0][len(rows[0])-1].Text)
 }
+
+// TestRPromptBreathingRoomOverride pins the render-only margin. canWriteRightBlock keeps
+// DefaultRPromptBreathingRoom cells free between the prompt and an rprompt so a command being
+// typed does not run into it - a margin nothing types into an exported image, which is why
+// render.Config asks for a smaller one. The width here is chosen to sit in the gap: wide enough
+// to clear 20 cells of room, too narrow to clear 30.
+func TestRPromptBreathingRoomOverride(t *testing.T) {
+	newEngineWithRoom := func(room int) *Engine {
+		flags := &runtime.Flags{
+			Shell:         shell.GENERIC,
+			TerminalWidth: 30,
+			IsPrimary:     true,
+		}
+
+		env := &runtime.Terminal{}
+		env.Init(flags)
+
+		cfg := &config.Config{
+			Blocks: []*config.Block{
+				{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments: []*config.Segment{
+						{Type: "text", Template: "AB", Foreground: "red", Background: "blue"},
+					},
+				},
+				{
+					Type: config.RPrompt,
+					Segments: []*config.Segment{
+						{Type: "text", Template: "RP", Foreground: "green", Background: "black"},
+					},
+				},
+			},
+		}
+
+		eng := newEngine(cfg, env)
+		eng.RPromptBreathingRoom = room
+
+		return eng
+	}
+
+	saveCaptureRunsGlobal(t)
+	terminal.CaptureRuns = true
+
+	// 30 wide, a 2-cell prompt and a 2-cell rprompt leaves 26 cells: past 20, short of 30.
+	assert.NotContains(t, newEngineWithRoom(0).Primary(), "RP", "the default 30 does not fit here")
+	assert.Contains(t, newEngineWithRoom(20).Primary(), "RP", "20 does")
+}

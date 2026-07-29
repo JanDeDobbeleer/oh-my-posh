@@ -11,8 +11,11 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
-func install(cfg *Config) error {
-	setState(validating)
+// Install downloads, verifies, and swaps in the latest release, replacing
+// the running executable. It is exported because the terminal UI in
+// cli/upgrade/tui drives it directly; this package has no UI of its own.
+func Install(cfg *Config) error {
+	setState(StageValidating)
 
 	executable, err := os.Executable()
 	if err != nil {
@@ -30,7 +33,7 @@ func install(cfg *Config) error {
 		return errors.New("we do not have permissions to update")
 	}
 
-	setState(downloading)
+	setState(StageDownloading)
 
 	data, err := downloadAndVerify(cfg)
 	if err != nil {
@@ -38,7 +41,7 @@ func install(cfg *Config) error {
 		return err
 	}
 
-	setState(installing)
+	setState(StageInstalling)
 
 	_, err = io.Copy(fp, bytes.NewReader(data))
 	// windows will have a lock when we do not close the file

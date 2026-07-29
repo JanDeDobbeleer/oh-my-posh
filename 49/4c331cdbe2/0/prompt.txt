@@ -1,0 +1,5 @@
+I committed it. I want you to rework the commits before jumping to the next item. We already have a lot but looking at the changes only a few topics (svg and studio). Reqork the branch so we only have larger commits based on those groups. Analyse which groups first, let me know and you can start once agreed.
+
+---
+
+six groups, drop the compare harness, keep the docs commit standalone. Should we also drop the Golden tests because that's the same as the PNG compare, or am I mistaken?

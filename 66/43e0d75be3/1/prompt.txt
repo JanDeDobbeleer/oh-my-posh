@@ -1,0 +1,112 @@
+it did find this angle:
+
+Only one construction site in the whole reachable set — runtime/http/http.go:17-26. Now let me scope the dsc and terraform stubs, then run overlay experiments.
+
+
+Ran 8 commands
+The keys got mangled by shell escaping. Let me write the generator as a file instead.
+
+
+Created gen.js, ran 2 commands
++12
+-0
+Confirmed — httputil.DumpRequestOut (runtime/terminal.go:491) internally builds a Transport, keeping the whole TLS stack alive. Let me patch that in the overlay too.
+
+
+Ran 13 commands, edited a file, created a file, read a file
++43
+-0
+Let me check cli/upgrade/config.go's net/http usage, then generate the full "nohttp" overlay.
+
+
+Ran 2 commands
+Now I'll generate the full "nohttp" overlay set.
+
+
+Created and edited gen-nohttp.js, ran 4 commands
++172
+-0
+v-nohttp: 21,030,888 raw (−28% vs baseline). Let me compress it and analyze what's still left.
+
+---
+
+do we need the  httputil.DumpRequestOut anyways in the "production" build?
+
+---
+
+<task-notification>
+<task-id>af981414f2a7285ee</task-id>
+<tool-use-id>REDACTED</tool-use-id>
+<output-file>C:\Users\jande\AppData\Local\Temp\claude\D--oh-my-posh\995a1b1c-8cc6-4f84-bd7d-278bbd3e6058\tasks\af981414f2a7285ee.output</output-file>
+<status>completed</status>
+<summary>Agent "Measure wasm size reduction options" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>Working tree is clean — only the five pre-existing modified files plus the untracked findings file (expected; `website/static/omp.wasm` was never touched, all probe outputs went to the scratchpad). The investigation is complete and everything is persisted in `D:\oh-my-posh\.wasm-size-findings.md`.
+
+## Summary of findings
+
+**Measurements** (go1.26.5, `-s -w -trimpath`, gzip -9 / brotli -q 11):
+
+| Variant | raw | gzip | brotli |
+|---|---|---|---|
+| baseline | 29,351,525 | 6,586,632 | 4,550,858 |
+| nohttp | 26,092,966 | 5,903,319 | 4,092,529 |
+| empty registry | 25,125,913 | 5,766,174 | 4,016,723 |
+| nohttp + registry | 21,863,927 | 5,078,972 | 3,552,801 |
+| + dsc stub | 21,607,586 | 5,024,696 | 3,515,305 (−22.8%) |
+
+**Key corrections to the prior run's picture:**
+- The prior "nohttp = 21,030,888" claim was wrong: full net/http+TLS elimination measures 26.09 MB. The 21 MB figure matches nohttp+registry combined. HTTP is worth 3.26 MB raw, not 8 MB.
+- Savings from nohttp and the empty registry are additive within 3.4 KB.
+- The dsc→cobra→jsonschema→yaml/v4 chain is only 0.26 MB raw / 37 KB brotli.
+- `go tool nm` cannot parse wasm at all (go1.26) — attribution was done via a native proxy binary built from an overlay-added `src/attrib/main.go` mirroring wasm/main.go. TLS removal verified there: 2,469 bytes of tls stringers remain, zero transport/handshake symbols.
+- The registry's gob init (117 `gob.Register` calls) pins segments just as hard as the map — emptying the map alone is insufficient.
+- Bonus: go-runewidth's `strictWidthLUT` is 2.2 MB of BSS filled by ~2.23M function calls in package init at every wasm instantiation — a startup-latency issue, not a size issue.
+
+**Recommendation order:** (1) nohttp via `js &amp;&amp; wasm`-tagged stubs — low effort/risk, do first; (2) registry emptying as part of the planned maps-fed-engine redesign — biggest win but gated on the data-only path since segment detection still runs in-browser; (3) dsc stub opportunistically; wasm-opt unmeasured (no offline binaryen); TinyGo not installed, assessed as unproven/high-risk given the reflect-heavy template/sprig/yaml surface — nothing was compiled, so no claims made.</result>
+<usage><subagent_tokens>116511</subagent_tokens><tool_uses>81</tool_uses><duration_ms>1392768</duration_ms></usage>
+</task-notification>
+
+---
+
+do everything
+
+---
+
+runewidth stays you say, but does it actually serve a purpose in our usage? What are we really doing with it?
+
+---
+
+Are the disagreements in a range we should care about?
+
+---
+
+continue, then replace it entirely
+
+---
+
+continue, then replace it entirely
+
+---
+
+yes, commit and fold the catalog fix back
+
+---
+
+delete the backup branch
+
+---
+
+create a plan and execute the The empty segment registry. replace the og:image with the new rendered image.
+
+---
+
+commit and continue with phase 2, add the changes into the right comits if relevant, keep separate what needs to stay separate logically
+
+---
+
+the default templat eisn't relevant, we do not support configurations without a template.
+
+---
+
+option 1, fix the themes and revert the table

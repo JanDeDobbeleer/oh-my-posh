@@ -161,14 +161,25 @@ func (s Store) close() {
 		return
 	}
 
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Error(err)
-		}
-	}()
-
 	enc := gob.NewEncoder(file)
 	if err := enc.Encode(cache); err != nil {
+		log.Error(err)
+	}
+
+	if err := file.Close(); err != nil {
+		log.Error(err)
+	}
+
+	if s != Session {
+		return
+	}
+
+	// On Windows, the mmap-backed write path doesn't reliably update the
+	// file's on-disk last-write-time (per Microsoft's docs), which can lead
+	// to an actively-used session cache being mistaken for stale and swept
+	// up by cache.Clear(). Explicitly bump the mtime now that the file is
+	// closed (and the mmap unmap/flush on Windows has happened).
+	if err := os.Chtimes(store.filePath, time.Now(), time.Now()); err != nil {
 		log.Error(err)
 	}
 }

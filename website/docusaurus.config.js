@@ -28,8 +28,17 @@ export default {
   ],
   themeConfig: {
     metadata: [
-      {property: 'og:image', content: 'https://ohmyposh.dev/img/hero.png'},
+      // A raster, unlike everything else the site shows: link previews will not render an SVG.
+      // Composed from the same rendered default prompt the homepage inlines, by
+      // scripts/render-og-image.mjs - which is run by hand, not by the build, since it needs a
+      // headless browser to pick up the real font. Re-run it when the default config changes.
+      {property: 'og:image', content: 'https://ohmyposh.dev/img/og-image.png'},
+      {property: 'og:image:width', content: '1200'},
+      {property: 'og:image:height', content: '630'},
       {property: 'og:type', content: 'website'},
+      // Without this the card renders as a thumbnail beside the text rather than full width.
+      {name: 'twitter:card', content: 'summary_large_image'},
+      {name: 'twitter:image', content: 'https://ohmyposh.dev/img/og-image.png'},
     ],
     colorMode: {
       defaultMode: 'light',

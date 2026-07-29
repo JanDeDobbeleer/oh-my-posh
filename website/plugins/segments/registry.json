@@ -1,0 +1,470 @@
+[
+  {
+    "type": "angular",
+    "docId": "angular"
+  },
+  {
+    "type": "argocd",
+    "docId": "argocd"
+  },
+  {
+    "type": "aspire",
+    "docId": "aspire"
+  },
+  {
+    "type": "aurelia",
+    "docId": "aurelia"
+  },
+  {
+    "type": "aws",
+    "docId": "aws"
+  },
+  {
+    "type": "az",
+    "docId": "az"
+  },
+  {
+    "type": "azd",
+    "docId": "azd"
+  },
+  {
+    "type": "azfunc",
+    "docId": "azfunc"
+  },
+  {
+    "type": "battery",
+    "docId": "battery"
+  },
+  {
+    "type": "bazel",
+    "docId": "bazel"
+  },
+  {
+    "type": "brewfather",
+    "docId": "brewfather"
+  },
+  {
+    "type": "buf",
+    "docId": "buf"
+  },
+  {
+    "type": "bun",
+    "docId": "bun"
+  },
+  {
+    "type": "carbonintensity",
+    "docId": "carbonintensity"
+  },
+  {
+    "type": "cds",
+    "docId": "cds"
+  },
+  {
+    "type": "cf",
+    "docId": "cf"
+  },
+  {
+    "type": "cftarget",
+    "docId": "cftarget"
+  },
+  {
+    "type": "claude",
+    "docId": "claude"
+  },
+  {
+    "type": "clojure",
+    "docId": "clojure"
+  },
+  {
+    "type": "cmake",
+    "docId": "cmake"
+  },
+  {
+    "type": "connection",
+    "docId": "connection"
+  },
+  {
+    "type": "copilot",
+    "docId": "copilot"
+  },
+  {
+    "type": "copilot_cli",
+    "docId": "copilot-cli"
+  },
+  {
+    "type": "crystal",
+    "docId": "crystal"
+  },
+  {
+    "type": "dart",
+    "docId": "dart"
+  },
+  {
+    "type": "deno",
+    "docId": "deno"
+  },
+  {
+    "type": "docker",
+    "docId": "docker"
+  },
+  {
+    "type": "dotnet",
+    "docId": "dotnet"
+  },
+  {
+    "type": "dvc",
+    "docId": "dvc"
+  },
+  {
+    "type": "elixir",
+    "docId": "elixir"
+  },
+  {
+    "type": "executiontime",
+    "docId": "executiontime"
+  },
+  {
+    "type": "firebase",
+    "docId": "firebase"
+  },
+  {
+    "type": "flutter",
+    "docId": "flutter"
+  },
+  {
+    "type": "fortran",
+    "docId": "fortran"
+  },
+  {
+    "type": "fossil",
+    "docId": "fossil"
+  },
+  {
+    "type": "gcp",
+    "docId": "gcp"
+  },
+  {
+    "type": "git",
+    "docId": "git"
+  },
+  {
+    "type": "gitversion",
+    "docId": "gitversion"
+  },
+  {
+    "type": "go",
+    "docId": "golang"
+  },
+  {
+    "type": "gradle",
+    "docId": "gradle"
+  },
+  {
+    "type": "haskell",
+    "docId": "haskell"
+  },
+  {
+    "type": "helm",
+    "docId": "helm"
+  },
+  {
+    "type": "http",
+    "docId": "http"
+  },
+  {
+    "type": "ipify",
+    "docId": "ipify"
+  },
+  {
+    "type": "java",
+    "docId": "java"
+  },
+  {
+    "type": "jujutsu",
+    "docId": "jujutsu"
+  },
+  {
+    "type": "julia",
+    "docId": "julia"
+  },
+  {
+    "type": "kotlin",
+    "docId": "kotlin"
+  },
+  {
+    "type": "kubectl",
+    "docId": "kubectl"
+  },
+  {
+    "type": "language",
+    "docId": "language"
+  },
+  {
+    "type": "lastfm",
+    "docId": "lastfm"
+  },
+  {
+    "type": "lua",
+    "docId": "lua"
+  },
+  {
+    "type": "mercurial",
+    "docId": "mercurial"
+  },
+  {
+    "type": "mojo",
+    "docId": "mojo"
+  },
+  {
+    "type": "mvn",
+    "docId": "mvn"
+  },
+  {
+    "type": "nba",
+    "docId": "nba"
+  },
+  {
+    "type": "nbgv",
+    "docId": "nbgv"
+  },
+  {
+    "type": "nightscout",
+    "docId": "nightscout"
+  },
+  {
+    "type": "nim",
+    "docId": "nim"
+  },
+  {
+    "type": "nix-shell",
+    "docId": "nix-shell"
+  },
+  {
+    "type": "node",
+    "docId": "node"
+  },
+  {
+    "type": "npm",
+    "docId": "npm"
+  },
+  {
+    "type": "nx",
+    "docId": "nx"
+  },
+  {
+    "type": "ocaml",
+    "docId": "ocaml"
+  },
+  {
+    "type": "orthodoxcal",
+    "docId": "orthodoxcal"
+  },
+  {
+    "type": "os",
+    "docId": "os"
+  },
+  {
+    "type": "owm",
+    "docId": "owm"
+  },
+  {
+    "type": "path",
+    "docId": "path"
+  },
+  {
+    "type": "perl",
+    "docId": "perl"
+  },
+  {
+    "type": "php",
+    "docId": "php"
+  },
+  {
+    "type": "plastic",
+    "docId": "plastic"
+  },
+  {
+    "type": "pnpm",
+    "docId": "pnpm"
+  },
+  {
+    "type": "project",
+    "docId": "project"
+  },
+  {
+    "type": "pulumi",
+    "docId": "pulumi"
+  },
+  {
+    "type": "python",
+    "docId": "python"
+  },
+  {
+    "type": "quasar",
+    "docId": "quasar"
+  },
+  {
+    "type": "r",
+    "docId": "r"
+  },
+  {
+    "type": "ramadan",
+    "docId": "ramadan"
+  },
+  {
+    "type": "react",
+    "docId": "react"
+  },
+  {
+    "type": "root",
+    "docId": "root"
+  },
+  {
+    "type": "ruby",
+    "docId": "ruby"
+  },
+  {
+    "type": "rust",
+    "docId": "rust"
+  },
+  {
+    "type": "sapling",
+    "docId": "sapling"
+  },
+  {
+    "type": "session",
+    "docId": "session"
+  },
+  {
+    "type": "shell",
+    "docId": "shell"
+  },
+  {
+    "type": "sitecore",
+    "docId": "sitecore"
+  },
+  {
+    "type": "spotify",
+    "docId": "spotify"
+  },
+  {
+    "type": "status",
+    "docId": "status"
+  },
+  {
+    "type": "strava",
+    "docId": "strava"
+  },
+  {
+    "type": "svelte",
+    "docId": "svelte"
+  },
+  {
+    "type": "svn",
+    "docId": "svn"
+  },
+  {
+    "type": "swift",
+    "docId": "swift"
+  },
+  {
+    "type": "sysinfo",
+    "docId": "sysinfo"
+  },
+  {
+    "type": "talosctl",
+    "docId": "talosctl"
+  },
+  {
+    "type": "taskwarrior",
+    "docId": "taskwarrior"
+  },
+  {
+    "type": "tauri",
+    "docId": "tauri"
+  },
+  {
+    "type": "terraform",
+    "docId": "terraform"
+  },
+  {
+    "type": "text",
+    "docId": "text"
+  },
+  {
+    "type": "time",
+    "docId": "time"
+  },
+  {
+    "type": "todoist",
+    "docId": "todoist"
+  },
+  {
+    "type": "ui5tooling",
+    "docId": "ui5tooling"
+  },
+  {
+    "type": "umbraco",
+    "docId": "umbraco"
+  },
+  {
+    "type": "unity",
+    "docId": "unity"
+  },
+  {
+    "type": "uno",
+    "docId": "uno"
+  },
+  {
+    "type": "upgrade",
+    "docId": "upgrade"
+  },
+  {
+    "type": "v",
+    "docId": "v"
+  },
+  {
+    "type": "vala",
+    "docId": "vala"
+  },
+  {
+    "type": "vimode",
+    "docId": "vimode"
+  },
+  {
+    "type": "wakatime",
+    "docId": "wakatime"
+  },
+  {
+    "type": "winget",
+    "docId": "winget"
+  },
+  {
+    "type": "winreg",
+    "docId": "winreg"
+  },
+  {
+    "type": "withings",
+    "docId": "withings"
+  },
+  {
+    "type": "xmake",
+    "docId": "xmake"
+  },
+  {
+    "type": "yarn",
+    "docId": "yarn"
+  },
+  {
+    "type": "ytm",
+    "docId": "ytm"
+  },
+  {
+    "type": "zig",
+    "docId": "zig"
+  },
+  {
+    "type": "zvm",
+    "docId": "zvm"
+  }
+]

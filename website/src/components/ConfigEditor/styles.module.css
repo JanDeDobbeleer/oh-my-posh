@@ -1,0 +1,195 @@
+/* Extracted from Studio/styles.module.css - see that file's own .studio/.preview rules for the
+   pane this sits beside. Both consumers (the studio, each segment doc's editor - see index.js)
+   wrap this in their own layout; this module only styles the editor itself. */
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-1);
+  min-width: 0;
+}
+
+/* Format tabs flush left against the editor window below them, Copy/Add to Studio (a segment
+   doc only) pushed to the right by space-between. align-items is center rather than baseline:
+   the tabs carry Infima's 3px active underline and the action pills carry a border, so aligning
+   the two on their text baselines left them visibly off by the difference. */
+.paneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--omp-space-2);
+}
+
+/* The format switch reuses Infima's own .tabs/.tabs__item/.tabs__item--active - the same classes
+   @theme/Tabs renders (node_modules/@docusaurus/theme-classic/lib/theme/Tabs/index.js) - so it is
+   pixel-identical to the underlined-active-tab look every segment doc already uses for its
+   json/yaml/toml code blocks, rather than an approximation. Only the identity of the *element*
+   differs (a plain <ul>/<li> here instead of Tabs' own TabsProvider/TabItem machinery, since
+   there is no separate panel per tab to show/hide - the one editor's content and language just
+   change). formatTabs trims Infima's default spacing, which assumes the tab strip owns the full
+   width of a content column; here it is one control among several in a header row. */
+.formatTabs {
+  margin: 0;
+  min-width: 0;
+  list-style: none;
+}
+
+/* The tab strip is a real <ul>/<li> inside a doc page, so `.markdown li + li { margin-top:
+   var(--ifm-list-item-margin) }` - the docs' own spacing between list items - applied to it,
+   pushing yaml and toml 4px below json, which is a first child and therefore exempt. Zeroed
+   here; the `ul` type selector is what wins the specificity tie against that rule. */
+ul.formatTabs li + li {
+  margin-top: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: baseline;
+  gap: var(--omp-space-1);
+}
+
+/* Visually hidden but still in the accessibility tree - the syntax-highlighted editor's real
+   input is react-simple-code-editor's own <textarea>, which can't take a plain aria-label prop,
+   so a proper associated <label> stands in for it instead. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The window chrome around the editor: same border/radius recipe as the preview pane beside it
+   (both trace back to the shared --omp-card-* tokens in src/css/custom.css), so the two read as
+   one family instead of the preview looking "finished" and the editor looking like a bare
+   textarea. overflow: hidden clips the chrome bar and the editor body to the rounded corners. */
+.editorWindow {
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  overflow: hidden;
+}
+
+.editorWindow:focus-within {
+  border-color: var(--ifm-color-primary);
+}
+
+/* Purely decorative title bar, styled after the traffic-light window controls of a native editor
+   window - it has nothing to click and nothing to announce, hence aria-hidden in index.js. */
+.editorChrome {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: var(--omp-space-1) var(--omp-space-2);
+  background: var(--omp-card-background);
+  border-bottom: 1px solid var(--omp-card-border-color);
+}
+
+.chromeDot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--ifm-color-emphasis-300);
+}
+
+/* position: relative makes this the gutter's containing block - see .gutter. */
+.editorBody {
+  --omp-gutter-width: 2.75rem;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+/* The line-number gutter. It is a sibling of .editor, not nested inside it, specifically so it
+   never shares .editor's own horizontal scrollbar (see .noWrap below) - long lines scroll the
+   code without dragging the numbers sideways with them.
+
+   Taken out of flow, pinned top-to-bottom, rather than left as a flex item: its height then comes
+   from .editorBody, which is .editor's height, however that height was arrived at - grown by a
+   keystroke or dragged down by the resize handle. As an in-flow item it did the opposite, since a
+   row's height is its tallest item: shrink the editor to 200px with 48 lines of numbers beside it
+   and the gutter kept the row 1176px tall. Being out of flow also means nothing it does can
+   resize .editor, which is what made the earlier ResizeObserver-driven height sync (see index.js)
+   feed back into itself. .editor's margin-left reserves the column it now floats over.
+
+   Font, size and line-height are identical to .editor's so line N's number lands next to code
+   row N; padding-top/bottom match .editor's padding so the first number aligns with the first
+   code line. Vertical scrolling is mirrored from .editor in index.js. */
+.gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: var(--omp-gutter-width);
+  overflow: hidden;
+  padding: var(--omp-space-2) var(--omp-space-2) var(--omp-space-2) 0;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-text-body);
+  line-height: 1.5;
+  text-align: right;
+  color: var(--omp-text-secondary);
+  border-right: 1px solid var(--omp-card-border-color);
+  user-select: none;
+}
+
+.gutterLine {
+  font-variant-numeric: tabular-nums;
+}
+
+/* No min-height: react-simple-code-editor's <pre> stays in normal flow (only the <textarea> is
+   absolutely positioned over it), so the element is already exactly as tall as the code it holds.
+   A fixed 22rem left a short segment config - most of them are under ten lines - sitting above
+   four or five empty rows. Every config text now ends in exactly one newline (see serialize.js's
+   stringifyConfig), which renders as the single blank row under the last character. The resize
+   handle still lets a reader make it taller. overflow: auto is set inline (see index.js) so
+   scrolling still works the way it did on a bare textarea. Background and text
+   color come from the active Prism theme instead of the card tokens (see index.js's
+   DARK_CODE_THEME/LIGHT_CODE_THEME) - matching a real code block's own colors rather than the
+   surrounding card chrome, the same way the docs' code fences do. Border and radius live on
+   .editorWindow instead, since the gutter sits inside the same frame and a border around .editor
+   alone would draw a seam between the two. */
+/* No padding here on purpose: it is passed to the Editor's own `padding` prop instead (see
+   index.js), because this element's children are absolutely positioned and would ignore it. */
+.editor {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--omp-gutter-width);
+  box-sizing: border-box;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-text-body);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.editor:focus-within {
+  outline: none;
+}
+
+/* Forces one logical line to one visual row (react-simple-code-editor's default whitespace is
+   pre-wrap), which is what lets the gutter map a line number to a fixed pixel offset instead of
+   having to measure wrapped-row heights. Applied via preClassName/textareaClassName (index.js), so
+   it lands on the actual pre/textarea elements rather than the outer .editor container - the
+   library sets white-space inline on both, hence !important to win over that. Long lines scroll
+   horizontally within .editor instead (its own overflow: auto, set inline in index.js). */
+.noWrap {
+  white-space: pre !important;
+}
+
+/* Left as a literal size rather than --omp-text-body: this is a mobile-only reduction on top of
+   the editor's own --omp-text-body, not one of the shared scale's steps. */
+@media (max-width: 700px) {
+  .editor {
+    font-size: 0.75rem;
+  }
+
+  .editorBody {
+    --omp-gutter-width: 2.25rem;
+  }
+
+  .gutter {
+    font-size: 0.75rem;
+  }
+}

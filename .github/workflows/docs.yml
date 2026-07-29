@@ -39,6 +39,17 @@ jobs:
           npm install
           npm run themes
           cd ..
+      - name: Render segment previews 🔎
+        run: |
+          export PATH="$PWD/src/bin:$PATH"
+          cd website
+          npm run segment-previews
+          cd ..
+      - name: Build studio wasm module 🧩
+        run: |
+          cd website
+          npm run wasm
+          cd ..
       - name: Copy schema for MCP validator 📋
         run: |
           mkdir -p website/api/data

@@ -143,21 +143,18 @@ Anywhere a **Standard color** is expected, you can instead use `darken(color, pe
   }}
 />
 
-`percent` is a number from `0` to `100`. It shifts the color's lightness toward black
-(`darken`) or white (`lighten`) by that share of the remaining distance to it, in the same HCL
-color space `dark-gradient`/`light-gradient` use, so hue stays exact and the result doesn't read
-as muddy. `0` leaves the color unchanged, `100` reaches (near-)black or (near-)white.
+`percent` runs from `0` to `100` and sets how far to travel toward black or white. `0` leaves the
+color unchanged, `100` reaches near-black or near-white. The shift happens in the same HCL color
+space `dark-gradient` and `light-gradient` use, which holds the hue exact instead of muddying it.
 
-The color argument must resolve to a hex color: a literal hex value (`darken(#3465A4, 20)`) or a
+The color argument must resolve to a hex color, either a literal value (`darken(#3465A4, 20)`) or a
 [Palette reference][palette] to one (`darken(p:accent, 20)`). **ANSI color names** (`green`,
-`lightBlue`), **256 color palette numbers**, and keywords (`foreground`, `accent`, ...) are not
-supported and render no color, with the reason logged in `oh-my-posh debug` output.
+`lightBlue`), **256 color palette numbers** and keywords such as `foreground` and `accent` render no
+color. Run `oh-my-posh debug` to see the reason.
 
-This is a deliberate limitation, not a missing feature: a named ANSI/terminal color's actual RGB
-value is decided by the terminal's own color scheme, and oh-my-posh has no reliable, fast way to
-ask the terminal what that value is on every prompt render. If you want a color that's a shade of
-one of your terminal's named colors, define its real hex value once as a
-[Palette][palette] entry and shade that:
+Those names carry no fixed RGB value. Your terminal's color scheme decides what `green` looks like,
+and Oh My Posh cannot ask the terminal for that value fast enough to do it on every render. To shade
+one of them, write its hex value into your [Palette][palette] once and shade the palette entry:
 
 <Config
   data={{
@@ -171,9 +168,9 @@ one of your terminal's named colors, define its real hex value once as a
   }}
 />
 
-`darken`/`lighten` calls cannot be nested inside each other or inside a `linear-gradient`/
-`dark-gradient`/`light-gradient`, and do not themselves support gradient stops or segment-context
-keywords like `parentBackground`.
+A `darken` or `lighten` call takes a color, nothing more. You cannot nest one inside another, place
+one inside a `linear-gradient`, `dark-gradient` or `light-gradient`, or pass it gradient stops or
+segment keywords such as `parentBackground`.
 
 ## Color templates
 

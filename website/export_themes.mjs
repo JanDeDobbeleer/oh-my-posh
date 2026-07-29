@@ -27,6 +27,13 @@ const CONFIG = {
   // build/ output as dead weight. Regenerated on every build (see the "themes" npm
   // script) and gitignored, exactly like the PNGs it replaces.
   MANIFEST_FILE: join(__dirname, 'generated/themes.json'),
+  // The prompt the homepage shows, rendered from oh-my-posh's own built-in default config
+  // (src/config/default.go) rather than any bundled theme, so it is exactly what a reader gets
+  // after running the install command directly above it. Written on its own rather than read out
+  // of the manifest: that file is ~500KB of inlined SVG, and a plain import of it from
+  // src/pages/index.js would put every one of the 124 themes into the landing page's own chunk -
+  // see plugins/themes/index.js on why the gallery pays that cost only on its own page.
+  HERO_FILE: join(__dirname, 'generated/hero.json'),
   CONCURRENCY: 8,
   THEME_EXTENSIONS: ['.omp.json', '.omp.toml', '.omp.yaml'],
   SEGMENT_DATA_FILE: join(__dirname, 'segment_data.json'),
@@ -188,12 +195,15 @@ async function buildDataFileWithTrending() {
 // when it contains spaces.
 const OMP_BIN = process.env.OMP_BIN || 'oh-my-posh';
 
+// configPath is null for the homepage's own render: oh-my-posh with no --config falls back to
+// the config it builds in Go (src/config/default.go), which is the prompt someone sees before
+// they have configured anything. There is no file to point at, and no bundled theme matches it.
 function buildPoshArgs(configPath, outputPath) {
   return [
     'config',
     'export',
     'image',
-    `--config=${configPath}`,
+    ...(configPath ? [`--config=${configPath}`] : []),
     `--output=${outputPath}`,
     `--font-family=${CONFIG.FONT_FAMILY}`,
     `--cell-width=${CONFIG.CELL_WIDTH}`,
@@ -269,37 +279,42 @@ async function exportTheme(themeFile) {
   // the svg only needs to exist long enough to be read back into the manifest, so
   // it lives in the OS temp dir rather than under website/, leaving nothing behind
   // for git status to notice.
+  const svg = await renderSVG(configPath, themeFile);
+
+  console.info(`Exported ${themeFile}`);
+
+  return { entry: buildManifestEntry(themeName, themeFile, svg), fileName: themeFile };
+}
+
+// One render, returning the SVG. label only ever appears in messages, so the caller can name
+// what it asked for - a theme file, or the built-in default config, which has no file at all.
+async function renderSVG(configPath, label) {
+  // A per-run scratch path, like buildDataFileWithTrending's temp data file: the svg only needs
+  // to exist long enough to be read back, so it lives in the OS temp dir rather than under
+  // website/, leaving nothing behind for git status to notice.
   const outputPath = join(tmpdir(), `omp-theme-${randomUUID()}.svg`);
-  const poshArgs = buildPoshArgs(configPath, outputPath);
 
   let stderr;
 
   try {
-    ({ stderr } = await execFileAsync(OMP_BIN, poshArgs));
+    ({ stderr } = await execFileAsync(OMP_BIN, buildPoshArgs(configPath, outputPath)));
   } catch (error) {
-    // execFileAsync only rejects on a non-zero exit code - a genuine render failure,
-    // not incidental stderr output. Fail the build loudly instead of silently
-    // dropping the theme from the page.
-    throw new Error(`Failed to export theme ${themeFile}: ${error.message}`);
+    // execFileAsync only rejects on a non-zero exit code - a genuine render failure, not
+    // incidental stderr output. Fail the build loudly instead of silently dropping the render.
+    throw new Error(`Failed to export ${label}: ${error.message}`);
   }
 
   if (stderr) {
     // A non-zero exit already threw above, so stderr here is incidental (e.g. the
     // hand-written-data-file warning) and must not fail the build.
-    console.warn(`${themeFile}: ${stderr.trim()}`);
+    console.warn(`${label}: ${stderr.trim()}`);
   }
 
-  let svg;
-
   try {
-    svg = await promises.readFile(outputPath, 'utf8');
+    return await promises.readFile(outputPath, 'utf8');
   } finally {
     await promises.unlink(outputPath).catch(() => {});
   }
-
-  console.info(`Exported ${themeFile}`);
-
-  return { entry: buildManifestEntry(themeName, themeFile, svg), fileName: themeFile };
 }
 
 async function ensureDirectories() {
@@ -340,6 +355,12 @@ async function main() {
     await promises.writeFile(CONFIG.MANIFEST_FILE, JSON.stringify(manifest));
 
     console.log(`Successfully exported ${manifest.length} themes to ${CONFIG.MANIFEST_FILE}`);
+
+    const heroSVG = await renderSVG(null, 'the default config');
+
+    await promises.writeFile(CONFIG.HERO_FILE, JSON.stringify({ svg: heroSVG }));
+
+    console.log(`Wrote the default config to ${CONFIG.HERO_FILE} for the homepage`);
 
     // buildDataFileWithTrending only returns a path other than the committed file when it
     // actually wrote a scratch copy with the trending track baked in (see its own comment); on any

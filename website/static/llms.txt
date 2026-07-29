@@ -2,19 +2,20 @@
 
 > Oh My Posh is the most customizable and fastest prompt theme engine for any shell. It renders
 > beautifully themed terminal prompts displaying Git status, language versions, cloud context,
-> system metrics, and 180+ other segments — on Windows, macOS, and Linux.
+> system metrics and more — 117 segments in all — on Windows, macOS, and Linux.
 
 ## Docs
 
-- [Getting Started](/docs/) — install Oh My Posh in minutes
+- [Docs hub](/docs/) — Getting started landing page, linking to installation and shell setup
 - [Windows Installation](/docs/installation/windows) — winget, chocolatey, or manual install
 - [macOS Installation](/docs/installation/macos) — Homebrew or MacPorts
 - [Linux Installation](/docs/installation/linux) — curl install script
 - [Shell Setup](/docs/installation/prompt) — per-shell init snippets
 - [Fonts](/docs/installation/fonts) — install a Nerd Font for icons
 - [Themes Gallery](/docs/themes) — browse all bundled themes
-- [Configuration Reference](/docs/configuration/overview) — full JSON/YAML/TOML schema
-- [Segments Reference](/docs/segments/overview) — all 180+ available segments
+- [Configuration Reference](/docs/configuration/introduction) — full JSON/YAML/TOML schema
+- [Segments Reference](/docs/segments/overview) — all 117 available segments, searchable and filterable by category and setup
+- [Studio](/docs/studio) — edit a config and see the prompt render live in the browser
 - [FAQ](/docs/faq) — common issues and solutions
 
 ## Skills

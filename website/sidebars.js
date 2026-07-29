@@ -2,13 +2,25 @@ export default {
   docs: [
     {
       type: "category",
-      label: "💡 Getting Started",
+      label: "Getting started",
       collapsed: false,
+      link: {
+        type: "generated-index",
+        title: "Getting started",
+        description: "Install Oh My Posh and set up your shell.",
+        slug: "/",
+      },
       items: [
         {
           type: "category",
-          label: "📦 Installation",
+          label: "Installation",
           collapsed: false,
+          link: {
+            type: "generated-index",
+            title: "Installation",
+            description: "Install Oh My Posh on Windows, macOS, or Linux.",
+            slug: "/installation",
+              },
           items: [
             "installation/windows",
             "installation/macos",
@@ -23,37 +35,77 @@ export default {
     },
     {
       type: "category",
-      label: "⚙️ Configuration",
+      label: "Configuration",
       link: {
-        type: 'doc',
-        id: 'configuration/introduction',
+        type: "doc",
+        id: "configuration/introduction",
       },
+      // Split into what you have to understand and what you can switch on,
+      // because a flat list of fifteen gave no clue which was which. Purely a
+      // sidebar regrouping: every document keeps its id and therefore its URL,
+      // which matters because this site has no client-redirects plugin, so a
+      // moved file is a permanently dead link.
       items: [
-        "configuration/general",
-        "configuration/block",
-        "configuration/segment",
-        "configuration/title",
-        "configuration/colors",
-        "configuration/templates",
-        "configuration/data",
-        "configuration/secondary-prompt",
-        "configuration/debug-prompt",
-        "configuration/transient",
-        "configuration/streaming",
-        "configuration/line-error",
-        "configuration/tooltips",
-        "configuration/sample",
+        {
+          type: "category",
+          label: "Concepts",
+          collapsed: false,
+          link: {
+            type: "generated-index",
+            title: "Concepts",
+            description: "The model a config is built from.",
+            slug: "/configuration/concepts",
+          },
+          items: [
+            "configuration/general",
+            "configuration/block",
+            "configuration/segment",
+            "configuration/colors",
+            "configuration/templates",
+            "configuration/title",
+          ],
+        },
+        {
+          type: "category",
+          label: "Features",
+          collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Features",
+            description: "Optional behaviour you can turn on.",
+            slug: "/configuration/features",
+          },
+          items: [
+            "configuration/transient",
+            "configuration/tooltips",
+            "configuration/streaming",
+            "configuration/secondary-prompt",
+            "configuration/debug-prompt",
+            "configuration/line-error",
+            "configuration/data",
+            "configuration/sample",
+          ],
+        },
       ],
     },
     {
       type: "category",
-      label: "🌟 Segments",
+      label: "Segments",
       collapsed: true,
+      link: {
+        type: "doc",
+        id: "segments/overview",
+      },
       items: [
         {
           type: "category",
-          label: "🧰 CLI",
+          label: "CLI",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "CLI",
+            description: "Segments for command-line tools and build systems.",
+          },
           items: [
             "segments/cli/angular",
             "segments/cli/argocd",
@@ -89,17 +141,22 @@ export default {
             "segments/cli/terraform",
             "segments/cli/ui5tooling",
             "segments/cli/umbraco",
-            "segments/cli/uno",
             "segments/cli/unity",
+            "segments/cli/uno",
             "segments/cli/xmake",
             "segments/cli/yarn",
             "segments/cli/zvm",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "☁️ Cloud",
+          label: "Cloud",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Cloud",
+            description: "Segments for cloud platforms and their CLIs.",
+          },
           items: [
             "segments/cloud/aws",
             "segments/cloud/az",
@@ -111,24 +168,34 @@ export default {
             "segments/cloud/gcp",
             "segments/cloud/pulumi",
             "segments/cloud/sitecore",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "🩺 Health",
+          label: "Health",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Health",
+            description: "Segments for health and fitness tracking.",
+          },
           items: [
             "segments/health/nightscout",
             "segments/health/orthodoxcal",
             "segments/health/ramadan",
             "segments/health/strava",
             "segments/health/withings",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "✍️ Languages",
+          label: "Languages",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Languages",
+            description: "Segments for programming language runtimes and versions.",
+          },
           items: [
             "segments/languages/clojure",
             "segments/languages/crystal",
@@ -157,22 +224,32 @@ export default {
             "segments/languages/v",
             "segments/languages/vala",
             "segments/languages/zig",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "🎧 Music",
+          label: "Music",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Music",
+            description: "Segments for now-playing music services.",
+          },
           items: [
             "segments/music/lastfm",
             "segments/music/spotify",
             "segments/music/ytm",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "🗂️ Source control",
+          label: "Source control",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Source control",
+            description: "Segments for version control systems.",
+          },
           items: [
             "segments/scm/dvc",
             "segments/scm/fossil",
@@ -182,12 +259,17 @@ export default {
             "segments/scm/plastic",
             "segments/scm/sapling",
             "segments/scm/svn",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "🖥️ System",
+          label: "System",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "System",
+            description: "Segments for system and shell information.",
+          },
           items: [
             "segments/system/battery",
             "segments/system/connection",
@@ -206,12 +288,17 @@ export default {
             "segments/system/vimode",
             "segments/system/winget",
             "segments/system/winreg",
-          ]
+          ],
         },
         {
           type: "category",
-          label: "🌐 Web",
+          label: "Web",
           collapsed: true,
+          link: {
+            type: "generated-index",
+            title: "Web",
+            description: "Segments for web APIs and services.",
+          },
           items: [
             "segments/web/brewfather",
             "segments/web/carbonintensity",
@@ -221,34 +308,59 @@ export default {
             "segments/web/owm",
             "segments/web/todoist",
             "segments/web/wakatime",
-          ]
+          ],
         },
       ],
     },
+    "studio",
     {
       type: "category",
-      label: "🤝 Contributing",
+      label: "Themes",
       collapsed: true,
+      link: {
+        type: "generated-index",
+        title: "Themes",
+        description: "Browse the bundled themes and share your own.",
+        slug: "/themes-guide",
+      },
       items: [
-        "contributing/started",
-        "contributing/segment",
-        "contributing/git",
-        "contributing/plastic",
+        "themes",
       ],
     },
-    "dsc",
-    "themes",
-    "share",
     {
       type: "category",
-      label: "🛠️ Advanced",
+      label: "Guides",
       collapsed: true,
+      link: {
+        type: "generated-index",
+        title: "Guides",
+        description: "Task-based guides beyond basic configuration.",
+        slug: "/guides",
+      },
       items: [
+        "dsc",
         "advanced/mcp-server",
       ],
     },
     "faq",
     "migrating",
-    "contributors",
+    {
+      type: "category",
+      label: "Contributing",
+      collapsed: true,
+      link: {
+        type: "generated-index",
+        title: "Contributing",
+        description: "Help improve Oh My Posh.",
+        slug: "/contributing",
+      },
+      items: [
+        "contributing/started",
+        "contributing/segment",
+        "contributing/git",
+        "contributing/plastic",
+        "contributors",
+      ],
+    },
   ],
 };

@@ -118,5 +118,5 @@ Or use `validate_segment` to check a single segment snippet instead of an entire
 ## Configuration reference
 
 - Full schema: <https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json>
-- Docs: <https://ohmyposh.dev/docs/configuration/overview>
+- Docs: <https://ohmyposh.dev/docs/configuration/introduction>
 - Segments: <https://ohmyposh.dev/docs/segments/overview>

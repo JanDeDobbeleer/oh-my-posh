@@ -3,7 +3,7 @@
   "checkpoint_id": "9e4f165fc448",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 4,
   "files_touched": [
     "tools/svg-png-compare/.gitignore",
     "tools/svg-png-compare/common.mjs",
@@ -28,6 +28,13 @@
       "compact_transcript": "/9e/4f165fc448/1/transcript.jsonl",
       "content_hash": "/9e/4f165fc448/1/content_hash.txt",
       "prompt": "/9e/4f165fc448/1/prompt.txt"
+    },
+    {
+      "metadata": "/9e/4f165fc448/2/metadata.json",
+      "transcript": "/9e/4f165fc448/2/full.jsonl",
+      "compact_transcript": "/9e/4f165fc448/2/transcript.jsonl",
+      "content_hash": "/9e/4f165fc448/2/content_hash.txt",
+      "prompt": "/9e/4f165fc448/2/prompt.txt"
     }
   ],
   "token_usage": {

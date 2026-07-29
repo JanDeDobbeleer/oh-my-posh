@@ -1,0 +1,77 @@
+/* The live prompt preview rendered above the editor (see Config.js). Deliberately not a card:
+   the rendered SVG already draws its own terminal window - border, rounded corners, title bar -
+   so a bordered surface around it framed a frame. Only the SVG shows. Same reasoning applies to
+   the studio's own preview pane (src/components/Studio/styles.module.css). */
+.preview {
+  box-sizing: border-box;
+  margin-bottom: var(--omp-space-2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--omp-space-1);
+}
+
+.svgWrapper {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.svgWrapper :global(svg) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Wraps the preview and the editor (see EditableConfig in Config.js) for a segment doc whose
+   sample config the reader can edit in place. No gap of its own - .preview's own margin-bottom
+   already spaces it from whatever follows, same as it did when that "whatever" was the plain
+   <Tabs/> this replaces for a matched segment doc. */
+.editableConfig {
+  display: flex;
+  flex-direction: column;
+}
+
+.wasmMessage {
+  margin: 0;
+  font-size: var(--omp-text-body);
+  color: var(--omp-text-secondary);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--omp-text-body);
+  font-family: var(--ifm-font-family-monospace);
+  white-space: pre-wrap;
+  color: var(--ifm-color-danger);
+}
+
+/* Copy / Add to Studio - same micro-label recipe as the format tabs beside them read from
+   (Infima's own .tabs__item, see ConfigEditor/index.js), styled as a bordered pill instead of an
+   underline so the two kinds of control - "pick a language" vs. "do something with this text" -
+   don't visually collapse into one row of identical tabs. */
+.action {
+  padding: 0.1rem 0.4rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+  color: var(--omp-text-secondary);
+  background: none;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action:hover {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.actionDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -1,0 +1,148 @@
+/* Search, then the results line, then the grid. The category/setup/display facets that
+   used to sit here are gone: the sidebar filters by name now, the catalog's own search
+   matches name, type and description, and the thirteen checkboxes were spending a row of
+   the page on a narrowing nobody reached for. */
+.cat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-2);
+}
+
+/* No padding: this was the right-hand column of a two-column grid and needed an inset from
+   the facet rail's border. It is now the full width of the content area, where an inset
+   would just push the cards out of line with the prose above them. */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-2);
+  min-width: 0;
+}
+
+/* The search field's own label. Same micro-label recipe the studio's pane labels use, so
+   the two pages name their sections the same way. */
+.lbl {
+  padding: 0;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+  color: var(--omp-text-secondary);
+}
+
+.searchRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-1);
+}
+
+/* Border and radius come from the same --omp-card-* tokens as the cards below it (see the
+   .item comment) - a search input should not out-border the cards it's filtering. */
+.search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.45rem 0.65rem;
+  font-size: var(--omp-text-body);
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}
+
+.resultsLine {
+  margin: 0;
+  font-size: var(--omp-text-body);
+  color: var(--omp-text-secondary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--omp-space-2);
+}
+
+/* Border, background and radius come from the shared --omp-card-* custom properties in
+   src/css/custom.css (radius is 8px there - see that comment for why), which also carries the
+   dark-mode override that used to be repeated here. */
+.item {
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  padding: var(--omp-space-2) var(--omp-space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-1);
+  background: var(--omp-card-background);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--ifm-transition-fast);
+}
+
+.item:hover,
+.item:focus {
+  border-color: var(--ifm-color-primary);
+  color: inherit;
+  text-decoration: none;
+}
+
+.nm {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-text-body);
+  color: var(--ifm-font-color-base);
+}
+
+/* .name is the segment's type (e.g. "git") right under its display name (.nm) - previously
+   identical to .ds (the description) in both size and color, so it read as a stray first line
+   of the description rather than a label of its own. Kept at the same --omp-text-body size as
+   .ds (both are secondary to .nm) but given the base foreground and a touch of weight so the
+   two are visually distinct. */
+.name {
+  font-size: var(--omp-text-body);
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+}
+
+.ds {
+  font-size: var(--omp-text-body);
+  color: var(--omp-text-secondary);
+  line-height: 1.45;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--omp-space-1);
+  margin-top: auto;
+}
+
+/* Border comes from the same --omp-card-border-color as the card containing it (see .item) -
+   a tag chip should not out-border its own card. */
+/* Label tokens, not a size of its own: 0.6rem rendered at 9.6px, below any sensible legibility
+   floor, and browsers with a minimum-font-size preference inflate it anyway - which breaks the
+   microcap look this was reaching for far worse than sizing it properly does. */
+.tag {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  letter-spacing: var(--omp-label-tracking);
+  padding: 0.08rem 0.35rem;
+  border-radius: var(--omp-radius-sm);
+  border: 1px solid var(--omp-card-border-color);
+  color: var(--ifm-color-emphasis-700);
+}
+
+.authTag {
+  border-color: transparent;
+  color: var(--ifm-color-warning-contrast-foreground);
+  background: var(--ifm-color-warning-contrast-background);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--omp-space-2);
+  padding: 1.5rem 0;
+  color: var(--omp-text-secondary);
+}
+
+/* No narrow-viewport block any more. It existed to collapse the two-column grid to one and
+   move the facet rail's border from right to bottom; the layout is a single column with a
+   bottom border at every width now, and the facet row already wraps on its own. */

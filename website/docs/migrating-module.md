@@ -1,7 +1,7 @@
 ---
 id: migrating
 title: PowerShell module
-sidebar_label: ⚰️ PowerShell Module
+sidebar_label: PowerShell Module
 ---
 
 ## Problem statement

@@ -3,10 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prestart": "node scripts/ensure-artifacts.mjs",
     "start": "cross-env NODE_ENV=development docusaurus start --poll 1000",
+    "prebuild": "node scripts/ensure-artifacts.mjs",
     "build": "docusaurus build",
     "serve": "docusaurus serve",
     "themes": "node export_themes.mjs",
+    "segment-previews": "node scripts/render-segment-previews.mjs",
+    "wasm": "node scripts/build-wasm.mjs",
     "clear": "docusaurus clear"
   },
   "dependencies": {
@@ -17,6 +21,7 @@
     "classnames": "^2.5.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-simple-code-editor": "^0.14.1",
     "smol-toml": "^1.7.0",
     "yaml": "^2.9.0"
   },

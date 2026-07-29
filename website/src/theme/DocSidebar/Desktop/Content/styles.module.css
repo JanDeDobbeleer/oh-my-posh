@@ -1,0 +1,63 @@
+/**
+ * .menu and .menuWithAnnouncementBar are copied verbatim from
+ * @docusaurus/theme-classic 3.10.2's own
+ * theme/DocSidebar/Desktop/Content/styles.module.css. That file is a CSS
+ * module local to the upstream component (not importable from here), so its
+ * two rules are re-declared as-is. Re-check against upstream on a major
+ * Docusaurus upgrade.
+ */
+@media (min-width: 997px) {
+  .menu {
+    flex-grow: 1;
+    padding: 0.5rem;
+  }
+  @supports (scrollbar-gutter: stable) {
+    .menu {
+      padding: 0.5rem 0 0.5rem 0.5rem;
+      scrollbar-gutter: stable;
+    }
+  }
+
+  .menuWithAnnouncementBar {
+    margin-bottom: var(--docusaurus-announcement-bar-height);
+  }
+}
+
+/* Visually hidden but still in the accessibility tree - same recipe as
+   Studio/styles.module.css's .srOnly. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Same visual recipe as SegmentCatalog/styles.module.css's .search (border,
+   radius and background all trace back to the shared --omp-card-* tokens) -
+   the sidebar filter and the segment catalog's own search box should read as
+   the same affordance. margin-bottom (rather than a wrapping row) is enough
+   spacing since the surrounding <nav> already carries its own 0.5rem inset. */
+.filterInput {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: var(--omp-space-1);
+  padding: 0.45rem 0.65rem;
+  font-size: var(--omp-text-body);
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}
+
+.noResults {
+  margin: 0;
+  padding: var(--omp-space-2) 0;
+  font-size: var(--omp-text-body);
+  color: var(--omp-text-secondary);
+}

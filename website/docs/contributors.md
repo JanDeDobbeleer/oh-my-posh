@@ -1,7 +1,7 @@
 ---
 id: contributors
 title: Contributors
-sidebar_label: 🙏 Contributors
+sidebar_label: Contributors
 ---
 
 Thanks goes to these wonderful people ([emoji key][acek]):

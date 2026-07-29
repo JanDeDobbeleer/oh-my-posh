@@ -1,0 +1,71 @@
+/* Preview above the editor, both full width, rather than two columns. A rendered
+   prompt is a wide, short artifact - 120 columns is roughly 1165px - so a half-width
+   pane scales it down by more than half and the text stops being readable, which
+   defeats the point of a live preview. Stacked, it renders close to 1:1 on a normal
+   desktop and only scales down on genuinely narrow screens. */
+.studio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-3);
+  margin-top: 1.5rem;
+}
+
+/* Wraps the preview only - the editor's own pane/paneLabel live in ConfigEditor/styles.module.css
+   now (see index.js), which uses the same recipe so the two panes still read as one family. */
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--omp-space-1);
+  min-width: 0;
+}
+
+/* No min-height: the preview is exactly as tall as the prompt it drew. No card either - the
+   rendered SVG draws its own terminal window (border, rounded corners, title bar), so a bordered
+   surface around it was a frame around a frame. Same call as the segment docs' own preview
+   (src/components/Config.module.css). */
+.preview {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--omp-space-2);
+  overflow: auto;
+}
+
+.svgWrapper {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.svgWrapper :global(svg) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.wasmMessage,
+.hint {
+  margin: 0;
+  font-size: var(--omp-text-body);
+  color: var(--omp-text-secondary);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--omp-text-body);
+  font-family: var(--ifm-font-family-monospace);
+  white-space: pre-wrap;
+  color: var(--ifm-color-danger);
+}
+
+/* Shown once, if a segment handed off from a doc page (see studioHandoff.js) couldn't be
+   appended - e.g. the session's own config had been left mid-edit and didn't parse. Same
+   danger-toned text as .error; not merged with it because the two report on different things
+   (a live render failure vs. a one-shot hand-off failure) and can in principle both be true at
+   once. */
+.notice {
+  margin: 0;
+  font-size: var(--omp-text-body);
+  color: var(--ifm-color-danger);
+}

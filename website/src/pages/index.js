@@ -1,62 +1,83 @@
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { usePluginData } from "@docusaurus/useGlobalData";
 import Layout from "@theme/Layout";
 import Head from "@docusaurus/Head";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
 import classnames from "classnames";
+// A plain static import, the same way <ThemeGallery/> pulls in the full manifest: webpack
+// code-splits it into this page's own chunk, and being synchronous it resolves during the SSR
+// build, so the static HTML ships with the prompt already inlined. This file holds only the
+// default theme - see export_themes.mjs's HERO_FILE for why it is not the full manifest.
+import hero from "../../generated/hero.json";
 import styles from "./styles.module.css";
 
-const features = [
-  {
-    title: <>🎨 Beautiful & Intelligent</>,
-    description: (
-      <>
-        Transform your terminal with stunning themes and intelligent segments that display
-        Git status, cloud info, language versions, system metrics, and 180+ other contextual details.
-        Your prompt adapts to what you're working on.
-      </>
-    ),
-  },
-  {
-    title: <>⚡ Lightning Fast</>,
-    description: (
-      <>
-        Built with Go for blazing performance. Smart caching and async operations ensure
-        your prompt renders instantly, even with complex configurations and multiple segments.
-        No more waiting for your terminal.
-      </>
-    ),
-  },
-  {
-    title: <>🌍 Universal Compatibility</>,
-    description: (
-      <>
-        One configuration works everywhere - PowerShell, Bash, Zsh, Fish, Nu Shell, and more.
-        Windows, macOS, Linux, WSL, containers, SSH sessions. Write once, use everywhere
-        with zero vendor lock-in.
-      </>
-    ),
-  },
+// The first two cards are fixed copy; the third's title is built from the segments plugin's
+// computed total (see usePluginData below) instead of a hardcoded "117 segments" that would
+// silently drift as segments are added or removed.
+function buildFeatures(segmentTotal) {
+  return [
+    {
+      title: <>One config, every shell</>,
+      description: (
+        <>
+          Write your prompt once and run it in PowerShell, Bash, Zsh, Fish, Nu and more, on
+          Windows, macOS, Linux, WSL, in containers and over SSH.
+        </>
+      ),
+    },
+    {
+      title: <>Built for speed</>,
+      description: (
+        <>
+          Written in Go. Segments run concurrently and cache what they find, so a prompt with a
+          dozen of them still renders in milliseconds.
+        </>
+      ),
+    },
+    {
+      title: <>{segmentTotal} segments</>,
+      description: (
+        <>
+          Git status, cloud context, language versions, system metrics and more, composed with a
+          template language so your prompt follows the work you are doing.
+        </>
+      ),
+    },
+  ];
+}
+
+const shells = [
+  "bash",
+  "cmd",
+  "elvish",
+  "fish",
+  "nu",
+  "powershell",
+  "xonsh",
+  "yash",
+  "zsh",
 ];
 
-function Feature({ imageUrl, title, description }) {
-  const imgUrl = useBaseUrl(imageUrl);
+function Feature({ title, description }) {
   return (
     <div className={classnames("col col--4", styles.feature)}>
-      {imgUrl && (
-        <div className="text--center">
-          <img className={styles.featureImage} src={imgUrl} alt={title} />
-        </div>
-      )}
-      <h3>{title}</h3>
-      <p>{description}</p>
+      <div className={styles.card}>
+        <h3>{title}</h3>
+        <p>{description}</p>
+      </div>
     </div>
   );
 }
 
 function Home() {
   const context = useDocusaurusContext();
-  const { siteConfig = {} } = context;
+  const { siteConfig } = context;
+  const { total: segmentTotal } = usePluginData("oh-my-posh-segments");
+  const features = buildFeatures(segmentTotal);
 
   const websiteJsonLd = JSON.stringify({
     "@context": "https://schema.org",
@@ -79,50 +100,93 @@ function Home() {
   });
 
   return (
-    <Layout title="Home" description={`${siteConfig.tagline}`}>
+    <Layout title="Home" description={siteConfig.tagline}>
       <Head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: websiteJsonLd}} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{__html: organizationJsonLd}} />
       </Head>
-      <header className={classnames("hero hero--primary", styles.heroBanner)}>
+      <header className={styles.heroBanner}>
         <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <h1 className={classnames("hero__title", styles.heroTitle)}>{siteConfig.title}</h1>
+          <p className={classnames("hero__subtitle", styles.subtitle)}>{siteConfig.tagline}</p>
+
+          {/* The prompt oh-my-posh renders with no config of its own, drawn by the same SVG
+              encoder the gallery and every segment doc use - not a screenshot, and not one of
+              the bundled themes. It inherits the page's own @font-face, so the icons and
+              powerline glyphs draw without embedding a font, and the text stays selectable. */}
+          <div className={styles.heroPrompt}>
+            <span
+              className={styles.svgWrapper}
+              role="img"
+              aria-label="The prompt Oh My Posh renders out of the box"
+              dangerouslySetInnerHTML={{ __html: hero.svg }}
+            />
+          </div>
+
+          <div className={styles.installBox}>
+            <Tabs
+              groupId="install-os"
+              defaultValue="windows"
+              values={[
+                { label: "Windows", value: "windows" },
+                { label: "macOS", value: "macos" },
+                { label: "Linux", value: "linux" },
+              ]}
+            >
+              <TabItem value="windows">
+                <CodeBlock language="powershell">
+                  winget install JanDeDobbeleer.OhMyPosh --source winget
+                </CodeBlock>
+              </TabItem>
+              <TabItem value="macos">
+                <CodeBlock language="bash">
+                  brew install jandedobbeleer/oh-my-posh/oh-my-posh
+                </CodeBlock>
+              </TabItem>
+              <TabItem value="linux">
+                <CodeBlock language="bash">
+                  curl -s https://ohmyposh.dev/install.sh | bash -s
+                </CodeBlock>
+              </TabItem>
+            </Tabs>
+            <p className={styles.installNote}>
+              Other options and package managers in the{" "}
+              <Link to={useBaseUrl("docs/installation/windows")}>installation guide</Link>.
+            </p>
+          </div>
+
           <div className={styles.buttons}>
             <Link
-              className={classnames(
-                "button button--primary button--lg",
-                styles.getStarted
-              )}
+              className="button button--primary button--lg"
               to={useBaseUrl("docs/")}
             >
-              Get Started &rarr;
+              Get started &rarr;
             </Link>
             <Link
-              className={classnames(
-                "button button--outline button--lg",
-                styles.getStarted
-              )}
+              className="button button--outline button--primary button--lg"
               to={useBaseUrl("docs/themes")}
             >
-              See themes &rarr;
+              Browse themes &rarr;
             </Link>
           </div>
-          <img className="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
+
         </div>
       </header>
       <main>
-        {features && features.length > 0 && (
-          <section className={styles.features}>
-            <div className="container">
-              <div className="row">
-                {features.map((props, idx) => (
-                  <Feature key={idx} {...props} />
-                ))}
-              </div>
+        <section className={styles.features}>
+          <div className="container">
+            <div className="row">
+              {features.map((props, idx) => (
+                <Feature key={idx} {...props} />
+              ))}
             </div>
-          </section>
-        )}
+          </div>
+        </section>
+        <section className={styles.shellRow}>
+          <div className="container">
+            <p className={styles.shellList}>Works with {shells.join(" · ")}</p>
+          </div>
+        </section>
       </main>
     </Layout>
   );

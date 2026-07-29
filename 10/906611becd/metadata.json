@@ -3,7 +3,7 @@
   "checkpoint_id": "10906611becd",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 3,
+  "checkpoints_count": 5,
   "files_touched": [
     "website/docs/installation/prompt.mdx",
     "website/docs/installation/windows.mdx",
@@ -24,6 +24,13 @@
       "compact_transcript": "/10/906611becd/1/transcript.jsonl",
       "content_hash": "/10/906611becd/1/content_hash.txt",
       "prompt": "/10/906611becd/1/prompt.txt"
+    },
+    {
+      "metadata": "/10/906611becd/2/metadata.json",
+      "transcript": "/10/906611becd/2/full.jsonl",
+      "compact_transcript": "/10/906611becd/2/transcript.jsonl",
+      "content_hash": "/10/906611becd/2/content_hash.txt",
+      "prompt": "/10/906611becd/2/prompt.txt"
     }
   ],
   "token_usage": {

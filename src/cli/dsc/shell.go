@@ -6,6 +6,7 @@
 package dsc
 
 import (
+	_ "embed"
 	"encoding/gob"
 	"fmt"
 	"os"
@@ -29,8 +30,11 @@ const (
 	initCommandRegex = `oh-my-posh(?:\.exe)?\s+init`
 )
 
+//go:embed shell.schema.json
+var shellSchema string
+
 func ShellDSC() *basedsc.Resource[*Shell] {
-	return &basedsc.Resource[*Shell]{}
+	return &basedsc.Resource[*Shell]{SchemaJSON: shellSchema}
 }
 
 type Shell struct {

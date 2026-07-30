@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "shell",
+  "properties": {
+    "states": {
+      "items": {
+        "properties": {
+          "command": {
+            "type": "string",
+            "title": "Command",
+            "description": "The oh-my-posh init command to run"
+          },
+          "name": {
+            "type": "string",
+            "title": "Shell name",
+            "description": "The name of the shell"
+          },
+          "skipExistingInit": {
+            "type": "boolean",
+            "title": "Skip existing init",
+            "description": "Treat any existing oh-my-posh init line as compliant instead of rewriting it"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "type": "array",
+      "title": "states",
+      "description": "The different states of the resource"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}

@@ -1,6 +1,8 @@
 package font
 
 import (
+	_ "embed"
+
 	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
@@ -9,9 +11,12 @@ type Resource struct {
 	dsc.Resource[*Font]
 }
 
+//go:embed font.schema.json
+var fontSchema string
+
 func DSC() *Resource {
 	return &Resource{
-		Resource: dsc.Resource[*Font]{},
+		Resource: dsc.Resource[*Font]{SchemaJSON: fontSchema},
 	}
 }
 

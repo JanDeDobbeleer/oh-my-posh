@@ -16,7 +16,7 @@ var configCmd = &cobra.Command{
 	Short: "Interact with the config",
 	Long: `Interact with the config.
 
-You can export, migrate or edit the config (via the editor specified in the environment variable "EDITOR").`,
+You can export or edit the config (via the editor specified in the environment variable "EDITOR").`,
 	ValidArgs: []string{
 		"edit",
 	},

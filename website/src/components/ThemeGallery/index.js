@@ -74,7 +74,7 @@ function OpenInStudioButton({ name, rawConfigUrl, format }) {
 // SVG inherits the page's own @font-face (see custom.css's "Victor Mono"
 // declaration), so the icons and powerline glyphs render without any font
 // embedding, subsetting, or data URI of their own.
-function ThemeCard({ name, githubUrl, rawConfigUrl, format, svg }) {
+function ThemeCard({ name, githubUrl, rawConfigUrl, format, svg, svgLight }) {
   return (
     <div className={styles.card}>
       <div className={styles.headingRow}>
@@ -84,7 +84,18 @@ function ThemeCard({ name, githubUrl, rawConfigUrl, format, svg }) {
         <OpenInStudioButton name={name} rawConfigUrl={rawConfigUrl} format={format} />
       </div>
       <Link to={githubUrl} className={styles.render}>
-        <span className={styles.svgWrapper} dangerouslySetInnerHTML={{ __html: svg }} />
+        {/* Two renders (dark svg, light svgLight - see export_themes.mjs's LIGHT_BACKGROUND)
+            ship in the static HTML; custom.css's shared omp-light-only/omp-dark-only classes
+            pick between them off Docusaurus's own html[data-theme] attribute, the same instant
+            CSS-only switch the homepage hero uses (src/pages/index.js). */}
+        <span
+          className={`${styles.svgWrapper} omp-dark-only`}
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+        <span
+          className={`${styles.svgWrapper} omp-light-only`}
+          dangerouslySetInnerHTML={{ __html: svgLight }}
+        />
       </Link>
     </div>
   );
@@ -113,6 +124,7 @@ function ThemeGallery() {
           rawConfigUrl={theme.rawConfigUrl}
           format={theme.format}
           svg={theme.svg}
+          svgLight={theme.svgLight}
         />
       ))}
     </div>

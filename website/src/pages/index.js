@@ -113,13 +113,24 @@ function Home() {
           {/* The prompt oh-my-posh renders with no config of its own, drawn by the same SVG
               encoder the gallery and every segment doc use - not a screenshot, and not one of
               the bundled themes. It inherits the page's own @font-face, so the icons and
-              powerline glyphs draw without embedding a font, and the text stays selectable. */}
+              powerline glyphs draw without embedding a font, and the text stays selectable.
+              Two renders (dark svg, light svgLight - see export_themes.mjs's HERO_LIGHT_
+              BACKGROUND) ship in the static HTML; custom.css's shared omp-light-only/
+              omp-dark-only classes pick between them off Docusaurus's own html[data-theme]
+              attribute, so the switch is instant and CSS-only - no client re-render, no flash of
+              the wrong variant while React hydrates. */}
           <div className={styles.heroPrompt}>
             <span
-              className={styles.svgWrapper}
+              className={classnames(styles.svgWrapper, "omp-dark-only")}
               role="img"
               aria-label="The prompt Oh My Posh renders out of the box"
               dangerouslySetInnerHTML={{ __html: hero.svg }}
+            />
+            <span
+              className={classnames(styles.svgWrapper, "omp-light-only")}
+              role="img"
+              aria-label="The prompt Oh My Posh renders out of the box"
+              dangerouslySetInnerHTML={{ __html: hero.svgLight }}
             />
           </div>
 

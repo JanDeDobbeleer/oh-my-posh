@@ -44,6 +44,16 @@ const CONFIG = {
   // was last built - and keeps generated/themes.json from growing by the size of every theme's
   // source on top of its already-large inlined SVGs.
   RAW_GITHUB_BASE_URL: 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes',
+  // Infima's own light-theme background (no --ifm-background-color override lives in
+  // custom.css, so this is Infima's default) - every SVG this exporter renders for the site's
+  // own light/dark toggle (the hero, and each theme's own light-mode render below) needs an
+  // explicit canvas background for its light half: most bundled themes (and always the hero's
+  // built-in default config) set no terminal background of their own, so without this flag they
+  // fall back to svg's own dark default (svg.go's defaultCanvasBackground) regardless of which
+  // mode the reader's browser is in. A theme that *does* set its own terminal background (e.g.
+  // tokyonight_storm) is unaffected either way - config_export_image.go's --background-color
+  // always loses to a theme's own background, exactly like a real terminal would.
+  LIGHT_BACKGROUND: '#ffffff',
   FONT_FAMILY: VICTOR_MONO.FONT_FAMILY,
   CELL_WIDTH: VICTOR_MONO.CELL_WIDTH,
   LINE_HEIGHT: VICTOR_MONO.LINE_HEIGHT,
@@ -219,7 +229,12 @@ const OMP_BIN = process.env.OMP_BIN || 'oh-my-posh';
 // configPath is null for the homepage's own render: oh-my-posh with no --config falls back to
 // the config it builds in Go (src/config/default.go), which is the prompt someone sees before
 // they have configured anything. There is no file to point at, and no bundled theme matches it.
-function buildPoshArgs(configPath, outputPath) {
+//
+// backgroundColor is optional (see LIGHT_BACKGROUND) - it is what makes a theme's own light-mode
+// render actually light when the theme sets no terminal background of its own; a theme that does
+// (e.g. tokyonight_storm) keeps its own look regardless, since --background-color always loses
+// to a theme's own background (config_export_image.go).
+function buildPoshArgs(configPath, outputPath, backgroundColor) {
   return [
     'config',
     'export',
@@ -231,6 +246,7 @@ function buildPoshArgs(configPath, outputPath) {
     `--line-height=${CONFIG.LINE_HEIGHT}`,
     `--fill-ascent=${CONFIG.FILL_ASCENT}`,
     `--fill-descent=${CONFIG.FILL_DESCENT}`,
+    ...(backgroundColor ? [`--background-color=${backgroundColor}`] : []),
     // segment_data.json is hand-written on purpose (see buildDataFileWithTrending):
     // its synthetic values are what make the renders look like a plausible
     // machine. oh-my-posh warns that the file carries no recorder marker, which is
@@ -258,14 +274,16 @@ function buildPoshArgs(configPath, outputPath) {
 // with, and the GitHub URL both the heading and the render link to. rawConfigUrl and format are
 // what "Open in Studio" (ThemeGallery/index.js) needs to fetch and parse the theme's actual
 // config at click time - see RAW_GITHUB_BASE_URL's own comment for why that's a URL, not the
-// file content itself.
-function buildManifestEntry(themeName, themeFile, svg) {
+// file content itself. svgLight is the theme's own light-mode render (see LIGHT_BACKGROUND) -
+// <ThemeCard/> ships both and picks between them the same way the homepage hero does.
+function buildManifestEntry(themeName, themeFile, svg, svgLight) {
   return {
     name: themeName,
     githubUrl: `${CONFIG.GITHUB_BASE_URL}/${themeFile}`,
     rawConfigUrl: `${CONFIG.RAW_GITHUB_BASE_URL}/${themeFile}`,
     format: getThemeFormat(themeFile),
     svg,
+    svgLight,
   };
 }
 
@@ -306,15 +324,17 @@ async function exportTheme(themeFile) {
   // it lives in the OS temp dir rather than under website/, leaving nothing behind
   // for git status to notice.
   const svg = await renderSVG(configPath, themeFile);
+  const svgLight = await renderSVG(configPath, `${themeFile} (light)`, CONFIG.LIGHT_BACKGROUND);
 
   console.info(`Exported ${themeFile}`);
 
-  return { entry: buildManifestEntry(themeName, themeFile, svg), fileName: themeFile };
+  return { entry: buildManifestEntry(themeName, themeFile, svg, svgLight), fileName: themeFile };
 }
 
 // One render, returning the SVG. label only ever appears in messages, so the caller can name
 // what it asked for - a theme file, or the built-in default config, which has no file at all.
-async function renderSVG(configPath, label) {
+// backgroundColor is optional (see buildPoshArgs).
+async function renderSVG(configPath, label, backgroundColor) {
   // A per-run scratch path, like buildDataFileWithTrending's temp data file: the svg only needs
   // to exist long enough to be read back, so it lives in the OS temp dir rather than under
   // website/, leaving nothing behind for git status to notice.
@@ -323,7 +343,7 @@ async function renderSVG(configPath, label) {
   let stderr;
 
   try {
-    ({ stderr } = await execFileAsync(OMP_BIN, buildPoshArgs(configPath, outputPath)));
+    ({ stderr } = await execFileAsync(OMP_BIN, buildPoshArgs(configPath, outputPath, backgroundColor)));
   } catch (error) {
     // execFileAsync only rejects on a non-zero exit code - a genuine render failure, not
     // incidental stderr output. Fail the build loudly instead of silently dropping the render.
@@ -383,8 +403,9 @@ async function main() {
     console.log(`Successfully exported ${manifest.length} themes to ${CONFIG.MANIFEST_FILE}`);
 
     const heroSVG = await renderSVG(null, 'the default config');
+    const heroSVGLight = await renderSVG(null, 'the default config (light)', CONFIG.LIGHT_BACKGROUND);
 
-    await promises.writeFile(CONFIG.HERO_FILE, JSON.stringify({ svg: heroSVG }));
+    await promises.writeFile(CONFIG.HERO_FILE, JSON.stringify({ svg: heroSVG, svgLight: heroSVGLight }));
 
     console.log(`Wrote the default config to ${CONFIG.HERO_FILE} for the homepage`);
 

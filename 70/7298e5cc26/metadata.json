@@ -3,8 +3,19 @@
   "checkpoint_id": "707298e5cc26",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 1,
-  "files_touched": null,
+  "checkpoints_count": 7,
+  "files_touched": [
+    "src/cli/config_export_data.go",
+    "src/cli/segment_data.go",
+    "src/config/data.go",
+    "src/config/segment.go",
+    "src/config/segment_data_test.go",
+    "src/segments/carbon_intensity.go",
+    "src/template/date.go",
+    "src/wasm/main.go",
+    "website/docs/segments/web/carbonintensity.mdx",
+    "website/segment_data.json"
+  ],
   "sessions": [
     {
       "metadata": "/70/7298e5cc26/0/metadata.json",
@@ -12,13 +23,20 @@
       "compact_transcript": "/70/7298e5cc26/0/transcript.jsonl",
       "content_hash": "/70/7298e5cc26/0/content_hash.txt",
       "prompt": "/70/7298e5cc26/0/prompt.txt"
+    },
+    {
+      "metadata": "/70/7298e5cc26/1/metadata.json",
+      "transcript": "/70/7298e5cc26/1/full.jsonl",
+      "compact_transcript": "/70/7298e5cc26/1/transcript.jsonl",
+      "content_hash": "/70/7298e5cc26/1/content_hash.txt",
+      "prompt": "/70/7298e5cc26/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1149,
-    "cache_creation_tokens": 4281425,
-    "cache_read_tokens": 176225772,
-    "output_tokens": 274317,
-    "api_call_count": 610
+    "input_tokens": 1410,
+    "cache_creation_tokens": 4603719,
+    "cache_read_tokens": 208159314,
+    "output_tokens": 352093,
+    "api_call_count": 748
   }
 }

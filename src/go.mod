@@ -22,7 +22,6 @@ require (
 )
 
 require (
-	github.com/ConradIrwin/font v0.2.1
 	github.com/invopop/jsonschema v0.14.0
 	github.com/lucasb-eyer/go-colorful v1.4.0
 	github.com/pelletier/go-toml/v2 v2.4.3
@@ -49,10 +48,8 @@ require (
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
-	dmitri.shuralyov.com/font/woff2 v0.0.0-20180220214647-957792cbbdab // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.2 // indirect
-	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/ebitengine/purego v0.10.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/pb33f/ordered-map/v2 v2.3.1 // indirect

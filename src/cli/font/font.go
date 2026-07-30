@@ -3,13 +3,10 @@
 package font
 
 import (
-	"bytes"
 	"encoding/gob"
 	"fmt"
 	"path"
 	"strings"
-
-	"github.com/ConradIrwin/font/sfnt"
 )
 
 func init() {
@@ -21,7 +18,7 @@ type Font struct {
 	Name     string                 `json:"name,omitempty" jsonschema:"title=Font name,description=The name of the font"`
 	Family   string                 `json:"-"`
 	FileName string                 `json:"-"`
-	Metadata map[sfnt.NameID]string `json:"-"`
+	Metadata map[nameID]string `json:"-"`
 	Data     []byte                 `json:"-"`
 }
 
@@ -73,33 +70,33 @@ func newFont(fileName string, data []byte) (*Font, error) {
 
 	font := &Font{
 		FileName: fileName,
-		Metadata: make(map[sfnt.NameID]string),
+		Metadata: make(map[nameID]string),
 		Data:     data,
 	}
 
-	fontData, err := sfnt.Parse(bytes.NewReader(font.Data))
+	table, ok, err := readNameTable(font.Data)
 	if err != nil {
 		return nil, err
 	}
 
-	if !fontData.HasTable(sfnt.TagName) {
+	if !ok {
 		return nil, fmt.Errorf("font %v has no name table", fileName)
 	}
 
-	nameTable, err := fontData.NameTable()
+	entries, err := parseNameTable(table)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, nameEntry := range nameTable.List() {
-		font.Metadata[nameEntry.NameID] = nameEntry.String()
+	for _, entry := range entries {
+		font.Metadata[entry.nameID] = entry.String()
 	}
 
-	font.Name = font.Metadata[sfnt.NameFull]
-	font.Family = font.Metadata[sfnt.NamePreferredFamily]
+	font.Name = font.Metadata[nameFull]
+	font.Family = font.Metadata[namePreferredFamily]
 
 	if font.Family == "" {
-		if v, ok := font.Metadata[sfnt.NameFontFamily]; ok {
+		if v, ok := font.Metadata[nameFontFamily]; ok {
 			font.Family = v
 		}
 	}

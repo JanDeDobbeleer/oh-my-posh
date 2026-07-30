@@ -124,11 +124,14 @@ func TestEncodeSkipsZeroCellRuns(t *testing.T) {
 	assert.Contains(t, doc, `x="`+formatFloat(wantX)+`"`)
 
 	// One <rect> for each of the two visible runs, plus the window's own
-	// background rect (see writeWindowChrome); one <text> for each of the
-	// two visible runs, plus the cursor and the watermark decorate always
-	// appends (see decorate).
+	// border rect (see writeWindowChrome; the header/content fills are now
+	// <path> elements, not <rect>s); one <text> for each of the two visible
+	// runs, plus the cursor, the watermark decorate always appends (see
+	// decorate), and the "−"/"▢"/"×" window-control glyphs the chrome draws
+	// (no title/tab-control text since those were dropped — see
+	// writeWindowChrome's doc comment).
 	assert.Equal(t, 3, strings.Count(doc, "<rect"))
-	assert.Equal(t, 4, strings.Count(doc, "<text"))
+	assert.Equal(t, 7, strings.Count(doc, "<text"))
 }
 
 // TestEncodeRunModes covers all three RunMode values (see terminal.RunMode's
@@ -560,6 +563,27 @@ func TestEncodeCursorAtAnchor(t *testing.T) {
 	assert.Contains(t, doc, `x="`+formatFloat(originX+6*opts.CellWidth)+`" y="`+y+`" textLength="10" lengthAdjust="spacingAndGlyphs" fill="#ffffff">_</text>`)
 	assert.Contains(t, doc, `x="`+formatFloat(originX+7*opts.CellWidth)+`" y="`+y+`" textLength="90"`)
 	assert.Contains(t, doc, `x="`+formatFloat(originX+16*opts.CellWidth)+`" y="`+y+`" textLength="50" lengthAdjust="spacingAndGlyphs" fill="#39b54a">right</text>`)
+}
+
+// TestEncodeCursorStaysLegibleOnLightBackground pins the fix for the "default"
+// foreground bug: the cursor's ForegroundSource is "default" (see decorate.go's
+// insertCursor), which used to resolve to a fixed white regardless of
+// CanvasBackground - invisible against a light one. It must now switch to
+// defaultForegroundNearBlack whenever CanvasBackground reads as light (see
+// defaultForegroundColor).
+func TestEncodeCursorStaysLegibleOnLightBackground(t *testing.T) {
+	rows := [][]terminal.Run{{contentRun("prompt")}}
+
+	opts := testOptions()
+	opts.Cursor = &Cursor{Row: 0, Run: 0}
+	light := color.RGB{R: 0xf5, G: 0xf5, B: 0xf0}
+	opts.CanvasBackground = &light
+
+	doc := Encode(rows, opts)
+	decodeXML(t, doc)
+
+	assert.Contains(t, doc, `fill="`+hexString(defaultForegroundNearBlack)+`">_</text>`)
+	assert.NotContains(t, doc, `fill="#ffffff">_</text>`)
 }
 
 // TestEncodeCursorWithoutAnchor pins the fallback for a caller that has no

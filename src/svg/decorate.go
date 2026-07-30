@@ -27,12 +27,9 @@ type Cursor struct {
 }
 
 // decorate appends the retired PNG renderer's own trailing content — a
-// cursor indicator glued onto the end of the prompt's own output, then two
-// blank lines, then the bold "ohmyposh.dev" watermark on its own line
-// (image.go's cleanContent, ~:374-401: `ir.AnsiString +=
-// "\n\n\x1b[1mohmyposh.dev\x1b[22m"`, two newlines before the watermark, not
-// one) — to rows, returning a new slice rather than mutating the caller's
-// own capture.
+// cursor indicator glued onto the end of the prompt's own output, then one
+// blank line, then the bold "ohmyposh.dev" watermark on its own line — to
+// rows, returning a new slice rather than mutating the caller's own capture.
 //
 // cursor says where "the end of the prompt's own output" is. Appending to
 // the last row's tail — which is what this did before — puts the cursor
@@ -66,7 +63,7 @@ func decorate(rows [][]terminal.Run, cursor *Cursor) [][]terminal.Run {
 
 	rows[row] = insertCursor(rows[row], at)
 
-	rows = append(rows, nil, nil, []terminal.Run{{
+	rows = append(rows, nil, []terminal.Run{{
 		Text:             watermarkText,
 		Cells:            len(watermarkText),
 		ForegroundSource: color.Ansi("default"),

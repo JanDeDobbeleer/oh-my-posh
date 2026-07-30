@@ -211,6 +211,26 @@ func TestEncodeRunModes(t *testing.T) {
 // failed color.Defaults.ToAnsi resolution emits nothing, so the glyph must
 // inherit whatever color was already active on that channel, rather than
 // falling back to no color at all.
+func TestEncodeCarriesForwardOnEmptySourceLegacy(t *testing.T) {
+	rows := [][]terminal.Run{
+		{
+			contentRun("ab"),
+			{Text: "cd", Cells: 2, ForegroundSource: "", BackgroundSource: "", Mode: terminal.RunNormal},
+		},
+	}
+
+	doc := Encode(rows, testOptions())
+	decodeXML(t, doc)
+
+	red := hexString(color.RGB{R: 222, G: 56, B: 43})
+
+	assert.Equal(t, 2, strings.Count(doc, `fill="`+red+`"`))
+}
+
+// TestEncodeCarriesForwardOnEmptySource pins the "empty" color form: a
+// failed color.Defaults.ToAnsi resolution emits nothing, so the glyph must
+// inherit whatever foreground color was already active, while the background
+// clears so a separator glyph does not inherit the previous segment's rect.
 func TestEncodeCarriesForwardOnEmptySource(t *testing.T) {
 	rows := [][]terminal.Run{
 		{
@@ -225,6 +245,23 @@ func TestEncodeCarriesForwardOnEmptySource(t *testing.T) {
 	red := hexString(color.RGB{R: 222, G: 56, B: 43})
 
 	assert.Equal(t, 2, strings.Count(doc, `fill="`+red+`"`))
+	assert.Equal(t, 2, strings.Count(doc, "<rect"))
+}
+
+// TestEncodeClearsBackgroundOnEmptySource ensures a separator-like run with no
+// explicit background paints no rect behind its glyph, so the glyph keeps its
+// own shape instead of becoming a solid block over the previous segment's
+// background.
+func TestEncodeClearsBackgroundOnEmptySource(t *testing.T) {
+	rows := [][]terminal.Run{{
+		{Text: "A", Cells: 1, ForegroundSource: "red", BackgroundSource: "blue", Mode: terminal.RunNormal},
+		{Text: "", Cells: 1, ForegroundSource: "green", BackgroundSource: "", Mode: terminal.RunNormal},
+	}}
+
+	doc := Encode(rows, testOptions())
+	decodeXML(t, doc)
+
+	assert.Equal(t, 2, strings.Count(doc, "<rect"))
 }
 
 // TestEncodeAttributes maps every Run.Attributes slot (see knownStyles'

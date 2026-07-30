@@ -143,6 +143,14 @@ func TestWriteSeparatorTrailingDiamondGradient(t *testing.T) {
 	assert.NotEqual(t, firstStopOut, gradientOut, "trailing diamond must not render the gradient's first stop")
 }
 
+func TestResolveBackgroundKeywordPowerlineSymbol(t *testing.T) {
+	const symbol = "<transparent,background></>"
+
+	got := resolveBackgroundKeyword(symbol, color.Ansi("#123456"))
+
+	assert.Equal(t, "<transparent,#123456></>", got)
+}
+
 // TestRenderActiveSegmentDiamondPreviousGradient covers renderActiveSegment's
 // diamond branch: when the previous segment has no trailing diamond, the next
 // segment's leading diamond is drawn against the previous segment's

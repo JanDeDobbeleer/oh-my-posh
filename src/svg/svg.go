@@ -384,11 +384,11 @@ func writeBlinkStyle(b *strings.Builder, blinkClass string) {
 	b.WriteString(" { 50% { opacity: 0; } }\n</style>\n")
 }
 
-// paintState carries the last resolved, non-empty color per channel across
-// runs in the same row. A Run whose source resolves to nothing — the ToAnsi
-// failure path color.Defaults.ToAnsi documents (see resolveChannel) — must
-// keep whatever was already active, exactly like a real terminal that never
-// received an SGR code for that channel.
+// paintState carries the last resolved color per channel across runs in the
+// same row. Foreground keeps the prior color on an unresolved source so a run
+// with no explicit foreground still inherits the terminal state; background
+// instead clears on an unresolved or transparent source so a separator glyph
+// does not inherit the previous segment's rect and render as a solid block.
 type paintState struct {
 	fg *color.RGB
 	bg *color.RGB
@@ -559,6 +559,8 @@ func paintRun(run *terminal.Run, state *paintState, opts *Options) (textRGB, rec
 	bg, bgResolved := resolveChannel(run.BackgroundSource, run.BackgroundRGB, true, opts)
 	if bgResolved {
 		state.bg = bg
+	} else {
+		state.bg = nil
 	}
 
 	switch run.Mode {

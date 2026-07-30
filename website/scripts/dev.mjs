@@ -10,8 +10,9 @@
 //    every save into a single render.
 //  - Editing export_themes.mjs, font-metrics.mjs or segment_data.json - anything that can change
 //    every theme's render, not just one - falls back to a full `npm run themes`.
-//  - Editing a Go source file under src/ rebuilds the studio's wasm module (`npm run wasm`), so
-//    a renderer change shows up in the in-browser studio without restarting anything.
+//  - Editing a Go source file under src/ rebuilds the website's generated artifacts (`node
+//    scripts/ensure-artifacts.mjs`), so a renderer change shows up in both the theme gallery and
+//    the in-browser studio without restarting anything.
 //
 // None of this runs for `npm run build` or CI: both already run `npm run themes` / `npm run
 // wasm` explicitly before building (see ensure-artifacts.mjs's own comment on that split), and
@@ -23,6 +24,7 @@
 // what is otherwise a few lines of child_process.
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:net';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -106,8 +108,18 @@ async function removeTheme(themeFile) {
   console.log(`[themes] Removed "${themeName}" from the gallery (file deleted).`);
 }
 
+// cmd.exe splits on whitespace, so anything containing a space or quote needs quoting; doubling
+// embedded quotes is cmd's own escape convention.
+function quoteForCmd(arg) {
+  return /[\s"]/.test(arg) ? `"${arg.replace(/"/g, '""')}"` : arg;
+}
+
 function runNpmScript(script) {
-  const result = spawnSync('npm', ['run', script], { cwd: WEBSITE_DIR, stdio: 'inherit', shell: IS_WINDOWS });
+  // Node deprecates passing an args array alongside shell: true (DEP0190) - it can't escape them
+  // for an unknown shell, so on Windows the full, already-quoted command is built as one string
+  // instead and given no separate args.
+  const [command, args] = IS_WINDOWS ? [['npm', 'run', script].map(quoteForCmd).join(' '), []] : ['npm', ['run', script]];
+  const result = spawnSync(command, args, { cwd: WEBSITE_DIR, stdio: 'inherit', shell: IS_WINDOWS });
 
   if (result.status === 0) {
     return true;
@@ -125,12 +137,21 @@ function fullThemesRegen() {
   }
 }
 
-function rebuildWasm() {
-  console.log('\n[wasm] Go source changed, rebuilding the studio wasm module...');
+function rebuildArtifacts() {
+  console.log('\n[artifacts] Go source changed, rebuilding website artifacts...');
 
-  if (runNpmScript('wasm')) {
-    console.log('[wasm] omp.wasm rebuilt.\n');
+  const result = spawnSync(process.execPath, [join(__dirname, 'ensure-artifacts.mjs')], {
+    cwd: WEBSITE_DIR,
+    stdio: 'inherit',
+  });
+
+  if (result.status === 0) {
+    console.log('[artifacts] Website artifacts rebuilt.\n');
+    return true;
   }
+
+  console.error(`[artifacts] node scripts/ensure-artifacts.mjs exited with code ${result.status}. Fix the error above and save again.\n`);
+  return false;
 }
 
 // A tiny per-key debounce/serialize queue: coalesces rapid-fire events for the same key (a save
@@ -172,7 +193,7 @@ function createDebouncedRunner(delayMs) {
 
 const scheduleThemeWork = createDebouncedRunner(300);
 const scheduleSharedWork = createDebouncedRunner(500);
-const scheduleWasmWork = createDebouncedRunner(500);
+const scheduleArtifactWork = createDebouncedRunner(500);
 
 const themesWatcher = chokidar.watch(CONFIG.THEMES_CONFIG_DIR, { ignoreInitial: true, ...POLLING_OPTIONS });
 
@@ -203,12 +224,47 @@ const wasmWatcher = chokidar.watch([join(SRC_DIR, '**/*.go'), join(SRC_DIR, 'go.
   ...POLLING_OPTIONS,
 });
 
-wasmWatcher.on('all', () => scheduleWasmWork('wasm', rebuildWasm));
+wasmWatcher.on('all', () => scheduleArtifactWork('artifacts', rebuildArtifacts));
 
-console.log('[dev] Watching /themes (per-theme reload), the exporter/data files (full regen) and src/**/*.go (wasm rebuild)...');
+console.log('[dev] Watching /themes (per-theme reload), the exporter/data files (full regen) and src/**/*.go (artifact rebuild)...');
+
+async function ensurePortAvailable(port) {
+  const server = createServer();
+
+  return new Promise((resolve, reject) => {
+    server.once('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        reject(new Error(`Port ${port} is already in use. Stop the existing dev server or set PORT to a different value.`));
+        return;
+      }
+
+      reject(error);
+    });
+
+    server.once('listening', () => {
+      server.close(() => resolve());
+    });
+
+    server.listen(port, 'localhost');
+  });
+}
+
+const port = process.env.PORT || '3000';
+
+try {
+  await ensurePortAvailable(port);
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
 
 const docusaurusBin = join(WEBSITE_DIR, 'node_modules', '.bin', IS_WINDOWS ? 'docusaurus.cmd' : 'docusaurus');
-const docusaurus = spawn(docusaurusBin, ['start', '--poll', '1000'], {
+const docusaurusArgs = ['start', '--poll', '1000', '--port', port];
+// Same DEP0190 workaround as runNpmScript above: shell: true and an args array don't mix.
+const [docusaurusCommand, spawnArgs] = IS_WINDOWS
+  ? [[docusaurusBin, ...docusaurusArgs].map(quoteForCmd).join(' '), []]
+  : [docusaurusBin, docusaurusArgs];
+const docusaurus = spawn(docusaurusCommand, spawnArgs, {
   cwd: WEBSITE_DIR,
   stdio: 'inherit',
   shell: IS_WINDOWS,

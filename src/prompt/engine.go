@@ -25,17 +25,16 @@ const DefaultRPromptBreathingRoom = 30
 
 type Engine struct {
 	Env                   runtime.Environment
-	streamingResults      chan *config.Segment
-	abort                 chan struct{}
+	activeSegment         *config.Segment
 	done                  chan struct{}
 	Config                *config.Config
-	// RPromptBreathingRoom overrides how many cells canWriteRightBlock insists on leaving free
-	// between the prompt and an rprompt. Zero keeps the interactive default. An export has no
-	// one typing into it, which is the only thing that margin protects, so a renderer can ask
-	// for a smaller one - see render.Config.
-	RPromptBreathingRoom int
-	activeSegment         *config.Segment
+	streamingResults      chan *config.Segment
+	abort                 chan struct{}
 	previousActiveSegment *config.Segment
+	pendingSegments       sync.Map
+	Overflow              config.Overflow
+	rprompt               string
+	prompt                strings.Builder
 	// blockTailColors is a snapshot of terminal.ParentColors captured just
 	// before previousActiveSegment resets to nil at the end of a block. A
 	// block's own Filler (see shouldFill) renders after terminal.String()
@@ -46,18 +45,7 @@ type Engine struct {
 	// color can itself be an unresolved parentBackground/parentForeground
 	// keyword, and resolving that requires walking the rest of the chain
 	// the same way the block's own last segment did.
-	blockTailColors   []*color.Set
-	pendingSegments   sync.Map
-	rprompt           string
-	Overflow          config.Overflow
-	prompt            strings.Builder
-	allBlocks         []*config.Block
-	currentLineLength int
-	Padding           int
-	rpromptLength     int
-	Plain             bool
-	forceRender       bool
-
+	blockTailColors []*color.Set
 	// capturedRows/rpromptRuns are the Run stream's engine-side counterpart to
 	// prompt/rprompt above, populated only when terminal.CaptureRuns is set
 	// (see runs.go). rpromptRuns persists on the Engine, mirroring e.rprompt,
@@ -68,13 +56,23 @@ type Engine struct {
 	// (renderBlockSegments/captureBlockRuns -> renderLaunchedBlock -> writeBlock,
 	// and shouldFill's own expanded filler runs).
 	capturedRows [][]terminal.Run
+	allBlocks    []*config.Block
 	rpromptRuns  []terminal.Run
-
+	// RPromptBreathingRoom overrides how many cells canWriteRightBlock insists on leaving free
+	// between the prompt and an rprompt. Zero keeps the interactive default. An export has no
+	// one typing into it, which is the only thing that margin protects, so a renderer can ask
+	// for a smaller one - see render.Config.
+	RPromptBreathingRoom int
+	rpromptLength        int
+	Padding              int
+	currentLineLength    int
 	// cursorRow/cursorRun locate the end of the primary prompt's own output
 	// within capturedRows — where the shell leaves the cursor. -1 means
 	// unset; see markCursorAnchor/CursorAnchor.
-	cursorRow int
-	cursorRun int
+	cursorRow   int
+	cursorRun   int
+	Plain       bool
+	forceRender bool
 }
 
 const (
@@ -601,6 +599,74 @@ func backgroundEdge(segment *config.Segment) color.Ansi {
 	return stop
 }
 
+// backgroundFirstEdge is backgroundEdge's left-edge counterpart, collapsing a segment's
+// background gradient to its FIRST stop instead of its last. Used for a leading diamond
+// (see resolveLeadingDiamond): unlike the last stop, a dark-gradient/light-gradient's first
+// stop needs no cell count to shade correctly (GradientFirst renders it unshaded, matching
+// the segment body's own first cell).
+func backgroundFirstEdge(segment *config.Segment) color.Ansi {
+	background := resolvePaletteReference(segment.ResolveBackground())
+
+	stop := background.GradientFirst()
+
+	switch stop { //nolint:exhaustive
+	case color.Foreground:
+		stop = resolvePaletteReference(segment.ResolveForeground()).GradientFirst()
+	case color.Background:
+		// self-reference has no resolvable edge
+		return color.Transparent
+	}
+
+	if stop == color.Foreground || stop == color.Background {
+		return color.Transparent
+	}
+
+	return stop
+}
+
+func resolveBackgroundKeyword(text string, replacement color.Ansi) string {
+	if !strings.Contains(text, string(color.Background)) {
+		return text
+	}
+
+	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, text)
+	if len(match) == 0 {
+		return text
+	}
+
+	anchor := match[terminal.ANCHOR]
+	adjusted := strings.ReplaceAll(anchor, string(color.Background), replacement.String())
+
+	return strings.Replace(text, anchor, adjusted, 1)
+}
+
+// resolveLeadingDiamond is resolveTrailingDiamond's left-edge counterpart: it rewrites a
+// `background` keyword inside the active segment's leading diamond to the gradient's resolved
+// FIRST stop. The diamond renders in its own Write with no gradient cell context, so the
+// keyword would otherwise reach Write() as the raw, unparseable "linear-gradient(...)" syntax:
+// a real ANSI terminal happens to paper over that (the escape code is silently skipped and the
+// glyph keeps whichever color was already active), but the SVG exporter has no such fallback -
+// it takes the failed resolution literally and paints the glyph in the canvas background,
+// making the diamond invisible instead of just the wrong shade.
+func (e *Engine) resolveLeadingDiamond() string {
+	diamond := e.activeSegment.LeadingDiamond
+
+	if !strings.Contains(diamond, string(color.Background)) {
+		return diamond
+	}
+
+	if !resolvePaletteReference(e.activeSegment.ResolveBackground()).IsGradient() {
+		return diamond
+	}
+
+	edge := backgroundFirstEdge(e.activeSegment)
+	if edge.IsClear() {
+		return diamond
+	}
+
+	return resolveBackgroundKeyword(diamond, edge)
+}
+
 func (e *Engine) renderActiveSegment() {
 	e.writeSeparator(false)
 
@@ -615,7 +681,7 @@ func (e *Engine) renderActiveSegment() {
 			background = backgroundEdge(e.previousActiveSegment)
 		}
 
-		terminal.Write(background, color.Background, e.activeSegment.LeadingDiamond)
+		terminal.Write(background, color.Background, e.resolveLeadingDiamond())
 		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Accordion:
 		// Render accordion segments if enabled OR pending (pending shows "..." text)
@@ -697,7 +763,7 @@ func (e *Engine) writeSeparator(final bool) {
 	}
 
 	if shouldOverridePowerlineLeadingSymbol() {
-		terminal.Write(color.Transparent, color.Background, e.activeSegment.LeadingPowerlineSymbol)
+		terminal.Write(color.Transparent, color.Background, resolveBackgroundKeyword(e.activeSegment.LeadingPowerlineSymbol, color.Background))
 		return
 	}
 
@@ -727,12 +793,13 @@ func (e *Engine) writeSeparator(final bool) {
 		bgColor = color.Background
 	}
 
+	separatorColor := e.getPowerlineColor()
 	if e.activeSegment.InvertPowerline || (e.previousActiveSegment != nil && e.previousActiveSegment.InvertPowerline) {
-		terminal.Write(e.getPowerlineColor(), bgColor, symbol)
+		terminal.Write(separatorColor, bgColor, resolveBackgroundKeyword(symbol, bgColor))
 		return
 	}
 
-	terminal.Write(bgColor, e.getPowerlineColor(), symbol)
+	terminal.Write(bgColor, separatorColor, resolveBackgroundKeyword(symbol, separatorColor))
 }
 
 // getPowerlineColor resolves the separator symbol's color, which always sits at the
@@ -773,20 +840,12 @@ func (e *Engine) resolveTrailingDiamond() string {
 		return diamond
 	}
 
-	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, diamond)
-	if len(match) == 0 {
-		return diamond
-	}
-
 	edge := backgroundEdge(e.activeSegment)
 	if edge.IsClear() {
 		return diamond
 	}
 
-	anchor := match[terminal.ANCHOR]
-	adjusted := strings.ReplaceAll(anchor, string(color.Background), edge.String())
-
-	return strings.Replace(diamond, anchor, adjusted, 1)
+	return resolveBackgroundKeyword(diamond, edge)
 }
 
 func (e *Engine) adjustTrailingDiamondColorOverrides() {

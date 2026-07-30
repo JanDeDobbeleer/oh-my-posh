@@ -1,3 +1,5 @@
+import {themes as prismThemes} from 'prism-react-renderer';
+
 export default {
   title: 'Oh My Posh',
   tagline: 'The most customizable and fastest prompt engine for any shell.',
@@ -49,6 +51,12 @@ export default {
       respectPrefersColorScheme: false,
     },
     prism: {
+      // Matches ConfigEditor's own DARK_CODE_THEME/LIGHT_CODE_THEME pair (see
+      // src/components/ConfigEditor/index.js) so every fenced code block in the docs follows
+      // the site's light/dark switch the same way the config editor does, instead of staying on
+      // one theme regardless of colour mode.
+      theme: prismThemes.github,
+      darkTheme: prismThemes.palenight,
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],
     },
     docs: {
@@ -207,7 +215,6 @@ export default {
         },
         theme: {
           customCss: [
-            './src/css/prism-rose-pine-moon.css',
             './src/css/custom.css'
           ],
         },

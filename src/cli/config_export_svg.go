@@ -5,10 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/render"
+	"github.com/jandedobbeleer/oh-my-posh/src/svg"
 )
 
 // exportSVG renders eng's already-captured Run stream (terminal.CaptureRuns
@@ -16,14 +18,26 @@ import (
 // non-rasterized SVG file. columns is the --terminal-width the prompt was
 // rendered with (see render.SVGOptions). cellWidth/lineHeight are the
 // --cell-width/--line-height flags' raw values (see render.SVGOptions).
+// backgroundColor is the --background-color flag's raw #RRGGBB value, or
+// empty when unset.
 //
 // The option-building and the CapturedRuns/CursorAnchor/svg.Encode glue both
 // moved to the render package (render.SVGOptions/render.SVG) so the js/wasm
 // entrypoint can reuse them without linking cli; this function keeps only
 // what stays genuinely CLI-shaped - resolving the output path and writing
 // the file.
-func exportSVG(eng *prompt.Engine, cfg *config.Config, output, fontFamily string, columns int, metrics render.FontMetrics) error {
+func exportSVG(eng *prompt.Engine, cfg *config.Config, output, fontFamily string, columns int, metrics render.FontMetrics, backgroundColor string) error {
 	opts := render.SVGOptions(fontFamily, columns, metrics)
+
+	// A caller-supplied canvas background only ever fills in for a theme that leaves its own
+	// terminal background unset - withDefaults (svg.go) always prefers a real
+	// opts.TerminalBackground over CanvasBackground when the theme sets one, so this can't paint
+	// over how the theme would actually look in a real terminal.
+	if backgroundColor != "" {
+		if rgb, ok := svg.ResolveStaticRGB(color.Ansi(backgroundColor), true, &opts); ok {
+			opts.CanvasBackground = rgb
+		}
+	}
 
 	doc := render.SVG(eng, opts)
 

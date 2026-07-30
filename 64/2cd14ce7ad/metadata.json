@@ -6,6 +6,7 @@
   "checkpoints_count": 15,
   "files_touched": [
     "src/wasm/main.go",
+    "website/src/components/Config.js",
     "website/src/components/ConfigEditor/renderDefaults.js"
   ],
   "sessions": [

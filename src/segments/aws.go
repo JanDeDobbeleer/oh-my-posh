@@ -8,7 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
-	"gopkg.in/ini.v1"
+	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 )
 
 type Aws struct {
@@ -142,7 +142,7 @@ func (a *Aws) parseINI(path string) (*ini.File, bool) {
 		return nil, false
 	}
 
-	cfg, err := ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true}, []byte(content))
+	cfg, err := ini.LoadVerbatim(content)
 	if err != nil {
 		log.Error(err)
 		return nil, false

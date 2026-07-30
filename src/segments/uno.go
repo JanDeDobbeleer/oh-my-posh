@@ -3,7 +3,7 @@ package segments
 import (
 	"encoding/json"
 
-	"github.com/gookit/goutil/jsonutil"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 type unoGlobalJSON struct {
@@ -26,7 +26,7 @@ func (u *Uno) Enabled() bool {
 		return false
 	}
 
-	content := jsonutil.StripComments(u.env.FileContent(file.Path))
+	content := text.StripJSONComments(u.env.FileContent(file.Path))
 
 	var globalJSON unoGlobalJSON
 	err = json.Unmarshal([]byte(content), &globalJSON)

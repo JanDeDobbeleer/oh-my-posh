@@ -9,10 +9,10 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gookit/goutil/jsonutil"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "go.yaml.in/yaml/v3"
@@ -548,7 +548,7 @@ func (n *Project) firstExistingFile(files []string) string {
 func (n *Project) parseJSONPackage(file string, allowJSONC bool) (*ProjectData, error) {
 	content := n.env.FileContent(file)
 	if allowJSONC && filepath.Ext(file) == ".jsonc" {
-		content = jsonutil.StripComments(content)
+		content = text.StripJSONComments(content)
 	}
 
 	var data ProjectData

@@ -7,7 +7,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
-	"gopkg.in/ini.v1"
+	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 )
 
 const (
@@ -44,7 +44,7 @@ func (g *Gcp) Enabled() bool {
 		return false
 	}
 
-	data, err := ini.Load([]byte(cfg))
+	data, err := ini.Load(cfg)
 	if err != nil {
 		log.Error(err)
 		return false

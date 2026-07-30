@@ -22,6 +22,7 @@ var (
 	svgLineHeight      float64
 	svgFillAscent      float64
 	svgFillDescent     float64
+	svgBackgroundColor string
 )
 
 var imageCmd = &cobra.Command{
@@ -55,6 +56,10 @@ You can tweak the output by using additional flags:
   where the separator does instead of standing taller than it. Both default
   to Hack Nerd Font's own U+E0B0 ink box; set them alongside font-family for
   the same reason as cell-width and line-height
+- background-color: #RRGGBB canvas/window background to render against,
+  overriding the theme's own background where none is set; a theme that
+  sets its own terminal background always wins over this flag, matching how
+  the theme itself would actually look in a real terminal
 
 Example usage:
 
@@ -100,7 +105,7 @@ Exports the config to an image file ~/mytheme.svg.`,
 			FillDescent: svgFillDescent,
 		}
 
-		if err := exportSVG(eng, cfg, outputImage, svgFontFamily, imageTerminalWidth, metrics); err != nil {
+		if err := exportSVG(eng, cfg, outputImage, svgFontFamily, imageTerminalWidth, metrics, svgBackgroundColor); err != nil {
 			exitcode = 666
 			fmt.Println(err.Error())
 		}
@@ -119,6 +124,7 @@ func init() {
 
 	imageCmd.Flags().Float64Var(&svgFillAscent, "fill-ascent", 0, fmt.Sprintf(fillHelp, "above"))
 	imageCmd.Flags().Float64Var(&svgFillDescent, "fill-descent", 0, fmt.Sprintf(fillHelp, "below"))
+	imageCmd.Flags().StringVar(&svgBackgroundColor, "background-color", "", "#RRGGBB canvas/window background, overridden by the theme's own background when it sets one")
 
 	exportCmd.AddCommand(imageCmd)
 }

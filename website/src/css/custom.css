@@ -50,6 +50,33 @@ html[data-theme="dark"] {
   --omp-card-background: var(--ifm-background-surface-color);
 }
 
+/* Shared "show only the render matching the reader's light/dark toggle" pair - any component
+   that ships two pre-rendered SVGs (one per mode) rather than picking one client-side wraps each
+   in one of these instead of introducing its own version: the homepage hero
+   (src/pages/index.js) and the theme gallery (ThemeGallery/index.js) both need it. defaultMode is
+   'light' (docusaurus.config.js), so light is the unadorned baseline here and dark is the
+   html[data-theme="dark"] override, the same convention --omp-card-background above uses.
+   The selector is doubled (.omp-light-only.omp-light-only) to raise specificity to (0,2,0):
+   these classes sit alongside a component's own single-class wrapper (e.g. .svgWrapper,
+   0,1,0) on the very same element, and CSS modules bundle after custom.css in Docusaurus's
+   webpack output, so a plain (0,1,0) rule here would lose the tie-break to that later,
+   equally-specific display:block and never actually hide anything. */
+.omp-light-only.omp-light-only {
+  display: block;
+}
+
+.omp-dark-only.omp-dark-only {
+  display: none;
+}
+
+html[data-theme="dark"] .omp-light-only.omp-light-only {
+  display: none;
+}
+
+html[data-theme="dark"] .omp-dark-only.omp-dark-only {
+  display: block;
+}
+
 /* Typography and spacing scale for the segment catalog and studio pages (see their own
    styles.module.css) - collapses the nine near-identical font sizes and the ad-hoc gap values
    the two pages had each accumulated on their own into one shared set of steps, and points

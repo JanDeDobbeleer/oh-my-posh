@@ -75,3 +75,27 @@
 - `config.Get` prefers the session gob cache over `POSH_THEME`.
 - Go guarantees exactly 2 records per wait-mode serve request even on segment panic
   (`renderComplete`) - blocking clients (Clink) rely on this.
+
+## js/wasm runtime footprint (verified 2026-07-30)
+
+- gopsutil (v4.26.6) ships `*_fallback.go` build-tag stubs for `GOOS=js` across process/host/mem/
+  load/disk/net/cpu/sensors, so it links fine into the `src/wasm` build without any split - it is
+  NOT a multi-MB cost by itself. The real, measurable cost was `runtime.Terminal.Shell()`'s parent-
+  process fallback (`gopsutil/process.NewProcess`) and `SystemInfo()` (`gopsutil/load` +
+  `gopsutil/disk` + `Memory()`/`gopsutil/mem`) plus `TerminalWidth()`'s
+  `wayneashleyberry/terminal-dimensions` (which shells out to `stty` via `os/exec`). `go build
+  -ldflags=-dumpdep` (GOOS=js) showed `gopsutil/process.Process` retaining dozens of exported
+  methods' `.namedata` (CPUPercent, Connections, Children, ...) even though wasm code only ever
+  calls `.Name()` - all of it is reachable, not DCE'd. Splitting those three methods into
+  `!js`/`js` file pairs on the existing `*Terminal` type (mirroring `terminal_root_js.go` /
+  `terminal_writable_js.go`) dropped the stripped `omp.wasm` from 21,866,822 to 21,833,786 bytes
+  (~33 KB) and fully eliminated `gopsutil/process`, `gopsutil/cpu`, `gopsutil/load`, and
+  `terminal-dimensions` from the dumpdep graph - only the type-only `gopsutil/disk.IOCountersStat`
+  (referenced by `SystemInfo.Disks`, unavoidable without touching `environment.go`) remains.
+- Why per-method `_js.go` splits are the only viable shape, not a new Environment type:
+  `text/template` calls `reflect.Value.MethodByName` with a non-constant name, so the linker keeps
+  every exported method of any type that gets converted to an interface in live code. `render.Config`
+  does exactly that (`env := &runtime.Terminal{}` assigned to the `Environment` interface), so ALL
+  of `*Terminal`'s methods stay linked regardless of which ones the wasm path actually calls - the
+  only way to drop a method's cost is to replace its body for the `js` tag,
+  not to introduce a slimmer type.

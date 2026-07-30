@@ -71,31 +71,75 @@ func TestEncodeColumnsScalesCanvasWidth(t *testing.T) {
 }
 
 // TestEncodeWindowChromeElements pins every distinct piece of window chrome:
-// the rounded window rect (filled and stroked) and the three traffic lights
-// in their fixed colors and left-to-right order. No drop shadow, and so no
-// filter to reference - see windowGeometry's doc comment.
+// the header bar path, the content pane path, the border rect (stroked,
+// unfilled), and the "−"/"▢"/"×" window-control glyphs in fixed left-to-right
+// order - no drop shadow, and so no filter to reference (see
+// windowGeometry's doc comment), and no title or "+"/"⌄" tab-control glyphs
+// (see writeWindowChrome's doc comment on why those were dropped).
 func TestEncodeWindowChromeElements(t *testing.T) {
 	rows := [][]terminal.Run{{contentRun("hi")}}
 
 	doc := Encode(rows, testOptions())
 	decodeXML(t, doc)
 
-	assert.Contains(t, doc, `class="omp-window"`)
+	assert.Contains(t, doc, `class="omp-window-header"`)
+	assert.Contains(t, doc, `class="omp-window-content"`)
+	assert.Contains(t, doc, `class="omp-window" x="`)
 	assert.Contains(t, doc, `rx="`)
 	assert.Contains(t, doc, `stroke="#404040"`)
+	assert.Contains(t, doc, `fill="none"`)
 	assert.NotContains(t, doc, "<feDropShadow")
 	assert.NotContains(t, doc, "filter=")
 
-	redIdx := strings.Index(doc, "#ED655A")
-	yellowIdx := strings.Index(doc, "#E1C04C")
-	greenIdx := strings.Index(doc, "#71BD47")
-	require.NotEqual(t, -1, redIdx)
-	require.NotEqual(t, -1, yellowIdx)
-	require.NotEqual(t, -1, greenIdx)
-	assert.Less(t, redIdx, yellowIdx, "traffic lights must appear red, yellow, green left to right")
-	assert.Less(t, yellowIdx, greenIdx, "traffic lights must appear red, yellow, green left to right")
+	assert.NotContains(t, doc, `class="omp-window-title"`)
+	assert.NotContains(t, doc, `class="omp-tab-control"`)
 
-	assert.Equal(t, 3, strings.Count(doc, `class="omp-traffic-light"`))
+	minimizeIdx := strings.Index(doc, "\u2212")
+	maximizeIdx := strings.Index(doc, "\u25a2")
+	closeIdx := strings.Index(doc, ">\u00d7<")
+	require.NotEqual(t, -1, minimizeIdx)
+	require.NotEqual(t, -1, maximizeIdx)
+	require.NotEqual(t, -1, closeIdx)
+	assert.Less(t, minimizeIdx, maximizeIdx, "window controls must appear minimize, maximize, close left to right")
+	assert.Less(t, maximizeIdx, closeIdx, "window controls must appear minimize, maximize, close left to right")
+
+	assert.Equal(t, 3, strings.Count(doc, `class="omp-window-control"`))
+}
+
+// TestEncodeWindowHeaderDiffersFromContent pins the whole point of the
+// two-tone chrome: the header bar's own fill must not equal the content
+// pane's fill (opts.CanvasBackground), or the two panes would read as one
+// continuous surface again.
+func TestEncodeWindowHeaderDiffersFromContent(t *testing.T) {
+	opts := testOptions()
+	custom := color.RGB{R: 10, G: 20, B: 30}
+	opts.CanvasBackground = &custom
+
+	doc := Encode([][]terminal.Run{{contentRun("hi")}}, opts)
+	decodeXML(t, doc)
+
+	headerStart := strings.Index(doc, `class="omp-window-header" fill="`) + len(`class="omp-window-header" fill="`)
+	headerFill := doc[headerStart : headerStart+7]
+
+	assert.NotEqual(t, hexString(custom), headerFill)
+}
+
+// TestEncodeWindowControlsStayLegibleOnLightHeader pins the same "contrast
+// with what's actually behind it" fix controlColor makes: the window
+// controls sit on the header bar, not the content pane, so they must
+// contrast with headerColor's own output rather than a fixed light gray -
+// a light theme's header (see headerColor: darker than a light content
+// fill, but still light overall) used to leave them nearly invisible.
+func TestEncodeWindowControlsStayLegibleOnLightHeader(t *testing.T) {
+	opts := testOptions()
+	light := color.RGB{R: 0xf5, G: 0xf5, B: 0xf0}
+	opts.CanvasBackground = &light
+
+	doc := Encode([][]terminal.Run{{contentRun("hi")}}, opts)
+	decodeXML(t, doc)
+
+	assert.Contains(t, doc, `fill="`+hexString(defaultForegroundNearBlack)+`" text-anchor="middle">`+"\u2212</text>")
+	assert.NotContains(t, doc, `fill="#cfcfcf"`)
 }
 
 // TestEncodeWindowFillMatchesCanvasBackground pins Options.CanvasBackground's
@@ -109,8 +153,7 @@ func TestEncodeWindowFillMatchesCanvasBackground(t *testing.T) {
 
 	doc := Encode([][]terminal.Run{{contentRun("hi")}}, opts)
 
-	assert.Contains(t, doc, `class="omp-window" x="`)
-	assert.Contains(t, doc, `fill="`+hexString(custom)+`"`)
+	assert.Contains(t, doc, `class="omp-window-content" fill="`+hexString(custom)+`"`)
 }
 
 // TestEncodeWindowFillPrefersKnownTerminalBackground pins the override:
@@ -124,8 +167,7 @@ func TestEncodeWindowFillPrefersKnownTerminalBackground(t *testing.T) {
 
 	doc := Encode([][]terminal.Run{{contentRun("hi")}}, opts)
 
-	assert.Contains(t, doc, `class="omp-window" x="`)
-	assert.Contains(t, doc, `fill="`+hexString(termBg)+`"`)
+	assert.Contains(t, doc, `class="omp-window-content" fill="`+hexString(termBg)+`"`)
 	assert.NotContains(t, doc, `fill="`+hexString(defaultCanvasBackground)+`"`)
 }
 
@@ -170,8 +212,8 @@ func TestEncodeEmptyRowsStillGetsChromeAndDecoration(t *testing.T) {
 
 // TestNewWindowGeometryScalesWithFontSize pins the FontSize/48 scaling the
 // task brief specifies: at FontSize 48 (the retired PNG renderer's own
-// reference em), every geometry constant must equal the PNG renderer's own
-// pixel value verbatim.
+// reference em), padding/titleOffset/corner/strokeWidth equal the PNG
+// renderer's own pixel value verbatim.
 func TestNewWindowGeometryScalesWithFontSize(t *testing.T) {
 	opts := Options{FontSize: 48}
 	geo := newWindowGeometry(&opts)
@@ -179,15 +221,17 @@ func TestNewWindowGeometryScalesWithFontSize(t *testing.T) {
 	assert.InDelta(t, 48, geo.padding, 0.001)
 	assert.InDelta(t, 80, geo.titleOffset, 0.001)
 	assert.InDelta(t, 12, geo.corner, 0.001)
-	assert.InDelta(t, 18, geo.trafficR, 0.001)
-	assert.InDelta(t, 50, geo.trafficGap, 0.001)
 	assert.InDelta(t, 2, geo.strokeWidth, 0.001)
+	assert.InDelta(t, 80*0.55, geo.controlSize, 0.001)
+	assert.InDelta(t, 80*1.15, geo.controlGap, 0.001)
 
 	// Half the reference FontSize halves every one of those constants too.
 	half := Options{FontSize: 24}
 	geoHalf := newWindowGeometry(&half)
 	assert.InDelta(t, geo.padding/2, geoHalf.padding, 0.001)
 	assert.InDelta(t, geo.titleOffset/2, geoHalf.titleOffset, 0.001)
+	assert.InDelta(t, geo.controlSize/2, geoHalf.controlSize, 0.001)
+	assert.InDelta(t, geo.controlGap/2, geoHalf.controlGap, 0.001)
 }
 
 // TestNewCanvasSizeHasNoOuterMargin pins that the window fills the canvas

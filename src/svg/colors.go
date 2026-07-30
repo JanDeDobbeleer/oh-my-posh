@@ -133,16 +133,21 @@ func hexToRGB(value string) (*color.RGB, bool) {
 // namedRGB resolves an ansiColorCodes name (see color/colors.go's
 // ansiColorCodes map) to RGB. "default" is context-dependent rather than a
 // fixed color: its background channel is the real terminal background
-// (Options.TerminalBackground, possibly unknown), and its foreground channel
-// has no equivalent explicit input (see Options' doc comment), so it falls
-// back to a fixed approximation.
+// (Options.TerminalBackground, possibly unknown); its foreground channel has
+// no equivalent explicit input (see Options' doc comment), so it falls back
+// to an approximation picked from the window's own background (see
+// defaultForegroundColor) rather than a single fixed color, so the cursor
+// and watermark decorate always appends (see decorate.go) stay legible
+// against a light terminal background instead of assuming a dark one.
 func namedRGB(name string, isBackground bool, opts *Options) (*color.RGB, bool) {
 	if name == "default" {
 		if isBackground {
 			return opts.TerminalBackground, true
 		}
 
-		return &defaultForegroundRGB, true
+		fg := defaultForegroundColor(opts)
+
+		return &fg, true
 	}
 
 	rgb, ok := ansiNamedRGB[name]
@@ -153,11 +158,45 @@ func namedRGB(name string, isBackground bool, opts *Options) (*color.RGB, bool) 
 	return &rgb, true
 }
 
-// defaultForegroundRGB is a fixed approximation of a terminal's default
-// foreground color, used only for the ansiColorCodes name "default" on a
-// foreground channel; see namedRGB's doc comment for why this can't be
-// resolved any more precisely from Options.
+// defaultForegroundRGB is the fixed fallback for the ansiColorCodes name
+// "default" on a foreground channel when no background is known to pick a
+// contrasting shade from (see defaultForegroundColor) — Options.
+// CanvasBackground is only guaranteed non-nil after Encode's own
+// withDefaults call, not for a caller resolving a channel directly (see
+// ResolveStaticRGB).
 var defaultForegroundRGB = color.RGB{R: 255, G: 255, B: 255}
+
+// defaultForegroundNearBlack is defaultForegroundColor's pick for a light
+// background: near-black rather than pure black, matching the muted,
+// slightly-softened tone the window chrome's own border/control colors
+// already use instead of a harsh #000.
+var defaultForegroundNearBlack = color.RGB{R: 0x1a, G: 0x1a, B: 0x1a}
+
+// defaultForegroundColor picks white or near-black for the "default"
+// foreground, whichever contrasts with opts.CanvasBackground's own
+// luminance (see luminance) — the same "pick a contrasting shade" trick
+// headerColor uses for the two-tone header bar. An unset CanvasBackground
+// (a caller resolving a channel directly, not through Encode) falls back to
+// the fixed white this always used before, since there is then no
+// background to contrast against.
+func defaultForegroundColor(opts *Options) color.RGB {
+	if opts.CanvasBackground == nil {
+		return defaultForegroundRGB
+	}
+
+	if luminance(*opts.CanvasBackground) < 128 {
+		return defaultForegroundRGB
+	}
+
+	return defaultForegroundNearBlack
+}
+
+// luminance is the perceived-brightness weighting (ITU-R BT.601) shared by
+// defaultForegroundColor and headerColor (window.go) to decide whether a
+// background reads as "dark" or "light".
+func luminance(rgb color.RGB) float64 {
+	return 0.299*float64(rgb.R) + 0.587*float64(rgb.G) + 0.114*float64(rgb.B)
+}
 
 // ansiNamedRGB gives each of ansiColorCodes' 16 names (color/colors.go) an
 // actual RGB, since ansiColorCodes itself only carries the SGR number, not a

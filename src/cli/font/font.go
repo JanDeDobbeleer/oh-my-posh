@@ -15,11 +15,11 @@ func init() {
 }
 
 type Font struct {
-	Name     string                 `json:"name,omitempty" jsonschema:"title=Font name,description=The name of the font"`
-	Family   string                 `json:"-"`
-	FileName string                 `json:"-"`
+	Name     string            `json:"name,omitempty" jsonschema:"title=Font name,description=The name of the font"`
+	Family   string            `json:"-"`
+	FileName string            `json:"-"`
 	Metadata map[nameID]string `json:"-"`
-	Data     []byte                 `json:"-"`
+	Data     []byte            `json:"-"`
 }
 
 func (f *Font) Apply() error {

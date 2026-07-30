@@ -3,7 +3,7 @@
   "checkpoint_id": "9214af96e44d",
   "strategy": "manual-commit",
   "branch": "themes-svg",
-  "checkpoints_count": 14,
+  "checkpoints_count": 15,
   "files_touched": [
     "website/docusaurus.config.js",
     "website/src/components/ConfigEditor/index.js"
@@ -29,13 +29,20 @@
       "compact_transcript": "/92/14af96e44d/2/transcript.jsonl",
       "content_hash": "/92/14af96e44d/2/content_hash.txt",
       "prompt": "/92/14af96e44d/2/prompt.txt"
+    },
+    {
+      "metadata": "/92/14af96e44d/3/metadata.json",
+      "transcript": "/92/14af96e44d/3/full.jsonl",
+      "compact_transcript": "/92/14af96e44d/3/transcript.jsonl",
+      "content_hash": "/92/14af96e44d/3/content_hash.txt",
+      "prompt": "/92/14af96e44d/3/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1166,
-    "cache_creation_tokens": 3772026,
-    "cache_read_tokens": 181589091,
-    "output_tokens": 281025,
-    "api_call_count": 619
+    "input_tokens": 3463,
+    "cache_creation_tokens": 13811446,
+    "cache_read_tokens": 752279081,
+    "output_tokens": 925119,
+    "api_call_count": 1843
   }
 }

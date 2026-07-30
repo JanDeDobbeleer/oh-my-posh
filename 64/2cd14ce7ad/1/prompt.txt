@@ -1,0 +1,7 @@
+is the subagnet still doing something? Seems stuck
+
+---
+
+it did find this angle:
+
+fold the changes into the right commits, do not run the test suite every time, only on the HEAD.

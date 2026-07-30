@@ -27,3 +27,12 @@ export function buildRenderOptions(columns) {
     fillDescent: VICTOR_MONO.FILL_DESCENT,
   };
 }
+
+// Infima's own light-theme background (no --ifm-background-color override lives in
+// custom.css) - same value export_themes.mjs's LIGHT_BACKGROUND renders the gallery/hero's
+// light variant against, so the studio's live preview matches every other build-time render
+// that already follows the site's color mode. Passed as the wasm render() call's own
+// options.backgroundColor (see src/wasm/main.go), which only ever fills in for a theme that
+// leaves its own terminal background unset - a theme with its own background (e.g.
+// tokyonight_storm) keeps looking like itself in the studio regardless of color mode.
+export const LIGHT_BACKGROUND_COLOR = '#ffffff';

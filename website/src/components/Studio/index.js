@@ -1,9 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
+import { useColorMode } from '@docusaurus/theme-common';
 import ConfigEditor from '../ConfigEditor';
 import WasmMessage from '../ConfigEditor/WasmMessage';
 import { useWasmRenderer } from '../ConfigEditor/useWasmRenderer';
-import { buildRenderOptions, RENDER_DATA_JSON } from '../ConfigEditor/renderDefaults';
+import {
+  buildRenderOptions,
+  LIGHT_BACKGROUND_COLOR,
+  RENDER_DATA_JSON,
+} from '../ConfigEditor/renderDefaults';
 import { convertConfig, parseConfig, stringifyConfig } from '../ConfigEditor/serialize';
 import {
   APPEND_KEY,
@@ -82,14 +87,31 @@ function Studio() {
   const { svg, error, wasmStatus, wasmProgress, wasmErrorMessage, render, ensureLoaded } =
     useWasmRenderer({ eager: true });
 
+  // The site's own dark/light toggle (the same @docusaurus/theme-common hook ConfigEditor's
+  // syntax-highlighting theme already follows) - the preview's canvas background is switched to
+  // match it below, rather than always rendering against the exporter's fixed dark default.
+  const { colorMode } = useColorMode();
+
   const debounceRef = useRef(null);
-  // runRender is a useCallback with no deps, so reading `format` from the closure would pin
-  // it to whatever was selected on first render. The ref is what the render call reads.
+  // runRender is a useCallback with no deps, so reading `format`/`colorMode` from the closure
+  // would pin them to whatever was selected on first render. The refs are what the render call
+  // actually reads.
   const formatRef = useRef(CONFIG_FORMAT);
+  const colorModeRef = useRef(colorMode);
+  colorModeRef.current = colorMode;
 
   const runRender = useCallback(
     (text) => {
-      render(text, formatRef.current, RENDER_DATA_JSON, RENDER_OPTIONS);
+      // A caller-supplied backgroundColor only ever fills in for a theme that leaves its own
+      // terminal background unset (see src/wasm/main.go's renderSVG), so a theme with its own
+      // background keeps looking like itself regardless of color mode - only the default,
+      // background-less starter actually changes with the toggle.
+      const options =
+        colorModeRef.current === 'light'
+          ? { ...RENDER_OPTIONS, backgroundColor: LIGHT_BACKGROUND_COLOR }
+          : RENDER_OPTIONS;
+
+      render(text, formatRef.current, RENDER_DATA_JSON, options);
     },
     [render],
   );
@@ -224,16 +246,18 @@ function Studio() {
   }, [format, configText]);
 
   // Render the starter config as soon as the module is ready, so a prompt appears on first
-  // paint without the user having to touch the editor.
+  // paint without the user having to touch the editor. colorMode is also a dependency so that
+  // flipping the site's own dark/light toggle re-renders the current config against the new
+  // canvas background immediately, instead of only picking it up on the reader's next edit.
   useEffect(() => {
     if (wasmStatus === 'ready') {
       runRender(configText);
     }
-    // configText is intentionally not a dependency: this effect's only job is the one render
-    // that happens the moment the module becomes ready, not every keystroke after - the
-    // editor's onChange handles that, debounced.
+    // configText is intentionally not a dependency: this effect's job is the one render that
+    // happens the moment the module becomes ready (or the color mode flips), not every
+    // keystroke after - the editor's onChange handles that, debounced.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasmStatus, runRender]);
+  }, [wasmStatus, colorMode, runRender]);
 
   useEffect(
     () => () => {

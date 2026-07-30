@@ -40,6 +40,17 @@ type windowGeometry struct {
 	controlGap  float64 // spacing between the three window controls
 }
 
+// minStrokeWidth is the floor writeWindowChrome's border stroke never
+// scales below: below the default FontSize (16, scale ~0.33) the plain
+// 2*scale formula drops under 1px - thin enough that anti-aliasing fades it
+// to near-nothing, which is what left the window's rounded corners barely
+// visible at every FontSize this package is actually used at (the website's
+// theme gallery and Studio preview both render at the default). 1px is
+// still crisp at FontSize 48's own scale=1 (2*1 > 1, so the clamp is a
+// no-op there and TestNewWindowGeometryScalesWithFontSize's pinned value of
+// 2 is untouched).
+const minStrokeWidth = 1.0
+
 func newWindowGeometry(opts *Options) windowGeometry {
 	scale := opts.FontSize / 48.0
 
@@ -47,7 +58,7 @@ func newWindowGeometry(opts *Options) windowGeometry {
 		padding:     48 * scale,
 		titleOffset: 80 * scale,
 		corner:      12 * scale,
-		strokeWidth: 2 * scale,
+		strokeWidth: max(2*scale, minStrokeWidth),
 	}
 
 	geo.controlSize = geo.titleOffset * 0.55

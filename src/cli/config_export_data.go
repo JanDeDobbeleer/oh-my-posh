@@ -11,7 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 	themesDir  string
 )
 
-var dataCmd = &cobra.Command{
+var dataCmd = &cmdtree.Command{
 	Use:   "data",
 	Short: "Export a template data file for your config",
 	Long: `Export a template data file for your config.
@@ -47,8 +47,8 @@ them into a single sanitized fixture (the most common recorded value per
 segment key wins), and writes it to the given output path. --config is
 ignored in this mode. This is the single command that regenerates
 src/prompt/testdata/fixtures - run from src/.`,
-	Args: cobra.NoArgs,
-	Run: func(cmd *cobra.Command, _ []string) {
+	Args: cmdtree.NoArgs,
+	Run: func(cmd *cmdtree.Command, _ []string) {
 		cache.Init(os.Getenv("POSH_SHELL"))
 
 		if themesDir != "" {

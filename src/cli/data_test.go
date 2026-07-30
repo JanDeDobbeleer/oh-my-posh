@@ -10,7 +10,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -291,7 +291,7 @@ func TestApplyDataFile_DataDeriveIsNoopOnAnUnmarkedFile(t *testing.T) {
 }
 
 func TestPrintAndImageCmd_DataDeriveFlagRegistered(t *testing.T) {
-	for _, cmd := range []*cobra.Command{printCmd, imageCmd} {
+	for _, cmd := range []*cmdtree.Command{printCmd, imageCmd} {
 		flag := cmd.Flags().Lookup("data-derive")
 		require.NotNil(t, flag, "%s must register --data-derive", cmd.Use)
 		assert.Equal(t, "false", flag.DefValue)

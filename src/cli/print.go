@@ -9,7 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
@@ -40,8 +40,8 @@ func init() {
 	RootCmd.AddCommand(printCmd)
 }
 
-func createPrintCmd() *cobra.Command {
-	printCmd := &cobra.Command{
+func createPrintCmd() *cmdtree.Command {
+	printCmd := &cmdtree.Command{
 		Use:   "print [debug|primary|secondary|transient|transient-right|right|tooltip|valid|error|preview]",
 		Short: "Print the prompt/context",
 		Long:  "Print one of the prompts based on the location/use-case.",
@@ -58,7 +58,7 @@ func createPrintCmd() *cobra.Command {
 			prompt.PREVIEW,
 		},
 		Args: NoArgsOrOneValidArg,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cmdtree.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()
 				return

@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -23,13 +23,13 @@ type resource interface {
 	Test(input string) error
 }
 
-func Command(r resource) *cobra.Command {
-	cmd := &cobra.Command{
+func Command(r resource) *cmdtree.Command {
+	cmd := &cmdtree.Command{
 		Use:       "dsc",
 		Short:     "Manage Oh My Posh DSC (Desired State Configuration)",
 		Long:      "Manage Oh My Posh DSC (Desired State Configuration).",
 		ValidArgs: []string{"get", "set", "test", "schema", "export"},
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cmdtree.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()
 				return

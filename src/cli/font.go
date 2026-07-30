@@ -12,13 +12,13 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
 	zipFolder string
 
-	fontCmd = &cobra.Command{
+	fontCmd = &cmdtree.Command{
 		Use:   "font",
 		Short: "Manage fonts",
 		Long: `Manage fonts.
@@ -29,7 +29,7 @@ List the available Nerd Fonts and install one:
   oh-my-posh font install Meslo`,
 	}
 
-	fontListCmd = &cobra.Command{
+	fontListCmd = &cmdtree.Command{
 		Use:   "list",
 		Short: "List the available Nerd Fonts",
 		Long: `List the available Nerd Fonts.
@@ -37,8 +37,8 @@ List the available Nerd Fonts and install one:
 Prints one font name per line, so it can be searched or piped:
 
   oh-my-posh font list | grep -i mono`,
-		Args: cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
+		Args: cmdtree.NoArgs,
+		Run: func(_ *cmdtree.Command, _ []string) {
 			fonts, err := font.List()
 			if err != nil {
 				log.Error(err)
@@ -53,7 +53,7 @@ Prints one font name per line, so it can be searched or piped:
 		},
 	}
 
-	fontInstallCmd = &cobra.Command{
+	fontInstallCmd = &cmdtree.Command{
 		Use:   "install <font>",
 		Short: "Install a Nerd Font",
 		Long: `Install a Nerd Font.
@@ -63,8 +63,8 @@ Takes a font name from ` + "`oh-my-posh font list`" + `, a URL, or the path to a
   oh-my-posh font install Meslo
   oh-my-posh font install https://example.com/font.zip
   oh-my-posh font install ./CascadiaCode.zip`,
-		Args: cobra.ExactArgs(1),
-		Run: func(_ *cobra.Command, args []string) {
+		Args: cmdtree.ExactArgs(1),
+		Run: func(_ *cmdtree.Command, args []string) {
 			env := &runtime.Terminal{}
 			env.Init(&runtime.Flags{})
 

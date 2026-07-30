@@ -11,7 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 	output string
 )
 
-var exportCmd = &cobra.Command{
+var exportCmd = &cmdtree.Command{
 	Use:   "export",
 	Short: "Export your config",
 	Long: `Export your config.
@@ -35,8 +35,8 @@ Exports the config file "~/myconfig.omp.json" in TOML format and prints the resu
 > oh-my-posh config export --output ~/new_config.omp.json
 
 Exports the current config to "~/new_config.omp.json" (in JSON format).`,
-	Args: cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Args: cmdtree.NoArgs,
+	Run: func(_ *cmdtree.Command, _ []string) {
 		if output == "" && format == "" {
 			// usage error
 			fmt.Println("neither output path nor export format is specified")

@@ -52,14 +52,14 @@ build/        # CI build helpers
 
 Key paths inside `src/`:
 
-| Path                          | Purpose                                             |
-| ----------------------------- | --------------------------------------------------- |
-| `src/segments/`               | One `.go` + one `_test.go` per segment              |
-| `src/config/segment_types.go` | Segment type registry (gob + string constants)      |
-| `src/cli/`                    | CLI commands (Cobra); `root.go` is the entry point  |
-| `src/prompt/engine.go`        | Segment rendering loop                              |
-| `src/cache/`                  | Existing TTL/file/command-path cache infrastructure |
-| `src/runtime/`                | `Environment` abstraction + mock                    |
+| Path                           | Purpose                                               |
+| ------------------------------ | ----------------------------------------------------- |
+| `src/segments/`                | One `.go` + one `_test.go` per segment                |
+| `src/config/segment_types.go`  | Segment type registry (gob + string constants)        |
+| `src/cli/`                     | CLI commands (cmdtree); `root.go` is the entry point  |
+| `src/prompt/engine.go`         | Segment rendering loop                                |
+| `src/cache/`                   | Existing TTL/file/command-path cache infrastructure   |
+| `src/runtime/`                 | `Environment` abstraction + mock                      |
 
 ## Segment Development
 
@@ -97,10 +97,10 @@ Supported shells: `bash`, `zsh`, `fish`, `powershell`/`pwsh`, `cmd`, `nu`, `elvi
 
 ## CLI Commands
 
-CLI commands use [Cobra](https://github.com/spf13/cobra) and live in `src/cli/`. To add a new
+CLI commands use the internal `src/cmdtree` command tree and live in `src/cli/`. To add a new
 command:
 
-1. Create `src/cli/<name>.go` with a `var <name>Cmd = &cobra.Command{...}`
+1. Create `src/cli/<name>.go` with a `var <name>Cmd = &cmdtree.Command{...}`
 2. Register it in `src/cli/root.go` via `RootCmd.AddCommand(<name>Cmd)`
 
 ## Caching

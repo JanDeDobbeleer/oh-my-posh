@@ -6,17 +6,17 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/spf13/cobra"
 )
 
-var noticeCmd = &cobra.Command{
+var noticeCmd = &cmdtree.Command{
 	Use:   "notice",
 	Short: "Print the upgrade notice when a new version is available.",
 	Long:  "Print the upgrade notice when a new version is available.",
-	Args:  cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Args:  cmdtree.NoArgs,
+	Run: func(_ *cmdtree.Command, _ []string) {
 		env := &runtime.Terminal{}
 		env.Init(&runtime.Flags{})
 

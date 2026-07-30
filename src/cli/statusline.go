@@ -14,7 +14,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 // statuslineRun returns a cobra Run function for statusline commands.
@@ -23,8 +23,8 @@ import (
 // cacheKey is the session cache key under which data is stored.
 // sessionID extracts the session ID from parsed data so it can be set as POSH_SESSION_ID.
 // defaultCfg is called when no --config flag is provided or parsing fails.
-func statuslineRun[T any](shellConst, cacheKey string, sessionID func(*T) string, defaultCfg func() *config.Config) func(*cobra.Command, []string) {
-	return func(cmd *cobra.Command, _ []string) {
+func statuslineRun[T any](shellConst, cacheKey string, sessionID func(*T) string, defaultCfg func() *config.Config) func(*cmdtree.Command, []string) {
+	return func(cmd *cmdtree.Command, _ []string) {
 		log.Debugf("%s command started", shellConst)
 
 		stdinData, err := io.ReadAll(os.Stdin)

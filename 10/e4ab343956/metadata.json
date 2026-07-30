@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "10e4ab343956",
+  "strategy": "manual-commit",
+  "branch": "themes-svg",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "website/plugins/themes/index.js",
+    "website/sidebars.js",
+    "website/src/components/ConfigEditor/studioHandoff.js",
+    "website/src/components/Studio/index.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/10/e4ab343956/0/metadata.json",
+      "transcript": "/10/e4ab343956/0/full.jsonl",
+      "compact_transcript": "/10/e4ab343956/0/transcript.jsonl",
+      "content_hash": "/10/e4ab343956/0/content_hash.txt",
+      "prompt": "/10/e4ab343956/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1166,
+    "cache_creation_tokens": 3772026,
+    "cache_read_tokens": 181589091,
+    "output_tokens": 281025,
+    "api_call_count": 619
+  }
+}

@@ -213,6 +213,15 @@ func reachableNames(value reflect.Value) (map[string]bool, map[string]reflect.Va
 
 			names[field.Name] = true
 			fields[field.Name] = sv.Field(i)
+
+			// The recorder writes a renamed field under both names, so a tag is just as legitimate
+			// a key as the Go name - it is the one the writer itself reads back.
+			if tag, tagged := field.Tag.Lookup("json"); tagged {
+				if name, _, _ := strings.Cut(tag, ","); name != "" && name != "-" {
+					names[name] = true
+					fields[name] = sv.Field(i)
+				}
+			}
 		}
 	}
 

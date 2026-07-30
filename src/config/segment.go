@@ -417,7 +417,7 @@ func (segment *Segment) ResolveForeground() color.Ansi {
 	}
 
 	if len(segment.ForegroundTemplates) != 0 {
-		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
+		match := segment.ForegroundTemplates.FirstMatch(segment.templateContext(), segment.Foreground.String())
 		segment.Foreground = color.Ansi(match)
 	}
 
@@ -433,7 +433,7 @@ func (segment *Segment) ResolveBackground() color.Ansi {
 	}
 
 	if len(segment.BackgroundTemplates) != 0 {
-		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
+		match := segment.BackgroundTemplates.FirstMatch(segment.templateContext(), segment.Background.String())
 		segment.Background = color.Ansi(match)
 	}
 
@@ -611,7 +611,7 @@ func (segment *Segment) restoreData() bool {
 		return true
 	}
 
-	if err := segment.restoreInto(recorded.Data); err != nil {
+	if err := segment.restoreInto(recorded.Data, recorded.Methods); err != nil {
 		log.Error(err)
 		return false
 	}
@@ -631,7 +631,11 @@ func (segment *Segment) restoreData() bool {
 // degraded form - a template resolves a name against a map key exactly as it resolves it against
 // a struct field, so both carry the same recorded values to the same templates. What a map cannot
 // carry is a method result, which is why the recorder writes those out as data too.
-func (segment *Segment) restoreInto(raw json.RawMessage) error {
+//
+// methods is the overlay for the values whose method results could not be written as data without
+// changing what the writer sees (RecordedSegment.Methods explains which). It is read here and
+// nowhere else: a writer brings its own methods, so only the map ever needs it.
+func (segment *Segment) restoreInto(raw, methods json.RawMessage) error {
 	if segment.writer != nil {
 		return json.Unmarshal(raw, &segment.writer)
 	}
@@ -639,6 +643,15 @@ func (segment *Segment) restoreInto(raw json.RawMessage) error {
 	data := make(map[string]any)
 	if err := json.Unmarshal(raw, &data); err != nil {
 		return err
+	}
+
+	if len(methods) != 0 {
+		overlay := make(map[string]any)
+		if err := json.Unmarshal(methods, &overlay); err != nil {
+			return err
+		}
+
+		MergeRecordedMethods(data, overlay)
 	}
 
 	segment.data = normalizeNumbers(data).(map[string]any)
@@ -688,12 +701,12 @@ func normalizeNumbers(value any) any {
 }
 
 // decodeRecordedSegment reports whether raw is exactly a RecordedSegment
-// envelope: a JSON object with only "enabled" and "data" keys, nothing else.
-// Anything short of that - a flat hand-written entry, or malformed JSON - is
-// left for the caller to treat as unmarked data.
+// envelope: a JSON object holding "enabled" and "data", and nothing beyond an
+// optional "methods". Anything short of that - a flat hand-written entry, or
+// malformed JSON - is left for the caller to treat as unmarked data.
 func decodeRecordedSegment(raw json.RawMessage) (RecordedSegment, bool) {
 	var fields map[string]json.RawMessage
-	if err := json.Unmarshal(raw, &fields); err != nil || len(fields) != 2 {
+	if err := json.Unmarshal(raw, &fields); err != nil {
 		return RecordedSegment{}, false
 	}
 
@@ -703,12 +716,18 @@ func decodeRecordedSegment(raw json.RawMessage) (RecordedSegment, bool) {
 		return RecordedSegment{}, false
 	}
 
+	methodsRaw, hasMethods := fields["methods"]
+
+	if len(fields) != 2 && (len(fields) != 3 || !hasMethods) {
+		return RecordedSegment{}, false
+	}
+
 	var enabled bool
 	if err := json.Unmarshal(enabledRaw, &enabled); err != nil {
 		return RecordedSegment{}, false
 	}
 
-	return RecordedSegment{Data: dataRaw, Enabled: enabled}, true
+	return RecordedSegment{Data: dataRaw, Methods: methodsRaw, Enabled: enabled}, true
 }
 
 func (segment *Segment) setCache() {

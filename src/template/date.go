@@ -24,11 +24,7 @@ func dateInZone(fmt string, date any, zone string) string {
 	case int32:
 		t = time.Unix(int64(v), 0)
 	case string:
-		if epoch, err := strconv.ParseInt(v, 10, 64); err == nil {
-			t = time.Unix(epoch, 0)
-		} else {
-			t = time.Now()
-		}
+		t = parseDateString(v)
 	default:
 		t = time.Now()
 	}
@@ -39,6 +35,23 @@ func dateInZone(fmt string, date any, zone string) string {
 	}
 
 	return t.In(loc).Format(fmt)
+}
+
+// parseDateString reads the two shapes a date reaches a template as text in: a Unix epoch, which
+// is what sprig's own unixEpoch hands on, and an RFC 3339 timestamp, which is how a time.Time
+// marshals. The second matters for a segment rendered from recorded data rather than from its
+// writer: JSON has no time type, so a recorded date arrives as the string it marshalled to, and
+// falling through to time.Now() would quietly replace it with the wall clock.
+func parseDateString(value string) time.Time {
+	if epoch, err := strconv.ParseInt(value, 10, 64); err == nil {
+		return time.Unix(epoch, 0)
+	}
+
+	if parsed, err := time.Parse(time.RFC3339Nano, value); err == nil {
+		return parsed
+	}
+
+	return time.Now()
 }
 
 func ompDate(fmt string, date any) string {

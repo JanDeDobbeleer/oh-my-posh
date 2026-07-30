@@ -28,11 +28,11 @@ import Config from "@site/src/components/Config.js";
     foreground: "#000000",
     background: "#ffffff",
     background_templates: [
-      '{{if eq "very low" .Index}}#a3e635{{end}}',
-      '{{if eq "low" .Index}}#bef264{{end}}',
-      '{{if eq "moderate" .Index}}#fbbf24{{end}}',
-      '{{if eq "high" .Index}}#ef4444{{end}}',
-      '{{if eq "very high" .Index}}#dc2626{{end}}',
+      '{{if eq "very low" .Index.String}}#a3e635{{end}}',
+      '{{if eq "low" .Index.String}}#bef264{{end}}',
+      '{{if eq "moderate" .Index.String}}#fbbf24{{end}}',
+      '{{if eq "high" .Index.String}}#ef4444{{end}}',
+      '{{if eq "very high" .Index.String}}#dc2626{{end}}',
     ],
     template:
       " CO₂ {{ .Index.Icon }}{{ .Actual.String }} {{ .TrendIcon }} {{ .Forecast.String }} ",

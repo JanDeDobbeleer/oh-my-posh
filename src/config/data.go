@@ -76,8 +76,37 @@ func ThemeFiles(dir string) ([]string, error) {
 // version marker. A hand-written file skips this wrapper and stores a segment's
 // raw writer fields directly, as it always has.
 type RecordedSegment struct {
-	Data    json.RawMessage `json:"data"`
+	Data json.RawMessage `json:"data"`
+	// Methods holds the method results that have no room in Data, shaped like it. A recorded
+	// value's methods normally sit alongside its fields, but a value that is not a struct has no
+	// fields to sit alongside: battery.State is an int, and an entry whose "State" were the object
+	// its String() belongs in would no longer unmarshal into the writer. Kept apart, Data stays
+	// writer-shaped and a render with no writer merges this over it - see MergeRecordedMethods.
+	Methods json.RawMessage `json:"methods,omitempty"`
 	Enabled bool            `json:"enabled"`
+}
+
+// MergeRecordedMethods overlays a recorded segment's Methods tree on its Data tree. Two maps are
+// merged key by key; anything else is replaced outright, which is what puts a scalar's method
+// results in the place of the scalar.
+func MergeRecordedMethods(data, methods any) any {
+	dataMap, isDataMap := data.(map[string]any)
+
+	methodsMap, isMethodsMap := methods.(map[string]any)
+	if !isDataMap || !isMethodsMap {
+		return methods
+	}
+
+	for key, value := range methodsMap {
+		if existing, ok := dataMap[key]; ok {
+			dataMap[key] = MergeRecordedMethods(existing, value)
+			continue
+		}
+
+		dataMap[key] = value
+	}
+
+	return dataMap
 }
 
 // Data holds template data supplied via the --data flag, used to render a

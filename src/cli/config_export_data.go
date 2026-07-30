@@ -156,12 +156,12 @@ func buildDataDocument(cfg *config.Config) ([]byte, error) {
 				continue
 			}
 
-			raw, err := recordSegmentData(writer)
+			raw, methods, err := recordSegmentData(writer)
 			if err != nil {
 				return nil, fmt.Errorf("failed to marshal segment %s: %w", segment.DataKey(), err)
 			}
 
-			recorded := config.RecordedSegment{Data: raw, Enabled: segment.Enabled}
+			recorded := config.RecordedSegment{Data: raw, Methods: methods, Enabled: segment.Enabled}
 
 			recordedRaw, err := json.Marshal(recorded)
 			if err != nil {

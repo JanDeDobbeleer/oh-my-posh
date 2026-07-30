@@ -38,6 +38,12 @@ const CONFIG = {
   THEME_EXTENSIONS: ['.omp.json', '.omp.toml', '.omp.yaml'],
   SEGMENT_DATA_FILE: join(__dirname, 'segment_data.json'),
   GITHUB_BASE_URL: 'https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes',
+  // "Open in Studio" (ThemeGallery/index.js) fetches a theme's config from here at click time,
+  // rather than this exporter reading the file content into the manifest. That keeps the gallery
+  // reading the actual current file on every click - not a snapshot frozen at whenever the site
+  // was last built - and keeps generated/themes.json from growing by the size of every theme's
+  // source on top of its already-large inlined SVGs.
+  RAW_GITHUB_BASE_URL: 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes',
   FONT_FAMILY: VICTOR_MONO.FONT_FAMILY,
   CELL_WIDTH: VICTOR_MONO.CELL_WIDTH,
   LINE_HEIGHT: VICTOR_MONO.LINE_HEIGHT,
@@ -70,6 +76,21 @@ function getThemeNameFromFile(fileName) {
   const lastDotIndex = fileName.lastIndexOf('.');
   const secondLastDotIndex = fileName.lastIndexOf('.', lastDotIndex - 1);
   return fileName.slice(0, secondLastDotIndex);
+}
+
+// The format string the studio's editor/parser (ConfigEditor/serialize.js) and CONFIG_FORMATS
+// (Studio/config.js) key on - derived from the same extension isValidTheme already checked,
+// so a theme file's own on-disk syntax is what "Open in Studio" loads it as.
+function getThemeFormat(fileName) {
+  if (fileName.endsWith('.omp.json')) {
+    return 'json';
+  }
+
+  if (fileName.endsWith('.omp.toml')) {
+    return 'toml';
+  }
+
+  return 'yaml';
 }
 
 async function fetchJsonWithTimeout(url) {
@@ -234,11 +255,16 @@ function buildPoshArgs(configPath, outputPath) {
 // dangerouslySetInnerHTML, never parsed as MDX/JSX - MDX compiles a document's body as JSX, and
 // the exporter's raw SVG attributes are not valid JSX, so the markup has to arrive as an opaque
 // string rather than live in the .mdx source itself), the name to label it
-// with, and the GitHub URL both the heading and the render link to.
+// with, and the GitHub URL both the heading and the render link to. rawConfigUrl and format are
+// what "Open in Studio" (ThemeGallery/index.js) needs to fetch and parse the theme's actual
+// config at click time - see RAW_GITHUB_BASE_URL's own comment for why that's a URL, not the
+// file content itself.
 function buildManifestEntry(themeName, themeFile, svg) {
   return {
     name: themeName,
     githubUrl: `${CONFIG.GITHUB_BASE_URL}/${themeFile}`,
+    rawConfigUrl: `${CONFIG.RAW_GITHUB_BASE_URL}/${themeFile}`,
+    format: getThemeFormat(themeFile),
     svg,
   };
 }
@@ -388,6 +414,7 @@ export {
   exportTheme,
   isValidTheme,
   getThemeNameFromFile,
+  getThemeFormat,
   buildManifestEntry,
   asyncPool,
   main,

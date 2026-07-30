@@ -1,6 +1,10 @@
 .gallery {
   display: flex;
   flex-direction: column;
+  /* Cards otherwise stretch to the full container width (flex column's default cross-axis
+     stretch), which is wider than the rendered svg - that's what left the "Open in Studio"
+     button floating free of the svg's own right edge instead of lining up with it. */
+  align-items: flex-start;
   gap: 2rem;
   margin-top: 2rem;
 }
@@ -9,10 +13,71 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  /* Sizes the card - and so headingRow, which stretches to fill it - to the width of its
+     widest child, the rendered svg (via .render/.svgWrapper), so the button's right edge lines
+     up with the svg's regardless of viewport width. max-width keeps a wide theme's render from
+     pushing the card past the viewport - .render's own overflow-x:auto handles the svg itself
+     scrolling in that case, same as before. */
+  width: fit-content;
+  max-width: 100%;
 }
 
 .heading {
   margin: 0;
+  /* Lets the name shrink/wrap instead of forcing headingRow (and so the card) wider than the
+     svg it's now sized to match. */
+  min-width: 0;
+}
+
+.headingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.studioAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  /* Never squeezed by a long theme name - it should keep its own width and let .heading give. */
+  flex-shrink: 0;
+}
+
+/* Same micro-label recipe as Config.module.css's .action (segment docs' Copy/Add to Studio) -
+   kept as its own copy rather than a shared import since the two live in separate CSS modules
+   scoped to their own components. */
+.studioButton {
+  padding: 0.1rem 0.4rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+  color: var(--omp-text-secondary);
+  background: none;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-radius-sm);
+  cursor: pointer;
+}
+
+.studioButton:hover:not(:disabled) {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+}
+
+.studioButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.studioError {
+  margin: 0;
+  max-width: 20rem;
+  font-size: var(--omp-text-body);
+  color: var(--ifm-color-danger);
+  text-align: right;
 }
 
 .render {

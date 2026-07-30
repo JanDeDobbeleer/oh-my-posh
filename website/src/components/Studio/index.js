@@ -6,6 +6,7 @@ import { buildRenderOptions, RENDER_DATA_JSON } from '../ConfigEditor/renderDefa
 import { convertConfig, parseConfig, stringifyConfig } from '../ConfigEditor/serialize';
 import {
   APPEND_KEY,
+  LOAD_KEY,
   SESSION_KEY,
   trySessionStorageGet,
   trySessionStorageRemove,
@@ -54,33 +55,72 @@ function Studio() {
     ensureLoaded();
   }, [ensureLoaded]);
 
-  // Resumes the reader's own session (see studioHandoff.js's SESSION_KEY doc comment) and, if a
-  // segment doc queued one, appends its segment on top - so "Add to Studio" really does add to
-  // whatever is already here rather than to a pristine starter every time. Runs exactly once, on
-  // mount: format/configText are intentionally read as their *initial* values (the plain
-  // STARTER), not the current state, since this effect IS what decides what "current" becomes.
+  // Resumes the reader's own session (see studioHandoff.js's SESSION_KEY doc comment), applies a
+  // pending theme load if "Open in Studio" queued one (LOAD_KEY, replacing rather than resuming),
+  // and otherwise, if a segment doc queued one, appends its segment on top - so "Add to Studio"
+  // really does add to whatever is already here rather than to a pristine starter every time.
+  // Runs exactly once, on mount: format/configText are intentionally read as their *initial*
+  // values (the plain STARTER), not the current state, since this effect IS what decides what
+  // "current" becomes.
   useEffect(() => {
     let baseFormat = CONFIG_FORMAT;
     let baseText = STARTERS[CONFIG_FORMAT];
 
-    const savedRaw = trySessionStorageGet(SESSION_KEY);
+    // LOAD_KEY ("Open in Studio" on a theme) takes priority over everything else: it means
+    // "start from this theme", not "add to whatever was already open". A hit here skips the
+    // SESSION_KEY resume below entirely (the whole point is to replace it) and the stale
+    // APPEND_KEY removal further down guards against an unrelated queued segment from an
+    // earlier, unfinished visit suddenly attaching itself to a freshly loaded theme.
+    const loadRaw = trySessionStorageGet(LOAD_KEY);
+    let loaded = false;
 
-    if (savedRaw) {
+    if (loadRaw) {
+      // One-shot regardless of outcome, same reasoning as APPEND_KEY below.
+      trySessionStorageRemove(LOAD_KEY);
+
       try {
-        const saved = JSON.parse(savedRaw);
+        const payload = JSON.parse(loadRaw);
 
-        if (saved && typeof saved.text === 'string' && CONFIG_FORMATS.includes(saved.format)) {
-          baseFormat = saved.format;
-          baseText = saved.text;
+        if (
+          payload &&
+          typeof payload.text === 'string' &&
+          CONFIG_FORMATS.includes(payload.format)
+        ) {
+          baseFormat = payload.format;
+          baseText = payload.text;
+          loaded = true;
         }
       } catch {
-        // Corrupt or foreign sessionStorage value - fall back to the pristine starter.
+        // Corrupt payload - fall through to the normal session-resume/starter path below.
+      }
+    }
+
+    if (!loaded) {
+      const savedRaw = trySessionStorageGet(SESSION_KEY);
+
+      if (savedRaw) {
+        try {
+          const saved = JSON.parse(savedRaw);
+
+          if (saved && typeof saved.text === 'string' && CONFIG_FORMATS.includes(saved.format)) {
+            baseFormat = saved.format;
+            baseText = saved.text;
+          }
+        } catch {
+          // Corrupt or foreign sessionStorage value - fall back to the pristine starter.
+        }
       }
     }
 
     const pendingRaw = trySessionStorageGet(APPEND_KEY);
 
-    if (pendingRaw) {
+    if (loaded) {
+      // A theme load supersedes any queued segment append too - discard it rather than silently
+      // bolting an unrelated segment onto the theme that was just opened.
+      if (pendingRaw) {
+        trySessionStorageRemove(APPEND_KEY);
+      }
+    } else if (pendingRaw) {
       // One-shot: consumed here regardless of what happens next, so a later, unrelated studio
       // visit never re-applies it.
       trySessionStorageRemove(APPEND_KEY);

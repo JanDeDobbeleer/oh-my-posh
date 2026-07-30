@@ -1,0 +1,41 @@
+Can we adjust the home page by removing the "a prompt that knows where you are" text and replacing that with "Oh My Posh" in the right font and bold? Underneath the "Most customizable and fastest prompt engine for any shell", add a rendered SVG of the default theme, which then obviously replaces the leftover PNG image we still had, which was a screenshot. Remove the PNG from the page.
+
+---
+
+The current configuration that is used on the homepage is the jandedobbeleer theme, but oh-my-posh has a built-in theme which is different from the jandedobbeleer theme. I want that default theme to be the one that is rendered.
+
+---
+
+I think there's a bug in the SVG rendering. The final space configuration in the configuration is not applied. The default, I think, has it, and the prompt_ is printed right after the prompt.
+
+---
+
+commit everything, folded into the right commits
+
+---
+
+yes, delete them
+
+---
+
+It picked up my POSH_CONFIG and I can see some issues in the rendering. Can you investigate what's happening and understand how to fix this? There's a leading diamond issue in path segment as well that's different to the normal ANSI render.
+
+---
+
+is the rprompt from the default config not rendered because there' not enough room?
+
+---
+
+or the render uses 20 breathing room instead of 30?
+
+---
+
+ah, but the segment data doesn't need to be the struct, it can be an anonymous struct or map we provide which will execute the template identically based on the template and engine logic. Or not?
+
+---
+
+fold the chnages into the right commits
+
+---
+
+do not run the tests every time, just on the eventual HEAD

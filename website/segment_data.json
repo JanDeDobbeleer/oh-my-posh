@@ -126,7 +126,17 @@
         "TenantDisplayName": "",
         "TenantID": "00000000-0000-0000-0000-000000000000",
         "Text": " x ",
-        "User": null
+        "User": null,
+        "environmentName": "AzureCloud",
+        "homeTenantId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isDefault": false,
+        "managedByTenants": null,
+        "name": "Contoso Production",
+        "state": "",
+        "tenantDisplayName": "",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "user": null
       },
       "enabled": true
     },
@@ -138,7 +148,9 @@
           "Text": " x "
         },
         "Text": " x ",
-        "Version": 1
+        "Version": 1,
+        "defaultEnvironment": "zava-prod",
+        "version": 1
       },
       "enabled": true
     },
@@ -181,7 +193,17 @@
         "TenantDisplayName": "",
         "TenantID": "00000000-0000-0000-0000-000000000000",
         "Text": " x ",
-        "User": null
+        "User": null,
+        "environmentName": "AzureCloud",
+        "homeTenantId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isDefault": false,
+        "managedByTenants": null,
+        "name": "Contoso Production",
+        "state": "",
+        "tenantDisplayName": "",
+        "tenantId": "00000000-0000-0000-0000-000000000000",
+        "user": null
       },
       "enabled": true
     },
@@ -197,7 +219,12 @@
         "State": 3,
         "Text": " x "
       },
-      "enabled": true
+      "enabled": true,
+      "methods": {
+        "State": {
+          "String": "Charging"
+        }
+      }
     },
     "bazel": {
       "data": {
@@ -239,7 +266,8 @@
         "Reading": null,
         "ReadingAge": 3,
         "Recipe": {
-          "Name": "Contoso Pale Ale"
+          "Name": "Contoso Pale Ale",
+          "name": "Contoso Pale Ale"
         },
         "Segment": {
           "Index": 10,
@@ -250,7 +278,20 @@
         "TemperatureTrend": 0,
         "TemperatureTrendIcon": "→",
         "Text": " x ",
-        "URL": ""
+        "URL": "",
+        "batchNo": 42,
+        "bottlingDate": 0,
+        "brewDate": 0,
+        "fermentationStartDate": 0,
+        "measuredAbv": 5.4,
+        "measuredFg": 0,
+        "measuredOg": 0,
+        "name": "Batch 42",
+        "recipe": {
+          "Name": "Contoso Pale Ale",
+          "name": "Contoso Pale Ale"
+        },
+        "status": "Fermenting"
       },
       "enabled": true
     },
@@ -308,9 +349,24 @@
           "Text": " x "
         },
         "Text": " x ",
-        "TrendIcon": "↘"
+        "TrendIcon": "↘",
+        "actual": 132,
+        "forecast": 148,
+        "index": "moderate"
       },
-      "enabled": true
+      "enabled": true,
+      "methods": {
+        "Actual": {
+          "String": "132"
+        },
+        "Forecast": {
+          "String": "148"
+        },
+        "Index": {
+          "Icon": "•",
+          "String": "moderate"
+        }
+      }
     },
     "cds": {
       "data": {
@@ -381,14 +437,25 @@
           "RemainingPercentage": null,
           "TotalInputTokens": 68000,
           "TotalOutputTokens": 4200,
-          "UsedPercentage": 42
+          "UsedPercentage": 42,
+          "context_window_size": 200000,
+          "current_usage": null,
+          "remaining_percentage": null,
+          "total_input_tokens": 68000,
+          "total_output_tokens": 4200,
+          "used_percentage": 42
         },
         "Cost": {
           "TotalAPIDurationMS": 0,
           "TotalCostUSD": 1.82,
           "TotalDurationMS": 734000,
           "TotalLinesAdded": 118,
-          "TotalLinesRemoved": 26
+          "TotalLinesRemoved": 26,
+          "total_api_duration_ms": 0,
+          "total_cost_usd": 1.82,
+          "total_duration_ms": 734000,
+          "total_lines_added": 118,
+          "total_lines_removed": 26
         },
         "Effort": null,
         "Exceeds200KTokens": false,
@@ -403,7 +470,9 @@
         "FormattedTokens": "72.2K",
         "Model": {
           "DisplayName": "Opus 4.5",
-          "ID": "claude-opus-4-5"
+          "ID": "claude-opus-4-5",
+          "display_name": "Opus 4.5",
+          "id": "claude-opus-4-5"
         },
         "OutputStyle": null,
         "PR": null,
@@ -432,9 +501,74 @@
           "CurrentDir": "~/dev/oh-my-posh",
           "GitWorktree": "",
           "ProjectDir": "~/dev/oh-my-posh",
-          "Repo": null
+          "Repo": null,
+          "added_dirs": null,
+          "current_dir": "~/dev/oh-my-posh",
+          "git_worktree": "",
+          "project_dir": "~/dev/oh-my-posh",
+          "repo": null
         },
-        "Worktree": null
+        "Worktree": null,
+        "agent": null,
+        "context_window": {
+          "ContextWindowSize": 200000,
+          "CurrentUsage": null,
+          "RemainingPercentage": null,
+          "TotalInputTokens": 68000,
+          "TotalOutputTokens": 4200,
+          "UsedPercentage": 42,
+          "context_window_size": 200000,
+          "current_usage": null,
+          "remaining_percentage": null,
+          "total_input_tokens": 68000,
+          "total_output_tokens": 4200,
+          "used_percentage": 42
+        },
+        "cost": {
+          "TotalAPIDurationMS": 0,
+          "TotalCostUSD": 1.82,
+          "TotalDurationMS": 734000,
+          "TotalLinesAdded": 118,
+          "TotalLinesRemoved": 26,
+          "total_api_duration_ms": 0,
+          "total_cost_usd": 1.82,
+          "total_duration_ms": 734000,
+          "total_lines_added": 118,
+          "total_lines_removed": 26
+        },
+        "cwd": "~/dev/oh-my-posh",
+        "effort": null,
+        "exceeds_200k_tokens": false,
+        "fast_mode": false,
+        "model": {
+          "DisplayName": "Opus 4.5",
+          "ID": "claude-opus-4-5",
+          "display_name": "Opus 4.5",
+          "id": "claude-opus-4-5"
+        },
+        "output_style": null,
+        "pr": null,
+        "prompt_id": "",
+        "rate_limits": null,
+        "session_id": "a1b2c3d4-e5f6-4789-b012-3456789abcde",
+        "session_name": "oh-my-posh",
+        "thinking": null,
+        "transcript_path": "",
+        "version": "2.1.0",
+        "vim": null,
+        "workspace": {
+          "AddedDirs": null,
+          "CurrentDir": "~/dev/oh-my-posh",
+          "GitWorktree": "",
+          "ProjectDir": "~/dev/oh-my-posh",
+          "Repo": null,
+          "added_dirs": null,
+          "current_dir": "~/dev/oh-my-posh",
+          "git_worktree": "",
+          "project_dir": "~/dev/oh-my-posh",
+          "repo": null
+        },
+        "worktree": null
       },
       "enabled": true
     },
@@ -505,29 +639,119 @@
           "Percent": 34,
           "Remaining": 66,
           "Unlimited": false,
-          "Used": 34
+          "Used": 34,
+          "limit": 100,
+          "percent": 34,
+          "remaining": 66,
+          "unlimited": false,
+          "used": 34
         },
         "Inline": {
           "Limit": 0,
           "Percent": 0,
           "Remaining": 100,
           "Unlimited": true,
-          "Used": 0
+          "Used": 0,
+          "limit": 0,
+          "percent": 0,
+          "remaining": 100,
+          "unlimited": true,
+          "used": 0
         },
         "Premium": {
           "Limit": 300,
           "Percent": 40,
           "Remaining": 60,
           "Unlimited": false,
-          "Used": 120
+          "Used": 120,
+          "limit": 300,
+          "percent": 40,
+          "remaining": 60,
+          "unlimited": false,
+          "used": 120
         },
         "Segment": {
           "Index": 21,
           "Text": " x "
         },
-        "Text": " x "
+        "Text": " x ",
+        "billing_cycle_end": "2026-08-01",
+        "chat": {
+          "Limit": 100,
+          "Percent": 34,
+          "Remaining": 66,
+          "Unlimited": false,
+          "Used": 34,
+          "limit": 100,
+          "percent": 34,
+          "remaining": 66,
+          "unlimited": false,
+          "used": 34
+        },
+        "inline": {
+          "Limit": 0,
+          "Percent": 0,
+          "Remaining": 100,
+          "Unlimited": true,
+          "Used": 0,
+          "limit": 0,
+          "percent": 0,
+          "remaining": 100,
+          "unlimited": true,
+          "used": 0
+        },
+        "premium": {
+          "Limit": 300,
+          "Percent": 40,
+          "Remaining": 60,
+          "Unlimited": false,
+          "Used": 120,
+          "limit": 300,
+          "percent": 40,
+          "remaining": 60,
+          "unlimited": false,
+          "used": 120
+        }
       },
-      "enabled": true
+      "enabled": true,
+      "methods": {
+        "Chat": {
+          "Percent": {
+            "Gauge": "▰▰▰▱▱",
+            "GaugeUsed": "▰▱▱▱▱",
+            "String": "34"
+          },
+          "Remaining": {
+            "Gauge": "▰▱▱▱▱",
+            "GaugeUsed": "▰▰▰▱▱",
+            "String": "66"
+          }
+        },
+        "Inline": {
+          "Percent": {
+            "Gauge": "▰▰▰▰▰",
+            "GaugeUsed": "▱▱▱▱▱",
+            "String": "0"
+          },
+          "Remaining": {
+            "Gauge": "▱▱▱▱▱",
+            "GaugeUsed": "▰▰▰▰▰",
+            "String": "100"
+          }
+        },
+        "Premium": {
+          "Percent": {
+            "Gauge": "▰▰▰▱▱",
+            "GaugeUsed": "▰▰▱▱▱",
+            "String": "40"
+          },
+          "Remaining": {
+            "Gauge": "▰▰▱▱▱",
+            "GaugeUsed": "▰▰▰▱▱",
+            "String": "60"
+          }
+        }
+      }
     },
     "copilot_cli": {
       "data": {
@@ -545,26 +769,47 @@
           "TotalOutputTokens": 0,
           "TotalReasoningTokens": 0,
           "TotalTokens": 36000,
-          "UsedPercentage": 18
+          "UsedPercentage": 18,
+          "context_window_size": 200000,
+          "current_context_tokens": 36000,
+          "last_call_input_tokens": 0,
+          "last_call_output_tokens": 0,
+          "remaining_percentage": null,
+          "remaining_tokens": null,
+          "total_cache_read_tokens": 0,
+          "total_cache_write_tokens": 0,
+          "total_input_tokens": 0,
+          "total_output_tokens": 0,
+          "total_reasoning_tokens": 0,
+          "total_tokens": 36000,
+          "used_percentage": 18
         },
         "Cost": {
           "TotalAPIDurationMS": 0,
           "TotalDurationMS": 214000,
           "TotalLinesAdded": 9,
           "TotalLinesRemoved": 2,
-          "TotalPremiumRequests": 3
+          "TotalPremiumRequests": 3,
+          "total_api_duration_ms": 0,
+          "total_duration_ms": 214000,
+          "total_lines_added": 9,
+          "total_lines_removed": 2,
+          "total_premium_requests": 3
         },
         "FormattedAPIDuration": "0m 0s",
         "FormattedDuration": "3m 34s",
         "FormattedTokens": "36.0K",
         "Model": {
           "DisplayName": "Sonnet 4.5",
-          "ID": "claude-sonnet-4-5"
+          "ID": "claude-sonnet-4-5",
+          "display_name": "Sonnet 4.5",
+          "id": "claude-sonnet-4-5"
         },
         "RemainingPercent": 82,
         "RemainingTokensCount": 164000,
         "Remote": {
-          "Connected": false
+          "Connected": false,
+          "connected": false
         },
         "Segment": {
           "Index": 22,
@@ -580,7 +825,68 @@
         "Username": "alice",
         "Version": "0.0.339",
         "Workspace": {
-          "CurrentDir": "~/dev/oh-my-posh"
+          "CurrentDir": "~/dev/oh-my-posh",
+          "current_dir": "~/dev/oh-my-posh"
+        },
+        "context_window": {
+          "ContextWindowSize": 200000,
+          "CurrentContextTokens": 36000,
+          "LastCallInputTokens": 0,
+          "LastCallOutputTokens": 0,
+          "RemainingPercentage": null,
+          "RemainingTokens": null,
+          "TotalCacheReadTokens": 0,
+          "TotalCacheWriteTokens": 0,
+          "TotalInputTokens": 0,
+          "TotalOutputTokens": 0,
+          "TotalReasoningTokens": 0,
+          "TotalTokens": 36000,
+          "UsedPercentage": 18,
+          "context_window_size": 200000,
+          "current_context_tokens": 36000,
+          "last_call_input_tokens": 0,
+          "last_call_output_tokens": 0,
+          "remaining_percentage": null,
+          "remaining_tokens": null,
+          "total_cache_read_tokens": 0,
+          "total_cache_write_tokens": 0,
+          "total_input_tokens": 0,
+          "total_output_tokens": 0,
+          "total_reasoning_tokens": 0,
+          "total_tokens": 36000,
+          "used_percentage": 18
+        },
+        "cost": {
+          "TotalAPIDurationMS": 0,
+          "TotalDurationMS": 214000,
+          "TotalLinesAdded": 9,
+          "TotalLinesRemoved": 2,
+          "TotalPremiumRequests": 3,
+          "total_api_duration_ms": 0,
+          "total_duration_ms": 214000,
+          "total_lines_added": 9,
+          "total_lines_removed": 2,
+          "total_premium_requests": 3
+        },
+        "cwd": "~/dev/oh-my-posh",
+        "model": {
+          "DisplayName": "Sonnet 4.5",
+          "ID": "claude-sonnet-4-5",
+          "display_name": "Sonnet 4.5",
+          "id": "claude-sonnet-4-5"
+        },
+        "remote": {
+          "Connected": false,
+          "connected": false
+        },
+        "session_id": "f6e5d4c3-b2a1-4098-9876-543210fedcba",
+        "session_name": "oh-my-posh",
+        "transcript_path": "",
+        "username": "alice",
+        "version": "0.0.339",
+        "workspace": {
+          "CurrentDir": "~/dev/oh-my-posh",
+          "current_dir": "~/dev/oh-my-posh"
         }
       },
       "enabled": true
@@ -1375,7 +1681,14 @@
         "Text": " x ",
         "Time": "Q3 6:42"
       },
-      "enabled": true
+      "enabled": true,
+      "methods": {
+        "GameStatus": {
+          "Int": 2,
+          "String": "In Progress",
+          "Valid": true
+        }
+      }
     },
     "nbgv": {
       "data": {
@@ -1413,7 +1726,18 @@
         "Trend": 4,
         "TrendIcon": "",
         "Type": "sgv",
-        "UtcOffset": 60
+        "UtcOffset": 60,
+        "_id": "",
+        "date": 1782500000000,
+        "dateString": "2026-07-28T09:33:20Z",
+        "device": "xDrip-DexcomG6",
+        "direction": "Flat",
+        "mills": 1782500000000,
+        "sgv": 118,
+        "sysTime": "2026-07-28T09:33:20Z",
+        "trend": 4,
+        "type": "sgv",
+        "utcOffset": 60
       },
       "enabled": true
     },
@@ -1595,7 +1919,12 @@
         "Text": " x ",
         "Writable": true
       },
-      "enabled": true
+      "enabled": true,
+      "methods": {
+        "Folders": {
+          "List": null
+        }
+      }
     },
     "perl": {
       "data": {
@@ -1722,7 +2051,9 @@
         "Stack": "contoso-prod",
         "Text": " x ",
         "URL": "app.pulumi.com/contoso",
-        "User": "alice"
+        "User": "alice",
+        "url": "app.pulumi.com/contoso",
+        "user": "alice"
       },
       "enabled": true
     },
@@ -1753,7 +2084,9 @@
       "data": {
         "AppVite": {
           "Dev": true,
-          "Version": "1.9.3"
+          "Version": "1.9.3",
+          "dev": true,
+          "version": "1.9.3"
         },
         "BuildMetadata": "",
         "Error": "",
@@ -1775,7 +2108,9 @@
         "URL": "",
         "Vite": {
           "Dev": true,
-          "Version": "5.4.11"
+          "Version": "5.4.11",
+          "dev": true,
+          "version": "5.4.11"
         }
       },
       "enabled": true
@@ -2019,7 +2354,19 @@
         "Text": " x ",
         "Type": "Ride",
         "URL": "",
-        "WeightedAverageWatts": 0
+        "WeightedAverageWatts": 0,
+        "average_heartrate": 0,
+        "average_watts": 0,
+        "device_watts": false,
+        "distance": 0,
+        "id": 0,
+        "kudos_count": 0,
+        "max_heartrate": 0,
+        "moving_time": 0,
+        "name": "Morning Ride",
+        "start_date": "0001-01-01T00:00:00Z",
+        "type": "Ride",
+        "weighted_average_watts": 0
       },
       "enabled": true
     },
@@ -2181,7 +2528,8 @@
         },
         "Text": " x ",
         "Version": "1.9.0",
-        "WorkspaceName": "example_corp-prod"
+        "WorkspaceName": "example_corp-prod",
+        "terraform_version": "1.9.0"
       },
       "enabled": true
     },
@@ -2197,7 +2545,7 @@
     },
     "time": {
       "data": {
-        "CurrentDate": "2026-03-17T09:41:00+01:00",
+        "CurrentDate": "2026-03-17T09:41:00Z",
         "Format": "",
         "Segment": {
           "Index": 98,
@@ -2286,7 +2634,9 @@
           "Text": " x "
         },
         "Text": " x ",
-        "Version": ""
+        "Version": "",
+        "current": "26.7.1",
+        "latest": "26.8.0"
       },
       "enabled": true
     },
@@ -2350,7 +2700,9 @@
       "data": {
         "CumulativeTotal": {
           "Seconds": 16200,
-          "Text": "4 hrs 30 mins"
+          "Text": "4 hrs 30 mins",
+          "seconds": 16200,
+          "text": "4 hrs 30 mins"
         },
         "End": "2026-07-09T23:59:59Z",
         "Segment": {
@@ -2358,7 +2710,15 @@
           "Text": " x "
         },
         "Start": "2026-07-09T00:00:00Z",
-        "Text": " x "
+        "Text": " x ",
+        "cumulative_total": {
+          "Seconds": 16200,
+          "Text": "4 hrs 30 mins",
+          "seconds": 16200,
+          "text": "4 hrs 30 mins"
+        },
+        "end": "2026-07-09T23:59:59Z",
+        "start": "2026-07-09T00:00:00Z"
       },
       "enabled": true
     },
@@ -2372,16 +2732,16 @@
         "UpdateCount": 2,
         "Updates": [
           {
-            "Name": "Microsoft Edge",
-            "ID": "Microsoft.Edge",
+            "Available": "131.0.2903.51",
             "Current": "130.0.2849.68",
-            "Available": "131.0.2903.51"
+            "ID": "Microsoft.Edge",
+            "Name": "Microsoft Edge"
           },
           {
-            "Name": "Git",
-            "ID": "Git.Git",
+            "Available": "2.47.1",
             "Current": "2.47.0",
-            "Available": "2.47.1"
+            "ID": "Git.Git",
+            "Name": "Git"
           }
         ]
       },

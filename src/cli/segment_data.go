@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"reflect"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 )
 
 // interfaceMethods are the SegmentWriter methods every writer has to satisfy. They describe how a
@@ -36,18 +38,48 @@ const maxMethodDepth = 3
 //
 // Fields win over methods on a name collision: the field is what json.Marshal chose to call the
 // value, and a method shadowing it would change what replay sees.
-func recordSegmentData(writer any) ([]byte, error) {
-	data, err := asDataMap(reflect.ValueOf(writer), 0)
+//
+// The methods a struct field carries in its own right are the exception, and they are why this
+// returns two trees rather than one. battery.State is an int, and every battery theme switches on
+// `.State.String`; a map holding the number it marshals to has nothing under that name. Its method
+// results have to go somewhere, and they cannot go where the number is - a file whose "State" is
+// an object no longer unmarshals into the writer, which is the other half of what a data file is
+// for. So the number stays in data, the methods go in a parallel methods tree shaped like it, and
+// whoever renders without a writer merges the second over the first (config.MergeRecordedMethods).
+func recordSegmentData(writer any) (data, methods []byte, err error) {
+	recorded, err := asDataMap(reflect.ValueOf(writer), 0)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return json.Marshal(data)
+	data, err = json.Marshal(recorded.data)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if recorded.methods == nil {
+		return data, nil, nil
+	}
+
+	methods, err = json.Marshal(recorded.methods)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return data, methods, nil
 }
 
-func asDataMap(value reflect.Value, depth int) (any, error) {
+// recorded is one value's two trees: what it marshals to, and the method results that have no
+// place in that marshalling. methods is nil for everything that needs no overlay, which is most of
+// what a writer holds.
+type recorded struct {
+	data    any
+	methods any
+}
+
+func asDataMap(value reflect.Value, depth int) (recorded, error) {
 	if !value.IsValid() {
-		return nil, nil
+		return recorded{}, nil
 	}
 
 	structValue := reflect.Indirect(value)
@@ -58,20 +90,32 @@ func asDataMap(value reflect.Value, depth int) (any, error) {
 	if structValue.Kind() != reflect.Struct || marshalsItself(value) {
 		raw, err := json.Marshal(value.Interface())
 		if err != nil {
-			return nil, err
+			return recorded{}, err
 		}
 
-		return json.RawMessage(raw), nil
+		// A type with its own MarshalJSON gets no overlay: that representation is the one templates
+		// consume, and time.Time's methods would bury the timestamp `date` parses.
+		var methods any
+		if overlay := methodResults(value, depth); len(overlay) != 0 {
+			methods = overlay
+		}
+
+		return recorded{data: json.RawMessage(raw), methods: methods}, nil
 	}
 
 	fields := make(map[string]any)
+	overlay := make(map[string]any)
 
 	if depth < maxMethodDepth {
-		addStructFields(structValue, fields, depth)
-		addMethodResults(value, fields, depth)
+		addStructFields(structValue, fields, overlay, depth)
+		addMethodResults(value, fields, overlay, depth)
 	}
 
-	return fields, nil
+	if len(overlay) == 0 {
+		return recorded{data: fields}, nil
+	}
+
+	return recorded{data: fields, methods: overlay}, nil
 }
 
 // marshalsItself reports whether a type defines its own JSON representation, in which case taking
@@ -87,16 +131,20 @@ func marshalsItself(value reflect.Value) bool {
 	return ok
 }
 
-// addStructFields records a struct's exported fields keyed by their Go names rather than their
-// json tags.
+// addStructFields records a struct's exported fields under their Go names, and again under a json
+// tag that renames them.
 //
-// This is what a template reads. `{{ .Name }}` resolves against a field called Name; the az
+// The Go name is what a template reads. `{{ .Name }}` resolves against a field called Name; the az
 // segment's json tag for it is "name", and wakatime's CumulativeTotal is tagged
 // "cumulative_total". A struct bridges the two because encoding/json knows the tag - a map has no
-// tags, so a recorded file keyed by tags leaves every such template unable to find anything. Since
-// the whole point of recording is to be replayed where no struct exists, the keys have to be the
-// names the templates use.
-func addStructFields(structValue reflect.Value, fields map[string]any, depth int) {
+// tags, so a recorded file keyed by tags leaves every such template unable to find anything.
+//
+// The tag is what a writer reads. encoding/json matches a tagged field by its tag and by nothing
+// else, so a file keyed only by Go names restores every plainly-named field and silently skips the
+// renamed ones - terraform's Version, tagged "terraform_version", came back nil and took the
+// version out of the prompt. Both keys carry the same value, so whichever side reads the file
+// finds what it is looking for under the name it knows.
+func addStructFields(structValue reflect.Value, fields, overlay map[string]any, depth int) {
 	for i := range structValue.NumField() {
 		field := structValue.Type().Field(i)
 
@@ -115,7 +163,7 @@ func addStructFields(structValue reflect.Value, fields map[string]any, depth int
 			// concerned, so they are flattened rather than nested under the type name.
 			embedded := reflect.Indirect(structValue.Field(i))
 			if embedded.Kind() == reflect.Struct {
-				addStructFields(embedded, fields, depth)
+				addStructFields(embedded, fields, overlay, depth)
 				continue
 			}
 		}
@@ -125,11 +173,58 @@ func addStructFields(structValue reflect.Value, fields map[string]any, depth int
 			continue
 		}
 
-		fields[field.Name] = nested
+		fields[field.Name] = nested.data
+
+		if name := taggedName(&field); name != "" {
+			fields[name] = nested.data
+		}
+
+		// The overlay is read only where there is no writer, so it needs the template's name and
+		// not the writer's.
+		if nested.methods != nil {
+			overlay[field.Name] = nested.methods
+		}
 	}
 }
 
-func addMethodResults(value reflect.Value, fields map[string]any, depth int) {
+// taggedName is the name encoding/json will look for when it differs from the field's own, and ""
+// when the two agree or the field carries no tag at all.
+func taggedName(field *reflect.StructField) string {
+	tag, tagged := field.Tag.Lookup("json")
+	if !tagged {
+		return ""
+	}
+
+	name, _, _ := strings.Cut(tag, ",")
+	if name == "" || name == field.Name {
+		return ""
+	}
+
+	return name
+}
+
+// methodResults records a value's methods on their own, for the non-struct case that has no
+// fields to merge them with. What comes back is the whole of what replaces the value, so each
+// method's own overlay is folded in here rather than left for the merge at restore to find - the
+// merge stops descending the moment one side is not a map, and a scalar's data is never one.
+func methodResults(value reflect.Value, depth int) map[string]any {
+	if depth >= maxMethodDepth || marshalsItself(value) {
+		return nil
+	}
+
+	fields := make(map[string]any)
+	overlay := make(map[string]any)
+
+	addMethodResults(value, fields, overlay, depth)
+
+	for name, methods := range overlay {
+		fields[name] = config.MergeRecordedMethods(fields[name], methods)
+	}
+
+	return fields
+}
+
+func addMethodResults(value reflect.Value, fields, overlay map[string]any, depth int) {
 	for i := range value.NumMethod() {
 		name := value.Type().Method(i).Name
 
@@ -158,7 +253,11 @@ func addMethodResults(value reflect.Value, fields map[string]any, depth int) {
 			continue
 		}
 
-		fields[name] = nested
+		fields[name] = nested.data
+
+		if nested.methods != nil {
+			overlay[name] = nested.methods
+		}
 	}
 }
 

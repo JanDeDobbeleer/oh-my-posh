@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"strings"
 	"syscall/js"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/render"
@@ -31,6 +32,15 @@ import (
 )
 
 func main() {
+	// Every render here is meant to be reproducible: the same config and the same recorded data
+	// give the same SVG, whoever builds the site and whenever. A recorded date is the one thing
+	// that would not have been - `{{ .CurrentDate | date .Format }}` converts to the local zone,
+	// and this build carries no zoneinfo, so "local" is whatever fixed offset the host happened to
+	// be on. A gallery built in July would print an hour later than the same gallery built in
+	// January. Pinning the zone takes the host back out of it; recorded timestamps are written in
+	// UTC to match (website/segment_data.json).
+	time.Local = time.UTC
+
 	js.Global().Set("render", js.FuncOf(renderJS))
 
 	// A wasm_exec.js-hosted module's main must never return: the host glue

@@ -44,6 +44,15 @@ func (n Number) String() string {
 
 type Index string
 
+// String is what a template compares an index against. `{{ eq "moderate" .Index }}` reads the
+// value itself and works the same, but only where a segment renders from its writer: a segment
+// rendered from recorded data has no Go type to carry Icon, so the recorder stores an index as
+// its method results, and a template reaching past them for the raw string finds nothing. Naming
+// the string as a method keeps both readings available wherever a segment renders from.
+func (i Index) String() string {
+	return string(i)
+}
+
 func (i Index) Icon() string {
 	switch i {
 	case "very low":

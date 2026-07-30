@@ -3,11 +3,9 @@ package segments
 import (
 	"strings"
 
-	c "golang.org/x/text/cases"
-	"golang.org/x/text/language"
-
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 )
 
 const (
@@ -45,7 +43,7 @@ func (t *Taskwarrior) Enabled() bool {
 	t.Commands = make(map[string]string, len(configuredCommands))
 
 	for name, args := range configuredCommands {
-		key := c.Title(language.English).String(name)
+		key := text.Title(name)
 		t.Commands[key] = t.runCommand(cmd, args)
 	}
 

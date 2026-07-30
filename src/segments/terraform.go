@@ -7,8 +7,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/hashicorp/hcl/v2/gohcl"
-	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
@@ -27,12 +25,8 @@ func (tf *Terraform) Template() string {
 	return " {{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }} "
 }
 
-type TerraFormConfig struct {
-	Terraform *TerraformBlock `hcl:"terraform,block"`
-}
-
 type TerraformBlock struct {
-	Version *string `hcl:"required_version" json:"terraform_version"`
+	Version *string `json:"terraform_version"`
 }
 
 func (tf *Terraform) Enabled() bool {
@@ -127,20 +121,13 @@ func (tf *Terraform) setVersionFromTfFiles() error {
 			continue
 		}
 
-		parser := hclparse.NewParser()
 		content := tf.env.FileContent(file)
-		hclFile, diags := parser.ParseHCL([]byte(content), file)
-		if diags != nil {
+		version, ok := extractRequiredVersion(content)
+		if !ok {
 			continue
 		}
 
-		var config TerraFormConfig
-		diags = gohcl.DecodeBody(hclFile.Body, nil, &config)
-		if diags != nil || config.Terraform == nil {
-			continue
-		}
-
-		tf.TerraformBlock = *config.Terraform
+		tf.Version = &version
 		return nil
 	}
 	return errors.New("no valid terraform files found")

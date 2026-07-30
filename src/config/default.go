@@ -4,7 +4,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
@@ -16,6 +15,18 @@ const (
 	paletteWhite          = "p:white"
 	paletteYellow         = "p:yellow"
 	backgroundTransparent = "transparent"
+
+	// Mirror segment option keys locally rather than importing segments,
+	// which drags its full transitive dep tree into the wasm build.
+	branchTemplate      options.Option = "branch_template"
+	fetchStatus         options.Option = "fetch_status"
+	fetchUpstreamIcon   options.Option = "fetch_upstream_icon"
+	homeEnabled         options.Option = "home_enabled"
+	fetchPackageManager options.Option = "fetch_package_manager"
+	displayMode         options.Option = "display_mode"
+	fetchVirtualEnv     options.Option = "fetch_virtual_env"
+	dirLength           options.Option = "dir_length"
+	folderSeparatorIcon options.Option = "folder_separator_icon"
 )
 
 func Default(configError error) *Config {
@@ -74,9 +85,9 @@ func Default(configError error) *Config {
 							"{{ if gt .Ahead 0 }}p:white{{ end }}",
 						},
 						Options: options.Map{
-							segments.BranchTemplate:    "{{ trunc 25 .Branch }}",
-							segments.FetchStatus:       true,
-							segments.FetchUpstreamIcon: true,
+							branchTemplate:    "{{ trunc 25 .Branch }}",
+							fetchStatus:       true,
+							fetchUpstreamIcon: true,
 						},
 						Template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ", //nolint:lll
 					},
@@ -115,9 +126,9 @@ func Default(configError error) *Config {
 						Background: backgroundTransparent,
 						Template:   "\ue718 ",
 						Options: options.Map{
-							segments.HomeEnabled:         false,
-							segments.FetchPackageManager: false,
-							segments.DisplayMode:         "files",
+							homeEnabled:         false,
+							fetchPackageManager: false,
+							displayMode:         "files",
 						},
 					},
 					{
@@ -137,9 +148,9 @@ func Default(configError error) *Config {
 						Background: backgroundTransparent,
 						Template:   "\ue235 ",
 						Options: options.Map{
-							options.FetchVersion:     false,
-							segments.DisplayMode:     "files",
-							segments.FetchVirtualEnv: false,
+							options.FetchVersion: false,
+							displayMode:          "files",
+							fetchVirtualEnv:      false,
 						},
 					},
 					{
@@ -242,9 +253,9 @@ func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) 
 						Foreground:     paletteWhite,
 						Background:     paletteOrange,
 						Options: options.Map{
-							segments.DirLength:           3,
-							segments.FolderSeparatorIcon: "\ue0bb",
-							options.Style:                "fish",
+							dirLength:           3,
+							folderSeparatorIcon: "\ue0bb",
+							options.Style:       "fish",
 						},
 						Template: "{{ if .Segments.Git.Dir }} \uf1d2 <i><b>{{ .Segments.Git.RepoName }}{{ if .Segments.Git.IsWorkTree }} \ue21c{{ end }}</b></i>{{ $rel :=  .Segments.Git.RelativeDir }}{{ if $rel }} \ueaf7 {{ .Format $rel }}{{ end }}{{ else }} \uea83 {{ path .Path .Location }}{{ end }} ", //nolint:lll
 					},
@@ -266,8 +277,8 @@ func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) 
 							"{{ if or (gt .Ahead 0) (gt .Behind 0) }}p:white{{ end }}",
 						},
 						Options: options.Map{
-							segments.FetchStatus:       true,
-							segments.FetchUpstreamIcon: false,
+							fetchStatus:       true,
+							fetchUpstreamIcon: false,
 						},
 						Template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ nospace .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ", //nolint:lll
 					},

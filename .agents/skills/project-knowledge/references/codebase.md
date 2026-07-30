@@ -99,3 +99,36 @@
   of `*Terminal`'s methods stay linked regardless of which ones the wasm path actually calls - the
   only way to drop a method's cost is to replace its body for the `js` tag,
   not to introduce a slimmer type.
+
+## config/shell package decoupled from segments and dsc for wasm (verified 2026-07-30)
+
+- `config/config.go` and `config/default.go` referenced bare `segments.CONST` string option-keys
+  (e.g. `segments.Source`, `segments.BranchTemplate`) directly and unconditionally, which pulled the
+  entire `segments` package - and its transitive HCL/go-cty/`golang.org/x/mod/modfile`/`gopkg.in/ini.v1`/
+  `cli/auth` dependency tree - into every binary linking `config`, including `src/wasm`. Fix: mirror
+  the option-key strings as local `options.Option` consts in the `config` package itself (`options` is
+  the small standalone package the keys' type lives in - importing it alone costs nothing heavy) and
+  drop the `segments` import entirely. Verified with `go list -deps ./wasm/` that `segments` is fully
+  gone from the wasm dependency graph after this change.
+- `src/dsc` (the CLI-only DSC/Desired State Configuration resource wrapper) pulls in
+  `github.com/invopop/jsonschema` (→ `go/ast`, `go/parser`, `go/doc`) and `github.com/spf13/cobra`.
+  Both `config/dsc.go` (the `Configuration`/`Resource` wrapper around parsed config files) and
+  `shell/dsc.go` (the `Shell`/`Resource` wrapper around shell-rc-rewriting) imported it unconditionally,
+  even though DSC tracking is purely a CLI bookkeeping feature never exercised by the wasm render path
+  (`render.Config`/`config.ParseBytes`/`config.ParseData` never touch it). Fix: moved both DSC resource
+  types into a new `src/cli/dsc` package (so they live where they're actually used) and decoupled the
+  `config` package from `dsc` via a nil-by-default hook: `config.NewDSCTracker func() config.DSCTracker`,
+  set by `cli/dsc`'s `init()`. `config.Parse()` (the file-loading path, `config/load.go`) checks the hook
+  and no-ops when nil (i.e. in any binary that never imports `cli`, such as wasm) instead of directly
+  constructing a `dsc.Resource`. `shell/dsc.go`'s shell-config-rewriting logic moved wholesale into
+  `cli/dsc/shell.go` (renamed `Shell`→ still `Shell`, just in the new package) since nothing in `shell`
+  itself needs it - only `cli/init.go`'s `init` command does.
+- Combined effect measured on the post-terminal-split wasm baseline (21,833,910 bytes stripped):
+  dropped to **17,825,752 bytes (~4.01 MB / ~18.4% additional reduction)**. Confirmed via
+  `go list -deps ./wasm/` that `segments`, `dsc`, `invopop/jsonschema`, `spf13/cobra`, `go/ast`,
+  `go/parser`, and HCL/go-cty are all absent from the wasm link graph after this change.
+- Pattern for any future "CLI-only logic embedded in a shared package" cleanup: introduce a
+  package-level func-var hook (nil by default) in the shared package, and have the CLI-only package
+  register the real version via `init()`. This avoids the shared package importing the heavy
+  dependency at all, while keeping the CLI behavior identical when `cli` (or whichever package sets
+  the hook) is actually linked.

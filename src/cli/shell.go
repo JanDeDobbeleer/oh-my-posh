@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
+	basedsc "github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/spf13/cobra"
 )
 
@@ -44,6 +44,6 @@ This command retrieves the name of the current shell being used.`,
 }
 
 func init() {
-	shellCmd.AddCommand(dsc.Command(shell.DSC()))
+	shellCmd.AddCommand(basedsc.Command(dsc.ShellDSC()))
 	RootCmd.AddCommand(shellCmd)
 }

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import classnames from 'classnames';
 import ConfigEditor from '../ConfigEditor';
 import WasmMessage from '../ConfigEditor/WasmMessage';
 import { useWasmRenderer } from '../ConfigEditor/useWasmRenderer';
@@ -12,6 +13,7 @@ import {
   trySessionStorageRemove,
   trySessionStorageSet,
 } from '../ConfigEditor/studioHandoff';
+import { exportSvgAsPng } from './exportPng';
 import { CONFIG_FORMAT, CONFIG_FORMATS, STARTERS } from './config';
 import styles from './styles.module.css';
 
@@ -24,6 +26,47 @@ const RENDER_OPTIONS = buildRenderOptions(120);
 // character typed. 200ms is long enough to coalesce a burst of keystrokes, short enough that the
 // preview still feels live.
 const DEBOUNCE_MS = 200;
+
+// Rasterizes the current preview svg (see exportPng.js) and saves it as a PNG. Disabled - inert,
+// but still focusable - whenever there is no svg to export, same convention as Config.js's own
+// "Add to Studio" action.
+function DownloadPngButton({ svg, disabled }) {
+  const [state, setState] = useState('idle');
+
+  const handleClick = useCallback(async () => {
+    if (disabled || !svg) {
+      return;
+    }
+
+    setState('exporting');
+
+    try {
+      await exportSvgAsPng(svg);
+      setState('idle');
+    } catch {
+      // The embedded font fetch, image decode, or canvas encode can each fail independently
+      // (e.g. a browser without canvas.toBlob); there is nothing more specific to tell the
+      // reader beyond "try again", so the label itself carries the failure.
+      setState('error');
+    }
+  }, [svg, disabled]);
+
+  const label =
+    state === 'exporting' ? 'Exporting…' : state === 'error' ? 'Failed - retry' : 'Download PNG';
+
+  return (
+    <button
+      type="button"
+      className={classnames(styles.action, {
+        [styles.actionDisabled]: disabled || state === 'exporting',
+      })}
+      aria-disabled={disabled || state === 'exporting'}
+      onClick={handleClick}
+    >
+      {label}
+    </button>
+  );
+}
 
 function Studio() {
   const [format, setFormat] = useState(CONFIG_FORMAT);
@@ -281,6 +324,7 @@ function Studio() {
         onFormatChange={handleFormatChange}
         value={configText}
         onChange={handleChange}
+        actions={<DownloadPngButton svg={svg} disabled={!svg} />}
       />
     </div>
   );

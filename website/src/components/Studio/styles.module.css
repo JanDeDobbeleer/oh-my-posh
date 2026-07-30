@@ -69,3 +69,34 @@
   font-size: var(--omp-text-body);
   color: var(--ifm-color-danger);
 }
+
+/* "Download PNG", rendered into ConfigEditor's actions slot (see index.js). Same bordered-pill
+   recipe as Config.module.css's own .action (Copy / Add to Studio on a segment doc) - duplicated
+   rather than imported since the two live in sibling components with no existing shared module
+   for it, same as ConfigEditor/styles.module.css's .actions container already being duplicated
+   in spirit across both. */
+.action {
+  padding: 0.1rem 0.4rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+  color: var(--omp-text-secondary);
+  background: none;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action:hover {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.actionDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

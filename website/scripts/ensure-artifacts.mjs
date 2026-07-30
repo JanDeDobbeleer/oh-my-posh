@@ -157,13 +157,25 @@ function resolveCLI() {
   return BIN;
 }
 
+// cmd.exe splits on whitespace, so anything containing a space or quote needs quoting; doubling
+// embedded quotes is cmd's own escape convention.
+function quoteForCmd(arg) {
+  return /[\s"]/.test(arg) ? `"${arg.replace(/"/g, '""')}"` : arg;
+}
+
 function run(script, cli) {
   console.log(`Generating ${script}...`);
 
-  const result = spawnSync('npm', ['run', script], {
+  const isWindows = process.platform === 'win32';
+  // Node deprecates passing an args array alongside shell: true (DEP0190) - it can't escape them
+  // for an unknown shell, so on Windows the full, already-quoted command is built as one string
+  // instead and given no separate args.
+  const [command, args] = isWindows ? [['npm', 'run', script].map(quoteForCmd).join(' '), []] : ['npm', ['run', script]];
+
+  const result = spawnSync(command, args, {
     cwd: WEBSITE_DIR,
     stdio: 'inherit',
-    shell: process.platform === 'win32',
+    shell: isWindows,
     env: cli ? { ...process.env, OMP_BIN: cli } : process.env,
   });
 

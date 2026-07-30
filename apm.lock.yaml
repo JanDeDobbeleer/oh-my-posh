@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-07-17T05:58:02.041300+00:00'
+generated_at: '2026-07-30T07:29:58.567651+00:00'
 apm_version: 0.25.0
 dependencies:
 - repo_url: ast-grep/agent-skill
@@ -30,6 +30,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/golang.md
   - .github/instructions/golang.instructions.md
@@ -44,6 +45,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/markdown.md
   - .github/instructions/markdown.instructions.md
@@ -58,6 +60,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/powershell.md
   - .github/instructions/powershell.instructions.md
@@ -66,10 +69,10 @@ dependencies:
     .github/instructions/powershell.instructions.md: sha256:ae92d1111d4183847df527525c73d706fa1ef003d515964270f858eecf659449
   content_hash: sha256:f159d7b75e7ecf3fa2c0cdf1d568799558320e06bcba5263c05e28487db68e5c
 - repo_url: jandedobbeleer/agentic
-  name: code-changes
+  name: agentic
   host: github.com
   resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
-  version: 1.0.0
+  version: unknown
   virtual_path: skills/code-changes
   is_virtual: true
   package_type: claude_skill
@@ -123,10 +126,10 @@ dependencies:
     .claude/skills/code-changes/references/verify.md: sha256:347c831be88cf73e706717f667cc83c1cbd8867d886fecf8ed3bcd24cf69fff6
   content_hash: sha256:8ff991b546b12798f194525ad6af84fd837614a2e6afe14ff62de3118c24c087
 - repo_url: jandedobbeleer/agentic
-  name: conventional-commit
+  name: agentic
   host: github.com
   resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
-  version: 1.0.0
+  version: unknown
   virtual_path: skills/conventional-commit
   is_virtual: true
   package_type: claude_skill
@@ -140,10 +143,10 @@ dependencies:
     .claude/skills/conventional-commit/SKILL.md: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
   content_hash: sha256:44bd33d20c6122489d0eedaa292dcf9b155439d021661e7ae84ce9b6f812d363
 - repo_url: jandedobbeleer/agentic
-  name: golang
+  name: agentic
   host: github.com
   resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
-  version: 1.0.0
+  version: unknown
   virtual_path: skills/golang
   is_virtual: true
   package_type: claude_skill
@@ -157,10 +160,10 @@ dependencies:
     .claude/skills/golang/SKILL.md: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
   content_hash: sha256:0b6572070aff3e4c6b61f6d9b5cf844756676d4a9669c16544f28e911eafc224
 - repo_url: jandedobbeleer/agentic
-  name: markdown
+  name: agentic
   host: github.com
   resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
-  version: 1.0.0
+  version: unknown
   virtual_path: skills/markdown
   is_virtual: true
   package_type: claude_skill
@@ -174,10 +177,10 @@ dependencies:
     .claude/skills/markdown/SKILL.md: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
   content_hash: sha256:fa25f4f36faa33fa51ec6e9a3b5bf7cde618d8d7dfb572dd8f55733dc1813265
 - repo_url: jandedobbeleer/agentic
-  name: powershell
+  name: agentic
   host: github.com
   resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
-  version: 1.0.0
+  version: unknown
   virtual_path: skills/powershell
   is_virtual: true
   package_type: claude_skill
@@ -191,10 +194,10 @@ dependencies:
     .claude/skills/powershell/SKILL.md: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
   content_hash: sha256:bc844acc1cf9ccc5d2d10e1c889b8b5b69b92f743e3bc11e0bc9a386770fc864
 - repo_url: jandedobbeleer/agentic
-  name: writing-clearly-and-concisely
+  name: agentic
   host: github.com
   resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
-  version: 1.0.0
+  version: unknown
   virtual_path: skills/writing-clearly-and-concisely
   is_virtual: true
   package_type: claude_skill

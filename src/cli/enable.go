@@ -8,7 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
@@ -23,13 +23,13 @@ var (
 	toggleLong = strings.Join(append([]string{toggleHelpText}, toggleArgs...), "\n- ")
 )
 
-var enableCmd = &cobra.Command{
+var enableCmd = &cmdtree.Command{
 	Use:       fmt.Sprintf(toggleUse, "enable"),
 	Short:     "Enable a feature",
 	Long:      fmt.Sprintf(toggleLong, "Enable"),
 	ValidArgs: toggleArgs,
 	Args:      NoArgsOrOneValidArg,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return
@@ -42,7 +42,7 @@ func init() {
 	RootCmd.AddCommand(enableCmd)
 }
 
-func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
+func toggleFeature(cmd *cmdtree.Command, feature string, enable bool) {
 	if feature == "" {
 		_ = cmd.Help()
 		return

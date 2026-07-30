@@ -1,17 +1,17 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
-func NoArgsOrOneValidArg(cmd *cobra.Command, args []string) error {
+func NoArgsOrOneValidArg(cmd *cmdtree.Command, args []string) error {
 	if len(args) == 0 {
 		return nil
 	}
 
-	if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+	if err := cmdtree.ExactArgs(1)(cmd, args); err != nil {
 		return err
 	}
 
-	return cobra.OnlyValidArgs(cmd, args)
+	return cmdtree.OnlyValidArgs(cmd, args)
 }

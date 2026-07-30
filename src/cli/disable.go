@@ -3,16 +3,16 @@ package cli
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
-var disableCmd = &cobra.Command{
+var disableCmd = &cmdtree.Command{
 	Use:       fmt.Sprintf(toggleUse, "disable"),
 	Short:     "Disable a feature",
 	Long:      fmt.Sprintf(toggleLong, "Disable"),
 	ValidArgs: toggleArgs,
 	Args:      NoArgsOrOneValidArg,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return

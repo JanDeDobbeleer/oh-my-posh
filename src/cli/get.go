@@ -10,10 +10,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	color2 "github.com/gookit/color"
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
-var getCmd = &cobra.Command{
+var getCmd = &cmdtree.Command{
 	Use:   "get [shell|millis|accent|toggles|width]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
@@ -34,7 +34,7 @@ This command is used to get the value of the following variables:
 		cache.TTL,
 	},
 	Args: NoArgsOrOneValidArg,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return

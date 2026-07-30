@@ -9,8 +9,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -27,14 +27,14 @@ var (
 	initialize bool
 )
 
-var RootCmd = &cobra.Command{
+var RootCmd = &cmdtree.Command{
 	Use:   "oh-my-posh",
 	Short: "oh-my-posh is a tool to render your prompt",
 	Long: `oh-my-posh is a cross platform tool to render your prompt.
 It can use the same configuration everywhere to offer a consistent
 experience, regardless of where you are. For a detailed guide
 on getting started, have a look at the docs at https://ohmyposh.dev`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if initialize {
 			runInit(strings.ToLower(shellName), getFullCommand(cmd, args))
 			return
@@ -47,7 +47,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 		_ = cmd.Help()
 	},
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(cmd *cmdtree.Command, args []string) {
 		configEnv := os.Getenv("POSH_CONFIG")
 		if configEnv != "" && configFlag == "" {
 			configFlag = configEnv
@@ -65,7 +65,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 		log.Debug("version:", build.Version)
 		log.Debug("command:", getFullCommand(cmd, args))
 	},
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+	PersistentPostRun: func(cmd *cmdtree.Command, args []string) {
 		defer func() {
 			if exitcode != 0 {
 				os.Exit(exitcode)
@@ -104,7 +104,7 @@ func Execute() {
 	// of milliseconds per prompt. Explorer never passes arguments, so the
 	// check is only needed when there are none.
 	if len(os.Args) > 1 {
-		cobra.MousetrapHelpText = ""
+		cmdtree.ExplorerLaunchHelpText = ""
 	}
 
 	if err := RootCmd.Execute(); err != nil {

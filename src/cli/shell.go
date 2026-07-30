@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	basedsc "github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/spf13/cobra"
 )
 
-var shellCmd = &cobra.Command{
+var shellCmd = &cmdtree.Command{
 	Use:   "shell get",
 	Short: "Get the shell name",
 	Long: `Get the shell name.
@@ -21,7 +21,7 @@ This command retrieves the name of the current shell being used.`,
 		"get",
 	},
 	Args: NoArgsOrOneValidArg,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return

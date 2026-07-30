@@ -8,10 +8,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
-var authCmd = &cobra.Command{
+var authCmd = &cmdtree.Command{
 	Use:   "auth [service]",
 	Short: "Authenticate against a service",
 	Long: `Authenticate against a service.
@@ -25,7 +25,7 @@ Available services:
 		"ytmda",
 	},
 	Args: NoArgsOrOneValidArg,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return

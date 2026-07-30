@@ -6,10 +6,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
-var claudeCmd = &cobra.Command{
+var claudeCmd = &cmdtree.Command{
 	Use:   "claude",
 	Short: "Render a prompt for Claude Code statusline",
 	Long: `Render a prompt for Claude Code statusline integration.
@@ -22,7 +22,7 @@ Example usage in Claude Code settings:
   "statusLine": {
     "command": "oh-my-posh claude --config ~/.config/ohmyposh/claude.toml"
   }`,
-	Args: cobra.NoArgs,
+	Args: cmdtree.NoArgs,
 	Run: statuslineRun[segments.ClaudeData](
 		shell.CLAUDE,
 		cache.CLAUDECACHE,

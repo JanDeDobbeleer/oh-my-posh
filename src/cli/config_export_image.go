@@ -11,7 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
@@ -25,7 +25,7 @@ var (
 	svgBackgroundColor string
 )
 
-var imageCmd = &cobra.Command{
+var imageCmd = &cmdtree.Command{
 	Use:   "image",
 	Short: "Export your config to an SVG image",
 	Long: `Export your config to an SVG image.
@@ -70,8 +70,8 @@ Exports the config to an image file called myconfig.svg in the current working d
 > oh-my-posh config export image --config ~/myconfig.omp.json --output ~/mytheme.svg
 
 Exports the config to an image file ~/mytheme.svg.`,
-	Args: cobra.NoArgs,
-	Run: func(cmd *cobra.Command, _ []string) {
+	Args: cmdtree.NoArgs,
+	Run: func(cmd *cmdtree.Command, _ []string) {
 		cache.Init(os.Getenv("POSH_SHELL"))
 
 		setConfigFlag()

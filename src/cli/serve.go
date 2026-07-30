@@ -13,7 +13,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 // Unix only - used by shells that cannot hold a child's stdin open across
@@ -66,13 +66,13 @@ const (
 // stdout: "<id>\x1f<payload>\x00". \x1f is the ASCII unit separator.
 const serveIDMarker = "\x1f"
 
-func createServeCmd() *cobra.Command {
-	serveCmd := &cobra.Command{
+func createServeCmd() *cmdtree.Command {
+	serveCmd := &cmdtree.Command{
 		Use:    "serve",
 		Short:  "Start a persistent prompt server that streams prompt updates over stdio",
 		Hidden: true,
-		Args:   cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
+		Args:   cmdtree.NoArgs,
+		Run: func(_ *cmdtree.Command, _ []string) {
 			if shellName == "" {
 				shellName = shell.GENERIC
 			}

@@ -4,19 +4,19 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
 	verbose bool
 )
 
-var versionCmd = &cobra.Command{
+var versionCmd = &cmdtree.Command{
 	Use:   "version",
 	Short: "Print the version",
 	Long:  "Print the version number of oh-my-posh.",
-	Args:  cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Args:  cmdtree.NoArgs,
+	Run: func(_ *cmdtree.Command, _ []string) {
 		if !verbose {
 			fmt.Println(build.Version)
 			return

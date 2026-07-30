@@ -7,14 +7,14 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 
-	"github.com/spf13/cobra"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
 var (
 	session bool
 )
 
-var cacheCmd = &cobra.Command{
+var cacheCmd = &cmdtree.Command{
 	Use:   "cache [path|clear|ttl|show]",
 	Short: "Interact with the oh-my-posh cache",
 	Long: `Interact with the oh-my-posh cache.
@@ -31,8 +31,8 @@ You can do the following:
 		cache.TTL,
 		"show",
 	},
-	Args: cobra.RangeArgs(1, 2),
-	Run: func(cmd *cobra.Command, args []string) {
+	Args: cmdtree.RangeArgs(1, 2),
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return

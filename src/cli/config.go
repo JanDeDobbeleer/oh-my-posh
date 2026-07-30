@@ -6,12 +6,12 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	basedsc "github.com/jandedobbeleer/oh-my-posh/src/dsc"
-	"github.com/spf13/cobra"
 )
 
-var configCmd = &cobra.Command{
+var configCmd = &cmdtree.Command{
 	Use:   "config edit",
 	Short: "Interact with the config",
 	Long: `Interact with the config.
@@ -21,7 +21,7 @@ You can export or edit the config (via the editor specified in the environment v
 		"edit",
 	},
 	Args: NoArgsOrOneValidArg,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cmdtree.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
 			return

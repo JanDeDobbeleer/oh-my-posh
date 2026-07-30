@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cmdflag"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/spf13/pflag"
 	yaml "go.yaml.in/yaml/v3"
 )
 
@@ -62,7 +62,7 @@ func (a *Argocd) getConfigPath() string {
 
 func (a *Argocd) getConfigFromOpts() string {
 	// don't exit/panic when encountering invalid flags
-	flags := pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
+	flags := cmdflag.NewFlagSet(os.Args[0], cmdflag.ContinueOnError)
 	// ignore other valid and invalid flags
 	flags.ParseErrorsAllowlist.UnknownFlags = true
 	// only care about config

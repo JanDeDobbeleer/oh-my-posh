@@ -22,10 +22,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
-
-	disk "github.com/shirou/gopsutil/v4/disk"
-	load "github.com/shirou/gopsutil/v4/load"
-	process "github.com/shirou/gopsutil/v4/process"
 )
 
 type Terminal struct {
@@ -439,12 +435,8 @@ func (term *Terminal) Shell() string {
 
 	log.Debug("no shell name provided in flags, trying to detect it")
 
-	pid := os.Getppid()
-	p, _ := process.NewProcess(int32(pid))
-
-	name, err := p.Name()
-	if err != nil {
-		log.Error(err)
+	name := term.shellProcessName()
+	if len(name) == 0 {
 		return UNKNOWN
 	}
 
@@ -641,29 +633,6 @@ func (term *Terminal) CursorPosition() (row, col int) {
 	}
 
 	return
-}
-
-func (term *Terminal) SystemInfo() (*SystemInfo, error) {
-	s := &SystemInfo{}
-
-	mem, err := term.Memory()
-	if err != nil {
-		return nil, err
-	}
-	s.Memory = *mem
-
-	loadStat, err := load.Avg()
-	if err == nil {
-		s.Load1 = loadStat.Load1
-		s.Load5 = loadStat.Load5
-		s.Load15 = loadStat.Load15
-	}
-
-	diskIO, err := disk.IOCounters()
-	if err == nil {
-		s.Disks = diskIO
-	}
-	return s, nil
 }
 
 func cleanHostName(hostName string) string {

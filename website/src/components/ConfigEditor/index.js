@@ -8,17 +8,9 @@ import { CONFIG_FORMATS } from '../Studio/config';
 import styles from './styles.module.css';
 
 // The docs' own code fences (@theme/CodeBlock) run on prism-react-renderer too, through
-// @docusaurus/theme-common's usePrismTheme() - which today resolves to the *same* palenight
-// theme in light and dark mode alike, because docusaurus.config.js's themeConfig.prism never
-// sets a `theme`/`darkTheme` pair (confirmed by inspecting a rendered docs code block: its
-// computed background is #292d3e and its punctuation #c792ea, palenight's colors - not the
-// #232136/#3e8fb0 that website/src/css/prism-rose-pine-moon.css would produce, which turns out
-// to be dead CSS for these React-rendered blocks, overridden by prism-react-renderer's own
-// inline per-token styling). Reusing palenight for dark mode keeps the editor pixel-identical to
-// a real doc's code fence; github stands in as the light counterpart so the editor - unlike the
-// docs' code blocks, which stay dark either way - actually adapts with the site's light/dark
-// switch, which is the more useful behaviour for something people type into for minutes at a
-// time rather than glance at.
+// @docusaurus/theme-common's usePrismTheme() - which now resolves to this exact pair via
+// docusaurus.config.js's themeConfig.prism.theme/darkTheme, so a doc's fenced code and the
+// editor stay visually identical in both colour modes.
 const DARK_CODE_THEME = themes.palenight;
 const LIGHT_CODE_THEME = themes.github;
 

@@ -1,0 +1,1160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "configuration",
+  "properties": {
+    "states": {
+      "items": {
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": [
+              "json",
+              "jsonc",
+              "yaml",
+              "yml",
+              "toml",
+              "tml"
+            ],
+            "title": "Format",
+            "description": "The format of the configuration file"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "The source of the configuration file"
+          },
+          "palette": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "debug_prompt": {
+            "properties": {
+              "options": {
+                "type": "object"
+              },
+              "cache": {
+                "properties": {
+                  "duration": {
+                    "type": "string"
+                  },
+                  "strategy": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "leading_diamond": {
+                "type": "string"
+              },
+              "trailing_diamond": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string"
+              },
+              "right_template": {
+                "type": "string"
+              },
+              "foreground": {
+                "type": "string"
+              },
+              "templates_logic": {
+                "type": "string"
+              },
+              "powerline_symbol": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              },
+              "filler": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "style": {
+                "type": "string"
+              },
+              "leading_powerline_symbol": {
+                "type": "string"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "fallback_template": {
+                "type": "string"
+              },
+              "tips": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "background_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "exclude_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "include_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "foreground_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "index": {
+                "type": "integer"
+              },
+              "min_width": {
+                "type": "integer"
+              },
+              "max_width": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "integer"
+              },
+              "newline": {
+                "type": "boolean"
+              },
+              "invert_powerline": {
+                "type": "boolean"
+              },
+              "force": {
+                "type": "boolean"
+              },
+              "toggled": {
+                "type": "boolean"
+              },
+              "interactive": {
+                "type": "boolean"
+              },
+              "multiline_keepprompt": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "var": {
+            "type": "object"
+          },
+          "palettes": {
+            "properties": {
+              "list": {
+                "additionalProperties": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "type": "object"
+              },
+              "template": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "valid_line": {
+            "properties": {
+              "options": {
+                "type": "object"
+              },
+              "cache": {
+                "properties": {
+                  "duration": {
+                    "type": "string"
+                  },
+                  "strategy": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "leading_diamond": {
+                "type": "string"
+              },
+              "trailing_diamond": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string"
+              },
+              "right_template": {
+                "type": "string"
+              },
+              "foreground": {
+                "type": "string"
+              },
+              "templates_logic": {
+                "type": "string"
+              },
+              "powerline_symbol": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              },
+              "filler": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "style": {
+                "type": "string"
+              },
+              "leading_powerline_symbol": {
+                "type": "string"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "fallback_template": {
+                "type": "string"
+              },
+              "tips": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "background_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "exclude_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "include_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "foreground_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "index": {
+                "type": "integer"
+              },
+              "min_width": {
+                "type": "integer"
+              },
+              "max_width": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "integer"
+              },
+              "newline": {
+                "type": "boolean"
+              },
+              "invert_powerline": {
+                "type": "boolean"
+              },
+              "force": {
+                "type": "boolean"
+              },
+              "toggled": {
+                "type": "boolean"
+              },
+              "interactive": {
+                "type": "boolean"
+              },
+              "multiline_keepprompt": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "secondary_prompt": {
+            "properties": {
+              "options": {
+                "type": "object"
+              },
+              "cache": {
+                "properties": {
+                  "duration": {
+                    "type": "string"
+                  },
+                  "strategy": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "leading_diamond": {
+                "type": "string"
+              },
+              "trailing_diamond": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string"
+              },
+              "right_template": {
+                "type": "string"
+              },
+              "foreground": {
+                "type": "string"
+              },
+              "templates_logic": {
+                "type": "string"
+              },
+              "powerline_symbol": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              },
+              "filler": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "style": {
+                "type": "string"
+              },
+              "leading_powerline_symbol": {
+                "type": "string"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "fallback_template": {
+                "type": "string"
+              },
+              "tips": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "background_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "exclude_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "include_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "foreground_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "index": {
+                "type": "integer"
+              },
+              "min_width": {
+                "type": "integer"
+              },
+              "max_width": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "integer"
+              },
+              "newline": {
+                "type": "boolean"
+              },
+              "invert_powerline": {
+                "type": "boolean"
+              },
+              "force": {
+                "type": "boolean"
+              },
+              "toggled": {
+                "type": "boolean"
+              },
+              "interactive": {
+                "type": "boolean"
+              },
+              "multiline_keepprompt": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "transient_prompt": {
+            "properties": {
+              "options": {
+                "type": "object"
+              },
+              "cache": {
+                "properties": {
+                  "duration": {
+                    "type": "string"
+                  },
+                  "strategy": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "leading_diamond": {
+                "type": "string"
+              },
+              "trailing_diamond": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string"
+              },
+              "right_template": {
+                "type": "string"
+              },
+              "foreground": {
+                "type": "string"
+              },
+              "templates_logic": {
+                "type": "string"
+              },
+              "powerline_symbol": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              },
+              "filler": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "style": {
+                "type": "string"
+              },
+              "leading_powerline_symbol": {
+                "type": "string"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "fallback_template": {
+                "type": "string"
+              },
+              "tips": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "background_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "exclude_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "include_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "foreground_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "index": {
+                "type": "integer"
+              },
+              "min_width": {
+                "type": "integer"
+              },
+              "max_width": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "integer"
+              },
+              "newline": {
+                "type": "boolean"
+              },
+              "invert_powerline": {
+                "type": "boolean"
+              },
+              "force": {
+                "type": "boolean"
+              },
+              "toggled": {
+                "type": "boolean"
+              },
+              "interactive": {
+                "type": "boolean"
+              },
+              "multiline_keepprompt": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "error_line": {
+            "properties": {
+              "options": {
+                "type": "object"
+              },
+              "cache": {
+                "properties": {
+                  "duration": {
+                    "type": "string"
+                  },
+                  "strategy": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object"
+              },
+              "alias": {
+                "type": "string"
+              },
+              "leading_diamond": {
+                "type": "string"
+              },
+              "trailing_diamond": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string"
+              },
+              "right_template": {
+                "type": "string"
+              },
+              "foreground": {
+                "type": "string"
+              },
+              "templates_logic": {
+                "type": "string"
+              },
+              "powerline_symbol": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              },
+              "filler": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "style": {
+                "type": "string"
+              },
+              "leading_powerline_symbol": {
+                "type": "string"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "fallback_template": {
+                "type": "string"
+              },
+              "tips": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "background_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "exclude_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "include_folders": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "foreground_templates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "index": {
+                "type": "integer"
+              },
+              "min_width": {
+                "type": "integer"
+              },
+              "max_width": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "integer"
+              },
+              "newline": {
+                "type": "boolean"
+              },
+              "invert_powerline": {
+                "type": "boolean"
+              },
+              "force": {
+                "type": "boolean"
+              },
+              "toggled": {
+                "type": "boolean"
+              },
+              "interactive": {
+                "type": "boolean"
+              },
+              "multiline_keepprompt": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "maps": {
+            "properties": {
+              "user_name": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "host_name": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "shell_name": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "upgrade": {
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "interval": {
+                "type": "string"
+              },
+              "auto": {
+                "type": "boolean"
+              },
+              "notice": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "source",
+              "interval",
+              "auto",
+              "notice"
+            ]
+          },
+          "terminal_features": {
+            "properties": {
+              "progress": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "extends": {
+            "type": "string"
+          },
+          "pwd": {
+            "type": "string"
+          },
+          "terminal_background": {
+            "type": "string"
+          },
+          "tooltips_action": {
+            "type": "string"
+          },
+          "console_title_template": {
+            "type": "string"
+          },
+          "accent_color": {
+            "type": "string"
+          },
+          "blocks": {
+            "items": {
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "alignment": {
+                  "type": "string"
+                },
+                "filler": {
+                  "type": "string"
+                },
+                "overflow": {
+                  "type": "string"
+                },
+                "leading_diamond": {
+                  "type": "string"
+                },
+                "trailing_diamond": {
+                  "type": "string"
+                },
+                "segments": {
+                  "items": {
+                    "properties": {
+                      "options": {
+                        "type": "object"
+                      },
+                      "cache": {
+                        "properties": {
+                          "duration": {
+                            "type": "string"
+                          },
+                          "strategy": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "type": "object"
+                      },
+                      "alias": {
+                        "type": "string"
+                      },
+                      "leading_diamond": {
+                        "type": "string"
+                      },
+                      "trailing_diamond": {
+                        "type": "string"
+                      },
+                      "template": {
+                        "type": "string"
+                      },
+                      "right_template": {
+                        "type": "string"
+                      },
+                      "foreground": {
+                        "type": "string"
+                      },
+                      "templates_logic": {
+                        "type": "string"
+                      },
+                      "powerline_symbol": {
+                        "type": "string"
+                      },
+                      "background": {
+                        "type": "string"
+                      },
+                      "filler": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "style": {
+                        "type": "string"
+                      },
+                      "leading_powerline_symbol": {
+                        "type": "string"
+                      },
+                      "placeholder": {
+                        "type": "string"
+                      },
+                      "fallback_template": {
+                        "type": "string"
+                      },
+                      "tips": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "background_templates": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "templates": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "exclude_folders": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "include_folders": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "foreground_templates": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "index": {
+                        "type": "integer"
+                      },
+                      "min_width": {
+                        "type": "integer"
+                      },
+                      "max_width": {
+                        "type": "integer"
+                      },
+                      "timeout": {
+                        "type": "integer"
+                      },
+                      "newline": {
+                        "type": "boolean"
+                      },
+                      "invert_powerline": {
+                        "type": "boolean"
+                      },
+                      "force": {
+                        "type": "boolean"
+                      },
+                      "toggled": {
+                        "type": "boolean"
+                      },
+                      "interactive": {
+                        "type": "boolean"
+                      },
+                      "multiline_keepprompt": {
+                        "type": "boolean"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "newline": {
+                  "type": "boolean"
+                },
+                "force": {
+                  "type": "boolean"
+                },
+                "restart_cycle": {
+                  "type": "boolean"
+                },
+                "index": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "iterm_features": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tooltips": {
+            "items": {
+              "properties": {
+                "options": {
+                  "type": "object"
+                },
+                "cache": {
+                  "properties": {
+                    "duration": {
+                      "type": "string"
+                    },
+                    "strategy": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "type": "object"
+                },
+                "alias": {
+                  "type": "string"
+                },
+                "leading_diamond": {
+                  "type": "string"
+                },
+                "trailing_diamond": {
+                  "type": "string"
+                },
+                "template": {
+                  "type": "string"
+                },
+                "right_template": {
+                  "type": "string"
+                },
+                "foreground": {
+                  "type": "string"
+                },
+                "templates_logic": {
+                  "type": "string"
+                },
+                "powerline_symbol": {
+                  "type": "string"
+                },
+                "background": {
+                  "type": "string"
+                },
+                "filler": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "style": {
+                  "type": "string"
+                },
+                "leading_powerline_symbol": {
+                  "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
+                },
+                "fallback_template": {
+                  "type": "string"
+                },
+                "tips": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "background_templates": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "templates": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "exclude_folders": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "include_folders": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "foreground_templates": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "min_width": {
+                  "type": "integer"
+                },
+                "max_width": {
+                  "type": "integer"
+                },
+                "timeout": {
+                  "type": "integer"
+                },
+                "newline": {
+                  "type": "boolean"
+                },
+                "invert_powerline": {
+                  "type": "boolean"
+                },
+                "force": {
+                  "type": "boolean"
+                },
+                "toggled": {
+                  "type": "boolean"
+                },
+                "interactive": {
+                  "type": "boolean"
+                },
+                "multiline_keepprompt": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "cycle": {
+            "items": {
+              "properties": {
+                "background": {
+                  "type": "string"
+                },
+                "foreground": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "background",
+                "foreground"
+              ]
+            },
+            "type": "array"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "streaming": {
+            "type": "integer"
+          },
+          "async": {
+            "type": "boolean"
+          },
+          "shell_integration": {
+            "type": "boolean"
+          },
+          "final_space": {
+            "type": "boolean"
+          },
+          "patch_pwsh_bleed": {
+            "type": "boolean"
+          },
+          "enable_cursor_positioning": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "version"
+        ]
+      },
+      "type": "array",
+      "title": "states",
+      "description": "The different states of the resource"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}

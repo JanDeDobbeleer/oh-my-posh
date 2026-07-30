@@ -1,6 +1,7 @@
 package dsc
 
 import (
+	_ "embed"
 	"encoding/gob"
 	"fmt"
 	"os"
@@ -26,9 +27,12 @@ type ConfigResource struct {
 	basedsc.Resource[*Configuration]
 }
 
+//go:embed configuration.schema.json
+var configurationSchema string
+
 func ConfigDSC() *ConfigResource {
 	return &ConfigResource{
-		Resource: basedsc.Resource[*Configuration]{},
+		Resource: basedsc.Resource[*Configuration]{SchemaJSON: configurationSchema},
 	}
 }
 

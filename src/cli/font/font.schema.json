@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "font",
+  "properties": {
+    "states": {
+      "items": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Font name",
+            "description": "The name of the font"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "type": "array",
+      "title": "states",
+      "description": "The different states of the resource"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}

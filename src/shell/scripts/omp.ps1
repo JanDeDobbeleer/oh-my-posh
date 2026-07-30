@@ -159,7 +159,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL = "pwsh"
     $env:POSH_SHELL_VERSION = $script:PSVersion
-    $env:CONDA_PROMPT_MODIFIER = $false
+    $env:CONDA_PROMPT_MODIFIER = ''
 
     function Invoke-Utf8Posh {
         param([string[]]$Arguments = @())

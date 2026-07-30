@@ -2,14 +2,23 @@
 
 ## Docs linting
 
-- Two markdown gates with different coverage (verified 2026-07-14): the Vale CI workflow
+- Two markdown gates cover skill docs (updated 2026-07-30): the Vale CI workflow
   (`.github/workflows/vale.yml`) explicitly lints `AGENTS.md`, `.github/copilot-instructions.md`,
-  and `.agents/skills`, while `markdownlint-cli2` skips dot-directories entirely - its globs never
-  match `.agents/` or `.github/`, even when passed explicit paths. Lint skill docs with Vale
-  before pushing; for markdownlint, copy them to a non-dot directory alongside
-  `.markdownlint-cli2.yaml`.
+  and `.agents/skills`, and `markdownlint-cli2`'s `**/*.md` glob in `.markdownlint-cli2.yaml` also
+  reaches `.agents/skills` - only the two explicit `ignores` entries there are excluded. Lint skill
+  doc changes with both `vale <path>` and `npx markdownlint-cli2 --config .markdownlint-cli2.yaml
+  <path>` before pushing.
 - Vale fails CI on error-level findings only; warnings pass. Justified terms (Go interface
   wording, zsh feature names) get file-scoped rule overrides in `.vale.ini`, each with a comment.
+
+## Windows git rebase with core.autocrlf=true
+
+- An interactive `git rebase --autosquash` can stop mid-sequence with "Your local changes to
+  `<file>` would be overwritten by merge" on a plain `pick` that has no real content conflict
+  (verified 2026-07-30). Root cause: `core.autocrlf=true` renormalizes line endings on checkout,
+  which git treats as a working-tree modification that blocks the next pick. Toggle
+  `git config core.autocrlf false` for the duration of the rebase (restore it after), rather than
+  trying to resolve a conflict that doesn't reflect the actual diff.
 
 ## Dev environment
 

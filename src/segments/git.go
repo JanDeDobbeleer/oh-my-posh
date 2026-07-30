@@ -15,7 +15,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
-	"gopkg.in/ini.v1"
+	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 )
 
 type Commit struct {
@@ -619,8 +619,7 @@ func (g *Git) getGitConfig() (*ini.File, error) {
 			return
 		}
 
-		// ini.Load expects []byte to parse content, not a file path
-		cfg, err := ini.Load([]byte(configData))
+		cfg, err := ini.Load(configData)
 		if err != nil {
 			g.configErr = err
 			return

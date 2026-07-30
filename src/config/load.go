@@ -12,13 +12,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gookit/goutil/jsonutil"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "go.yaml.in/yaml/v3"
@@ -280,7 +280,7 @@ func ParseBytes(format string, data []byte) (*Config, error) {
 	case JSONC, JSON:
 		cfg.Format = JSON
 
-		str := jsonutil.StripComments(string(data))
+		str := text.StripJSONComments(string(data))
 		data = []byte(str)
 
 		decoder := json.NewDecoder(bytes.NewReader(data))

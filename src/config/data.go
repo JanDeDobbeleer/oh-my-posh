@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 
-	"github.com/gookit/goutil/jsonutil"
 	toml "github.com/pelletier/go-toml/v2"
 	yaml "go.yaml.in/yaml/v3"
 )
@@ -171,7 +171,7 @@ func decodeDataRoot(ext string, raw []byte) (map[string]json.RawMessage, error) 
 
 	switch ext {
 	case JSON, JSONC:
-		raw = []byte(jsonutil.StripComments(string(raw)))
+		raw = []byte(text.StripJSONComments(string(raw)))
 
 		if err := json.Unmarshal(raw, &root); err != nil {
 			return nil, fmt.Errorf("failed to parse data file: %w", err)

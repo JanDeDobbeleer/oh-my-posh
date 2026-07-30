@@ -14,7 +14,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-	"gopkg.in/ini.v1"
+	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -208,7 +208,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {
-			g.config, g.configErr = ini.Load([]byte(configData))
+			g.config, g.configErr = ini.Load(configData)
 		})
 
 		_ = g.Enabled()
@@ -1233,7 +1233,7 @@ func TestGitRemotes(t *testing.T) {
 
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {
-			g.config, g.configErr = ini.Load([]byte(tc.Config))
+			g.config, g.configErr = ini.Load(tc.Config)
 		})
 
 		got := g.Remotes()
@@ -1454,7 +1454,7 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {
 			if len(tc.Config) > 0 {
-				g.config, g.configErr = ini.Load([]byte(tc.Config))
+				g.config, g.configErr = ini.Load(tc.Config)
 				return
 			}
 

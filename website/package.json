@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "prestart": "node scripts/ensure-artifacts.mjs",
-    "start": "cross-env NODE_ENV=development docusaurus start --poll 1000",
+    "start": "cross-env NODE_ENV=development node scripts/dev.mjs",
     "prebuild": "node scripts/ensure-artifacts.mjs",
     "build": "docusaurus build",
     "serve": "docusaurus serve",
@@ -26,6 +26,7 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "chokidar": "^3.6.0",
     "cross-env": "^10.1.0"
   },
   "browserslist": {

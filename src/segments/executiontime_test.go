@@ -418,3 +418,23 @@ func TestExecutionTimeFormatISO8601Ms(t *testing.T) {
 		assert.Equal(t, tc.Expected, output, "Input: %s", tc.Input)
 	}
 }
+
+func TestGroupThousands(t *testing.T) {
+	cases := map[int64]string{
+		0:          "0",
+		1:          "1",
+		999:        "999",
+		1000:       "1,000",
+		12345:      "12,345",
+		123456:     "123,456",
+		1234567:    "1,234,567",
+		1000000000: "1,000,000,000",
+		-999:       "-999",
+		-1000:      "-1,000",
+		-1234567:   "-1,234,567",
+	}
+
+	for input, expected := range cases {
+		assert.Equal(t, expected, groupThousands(input))
+	}
+}

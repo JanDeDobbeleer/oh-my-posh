@@ -18,10 +18,9 @@ import (
 	runjobs "github.com/jandedobbeleer/oh-my-posh/src/runtime/jobs"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/text"
 
 	"go.yaml.in/yaml/v3"
-	c "golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type SegmentStyle string
@@ -178,7 +177,7 @@ func (segment *Segment) Name() string {
 
 	name := segment.Alias
 	if name == "" {
-		name = c.Title(language.English).String(string(segment.Type))
+		name = text.Title(string(segment.Type))
 	}
 
 	segment.name = name
@@ -325,11 +324,11 @@ func (segment *Segment) Render(index int, force bool) bool {
 
 	segment.setIndex(index)
 
-	text := segment.string()
+	rendered := segment.string()
 
 	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
 	if !segment.Pending {
-		segment.Enabled = segment.Force || strings.ContainsFunc(text, func(r rune) bool { return r != ' ' })
+		segment.Enabled = segment.Force || strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' })
 
 		if !segment.Enabled {
 			template.Cache.RemoveSegmentData(segment.Name())
@@ -337,7 +336,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 		}
 	}
 
-	segment.SetText(text)
+	segment.SetText(rendered)
 	segment.setCache()
 
 	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
@@ -359,12 +358,12 @@ func (segment *Segment) renderFallback(index int) bool {
 		return false
 	}
 
-	text, err := template.RenderTrusted(segment.FallbackTemplate, segment.writer)
+	rendered, err := template.RenderTrusted(segment.FallbackTemplate, segment.writer)
 	if err != nil {
-		text = err.Error()
+		rendered = err.Error()
 	}
 
-	if !strings.ContainsFunc(text, func(r rune) bool { return r != ' ' }) {
+	if !strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' }) {
 		return false
 	}
 
@@ -375,7 +374,7 @@ func (segment *Segment) renderFallback(index int) bool {
 
 	segment.setIndex(index)
 	segment.Enabled = true
-	segment.SetText(text)
+	segment.SetText(rendered)
 
 	// Intentionally skip setCache(): the writer is zero/partially hydrated
 	// here, and caching it would make restoreCache() later resurrect a
@@ -394,13 +393,13 @@ func (segment *Segment) Text() string {
 	return segment.writer.Text()
 }
 
-func (segment *Segment) SetText(text string) {
+func (segment *Segment) SetText(value string) {
 	if segment.writer == nil {
-		segment.text = text
+		segment.text = value
 		return
 	}
 
-	segment.writer.SetText(text)
+	segment.writer.SetText(value)
 }
 
 func (segment *Segment) setIndex(index int) {
@@ -814,12 +813,12 @@ func (segment *Segment) string() string {
 		segment.Template = segment.writer.Template()
 	}
 
-	text, err := template.RenderTrusted(segment.Template, context)
+	rendered, err := template.RenderTrusted(segment.Template, context)
 	if err != nil {
 		return err.Error()
 	}
 
-	return text
+	return rendered
 }
 
 func (segment *Segment) shouldIncludeFolder() bool {

@@ -384,6 +384,7 @@ if (process.argv[1] === __filename) {
 }
 
 export {
+  CONFIG,
   exportTheme,
   isValidTheme,
   getThemeNameFromFile,

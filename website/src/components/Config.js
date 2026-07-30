@@ -7,10 +7,15 @@ import classnames from 'classnames';
 import YAML from 'yaml';
 import TOML from 'smol-toml';
 import { useDoc } from '@docusaurus/plugin-content-docs/client';
+import { useColorMode } from '@docusaurus/theme-common';
 import ConfigEditor from './ConfigEditor';
 import WasmMessage from './ConfigEditor/WasmMessage';
 import { useWasmRenderer } from './ConfigEditor/useWasmRenderer';
-import { buildRenderOptions, RENDER_DATA_JSON } from './ConfigEditor/renderDefaults';
+import {
+  buildRenderOptions,
+  LIGHT_BACKGROUND_COLOR,
+  RENDER_DATA_JSON,
+} from './ConfigEditor/renderDefaults';
 import { convertConfig, parseConfig, stringifyConfig } from './ConfigEditor/serialize';
 import { APPEND_KEY, trySessionStorageSet } from './ConfigEditor/studioHandoff';
 import styles from './Config.module.css';
@@ -130,7 +135,7 @@ function AddToStudioButton({ format, configText, disabled }) {
 // The editable half of a segment doc's "Sample Configuration": the build-time static SVG shows
 // immediately (see Config below), and only turns into a live one once the reader edits the
 // config for the first time - see useWasmRenderer's `eager` doc comment for why that matters.
-function EditableConfig({ data, staticSvg }) {
+function EditableConfig({ data, staticSvg, staticSvgLight }) {
   // Only the default format's text is built up front. The other two used to be pre-rendered as
   // well, to be swapped in whole when the reader picked a different tab; handleFormatChange now
   // rewrites whatever is in the editor instead (see convertConfig), so they were never read.
@@ -142,6 +147,13 @@ function EditableConfig({ data, staticSvg }) {
 
   const formatRef = useRef(SEGMENT_DEFAULT_FORMAT);
   const debounceRef = useRef(null);
+
+  // The site's own dark/light toggle (see Studio/index.js, which follows the same convention) -
+  // the live preview's canvas background is switched to match it below, rather than always
+  // rendering against the exporter's fixed dark default.
+  const { colorMode } = useColorMode();
+  const colorModeRef = useRef(colorMode);
+  colorModeRef.current = colorMode;
 
   const { svg, error, wasmStatus, wasmProgress, wasmErrorMessage, render, ensureLoaded } =
     useWasmRenderer({ eager: false });
@@ -159,22 +171,35 @@ function EditableConfig({ data, staticSvg }) {
 
       setParseError(null);
       const wrappedText = stringifyConfig(fmt, buildPromptConfig(segment));
-      render(wrappedText, fmt, RENDER_DATA_JSON, SEGMENT_RENDER_OPTIONS);
+
+      // A caller-supplied backgroundColor only ever fills in for a segment whose sample config
+      // leaves its own terminal background unset (see src/wasm/main.go's renderSVG), so a
+      // segment that does set one keeps looking like itself regardless of color mode.
+      const options =
+        colorModeRef.current === 'light'
+          ? { ...SEGMENT_RENDER_OPTIONS, backgroundColor: LIGHT_BACKGROUND_COLOR }
+          : SEGMENT_RENDER_OPTIONS;
+
+      render(wrappedText, fmt, RENDER_DATA_JSON, options);
     },
     [render],
   );
 
   // Mirrors the studio's own "render as soon as the module is ready" effect (Studio/index.js):
   // the module only starts loading on the reader's first edit (see handleChange below), so by
-  // the time it actually becomes ready there is already something worth rendering.
+  // the time it actually becomes ready there is already something worth rendering. colorMode is
+  // also a dependency so that flipping the site's own dark/light toggle re-renders the current
+  // config against the new canvas background immediately, instead of only picking it up on the
+  // reader's next edit.
   useEffect(() => {
     if (wasmStatus === 'ready') {
       runRender(configText, format);
     }
-    // configText/format intentionally excluded: this effect's only job is the one render that
-    // happens the moment the module becomes ready, not every keystroke after.
+    // configText/format intentionally excluded: this effect's job is the one render that
+    // happens the moment the module becomes ready (or the color mode flips), not every
+    // keystroke after.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasmStatus, runRender]);
+  }, [wasmStatus, colorMode, runRender]);
 
   useEffect(
     () => () => {
@@ -232,10 +257,11 @@ function EditableConfig({ data, staticSvg }) {
   );
 
   // Keeps the last good preview on screen instead of blanking it: before the first edit (or
-  // while the module is still loading) that is the build-time static SVG; once a live render has
-  // actually succeeded at least once, its own svg takes over and is itself kept across a later
-  // parse/render error, same as the studio.
-  const displaySvg = svg || staticSvg;
+  // while the module is still loading) that is the build-time static SVG pair, switched by CSS
+  // off the site's own color mode exactly like the theme gallery (see ThemeGallery/index.js);
+  // once a live render has actually succeeded at least once, its own single svg - already
+  // rendered for the current color mode, see runRender above - takes over and is itself kept
+  // across a later parse/render error, same as the studio.
   const displayError = parseError || error;
 
   return (
@@ -248,8 +274,21 @@ function EditableConfig({ data, staticSvg }) {
           className={styles.wasmMessage}
         />
         {displayError && <p className={styles.error}>{displayError}</p>}
-        {displaySvg && (
-          <span className={styles.svgWrapper} dangerouslySetInnerHTML={{ __html: displaySvg }} />
+        {svg ? (
+          <span className={styles.svgWrapper} dangerouslySetInnerHTML={{ __html: svg }} />
+        ) : (
+          staticSvg && (
+            <>
+              <span
+                className={`${styles.svgWrapper} omp-dark-only`}
+                dangerouslySetInnerHTML={{ __html: staticSvg }}
+              />
+              <span
+                className={`${styles.svgWrapper} omp-light-only`}
+                dangerouslySetInnerHTML={{ __html: staticSvgLight }}
+              />
+            </>
+          )
         )}
       </div>
       <ConfigEditor
@@ -289,10 +328,11 @@ function Config(props) {
   // the stored sample object against this instance's own `data` prop confirms this really is the
   // <Config/> the preview was rendered from - and, now, which instance gets to become editable:
   // an unmatched second block keeps the plain tabs below rather than turning into its own editor.
-  const preview = entry && JSON.stringify(entry.segment) === JSON.stringify(data) ? entry.svg : null;
+  const isMatch = entry && JSON.stringify(entry.segment) === JSON.stringify(data);
+  const preview = isMatch ? entry.svg : null;
 
   if (preview) {
-    return <EditableConfig data={data} staticSvg={preview} />;
+    return <EditableConfig data={data} staticSvg={preview} staticSvgLight={entry.svgLight} />;
   }
 
   const patchTomlData = () => {

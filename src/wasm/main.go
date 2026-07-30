@@ -25,9 +25,11 @@ import (
 	"syscall/js"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/render"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/svg"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
@@ -169,6 +171,18 @@ func renderSVG(args []js.Value) (string, error) {
 	}
 
 	opts := render.SVGOptions(jsString(optionsGet(options, "fontFamily")), columns, metrics)
+
+	// A caller-supplied canvas background (the website's studio, switching between its own
+	// dark/light color mode) only ever fills in for a theme that leaves its own terminal
+	// background unset - withDefaults (svg.go) always prefers a real opts.TerminalBackground
+	// over CanvasBackground when the theme sets one, so this can't paint over how the theme
+	// would actually look in a real terminal. Same convention as the CLI's own
+	// --background-color flag (cli/config_export_svg.go's exportSVG).
+	if backgroundColor := jsString(optionsGet(options, "backgroundColor")); backgroundColor != "" {
+		if rgb, ok := svg.ResolveStaticRGB(color.Ansi(backgroundColor), true, &opts); ok {
+			opts.CanvasBackground = rgb
+		}
+	}
 
 	return render.SVG(eng, opts), nil
 }

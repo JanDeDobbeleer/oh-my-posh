@@ -11,7 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -20,6 +20,16 @@ import (
 func init() {
 	gob.Register(&Config{})
 }
+
+// Mirrors segments.Source/Pwsh/Cli/FirstMatch: read locally instead of importing
+// segments, which drags its full transitive dep tree (HCL, go-cty, etc.) into
+// every binary that links this package, including the wasm render build.
+const (
+	sourceOption options.Option = "source"
+	pwshSource   string         = "pwsh"
+	cliSource    string         = "cli"
+	firstMatch   string         = "cli|pwsh"
+)
 
 const (
 	JSON string = "json"
@@ -195,16 +205,16 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 
 		for _, segment := range block.Segments {
 			if segment.Type == AZ {
-				source := segment.Options.String(segments.Source, segments.FirstMatch)
-				if strings.Contains(source, segments.Pwsh) {
+				source := segment.Options.String(sourceOption, firstMatch)
+				if strings.Contains(source, pwshSource) {
 					log.Debug("azure enabled")
 					feats |= shell.Azure
 				}
 			}
 
 			if segment.Type == GIT {
-				source := segment.Options.String(segments.Source, segments.Cli)
-				if source == segments.Pwsh {
+				source := segment.Options.String(sourceOption, cliSource)
+				if source == pwshSource {
 					log.Debug("posh-git enabled")
 					feats |= shell.PoshGit
 				}

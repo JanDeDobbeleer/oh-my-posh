@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -127,9 +128,9 @@ func runInit(sh, command string) {
 		output = shell.Init(env, feats)
 	}
 
-	shellDSC := shell.DSC()
+	shellDSC := dsc.ShellDSC()
 	shellDSC.Load()
-	shellDSC.Add(&shell.Shell{
+	shellDSC.Add(&dsc.Shell{
 		Command: command,
 		Name:    sh,
 	})

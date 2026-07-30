@@ -99,11 +99,13 @@ func Parse(configFile string) (*Config, error) {
 
 	configFile = resolveConfigLocation(configFile)
 
-	configDSC := DSC()
-	configDSC.Load()
-	configDSC.Add(configFile)
+	configDSC := newDSCTracker()
+	if configDSC != nil {
+		configDSC.Load()
+		configDSC.Add(configFile)
 
-	defer configDSC.Save()
+		defer configDSC.Save()
+	}
 
 	h := fnv.New64a()
 
@@ -132,7 +134,9 @@ func Parse(configFile string) (*Config, error) {
 			break
 		}
 
-		configDSC.Add(cfg.Extends)
+		if configDSC != nil {
+			configDSC.Add(cfg.Extends)
+		}
 
 		// anchor the next hop's relative extends path against this hop's own
 		// directory, not the directory of the config that started the chain

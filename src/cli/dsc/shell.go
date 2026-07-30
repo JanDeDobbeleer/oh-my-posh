@@ -1,4 +1,9 @@
-package shell
+// Package dsc holds CLI-only Desired State Configuration resources. It lives
+// under cli, not shell, because shell is imported by the wasm render build
+// for its shell-name constants and feature flags; importing the base dsc
+// package from there would pull invopop/jsonschema (go/ast, go/parser,
+// go/doc) and cobra into every binary that links shell.
+package dsc
 
 import (
 	"encoding/gob"
@@ -8,11 +13,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
+	basedsc "github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
 func init() {
@@ -23,8 +29,8 @@ const (
 	initCommandRegex = `oh-my-posh(?:\.exe)?\s+init`
 )
 
-func DSC() *dsc.Resource[*Shell] {
-	return &dsc.Resource[*Shell]{}
+func ShellDSC() *basedsc.Resource[*Shell] {
+	return &basedsc.Resource[*Shell]{}
 }
 
 type Shell struct {
@@ -33,12 +39,12 @@ type Shell struct {
 	SkipExistingInit bool   `json:"skipExistingInit,omitempty" jsonschema:"title=Skip existing init,description=Treat any existing oh-my-posh init line as compliant instead of rewriting it"` //nolint:lll
 }
 
-func (s *Shell) Equal(shell *Shell) bool {
-	if shell == nil {
+func (s *Shell) Equal(other *Shell) bool {
+	if other == nil {
 		return false
 	}
 
-	return s.Name == shell.Name
+	return s.Name == other.Name
 }
 
 func (s *Shell) Resolve() (*Shell, bool) {
@@ -85,27 +91,27 @@ func (s *Shell) getShellConfigPath() (string, error) {
 	}
 
 	switch s.Name {
-	case BASH:
+	case shell.BASH:
 		bashrc := filepath.Join(home, ".bashrc")
 		if _, err := os.Stat(bashrc); err == nil {
 			return bashrc, nil
 		}
 
 		return filepath.Join(home, ".bash_profile"), nil
-	case ZSH:
+	case shell.ZSH:
 		return filepath.Join(home, ".zshrc"), nil
-	case FISH:
+	case shell.FISH:
 		configDir := filepath.Join(home, ".config", "fish")
 		return filepath.Join(configDir, "config.fish"), nil
-	case PWSH:
+	case shell.PWSH:
 		return cmd.Run(s.Name, "-NoProfile", "-Command", "$PROFILE")
-	case NU:
+	case shell.NU:
 		return cmd.Run("nu", "-c", "$nu.config-path")
-	case ELVISH:
+	case shell.ELVISH:
 		return filepath.Join(home, ".elvish", "rc.elv"), nil
-	case XONSH:
+	case shell.XONSH:
 		return filepath.Join(home, ".xonshrc"), nil
-	case YASH:
+	case shell.YASH:
 		return filepath.Join(home, ".yashrc"), nil
 	default:
 		return "", fmt.Errorf("unsupported shell type: %s", s.Name)
@@ -194,15 +200,15 @@ func (s *Shell) getLastInitLinePosition(lines []string) int {
 
 func (s *Shell) shellCommand() string {
 	switch s.Name {
-	case BASH, ZSH, YASH:
+	case shell.BASH, shell.ZSH, shell.YASH:
 		return fmt.Sprintf(`eval "$(%s)"`, s.Command)
-	case FISH:
+	case shell.FISH:
 		return s.Command + " | source"
-	case PWSH:
+	case shell.PWSH:
 		return s.Command + " | Invoke-Expression"
-	case ELVISH:
+	case shell.ELVISH:
 		return fmt.Sprintf(`eval (%s)`, s.Command)
-	case XONSH:
+	case shell.XONSH:
 		return fmt.Sprintf(`execx($(%s))`, s.Command)
 	default:
 		return s.Command

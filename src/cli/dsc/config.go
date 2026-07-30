@@ -1,4 +1,4 @@
-package config
+package dsc
 
 import (
 	"encoding/gob"
@@ -8,33 +8,38 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	basedsc "github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 )
 
 func init() {
 	gob.Register([]*Configuration{})
+
+	config.NewDSCTracker = func() config.DSCTracker {
+		return ConfigDSC()
+	}
 }
 
-type Resource struct {
-	dsc.Resource[*Configuration]
+type ConfigResource struct {
+	basedsc.Resource[*Configuration]
 }
 
-func DSC() *Resource {
-	return &Resource{
-		Resource: dsc.Resource[*Configuration]{},
+func ConfigDSC() *ConfigResource {
+	return &ConfigResource{
+		Resource: basedsc.Resource[*Configuration]{},
 	}
 }
 
 type Configuration struct {
 	Format string `json:"format,omitempty" jsonschema:"title=Format,description=The format of the configuration file,enum=json,enum=jsonc,enum=yaml,enum=yml,enum=toml,enum=tml"`
 	Source string `json:"source,omitempty" jsonschema:"title=Source,description=The source of the configuration file"`
-	Config
+	config.Config
 	resolved bool `json:"-"`
 }
 
-func (s *Resource) Add(configPath string) {
+func (s *ConfigResource) Add(configPath string) {
 	if configPath == "" || strings.HasPrefix(configPath, "http") {
 		log.Debug("local configuration not provided or remote configuration, skipping")
 		return
@@ -49,9 +54,9 @@ func (s *Resource) Add(configPath string) {
 	})
 }
 
-func (s *Resource) ToJSON() string {
+func (s *ConfigResource) ToJSON() string {
 	output := s.Resource.ToJSON()
-	return EscapeGlyphs(output, false)
+	return config.EscapeGlyphs(output, false)
 }
 
 func (c *Configuration) Apply() error {
@@ -60,9 +65,9 @@ func (c *Configuration) Apply() error {
 	}
 
 	formats := map[string][]string{
-		JSON: {".json", ".jsonc"},
-		YAML: {".yaml", ".yml"},
-		TOML: {".toml", ".tml"},
+		config.JSON: {".json", ".jsonc"},
+		config.YAML: {".yaml", ".yml"},
+		config.TOML: {".toml", ".tml"},
 	}
 
 	if !slices.Contains(formats[c.Format], filepath.Ext(c.Source)) {
@@ -91,12 +96,12 @@ func (c *Configuration) Apply() error {
 	return nil
 }
 
-func (c *Configuration) Equal(config *Configuration) bool {
-	if config == nil {
+func (c *Configuration) Equal(other *Configuration) bool {
+	if other == nil {
 		return false
 	}
 
-	return c.Source == config.Source
+	return c.Source == other.Source
 }
 
 func (c *Configuration) Resolve() (*Configuration, bool) {
@@ -110,7 +115,7 @@ func (c *Configuration) Resolve() (*Configuration, bool) {
 	c.resolved = true
 
 	// we use pwsh as that will never omit any feature
-	data := Load(c.Source)
+	data := config.Load(c.Source)
 	if data == nil {
 		log.Debug("No configuration data found")
 		return nil, false

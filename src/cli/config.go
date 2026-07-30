@@ -5,8 +5,9 @@ import (
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli/dsc"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/dsc"
+	basedsc "github.com/jandedobbeleer/oh-my-posh/src/dsc"
 	"github.com/spf13/cobra"
 )
 
@@ -43,6 +44,6 @@ You can export, migrate or edit the config (via the editor specified in the envi
 }
 
 func init() {
-	configCmd.AddCommand(dsc.Command(config.DSC()))
+	configCmd.AddCommand(basedsc.Command(dsc.ConfigDSC()))
 	RootCmd.AddCommand(configCmd)
 }

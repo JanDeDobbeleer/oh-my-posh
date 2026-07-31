@@ -17,6 +17,10 @@ import {
   RENDER_DATA_JSON,
 } from './ConfigEditor/renderDefaults';
 import { convertConfig, parseConfig, stringifyConfig } from './ConfigEditor/serialize';
+import { getSyntaxError } from './ConfigEditor/errorPosition';
+import { useDelayedError } from './ConfigEditor/useDelayedError';
+import { useHoldTrue } from './ConfigEditor/useHoldTrue';
+import ErrorIndicator from './ConfigEditor/ErrorIndicator';
 import { APPEND_KEY, trySessionStorageSet } from './ConfigEditor/studioHandoff';
 import styles from './Config.module.css';
 
@@ -144,6 +148,10 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
   const [format, setFormat] = useState(SEGMENT_DEFAULT_FORMAT);
   const [configText, setConfigText] = useState(initialText);
   const [parseError, setParseError] = useState(null);
+  const [errorLocation, setErrorLocation] = useState(null);
+  // Whether ConfigEditor's own completion popup is currently open - see its
+  // onCompletionOpenChange doc comment for why the error banner is suppressed while it is.
+  const [completionOpen, setCompletionOpen] = useState(false);
 
   const formatRef = useRef(SEGMENT_DEFAULT_FORMAT);
   const debounceRef = useRef(null);
@@ -166,10 +174,12 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
         segment = parseConfig(fmt, text);
       } catch (err) {
         setParseError(err.message || String(err));
+        setErrorLocation(getSyntaxError(fmt, text));
         return;
       }
 
       setParseError(null);
+      setErrorLocation(null);
       const wrappedText = stringifyConfig(fmt, buildPromptConfig(segment));
 
       // A caller-supplied backgroundColor only ever fills in for a segment whose sample config
@@ -262,7 +272,18 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
   // once a live render has actually succeeded at least once, its own single svg - already
   // rendered for the current color mode, see runRender above - takes over and is itself kept
   // across a later parse/render error, same as the studio.
-  const displayError = parseError || error;
+  const rawDisplayError = parseError || error;
+  // Held back briefly on its first appearance (see useDelayedError) so a still-typing
+  // reader doesn't get flagged for a config they haven't finished yet, and suppressed
+  // outright while the completion popup is open - the config is almost always
+  // momentarily invalid mid-completion, and there's nothing to fix until it closes.
+  const delayedError = useDelayedError(rawDisplayError);
+  // Held true for a bit past the popup closing too: accepting a completion runs the edit
+  // through the same DEBOUNCE_MS-delayed render pipeline as normal typing, so the still-stale
+  // `error` from before the edit would otherwise flash back into view for that gap before the
+  // re-render confirms the config is actually valid now.
+  const completionSuppressed = useHoldTrue(completionOpen, DEBOUNCE_MS + 150);
+  const displayError = completionSuppressed ? null : delayedError;
 
   return (
     <div className={styles.editableConfig}>
@@ -273,7 +294,6 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
           errorMessage={wasmErrorMessage}
           className={styles.wasmMessage}
         />
-        {displayError && <p className={styles.error}>{displayError}</p>}
         {svg ? (
           <span className={styles.svgWrapper} dangerouslySetInnerHTML={{ __html: svg }} />
         ) : (
@@ -290,6 +310,7 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
             </>
           )
         )}
+        )}
       </div>
       <ConfigEditor
         label="Config"
@@ -299,10 +320,15 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
         onFormatChange={handleFormatChange}
         value={configText}
         onChange={handleChange}
+        schemaScope="segment"
+        errorLocation={displayError ? errorLocation : null}
+        errorMessage={displayError}
+        onCompletionOpenChange={setCompletionOpen}
         actions={
           <>
             <CopyButton text={configText} />
             <AddToStudioButton format={format} configText={configText} disabled={!!parseError} />
+            <ErrorIndicator message={displayError} />
           </>
         }
       />

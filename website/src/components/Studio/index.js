@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
+import ErrorIndicator from '../ConfigEditor/ErrorIndicator';
 import { useColorMode } from '@docusaurus/theme-common';
 import ConfigEditor from '../ConfigEditor';
 import WasmMessage from '../ConfigEditor/WasmMessage';
@@ -10,6 +11,10 @@ import {
   RENDER_DATA_JSON,
 } from '../ConfigEditor/renderDefaults';
 import { convertConfig, parseConfig, stringifyConfig } from '../ConfigEditor/serialize';
+import { getSyntaxError } from '../ConfigEditor/errorPosition';
+import { useDelayedError } from '../ConfigEditor/useDelayedError';
+import { useHoldTrue } from '../ConfigEditor/useHoldTrue';
+
 import {
   APPEND_KEY,
   LOAD_KEY,
@@ -83,6 +88,19 @@ function Studio() {
   // Set when a format switch was refused because the config in the editor does not parse; cleared
   // by the next switch that succeeds. See handleFormatChange.
   const [formatNotice, setFormatNotice] = useState(null);
+  // The current syntax error, if any - { message, line, column, endColumn } from
+  // errorPosition.js's getSyntaxError, or null. Unlike Config.js's segment editor, the studio has
+  // no client-side pre-parse step of its own (its render path goes straight to the wasm module,
+  // whose ParseBytes error is always a generic sentinel string with no message or position - see
+  // src/config/load.go), so this is a second re-parse purely to recover both: `message` replaces
+  // the generic wasm banner text below whenever it's available, and line/column/endColumn place
+  // the underline. `error` itself, from the wasm renderer, remains the actual source of truth for
+  // whether the config is valid - this can only add detail to it, never override that verdict.
+  const [syntaxError, setSyntaxError] = useState(null);
+  // Whether ConfigEditor's own completion popup is currently open - see its
+  // onCompletionOpenChange doc comment for why the error banner is suppressed while it is.
+  const [completionOpen, setCompletionOpen] = useState(false);
+
 
   const { svg, error, wasmStatus, wasmProgress, wasmErrorMessage, render, ensureLoaded } =
     useWasmRenderer({ eager: true });
@@ -102,6 +120,8 @@ function Studio() {
 
   const runRender = useCallback(
     (text) => {
+      setSyntaxError(getSyntaxError(formatRef.current, text));
+
       // A caller-supplied backgroundColor only ever fills in for a theme that leaves its own
       // terminal background unset (see src/wasm/main.go's renderSVG), so a theme with its own
       // background keeps looking like itself regardless of color mode - only the default,
@@ -115,6 +135,7 @@ function Studio() {
     },
     [render],
   );
+
 
   useEffect(() => {
     ensureLoaded();
@@ -313,6 +334,21 @@ function Studio() {
   );
 
   const previewHint = wasmStatus === 'ready' && !svg && !error ? 'Nothing to preview yet.' : null;
+  // Prefer the client-side re-parse's real message (e.g. "Expected ',' or '}' after property
+  // value in JSON at position 13 (line 3 column 3)") over the wasm module's generic sentinel
+  // string - see syntaxError's own doc comment for why the wasm error has no detail to offer here.
+  const rawDisplayError = error && (syntaxError?.message || error);
+  // Held back briefly on its first appearance (see useDelayedError) so a still-typing
+  // reader doesn't get flagged for a config they haven't finished yet, and suppressed
+  // outright while the completion popup is open - the config is almost always
+  // momentarily invalid mid-completion, and there's nothing to fix until it closes.
+  const delayedError = useDelayedError(rawDisplayError);
+  // Held true for a bit past the popup closing too: accepting a completion runs the edit
+  // through the same DEBOUNCE_MS-delayed render pipeline as normal typing, so the still-stale
+  // `error` from before the edit would otherwise flash back into view for that gap before the
+  // re-render confirms the config is actually valid now.
+  const completionSuppressed = useHoldTrue(completionOpen, DEBOUNCE_MS + 150);
+  const displayError = completionSuppressed ? null : delayedError;
 
   return (
     <div className={styles.studio}>
@@ -326,8 +362,6 @@ function Studio() {
             errorMessage={wasmErrorMessage}
             className={styles.wasmMessage}
           />
-
-          {error && <p className={styles.error}>{error}</p>}
 
           {svg && (
             <span className={styles.svgWrapper} dangerouslySetInnerHTML={{ __html: svg }} />
@@ -348,7 +382,15 @@ function Studio() {
         onFormatChange={handleFormatChange}
         value={configText}
         onChange={handleChange}
-        actions={<DownloadPngButton svg={svg} disabled={!svg} />}
+        actions={
+          <>
+            <DownloadPngButton svg={svg} disabled={!svg} />
+            <ErrorIndicator message={displayError} />
+          </>
+        }
+        errorLocation={displayError ? syntaxError : null}
+        errorMessage={displayError}
+        onCompletionOpenChange={setCompletionOpen}
       />
     </div>
   );

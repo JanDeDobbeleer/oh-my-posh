@@ -114,7 +114,9 @@ func shadeHex(inner Ansi, dir shadeDirection, percent float64) (string, bool) {
 
 	if dir == shadeLight {
 		l += (1 - l) * pct
-	} else {
+	}
+
+	if dir != shadeLight {
 		l -= l * pct
 	}
 

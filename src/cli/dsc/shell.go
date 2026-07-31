@@ -2,7 +2,7 @@
 // under cli, not shell, because shell is imported by the wasm render build
 // for its shell-name constants and feature flags; importing the base dsc
 // package from there would pull invopop/jsonschema (go/ast, go/parser,
-// go/doc) and cobra into every binary that links shell.
+// go/doc) and the command tree/flag machinery into every binary that links shell.
 package dsc
 
 import (

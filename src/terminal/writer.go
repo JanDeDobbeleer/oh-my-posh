@@ -566,7 +566,9 @@ func Write(background, foreground color.Ansi, txt string) {
 				// last-stop edges separators and parent keywords already render.
 				cs.backgroundColor = collapseGradientLast(cs, cs.backgroundColor, true)
 				bgGradient = false
-			} else if CaptureRuns {
+			}
+
+			if bgGradient && CaptureRuns {
 				cs.bgGradientRGB = color.GradientCellsRGB(cs.backgroundColor, cells, Colors, CurrentColors, ParentColors)
 			}
 		}
@@ -576,7 +578,9 @@ func Write(background, foreground color.Ansi, txt string) {
 			if cs.fgGradientCells == nil {
 				cs.foregroundColor = collapseGradientLast(cs, cs.foregroundColor, false)
 				fgGradient = false
-			} else if CaptureRuns {
+			}
+
+			if fgGradient && CaptureRuns {
 				cs.fgGradientRGB = color.GradientCellsRGB(cs.foregroundColor, cells, Colors, CurrentColors, ParentColors)
 			}
 		}

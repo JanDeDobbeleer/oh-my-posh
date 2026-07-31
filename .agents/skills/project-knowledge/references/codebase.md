@@ -141,3 +141,15 @@
   register the real version via `init()`. This avoids the shared package importing the heavy
   dependency at all, while keeping the CLI behavior identical when `cli` (or whichever package sets
   the hook) is actually linked.
+
+## Git linked-worktree cache identity (verified 2026-07-31)
+
+- `Git.scmDir` is not the authoritative shared repository identity. Ordinary absolute linked-
+  worktree discovery currently rewrites it to the common `.git` directory, but that is an
+  incidental result of parsing the worktree administration path and is not consistent across
+  every discovery shape.
+- For data that should be shared by sibling worktrees, resolve the `.git` indirection target first
+  and derive the common Git directory by removing its final `/worktrees/<id>` portion. In
+  particular, recompute that boundary after resolving a relative administration path; an index
+  calculated against the unresolved string points at the wrong location once its parent is
+  prepended.

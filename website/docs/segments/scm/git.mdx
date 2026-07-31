@@ -153,9 +153,13 @@ You can set the following options to `true` to enable fetching additional inform
 | `.Remotes`        | `map[string]string` | a map of remote names to their URLs                                                                                              |
 | `.LatestTag`      | `string`            | the latest tag name                                                                                                              |
 
-`.MainWorktree` is resolved lazily only when referenced. Its first use in a linked worktree runs
-`git worktree list --porcelain -z`; the result is cached for the shell session and shared by the
-repository's linked worktrees.
+`.MainWorktree` requires Git 2.36 or newer. It is resolved lazily, so no additional command runs
+unless the property is referenced. Its first use in a linked worktree runs
+`git worktree list --porcelain -z`; the result is cached for the shell session and shared by
+sibling worktrees of the repository.
+
+The property is empty in the main worktree and when the main repository is bare. It also remains
+empty when Git does not support the command, the command fails, or its output cannot be parsed.
 
 #### Status
 

@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -1293,6 +1294,194 @@ func TestGitRepoName(t *testing.T) {
 		got := g.repoName()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
+}
+
+func TestParseMainWorktree(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Output   string
+		Expected string
+		Valid    bool
+	}{
+		{
+			Case: "main worktree",
+			Output: "worktree /repo/main\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00" +
+				"worktree /repo/linked\x00HEAD abcdef1234567890\x00branch refs/heads/feature\x00\x00",
+			Expected: "/repo/main",
+			Valid:    true,
+		},
+		{
+			Case:     "path with spaces and newline",
+			Output:   "worktree /repo/main path\nwith newline\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00",
+			Expected: "/repo/main path\nwith newline",
+			Valid:    true,
+		},
+		{
+			Case:   "bare main repository",
+			Output: "worktree /repo/main.git\x00bare\x00\x00worktree /repo/linked\x00HEAD 1234567890abcdef\x00\x00",
+			Valid:  true,
+		},
+		{
+			Case: "empty output",
+		},
+		{
+			Case:   "missing record terminator",
+			Output: "worktree /repo/main\x00HEAD 1234567890abcdef",
+		},
+		{
+			Case:   "missing worktree field",
+			Output: "HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00",
+		},
+		{
+			Case:   "empty worktree path",
+			Output: "worktree \x00HEAD 1234567890abcdef\x00\x00",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			got, valid := parseMainWorktree(tc.Output)
+			assert.Equal(t, tc.Expected, got)
+			assert.Equal(t, tc.Valid, valid)
+		})
+	}
+}
+
+func TestGitMainWorktree(t *testing.T) {
+	cases := []struct {
+		Case          string
+		Output        string
+		CommandError  error
+		Expected      string
+		Linked        bool
+		ExpectedCalls int
+	}{
+		{
+			Case: "not a linked worktree",
+		},
+		{
+			Case:          "linked worktree",
+			Output:        "worktree /repo/main\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00",
+			Expected:      "/repo/main",
+			Linked:        true,
+			ExpectedCalls: 1,
+		},
+		{
+			Case:          "command failure",
+			CommandError:  errors.New("git failed"),
+			Linked:        true,
+			ExpectedCalls: 1,
+		},
+		{
+			Case:          "malformed output",
+			Output:        "worktree /repo/main",
+			Linked:        true,
+			ExpectedCalls: 1,
+		},
+	}
+
+	for index, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			commonDir := fmt.Sprintf("/repo/%d/.git", index)
+			key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
+			cache.Delete(cache.Session, key)
+			t.Cleanup(func() {
+				cache.Delete(cache.Session, key)
+			})
+
+			env := new(mock.Environment)
+			if tc.ExpectedCalls > 0 {
+				args := []string{
+					"-C", "/repo/linked",
+					"--no-optional-locks",
+					"-c", "core.quotepath=false",
+					"-c", "color.status=false",
+					"worktree", "list", "--porcelain", "-z",
+				}
+				env.On("RunCommand", GITCOMMAND, args).Return(tc.Output, tc.CommandError).Once()
+			}
+
+			g := &Git{
+				Scm: Scm{
+					command:     GITCOMMAND,
+					repoRootDir: "/repo/linked",
+					scmDir:      commonDir,
+				},
+				IsWorkTree: tc.Linked,
+			}
+			g.Init(options.Map{}, env)
+
+			got := renderTemplate(env, "{{ .MainWorktree }}|{{ .MainWorktree }}", g)
+
+			assert.Equal(t, tc.Expected+"|"+tc.Expected, got)
+			env.AssertNumberOfCalls(t, "RunCommand", tc.ExpectedCalls)
+		})
+	}
+}
+
+func TestGitMainWorktreeSessionCache(t *testing.T) {
+	const (
+		commonDir    = "/repo/.git"
+		mainWorktree = "/repo/main"
+	)
+
+	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
+	cache.Delete(cache.Session, key)
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, key)
+	})
+
+	firstEnv := new(mock.Environment)
+	firstEnv.MockGitCommand(
+		"/repo/linked-one",
+		"worktree /repo/main\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00",
+		"worktree", "list", "--porcelain", "-z",
+	)
+	first := &Git{
+		Scm: Scm{
+			command:     GITCOMMAND,
+			repoRootDir: "/repo/linked-one",
+			scmDir:      commonDir,
+		},
+		IsWorkTree: true,
+	}
+	first.Init(options.Map{}, firstEnv)
+
+	secondEnv := new(mock.Environment)
+	second := &Git{
+		Scm: Scm{
+			command:     GITCOMMAND,
+			repoRootDir: "/repo/linked-two",
+			scmDir:      commonDir,
+		},
+		IsWorkTree: true,
+	}
+	second.Init(options.Map{}, secondEnv)
+
+	assert.Equal(t, mainWorktree, first.MainWorktree())
+	assert.Equal(t, mainWorktree, second.MainWorktree())
+	firstEnv.AssertNumberOfCalls(t, "RunCommand", 1)
+	secondEnv.AssertNotCalled(t, "RunCommand", testify_.Anything, testify_.Anything)
+}
+
+func TestGitMainWorktreeIsLazy(t *testing.T) {
+	env := new(mock.Environment)
+	g := &Git{
+		Working: &GitStatus{},
+		Staging: &GitStatus{},
+		Scm: Scm{
+			command:     GITCOMMAND,
+			repoRootDir: "/repo/linked",
+			scmDir:      "/repo/.git",
+		},
+		IsWorkTree: true,
+	}
+	g.Init(options.Map{}, env)
+
+	got := renderTemplateNoTrimSpace(env, g.Template(), g)
+
+	assert.NotEmpty(t, got)
+	env.AssertNotCalled(t, "RunCommand", testify_.Anything, testify_.Anything)
 }
 
 func TestDisableWithJJEnabled(t *testing.T) {

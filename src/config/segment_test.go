@@ -407,6 +407,30 @@ func TestSegment_RestoreDataRecordedEnabledPopulatesWriterNoProbe(t *testing.T) 
 	assert.Equal(t, "true", segment.string())
 }
 
+func TestSegment_RestoreDataMainWorktreeStaysRuntimeFree(t *testing.T) {
+	flags := &runtime.Flags{
+		DataOnly: true,
+		SegmentData: map[string]json.RawMessage{
+			"git": json.RawMessage(
+				`{"enabled":true,"data":{"IsWorkTree":true,"MainWorktree":"/repo/main"}}`,
+			),
+		},
+	}
+	env := newDataReplayEnv(flags)
+
+	segment := &Segment{
+		Type:     GIT,
+		Template: "{{ .MainWorktree }}",
+	}
+	segment.Execute(env)
+
+	assert.True(t, segment.Enabled)
+	assert.Empty(t, segment.string())
+	env.AssertNotCalled(t, "HasParentFilePath", testifymock.Anything, testifymock.Anything)
+	env.AssertNotCalled(t, "HasCommand", testifymock.Anything)
+	env.AssertNotCalled(t, "RunCommand", testifymock.Anything, testifymock.Anything)
+}
+
 // A recorded-but-disabled entry must suppress the segment without probing it
 // live (that is what makes replay hermetic for e.g. wakatime on a config where
 // it was disabled at record time). No "Getenv"/"Platform" stub, same reasoning

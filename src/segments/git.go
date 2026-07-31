@@ -1077,11 +1077,11 @@ func (g *Git) MainWorktree() string {
 	}
 
 	g.mainWorktreeOnce.Do(func() {
-		commonDir := g.commonGitDir()
-		if commonDir == "" {
+		if !g.ensureMainWorktreeContext() {
 			return
 		}
 
+		commonDir := g.commonGitDir()
 		key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
 		if mainWorktree, found := cache.Get[string](cache.Session, key); found {
 			g.mainWorktree = mainWorktree
@@ -1100,6 +1100,35 @@ func (g *Git) MainWorktree() string {
 	})
 
 	return g.mainWorktree
+}
+
+func (g *Git) ensureMainWorktreeContext() bool {
+	if g.command != "" && g.commonGitDir() != "" {
+		return true
+	}
+
+	if g.env.Flags().DataOnly {
+		return false
+	}
+
+	var gitdir *runtime.FileInfo
+	if g.commonGitDir() == "" {
+		var err error
+		gitdir, err = g.env.HasParentFilePath(".git", true)
+		if err != nil {
+			return false
+		}
+	}
+
+	if g.command == "" && !g.hasCommand(GITCOMMAND) {
+		return false
+	}
+
+	if gitdir != nil && (!g.isRepo(gitdir) || !g.IsWorkTree) {
+		return false
+	}
+
+	return g.commonGitDir() != ""
 }
 
 func (g *Git) commonGitDir() string {

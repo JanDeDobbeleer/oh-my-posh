@@ -3,7 +3,7 @@
   "checkpoint_id": "da7937bafeeb",
   "strategy": "manual-commit",
   "branch": "editor-completion",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "website/src/components/ConfigEditor/styles.module.css"
   ],
@@ -14,6 +14,13 @@
       "compact_transcript": "/da/7937bafeeb/0/transcript.jsonl",
       "content_hash": "/da/7937bafeeb/0/content_hash.txt",
       "prompt": "/da/7937bafeeb/0/prompt.txt"
+    },
+    {
+      "metadata": "/da/7937bafeeb/1/metadata.json",
+      "transcript": "/da/7937bafeeb/1/full.jsonl",
+      "compact_transcript": "/da/7937bafeeb/1/transcript.jsonl",
+      "content_hash": "/da/7937bafeeb/1/content_hash.txt",
+      "prompt": "/da/7937bafeeb/1/prompt.txt"
     }
   ],
   "token_usage": {

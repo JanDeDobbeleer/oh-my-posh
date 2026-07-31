@@ -1476,6 +1476,97 @@ func TestGitMainWorktreeSessionCache(t *testing.T) {
 	secondEnv.AssertNotCalled(t, "RunCommand", testify_.Anything, testify_.Anything)
 }
 
+func TestGitMainWorktreeConvertsWSLPath(t *testing.T) {
+	const (
+		commonDir      = "C:/repo/main/.git"
+		windowsPath    = "C:/repo/main"
+		linuxPath      = "/mnt/c/repo/main"
+		linkedWorktree = "C:/repo/linked"
+	)
+
+	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
+	cache.Delete(cache.Session, key)
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, key)
+	})
+
+	env := new(mock.Environment)
+	env.On("RunCommand", "git.exe", []string{
+		"-C", linkedWorktree,
+		"--no-optional-locks",
+		"-c", "core.quotepath=false",
+		"-c", "color.status=false",
+		"worktree", "list", "--porcelain", "-z",
+	}).Return("worktree "+windowsPath+"\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00", nil).Once()
+	env.On("ConvertToLinuxPath").Return(linuxPath).Once()
+
+	g := &Git{
+		Scm: Scm{
+			command:         "git.exe",
+			repoRootDir:     linkedWorktree,
+			mainSCMDir:      commonDir + "/worktrees/linked",
+			IsWslSharedPath: true,
+		},
+		IsWorkTree: true,
+	}
+	g.Init(options.Map{}, env)
+
+	assert.Equal(t, linuxPath, g.MainWorktree())
+	env.AssertExpectations(t)
+}
+
+func TestGitMainWorktreeFromWindowsGitInWSL(t *testing.T) {
+	const (
+		windowsMain     = "D:/repo/main"
+		windowsLinked   = "D:/repo/linked"
+		linuxMain       = "/mnt/d/repo/main"
+		linuxLinked     = "/mnt/d/repo/linked"
+		linuxCommonDir  = linuxMain + "/.git"
+		linuxAdminDir   = linuxCommonDir + "/worktrees/linked"
+		windowsAdminDir = windowsMain + "/.git/worktrees/linked"
+	)
+
+	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, linuxCommonDir)
+	cache.Delete(cache.Session, key)
+	t.Cleanup(func() {
+		cache.Delete(cache.Session, key)
+	})
+
+	env := new(mock.Environment)
+	gitFile := &runtime.FileInfo{
+		Path:         linuxLinked + "/.git",
+		ParentFolder: linuxLinked,
+	}
+	env.On("GOOS").Return("")
+	env.On("FileContent", gitFile.Path).Return("gitdir: " + windowsAdminDir).Once()
+	env.On("ConvertToLinuxPath").Return(linuxAdminDir).Once()
+	env.On("FileContent", filepath.Join(linuxAdminDir, "gitdir")).Return(windowsLinked + "/.git").Once()
+	env.On("ConvertToLinuxPath").Return(linuxLinked).Once()
+	env.On("ConvertToWindowsPath", linuxLinked).Return(windowsLinked).Once()
+	env.On("RunCommand", "git.exe", []string{
+		"-C", windowsLinked,
+		"--no-optional-locks",
+		"-c", "core.quotepath=false",
+		"-c", "color.status=false",
+		"worktree", "list", "--porcelain", "-z",
+	}).Return("worktree "+windowsMain+"\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00", nil).Once()
+	env.On("ConvertToLinuxPath").Return(linuxMain).Once()
+
+	g := &Git{
+		Scm: Scm{
+			command:         "git.exe",
+			IsWslSharedPath: true,
+		},
+	}
+	g.Init(options.Map{}, env)
+
+	require.True(t, g.isRepo(gitFile))
+	assert.Equal(t, windowsLinked, g.repoRootDir)
+	assert.Equal(t, linuxCommonDir, g.commonGitDir())
+	assert.Equal(t, linuxMain, g.MainWorktree())
+	env.AssertExpectations(t)
+}
+
 func TestGitMainWorktreeIsLazy(t *testing.T) {
 	env := new(mock.Environment)
 	g := &Git{

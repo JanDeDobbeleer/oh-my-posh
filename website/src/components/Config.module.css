@@ -38,14 +38,6 @@
   color: var(--omp-text-secondary);
 }
 
-.error {
-  margin: 0;
-  font-size: var(--omp-text-body);
-  font-family: var(--ifm-font-family-monospace);
-  white-space: pre-wrap;
-  color: var(--ifm-color-danger);
-}
-
 /* Copy / Add to Studio - same micro-label recipe as the format tabs beside them read from
    (Infima's own .tabs__item, see ConfigEditor/index.js), styled as a bordered pill instead of an
    underline so the two kinds of control - "pick a language" vs. "do something with this text" -

@@ -51,14 +51,6 @@
   color: var(--omp-text-secondary);
 }
 
-.error {
-  margin: 0;
-  font-size: var(--omp-text-body);
-  font-family: var(--ifm-font-family-monospace);
-  white-space: pre-wrap;
-  color: var(--ifm-color-danger);
-}
-
 /* Shown once, if a segment handed off from a doc page (see studioHandoff.js) couldn't be
    appended - e.g. the session's own config had been left mid-edit and didn't parse. Same
    danger-toned text as .error; not merged with it because the two report on different things

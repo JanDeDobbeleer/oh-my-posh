@@ -168,6 +168,23 @@ ul.formatTabs li + li {
   outline: none;
 }
 
+/* react-simple-code-editor's textarea keeps the browser's native focus outline even though
+   .editor:focus-within above resets it - outline does not cascade from a wrapper to a
+   descendant, and this is the actual focusable element. Left alone, it renders as a second,
+   inner ring that changes color on focus alongside .editorWindow's intended outer border. */
+.editorTextarea:focus {
+  outline: none;
+}
+
+/* text-decoration (rather than a background-image squiggle) so it rides along with the text -
+   no separate positioning/scroll-sync logic needed. Drawn by ConfigEditor/index.js's
+   highlightConfig splitting the offending token, driven by the errorLocation prop. */
+.errorSquiggle {
+  text-decoration: underline wavy var(--ifm-color-danger);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
 /* Forces one logical line to one visual row (react-simple-code-editor's default whitespace is
    pre-wrap), which is what lets the gutter map a line number to a fixed pixel offset instead of
    having to measure wrapped-row heights. Applied via preClassName/textareaClassName (index.js), so
@@ -176,6 +193,142 @@ ul.formatTabs li + li {
    horizontally within .editor instead (its own overflow: auto, set inline in index.js). */
 .noWrap {
   white-space: pre !important;
+}
+
+.completionPopup {
+  position: absolute;
+  z-index: 10;
+  min-width: 16rem;
+  max-width: 24rem;
+  max-height: 16rem;
+  padding: 0.25rem;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  background: var(--omp-card-background);
+  box-shadow: var(--ifm-global-shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  overflow-y: auto;
+}
+
+.completionOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--omp-space-2);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  color: var(--ifm-font-color-base);
+}
+
+.completionOption:hover {
+  background: var(--ifm-hover-overlay);
+}
+
+.completionOptionActive,
+.completionOptionActive:hover {
+  background: var(--ifm-color-primary);
+  color: #fff;
+}
+
+.completionLabel {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.completionDetail {
+  color: var(--omp-text-secondary);
+  font-size: 0.8rem;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 3;
+}
+
+.completionOptionActive .completionDetail {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.completionTooltip {
+  position: absolute;
+  z-index: 11;
+  width: 18rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  background: var(--omp-card-background);
+  box-shadow: var(--ifm-global-shadow-md);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  /* Purely informational and mouse-driven - never steals focus/clicks from the popup
+     it floats next to. */
+  pointer-events: none;
+}
+
+.completionTooltipTitle {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--ifm-font-color-base);
+}
+
+.completionTooltipText {
+  color: var(--omp-text-secondary);
+}
+
+.completionTooltipExamples {
+  margin-top: 0.35rem;
+  color: var(--omp-text-secondary);
+  font-size: 0.85em;
+  font-family: var(--ifm-font-family-monospace);
+}
+
+/* ErrorIndicator.js's warning triangle, rendered into ConfigEditor's actions slot alongside the
+   download/copy/add-to-studio buttons. position: relative so its own tooltip bubble (absolute)
+   anchors to the triangle itself rather than some further-up ancestor. */
+.errorIndicator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* .actions aligns its children on their text baseline (see that rule's own comment) so the
+     bordered action pills all read as one row - a bare svg icon has no text baseline of its own
+     to line up on, and defaulted to sitting a couple pixels off-center against them. Not an
+     .actions-wide change: only this one non-text item needs the override. */
+  align-self: center;
+  color: var(--ifm-color-danger);
+  cursor: default;
+}
+
+.errorIndicatorIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Reuses .completionTooltip's card look (border/background/shadow), just anchored below the
+   triangle instead of following the mouse - pointer-events left enabled (unlike the hover-info
+   tooltip) so a touch/keyboard reader can't lose it by so much as brushing past it. */
+.errorIndicatorTooltip {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  pointer-events: auto;
+}
+
+.errorIndicatorTooltipLeft {
+  right: auto;
+  left: 0;
+}
+
+.errorIndicatorTooltipUp {
+  top: auto;
+  bottom: calc(100% + 0.5rem);
 }
 
 /* Left as a literal size rather than --omp-text-body: this is a mobile-only reduction on top of

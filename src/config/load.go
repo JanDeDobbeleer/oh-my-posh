@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"hash/fnv"
+	"io"
 	"os"
 	"path/filepath"
 	runtimelib "runtime"
@@ -285,6 +286,17 @@ func ParseBytes(format string, data []byte) (*Config, error) {
 
 		decoder := json.NewDecoder(bytes.NewReader(data))
 		parseErr = decoder.Decode(&cfg)
+
+		// decoder.Decode only reads the first JSON value and, unlike
+		// json.Unmarshal, never checks what follows it - a stray character
+		// after the closing brace (a leftover paste, a misplaced comma) would
+		// otherwise be silently ignored rather than reported as the parse
+		// error it is.
+		if parseErr == nil {
+			if _, tokErr := decoder.Token(); tokErr != io.EOF {
+				parseErr = fmt.Errorf("unexpected data after top-level value")
+			}
+		}
 	case TOML, TML:
 		cfg.Format = TOML
 		parseErr = toml.Unmarshal(data, &cfg)

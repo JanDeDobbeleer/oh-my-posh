@@ -153,3 +153,8 @@
   particular, recompute that boundary after resolving a relative administration path; an index
   calculated against the unresolved string points at the wrong location once its parent is
   prepended.
+- In a WSL shared drive using `git.exe`, both the worktree's `.git` file and the administration
+  directory's `gitdir` backlink can contain Windows `D:/...` paths. Convert each to its Linux
+  spelling before calling the platform path resolver. On Linux, `filepath.IsAbs("D:/...")` is
+  false, so resolving it directly incorrectly appends the Windows path below
+  `.git/worktrees/<id>`.

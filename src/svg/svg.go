@@ -557,10 +557,9 @@ func paintRun(run *terminal.Run, state *paintState, opts *Options) (textRGB, rec
 	}
 
 	bg, bgResolved := resolveChannel(run.BackgroundSource, run.BackgroundRGB, true, opts)
+	state.bg = nil
 	if bgResolved {
 		state.bg = bg
-	} else {
-		state.bg = nil
 	}
 
 	switch run.Mode {

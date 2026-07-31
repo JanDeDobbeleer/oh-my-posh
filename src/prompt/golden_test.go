@@ -275,9 +275,10 @@ func escapeWindow(b []byte) string {
 		default:
 			if r < 0x20 {
 				fmt.Fprintf(&sb, "<%02X>", r)
-			} else {
-				sb.WriteRune(r)
+				continue
 			}
+
+			sb.WriteRune(r)
 		}
 	}
 

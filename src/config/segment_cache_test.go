@@ -1,14 +1,18 @@
 package config
 
 import (
+	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
+	testifymock "github.com/stretchr/testify/mock"
 )
 
 func newCachedTextSegment(env *mock.Environment, alias string, strategy Strategy) *Segment {
@@ -101,4 +105,67 @@ func TestSegmentCache(t *testing.T) {
 		_, found := cache.Get[int](store, key)
 		assert.False(t, found, "unexpected key should be removed")
 	})
+}
+
+func TestGitMainWorktreeRestoresLiveContextLazilyAfterSegmentCacheHit(t *testing.T) {
+	const (
+		alias          = "cached-linked-worktree"
+		mainWorktree   = "/repo/main"
+		linkedWorktree = "/repo/linked"
+		commonDir      = mainWorktree + "/.git"
+		adminDir       = commonDir + "/worktrees/linked"
+	)
+
+	segmentCache := &Cache{Duration: "5h", Strategy: Session}
+	source := &Segment{
+		Type:  GIT,
+		Alias: alias,
+		Cache: segmentCache,
+		writer: &segments.Git{
+			IsWorkTree: true,
+		},
+	}
+	source.setCache()
+
+	key, store := source.cacheKeyAndStore()
+	t.Cleanup(func() { cache.Delete(store, key) })
+
+	env := newDataReplayEnv(&runtime.Flags{})
+	gitFile := &runtime.FileInfo{
+		Path:         linkedWorktree + "/.git",
+		ParentFolder: linkedWorktree,
+	}
+	env.On("HasParentFilePath", ".git", true).Return(gitFile, nil).Once()
+	env.On("InWSLSharedDrive").Return(false).Once()
+	env.On("GOOS").Return("")
+	env.On("HasCommand", "git").Return(true).Once()
+	env.On("FileContent", gitFile.Path).Return("gitdir: " + adminDir).Once()
+	env.On("FileContent", filepath.Join(adminDir, "gitdir")).Return(linkedWorktree + "/.git").Once()
+	env.On("RunCommand", "git", []string{
+		"-C", linkedWorktree + "/",
+		"--no-optional-locks",
+		"-c", "core.quotepath=false",
+		"-c", "color.status=false",
+		"worktree", "list", "--porcelain", "-z",
+	}).Return("worktree "+mainWorktree+"\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00", nil).Once()
+
+	segment := &Segment{
+		Type:     GIT,
+		Alias:    alias,
+		Cache:    segmentCache,
+		Template: "{{ .MainWorktree }}|{{ .MainWorktree }}",
+	}
+	segment.Execute(env)
+
+	env.AssertNotCalled(t, "HasParentFilePath", testifymock.Anything, testifymock.Anything)
+	env.AssertNotCalled(t, "HasCommand", testifymock.Anything)
+	env.AssertNotCalled(t, "RunCommand", testifymock.Anything, testifymock.Anything)
+
+	writer := segment.Writer().(*segments.Git)
+	assert.Equal(t, mainWorktree, writer.MainWorktree())
+	assert.Equal(t, mainWorktree, writer.MainWorktree())
+	assert.Equal(t, fmt.Sprintf("%s|%s", mainWorktree, mainWorktree), segment.string())
+	env.AssertNumberOfCalls(t, "HasParentFilePath", 1)
+	env.AssertNumberOfCalls(t, "HasCommand", 1)
+	env.AssertNumberOfCalls(t, "RunCommand", 1)
 }

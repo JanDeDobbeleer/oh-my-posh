@@ -17,7 +17,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 )
 
-// statuslineRun returns a cobra Run function for statusline commands.
+// statuslineRun returns a cmdtree Run function for statusline commands.
 // T is the type of the JSON data read from stdin.
 // shellConst identifies the shell (used for cache init and terminal init).
 // cacheKey is the session cache key under which data is stored.

@@ -99,10 +99,10 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 }
 
 func Execute() {
-	// Cobra's mousetrap hook walks the full Windows process table on every
-	// invocation to detect a double-click launch from Explorer, costing tens
-	// of milliseconds per prompt. Explorer never passes arguments, so the
-	// check is only needed when there are none.
+	// The Explorer-launch guard walks the full Windows process table on
+	// every invocation to detect a double-click launch from Explorer,
+	// costing tens of milliseconds per prompt. Explorer never passes
+	// arguments, so the check is only needed when there are none.
 	if len(os.Args) > 1 {
 		cmdtree.ExplorerLaunchHelpText = ""
 	}

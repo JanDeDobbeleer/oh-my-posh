@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "32cc62d5ef4d",
+  "strategy": "manual-commit",
+  "branch": "claude/language-rewrite-binary-speed-glu4a1",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/terminal/writer.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/32/cc62d5ef4d/0/metadata.json",
+      "transcript": "/32/cc62d5ef4d/0/full.jsonl",
+      "compact_transcript": "/32/cc62d5ef4d/0/transcript.jsonl",
+      "content_hash": "/32/cc62d5ef4d/0/content_hash.txt",
+      "prompt": "/32/cc62d5ef4d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2297,
+    "cache_creation_tokens": 10039420,
+    "cache_read_tokens": 570689990,
+    "output_tokens": 644094,
+    "api_call_count": 1224
+  }
+}

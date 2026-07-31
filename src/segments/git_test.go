@@ -19,6 +19,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -1421,8 +1422,10 @@ func TestGitMainWorktree(t *testing.T) {
 
 func TestGitMainWorktreeSessionCache(t *testing.T) {
 	const (
-		commonDir    = "/repo/.git"
-		mainWorktree = "/repo/main"
+		mainWorktree = TestRootPath + "repo/main"
+		firstRoot    = TestRootPath + "repo/linked-one"
+		secondRoot   = TestRootPath + "repo/linked-two"
+		commonDir    = mainWorktree + "/.git"
 	)
 
 	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
@@ -1432,31 +1435,40 @@ func TestGitMainWorktreeSessionCache(t *testing.T) {
 	})
 
 	firstEnv := new(mock.Environment)
+	firstGitFile := &runtime.FileInfo{
+		Path:         firstRoot + "/.git",
+		ParentFolder: firstRoot,
+	}
+	firstAdminDir := commonDir + "/worktrees/linked-one"
+	firstEnv.On("FileContent", firstGitFile.Path).Return("gitdir: " + firstAdminDir)
+	firstEnv.On("FileContent", filepath.Join(firstAdminDir, "gitdir")).Return(firstRoot + "/.git")
 	firstEnv.MockGitCommand(
-		"/repo/linked-one",
-		"worktree /repo/main\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00",
+		firstRoot+"/",
+		"worktree "+mainWorktree+"\x00HEAD 1234567890abcdef\x00branch refs/heads/main\x00\x00",
 		"worktree", "list", "--porcelain", "-z",
 	)
-	first := &Git{
-		Scm: Scm{
-			command:     GITCOMMAND,
-			repoRootDir: "/repo/linked-one",
-			scmDir:      commonDir,
-		},
-		IsWorkTree: true,
-	}
+	first := &Git{}
 	first.Init(options.Map{}, firstEnv)
+	require.True(t, first.hasWorktree(firstGitFile))
+	first.command = GITCOMMAND
 
 	secondEnv := new(mock.Environment)
-	second := &Git{
-		Scm: Scm{
-			command:     GITCOMMAND,
-			repoRootDir: "/repo/linked-two",
-			scmDir:      commonDir,
-		},
-		IsWorkTree: true,
+	secondGitFile := &runtime.FileInfo{
+		Path:         secondRoot + "/.git",
+		ParentFolder: secondRoot,
 	}
+	secondAdminDir := commonDir + "/worktrees/linked-two"
+	secondEnv.On("FileContent", secondGitFile.Path).Return("gitdir: ../main/.git/worktrees/linked-two")
+	secondEnv.On("FileContent", filepath.Join(secondAdminDir, "gitdir")).Return("../../../linked-two/.git")
+	second := &Git{}
 	second.Init(options.Map{}, secondEnv)
+	require.True(t, second.hasWorktree(secondGitFile))
+	second.command = GITCOMMAND
+
+	assert.Equal(t, firstAdminDir, first.mainSCMDir)
+	assert.Equal(t, secondAdminDir, second.mainSCMDir)
+	assert.Equal(t, commonDir, first.commonGitDir())
+	assert.Equal(t, commonDir, second.commonGitDir())
 
 	assert.Equal(t, mainWorktree, first.MainWorktree())
 	assert.Equal(t, mainWorktree, second.MainWorktree())

@@ -492,7 +492,8 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 
 	// convert to absolute path for worktrees only
 	if strings.HasPrefix(g.mainSCMDir, "..") {
-		g.mainSCMDir = filepath.Join(gitdir.ParentFolder, g.mainSCMDir)
+		g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
+		worktreeIndex = strings.LastIndex(g.mainSCMDir, "/worktrees/")
 	}
 
 	if worktreeIndex > -1 {
@@ -1069,12 +1070,17 @@ func (g *Git) WorktreeCount() int {
 }
 
 func (g *Git) MainWorktree() string {
-	if !g.IsWorkTree || g.scmDir == "" {
+	if !g.IsWorkTree {
 		return ""
 	}
 
 	g.mainWorktreeOnce.Do(func() {
-		key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, g.scmDir)
+		commonDir := g.commonGitDir()
+		if commonDir == "" {
+			return
+		}
+
+		key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
 		if mainWorktree, found := cache.Get[string](cache.Session, key); found {
 			g.mainWorktree = mainWorktree
 			return
@@ -1092,6 +1098,15 @@ func (g *Git) MainWorktree() string {
 	})
 
 	return g.mainWorktree
+}
+
+func (g *Git) commonGitDir() string {
+	mainSCMDir := filepath.ToSlash(g.mainSCMDir)
+	if worktreeIndex := strings.LastIndex(mainSCMDir, "/worktrees/"); worktreeIndex > -1 {
+		return mainSCMDir[:worktreeIndex]
+	}
+
+	return filepath.ToSlash(g.scmDir)
 }
 
 func parseMainWorktree(output string) (string, bool) {

@@ -3,7 +3,7 @@
   "checkpoint_id": "69d624b62d51",
   "strategy": "manual-commit",
   "branch": "claude/language-rewrite-binary-speed-glu4a1",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "src/render/render.go"
   ],
@@ -14,13 +14,20 @@
       "compact_transcript": "/69/d624b62d51/0/transcript.jsonl",
       "content_hash": "/69/d624b62d51/0/content_hash.txt",
       "prompt": "/69/d624b62d51/0/prompt.txt"
+    },
+    {
+      "metadata": "/69/d624b62d51/1/metadata.json",
+      "transcript": "/69/d624b62d51/1/full.jsonl",
+      "compact_transcript": "/69/d624b62d51/1/transcript.jsonl",
+      "content_hash": "/69/d624b62d51/1/content_hash.txt",
+      "prompt": "/69/d624b62d51/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 0,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 0,
-    "output_tokens": 0,
-    "api_call_count": 0
+    "input_tokens": 2297,
+    "cache_creation_tokens": 10039420,
+    "cache_read_tokens": 570689990,
+    "output_tokens": 644094,
+    "api_call_count": 1224
   }
 }

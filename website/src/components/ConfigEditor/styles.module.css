@@ -47,9 +47,9 @@ ul.formatTabs li + li {
   gap: var(--omp-space-1);
 }
 
-/* Visually hidden but still in the accessibility tree - the syntax-highlighted editor's real
-   input is react-simple-code-editor's own <textarea>, which can't take a plain aria-label prop,
-   so a proper associated <label> stands in for it instead. */
+/* Visually hidden but still in the accessibility tree - CodeMirror's own editable surface (a
+   contenteditable div, not a <textarea>) can't take a plain aria-label prop, so a proper
+   associated <label> stands in for it instead - see index.js's EditorView.contentAttributes. */
 .srOnly {
   position: absolute;
   width: 1px;
@@ -65,11 +65,11 @@ ul.formatTabs li + li {
 /* The window chrome around the editor: same border/radius recipe as the preview pane beside it
    (both trace back to the shared --omp-card-* tokens in src/css/custom.css), so the two read as
    one family instead of the preview looking "finished" and the editor looking like a bare
-   textarea. overflow: hidden clips the chrome bar and the editor body to the rounded corners. */
+   textarea. Overflow stays visible so completion popups can escape the editor frame. */
 .editorWindow {
   border: 1px solid var(--omp-card-border-color);
   border-radius: var(--omp-card-radius);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .editorWindow:focus-within {
@@ -85,6 +85,7 @@ ul.formatTabs li + li {
   padding: var(--omp-space-1) var(--omp-space-2);
   background: var(--omp-card-background);
   border-bottom: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius) var(--omp-card-radius) 0 0;
 }
 
 .chromeDot {
@@ -94,169 +95,50 @@ ul.formatTabs li + li {
   background: var(--ifm-color-emphasis-300);
 }
 
-/* position: relative makes this the gutter's containing block - see .gutter. */
+/* No position: relative needed here any more - CodeMirror's own gutter is a child of
+   .cm-editor/.editorHost below, not a sibling positioned against .editorBody the way the old
+   hand-rolled line-number gutter was. align-items: stretch still gives .editorHost the row's
+   full height. */
 .editorBody {
-  --omp-gutter-width: 2.75rem;
-  position: relative;
   display: flex;
   align-items: stretch;
 }
 
-/* The line-number gutter. It is a sibling of .editor, not nested inside it, specifically so it
-   never shares .editor's own horizontal scrollbar (see .noWrap below) - long lines scroll the
-   code without dragging the numbers sideways with them.
-
-   Taken out of flow, pinned top-to-bottom, rather than left as a flex item: its height then comes
-   from .editorBody, which is .editor's height, however that height was arrived at - grown by a
-   keystroke or dragged down by the resize handle. As an in-flow item it did the opposite, since a
-   row's height is its tallest item: shrink the editor to 200px with 48 lines of numbers beside it
-   and the gutter kept the row 1176px tall. Being out of flow also means nothing it does can
-   resize .editor, which is what made the earlier ResizeObserver-driven height sync (see index.js)
-   feed back into itself. .editor's margin-left reserves the column it now floats over.
-
-   Font, size and line-height are identical to .editor's so line N's number lands next to code
-   row N; padding-top/bottom match .editor's padding so the first number aligns with the first
-   code line. Vertical scrolling is mirrored from .editor in index.js. */
-.gutter {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  box-sizing: border-box;
-  width: var(--omp-gutter-width);
-  overflow: hidden;
-  padding: var(--omp-space-2) var(--omp-space-2) var(--omp-space-2) 0;
-  font-family: var(--ifm-font-family-monospace);
-  font-size: var(--omp-text-body);
-  line-height: 1.5;
-  text-align: right;
-  color: var(--omp-text-secondary);
-  border-right: 1px solid var(--omp-card-border-color);
-  user-select: none;
-}
-
-.gutterLine {
-  font-variant-numeric: tabular-nums;
-}
-
-/* No min-height: react-simple-code-editor's <pre> stays in normal flow (only the <textarea> is
-   absolutely positioned over it), so the element is already exactly as tall as the code it holds.
-   A fixed 22rem left a short segment config - most of them are under ten lines - sitting above
-   four or five empty rows. Every config text now ends in exactly one newline (see serialize.js's
-   stringifyConfig), which renders as the single blank row under the last character. The resize
-   handle still lets a reader make it taller. overflow: auto is set inline (see index.js) so
-   scrolling still works the way it did on a bare textarea. Background and text
-   color come from the active Prism theme instead of the card tokens (see index.js's
-   DARK_CODE_THEME/LIGHT_CODE_THEME) - matching a real code block's own colors rather than the
-   surrounding card chrome, the same way the docs' code fences do. Border and radius live on
-   .editorWindow instead, since the gutter sits inside the same frame and a border around .editor
-   alone would draw a seam between the two. */
-/* No padding here on purpose: it is passed to the Editor's own `padding` prop instead (see
-   index.js), because this element's children are absolutely positioned and would ignore it. */
-.editor {
+/* The flex host CodeMirror mounts its own <div class="cm-editor"> into (see index.js's `new
+   EditorView({ parent: hostRef.current })`) - min-width: 0 lets it shrink below its content's
+   natural width instead of overflowing the pane, same as every other flex child in this file. */
+.editorHost {
   flex: 1;
   min-width: 0;
-  margin-left: var(--omp-gutter-width);
-  box-sizing: border-box;
+}
+
+/* CodeMirror sizes .cm-editor to its own content by default (no min-height set here), matching
+   the old editor's behaviour: a short segment config - most are under ten lines - doesn't sit
+   above a wall of empty rows. font-size/line-height reproduce the old .editor's own values;
+   border-radius keeps the bottom corners matching .editorWindow's frame now that CodeMirror's
+   gutter+content pair replaces the old .gutter/.editor sibling pair sharing that frame. */
+.editorHost :global(.cm-editor) {
   font-family: var(--ifm-font-family-monospace);
   font-size: var(--omp-text-body);
   line-height: 1.5;
-  resize: vertical;
+  border-radius: 0 0 var(--omp-card-radius) var(--omp-card-radius);
 }
 
-.editor:focus-within {
+.editorHost :global(.cm-editor.cm-focused) {
   outline: none;
 }
 
-/* react-simple-code-editor's textarea keeps the browser's native focus outline even though
-   .editor:focus-within above resets it - outline does not cascade from a wrapper to a
-   descendant, and this is the actual focusable element. Left alone, it renders as a second,
-   inner ring that changes color on focus alongside .editorWindow's intended outer border. */
-.editorTextarea:focus {
-  outline: none;
+/* Long lines scroll horizontally instead of wrapping - EditorView.lineWrapping is deliberately
+   never added (see index.js), so this is the only place that behaviour needs stating; CodeMirror
+   would otherwise still let a scroller overflow silently without it. */
+.editorHost :global(.cm-scroller) {
+  overflow-x: auto;
 }
 
-/* text-decoration (rather than a background-image squiggle) so it rides along with the text -
-   no separate positioning/scroll-sync logic needed. Drawn by ConfigEditor/index.js's
-   highlightConfig splitting the offending token, driven by the errorLocation prop. */
-.errorSquiggle {
-  text-decoration: underline wavy var(--ifm-color-danger);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-/* Forces one logical line to one visual row (react-simple-code-editor's default whitespace is
-   pre-wrap), which is what lets the gutter map a line number to a fixed pixel offset instead of
-   having to measure wrapped-row heights. Applied via preClassName/textareaClassName (index.js), so
-   it lands on the actual pre/textarea elements rather than the outer .editor container - the
-   library sets white-space inline on both, hence !important to win over that. Long lines scroll
-   horizontally within .editor instead (its own overflow: auto, set inline in index.js). */
-.noWrap {
-  white-space: pre !important;
-}
-
-.completionPopup {
-  position: absolute;
-  z-index: 10;
-  min-width: 16rem;
-  max-width: 24rem;
-  max-height: 16rem;
-  padding: 0.25rem;
-  border: 1px solid var(--omp-card-border-color);
-  border-radius: var(--omp-card-radius);
-  background: var(--omp-card-background);
-  box-shadow: var(--ifm-global-shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  overflow-y: auto;
-}
-
-.completionOption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--omp-space-2);
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.9rem;
-  color: var(--ifm-font-color-base);
-}
-
-.completionOption:hover {
-  background: var(--ifm-hover-overlay);
-}
-
-.completionOptionActive,
-.completionOptionActive:hover {
-  background: var(--ifm-color-primary);
-  color: #fff;
-}
-
-.completionLabel {
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.completionDetail {
-  color: var(--omp-text-secondary);
-  font-size: 0.8rem;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex-shrink: 3;
-}
-
-.completionOptionActive .completionDetail {
-  color: inherit;
-  opacity: 0.85;
-}
-
+/* Despite the name, this is no longer the editor's own completion/hover tooltip (CodeMirror
+   draws those itself now - see editorTheme.js's .cm-tooltip rule) - only ErrorIndicator.js's
+   warning-triangle bubble still uses it, kept under its original name rather than renamed, since
+   renaming would touch ErrorIndicator.js for no behavioural benefit. */
 .completionTooltip {
   position: absolute;
   z-index: 11;
@@ -281,13 +163,6 @@ ul.formatTabs li + li {
 
 .completionTooltipText {
   color: var(--omp-text-secondary);
-}
-
-.completionTooltipExamples {
-  margin-top: 0.35rem;
-  color: var(--omp-text-secondary);
-  font-size: 0.85em;
-  font-family: var(--ifm-font-family-monospace);
 }
 
 /* ErrorIndicator.js's warning triangle, rendered into ConfigEditor's actions slot alongside the
@@ -332,17 +207,11 @@ ul.formatTabs li + li {
 }
 
 /* Left as a literal size rather than --omp-text-body: this is a mobile-only reduction on top of
-   the editor's own --omp-text-body, not one of the shared scale's steps. */
+   the editor's own --omp-text-body, not one of the shared scale's steps. Only one rule needed
+   now (against .cm-editor) - CodeMirror's own gutter inherits font-size from it rather than
+   needing the separate --omp-gutter-width/.gutter overrides the old hand-rolled gutter did. */
 @media (max-width: 700px) {
-  .editor {
-    font-size: 0.75rem;
-  }
-
-  .editorBody {
-    --omp-gutter-width: 2.25rem;
-  }
-
-  .gutter {
+  .editorHost :global(.cm-editor) {
     font-size: 0.75rem;
   }
 }

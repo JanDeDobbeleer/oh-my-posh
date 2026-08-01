@@ -11,12 +11,12 @@ import (
 func TestRenderItermFeatures(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Features ITermFeatures
 		Shell    string
 		Pwd      string
 		User     string
 		Host     string
 		Expected string
+		Features ITermFeatures
 	}{
 		{
 			Case:     "CurrentDir clean pwd",

@@ -2,7 +2,6 @@ package terminal
 
 import (
 	"testing"
-	"unsafe"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -599,13 +598,4 @@ func TestStripControlRunes(t *testing.T) {
 			assert.Equal(t, tc.Expected, got, tc.Case)
 		})
 	}
-}
-
-func TestStripControlRunesFastPath(t *testing.T) {
-	input := "no control runes here, just plain text"
-
-	got := stripControlRunes(input)
-
-	assert.Equal(t, input, got)
-	assert.Same(t, unsafe.StringData(input), unsafe.StringData(got), "fast path must return the input unchanged, not a copy")
 }

@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "6beb436f6cd8",
+  "strategy": "manual-commit",
+  "branch": "claude/security-advisories-analysis-50944a",
+  "checkpoints_count": 5,
+  "files_touched": [
+    "src/template/func_map.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/6b/eb436f6cd8/0/metadata.json",
+      "transcript": "/6b/eb436f6cd8/0/full.jsonl",
+      "compact_transcript": "/6b/eb436f6cd8/0/transcript.jsonl",
+      "content_hash": "/6b/eb436f6cd8/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 164,
+    "cache_creation_tokens": 112243,
+    "cache_read_tokens": 2801009,
+    "output_tokens": 35683,
+    "api_call_count": 24
+  }
+}

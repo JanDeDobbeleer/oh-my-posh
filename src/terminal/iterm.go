@@ -41,9 +41,9 @@ func RenderItermFeatures(features ITermFeatures, sh, pwd, user, host string) str
 
 			result.WriteString(formats.ITermPromptMark)
 		case CurrentDir:
-			result.WriteString(fmt.Sprintf(formats.ITermCurrentDir, pwd))
+			result.WriteString(fmt.Sprintf(formats.ITermCurrentDir, stripControlRunes(pwd)))
 		case RemoteHost:
-			result.WriteString(fmt.Sprintf(formats.ITermRemoteHost, user, host))
+			result.WriteString(fmt.Sprintf(formats.ITermRemoteHost, stripControlRunes(user), stripControlRunes(host)))
 		}
 	}
 

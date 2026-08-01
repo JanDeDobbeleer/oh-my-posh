@@ -1,0 +1,17 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "cf47aaae6d2a",
+  "strategy": "manual-commit",
+  "branch": "claude/security-advisories-analysis-50944a",
+  "checkpoints_count": 5,
+  "files_touched": [
+    "src/template/render.go",
+    "src/template/text_test.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/cf/47aaae6d2a/0/metadata.json",
+      "prompt": ""
+    }
+  ]
+}

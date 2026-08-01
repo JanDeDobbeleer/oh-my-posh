@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "cf47aaae6d2a",
+  "session_id": "be2220da-eaff-40d2-b482-9f05cced3187",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-01T09:40:38.2523571Z",
+  "branch": "claude/security-advisories-analysis-50944a",
+  "checkpoints_count": 5,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/template/render.go",
+    "src/template/text_test.go"
+  ],
+  "agent": "Claude Code",
+  "model": "",
+  "turn_id": "711514389057",
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-01T09:40:38.2465983Z",
+    "agent_lines": 84,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 84,
+    "total_lines_changed": 85,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}

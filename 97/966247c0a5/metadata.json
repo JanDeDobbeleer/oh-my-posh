@@ -1,0 +1,19 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "97966247c0a5",
+  "strategy": "manual-commit",
+  "branch": "claude/security-advisories-analysis-50944a",
+  "checkpoints_count": 5,
+  "files_touched": [
+    "src/terminal/iterm.go",
+    "src/terminal/iterm_test.go",
+    "src/terminal/writer.go",
+    "src/terminal/writer_test.go"
+  ],
+  "sessions": [
+    {
+      "metadata": "/97/966247c0a5/0/metadata.json",
+      "prompt": ""
+    }
+  ]
+}

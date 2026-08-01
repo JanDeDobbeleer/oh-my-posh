@@ -358,6 +358,80 @@ func TestPatchTemplate(t *testing.T) {
 	}
 }
 
+func TestRenderUntrustedEnvVar(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Template string
+	}{
+		{Case: ".Env. syntax", Template: "{{ .Env.SOMEVAR }}"},
+		{Case: "raw call .Getenv bypass", Template: `{{ call .Getenv "SOMEVAR" }}`},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return("foo")
+		env.On("Getenv", "SOMEVAR").Return("leaked-secret")
+
+		Cache = new(cache.Template)
+		Init(env, nil, nil)
+
+		text, err := RenderUntrusted(tc.Template, nil)
+		assert.NoError(t, err, tc.Case)
+		assert.Empty(t, text, tc.Case)
+	}
+}
+
+func TestRenderTrustedEnvVar(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Template string
+	}{
+		{Case: ".Env. syntax", Template: "{{ .Env.SOMEVAR }}"},
+		{Case: "raw call .Getenv", Template: `{{ call .Getenv "SOMEVAR" }}`},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return("foo")
+		env.On("Getenv", "SOMEVAR").Return("real-value")
+
+		Cache = new(cache.Template)
+		Init(env, nil, nil)
+
+		text, err := RenderTrusted(tc.Template, nil)
+		assert.NoError(t, err, tc.Case)
+		assert.Equal(t, "real-value", text, tc.Case)
+	}
+}
+
+func TestRenderUntrustedDangerousFuncsUndefined(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Shell").Return("foo")
+	Cache = new(cache.Template)
+	Init(env, nil, nil)
+
+	_, err := RenderUntrusted(`{{ getHostByName "localhost" }}`, nil)
+	assert.Error(t, err)
+}
+
+func TestTrustedFuncMapKeepsDangerousFuncs(t *testing.T) {
+	fm := funcMap(true)
+
+	for name := range dangerousFuncs {
+		_, ok := fm[name]
+		assert.True(t, ok, "trusted func map should still contain %q", name)
+	}
+}
+
+func TestRestrictedFuncMapDropsDangerousFuncs(t *testing.T) {
+	fm := funcMap(false)
+
+	for name := range dangerousFuncs {
+		_, ok := fm[name]
+		assert.False(t, ok, "restricted func map should not contain %q", name)
+	}
+}
+
 type Foo struct{}
 
 func (f *Foo) Hello() string {

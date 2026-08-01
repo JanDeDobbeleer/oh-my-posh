@@ -26,8 +26,17 @@ type context struct {
 
 func (c *context) init(t *Text) {
 	c.Data = t.context
-	c.Getenv = env.Getenv
 	c.Template = *Cache
+
+	if t.trusted {
+		c.Getenv = env.Getenv
+		return
+	}
+
+	// Untrusted templates never get real env values: .Env.NAME is rewritten by
+	// patchTemplate into (call .Getenv "NAME"), but a raw {{ call .Getenv "NAME" }}
+	// bypasses that rewrite entirely, so the binding itself must be the boundary.
+	c.Getenv = func(string) string { return "" }
 }
 
 var (

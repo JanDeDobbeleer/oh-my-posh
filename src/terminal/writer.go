@@ -352,6 +352,10 @@ func Pwd(pwdType, userName, hostName, pwd string) string {
 		return ""
 	}
 
+	userName = stripControlRunes(userName)
+	hostName = stripControlRunes(hostName)
+	pwd = stripControlRunes(pwd)
+
 	switch pwdType {
 	case OSC7:
 		return fmt.Sprintf(formats.Osc7, hostName, pwd)
@@ -938,6 +942,38 @@ func isControlRune(s rune) bool {
 	}
 
 	return s <= 0x1f || (s >= 0x7f && s <= 0x9f)
+}
+
+// isOSCPayloadControlRune reports whether s is a C0 (0x00-0x1F), DEL (0x7F),
+// or C1 (0x80-0x9F) control character, with no exemption for '\n': unlike
+// isControlRune's rendered segment text, the values this guards are
+// single-line OSC payload fields (path, username, hostname), where a raw
+// newline has no legitimate use and can only corrupt the sequence.
+func isOSCPayloadControlRune(s rune) bool {
+	return s <= 0x1f || (s >= 0x7f && s <= 0x9f)
+}
+
+// stripControlRunes drops control runes from a whole string, for values
+// that reach the terminal in one shot rather than through write's per-rune
+// stream (an OSC payload field such as a path, username, or hostname).
+// Kept separate from write/isControlRune, which guard the streaming render
+// path instead.
+func stripControlRunes(s string) string {
+	if !strings.ContainsFunc(s, isOSCPayloadControlRune) {
+		return s
+	}
+
+	sb := text.NewBuilder()
+
+	for _, r := range s {
+		if isOSCPayloadControlRune(r) {
+			continue
+		}
+
+		sb.WriteRune(r)
+	}
+
+	return sb.String()
 }
 
 // writeVisibleRune stamps the active gradient color(s) for the current cell

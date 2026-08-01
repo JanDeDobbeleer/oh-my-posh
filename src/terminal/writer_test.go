@@ -2,6 +2,7 @@ package terminal
 
 import (
 	"testing"
+	"unsafe"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -491,4 +492,120 @@ func TestAsAnsiColorsWithSourceSurvivesResolution(t *testing.T) {
 			}
 		})
 	}
+}
+
+// maliciousPwd embeds ESC-ST (which closes an OSC sequence early) followed by
+// an independent OSC 0 title-set: if Pwd ever stops sanitizing, this reaches
+// the terminal as two escape sequences instead of one opaque payload.
+const maliciousPwd = "evil\x1b\\\x1b]0;PWNED\x07rest"
+
+func TestPwd(t *testing.T) {
+	cases := []struct {
+		Case     string
+		PwdType  string
+		Pwd      string
+		UserName string
+		HostName string
+		Expected string
+	}{
+		{
+			Case:     "OSC7 clean pwd",
+			PwdType:  OSC7,
+			Pwd:      "/home/user/project",
+			HostName: "box",
+			Expected: "\x1b]7;file://box//home/user/project\x1b\\",
+		},
+		{
+			Case:     "OSC7 malicious pwd is sanitized",
+			PwdType:  OSC7,
+			Pwd:      maliciousPwd,
+			HostName: "box",
+			Expected: "\x1b]7;file://box/evil\\]0;PWNEDrest\x1b\\",
+		},
+		{
+			Case:     "OSC51 clean pwd",
+			PwdType:  OSC51,
+			Pwd:      "/home/user/project",
+			UserName: "jan",
+			HostName: "box",
+			Expected: "\x1b]51;Ajan@box:/home/user/project\x1b\\",
+		},
+		{
+			Case:     "OSC51 malicious pwd, user and host are sanitized",
+			PwdType:  OSC51,
+			Pwd:      maliciousPwd,
+			UserName: maliciousPwd,
+			HostName: maliciousPwd,
+			Expected: "\x1b]51;Aevil\\]0;PWNEDrest@evil\\]0;PWNEDrest:evil\\]0;PWNEDrest\x1b\\",
+		},
+		{
+			Case:     "OSC99 clean pwd",
+			PwdType:  OSC99,
+			Pwd:      "/home/user/project",
+			Expected: "\x1b]9;9;/home/user/project\x1b\\",
+		},
+		{
+			Case:     "OSC99 malicious pwd is sanitized",
+			PwdType:  OSC99,
+			Pwd:      maliciousPwd,
+			Expected: "\x1b]9;9;evil\\]0;PWNEDrest\x1b\\",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Init(shell.GENERIC)
+
+			got := Pwd(tc.PwdType, tc.UserName, tc.HostName, tc.Pwd)
+
+			assert.Equal(t, tc.Expected, got, tc.Case)
+			assert.NotContains(t, got, "\x1b]0;PWNED\x07", tc.Case)
+		})
+	}
+}
+
+func TestStripControlRunes(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Input    string
+		Expected string
+	}{
+		{
+			Case:     "empty string",
+			Input:    "",
+			Expected: "",
+		},
+		{
+			Case:     "printable unicode is untouched",
+			Input:    "jan @ 世界 café",
+			Expected: "jan @ 世界 café",
+		},
+		{
+			Case:     "C0 and C1 control runes removed",
+			Input:    "evil\x1b\\\x1b]0;PWNED\x07rest",
+			Expected: "evil\\]0;PWNEDrest",
+		},
+		{
+			Case:     "newline removed, unlike isControlRune",
+			Input:    "line1\nline2",
+			Expected: "line1line2",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			got := stripControlRunes(tc.Input)
+
+			assert.Equal(t, tc.Expected, got, tc.Case)
+		})
+	}
+}
+
+func TestStripControlRunesFastPath(t *testing.T) {
+	input := "no control runes here, just plain text"
+
+	got := stripControlRunes(input)
+
+	assert.Equal(t, input, got)
+	assert.Same(t, unsafe.StringData(input), unsafe.StringData(got), "fast path must return the input unchanged, not a copy")
 }

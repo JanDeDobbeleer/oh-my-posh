@@ -14,6 +14,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
 // Detached is the branch name reported when HEAD is not on a branch. It must
@@ -33,11 +35,14 @@ type Counts struct {
 
 // Result is the outcome of a successful Load.
 type Result struct {
+	// Hash is the full HEAD hash, or "(initial)" on an unborn branch.
+	Hash string
+	// Ref is the branch name, or Detached.
+	Ref string
+	// Upstream is "origin/main"-style, empty when not configured.
+	Upstream     string
 	Working      Counts
 	Staging      Counts
-	Hash         string // full HEAD hash, "(initial)" when unborn
-	Ref          string // branch name, or Detached
-	Upstream     string // "origin/main"-style, "" when not configured
 	Ahead        int
 	Behind       int
 	UpstreamGone bool
@@ -55,6 +60,8 @@ type Options struct {
 // Load computes the working tree and staging area status for the repository
 // described by opts. Any error means the caller must fall back to exec git.
 func Load(opts Options) (*Result, error) {
+	defer log.Trace(time.Now(), opts.RepoRoot)
+
 	untrackedMode := opts.UntrackedMode
 	if untrackedMode == "" {
 		untrackedMode = "normal"

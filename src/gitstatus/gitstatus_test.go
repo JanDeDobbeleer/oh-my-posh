@@ -357,7 +357,7 @@ func setupIntentToAdd(t *testing.T, dir string) {
 
 // --- test infrastructure -----------------------------------------------
 
-func skipIfNoGit(t *testing.T) {
+func skipIfNoGit(t testing.TB) {
 	t.Helper()
 	if _, err := exec.LookPath("git"); err != nil {
 		t.Skip("git not found on PATH")
@@ -368,7 +368,7 @@ func skipIfNoGit(t *testing.T) {
 // directory for the duration of the test, so neither the native engine nor
 // the real git CLI pick up the developer machine's actual global gitconfig
 // or excludes file.
-func hermeticHome(t *testing.T) {
+func hermeticHome(t testing.TB) {
 	t.Helper()
 	home := t.TempDir()
 	t.Setenv("HOME", home)
@@ -376,7 +376,7 @@ func hermeticHome(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
 }
 
-func initGitRepo(t *testing.T, dir string) {
+func initGitRepo(t testing.TB, dir string) {
 	t.Helper()
 	runGit(t, dir, "init", "-q", "-b", "main", ".")
 	runGit(t, dir, "config", "user.email", "test@example.com")
@@ -384,14 +384,14 @@ func initGitRepo(t *testing.T, dir string) {
 	runGit(t, dir, "config", "core.autocrlf", "false")
 }
 
-func writeFile(t *testing.T, dir, rel, content string) {
+func writeFile(t testing.TB, dir, rel, content string) {
 	t.Helper()
 	full := filepath.Join(dir, filepath.FromSlash(rel))
 	require.NoError(t, os.MkdirAll(filepath.Dir(full), 0o755))
 	require.NoError(t, os.WriteFile(full, []byte(content), 0o644))
 }
 
-func runGit(t *testing.T, dir string, args ...string) string {
+func runGit(t testing.TB, dir string, args ...string) string {
 	t.Helper()
 	out, err := gitCommand(dir, args...)
 	require.NoErrorf(t, err, "git %s failed: %s", strings.Join(args, " "), out)
@@ -400,7 +400,7 @@ func runGit(t *testing.T, dir string, args ...string) string {
 
 // runGitAllowFail runs git and returns its output even on a non-zero exit,
 // for commands like `git merge` that legitimately fail on conflict.
-func runGitAllowFail(t *testing.T, dir string, args ...string) string {
+func runGitAllowFail(t testing.TB, dir string, args ...string) string {
 	t.Helper()
 	out, _ := gitCommand(dir, args...)
 	return out
@@ -414,7 +414,7 @@ func gitCommand(dir string, args ...string) (string, error) {
 	return string(out), err
 }
 
-func gitPath(t *testing.T, dir, arg string) string {
+func gitPath(t testing.TB, dir, arg string) string {
 	t.Helper()
 	out := runGit(t, dir, "rev-parse", "--path-format=absolute", arg)
 	return filepath.FromSlash(strings.TrimSpace(out))

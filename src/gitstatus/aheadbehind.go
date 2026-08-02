@@ -14,8 +14,8 @@ const (
 )
 
 type queuedCommit struct {
-	hash plumbing.Hash
 	info *commitInfo
+	hash plumbing.Hash
 }
 
 type commitPQ []queuedCommit
@@ -73,9 +73,8 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 	}
 
 	ahead, behind := 0, 0
-	interesting := 2
 
-	for queue.Len() > 0 && interesting > 0 {
+	for queue.Len() > 0 {
 		commit := heap.Pop(&queue).(queuedCommit)
 		flag := flags[commit.hash]
 
@@ -114,8 +113,8 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 			}
 		}
 
-		// Termination heuristic: once every queued commit is flagged on
-		// both sides, nothing one-sided remains to discover.
+		// Termination: once every queued commit is flagged on both sides,
+		// nothing one-sided remains to discover.
 		allShared := true
 		for _, qc := range queue {
 			f := flags[qc.hash]
@@ -125,7 +124,7 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 			}
 		}
 		if allShared {
-			interesting = 0
+			break
 		}
 	}
 

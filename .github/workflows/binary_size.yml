@@ -11,7 +11,6 @@ name: Binary Size Check
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   build:
@@ -80,85 +79,15 @@ jobs:
           retention-days: 1
           path: /tmp/report-${{ matrix.goos }}.json
 
-  report:
-    needs: build
-    if: always()
+  pr-context:
     runs-on: ubuntu-latest
     steps:
-      - name: Download size reports 📥
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+      - name: Save PR number
+        run: echo "${{ github.event.pull_request.number }}" > pr-number.txt
+
+      - name: Upload PR number 📤
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          pattern: size-report-*
-          path: reports
-          merge-multiple: true
-
-      - name: Report size deltas 💬
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
-        with:
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            const marker = '<!-- binary-size-report -->';
-
-            // Flag growth above ~256 KiB or 2%, whichever is more forgiving for small binaries.
-            const thresholdBytes = 256 * 1024;
-            const thresholdPercent = 2;
-
-            const fmtMB = (bytes) => (bytes / 1024 / 1024).toFixed(2) + ' MB';
-            const fmtDeltaKB = (bytes) => (bytes >= 0 ? '+' : '') + (bytes / 1024).toFixed(1) + ' KB';
-            const fmtPercent = (p) => (p >= 0 ? '+' : '') + p + '%';
-
-            const reportsDir = 'reports';
-            const files = fs.existsSync(reportsDir)
-              ? fs.readdirSync(reportsDir).filter((f) => f.endsWith('.json')).sort()
-              : [];
-
-            if (files.length === 0) {
-              core.setFailed('No size reports were produced by the build job.');
-              return;
-            }
-
-            const reports = files.map((f) => JSON.parse(fs.readFileSync(path.join(reportsDir, f), 'utf8')));
-
-            let anyFlagged = false;
-            let anyShrank = false;
-            const rows = reports.map((r) => {
-              const flagged = r.delta > 0 && (r.delta > thresholdBytes || r.percent > thresholdPercent);
-              if (flagged) anyFlagged = true;
-              if (r.delta < 0) anyShrank = true;
-              const mark = flagged ? ' ⚠️' : '';
-              return `| ${r.goos} | ${fmtMB(r.baseline_size)} | ${fmtMB(r.pr_size)} | ${fmtDeltaKB(r.delta)} (${fmtPercent(r.percent)})${mark} |`;
-            });
-
-            let callout = '✅ No significant size change on any platform.';
-            if (anyFlagged) {
-              callout = `⚠️ **Binary size grew by more than the ${thresholdPercent}% / 256 KiB threshold on at least one platform.** If this PR doesn't add a feature that justifies it, double-check for a new or heavier dependency.`;
-            } else if (anyShrank) {
-              callout = '🎉 Binary size shrank on at least one platform.';
-            }
-
-            const body = [
-              marker,
-              '### 📦 Release binary size report',
-              '',
-              'Compares this PR\'s release-equivalent build against the latest published release, per OS (amd64).',
-              '',
-              '| OS | Baseline | This PR | Delta |',
-              '|---|---|---|---|',
-              ...rows,
-              '',
-              callout,
-            ].join('\n');
-
-            const { repo: { owner, repo } } = context;
-            const issue_number = context.payload.pull_request.number;
-
-            const comments = await github.rest.issues.listComments({ owner, repo, issue_number });
-            const existing = comments.data.find((c) => c.body && c.body.includes(marker));
-
-            if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-            } else {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-            }
+          name: pr-number
+          retention-days: 1
+          path: pr-number.txt

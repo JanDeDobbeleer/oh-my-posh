@@ -1,0 +1,123 @@
+on:
+  workflow_run:
+    workflows: ["Binary Size Check"]
+    types: [completed]
+
+name: Binary Size Report
+
+permissions:
+  actions: read
+  pull-requests: write
+
+jobs:
+  report:
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download reports 📥
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          pattern: '*'
+          path: reports
+          merge-multiple: true
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report size deltas 💬
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const marker = '<!-- binary-size-report -->';
+
+            // Flag growth above ~256 KiB or 2%, whichever is more forgiving for small binaries.
+            const thresholdBytes = 256 * 1024;
+            const thresholdPercent = 2;
+
+            const fmtMB = (bytes) => (bytes / 1024 / 1024).toFixed(2) + ' MB';
+            const fmtDeltaKB = (bytes) => (bytes >= 0 ? '+' : '') + (bytes / 1024).toFixed(1) + ' KB';
+            const fmtPercent = (p) => (p >= 0 ? '+' : '') + p + '%';
+
+            const issue_number = parseInt(fs.readFileSync('reports/pr-number.txt', 'utf8').trim(), 10);
+            if (!Number.isInteger(issue_number) || issue_number <= 0) {
+              core.setFailed('Invalid PR number in artifact.');
+              return;
+            }
+
+            const { repo: { owner, repo } } = context;
+
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: issue_number });
+            if (pr.head.sha !== context.payload.workflow_run.head_sha) {
+              core.setFailed('PR head SHA does not match triggering workflow run.');
+              return;
+            }
+
+            const reportsDir = 'reports';
+            const files = fs.existsSync(reportsDir)
+              ? fs.readdirSync(reportsDir).filter((f) => f.endsWith('.json')).sort()
+              : [];
+
+            if (files.length === 0) {
+              core.setFailed('No size reports were produced by the build job.');
+              return;
+            }
+
+            const allowedGoos = ['darwin', 'linux', 'windows'];
+
+            const reports = files
+              .map((f) => JSON.parse(fs.readFileSync(path.join(reportsDir, f), 'utf8')))
+              .filter((r) => allowedGoos.includes(r.goos))
+              .map((r) => ({
+                goos: r.goos,
+                pr_size: Number(r.pr_size),
+                baseline_size: Number(r.baseline_size),
+                delta: Number(r.delta),
+                percent: Number(r.percent),
+              }))
+              .filter((r) => [r.pr_size, r.baseline_size, r.delta, r.percent].every(Number.isFinite));
+
+            if (reports.length === 0) {
+              core.setFailed('No valid size reports were produced by the build job.');
+              return;
+            }
+
+            let anyFlagged = false;
+            let anyShrank = false;
+            const rows = reports.map((r) => {
+              const flagged = r.delta > 0 && (r.delta > thresholdBytes || r.percent > thresholdPercent);
+              if (flagged) anyFlagged = true;
+              if (r.delta < 0) anyShrank = true;
+              const mark = flagged ? ' ⚠️' : '';
+              return `| ${r.goos} | ${fmtMB(r.baseline_size)} | ${fmtMB(r.pr_size)} | ${fmtDeltaKB(r.delta)} (${fmtPercent(r.percent)})${mark} |`;
+            });
+
+            let callout = '✅ No significant size change on any platform.';
+            if (anyFlagged) {
+              callout = `⚠️ **Binary size grew by more than the ${thresholdPercent}% / 256 KiB threshold on at least one platform.** If this PR doesn't add a feature that justifies it, double-check for a new or heavier dependency.`;
+            } else if (anyShrank) {
+              callout = '🎉 Binary size shrank on at least one platform.';
+            }
+
+            const body = [
+              marker,
+              '### 📦 Release binary size report',
+              '',
+              'Compares this PR\'s release-equivalent build against the latest published release, per OS (amd64).',
+              '',
+              '| OS | Baseline | This PR | Delta |',
+              '|---|---|---|---|',
+              ...rows,
+              '',
+              callout,
+            ].join('\n');
+
+            const comments = await github.rest.issues.listComments({ owner, repo, issue_number });
+            const existing = comments.data.find((c) => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }

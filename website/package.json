@@ -7,6 +7,7 @@
     "start": "cross-env NODE_ENV=development node scripts/dev.mjs",
     "prebuild": "node scripts/ensure-artifacts.mjs",
     "build": "docusaurus build",
+    "test": "node --test src/components/Studio/*.test.mjs",
     "serve": "docusaurus serve",
     "themes": "node export_themes.mjs",
     "segment-previews": "node scripts/render-segment-previews.mjs",

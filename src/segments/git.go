@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/gitstatus"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -61,6 +62,7 @@ func (s *GitStatus) add(code string) {
 
 const (
 	FetchStatus       options.Option = "fetch_status"
+	NativeStatus      options.Option = "native_status"
 	FetchPushStatus   options.Option = "fetch_push_status"
 	IgnoreStatus      options.Option = "ignore_status"
 	FetchUpstreamIcon options.Option = "fetch_upstream_icon"
@@ -761,6 +763,10 @@ func (g *Git) setStatus() {
 	g.Working = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 	g.Staging = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
+	if g.options.Bool(NativeStatus, false) && g.setStatusNative() {
+		return
+	}
+
 	untrackedMode := g.getUntrackedFilesMode()
 	args := []string{"status", untrackedMode, "--branch", "--porcelain=2"}
 	ignoreSubmodulesMode := g.getIgnoreSubmodulesMode()
@@ -803,6 +809,56 @@ func (g *Git) setStatus() {
 
 		addToStatus(line)
 	}
+}
+
+// setStatusNative computes the status using the built-in gitstatus engine
+// instead of spawning git. It returns false whenever the repo uses a
+// feature the engine doesn't support (or ignore_submodules is configured,
+// which the engine doesn't apply), leaving g.Working/g.Staging untouched so
+// the caller falls back to the exec path.
+func (g *Git) setStatusNative() bool {
+	if len(g.getIgnoreSubmodulesMode()) > 0 {
+		return false
+	}
+
+	opts := gitstatus.Options{
+		WorktreeGitDir: g.mainSCMDir,
+		CommonGitDir:   g.scmDir,
+		RepoRoot:       g.repoRootDir,
+		UntrackedMode:  strings.TrimPrefix(g.getUntrackedFilesMode(), "-u"),
+	}
+
+	result, err := gitstatus.Load(opts)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	g.Working.Added = result.Working.Added
+	g.Working.Deleted = result.Working.Deleted
+	g.Working.Modified = result.Working.Modified
+	g.Working.Untracked = result.Working.Untracked
+	g.Working.Unmerged = result.Working.Unmerged
+
+	g.Staging.Added = result.Staging.Added
+	g.Staging.Deleted = result.Staging.Deleted
+	g.Staging.Modified = result.Staging.Modified
+	g.Staging.Untracked = result.Staging.Untracked
+	g.Staging.Unmerged = result.Staging.Unmerged
+
+	g.Hash = result.Hash
+	g.ShortHash = result.Hash
+	if len(result.Hash) >= 7 {
+		g.ShortHash = result.Hash[:7]
+	}
+
+	g.Ref = result.Ref
+	g.Upstream = result.Upstream
+	g.Ahead = result.Ahead
+	g.Behind = result.Behind
+	g.UpstreamGone = result.UpstreamGone
+
+	return true
 }
 
 func (g *Git) getGitCommandOutput(args ...string) string {

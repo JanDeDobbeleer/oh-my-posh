@@ -1,9 +1,11 @@
 package segments
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -18,6 +20,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -1466,4 +1469,95 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		assert.Equal(t, tc.ExpectedPushAhead, g.PushAhead, tc.Case)
 		assert.Equal(t, tc.ExpectedPushBehind, g.PushBehind, tc.Case)
 	}
+}
+
+// TestSetStatusNative builds a real temp repo with the git CLI (skipped when
+// git isn't on PATH), then asserts setStatusNative populates the same
+// fields as the existing exec+porcelain path for that exact repo. The
+// porcelain text fed to the exec path is captured from a real `git status`
+// call, so both sides are exercised against genuine, non-trivial repo state.
+func TestSetStatusNative(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	dir := t.TempDir()
+	runRealGit(t, dir, "init", "-q", "-b", "main", ".")
+	runRealGit(t, dir, "config", "user.email", "test@example.com")
+	runRealGit(t, dir, "config", "user.name", "Test")
+	runRealGit(t, dir, "config", "core.autocrlf", "false")
+
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), []byte("a\n"), 0o644))
+	runRealGit(t, dir, "add", ".")
+	runRealGit(t, dir, "commit", "-q", "-m", "init")
+
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), []byte("changed\n"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "untracked.txt"), []byte("u\n"), 0o644))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "staged-add.txt"), []byte("new\n"), 0o644))
+	runRealGit(t, dir, "add", "staged-add.txt")
+
+	worktreeGitDir := realGitPath(t, dir, "--git-dir")
+	commonGitDir := realGitPath(t, dir, "--git-common-dir")
+	repoRoot := realGitPath(t, dir, "--show-toplevel")
+
+	// Capture the exact porcelain text a real `git status` produces for this
+	// repo, then feed it through the existing exec parsing path via the
+	// mock environment, following the mocking pattern the other setStatus
+	// tests already use.
+	porcelain := runRealGit(t, dir, "status", "-unormal", "--branch", "--porcelain=2")
+
+	env := new(mock.Environment)
+	env.MockGitCommand(repoRoot, porcelain, "status", "-unormal", "--branch", "--porcelain=2")
+
+	gExec := &Git{Scm: Scm{command: GITCOMMAND, repoRootDir: repoRoot}}
+	gExec.Init(options.Map{}, env)
+	gExec.setStatus()
+
+	// A bare mock.Environment (no expectations configured) means any
+	// accidental exec fallback would either panic on an unmet expectation
+	// or, since Scm.command is unset here, silently return empty output —
+	// either way the sanity check below would catch it.
+	gNative := &Git{Scm: Scm{
+		mainSCMDir:  worktreeGitDir,
+		scmDir:      commonGitDir,
+		repoRootDir: repoRoot,
+	}}
+	gNative.Init(options.Map{NativeStatus: true}, new(mock.Environment))
+	gNative.setStatus()
+
+	// sanity: make sure this scenario actually exercises non-trivial status
+	// before comparing, so a broken fixture (or a silent fallback) can't
+	// pass by both sides being all-zero.
+	require.True(t, gNative.Working.Modified > 0 && gNative.Working.Untracked > 0 && gNative.Staging.Added > 0)
+
+	assert.Equal(t, gExec.Working, gNative.Working)
+	assert.Equal(t, gExec.Staging, gNative.Staging)
+	assert.Equal(t, gExec.Hash, gNative.Hash)
+	assert.Equal(t, gExec.ShortHash, gNative.ShortHash)
+	assert.Equal(t, gExec.Ref, gNative.Ref)
+	assert.Equal(t, gExec.Upstream, gNative.Upstream)
+	assert.Equal(t, gExec.Ahead, gNative.Ahead)
+	assert.Equal(t, gExec.Behind, gNative.Behind)
+	assert.Equal(t, gExec.UpstreamGone, gNative.UpstreamGone)
+}
+
+func runRealGit(t *testing.T, dir string, args ...string) string {
+	t.Helper()
+	cmd := exec.CommandContext(context.Background(), "git", args...)
+	cmd.Dir = dir
+	cmd.Env = append(os.Environ(), "GIT_CONFIG_NOSYSTEM=1")
+	out, err := cmd.CombinedOutput()
+	require.NoErrorf(t, err, "git %s failed: %s", strings.Join(args, " "), out)
+	return string(out)
+}
+
+func realGitPath(t *testing.T, dir, arg string) string {
+	t.Helper()
+	out := runRealGit(t, dir, "rev-parse", "--path-format=absolute", arg)
+	return filepath.FromSlash(strings.TrimSpace(out))
 }

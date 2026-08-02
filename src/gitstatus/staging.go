@@ -2,20 +2,11 @@ package gitstatus
 
 import (
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/format/index"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 )
-
-// mergedStage is the on-disk stage value of a fully merged index entry.
-// go-git's index.Merged constant is defined as 1, but the decoder actually
-// extracts the raw on-disk stage bits (0-3) into Entry.Stage, where 0 means
-// "no conflict". We compare against that zero value directly rather than
-// the (seemingly mislabeled) named constant.
-const mergedStage index.Stage = 0
 
 // diffStaging compares the index against the HEAD tree to compute the
 // staging-side counts: cache-tree fast path first, then a full tree diff.
-func diffStaging(store storer.EncodedObjectStorer, idx *index.Index, headHash plumbing.Hash, headOK bool, result *Result) error {
+func diffStaging(store *objectStore, idx *gitIndex, headHash plumbing.Hash, headOK bool, result *Result) error {
 	headFiles := map[string]plumbing.Hash{}
 
 	if headOK {
@@ -39,8 +30,9 @@ func diffStaging(store storer.EncodedObjectStorer, idx *index.Index, headHash pl
 	}
 
 	unmerged := map[string]bool{}
-	for _, e := range idx.Entries {
-		if e.Stage == mergedStage {
+	for i := range idx.Entries {
+		e := &idx.Entries[i]
+		if e.Stage == 0 {
 			continue
 		}
 		unmerged[e.Name] = true
@@ -49,8 +41,9 @@ func diffStaging(store storer.EncodedObjectStorer, idx *index.Index, headHash pl
 
 	var addedHashes, deletedHashes []plumbing.Hash
 
-	for _, e := range idx.Entries {
-		if e.Stage != mergedStage || e.IntentToAdd || unmerged[e.Name] {
+	for i := range idx.Entries {
+		e := &idx.Entries[i]
+		if e.Stage != 0 || e.IntentToAdd || unmerged[e.Name] {
 			continue
 		}
 
@@ -76,12 +69,12 @@ func diffStaging(store storer.EncodedObjectStorer, idx *index.Index, headHash pl
 	return nil
 }
 
-func cacheTreeMatches(idx *index.Index, headTree plumbing.Hash) bool {
-	if idx.Cache == nil || len(idx.Cache.Entries) == 0 {
+func cacheTreeMatches(idx *gitIndex, headTree plumbing.Hash) bool {
+	if len(idx.CacheTree) == 0 {
 		return false
 	}
 
-	root := idx.Cache.Entries[0]
+	root := idx.CacheTree[0]
 	return root.Path == "" && root.Entries >= 0 && root.Hash == headTree
 }
 

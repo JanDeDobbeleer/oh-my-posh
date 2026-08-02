@@ -9,19 +9,11 @@
 package gitstatus
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
-
-	"github.com/go-git/go-git/v5/plumbing/cache"
-	"github.com/go-git/go-git/v5/plumbing/filemode"
-	"github.com/go-git/go-git/v5/plumbing/format/index"
-	"github.com/go-git/go-git/v5/storage/filesystem"
-
-	"github.com/go-git/go-billy/v5/osfs"
 )
 
 // Detached is the branch name reported when HEAD is not on a branch. It must
@@ -76,8 +68,8 @@ func Load(opts Options) (*Result, error) {
 		return nil, err
 	}
 
-	for _, e := range idx.Entries {
-		if e.Mode == filemode.Submodule {
+	for i := range idx.Entries {
+		if idx.Entries[i].Mode == modeGitlink {
 			return nil, errors.New("gitstatus: submodule entries require exec fallback")
 		}
 	}
@@ -88,8 +80,8 @@ func Load(opts Options) (*Result, error) {
 	// there is no upstream to resolve and no repo-level excludesfile.
 	cfg, _ := loadRepoConfig(opts.CommonGitDir)
 
-	fs := osfs.New(opts.CommonGitDir)
-	store := filesystem.NewStorage(fs, cache.NewObjectLRUDefault())
+	store := newObjectStore(opts.CommonGitDir)
+	defer store.close()
 
 	headHash, headOK, err := resolveBranch(opts, cfg, store, result)
 	if err != nil {
@@ -109,7 +101,7 @@ func Load(opts Options) (*Result, error) {
 // readIndex decodes the index file, recording its mtime beforehand so the
 // worktree scan can detect racily-clean entries (files modified in the same
 // timestamp tick the index was written).
-func readIndex(worktreeGitDir string) (*index.Index, time.Time, error) {
+func readIndex(worktreeGitDir string) (*gitIndex, time.Time, error) {
 	indexPath := filepath.Join(worktreeGitDir, "index")
 
 	fi, err := os.Stat(indexPath)
@@ -122,33 +114,10 @@ func readIndex(worktreeGitDir string) (*index.Index, time.Time, error) {
 		return nil, time.Time{}, err
 	}
 
-	idx := &index.Index{}
-	err = index.NewDecoder(bytes.NewReader(data)).Decode(idx)
-	// index.skipHash (git >= 2.40, default with feature.manyFiles) writes an
-	// all-zero trailer instead of a checksum; the decoder has fully populated
-	// idx by the time it rejects that, so accept it
-	if errors.Is(err, index.ErrInvalidChecksum) && isZeroTrailer(data) {
-		err = nil
-	}
-
+	idx, err := decodeIndex(data)
 	if err != nil {
-		return nil, time.Time{}, fmt.Errorf("gitstatus: decode index: %w", err)
+		return nil, time.Time{}, err
 	}
 
 	return idx, fi.ModTime(), nil
-}
-
-func isZeroTrailer(data []byte) bool {
-	const trailerLen = 20
-	if len(data) < trailerLen {
-		return false
-	}
-
-	for _, b := range data[len(data)-trailerLen:] {
-		if b != 0 {
-			return false
-		}
-	}
-
-	return true
 }

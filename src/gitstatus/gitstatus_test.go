@@ -38,14 +38,33 @@ func TestLoadParity(t *testing.T) {
 		{Name: "tracked file replaced by directory", Setup: setupFileToDir},
 		{Name: "tracked directory replaced by file", Setup: setupDirToFile},
 		{Name: "index.skipHash zero trailer", Setup: setupSkipHash},
+		{Name: "index version 4", Setup: setupIndexV4},
+		{Name: "fully packed objects", Setup: setupPacked},
+		{Name: "packed ahead and behind", Setup: setupPackedAheadBehind},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.Name, func(t *testing.T) {
-			dir := t.TempDir()
-			initGitRepo(t, dir)
-			tc.Setup(t, dir)
-			assertParity(t, dir, tc.UntrackedMode)
+	// Every case runs under both stat strategies: the in-walk comparison
+	// (Windows default) and the flat lstat pool (everywhere else), so each
+	// platform's CI exercises the other's code path too.
+	for _, inWalk := range []bool{true, false} {
+		name := "flat-stat"
+		if inWalk {
+			name = "stat-in-walk"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			previous := statInWalk
+			statInWalk = inWalk
+			t.Cleanup(func() { statInWalk = previous })
+
+			for _, tc := range cases {
+				t.Run(tc.Name, func(t *testing.T) {
+					dir := t.TempDir()
+					initGitRepo(t, dir)
+					tc.Setup(t, dir)
+					assertParity(t, dir, tc.UntrackedMode)
+				})
+			}
 		})
 	}
 }
@@ -213,6 +232,55 @@ func setupSkipHash(t *testing.T, dir string) {
 
 	writeFile(t, dir, "a.txt", "changed\n")
 	writeFile(t, dir, "untracked.txt", "u\n")
+}
+
+// setupIndexV4 forces the prefix-compressed index format (git writes v2 by
+// default) with a mix of staged, dirty, and untracked files whose paths
+// share long prefixes.
+func setupIndexV4(t *testing.T, dir string) {
+	runGit(t, dir, "config", "index.version", "4")
+
+	writeFile(t, dir, "deeply/nested/directory/one.txt", "1\n")
+	writeFile(t, dir, "deeply/nested/directory/two.txt", "2\n")
+	writeFile(t, dir, "deeply/nested/other/three.txt", "3\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	writeFile(t, dir, "deeply/nested/directory/two.txt", "changed\n")
+	writeFile(t, dir, "deeply/nested/staged.txt", "staged\n")
+	runGit(t, dir, "add", "deeply/nested/staged.txt")
+	writeFile(t, dir, "deeply/nested/untracked.txt", "u\n")
+}
+
+// setupPacked repacks every object into a single pack (with deltas) and
+// stages a change afterwards, so the staging tree diff and commit reads all
+// go through the pack reader instead of loose objects.
+func setupPacked(t *testing.T, dir string) {
+	for i := range 5 {
+		writeFile(t, dir, "file.txt", strings.Repeat("line\n", 50+i))
+		runGit(t, dir, "add", ".")
+		runGit(t, dir, "commit", "-q", "-m", "rev")
+	}
+	writeFile(t, dir, "dir/nested.txt", "nested\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "nested")
+
+	runGit(t, dir, "repack", "-a", "-d", "-q")
+	runGit(t, dir, "prune-packed")
+
+	// staged change invalidates the cache-tree fast path: the tree diff must
+	// read HEAD's trees from the pack
+	writeFile(t, dir, "staged.txt", "staged\n")
+	runGit(t, dir, "add", "staged.txt")
+	writeFile(t, dir, "file.txt", "dirty\n")
+}
+
+// setupPackedAheadBehind diverges from a packed upstream so the
+// ahead/behind walk reads its commits from the pack.
+func setupPackedAheadBehind(t *testing.T, dir string) {
+	setupAheadBehind(t, dir)
+	runGit(t, dir, "repack", "-a", "-d", "-q")
+	runGit(t, dir, "prune-packed")
 }
 
 func setupDetached(t *testing.T, dir string) {

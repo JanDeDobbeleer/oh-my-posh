@@ -4,7 +4,6 @@ import (
 	"container/heap"
 
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 )
 
 // Reachability flags used by aheadBehind's paint_down_to_common walk.
@@ -40,7 +39,7 @@ func (q *commitPQ) Pop() any {
 // aheadBehind implements git's paint_down_to_common: walk both tips by
 // committer-date priority, flag reachability from each side, and count the
 // commits reachable from only one side.
-func aheadBehind(store storer.EncodedObjectStorer, ours, theirs plumbing.Hash) (int, int, error) {
+func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, error) {
 	if ours == theirs {
 		return 0, 0, nil
 	}

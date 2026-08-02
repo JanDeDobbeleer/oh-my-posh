@@ -8,7 +8,7 @@ import {
 } from './configuratorHandoff.mjs';
 
 describe('Configurator handoff', () => {
-  it('creates a config-free URL with a cryptographically random fragment nonce', () => {
+  it('uses the Configurator nonce fragment with no config data in the URL', () => {
     const handoff = createConfiguratorHandoff('yaml', 'version: 4', {
       getRandomValues(bytes) {
         bytes.fill(0xab);
@@ -17,7 +17,10 @@ describe('Configurator handoff', () => {
     });
 
     assert.equal(handoff.nonce, 'ab'.repeat(32));
-    assert.equal(handoff.url, `https://configurator.ohmyposh.dev/#nonce=${'ab'.repeat(32)}`);
+    assert.equal(
+      handoff.url,
+      `https://configurator.ohmyposh.dev/#omp-configurator-nonce=${'ab'.repeat(32)}`,
+    );
     assert.equal(handoff.url.includes('version'), false);
   });
 

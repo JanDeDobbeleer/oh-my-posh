@@ -5,6 +5,7 @@ const MESSAGE_VERSION = 1;
 const READY_MESSAGE_TYPE = 'omp-configurator-ready';
 const CONFIG_MESSAGE_TYPE = 'omp-studio-config';
 const NONCE_BYTES = 32;
+const NONCE_FRAGMENT_KEY = 'omp-configurator-nonce';
 
 export function generateNonce(crypto = globalThis.crypto) {
   if (!crypto || typeof crypto.getRandomValues !== 'function') {
@@ -20,7 +21,7 @@ export function generateNonce(crypto = globalThis.crypto) {
 export function createConfiguratorHandoff(format, text, crypto) {
   const nonce = generateNonce(crypto);
   const url = new URL(CONFIGURATOR_URL);
-  url.hash = `nonce=${encodeURIComponent(nonce)}`;
+  url.hash = `${NONCE_FRAGMENT_KEY}=${encodeURIComponent(nonce)}`;
 
   return { nonce, format, text, url: url.toString() };
 }

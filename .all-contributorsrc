@@ -3744,6 +3744,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "jamesmontemagno",
+      "name": "James Montemagno",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1676321?v=4",
+      "profile": "https://montemagno.com",
+      "contributions": [
+        "doc",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

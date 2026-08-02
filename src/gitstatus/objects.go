@@ -11,9 +11,10 @@ import (
 
 // commitInfo is the subset of a commit object the status engine needs.
 type commitInfo struct {
+	Parents []plumbing.Hash
+	// CommitterWhen is the committer timestamp in unix seconds.
+	CommitterWhen int64
 	Tree          plumbing.Hash
-	Parents       []plumbing.Hash
-	CommitterWhen int64 // unix seconds
 }
 
 func readCommit(store *objectStore, h plumbing.Hash) (*commitInfo, error) {

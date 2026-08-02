@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -24,13 +25,21 @@ type cachedObject struct {
 	data []byte
 }
 
+// packLocation keys the per-Load object cache without allocating a string
+// per lookup on the delta-chain hot path.
+type packLocation struct {
+	pack   *packFile
+	offset int64
+}
+
 type objectStore struct {
-	objectsDirs []string // primary objects dir + any alternates
+	// cache holds inflated pack objects resolved during this Load, keyed by
+	// pack offset; delta chains hit the same bases repeatedly.
+	cache map[packLocation]cachedObject
+	// objectsDirs is the primary objects dir plus any alternates.
+	objectsDirs []string
 	packs       []*packFile
 	packsLoaded bool
-	// cache holds inflated pack objects resolved during this Load, keyed by
-	// pack offset; delta chains hit the same bases repeatedly
-	cache map[string]cachedObject
 }
 
 func newObjectStore(commonGitDir string) *objectStore {
@@ -51,7 +60,7 @@ func newObjectStore(commonGitDir string) *objectStore {
 		}
 	}
 
-	return &objectStore{objectsDirs: dirs, cache: map[string]cachedObject{}}
+	return &objectStore{objectsDirs: dirs, cache: map[packLocation]cachedObject{}}
 }
 
 // close releases the pack file handles opened during this Load. Without it
@@ -109,17 +118,17 @@ func parseLooseObject(raw []byte) (string, []byte, error) {
 	}
 
 	// header: "<type> <size>\x00"
-	nul := bytes.IndexByte(content, 0)
-	if nul < 0 {
-		return "", nil, fmt.Errorf("gitstatus: malformed loose object")
+	header, body, found := bytes.Cut(content, []byte{0})
+	if !found {
+		return "", nil, errors.New("gitstatus: malformed loose object")
 	}
 
-	kind, _, ok := strings.Cut(string(content[:nul]), " ")
+	kind, _, ok := strings.Cut(string(header), " ")
 	if !ok {
-		return "", nil, fmt.Errorf("gitstatus: malformed loose object header")
+		return "", nil, errors.New("gitstatus: malformed loose object header")
 	}
 
-	return kind, content[nul+1:], nil
+	return kind, body, nil
 }
 
 func (o *objectStore) loadPacks() {
@@ -143,9 +152,9 @@ func (o *objectStore) loadPacks() {
 // sha table with ReadAt instead of loading the whole file: a few 20-byte
 // reads per lookup even for multi-megabyte indexes.
 type packFile struct {
-	idxPath string
 	idx     *os.File
 	pack    *os.File
+	idxPath string
 	fanout  [256]uint32
 	loaded  bool
 	broken  bool
@@ -289,7 +298,7 @@ var packKinds = map[byte]string{
 // packObjectAt inflates the object at offset, resolving delta chains
 // recursively.
 func (o *objectStore) packObjectAt(p *packFile, offset int64) (string, []byte, error) {
-	cacheKey := fmt.Sprintf("%s@%d", p.idxPath, offset)
+	cacheKey := packLocation{pack: p, offset: offset}
 	if cached, ok := o.cache[cacheKey]; ok {
 		return cached.kind, cached.data, nil
 	}
@@ -307,7 +316,7 @@ func (o *objectStore) packObjectAt(p *packFile, offset int64) (string, []byte, e
 	used := 1
 	for header[used-1]&0x80 != 0 {
 		if used >= len(header) {
-			return "", nil, fmt.Errorf("gitstatus: pack header overflow")
+			return "", nil, errors.New("gitstatus: pack header overflow")
 		}
 		size |= int64(header[used]&0x7f) << shift
 		shift += 7
@@ -318,7 +327,7 @@ func (o *objectStore) packObjectAt(p *packFile, offset int64) (string, []byte, e
 	case packOfsDelta:
 		negOffset, n := decodeOffsetVarint(header[used:])
 		if n == 0 {
-			return "", nil, fmt.Errorf("gitstatus: malformed ofs-delta")
+			return "", nil, errors.New("gitstatus: malformed ofs-delta")
 		}
 		baseKind, base, err := o.packObjectAt(p, offset-int64(negOffset))
 		if err != nil {
@@ -328,7 +337,7 @@ func (o *objectStore) packObjectAt(p *packFile, offset int64) (string, []byte, e
 
 	case packRefDelta:
 		if len(header) < used+20 {
-			return "", nil, fmt.Errorf("gitstatus: malformed ref-delta")
+			return "", nil, errors.New("gitstatus: malformed ref-delta")
 		}
 		var baseHash plumbing.Hash
 		copy(baseHash[:], header[used:used+20])
@@ -371,7 +380,7 @@ func (o *objectStore) inflateAt(p *packFile, offset, expectedSize int64) ([]byte
 }
 
 // applyPackDelta inflates the delta at deltaOffset and applies it to base.
-func (o *objectStore) applyPackDelta(p *packFile, deltaOffset, deltaSize int64, baseKind string, base []byte, cacheKey string) (string, []byte, error) {
+func (o *objectStore) applyPackDelta(p *packFile, deltaOffset, deltaSize int64, baseKind string, base []byte, cacheKey packLocation) (string, []byte, error) {
 	delta, err := o.inflateAt(p, deltaOffset, deltaSize)
 	if err != nil {
 		return "", nil, err
@@ -391,13 +400,13 @@ func (o *objectStore) applyPackDelta(p *packFile, deltaOffset, deltaSize int64, 
 func applyDelta(base, delta []byte) ([]byte, error) {
 	baseSize, n := decodeSizeVarint(delta)
 	if n == 0 || int64(len(base)) != baseSize {
-		return nil, fmt.Errorf("gitstatus: delta base size mismatch")
+		return nil, errors.New("gitstatus: delta base size mismatch")
 	}
 	delta = delta[n:]
 
 	targetSize, n := decodeSizeVarint(delta)
 	if n == 0 {
-		return nil, fmt.Errorf("gitstatus: malformed delta")
+		return nil, errors.New("gitstatus: malformed delta")
 	}
 	delta = delta[n:]
 
@@ -413,7 +422,7 @@ func applyDelta(base, delta []byte) ([]byte, error) {
 			for bit := range 4 {
 				if op&(1<<bit) != 0 {
 					if len(delta) == 0 {
-						return nil, fmt.Errorf("gitstatus: truncated delta copy")
+						return nil, errors.New("gitstatus: truncated delta copy")
 					}
 					offset |= int64(delta[0]) << (8 * bit)
 					delta = delta[1:]
@@ -422,7 +431,7 @@ func applyDelta(base, delta []byte) ([]byte, error) {
 			for bit := range 3 {
 				if op&(0x10<<bit) != 0 {
 					if len(delta) == 0 {
-						return nil, fmt.Errorf("gitstatus: truncated delta copy")
+						return nil, errors.New("gitstatus: truncated delta copy")
 					}
 					size |= int64(delta[0]) << (8 * bit)
 					delta = delta[1:]
@@ -432,26 +441,26 @@ func applyDelta(base, delta []byte) ([]byte, error) {
 				size = 0x10000
 			}
 			if offset+size > int64(len(base)) {
-				return nil, fmt.Errorf("gitstatus: delta copy out of range")
+				return nil, errors.New("gitstatus: delta copy out of range")
 			}
 			result = append(result, base[offset:offset+size]...)
 			continue
 		}
 
 		if op == 0 {
-			return nil, fmt.Errorf("gitstatus: invalid delta opcode")
+			return nil, errors.New("gitstatus: invalid delta opcode")
 		}
 
 		// insert literal of length op
 		if int(op) > len(delta) {
-			return nil, fmt.Errorf("gitstatus: truncated delta insert")
+			return nil, errors.New("gitstatus: truncated delta insert")
 		}
 		result = append(result, delta[:op]...)
 		delta = delta[op:]
 	}
 
 	if int64(len(result)) != targetSize {
-		return nil, fmt.Errorf("gitstatus: delta target size mismatch")
+		return nil, errors.New("gitstatus: delta target size mismatch")
 	}
 
 	return result, nil

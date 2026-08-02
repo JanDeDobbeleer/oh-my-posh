@@ -186,55 +186,66 @@ func TestResolveUpstream(t *testing.T) {
 	}
 }
 
-func TestLoadFallsBackOnGitlinkEntry(t *testing.T) {
-	worktreeGitDir := t.TempDir()
+func TestLoadFallsBack(t *testing.T) {
+	cases := []struct {
+		Setup func(t *testing.T, dir string)
+		Case  string
+	}{
+		{
+			Case: "gitlink entry",
+			Setup: func(t *testing.T, dir string) {
+				t.Helper()
+				idx := &index.Index{
+					Version: 2,
+					Entries: []*index.Entry{
+						{Name: "submodule", Mode: filemode.Submodule, Hash: plumbing.NewHash("1111111111111111111111111111111111111111")},
+					},
+				}
+				encodeIndex(t, filepath.Join(dir, "index"), idx)
+			},
+		},
+		{
+			Case: "mandatory index extension",
+			Setup: func(t *testing.T, dir string) {
+				t.Helper()
+				// DIRC header, version 2, zero entries, then a mandatory
+				// ("sdir", lowercase first byte) extension header.
+				// Sparse-index and split-index (signatures "sdir"/"link")
+				// both hit this same decoder path.
+				var buf bytes.Buffer
+				buf.WriteString("DIRC")
+				require.NoError(t, binary.Write(&buf, binary.BigEndian, uint32(2)))
+				require.NoError(t, binary.Write(&buf, binary.BigEndian, uint32(0)))
+				buf.WriteString("sdir")
+				require.NoError(t, binary.Write(&buf, binary.BigEndian, uint32(0)))
+				buf.Write(make([]byte, 20)) // trailer so the extension scan sees a complete block
 
-	idx := &index.Index{
-		Version: 2,
-		Entries: []*index.Entry{
-			{Name: "submodule", Mode: filemode.Submodule, Hash: plumbing.NewHash("1111111111111111111111111111111111111111")},
+				require.NoError(t, os.WriteFile(filepath.Join(dir, "index"), buf.Bytes(), 0o644))
+			},
+		},
+		{
+			Case: "reftables HEAD",
+			Setup: func(t *testing.T, dir string) {
+				t.Helper()
+				encodeIndex(t, filepath.Join(dir, "index"), &index.Index{Version: 2})
+				require.NoError(t, os.WriteFile(filepath.Join(dir, "HEAD"), []byte("ref: refs/heads/.invalid\n"), 0o644))
+			},
 		},
 	}
-	encodeIndex(t, filepath.Join(worktreeGitDir, "index"), idx)
 
-	_, err := Load(Options{
-		WorktreeGitDir: worktreeGitDir,
-		CommonGitDir:   worktreeGitDir,
-		RepoRoot:       worktreeGitDir,
-	})
-	assert.Error(t, err)
-}
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			dir := t.TempDir()
+			tc.Setup(t, dir)
 
-func TestLoadFallsBackOnMandatoryExtension(t *testing.T) {
-	worktreeGitDir := t.TempDir()
-
-	// DIRC header, version 2, zero entries, then a mandatory ("sdir",
-	// lowercase first byte) extension header. Sparse-index and split-index
-	// (signatures "sdir"/"link") both hit this same decoder path.
-	var buf bytes.Buffer
-	buf.WriteString("DIRC")
-	require.NoError(t, binary.Write(&buf, binary.BigEndian, uint32(2)))
-	require.NoError(t, binary.Write(&buf, binary.BigEndian, uint32(0)))
-	buf.WriteString("sdir")
-	require.NoError(t, binary.Write(&buf, binary.BigEndian, uint32(0)))
-	buf.Write(make([]byte, 20)) // padding so the decoder's lookahead sees a full extension header
-
-	require.NoError(t, os.WriteFile(filepath.Join(worktreeGitDir, "index"), buf.Bytes(), 0o644))
-
-	_, err := Load(Options{
-		WorktreeGitDir: worktreeGitDir,
-		CommonGitDir:   worktreeGitDir,
-		RepoRoot:       worktreeGitDir,
-	})
-	assert.Error(t, err)
-}
-
-func TestResolveBranchFallsBackOnReftables(t *testing.T) {
-	worktreeGitDir := t.TempDir()
-	require.NoError(t, os.WriteFile(filepath.Join(worktreeGitDir, "HEAD"), []byte("ref: refs/heads/.invalid\n"), 0o644))
-
-	_, _, err := resolveBranch(Options{WorktreeGitDir: worktreeGitDir, CommonGitDir: worktreeGitDir}, nil, nil, &Result{})
-	assert.Error(t, err)
+			_, err := Load(Options{
+				WorktreeGitDir: dir,
+				CommonGitDir:   dir,
+				RepoRoot:       dir,
+			})
+			assert.Error(t, err)
+		})
+	}
 }
 
 func encodeIndex(t *testing.T, path string, idx *index.Index) {

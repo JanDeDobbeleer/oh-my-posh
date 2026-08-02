@@ -48,7 +48,7 @@ type indexEntry struct {
 	IntentToAdd  bool
 }
 
-// cacheTree is one entry of the TREE extension. Entries < 0 marks the span
+// cacheTree is the root record of the TREE extension. Entries < 0 marks it
 // invalidated.
 type cacheTree struct {
 	Path    string
@@ -57,8 +57,11 @@ type cacheTree struct {
 }
 
 type gitIndex struct {
-	Entries   []indexEntry
-	CacheTree []cacheTree
+	// CacheTreeRoot holds the first TREE extension record (the repository
+	// root); the staging fast path needs nothing else, so subtree records
+	// are never parsed. Nil when the extension is absent.
+	CacheTreeRoot *cacheTree
+	Entries       []indexEntry
 }
 
 // decodeIndex parses an index file. It fails on unsupported versions and on
@@ -119,16 +122,16 @@ func decodeEntries(data []byte, version, count uint32, idx *gitIndex) ([]byte, e
 
 		var name []byte
 		var err error
-		if version == 4 {
+
+		switch version {
+		case 4:
 			name, data, err = decodeNameV4(data[consumed:], prevName)
-			if err != nil {
-				return nil, err
-			}
-		} else {
+		default:
 			name, data, err = decodeNamePadded(data, consumed, nameLen)
-			if err != nil {
-				return nil, err
-			}
+		}
+
+		if err != nil {
+			return nil, err
 		}
 
 		prevName = name
@@ -257,48 +260,51 @@ func decodeExtensions(data []byte, idx *gitIndex) error {
 	return nil
 }
 
-// decodeTreeExtension parses the cache-tree extension: a sequence of
-// "path NUL entry-count SP subtree-count LF [hash]" records, hash present
-// only for valid (non-negative entry-count) records.
+// decodeTreeExtension parses only the first record of the cache-tree
+// extension — "path NUL entry-count SP subtree-count LF [hash]", hash
+// present only when the entry-count is non-negative. The first record is
+// the repository root, the only one the staging fast path consumes; the
+// remaining subtree records are skipped wholesale (the extension block is
+// length-delimited, so nothing after it depends on parsing them).
 func decodeTreeExtension(data []byte, idx *gitIndex) error {
-	for len(data) > 0 {
-		nul := -1
-		for i := range data {
-			if data[i] == 0 {
-				nul = i
-				break
-			}
-		}
-		if nul < 0 {
-			return errIndexMalformed
-		}
-
-		entry := cacheTree{Path: string(data[:nul])}
-		data = data[nul+1:]
-
-		count, rest, err := readASCIIInt(data, ' ')
-		if err != nil {
-			return err
-		}
-		entry.Entries = count
-
-		_, rest, err = readASCIIInt(rest, '\n')
-		if err != nil {
-			return err
-		}
-		data = rest
-
-		if count >= 0 {
-			if len(data) < 20 {
-				return errIndexMalformed
-			}
-			copy(entry.Hash[:], data[:20])
-			data = data[20:]
-		}
-
-		idx.CacheTree = append(idx.CacheTree, entry)
+	if len(data) == 0 {
+		return nil
 	}
 
+	nul := -1
+	for i := range data {
+		if data[i] == 0 {
+			nul = i
+			break
+		}
+	}
+	if nul < 0 {
+		return errIndexMalformed
+	}
+
+	root := cacheTree{Path: string(data[:nul])}
+	data = data[nul+1:]
+
+	count, rest, err := readASCIIInt(data, ' ')
+	if err != nil {
+		return err
+	}
+	root.Entries = count
+
+	_, rest, err = readASCIIInt(rest, '\n')
+	if err != nil {
+		return err
+	}
+	data = rest
+
+	if count >= 0 {
+		if len(data) < 20 {
+			return errIndexMalformed
+		}
+		copy(root.Hash[:], data[:20])
+	}
+
+	idx.CacheTreeRoot = &root
 	return nil
 }
 

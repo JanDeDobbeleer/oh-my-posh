@@ -70,12 +70,8 @@ func diffStaging(store *objectStore, idx *gitIndex, headHash plumbing.Hash, head
 }
 
 func cacheTreeMatches(idx *gitIndex, headTree plumbing.Hash) bool {
-	if len(idx.CacheTree) == 0 {
-		return false
-	}
-
-	root := idx.CacheTree[0]
-	return root.Path == "" && root.Entries >= 0 && root.Hash == headTree
+	root := idx.CacheTreeRoot
+	return root != nil && root.Path == "" && root.Entries >= 0 && root.Hash == headTree
 }
 
 // pairRenames mirrors git's exact-content rename detection: an Added path

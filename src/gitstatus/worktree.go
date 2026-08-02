@@ -32,21 +32,20 @@ var statInWalk = runtime.GOOS == "windows"
 // Counters are atomics; every index entry has a unique path so each
 // indexEntryRef is only ever touched by one goroutine.
 type scanner struct {
-	entries          map[string]*indexEntryRef
+	indexModTime     time.Time
 	lowerEntries     map[string]*indexEntryRef
 	unmerged         map[string]bool
 	sem              chan struct{}
+	entries          map[string]*indexEntryRef
 	untrackedMode    string
 	repoRoot         string
 	sortedPaths      []string
 	lowerSortedPaths []string
-	indexModTime     time.Time
 	wg               sync.WaitGroup
 	untracked        atomic.Int64
 	modified         atomic.Int64
 	added            atomic.Int64
 	deleted          atomic.Int64
-	rehashes         atomic.Int64
 	caseInsensitive  bool
 }
 
@@ -102,7 +101,11 @@ func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untracked
 		s.statTrackedEntries()
 	}
 
-	s.walk(opts.RepoRoot, "", basePatterns)
+	// with the flat pool active and untracked detection off, the walk has
+	// nothing left to contribute
+	if statInWalk || untrackedMode != "no" {
+		s.walk(opts.RepoRoot, "", basePatterns)
+	}
 	s.wg.Wait()
 
 	result.Working.Untracked += int(s.untracked.Load())
@@ -124,11 +127,12 @@ func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untracked
 // comparing each against one direct lstat. Runs concurrently with the
 // untracked walk; the two share only atomic counters.
 func (s *scanner) statTrackedEntries() {
-	workers := runtime.NumCPU()
-	chunk := (len(s.sortedPaths) + workers - 1) / workers
-	if chunk == 0 {
+	if len(s.sortedPaths) == 0 {
 		return
 	}
+
+	workers := runtime.NumCPU()
+	chunk := (len(s.sortedPaths) + workers - 1) / workers
 
 	for start := 0; start < len(s.sortedPaths); start += chunk {
 		end := min(start+chunk, len(s.sortedPaths))
@@ -198,7 +202,6 @@ func (s *scanner) compareEntry(e *indexEntry, fullPath string, info os.FileInfo)
 		return
 	}
 
-	s.rehashes.Add(1)
 	if !blobMatches(fullPath, e.Hash) {
 		s.modified.Add(1)
 	}
@@ -224,15 +227,15 @@ func (s *scanner) lookup(rel string) (*indexEntryRef, bool) {
 }
 
 func (s *scanner) hasTrackedPrefix(dirSlash string) bool {
-	if i := sort.SearchStrings(s.sortedPaths, dirSlash); i < len(s.sortedPaths) && strings.HasPrefix(s.sortedPaths[i], dirSlash) {
-		return true
+	// on case-insensitive platforms the folded list covers exact hits too
+	if s.caseInsensitive {
+		lowerSlash := strings.ToLower(dirSlash)
+		i := sort.SearchStrings(s.lowerSortedPaths, lowerSlash)
+		return i < len(s.lowerSortedPaths) && strings.HasPrefix(s.lowerSortedPaths[i], lowerSlash)
 	}
-	if !s.caseInsensitive {
-		return false
-	}
-	lowerSlash := strings.ToLower(dirSlash)
-	i := sort.SearchStrings(s.lowerSortedPaths, lowerSlash)
-	return i < len(s.lowerSortedPaths) && strings.HasPrefix(s.lowerSortedPaths[i], lowerSlash)
+
+	i := sort.SearchStrings(s.sortedPaths, dirSlash)
+	return i < len(s.sortedPaths) && strings.HasPrefix(s.sortedPaths[i], dirSlash)
 }
 
 // descend walks a subdirectory, on its own goroutine when the concurrency
@@ -241,12 +244,10 @@ func (s *scanner) descend(dir, name, childRel string, patterns []gitignore.Patte
 	sub := filepath.Join(dir, name)
 	select {
 	case s.sem <- struct{}{}:
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
+		s.wg.Go(func() {
 			defer func() { <-s.sem }()
 			s.walk(sub, childRel, patterns)
-		}()
+		})
 	default:
 		s.walk(sub, childRel, patterns)
 	}

@@ -197,16 +197,19 @@ WinGet configuration enables you to install Oh My Posh and apply configuration i
 Create a configuration file to install and configure Oh My Posh:
 
 ```yaml title="oh-my-posh-setup.yaml"
-$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
 metadata:
   winget:
-    processor: dscv3
-resources:
-  - name: Install Oh My Posh
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    properties:
-      id: JanDeDobbeleer.OhMyPosh
-      source: winget
+    processor:
+      identifier: dscv3
+- type: Microsoft.WinGet/Package
+  name: OhMyPosh
+  properties:
+    id: JanDeDobbeleer.OhMyPosh
+    source: winget
+    useLatest: true
+  metadata:
+    description: Install Oh My Posh
 ```
 
 Apply the configuration:
@@ -220,31 +223,44 @@ winget configure oh-my-posh-setup.yaml
 This example installs Oh My Posh, adds your configuration, and initializes PowerShell:
 
 ```yaml title="oh-my-posh-complete.yaml"
-$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
 metadata:
   winget:
-    processor: dscv3
+    processor:
+      identifier: dscv3
 resources:
-  - name: Install Oh My Posh
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    properties:
-      id: JanDeDobbeleer.OhMyPosh
-      source: winget
+- type: Microsoft.WinGet/Package
+  name: OhMyPosh
+  properties:
+    id: JanDeDobbeleer.OhMyPosh
+    source: winget
+    useLatest: true
+  metadata:
+    description: Install Oh My Posh
 
-  - name: Add Oh My Posh configuration
-    type: OhMyPosh/Config
-    properties:
-      states:
-        - source: ~/mytheme.omp.json
-          format: json
+- type: OhMyPosh/Config
+  name: OhMyPoshConfiguration
+  dependsOn:
+  - OhMyPosh
+  properties:
+    states:
+      - source: ~/mytheme.omp.json
+        format: json
+        version: 3
+  metadata:
+    description: Add Oh My Posh configuration
 
-  - name: Initialize PowerShell
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: pwsh
-          command: oh-my-posh init pwsh --config ~/mytheme.omp.json
-          skipExistingInit: true
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializePowerShell
+  dependsOn:
+  - OhMyPoshConfiguration
+  properties:
+    states:
+      - name: pwsh
+        command: oh-my-posh init pwsh --config ~/mytheme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize PowerShell
 ```
 
 Apply with:
@@ -258,44 +274,68 @@ winget configure oh-my-posh-complete.yaml
 Initialize multiple shells with different configurations:
 
 ```yaml title="oh-my-posh-multi-shell.yaml"
-$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
 metadata:
   winget:
-    processor: dscv3
+    processor:
+      identifier: dscv3
 resources:
-  - name: Install Oh My Posh
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    properties:
-      id: JanDeDobbeleer.OhMyPosh
-      source: winget
+- type: Microsoft.WinGet/Package
+  name: OhMyPosh
+  properties:
+    id: JanDeDobbeleer.OhMyPosh
+    source: winget
+    useLatest: true
+  metadata:
+    description: Install Oh My Posh
 
-  - name: Add work configuration
-    type: OhMyPosh/Config
-    properties:
-      states:
-        - source: ~/work-theme.omp.json
-          format: json
+- type: OhMyPosh/Config
+  name: OhMyPoshWorkConfiguration
+  dependsOn:
+  - OhMyPosh
+  properties:
+    states:
+      - source: ~/work-theme.omp.json
+        format: json
+        version: 3
+  metadata:
+    description: Add Oh My Posh work configuration
 
-  - name: Add personal configuration
-    type: OhMyPosh/Config
-    properties:
-      states:
-        - source: ~/personal-theme.omp.json
-          format: json
+- type: OhMyPosh/Config
+  name: OhMyPoshPersonalConfiguration
+  dependsOn:
+  - OhMyPosh
+  properties:
+    states:
+      - source: ~/personal-theme.omp.json
+        format: json
+        version: 3
+  metadata:
+    description: Add Oh My Posh personal configuration
 
-  - name: Initialize PowerShell with work configuration
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: pwsh
-          command: oh-my-posh init pwsh --config ~/work-theme.omp.json
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializePowerShell
+  dependsOn:
+  - OhMyPoshWorkConfiguration
+  properties:
+    states:
+      - name: pwsh
+        command: oh-my-posh init pwsh --config ~/work-theme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize PowerShell with work configuration
 
-  - name: Initialize Bash with personal configuration
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: bash
-          command: oh-my-posh init bash --config ~/personal-theme.omp.json
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializeBash
+  dependsOn:
+  - OhMyPoshPersonalConfiguration
+  properties:
+    states:
+      - name: bash
+        command: oh-my-posh init bash --config ~/personal-theme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize Bash with personal configuration
 ```
 
 ## Orchestration with Microsoft DSC
@@ -308,21 +348,33 @@ resources that can be used in DSC configuration documents.
 Create a configuration document for Oh My Posh:
 
 ```yaml title="oh-my-posh-dsc.yaml"
-$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  winget:
+    processor:
+      identifier: dscv3
 resources:
-  - name: Add Oh My Posh configuration
-    type: OhMyPosh/Config
-    properties:
-      states:
-        - source: ~/mytheme.omp.json
-          format: json
+- type: OhMyPosh/Config
+  name: OhMyPoshConfiguration
+  properties:
+    states:
+      - source: ~/mytheme.omp.json
+        format: json
+        version: 3
+  metadata:
+    description: Add Oh My Posh configuration
 
-  - name: Initialize PowerShell
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: pwsh
-          command: oh-my-posh init pwsh --config ~/mytheme.omp.json
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializePowerShell
+  dependsOn:
+  - OhMyPoshConfiguration
+  properties:
+    states:
+      - name: pwsh
+        command: oh-my-posh init pwsh --config ~/mytheme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize PowerShell
 ```
 
 Apply the configuration using the `dsc` CLI:
@@ -334,42 +386,67 @@ dsc config set --document oh-my-posh-dsc.yaml
 ### Complete configuration with multiple shells
 
 ```yaml title="oh-my-posh-complete-dsc.yaml"
-$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+metadata:
+  winget:
+    processor:
+      identifier: dscv3
 resources:
-  - name: Add primary configuration
-    type: OhMyPosh/Config
-    properties:
-      states:
-        - source: ~/primary-theme.omp.json
-          format: json
+- type: OhMyPosh/Config
+  name: OhMyPoshPrimaryConfiguration
+  properties:
+    states:
+      - source: ~/primary-theme.omp.json
+        format: json
+        version: 3
+  metadata:
+    description: Add primary configuration
 
-  - name: Add secondary configuration
-    type: OhMyPosh/Config
-    properties:
-      states:
-        - source: ~/secondary-theme.omp.json
-          format: yaml
+- type: OhMyPosh/Config
+  name: OhMyPoshSecondaryConfiguration
+  properties:
+    states:
+      - source: ~/secondary-theme.omp.json
+        format: json
+        version: 3
+  metadata:
+    description: Add secondary configuration
 
-  - name: Initialize PowerShell
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: pwsh
-          command: oh-my-posh init pwsh --config ~/primary-theme.omp.json
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializePowerShell
+  dependsOn:
+  - OhMyPoshPrimaryConfiguration
+  properties:
+    states:
+      - name: pwsh
+        command: oh-my-posh init pwsh --config ~/primary-theme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize PowerShell
 
-  - name: Initialize Bash
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: bash
-          command: oh-my-posh init bash --config ~/primary-theme.omp.json
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializeBash
+  dependsOn:
+  - OhMyPoshPrimaryConfiguration
+  properties:
+    states:
+      - name: bash
+        command: oh-my-posh init bash --config ~/primary-theme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize Bash
 
-  - name: Initialize Zsh
-    type: OhMyPosh/Shell
-    properties:
-      states:
-        - name: zsh
-          command: oh-my-posh init zsh --config ~/secondary-theme.omp.json
+- type: OhMyPosh/Shell
+  name: OhMyPoshInitializeZsh
+  dependsOn:
+  - OhMyPoshSecondaryConfiguration
+  properties:
+    states:
+      - name: zsh
+        command: oh-my-posh init zsh --config ~/secondary-theme.omp.json
+        skipExistingInit: true
+  metadata:
+    description: Initialize Zsh
 ```
 
 ### Resource Types

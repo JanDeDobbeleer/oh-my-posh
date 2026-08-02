@@ -5478,7 +5478,14 @@
       "default": false
     },
     "pwd": {
-      "type": "string",
+      "anyOf": [
+        {
+          "enum": ["osc99", "osc7", "osc51"]
+        },
+        {
+          "type": "string"
+        }
+      ],
       "title": "Enable OSC99/7/51",
       "description": "Report the current working directory to the terminal using OSC 99, 7, or 51 sequences.",
       "default": ""

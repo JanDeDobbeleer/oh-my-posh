@@ -2036,6 +2036,12 @@
                     "description": "Display the local changes or not.",
                     "default": false
                   },
+                  "native_status": {
+                    "type": "boolean",
+                    "title": "Use the Native Status Engine",
+                    "description": "Fetch the status information using the built-in engine instead of the git CLI (experimental, falls back to git automatically).",
+                    "default": false
+                  },
                   "fetch_push_status": {
                     "type": "boolean",
                     "title": "Display Push Status",

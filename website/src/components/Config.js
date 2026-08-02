@@ -310,7 +310,6 @@ function EditableConfig({ data, staticSvg, staticSvgLight }) {
             </>
           )
         )}
-        )}
       </div>
       <ConfigEditor
         label="Config"

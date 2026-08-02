@@ -1,42 +1,32 @@
 package gitstatus
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
-	"io"
 	"strconv"
 	"strings"
 
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 )
 
 // commitInfo is the subset of a commit object the status engine needs.
-// Parsing it directly from the encoded object keeps go-git's plumbing/object
-// package — and its openpgp/diff dependency tree — out of the binary.
 type commitInfo struct {
 	Tree          plumbing.Hash
 	Parents       []plumbing.Hash
 	CommitterWhen int64 // unix seconds
 }
 
-func readCommit(store storer.EncodedObjectStorer, h plumbing.Hash) (*commitInfo, error) {
-	obj, err := store.EncodedObject(plumbing.CommitObject, h)
+func readCommit(store *objectStore, h plumbing.Hash) (*commitInfo, error) {
+	kind, data, err := store.object(h)
 	if err != nil {
 		return nil, err
 	}
-
-	r, err := obj.Reader()
-	if err != nil {
-		return nil, err
+	if kind != kindCommit {
+		return nil, fmt.Errorf("gitstatus: object %s is a %s, expected a commit", h, kind)
 	}
-	defer r.Close()
 
 	info := &commitInfo{}
-	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		line := scanner.Text()
+	for line := range strings.SplitSeq(string(data), "\n") {
 		if line == "" {
 			break // end of headers, message follows
 		}
@@ -58,10 +48,6 @@ func readCommit(store storer.EncodedObjectStorer, h plumbing.Hash) (*commitInfo,
 		case "committer":
 			info.CommitterWhen = identTimestamp(value)
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	if info.Tree.IsZero() {
@@ -92,22 +78,14 @@ const treeModeDir = "40000"
 
 // walkTree streams every blob in the tree rooted at h to visit, with its
 // full slash-separated path. Non-blob, non-tree entries (gitlinks) are
-// skipped, matching the previous TreeWalker-based behavior.
-func walkTree(store storer.EncodedObjectStorer, h plumbing.Hash, prefix string, visit func(path string, blob plumbing.Hash)) error {
-	obj, err := store.EncodedObject(plumbing.TreeObject, h)
+// skipped.
+func walkTree(store *objectStore, h plumbing.Hash, prefix string, visit func(path string, blob plumbing.Hash)) error {
+	kind, data, err := store.object(h)
 	if err != nil {
 		return err
 	}
-
-	r, err := obj.Reader()
-	if err != nil {
-		return err
-	}
-
-	data, err := io.ReadAll(r)
-	r.Close()
-	if err != nil {
-		return err
+	if kind != kindTree {
+		return fmt.Errorf("gitstatus: object %s is a %s, expected a tree", h, kind)
 	}
 
 	// tree format: "<octal mode> <name>\x00" followed by a raw 20-byte hash

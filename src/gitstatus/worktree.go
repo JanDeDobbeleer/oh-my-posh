@@ -12,15 +12,21 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/filemode"
 	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
-	"github.com/go-git/go-git/v5/plumbing/format/index"
 )
 
 type indexEntryRef struct {
-	entry *index.Entry
+	entry *indexEntry
 	seen  bool
 }
+
+// statInWalk selects the tracked-file stat strategy. On Windows, directory
+// enumeration returns size+mtime for free, so entries are compared during
+// the walk. Elsewhere ReadDir yields names only and every DirEntry.Info()
+// is an lstat syscall — a flat worker pool over the index entries (git's
+// preload_index equivalent) parallelizes those far better than the
+// per-directory walk can.
+var statInWalk = runtime.GOOS == "windows"
 
 // scanner holds the shared, read-mostly state of one parallel worktree walk.
 // Counters are atomics; every index entry has a unique path so each
@@ -31,6 +37,7 @@ type scanner struct {
 	unmerged         map[string]bool
 	sem              chan struct{}
 	untrackedMode    string
+	repoRoot         string
 	sortedPaths      []string
 	lowerSortedPaths []string
 	indexModTime     time.Time
@@ -38,20 +45,20 @@ type scanner struct {
 	untracked        atomic.Int64
 	modified         atomic.Int64
 	added            atomic.Int64
+	deleted          atomic.Int64
 	rehashes         atomic.Int64
 	caseInsensitive  bool
 }
 
-// scanWorktree walks the worktree in parallel (one goroutine per tracked
-// directory, bounded by NumCPU), comparing every tracked entry against the
-// on-disk state and collecting untracked files/directories, then fills in
-// result.Working accordingly.
-func scanWorktree(opts Options, idx *index.Index, indexModTime time.Time, untrackedMode string, basePatterns []gitignore.Pattern, result *Result) {
+// scanWorktree compares every tracked entry against the on-disk state and
+// collects untracked files/directories, filling in result.Working.
+func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untrackedMode string, basePatterns []gitignore.Pattern, result *Result) {
 	s := &scanner{
 		entries:       make(map[string]*indexEntryRef, len(idx.Entries)),
 		unmerged:      map[string]bool{},
 		sem:           make(chan struct{}, runtime.NumCPU()),
 		untrackedMode: untrackedMode,
+		repoRoot:      opts.RepoRoot,
 		indexModTime:  indexModTime,
 		// Case-insensitive filesystems can report a tracked path back with
 		// different casing than the index stores, which would otherwise look
@@ -61,9 +68,10 @@ func scanWorktree(opts Options, idx *index.Index, indexModTime time.Time, untrac
 
 	unmergedStages := map[string]int{}
 
-	for _, e := range idx.Entries {
-		if e.Stage != mergedStage {
-			unmergedStages[e.Name] |= 1 << uint(e.Stage)
+	for i := range idx.Entries {
+		e := &idx.Entries[i]
+		if e.Stage != 0 {
+			unmergedStages[e.Name] |= 1 << e.Stage
 			continue
 		}
 		s.entries[e.Name] = &indexEntryRef{entry: e}
@@ -90,19 +98,118 @@ func scanWorktree(opts Options, idx *index.Index, indexModTime time.Time, untrac
 		addCode(&result.Working, working)
 	}
 
+	if !statInWalk {
+		s.statTrackedEntries()
+	}
+
 	s.walk(opts.RepoRoot, "", basePatterns)
 	s.wg.Wait()
 
 	result.Working.Untracked += int(s.untracked.Load())
 	result.Working.Modified += int(s.modified.Load())
 	result.Working.Added += int(s.added.Load())
+	result.Working.Deleted += int(s.deleted.Load())
 
-	for _, p := range s.sortedPaths {
-		ref := s.entries[p]
-		if !ref.seen && !ref.entry.SkipWorktree {
-			result.Working.Deleted++
+	if statInWalk {
+		for _, p := range s.sortedPaths {
+			ref := s.entries[p]
+			if !ref.seen && !ref.entry.SkipWorktree {
+				result.Working.Deleted++
+			}
 		}
 	}
+}
+
+// statTrackedEntries fans a worker pool out over the tracked entries,
+// comparing each against one direct lstat. Runs concurrently with the
+// untracked walk; the two share only atomic counters.
+func (s *scanner) statTrackedEntries() {
+	workers := runtime.NumCPU()
+	chunk := (len(s.sortedPaths) + workers - 1) / workers
+	if chunk == 0 {
+		return
+	}
+
+	for start := 0; start < len(s.sortedPaths); start += chunk {
+		end := min(start+chunk, len(s.sortedPaths))
+
+		s.wg.Add(1)
+		go func(paths []string) {
+			defer s.wg.Done()
+			for _, p := range paths {
+				s.statEntry(s.entries[p].entry)
+			}
+		}(s.sortedPaths[start:end])
+	}
+}
+
+func (s *scanner) statEntry(e *indexEntry) {
+	if e.SkipWorktree {
+		return
+	}
+
+	fullPath := filepath.Join(s.repoRoot, filepath.FromSlash(e.Name))
+
+	info, err := os.Lstat(fullPath)
+	if err != nil {
+		s.deleted.Add(1)
+		return
+	}
+
+	// tracked file replaced by a directory: porcelain reports the file as
+	// deleted and hides the directory's contents
+	if info.IsDir() && e.Mode != modeSymlink {
+		s.deleted.Add(1)
+		return
+	}
+
+	s.compareEntry(e, fullPath, info)
+}
+
+// compareEntry applies the stat-cache comparison shared by both strategies:
+// intent-to-add, symlinks, size, mtime, and the racy-index rehash.
+func (s *scanner) compareEntry(e *indexEntry, fullPath string, info os.FileInfo) {
+	if e.IntentToAdd {
+		s.added.Add(1)
+		return
+	}
+
+	if e.Mode == modeSymlink {
+		if !symlinkMatches(fullPath, e.Hash) {
+			s.modified.Add(1)
+		}
+		return
+	}
+
+	if uint32(info.Size()) != e.Size {
+		s.modified.Add(1)
+		return
+	}
+
+	mt := info.ModTime()
+	sec, nsec := mt.Unix(), mt.Nanosecond()
+	clean := sec == int64(e.MtimeSec) && (uint32(nsec) == e.MtimeNsec || e.MtimeNsec == 0)
+	// Racy check: an index entry recorded at or after the index file's own
+	// mtime can't be trusted from stat comparison alone (the file could
+	// have changed again within the same timestamp tick), so force a
+	// rehash even though the stat matched.
+	racy := !entryTimeBefore(e, s.indexModTime)
+	if clean && !racy {
+		return
+	}
+
+	s.rehashes.Add(1)
+	if !blobMatches(fullPath, e.Hash) {
+		s.modified.Add(1)
+	}
+}
+
+func entryTimeBefore(e *indexEntry, t time.Time) bool {
+	sec := int64(e.MtimeSec)
+	if sec != t.Unix() {
+		return sec < t.Unix()
+	}
+	return int64(e.MtimeNsec) < int64(t.Nanosecond())
 }
 
 func (s *scanner) lookup(rel string) (*indexEntryRef, bool) {
@@ -178,13 +285,9 @@ func (s *scanner) walk(dir, rel string, patterns []gitignore.Pattern) {
 		// which case it must still be treated as the tracked file it
 		// is, not descended into.
 		if ref, tracked := s.lookup(childRel); tracked {
-			if de.IsDir() && ref.entry.Mode != filemode.Symlink {
-				// tracked file replaced by a directory: porcelain reports
-				// the file as deleted (via the unseen pass) and hides the
-				// directory's contents
-				continue
+			if statInWalk {
+				s.walkCompare(dir, name, ref, de)
 			}
-			compareTracked(dir, name, ref, de, s.indexModTime, &s.modified, &s.added, &s.rehashes)
 			continue
 		}
 
@@ -205,6 +308,34 @@ func (s *scanner) walk(dir, rel string, patterns []gitignore.Pattern) {
 		}
 		s.untracked.Add(1)
 	}
+}
+
+// walkCompare resolves a tracked entry during the walk (Windows strategy).
+// Every index entry has a unique path, so exactly one goroutine ever visits
+// a given ref; writing ref.seen here needs no synchronization, only the
+// wg.Wait() happens-before edge before it's read back on the caller side.
+func (s *scanner) walkCompare(dir, name string, ref *indexEntryRef, de os.DirEntry) {
+	ref.seen = true
+	e := ref.entry
+
+	if e.SkipWorktree {
+		return
+	}
+
+	if de.IsDir() && e.Mode != modeSymlink {
+		// tracked file replaced by a directory: porcelain reports the file
+		// as deleted (via the unseen pass) and hides the directory's
+		// contents
+		ref.seen = false
+		return
+	}
+
+	info, err := de.Info()
+	if err != nil {
+		return
+	}
+
+	s.compareEntry(e, filepath.Join(dir, name), info)
 }
 
 // walkDir handles a directory entry that holds no tracked file itself:
@@ -233,59 +364,6 @@ func (s *scanner) walkDir(dir, name, childRel string, patterns []gitignore.Patte
 	// at least one non-ignored file.
 	if dirHasVisibleFile(filepath.Join(dir, name), childRel, match) {
 		s.untracked.Add(1)
-	}
-}
-
-// compareTracked resolves the working-tree state of a single tracked entry.
-// Every index entry has a unique path, so exactly one goroutine ever visits
-// a given ref; writing ref.seen here needs no synchronization, only the
-// wg.Wait() happens-before edge before it's read back on the caller side.
-func compareTracked(dir, name string, ref *indexEntryRef, de os.DirEntry, indexModTime time.Time, modified, added, rehashes *atomic.Int64) {
-	ref.seen = true
-	e := ref.entry
-
-	if e.SkipWorktree {
-		return
-	}
-
-	if e.IntentToAdd {
-		added.Add(1)
-		return
-	}
-
-	fullPath := filepath.Join(dir, name)
-
-	if e.Mode == filemode.Symlink {
-		if !symlinkMatches(fullPath, e.Hash) {
-			modified.Add(1)
-		}
-		return
-	}
-
-	info, err := de.Info()
-	if err != nil {
-		return
-	}
-
-	if uint32(info.Size()) != e.Size {
-		modified.Add(1)
-		return
-	}
-
-	mt := info.ModTime()
-	clean := mt.Unix() == e.ModifiedAt.Unix() && (mt.Nanosecond() == e.ModifiedAt.Nanosecond() || e.ModifiedAt.Nanosecond() == 0)
-	// Racy check: an index entry recorded at or after the index file's own
-	// mtime can't be trusted from stat comparison alone (the file could
-	// have changed again within the same timestamp tick), so force a
-	// rehash even though the stat matched.
-	racy := !e.ModifiedAt.Before(indexModTime)
-	if clean && !racy {
-		return
-	}
-
-	rehashes.Add(1)
-	if !blobMatches(fullPath, e.Hash) {
-		modified.Add(1)
 	}
 }
 

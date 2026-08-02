@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 )
@@ -23,7 +22,7 @@ const (
 // checkout it also resolves the configured upstream and, when one exists,
 // the ahead/behind counts. The returned bool is false only for an unborn
 // branch (HEAD points at a branch ref that has never been committed to).
-func resolveBranch(opts Options, cfg *ini.File, store storer.EncodedObjectStorer, result *Result) (plumbing.Hash, bool, error) {
+func resolveBranch(opts Options, cfg *ini.File, store *objectStore, result *Result) (plumbing.Hash, bool, error) {
 	data, err := os.ReadFile(filepath.Join(opts.WorktreeGitDir, "HEAD"))
 	if err != nil {
 		return plumbing.ZeroHash, false, err
@@ -72,7 +71,7 @@ func resolveDetached(head string, result *Result) (plumbing.Hash, bool, error) {
 
 // resolveUpstream fills in Upstream/UpstreamGone/Ahead/Behind from the
 // branch's remote-tracking configuration, if any.
-func resolveUpstream(opts Options, cfg *ini.File, store storer.EncodedObjectStorer, branchName string, headHash plumbing.Hash, result *Result) error {
+func resolveUpstream(opts Options, cfg *ini.File, store *objectStore, branchName string, headHash plumbing.Hash, result *Result) error {
 	if cfg == nil {
 		return nil
 	}

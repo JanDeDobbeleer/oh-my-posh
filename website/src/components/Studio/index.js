@@ -23,6 +23,11 @@ import {
   trySessionStorageRemove,
   trySessionStorageSet,
 } from '../ConfigEditor/studioHandoff';
+import {
+  createConfiguratorHandoff,
+  isConfiguratorReadyMessage,
+  sendStudioConfig,
+} from './configuratorHandoff.mjs';
 import { exportSvgAsPng } from './exportPng';
 import { CONFIG_FORMAT, CONFIG_FORMATS, STARTERS } from './config';
 import styles from './styles.module.css';
@@ -78,6 +83,14 @@ function DownloadPngButton({ svg, disabled }) {
   );
 }
 
+function OpenInConfiguratorButton({ onClick }) {
+  return (
+    <button type="button" className={styles.action} onClick={onClick}>
+      Open in Configurator
+    </button>
+  );
+}
+
 function Studio() {
   const [format, setFormat] = useState(CONFIG_FORMAT);
   const [configText, setConfigText] = useState(STARTERS[CONFIG_FORMAT]);
@@ -88,6 +101,7 @@ function Studio() {
   // Set when a format switch was refused because the config in the editor does not parse; cleared
   // by the next switch that succeeds. See handleFormatChange.
   const [formatNotice, setFormatNotice] = useState(null);
+  const [configuratorNotice, setConfiguratorNotice] = useState(null);
   // The current syntax error, if any - { message, line, column, endColumn } from
   // errorPosition.js's getSyntaxError, or null. Unlike Config.js's segment editor, the studio has
   // no client-side pre-parse step of its own (its render path goes straight to the wasm module,
@@ -111,6 +125,7 @@ function Studio() {
   const { colorMode } = useColorMode();
 
   const debounceRef = useRef(null);
+  const configuratorHandoffRef = useRef(null);
   // runRender is a useCallback with no deps, so reading `format`/`colorMode` from the closure
   // would pin them to whatever was selected on first render. The refs are what the render call
   // actually reads.
@@ -140,6 +155,26 @@ function Studio() {
   useEffect(() => {
     ensureLoaded();
   }, [ensureLoaded]);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      const pending = configuratorHandoffRef.current;
+
+      if (!isConfiguratorReadyMessage(event, pending)) {
+        return;
+      }
+
+      configuratorHandoffRef.current = null;
+      sendStudioConfig(pending);
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      configuratorHandoffRef.current = null;
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   // Resumes the reader's own session (see studioHandoff.js's SESSION_KEY doc comment), applies a
   // pending theme load if "Open in Studio" queued one (LOAD_KEY, replacing rather than resuming),
@@ -333,6 +368,47 @@ function Studio() {
     [runRender],
   );
 
+  const handleOpenInConfigurator = useCallback(() => {
+    try {
+      parseConfig(format, configText);
+    } catch {
+      setConfiguratorNotice('Fix the configuration errors before opening it in Configurator.');
+      return;
+    }
+
+    let handoff;
+
+    try {
+      handoff = createConfiguratorHandoff(format, configText);
+    } catch {
+      setConfiguratorNotice(
+        'Could not prepare a secure handoff to Configurator. Try again in a supported browser.',
+      );
+      return;
+    }
+
+    let popupWindow;
+
+    try {
+      popupWindow = window.open(handoff.url, '_blank');
+    } catch {
+      popupWindow = null;
+    }
+
+    if (!popupWindow) {
+      setConfiguratorNotice('Could not open Configurator. Allow popups for this site and try again.');
+      return;
+    }
+
+    configuratorHandoffRef.current = {
+      nonce: handoff.nonce,
+      format,
+      text: configText,
+      popupWindow,
+    };
+    setConfiguratorNotice(null);
+  }, [configText, format]);
+
   const previewHint = wasmStatus === 'ready' && !svg && !error ? 'Nothing to preview yet.' : null;
   // Prefer the client-side re-parse's real message (e.g. "Expected ',' or '}' after property
   // value in JSON at position 13 (line 3 column 3)") over the wasm module's generic sentinel
@@ -373,6 +449,7 @@ function Studio() {
 
       {appendNotice && <p className={styles.notice}>{appendNotice}</p>}
       {formatNotice && <p className={styles.notice}>{formatNotice}</p>}
+      {configuratorNotice && <p className={styles.notice}>{configuratorNotice}</p>}
 
       <ConfigEditor
         label="Config"
@@ -385,6 +462,7 @@ function Studio() {
         actions={
           <>
             <DownloadPngButton svg={svg} disabled={!svg} />
+            <OpenInConfiguratorButton onClick={handleOpenInConfigurator} />
             <ErrorIndicator message={displayError} />
           </>
         }

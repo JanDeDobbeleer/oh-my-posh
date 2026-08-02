@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -41,6 +42,10 @@ func TestLoadParity(t *testing.T) {
 		{Name: "index version 4", Setup: setupIndexV4},
 		{Name: "fully packed objects", Setup: setupPacked},
 		{Name: "packed ahead and behind", Setup: setupPackedAheadBehind},
+		{Name: "staged delete only", Setup: setupStagedDelete},
+		{Name: "staged mode change", Setup: setupStagedModeChange},
+		{Name: "conflict in fresh subdirectory", Setup: setupConflictInSubdir},
+		{Name: "working mode change", Setup: setupWorkingModeChange},
 	}
 
 	// Every case runs under both stat strategies: the in-walk comparison
@@ -67,6 +72,58 @@ func TestLoadParity(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestLoadFallsBackOnInexactRename covers the C4 contract decision: a
+// staged rename whose content also changed leaves an unpaired add and an
+// unpaired delete, which git may pair through similarity detection. The
+// engine cannot, so it must error into the exec fallback instead of
+// reporting A+D where git reports R.
+func TestLoadFallsBackOnInexactRename(t *testing.T) {
+	skipIfNoGit(t)
+	hermeticHome(t)
+
+	dir := t.TempDir()
+	initGitRepo(t, dir)
+
+	writeFile(t, dir, "old-name.txt", "a body large enough for gits similarity detection to pair the rename\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	runGit(t, dir, "mv", "old-name.txt", "new-name.txt")
+	writeFile(t, dir, "new-name.txt", "a body large enough for gits similarity detection to pair the rename, edited\n")
+	runGit(t, dir, "add", "new-name.txt")
+
+	_, err := Load(Options{
+		WorktreeGitDir: gitPath(t, dir, "--git-dir"),
+		CommonGitDir:   gitPath(t, dir, "--git-common-dir"),
+		RepoRoot:       gitPath(t, dir, "--show-toplevel"),
+	})
+	assert.Error(t, err)
+}
+
+// TestLoadParityTypechangeSymlink replaces a tracked file with a symlink:
+// porcelain reports T, which both engines must count as nothing. Skipped on
+// Windows, where creating symlinks requires elevated privileges.
+func TestLoadParityTypechangeSymlink(t *testing.T) {
+	if runtime.GOOS == goosWindows {
+		t.Skip("symlink creation requires privileges on Windows")
+	}
+	skipIfNoGit(t)
+	hermeticHome(t)
+
+	dir := t.TempDir()
+	initGitRepo(t, dir)
+
+	writeFile(t, dir, "target.txt", "target\n")
+	writeFile(t, dir, "swap.txt", "file\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	require.NoError(t, os.Remove(filepath.Join(dir, "swap.txt")))
+	require.NoError(t, os.Symlink("target.txt", filepath.Join(dir, "swap.txt")))
+
+	assertParity(t, dir, "")
 }
 
 // TestLoadParityLinkedWorktree exercises a `git worktree add` checkout,
@@ -129,7 +186,6 @@ func setupDirtyMix(t *testing.T, dir string) {
 	writeFile(t, dir, "same-size.txt", "hello\n")
 	writeFile(t, dir, "diff-size.txt", "short\n")
 	writeFile(t, dir, "to-delete.txt", "bye\n")
-	writeFile(t, dir, "staged-delete.txt", "gone\n")
 	writeFile(t, dir, "staged-modify.txt", "orig\n")
 	writeFile(t, dir, "rename-src.txt", "rename me please, needs enough content to be detected as a rename by gits similarity heuristic\n")
 	runGit(t, dir, "add", ".")
@@ -142,11 +198,10 @@ func setupDirtyMix(t *testing.T, dir string) {
 	// unstaged delete
 	require.NoError(t, os.Remove(filepath.Join(dir, "to-delete.txt")))
 
-	// staged add
+	// staged add; a staged delete alongside would trip the rename-ambiguity
+	// fallback, so pure deletion coverage lives in its own scenario
 	writeFile(t, dir, "staged-add.txt", "new\n")
 	runGit(t, dir, "add", "staged-add.txt")
-	// staged delete
-	runGit(t, dir, "rm", "-q", "staged-delete.txt")
 	// staged modify
 	writeFile(t, dir, "staged-modify.txt", "changed\n")
 	runGit(t, dir, "add", "staged-modify.txt")
@@ -281,6 +336,60 @@ func setupPackedAheadBehind(t *testing.T, dir string) {
 	setupAheadBehind(t, dir)
 	runGit(t, dir, "repack", "-a", "-d", "-q")
 	runGit(t, dir, "prune-packed")
+}
+
+// setupStagedDelete stages a deletion with no staged addition alongside, so
+// the exact-rename pairing has nothing to pair and no fallback triggers.
+func setupStagedDelete(t *testing.T, dir string) {
+	writeFile(t, dir, "keep.txt", "keep\\n")
+	writeFile(t, dir, "doomed.txt", "doomed\\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	runGit(t, dir, "rm", "-q", "doomed.txt")
+}
+
+// setupStagedModeChange stages an executable-bit flip via update-index,
+// which works on every platform because no filesystem mode is involved.
+func setupStagedModeChange(t *testing.T, dir string) {
+	writeFile(t, dir, "script.sh", "#!/bin/sh\\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	runGit(t, dir, "update-index", "--chmod=+x", "script.sh")
+}
+
+// setupConflictInSubdir produces a both-added conflict on a path whose
+// directory holds no other tracked file, so the untracked-directory
+// collapsing must still recognize it as tracked.
+func setupConflictInSubdir(t *testing.T, dir string) {
+	writeFile(t, dir, "base.txt", "base\\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	runGit(t, dir, "checkout", "-q", "-b", "feature")
+	writeFile(t, dir, "sub/only.txt", "from feature\\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "feature adds sub")
+
+	runGit(t, dir, "checkout", "-q", "main")
+	writeFile(t, dir, "sub/only.txt", "from main\\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "main adds sub")
+
+	runGitAllowFail(t, dir, "merge", "-q", "feature")
+}
+
+// setupWorkingModeChange flips the on-disk executable bit of a tracked
+// file. Meaningful only where the filesystem records the bit; on Windows
+// core.filemode=false makes it a no-op clean scenario, which is itself
+// worth asserting.
+func setupWorkingModeChange(t *testing.T, dir string) {
+	writeFile(t, dir, "script.sh", "#!/bin/sh\\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	require.NoError(t, os.Chmod(filepath.Join(dir, "script.sh"), 0o755))
 }
 
 func setupDetached(t *testing.T, dir string) {

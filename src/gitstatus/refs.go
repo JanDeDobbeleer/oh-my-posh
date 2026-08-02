@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/go-git/go-git/v5/plumbing"
@@ -40,7 +41,11 @@ func resolveBranch(opts Options, cfg *ini.File, store *objectStore, result *Resu
 
 	result.Ref = branchName
 
-	hash, ok := resolveRef(opts.CommonGitDir, "refs/heads/"+branchName)
+	hash, ok, err := resolveRef(opts.CommonGitDir, "refs/heads/"+branchName)
+	if err != nil {
+		return plumbing.ZeroHash, false, err
+	}
+
 	if !ok {
 		// Unborn branch: no commits yet. Matches porcelain's
 		// `# branch.oid (initial)`. Upstream/ahead-behind are left at their
@@ -105,7 +110,11 @@ func resolveUpstream(opts Options, cfg *ini.File, store *objectStore, branchName
 		upstreamRefPath = "refs/remotes/" + remote + "/" + mergeBranch
 	}
 
-	upstreamHash, ok := resolveRef(opts.CommonGitDir, upstreamRefPath)
+	upstreamHash, ok, err := resolveRef(opts.CommonGitDir, upstreamRefPath)
+	if err != nil {
+		return err
+	}
+
 	if !ok {
 		result.UpstreamGone = true
 		return nil
@@ -124,15 +133,21 @@ func resolveUpstream(opts Options, cfg *ini.File, store *objectStore, branchName
 
 // resolveRef resolves a ref path (e.g. "refs/heads/main") to its commit
 // hash, checking the loose ref file first and falling back to packed-refs.
-func resolveRef(commonGitDir, refPath string) (plumbing.Hash, bool) {
+// A loose ref file that exists but does not hold a plain hash (a symref,
+// or corruption) is an error: guessing here would silently misreport the
+// branch as unborn, so the caller must fall back to exec git instead.
+func resolveRef(commonGitDir, refPath string) (plumbing.Hash, bool, error) {
 	data, err := os.ReadFile(filepath.Join(commonGitDir, filepath.FromSlash(refPath)))
 	if err == nil {
-		if hash, ok := parseHash(strings.TrimSpace(string(data))); ok {
-			return hash, true
+		hash, ok := parseHash(strings.TrimSpace(string(data)))
+		if !ok {
+			return plumbing.ZeroHash, false, fmt.Errorf("gitstatus: unsupported loose ref content in %s", refPath)
 		}
+		return hash, true, nil
 	}
 
-	return scanPackedRefs(commonGitDir, refPath)
+	hash, found := scanPackedRefs(commonGitDir, refPath)
+	return hash, found, nil
 }
 
 // scanPackedRefs looks up refPath in CommonGitDir/packed-refs. Lines are
@@ -192,4 +207,47 @@ func loadRepoConfig(commonGitDir string) (*ini.File, error) {
 	}
 
 	return ini.Load(string(data))
+}
+
+// checkRepoFormat rejects repository formats the engine cannot read
+// correctly, deterministically instead of by parse luck: SHA-256 object
+// format, reftables ref storage, and future format versions.
+func checkRepoFormat(cfg *ini.File) error {
+	if cfg == nil {
+		return nil
+	}
+
+	core := cfg.Section("core")
+	if v := core.Key("repositoryformatversion").String(); v != "" && v != "0" && v != "1" {
+		return fmt.Errorf("gitstatus: unsupported repositoryformatversion %s", v)
+	}
+
+	extensions := cfg.Section("extensions")
+
+	if v := extensions.Key("objectformat").String(); v != "" && !strings.EqualFold(v, "sha1") {
+		return fmt.Errorf("gitstatus: unsupported object format %s", v)
+	}
+
+	if v := extensions.Key("refstorage").String(); v != "" && !strings.EqualFold(v, "files") {
+		return fmt.Errorf("gitstatus: unsupported ref storage %s", v)
+	}
+
+	return nil
+}
+
+// trustExecutableBit mirrors git's core.filemode: whether the filesystem
+// records the executable bit reliably. Platform default, overridden by the
+// repo config (git init probes the filesystem and records the verdict).
+func trustExecutableBit(cfg *ini.File) bool {
+	trust := runtime.GOOS != goosWindows
+	if cfg == nil {
+		return trust
+	}
+
+	v := cfg.Section("core").Key("filemode").String()
+	if v == "" {
+		return trust
+	}
+
+	return strings.EqualFold(v, "true")
 }

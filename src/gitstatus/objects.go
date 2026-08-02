@@ -78,9 +78,9 @@ func identTimestamp(ident string) int64 {
 const treeModeDir = "40000"
 
 // walkTree streams every blob in the tree rooted at h to visit, with its
-// full slash-separated path. Non-blob, non-tree entries (gitlinks) are
-// skipped.
-func walkTree(store *objectStore, h plumbing.Hash, prefix string, visit func(path string, blob plumbing.Hash)) error {
+// full slash-separated path and recorded mode. Non-blob, non-tree entries
+// (gitlinks) are skipped.
+func walkTree(store *objectStore, h plumbing.Hash, prefix string, visit func(path string, blob plumbing.Hash, mode uint32)) error {
 	kind, data, err := store.object(h)
 	if err != nil {
 		return err
@@ -117,7 +117,11 @@ func walkTree(store *objectStore, h plumbing.Hash, prefix string, visit func(pat
 			}
 		case "160000": // gitlink (submodule): not a blob, skip
 		default:
-			visit(path, entryHash)
+			parsed, err := strconv.ParseUint(mode, 8, 32)
+			if err != nil {
+				return fmt.Errorf("gitstatus: malformed tree entry mode in %s: %w", h, err)
+			}
+			visit(path, entryHash, uint32(parsed))
 		}
 	}
 

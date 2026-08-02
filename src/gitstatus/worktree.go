@@ -2,6 +2,7 @@ package gitstatus
 
 import (
 	"bytes"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -20,13 +21,15 @@ type indexEntryRef struct {
 	seen  bool
 }
 
+const goosWindows = "windows"
+
 // statInWalk selects the tracked-file stat strategy. On Windows, directory
 // enumeration returns size+mtime for free, so entries are compared during
 // the walk. Elsewhere ReadDir yields names only and every DirEntry.Info()
 // is an lstat syscall — a flat worker pool over the index entries (git's
 // preload_index equivalent) parallelizes those far better than the
 // per-directory walk can.
-var statInWalk = runtime.GOOS == "windows"
+var statInWalk = runtime.GOOS == goosWindows
 
 // scanner holds the shared, read-mostly state of one parallel worktree walk.
 // Counters are atomics; every index entry has a unique path so each
@@ -41,17 +44,19 @@ type scanner struct {
 	repoRoot         string
 	sortedPaths      []string
 	lowerSortedPaths []string
+	unmergedSorted   []string
 	wg               sync.WaitGroup
 	untracked        atomic.Int64
 	modified         atomic.Int64
 	added            atomic.Int64
 	deleted          atomic.Int64
 	caseInsensitive  bool
+	fileMode         bool
 }
 
 // scanWorktree compares every tracked entry against the on-disk state and
 // collects untracked files/directories, filling in result.Working.
-func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untrackedMode string, basePatterns []gitignore.Pattern, result *Result) {
+func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untrackedMode string, fileMode bool, basePatterns []gitignore.Pattern, result *Result) {
 	s := &scanner{
 		entries:       make(map[string]*indexEntryRef, len(idx.Entries)),
 		unmerged:      map[string]bool{},
@@ -59,10 +64,11 @@ func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untracked
 		untrackedMode: untrackedMode,
 		repoRoot:      opts.RepoRoot,
 		indexModTime:  indexModTime,
+		fileMode:      fileMode,
 		// Case-insensitive filesystems can report a tracked path back with
 		// different casing than the index stores, which would otherwise look
 		// like an untracked file paired with a deleted one.
-		caseInsensitive: runtime.GOOS == "windows" || runtime.GOOS == "darwin",
+		caseInsensitive: runtime.GOOS == goosWindows || runtime.GOOS == "darwin",
 	}
 
 	unmergedStages := map[string]int{}
@@ -92,10 +98,12 @@ func scanWorktree(opts Options, idx *gitIndex, indexModTime time.Time, untracked
 
 	for name, stages := range unmergedStages {
 		s.unmerged[name] = true
+		s.unmergedSorted = append(s.unmergedSorted, name)
 		staging, working := conflictXY(stages)
 		addCode(&result.Staging, staging)
 		addCode(&result.Working, working)
 	}
+	sort.Strings(s.unmergedSorted)
 
 	if !statInWalk {
 		s.statTrackedEntries()
@@ -171,10 +179,19 @@ func (s *scanner) statEntry(e *indexEntry) {
 }
 
 // compareEntry applies the stat-cache comparison shared by both strategies:
-// intent-to-add, symlinks, size, mtime, and the racy-index rehash.
+// intent-to-add, symlinks, type changes, the executable bit, size, mtime,
+// and the racy-index rehash.
 func (s *scanner) compareEntry(e *indexEntry, fullPath string, info os.FileInfo) {
 	if e.IntentToAdd {
 		s.added.Add(1)
+		return
+	}
+
+	onDiskSymlink := info.Mode()&fs.ModeSymlink != 0
+
+	// file<->symlink type change: porcelain reports T, which the segment's
+	// counting ignores — count nothing, mirroring the exec path
+	if (e.Mode == modeSymlink) != onDiskSymlink {
 		return
 	}
 
@@ -182,6 +199,13 @@ func (s *scanner) compareEntry(e *indexEntry, fullPath string, info os.FileInfo)
 		if !symlinkMatches(fullPath, e.Hash) {
 			s.modified.Add(1)
 		}
+		return
+	}
+
+	// executable-bit change; only when the filesystem records one
+	// (core.filemode), like git's trust_executable_bit
+	if s.fileMode && (uint32(info.Mode().Perm())^e.Mode)&0o100 != 0 {
+		s.modified.Add(1)
 		return
 	}
 
@@ -227,15 +251,21 @@ func (s *scanner) lookup(rel string) (*indexEntryRef, bool) {
 }
 
 func (s *scanner) hasTrackedPrefix(dirSlash string) bool {
-	// on case-insensitive platforms the folded list covers exact hits too
-	if s.caseInsensitive {
-		lowerSlash := strings.ToLower(dirSlash)
-		i := sort.SearchStrings(s.lowerSortedPaths, lowerSlash)
-		return i < len(s.lowerSortedPaths) && strings.HasPrefix(s.lowerSortedPaths[i], lowerSlash)
+	if hasSortedPrefix(s.unmergedSorted, dirSlash) {
+		return true
 	}
 
-	i := sort.SearchStrings(s.sortedPaths, dirSlash)
-	return i < len(s.sortedPaths) && strings.HasPrefix(s.sortedPaths[i], dirSlash)
+	// on case-insensitive platforms the folded list covers exact hits too
+	if s.caseInsensitive {
+		return hasSortedPrefix(s.lowerSortedPaths, strings.ToLower(dirSlash))
+	}
+
+	return hasSortedPrefix(s.sortedPaths, dirSlash)
+}
+
+func hasSortedPrefix(sorted []string, prefix string) bool {
+	i := sort.SearchStrings(sorted, prefix)
+	return i < len(sorted) && strings.HasPrefix(sorted[i], prefix)
 }
 
 // descend walks a subdirectory, on its own goroutine when the concurrency

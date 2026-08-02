@@ -106,13 +106,20 @@ func TestResolveRefPrefersLooseOverPacked(t *testing.T) {
 	require.NoError(t, os.WriteFile(filepath.Join(dir, "refs", "heads", "main"), []byte(looseHash+"\n"), 0o644))
 	require.NoError(t, os.WriteFile(filepath.Join(dir, "packed-refs"), []byte(packedHash+" refs/heads/main\n"), 0o644))
 
-	hash, ok := resolveRef(dir, "refs/heads/main")
+	hash, ok, err := resolveRef(dir, "refs/heads/main")
+	require.NoError(t, err)
 	require.True(t, ok)
 	assert.Equal(t, looseHash, hash.String())
 
-	hash, ok = resolveRef(dir, "refs/heads/only-packed")
+	hash, ok, err = resolveRef(dir, "refs/heads/only-packed")
+	require.NoError(t, err)
 	assert.False(t, ok)
 	assert.True(t, hash.IsZero())
+
+	// a loose ref holding a symref must error out, not report unborn
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "refs", "heads", "alias"), []byte("ref: refs/heads/main\n"), 0o644))
+	_, _, err = resolveRef(dir, "refs/heads/alias")
+	assert.Error(t, err)
 }
 
 func TestResolveUpstream(t *testing.T) {

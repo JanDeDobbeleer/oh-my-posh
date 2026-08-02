@@ -87,6 +87,10 @@ func Load(opts Options) (*Result, error) {
 	// there is no upstream to resolve and no repo-level excludesfile.
 	cfg, _ := loadRepoConfig(opts.CommonGitDir)
 
+	if err := checkRepoFormat(cfg); err != nil {
+		return nil, err
+	}
+
 	store := newObjectStore(opts.CommonGitDir)
 	defer store.close()
 
@@ -96,7 +100,7 @@ func Load(opts Options) (*Result, error) {
 	}
 
 	basePatterns := loadBasePatterns(opts, cfg)
-	scanWorktree(opts, idx, indexModTime, untrackedMode, basePatterns, result)
+	scanWorktree(opts, idx, indexModTime, untrackedMode, trustExecutableBit(cfg), basePatterns, result)
 
 	if err := diffStaging(store, idx, headHash, headOK, result); err != nil {
 		return nil, err

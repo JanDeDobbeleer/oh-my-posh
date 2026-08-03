@@ -28,3 +28,10 @@
 - On Windows there is no SIGPIPE; child lifecycle management must rely on fd closure / stdin EOF.
 - On native Linux, process spawns cost 11-16ms - daemon architectures that pay off on Windows can
   be a wash there (see the bash serve revert in [bash](bash.md)).
+
+## Statusline width detection
+
+- On Unix, `terminal-dimensions` runs `stty size` against the renderer's stdin. Claude Code sends
+  statusline JSON over that stdin, so it is not a TTY. A valid `COLUMNS` fallback must replace the
+  resulting `stty` error; returning a non-zero width with the stale error makes
+  `prompt.Engine.canWriteRightBlock` reject ordinary right-aligned blocks (verified 2026-08-03).

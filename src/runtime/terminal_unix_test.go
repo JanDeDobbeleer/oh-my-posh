@@ -3,6 +3,7 @@
 package runtime
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -61,6 +62,63 @@ func TestMemoryPercentageCalculation(t *testing.T) {
 			}
 
 			assert.InDelta(t, tc.ExpectedPercent, percentUsed, 0.01, tc.Name)
+		})
+	}
+}
+
+func TestResolveTerminalWidth(t *testing.T) {
+	terminalErr := errors.New("not a tty")
+	cases := []struct {
+		TerminalError   error
+		Name            string
+		Columns         string
+		TerminalWidth   uint
+		ExpectedWidth   uint
+		ExpectedToError bool
+	}{
+		{
+			Name:          "terminal width is available",
+			Columns:       "120",
+			TerminalWidth: 80,
+			ExpectedWidth: 80,
+		},
+		{
+			Name:          "COLUMNS replaces terminal error",
+			Columns:       "120",
+			TerminalError: terminalErr,
+			ExpectedWidth: 120,
+		},
+		{
+			Name:            "terminal and COLUMNS both fail",
+			Columns:         "invalid",
+			TerminalError:   terminalErr,
+			ExpectedToError: true,
+		},
+		{
+			Name:            "zero COLUMNS is invalid",
+			Columns:         "0",
+			TerminalError:   terminalErr,
+			ExpectedToError: true,
+		},
+		{
+			Name:            "negative COLUMNS is invalid",
+			Columns:         "-1",
+			TerminalError:   terminalErr,
+			ExpectedToError: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Name, func(t *testing.T) {
+			width, err := resolveTerminalWidth(tc.TerminalWidth, tc.TerminalError, tc.Columns)
+
+			assert.Equal(t, tc.ExpectedWidth, width)
+			if tc.ExpectedToError {
+				assert.Error(t, err)
+				assert.ErrorIs(t, err, terminalErr)
+				return
+			}
+			assert.NoError(t, err)
 		})
 	}
 }

@@ -3,6 +3,7 @@
 package runtime
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -62,24 +63,34 @@ func (term *Terminal) TerminalWidth() (int, error) {
 	}
 
 	width, err := terminal.Width()
-	if err != nil {
-		log.Error(err)
+	if width == 0 {
+		width, err = resolveTerminalWidth(width, err, term.Getenv("COLUMNS"))
 	}
 
-	// fetch width from the environment variable
-	// in case the terminal width is not available
-	if width == 0 {
-		i, err := strconv.Atoi(term.Getenv("COLUMNS"))
-		if err != nil {
-			log.Error(err)
-		}
-		width = uint(i)
+	if err != nil {
+		log.Error(err)
 	}
 
 	term.CmdFlags.TerminalWidth = int(width)
 	log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
 
 	return term.CmdFlags.TerminalWidth, err
+}
+
+func resolveTerminalWidth(width uint, terminalErr error, columns string) (uint, error) {
+	if width != 0 {
+		return width, terminalErr
+	}
+
+	columnWidth, err := strconv.Atoi(columns)
+	if err != nil {
+		return 0, errors.Join(terminalErr, err)
+	}
+	if columnWidth <= 0 {
+		return 0, errors.Join(terminalErr, errors.New("terminal width must be greater than zero"))
+	}
+
+	return uint(columnWidth), nil
 }
 
 func (term *Terminal) Platform() string {

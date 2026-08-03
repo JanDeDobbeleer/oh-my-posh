@@ -66,10 +66,14 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		promptText = fmt.Sprintf("%s%s", e.getNewline(), promptText)
 	}
 
+	// Transient isn't rendered by the block engine, so unlike the primary
+	// prompt these marks can't go through e.write/e.string - append them to
+	// str directly instead.
+	var shellIntegrationStart, shellIntegrationEnd string
 	if promptType == Transient && e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
-		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
-		e.write(terminal.PromptStart())
+		shellIntegrationStart = terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode) + terminal.PromptStart()
+		shellIntegrationEnd = terminal.CommandStart()
 	}
 
 	foreground := color.Ansi(prompt.ForegroundTemplates.FirstMatch(nil, string(prompt.Foreground)))
@@ -78,6 +82,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	terminal.Write(background, foreground, promptText)
 
 	str, length := terminal.String()
+	str = shellIntegrationStart + str
 
 	if promptType == Secondary && e.Env.Shell() == shell.ZSH && e.Env.Flags().Eval {
 		evalOutput := fmt.Sprintf("_omp_secondary_prompt=%s", shell.QuotePosixStr(str))
@@ -108,15 +113,15 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	switch e.Env.Shell() {
 	case shell.ZSH:
 		if !e.Env.Flags().Eval {
-			return str
+			return str + shellIntegrationEnd
 		}
 
-		return e.transientZSH(str, rightStr)
+		return e.transientZSH(str+shellIntegrationEnd, rightStr)
 	case shell.PWSH:
-		return e.transientPWSH(str, padText, rightStr, length, rightLength)
+		return e.transientPWSH(str, padText, rightStr, length, rightLength) + shellIntegrationEnd
 	}
 
-	return str
+	return str + shellIntegrationEnd
 }
 
 // transientZSH returns the transient prompt as an eval statement setting

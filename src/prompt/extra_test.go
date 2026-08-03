@@ -303,6 +303,56 @@ func TestExtraPromptTransientFish(t *testing.T) {
 	}
 }
 
+func TestExtraPromptTransientShellIntegration(t *testing.T) {
+	cases := []struct {
+		Case  string
+		Shell string
+		Eval  bool
+	}{
+		{Case: "pwsh", Shell: shell.PWSH},
+		{Case: "zsh, eval", Shell: shell.ZSH, Eval: true},
+		{Case: "zsh, no eval", Shell: shell.ZSH},
+		{Case: "fish", Shell: shell.FISH},
+	}
+
+	for _, tc := range cases {
+		env := setupExtraPromptTest(t, tc.Shell, &runtime.Flags{Eval: tc.Eval})
+		env.On("TerminalWidth").Return(0, nil)
+		env.On("StatusCodes").Return(3, "3")
+
+		engine := &Engine{
+			Config: &config.Config{
+				ShellIntegration: true,
+				TransientPrompt: &config.Segment{
+					Template: "L>",
+				},
+			},
+			Env: env,
+		}
+
+		got := engine.ExtraPrompt(Transient)
+
+		start := terminal.CommandFinished(3, false) + terminal.PromptStart()
+		end := terminal.CommandStart()
+
+		// zsh in eval mode wraps the marked-up string in a PS1=$'...' assignment
+		// instead of returning it as-is; unwrap that before checking the marks.
+		if tc.Shell == shell.ZSH && tc.Eval {
+			body, ok := strings.CutPrefix(got, "PS1=$'")
+			assert.True(t, ok, "%s: expected PS1=$'...' prefix, got %q", tc.Case, got)
+			got, ok = strings.CutSuffix(body, "'\nRPROMPT=''")
+			assert.True(t, ok, "%s: expected \\nRPROMPT='' suffix, got %q", tc.Case, body)
+		}
+
+		assert.True(t, strings.HasPrefix(got, start), "%s: expected prefix %q, got %q", tc.Case, start, got)
+		assert.True(t, strings.HasSuffix(got, end), "%s: expected suffix %q, got %q", tc.Case, end, got)
+
+		// the rendered template text must still be present, untouched, between the marks
+		middle := strings.TrimSuffix(strings.TrimPrefix(got, start), end)
+		assert.Contains(t, middle, "L>", tc.Case)
+	}
+}
+
 func TestTransientRPromptTemplateError(t *testing.T) {
 	env := setupExtraPromptTest(t, shell.FISH, &runtime.Flags{})
 	engine := &Engine{

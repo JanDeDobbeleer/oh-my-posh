@@ -3763,6 +3763,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "adamradocz",
+      "name": "Adam Radocz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16503773?v=4",
+      "profile": "https://github.com/adamradocz",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

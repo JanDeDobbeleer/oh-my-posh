@@ -1,6 +1,9 @@
 ---
 name: writing-clearly-and-concisely
-description: Apply whenever writing content a human will read — emails, documents, reports, documentation, messages, UI copy, commit messages, explanations, or any other prose. Applies Strunk's timeless rules for clearer, stronger, more professional writing.
+description:
+  Apply whenever writing content a human will read — emails, documents, reports, documentation, messages, UI copy,
+  commit messages, explanations, or any other prose. Applies Strunk's timeless rules for clearer, stronger, more
+  professional writing.
 ---
 
 # Writing Clearly and Concisely
@@ -34,7 +37,7 @@ Loading a single section (~1,000-4,500 tokens) instead of everything saves signi
 
 ## Elements of Style
 
-William Strunk Jr.'s *The Elements of Style* (1918) teaches you to write clearly and cut ruthlessly.
+William Strunk Jr.'s _The Elements of Style_ (1918) teaches you to write clearly and cut ruthlessly.
 
 ### Rules
 
@@ -50,30 +53,31 @@ William Strunk Jr.'s *The Elements of Style* (1918) teaches you to write clearly
 
 **Elementary Principles of Composition**:
 
-8. One paragraph per topic
-9. Begin paragraph with topic sentence
-10. **Use active voice**
-11. **Put statements in positive form**
-12. **Use definite, specific, concrete language**
-13. **Omit needless words**
-14. Avoid succession of loose sentences
-15. Express co-ordinate ideas in similar form
-16. **Keep related words together**
-17. Keep to one tense in summaries
-18. **Place emphatic words at end of sentence**
+1. One paragraph per topic
+2. Begin paragraph with topic sentence
+3. **Use active voice**
+4. **Put statements in positive form**
+5. **Use definite, specific, concrete language**
+6. **Omit needless words**
+7. Avoid succession of loose sentences
+8. Express co-ordinate ideas in similar form
+9. **Keep related words together**
+10. Keep to one tense in summaries
+11. **Place emphatic words at end of sentence**
 
 ### Reference Files
 
 The rules above are summarized from Strunk's original text. For complete explanations with examples:
 
-| Section | File | ~Tokens |
-|---------|------|---------|
-| Grammar, punctuation, comma rules | `02-elementary-rules-of-usage.md` | 2,500 |
-| Paragraph structure, active voice, concision | `03-elementary-principles-of-composition.md` | 4,500 |
-| Headings, quotations, formatting | `04-a-few-matters-of-form.md` | 1,000 |
-| Word choice, common errors | `05-words-and-expressions-commonly-misused.md` | 4,000 |
+| Section                                      | File                                           | ~Tokens |
+| -------------------------------------------- | ---------------------------------------------- | ------- |
+| Grammar, punctuation, comma rules            | `02-elementary-rules-of-usage.md`              | 2,500   |
+| Paragraph structure, active voice, concision | `03-elementary-principles-of-composition.md`   | 4,500   |
+| Headings, quotations, formatting             | `04-a-few-matters-of-form.md`                  | 1,000   |
+| Word choice, common errors                   | `05-words-and-expressions-commonly-misused.md` | 4,000   |
 
-**Most tasks need only `03-elementary-principles-of-composition.md`** — it covers active voice, positive form, concrete language, and omitting needless words.
+**Most tasks need only `03-elementary-principles-of-composition.md`** — it covers active voice, positive form, concrete
+language, and omitting needless words.
 
 ## AI Writing Patterns to Avoid
 
@@ -88,8 +92,10 @@ LLMs regress to statistical means, producing generic, puffy prose. Avoid:
 
 Be specific, not grandiose. Say what it actually does.
 
-For comprehensive research on why these patterns occur, see `signs-of-ai-writing.md`. Wikipedia editors developed this guide to detect AI-generated submissions — their patterns are well-documented and field-tested.
+For comprehensive research on why these patterns occur, see `signs-of-ai-writing.md`. Wikipedia editors developed this
+guide to detect AI-generated submissions — their patterns are well-documented and field-tested.
 
 ## Bottom Line
 
-Writing for humans? Load the relevant section from `elements-of-style/` and apply the rules. For most tasks, `03-elementary-principles-of-composition.md` covers what matters most.
+Writing for humans? Load the relevant section from `elements-of-style/` and apply the rules. For most tasks,
+`03-elementary-principles-of-composition.md` covers what matters most.

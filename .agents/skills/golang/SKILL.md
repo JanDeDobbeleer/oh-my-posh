@@ -288,7 +288,7 @@ for _, item := range items {
 #### Table-driven tests are the default
 
 One behavior under test = one test function with a table of cases. Never write several
-near-identical test functions that differ only in input data, fixtures, or expected outcome —
+near-identical test functions that differ in input data, fixtures, or expected outcome, because
 those differences are table fields. A per-case fixture (a different map, config, or mock return)
 is not a reason to split; put the fixture in the table. Shared setup (mocks, caches, `Init`
 calls) runs once before the loop.
@@ -296,7 +296,7 @@ calls) runs once before the loop.
 When adding cases to an existing test file, extend the existing table instead of adding a new
 test function.
 
-Only split into separate test functions when the flow genuinely differs: a different API under
+Split into separate test functions when the flow genuinely differs: a different API under
 test, or a setup/assertion sequence that cannot be expressed as table fields.
 
 ```go

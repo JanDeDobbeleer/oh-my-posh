@@ -1,6 +1,7 @@
 # Writing Clearly and Concisely
 
-A skill that applies William Strunk Jr.'s timeless writing principles to produce clearer, stronger, more professional prose while avoiding common AI writing patterns.
+A skill that applies William Strunk Jr.'s timeless writing principles to produce clearer, stronger, more professional
+prose while avoiding common AI writing patterns.
 
 ## Purpose
 
@@ -9,7 +10,8 @@ This skill helps you write better prose for human readers. It draws from two sou
 1. **The Elements of Style** (Strunk, 1918) - Time-tested rules for clear, forceful writing
 2. **AI Pattern Avoidance** - Research-backed guidance on avoiding generic, puffy language that LLMs tend to produce
 
-Whether you're writing documentation, commit messages, error messages, or any text humans will read, this skill helps you cut fluff and say what you mean.
+Whether you're writing documentation, commit messages, error messages, or any text humans will read, this skill helps
+you cut fluff and say what you mean.
 
 ## When to Use
 
@@ -23,6 +25,7 @@ Use this skill whenever you write prose for humans:
 - **Editing** - Improving clarity of existing text
 
 **Trigger phrases:**
+
 - "Write documentation for..."
 - "Draft a README"
 - "Edit this for clarity"
@@ -50,16 +53,16 @@ For tight context situations, dispatch a subagent with your draft and the releva
 
 ### Strunk's Core Rules
 
-The skill emphasizes these principles from *The Elements of Style*:
+The skill emphasizes these principles from _The Elements of Style_:
 
-| Rule | Principle |
-|------|-----------|
-| 10 | Use active voice |
-| 11 | Put statements in positive form |
-| 12 | Use definite, specific, concrete language |
-| 13 | Omit needless words |
-| 16 | Keep related words together |
-| 18 | Place emphatic words at end of sentence |
+| Rule | Principle                                 |
+| ---- | ----------------------------------------- |
+| 10   | Use active voice                          |
+| 11   | Put statements in positive form           |
+| 12   | Use definite, specific, concrete language |
+| 13   | Omit needless words                       |
+| 16   | Keep related words together               |
+| 18   | Place emphatic words at end of sentence   |
 
 ### AI Pattern Detection
 
@@ -73,46 +76,73 @@ The skill identifies and eliminates common LLM writing patterns:
 
 ## Reference Files
 
-| Section | File | Tokens | Content |
-|---------|------|--------|---------|
-| Grammar & punctuation | `02-elementary-rules-of-usage.md` | ~2,500 | Comma rules, possessives, sentence structure |
-| Composition principles | `03-elementary-principles-of-composition.md` | ~4,500 | Active voice, concision, paragraph structure |
-| Formatting | `04-a-few-matters-of-form.md` | ~1,000 | Headings, quotations, formatting conventions |
-| Word choice | `05-words-and-expressions-commonly-misused.md` | ~4,000 | Common errors, word selection |
-| AI patterns | `signs-of-ai-writing.md` | ~25,000 | Wikipedia editors' field guide to AI detection |
+- **Section:** Grammar & punctuation
+  - **File:** `02-elementary-rules-of-usage.md`
+  - **Tokens:** ~2,500
+  - **Content:** Comma rules, possessives, sentence structure
+
+- **Section:** Composition principles
+  - **File:** `03-elementary-principles-of-composition.md`
+  - **Tokens:** ~4,500
+  - **Content:** Active voice, concision, paragraph structure
+
+- **Section:** Formatting
+  - **File:** `04-a-few-matters-of-form.md`
+  - **Tokens:** ~1,000
+  - **Content:** Headings, quotations, formatting conventions
+
+- **Section:** Word choice
+  - **File:** `05-words-and-expressions-commonly-misused.md`
+  - **Tokens:** ~4,000
+  - **Content:** Common errors, word selection
+
+- **Section:** AI patterns
+  - **File:** `signs-of-ai-writing.md`
+  - **Tokens:** ~25,000
+  - **Content:** Wikipedia editors' field guide to AI detection
 
 ## Usage Examples
 
 ### Example 1: Tightening a Commit Message
 
 **Before:**
-> This commit implements the functionality for ensuring that user authentication is properly handled, showcasing robust error handling capabilities.
+
+> This commit implements the functionality for ensuring that user authentication is properly handled, showcasing robust
+> error handling capabilities.
 
 **After:**
+
 > Add user authentication with error handling
 
 ### Example 2: Rewriting Documentation
 
 **Before:**
-> This groundbreaking feature leverages cutting-edge technology to deliver a seamless experience, fostering better engagement and driving impactful results.
+
+> This groundbreaking feature leverages cutting-edge technology to deliver a seamless experience, fostering better
+> engagement and driving impactful results.
 
 **After:**
+
 > This feature uses WebSocket connections to update the dashboard in real time.
 
 ### Example 3: Fixing Passive Voice
 
 **Before:**
+
 > The configuration file is read by the application at startup.
 
 **After:**
+
 > The application reads the configuration file at startup.
 
 ### Example 4: Removing Hedging
 
 **Before:**
+
 > It is important to note that the API might potentially return an error in certain situations.
 
 **After:**
+
 > The API returns an error when the token expires.
 
 ## Best Practices
@@ -126,7 +156,7 @@ The skill identifies and eliminates common LLM writing patterns:
 
 ## Directory Structure
 
-```
+```text
 writing-clearly-and-concisely/
   SKILL.md                 # Main skill definition
   README.md                # This file
@@ -142,16 +172,17 @@ writing-clearly-and-concisely/
 ## Installation
 
 **Claude Code:**
+
 ```bash
 cp -r skills/writing-clearly-and-concisely ~/.claude/skills/
 ```
 
-**Claude.ai:**
-Add the skill to project knowledge or paste SKILL.md contents into your conversation.
+**Claude.ai:** Add the skill to project knowledge or paste SKILL.md contents into your conversation.
 
 ## Attribution
 
-- Original skill by @joshuadavidthomas from [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills) (MIT)
+- Original skill by @joshuadavidthomas from
+  [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills) (MIT)
 - Adapted from [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style)
-- Writing principles from *The Elements of Style* by William Strunk Jr. (1918)
+- Writing principles from _The Elements of Style_ by William Strunk Jr. (1918)
 - AI pattern research from Wikipedia's field guide to AI-generated content detection

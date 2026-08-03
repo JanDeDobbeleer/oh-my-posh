@@ -1,9 +1,9 @@
 lockfile_version: '1'
-generated_at: '2026-07-30T07:29:58.567651+00:00'
-apm_version: 0.25.0
+generated_at: '2026-08-03T05:16:36.052971+00:00'
+apm_version: 0.26.0
 dependencies:
 - repo_url: ast-grep/agent-skill
-  name: agent-skill
+  name: ast-grep
   host: github.com
   resolved_commit: c2a9bc154f4ffe08b25d28d5e852dfac8c0d0d8a
   version: unknown
@@ -26,52 +26,49 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic-golang
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
-  package_type: apm_package
   deployed_files:
   - .claude/rules/golang.md
   - .github/instructions/golang.instructions.md
   deployed_file_hashes:
     .claude/rules/golang.md: sha256:6ebdb015cdee3b2b834cf794f3851d84113ee381025e5554a9fa814c1d54c4ad
     .github/instructions/golang.instructions.md: sha256:1f477c4204be1cc8b704ed3cddad0d3c3f1b9d4db3270ae9787de7c975807053
-  content_hash: sha256:cc899928ca2b32bcb7b5d59e8d151e430bc388d244261c97794e1b262dd5f320
+  content_hash: sha256:3ea7e0cefb98f178f2552d51b14906d4bac9028c42467b70f22d2ecbee08015e
 - repo_url: jandedobbeleer/agentic
   name: agentic-markdown
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
-  package_type: apm_package
   deployed_files:
   - .claude/rules/markdown.md
   - .github/instructions/markdown.instructions.md
   deployed_file_hashes:
     .claude/rules/markdown.md: sha256:223315c67ebf00bfb7ae7a0d288f1991a3ae8f736b8b2b0fd8468a5104b47893
     .github/instructions/markdown.instructions.md: sha256:91d656b4d6c90a8ae10ca520e2f5c9444a4b6add5520328f24ad2a919e0f4747
-  content_hash: sha256:1862a115c834b4b8f4d9e036c2f05fa934304f3f3f1b20e235da515b8f0dc44b
+  content_hash: sha256:95283b86401c5cc052eaaa4e9f71b34a673f1e1f311a70ed93937d4deba2d272
 - repo_url: jandedobbeleer/agentic
   name: agentic-powershell
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
-  package_type: apm_package
   deployed_files:
   - .claude/rules/powershell.md
   - .github/instructions/powershell.instructions.md
   deployed_file_hashes:
     .claude/rules/powershell.md: sha256:f17d5edda5ecc2aac8c86a32c03d32c8eccf0d945983ee70b404062d61f10a27
     .github/instructions/powershell.instructions.md: sha256:ae92d1111d4183847df527525c73d706fa1ef003d515964270f858eecf659449
-  content_hash: sha256:f159d7b75e7ecf3fa2c0cdf1d568799558320e06bcba5263c05e28487db68e5c
+  content_hash: sha256:b64a000548bd18ac79d7d5f5afbefaec3bb94b31765470a87a2e1ab5bb0749dd
 - repo_url: jandedobbeleer/agentic
-  name: agentic
+  name: code-changes
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: unknown
   virtual_path: skills/code-changes
   is_virtual: true
@@ -126,9 +123,9 @@ dependencies:
     .claude/skills/code-changes/references/verify.md: sha256:347c831be88cf73e706717f667cc83c1cbd8867d886fecf8ed3bcd24cf69fff6
   content_hash: sha256:8ff991b546b12798f194525ad6af84fd837614a2e6afe14ff62de3118c24c087
 - repo_url: jandedobbeleer/agentic
-  name: agentic
+  name: conventional-commit
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: unknown
   virtual_path: skills/conventional-commit
   is_virtual: true
@@ -143,9 +140,9 @@ dependencies:
     .claude/skills/conventional-commit/SKILL.md: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
   content_hash: sha256:44bd33d20c6122489d0eedaa292dcf9b155439d021661e7ae84ce9b6f812d363
 - repo_url: jandedobbeleer/agentic
-  name: agentic
+  name: golang
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: unknown
   virtual_path: skills/golang
   is_virtual: true
@@ -160,9 +157,9 @@ dependencies:
     .claude/skills/golang/SKILL.md: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
   content_hash: sha256:0b6572070aff3e4c6b61f6d9b5cf844756676d4a9669c16544f28e911eafc224
 - repo_url: jandedobbeleer/agentic
-  name: agentic
+  name: markdown
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: unknown
   virtual_path: skills/markdown
   is_virtual: true
@@ -177,9 +174,9 @@ dependencies:
     .claude/skills/markdown/SKILL.md: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
   content_hash: sha256:fa25f4f36faa33fa51ec6e9a3b5bf7cde618d8d7dfb572dd8f55733dc1813265
 - repo_url: jandedobbeleer/agentic
-  name: agentic
+  name: powershell
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: unknown
   virtual_path: skills/powershell
   is_virtual: true
@@ -194,9 +191,9 @@ dependencies:
     .claude/skills/powershell/SKILL.md: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
   content_hash: sha256:bc844acc1cf9ccc5d2d10e1c889b8b5b69b92f743e3bc11e0bc9a386770fc864
 - repo_url: jandedobbeleer/agentic
-  name: agentic
+  name: writing-clearly-and-concisely
   host: github.com
-  resolved_commit: a8a75d7320a35f2502011817e18c8597977c37c9
+  resolved_commit: 856a1f17ca750b4266e509c32873f8c89c70c369
   version: unknown
   virtual_path: skills/writing-clearly-and-concisely
   is_virtual: true
@@ -239,294 +236,6 @@ dependencies:
     .claude/skills/writing-clearly-and-concisely/signs-of-ai-writing.md: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
   content_hash: sha256:f2651cddb46c9695f38a30a75e9c247c41518a9d47f63256f6cafafe94d2a1ff
 deployments:
-- kind: project-relative
-  target: agents
-  value: .agents/skills/ast-grep
-  runtime: null
-  scope: project
-  owners:
-  - ast-grep/agent-skill/ast-grep/skills/ast-grep
-  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/ast-grep/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - ast-grep/agent-skill/ast-grep/skills/ast-grep
-  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
-  content_hash: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
-- kind: project-relative
-  target: agents
-  value: .agents/skills/ast-grep/references/rule_reference.md
-  runtime: null
-  scope: project
-  owners:
-  - ast-grep/agent-skill/ast-grep/skills/ast-grep
-  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
-  content_hash: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:392079734548467ac5ea00c20ecfd8e7bd431a5a3377afbd8e06d642eeac4e91
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/analyze.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:0a1e4825d315f44f58f13851716b42a9a6a54f6b7a6b17aa101b97d3d1fde75b
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/delegate.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:3bbb47460f76ce9568f6eea07091f981b6127dda6ff7545456b2abd3a9b9ef72
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/deliver.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:f4c48a1adf3139ddb9259339c2919e533ee448b1a1e9b03a1393fc38ebebf0e4
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/escalate.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:b240512bcc3764ee82fbf880c11d74f4b73e4bee640e64d55ad62fea70484874
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/issue-triage.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:7e92dad2274802263787f22f80ca5dcf2a2614fd4460650b19cfc5ec904169c2
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/model-tiers.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:fa3e9a6ce99f9f21fbb2c525428960411fb344dc75d3fde1bf5297927d5961aa
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/plan.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:d1bdd255c147cd3ea4aaadcbb0d6380c6753af930f23401a4be4473d17b4c165
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/pr-review-comments.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:ff3d4be9488c4363b55947ddea07dc350e52d26fe656b4155b5a621cdb37a1c9
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/supervise.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:579ea976220ed6c3a1ed92983985aa1e78a8adae54a59845eb21481a4910d67e
-- kind: project-relative
-  target: agents
-  value: .agents/skills/code-changes/references/verify.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/code-changes
-  active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:347c831be88cf73e706717f667cc83c1cbd8867d886fecf8ed3bcd24cf69fff6
-- kind: project-relative
-  target: agents
-  value: .agents/skills/conventional-commit
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/conventional-commit
-  active_owner: jandedobbeleer/agentic/skills/conventional-commit
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/conventional-commit/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/conventional-commit
-  active_owner: jandedobbeleer/agentic/skills/conventional-commit
-  content_hash: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
-- kind: project-relative
-  target: agents
-  value: .agents/skills/golang
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/golang
-  active_owner: jandedobbeleer/agentic/skills/golang
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/golang/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/golang
-  active_owner: jandedobbeleer/agentic/skills/golang
-  content_hash: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
-- kind: project-relative
-  target: agents
-  value: .agents/skills/markdown
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/markdown
-  active_owner: jandedobbeleer/agentic/skills/markdown
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/markdown/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/markdown
-  active_owner: jandedobbeleer/agentic/skills/markdown
-  content_hash: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
-- kind: project-relative
-  target: agents
-  value: .agents/skills/powershell
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/powershell
-  active_owner: jandedobbeleer/agentic/skills/powershell
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/powershell/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/powershell
-  active_owner: jandedobbeleer/agentic/skills/powershell
-  content_hash: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: null
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/README.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:cd8241146abf3e7514fdb07a6db2e06c8535a4f78dd1ab471901b2e7fe4db089
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:d2b345fcfc61e8143136e27b1ca2db9585c5fc46c63f0abd89a8547391349c36
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:248b18596fa18cf63605182688565d25d115c859f602068185f6014c26addbfe
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:8cead3fc56b54ab5fc22e52c14423182fdce2d9535d4c1dda1f8319cac542027
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:3867f33512ff2f0e965386dbb558579aab43ca10f070bd48d732584b9b5119e0
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:150feae0c201def056a96dd25fa5d23e015f53632b21f3bcd7b7266f8197c563
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
-- kind: project-relative
-  target: agents
-  value: .agents/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
-  runtime: null
-  scope: project
-  owners:
-  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
-  content_hash: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
 - kind: project-relative
   target: claude
   value: .claude/rules/golang.md
@@ -836,6 +545,294 @@ deployments:
 - kind: project-relative
   target: claude
   value: .claude/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:06d135c200e1bbfdbe90f433dfbdffeb9c4ea07f028a9a880f4026622e5c10fd
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/ast-grep
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/ast-grep/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/ast-grep/references/rule_reference.md
+  runtime: null
+  scope: project
+  owners:
+  - ast-grep/agent-skill/ast-grep/skills/ast-grep
+  active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
+  content_hash: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:392079734548467ac5ea00c20ecfd8e7bd431a5a3377afbd8e06d642eeac4e91
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/analyze.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:0a1e4825d315f44f58f13851716b42a9a6a54f6b7a6b17aa101b97d3d1fde75b
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/delegate.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:3bbb47460f76ce9568f6eea07091f981b6127dda6ff7545456b2abd3a9b9ef72
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/deliver.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:f4c48a1adf3139ddb9259339c2919e533ee448b1a1e9b03a1393fc38ebebf0e4
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/escalate.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:b240512bcc3764ee82fbf880c11d74f4b73e4bee640e64d55ad62fea70484874
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/issue-triage.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:7e92dad2274802263787f22f80ca5dcf2a2614fd4460650b19cfc5ec904169c2
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/model-tiers.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:fa3e9a6ce99f9f21fbb2c525428960411fb344dc75d3fde1bf5297927d5961aa
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/plan.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:d1bdd255c147cd3ea4aaadcbb0d6380c6753af930f23401a4be4473d17b4c165
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/pr-review-comments.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:ff3d4be9488c4363b55947ddea07dc350e52d26fe656b4155b5a621cdb37a1c9
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/supervise.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:579ea976220ed6c3a1ed92983985aa1e78a8adae54a59845eb21481a4910d67e
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/verify.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:347c831be88cf73e706717f667cc83c1cbd8867d886fecf8ed3bcd24cf69fff6
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/conventional-commit
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/conventional-commit
+  active_owner: jandedobbeleer/agentic/skills/conventional-commit
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/conventional-commit/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/conventional-commit
+  active_owner: jandedobbeleer/agentic/skills/conventional-commit
+  content_hash: sha256:05f6b10c1909b9975410639901c713359e94d358b7b7dbc1e606d5356846d229
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/golang
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/golang
+  active_owner: jandedobbeleer/agentic/skills/golang
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/golang/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/golang
+  active_owner: jandedobbeleer/agentic/skills/golang
+  content_hash: sha256:97481de42769712647f968ac99e99375df242c90c051b13aecb6b946e381370b
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/markdown
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/markdown
+  active_owner: jandedobbeleer/agentic/skills/markdown
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/markdown/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/markdown
+  active_owner: jandedobbeleer/agentic/skills/markdown
+  content_hash: sha256:841c2953f949e0e5a1641e895a88f8e9ab4b7e7fab6824728cc22fbdcaba4d8d
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/powershell
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/powershell
+  active_owner: jandedobbeleer/agentic/skills/powershell
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/powershell/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/powershell
+  active_owner: jandedobbeleer/agentic/skills/powershell
+  content_hash: sha256:cedf9f49815cf9d78bcad7907b835707d037960e71e7481081771c086d346692
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/README.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:cd8241146abf3e7514fdb07a6db2e06c8535a4f78dd1ab471901b2e7fe4db089
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:d2b345fcfc61e8143136e27b1ca2db9585c5fc46c63f0abd89a8547391349c36
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/01-introductory.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:248b18596fa18cf63605182688565d25d115c859f602068185f6014c26addbfe
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/02-elementary-rules-of-usage.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:8cead3fc56b54ab5fc22e52c14423182fdce2d9535d4c1dda1f8319cac542027
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/03-elementary-principles-of-composition.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:3867f33512ff2f0e965386dbb558579aab43ca10f070bd48d732584b9b5119e0
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/04-a-few-matters-of-form.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:150feae0c201def056a96dd25fa5d23e015f53632b21f3bcd7b7266f8197c563
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/elements-of-style/05-words-and-expressions-commonly-misused.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  active_owner: jandedobbeleer/agentic/skills/writing-clearly-and-concisely
+  content_hash: sha256:60db286f5166b1b6f4d85a0cc39471b375fbd62d6057d3844533551fb09f2c2d
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/writing-clearly-and-concisely/signs-of-ai-writing.md
   runtime: null
   scope: project
   owners:

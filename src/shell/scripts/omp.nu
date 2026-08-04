@@ -35,13 +35,22 @@ def --wrapped _omp_get_prompt [
         $ms => { $ms | into int }
     }
 
+    # `$env.POSH_EXECUTED` is set once per prompt cycle in `$env.PROMPT_COMMAND`, based on
+    # whether history actually grew. Falls back to the execution-time sentinel when history
+    # is disabled, which only detects a freshly started shell.
+    let no_status = if $nu.history-enabled {
+        not ($env.POSH_EXECUTED? | default false)
+    } else {
+        $execution_time < 0
+    }
+
     (
         ^$_omp_executable print $type
             --save-cache
             --shell=nu
             $"--shell-version=($env.POSH_SHELL_VERSION)"
             $"--status=($env.LAST_EXIT_CODE)"
-            $"--no-status=($execution_time < 0)"
+            $"--no-status=($no_status)"
             $"--execution-time=($execution_time)"
             $"--terminal-width=((term size).columns)"
             $"--job-count=(job list | length)"
@@ -56,15 +65,23 @@ $env.PROMPT_MULTILINE_INDICATOR = (
 )
 
 $env.PROMPT_COMMAND = {||
+    let hist = if $nu.history-enabled { history } else { [] }
+    let hist_len = ($hist | length)
+
     # hack: sets cursor line to 1 on clear; not bulletproof, just a start
     let clear = $nu.history-enabled and (
-        (history | is-empty)
-        or (history | last | get command?) == "clear"
+        ($hist | is-empty)
+        or ($hist | last | get command?) == "clear"
     )
 
     if ($env.SET_POSHCONTEXT? | is-not-empty) {
         do --env $env.SET_POSHCONTEXT
     }
+
+    # a command was executed this prompt cycle only if history actually grew;
+    # an empty Enter (or history disabled) leaves the length unchanged
+    $env.POSH_EXECUTED = ($nu.history-enabled and ($hist_len > ($env.POSH_LAST_HISTORY_LEN? | default 0)))
+    $env.POSH_LAST_HISTORY_LEN = $hist_len
 
     _omp_get_prompt primary $"--cleared=($clear)"
 }

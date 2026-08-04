@@ -162,6 +162,7 @@ function _omp_hook() {
     _omp_job_count=${#_omp_jobs[@]}
 
     _omp_execution_time=-1
+    _omp_no_status=true
     if [[ $_omp_start_time ]]; then
         local omp_now=$(_omp_milliseconds)
         _omp_execution_time=$((omp_now - _omp_start_time))

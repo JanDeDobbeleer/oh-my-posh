@@ -563,6 +563,67 @@ func TestPwd(t *testing.T) {
 	}
 }
 
+func TestSetCursorStyle(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Shell    string
+		Style    string
+		Expected string
+		Plain    bool
+	}{
+		{
+			Case:     "Steady block, generic shell",
+			Shell:    shell.GENERIC,
+			Style:    SteadyBlock,
+			Expected: "\x1b[2 q",
+		},
+		{
+			Case:     "Blinking bar, generic shell",
+			Shell:    shell.GENERIC,
+			Style:    BlinkingBar,
+			Expected: "\x1b[5 q",
+		},
+		{
+			Case:     "Steady underline wrapped for bash readline",
+			Shell:    shell.BASH,
+			Style:    SteadyUnderline,
+			Expected: "\\[\x1b[4 q\\]",
+		},
+		{
+			Case:     "Steady bar wrapped for zsh",
+			Shell:    shell.ZSH,
+			Style:    SteadyBar,
+			Expected: "%{\x1b[6 q%}",
+		},
+		{
+			Case:     "Unknown style renders nothing",
+			Shell:    shell.GENERIC,
+			Style:    "not-a-style",
+			Expected: "",
+		},
+		{
+			Case:     "Plain mode renders nothing",
+			Shell:    shell.GENERIC,
+			Style:    SteadyBlock,
+			Plain:    true,
+			Expected: "",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			Init(tc.Shell)
+			Plain = tc.Plain
+
+			got := SetCursorStyle(tc.Style)
+
+			assert.Equal(t, tc.Expected, got, tc.Case)
+		})
+	}
+
+	Plain = false
+}
+
 func TestStripControlRunes(t *testing.T) {
 	cases := []struct {
 		Case     string

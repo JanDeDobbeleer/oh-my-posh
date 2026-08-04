@@ -5471,6 +5471,19 @@
       "description": "Add a trailing space to the end of the prompt.",
       "default": true
     },
+    "cursor_style": {
+      "type": "string",
+      "title": "Cursor Style",
+      "description": "Set the terminal cursor's shape/blink state via a DECSCUSR sequence at the start of the prompt.",
+      "enum": [
+        "blinking_block",
+        "steady_block",
+        "blinking_underline",
+        "steady_underline",
+        "blinking_bar",
+        "steady_bar"
+      ]
+    },
     "enable_cursor_positioning": {
       "type": "boolean",
       "title": "Enable Cursor Positioning",

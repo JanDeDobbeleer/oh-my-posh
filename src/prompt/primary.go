@@ -161,6 +161,10 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
 	}
 
+	if len(e.Config.CursorStyle) > 0 {
+		e.write(terminal.SetCursorStyle(e.Config.CursorStyle))
+	}
+
 	if e.Config.ShellIntegration {
 		e.write(terminal.CommandStart())
 	}

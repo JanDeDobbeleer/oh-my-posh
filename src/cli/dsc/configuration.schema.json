@@ -785,6 +785,9 @@
           "console_title_template": {
             "type": "string"
           },
+          "cursor_style": {
+            "type": "string"
+          },
           "accent_color": {
             "type": "string"
           },

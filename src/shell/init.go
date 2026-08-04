@@ -154,6 +154,10 @@ func generateScript(env runtime.Environment, feats Features) string {
 
 	bashBLEsession = len(env.Getenv("BLE_SESSION_ID")) != 0
 
+	if env.Flags().Shell == NU && feats&Streaming != 0 && !nuSupportsStreaming(env) {
+		feats &^= Streaming
+	}
+
 	// Only nu consumes the ::CONFIG:: placeholder: it has no eval'd session
 	// script to export POSH_CONFIG from, so the value is baked into its init
 	// script instead. All other shells get it via sessionScript.
@@ -213,6 +217,10 @@ func generateNuScript(env runtime.Environment, feats Features) string {
 	}
 
 	executable = quoteNuStr(executable)
+
+	if feats&Streaming != 0 && !nuSupportsStreaming(env) {
+		feats &^= Streaming
+	}
 
 	init := strings.NewReplacer(
 		"::OMP::", executable,

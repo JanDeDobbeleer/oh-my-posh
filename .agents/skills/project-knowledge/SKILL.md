@@ -30,6 +30,7 @@ and is not derivable from a quick read of the code.
 | [pwsh](references/pwsh.md)           | Touching `omp.ps1`, PSReadLine, runspaces, events, or pwsh perf        |
 | [fish](references/fish.md)           | Touching `omp.fish`, fish jobs, fifos, or fish event handlers          |
 | [bash](references/bash.md)           | Touching `omp.bash`, PROMPT_COMMAND, readline, or bash coprocs         |
+| [nu](references/nu.md)               | Touching `omp.nu`, nu parsing/scoping, or `job`-based synchronization  |
 | [cmd-clink](references/cmd-clink.md) | Touching `omp.lua`, Clink integration, or Windows pipe lifecycles      |
 | [terminal](references/terminal.md)   | Reasoning about ptys, ConPTY, Windows Terminal, or terminal encoding   |
 | [testing](references/testing.md)     | Building a harness to drive a shell end-to-end (WSL, zpty, script(1))  |

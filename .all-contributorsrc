@@ -3772,6 +3772,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "e-kulikov",
+      "name": "Evgeny Kulikov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3277076?v=4",
+      "profile": "https://github.com/e-kulikov",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

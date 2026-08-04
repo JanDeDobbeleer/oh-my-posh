@@ -3,7 +3,7 @@
   "checkpoint_id": "afc824f2ed92",
   "strategy": "manual-commit",
   "branch": "next",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
     "src/prompt/primary.go"
   ],
@@ -14,6 +14,13 @@
       "compact_transcript": "/af/c824f2ed92/0/transcript.jsonl",
       "content_hash": "/af/c824f2ed92/0/content_hash.txt",
       "prompt": "/af/c824f2ed92/0/prompt.txt"
+    },
+    {
+      "metadata": "/af/c824f2ed92/1/metadata.json",
+      "transcript": "/af/c824f2ed92/1/full.jsonl",
+      "compact_transcript": "/af/c824f2ed92/1/transcript.jsonl",
+      "content_hash": "/af/c824f2ed92/1/content_hash.txt",
+      "prompt": "/af/c824f2ed92/1/prompt.txt"
     }
   ],
   "token_usage": {

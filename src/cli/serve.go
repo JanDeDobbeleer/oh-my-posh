@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -19,6 +20,12 @@ import (
 // Unix only - used by shells that cannot hold a child's stdin open across
 // prompts (fish).
 var requestPipe string
+
+// Windows nu: mkfifo doesn't exist and nu's save/redirect primitives cannot
+// write to Windows named pipes, so the daemon serves requests over a
+// loopback HTTP endpoint instead and publishes "<port> <token>" to this file
+// (see serve_http.go).
+var portFile string
 
 var serveCmd = createServeCmd()
 
@@ -77,9 +84,24 @@ func createServeCmd() *cmdtree.Command {
 				shellName = shell.GENERIC
 			}
 
-			in, err := openServeInput(requestPipe)
-			if err != nil {
-				os.Exit(1)
+			// Bring the transport up before cache.Init: a transport failure
+			// exits with os.Exit, which would skip the deferred cache.Close.
+			var run func() bool
+
+			if portFile != "" {
+				server, err := startServeHTTP(portFile)
+				if err != nil {
+					os.Exit(1)
+				}
+
+				run = server.run
+			} else {
+				in, err := openServeInput(requestPipe)
+				if err != nil {
+					os.Exit(1)
+				}
+
+				run = func() bool { return runServeLoop(in, os.Stdout) }
 			}
 
 			options := []cache.Option{cache.Persist}
@@ -92,7 +114,7 @@ func createServeCmd() *cmdtree.Command {
 			// least once (it reads package-level state set there); if the
 			// daemon quits/hits EOF before ever handling a render request,
 			// skip it instead of panicking on that unset state.
-			if renderedAtLeastOnce := runServeLoop(in, os.Stdout); renderedAtLeastOnce {
+			if renderedAtLeastOnce := run(); renderedAtLeastOnce {
 				template.SaveCache()
 			}
 		},
@@ -100,9 +122,11 @@ func createServeCmd() *cmdtree.Command {
 
 	serveCmd.Flags().StringVar(&shellName, "shell", "", "the shell to serve for")
 	serveCmd.Flags().StringVar(&requestPipe, "request-pipe", "", "named pipe (fifo) to read requests from instead of stdin")
+	serveCmd.Flags().StringVar(&portFile, "port-file", "", "serve over loopback HTTP and write '<port> <token>' to this file")
 
 	// Hide flags that are for internal use only.
 	_ = serveCmd.Flags().MarkHidden("request-pipe")
+	_ = serveCmd.Flags().MarkHidden("port-file")
 
 	return serveCmd
 }
@@ -151,7 +175,7 @@ type serveActiveCycle struct {
 // StreamPrimary) so a broken render costs one prompt, not the daemon; the
 // shell additionally redirects this process's stderr so anything unrecovered
 // can never reach the user's terminal.
-func runServeLoop(in, out *os.File) bool {
+func runServeLoop(in io.Reader, out io.Writer) bool {
 	scanner := bufio.NewScanner(in)
 	// Env payloads (a POSH_* overlay plus PATH) can exceed the default 64 KB
 	// scanner buffer, so grow it up front.
@@ -259,7 +283,7 @@ func applyEnvOverlay(env map[string]string, keys map[string]struct{}) {
 // A panic while setting up the cycle (e.g. in prompt.New) is recovered and
 // reported as "no cycle": the daemon stays alive, the shell's waiter times
 // out and falls back to the legacy path for that prompt.
-func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct{}) (cycle *serveActiveCycle) {
+func startRenderCycle(req *serveRequest, out io.Writer, envKeys map[string]struct{}) (cycle *serveActiveCycle) {
 	defer func() {
 		if r := recover(); r != nil {
 			cycle = nil
@@ -374,7 +398,7 @@ func renderComplete(eng *prompt.Engine) <-chan string {
 
 // copyRecords copies prompt records to out prefixed with the cycle id and
 // closes the returned channel once the source channel is exhausted.
-func copyRecords(id int64, records <-chan string, out *os.File) chan struct{} {
+func copyRecords(id int64, records <-chan string, out io.Writer) chan struct{} {
 	done := make(chan struct{})
 
 	go func() {

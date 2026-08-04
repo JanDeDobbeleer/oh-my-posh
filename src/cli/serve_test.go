@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"slices"
@@ -132,7 +133,7 @@ type recordReader struct {
 	ch chan serveRecord
 }
 
-func newRecordReader(r *os.File) *recordReader {
+func newRecordReader(r io.Reader) *recordReader {
 	rr := &recordReader{ch: make(chan serveRecord, 64)}
 
 	go func() {

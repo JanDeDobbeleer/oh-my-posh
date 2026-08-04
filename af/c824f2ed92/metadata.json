@@ -3,7 +3,7 @@
   "checkpoint_id": "afc824f2ed92",
   "strategy": "manual-commit",
   "branch": "next",
-  "checkpoints_count": 2,
+  "checkpoints_count": 1,
   "files_touched": [
     "src/prompt/primary.go"
   ],
@@ -14,13 +14,6 @@
       "compact_transcript": "/af/c824f2ed92/0/transcript.jsonl",
       "content_hash": "/af/c824f2ed92/0/content_hash.txt",
       "prompt": "/af/c824f2ed92/0/prompt.txt"
-    },
-    {
-      "metadata": "/af/c824f2ed92/1/metadata.json",
-      "transcript": "/af/c824f2ed92/1/full.jsonl",
-      "compact_transcript": "/af/c824f2ed92/1/transcript.jsonl",
-      "content_hash": "/af/c824f2ed92/1/content_hash.txt",
-      "prompt": "/af/c824f2ed92/1/prompt.txt"
     }
   ],
   "token_usage": {
@@ -29,17 +22,5 @@
     "cache_read_tokens": 176225772,
     "output_tokens": 274317,
     "api_call_count": 610
-  },
-  "combined_attribution": {
-    "calculated_at": "2026-08-04T06:36:51.5618791Z",
-    "agent_lines": 4,
-    "agent_removed": 0,
-    "human_added": 114,
-    "human_modified": 0,
-    "human_removed": 0,
-    "total_committed": 118,
-    "total_lines_changed": 118,
-    "agent_percentage": 3.389830508474576,
-    "metric_version": 2
   }
 }

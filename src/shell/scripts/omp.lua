@@ -376,9 +376,7 @@ local function url_encode(str)
 end
 
 local function command_executed_mark(input)
-    if string.gsub(input, '^%s*(.-)%s*$', '%1') ~= '' then
-        no_exit_code = false
-    end
+    no_exit_code = string.gsub(input, '^%s*(.-)%s*$', '%1') == ''
 
     if not ftcs_marks_enabled then
         return

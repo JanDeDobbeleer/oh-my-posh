@@ -144,6 +144,14 @@ const (
 	OSC7  = "osc7"
 	OSC51 = "osc51"
 
+	// DECSCUSR (CSI n SP q) cursor style names, matching xterm's ctlseqs terminology.
+	BlinkingBlock     = "blinking_block"
+	SteadyBlock       = "steady_block"
+	BlinkingUnderline = "blinking_underline"
+	SteadyUnderline   = "steady_underline"
+	BlinkingBar       = "blinking_bar"
+	SteadyBar         = "steady_bar"
+
 	ANCHOR = "ANCHOR"
 	BG     = "BG"
 	FG     = "FG"
@@ -366,6 +374,33 @@ func Pwd(pwdType, userName, hostName, pwd string) string {
 	default:
 		return fmt.Sprintf(formats.Osc99, pwd)
 	}
+}
+
+// decscusrCodes maps the CursorStyle option values to their DECSCUSR (CSI n SP q) parameter.
+var decscusrCodes = map[string]int{
+	BlinkingBlock:     1,
+	SteadyBlock:       2,
+	BlinkingUnderline: 3,
+	SteadyUnderline:   4,
+	BlinkingBar:       5,
+	SteadyBar:         6,
+}
+
+// SetCursorStyle renders the DECSCUSR sequence for a known cursor style, wrapped in the
+// shell's escape sequence so it doesn't confuse readline-based shells about the cursor
+// column. Unlike segment content this is Oh My Posh's own trusted output, so it's exempt
+// from the control-rune stripping write() applies to potentially attacker-controlled text.
+func SetCursorStyle(style string) string {
+	if Plain {
+		return ""
+	}
+
+	code, ok := decscusrCodes[style]
+	if !ok {
+		return ""
+	}
+
+	return fmt.Sprintf(formats.Escape, fmt.Sprintf("\x1b[%d q", code))
 }
 
 func ClearAfter() string {

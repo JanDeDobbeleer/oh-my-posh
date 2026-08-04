@@ -37,8 +37,8 @@ type. Config editing changes from "look up the docs, guess the property name, re
 into something closer to writing code with a linter looking over your shoulder.
 
 If you're looking for a more drag and drop experience, **Open in Configurator** hands your config
-straight off to the full Configurator app. Shout out to [James Montemagno] for maintaining that
-awesome tool!
+straight off to the full [Configurator app](https://configurator.ohmyposh.dev/).
+Shout out to [James Montemagno] for maintaining that awesome tool!
 
 Studio and the Configurator aren't a linear path where one replaces the other. They're two
 different ways of working, and now you can move between them freely. If you want a fast,

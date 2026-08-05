@@ -602,6 +602,18 @@ func TestSetCursorStyle(t *testing.T) {
 			Expected: "",
 		},
 		{
+			Case:     "Default steady, generic shell",
+			Shell:    shell.GENERIC,
+			Style:    DefaultSteady,
+			Expected: "\x1b[0 q\x1b[?12l",
+		},
+		{
+			Case:     "Default blinking wrapped for zsh",
+			Shell:    shell.ZSH,
+			Style:    DefaultBlinking,
+			Expected: "%{\x1b[0 q\x1b[?12h%}",
+		},
+		{
 			Case:     "Plain mode renders nothing",
 			Shell:    shell.GENERIC,
 			Style:    SteadyBlock,

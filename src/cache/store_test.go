@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"encoding/gob"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,4 +120,47 @@ func TestStoreCloseTouchesSessionFileMTime(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, info.ModTime().Before(before), "mtime should be bumped to the close time, not left stale")
 	assert.WithinDuration(t, time.Now(), info.ModTime(), time.Minute)
+}
+
+type storeGobPointerType struct {
+	Name string
+}
+
+// Guards against #7766: gob.Register keys its decode-side type map on the
+// exact type registered, while encoding an interface value uses the base
+// type. Registering a type as a pointer (as segment_registry.go does for
+// segments.Version, ClaudeData and CopilotCLIData) means a value stored
+// under that type comes back as *T, not T, on the next process's gob decode
+// of the on-disk device cache. Get[T] must still return a hit in that case,
+// otherwise cache_duration silently never survives a process restart.
+func TestGetSurvivesGobPointerRegistration(t *testing.T) {
+	gob.Register(&storeGobPointerType{})
+
+	origDevice := device
+	origCachePath := cachePath
+	t.Cleanup(func() {
+		device = origDevice
+		cachePath = origCachePath
+	})
+
+	cachePath = t.TempDir()
+	const fileName = "device.cache"
+
+	// First process: set the value and persist it to disk.
+	writer := Device.new()
+	writer.filePath = filepath.Join(cachePath, fileName)
+	writer.persist = true
+	device = writer
+
+	Set(Device, "test_key", storeGobPointerType{Name: "value"}, Duration("1h"))
+	Device.close()
+
+	// Second process: fresh store, loaded from disk. This is the gob decode
+	// that flips the interface-typed value from T to *T.
+	device = nil
+	Device.init(fileName, true)
+
+	got, ok := Get[storeGobPointerType](Device, "test_key")
+	require.True(t, ok, "expected a cache hit after a gob round-trip of a pointer-registered type")
+	assert.Equal(t, "value", got.Name)
 }

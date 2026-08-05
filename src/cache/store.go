@@ -14,6 +14,10 @@ import (
 )
 
 type store struct {
+	// mtime is the on-disk file's modification time as of the last load or
+	// refresh. A long-lived process (serve) uses it to detect writes made by
+	// other processes (e.g. toggle) between render cycles - see Refresh.
+	mtime    time.Time
 	cache    *maps.Concurrent[*Entry[any]]
 	filePath string
 	dirty    bool
@@ -25,10 +29,6 @@ type store struct {
 	// attempt to (re)create the file, since doing so would truncate the
 	// other process's data.
 	locked bool
-	// mtime is the on-disk file's modification time as of the last load or
-	// refresh. A long-lived process (serve) uses it to detect writes made by
-	// other processes (e.g. toggle) between render cycles - see Refresh.
-	mtime time.Time
 }
 
 var (

@@ -21,7 +21,8 @@ prompt every time the active mode changes.
 
 PowerShell support sets PSReadLine's `ViModeIndicator` to `Script`, replacing
 cursor-shape mode indicators such as `Cursor`. The mode is then shown by this
-segment in the prompt instead.
+segment in the prompt instead, or configure the top-level [`cursor_style`][cursor-style]
+setting to vary the cursor shape by `.Env.POSH_VI_MODE` without a custom handler.
 
 :::
 
@@ -66,6 +67,7 @@ import Config from "@site/src/components/Config.js";
 | `.Keymap` | `string` | the raw mode value ([`$KEYMAP`][zsh-keymap] in ZSH, e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`; `viins` or `vicmd` in PowerShell PSReadLine; `viins`, `vicmd`, `visual` or `replace` in fish) |
 
 [templates]: /docs/configuration/templates
+[cursor-style]: /docs/configuration/general#properties
 [zsh-vi-mode]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps
 [zsh-keymap]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-KEYMAP
 [pwsh-vi-mode]: https://learn.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption#-vimodechangehandler

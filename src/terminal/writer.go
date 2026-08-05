@@ -152,6 +152,14 @@ const (
 	BlinkingBar       = "blinking_bar"
 	SteadyBar         = "steady_bar"
 
+	// DefaultSteady and DefaultBlinking reset DECSCUSR to the terminal's own
+	// default shape (CSI 0 SP q) and only toggle blink (CSI ? 12 h/l), so
+	// terminal-specific shapes DECSCUSR can't select - Windows Terminal's
+	// vintage, double-underscore and empty-box cursors among them - stay
+	// under the user's terminal profile setting instead of being overridden.
+	DefaultSteady   = "default_steady"
+	DefaultBlinking = "default_blinking"
+
 	ANCHOR = "ANCHOR"
 	BG     = "BG"
 	FG     = "FG"
@@ -393,6 +401,13 @@ var decscusrCodes = map[string]int{
 func SetCursorStyle(style string) string {
 	if Plain {
 		return ""
+	}
+
+	switch style {
+	case DefaultSteady:
+		return fmt.Sprintf(formats.Escape, "\x1b[0 q\x1b[?12l")
+	case DefaultBlinking:
+		return fmt.Sprintf(formats.Escape, "\x1b[0 q\x1b[?12h")
 	}
 
 	code, ok := decscusrCodes[style]

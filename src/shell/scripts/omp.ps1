@@ -1344,7 +1344,20 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             (Get-PSReadLineOption).PromptText = $script:OriginalPromptText
 
             if ((Get-Command Set-PSReadLineOption).Parameters.ContainsKey('ViModeChangeHandler')) {
-                Set-PSReadLineOption -ViModeIndicator $script:OriginalViModeIndicator -ViModeChangeHandler $script:OriginalViModeChangeHandler
+                # PSReadLine throws when a non-null -ViModeChangeHandler is set while the
+                # resulting ViModeIndicator is not Script, and silently ignores a $null
+                # handler (an existing handler can never be cleared). A handler set by the
+                # user (or a previous init) therefore survives our restore, gets captured
+                # as "original" on the next re-source alongside a non-Script indicator,
+                # and re-applying that pair here would throw
+                # "ViModeChangeHandler option requires ViModeStyle.Script".
+                # Only restore the handler when the captured pair is valid.
+                if ($script:OriginalViModeIndicator -eq 'Script' -and $null -ne $script:OriginalViModeChangeHandler) {
+                    Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $script:OriginalViModeChangeHandler
+                }
+                else {
+                    Set-PSReadLineOption -ViModeIndicator $script:OriginalViModeIndicator
+                }
             }
 
             Remove-Item Env:POSH_VI_MODE -ErrorAction Ignore

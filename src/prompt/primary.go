@@ -7,6 +7,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
@@ -161,8 +162,12 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
 	}
 
+	// Template-rendered so cursor_style can vary per render, e.g. by keying off
+	// POSH_VI_MODE (set by the vimode segment's shell hooks) via .Env.
 	if len(e.Config.CursorStyle) > 0 {
-		e.write(terminal.SetCursorStyle(e.Config.CursorStyle))
+		if style, err := template.RenderTrusted(e.Config.CursorStyle, nil); err == nil {
+			e.write(terminal.SetCursorStyle(style))
+		}
 	}
 
 	if e.Config.ShellIntegration {

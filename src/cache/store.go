@@ -212,6 +212,16 @@ func Get[T any](s Store, key string) (T, bool) {
 		return typed, true
 	}
 
+	// gob.Register keys its decode-side type map on the exact type it was given,
+	// while encoding an interface value uses the base type. Registering a type
+	// as a pointer (see segment_registry.go) therefore makes every gob round-trip
+	// of a value stored under that type come back as *T instead of T. Accept that
+	// shape here rather than dropping it as a cache miss.
+	if ptr, ok := entry.Value.(*T); ok && ptr != nil {
+		log.Debugf("(%s) found entry: %s - %v", string(s), key, *ptr)
+		return *ptr, true
+	}
+
 	log.Error(fmt.Errorf("(%s) type mismatch for key: %s. Got %T, expected %T", string(s), key, entry.Value, zero))
 	return zero, false
 }

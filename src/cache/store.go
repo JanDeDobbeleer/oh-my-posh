@@ -14,6 +14,10 @@ import (
 )
 
 type store struct {
+	// mtime is the on-disk file's modification time as of the last load or
+	// refresh. A long-lived process (serve) uses it to detect writes made by
+	// other processes (e.g. toggle) between render cycles - see Refresh.
+	mtime    time.Time
 	cache    *maps.Concurrent[*Entry[any]]
 	filePath string
 	dirty    bool
@@ -72,6 +76,7 @@ func (s Store) init(filePath string, persist bool) {
 	store.persist = persist
 	store.dirty = false
 	store.locked = false
+	store.mtime = time.Time{}
 
 	reader, err := openFile(store.filePath)
 	if err != nil {
@@ -91,6 +96,10 @@ func (s Store) init(filePath string, persist bool) {
 	}
 
 	defer reader.Close()
+
+	if info, err := os.Stat(store.filePath); err == nil {
+		store.mtime = info.ModTime()
+	}
 
 	var list maps.Simple[*Entry[any]]
 
@@ -132,10 +141,70 @@ func touchSessionFile(filePath string) {
 	}
 }
 
+// Refresh re-syncs the in-memory store with the on-disk file if it has
+// changed since the last load or refresh, merging entries by Timestamp (the
+// newer value wins). A short-lived, one-shot invocation never needs this -
+// init() already loads the current file once. It exists for a long-lived
+// process (serve) that keeps its cache in memory for the session: without
+// it, a write from another process (e.g. `toggle`, `enable`/`disable`)
+// would stay invisible until the daemon exits.
+func Refresh(s Store) {
+	defer log.Trace(time.Now(), string(s))
+
+	store := s.get()
+	if store == nil || store.locked || store.filePath == "" {
+		return
+	}
+
+	info, err := os.Stat(store.filePath)
+	if err != nil || !info.ModTime().After(store.mtime) {
+		return
+	}
+
+	reader, err := openFile(store.filePath)
+	if err != nil {
+		return
+	}
+
+	defer reader.Close()
+
+	var list maps.Simple[*Entry[any]]
+
+	dec := gob.NewDecoder(reader)
+	if err := dec.Decode(&list); err != nil {
+		log.Error(err)
+		return
+	}
+
+	for key, diskEntry := range list {
+		if diskEntry.Expired() {
+			continue
+		}
+
+		if current, found := store.cache.Get(key); found && current.Timestamp >= diskEntry.Timestamp {
+			continue
+		}
+
+		log.Debugf("(%s) refreshing %s from disk", string(s), key)
+		store.cache.Set(key, diskEntry)
+	}
+
+	store.mtime = info.ModTime()
+}
+
 func (s Store) close() {
 	defer log.Trace(time.Now(), string(s))
 
 	store := s.get()
+
+	// Pick up any write from another process one last time before a dirty
+	// store overwrites the file, so a change made after the last Refresh
+	// (e.g. right before the shell exits) isn't clobbered by this store's
+	// own, possibly stale, in-memory copy.
+	if store != nil && !store.locked && store.persist && store.dirty {
+		Refresh(s)
+	}
+
 	if store == nil || store.locked || !store.persist || !store.dirty {
 		if s == Session && store != nil && !store.locked && store.filePath != "" {
 			touchSessionFile(store.filePath)
@@ -169,15 +238,13 @@ func (s Store) close() {
 		log.Error(err)
 	}
 
-	if s != Session {
-		return
-	}
-
 	// On Windows, the mmap-backed write path doesn't reliably update the
-	// file's on-disk last-write-time (per Microsoft's docs), which can lead
-	// to an actively-used session cache being mistaken for stale and swept
-	// up by cache.Clear(). Explicitly bump the mtime now that the file is
-	// closed (and the mmap unmap/flush on Windows has happened).
+	// file's on-disk last-write-time (per Microsoft's docs). For the session
+	// store that can lead to an actively-used cache being mistaken for stale
+	// and swept up by cache.Clear(); for either store, a long-lived Refresh
+	// reader (serve) needs a trustworthy mtime to notice this write at all.
+	// Explicitly bump it now that the file is closed (and the mmap
+	// unmap/flush on Windows has happened).
 	if err := os.Chtimes(store.filePath, time.Now(), time.Now()); err != nil {
 		log.Error(err)
 	}

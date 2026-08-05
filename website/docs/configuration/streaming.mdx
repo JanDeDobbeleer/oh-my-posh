@@ -117,6 +117,13 @@ Requires [Clink][clink] v1.1.42 or later.
 </TabItem>
 </Tabs>
 
+## Known limitations
+
+The background process re-syncs its in-memory cache from disk before every render, so writes
+from another process (`toggle`, `enable`/`disable`) are picked up on the next prompt. There can
+still be a narrow window - a write that lands between the background process reading the cache
+and finishing that same render - where it takes one extra prompt to show up.
+
 ## Feedback
 
 If you encounter issues or have suggestions for the streaming feature, please open an issue on the

@@ -266,6 +266,18 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 		}
 	}()
 
+	// The daemon keeps its caches in memory for its whole lifetime (see the
+	// comment on copyRecords below) and only reads the on-disk files once,
+	// at startup. Refresh picks up writes from other processes that landed
+	// since the last cycle: Session for `oh-my-posh toggle` (a segment
+	// toggled mid-session shouldn't stay stuck until the daemon exits), and
+	// Device for `enable`/`disable` (e.g. `enable reload`, which config.Get
+	// in prompt.New checks to bypass its own config cache after an edit -
+	// without this the daemon would keep serving the old config until
+	// restarted).
+	cache.Refresh(cache.Session)
+	cache.Refresh(cache.Device)
+
 	// Apply the env overlay BEFORE constructing the engine so segment
 	// execution and config templates observe the calling shell's
 	// environment. v1 accepts the theoretical race with a still-running
@@ -397,7 +409,9 @@ func copyRecords(id int64, records <-chan string, out *os.File) chan struct{} {
 		// template caches in memory for the daemon's lifetime - that's the
 		// whole point of a long-lived process. Caches are only flushed to
 		// disk once, on clean shutdown (quit/EOF), via the cache.Close()/
-		// template.SaveCache() defer in createServeCmd.
+		// template.SaveCache() defer in createServeCmd. Reads are a
+		// different story: cache.Refresh() in startRenderCycle re-syncs from
+		// disk each cycle, so writes from other processes are still seen.
 	}()
 
 	return done

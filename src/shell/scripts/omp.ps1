@@ -1226,6 +1226,37 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
 
         $env:POSH_VI_MODE = "viins"
+
+        # Inside a PSSession, the local client host prefixes the remote prompt with
+        # "[hostname]: " before painting it, so a full InvokePrompt() repaint computes
+        # its cursor/line bookkeeping against on-screen geometry that no longer matches
+        # what the remote side sees, and it eats the previous line on every mode change
+        # (see issue #7780). Raw ANSI still reaches the real console via a direct
+        # Console.Write, since that bypasses the host proxy entirely, so precompute both
+        # cursor sequences once and swap between them without a repaint.
+        if ($null -ne $PSSenderInfo) {
+            $script:ViModeCursorStyles = @{
+                viins = (Invoke-Utf8Posh @("print", "cursor", "--shell=$script:ShellName")) -join "`n"
+            }
+
+            $env:POSH_VI_MODE = "vicmd"
+            $script:ViModeCursorStyles.vicmd = (Invoke-Utf8Posh @("print", "cursor", "--shell=$script:ShellName")) -join "`n"
+            $env:POSH_VI_MODE = "viins"
+
+            Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler {
+                param($mode)
+
+                $env:POSH_VI_MODE = if ($mode -eq "Command") { "vicmd" } else { "viins" }
+
+                $sequence = $script:ViModeCursorStyles[$env:POSH_VI_MODE]
+                if ($sequence) {
+                    [Console]::Write($sequence)
+                }
+            }
+
+            return
+        }
+
         Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler {
             param($mode)
 
@@ -1356,6 +1387,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             }
 
             Remove-Item Env:POSH_VI_MODE -ErrorAction Ignore
+            Remove-Variable -Name ViModeCursorStyles -Scope Script -ErrorAction Ignore
 
             if ((Get-PSReadLineKeyHandler Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
                 Remove-PSReadLineKeyHandler Spacebar

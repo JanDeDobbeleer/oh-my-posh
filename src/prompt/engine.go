@@ -86,6 +86,7 @@ const (
 	VALID           = "valid"
 	ERROR           = "error"
 	PREVIEW         = "preview"
+	CURSOR          = "cursor"
 )
 
 func (e *Engine) write(txt string) {

@@ -1227,44 +1227,38 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
         $env:POSH_VI_MODE = "viins"
 
-        # Inside a PSSession, the local client host prefixes the remote prompt with
-        # "[hostname]: " before painting it, so a full InvokePrompt() repaint computes
-        # its cursor/line bookkeeping against on-screen geometry that no longer matches
-        # what the remote side sees, and it eats the previous line on every mode change
-        # (see issue #7780). Raw ANSI still reaches the real console via a direct
-        # Console.Write, since that bypasses the host proxy entirely, so precompute both
-        # cursor sequences once and swap between them without a repaint.
-        if ($null -ne $PSSenderInfo) {
-            $script:ViModeCursorStyles = @{
-                viins = (Invoke-Utf8Posh @("print", "cursor", "--shell=$script:ShellName")) -join "`n"
-            }
-
-            $env:POSH_VI_MODE = "vicmd"
-            $script:ViModeCursorStyles.vicmd = (Invoke-Utf8Posh @("print", "cursor", "--shell=$script:ShellName")) -join "`n"
-            $env:POSH_VI_MODE = "viins"
-
-            Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler {
-                param($mode)
-
-                $env:POSH_VI_MODE = if ($mode -eq "Command") { "vicmd" } else { "viins" }
-
-                $sequence = $script:ViModeCursorStyles[$env:POSH_VI_MODE]
-                if ($sequence) {
-                    [Console]::Write($sequence)
-                }
-            }
-
-            return
+        # Precomputed so a mode change while a PSSession is pushed (Enter-PSSession) can
+        # update the cursor shape with a direct Console.Write instead of a full
+        # InvokePrompt() repaint. $Host.IsRunspacePushed is checked in the handler below,
+        # not here: PSReadLine's vi-mode handler always runs in the local client process
+        # (it owns reading raw keystrokes off the real console, independent of which
+        # runspace is current for command/prompt evaluation), so $PSSenderInfo - only set
+        # inside a remote/server-side runspace - is never true where this handler runs,
+        # and IsRunspacePushed can flip within the same handler's lifetime as the user
+        # enters/exits sessions. Inside a pushed session the client host prefixes the
+        # remote-rendered prompt with "[hostname]: " before painting it, so a repaint's
+        # cursor/line bookkeeping no longer matches the actual on-screen layout and eats
+        # the previous line on every mode change (see issue #7780); Console.Write bypasses
+        # that repaint - and the host's prompt-decorating proxy - entirely.
+        $script:ViModeCursorStyles = @{
+            viins = (Invoke-Utf8Posh @("print", "cursor", "--shell=$script:ShellName")) -join "`n"
         }
+
+        $env:POSH_VI_MODE = "vicmd"
+        $script:ViModeCursorStyles.vicmd = (Invoke-Utf8Posh @("print", "cursor", "--shell=$script:ShellName")) -join "`n"
+        $env:POSH_VI_MODE = "viins"
 
         Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler {
             param($mode)
 
-            if ($mode -eq "Command") {
-                $env:POSH_VI_MODE = "vicmd"
-            }
-            else {
-                $env:POSH_VI_MODE = "viins"
+            $env:POSH_VI_MODE = if ($mode -eq "Command") { "vicmd" } else { "viins" }
+
+            if ($Host.IsRunspacePushed) {
+                $sequence = $script:ViModeCursorStyles[$env:POSH_VI_MODE]
+                if ($sequence) {
+                    [Console]::Write($sequence)
+                }
+                return
             }
 
             $previousOutputEncoding = [Console]::OutputEncoding

@@ -526,6 +526,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/e-kulikov"><img src="https://avatars.githubusercontent.com/u/3277076?v=4?s=100" width="100px;" alt="Evgeny Kulikov"/><br /><sub><b>Evgeny Kulikov</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=e-kulikov" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jinli.io"><img src="https://avatars.githubusercontent.com/u/26253144?v=4?s=100" width="100px;" alt="lijin"/><br /><sub><b>lijin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jin-li" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

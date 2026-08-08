@@ -13,12 +13,12 @@ import (
 
 func TestBatteryEnabled(t *testing.T) {
 	cases := []struct {
-		Case            string
 		Info            *battery.Info
 		Error           error
+		Case            string
+		Expected        string
 		DisplayError    bool
 		ExpectedEnabled bool
-		Expected        string
 	}{
 		{
 			Case:            "detected battery at 0%",

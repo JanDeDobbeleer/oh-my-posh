@@ -442,10 +442,14 @@ linters catch real bugs and style violations that will be flagged in CI or code 
 After steps 1 through 3, always run `git diff` to review auto-applied changes before staging them.
 All four steps must complete with zero errors before the commit is created.
 
-#### Platform-specific files (`_unix.go`, `_windows.go`, `_darwin.go`)
+#### Platform-specific files (`_unix.go`, `_windows.go`, `_darwin.go`, `_js.go`)
 
-If you add or modify a file with a platform-specific suffix, also cross-compile to catch
-issues the local OS linter skips. On Windows, run:
+These suffixes, and an explicit `//go:build` constraint, are how a file is bound to one target.
+The toolchain type-checks and lints the files selected for the host and nothing else, so a
+violation in another platform's file ships silently.
+
+If you add or modify such a file, also cross-compile to catch issues the local OS linter skips.
+On Windows, run:
 
 ```powershell
 $env:GOOS = "linux"; go build ./...; $env:GOOS = ""
@@ -458,7 +462,8 @@ GOOS=windows go build ./...
 ```
 
 This catches import mismatches, missing symbols, and linter rules (like `modernize`
-`strings.SplitSeq`) that apply on the non-host platform.
+`strings.SplitSeq`) that apply on the non-host platform. Run `golangci-lint run` under the same
+`GOOS` so the lint rules are covered too, not the build alone.
 
 #### Common golangci-lint violations to fix before committing
 

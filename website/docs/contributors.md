@@ -527,6 +527,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/e-kulikov"><img src="https://avatars.githubusercontent.com/u/3277076?v=4?s=100" width="100px;" alt="Evgeny Kulikov"/><br /><sub><b>Evgeny Kulikov</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=e-kulikov" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://jinli.io"><img src="https://avatars.githubusercontent.com/u/26253144?v=4?s=100" width="100px;" alt="lijin"/><br /><sub><b>lijin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jin-li" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://ezquieldev.vercel.app/"><img src="https://avatars.githubusercontent.com/u/115424590?v=4?s=100" width="100px;" alt="Ezequiel Salazar"/><br /><sub><b>Ezequiel Salazar</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Ezequie1Sc" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

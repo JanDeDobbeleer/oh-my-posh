@@ -1187,12 +1187,18 @@ func (g *Git) ensureMainWorktreeContext() bool {
 }
 
 func (g *Git) commonGitDir() string {
+	// scmDir is the common git directory at every discovery exit. The worktrees cut
+	// below is only for partially initialized state, where scmDir is not yet set.
+	if g.scmDir != "" {
+		return filepath.ToSlash(g.scmDir)
+	}
+
 	mainSCMDir := filepath.ToSlash(g.mainSCMDir)
 	if worktreeIndex := strings.LastIndex(mainSCMDir, "/worktrees/"); worktreeIndex > -1 {
 		return mainSCMDir[:worktreeIndex]
 	}
 
-	return filepath.ToSlash(g.scmDir)
+	return ""
 }
 
 func worktreeAdminIndex(adminDir string) int {

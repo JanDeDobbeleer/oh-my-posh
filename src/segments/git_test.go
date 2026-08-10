@@ -63,6 +63,50 @@ func TestWorktreeAdminIndex(t *testing.T) {
 	}
 }
 
+func TestCommonGitDir(t *testing.T) {
+	cases := []struct {
+		Case       string
+		ScmDir     string
+		MainSCMDir string
+		Expected   string
+	}{
+		{
+			Case:       "scmDir wins over the worktrees cut",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git/worktrees/linked",
+			Expected:   "/repo/.git",
+		},
+		{
+			Case:       "checkout path containing worktrees does not fool the cut",
+			ScmDir:     "/x/sepdir",
+			MainSCMDir: "/x/worktrees/trap/",
+			Expected:   "/x/sepdir",
+		},
+		{
+			Case:       "falls back to the cut when scmDir is empty",
+			MainSCMDir: "/repo/.git/worktrees/linked",
+			Expected:   "/repo/.git",
+		},
+		{
+			Case:     "empty when nothing is known",
+			Expected: "",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			g := &Git{
+				Scm: Scm{
+					scmDir:     tc.ScmDir,
+					mainSCMDir: tc.MainSCMDir,
+				},
+			}
+
+			assert.Equal(t, tc.Expected, g.commonGitDir())
+		})
+	}
+}
+
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -2432,6 +2433,86 @@ func TestGetRemoteURL(t *testing.T) {
 			g.Init(options.Map{}, env)
 
 			assert.Equal(t, tc.Expected, g.getRemoteURL())
+		})
+	}
+}
+
+func TestWorktreeCount(t *testing.T) {
+	cases := []struct {
+		Case       string
+		ScmDir     string
+		MainSCMDir string
+		Entries    []fs.DirEntry
+		Expected   int
+		HasFolder  bool
+	}{
+		{
+			Case:       "plain clone with no registry",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git",
+			HasFolder:  false,
+			Expected:   0,
+		},
+		{
+			Case:       "linked worktree counts the common registry",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git/worktrees/linked",
+			HasFolder:  true,
+			Entries: []fs.DirEntry{
+				&MockDirEntry{name: "linked", isDir: true},
+				&MockDirEntry{name: "other", isDir: true},
+			},
+			Expected: 2,
+		},
+		{
+			Case:       "files in the registry are not counted",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git",
+			HasFolder:  true,
+			Entries: []fs.DirEntry{
+				&MockDirEntry{name: "linked", isDir: true},
+				&MockDirEntry{name: "README", isDir: false},
+			},
+			Expected: 1,
+		},
+		{
+			Case:       "separate git dir counts its external registry",
+			ScmDir:     "/x/sepdir",
+			MainSCMDir: "/x/worktrees/trap/",
+			HasFolder:  true,
+			Entries:    []fs.DirEntry{&MockDirEntry{name: "wt", isDir: true}},
+			Expected:   1,
+		},
+		{
+			Case:     "unknown common dir touches nothing",
+			Expected: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+
+			if tc.ScmDir != "" {
+				worktrees := filepath.Join(tc.ScmDir, "worktrees")
+				env.On("HasFolder", worktrees).Return(tc.HasFolder)
+				env.On("LsDir", worktrees).Return(tc.Entries)
+			}
+
+			g := &Git{
+				Scm: Scm{
+					scmDir:     tc.ScmDir,
+					mainSCMDir: tc.MainSCMDir,
+				},
+			}
+			g.Init(options.Map{}, env)
+
+			assert.Equal(t, tc.Expected, g.WorktreeCount())
+
+			if tc.ScmDir == "" {
+				env.AssertNotCalled(t, "HasFolder", testify_.Anything)
+				env.AssertNotCalled(t, "LsDir", testify_.Anything)
+			}
 		})
 	}
 }

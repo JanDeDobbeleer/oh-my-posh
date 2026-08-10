@@ -1114,15 +1114,19 @@ func (g *Git) WorktreeCount() int {
 		return g.worktreeCount
 	}
 
-	worktreesFolder := filepath.Join(g.mainSCMDir, "worktrees")
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return 0
+	}
+
+	worktreesFolder := filepath.Join(commonDir, "worktrees")
 
 	if !g.env.HasFolder(worktreesFolder) {
 		return 0
 	}
 
-	worktreeFolders := g.env.LsDir(worktreesFolder)
 	var count int
-	for _, folder := range worktreeFolders {
+	for _, folder := range g.env.LsDir(worktreesFolder) {
 		if folder.IsDir() {
 			count++
 		}

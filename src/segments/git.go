@@ -1264,18 +1264,17 @@ func (g *Git) getRemoteURL() string {
 		upstream = origin
 	}
 
-	cfg, err := g.getGitConfig()
-	if err != nil {
-		return g.getGitCommandOutput("remote", "get-url", upstream)
-	}
-
-	url := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
-	if len(url) != 0 {
-		log.Debug("remote url found in config:", url)
+	// Ask git first because it applies insteadOf rewriting and reads the merged configuration.
+	if url := g.getGitCommandOutput("remote", "get-url", upstream); url != "" {
 		return url
 	}
 
-	return g.getGitCommandOutput("remote", "get-url", upstream)
+	cfg, err := g.commonConfig()
+	if err != nil {
+		return ""
+	}
+
+	return cfg.Section("remote \"" + upstream + "\"").Key("url").String()
 }
 
 func (g *Git) Remotes() map[string]string {

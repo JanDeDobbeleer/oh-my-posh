@@ -2323,3 +2323,70 @@ func realGitPath(t *testing.T, dir, arg string) string {
 	out := runRealGit(t, dir, "rev-parse", "--path-format=absolute", arg)
 	return filepath.FromSlash(strings.TrimSpace(out))
 }
+
+func TestGetRemoteURL(t *testing.T) {
+	const configWithOrigin = "[remote \"origin\"]\n\turl = gh:example/repo.git"
+
+	cases := []struct {
+		Case      string
+		Upstream  string
+		CLIOutput string
+		CLIError  error
+		Config    string
+		ScmDir    string
+		Expected  string
+	}{
+		{
+			Case:      "CLI wins over the raw config value (insteadOf is applied)",
+			Upstream:  "origin/main",
+			CLIOutput: "https://github.com/example/repo.git",
+			Config:    configWithOrigin,
+			ScmDir:    "/repo/.git",
+			Expected:  "https://github.com/example/repo.git",
+		},
+		{
+			Case:     "falls back to the common config when the CLI fails",
+			Upstream: "origin/main",
+			CLIError: errors.New("git unavailable"),
+			Config:   configWithOrigin,
+			ScmDir:   "/repo/.git",
+			Expected: "gh:example/repo.git",
+		},
+		{
+			Case:     "empty when the CLI fails and there is no common config",
+			Upstream: "origin/main",
+			CLIError: errors.New("git unavailable"),
+			Config:   configWithOrigin,
+			ScmDir:   "",
+			Expected: "",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("IsWsl").Return(false)
+			env.On("GOOS").Return("unix")
+			env.On("RunCommand", GITCOMMAND, []string{
+				"-C", "/repo", "--no-optional-locks", "-c", "core.quotepath=false",
+				"-c", "color.status=false", "remote", "get-url", "origin",
+			}).Return(tc.CLIOutput, tc.CLIError)
+
+			if tc.ScmDir != "" {
+				env.On("FileContent", tc.ScmDir+"/config").Return(tc.Config)
+			}
+
+			g := &Git{
+				Scm: Scm{
+					command:     GITCOMMAND,
+					repoRootDir: "/repo",
+					scmDir:      tc.ScmDir,
+					Upstream:    tc.Upstream,
+				},
+			}
+			g.Init(options.Map{}, env)
+
+			assert.Equal(t, tc.Expected, g.getRemoteURL())
+		})
+	}
+}

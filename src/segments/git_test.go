@@ -219,6 +219,34 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/module/path"),
 		},
 		{
+			Case:                  "submodule worktree with a relative gitdir path",
+			ExpectedEnabled:       true,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       "../../../../../../worktree/.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/module/path/worktrees/location"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/module/path"),
+		},
+		{
+			Case:                  "nested submodule worktree",
+			ExpectedEnabled:       true,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/modules/outer/modules/inner/worktrees/location",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       TestRootPath + "dev/inner-wt.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/outer/modules/inner/worktrees/location",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/outer/modules/inner/worktrees/location"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/inner-wt"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/outer/modules/inner"),
+		},
+		{
 			Case:                  "separate git dir",
 			ExpectedEnabled:       true,
 			Pointer:               TestRootPath + "dev/separate/.git/posh",
@@ -2370,6 +2398,79 @@ func TestPushRef(t *testing.T) {
 
 		assert.Equal(t, "fork/main", g.pushRef())
 	})
+}
+
+func TestSetStatusNativeDirRoles(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	t.Run("separate git dir", func(t *testing.T) {
+		root := t.TempDir()
+		repo := filepath.Join(root, "worktree")
+		gitDir := filepath.Join(root, "gitdir")
+		runRealGit(t, root, "init", "-q", "-b", "main", "--separate-git-dir", gitDir, repo)
+		prepareNativeStatusRepo(t, repo)
+
+		g := nativeStatusGit(t, repo)
+		require.Equal(t, g.scmDir, g.mainSCMDir)
+		require.True(t, g.setStatusNative())
+		assert.Equal(t, 1, g.Working.Modified)
+		assert.Equal(t, "main", g.Ref)
+	})
+
+	t.Run("submodule worktree", func(t *testing.T) {
+		root := t.TempDir()
+		source := filepath.Join(root, "source")
+		super := filepath.Join(root, "super")
+		subWorktree := filepath.Join(root, "sub-worktree")
+
+		runRealGit(t, root, "init", "-q", "-b", "main", source)
+		prepareNativeStatusRepo(t, source)
+		runRealGit(t, root, "init", "-q", "-b", "main", super)
+		prepareNativeStatusRepo(t, super)
+		runRealGit(t, super, "-c", "protocol.file.allow=always", "submodule", "add", "-q", source, "sub")
+		runRealGit(t, super, "commit", "-q", "-m", "add submodule")
+		runRealGit(t, filepath.Join(super, "sub"), "worktree", "add", "-q", "-b", "feature", subWorktree)
+		require.NoError(t, os.WriteFile(filepath.Join(subWorktree, "a.txt"), []byte("changed again\n"), 0o644))
+
+		g := nativeStatusGit(t, subWorktree)
+		require.NotEqual(t, g.scmDir, g.mainSCMDir)
+		require.True(t, g.setStatusNative())
+		assert.Equal(t, 1, g.Working.Modified)
+		assert.Equal(t, "feature", g.Ref)
+	})
+}
+
+func prepareNativeStatusRepo(t *testing.T, repo string) {
+	t.Helper()
+	runRealGit(t, repo, "config", "user.email", "test@example.com")
+	runRealGit(t, repo, "config", "user.name", "Test")
+	runRealGit(t, repo, "config", "core.autocrlf", "false")
+	require.NoError(t, os.WriteFile(filepath.Join(repo, "a.txt"), []byte("a\n"), 0o644))
+	runRealGit(t, repo, "add", ".")
+	runRealGit(t, repo, "commit", "-q", "-m", "init")
+	require.NoError(t, os.WriteFile(filepath.Join(repo, "a.txt"), []byte("changed\n"), 0o644))
+}
+
+func nativeStatusGit(t *testing.T, repo string) *Git {
+	t.Helper()
+	g := &Git{
+		Scm: Scm{
+			mainSCMDir:  realGitPath(t, repo, "--git-dir"),
+			scmDir:      realGitPath(t, repo, "--git-common-dir"),
+			repoRootDir: realGitPath(t, repo, "--show-toplevel"),
+		},
+		Working: &GitStatus{},
+		Staging: &GitStatus{},
+	}
+	g.Init(options.Map{}, new(mock.Environment))
+	return g
 }
 
 // TestSetStatusNative builds a real temp repo with the git CLI (skipped when

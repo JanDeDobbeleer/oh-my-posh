@@ -451,6 +451,99 @@ func TestEnabledInBareLayout(t *testing.T) {
 	}
 }
 
+func TestIsBareRepoResolvesPointer(t *testing.T) {
+	cases := []struct {
+		Case              string
+		Pointer           string
+		ExpectedConfig    string
+		ExpectedProbedDir string
+		ExpectedIsBare    bool
+		OldConfig         string
+	}{
+		{
+			Case:              "relative pointer",
+			Pointer:           "./.bare",
+			ExpectedConfig:    "/repo/.bare/config",
+			ExpectedProbedDir: "/repo/.bare",
+			ExpectedIsBare:    true,
+		},
+		{
+			Case:              "absolute pointer",
+			Pointer:           "/repo/.bare",
+			ExpectedConfig:    "/repo/.bare/config",
+			ExpectedProbedDir: "/repo/.bare",
+			ExpectedIsBare:    true,
+			OldConfig:         "/repo/repo/.bare/config",
+		},
+		{
+			Case:              "absolute pointer to a non-bare git dir",
+			Pointer:           "/elsewhere/gitdir",
+			ExpectedConfig:    "/elsewhere/gitdir/config",
+			ExpectedProbedDir: "/elsewhere/gitdir",
+			ExpectedIsBare:    false,
+			OldConfig:         "/repo/elsewhere/gitdir/config",
+		},
+	}
+
+	for _, tc := range cases {
+		fileInfo := &runtime.FileInfo{
+			Path:         "/repo/.git",
+			ParentFolder: "/repo",
+		}
+
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("HasCommand", "git").Return(true)
+		env.On("GOOS").Return("")
+		env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+		env.On("FileContent", "/repo/.git").Return(fmt.Sprintf("gitdir: %s", tc.Pointer))
+		env.On("FileContent", tc.ExpectedConfig).Return(fmt.Sprintf("[core]\n\tbare = %t", tc.ExpectedIsBare))
+		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
+
+		if tc.OldConfig != "" {
+			env.On("FileContent", tc.OldConfig).Return("")
+		}
+
+		g := &Git{}
+		g.Init(options.Map{FetchBareInfo: true}, env)
+
+		assert.True(t, g.shouldDisplay(), tc.Case)
+		assert.Equal(t, tc.ExpectedIsBare, g.IsBare, tc.Case)
+		env.AssertCalled(t, "FileContent", tc.ExpectedConfig)
+
+		if tc.OldConfig != "" {
+			env.AssertNotCalled(t, "FileContent", tc.OldConfig)
+		}
+	}
+}
+
+func TestShouldDisplayInitializesWSLBeforeBareRepoDetection(t *testing.T) {
+	fileInfo := &runtime.FileInfo{
+		Path:         "/repo/.git",
+		ParentFolder: "/repo",
+	}
+
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(true)
+	env.On("HasCommand", "git.exe").Return(true)
+	env.On("GOOS").Return("")
+	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+	env.On("ConvertToLinuxPath").Return("/mnt/c/repo/.bare")
+	env.On("FileContent", "/repo/.git").Return("gitdir: C:/repo/.bare")
+	env.On("FileContent", "/repo/C:/repo/.bare/config").Return("")
+	env.On("FileContent", "/mnt/c/repo/.bare/config").Return("[core]\n\tbare = true")
+	env.On("HasFilesInDir", "/mnt/c/repo/.bare", "HEAD").Return(true)
+	env.On("ConvertToWindowsPath", "/repo/").Return("C:/repo")
+
+	g := &Git{}
+	g.Init(options.Map{FetchBareInfo: true}, env)
+
+	assert.True(t, g.shouldDisplay())
+	assert.True(t, g.IsBare)
+	env.AssertNumberOfCalls(t, "ConvertToLinuxPath", 2)
+	env.AssertCalled(t, "FileContent", "/mnt/c/repo/.bare/config")
+}
+
 func TestEnabledInBareRepo(t *testing.T) {
 	cases := []struct {
 		Case   string

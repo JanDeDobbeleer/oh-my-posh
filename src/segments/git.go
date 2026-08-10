@@ -347,12 +347,12 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	if g.options.Bool(FetchBareInfo, false) {
-		g.IsBare = g.isBareRepo(gitdir)
-	}
-
 	if !g.hasCommand(GITCOMMAND) {
 		return false
+	}
+
+	if g.options.Bool(FetchBareInfo, false) {
+		g.IsBare = g.isBareRepo(gitdir)
 	}
 
 	return g.isRepo(gitdir)
@@ -402,7 +402,7 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 	} else {
 		content := g.fileContent(gitDir.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.mainSCMDir = filepath.Join(gitDir.ParentFolder, dir)
+		g.mainSCMDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
 	}
 
 	cfg, err := g.getGitConfig()

@@ -462,10 +462,10 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	// to the mounted path
 	g.mainSCMDir = g.convertToLinuxPath(matches["dir"])
 
-	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
-	// scmDir needs to become path/.git
-	// repoRootDir needs to become path
-	worktreeIndex := strings.LastIndex(g.mainSCMDir, "/worktrees/")
+	// Worktree admin dirs are <common>/worktrees/<name>. Classify on the normalised form
+	// and slice that same form, so a "." or a doubled separator cannot shift the index.
+	adminDir := filepath.ToSlash(filepath.Clean(g.mainSCMDir))
+	worktreeIndex := worktreeAdminIndex(adminDir)
 
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
 	// we need the parent folder to detect where the real .git folder is
@@ -474,7 +474,8 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
 		// between worktree and a module path containing the word 'worktree,' however.
-		worktreeIndex = strings.LastIndex(g.scmDir, "/worktrees/")
+		moduleDir := filepath.ToSlash(filepath.Clean(g.scmDir))
+		worktreeIndex = worktreeAdminIndex(moduleDir)
 		if worktreeIndex > -1 && g.env.HasFilesInDir(g.scmDir, "gitdir") {
 			gitDir := filepath.Join(g.scmDir, "gitdir")
 			realGitFolder := g.env.FileContent(gitDir)
@@ -482,7 +483,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 			g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
 			// resolve relative paths (worktree.useRelativePaths = true)
 			g.repoRootDir = resolveGitPath(g.scmDir, g.repoRootDir)
-			g.scmDir = g.scmDir[:worktreeIndex]
+			g.scmDir = moduleDir[:worktreeIndex]
 			g.mainSCMDir = g.scmDir
 			g.IsWorkTree = true
 			return true
@@ -496,19 +497,25 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	// convert to absolute path for worktrees only
 	if strings.HasPrefix(g.mainSCMDir, "..") {
 		g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
-		worktreeIndex = strings.LastIndex(g.mainSCMDir, "/worktrees/")
+		adminDir = filepath.ToSlash(filepath.Clean(g.mainSCMDir))
+		worktreeIndex = worktreeAdminIndex(adminDir)
 	}
 
 	if worktreeIndex > -1 {
-		gitDir := filepath.Join(g.mainSCMDir, "gitdir")
-		g.scmDir = g.mainSCMDir[:worktreeIndex]
-		gitDirContent := g.env.FileContent(gitDir)
-		g.repoRootDir = strings.TrimSuffix(strings.TrimRight(gitDirContent, "\n\r "), ".git")
-		g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
+		gitDirContent := g.env.FileContent(filepath.Join(g.mainSCMDir, "gitdir"))
+		gitDirPath := strings.TrimRight(gitDirContent, "\n\r ")
+		root := strings.TrimSuffix(gitDirPath, ".git")
+		root = g.convertToLinuxPath(root)
 		// resolve relative paths (worktree.useRelativePaths = true)
-		g.repoRootDir = resolveGitPath(g.mainSCMDir, g.repoRootDir)
-		g.IsWorkTree = true
-		return true
+		root = resolveGitPath(g.mainSCMDir, root)
+
+		// A genuine worktree's metadata points back at the .git file we just read.
+		if gitDirPath != "" && filepath.Clean(root) == filepath.Clean(gitdir.ParentFolder) {
+			g.scmDir = adminDir[:worktreeIndex]
+			g.repoRootDir = root
+			g.IsWorkTree = true
+			return true
+		}
 	}
 
 	// check for separate git folder(--separate-git-dir)

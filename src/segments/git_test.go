@@ -215,6 +215,80 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRealFolder:    strPtr(TestRootPath + "dev/worktree"),
 			ExpectedRootFolder:    strPtr(TestRootPath + dotGit),
 		},
+		{
+			// Shape matches, but metadata does not point back to the discovered .git file.
+			Case:              "bare layout in a dir named worktrees",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "me/worktrees/.bare",
+			DiscoveredGitFile: TestRootPath + "me/worktrees/.git",
+			DiscoveredParent:  TestRootPath + "me/worktrees",
+			MetadataAddon:     "gitdir",
+			ExpectedProbedDir: TestRootPath + "me/worktrees/.bare",
+		},
+		{
+			Case:               "worktree metadata is whitespace only",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: false,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/.git/worktrees/folder_worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/.git/worktrees/folder_worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    " \n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			Case:               "worktree metadata points somewhere else",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: false,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "dev/moved-elsewhere/.git\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			Case:               "worktree metadata spelled with a trailing separator",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "dev/worktree/.git\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			Case:               "worktree metadata is garbage that resolves nowhere",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: false,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    "not-a-path-at-all\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			// Both spelling forms must reject a shape match whose metadata does not match.
+			Case:              "repo under a worktrees path component, absolute spelling",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "me/worktrees/proj/.bare",
+			DiscoveredGitFile: TestRootPath + "me/worktrees/proj/.git",
+			DiscoveredParent:  TestRootPath + "me/worktrees/proj",
+			ExpectedProbedDir: TestRootPath + "me/worktrees/proj/.bare",
+		},
+		{
+			Case:               "genuine worktree whose common dir is under a worktrees component",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "me/worktrees/proj/.git/worktrees/feat",
+			DiscoveredGitFile:  TestRootPath + "me/checkouts/feat/.git",
+			DiscoveredParent:   TestRootPath + "me/checkouts/feat",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "me/checkouts/feat/.git\n",
+			ExpectedProbedDir:  TestRootPath + "me/worktrees/proj/.git/worktrees/feat",
+		},
 	}
 
 	for _, tc := range cases {
@@ -1539,7 +1613,7 @@ func TestGitMainWorktreeSessionCache(t *testing.T) {
 	}
 	secondAdminDir := commonDir + "/worktrees/linked-two"
 	secondEnv.On("FileContent", secondGitFile.Path).Return("gitdir: ../main/.git/worktrees/linked-two")
-	secondEnv.On("FileContent", filepath.Join(secondAdminDir, "gitdir")).Return("../../../linked-two/.git")
+	secondEnv.On("FileContent", filepath.Join(secondAdminDir, "gitdir")).Return("../../../../linked-two/.git")
 	second := &Git{}
 	second.Init(options.Map{}, secondEnv)
 	require.True(t, second.hasWorktree(secondGitFile))

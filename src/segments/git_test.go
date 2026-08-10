@@ -205,16 +205,18 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRootFolder:    new(TestRootPath + dotGitSubmodule),
 		},
 		{
-			// Directory-role assertions are reserved for a later decision.
-			Case:               "submodule with worktrees",
-			ExpectedEnabled:    true,
-			ExpectedIsWorkTree: true,
-			Pointer:            TestRootPath + "dev/.git/modules/module/path/worktrees/location",
-			DiscoveredGitFile:  TestRootPath + dotGit,
-			DiscoveredParent:   TestRootPath + "dev",
-			MetadataAddon:      "gitdir",
-			MetadataContent:    TestRootPath + "dev/worktree.git\n",
-			ExpectedProbedDir:  TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			Case:                  "submodule with worktrees",
+			ExpectedEnabled:       true,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       TestRootPath + "dev/worktree.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/module/path/worktrees/location"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/module/path"),
 		},
 		{
 			Case:                  "separate git dir",
@@ -859,6 +861,33 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		g.setHEADStatus()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
+}
+
+func TestSubmoduleWorktreeReadsItsOwnHEAD(t *testing.T) {
+	const (
+		commonDir = "/super/.git/modules/sub"
+		adminDir  = commonDir + "/worktrees/subwt"
+	)
+
+	env := new(mock.Environment)
+	env.On("FileContent", adminDir+"/HEAD").Return("ref: refs/heads/subfeature")
+	env.On("FileContent", commonDir+"/HEAD").Return("ref: refs/heads/main")
+	env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(false)
+	env.On("HasFolder", testify_.Anything).Return(false)
+	env.On("GOOS").Return("unix")
+
+	g := &Git{
+		Scm: Scm{
+			scmDir:     commonDir,
+			mainSCMDir: adminDir,
+		},
+		IsWorkTree: true,
+	}
+	g.Init(options.Map{}, env)
+
+	g.updateHEADReference()
+
+	assert.Equal(t, "subfeature", g.Ref)
 }
 
 func TestSetPrettyHEADName(t *testing.T) {

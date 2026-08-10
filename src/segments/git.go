@@ -486,8 +486,8 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 			g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
 			// resolve relative paths (worktree.useRelativePaths = true)
 			g.repoRootDir = resolveGitPath(g.scmDir, g.repoRootDir)
-			g.scmDir = moduleDir[:worktreeIndex]
 			g.mainSCMDir = g.scmDir
+			g.scmDir = moduleDir[:worktreeIndex]
 			g.IsWorkTree = true
 			return true
 		}

@@ -1570,23 +1570,24 @@ func TestGitRemotes(t *testing.T) {
 		ExpectedRemotes map[string]string
 		Case            string
 		Config          string
+		ScmDir          string
 		Expected        int
 	}{
 		{
 			Case:            "Empty config file",
+			ScmDir:          "/repo/.git",
 			Expected:        0,
 			ExpectedRemotes: map[string]string{},
 		},
 		{
 			Case:     "Two remotes",
+			ScmDir:   "/repo/.git",
 			Expected: 2,
 			Config: `
 [remote "origin"]
 	url = git@github.com:JanDeDobbeleer/test.git
-	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "upstream"]
 	url = git@github.com:microsoft/test.git
-	fetch = +refs/heads/*:refs/remotes/upstream/*
 `,
 			ExpectedRemotes: map[string]string{
 				"origin":   "https://github.com/JanDeDobbeleer/test",
@@ -1595,11 +1596,11 @@ func TestGitRemotes(t *testing.T) {
 		},
 		{
 			Case:     "One remote",
+			ScmDir:   "/repo/.git",
 			Expected: 1,
 			Config: `
 [remote "origin"]
 	url = git@github.com:JanDeDobbeleer/test.git
-	fetch = +refs/heads/*:refs/remotes/origin/*
 `,
 			ExpectedRemotes: map[string]string{
 				"origin": "https://github.com/JanDeDobbeleer/test",
@@ -1607,12 +1608,14 @@ func TestGitRemotes(t *testing.T) {
 		},
 		{
 			Case:            "Broken config",
+			ScmDir:          "/repo/.git",
 			Expected:        0,
 			Config:          "{{}}",
 			ExpectedRemotes: map[string]string{},
 		},
 		{
 			Case:     "Three remotes with different URL formats",
+			ScmDir:   "/repo/.git",
 			Expected: 3,
 			Config: `
 [remote "origin"]
@@ -1631,32 +1634,54 @@ func TestGitRemotes(t *testing.T) {
 				"fork":     "https://gitlab.com/user/test",
 			},
 		},
+		{
+			Case:     "Linked worktree reads the common config",
+			ScmDir:   "/repo/.git",
+			Expected: 1,
+			Config: `
+[remote "origin"]
+	url = git@github.com:JanDeDobbeleer/test.git
+`,
+			ExpectedRemotes: map[string]string{
+				"origin": "https://github.com/JanDeDobbeleer/test",
+			},
+		},
+		{
+			Case:            "Empty common dir returns empty without reading",
+			ScmDir:          "",
+			Expected:        0,
+			ExpectedRemotes: map[string]string{},
+		},
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			if tc.ScmDir != "" {
+				env.On("FileContent", tc.ScmDir+"/config").Return(tc.Config)
+			}
 
-		g := &Git{
-			Scm: Scm{
-				repoRootDir: "foo",
-			},
-		}
-		g.Init(options.Map{}, env)
+			g := &Git{
+				Scm: Scm{
+					repoRootDir: "foo",
+					scmDir:      tc.ScmDir,
+				},
+			}
+			g.Init(options.Map{}, env)
 
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.config, g.configErr = ini.Load(tc.Config)
+			got := g.Remotes()
+			assert.Equal(t, tc.Expected, len(got), tc.Case)
+
+			for name, expectedURL := range tc.ExpectedRemotes {
+				actualURL, exists := got[name]
+				assert.True(t, exists, "%s: expected remote '%s' to exist", tc.Case, name)
+				assert.Equal(t, expectedURL, actualURL, "%s: remote '%s' URL mismatch", tc.Case, name)
+			}
+
+			if tc.ScmDir == "" {
+				env.AssertNotCalled(t, "FileContent", testify_.Anything)
+			}
 		})
-
-		got := g.Remotes()
-		assert.Equal(t, tc.Expected, len(got), tc.Case)
-
-		// Verify the actual remote names and URLs
-		for name, expectedURL := range tc.ExpectedRemotes {
-			actualURL, exists := got[name]
-			assert.True(t, exists, "%s: expected remote '%s' to exist", tc.Case, name)
-			assert.Equal(t, expectedURL, actualURL, "%s: remote '%s' URL mismatch", tc.Case, name)
-		}
 	}
 }
 

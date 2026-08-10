@@ -116,6 +116,7 @@ type Rebase struct {
 }
 
 type Git struct {
+	commonCfgErr   error
 	configErr      error
 	config         *ini.File
 	Working        *GitStatus
@@ -123,23 +124,25 @@ type Git struct {
 	commit         *Commit
 	Rebase         *Rebase
 	User           *User
-	ShortHash      string
+	commonCfg      *ini.File
 	Hash           string
-	BranchStatus   string
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string
 	Ref            string
 	RawUpstreamURL string
 	mainWorktree   string
+	BranchStatus   string
+	ShortHash      string
 	Scm
-	stashCount       int
 	Ahead            int
-	PushAhead        int
 	PushBehind       int
 	Behind           int
 	worktreeCount    int
+	PushAhead        int
+	stashCount       int
 	configOnce       sync.Once
+	commonCfgOnce    sync.Once
 	mainWorktreeOnce sync.Once
 	IsWorkTree       bool
 	Merge            bool
@@ -620,25 +623,41 @@ func (g *Git) getPushRemote() string {
 	return pushRemote + "/" + branch
 }
 
+func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
+	if dir == "" {
+		return nil, fmt.Errorf("no git directory to read the config from")
+	}
+
+	configData := strings.Trim(env.FileContent(dir+"/config"), " \r\n")
+	if configData == "" {
+		log.Debug("git config file not found")
+		return nil, fmt.Errorf("git config file not found")
+	}
+
+	return ini.Load(configData)
+}
+
 func (g *Git) getGitConfig() (*ini.File, error) {
 	g.configOnce.Do(func() {
-		configData := g.fileContent(g.mainSCMDir, "config")
-		if configData == "" {
-			log.Debug("git config file not found")
-			g.configErr = fmt.Errorf("git config file not found")
-			return
-		}
-
-		cfg, err := ini.Load(configData)
-		if err != nil {
-			g.configErr = err
-			return
-		}
-
-		g.config = cfg
+		g.config, g.configErr = loadGitConfig(g.env, g.mainSCMDir)
 	})
 
 	return g.config, g.configErr
+}
+
+// commonConfig reads the repository's shared config. It refuses to memoize a failure
+// against an unknown directory, which a cache-restored segment would otherwise poison.
+func (g *Git) commonConfig() (*ini.File, error) {
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return nil, fmt.Errorf("common git directory is unknown")
+	}
+
+	g.commonCfgOnce.Do(func() {
+		g.commonCfg, g.commonCfgErr = loadGitConfig(g.env, commonDir)
+	})
+
+	return g.commonCfg, g.commonCfgErr
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {
@@ -1261,7 +1280,7 @@ func (g *Git) getRemoteURL() string {
 func (g *Git) Remotes() map[string]string {
 	var remotes = make(map[string]string)
 
-	cfg, err := g.getGitConfig()
+	cfg, err := g.commonConfig()
 	if err != nil {
 		return remotes
 	}

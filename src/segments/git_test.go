@@ -30,6 +30,39 @@ const (
 	dotGitSubmodule = "dev/.git/modules/submodule"
 )
 
+func TestWorktreeAdminIndex(t *testing.T) {
+	cases := []struct {
+		Case string
+		Path string
+		// Expected is the common git directory a caller slices out, or "" when Path is
+		// not a worktree administrative directory.
+		Expected string
+	}{
+		{Case: "admin dir", Path: "/repo/.git/worktrees/feat", Expected: "/repo/.git"},
+		{Case: "trailing separator", Path: "/repo/.git/worktrees/feat/", Expected: "/repo/.git"},
+		{Case: "dot component", Path: "/repo/.git/worktrees/feat/.", Expected: "/repo/.git"},
+		{Case: "doubled separator", Path: "/repo/.git/worktrees//feat", Expected: "/repo/.git"},
+		{Case: "nested worktrees keeps the last", Path: "/a/.git/worktrees/x/.git/worktrees/y", Expected: "/a/.git/worktrees/x/.git"},
+		{Case: "two components after worktrees", Path: "/repo/.git/worktrees/a/b", Expected: ""},
+		{Case: "repo under a worktrees component", Path: "/home/me/worktrees/proj/.bare", Expected: ""},
+		{Case: "no name after worktrees", Path: "/repo/.git/worktrees/", Expected: ""},
+		{Case: "no worktrees segment", Path: "/repo/.git", Expected: ""},
+		{Case: "empty", Path: "", Expected: ""},
+		// Shape alone cannot reject this one: the remainder is a single component. Task 2's
+		// metadata back-reference check is what keeps it out of the worktree branch.
+		{Case: "bare layout in a dir named worktrees", Path: "/home/me/worktrees/.bare", Expected: "/home/me"},
+	}
+
+	for _, tc := range cases {
+		var got string
+		if index := worktreeAdminIndex(tc.Path); index > -1 {
+			got = filepath.ToSlash(filepath.Clean(tc.Path))[:index]
+		}
+
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)

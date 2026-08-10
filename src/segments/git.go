@@ -458,19 +458,18 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		return false
 	}
 
-	// if we open a worktree file in a WSL shared folder, we have to convert it back
-	// to the mounted path
-	g.mainSCMDir = g.convertToLinuxPath(matches["dir"])
+	// Convert before resolving because filepath.IsAbs("C:/repo/.git") is false on Linux.
+	raw := g.convertToLinuxPath(matches["dir"])
+	g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, raw)
 
-	// Worktree admin dirs are <common>/worktrees/<name>. Classify on the normalised form
-	// and slice that same form, so a "." or a doubled separator cannot shift the index.
+	// The returned index only applies to the normalized path.
 	adminDir := filepath.ToSlash(filepath.Clean(g.mainSCMDir))
 	worktreeIndex := worktreeAdminIndex(adminDir)
 
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
 	// we need the parent folder to detect where the real .git folder is
-	if strings.Contains(g.mainSCMDir, "/modules/") {
-		g.scmDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
+	if strings.Contains(raw, "/modules/") {
+		g.scmDir = g.mainSCMDir
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
 		// between worktree and a module path containing the word 'worktree,' however.
@@ -492,13 +491,6 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		g.repoRootDir = g.scmDir
 		g.mainSCMDir = g.scmDir
 		return true
-	}
-
-	// convert to absolute path for worktrees only
-	if strings.HasPrefix(g.mainSCMDir, "..") {
-		g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
-		adminDir = filepath.ToSlash(filepath.Clean(g.mainSCMDir))
-		worktreeIndex = worktreeAdminIndex(adminDir)
 	}
 
 	if worktreeIndex > -1 {

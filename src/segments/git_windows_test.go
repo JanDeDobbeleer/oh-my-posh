@@ -3,8 +3,14 @@
 package segments
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -63,5 +69,55 @@ func TestWorktreeAdminIndexWindows(t *testing.T) {
 		}
 
 		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestEnabledInWorktreeWindows(t *testing.T) {
+	cases := []struct {
+		Case               string
+		Pointer            string
+		ExpectedProbedDir  string
+		ExpectedIsWorkTree bool
+	}{
+		{
+			Case:               "drive absolute with native separators",
+			Pointer:            `C:\repo\.git\worktrees\feat`,
+			ExpectedProbedDir:  `C:\repo\.git\worktrees\feat`,
+			ExpectedIsWorkTree: true,
+		},
+		{
+			Case:               "disk-relative pointer gains the volume",
+			Pointer:            "/repo/.git/worktrees/feat",
+			ExpectedProbedDir:  "C:/repo/.git/worktrees/feat",
+			ExpectedIsWorkTree: true,
+		},
+		{
+			Case:               "relative pointer resolves against the .git file's folder",
+			Pointer:            "./.bare",
+			ExpectedProbedDir:  "C:/repo/feat/.bare",
+			ExpectedIsWorkTree: false,
+		},
+	}
+
+	for _, tc := range cases {
+		fileInfo := &runtime.FileInfo{
+			Path:         `C:/repo/feat/.git`,
+			ParentFolder: `C:/repo/feat`,
+		}
+
+		env := new(mock.Environment)
+		env.On("FileContent", fileInfo.Path).Return(fmt.Sprintf("gitdir: %s", tc.Pointer))
+		env.On("FileContent", filepath.Join(tc.ExpectedProbedDir, "gitdir")).Return(`C:/repo/feat/.git` + "\n")
+		env.On("HasFilesInDir", tc.ExpectedProbedDir, "gitdir").Return(true)
+		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
+		env.On("PathSeparator").Return(string(os.PathSeparator))
+
+		g := &Git{}
+		g.Init(options.Map{}, env)
+
+		assert.True(t, g.hasWorktree(fileInfo), tc.Case)
+		assert.Equal(t, tc.ExpectedIsWorkTree, g.IsWorkTree, tc.Case)
+		assert.True(t, filepath.IsAbs(g.mainSCMDir), tc.Case+": mainSCMDir must be absolute")
+		assert.True(t, filepath.IsAbs(g.scmDir), tc.Case+": scmDir must be absolute")
 	}
 }

@@ -114,7 +114,8 @@ func strPtr(s string) *string {
 
 func TestEnabledInWorktree(t *testing.T) {
 	cases := []struct {
-		Pointer string
+		Pointer    string
+		RawGitFile string
 		// For a worktree topology, the discovered parent is the worktree root and
 		// must match the metadata back-reference.
 		DiscoveredGitFile string
@@ -289,12 +290,89 @@ func TestEnabledInWorktree(t *testing.T) {
 			MetadataContent:    TestRootPath + "me/checkouts/feat/.git\n",
 			ExpectedProbedDir:  TestRootPath + "me/worktrees/proj/.git/worktrees/feat",
 		},
+		{
+			Case:              "bare layout, dot-slash relative pointer",
+			ExpectedEnabled:   true,
+			Pointer:           "./.bare",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/.bare",
+		},
+		{
+			Case:              "bare layout, bare relative pointer",
+			ExpectedEnabled:   true,
+			Pointer:           ".bare",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/.bare",
+		},
+		{
+			Case:              "relative pointer into a subdirectory",
+			ExpectedEnabled:   true,
+			Pointer:           "sub/git",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/sub/git",
+		},
+		{
+			// Absolute pointers retain their trailing separator; filepath.Join cleans relative ones.
+			Case:               "absolute pointer ending in a separator",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "repo/.git/worktrees/feat/",
+			DiscoveredGitFile:  TestRootPath + "repo/feat/.git",
+			DiscoveredParent:   TestRootPath + "repo/feat",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "repo/feat/.git\n",
+			ExpectedProbedDir:  TestRootPath + "repo/.git/worktrees/feat/",
+		},
+		{
+			// This pins the existing trim; Git treats a trailing space as part of the path.
+			Case:              "pointer with trailing whitespace is trimmed",
+			ExpectedEnabled:   true,
+			RawGitFile:        "gitdir: ./.bare \n",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/.bare",
+		},
+		{
+			Case:              "malformed .git file with no gitdir line",
+			ExpectedEnabled:   false,
+			RawGitFile:        "not a gitdir line",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo",
+		},
+		{
+			Case:              "gitdir line with an empty pointer",
+			ExpectedEnabled:   false,
+			RawGitFile:        "gitdir: ",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo",
+		},
+		{
+			// Keep this check on the raw pointer: resolving it first changes the branch.
+			Case:               "worktree with a relative pointer under a modules component",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            "../.git/worktrees/feat",
+			DiscoveredGitFile:  TestRootPath + "modules/repo/feat/.git",
+			DiscoveredParent:   TestRootPath + "modules/repo/feat",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "modules/repo/feat/.git\n",
+			ExpectedProbedDir:  TestRootPath + "modules/repo/.git/worktrees/feat",
+		},
 	}
 
 	for _, tc := range cases {
 		fileInfo := &runtime.FileInfo{Path: tc.DiscoveredGitFile, ParentFolder: tc.DiscoveredParent}
 		env := new(mock.Environment)
-		env.On("FileContent", tc.DiscoveredGitFile).Return(fmt.Sprintf("gitdir: %s", tc.Pointer))
+		gitFileContent := fmt.Sprintf("gitdir: %s", tc.Pointer)
+		if tc.RawGitFile != "" {
+			gitFileContent = tc.RawGitFile
+		}
+		env.On("FileContent", tc.DiscoveredGitFile).Return(gitFileContent)
 		env.On("FileContent", filepath.Join(tc.ExpectedProbedDir, tc.MetadataAddon)).Return(tc.MetadataContent)
 		env.On("HasFilesInDir", tc.ExpectedProbedDir, tc.MetadataAddon).Return(tc.MetadataAddon != "")
 		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
@@ -322,6 +400,54 @@ func TestEnabledInWorktree(t *testing.T) {
 			assert.True(t, filepath.IsAbs(g.mainSCMDir), tc.Case+": mainSCMDir must be absolute")
 			assert.True(t, filepath.IsAbs(g.scmDir), tc.Case+": scmDir must be absolute")
 		}
+	}
+}
+
+func TestEnabledInBareLayout(t *testing.T) {
+	cases := []struct {
+		Case          string
+		FetchBareInfo bool
+	}{
+		{Case: "bare layout without fetch_bare_info", FetchBareInfo: false},
+		{Case: "bare layout with fetch_bare_info", FetchBareInfo: true},
+	}
+
+	for _, tc := range cases {
+		fileInfo := &runtime.FileInfo{
+			Path:         "/repo/.git",
+			ParentFolder: "/repo",
+		}
+
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("HasCommand", "git").Return(true)
+		env.On("GOOS").Return("")
+		env.On("IsWsl").Return(false)
+		env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+		env.On("PathSeparator").Return("/")
+		env.On("Home").Return(poshHome)
+		env.On("Getenv", poshGitEnv).Return("")
+		env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
+		env.On("FileContent", "/repo/.git").Return("gitdir: ./.bare")
+		env.On("HasFilesInDir", "/repo/.bare", "HEAD").Return(true)
+		env.On("FileContent", "/repo/.bare/config").Return("[core]\n\tbare = true")
+		env.On("FileContent", "/repo//HEAD").Return("")
+		env.MockGitCommand("/repo/", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
+		env.MockGitCommand("/repo/", "", "describe", "--tags", "--exact-match")
+		env.MockGitCommand("/repo/", "", "remote")
+
+		props := options.Map{}
+		if tc.FetchBareInfo {
+			props = options.Map{FetchBareInfo: true}
+		}
+
+		g := &Git{}
+		g.Init(props, env)
+
+		assert.True(t, g.Enabled(), tc.Case)
+		assert.Equal(t, tc.FetchBareInfo, g.IsBare, tc.Case)
+		assert.True(t, filepath.IsAbs(g.mainSCMDir), tc.Case+": mainSCMDir must be absolute")
+		assert.True(t, filepath.IsAbs(g.scmDir), tc.Case+": scmDir must be absolute")
 	}
 }
 

@@ -1768,48 +1768,99 @@ func TestGitRemotes(t *testing.T) {
 
 func TestGitRepoName(t *testing.T) {
 	cases := []struct {
-		Case       string
-		Expected   string
-		WorkingDir string
-		RealDir    string
-		IsWorkTree bool
+		Case            string
+		Expected        string
+		ScmDir          string
+		RepoRootDir     string
+		ParentGitFile   string
+		WorktreeConfig  string
+		CommonConfig    string
+		ConvertedGitDir string
+		ConvertedParent string
+		ParentGitIsDir  bool
+		IsWorkTree      bool
+		IsWslSharedPath bool
 	}{
 		{
-			Case:       "In worktree",
-			Expected:   "oh-my-posh",
-			IsWorkTree: true,
-			WorkingDir: "/Users/jan/Code/oh-my-posh/.git/worktrees/oh-my-posh2",
+			Case:        "not in a worktree",
+			Expected:    "oh-my-posh",
+			RepoRootDir: "/Users/jan/Code/oh-my-posh",
 		},
 		{
-			Case:       "Not in worktree",
-			Expected:   "oh-my-posh",
-			IsWorkTree: false,
-			RealDir:    "/Users/jan/Code/oh-my-posh",
+			Case:           "ordinary linked worktree",
+			Expected:       "normal",
+			IsWorkTree:     true,
+			ScmDir:         "/code/normal/.git",
+			ParentGitIsDir: true,
 		},
 		{
-			Case:       "In worktree, unexpected dir",
+			Case:          "bare-backed linked worktree",
+			Expected:      "barelayout",
+			IsWorkTree:    true,
+			ScmDir:        "/code/barelayout/.bare",
+			ParentGitFile: "gitdir: ./.bare",
+		},
+		{
+			Case:            "bare-backed linked worktree through Windows git in WSL",
+			Expected:        "barelayout",
+			IsWorkTree:      true,
+			IsWslSharedPath: true,
+			ScmDir:          "/mnt/c/code/barelayout/.bare",
+			ParentGitFile:   "gitdir: C:/code/barelayout/.bare",
+			ConvertedGitDir: "/mnt/c/code/barelayout/.bare",
+			ConvertedParent: "/mnt/c/code/barelayout",
+		},
+		{
+			Case:         "submodule linked worktree resolves core.worktree",
+			Expected:     "sub",
+			IsWorkTree:   true,
+			ScmDir:       "/super/.git/modules/logical",
+			CommonConfig: "[core]\n\tworktree = ../../../sub",
+		},
+		{
+			Case:           "submodule linked worktree with extensions.worktreeConfig",
+			Expected:       "sub",
+			IsWorkTree:     true,
+			ScmDir:         "/super/.git/modules/logical",
+			WorktreeConfig: "[core]\n\tworktree = ../../../sub",
+		},
+		{
+			Case:       "external separate git dir stays empty",
 			Expected:   "",
 			IsWorkTree: true,
-			WorkingDir: "/Users/jan/Code/oh-my-posh2",
+			ScmDir:     "/x/sepdir",
 		},
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("PathSeparator").Return("/")
-		env.On("GOOS").Return(runtime.LINUX)
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("PathSeparator").Return("/")
+			env.On("GOOS").Return(runtime.LINUX)
 
-		g := &Git{
-			Scm: Scm{
-				repoRootDir: tc.RealDir,
-				mainSCMDir:  tc.WorkingDir,
-			},
-			IsWorkTree: tc.IsWorkTree,
-		}
-		g.Init(options.Map{}, env)
+			parent := filepath.Dir(tc.ScmDir)
+			env.On("HasFolder", parent+"/.git").Return(tc.ParentGitIsDir)
+			env.On("HasFilesInDir", parent, ".git").Return(tc.ParentGitFile != "")
+			env.On("FileContent", parent+"/.git").Return(tc.ParentGitFile)
+			env.On("FileContent", tc.ScmDir+"/config.worktree").Return(tc.WorktreeConfig)
+			env.On("FileContent", tc.ScmDir+"/config").Return(tc.CommonConfig)
+			if tc.ConvertedGitDir != "" {
+				env.On("ConvertToLinuxPath").Return(tc.ConvertedGitDir).Once()
+				env.On("ConvertToLinuxPath").Return(tc.ConvertedParent).Once()
+			}
 
-		got := g.repoName()
-		assert.Equal(t, tc.Expected, got, tc.Case)
+			g := &Git{
+				Scm: Scm{
+					repoRootDir:     tc.RepoRootDir,
+					scmDir:          tc.ScmDir,
+					IsWslSharedPath: tc.IsWslSharedPath,
+				},
+				IsWorkTree: tc.IsWorkTree,
+			}
+			g.Init(options.Map{}, env)
+
+			assert.Equal(t, tc.Expected, g.repoName(), tc.Case)
+		})
 	}
 }
 

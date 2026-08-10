@@ -613,18 +613,21 @@ func (g *Git) getPushRemote() string {
 	return strings.TrimSpace(pushRemote) + "/" + branch
 }
 
-func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
+func loadGitConfigFile(env runtime.Environment, dir, file string) (*ini.File, error) {
 	if dir == "" {
-		return nil, fmt.Errorf("no git directory to read the config from")
+		return nil, fmt.Errorf("no git directory to read %s from", file)
 	}
 
-	configData := strings.Trim(env.FileContent(dir+"/config"), " \r\n")
+	configData := strings.Trim(env.FileContent(dir+"/"+file), " \r\n")
 	if configData == "" {
-		log.Debug("git config file not found")
-		return nil, fmt.Errorf("git config file not found")
+		return nil, fmt.Errorf("%s not found", file)
 	}
 
 	return ini.Load(configData)
+}
+
+func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
+	return loadGitConfigFile(env, dir, "config")
 }
 
 // commonConfig reads the repository's shared config. It refuses to memoize a failure
@@ -1313,10 +1316,50 @@ func (g *Git) repoName() string {
 		return path.Base(g.convertToLinuxPath(g.repoRootDir))
 	}
 
-	ind := strings.LastIndex(g.mainSCMDir, ".git/worktrees")
-	if ind > -1 {
-		return path.Base(g.mainSCMDir[:ind])
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return ""
+	}
+
+	if parent := filepath.Dir(commonDir); g.gitEntryResolvesTo(parent, commonDir) {
+		return path.Base(g.convertToLinuxPath(parent))
+	}
+
+	for _, file := range []string{"config.worktree", "config"} {
+		cfg, err := loadGitConfigFile(g.env, commonDir, file)
+		if err != nil {
+			continue
+		}
+
+		worktree := cfg.Section("core").Key("worktree").String()
+		if worktree == "" {
+			continue
+		}
+
+		return path.Base(g.convertToLinuxPath(resolveGitPath(commonDir, worktree)))
 	}
 
 	return ""
+}
+
+func (g *Git) gitEntryResolvesTo(parent, commonDir string) bool {
+	gitEntry := parent + "/.git"
+	commonDir = filepath.ToSlash(filepath.Clean(commonDir))
+
+	if g.env.HasFolder(gitEntry) {
+		return filepath.ToSlash(filepath.Clean(gitEntry)) == commonDir
+	}
+
+	if !g.env.HasFilesInDir(parent, ".git") {
+		return false
+	}
+
+	content := strings.Trim(g.env.FileContent(gitEntry), " \r\n")
+	target, found := strings.CutPrefix(content, "gitdir: ")
+	if !found {
+		return false
+	}
+
+	target = g.convertToLinuxPath(target)
+	return filepath.ToSlash(filepath.Clean(resolveGitPath(parent, target))) == commonDir
 }

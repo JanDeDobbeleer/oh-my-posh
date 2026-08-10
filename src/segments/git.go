@@ -1195,10 +1195,10 @@ func (g *Git) commonGitDir() string {
 	return filepath.ToSlash(g.scmDir)
 }
 
-func worktreeAdminIndex(path string) int {
+func worktreeAdminIndex(adminDir string) int {
 	const segment = "/worktrees/"
 
-	normalised := filepath.ToSlash(filepath.Clean(path))
+	normalised := filepath.ToSlash(filepath.Clean(adminDir))
 	index := strings.LastIndex(normalised, segment)
 	if index < 0 {
 		return -1

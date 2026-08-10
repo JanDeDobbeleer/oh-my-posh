@@ -108,26 +108,19 @@ func TestResolveEmptyGitPath(t *testing.T) {
 	assert.Equal(t, base, resolveGitPath(base, ""))
 }
 
-func strPtr(s string) *string {
-	return &s
-}
-
 func TestEnabledInWorktree(t *testing.T) {
 	cases := []struct {
-		Pointer    string
-		RawGitFile string
-		// For a worktree topology, the discovered parent is the worktree root and
-		// must match the metadata back-reference.
-		DiscoveredGitFile string
-		DiscoveredParent  string
-		MetadataAddon     string
-		MetadataContent   string
-		ExpectedProbedDir string
-		Case              string
-		// nil reserves directory-role assertions for a later decision.
 		ExpectedWorkingFolder *string
-		ExpectedRealFolder    *string
 		ExpectedRootFolder    *string
+		ExpectedRealFolder    *string
+		DiscoveredParent      string
+		MetadataAddon         string
+		MetadataContent       string
+		ExpectedProbedDir     string
+		Case                  string
+		Pointer               string
+		DiscoveredGitFile     string
+		RawGitFile            string
 		ExpectedIsWorkTree    bool
 		ExpectedEnabled       bool
 	}{
@@ -141,9 +134,9 @@ func TestEnabledInWorktree(t *testing.T) {
 			MetadataAddon:         "gitdir",
 			MetadataContent:       TestRootPath + "dev/worktree.git\n",
 			ExpectedProbedDir:     TestRootPath + "dev/.git/worktrees/folder_worktree",
-			ExpectedWorkingFolder: strPtr(TestRootPath + "dev/.git/worktrees/folder_worktree"),
-			ExpectedRealFolder:    strPtr(TestRootPath + "dev/worktree"),
-			ExpectedRootFolder:    strPtr(TestRootPath + dotGit),
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/worktrees/folder_worktree"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + dotGit),
 		},
 		{
 			Case:                  "submodule",
@@ -152,9 +145,9 @@ func TestEnabledInWorktree(t *testing.T) {
 			DiscoveredGitFile:     TestRootPath + dotGit,
 			DiscoveredParent:      TestRootPath + "dev",
 			ExpectedProbedDir:     TestRootPath + dotGitSubmodule,
-			ExpectedWorkingFolder: strPtr(TestRootPath + dotGitSubmodule),
-			ExpectedRealFolder:    strPtr(TestRootPath + dotGitSubmodule),
-			ExpectedRootFolder:    strPtr(TestRootPath + dotGitSubmodule),
+			ExpectedWorkingFolder: new(TestRootPath + dotGitSubmodule),
+			ExpectedRealFolder:    new(TestRootPath + dotGitSubmodule),
+			ExpectedRootFolder:    new(TestRootPath + dotGitSubmodule),
 		},
 		{
 			Case:                  "submodule with root working folder",
@@ -163,9 +156,9 @@ func TestEnabledInWorktree(t *testing.T) {
 			DiscoveredGitFile:     TestRootPath + dotGit,
 			DiscoveredParent:      TestRootPath + "dev",
 			ExpectedProbedDir:     TestRootPath + dotGitSubmodule,
-			ExpectedWorkingFolder: strPtr(TestRootPath + dotGitSubmodule),
-			ExpectedRealFolder:    strPtr(TestRootPath + dotGitSubmodule),
-			ExpectedRootFolder:    strPtr(TestRootPath + dotGitSubmodule),
+			ExpectedWorkingFolder: new(TestRootPath + dotGitSubmodule),
+			ExpectedRealFolder:    new(TestRootPath + dotGitSubmodule),
+			ExpectedRootFolder:    new(TestRootPath + dotGitSubmodule),
 		},
 		{
 			// Directory-role assertions are reserved for a later decision.
@@ -198,9 +191,9 @@ func TestEnabledInWorktree(t *testing.T) {
 			MetadataAddon:         "gitdir",
 			MetadataContent:       "../../../worktree/.git\n",
 			ExpectedProbedDir:     TestRootPath + "dev/.git/worktrees/folder_worktree",
-			ExpectedWorkingFolder: strPtr(TestRootPath + "dev/.git/worktrees/folder_worktree"),
-			ExpectedRealFolder:    strPtr(TestRootPath + "dev/worktree"),
-			ExpectedRootFolder:    strPtr(TestRootPath + dotGit),
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/worktrees/folder_worktree"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + dotGit),
 		},
 		{
 			Case:                  "worktree with relative gitdir path, no trailing newline",
@@ -212,9 +205,9 @@ func TestEnabledInWorktree(t *testing.T) {
 			MetadataAddon:         "gitdir",
 			MetadataContent:       "../../../worktree/.git",
 			ExpectedProbedDir:     TestRootPath + "dev/.git/worktrees/folder_worktree",
-			ExpectedWorkingFolder: strPtr(TestRootPath + "dev/.git/worktrees/folder_worktree"),
-			ExpectedRealFolder:    strPtr(TestRootPath + "dev/worktree"),
-			ExpectedRootFolder:    strPtr(TestRootPath + dotGit),
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/worktrees/folder_worktree"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + dotGit),
 		},
 		{
 			// Shape matches, but metadata does not point back to the discovered .git file.
@@ -457,8 +450,8 @@ func TestIsBareRepoResolvesPointer(t *testing.T) {
 		Pointer           string
 		ExpectedConfig    string
 		ExpectedProbedDir string
-		ExpectedIsBare    bool
 		OldConfig         string
+		ExpectedIsBare    bool
 	}{
 		{
 			Case:              "relative pointer",

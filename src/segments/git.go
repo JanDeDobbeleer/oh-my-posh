@@ -1196,6 +1196,23 @@ func (g *Git) commonGitDir() string {
 	return filepath.ToSlash(g.scmDir)
 }
 
+func worktreeAdminIndex(path string) int {
+	const segment = "/worktrees/"
+
+	normalised := filepath.ToSlash(filepath.Clean(path))
+	index := strings.LastIndex(normalised, segment)
+	if index < 0 {
+		return -1
+	}
+
+	name := normalised[index+len(segment):]
+	if name == "" || strings.Contains(name, "/") {
+		return -1
+	}
+
+	return index
+}
+
 func parseMainWorktree(output string) (string, bool) {
 	// Git guarantees the main worktree is the first record.
 	record, _, found := strings.Cut(output, "\x00\x00")

@@ -2193,6 +2193,10 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "rev-parse", "--abbrev-ref", "@{push}"}).Return("", nil)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "config", "--get", "branch.main.pushRemote"}).Return("", nil)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "config", "--get", "remote.pushDefault"}).Return("", nil)
 		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "rev-list", "--count", "origin/main..HEAD"}).Return(tc.PushAheadCount, nil)
@@ -2231,6 +2235,47 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		assert.Equal(t, tc.ExpectedPushAhead, g.PushAhead, tc.Case)
 		assert.Equal(t, tc.ExpectedPushBehind, g.PushBehind, tc.Case)
 	}
+}
+
+func TestPushRef(t *testing.T) {
+	args := func(extra ...string) []string {
+		return append([]string{
+			"-C", "/repo", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false",
+		}, extra...)
+	}
+
+	t.Run("uses @{push} when it resolves", func(t *testing.T) {
+		env := new(mock.Environment)
+		env.On("IsWsl").Return(false)
+		env.On("GOOS").Return("unix")
+		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("origin/main", nil)
+
+		g := &Git{
+			Scm: Scm{command: GITCOMMAND, repoRootDir: "/repo"},
+			Ref: "main",
+		}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, "origin/main", g.pushRef())
+		env.AssertNotCalled(t, "RunCommand", GITCOMMAND, args("config", "--get", "remote.pushDefault"))
+	})
+
+	t.Run("falls back to per-branch pushRemote when @{push} is unresolvable", func(t *testing.T) {
+		env := new(mock.Environment)
+		env.On("IsWsl").Return(false)
+		env.On("GOOS").Return("unix")
+		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("", errors.New("cannot resolve 'simple' push to a single destination"))
+		env.On("RunCommand", GITCOMMAND, args("config", "--get", "branch.main.pushRemote")).Return("fork", nil)
+
+		g := &Git{
+			Scm: Scm{command: GITCOMMAND, repoRootDir: "/repo"},
+			Ref: "main",
+		}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, "fork/main", g.pushRef())
+	})
 }
 
 // TestSetStatusNative builds a real temp repo with the git CLI (skipped when

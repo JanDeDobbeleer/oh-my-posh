@@ -563,7 +563,7 @@ func (g *Git) setPushStatus() {
 		return
 	}
 
-	pushRemote := g.getPushRemote()
+	pushRemote := g.pushRef()
 	if pushRemote == "" {
 		return
 	}
@@ -585,43 +585,36 @@ func (g *Git) setPushStatus() {
 	wg.Wait()
 }
 
+// pushRef resolves the destination of a push once, so both counts below describe the
+// same comparison. An empty rev-list result is a genuine failure, never a retry signal.
+func (g *Git) pushRef() string {
+	if ref := g.getGitCommandOutput("rev-parse", "--abbrev-ref", "@{push}"); ref != "" {
+		return ref
+	}
+
+	return g.getPushRemote()
+}
+
 func (g *Git) getPushRemote() string {
-	upstream := g.Upstream
-	if idx := strings.Index(upstream, "/"); idx != -1 {
-		upstream = upstream[:idx]
-	}
-
-	if upstream == "" {
-		upstream = origin
-	}
-
 	branch := g.Ref
 	if branch == "" {
 		return ""
 	}
 
-	cfg, err := g.getGitConfig()
-	if err != nil {
-		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
-		if pushRemote == "" {
-			pushRemote = upstream
-		}
-
-		return strings.TrimSpace(pushRemote) + "/" + branch
-	}
-
-	sectionName := fmt.Sprintf(`branch "%s"`, branch)
-	section := cfg.Section(sectionName)
-	pushRemote := section.Key("pushRemote").String()
+	pushRemote := g.getGitCommandOutput("config", "--get", fmt.Sprintf("branch.%s.pushRemote", branch))
 	if pushRemote == "" {
-		pushRemote = cfg.Section("remote").Key("pushDefault").String()
+		pushRemote = g.getGitCommandOutput("config", "--get", "remote.pushDefault")
 	}
 
 	if pushRemote == "" {
-		pushRemote = upstream
+		pushRemote = regex.ReplaceAllString("/.*", g.Upstream, "")
 	}
 
-	return pushRemote + "/" + branch
+	if pushRemote == "" {
+		pushRemote = origin
+	}
+
+	return strings.TrimSpace(pushRemote) + "/" + branch
 }
 
 func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
@@ -636,14 +629,6 @@ func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
 	}
 
 	return ini.Load(configData)
-}
-
-func (g *Git) getGitConfig() (*ini.File, error) {
-	g.configOnce.Do(func() {
-		g.config, g.configErr = loadGitConfig(g.env, g.mainSCMDir)
-	})
-
-	return g.config, g.configErr
 }
 
 // commonConfig reads the repository's shared config. It refuses to memoize a failure

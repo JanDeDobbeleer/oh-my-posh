@@ -514,13 +514,9 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		}
 	}
 
-	// check for separate git folder(--separate-git-dir)
-	// check if the folder contains a HEAD file
 	if g.env.HasFilesInDir(g.mainSCMDir, "HEAD") {
-		gitFolder := strings.TrimSuffix(g.scmDir, ".git")
+		g.repoRootDir = strings.TrimSuffix(g.scmDir, ".git")
 		g.scmDir = g.mainSCMDir
-		g.mainSCMDir = gitFolder
-		g.repoRootDir = gitFolder
 		return true
 	}
 

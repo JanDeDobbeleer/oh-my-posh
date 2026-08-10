@@ -217,13 +217,26 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedProbedDir:  TestRootPath + "dev/.git/modules/module/path/worktrees/location",
 		},
 		{
-			// Directory-role assertions are reserved for a later decision.
-			Case:              "separate git dir",
-			ExpectedEnabled:   true,
-			Pointer:           TestRootPath + "dev/separate/.git/posh",
-			DiscoveredGitFile: TestRootPath + dotGit,
-			DiscoveredParent:  TestRootPath + "dev",
-			ExpectedProbedDir: TestRootPath + "dev/separate/.git/posh",
+			Case:                  "separate git dir",
+			ExpectedEnabled:       true,
+			Pointer:               TestRootPath + "dev/separate/.git/posh",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			ExpectedProbedDir:     TestRootPath + "dev/separate/.git/posh",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/separate/.git/posh"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/separate/.git/posh"),
+		},
+		{
+			Case:                  "bare repo through a .git pointer",
+			ExpectedEnabled:       true,
+			Pointer:               TestRootPath + "dev/.bare",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			ExpectedProbedDir:     TestRootPath + "dev/.bare",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.bare"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.bare"),
 		},
 		{
 			Case:                  "worktree with relative gitdir path",
@@ -468,7 +481,7 @@ func TestEnabledInBareLayout(t *testing.T) {
 		env.On("FileContent", "/repo/.git").Return("gitdir: ./.bare")
 		env.On("HasFilesInDir", "/repo/.bare", "HEAD").Return(true)
 		env.On("FileContent", "/repo/.bare/config").Return("[core]\n\tbare = true")
-		env.On("FileContent", "/repo//HEAD").Return("")
+		env.On("FileContent", "/repo/.bare/HEAD").Return("")
 		env.MockGitCommand("/repo/", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 		env.MockGitCommand("/repo/", "", "describe", "--tags", "--exact-match")
 		env.MockGitCommand("/repo/", "", "remote")

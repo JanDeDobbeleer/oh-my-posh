@@ -400,15 +400,16 @@ func (g *Git) setUser() {
 func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 	defer log.Trace(time.Now())
 
-	if gitDir.IsDir {
-		g.mainSCMDir = gitDir.Path
-	} else {
+	bareDir := gitDir.Path
+	if !gitDir.IsDir {
 		content := g.fileContent(gitDir.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.mainSCMDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
+		bareDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
 	}
 
-	cfg, err := g.getGitConfig()
+	g.mainSCMDir = bareDir
+
+	cfg, err := loadGitConfig(g.env, bareDir)
 	if err != nil {
 		log.Error(err)
 		return false

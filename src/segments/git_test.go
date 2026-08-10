@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -583,50 +582,89 @@ func TestShouldDisplayInitializesWSLBeforeBareRepoDetection(t *testing.T) {
 
 func TestEnabledInBareRepo(t *testing.T) {
 	cases := []struct {
-		Case   string
-		HEAD   string
-		IsBare bool
+		Case            string
+		HEAD            string
+		GitDirPath      string
+		GitFileContent  string
+		Config          string
+		ExpectedRemotes int
+		GitDirIsDir     bool
+		IsBare          bool
 	}{
 		{
-			Case:   "Bare repo on main",
-			IsBare: true,
-			HEAD:   "ref: refs/heads/main",
+			Case:        "Bare repo on main",
+			IsBare:      true,
+			GitDirPath:  "git",
+			GitDirIsDir: true,
+			HEAD:        "ref: refs/heads/main",
+			Config:      "[core]\n\tbare = true",
 		},
 		{
-			Case:   "Not a bare repo",
-			HEAD:   "ref: refs/heads/main",
-			IsBare: false,
+			Case:        "Not a bare repo",
+			IsBare:      false,
+			GitDirPath:  "git",
+			GitDirIsDir: true,
+			HEAD:        "ref: refs/heads/main",
+			Config:      "[core]\n\tbare = false",
+		},
+		{
+			Case:            "Linked worktree probe does not poison the remotes memo",
+			IsBare:          false,
+			GitDirPath:      "/repo/.git",
+			GitDirIsDir:     false,
+			GitFileContent:  "gitdir: /repo/.git/worktrees/linked",
+			Config:          "[remote \"origin\"]\n\turl = git@github.com:JanDeDobbeleer/test.git",
+			ExpectedRemotes: 1,
 		},
 	}
 	for _, tc := range cases {
-		path := "git"
-		env := new(mock.Environment)
-		env.On("InWSLSharedDrive").Return(false)
-		env.On("GOOS").Return("")
-		env.On("HasCommand", "git").Return(true)
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("InWSLSharedDrive").Return(false)
+			env.On("GOOS").Return("")
+			env.On("HasCommand", "git").Return(true)
+			env.On("PathSeparator").Return("/")
 
-		configData := fmt.Sprintf(`[core]
-		bare = %s`, strconv.FormatBool(tc.IsBare))
+			fileInfo := &runtime.FileInfo{
+				IsDir:        tc.GitDirIsDir,
+				Path:         tc.GitDirPath,
+				ParentFolder: "/repo",
+			}
+			env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+			env.On("FileContent", tc.GitDirPath).Return(tc.GitFileContent)
+			env.On("FileContent", "/repo/.git/worktrees/linked/gitdir").Return("/repo/linked/.git\n")
+			env.On("FileContent", tc.GitDirPath+"/HEAD").Return(tc.HEAD)
+			env.On("FileContent", testify_.Anything).Return(tc.Config)
+			env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(true)
+			env.On("HasFolder", testify_.Anything).Return(false)
+			env.On("RunCommand", testify_.Anything, testify_.Anything).Return("", nil)
 
-		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
-		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
+			props := options.Map{FetchBareInfo: true}
 
-		props := options.Map{
-			FetchBareInfo: true,
-		}
+			g := &Git{}
+			g.Init(props, env)
 
-		g := &Git{}
-		g.Init(props, env)
+			_ = g.Enabled()
 
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.config, g.configErr = ini.Load(configData)
+			assert.Equal(t, tc.IsBare, g.IsBare, tc.Case)
+
+			if tc.ExpectedRemotes > 0 {
+				assert.Len(t, g.Remotes(), tc.ExpectedRemotes, "%s: remotes must survive the bare probe", tc.Case)
+			}
 		})
-
-		_ = g.Enabled()
-
-		assert.Equal(t, tc.IsBare, g.IsBare, tc.Case)
 	}
+}
+
+func TestIsBareRepoDoesNotReuseConfigMemo(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("FileContent", "first/config").Return("[core]\n\tbare = false")
+	env.On("FileContent", "second/config").Return("[core]\n\tbare = true")
+
+	g := &Git{}
+	g.Init(options.Map{}, env)
+
+	assert.False(t, g.isBareRepo(&runtime.FileInfo{Path: "first", IsDir: true}))
+	assert.True(t, g.isBareRepo(&runtime.FileInfo{Path: "second", IsDir: true}))
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {

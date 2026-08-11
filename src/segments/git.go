@@ -117,8 +117,6 @@ type Rebase struct {
 
 type Git struct {
 	commonCfgErr   error
-	configErr      error
-	config         *ini.File
 	Working        *GitStatus
 	Staging        *GitStatus
 	commit         *Commit
@@ -141,7 +139,6 @@ type Git struct {
 	worktreeCount    int
 	PushAhead        int
 	stashCount       int
-	configOnce       sync.Once
 	commonCfgOnce    sync.Once
 	mainWorktreeOnce sync.Once
 	IsWorkTree       bool

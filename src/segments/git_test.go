@@ -9,12 +9,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"sync"
 	"testing"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
@@ -1260,11 +1258,6 @@ func TestGitUpstream(t *testing.T) {
 		}
 		g.Init(props, env)
 
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.configErr = errors.New("no config")
-		})
-
 		upstreamIcon := g.getUpstreamIcon()
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
@@ -2266,7 +2259,6 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		Case               string
 		PushAheadCount     string
 		PushBehindCount    string
-		Config             string
 		ExpectedPushAhead  int
 		ExpectedPushBehind int
 	}{
@@ -2297,18 +2289,6 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 			PushBehindCount:    "0",
 			ExpectedPushAhead:  0,
 			ExpectedPushBehind: 0,
-		},
-		{
-			Case:               "remote from config",
-			PushAheadCount:     "2",
-			PushBehindCount:    "0",
-			ExpectedPushAhead:  2,
-			ExpectedPushBehind: 0,
-			Config: `
-			[branch "main"]
-				remote = origin
-				merge = refs/heads/main
-			`,
 		},
 	}
 
@@ -2341,16 +2321,6 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		}
 
 		g.Init(props, env)
-
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			if len(tc.Config) > 0 {
-				g.config, g.configErr = ini.Load(tc.Config)
-				return
-			}
-
-			g.configErr = errors.New("no config")
-		})
 
 		g.setPushStatus()
 
@@ -2389,6 +2359,23 @@ func TestPushRef(t *testing.T) {
 		env.On("GOOS").Return("unix")
 		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("", errors.New("cannot resolve 'simple' push to a single destination"))
 		env.On("RunCommand", GITCOMMAND, args("config", "--get", "branch.main.pushRemote")).Return("fork", nil)
+
+		g := &Git{
+			Scm: Scm{command: GITCOMMAND, repoRootDir: "/repo"},
+			Ref: "main",
+		}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, "fork/main", g.pushRef())
+	})
+
+	t.Run("falls back to remote.pushDefault when the branch has no pushRemote", func(t *testing.T) {
+		env := new(mock.Environment)
+		env.On("IsWsl").Return(false)
+		env.On("GOOS").Return("unix")
+		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("", errors.New("cannot resolve push destination"))
+		env.On("RunCommand", GITCOMMAND, args("config", "--get", "branch.main.pushRemote")).Return("", nil)
+		env.On("RunCommand", GITCOMMAND, args("config", "--get", "remote.pushDefault")).Return("fork", nil)
 
 		g := &Git{
 			Scm: Scm{command: GITCOMMAND, repoRootDir: "/repo"},

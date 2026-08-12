@@ -98,16 +98,19 @@ func recurseInitCommand(env runtime.Environment) string {
 		additionalParams += " --eval"
 	}
 
-	config := quotePwshOrElvishStr(env.Flags().ConfigPath)
-	executable = quotePwshOrElvishStr(executable)
+	config := env.Flags().ConfigPath
 
 	var command string
 
 	switch env.Flags().Shell {
 	case PWSH:
 		command = "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
+		config = quotePwshStr(config)
+		executable = quotePwshStr(executable)
 	case ELVISH:
 		command = "eval ((external %s) init %s --config=%s --print%s | slurp)"
+		config = quoteElvishStr(config)
+		executable = quoteElvishStr(executable)
 	}
 
 	return fmt.Sprintf(command, executable, env.Flags().Shell, config, additionalParams)
@@ -163,7 +166,7 @@ func generateScript(env runtime.Environment, feats Features) string {
 
 	switch env.Flags().Shell {
 	case PWSH:
-		executable = quotePwshOrElvishStr(executable)
+		executable = quotePwshStr(executable)
 		script = pwshInit
 	case ZSH:
 		executable = QuotePosixStr(executable)
@@ -182,7 +185,7 @@ func generateScript(env runtime.Environment, feats Features) string {
 		config = quoteNuStr(env.Flags().ConfigPath)
 		script = nuInit
 	case ELVISH:
-		executable = quotePwshOrElvishStr(executable)
+		executable = quoteElvishStr(executable)
 		script = elvishInit
 	case XONSH:
 		executable = quotePythonStr(executable)
@@ -241,7 +244,7 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 
 	switch env.Flags().Shell {
 	case PWSH:
-		script += fmt.Sprintf("& %s", quotePwshOrElvishStr(scriptPath))
+		script += fmt.Sprintf("& %s", quotePwshStr(scriptPath))
 	case ZSH, BASH:
 		script += fmt.Sprintf("source %s", QuotePosixStr(scriptPath))
 	case XONSH:
@@ -252,7 +255,7 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 		// yash has no source builtin, use the dot command instead
 		script += fmt.Sprintf(". %s", quoteYashStr(scriptPath))
 	case ELVISH:
-		script += fmt.Sprintf("eval (slurp < %s)", quotePwshOrElvishStr(scriptPath))
+		script += fmt.Sprintf("eval (slurp < %s)", quoteElvishStr(scriptPath))
 	case CMD:
 		// dofile closes the file handle when done, io.open would leak it
 		// until the Lua GC kicks in, blocking script updates on Windows
@@ -276,7 +279,7 @@ func sourceCommandAsync(shell, scriptPath string) string {
 				"$global:_ompPromptFunction = $null; "+
 				"$global:_ompInitialized = $false; "+
 				"function prompt() { if (-not $global:_ompInitialized) { $global:_ompAsyncInit = $true; & %s; return }; if ($global:_ompPromptFunction) { & $global:_ompPromptFunction } }",
-			quotePwshOrElvishStr(scriptPath),
+			quotePwshStr(scriptPath),
 		)
 	case ZSH:
 		return fmt.Sprintf("precmd() { source %s }", QuotePosixStr(scriptPath))
@@ -312,7 +315,7 @@ func sessionScript(env runtime.Environment) string {
 
 	switch env.Flags().Shell {
 	case PWSH:
-		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s;", sessionID, quotePwshOrElvishStr(config))
+		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s;", sessionID, quotePwshStr(config))
 	case ZSH, BASH:
 		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, QuotePosixStr(config))
 	case YASH:
@@ -322,7 +325,7 @@ func sessionScript(env runtime.Environment) string {
 	case FISH:
 		return fmt.Sprintf("set --export --global POSH_SESSION_ID \"%s\"; set --export --global POSH_CONFIG %s;", sessionID, quoteFishStr(config))
 	case ELVISH:
-		return fmt.Sprintf("set-env POSH_SESSION_ID \"%s\"; set-env POSH_CONFIG %s;", sessionID, quotePwshOrElvishStr(config))
+		return fmt.Sprintf("set-env POSH_SESSION_ID \"%s\"; set-env POSH_CONFIG %s;", sessionID, quoteElvishStr(config))
 	case CMD:
 		return fmt.Sprintf(`os.setenv('POSH_SESSION_ID', '%s'); os.setenv('POSH_CONFIG', '%s');`, sessionID, escapeLuaStr(config))
 	}

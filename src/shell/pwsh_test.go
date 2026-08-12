@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +45,7 @@ func TestSourceCommandAsyncPwsh(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func TestQuotePwshOrElvishStr(t *testing.T) {
+func TestQuotePwshStr(t *testing.T) {
 	tests := []struct {
 		str      string
 		expected string
@@ -50,8 +53,31 @@ func TestQuotePwshOrElvishStr(t *testing.T) {
 		{str: "", expected: "''"},
 		{str: `/tmp/"omp's dir"/oh-my-posh`, expected: `'/tmp/"omp''s dir"/oh-my-posh'`},
 		{str: `C:/tmp\omp's dir/oh-my-posh.exe`, expected: `'C:/tmp\omp''s dir/oh-my-posh.exe'`},
+		// non-ASCII runes are emitted as [char] expressions so the output
+		// survives PowerShell's OEM code page decoding of native stdout
+		{str: `C:/Users/MyNameE²/init.ps1`, expected: `"$('C:/Users/MyNameE' + [char]0xB2 + '/init.ps1')"`},
+		{str: `C:/Users/Ø²/omp's.ps1`, expected: `"$('C:/Users/' + [char]0xD8 + [char]0xB2 + '/omp''s.ps1')"`},
+		{str: `²init.ps1`, expected: `"$('' + [char]0xB2 + 'init.ps1')"`},
+		{str: `C:/Users/📁/init.ps1`, expected: `"$('C:/Users/' + [char]::ConvertFromUtf32(0x1F4C1) + '/init.ps1')"`},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.expected, quotePwshOrElvishStr(tc.str), fmt.Sprintf("quotePwshOrElvishStr: %s", tc.str))
+		assert.Equal(t, tc.expected, quotePwshStr(tc.str), fmt.Sprintf("quotePwshStr: %s", tc.str))
+	}
+}
+
+// PowerShell decodes native command output using [Console]::OutputEncoding,
+// which defaults to the legacy OEM code page on Windows. Everything written
+// to stdout for pwsh must therefore be pure ASCII, no matter which characters
+// the injected paths contain.
+func TestSessionScriptPwshIsPureASCII(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Flags").Return(&runtime.Flags{Shell: PWSH, ConfigPath: "C:/Users/MyNameE²/omp.json"})
+
+	got := sessionScript(env)
+
+	assert.Contains(t, got, `$env:POSH_CONFIG = "$('C:/Users/MyNameE' + [char]0xB2 + '/omp.json')";`)
+
+	for i, b := range []byte(got) {
+		assert.Less(t, b, uint8(0x80), fmt.Sprintf("non-ASCII byte at index %d in: %s", i, got))
 	}
 }

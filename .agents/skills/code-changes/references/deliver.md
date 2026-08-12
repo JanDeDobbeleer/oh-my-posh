@@ -24,6 +24,9 @@ Outcome first, then evidence. It contains:
 3. Verification evidence: the gates that ran and the concrete functional results observed.
 4. Loose ends explicitly left to the user (secrets to delete, manual validation steps, decisions
    deferred), each with the exact command or check when applicable.
+5. What the change did not do that its own headline implies. If a commit says "drop X", state what
+   of X remains and why. If a capability was removed or replaced, name it as a removal, not as a
+   simplification.
 
 Never report an unverified step as done, and never bury a failure in the middle of a success
 story.

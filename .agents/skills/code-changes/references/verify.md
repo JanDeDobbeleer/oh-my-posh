@@ -7,16 +7,24 @@ work by default.
 ## Quality gates
 
 - Build, full test suite, formatters, and linters — all must pass with zero errors.
-- Apply the project's language skill when one exists (for example the Go skill's pre-commit
-  gate: `modernize`, `fieldalignment`, `go mod tidy`, `gofmt`, `golangci-lint`).
-- Cross-compile when platform-specific files changed (`_windows.go`, `_unix.go`, and the like) —
-  the local OS linter skips the other platform's rules.
+- Re-read the language and framework skills pinned in Phase 2 and review the final diff against
+  them by hand, then run whatever pre-commit gate each one defines. Linters do not cover control
+  flow, test structure, logging, or comment conventions — a green linter is not evidence the skill
+  was followed.
+- Cross-compile or re-lint for every target platform when platform-specific files changed — the
+  local toolchain skips the other platform's rules. The language skill names how those files are
+  marked.
 
 ## Functional proof
 
 Tests passing is necessary, not sufficient. Run the real flow and confirm concrete outputs:
 render the prompt, execute the command, hit the endpoint. Record the actual values observed —
 the final report quotes them as evidence, not adjectives.
+
+Exercise the flow the way the user will reach it, not only the way the harness reaches it: the
+built artifact rather than the dev server, a cold start rather than the running process, the entry
+point they actually open. When a dev server or file watcher is in play, restart it before judging
+behavior — a stale bundle produces confident, wrong verification.
 
 When the user said they will do the manual validation, state exactly what they should check and
 what the expected result is.

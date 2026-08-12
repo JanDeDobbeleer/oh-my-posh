@@ -35,11 +35,8 @@ func (b *Battery) Enabled() bool {
 		return false
 	}
 
-	b.Info = *info
-
-	// case on computer without batteries(no error, empty array)
-	if err == nil && b.Percentage == 0 {
-		return false
+	if info != nil {
+		b.Info = *info
 	}
 
 	switch b.State {

@@ -42,7 +42,7 @@ func init() {
 
 func createPrintCmd() *cmdtree.Command {
 	printCmd := &cmdtree.Command{
-		Use:   "print [debug|primary|secondary|transient|transient-right|right|tooltip|valid|error|preview]",
+		Use:   "print [debug|primary|secondary|transient|transient-right|right|tooltip|valid|error|preview|cursor]",
 		Short: "Print the prompt/context",
 		Long:  "Print one of the prompts based on the location/use-case.",
 		ValidArgs: []string{
@@ -56,6 +56,7 @@ func createPrintCmd() *cmdtree.Command {
 			prompt.VALID,
 			prompt.ERROR,
 			prompt.PREVIEW,
+			prompt.CURSOR,
 		},
 		Args: NoArgsOrOneValidArg,
 		Run: func(cmd *cmdtree.Command, args []string) {
@@ -133,6 +134,8 @@ func createPrintCmd() *cmdtree.Command {
 				fmt.Print(eng.ExtraPrompt(prompt.Error))
 			case prompt.PREVIEW:
 				fmt.Print(eng.Preview())
+			case prompt.CURSOR:
+				fmt.Print(eng.CursorStyle())
 			default:
 				_ = cmd.Help()
 			}

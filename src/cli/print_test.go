@@ -13,3 +13,9 @@ func TestPrintCommandTransientRight(t *testing.T) {
 
 	assert.Contains(t, cmd.ValidArgs, prompt.TRANSIENT_RIGHT)
 }
+
+func TestPrintCommandCursor(t *testing.T) {
+	cmd := createPrintCmd()
+
+	assert.Contains(t, cmd.ValidArgs, prompt.CURSOR)
+}

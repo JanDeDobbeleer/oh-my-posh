@@ -3781,6 +3781,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jin-li",
+      "name": "lijin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26253144?v=4",
+      "profile": "https://jinli.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Ezequie1Sc",
+      "name": "Ezequiel Salazar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115424590?v=4",
+      "profile": "https://ezquieldev.vercel.app/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

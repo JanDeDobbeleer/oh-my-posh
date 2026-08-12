@@ -1239,10 +1239,10 @@ func (g *Git) isModuleAdminDir(target, parent string) bool {
 	return filepath.Clean(root) == filepath.Clean(parent)
 }
 
-func worktreeAdminIndex(path string) int {
+func worktreeAdminIndex(dir string) int {
 	const segment = "/worktrees/"
 
-	normalised := filepath.ToSlash(filepath.Clean(path))
+	normalised := filepath.ToSlash(filepath.Clean(dir))
 	index := strings.LastIndex(normalised, segment)
 	if index < 0 {
 		return -1

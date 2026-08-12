@@ -1,0 +1,338 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palettes": {
+    "template": "{{ if .Env.POSH_CATPPUCCIN_FLAVOR }}{{ .Env.POSH_CATPPUCCIN_FLAVOR }}{{ else }}mocha{{ end }}",
+    "list": {
+      "latte": {
+        "rosewater": "#dc8a78",
+        "flamingo": "#dd7878",
+        "pink": "#ea76cb",
+        "mauve": "#8839ef",
+        "red": "#d20f39",
+        "maroon": "#e64553",
+        "peach": "#fe640b",
+        "yellow": "#df8e1d",
+        "green": "#40a02b",
+        "teal": "#179299",
+        "sky": "#04a5e5",
+        "sapphire": "#209fb5",
+        "blue": "#1e66f5",
+        "lavender": "#7287fd",
+        "text": "#4c4f69",
+        "subtext1": "#5c5f77",
+        "subtext0": "#6c6f85",
+        "overlay2": "#7c7f93",
+        "overlay1": "#8c8fa1",
+        "overlay0": "#9ca0b0",
+        "surface2": "#acb0be",
+        "surface1": "#bcc0cc",
+        "surface0": "#ccd0da",
+        "base": "#eff1f5",
+        "mantle": "#e6e9ef",
+        "crust": "#dce0e8",
+        "segment-text": "p:text"
+      },
+      "frappe": {
+        "rosewater": "#f2d5cf",
+        "flamingo": "#eebebe",
+        "pink": "#f4b8e4",
+        "mauve": "#ca9ee6",
+        "red": "#e78284",
+        "maroon": "#ea999c",
+        "peach": "#ef9f76",
+        "yellow": "#e5c890",
+        "green": "#a6d189",
+        "teal": "#81c8be",
+        "sky": "#99d1db",
+        "sapphire": "#85c1dc",
+        "blue": "#8caaee",
+        "lavender": "#babbf1",
+        "text": "#c6d0f5",
+        "subtext1": "#b5bfe2",
+        "subtext0": "#a5adce",
+        "overlay2": "#949cbb",
+        "overlay1": "#838ba7",
+        "overlay0": "#737994",
+        "surface2": "#626880",
+        "surface1": "#51576d",
+        "surface0": "#414559",
+        "base": "#303446",
+        "mantle": "#292c3c",
+        "crust": "#232634",
+        "segment-text": "p:base"
+      },
+      "macchiato": {
+        "rosewater": "#f4dbd6",
+        "flamingo": "#f0c6c6",
+        "pink": "#f5bde6",
+        "mauve": "#c6a0f6",
+        "red": "#ed8796",
+        "maroon": "#ee99a0",
+        "peach": "#f5a97f",
+        "yellow": "#eed49f",
+        "green": "#a6da95",
+        "teal": "#8bd5ca",
+        "sky": "#91d7e3",
+        "sapphire": "#7dc4e4",
+        "blue": "#8aadf4",
+        "lavender": "#b7bdf8",
+        "text": "#cad3f5",
+        "subtext1": "#b8c0e0",
+        "subtext0": "#a5adcb",
+        "overlay2": "#939ab7",
+        "overlay1": "#8087a2",
+        "overlay0": "#6e738d",
+        "surface2": "#5b6078",
+        "surface1": "#494d64",
+        "surface0": "#363a4f",
+        "base": "#24273a",
+        "mantle": "#1e2030",
+        "crust": "#181926",
+        "segment-text": "p:base"
+      },
+      "mocha": {
+        "rosewater": "#f5e0dc",
+        "flamingo": "#f2cdcd",
+        "pink": "#f5c2e7",
+        "mauve": "#cba6f7",
+        "red": "#f38ba8",
+        "maroon": "#eba0ac",
+        "peach": "#fab387",
+        "yellow": "#f9e2af",
+        "green": "#a6e3a1",
+        "teal": "#94e2d5",
+        "sky": "#89dceb",
+        "sapphire": "#74c7ec",
+        "blue": "#89b4fa",
+        "lavender": "#b4befe",
+        "text": "#cdd6f4",
+        "subtext1": "#bac2de",
+        "subtext0": "#a6adc8",
+        "overlay2": "#9399b2",
+        "overlay1": "#7f849c",
+        "overlay0": "#6c7086",
+        "surface2": "#585b70",
+        "surface1": "#45475a",
+        "surface0": "#313244",
+        "base": "#1e1e2e",
+        "mantle": "#181825",
+        "crust": "#11111b",
+        "segment-text": "p:base"
+      }
+    }
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "p:rosewater",
+          "foreground": "p:segment-text",
+          "leading_diamond": "\ue0b6",
+          "options": {
+            "windows": "\ue62a"
+          },
+          "style": "diamond",
+          "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
+          "type": "os"
+        },
+        {
+          "background": "p:pink",
+          "foreground": "p:segment-text",
+          "powerline_symbol": "\ue0b0",
+          "style": "powerline",
+          "template": "{{ if .SSHSession }} \ueb39 {{ .UserName }}@{{ .HostName }}{{ end }}",
+          "type": "session"
+        },
+        {
+          "background": "p:mauve",
+          "foreground": "p:base",
+          "powerline_symbol": "\ue0b0",
+          "options": {
+            "style": "full"
+          },
+          "style": "powerline",
+          "templates": [
+            "{{ if eq .Location .Env.HOME }} \udb84\udcb5 {{ .Path }} {{ end }}",
+            "{{ if not .Writable }} \udb80\ude50 {{ .Path }} {{ end }}",
+            "{{ if glob \".github\" }} \ue5fd {{ .Path }} {{ end }}",
+            "{{ if glob \".git\" }} \ue5fb {{ .Path }} {{ end }}",
+            "{{ if glob \"package.json\" }} \ue5fa {{ .Path }} {{ end }}",
+            "{{ if matchP \"(?i)(^|/)downloads$\" .Location }} \udb80\ude4d {{ .Path }} {{ end }}",
+            "{{ if matchP \"(?i)(^|/)(pictures|images)$\" .Location }} \udb80\ude4f {{ .Path }} {{ end }}",
+            " \uf07c {{ .Path }} "
+          ],
+          "templates_logic": "first_match",
+          "type": "path"
+        },
+        {
+          "background": "p:green",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}p:peach{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}",
+            "{{ if gt .Ahead 0 }}p:sapphire{{ end }}",
+            "{{ if gt .Behind 0 }}p:yellow{{ end }}"
+          ],
+          "foreground": "p:segment-text",
+          "powerline_symbol": "\ue0b0",
+          "options": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "powerline",
+          "template": " {{ .UpstreamIcon }} {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "p:green",
+          "background_templates": [
+            "{{ if gt .Code 0 }}p:red{{ end }}"
+          ],
+          "foreground": "p:segment-text",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "options": {
+            "always_enabled": true
+          },
+          "style": "powerline",
+          "template": "{{ if eq .Code 0 }}{{ else }}{{ reason .Code }}{{ end }}",
+          "type": "status"
+        },
+        {
+          "background": "p:red",
+          "foreground": "p:segment-text",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "style": "powerline",
+          "template": " \u26a1",
+          "type": "root"
+        },
+        {
+          "background": "p:yellow",
+          "foreground": "p:segment-text",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "style": "powerline",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
+          "type": "python"
+        },
+        {
+          "background": "p:teal",
+          "foreground": "p:segment-text",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "style": "powerline",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+          "type": "node"
+        },
+        {
+          "background": "p:lavender",
+          "foreground": "p:segment-text",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "options": {
+            "always_enabled": true
+          },
+          "style": "powerline",
+          "template": "{{ .FormattedMs }}",
+          "type": "executiontime"
+        },
+        {
+          "background": "p:sapphire",
+          "foreground": "p:segment-text",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "options": {
+            "time_format": "15:04:05"
+          },
+          "style": "powerline",
+          "template": "{{ if .Segments.Contains \"Battery\" }}{{ .CurrentDate | date .Format }}{{ end }}",
+          "type": "time"
+        },
+        {
+          "background": "p:sapphire",
+          "foreground": "p:segment-text",
+          "options": {
+            "time_format": "15:04:05"
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "template": "{{ if not (.Segments.Contains \"Battery\") }}{{ .CurrentDate | date .Format }}{{ end }}",
+          "type": "time"
+        },
+        {
+          "type": "battery",
+          "invert_powerline": true,
+          "powerline_symbol": "\ue0b2",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "foreground": "p:segment-text",
+          "background": "p:green",
+          "background_templates": [
+            "{{ if .Error }}p:red{{ end }}",
+            "{{ if le .Percentage 15 }}p:red{{ end }}",
+            "{{ if and (ge .Percentage 16) (le .Percentage 30) }}p:maroon{{ end }}",
+            "{{ if and (ge .Percentage 31) (le .Percentage 45) }}p:peach{{ end }}",
+            "{{ if and (ge .Percentage 46) (le .Percentage 55) }}p:peach{{ end }}",
+            "{{ if and (ge .Percentage 56) (le .Percentage 70) }}p:yellow{{ end }}",
+            "{{ if and (ge .Percentage 71) (le .Percentage 90) }}p:teal{{ end }}",
+            "{{ if and (ge .Percentage 91) (le .Percentage 100) }}p:green{{ end }}"
+          ],
+          "templates": [
+            "{{ if eq .State.String \"Full\" }} \udb80\udc84 {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 95) }} \udb80\udc79 {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 85) }} \udb80\udc82 {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 75) }} \udb80\udc81 {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 65) }} \udb80\udc80 {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 55) }} \udb80\udc7f {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 45) }} \udb80\udc7e {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 35) }} \udb80\udc7d {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 25) }} \udb80\udc7c {{ .Percentage }}%{{ end }}",
+            "{{ if and (eq .State.String \"Discharging\") (gt .Percentage 15) }} \udb80\udc7b {{ .Percentage }}%{{ end }}",
+            "{{ if eq .State.String \"Discharging\" }} \udb80\udc7a {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 95 }} \udb80\udc85 {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 85 }} \udb80\udc8b {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 75 }} \udb80\udc8a {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 65 }} \udb82\udc9e {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 55 }} \udb80\udc89 {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 45 }} \udb82\udc9d {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 35 }} \udb82\udc9d {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 25 }} \udb80\udc87 {{ .Percentage }}%{{ end }}",
+            "{{ if gt .Percentage 15 }} \udb80\udc86 {{ .Percentage }}%{{ end }}",
+            " \udb82\udc9c {{ .Percentage }}%"
+          ],
+          "templates_logic": "first_match",
+          "options": {
+            "display_error": false
+          }
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "p:sky",
+          "foreground": "p:segment-text",
+          "interactive": true,
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b0",
+          "style": "diamond",
+          "template": "{{ if eq .Shell \"zsh\" }}%h{{ else }}{{ .PromptCount }}{{ end }}",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 5
+}

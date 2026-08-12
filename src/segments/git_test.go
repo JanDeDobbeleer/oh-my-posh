@@ -123,7 +123,11 @@ func TestEnabledInWorktree(t *testing.T) {
 		MetadataAddon     string
 		MetadataContent   string
 		ExpectedProbedDir string
-		Case              string
+		// TargetConfig is the config file found in the directory the pointer names. The
+		// modules classifier reads core.worktree out of it to tell a submodule git dir
+		// from a --separate-git-dir target, which has no core.worktree at all.
+		TargetConfig string
+		Case         string
 		// nil reserves directory-role assertions for a later decision.
 		ExpectedWorkingFolder *string
 		ExpectedRealFolder    *string
@@ -146,12 +150,15 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRootFolder:    strPtr(TestRootPath + dotGit),
 		},
 		{
+			// The discovered .git file sits in the submodule's own checkout, and the git
+			// dir points back at it through core.worktree. Both are what git writes.
 			Case:                  "submodule",
 			ExpectedEnabled:       true,
-			Pointer:               "./.git/modules/submodule",
-			DiscoveredGitFile:     TestRootPath + dotGit,
-			DiscoveredParent:      TestRootPath + "dev",
+			Pointer:               "../.git/modules/submodule",
+			DiscoveredGitFile:     TestRootPath + "dev/sub/.git",
+			DiscoveredParent:      TestRootPath + "dev/sub",
 			ExpectedProbedDir:     TestRootPath + dotGitSubmodule,
+			TargetConfig:          "[core]\n\tworktree = ../../../sub",
 			ExpectedWorkingFolder: strPtr(TestRootPath + dotGitSubmodule),
 			ExpectedRealFolder:    strPtr(TestRootPath + dotGitSubmodule),
 			ExpectedRootFolder:    strPtr(TestRootPath + dotGitSubmodule),
@@ -160,9 +167,10 @@ func TestEnabledInWorktree(t *testing.T) {
 			Case:                  "submodule with root working folder",
 			ExpectedEnabled:       true,
 			Pointer:               TestRootPath + dotGitSubmodule,
-			DiscoveredGitFile:     TestRootPath + dotGit,
-			DiscoveredParent:      TestRootPath + "dev",
+			DiscoveredGitFile:     TestRootPath + "dev/sub/.git",
+			DiscoveredParent:      TestRootPath + "dev/sub",
 			ExpectedProbedDir:     TestRootPath + dotGitSubmodule,
+			TargetConfig:          "[core]\n\tworktree = ../../../sub",
 			ExpectedWorkingFolder: strPtr(TestRootPath + dotGitSubmodule),
 			ExpectedRealFolder:    strPtr(TestRootPath + dotGitSubmodule),
 			ExpectedRootFolder:    strPtr(TestRootPath + dotGitSubmodule),
@@ -187,6 +195,77 @@ func TestEnabledInWorktree(t *testing.T) {
 			DiscoveredGitFile: TestRootPath + dotGit,
 			DiscoveredParent:  TestRootPath + "dev",
 			ExpectedProbedDir: TestRootPath + "dev/separate/.git/posh",
+		},
+		{
+			// The pointer's spelling contains a "modules" component, but the directory
+			// before it is an ordinary folder, not a superproject git dir. This is a
+			// separate git dir, so repoRootDir must be the working tree root and not the
+			// git dir the pointer names.
+			Case:              "separate git dir under a modules path component",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "srv/modules/project.git",
+			DiscoveredGitFile: TestRootPath + "work/project/.git",
+			DiscoveredParent:  TestRootPath + "work/project",
+			ExpectedProbedDir: TestRootPath + "srv/modules/project.git",
+			// A --separate-git-dir target records no core.worktree.
+			TargetConfig:       "[core]\n\trepositoryformatversion = 0",
+			ExpectedRealFolder: strPtr(TestRootPath + "work/project/"),
+		},
+		{
+			// A submodule's name is its path, so it can hold separators. Rejecting this
+			// is what a "one component after modules" rule would do.
+			Case:                  "submodule at a nested path",
+			ExpectedEnabled:       true,
+			Pointer:               "../../.git/modules/vendor/libfoo",
+			DiscoveredGitFile:     TestRootPath + "dev/vendor/libfoo/.git",
+			DiscoveredParent:      TestRootPath + "dev/vendor/libfoo",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/vendor/libfoo",
+			TargetConfig:          "[core]\n\tworktree = ../../../../vendor/libfoo",
+			ExpectedWorkingFolder: strPtr(TestRootPath + "dev/.git/modules/vendor/libfoo"),
+			ExpectedRealFolder:    strPtr(TestRootPath + "dev/.git/modules/vendor/libfoo"),
+			ExpectedRootFolder:    strPtr(TestRootPath + "dev/.git/modules/vendor/libfoo"),
+		},
+		{
+			// When the superproject itself uses --separate-git-dir, the folder in front of
+			// modules is not called .git. Rejecting this is what a ".git/modules" rule
+			// would do.
+			Case:                  "submodule of a separate-git-dir superproject",
+			ExpectedEnabled:       true,
+			Pointer:               "../../sepgit/modules/sub",
+			DiscoveredGitFile:     TestRootPath + "dev/sep/sub/.git",
+			DiscoveredParent:      TestRootPath + "dev/sep/sub",
+			ExpectedProbedDir:     TestRootPath + "dev/sepgit/modules/sub",
+			TargetConfig:          "[core]\n\tworktree = ../../../sep/sub",
+			ExpectedWorkingFolder: strPtr(TestRootPath + "dev/sepgit/modules/sub"),
+			ExpectedRealFolder:    strPtr(TestRootPath + "dev/sepgit/modules/sub"),
+			ExpectedRootFolder:    strPtr(TestRootPath + "dev/sepgit/modules/sub"),
+		},
+		{
+			// A submodule checked out at modules/foo doubles the segment. Rejecting this
+			// is what keying on the last modules occurrence would do, because the prefix
+			// then lands on .git/modules, which is a container and not a git dir.
+			Case:                  "submodule checked out below a modules folder",
+			ExpectedEnabled:       true,
+			Pointer:               "../../.git/modules/modules/foo",
+			DiscoveredGitFile:     TestRootPath + "dev/modules/foo/.git",
+			DiscoveredParent:      TestRootPath + "dev/modules/foo",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/modules/foo",
+			TargetConfig:          "[core]\n\tworktree = ../../../../modules/foo",
+			ExpectedWorkingFolder: strPtr(TestRootPath + "dev/.git/modules/modules/foo"),
+			ExpectedRealFolder:    strPtr(TestRootPath + "dev/.git/modules/modules/foo"),
+			ExpectedRootFolder:    strPtr(TestRootPath + "dev/.git/modules/modules/foo"),
+		},
+		{
+			// core.worktree present but pointing at another checkout: the git dir is not
+			// this checkout's, so it must not be treated as its submodule.
+			Case:               "module dir whose core.worktree points elsewhere",
+			ExpectedEnabled:    true,
+			Pointer:            TestRootPath + "dev/.git/modules/stale",
+			DiscoveredGitFile:  TestRootPath + "dev/sub/.git",
+			DiscoveredParent:   TestRootPath + "dev/sub",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/modules/stale",
+			TargetConfig:       "[core]\n\tworktree = ../../../elsewhere",
+			ExpectedRealFolder: strPtr(TestRootPath + "dev/sub/"),
 		},
 		{
 			Case:                  "worktree with relative gitdir path",
@@ -376,6 +455,7 @@ func TestEnabledInWorktree(t *testing.T) {
 		env.On("FileContent", filepath.Join(tc.ExpectedProbedDir, tc.MetadataAddon)).Return(tc.MetadataContent)
 		env.On("HasFilesInDir", tc.ExpectedProbedDir, tc.MetadataAddon).Return(tc.MetadataAddon != "")
 		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
+		env.On("FileContent", tc.ExpectedProbedDir+"/config").Return(tc.TargetConfig)
 		env.On("PathSeparator").Return(string(os.PathSeparator))
 
 		g := &Git{}

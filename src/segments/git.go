@@ -467,8 +467,10 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	worktreeIndex := worktreeAdminIndex(adminDir)
 
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
-	// we need the parent folder to detect where the real .git folder is
-	if strings.Contains(raw, "/modules/") {
+	// we need the parent folder to detect where the real .git folder is. Test raw rather
+	// than the resolved path: a checkout below a folder named modules would otherwise
+	// drag every genuine worktree in it into this branch.
+	if strings.Contains(raw, "/modules/") && g.isModuleAdminDir(g.mainSCMDir, gitdir.ParentFolder) {
 		g.scmDir = g.mainSCMDir
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
@@ -1193,6 +1195,48 @@ func (g *Git) commonGitDir() string {
 	}
 
 	return filepath.ToSlash(g.scmDir)
+}
+
+// isModuleAdminDir reports whether target is a submodule administrative directory
+// belonging to the checkout at parent, or a linked worktree inside one.
+//
+// A pointer whose spelling merely contains a modules component is not enough: a
+// --separate-git-dir target such as /srv/modules/project.git spells the same substring
+// without being a submodule. Nor does the shape help the way it does for worktrees. A
+// submodule's name is its path, so it may hold separators (.git/modules/vendor/libfoo),
+// it may nest (.../modules/vendor/libfoo/modules/inner), and the folder in front of
+// modules is only called .git when the superproject has no --separate-git-dir of its own
+// (../../sepgit/modules/sub is a real pointer).
+//
+// What does hold is that git records core.worktree in a submodule's git dir, pointing
+// back at the checkout, and never records it in a --separate-git-dir target. That
+// back-reference is the same kind of proof the worktree branch takes from its gitdir
+// metadata.
+func (g *Git) isModuleAdminDir(target, parent string) bool {
+	// A linked worktree inside a module dir keeps no config of its own, so it cannot
+	// carry core.worktree. Its gitdir metadata identifies it instead, which is what the
+	// worktree case in the caller goes on to validate.
+	if worktreeAdminIndex(target) > -1 && g.env.HasFilesInDir(target, "gitdir") {
+		return true
+	}
+
+	cfg, err := ini.Load(g.fileContent(target, "config"))
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	worktree := cfg.Section("core").Key("worktree").String()
+	if worktree == "" {
+		log.Debug("no core.worktree in", target, "- not a submodule git dir")
+		return false
+	}
+
+	// core.worktree is relative to the git dir holding it, and may need the same WSL
+	// conversion as the pointer itself.
+	root := resolveGitPath(target, g.convertToLinuxPath(worktree))
+
+	return filepath.Clean(root) == filepath.Clean(parent)
 }
 
 func worktreeAdminIndex(path string) int {

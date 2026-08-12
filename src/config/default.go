@@ -260,12 +260,10 @@ func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) 
 						Template: "{{ if .Segments.Git.Dir }} \uf1d2 <i><b>{{ .Segments.Git.RepoName }}{{ if .Segments.Git.IsWorkTree }} \ue21c{{ end }}</b></i>{{ $rel :=  .Segments.Git.RelativeDir }}{{ if $rel }} \ueaf7 {{ .Format $rel }}{{ end }}{{ else }} \uea83 {{ path .Path .Location }}{{ end }} ", //nolint:lll
 					},
 					{
-						Type:            GIT,
-						Style:           Diamond,
-						LeadingDiamond:  "<parentBackground,background>\ue0b0</>",
-						TrailingDiamond: "\ue0b4",
-						Foreground:      paletteBlack,
-						Background:      paletteGreen,
+						Type:       GIT,
+						Style:      Plain,
+						Foreground: paletteBlack,
+						Background: paletteGreen,
 						BackgroundTemplates: []string{
 							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}",
 							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}",
@@ -281,6 +279,13 @@ func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) 
 							fetchUpstreamIcon: false,
 						},
 						Template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ nospace .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ", //nolint:lll
+					},
+					{
+						Type:       TEXT,
+						Style:      Plain,
+						Background: backgroundTransparent,
+						Foreground: color.ParentBackground,
+						Template:   "\ue0b0",
 					},
 				},
 			},

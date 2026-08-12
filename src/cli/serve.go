@@ -26,10 +26,15 @@ func init() {
 	RootCmd.AddCommand(serveCmd)
 }
 
-// One JSON object per line on stdin. Unknown fields are ignored by
-// encoding/json by default, giving forward compatibility for free.
+// One JSON object per line on stdin, immediately followed - for every
+// command, not just render - by a raw "KEY=VALUE\x00" record stream
+// terminated by an empty record (a bare NUL); see readEnvBlob. Unknown JSON
+// fields are ignored by encoding/json by default, giving forward
+// compatibility for free.
 type serveRequest struct {
-	Env           map[string]string `json:"env"`
+	// Env is never part of the JSON header - it comes from the raw record
+	// stream that follows every request line, parsed by readEnvBlob.
+	Env           map[string]string `json:"-"`
 	Command       string            `json:"command"`
 	Shell         string            `json:"shell"`
 	ShellVersion  string            `json:"shell-version"`
@@ -112,9 +117,11 @@ func createServeCmd() *cmdtree.Command {
 // primitive fish has) never EOFs the read side. Unix only - the shell owns
 // the fifo's lifecycle.
 //
-// Clients must write each request in a single write(2) call; requests from a
-// single sequential writer (one shell session) never interleave regardless
-// of size.
+// A request (header line plus its env blob, see readEnvBlob) may span more
+// than one write(2) call - the reader is not line/buffer-size bound - but
+// those calls must be consecutive with no other writer's bytes landing
+// between them. A single sequential writer (one shell session, one request
+// at a time) guarantees that regardless of size.
 func openServeInput(pipePath string) (*os.File, error) {
 	if pipePath == "" {
 		return os.Stdin, nil
@@ -139,7 +146,8 @@ type serveActiveCycle struct {
 	copierDone chan struct{}
 }
 
-// runServeLoop reads newline-delimited JSON requests from in and writes
+// runServeLoop reads newline-delimited JSON requests (each immediately
+// followed by a raw env record blob, see readEnvBlob) from in and writes
 // NUL-delimited, cycle-id-prefixed prompt records to out. It returns when it
 // reads a quit command or hits EOF on stdin. The returned bool reports
 // whether at least one render request was handled, so the caller knows
@@ -152,20 +160,18 @@ type serveActiveCycle struct {
 // shell additionally redirects this process's stderr so anything unrecovered
 // can never reach the user's terminal.
 func runServeLoop(in, out *os.File) bool {
-	scanner := bufio.NewScanner(in)
-	// Env payloads (a POSH_* overlay plus PATH) can exceed the default 64 KB
-	// scanner buffer, so grow it up front.
-	scanner.Buffer(make([]byte, 0, 256*1024), 1024*1024)
+	reader := bufio.NewReader(in)
 
 	var active *serveActiveCycle
 	renderedAtLeastOnce := false
 
-	// envKeys tracks which variables the previous request's overlay set, so
+	// envKeys tracks which variables the previous request's env blob set, so
 	// a variable that disappears from a later request (e.g. VIRTUAL_ENV after
-	// `deactivate`) gets unset instead of pinning its stale value for the rest
-	// of the daemon's life. Scoped to the loop so repeated invocations in the
-	// same process (tests) never inherit a previous loop's keys. The serve
-	// loop is single-threaded, so no locking.
+	// `deactivate`, or anything a client stops forwarding) gets unset instead
+	// of pinning its stale value for the rest of the daemon's life. Scoped to
+	// the loop so repeated invocations in the same process (tests) never
+	// inherit a previous loop's keys. The serve loop is single-threaded, so
+	// no locking.
 	envKeys := map[string]struct{}{}
 
 	stopActiveCycle := func() {
@@ -189,50 +195,106 @@ func runServeLoop(in, out *os.File) bool {
 		active = nil
 	}
 
-	for scanner.Scan() {
-		line := scanner.Bytes()
+	for {
+		line, err := reader.ReadBytes('\n')
+		eof := err != nil
 
+		line = bytes.TrimSuffix(line, []byte{'\n'})
+		line = bytes.TrimSuffix(line, []byte{'\r'})
 		// Strip a UTF-8 BOM: .NET's default UTF8 encoding writes one on the
 		// StreamWriter's first write, which would otherwise make the first
 		// request line of a session unparseable.
 		line = bytes.TrimPrefix(line, []byte{0xEF, 0xBB, 0xBF})
 
 		if len(line) == 0 {
+			if eof {
+				break
+			}
 			continue
+		}
+
+		// A well-formed client always sends the env blob right after the
+		// header line, for every command - even abort/quit send a bare NUL
+		// terminator. Reading it here, unconditionally, is what keeps the
+		// stream in sync regardless of the header's command or JSON validity;
+		// a client that skipped it on some commands would desync every
+		// request after the first one that did.
+		env, envErr := readEnvBlob(reader)
+		if envErr != nil {
+			// Truncated/closed mid-blob: nothing more can be recovered.
+			break
 		}
 
 		var req serveRequest
-		if err := json.Unmarshal(line, &req); err != nil {
-			// Malformed line: ignore for forward/backward compatibility.
-			continue
-		}
+		if err := json.Unmarshal(line, &req); err == nil {
+			req.Env = env
 
-		switch req.Command {
-		case serveCommandRender:
-			// A new render request implicitly aborts whatever is running.
-			stopActiveCycle()
-			// A nil cycle means setup panicked before prompt.New completed -
-			// template.Init may never have run, in which case the shutdown
-			// path must not call template.SaveCache (it dereferences state
-			// only Init sets). A started cycle implies Init completed.
-			if active = startRenderCycle(&req, out, envKeys); active != nil {
-				renderedAtLeastOnce = true
+			switch req.Command {
+			case serveCommandRender:
+				// A new render request implicitly aborts whatever is running.
+				stopActiveCycle()
+				// A nil cycle means setup panicked before prompt.New completed -
+				// template.Init may never have run, in which case the shutdown
+				// path must not call template.SaveCache (it dereferences state
+				// only Init sets). A started cycle implies Init completed.
+				if active = startRenderCycle(&req, out, envKeys); active != nil {
+					renderedAtLeastOnce = true
+				}
+			case serveCommandAbort:
+				stopActiveCycle()
+			case serveCommandQuit:
+				stopActiveCycle()
+				return renderedAtLeastOnce
+			default:
+				// Unknown command: ignore for forward compatibility.
 			}
-		case serveCommandAbort:
-			stopActiveCycle()
-		case serveCommandQuit:
-			stopActiveCycle()
-			return renderedAtLeastOnce
-		default:
-			// Unknown command: ignore for forward compatibility.
+		}
+		// Malformed JSON header: ignored for forward/backward compatibility
+		// (its env blob was already consumed above, keeping the stream in sync).
+
+		if eof {
+			break
 		}
 	}
 
-	// EOF (or a scanner error) on stdin: behave like an explicit quit so
-	// caches are still flushed by the caller's deferred cleanup.
+	// EOF (or a read error) on stdin: behave like an explicit quit so caches
+	// are still flushed by the caller's deferred cleanup.
 	stopActiveCycle()
 
 	return renderedAtLeastOnce
+}
+
+// readEnvBlob reads a "KEY=VALUE\x00" record stream from r, terminated by an
+// empty record (a bare NUL byte). Every request line is unconditionally
+// followed by this blob - even for commands that ignore its contents - so
+// the reader never needs to know in advance whether one is coming.
+//
+// Environment variable values cannot contain a NUL byte on any OS this
+// project targets (POSIX environ entries and the Windows environment block
+// are themselves NUL-terminated/-delimited C strings), so this framing needs
+// no escaping: a key/value pair is malformed only if it has no '=', in which
+// case it is skipped.
+func readEnvBlob(r *bufio.Reader) (map[string]string, error) {
+	env := map[string]string{}
+
+	for {
+		record, err := r.ReadBytes(0)
+		if err != nil {
+			return nil, err
+		}
+
+		record = record[:len(record)-1] // drop the trailing NUL delimiter
+		if len(record) == 0 {
+			return env, nil
+		}
+
+		key, value, found := bytes.Cut(record, []byte{'='})
+		if !found {
+			continue
+		}
+
+		env[string(key)] = string(value)
+	}
 }
 
 func applyEnvOverlay(env map[string]string, keys map[string]struct{}) {

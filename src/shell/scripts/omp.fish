@@ -290,33 +290,35 @@ function _omp_serve_start
     return 0
 end
 
-# Joining the result with '' drops any embedded newlines - the values we send
-# (paths, POSH_* variables) never legitimately contain them, and a raw newline
-# would break the line-delimited request protocol.
+# Escapes a JSON header string field (PWD). Joining the result with '' drops
+# any embedded newlines - PWD never legitimately contains one, and a raw
+# newline would break the line-delimited request protocol.
 function _omp_serve_escape
     string join '' -- (string replace -a -- '\\' '\\\\' "$argv" | string replace -a -- '"' '\\"' | string replace -a -- \t '\\t')
 end
 
-function _omp_serve_env_json
-    set --local parts
-
-    set --append parts '"PATH":"'(_omp_serve_escape (string join ':' -- $PATH))'"'
-
-    # forward every exported POSH_* variable plus the virtual-env markers;
-    # the daemon's environment is otherwise frozen at its start
-    for name in (set --names)
-        if string match -q 'POSH_*' -- $name; and set -qx $name
-            set --append parts '"'$name'":"'(_omp_serve_escape "$$name")'"'
-        end
+# Writes the full exported environment as "KEY=VALUE\0" records, terminated
+# by one extra bare NUL (an empty record). No escaping is needed - env values
+# can never contain a NUL byte on any OS. Quoting the indirect expansion
+# ("$$name") is load-bearing: fish variables are lists, and a bare $$name
+# would re-cycle printf's format string across a multi-element value (e.g.
+# PATH); quoted, fish joins it exactly as it would for export - colon-joined
+# for path variables (anything ending in "PATH", plus anything set --path),
+# space-joined otherwise - matching what a real child process sees.
+#
+# A name outside fish's identifier syntax (e.g. a bash-exported function
+# leaking in as "BASH_FUNC_foo%%", or any inherited name with a hyphen)
+# survives to `set --export --names` but breaks indirect expansion: $$name
+# only dereferences the longest leading identifier run and pastes the rest
+# back as literal text, corrupting the value. Skip those - zsh's writer
+# already omits them for the same underlying reason (its parameter table
+# can't hold such a name either), so this just matches that behavior.
+function _omp_serve_env_raw
+    for name in (set --export --names)
+        string match -qr -- '^\w+$' $name; or continue
+        printf '%s=%s\0' $name "$$name"
     end
-
-    for name in VIRTUAL_ENV CONDA_PROMPT_MODIFIER
-        if set -q $name
-            set --append parts '"'$name'":"'(_omp_serve_escape "$$name")'"'
-        end
-    end
-
-    echo -n '{'(string join ',' -- $parts)'}'
+    printf '\0'
 end
 
 function _omp_serve_request
@@ -338,7 +340,7 @@ function _omp_serve_request
         set cleared false
     end
 
-    set --local json '{"command":"render","id":'$_omp_serve_cycle',"shell":"fish","shell-version":"'$FISH_VERSION'","status":'$_omp_status',"pipestatus":"'"$_omp_pipestatus"'","no-status":'$_omp_no_status',"execution-time":'$exec_time',"stack-count":'(count $dirstack)',"terminal-width":'$width',"cleared":'$cleared',"pwd":"'(_omp_serve_escape $PWD)'","env":'(_omp_serve_env_json)'}'
+    set --local json '{"command":"render","id":'$_omp_serve_cycle',"shell":"fish","shell-version":"'$FISH_VERSION'","status":'$_omp_status',"pipestatus":"'"$_omp_pipestatus"'","no-status":'$_omp_no_status',"execution-time":'$exec_time',"stack-count":'(count $dirstack)',"terminal-width":'$width',"cleared":'$cleared',"pwd":"'(_omp_serve_escape $PWD)'"}'
 
     # a fifo write with no reader blocks forever - only write while the
     # daemon pipeline is alive (the daemon holds the fifo open read-write,
@@ -347,7 +349,13 @@ function _omp_serve_request
         return 1
     end
 
-    echo $json >"$_omp_serve_fifo" 2>/dev/null
+    # The full environment follows the header, unconditionally - see
+    # _omp_serve_env_raw. One fifo open for both writes keeps them from
+    # interleaving with another writer.
+    begin
+        echo $json
+        _omp_serve_env_raw
+    end >"$_omp_serve_fifo" 2>/dev/null
 end
 
 # poll the tempfile until it holds this cycle's primary record
@@ -405,14 +413,16 @@ function _omp_serve_render
 end
 
 function _omp_serve_abort
+    # Every request line - even one with no env of its own - must be followed
+    # by a blob; a bare NUL is an empty one (see readEnvBlob/_omp_serve_env_raw).
     if test -n "$_omp_serve_fifo"; and _omp_serve_alive
-        echo '{"command":"abort"}' >"$_omp_serve_fifo" 2>/dev/null
+        printf '{"command":"abort"}\n\0' >"$_omp_serve_fifo" 2>/dev/null
     end
 end
 
 function _omp_serve_quit
     if test -n "$_omp_serve_fifo"; and _omp_serve_alive
-        echo '{"command":"quit"}' >"$_omp_serve_fifo" 2>/dev/null
+        printf '{"command":"quit"}\n\0' >"$_omp_serve_fifo" 2>/dev/null
     end
     _omp_serve_stop
     if test -n "$_omp_serve_tempfile"

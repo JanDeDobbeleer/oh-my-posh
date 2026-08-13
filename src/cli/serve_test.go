@@ -59,14 +59,40 @@ func startServeHarness(t *testing.T) *serveHarness {
 	return h
 }
 
-// send writes a single newline-terminated JSON request to the loop's stdin.
+// send writes a newline-terminated JSON header to the loop's stdin, followed
+// by the NUL-delimited env blob every request must carry (see readEnvBlob).
+// v may carry an "env" key (map[string]string) - if present, it is pulled
+// out of the JSON header and sent as the raw blob instead; a request with no
+// "env" key sends an empty blob (just the terminator).
 func (h *serveHarness) send(v any) {
 	h.t.Helper()
+
+	env := map[string]string{}
+	if m, ok := v.(map[string]any); ok {
+		if raw, ok := m["env"]; ok {
+			delete(m, "env")
+			typed, ok := raw.(map[string]string)
+			require.True(h.t, ok, "send: \"env\" must be a map[string]string, got %T", raw)
+			env = typed
+		}
+	}
 
 	data, err := json.Marshal(v)
 	require.NoError(h.t, err)
 
-	_, err = h.stdin.Write(append(data, '\n'))
+	var buf bytes.Buffer
+	buf.Write(data)
+	buf.WriteByte('\n')
+
+	for key, value := range env {
+		buf.WriteString(key)
+		buf.WriteByte('=')
+		buf.WriteString(value)
+		buf.WriteByte(0)
+	}
+	buf.WriteByte(0) // empty record: terminates the blob
+
+	_, err = h.stdin.Write(buf.Bytes())
 	require.NoError(h.t, err)
 }
 
@@ -430,6 +456,91 @@ func TestServeLoop_EnvOverlayUnsetsVanishedVariables(t *testing.T) {
 	h.quitAndWait()
 }
 
+// TestServeLoop_EnvBlobHandlesArbitraryValues guards the reason env forwarding
+// moved off JSON: a value with a literal newline, tab, quote, backslash, or
+// non-ASCII byte must reach the daemon byte-exact, with no escaping logic to
+// get wrong. This would corrupt or silently drop such values under JSON
+// string escaping (which is exactly what the whitelist-based overlay hid,
+// since it only ever carried PATH/POSH_*-shaped values).
+func TestServeLoop_EnvBlobHandlesArbitraryValues(t *testing.T) {
+	h := startServeHarness(t)
+	pwd := t.TempDir()
+	chdirBackToWD(t)
+
+	const name = "POSH_SERVE_ENV_ARBITRARY_TEST"
+	t.Cleanup(func() { _ = os.Unsetenv(name) })
+
+	value := "line1\nline2\ttab\"quote\\backénd"
+
+	h.send(map[string]any{
+		"command": "render", "id": 1, "shell": "pwsh", "pwd": pwd,
+		"env": map[string]string{name: value},
+	})
+	records := h.records(500 * time.Millisecond)
+	require.NotEmpty(t, records)
+	assert.Equal(t, value, os.Getenv(name), "env value must survive the blob byte-exact, unescaped")
+
+	h.quitAndWait()
+}
+
+// TestReadEnvBlob_MalformedRecordsSkipped guards readEnvBlob's parsing rules
+// directly: a record with no '=' is dropped rather than corrupting the map
+// or aborting the parse, and an empty blob (just the terminator) parses to
+// an empty, non-nil map.
+func TestReadEnvBlob_MalformedRecordsSkipped(t *testing.T) {
+	blob := "NOEQUALSSIGN\x00KEY=value\x00ANOTHER=a=b=c\x00\x00"
+	reader := bufio.NewReader(bytes.NewBufferString(blob))
+
+	env, err := readEnvBlob(reader)
+	require.NoError(t, err)
+	assert.NotContains(t, env, "NOEQUALSSIGN", "a record with no '=' must be skipped, not stored under an empty value")
+	assert.Equal(t, "value", env["KEY"])
+	assert.Equal(t, "a=b=c", env["ANOTHER"], "only the first '=' splits key from value")
+
+	empty, err := readEnvBlob(bufio.NewReader(bytes.NewBufferString("\x00")))
+	require.NoError(t, err)
+	assert.Empty(t, empty)
+}
+
+// TestReadEnvBlob_TruncatedBlobReturnsError guards the case where the
+// connection closes mid-record, before the terminating empty record ever
+// arrives: readEnvBlob must report an error (so runServeLoop treats it like
+// EOF and shuts down) rather than block forever or return a partial map.
+func TestReadEnvBlob_TruncatedBlobReturnsError(t *testing.T) {
+	reader := bufio.NewReader(bytes.NewBufferString("KEY=value\x00TRUNC=no-terminator-ever"))
+
+	env, err := readEnvBlob(reader)
+	require.Error(t, err)
+	assert.Nil(t, env)
+}
+
+// TestServeLoop_MalformedHeaderStillConsumesBlobThenNextRequestRenders is
+// the central desync-resilience property runServeLoop's comments claim: a
+// non-empty header line that fails JSON parsing must still have its env blob
+// consumed (every header is unconditionally followed by one), or the next
+// request's header would be misread as more of the previous blob and the
+// loop would never render again.
+func TestServeLoop_MalformedHeaderStillConsumesBlobThenNextRequestRenders(t *testing.T) {
+	h := startServeHarness(t)
+	pwd := t.TempDir()
+	chdirBackToWD(t)
+
+	// A malformed (non-JSON) header line, followed by its own non-empty env
+	// blob - exactly what a well-formed client always sends, just with a
+	// garbled header. The header still needs its own newline terminator;
+	// omitting it would just make this one long header line, defeating the
+	// point of the test.
+	_, err := h.stdin.Write([]byte("not valid json\nSOME=value\x00\x00"))
+	require.NoError(t, err)
+
+	h.render(1, pwd)
+	records := h.records(500 * time.Millisecond)
+	require.NotEmpty(t, records, "a render after a malformed header must still produce records - the stream must not have desynced")
+	assert.Equal(t, "1", records[0].id)
+
+	h.quitAndWait()
+}
+
 func TestServeLoop_QuitExitsCleanly(t *testing.T) {
 	h := startServeHarness(t)
 
@@ -496,7 +607,7 @@ func TestServeLoop_UTF8BOMOnFirstLine(t *testing.T) {
 	require.NoError(t, err)
 
 	payload := append([]byte{0xEF, 0xBB, 0xBF}, data...)
-	payload = append(payload, '\n')
+	payload = append(payload, '\n', 0) // trailing 0: empty env blob, just the terminator
 	_, err = h.stdin.Write(payload)
 	require.NoError(t, err)
 

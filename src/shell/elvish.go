@@ -2,10 +2,20 @@ package shell
 
 import (
 	_ "embed"
+	"fmt"
+	"strings"
 )
 
 //go:embed scripts/omp.elv
 var elvishInit string
+
+func quoteElvishStr(str string) string {
+	if str == "" {
+		return "''"
+	}
+
+	return fmt.Sprintf("'%s'", strings.ReplaceAll(str, "'", "''"))
+}
 
 func (f Features) Elvish() Code {
 	switch f {

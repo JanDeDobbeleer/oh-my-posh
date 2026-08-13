@@ -53,7 +53,9 @@ func TestServeLoop_RequestPipe(t *testing.T) {
 		data, err := json.Marshal(v)
 		require.NoError(t, err)
 
-		_, err = f.Write(append(data, '\n'))
+		data = append(data, '\n', 0) // trailing 0: empty env blob, just the terminator
+
+		_, err = f.Write(data)
 		require.NoError(t, err)
 		require.NoError(t, f.Close())
 	}

@@ -429,7 +429,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # render needs to be interrupted - write abort instead of killing anything.
         if ($null -ne $script:Streaming.ServeProcess -and -not $script:Streaming.ServeProcess.HasExited) {
             try {
+                # Every request line - even one with no env of its own - must
+                # be followed by a blob; a bare NUL is an empty one (see
+                # readEnvBlob/Get-PoshServeEnvRaw).
                 $script:Streaming.StdIn.WriteLine('{"command":"abort"}')
+                $script:Streaming.StdIn.Write([char]0)
                 $script:Streaming.StdIn.Flush()
             }
             catch {
@@ -613,26 +617,19 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         return ''
     }
 
-    function Get-PoshServeEnvOverlay {
-        # v1 env overlay: PATH, every POSH_* variable, VIRTUAL_ENV and
-        # CONDA_PROMPT_MODIFIER. Deliberately not derived from config
-        # templates yet (see implementation plan TODO).
-        $overlay = [ordered]@{}
-        $overlay['PATH'] = $env:PATH
-
-        Get-ChildItem env:POSH_* -ErrorAction Ignore | ForEach-Object {
-            $overlay[$_.Name] = $_.Value
+    function Get-PoshServeEnvRaw {
+        # The full exported environment as "KEY=VALUE\0" records, terminated
+        # by one extra bare NUL (an empty record) - see readEnvBlob on the
+        # daemon side. No escaping is needed: env values can never contain a
+        # NUL byte on any OS, and GetEnvironmentVariables() already returns
+        # each variable's real, single-string value - no array-join
+        # subtlety like fish's list variables to worry about here.
+        $sb = [System.Text.StringBuilder]::new()
+        foreach ($entry in [Environment]::GetEnvironmentVariables().GetEnumerator()) {
+            [void]$sb.Append($entry.Key).Append('=').Append($entry.Value).Append([char]0)
         }
-
-        if (Test-Path env:VIRTUAL_ENV) {
-            $overlay['VIRTUAL_ENV'] = $env:VIRTUAL_ENV
-        }
-
-        if (Test-Path env:CONDA_PROMPT_MODIFIER) {
-            $overlay['CONDA_PROMPT_MODIFIER'] = $env:CONDA_PROMPT_MODIFIER
-        }
-
-        return $overlay
+        [void]$sb.Append([char]0)
+        return $sb.ToString()
     }
 
     function Suspend-PoshServeOnFailure {
@@ -659,6 +656,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($null -ne $script:Streaming.Output -and $script:Streaming.Output.Count -ge 4096) {
             try {
                 $script:Streaming.StdIn.WriteLine('{"command":"quit"}')
+                $script:Streaming.StdIn.Write([char]0)
                 $script:Streaming.StdIn.Flush()
             }
             catch {
@@ -677,11 +675,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $script:Streaming.Transient = ''
         $script:Streaming.CycleStarted = $true
 
-        $envOverlay = Get-PoshServeEnvOverlay
-        $envJson = ($envOverlay.Keys | ForEach-Object {
-                '"' + $_ + '":' + (ConvertTo-PoshServeJsonString $envOverlay[$_])
-            }) -join ','
-
         $json = '{' +
         '"command":"render"' +
         ',"id":' + $script:Streaming.CycleId +
@@ -696,11 +689,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         ',"terminal-width":' + (Get-TerminalWidth) +
         ',"job-count":' + $script:JobCount +
         ',"cleared":false' +
-        ',"env":{' + $envJson + '}' +
         '}'
+
+        # The full environment follows the header, unconditionally - see
+        # Get-PoshServeEnvRaw. Both writes go through the same StdIn, so they
+        # can never interleave with another request.
+        $envRaw = Get-PoshServeEnvRaw
 
         try {
             $script:Streaming.StdIn.WriteLine($json)
+            $script:Streaming.StdIn.Write($envRaw)
             $script:Streaming.StdIn.Flush()
         }
         catch {
@@ -720,6 +718,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
             try {
                 $script:Streaming.StdIn.WriteLine($json)
+                $script:Streaming.StdIn.Write($envRaw)
                 $script:Streaming.StdIn.Flush()
             }
             catch {
@@ -1024,6 +1023,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 if ($null -ne $s.ServeProcess -and -not $s.ServeProcess.HasExited) {
                     try {
                         $s.StdIn.WriteLine('{"command":"quit"}')
+                        $s.StdIn.Write([char]0)
                         $s.StdIn.Flush()
                         $s.StdIn.Close()
                     }
@@ -1299,6 +1299,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             if ($null -ne $script:Streaming.ServeProcess -and -not $script:Streaming.ServeProcess.HasExited) {
                 try {
                     $script:Streaming.StdIn.WriteLine('{"command":"quit"}')
+                    $script:Streaming.StdIn.Write([char]0)
                     $script:Streaming.StdIn.Flush()
                     $script:Streaming.StdIn.Close()
                 }

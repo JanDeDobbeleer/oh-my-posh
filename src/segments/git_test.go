@@ -151,21 +151,28 @@ func TestResolveEmptyGitPath(t *testing.T) {
 }
 
 func TestEnabledInWorktree(t *testing.T) {
+	// Field order below is what fieldalignment wants, so the groups a reader would expect
+	// together are not adjacent. The comments travel with the fields instead.
 	cases := []struct {
 		// nil reserves directory-role assertions for a later decision.
 		ExpectedWorkingFolder *string
 		ExpectedRootFolder    *string
 		ExpectedRealFolder    *string
-		// For a worktree topology, the discovered parent is the worktree root and
-		// must match the metadata back-reference.
+		// For a worktree topology, the discovered parent is the worktree root and must
+		// match the metadata back-reference. See DiscoveredGitFile below.
 		DiscoveredParent  string
 		MetadataAddon     string
 		MetadataContent   string
 		ExpectedProbedDir string
 		Case              string
 		Pointer           string
+		// DiscoveredGitFile is the .git file HasParentFilePath found, whose parent is
+		// DiscoveredParent above.
 		DiscoveredGitFile string
-		RawGitFile        string
+		// RawGitFile overrides the whole .git file body. Use it when the test is about
+		// the file's syntax rather than the pointer it carries; leave it empty and the
+		// loop writes "gitdir: <Pointer>".
+		RawGitFile string
 		// TargetConfig is the config file found in the directory the pointer names. The
 		// modules classifier reads core.worktree out of it to tell a submodule git dir
 		// from a --separate-git-dir target, which has no core.worktree at all.
@@ -574,9 +581,14 @@ func TestEnabledInBareLayout(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		// Fixtures are built from TestRootPath so the paths are absolute on the platform
+		// the test binary runs on. filepath.IsAbs below is the real one, not the mocked
+		// GOOS, so a literal "/repo" would not be absolute on Windows.
+		root := TestRootPath + "repo"
+
 		fileInfo := &runtime.FileInfo{
-			Path:         "/repo/.git",
-			ParentFolder: "/repo",
+			Path:         root + "/.git",
+			ParentFolder: root,
 		}
 
 		env := new(mock.Environment)
@@ -589,13 +601,15 @@ func TestEnabledInBareLayout(t *testing.T) {
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", poshGitEnv).Return("")
 		env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
-		env.On("FileContent", "/repo/.git").Return("gitdir: ./.bare")
-		env.On("HasFilesInDir", "/repo/.bare", "HEAD").Return(true)
-		env.On("FileContent", "/repo/.bare/config").Return("[core]\n\tbare = true")
-		env.On("FileContent", "/repo/.bare/HEAD").Return("")
-		env.MockGitCommand("/repo/", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
-		env.MockGitCommand("/repo/", "", "describe", "--tags", "--exact-match")
-		env.MockGitCommand("/repo/", "", "remote")
+		env.On("FileContent", root+"/.git").Return("gitdir: ./.bare")
+		env.On("HasFilesInDir", root+"/.bare", "HEAD").Return(true)
+		env.On("FileContent", root+"/.bare/config").Return("[core]\n\tbare = true")
+		// HEAD lives in the bare git dir, not the working tree root: mainSCMDir holds the
+		// current checkout's git directory now.
+		env.On("FileContent", root+"/.bare/HEAD").Return("")
+		env.MockGitCommand(root+"/", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
+		env.MockGitCommand(root+"/", "", "describe", "--tags", "--exact-match")
+		env.MockGitCommand(root+"/", "", "remote")
 
 		props := options.Map{}
 		if tc.FetchBareInfo {
@@ -613,56 +627,61 @@ func TestEnabledInBareLayout(t *testing.T) {
 }
 
 func TestIsBareRepoResolvesPointer(t *testing.T) {
+	// Fixtures are built from TestRootPath so that "absolute pointer" really is absolute
+	// on the platform the test binary runs on. A literal "/repo/.bare" is only
+	// disk-relative on Windows, which would exercise a different resolveGitPath branch
+	// than the one these cases are about.
+	root := TestRootPath + "repo"
+
 	cases := []struct {
 		Case              string
 		Pointer           string
-		ExpectedConfig    string
 		ExpectedProbedDir string
-		OldConfig         string
 		ExpectedIsBare    bool
 	}{
 		{
 			Case:              "relative pointer",
 			Pointer:           "./.bare",
-			ExpectedConfig:    "/repo/.bare/config",
-			ExpectedProbedDir: "/repo/.bare",
+			ExpectedProbedDir: root + "/.bare",
 			ExpectedIsBare:    true,
 		},
 		{
 			Case:              "absolute pointer",
-			Pointer:           "/repo/.bare",
-			ExpectedConfig:    "/repo/.bare/config",
-			ExpectedProbedDir: "/repo/.bare",
+			Pointer:           root + "/.bare",
+			ExpectedProbedDir: root + "/.bare",
 			ExpectedIsBare:    true,
-			OldConfig:         "/repo/repo/.bare/config",
 		},
 		{
 			Case:              "absolute pointer to a non-bare git dir",
-			Pointer:           "/elsewhere/gitdir",
-			ExpectedConfig:    "/elsewhere/gitdir/config",
-			ExpectedProbedDir: "/elsewhere/gitdir",
+			Pointer:           TestRootPath + "elsewhere/gitdir",
+			ExpectedProbedDir: TestRootPath + "elsewhere/gitdir",
 			ExpectedIsBare:    false,
-			OldConfig:         "/repo/elsewhere/gitdir/config",
 		},
 	}
 
 	for _, tc := range cases {
 		fileInfo := &runtime.FileInfo{
-			Path:         "/repo/.git",
-			ParentFolder: "/repo",
+			Path:         root + "/.git",
+			ParentFolder: root,
 		}
+
+		expectedConfig := tc.ExpectedProbedDir + "/config"
+		// What the old filepath.Join produced: the same path for a relative pointer, and
+		// the pointer concatenated onto the parent for an absolute one. Derived rather
+		// than written out so it stays correct under Windows path semantics too.
+		oldConfig := filepath.Join(fileInfo.ParentFolder, tc.Pointer) + "/config"
 
 		env := new(mock.Environment)
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("HasCommand", "git").Return(true)
 		env.On("GOOS").Return("")
 		env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
-		env.On("FileContent", "/repo/.git").Return(fmt.Sprintf("gitdir: %s", tc.Pointer))
-		env.On("FileContent", tc.ExpectedConfig).Return(fmt.Sprintf("[core]\n\tbare = %t", tc.ExpectedIsBare))
+		env.On("FileContent", root+"/.git").Return(fmt.Sprintf("gitdir: %s", tc.Pointer))
+		env.On("FileContent", expectedConfig).Return(fmt.Sprintf("[core]\n\tbare = %t", tc.ExpectedIsBare))
 		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
 
-		if tc.OldConfig != "" {
-			env.On("FileContent", tc.OldConfig).Return("")
+		if oldConfig != expectedConfig {
+			env.On("FileContent", oldConfig).Return("")
 		}
 
 		g := &Git{}
@@ -670,10 +689,10 @@ func TestIsBareRepoResolvesPointer(t *testing.T) {
 
 		assert.True(t, g.shouldDisplay(), tc.Case)
 		assert.Equal(t, tc.ExpectedIsBare, g.IsBare, tc.Case)
-		env.AssertCalled(t, "FileContent", tc.ExpectedConfig)
+		env.AssertCalled(t, "FileContent", expectedConfig)
 
-		if tc.OldConfig != "" {
-			env.AssertNotCalled(t, "FileContent", tc.OldConfig)
+		if oldConfig != expectedConfig {
+			env.AssertNotCalled(t, "FileContent", oldConfig)
 		}
 	}
 }

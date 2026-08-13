@@ -184,35 +184,43 @@ local function json_escape(str)
     return (str:gsub('%c', ''))
 end
 
-local function serve_env_json()
+-- Returns the full exported environment as "KEY=VALUE\0" records, terminated
+-- by one extra bare NUL (an empty record) - see readEnvBlob on the daemon
+-- side. No escaping is needed: env values can never contain a NUL byte on
+-- any OS, and os.getenv already returns each variable's real, single-string
+-- value.
+local function serve_env_raw()
     local parts = {}
 
     local function add(name, value)
         if value then
-            parts[#parts + 1] = string.format('"%s":"%s"', name, json_escape(value))
+            parts[#parts + 1] = name .. '=' .. value .. '\0'
         end
     end
-
-    add('PATH', os.getenv('PATH'))
-    add('VIRTUAL_ENV', os.getenv('VIRTUAL_ENV'))
-    add('CONDA_PROMPT_MODIFIER', os.getenv('CONDA_PROMPT_MODIFIER'))
 
     if os.getenvnames then
         for _, name in ipairs(os.getenvnames()) do
-            if name:sub(1, 5) == 'POSH_' then
-                add(name, os.getenv(name))
-            end
+            add(name, os.getenv(name))
         end
+    else
+        -- Older Clink without os.getenvnames can't enumerate the
+        -- environment; fall back to the variables oh-my-posh itself depends
+        -- on rather than sending nothing.
+        add('PATH', os.getenv('PATH'))
+        add('VIRTUAL_ENV', os.getenv('VIRTUAL_ENV'))
+        add('CONDA_PROMPT_MODIFIER', os.getenv('CONDA_PROMPT_MODIFIER'))
     end
 
-    return '{' .. table.concat(parts, ',') .. '}'
+    parts[#parts + 1] = '\0' -- empty record: terminates the blob
+
+    return table.concat(parts)
 end
 
 local function serve_write_request()
     serve.cycle = serve.cycle + 1
     serve.transient = nil
 
-    -- Forwarded to the daemon through the POSH_* env overlay below.
+    -- Forwarded to the daemon through the full env blob below.
     os.setenv('POSH_CURSOR_LINE', console.getnumlines())
 
     local status = 0
@@ -221,18 +229,21 @@ local function serve_write_request()
     end
 
     local request = string.format(
-        '{"command":"render","id":%d,"shell":"cmd","status":%d,"no-status":%s,"execution-time":%d,"pwd":"%s","terminal-width":%d,"wait":true,"env":%s}\n',
+        '{"command":"render","id":%d,"shell":"cmd","status":%d,"no-status":%s,"execution-time":%d,"pwd":"%s","terminal-width":%d,"wait":true}\n',
         serve.cycle,
         status,
         no_exit_code and 'true' or 'false',
         last_duration or 0,
         json_escape(os.getcwd() or ''),
-        console.getwidth() or 0,
-        serve_env_json()
+        console.getwidth() or 0
     )
 
+    -- The full environment follows the header, unconditionally - see
+    -- serve_env_raw. Both writes go through the same pipe from the same
+    -- sequential writer, so they can never interleave with another request.
     return (pcall(function()
         assert(serve.w:write(request))
+        assert(serve.w:write(serve_env_raw()))
         serve.w:flush()
     end))
 end

@@ -208,6 +208,23 @@ function _omp_serve_escape() {
   REPLY=${s//[[:cntrl:]]/}
 }
 
+# Returns via REPLY: the full exported environment as "KEY=VALUE\0" records,
+# terminated by one extra bare NUL (an empty record). No escaping is needed -
+# env values can never contain a NUL byte on any OS, and ${(P)name} already
+# returns an exported scalar's real value (zsh ties PATH-like parameters to
+# their colon-joined scalar form, unlike fish's list variables, so there is
+# no array-join subtlety to handle here).
+function _omp_serve_env_raw() {
+  local name value
+  REPLY=''
+  for name in ${(k)parameters[(I)*]}; do
+    [[ ${parameters[$name]} == *export* ]] || continue
+    value=${(P)name}
+    REPLY+="$name=$value"$'\0'
+  done
+  REPLY+=$'\0'
+}
+
 function _omp_serve_request() {
   # A write to a dead daemon's pipe raises SIGPIPE, which kills a
   # non-interactive shell outright - ignore it for the duration of this
@@ -225,24 +242,6 @@ function _omp_serve_request() {
   (( _omp_serve_cycle++ ))
   _omp_transient_prompt=""
 
-  local name env_json
-  _omp_serve_escape "$PATH"
-  env_json="\"PATH\":\"$REPLY\""
-
-  # Forward every exported POSH_* variable plus the virtual-env markers; the
-  # daemon's environment is otherwise frozen at its start.
-  for name in ${(k)parameters[(I)POSH_*]}; do
-    [[ ${parameters[$name]} == *export* ]] || continue
-    _omp_serve_escape "${(P)name}"
-    env_json+=",\"$name\":\"$REPLY\""
-  done
-
-  for name in VIRTUAL_ENV CONDA_PROMPT_MODIFIER; do
-    [[ -v $name ]] || continue
-    _omp_serve_escape "${(P)name}"
-    env_json+=",\"$name\":\"$REPLY\""
-  done
-
   _omp_serve_escape "$PWD"
 
   local json='{"command":"render"'
@@ -257,10 +256,13 @@ function _omp_serve_request() {
   json+=",\"terminal-width\":${COLUMNS:-0}"
   json+=",\"job-count\":$_omp_job_count"
   json+=",\"pwd\":\"$REPLY\""
-  json+=",\"env\":{$env_json}"
   json+='}'
 
-  print -r -u $_omp_serve_fd_in -- "$json" 2>/dev/null
+  # The full environment follows the header, unconditionally - see
+  # _omp_serve_env_raw. Both writes go through the same fd from the same
+  # sequential writer, so they can never interleave with another request.
+  _omp_serve_env_raw
+  print -rn -u $_omp_serve_fd_in -- "$json"$'\n'"$REPLY" 2>/dev/null
 }
 
 # Renders the primary prompt through the daemon. Returns nonzero on failure,
@@ -347,13 +349,15 @@ function _omp_serve_async_handler() {
 function _omp_serve_abort() {
   setopt localoptions localtraps
   trap '' PIPE
-  [[ $_omp_serve_fd_in -ge 0 ]] && print -r -u $_omp_serve_fd_in -- '{"command":"abort"}' 2>/dev/null
+  # Every request line - even one with no env of its own - must be followed
+  # by a blob; a bare NUL is an empty one (see readEnvBlob/_omp_serve_env_raw).
+  [[ $_omp_serve_fd_in -ge 0 ]] && print -rn -u $_omp_serve_fd_in -- $'{"command":"abort"}\n\0' 2>/dev/null
 }
 
 function _omp_serve_quit() {
   setopt localoptions localtraps
   trap '' PIPE
-  [[ $_omp_serve_fd_in -ge 0 ]] && print -r -u $_omp_serve_fd_in -- '{"command":"quit"}' 2>/dev/null
+  [[ $_omp_serve_fd_in -ge 0 ]] && print -rn -u $_omp_serve_fd_in -- $'{"command":"quit"}\n\0' 2>/dev/null
   _omp_serve_stop
 }
 

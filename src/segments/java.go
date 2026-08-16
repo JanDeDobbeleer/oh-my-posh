@@ -13,14 +13,21 @@ func (j *Java) Template() string {
 }
 
 func (j *Java) Enabled() bool {
-	j.init()
+	j.loadSpec()
 
 	return j.Language.Enabled()
 }
 
+// Activation implements the activation gate; see Language.activation.
+func (j *Java) Activation() Activation {
+	j.loadSpec()
+
+	return j.activation()
+}
+
 const javaToolName = "java"
 
-func (j *Java) init() {
+func (j *Java) loadSpec() {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 
 	j.extensions = []string{

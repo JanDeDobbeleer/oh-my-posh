@@ -28,6 +28,19 @@ func (n *Node) Template() string {
 }
 
 func (n *Node) Enabled() bool {
+	n.loadSpec()
+
+	return n.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (n *Node) Activation() Activation {
+	n.loadSpec()
+
+	return n.activation()
+}
+
+func (n *Node) loadSpec() {
 	n.extensions = []string{"*.js", "*.ts", fileName, ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".vue"}
 	n.tooling = map[string]*cmd{
 		nodeToolName: {
@@ -40,8 +53,6 @@ func (n *Node) Enabled() bool {
 	n.versionURLTemplate = "https://github.com/nodejs/node/blob/main/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}"
 	n.Language.matchesVersionFile = n.matchesVersionFile
 	n.Language.loadContext = n.loadContext
-
-	return n.Language.Enabled()
 }
 
 func (n *Node) loadContext() {

@@ -232,6 +232,10 @@ func (segment *Segment) Execute(env runtime.Environment) {
 		return
 	}
 
+	if segment.gatedInactive() {
+		return
+	}
+
 	defer func() {
 		if segment.Enabled {
 			template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
@@ -273,6 +277,46 @@ func (segment *Segment) Execute(env runtime.Environment) {
 	segment.evaluated = true
 
 	segment.overlayData()
+}
+
+// gatedInactive evaluates the writer's activation gate: a cheap, declarative
+// pre-check that proves a segment cannot possibly be enabled in the current
+// working directory, letting Execute skip the (potentially expensive)
+// writer.Enabled() probe entirely. The glob check runs against the cached
+// directory listing (env.HasFiles), so a gated-off segment costs a few string
+// matches instead of an Enabled() evaluation.
+//
+// Three segment shapes bypass the gate and run the full path exactly as
+// before: forced segments (Force), segments with a fallback template (which
+// renders against the evaluated-but-disabled writer, so the `evaluated`
+// semantics must stay identical), and segments pinned via a hand-written data
+// file (pendingData), whose overlay expects writer.Enabled() to derive live
+// state first. Deliberately not skipped here: a segment with a cache config
+// whose restore missed gates like any other - the next cache fill simply
+// waits until the segment can activate again.
+func (segment *Segment) gatedInactive() bool {
+	if segment.Force || segment.FallbackTemplate != "" || len(segment.pendingData) > 0 {
+		return false
+	}
+
+	if segment.writer == nil {
+		return false
+	}
+
+	globs, gated := activationGate(segment.writer)
+	if !gated {
+		return false
+	}
+
+	for _, glob := range globs {
+		if segment.env.HasFiles(glob) {
+			return false
+		}
+	}
+
+	log.Debugf("segment gated (inactive): %s", segment.Name())
+
+	return true
 }
 
 // overlayData applies data pinned in a hand-written (unmarked) file on top of the

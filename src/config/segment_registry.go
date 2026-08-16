@@ -22,6 +22,29 @@ func newSegmentWriter(segmentType SegmentType) (SegmentWriter, error) {
 	return f(), nil
 }
 
+// activationGate returns the file globs whose collective absence in the
+// current working directory proves the segment cannot activate, and whether
+// such a gate applies at all. A writer that does not implement
+// segments.Activator, or whose activation is Always (or empty), has no gate
+// and always executes.
+//
+// Lives beside the registry rather than in segment.go so the js/wasm build,
+// which has no writers, does not pull the segments package back in (see
+// segment_registry_js.go).
+func activationGate(writer SegmentWriter) ([]string, bool) {
+	activator, ok := writer.(segments.Activator)
+	if !ok {
+		return nil, false
+	}
+
+	activation := activator.Activation()
+	if activation.Always || len(activation.FileGlobs) == 0 {
+		return nil, false
+	}
+
+	return activation.FileGlobs, true
+}
+
 func init() {
 	gob.Register(&segments.Angular{})
 	gob.Register(&segments.Version{})

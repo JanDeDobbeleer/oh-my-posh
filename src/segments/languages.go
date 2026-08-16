@@ -367,6 +367,25 @@ func NewLanguage(name string) *ConfiguredLanguage {
 }
 
 func (c *ConfiguredLanguage) Enabled() bool {
+	c.loadSpec()
+
+	enabled := c.Language.Enabled()
+
+	if preset, ok := languageDefinitions[c.name]; ok && preset.sanitizeVersion != nil {
+		c.Full = preset.sanitizeVersion(c.Full)
+	}
+
+	return enabled
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (c *ConfiguredLanguage) Activation() Activation {
+	c.loadSpec()
+
+	return c.activation()
+}
+
+func (c *ConfiguredLanguage) loadSpec() {
 	if c.name == "" {
 		c.name = c.options.String(LanguageName, "")
 	}
@@ -381,14 +400,6 @@ func (c *ConfiguredLanguage) Enabled() bool {
 	}
 
 	c.applyCustomTools()
-
-	enabled := c.Language.Enabled()
-
-	if preset, ok := languageDefinitions[c.name]; ok && preset.sanitizeVersion != nil {
-		c.Full = preset.sanitizeVersion(c.Full)
-	}
-
-	return enabled
 }
 
 // applyCustomTools reads the `tools` option (a list of {name, executable, args, regex,

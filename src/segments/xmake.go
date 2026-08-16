@@ -9,6 +9,19 @@ func (x *XMake) Template() string {
 }
 
 func (x *XMake) Enabled() bool {
+	x.loadSpec()
+
+	return x.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (x *XMake) Activation() Activation {
+	x.loadSpec()
+
+	return x.activation()
+}
+
+func (x *XMake) loadSpec() {
 	const xmakeToolName = "xmake"
 
 	x.extensions = []string{"xmake.lua"}
@@ -20,6 +33,4 @@ func (x *XMake) Enabled() bool {
 		},
 	}
 	x.defaultTooling = []string{xmakeToolName}
-
-	return x.Language.Enabled()
 }

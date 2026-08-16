@@ -32,6 +32,19 @@ func (p *Python) Template() string {
 }
 
 func (p *Python) Enabled() bool {
+	p.loadSpec()
+
+	return p.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (p *Python) Activation() Activation {
+	p.loadSpec()
+
+	return p.activation()
+}
+
+func (p *Python) loadSpec() {
 	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
 	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
 
@@ -70,8 +83,6 @@ func (p *Python) Enabled() bool {
 	p.displayMode = p.options.String(DisplayMode, DisplayModeEnvironment)
 	p.Language.loadContext = p.loadContext
 	p.Language.inContext = p.inContext
-
-	return p.Language.Enabled()
 }
 
 func (p *Python) loadContext() {

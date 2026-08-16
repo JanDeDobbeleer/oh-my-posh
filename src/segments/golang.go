@@ -21,6 +21,19 @@ func (g *Golang) Template() string {
 }
 
 func (g *Golang) Enabled() bool {
+	g.loadSpec()
+
+	return g.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (g *Golang) Activation() Activation {
+	g.loadSpec()
+
+	return g.activation()
+}
+
+func (g *Golang) loadSpec() {
 	g.extensions = []string{"*.go", "go.mod", "go.sum", "go.work", "go.work.sum"}
 	g.tooling = map[string]*cmd{
 		"mod": {
@@ -35,8 +48,6 @@ func (g *Golang) Enabled() bool {
 	}
 	g.defaultTooling = []string{"mod", "go"}
 	g.versionURLTemplate = "https://golang.org/doc/go{{ .Major }}.{{ .Minor }}"
-
-	return g.Language.Enabled()
 }
 
 func (g *Golang) getVersion() (string, error) {

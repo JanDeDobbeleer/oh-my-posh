@@ -21,7 +21,7 @@ func (g *Gradle) Template() string {
 }
 
 func (g *Gradle) Enabled() bool {
-	g.extensions = []string{"*.gradle", "*.gradle.kts"}
+	g.loadSpec()
 
 	executable := gradle
 	gradlew, err := g.env.HasParentFilePath("gradlew", false)
@@ -41,6 +41,19 @@ func (g *Gradle) Enabled() bool {
 	g.versionURLTemplate = "https://github.com/gradle/gradle/releases/tag/v{{ .Full }}"
 
 	return g.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (g *Gradle) Activation() Activation {
+	g.loadSpec()
+
+	return g.activation()
+}
+
+// loadSpec holds the file spec only; the tooling depends on a gradlew lookup
+// that stays in Enabled().
+func (g *Gradle) loadSpec() {
+	g.extensions = []string{"*.gradle", "*.gradle.kts"}
 }
 
 func (g *Gradle) buildGetVersion(executable string) getVersion {

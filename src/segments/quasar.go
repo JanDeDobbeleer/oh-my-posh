@@ -24,6 +24,29 @@ type Quasar struct {
 }
 
 func (q *Quasar) Enabled() bool {
+	q.loadSpec()
+
+	if !q.Language.Enabled() {
+		return false
+	}
+
+	if q.options.Bool(FetchDependencies, false) {
+		q.fetchDependencies()
+	}
+
+	return true
+}
+
+// Activation implements the activation gate; see Language.activation. Quasar
+// declares project files (searched in parent directories), so this resolves
+// to Always.
+func (q *Quasar) Activation() Activation {
+	q.loadSpec()
+
+	return q.activation()
+}
+
+func (q *Quasar) loadSpec() {
 	const quasarToolName = "quasar"
 
 	q.projectFiles = []string{"quasar.config", "quasar.config.js"}
@@ -36,16 +59,6 @@ func (q *Quasar) Enabled() bool {
 	}
 	q.defaultTooling = []string{quasarToolName}
 	q.versionURLTemplate = "https://github.com/quasarframework/quasar/releases/tag/quasar-v{{ .Full }}"
-
-	if !q.Language.Enabled() {
-		return false
-	}
-
-	if q.options.Bool(FetchDependencies, false) {
-		q.fetchDependencies()
-	}
-
-	return true
 }
 
 func (q *Quasar) Template() string {

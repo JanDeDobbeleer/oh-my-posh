@@ -18,6 +18,20 @@ func (b *Bazel) Template() string {
 const bazelToolName = "bazel"
 
 func (b *Bazel) Enabled() bool {
+	b.loadSpec()
+
+	return b.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation. Bazel
+// declares folders, so this resolves to Always unless the user empties them.
+func (b *Bazel) Activation() Activation {
+	b.loadSpec()
+
+	return b.activation()
+}
+
+func (b *Bazel) loadSpec() {
 	b.extensions = []string{"*.bazel", "*.bzl", "BUILD", "WORKSPACE", ".bazelrc", ".bazelversion"}
 	b.folders = []string{"bazel-bin", "bazel-out", "bazel-testlogs"}
 	b.tooling = map[string]*cmd{
@@ -32,6 +46,4 @@ func (b *Bazel) Enabled() bool {
 	b.versionURLTemplate = "https://{{ if lt .Major 6 }}docs.{{ end }}bazel.build/versions/{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
 
 	b.Icon = b.options.String(Icon, "\ue63a")
-
-	return b.Language.Enabled()
 }

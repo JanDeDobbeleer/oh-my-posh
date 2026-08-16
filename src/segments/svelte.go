@@ -9,6 +9,19 @@ func (s *Svelte) Template() string {
 }
 
 func (s *Svelte) Enabled() bool {
+	s.loadSpec()
+
+	return s.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (s *Svelte) Activation() Activation {
+	s.loadSpec()
+
+	return s.activation()
+}
+
+func (s *Svelte) loadSpec() {
 	s.extensions = []string{"svelte.config.js"}
 	s.tooling = map[string]*cmd{
 		"svelte": {
@@ -18,8 +31,6 @@ func (s *Svelte) Enabled() bool {
 	}
 	s.defaultTooling = []string{"svelte"}
 	s.versionURLTemplate = "https://github.com/sveltejs/svelte/releases/tag/svelte%40{{.Full}}"
-
-	return s.Language.Enabled()
 }
 
 func (s *Svelte) getVersion() (string, error) {

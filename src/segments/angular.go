@@ -13,6 +13,19 @@ func (a *Angular) Template() string {
 }
 
 func (a *Angular) Enabled() bool {
+	a.loadSpec()
+
+	return a.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (a *Angular) Activation() Activation {
+	a.loadSpec()
+
+	return a.activation()
+}
+
+func (a *Angular) loadSpec() {
 	a.extensions = []string{"angular.json"}
 	a.tooling = map[string]*cmd{
 		"angular": {
@@ -22,8 +35,6 @@ func (a *Angular) Enabled() bool {
 	}
 	a.defaultTooling = []string{"angular"}
 	a.versionURLTemplate = "https://github.com/angular/angular/releases/tag/{{.Full}}"
-
-	return a.Language.Enabled()
 }
 
 func (a *Angular) getVersion() (string, error) {

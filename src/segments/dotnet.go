@@ -28,31 +28,7 @@ func (d *Dotnet) Template() string {
 }
 
 func (d *Dotnet) Enabled() bool {
-	d.extensions = []string{
-		"*.cs",
-		"*.csx",
-		"*.vb",
-		"*.sln",
-		"*.slnx",
-		"*.slnf",
-		"*.csproj",
-		"*.vbproj",
-		"*.fs",
-		"*.fsx",
-		"*.fsproj",
-		"global.json",
-	}
-	d.tooling = map[string]*cmd{
-		dotnetToolName: {
-			executable: dotnetToolName,
-			args:       []string{versionFlagArg},
-			envs:       []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
-			regex: `(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)` +
-				`(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?))`,
-		},
-	}
-	d.defaultTooling = []string{dotnetToolName}
-	d.versionURLTemplate = "https://github.com/dotnet/core/blob/main/release-notes/{{ .Major }}.{{ .Minor }}/{{ .Major }}.{{ .Minor }}.{{ substr 0 1 .Patch }}/{{ .Major }}.{{ .Minor }}.{{ substr 0 1 .Patch }}.md" //nolint: lll
+	d.loadSpec()
 
 	enabled := d.Language.Enabled()
 	if !enabled {
@@ -78,4 +54,39 @@ func (d *Dotnet) Enabled() bool {
 	}
 
 	return true
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (d *Dotnet) Activation() Activation {
+	d.loadSpec()
+
+	return d.activation()
+}
+
+func (d *Dotnet) loadSpec() {
+	d.extensions = []string{
+		"*.cs",
+		"*.csx",
+		"*.vb",
+		"*.sln",
+		"*.slnx",
+		"*.slnf",
+		"*.csproj",
+		"*.vbproj",
+		"*.fs",
+		"*.fsx",
+		"*.fsproj",
+		"global.json",
+	}
+	d.tooling = map[string]*cmd{
+		dotnetToolName: {
+			executable: dotnetToolName,
+			args:       []string{versionFlagArg},
+			envs:       []string{"DOTNET_CLI_TELEMETRY_OPTOUT=1"},
+			regex: `(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)` +
+				`(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?))`,
+		},
+	}
+	d.defaultTooling = []string{dotnetToolName}
+	d.versionURLTemplate = "https://github.com/dotnet/core/blob/main/release-notes/{{ .Major }}.{{ .Minor }}/{{ .Major }}.{{ .Minor }}.{{ substr 0 1 .Patch }}/{{ .Major }}.{{ .Minor }}.{{ substr 0 1 .Patch }}.md" //nolint: lll
 }

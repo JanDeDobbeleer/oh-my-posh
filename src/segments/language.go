@@ -209,6 +209,47 @@ func (l *Language) Enabled() bool {
 	return enabled
 }
 
+// activation backs the Activator implementation of the concrete language
+// segments. It mirrors the decision tree in Enabled(): only when nothing but
+// a file in the current working directory can turn the segment on does it
+// return the extension globs as a gate; anything that can enable the segment
+// without such a file - project files (searched in parent directories too),
+// folders (checked with a stat call rather than against the directory
+// listing), or a display mode other than "files" - forces Always so the full
+// Enabled() path runs.
+//
+// Deliberately unexported: a promoted Activation() would make every Language
+// embedder an Activator, including ones that only build their spec inside
+// Enabled() and would therefore be gated against an empty (or incomplete)
+// spec. A concrete segment opts in by defining Activation() itself, building
+// its spec first and then delegating here - the same way its Enabled() builds
+// the spec before delegating to Language.Enabled().
+func (l *Language) activation() Activation {
+	if len(l.options.StringArray(LanguageProjectFiles, l.projectFiles)) != 0 {
+		return Activation{Always: true}
+	}
+
+	if len(l.options.StringArray(LanguageFolders, l.folders)) != 0 {
+		return Activation{Always: true}
+	}
+
+	displayMode := l.displayMode
+	if displayMode == "" {
+		displayMode = l.options.String(DisplayMode, DisplayModeFiles)
+	}
+
+	if displayMode != DisplayModeFiles {
+		return Activation{Always: true}
+	}
+
+	extensions := l.options.StringArray(LanguageExtensions, l.extensions)
+	if len(extensions) == 0 {
+		return Activation{Always: true}
+	}
+
+	return Activation{FileGlobs: extensions}
+}
+
 // Users can override the default tooling via the Tooling option (e.g. "uv" for Python to use the UV package manager).
 func (l *Language) loadTooling() {
 	enabledTools := l.options.StringArray(Tooling, l.defaultTooling)

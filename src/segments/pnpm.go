@@ -5,6 +5,19 @@ type Pnpm struct {
 }
 
 func (n *Pnpm) Enabled() bool {
+	n.loadSpec()
+
+	return n.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (n *Pnpm) Activation() Activation {
+	n.loadSpec()
+
+	return n.activation()
+}
+
+func (n *Pnpm) loadSpec() {
 	n.extensions = []string{fileName, "pnpm-lock.yaml"}
 	n.tooling = map[string]*cmd{
 		pnpmToolName: {
@@ -15,8 +28,6 @@ func (n *Pnpm) Enabled() bool {
 	}
 	n.defaultTooling = []string{pnpmToolName}
 	n.versionURLTemplate = "https://github.com/pnpm/pnpm/releases/tag/v{{ .Full }}"
-
-	return n.Language.Enabled()
 }
 
 func (n *Pnpm) Template() string {

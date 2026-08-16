@@ -12,6 +12,19 @@ func (c *Cds) Template() string {
 const cdsToolName = "cds"
 
 func (c *Cds) Enabled() bool {
+	c.loadSpec()
+
+	return c.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (c *Cds) Activation() Activation {
+	c.loadSpec()
+
+	return c.activation()
+}
+
+func (c *Cds) loadSpec() {
 	c.extensions = []string{".cdsrc.json", ".cdsrc-private.json", "*.cds"}
 	c.tooling = map[string]*cmd{
 		cdsToolName: {
@@ -24,8 +37,6 @@ func (c *Cds) Enabled() bool {
 	c.Language.loadContext = c.loadContext
 	c.Language.inContext = c.inContext
 	c.displayMode = c.options.String(DisplayMode, DisplayModeContext)
-
-	return c.Language.Enabled()
 }
 
 func (c *Cds) loadContext() {

@@ -12,6 +12,19 @@ func (u *UI5Tooling) Template() string {
 }
 
 func (u *UI5Tooling) Enabled() bool {
+	u.loadSpec()
+
+	return u.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation.
+func (u *UI5Tooling) Activation() Activation {
+	u.loadSpec()
+
+	return u.activation()
+}
+
+func (u *UI5Tooling) loadSpec() {
 	const ui5ToolName = "ui5"
 
 	u.extensions = []string{UI5ToolingYamlPattern}
@@ -27,8 +40,6 @@ func (u *UI5Tooling) Enabled() bool {
 	u.versionURLTemplate = "https://github.com/SAP/ui5-cli/releases/tag/v{{ .Full }}"
 	u.Language.loadContext = u.loadContext
 	u.Language.inContext = u.inContext
-
-	return u.Language.Enabled()
 }
 
 func (u *UI5Tooling) loadContext() {

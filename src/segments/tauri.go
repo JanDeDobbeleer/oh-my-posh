@@ -13,6 +13,20 @@ func (t *Tauri) Template() string {
 }
 
 func (t *Tauri) Enabled() bool {
+	t.loadSpec()
+
+	return t.Language.Enabled()
+}
+
+// Activation implements the activation gate; see Language.activation. Tauri
+// declares folders, so this resolves to Always unless the user empties them.
+func (t *Tauri) Activation() Activation {
+	t.loadSpec()
+
+	return t.activation()
+}
+
+func (t *Tauri) loadSpec() {
 	t.extensions = []string{"tauri.conf.json"}
 	t.folders = []string{"src-tauri"}
 	t.tooling = map[string]*cmd{
@@ -23,8 +37,6 @@ func (t *Tauri) Enabled() bool {
 	}
 	t.defaultTooling = []string{"tauri"}
 	t.versionURLTemplate = "https://github.com/tauri-apps/tauri/releases/tag/tauri-v{{.Full}}"
-
-	return t.Language.Enabled()
 }
 
 func (t *Tauri) getVersion() (string, error) {

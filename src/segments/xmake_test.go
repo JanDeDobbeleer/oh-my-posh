@@ -23,6 +23,7 @@ func TestXMake(t *testing.T) {
 			extension:     "xmake.lua",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		x := &XMake{}
 		x.Init(props, env)
 		assert.True(t, x.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

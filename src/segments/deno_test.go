@@ -23,6 +23,7 @@ func TestDeno(t *testing.T) {
 			extension:     "*.js",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		d := &Deno{}
 		d.Init(props, env)
 		assert.True(t, d.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

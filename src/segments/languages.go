@@ -59,13 +59,23 @@ var languageDefinitions = map[string]languageDefinition{
 		},
 		tooling: map[string]*cmd{
 			gfortranToolName: {
-				executable: gfortranToolName,
-				args:       []string{versionFlagArg},
-				regex:      `GNU Fortran \(.*\) ` + versionRegex,
+				executable:       gfortranToolName,
+				args:             []string{versionFlagArg},
+				regex:            `GNU Fortran \(.*\) ` + versionRegex,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling: []string{gfortranToolName},
 	},
+	// None of ruby's tooling is marked versionCacheable. rbenv/rvm-prompt/
+	// chruby are directory-dispatching version managers by design - the same
+	// resolved binary reads a per-directory version (.ruby-version, a
+	// gemset, etc.) and reports accordingly. asdf is the same for the same
+	// reason. The plain "ruby" entry is included in that too: once rbenv or
+	// asdf is managing Ruby, it installs "ruby" itself on PATH as one of
+	// these directory-dispatching shims, and there is no way at
+	// cmd-definition time to tell that apart from a real, safe-to-cache
+	// interpreter.
 	rubyToolName: {
 		extensions: []string{"*.rb", "Rakefile", "Gemfile"},
 		tooling: map[string]*cmd{
@@ -116,14 +126,16 @@ var languageDefinitions = map[string]languageDefinition{
 		},
 		tooling: map[string]*cmd{
 			clojureToolName: {
-				executable: clojureToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Clojure CLI version (?P<version>(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+)(?:\.(?P<build>[0-9]+))?)`,
+				executable:       clojureToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Clojure CLI version (?P<version>(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+)(?:\.(?P<build>[0-9]+))?)`,
+				versionCacheable: true,
 			},
 			leinToolName: {
-				executable: leinToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Leiningen (?P<version>(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+))`,
+				executable:       leinToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Leiningen (?P<version>(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.(?P<patch>[0-9]+))`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling: []string{clojureToolName, leinToolName},
@@ -132,14 +144,20 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.cr", "shard.yml"},
 		tooling: map[string]*cmd{
 			crystalToolName: {
-				executable: crystalToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Crystal ` + versionRegex,
+				executable:       crystalToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Crystal ` + versionRegex,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{crystalToolName},
 		versionURLTemplate: "https://github.com/crystal-lang/crystal/releases/tag/{{ .Full }}",
 	},
+	// Neither tool here is marked versionCacheable, for the same reason as
+	// ruby above: asdf dispatches by directory, and once it manages elixir
+	// it also puts "elixir" itself on PATH as one of these shims - so the
+	// direct entry cannot be trusted to be a real, cacheable interpreter
+	// either.
 	"elixir": {
 		extensions: []string{"*.ex", "*.exs"},
 		tooling: map[string]*cmd{
@@ -161,9 +179,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.jl"},
 		tooling: map[string]*cmd{
 			juliaToolName: {
-				executable: juliaToolName,
-				args:       []string{versionFlagArg},
-				regex:      `julia version ` + versionRegex,
+				executable:       juliaToolName,
+				args:             []string{versionFlagArg},
+				regex:            `julia version ` + versionRegex,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{juliaToolName},
@@ -173,9 +192,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.kt", "*.kts", "*.ktm"},
 		tooling: map[string]*cmd{
 			kotlinToolName: {
-				executable: kotlinToolName,
-				args:       []string{versionFlagShortArg},
-				regex:      `Kotlin version ` + versionRegex,
+				executable:       kotlinToolName,
+				args:             []string{versionFlagShortArg},
+				regex:            `Kotlin version ` + versionRegex,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{kotlinToolName},
@@ -190,12 +210,14 @@ var languageDefinitions = map[string]languageDefinition{
 				args:               []string{"-v"},
 				regex:              `Lua (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,
 				versionURLTemplate: "https://www.lua.org/manual/{{ .Major }}.{{ .Minor }}/readme.html#changes",
+				versionCacheable:   true,
 			},
 			luajitToolName: {
 				executable:         luajitToolName,
 				args:               []string{"-v"},
 				regex:              `LuaJIT (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,
 				versionURLTemplate: "https://github.com/LuaJIT/LuaJIT/tree/v{{ .Major}}.{{ .Minor}}",
+				versionCacheable:   true,
 			},
 		},
 		defaultTooling: []string{luaToolName, luajitToolName},
@@ -204,9 +226,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.nim", "*.nims"},
 		tooling: map[string]*cmd{
 			nimToolName: {
-				executable: nimToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Nim Compiler Version (?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+))`,
+				executable:       nimToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Nim Compiler Version (?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+))`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling: []string{nimToolName},
@@ -215,9 +238,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.ml", "*.mli", "dune", "dune-project", "dune-workspace"},
 		tooling: map[string]*cmd{
 			ocamlToolName: {
-				executable: ocamlToolName,
-				args:       []string{versionFlagShortArg},
-				regex:      `The OCaml toplevel, version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))(-(?P<prerelease>[a-z]+))?)`,
+				executable:       ocamlToolName,
+				args:             []string{versionFlagShortArg},
+				regex:            `The OCaml toplevel, version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))(-(?P<prerelease>[a-z]+))?)`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling: []string{ocamlToolName},
@@ -226,9 +250,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{".perl-version", "*.pl", "*.pm", "*.t"},
 		tooling: map[string]*cmd{
 			perlToolName: {
-				executable: perlToolName,
-				args:       []string{versionFlagShortArg},
-				regex:      `This is perl.*v(?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))(?:\.(?P<patch>[0-9]+))?).* built for .+`,
+				executable:       perlToolName,
+				args:             []string{versionFlagShortArg},
+				regex:            `This is perl.*v(?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))(?:\.(?P<patch>[0-9]+))?).* built for .+`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling: []string{perlToolName},
@@ -237,9 +262,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.php", "composer.json", "composer.lock", ".php-version", "blade.php"},
 		tooling: map[string]*cmd{
 			phpToolName: {
-				executable: phpToolName,
-				args:       []string{versionFlagArg},
-				regex:      `(?:PHP (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+				executable:       phpToolName,
+				args:             []string{versionFlagArg},
+				regex:            `(?:PHP (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{phpToolName},
@@ -249,19 +275,22 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.R", "*.Rmd", "*.Rsx", "*.Rda", "*.Rd", "*.Rproj", ".Rproj.user"},
 		tooling: map[string]*cmd{
 			rscriptToolName: {
-				executable: rscriptToolName,
-				args:       []string{versionFlagArg},
-				regex:      `version ` + versionRegex,
+				executable:       rscriptToolName,
+				args:             []string{versionFlagArg},
+				regex:            `version ` + versionRegex,
+				versionCacheable: true,
 			},
 			"R": {
-				executable: "R",
-				args:       []string{versionFlagArg},
-				regex:      `version ` + versionRegex,
+				executable:       "R",
+				args:             []string{versionFlagArg},
+				regex:            `version ` + versionRegex,
+				versionCacheable: true,
 			},
 			rExeToolName: {
-				executable: rExeToolName,
-				args:       []string{versionFlagArg},
-				regex:      `version ` + versionRegex,
+				executable:       rExeToolName,
+				args:             []string{versionFlagArg},
+				regex:            `version ` + versionRegex,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{rscriptToolName, "R", rExeToolName},
@@ -270,6 +299,14 @@ var languageDefinitions = map[string]languageDefinition{
 	"rust": {
 		extensions: []string{"*.rs", "Cargo.toml", "Cargo.lock"},
 		tooling: map[string]*cmd{
+			// Not marked versionCacheable: rustup - the official Rust
+			// installer - installs rustc as a symlink to a rustup proxy
+			// binary. The proxy reads any rust-toolchain(.toml) file walking
+			// up from cwd (or a rustup directory override) and dispatches to
+			// that pinned toolchain, auto-installing it if needed. Verified
+			// directly: the same resolved rustc symlink reported two
+			// different versions depending solely on a rust-toolchain.toml
+			// in the working directory.
 			rustcToolName: {
 				executable: rustcToolName,
 				args:       []string{versionFlagArg},
@@ -282,9 +319,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.swift", "*.SWIFT", "Podfile"},
 		tooling: map[string]*cmd{
 			swiftToolName: {
-				executable: swiftToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Swift version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)((.|-)(?P<patch>[0-9]+|dev))?))`,
+				executable:       swiftToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Swift version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)((.|-)(?P<patch>[0-9]+|dev))?))`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{swiftToolName},
@@ -294,9 +332,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.v"},
 		tooling: map[string]*cmd{
 			"v": {
-				executable: "v",
-				args:       []string{"--version"},
-				regex:      `V (?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)) [a-f0-9]+`,
+				executable:       "v",
+				args:             []string{"--version"},
+				regex:            `V (?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)) [a-f0-9]+`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling: []string{"v"},
@@ -305,9 +344,10 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.vala"},
 		tooling: map[string]*cmd{
 			valaToolName: {
-				executable: valaToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Vala (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				executable:       valaToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Vala (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{valaToolName},
@@ -318,9 +358,10 @@ var languageDefinitions = map[string]languageDefinition{
 		projectFiles: []string{"build.zig"},
 		tooling: map[string]*cmd{
 			zigToolName: {
-				executable: zigToolName,
-				args:       []string{versionArg},
-				regex:      `(?P<version>(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)`, //nolint:lll
+				executable:       zigToolName,
+				args:             []string{versionArg},
+				regex:            `(?P<version>(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)`, //nolint:lll
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{zigToolName},
@@ -330,15 +371,18 @@ var languageDefinitions = map[string]languageDefinition{
 		extensions: []string{"*.dart", pubspecFileName, "pubspec.yml", "pubspec.lock"},
 		folders:    []string{".dart_tool"},
 		tooling: map[string]*cmd{
+			// Not marked versionCacheable: same fvm project-config dependence
+			// as flutter.go's fvm entry.
 			fvmToolName: {
 				executable: fvmToolName,
 				args:       []string{dartToolName, versionFlagArg},
 				regex:      `Dart SDK version: ` + versionRegex,
 			},
 			dartToolName: {
-				executable: dartToolName,
-				args:       []string{versionFlagArg},
-				regex:      `Dart SDK version: ` + versionRegex,
+				executable:       dartToolName,
+				args:             []string{versionFlagArg},
+				regex:            `Dart SDK version: ` + versionRegex,
+				versionCacheable: true,
 			},
 		},
 		defaultTooling:     []string{fvmToolName, dartToolName},

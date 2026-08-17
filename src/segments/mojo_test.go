@@ -74,6 +74,7 @@ func TestMojoTemplate(t *testing.T) {
 			extension:     "*.mojo",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		env.On("Getenv", "PIXI_ENVIRONMENT_NAME").Return(tc.VirtualEnvName)
 		props[options.DisplayDefault] = tc.DisplayDefault
 		props[options.FetchVersion] = tc.FetchVersion

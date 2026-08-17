@@ -20,10 +20,15 @@ func (n *Npm) Activation() Activation {
 func (n *Npm) loadSpec() {
 	n.extensions = []string{fileName, "package-lock.json"}
 	n.tooling = map[string]*cmd{
+		// Unlike yarn/pnpm, npm ships bundled with node itself and Corepack
+		// does not shim it by default, so npm --version is not routed through
+		// a project-pinned dispatcher: it reports the resolved binary's own
+		// version.
 		npmToolName: {
-			executable: npmToolName,
-			args:       []string{versionFlagArg},
-			regex:      versionRegex,
+			executable:       npmToolName,
+			args:             []string{versionFlagArg},
+			regex:            versionRegex,
+			versionCacheable: true,
 		},
 	}
 	n.defaultTooling = []string{npmToolName}

@@ -54,6 +54,7 @@ type Environment interface {
 	DirIsWritable(input string) bool
 	CommandPath(command string) string
 	HasCommand(command string) bool
+	StatFile(path string) (FileStat, error)
 	FileContent(file string) string
 	LsDir(input string) []fs.DirEntry
 	RunCommand(command string, args ...string) (string, error)
@@ -146,6 +147,15 @@ type FileInfo struct {
 	ParentFolder string
 	Path         string
 	IsDir        bool
+}
+
+// FileStat is the on-disk identity of a file: its modification time (Unix
+// seconds) and size in bytes. Callers use it to key a cache entry on a file
+// rather than on a duration - the entry invalidates itself the moment either
+// value changes, with nothing time-based to guess about.
+type FileStat struct {
+	ModTime int64
+	Size    int64
 }
 
 type WindowsRegistryValueType string

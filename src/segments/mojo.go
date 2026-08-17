@@ -32,9 +32,10 @@ func (m *Mojo) loadSpec() {
 	m.extensions = []string{"*.🔥", "*.mojo", "mojoproject.toml"}
 	m.tooling = map[string]*cmd{
 		mojoToolName: {
-			executable: mojoToolName,
-			args:       []string{versionFlagArg},
-			regex:      `(?:mojo (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			executable:       mojoToolName,
+			args:             []string{versionFlagArg},
+			regex:            `(?:mojo (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			versionCacheable: true,
 		},
 	}
 	m.defaultTooling = []string{mojoToolName}

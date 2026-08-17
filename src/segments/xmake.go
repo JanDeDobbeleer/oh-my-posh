@@ -27,9 +27,10 @@ func (x *XMake) loadSpec() {
 	x.extensions = []string{"xmake.lua"}
 	x.tooling = map[string]*cmd{
 		xmakeToolName: {
-			executable: xmakeToolName,
-			args:       []string{versionFlagArg},
-			regex:      `xmake v(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+			executable:       xmakeToolName,
+			args:             []string{versionFlagArg},
+			regex:            `xmake v(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+			versionCacheable: true,
 		},
 	}
 	x.defaultTooling = []string{xmakeToolName}

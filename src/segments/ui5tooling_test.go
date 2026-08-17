@@ -72,6 +72,7 @@ func TestUI5Tooling(t *testing.T) {
 			extension:     UI5ToolingYamlPattern,
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 
 		if tc.DisplayMode == "" {
 			tc.DisplayMode = DisplayModeContext

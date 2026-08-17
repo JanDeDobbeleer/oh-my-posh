@@ -27,9 +27,10 @@ func (b *Buf) loadSpec() {
 	b.extensions = []string{"buf.yaml", "buf.gen.yaml", "buf.work.yaml"}
 	b.tooling = map[string]*cmd{
 		bufToolName: {
-			executable: bufToolName,
-			args:       []string{versionFlagArg},
-			regex:      versionRegexPrefixed,
+			executable:       bufToolName,
+			args:             []string{versionFlagArg},
+			regex:            versionRegexPrefixed,
+			versionCacheable: true,
 		},
 	}
 	b.defaultTooling = []string{bufToolName}

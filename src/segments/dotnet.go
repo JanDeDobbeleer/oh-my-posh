@@ -79,6 +79,10 @@ func (d *Dotnet) loadSpec() {
 		"global.json",
 	}
 	d.tooling = map[string]*cmd{
+		// Not marked versionCacheable: `dotnet --version` reads global.json
+		// from the working directory (or a parent) and reports the pinned
+		// SDK version when one is set, so the same dotnet binary's output
+		// depends on the project, not just on itself.
 		dotnetToolName: {
 			executable: dotnetToolName,
 			args:       []string{versionFlagArg},

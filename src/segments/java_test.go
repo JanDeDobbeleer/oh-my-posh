@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,11 +62,14 @@ func TestJava(t *testing.T) {
 			extension:     "pom.xml",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 
 		if tc.JavaHomeEnabled {
 			env.On("Getenv", "JAVA_HOME").Return("/usr/java")
 			env.On("HasCommand", "/usr/java/bin/java").Return(true)
 			env.On("RunCommandWithEnv", "/usr/java/bin/java", []string(nil), []string{"-Xinternalversion"}).Return(tc.JavaHomeVersion, nil)
+			env.On("CommandPath", "/usr/java/bin/java").Return("/usr/java/bin/java")
+			env.On("StatFile", "/usr/java/bin/java").Return(runtime.FileStat{ModTime: 1, Size: 1}, nil)
 		} else {
 			env.On("Getenv", "JAVA_HOME").Return("")
 		}

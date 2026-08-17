@@ -25,9 +25,10 @@ func (b *Bun) loadSpec() {
 	b.extensions = []string{"bun.lockb", "bun.lock"}
 	b.tooling = map[string]*cmd{
 		bunToolName: {
-			executable: bunToolName,
-			args:       []string{versionFlagArg},
-			regex:      versionRegexPrefixed,
+			executable:       bunToolName,
+			args:             []string{versionFlagArg},
+			regex:            versionRegexPrefixed,
+			versionCacheable: true,
 		},
 	}
 	b.defaultTooling = []string{bunToolName}

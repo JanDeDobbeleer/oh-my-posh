@@ -27,9 +27,10 @@ func (az *AzFunc) loadSpec() {
 	az.extensions = []string{"host.json", "local.settings.json", "function.json"}
 	az.tooling = map[string]*cmd{
 		azFuncToolName: {
-			executable: azFuncToolName,
-			args:       []string{versionFlagArg},
-			regex:      `(?P<version>[0-9.]+)`,
+			executable:       azFuncToolName,
+			args:             []string{versionFlagArg},
+			regex:            `(?P<version>[0-9.]+)`,
+			versionCacheable: true,
 		},
 	}
 	az.defaultTooling = []string{azFuncToolName}

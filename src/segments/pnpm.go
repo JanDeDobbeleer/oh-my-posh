@@ -20,6 +20,9 @@ func (n *Pnpm) Activation() Activation {
 func (n *Pnpm) loadSpec() {
 	n.extensions = []string{fileName, "pnpm-lock.yaml"}
 	n.tooling = map[string]*cmd{
+		// Not marked versionCacheable: same Corepack shim risk as yarn (see
+		// yarn.go) - pnpm is equally commonly managed through Corepack's
+		// package.json-pinned dispatch.
 		pnpmToolName: {
 			executable: pnpmToolName,
 			args:       []string{versionFlagArg},

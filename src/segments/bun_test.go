@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -22,6 +23,11 @@ func TestBun(t *testing.T) {
 		{Case: "Bun 1.3.10 with bun.lock", ExpectedString: "1.3.10", Version: "1.3.10", Extension: "bun.lock"},
 	}
 	for _, tc := range cases {
+		// Both cases resolve "bun" to the same mocked path/stat, so without
+		// clearing between them the second case would be served the first
+		// case's cached output instead of exercising its own.
+		cache.Device.DeleteAll()
+
 		env := new(mock.Environment)
 		env.On("HasCommand", "bun").Return(true)
 		env.On("RunCommandWithEnv", "bun", []string(nil), []string{"--version"}).Return(tc.Version, nil)
@@ -30,6 +36,9 @@ func TestBun(t *testing.T) {
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
 		env.On("Shell").Return("foo")
+		env.On("Flags").Return(&runtime.Flags{})
+		env.On("CommandPath", "bun").Return("/usr/bin/bun")
+		env.On("StatFile", "/usr/bin/bun").Return(runtime.FileStat{ModTime: 1, Size: 1}, nil)
 
 		if template.Cache == nil {
 			template.Cache = &cache.Template{}

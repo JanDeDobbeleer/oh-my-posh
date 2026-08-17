@@ -48,9 +48,10 @@ func (j *Java) loadSpec() {
 
 	j.tooling = map[string]*cmd{
 		javaToolName: {
-			executable: javaToolName,
-			args:       []string{"-Xinternalversion"},
-			regex:      javaRegex,
+			executable:       javaToolName,
+			args:             []string{"-Xinternalversion"},
+			regex:            javaRegex,
+			versionCacheable: true,
 		},
 	}
 	j.defaultTooling = []string{javaToolName}
@@ -62,6 +63,12 @@ func (j *Java) loadSpec() {
 			executable: java,
 			args:       []string{"-Xinternalversion"},
 			regex:      javaRegex,
+			// JAVA_HOME is baked directly into executable above, so a
+			// different JAVA_HOME resolves to a different path and therefore
+			// a different cache key automatically - the env-var dependency
+			// is fully captured by the resolved path, unlike a tool that
+			// reads JAVA_HOME again at run time.
+			versionCacheable: true,
 		}
 		j.defaultTooling = []string{"java_home", javaToolName}
 	}

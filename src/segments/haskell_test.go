@@ -60,6 +60,7 @@ func TestHaskell(t *testing.T) {
 			extension:     "*.hs",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 
 		if tc.StackGhcMode == "always" || (tc.StackGhcMode == "package" && tc.InStackPackage) {
 			env.On("HasCommand", "stack").Return(true)

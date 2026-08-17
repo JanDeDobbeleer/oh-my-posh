@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"hash/fnv"
 	"path/filepath"
 	runtime_ "runtime"
 
@@ -74,6 +75,14 @@ type cmd struct {
 	versionURLTemplate string
 	args               []string
 	envs               []string
+	// versionCacheable opts this command's raw output into the keyed device
+	// cache (see Language.versionCacheKey): set it only when the output is a
+	// pure function of the resolved executable - its path, mtime and size -
+	// and the exact args, with no cwd file, environment variable, or project
+	// config able to change what that same binary prints. A getVersion-backed
+	// command never reaches the cache regardless of this flag, since the
+	// cache sits in the executable-invocation branch of runCommand.
+	versionCacheable bool
 }
 
 func (c *cmd) parse(versionInfo string) (*Version, error) {
@@ -337,6 +346,14 @@ func (l *Language) hasLanguageFolders() bool {
 func (l *Language) setVersion() error {
 	var lastError error
 
+	// This is the legacy, opt-in cache: it only ever stores anything once a
+	// user sets cache_duration (cache.Set is a no-op for the zero/NONE
+	// duration this defaults to, below), and it caches the resolved Version
+	// for the whole segment under a TTL the user picks, not one derived from
+	// what the value depends on. Whether or not it fires, runCommand's keyed
+	// cache below is still consulted per command - that one is the default,
+	// always-on path for the commands that opted into it, and needs no
+	// option to be effective.
 	cacheKey := fmt.Sprintf("version_%s", l.name)
 
 	if versionCache, OK := cache.Device.Get[Version](cacheKey); OK {
@@ -386,11 +403,26 @@ func (l *Language) runCommand(command *cmd) (string, error) {
 			return "", errors.New(noVersion)
 		}
 
+		cacheKey, cacheable := l.versionCacheKey(command)
+		if cacheable {
+			if cached, found := cache.Device.Get[string](cacheKey); found {
+				log.Debugf("using cached version output for %s", command.executable)
+				return cached, nil
+			}
+		}
+
 		versionStr, err := l.env.RunCommandWithEnv(command.executable, command.envs, command.args...)
 
 		if exitErr, ok := err.(*runtime.CommandError); ok {
 			l.exitCode = exitErr.ExitCode
 			return "", fmt.Errorf("err executing %s with %v", command.executable, command.args)
+		}
+
+		// Success only: a failed run (a non-CommandError err, or one the
+		// caller above already turned into an early return) never gets
+		// cached, so a transient failure cannot pin a bad result for a week.
+		if err == nil && cacheable {
+			cache.Device.Set(cacheKey, versionStr, cache.ONEWEEK)
 		}
 
 		return versionStr, nil
@@ -406,6 +438,44 @@ func (l *Language) runCommand(command *cmd) (string, error) {
 	}
 
 	return versionStr, nil
+}
+
+// versionCacheKey reports the device-cache key for command's raw output, and
+// whether command is eligible for that cache at all. Eligibility requires:
+// opting in via versionCacheable, an environment that can resolve a real
+// executable identity (DataOnly cannot), and a resolvable, statable
+// executable path.
+//
+// The key mixes the resolved absolute path with the executable's mtime and
+// size and the exact arguments, so a PATH change, a reinstalled or upgraded
+// binary, or different args all produce a different key and therefore a
+// cache miss - invalidation follows from what the output depends on, not
+// from a guessed TTL. The TTL passed to cache.Set (see runCommand) exists
+// only so a device cache nobody prunes doesn't grow forever; it plays no
+// part in correctness.
+func (l *Language) versionCacheKey(command *cmd) (string, bool) {
+	if !command.versionCacheable || l.env.Flags().DataOnly {
+		return "", false
+	}
+
+	path := l.env.CommandPath(command.executable)
+	if path == "" {
+		return "", false
+	}
+
+	stat, err := l.env.StatFile(path)
+	if err != nil {
+		return "", false
+	}
+
+	h := fnv.New64a()
+	fmt.Fprintf(h, "%s\x00%d\x00%d", path, stat.ModTime, stat.Size)
+
+	for _, arg := range command.args {
+		fmt.Fprintf(h, "\x00%s", arg)
+	}
+
+	return fmt.Sprintf("version_%x", h.Sum64()), true
 }
 
 func (l *Language) loadLanguageContext() {

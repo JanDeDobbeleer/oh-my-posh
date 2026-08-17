@@ -34,9 +34,10 @@ func (u *UI5Tooling) loadSpec() {
 	u.displayMode = u.options.String(DisplayMode, DisplayModeContext)
 	u.tooling = map[string]*cmd{
 		ui5ToolName: {
-			executable: ui5ToolName,
-			args:       []string{versionFlagArg},
-			regex:      versionRegexPrefixed,
+			executable:       ui5ToolName,
+			args:             []string{versionFlagArg},
+			regex:            versionRegexPrefixed,
+			versionCacheable: true,
 		},
 	}
 	u.defaultTooling = []string{ui5ToolName}

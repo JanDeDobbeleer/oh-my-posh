@@ -49,10 +49,14 @@ func (h *Haskell) loadSpec() {
 	h.extensions = []string{"*.hs", "*.lhs", "stack.yaml", "package.yaml", "*.cabal", "cabal.project"}
 	h.tooling = map[string]*cmd{
 		ghcToolName: {
-			executable: ghcToolName,
-			args:       []string{"--numeric-version"},
-			regex:      versionRegex,
+			executable:       ghcToolName,
+			args:             []string{"--numeric-version"},
+			regex:            versionRegex,
+			versionCacheable: true,
 		},
+		// Not marked versionCacheable: stack resolves the GHC version to run
+		// from the project's stack.yaml resolver, so the same stack binary
+		// reports a different version per project.
 		stackToolName: {
 			executable: stackToolName,
 			args:       []string{ghcToolName, "--", "--numeric-version"},

@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -47,6 +48,12 @@ func TestTerminalDataOnlyRefusesEveryProbe(t *testing.T) {
 
 	t.Run("CommandPath", func(t *testing.T) {
 		assert.Empty(t, term.CommandPath("go"))
+	})
+
+	t.Run("StatFile", func(t *testing.T) {
+		stat, err := term.StatFile(os.Args[0])
+		assert.Equal(t, FileStat{}, stat)
+		require.ErrorIs(t, err, errDataOnly)
 	})
 
 	t.Run("RunCommand", func(t *testing.T) {

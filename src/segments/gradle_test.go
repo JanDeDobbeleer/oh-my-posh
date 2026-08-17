@@ -86,7 +86,8 @@ func TestGradle(t *testing.T) {
 		props := options.Map{options.FetchVersion: true}
 		g := &Gradle{}
 		g.Init(props, env)
-		assert.False(t, g.Activation().Active(env))
+		activation := g.Activation()
+		assert.False(t, activation.Active(env))
 	})
 
 	for _, tc := range cases {

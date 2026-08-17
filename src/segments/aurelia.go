@@ -1,3 +1,4 @@
+//nolint:dupl // react and aurelia are deliberately parallel: identical node-package detection, differing only in package name and version metadata
 package segments
 
 type Aurelia struct {

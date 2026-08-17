@@ -1,6 +1,9 @@
 package runtime
 
-import "path/filepath"
+import (
+	"path/filepath"
+	"slices"
+)
 
 // Activation describes the cheap preconditions under which a segment can
 // possibly be enabled, letting the engine skip the (potentially expensive)
@@ -37,7 +40,7 @@ type Activation struct {
 
 // Active reports whether any of the activation's conditions holds. See the
 // type documentation for the contract.
-func (a Activation) Active(env Environment) bool {
+func (a *Activation) Active(env Environment) bool {
 	if a.Always {
 		return true
 	}
@@ -47,10 +50,8 @@ func (a Activation) Active(env Environment) bool {
 		return true
 	}
 
-	for _, glob := range a.FileGlobs {
-		if env.HasFiles(glob) {
-			return true
-		}
+	if slices.ContainsFunc(a.FileGlobs, env.HasFiles) {
+		return true
 	}
 
 	for _, folder := range a.Folders {

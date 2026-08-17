@@ -75,7 +75,8 @@ func bootStrapLanguageTest(args *languageArgs) *Language {
 // Segment.Execute: Enabled() only runs once the gate passed, and the
 // file-presence decision lives in the gate.
 func languageEnabled(lang *Language) bool {
-	if !lang.activation().Active(lang.env) {
+	activation := lang.activation()
+	if !activation.Active(lang.env) {
 		return false
 	}
 

@@ -28,6 +28,7 @@ type Terminal struct {
 	CmdFlags      *Flags
 	cmdCache      *cache.Command
 	lsDirMap      *maps.Concurrent[[]fs.DirEntry]
+	dirIndexMap   *maps.Concurrent[*dirIndex]
 	parentFileMap *maps.Concurrent[parentFilePathResult]
 	cwd           string
 	host          string
@@ -53,6 +54,7 @@ func (term *Terminal) Init(flags *Flags) {
 	}
 
 	term.lsDirMap = maps.NewConcurrent[[]fs.DirEntry]()
+	term.dirIndexMap = maps.NewConcurrent[*dirIndex]()
 	term.parentFileMap = maps.NewConcurrent[parentFilePathResult]()
 
 	term.setPromptCount()
@@ -144,27 +146,165 @@ func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
 	}
 	defer log.Trace(time.Now(), pattern)
 
-	fileSystem := os.DirFS(dir)
-	var dirEntries []fs.DirEntry
-
-	if files, OK := term.lsDirMap.Get(dir); OK {
-		dirEntries = files
-	}
-
-	if len(dirEntries) == 0 {
-		var err error
-		dirEntries, err = fs.ReadDir(fileSystem, ".")
-		if err != nil {
-			log.Error(err)
-			log.Debug("false")
-			return false
-		}
-
-		term.lsDirMap.Set(dir, dirEntries)
+	dirEntries, err := term.readDir(dir)
+	if err != nil {
+		log.Error(err)
+		log.Debug("false")
+		return false
 	}
 
 	pattern = strings.ToLower(pattern)
 
+	idx := term.dirIndex(dir, dirEntries)
+	if matched, ok := idx.match(pattern); ok {
+		if matched {
+			log.Debug("true")
+			return true
+		}
+
+		log.Debug("false")
+		return false
+	}
+
+	return linearMatch(dirEntries, pattern)
+}
+
+// readDir returns dir's listing, populating the per-Terminal cache from disk
+// on first use. A directory read once during a prompt invocation never
+// changes underneath it, so later calls for the same dir reuse the cached
+// entries instead of hitting the filesystem again.
+func (term *Terminal) readDir(dir string) ([]fs.DirEntry, error) {
+	if files, OK := term.lsDirMap.Get(dir); OK && len(files) > 0 {
+		return files, nil
+	}
+
+	fileSystem := os.DirFS(dir)
+
+	dirEntries, err := fs.ReadDir(fileSystem, ".")
+	if err != nil {
+		return nil, err
+	}
+
+	term.lsDirMap.Set(dir, dirEntries)
+
+	return dirEntries, nil
+}
+
+// dirIndex returns the cached dirIndex for dir, building it from dirEntries
+// on first use. Two callers racing on the same never-before-seen dir may
+// both build it; the maps.Concurrent Set that loses the race is discarded,
+// which is harmless since both builds produce an equal index - the same
+// tradeoff lsDirMap already makes for the raw listing.
+func (term *Terminal) dirIndex(dir string, dirEntries []fs.DirEntry) *dirIndex {
+	if idx, OK := term.dirIndexMap.Get(dir); OK {
+		return idx
+	}
+
+	idx := newDirIndex(dirEntries)
+	term.dirIndexMap.Set(dir, idx)
+
+	return idx
+}
+
+// dirIndex is the inverted view of a directory listing that HasFilesInDir
+// consults before falling back to a linear filepath.Match scan. Building it
+// once per directory turns the common query shapes - a literal file name, or
+// a "*.ext" glob - into a single map lookup instead of a scan repeated for
+// every segment and every glob it declares.
+//
+// It excludes directories and lower-cases every name, mirroring linearMatch's
+// own comparison exactly.
+type dirIndex struct {
+	// names holds every file's lower-cased name, answering literal (no
+	// metacharacter) patterns.
+	names map[string]struct{}
+	// suffixes holds every dotted suffix of every file's lower-cased name -
+	// for "a.b.c" that is ".c" and ".b.c" - so both "*.c" and multi-dot
+	// patterns like "*.gradle.kts" resolve with a single lookup.
+	suffixes map[string]struct{}
+}
+
+// newDirIndex builds a dirIndex from a directory listing.
+func newDirIndex(dirEntries []fs.DirEntry) *dirIndex {
+	idx := &dirIndex{
+		names:    make(map[string]struct{}, len(dirEntries)),
+		suffixes: make(map[string]struct{}),
+	}
+
+	for _, entry := range dirEntries {
+		if entry.IsDir() {
+			continue
+		}
+
+		name := strings.ToLower(entry.Name())
+		idx.names[name] = struct{}{}
+
+		for i, r := range name {
+			if r != '.' {
+				continue
+			}
+
+			idx.suffixes[name[i:]] = struct{}{}
+		}
+	}
+
+	return idx
+}
+
+// match answers pattern - already lower-cased by the caller, the same
+// contract linearMatch relies on - from the index when its shape allows a
+// direct lookup. ok is false for anything else, telling the caller to fall
+// back to linearMatch; that fallback is always correct, so a false negative
+// here only costs performance, never correctness.
+func (idx *dirIndex) match(pattern string) (matched, ok bool) {
+	if suffix, isSuffix := suffixPattern(pattern); isSuffix {
+		_, hit := idx.suffixes[suffix]
+		return hit, true
+	}
+
+	if !hasGlobMeta(pattern) {
+		_, hit := idx.names[pattern]
+		return hit, true
+	}
+
+	return false, false
+}
+
+// hasGlobMeta reports whether pattern contains a filepath.Match
+// metacharacter - wildcard, single-character wildcard, character class, or
+// escape. A pattern with none of these is a plain literal: filepath.Match
+// degrades to a straight string comparison against the (single-element,
+// separator-free) directory entry name.
+func hasGlobMeta(pattern string) bool {
+	return strings.ContainsAny(pattern, `*?[\`)
+}
+
+// suffixPattern reports whether pattern has the shape "*" followed by a
+// dotted suffix with no further metacharacters - "*.go", "*.gradle.kts" -
+// and if so returns that suffix, dot included, ready for a
+// dirIndex.suffixes lookup.
+//
+// Patterns the index cannot decide this way - bare "*", or a leading "*"
+// whose suffix does not start with "." such as "*txt" - fall through to
+// linearMatch instead of being special-cased here: they are rare in
+// practice, and the index only ever tracks dot-anchored suffixes.
+func suffixPattern(pattern string) (suffix string, ok bool) {
+	if len(pattern) < 2 || pattern[0] != '*' || pattern[1] != '.' {
+		return "", false
+	}
+
+	if hasGlobMeta(pattern[1:]) {
+		return "", false
+	}
+
+	return pattern[1:], true
+}
+
+// linearMatch is the pre-index HasFilesInDir scan: filepath.Match against
+// every non-directory entry, case-insensitively. It is the fallback for
+// pattern shapes dirIndex.match cannot decide, and the reference
+// implementation the differential tests check the index against.
+func linearMatch(dirEntries []fs.DirEntry, pattern string) bool {
 	for _, match := range dirEntries {
 		if match.IsDir() {
 			continue

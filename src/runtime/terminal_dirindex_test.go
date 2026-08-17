@@ -101,6 +101,10 @@ func TestDirIndexMatchesLinearScan(t *testing.T) {
 		"*.kts", "*.gradle.kts", "*.GRADLE.KTS", "*.tar.gz", "*.gz",
 		"*.bz2", "*.tar.bz2", "*.c", "*.b.c", "*.y", "*.four",
 		"*.three.four", "*.two.three.four", "*.hidden", "*.",
+		// empty-stem dotfiles: filepath.Match's * matches the empty string,
+		// so "*.env" matches ".env" - the least intuitive equivalence the
+		// suffix set must reproduce
+		"*.env", "*.ENV", "*.gitignore",
 		"*.rb", "*.missing", "*",
 		"", "?", "*?", "?.go", "?ain.go", "m?in.go",
 		"[mM]ain.go", "[a-z]*.go", "main.[gG]o",

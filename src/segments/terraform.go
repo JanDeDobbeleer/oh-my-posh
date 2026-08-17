@@ -3,6 +3,8 @@ package segments
 import (
 	"encoding/json"
 	"errors"
+	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
@@ -27,31 +29,54 @@ type TerraformBlock struct {
 	Version *string `json:"terraform_version"`
 }
 
-// Activation lifts the old inContext check into the gate: the segment can
-// only activate when the cwd carries the .terraform folder or one of the
-// files the context check reacted to (extended with the version files when
-// fetch_version is on, mirroring the old fetchVersion-dependent check).
-func (tf *Terraform) Activation() Activation {
-	activation := Activation{
-		Folders:   []string{".terraform"},
-		FileGlobs: []string{".tf", ".tfplan", ".tfstate"},
-	}
+// contextConditions returns the folders and file globs whose presence puts
+// the segment in context, shared between the activation gate and inContext
+// so the two can never diverge.
+func (tf *Terraform) contextConditions(fetchVersion bool) (folders, globs []string) {
+	folders = []string{".terraform"}
+	globs = []string{".tf", ".tfplan", ".tfstate"}
 
-	if tf.options.Bool(options.FetchVersion, false) {
+	if fetchVersion {
 		_, tenvVersionFile := tf.tenvSources()
-		activation.FileGlobs = append(activation.FileGlobs, "versions.tf", "main.tf", "terraform.tfstate", tenvVersionFile)
+		globs = append(globs, "versions.tf", "main.tf", "terraform.tfstate", tenvVersionFile)
 	}
 
-	return activation
+	return folders, globs
+}
+
+// Activation gates on the context conditions: the segment can only activate
+// when the cwd carries the .terraform folder or one of the files the
+// context check reacts to.
+func (tf *Terraform) Activation() Activation {
+	folders, globs := tf.contextConditions(tf.options.Bool(options.FetchVersion, false))
+
+	return Activation{
+		Folders:   folders,
+		FileGlobs: globs,
+	}
+}
+
+// inContext re-verifies the context conditions even though a passing gate
+// implies a match: Force and pinned data bypass the gate, so Enabled must
+// stay standalone-correct. The re-check hits the memoized directory listing
+// and stat results.
+func (tf *Terraform) inContext(fetchVersion bool) bool {
+	folders, globs := tf.contextConditions(fetchVersion)
+
+	for _, folder := range folders {
+		if tf.env.HasFolder(filepath.Join(tf.env.Pwd(), folder)) {
+			return true
+		}
+	}
+
+	return slices.ContainsFunc(globs, tf.env.HasFiles)
 }
 
 func (tf *Terraform) Enabled() bool {
 	cmd := tf.options.String(Command, "terraform")
 	fetchVersion := tf.options.Bool(options.FetchVersion, false)
 
-	// the context check (terraform files/folder presence) lives in
-	// Activation; only the command probe remains
-	if !tf.env.HasCommand(cmd) {
+	if !tf.env.HasCommand(cmd) || !tf.inContext(fetchVersion) {
 		return false
 	}
 

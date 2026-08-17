@@ -218,8 +218,9 @@ func TestTerraform(t *testing.T) {
 		if template == "" {
 			template = tf.Template()
 		}
-		// the context check lives in the activation gate; Enabled only runs
-		// once the gate passed
+		// Enabled must stay standalone-correct (Force and pinned data bypass
+		// the gate), and the gate composition must agree with it
+		assert.Equal(t, tc.ExpectedEnabled, tf.Enabled(), tc.Case)
 		activation := tf.Activation()
 		enabled := activation.Active(env) && tf.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

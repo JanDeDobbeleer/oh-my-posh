@@ -73,8 +73,9 @@ func TestGradle(t *testing.T) {
 		},
 	}
 
-	// "No gradle files" — the activation gate fails without calling gradle at
-	// all; Enabled() never runs when the gate fails.
+	// "No gradle files" — the activation gate fails without calling gradle
+	// at all, AND Enabled() on its own (as reached via the Force/pinned-data
+	// gate bypasses) still returns false: it must stay standalone-correct.
 	t.Run("No gradle files in directory", func(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("HasFiles", "*.gradle").Return(false)
@@ -88,6 +89,7 @@ func TestGradle(t *testing.T) {
 		g.Init(props, env)
 		activation := g.Activation()
 		assert.False(t, activation.Active(env))
+		assert.False(t, g.Enabled())
 	})
 
 	for _, tc := range cases {

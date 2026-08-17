@@ -185,6 +185,20 @@ func TestSegmentGate_ConditionsAreOrAcrossKinds(t *testing.T) {
 	assert.True(t, segment.Enabled)
 }
 
+// Regression test: Force bypasses the GATE, not the segment's own
+// detection. A forced language segment in a directory without matching
+// files must stay disabled, exactly as before activation gates existed -
+// Enabled() re-verifies presence with its own semantics.
+func TestSegmentGate_ForceStillRequiresEnabled(t *testing.T) {
+	env := newDataReplayEnv(&runtime.Flags{})
+	env.On("HasFiles", testifymock.Anything).Return(false)
+
+	segment := &Segment{Type: GOLANG, Force: true}
+	segment.Execute(env)
+
+	assert.False(t, segment.Enabled, "force must not enable a segment its own detection rejects")
+}
+
 // No "HasFiles" stub: a bypass that still evaluated the globs would panic the
 // mock, so the stub's absence is part of the assertion.
 func TestSegmentGate_ForceBypassesGate(t *testing.T) {

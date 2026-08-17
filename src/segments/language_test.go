@@ -71,6 +71,17 @@ func bootStrapLanguageTest(args *languageArgs) *Language {
 	return l
 }
 
+// languageEnabled routes through the activation gate first, mirroring
+// Segment.Execute: Enabled() only runs once the gate passed, and the
+// file-presence decision lives in the gate.
+func languageEnabled(lang *Language) bool {
+	if !lang.activation().Active(lang.env) {
+		return false
+	}
+
+	return lang.Enabled()
+}
+
 func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T) {
 	args := &languageArgs{
 		commands: []*cmd{
@@ -134,7 +145,7 @@ func TestLanguageDisabledNoFiles(t *testing.T) {
 		enabledCommands:   []string{"unicorn"},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.False(t, lang.Enabled(), "no files in the current directory")
+	assert.False(t, languageEnabled(lang), "no files in the current directory")
 }
 
 func TestLanguageEnabledOneExtensionFound(t *testing.T) {

@@ -25,12 +25,22 @@ import (
 )
 
 type Terminal struct {
-	CmdFlags *Flags
-	cmdCache *cache.Command
-	lsDirMap *maps.Concurrent[[]fs.DirEntry]
-	cwd      string
-	host     string
-	networks []*Connection
+	CmdFlags      *Flags
+	cmdCache      *cache.Command
+	lsDirMap      *maps.Concurrent[[]fs.DirEntry]
+	parentFileMap *maps.Concurrent[parentFilePathResult]
+	cwd           string
+	host          string
+	networks      []*Connection
+}
+
+// parentFilePathResult memoizes a HasParentFilePath outcome (hit or miss) for
+// the duration of one prompt invocation, so the activation gate and a
+// segment's own Enabled() doing the same upward search only walk the
+// directory tree once.
+type parentFilePathResult struct {
+	info *FileInfo
+	err  error
 }
 
 func (term *Terminal) Init(flags *Flags) {
@@ -43,6 +53,7 @@ func (term *Terminal) Init(flags *Flags) {
 	}
 
 	term.lsDirMap = maps.NewConcurrent[[]fs.DirEntry]()
+	term.parentFileMap = maps.NewConcurrent[parentFilePathResult]()
 
 	term.setPromptCount()
 
@@ -516,6 +527,23 @@ func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*Fi
 	}
 	defer log.Trace(time.Now(), parent)
 
+	key := parent + "|" + strconv.FormatBool(followSymlinks)
+	if term.parentFileMap != nil {
+		if result, OK := term.parentFileMap.Get(key); OK {
+			return result.info, result.err
+		}
+	}
+
+	info, err := term.findParentFilePath(parent, followSymlinks)
+
+	if term.parentFileMap != nil {
+		term.parentFileMap.Set(key, parentFilePathResult{info: info, err: err})
+	}
+
+	return info, err
+}
+
+func (term *Terminal) findParentFilePath(parent string, followSymlinks bool) (*FileInfo, error) {
 	pwd := term.Pwd()
 	if followSymlinks {
 		if actual, err := term.ResolveSymlink(pwd); err == nil {

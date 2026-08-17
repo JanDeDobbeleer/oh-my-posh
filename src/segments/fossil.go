@@ -35,6 +35,10 @@ func (f *Fossil) Template() string {
 	return " \ue725 {{.Branch}} {{.Status.String}} "
 }
 
+// Enabled has no Activation gate (Base's Always applies): fossil detection
+// runs `fossil status` and lets the command decide, rather than searching
+// for a checkout marker (.fslckout/_FOSSIL_) - there is no exact upward
+// marker search to lift into a gate.
 func (f *Fossil) Enabled() bool {
 	if !f.hasCommand(FOSSILCOMMAND) {
 		return false

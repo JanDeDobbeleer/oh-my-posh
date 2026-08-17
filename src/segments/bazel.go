@@ -23,8 +23,7 @@ func (b *Bazel) Enabled() bool {
 	return b.Language.Enabled()
 }
 
-// Activation implements the activation gate; see Language.activation. Bazel
-// declares folders, so this resolves to Always unless the user empties them.
+// Activation implements the activation gate; see Language.activation.
 func (b *Bazel) Activation() Activation {
 	b.loadSpec()
 

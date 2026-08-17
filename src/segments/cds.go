@@ -37,6 +37,9 @@ func (c *Cds) loadSpec() {
 	c.Language.loadContext = c.loadContext
 	c.Language.inContext = c.inContext
 	c.displayMode = c.options.String(DisplayMode, DisplayModeContext)
+	// the context callback reads package.json in the cwd for a @sap/cds
+	// dependency, so its presence gates the context part
+	c.contextFiles = []string{fileName}
 }
 
 func (c *Cds) loadContext() {

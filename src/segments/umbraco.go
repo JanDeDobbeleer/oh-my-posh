@@ -29,6 +29,13 @@ type WebConfig struct {
 	} `xml:"appSettings>add"`
 }
 
+// Activation gates on the umbraco folder marker Enabled searches for; the
+// search itself stays in Enabled because its result (the folder location) is
+// what the installation scan reads from.
+func (u *Umbraco) Activation() Activation {
+	return Activation{ProjectFiles: []string{"umbraco", "Umbraco"}}
+}
+
 func (u *Umbraco) Enabled() bool {
 	var location string
 

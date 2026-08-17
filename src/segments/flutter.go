@@ -16,8 +16,7 @@ func (f *Flutter) Enabled() bool {
 	return f.Language.Enabled()
 }
 
-// Activation implements the activation gate; see Language.activation. Flutter
-// declares folders, so this resolves to Always unless the user empties them.
+// Activation implements the activation gate; see Language.activation.
 func (f *Flutter) Activation() Activation {
 	f.loadSpec()
 

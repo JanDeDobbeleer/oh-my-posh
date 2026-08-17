@@ -48,6 +48,11 @@ func (s *Svn) Template() string {
 	return " \ue0a0{{.Branch}} r{{.BaseRev}} {{.Working.String}} "
 }
 
+// Activation gates on the repository marker shouldDisplay searches for.
+func (s *Svn) Activation() Activation {
+	return Activation{ProjectFiles: []string{".svn"}}
+}
+
 func (s *Svn) Enabled() bool {
 	if !s.shouldDisplay() {
 		return false

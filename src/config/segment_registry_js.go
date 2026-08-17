@@ -21,8 +21,3 @@ package config
 func newSegmentWriter(_ SegmentType) (SegmentWriter, error) {
 	return nil, nil
 }
-
-// activationGate has nothing to gate on a build with no writers.
-func activationGate(_ SegmentWriter) ([]string, bool) {
-	return nil, false
-}

@@ -154,6 +154,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("HasParentFilePath", ".python-version", false).Return(&runtime.FileInfo{}, errors.New("no match at root level"))
 		python := &Python{}
 		python.Init(options.Map{}, env)
+		python.loadSpec()
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.inContext())
 	}
@@ -205,6 +206,7 @@ func TestPythonVirtualEnvIgnoreDefaultVenvNames(t *testing.T) {
 
 		python := &Python{}
 		python.Init(props, env)
+		python.loadSpec()
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.Venv)
 	}
@@ -250,6 +252,7 @@ func TestPythonVirtualEnvIgnoreCustomVenvNames(t *testing.T) {
 
 		python := &Python{}
 		python.Init(props, env)
+		python.loadSpec()
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.Venv)
 	}

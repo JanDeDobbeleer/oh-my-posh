@@ -709,6 +709,7 @@ type fallbackWriter struct {
 }
 
 func (w *fallbackWriter) Enabled() bool                                  { return w.enabled }
+func (w *fallbackWriter) Activation() runtime.Activation                 { return runtime.Activation{Always: true} }
 func (w *fallbackWriter) Template() string                               { return w.template }
 func (w *fallbackWriter) SetText(text string)                            { w.text = text }
 func (w *fallbackWriter) SetIndex(_ int)                                 {}

@@ -73,7 +73,8 @@ func TestGradle(t *testing.T) {
 		},
 	}
 
-	// "No gradle files" — Enabled() returns false without calling gradle at all.
+	// "No gradle files" — the activation gate fails without calling gradle at
+	// all; Enabled() never runs when the gate fails.
 	t.Run("No gradle files in directory", func(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("HasFiles", "*.gradle").Return(false)
@@ -85,7 +86,7 @@ func TestGradle(t *testing.T) {
 		props := options.Map{options.FetchVersion: true}
 		g := &Gradle{}
 		g.Init(props, env)
-		assert.False(t, g.Enabled())
+		assert.False(t, g.Activation().Active(env))
 	})
 
 	for _, tc := range cases {

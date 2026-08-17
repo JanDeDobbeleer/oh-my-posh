@@ -70,7 +70,51 @@ type Project struct {
 	projects []*ProjectItem
 }
 
+// Activation gates on the union of all project marker files (with per-type
+// file overrides applied), unless always_enabled pins the segment on. The
+// per-item check stays in Enabled: it must know which marker matched to pick
+// the fetcher.
+func (n *Project) Activation() Activation {
+	if n.options.Bool(options.AlwaysEnabled, false) {
+		return Activation{Always: true}
+	}
+
+	n.loadProjects()
+
+	var globs []string
+	for _, item := range n.projects {
+		globs = append(globs, item.Files...)
+	}
+
+	return Activation{FileGlobs: globs}
+}
+
 func (n *Project) Enabled() bool {
+	n.loadProjects()
+
+	if priority := n.options.StringArray(Priority, nil); len(priority) != 0 {
+		n.projects = reorderByPriority(n.projects, priority)
+	}
+
+	for _, item := range n.projects {
+		if !n.hasProjectFile(item) {
+			continue
+		}
+
+		data := item.Fetcher(*item)
+		if data == nil {
+			continue
+		}
+
+		n.ProjectData = *data
+		n.Type = item.Name
+		return true
+	}
+
+	return n.options.Bool(options.AlwaysEnabled, false)
+}
+
+func (n *Project) loadProjects() {
 	n.projects = []*ProjectItem{
 		{
 			Name:    nodeToolName,
@@ -139,30 +183,11 @@ func (n *Project) Enabled() bool {
 		},
 	}
 
-	if priority := n.options.StringArray(Priority, nil); len(priority) != 0 {
-		n.projects = reorderByPriority(n.projects, priority)
-	}
-
+	// allow files override
 	for _, item := range n.projects {
-		// allow files override
 		property := options.Option(fmt.Sprintf("%s_files", item.Name))
 		item.Files = n.options.StringArray(property, item.Files)
-
-		if !n.hasProjectFile(item) {
-			continue
-		}
-
-		data := item.Fetcher(*item)
-		if data == nil {
-			continue
-		}
-
-		n.ProjectData = *data
-		n.Type = item.Name
-		return true
 	}
-
-	return n.options.Bool(options.AlwaysEnabled, false)
 }
 
 func (n *Project) Template() string {

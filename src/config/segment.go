@@ -313,7 +313,8 @@ func (segment *Segment) gateActive() bool {
 		return true
 	}
 
-	return segment.writer.Activation().Active(segment.env)
+	activation := segment.writer.Activation()
+	return activation.Active(segment.env)
 }
 
 // overlayData applies data pinned in a hand-written (unmarked) file on top of the

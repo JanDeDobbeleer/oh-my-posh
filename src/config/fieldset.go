@@ -2,7 +2,9 @@ package config
 
 import (
 	"slices"
+	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
@@ -22,21 +24,30 @@ type FieldSetConsumer interface {
 // in tests to observe whether an analysis actually ran.
 var analyzeFields = template.AnalyzeFields
 
+// fieldSetAnalysisVersion is the analyzer generation stamped into configs
+// alongside their field sets. BUMP THIS whenever the analysis changes -
+// template.AnalyzeFields' semantics, the source lists walked here, or the
+// stamp shape - so a config stamped by another binary generation is treated
+// as unstamped (see Get) and a long-lived session (tmux) re-analyzes once
+// after a binary upgrade instead of trusting stale stamps.
+const fieldSetAnalysisVersion = 2
+
 // ResolveFieldSets analyzes every template in the config and stamps each
 // renderable segment with the set of top-level context fields those templates
 // can read from it - its own templates plus any .Segments.<name> reference
-// from another segment, an extra prompt, a tooltip, or the console title.
+// from another segment, an extra prompt, a tooltip, or a global template
+// string (console title, fillers, palette values, ...).
 // MapSegmentWithWriter hands the stamped set to writers implementing
 // FieldSetConsumer. Idempotent, so callers can resolve defensively: the
-// FieldSetsResolved marker survives the session cache's gob round trip
-// (Store stamps before encoding), making this a no-op on restored configs -
+// FieldSetsVersion marker survives the session cache's gob round trip (Store
+// stamps before encoding), making this a no-op on restored configs -
 // analysis runs once per config content per shell session, not per prompt.
 func (cfg *Config) ResolveFieldSets() {
-	if cfg.FieldSetsResolved {
+	if cfg.FieldSetsVersion == fieldSetAnalysisVersion {
 		return
 	}
 
-	cfg.FieldSetsResolved = true
+	cfg.FieldSetsVersion = fieldSetAnalysisVersion
 
 	analysis := newFieldAnalysis()
 
@@ -72,7 +83,33 @@ func (cfg *Config) renderableSegments() []*Segment {
 }
 
 func (cfg *Config) globalTemplateSources() []string {
-	sources := []string{cfg.ConsoleTitleTemplate}
+	// nil-context template strings can still reach any segment's data
+	// through the global context's .Segments, so they all go through the
+	// cross-segment extraction pass
+	sources := []string{
+		cfg.ConsoleTitleTemplate,
+		cfg.PWD,
+		cfg.CursorStyle,
+		string(cfg.TerminalBackground),
+	}
+
+	for _, block := range cfg.Blocks {
+		sources = append(sources, block.Filler)
+	}
+
+	for _, value := range cfg.Palette {
+		sources = append(sources, string(value))
+	}
+
+	if cfg.Palettes != nil {
+		sources = append(sources, cfg.Palettes.Template)
+
+		for _, palette := range cfg.Palettes.List {
+			for _, value := range palette {
+				sources = append(sources, string(value))
+			}
+		}
+	}
 
 	for _, segment := range []*Segment{cfg.TransientPrompt, cfg.SecondaryPrompt, cfg.ValidLine, cfg.ErrorLine, cfg.DebugPrompt} {
 		if segment == nil {
@@ -86,19 +123,66 @@ func (cfg *Config) globalTemplateSources() []string {
 }
 
 // templateSources lists every template string this segment can render,
-// mirroring the sources evaluateNeeds walks plus the placeholder and the
-// right template (rendered for extra prompts).
+// mirroring the sources evaluateNeeds walks plus the placeholder, the right
+// template and filler (rendered for extra prompts), and the style (resolved
+// as a template against the segment's own writer, see SegmentStyle.resolve).
 func (segment *Segment) templateSources() []string {
 	sources := []string{
 		segment.Template,
 		segment.RightTemplate,
 		segment.FallbackTemplate,
 		segment.Placeholder,
+		segment.Filler,
+		string(segment.Style),
 	}
 
 	sources = append(sources, segment.Templates...)
 	sources = append(sources, segment.ForegroundTemplates...)
 	sources = append(sources, segment.BackgroundTemplates...)
+
+	return sources
+}
+
+// templatedOptionValues collects the segment's option values (nested ones
+// included) that carry template syntax. These render through
+// options.Map.Template against contexts this analysis cannot model per
+// option, so analyzeSegment treats any hit conservatively.
+func (segment *Segment) templatedOptionValues() []string {
+	var sources []string
+
+	var collect func(value any)
+	collect = func(value any) {
+		switch v := value.(type) {
+		case string:
+			if strings.Contains(v, "{{") {
+				sources = append(sources, v)
+			}
+		case map[string]any:
+			for _, nested := range v {
+				collect(nested)
+			}
+		case map[any]any:
+			for _, nested := range v {
+				collect(nested)
+			}
+		case options.Map:
+			for _, nested := range v {
+				collect(nested)
+			}
+		case []any:
+			for _, nested := range v {
+				collect(nested)
+			}
+		case []string:
+			for _, nested := range v {
+				collect(nested)
+			}
+		}
+	}
+
+	for _, value := range segment.Options {
+		collect(value)
+	}
 
 	return sources
 }
@@ -158,6 +242,20 @@ func (a *fieldAnalysis) analyzeSegment(segment *Segment) {
 		}
 
 		a.mergeCross(refs)
+	}
+
+	// Templated option values (branch_template and friends) render against
+	// per-option contexts this walk cannot model, so any hit is handled
+	// conservatively: the segment's own set becomes untrustworthy - falling
+	// back to the explicit fetch options, which is display-correct by
+	// construction - while cross-segment references inside those options
+	// still count toward the segments they name. refs.Own/OwnOpaque are
+	// deliberately dropped here: the option's own dot is not this segment's
+	// context.
+	for _, text := range segment.templatedOptionValues() {
+		a.ownOpaque[segment] = true
+
+		a.mergeCross(analyzeFields(text))
 	}
 }
 

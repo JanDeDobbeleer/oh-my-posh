@@ -51,10 +51,12 @@ func Get(configFile string, reload bool) *Config {
 	if base64String, found := cache.Session.Get[string](configKey); found {
 		var cfg Config
 		if err := cfg.Restore(base64String); err == nil {
-			// A pre-stamp entry (written by an older binary) restores without
-			// field-set stamps; Store analyzes and persists them, so this one
-			// extra write upgrades the entry for the rest of the session.
-			if !cfg.FieldSetsResolved {
+			// An entry written by another binary generation restores without
+			// current field-set stamps - either unstamped (version zero) or
+			// stamped by a different analyzer; Store re-analyzes and persists
+			// them, so this one extra write upgrades the entry for the rest
+			// of the session.
+			if cfg.FieldSetsVersion != fieldSetAnalysisVersion {
 				cfg.Store()
 			}
 

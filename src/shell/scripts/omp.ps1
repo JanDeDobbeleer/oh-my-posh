@@ -98,6 +98,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             # timeout). Deliberately never reset on success: a flapping daemon
             # should eventually stop taxing prompts with restarts.
             FailureCount = 0
+            # True from the moment a wait-mode render request is (even
+            # partially) written until its reply is consumed or given up on.
+            # A wait cycle cannot be aborted daemon-side, so when the waiter
+            # is unwound mid-cycle (Ctrl+C), Stop-ActiveRenderCycle must kill
+            # the daemon instead of writing into it - see both functions.
+            WaitPending  = $false
             # Drains records the reader appended to Output: async segment
             # updates and the transient refresh. Serve records carry an
             # "<id>\x1f" prefix (stale cycles are discarded); legacy stream
@@ -155,6 +161,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $global:_ompStreamingState = $script:Streaming
     $script:StreamingOnIdleJob = $null
     $script:StreamingExitingJob = $null
+    # Wait mode: render requests carry "wait":true, the daemon resolves every
+    # segment before replying (print primary semantics, same records contract
+    # as cmd/Clink) and the PowerShell.OnIdle subscriber is never registered -
+    # there are no incremental records to repaint from. Used under PowerShell
+    # Editor Services, where registering OnIdle is what crashes the host (see
+    # Enable-PoshStreaming).
+    $script:StreamingWait = $false
 
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_SHELL = "pwsh"
@@ -428,6 +441,39 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # Serve mode: the daemon persists across cycles, only the in-flight
         # render needs to be interrupted - write abort instead of killing anything.
         if ($null -ne $script:Streaming.ServeProcess -and -not $script:Streaming.ServeProcess.HasExited) {
+            # Except for an abandoned wait cycle. A wait render cannot be
+            # interrupted: abort makes the daemon block on the in-flight
+            # render's completion (engine.Abort is a no-op when StreamPrimary
+            # never ran) and it stops reading stdin while it waits - so if
+            # the waiter was unwound mid-cycle (Ctrl+C), writing abort here
+            # and then the next request's multi-KB env blob into that daemon
+            # can block the engine thread on a full pipe with no deadline.
+            # Kill it instead; the next render restarts it fresh. Not a
+            # daemon fault - no failure is counted.
+            if ($script:StreamingWait -and $script:Streaming.WaitPending) {
+                try {
+                    $script:Streaming.ServeProcess.Kill()
+                }
+                catch {
+                }
+
+                $script:Streaming.ServeProcess = $null
+                $script:Streaming.WaitPending = $false
+                $script:Streaming.State = 'NEW'
+                $script:Streaming.Dirty = $false
+                return
+            }
+
+            # The abort write is three statements - a Ctrl+C landing between
+            # them tears it and desyncs the protocol stream: the daemon
+            # blocks reading the never-written env blob and consumes the next
+            # request as blob records. Cover the write with the same flag the
+            # render writes use, so a torn (or thrown) abort routes into the
+            # kill branch above at the next prompt instead of hanging the
+            # deadline-less wait-mode waiter. Inert in streaming mode, where
+            # the flag is assigned $false and never read.
+            $script:Streaming.WaitPending = $script:StreamingWait
+
             try {
                 # Every request line - even one with no env of its own - must
                 # be followed by a blob; a bare NUL is an empty one (see
@@ -435,6 +481,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $script:Streaming.StdIn.WriteLine('{"command":"abort"}')
                 $script:Streaming.StdIn.Write([char]0)
                 $script:Streaming.StdIn.Flush()
+                $script:Streaming.WaitPending = $false
             }
             catch {
             }
@@ -634,20 +681,62 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Suspend-PoshServeOnFailure {
         $script:Streaming.FailureCount++
-        if ($script:Streaming.FailureCount -ge 3) {
-            # Degrade to the per-prompt stream path for the rest of the
-            # session - a repeatedly failing daemon must not add a restart
-            # plus a response timeout to every single prompt.
-            $script:ServeSupported = $false
+        if ($script:Streaming.FailureCount -lt 3) {
+            return
         }
+
+        # Degrade to the per-prompt stream path for the rest of the
+        # session - a repeatedly failing daemon must not add a restart
+        # plus a response timeout to every single prompt.
+        $script:ServeSupported = $false
+
+        # Serve is off for good, but the daemon can still be alive here (the
+        # empty-primary path keeps it running on purpose). Without this it
+        # would idle until session end while Stop-ActiveRenderCycle keeps
+        # writing it an abort every prompt. Ask it to quit (flushes its
+        # caches) and close stdin - the EOF exit signal that works even if
+        # the quit line is lost; the daemon's stdout EOF then releases the
+        # reader runspace.
+        if ($null -ne $script:Streaming.ServeProcess -and -not $script:Streaming.ServeProcess.HasExited) {
+            try {
+                $script:Streaming.StdIn.WriteLine('{"command":"quit"}')
+                $script:Streaming.StdIn.Write([char]0)
+                $script:Streaming.StdIn.Flush()
+                $script:Streaming.StdIn.Close()
+            }
+            catch {
+            }
+        }
+
+        $script:Streaming.ServeProcess = $null
+    }
+
+    function Get-PoshStreamingPromptFallback {
+        # Daemon-failure fallback. Wait mode must never reach the legacy
+        # per-prompt stream: it registers PowerShell.OnIdle (the exact hazard
+        # wait mode exists to avoid under PSES) and depends on it to repaint
+        # everything past its first record.
+        if ($script:StreamingWait) {
+            # No daemon rendered this cycle, and two of the callers (the
+            # ServeSupported guard and a failed daemon start) bail out before
+            # the per-cycle transient reset - drop the previous cycle's
+            # cached transient so Enter renders a fresh one instead of
+            # replaying stale context. The legacy branch resets it itself.
+            $script:Streaming.Transient = ''
+            return Get-PoshPrompt 'primary'
+        }
+
+        Get-PoshStreamingPromptLegacy
     }
 
     function Get-PoshStreamingPrompt {
         if (-not $script:ServeSupported) {
-            return Get-PoshStreamingPromptLegacy
+            return Get-PoshStreamingPromptFallback
         }
 
-        Register-PoshStreamingOnIdle
+        if (-not $script:StreamingWait) {
+            Register-PoshStreamingOnIdle
+        }
 
         # The reader's record collection only grows - both consumers key off
         # add-time indices, so in-place trimming would corrupt their cursors.
@@ -667,7 +756,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($null -eq $script:Streaming.ServeProcess -or $script:Streaming.ServeProcess.HasExited) {
             if (-not (Start-PoshServe)) {
                 Suspend-PoshServeOnFailure
-                return Get-PoshStreamingPromptLegacy
+                return Get-PoshStreamingPromptFallback
             }
         }
 
@@ -688,6 +777,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         ',"stack-count":' + (Get-PoshStackCount) +
         ',"terminal-width":' + (Get-TerminalWidth) +
         ',"job-count":' + $script:JobCount +
+        ',"wait":' + $(if ($script:StreamingWait) { 'true' } else { 'false' }) +
         ',"cleared":false' +
         '}'
 
@@ -696,6 +786,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # can never interleave with another request.
         $envRaw = Get-PoshServeEnvRaw
 
+        # From here until the reply is consumed or given up on, the daemon
+        # owns a wait cycle this client might abandon: Ctrl+C can unwind the
+        # waiter at any point, and even a partially written request poisons
+        # the protocol stream. Stop-ActiveRenderCycle keys off this to kill a
+        # possibly-wedged daemon instead of writing into it.
+        $script:Streaming.WaitPending = $script:StreamingWait
+
         try {
             $script:Streaming.StdIn.WriteLine($json)
             $script:Streaming.StdIn.Write($envRaw)
@@ -703,17 +800,21 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
         catch {
             # The daemon died between the health check above and this write - restart once.
-            Suspend-PoshServeOnFailure
-            # Mirror the timeout path: kill before dropping the reference, so a
-            # process with a broken stdin but a live body can never be leaked.
+            # Kill before dropping the reference (mirroring the death path
+            # below), so a process with a broken stdin but a live body can
+            # never be leaked.
             try {
                 $script:Streaming.ServeProcess.Kill()
             }
             catch {
             }
             $script:Streaming.ServeProcess = $null
-            if (-not (Start-PoshServe)) {
-                return Get-PoshStreamingPromptLegacy
+            Suspend-PoshServeOnFailure
+            # A third strike just disabled serve for the session - don't
+            # start a daemon that nothing would ever talk to again.
+            if (-not $script:ServeSupported -or -not (Start-PoshServe)) {
+                $script:Streaming.WaitPending = $false
+                return Get-PoshStreamingPromptFallback
             }
 
             try {
@@ -730,7 +831,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 catch {
                 }
                 $script:Streaming.ServeProcess = $null
-                return Get-PoshStreamingPromptLegacy
+                $script:Streaming.WaitPending = $false
+                return Get-PoshStreamingPromptFallback
             }
         }
 
@@ -752,7 +854,21 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $firstPrompt = $null
         $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
-        while ($null -eq $firstPrompt -and $stopwatch.ElapsedMilliseconds -lt 2000) {
+        # Streaming keeps a 2s deadline: its first record is a fast paint
+        # that a healthy daemon produces near-instantly, so a longer silence
+        # means the daemon is gone. A wait render instead resolves every
+        # segment before its first record - it legitimately takes as long as
+        # print primary would, and print primary has no deadline at all (only
+        # opt-in per-segment timeouts) - so wait mode blocks like Clink does
+        # and treats daemon death as the only failure: the reader EOFs and
+        # sets the signal, one grace pass drains records the dying pipe still
+        # buffered, then the fallback takes over. A daemon that survives but
+        # never replies (a cycle-setup panic) blocks like a hung print
+        # primary would - Ctrl+C unwinds this waiter, and the next prompt
+        # then kills the daemon via the WaitPending flag.
+        $serveExited = $false
+
+        while ($null -eq $firstPrompt) {
             while ($s.RecordIndex -lt $output.Count) {
                 $record = $output[$s.RecordIndex]
                 $s.RecordIndex++
@@ -787,22 +903,57 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $firstPrompt = $payload
             }
 
-            if ($null -eq $firstPrompt) {
-                [void]$signal.Wait(100)
-                $signal.Reset()
+            if ($null -ne $firstPrompt) {
+                break
             }
+
+            if ($script:StreamingWait) {
+                if ($s.ServeProcess.HasExited) {
+                    if ($serveExited) {
+                        break
+                    }
+                    $serveExited = $true
+                }
+            }
+            elseif ($stopwatch.ElapsedMilliseconds -ge 2000) {
+                break
+            }
+
+            [void]$signal.Wait(100)
+            $signal.Reset()
         }
 
+        # However this cycle ended, the daemon no longer holds a request this
+        # client walked away from - the next Stop-ActiveRenderCycle can use
+        # the regular abort write again.
+        $s.WaitPending = $false
+
         if ($null -eq $firstPrompt) {
-            # Daemon stopped responding - kill it and fall back for this cycle.
-            Suspend-PoshServeOnFailure
+            # Streaming: the daemon went silent past its deadline. Wait mode:
+            # the daemon died mid-render. Kill it (a no-op on a corpse,
+            # load-bearing for a silent-but-alive one) before counting the
+            # failure, then fall back for this cycle.
             try {
                 $s.ServeProcess.Kill()
             }
             catch {
             }
             $s.ServeProcess = $null
-            return Get-PoshStreamingPromptLegacy
+            Suspend-PoshServeOnFailure
+            return Get-PoshStreamingPromptFallback
+        }
+
+        # An empty primary is the daemon's failed-render signal: a panic in
+        # the primary render is recovered and answered with "" plus an empty
+        # transient rather than a missing reply, and the daemon lives on. (A
+        # panic during the transient render still delivers a real primary; a
+        # panic during cycle setup emits nothing at all and is handled as a
+        # silent daemon above.) Same contract handling as Clink: count the
+        # failure and fall back to a one-shot render for this prompt, without
+        # killing the daemon.
+        if ($script:StreamingWait -and $firstPrompt -eq '') {
+            Suspend-PoshServeOnFailure
+            return Get-PoshStreamingPromptFallback
         }
 
         return $firstPrompt
@@ -1009,16 +1160,35 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     function Enable-PoshStreaming {
         # PowerShell Editor Services - the host behind the VS Code PowerShell
         # extension and nvim's PSES client - invokes its own synchronous
-        # pipelines from the same PSReadLine idle hook, and only pumps them
-        # while the runspace has event subscribers. Registering
-        # PowerShell.OnIdle below is therefore what creates a second pipeline
+        # pipelines from the same PSReadLine idle hook the async repaint rides
+        # on. Registering PowerShell.OnIdle there creates a second pipeline
         # invoker on the same runspace and the ~300ms race that
         # DoConcurrentCheck aborts with "Pipelines cannot be run concurrently"
         # (issue #7809). The exception is thrown from inside the host's own
         # invocation, so script code can neither observe nor synchronize
-        # against it - streaming stays off and the prompt renders synchronously.
+        # against it - the OnIdle subscriber must simply never exist there.
+        #
+        # The serve daemon itself is not the hazard, so keep it: wait mode
+        # renders synchronously through the warm daemon (every segment
+        # resolved, no incremental records, no repaints - the same contract
+        # cmd/Clink uses). PowerShell.Exiting below is still registered; that
+        # only puts PSES's event pump in its "pulse" mode, and the pulse is a
+        # pipeline PSES runs serialized on its own execution queue - the crash
+        # needs a second invoker, which only the OnIdle action supplied. The
+        # accepted cost: with any subscriber present, an idle PSES session
+        # runs that trivial pulse pipeline on each ~300ms idle tick. That
+        # buys a daemon that is never leaked on a graceful exit.
+        #
+        # Without a daemon (Windows PowerShell 5.1, ConstrainedLanguage) there
+        # is no wait mode to lean on and the legacy per-prompt stream depends
+        # on OnIdle for every record past its first - the prompt stays fully
+        # synchronous there.
         if (Test-PoshEditorServicesHost) {
-            return
+            if (-not $script:ServeSupported) {
+                return
+            }
+
+            $script:StreamingWait = $true
         }
 
         $global:_ompStreaming = $true

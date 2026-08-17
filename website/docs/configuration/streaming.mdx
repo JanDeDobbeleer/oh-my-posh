@@ -66,9 +66,12 @@ differs per shell:
 Requires PowerShell 6 or later for the background process; Windows PowerShell 5.1 and
 sessions in `ConstrainedLanguage` mode use a streaming process per prompt instead.
 
-Streaming is skipped entirely inside PowerShell Editor Services - the host behind the VS Code
-PowerShell extension and Neovim's PSES client - because that host runs its own pipelines from
-the idle hook streaming relies on. The prompt renders synchronously there.
+Inside PowerShell Editor Services - the host behind the VS Code PowerShell extension and
+Neovim's PSES client - live updates are disabled, because that host runs its own pipelines
+from the idle hook the async repaint relies on. The persistent daemon is still used: prompts
+render synchronously through it with every segment fully resolved, keeping its warm caches
+without the repaints. On Windows PowerShell 5.1 and in `ConstrainedLanguage` mode - where
+the daemon is unavailable - the prompt falls back to a fully synchronous render.
 
 - **live updates**: the prompt repaints in place as pending segments resolve, even while
   you're already typing

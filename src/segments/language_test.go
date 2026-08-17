@@ -768,6 +768,12 @@ func TestLanguageVersionCommandCacheKeyInvalidation(t *testing.T) {
 			Path:    baselinePath,
 			Stat:    baselineStat,
 		},
+		{
+			Case:    "changed envs",
+			Command: &cmd{executable: "unicorn", args: []string{"--version"}, envs: []string{"FOO=bar"}, versionCacheable: true},
+			Path:    baselinePath,
+			Stat:    baselineStat,
+		},
 	}
 
 	env := new(mock.Environment)
@@ -897,5 +903,44 @@ func TestNodePackageVersion(t *testing.T) {
 
 		assert.Nil(t, err, tc.Case)
 		assert.Equal(t, tc.Version, got, tc.Case)
+	}
+}
+
+// TestVersionCacheWrapperOptOuts pins which tools stay out of the version
+// cache: wrapper/shim executables whose own identity cannot key their output
+// (versionCacheKey's first guard makes an unset flag skip the cache
+// entirely). java_home stays cacheable because the resolved JDK path itself
+// is the key there.
+func TestVersionCacheWrapperOptOuts(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("Getenv", "JAVA_HOME").Return("/opt/java")
+
+	java := &Java{}
+	java.Init(options.Map{}, env)
+	java.loadSpec()
+
+	flutter := &Flutter{}
+	flutter.loadSpec()
+
+	ui5 := &UI5Tooling{}
+	ui5.Init(options.Map{}, env)
+	ui5.loadSpec()
+
+	cases := []struct {
+		Command   *cmd
+		Case      string
+		Cacheable bool
+	}{
+		{Case: "flutter wrapper", Command: flutter.tooling[flutterToolName]},
+		{Case: "fvm", Command: flutter.tooling[fvmToolName]},
+		{Case: "swift xcrun shim", Command: languageDefinitions["swift"].tooling[swiftToolName]},
+		{Case: "plain java stub", Command: java.tooling[javaToolName]},
+		{Case: "java_home-resolved java", Command: java.tooling["java_home"], Cacheable: true},
+		{Case: "ui5 project delegation", Command: ui5.tooling["ui5"]},
+	}
+
+	for _, tc := range cases {
+		require.NotNil(t, tc.Command, tc.Case)
+		assert.Equal(t, tc.Cacheable, tc.Command.versionCacheable, tc.Case)
 	}
 }

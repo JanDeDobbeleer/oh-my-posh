@@ -36,11 +36,15 @@ func (f *Flutter) loadSpec() {
 			args:       []string{flutterToolName, versionFlagArg},
 			regex:      `Flutter ` + versionRegex,
 		},
+		// Not marked versionCacheable: bin/flutter is a stable wrapper
+		// script that dispatches into the SDK checkout next to it, and
+		// `flutter upgrade`/`flutter channel` swap that SDK via git without
+		// touching the script - so the wrapper's path/mtime/size cannot see
+		// an upgrade (the same wrapper-dispatch class as mvnw/gradlew).
 		flutterToolName: {
-			executable:       flutterToolName,
-			args:             []string{versionFlagArg},
-			regex:            `Flutter ` + versionRegex,
-			versionCacheable: true,
+			executable: flutterToolName,
+			args:       []string{versionFlagArg},
+			regex:      `Flutter ` + versionRegex,
 		},
 	}
 	f.defaultTooling = []string{fvmToolName, flutterToolName}

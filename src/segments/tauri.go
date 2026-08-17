@@ -18,8 +18,7 @@ func (t *Tauri) Enabled() bool {
 	return t.Language.Enabled()
 }
 
-// Activation implements the activation gate; see Language.activation. Tauri
-// declares folders, so this resolves to Always unless the user empties them.
+// Activation implements the activation gate; see Language.activation.
 func (t *Tauri) Activation() Activation {
 	t.loadSpec()
 

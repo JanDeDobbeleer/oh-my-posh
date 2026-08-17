@@ -32,6 +32,11 @@ func (d *Dvc) Template() string {
 	return "  {{ .Status.String }} "
 }
 
+// Activation gates on the repository marker Enabled searches for.
+func (d *Dvc) Activation() Activation {
+	return Activation{ProjectFiles: []string{".dvc"}}
+}
+
 func (d *Dvc) Enabled() bool {
 	if !d.hasCommand(DVCCOMMAND) {
 		return false

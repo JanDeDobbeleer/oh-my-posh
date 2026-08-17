@@ -11,19 +11,36 @@ import (
 
 func TestLanguageActivation(t *testing.T) {
 	cases := []struct {
-		options           options.Map
-		Case              string
-		displayMode       string
-		extensions        []string
-		folders           []string
-		projectFiles      []string
-		expectedFileGlobs []string
-		expectedAlways    bool
+		options              options.Map
+		Case                 string
+		displayMode          string
+		extensions           []string
+		folders              []string
+		projectFiles         []string
+		contextEnvVars       []string
+		contextFiles         []string
+		expectedFileGlobs    []string
+		expectedFolders      []string
+		expectedProjectFiles []string
+		expectedEnvVars      []string
+		withContext          bool
+		expectedAlways       bool
 	}{
 		{
 			Case:              "files mode gates on extensions",
 			extensions:        []string{uni, corn},
 			expectedFileGlobs: []string{uni, corn},
+		},
+		{
+			Case:              "files mode carries folders and project files",
+			extensions:        []string{uni},
+			folders:           []string{"lua"},
+			projectFiles:      []string{"build.zig"},
+			expectedFileGlobs: []string{uni},
+			expectedFolders:   []string{"lua"},
+			expectedProjectFiles: []string{
+				"build.zig",
+			},
 		},
 		{
 			Case:           "display_mode always",
@@ -32,37 +49,40 @@ func TestLanguageActivation(t *testing.T) {
 			expectedAlways: true,
 		},
 		{
-			Case:           "display_mode environment",
+			Case:              "environment mode with declared env vars",
+			extensions:        []string{uni},
+			contextEnvVars:    []string{"VIRTUAL_ENV"},
+			withContext:       true,
+			options:           options.Map{DisplayMode: DisplayModeEnvironment},
+			expectedFileGlobs: []string{uni},
+			expectedEnvVars:   []string{"VIRTUAL_ENV"},
+		},
+		{
+			Case:           "environment mode with an opaque context callback",
 			extensions:     []string{uni},
+			withContext:    true,
 			options:        options.Map{DisplayMode: DisplayModeEnvironment},
 			expectedAlways: true,
 		},
 		{
-			Case:           "display_mode context",
+			Case:              "environment mode without a context callback",
+			extensions:        []string{uni},
+			options:           options.Map{DisplayMode: DisplayModeEnvironment},
+			expectedFileGlobs: []string{uni},
+		},
+		{
+			Case:              "context mode with declared context files",
+			extensions:        []string{uni},
+			contextFiles:      []string{"package.json"},
+			withContext:       true,
+			options:           options.Map{DisplayMode: DisplayModeContext},
+			expectedFileGlobs: []string{uni, "package.json"},
+		},
+		{
+			Case:           "context mode with an opaque context callback",
 			extensions:     []string{uni},
+			withContext:    true,
 			options:        options.Map{DisplayMode: DisplayModeContext},
-			expectedAlways: true,
-		},
-		{
-			Case:           "preset display mode other than files",
-			extensions:     []string{uni},
-			displayMode:    DisplayModeEnvironment,
-			expectedAlways: true,
-		},
-		{
-			Case:           "folders cannot be expressed as file globs",
-			extensions:     []string{uni},
-			folders:        []string{"lua"},
-			expectedAlways: true,
-		},
-		{
-			Case:           "project files are searched in parent directories",
-			extensions:     []string{uni},
-			projectFiles:   []string{"build.zig"},
-			expectedAlways: true,
-		},
-		{
-			Case:           "no extensions means no gate",
 			expectedAlways: true,
 		},
 		{
@@ -72,16 +92,13 @@ func TestLanguageActivation(t *testing.T) {
 			expectedFileGlobs: []string{corn},
 		},
 		{
-			Case:           "folders added via options force Always",
-			extensions:     []string{uni},
-			options:        options.Map{LanguageFolders: []string{".venv"}},
-			expectedAlways: true,
-		},
-		{
-			Case:           "project files added via options force Always",
-			extensions:     []string{uni},
-			options:        options.Map{LanguageProjectFiles: []string{"quasar.config"}},
-			expectedAlways: true,
+			Case:            "folders overridden via options",
+			extensions:      []string{uni},
+			options:         options.Map{LanguageFolders: []string{".venv"}},
+			expectedFolders: []string{".venv"},
+			expectedFileGlobs: []string{
+				uni,
+			},
 		},
 	}
 
@@ -89,10 +106,16 @@ func TestLanguageActivation(t *testing.T) {
 		env := new(mock.Environment)
 
 		language := &Language{
-			extensions:   tc.extensions,
-			folders:      tc.folders,
-			projectFiles: tc.projectFiles,
-			displayMode:  tc.displayMode,
+			extensions:     tc.extensions,
+			folders:        tc.folders,
+			projectFiles:   tc.projectFiles,
+			contextEnvVars: tc.contextEnvVars,
+			contextFiles:   tc.contextFiles,
+			displayMode:    tc.displayMode,
+		}
+
+		if tc.withContext {
+			language.inContext = func() bool { return false }
 		}
 
 		opts := tc.options
@@ -105,9 +128,14 @@ func TestLanguageActivation(t *testing.T) {
 		activation := language.activation()
 
 		assert.Equal(t, tc.expectedAlways, activation.Always, tc.Case)
-		if !tc.expectedAlways {
-			assert.Equal(t, tc.expectedFileGlobs, activation.FileGlobs, tc.Case)
+		if tc.expectedAlways {
+			continue
 		}
+
+		assert.Equal(t, tc.expectedFileGlobs, activation.FileGlobs, tc.Case)
+		assert.Equal(t, tc.expectedFolders, activation.Folders, tc.Case)
+		assert.Equal(t, tc.expectedProjectFiles, activation.ProjectFiles, tc.Case)
+		assert.Equal(t, tc.expectedEnvVars, activation.EnvVars, tc.Case)
 	}
 }
 
@@ -121,30 +149,28 @@ func TestNodeActivation(t *testing.T) {
 	assert.Equal(t, []string{"*.js", "*.ts", fileName, ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".vue"}, activation.FileGlobs)
 }
 
-// Python defaults to the environment display mode (an active venv enables it
-// without any file in the cwd), so it must never gate by default.
-func TestPythonActivationDefaultsToAlways(t *testing.T) {
+// Python defaults to the environment display mode; the gate carries its
+// declared venv triggers (env vars) alongside the file spec instead of
+// falling back to Always.
+func TestPythonActivation(t *testing.T) {
 	python := &Python{}
 	python.Init(options.Map{}, new(mock.Environment))
 
-	assert.True(t, python.Activation().Always)
-}
+	activation := python.Activation()
 
-// With display_mode=files, Python still declares venv folders, which the file
-// gate cannot express, so it stays Always.
-func TestPythonActivationFilesModeStillAlwaysDueToFolders(t *testing.T) {
-	python := &Python{}
-	python.Init(options.Map{DisplayMode: DisplayModeFiles}, new(mock.Environment))
-
-	assert.True(t, python.Activation().Always)
+	assert.False(t, activation.Always)
+	assert.Equal(t, []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}, activation.FileGlobs)
+	assert.Equal(t, []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}, activation.Folders)
+	assert.Equal(t, []string{"VIRTUAL_ENV", "CONDA_ENV_PATH", "CONDA_DEFAULT_ENV"}, activation.EnvVars)
 }
 
 func TestConfiguredLanguageActivation(t *testing.T) {
 	cases := []struct {
-		Case              string
-		name              string
-		expectedFileGlobs []string
-		expectedAlways    bool
+		Case                 string
+		name                 string
+		expectedFileGlobs    []string
+		expectedFolders      []string
+		expectedProjectFiles []string
 	}{
 		{
 			Case:              "rust preset gates on its extensions",
@@ -152,19 +178,16 @@ func TestConfiguredLanguageActivation(t *testing.T) {
 			expectedFileGlobs: []string{"*.rs", "Cargo.toml", "Cargo.lock"},
 		},
 		{
-			Case:           "zig preset has project files",
-			name:           "zig",
-			expectedAlways: true,
+			Case:                 "zig preset carries its project files",
+			name:                 "zig",
+			expectedFileGlobs:    []string{"*.zig", "*.zon"},
+			expectedProjectFiles: []string{"build.zig"},
 		},
 		{
-			Case:           "lua preset has folders",
-			name:           "lua",
-			expectedAlways: true,
-		},
-		{
-			Case:           "unknown preset has no extensions and no gate",
-			name:           "unknown",
-			expectedAlways: true,
+			Case:              "lua preset carries its folders",
+			name:              "lua",
+			expectedFileGlobs: []string{"*.lua", "*.rockspec"},
+			expectedFolders:   []string{"lua"},
 		},
 	}
 
@@ -174,11 +197,27 @@ func TestConfiguredLanguageActivation(t *testing.T) {
 
 		activation := language.Activation()
 
-		assert.Equal(t, tc.expectedAlways, activation.Always, tc.Case)
-		if !tc.expectedAlways {
-			assert.Equal(t, tc.expectedFileGlobs, activation.FileGlobs, tc.Case)
-		}
+		assert.False(t, activation.Always, tc.Case)
+		assert.Equal(t, tc.expectedFileGlobs, activation.FileGlobs, tc.Case)
+		assert.Equal(t, tc.expectedFolders, activation.Folders, tc.Case)
+		assert.Equal(t, tc.expectedProjectFiles, activation.ProjectFiles, tc.Case)
 	}
+}
+
+// An unknown preset has no conditions: the zero-value activation carries no
+// gate, so the segment executes (and Enabled decides, as before).
+func TestConfiguredLanguageActivationUnknownPreset(t *testing.T) {
+	language := NewLanguage("unknown")
+	language.Init(options.Map{}, new(mock.Environment))
+
+	activation := language.Activation()
+
+	assert.False(t, activation.Always)
+	assert.Empty(t, activation.FileGlobs)
+	assert.Empty(t, activation.Folders)
+	assert.Empty(t, activation.ProjectFiles)
+	assert.Empty(t, activation.EnvVars)
+	assert.True(t, activation.Active(new(mock.Environment)), "the zero value carries no gate")
 }
 
 // Activation must leave the language in a state where Enabled() still works
@@ -197,6 +236,7 @@ func TestActivationThenEnabledStaysConsistent(t *testing.T) {
 	activation := bun.Activation()
 	assert.False(t, activation.Always)
 	assert.Equal(t, []string{"bun.lockb", "bun.lock"}, activation.FileGlobs)
+	assert.True(t, activation.Active(env))
 
 	assert.True(t, bun.Enabled())
 }

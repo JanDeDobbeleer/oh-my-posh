@@ -3,8 +3,6 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
@@ -29,11 +27,31 @@ type TerraformBlock struct {
 	Version *string `json:"terraform_version"`
 }
 
+// Activation lifts the old inContext check into the gate: the segment can
+// only activate when the cwd carries the .terraform folder or one of the
+// files the context check reacted to (extended with the version files when
+// fetch_version is on, mirroring the old fetchVersion-dependent check).
+func (tf *Terraform) Activation() Activation {
+	activation := Activation{
+		Folders:   []string{".terraform"},
+		FileGlobs: []string{".tf", ".tfplan", ".tfstate"},
+	}
+
+	if tf.options.Bool(options.FetchVersion, false) {
+		_, tenvVersionFile := tf.tenvSources()
+		activation.FileGlobs = append(activation.FileGlobs, "versions.tf", "main.tf", "terraform.tfstate", tenvVersionFile)
+	}
+
+	return activation
+}
+
 func (tf *Terraform) Enabled() bool {
 	cmd := tf.options.String(Command, "terraform")
 	fetchVersion := tf.options.Bool(options.FetchVersion, false)
 
-	if !tf.env.HasCommand(cmd) || !tf.inContext(fetchVersion) {
+	// the context check (terraform files/folder presence) lives in
+	// Activation; only the command probe remains
+	if !tf.env.HasCommand(cmd) {
 		return false
 	}
 
@@ -91,27 +109,6 @@ func (tf *Terraform) setVersionFromTenv() bool {
 
 	tf.Version = &version
 	return true
-}
-
-func (tf *Terraform) inContext(fetchVersion bool) bool {
-	terraformFolder := filepath.Join(tf.env.Pwd(), ".terraform")
-
-	if tf.env.HasFolder(terraformFolder) {
-		return true
-	}
-
-	files := []string{".tf", ".tfplan", ".tfstate"}
-	if slices.ContainsFunc(files, tf.env.HasFiles) {
-		return true
-	}
-
-	if !fetchVersion {
-		return false
-	}
-
-	_, tenvVersionFile := tf.tenvSources()
-	versionFiles := []string{"versions.tf", "main.tf", "terraform.tfstate", tenvVersionFile}
-	return slices.ContainsFunc(versionFiles, tf.env.HasFiles)
 }
 
 func (tf *Terraform) setVersionFromTfFiles() error {

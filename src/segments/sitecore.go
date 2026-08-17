@@ -30,8 +30,15 @@ type UserConfig struct {
 	DefaultEndpoint string                    `json:"defaultEndpoint"`
 }
 
+// Activation gates on the sitecore.json marker in the cwd, whose presence
+// check used to open Enabled; the .sitecore/user.json check stays there
+// (it looks inside a subdirectory, which a cwd file glob cannot express).
+func (s *Sitecore) Activation() Activation {
+	return Activation{FileGlobs: []string{sitecoreFileName}}
+}
+
 func (s *Sitecore) Enabled() bool {
-	if !s.env.HasFiles(sitecoreFileName) || !s.env.HasFilesInDir(sitecoreFolderName, userFileName) {
+	if !s.env.HasFilesInDir(sitecoreFolderName, userFileName) {
 		log.Debug("sitecore cli configuration files were not found")
 		return false
 	}

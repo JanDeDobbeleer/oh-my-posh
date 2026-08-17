@@ -2,20 +2,24 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
+	testifymock "github.com/stretchr/testify/mock"
 )
 
 // gateStubType is registered per test into the Segments registry so Execute
 // constructs the exact writer instance the test wants to inspect.
 const gateStubType SegmentType = "gatestub"
 
-// gateStubWriter implements segments.Activator and records whether Enabled()
-// ran, so tests can prove the gate skipped (or did not skip) the probe.
+// gateStubWriter overrides Base's default Activation and records whether
+// Enabled() ran, so tests can prove the gate skipped (or did not skip) the
+// probe.
 type gateStubWriter struct {
 	segments.Base
 	activation    segments.Activation
@@ -35,7 +39,7 @@ func (w *gateStubWriter) Activation() segments.Activation {
 	return w.activation
 }
 
-// plainStubWriter does NOT implement segments.Activator.
+// plainStubWriter inherits the default Activation from Base.
 type plainStubWriter struct {
 	segments.Base
 	enabledCalled bool
@@ -94,6 +98,93 @@ func TestSegmentGate_MatchingFileRunsEnabled(t *testing.T) {
 	assert.True(t, segment.evaluated)
 }
 
+func TestSegmentGate_FolderConditionMatches(t *testing.T) {
+	writer := &gateStubWriter{
+		activation: segments.Activation{Folders: []string{".venv"}},
+	}
+	registerStubWriter(t, writer)
+
+	env := newDataReplayEnv(&runtime.Flags{})
+	// the folder condition stats filepath.Join(Pwd, folder), which joins with
+	// the platform separator - expect exactly what production produces on
+	// either OS
+	env.On("HasFolder", filepath.Join("/test", ".venv")).Return(true)
+
+	segment := &Segment{Type: gateStubType}
+	segment.Execute(env)
+
+	assert.True(t, writer.enabledCalled, "a matching folder keeps the segment alive")
+	assert.True(t, segment.Enabled)
+}
+
+func TestSegmentGate_ProjectFileConditionMatches(t *testing.T) {
+	writer := &gateStubWriter{
+		activation: segments.Activation{ProjectFiles: []string{".git"}},
+	}
+	registerStubWriter(t, writer)
+
+	env := newDataReplayEnv(&runtime.Flags{})
+	env.On("HasParentFilePath", ".git", false).Return(&runtime.FileInfo{Path: "/test/.git"}, nil)
+
+	segment := &Segment{Type: gateStubType}
+	segment.Execute(env)
+
+	assert.True(t, writer.enabledCalled, "a found project file keeps the segment alive")
+	assert.True(t, segment.Enabled)
+}
+
+func TestSegmentGate_ProjectFileConditionMisses(t *testing.T) {
+	writer := &gateStubWriter{
+		activation: segments.Activation{ProjectFiles: []string{".git"}},
+	}
+	registerStubWriter(t, writer)
+
+	env := newDataReplayEnv(&runtime.Flags{})
+	env.On("HasParentFilePath", ".git", testifymock.Anything).Return((*runtime.FileInfo)(nil), errors.New("no match at root level"))
+
+	segment := &Segment{Type: gateStubType}
+	segment.Execute(env)
+
+	assert.False(t, writer.enabledCalled, "both search variants missed, the segment gates off")
+	assert.False(t, segment.Enabled)
+}
+
+func TestSegmentGate_EnvVarConditionMatches(t *testing.T) {
+	writer := &gateStubWriter{
+		activation: segments.Activation{EnvVars: []string{"VIRTUAL_ENV"}},
+	}
+	registerStubWriter(t, writer)
+
+	env := newDataReplayEnv(&runtime.Flags{})
+	env.On("Getenv", "VIRTUAL_ENV").Return("/venv")
+
+	segment := &Segment{Type: gateStubType}
+	segment.Execute(env)
+
+	assert.True(t, writer.enabledCalled, "a non-empty env var keeps the segment alive")
+	assert.True(t, segment.Enabled)
+}
+
+func TestSegmentGate_ConditionsAreOrAcrossKinds(t *testing.T) {
+	writer := &gateStubWriter{
+		activation: segments.Activation{
+			FileGlobs: []string{"*.uni"},
+			EnvVars:   []string{"VIRTUAL_ENV"},
+		},
+	}
+	registerStubWriter(t, writer)
+
+	env := newDataReplayEnv(&runtime.Flags{})
+	env.On("HasFiles", "*.uni").Return(false)
+	env.On("Getenv", "VIRTUAL_ENV").Return("/venv")
+
+	segment := &Segment{Type: gateStubType}
+	segment.Execute(env)
+
+	assert.True(t, writer.enabledCalled, "any matching condition of any kind keeps the segment alive")
+	assert.True(t, segment.Enabled)
+}
+
 // No "HasFiles" stub: a bypass that still evaluated the globs would panic the
 // mock, so the stub's absence is part of the assertion.
 func TestSegmentGate_ForceBypassesGate(t *testing.T) {
@@ -111,22 +202,26 @@ func TestSegmentGate_ForceBypassesGate(t *testing.T) {
 	assert.True(t, segment.Enabled)
 }
 
-// Fallback templates render against the evaluated-but-disabled writer, so a
-// gated skip would silently drop them; they bypass the gate entirely. No
-// "HasFiles" stub, same reasoning as the Force test.
-func TestSegmentGate_FallbackTemplateBypassesGate(t *testing.T) {
+// Contract change (deliberate): a failing gate no longer forces the full
+// Enabled() evaluation for a fallback template. The segment counts as
+// evaluated so renderFallback runs, but against the zero-state writer.
+func TestSegmentGate_FallbackTemplateRendersWithoutEnabled(t *testing.T) {
 	writer := &gateStubWriter{
 		activation: segments.Activation{FileGlobs: []string{"*.uni"}},
 	}
 	registerStubWriter(t, writer)
 
 	env := newDataReplayEnv(&runtime.Flags{})
+	env.On("HasFiles", "*.uni").Return(false)
 
 	segment := &Segment{Type: gateStubType, FallbackTemplate: "fallback"}
 	segment.Execute(env)
 
-	assert.True(t, writer.enabledCalled, "fallback-template segments must run the full path")
-	assert.True(t, segment.evaluated, "evaluated semantics must stay identical for renderFallback")
+	assert.False(t, writer.enabledCalled, "the gate wins: Enabled() must not run for the fallback")
+	assert.False(t, segment.Enabled)
+	assert.True(t, segment.evaluated, "the fallback must still render, against the zero-state writer")
+	assert.True(t, segment.Render(0, false), "renderFallback picks the segment up")
+	assert.Equal(t, "fallback", segment.Text())
 }
 
 // A hand-written (flat) data entry pins the segment on via the pendingData
@@ -180,7 +275,7 @@ func TestSegmentGate_ZeroActivationRunsEnabled(t *testing.T) {
 	assert.True(t, segment.Enabled)
 }
 
-func TestSegmentGate_NonActivatorWriterUnchanged(t *testing.T) {
+func TestSegmentGate_BaseDefaultIsUngated(t *testing.T) {
 	writer := &plainStubWriter{}
 	registerStubWriter(t, writer)
 
@@ -189,6 +284,6 @@ func TestSegmentGate_NonActivatorWriterUnchanged(t *testing.T) {
 	segment := &Segment{Type: gateStubType}
 	segment.Execute(env)
 
-	assert.True(t, writer.enabledCalled, "writers without Activator are never gated")
+	assert.True(t, writer.enabledCalled, "writers inheriting Base's Activation are never gated")
 	assert.True(t, segment.Enabled)
 }

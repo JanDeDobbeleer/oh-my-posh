@@ -41,6 +41,9 @@ func (m *Mojo) loadSpec() {
 	m.displayMode = m.options.String(DisplayMode, DisplayModeEnvironment)
 	m.Language.loadContext = m.loadContext
 	m.Language.inContext = m.inContext
+	// the declared trigger for the pixi/magic virtual env context, keeping
+	// the activation gate and loadContext in sync
+	m.contextEnvVars = []string{"PIXI_ENVIRONMENT_NAME"}
 }
 
 func (m *Mojo) loadContext() {

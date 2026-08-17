@@ -38,6 +38,11 @@ func (p *Plastic) Template() string {
 	return " {{ .Selector }} "
 }
 
+// Activation gates on the workspace marker Enabled searches for.
+func (p *Plastic) Activation() Activation {
+	return Activation{ProjectFiles: []string{".plastic"}}
+}
+
 func (p *Plastic) Enabled() bool {
 	if !p.env.HasCommand("cm") {
 		return false

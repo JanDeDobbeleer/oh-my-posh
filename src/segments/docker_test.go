@@ -87,7 +87,10 @@ func TestDockerFiles(t *testing.T) {
 		env.On("HasFiles", tc.Case).Return(true)
 		env.On("HasFiles", mock_.Anything).Return(false)
 
-		assert.Equal(t, tc.ExpectedEnabled, docker.Enabled(), tc.Case)
+		// the file presence check lives in the activation gate; Enabled only
+		// runs once the gate passed
+		enabled := docker.Activation().Active(env) && docker.Enabled()
+		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 	}
 }
 

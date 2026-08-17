@@ -50,6 +50,14 @@ func (n *GitVersion) Template() string {
 	return " {{ .MajorMinorPatch }} "
 }
 
+// Activation gates on the git repository marker: the gitversion tool only
+// produces output inside a git repository (it performs the same upward .git
+// search itself), so outside of one the expensive CLI invocation is provably
+// pointless.
+func (n *GitVersion) Activation() Activation {
+	return Activation{ProjectFiles: []string{".git"}}
+}
+
 func (n *GitVersion) Enabled() bool {
 	gitversion := "gitversion"
 	if !n.env.HasCommand(gitversion) {

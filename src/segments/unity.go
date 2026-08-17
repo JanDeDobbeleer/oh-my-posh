@@ -22,6 +22,13 @@ func (u *Unity) Template() string {
 	return " \ue721 {{ .UnityVersion }}{{ if .CSharpVersion }} {{ .CSharpVersion }}{{ end }} "
 }
 
+// Activation gates on the ProjectSettings marker GetUnityVersion searches
+// for; the search itself stays in Enabled because its result (the project
+// directory) is what the version lookup reads from.
+func (u *Unity) Activation() Activation {
+	return Activation{ProjectFiles: []string{"ProjectSettings"}}
+}
+
 func (u *Unity) Enabled() bool {
 	unityVersion, err := u.GetUnityVersion()
 	if err != nil {

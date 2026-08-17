@@ -6,8 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"slices"
-
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
@@ -60,7 +58,7 @@ func (d *Docker) configFiles() []string {
 	return files
 }
 
-func (d *Docker) Enabled() bool {
+func (d *Docker) extensions() []string {
 	extensions := []string{
 		"compose.yml",
 		"compose.yaml",
@@ -69,17 +67,30 @@ func (d *Docker) Enabled() bool {
 		"Dockerfile",
 	}
 
-	extensions = d.options.StringArray(LanguageExtensions, extensions)
+	return d.options.StringArray(LanguageExtensions, extensions)
+}
 
+// Activation gates the files display mode on its file globs (the presence
+// check formerly duplicated in Enabled). The context and environment modes
+// stay ungated: they enable through environment variables that may be unset
+// while a context is still configured in $HOME/.docker/config.json, which no
+// cwd-scoped condition expresses.
+func (d *Docker) Activation() Activation {
+	if d.options.String(DisplayMode, DisplayModeContext) != DisplayModeFiles {
+		return Activation{Always: true}
+	}
+
+	return Activation{FileGlobs: d.extensions()}
+}
+
+func (d *Docker) Enabled() bool {
 	displayMode := d.options.String(DisplayMode, DisplayModeContext)
 
 	switch displayMode {
 	case DisplayModeContext:
 		return d.fetchContext()
 	case DisplayModeFiles:
-		if !slices.ContainsFunc(extensions, d.env.HasFiles) {
-			return false
-		}
+		// the file presence check lives in Activation
 
 		// always respect the context fetching
 		if d.options.Bool(FetchContext, true) {

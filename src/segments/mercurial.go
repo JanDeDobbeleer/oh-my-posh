@@ -46,6 +46,11 @@ func (hg *Mercurial) Template() string {
 	return "hg {{.Branch}} {{if .LocalCommitNumber}}({{.LocalCommitNumber}}:{{.ChangeSetIDShort}}){{end}}{{range .Bookmarks }} \uf02e {{.}}{{end}}{{range .Tags}} \uf02b {{.}}{{end}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}" //nolint: lll
 }
 
+// Activation gates on the repository marker shouldDisplay searches for.
+func (hg *Mercurial) Activation() Activation {
+	return Activation{ProjectFiles: []string{".hg"}}
+}
+
 func (hg *Mercurial) Enabled() bool {
 	if !hg.shouldDisplay() {
 		return false

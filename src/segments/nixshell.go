@@ -48,6 +48,10 @@ func (n *NixShell) InNewNixShell() bool {
 	return false
 }
 
+// Enabled has no Activation gate (Base's Always applies): gating on
+// IN_NIX_SHELL alone would break the `nix shell` detection, which recognizes
+// the shell purely through /nix/store entries in PATH - and PATH being
+// non-empty is no condition at all.
 func (n *NixShell) Enabled() bool {
 	n.Type = n.DetectType()
 

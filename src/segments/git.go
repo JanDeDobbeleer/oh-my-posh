@@ -155,6 +155,15 @@ func (g *Git) Template() string {
 	return " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }} " //nolint: lll
 }
 
+// Activation gates on the repository marker: the same upward .git search
+// shouldDisplay runs (memoized at the runtime level, so the double lookup is
+// one walk). Everything else - git command presence, worktree/bare
+// resolution, disable_with_jj - stays in Enabled(), for which the marker's
+// presence is a strict precondition.
+func (g *Git) Activation() Activation {
+	return Activation{ProjectFiles: []string{".git"}}
+}
+
 func (g *Git) Enabled() bool {
 	g.User = &User{}
 	g.Working = &GitStatus{}

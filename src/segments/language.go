@@ -111,9 +111,15 @@ type Language struct {
 	projectFiles       []string
 	folders            []string
 	extensions         []string
-	exitCode           int
-	homeEnabled        bool
-	Mismatch           bool
+	// contextEnvVars declares the environment variables whose presence can
+	// make inContext return true, so environment/context display modes can
+	// gate on them instead of falling back to Always.
+	contextEnvVars []string
+	// contextFiles declares the cwd files inContext reads, same purpose.
+	contextFiles []string
+	exitCode     int
+	homeEnabled  bool
+	Mismatch     bool
 }
 
 const (
@@ -142,6 +148,12 @@ func (l *Language) getName() string {
 	return base[:len(base)-3]
 }
 
+// Enabled decides whether the segment renders. It runs only when the
+// activation gate (see activation) passed - or was bypassed by Force or
+// pinned data - so the file/extension/folder presence checks the gate
+// already proved are not repeated here; what remains are the decisions the
+// gate cannot express (home directory, context callbacks) and the version
+// fetching.
 func (l *Language) Enabled() bool {
 	if l.name == "" {
 		l.name = l.getName()
@@ -161,6 +173,10 @@ func (l *Language) Enabled() bool {
 		return false
 	}
 
+	// The gate already established that a project file exists, but the
+	// segment needs the project root itself (InProjectDir, quasar's
+	// dependency fetching), so the search still runs; the runtime-level
+	// HasParentFilePath cache makes it a cache hit.
 	if len(l.projectFiles) != 0 && l.hasProjectFiles() {
 		enabled = true
 	}
@@ -179,11 +195,20 @@ func (l *Language) Enabled() bool {
 		case DisplayModeEnvironment:
 			enabled = l.inLanguageContext()
 		case DisplayModeFiles:
-			enabled = l.hasLanguageFiles() || l.hasLanguageFolders()
+			// the gate verified a matching file or folder in the cwd;
+			// re-checking here would duplicate it. Under Force the gate is
+			// skipped, but forced segments render regardless. A spec with
+			// neither extensions nor folders carries no gate at all, so
+			// nothing was verified: such a segment stays disabled, as it
+			// always was in files mode.
+			enabled = len(l.extensions) != 0 || len(l.folders) != 0
 		case DisplayModeContext:
 			fallthrough
 		default:
-			enabled = l.hasLanguageFiles() || l.hasLanguageFolders() || l.inLanguageContext() || l.hasProjectFiles()
+			// the gate narrows this down but cannot decide it: a pass via a
+			// declared context trigger (env var, context file) does not
+			// guarantee the context callback agrees
+			enabled = l.hasLanguageFiles() || l.hasLanguageFolders() || l.inLanguageContext()
 		}
 	}
 
@@ -209,45 +234,59 @@ func (l *Language) Enabled() bool {
 	return enabled
 }
 
-// activation backs the Activator implementation of the concrete language
-// segments. It mirrors the decision tree in Enabled(): only when nothing but
-// a file in the current working directory can turn the segment on does it
-// return the extension globs as a gate; anything that can enable the segment
-// without such a file - project files (searched in parent directories too),
-// folders (checked with a stat call rather than against the directory
-// listing), or a display mode other than "files" - forces Always so the full
-// Enabled() path runs.
+// activation backs the Activation() implementation of the concrete language
+// segments. It expresses everything Enabled()'s decision tree can react to
+// as OR'd preconditions: the extension globs and folders of the file check,
+// the project files (searched in parent directories), and the declared
+// triggers of the context callback (contextEnvVars/contextFiles). Where the
+// context callback is opaque - it exists but declares no triggers - the gate
+// falls back to Always so the full Enabled() path decides, exactly as
+// before.
 //
-// Deliberately unexported: a promoted Activation() would make every Language
-// embedder an Activator, including ones that only build their spec inside
+// Deliberately unexported: promoting an exported Activation() from Language
+// would gate every embedder, including one that only builds its spec inside
 // Enabled() and would therefore be gated against an empty (or incomplete)
 // spec. A concrete segment opts in by defining Activation() itself, building
-// its spec first and then delegating here - the same way its Enabled() builds
-// the spec before delegating to Language.Enabled().
+// its spec first and then delegating here - the same way its Enabled()
+// builds the spec before delegating to Language.Enabled().
 func (l *Language) activation() Activation {
-	if len(l.options.StringArray(LanguageProjectFiles, l.projectFiles)) != 0 {
-		return Activation{Always: true}
-	}
-
-	if len(l.options.StringArray(LanguageFolders, l.folders)) != 0 {
-		return Activation{Always: true}
-	}
-
 	displayMode := l.displayMode
 	if displayMode == "" {
 		displayMode = l.options.String(DisplayMode, DisplayModeFiles)
 	}
 
-	if displayMode != DisplayModeFiles {
+	if displayMode == DisplayModeAlways {
 		return Activation{Always: true}
 	}
 
-	extensions := l.options.StringArray(LanguageExtensions, l.extensions)
-	if len(extensions) == 0 {
-		return Activation{Always: true}
+	activation := Activation{
+		FileGlobs:    l.options.StringArray(LanguageExtensions, l.extensions),
+		Folders:      l.options.StringArray(LanguageFolders, l.folders),
+		ProjectFiles: l.options.StringArray(LanguageProjectFiles, l.projectFiles),
 	}
 
-	return Activation{FileGlobs: extensions}
+	if displayMode == DisplayModeFiles {
+		return activation
+	}
+
+	// environment and context modes can also enable through the context
+	// callback; gate on its declared triggers when it has any
+	activation.EnvVars = l.contextEnvVars
+
+	if len(l.contextFiles) != 0 {
+		globs := make([]string, 0, len(activation.FileGlobs)+len(l.contextFiles))
+		globs = append(globs, activation.FileGlobs...)
+		globs = append(globs, l.contextFiles...)
+		activation.FileGlobs = globs
+	}
+
+	if l.inContext != nil && len(l.contextEnvVars) == 0 && len(l.contextFiles) == 0 {
+		// opaque context callback: it can enable the segment through state
+		// the gate cannot see, so there is no gate
+		activation.Always = true
+	}
+
+	return activation
 }
 
 // Users can override the default tooling via the Tooling option (e.g. "uv" for Python to use the UV package manager).

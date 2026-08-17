@@ -218,7 +218,10 @@ func TestTerraform(t *testing.T) {
 		if template == "" {
 			template = tf.Template()
 		}
-		assert.Equal(t, tc.ExpectedEnabled, tf.Enabled(), tc.Case)
+		// the context check lives in the activation gate; Enabled only runs
+		// once the gate passed
+		enabled := tf.Activation().Active(env) && tf.Enabled()
+		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		var got = renderTemplate(env, template, tf)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}

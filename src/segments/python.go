@@ -83,6 +83,13 @@ func (p *Python) loadSpec() {
 	p.displayMode = p.options.String(DisplayMode, DisplayModeEnvironment)
 	p.Language.loadContext = p.loadContext
 	p.Language.inContext = p.inContext
+	// The declared triggers for the venv context: with none of these set (and
+	// no matching file or folder in the cwd), the segment gates off without
+	// probing. A venv that is only discoverable through pyvenv.cfg next to
+	// the python executable, with no environment variable exported and no
+	// python files around, no longer activates the segment - an accepted
+	// trade-off for skipping the probe in every unrelated directory.
+	p.contextEnvVars = []string{"VIRTUAL_ENV", "CONDA_ENV_PATH", "CONDA_DEFAULT_ENV"}
 }
 
 func (p *Python) loadContext() {
@@ -94,11 +101,8 @@ func (p *Python) loadContext() {
 		return
 	}
 
-	venvVars := []string{
-		"VIRTUAL_ENV",
-		"CONDA_ENV_PATH",
-		"CONDA_DEFAULT_ENV",
-	}
+	// declared in loadSpec so the activation gate and this lookup stay in sync
+	venvVars := p.contextEnvVars
 
 	folderNameFallback := p.options.Bool(FolderNameFallback, true)
 	defaultVenvNames := p.options.StringArray(DefaultVenvNames, []string{

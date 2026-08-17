@@ -17,7 +17,10 @@ func (u *UI5Tooling) Enabled() bool {
 	return u.Language.Enabled()
 }
 
-// Activation implements the activation gate; see Language.activation.
+// Activation implements the activation gate; see Language.activation. The
+// default context mode resolves to Always: the context callback is a
+// depth-limited glob search through parent directories, which no condition
+// kind expresses (ProjectFiles match exact names only).
 func (u *UI5Tooling) Activation() Activation {
 	u.loadSpec()
 

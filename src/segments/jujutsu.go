@@ -49,6 +49,11 @@ func (jj *Jujutsu) Template() string {
 	return " \uf1fa{{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} "
 }
 
+// Activation gates on the repository marker shouldDisplay searches for.
+func (jj *Jujutsu) Activation() Activation {
+	return Activation{ProjectFiles: []string{".jj"}}
+}
+
 func (jj *Jujutsu) Enabled() bool {
 	displayStatus := jj.options.Bool(FetchStatus, false)
 

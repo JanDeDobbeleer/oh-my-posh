@@ -11,6 +11,12 @@ type SegmentType string
 // SegmentWriter is the interface used to define what and if to write to the prompt
 type SegmentWriter interface {
 	Enabled() bool
+	// Activation declares the cheap preconditions under which the writer can
+	// possibly be enabled; the engine skips Enabled() entirely when none of
+	// them holds (see runtime.Activation for the contract). Called after
+	// Init(), so implementations may consult their options. segments.Base
+	// provides the default (Always) implementation.
+	Activation() runtime.Activation
 	Template() string
 	SetText(text string)
 	SetIndex(index int)

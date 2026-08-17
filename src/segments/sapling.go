@@ -59,6 +59,11 @@ func (sl *Sapling) Template() string {
 	return " {{ if .Bookmark }}\uf097 {{ .Bookmark }}*{{ else }}\ue729 {{ .ShortHash }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} "
 }
 
+// Activation gates on the repository marker shouldDisplay searches for.
+func (sl *Sapling) Activation() Activation {
+	return Activation{ProjectFiles: []string{".sl"}}
+}
+
 func (sl *Sapling) Enabled() bool {
 	if !sl.shouldDisplay() {
 		return false

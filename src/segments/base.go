@@ -38,3 +38,10 @@ func (b *Base) Init(opts options.Provider, env runtime.Environment) {
 func (b *Base) CacheKey() (string, bool) {
 	return "", false
 }
+
+// Activation satisfies the SegmentWriter contract with the ungated default:
+// the segment always executes. Writers with a cheap, provable precondition
+// override this to let the engine skip their Enabled() probe entirely.
+func (b *Base) Activation() Activation {
+	return Activation{Always: true}
+}

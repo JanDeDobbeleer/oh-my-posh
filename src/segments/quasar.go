@@ -37,9 +37,7 @@ func (q *Quasar) Enabled() bool {
 	return true
 }
 
-// Activation implements the activation gate; see Language.activation. Quasar
-// declares project files (searched in parent directories), so this resolves
-// to Always.
+// Activation implements the activation gate; see Language.activation.
 func (q *Quasar) Activation() Activation {
 	q.loadSpec()
 

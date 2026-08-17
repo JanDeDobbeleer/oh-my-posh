@@ -87,11 +87,11 @@ func TestDockerFiles(t *testing.T) {
 		env.On("HasFiles", tc.Case).Return(true)
 		env.On("HasFiles", mock_.Anything).Return(false)
 
-		// the file presence check lives in the activation gate; Enabled only
-		// runs once the gate passed
+		// the activation gate and Enabled must agree: Enabled stays
+		// standalone-correct (Force and pinned data bypass the gate)
 		activation := docker.Activation()
-		enabled := activation.Active(env) && docker.Enabled()
-		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, activation.Active(env), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, docker.Enabled(), tc.Case)
 	}
 }
 

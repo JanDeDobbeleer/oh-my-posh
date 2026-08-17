@@ -148,12 +148,12 @@ func (l *Language) getName() string {
 	return base[:len(base)-3]
 }
 
-// Enabled decides whether the segment renders. It runs only when the
-// activation gate (see activation) passed - or was bypassed by Force or
-// pinned data - so the file/extension/folder presence checks the gate
-// already proved are not repeated here; what remains are the decisions the
-// gate cannot express (home directory, context callbacks) and the version
-// fetching.
+// Enabled decides whether the segment renders, and is standalone-correct:
+// it never assumes the activation gate (see activation) ran, because Force
+// and pinned data bypass the gate entirely. The presence checks the gate
+// also evaluates are re-verified here, which is near-free: the directory
+// listing and parent-path searches are memoized per invocation, so the gate
+// remains a pure skip-optimization.
 func (l *Language) Enabled() bool {
 	if l.name == "" {
 		l.name = l.getName()
@@ -173,10 +173,9 @@ func (l *Language) Enabled() bool {
 		return false
 	}
 
-	// The gate already established that a project file exists, but the
-	// segment needs the project root itself (InProjectDir, quasar's
-	// dependency fetching), so the search still runs; the runtime-level
-	// HasParentFilePath cache makes it a cache hit.
+	// Runs the search regardless of the gate: the segment needs the project
+	// root itself (InProjectDir, quasar's dependency fetching), and after a
+	// gate pass the runtime-level HasParentFilePath cache makes it a hit.
 	if len(l.projectFiles) != 0 && l.hasProjectFiles() {
 		enabled = true
 	}
@@ -195,13 +194,14 @@ func (l *Language) Enabled() bool {
 		case DisplayModeEnvironment:
 			enabled = l.inLanguageContext()
 		case DisplayModeFiles:
-			// the gate verified a matching file or folder in the cwd;
-			// re-checking here would duplicate it. Under Force the gate is
-			// skipped, but forced segments render regardless. A spec with
-			// neither extensions nor folders carries no gate at all, so
-			// nothing was verified: such a segment stays disabled, as it
-			// always was in files mode.
-			enabled = len(l.extensions) != 0 || len(l.folders) != 0
+			// Re-verified even though a passing gate implies a match: the
+			// gate is a skip-optimization, not a precondition Enabled may
+			// rely on - Force and pinned data bypass it entirely, and the
+			// gate's symlink-following project-file variant can pass where
+			// this segment's own search misses. The re-check is a map hit:
+			// the directory listing and parent-path searches are memoized
+			// per invocation.
+			enabled = l.hasLanguageFiles() || l.hasLanguageFolders()
 		case DisplayModeContext:
 			fallthrough
 		default:
@@ -326,7 +326,12 @@ func (l *Language) InProjectDir() bool {
 }
 
 func (l *Language) hasLanguageFolders() bool {
-	return slices.ContainsFunc(l.folders, l.env.HasFolder)
+	// joined with Pwd, matching the activation gate's folder check, so a
+	// caller whose PWD flag differs from the process cwd cannot get
+	// gate/Enabled divergence
+	return slices.ContainsFunc(l.folders, func(folder string) bool {
+		return l.env.HasFolder(filepath.Join(l.env.Pwd(), folder))
+	})
 }
 
 func (l *Language) setVersion() error {

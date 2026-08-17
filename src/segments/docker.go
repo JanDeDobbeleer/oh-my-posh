@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
@@ -90,7 +91,13 @@ func (d *Docker) Enabled() bool {
 	case DisplayModeContext:
 		return d.fetchContext()
 	case DisplayModeFiles:
-		// the file presence check lives in Activation
+		// Re-verified even though a passing gate implies a match: Force and
+		// pinned data bypass the gate, so Enabled must stay
+		// standalone-correct. The re-check is a hit on the memoized
+		// directory listing.
+		if !slices.ContainsFunc(d.extensions(), d.env.HasFiles) {
+			return false
+		}
 
 		// always respect the context fetching
 		if d.options.Bool(FetchContext, true) {

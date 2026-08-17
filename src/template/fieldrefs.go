@@ -38,6 +38,11 @@ func (refs *Refs) recordSegment(segment, field string) {
 // patching the renderer applies (see patchTemplate), so the shape analyzed is
 // the shape executed. It never fails: anything the walk cannot follow flips
 // the corresponding opaque flag on the result instead.
+//
+// Results of this analysis are persisted in the session cache (see
+// config.ResolveFieldSets): any change to what this function covers or
+// reports must be accompanied by a bump of config's fieldSetAnalysisVersion
+// so stale persisted stamps refresh.
 func AnalyzeFields(text string) (refs *Refs) {
 	refs = &Refs{
 		Own:            make(map[string]bool),

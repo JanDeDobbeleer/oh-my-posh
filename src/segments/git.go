@@ -128,8 +128,12 @@ var (
 		"Working", "Staging", "Ahead", "Behind", "BranchStatus", "Upstream", "UpstreamGone",
 		"Hash", "ShortHash", "Rebase", "Merge", "CherryPick", "Revert", "PushAhead", "PushBehind",
 	}
-	gitPushStatusFields   = []string{"PushAhead", "PushBehind"}
-	gitUpstreamIconFields = []string{"UpstreamIcon", "UpstreamURL", "RawUpstreamURL"}
+	gitPushStatusFields = []string{"PushAhead", "PushBehind"}
+	// Upstream maps to both units: the status probe populates it in normal
+	// repos, but the bare-repo path (getBareRepoInfo) only fills it under
+	// the upstream-icon probe, so a bare-repo template referencing
+	// .Upstream must trigger that probe as well.
+	gitUpstreamIconFields = []string{"UpstreamIcon", "UpstreamURL", "RawUpstreamURL", "Upstream"}
 	gitUserFields         = []string{"User"}
 	gitBareFields         = []string{"IsBare"}
 )

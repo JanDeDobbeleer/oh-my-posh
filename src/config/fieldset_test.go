@@ -7,8 +7,10 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -113,6 +115,83 @@ func TestResolveFieldSets(t *testing.T) {
 				},
 			},
 			ExpectedFields:     []string{"HEAD", "User"},
+			ExpectedAnalyzable: true,
+		},
+		{
+			Case: "style template counts toward the segment",
+			Config: &Config{
+				Blocks: []*Block{{Segments: []*Segment{
+					{Type: GIT, Template: "{{ .HEAD }}", Style: "{{ if .Working.Changed }}powerline{{ end }}"},
+				}}},
+			},
+			ExpectedFields:     []string{"HEAD", "Working"},
+			ExpectedAnalyzable: true,
+		},
+		{
+			Case: "templated option defeats own analysis",
+			Config: &Config{
+				Blocks: []*Block{{Segments: []*Segment{
+					{
+						Type:     GIT,
+						Template: "{{ .HEAD }}",
+						Options:  options.Map{"branch_template": "{{ trunc 25 .Branch }}"},
+					},
+				}}},
+			},
+			ExpectedFields:     []string{"HEAD"},
+			ExpectedAnalyzable: false,
+		},
+		{
+			Case: "cross-segment reference inside another segment's option counts",
+			Config: &Config{
+				Blocks: []*Block{{Segments: []*Segment{
+					{Type: GIT, Template: "{{ .HEAD }}"},
+					{
+						Type:     TEXT,
+						Template: "x",
+						Options:  options.Map{"custom": "{{ .Segments.Git.Working.Changed }}"},
+					},
+				}}},
+			},
+			ExpectedFields:     []string{"HEAD", "Working"},
+			ExpectedAnalyzable: true,
+		},
+		{
+			Case: "nested templated option defeats own analysis",
+			Config: &Config{
+				Blocks: []*Block{{Segments: []*Segment{
+					{
+						Type:     GIT,
+						Template: "{{ .HEAD }}",
+						Options:  options.Map{"mapped": map[string]any{"key": "{{ .Env.FOO }}"}},
+					},
+				}}},
+			},
+			ExpectedFields:     []string{"HEAD"},
+			ExpectedAnalyzable: false,
+		},
+		{
+			Case: "block filler cross-reference counts",
+			Config: &Config{
+				Blocks: []*Block{{
+					Filler: "{{ .Segments.Git.Ahead }}",
+					Segments: []*Segment{
+						{Type: GIT, Template: "{{ .HEAD }}"},
+					},
+				}},
+			},
+			ExpectedFields:     []string{"Ahead", "HEAD"},
+			ExpectedAnalyzable: true,
+		},
+		{
+			Case: "palette value cross-reference counts",
+			Config: &Config{
+				Blocks: []*Block{{Segments: []*Segment{
+					{Type: GIT, Template: "{{ .HEAD }}"},
+				}}},
+				Palette: color.Palette{"git": "{{ if gt .Segments.Git.Behind 0 }}#ff0000{{ else }}#00ff00{{ end }}"},
+			},
+			ExpectedFields:     []string{"Behind", "HEAD"},
 			ExpectedAnalyzable: true,
 		},
 		{
@@ -257,7 +336,7 @@ func TestFieldSetStampsSurviveGobRoundTrip(t *testing.T) {
 	restored := &Config{}
 	require.NoError(t, restored.Restore(cfg.Base64()))
 
-	assert.True(t, restored.FieldSetsResolved, "the stamped marker must round-trip")
+	assert.Equal(t, fieldSetAnalysisVersion, restored.FieldSetsVersion, "the stamped marker must round-trip")
 
 	segment := restored.Blocks[0].Segments[0]
 	assert.Equal(t, []string{"HEAD"}, segment.ReferencedFields)
@@ -273,7 +352,7 @@ func TestGetUpgradesLegacyUnstampedCacheEntry(t *testing.T) {
 	resetCache(t)
 
 	// a pre-stamp binary cached the config without field sets: same payload
-	// shape, FieldSetsResolved never set
+	// shape, FieldSetsVersion never set
 	legacy := &Config{
 		Blocks: []*Block{{Segments: []*Segment{
 			{Type: GIT, Template: "{{ .HEAD }}"},
@@ -284,7 +363,7 @@ func TestGetUpgradesLegacyUnstampedCacheEntry(t *testing.T) {
 	count := countAnalyzerCalls(t)
 
 	cfg := Get("", false)
-	assert.True(t, cfg.FieldSetsResolved, "a legacy entry must be analyzed on restore")
+	assert.Equal(t, fieldSetAnalysisVersion, cfg.FieldSetsVersion, "a legacy entry must be analyzed on restore")
 	assert.Positive(t, *count, "the legacy entry requires one analysis")
 	assert.Equal(t, []string{"HEAD"}, cfg.Blocks[0].Segments[0].ReferencedFields)
 
@@ -292,7 +371,7 @@ func TestGetUpgradesLegacyUnstampedCacheEntry(t *testing.T) {
 	*count = 0
 
 	cfg = Get("", false)
-	assert.True(t, cfg.FieldSetsResolved)
+	assert.Equal(t, fieldSetAnalysisVersion, cfg.FieldSetsVersion)
 	assert.Zero(t, *count, "the upgraded entry must restore stamped")
 	assert.Equal(t, []string{"HEAD"}, cfg.Blocks[0].Segments[0].ReferencedFields)
 }
@@ -322,5 +401,33 @@ func TestGetReloadRefreshesFieldSets(t *testing.T) {
 
 	cfg = Get(file, true)
 	assert.Equal(t, []string{"HEAD", "Working"}, cfg.Blocks[0].Segments[0].ReferencedFields)
-	assert.True(t, cfg.FieldSetsResolved)
+	assert.Equal(t, fieldSetAnalysisVersion, cfg.FieldSetsVersion)
+}
+
+func TestGetRefreshesOutdatedStampVersion(t *testing.T) {
+	resetCache(t)
+
+	// a config stamped by a different analyzer generation: same payload
+	// shape, mismatched version marker
+	outdated := &Config{
+		Blocks: []*Block{{Segments: []*Segment{
+			{Type: GIT, Template: "{{ .HEAD }}"},
+		}}},
+	}
+	outdated.ResolveFieldSets()
+	outdated.FieldSetsVersion = fieldSetAnalysisVersion - 1
+	cache.Session.Set(configKey, outdated.Base64(), cache.INFINITE)
+
+	count := countAnalyzerCalls(t)
+
+	cfg := Get("", false)
+	assert.Equal(t, fieldSetAnalysisVersion, cfg.FieldSetsVersion, "a version mismatch must re-analyze on restore")
+	assert.Positive(t, *count, "the outdated stamps require one re-analysis")
+
+	// the refresh re-stored the entry, so the next restore skips analysis
+	*count = 0
+
+	cfg = Get("", false)
+	assert.Equal(t, fieldSetAnalysisVersion, cfg.FieldSetsVersion)
+	assert.Zero(t, *count, "the refreshed entry must restore with current stamps")
 }

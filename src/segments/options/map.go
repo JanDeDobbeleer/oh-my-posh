@@ -30,6 +30,7 @@ func init() {
 
 type Provider interface {
 	Color(option Option, defaultValue color.Ansi) color.Ansi
+	Has(option Option) bool
 	Bool(option Option, defaultValue bool) bool
 	String(option Option, defaultValue string) string
 	Template(option Option, defaultValue string, context any) string
@@ -69,6 +70,14 @@ func debugf(format string, args ...any) {
 	}
 
 	log.Debug(fmt.Sprintf(format, args...))
+}
+
+// Has reports whether the option was explicitly configured, regardless of its
+// value. Writers use it to tell an explicit opt-in/opt-out apart from an
+// absent option whose behavior may be derived instead.
+func (m Map) Has(option Option) bool {
+	_, found := m[option]
+	return found
 }
 
 func (m Map) String(option Option, defaultValue string) string {

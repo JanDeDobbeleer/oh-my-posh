@@ -96,6 +96,7 @@ type Config struct {
 	AutoUpgrade             bool `json:"-" toml:"-" yaml:"-"`
 	EnableCursorPositioning bool `json:"enable_cursor_positioning,omitempty" toml:"enable_cursor_positioning,omitempty" yaml:"enable_cursor_positioning,omitempty"`
 	MigrateGlyphs           bool `json:"-" toml:"-" yaml:"-"`
+	fieldSetsResolved       bool
 }
 
 func (cfg *Config) MakeColors(env runtime.Environment) color.String {

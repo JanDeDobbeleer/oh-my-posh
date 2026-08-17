@@ -47,8 +47,14 @@ import Config from "@site/src/components/Config.js";
 
 ### Fetching information
 
-As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
-You can set the following options to `true` to enable fetching additional information (and populate the template).
+As doing multiple git calls can slow down the prompt experience, we only fetch what your config displays.
+Oh My Posh inspects your templates (including cross-segment references, extra prompts and the console title)
+and runs a probe only when a template references one of the fields it populates. For example, `.Working` or
+`.Staging` in a template enables the status fetch, `.UpstreamIcon` the upstream icon fetch, and so on.
+
+The `fetch_*` options below remain available as explicit overrides: setting one to `true` or `false` always
+wins over what the templates imply. When a template is too dynamic to analyze, only the explicitly enabled
+options fetch, matching the previous opt-in behavior.
 
 | Name                  |        Type         | Default | Description                                                                                                                                                                                                                                                                                                                           |
 | --------------------- | :-----------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

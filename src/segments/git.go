@@ -115,23 +115,43 @@ type Rebase struct {
 	Total   int
 }
 
+// Optional git probes and the template-visible fields each one populates.
+// A probe runs when its option is explicitly configured (the option always
+// wins) or, with the option absent, when the config's analyzed templates
+// reference one of the probe's fields; see shouldFetch.
+var (
+	// setStatus with setHEADStatus and setBranchStatus. PushAhead/PushBehind
+	// belong to the push probe but are listed here too: that probe only ever
+	// runs nested inside the status fetch, so referencing its fields must
+	// switch the status fetch on as well.
+	gitStatusFields = []string{
+		"Working", "Staging", "Ahead", "Behind", "BranchStatus", "Upstream", "UpstreamGone",
+		"Hash", "ShortHash", "Rebase", "Merge", "CherryPick", "Revert", "PushAhead", "PushBehind",
+	}
+	gitPushStatusFields   = []string{"PushAhead", "PushBehind"}
+	gitUpstreamIconFields = []string{"UpstreamIcon", "UpstreamURL", "RawUpstreamURL"}
+	gitUserFields         = []string{"User"}
+	gitBareFields         = []string{"IsBare"}
+)
+
 type Git struct {
-	configErr      error
-	config         *ini.File
-	Working        *GitStatus
-	Staging        *GitStatus
-	commit         *Commit
-	Rebase         *Rebase
-	User           *User
-	ShortHash      string
-	Hash           string
-	BranchStatus   string
-	HEAD           string
-	UpstreamIcon   string
-	UpstreamURL    string
-	Ref            string
-	RawUpstreamURL string
-	mainWorktree   string
+	configErr        error
+	config           *ini.File
+	referencedFields map[string]bool
+	Working          *GitStatus
+	Staging          *GitStatus
+	commit           *Commit
+	Rebase           *Rebase
+	User             *User
+	ShortHash        string
+	Hash             string
+	BranchStatus     string
+	HEAD             string
+	UpstreamIcon     string
+	UpstreamURL      string
+	Ref              string
+	RawUpstreamURL   string
+	mainWorktree     string
 	Scm
 	stashCount       int
 	Ahead            int
@@ -146,6 +166,7 @@ type Git struct {
 	CherryPick       bool
 	Revert           bool
 	poshgit          bool
+	fieldsAnalyzable bool
 	Detached         bool
 	IsBare           bool
 	UpstreamGone     bool
@@ -164,6 +185,38 @@ func (g *Git) Activation() Activation {
 	return Activation{ProjectFiles: []string{".git"}}
 }
 
+// SetReferencedFields receives the field set the config's templates can read
+// from this segment. The optional probes consult it through shouldFetch so
+// data no template displays is never fetched; analyzable false disables the
+// derivation and leaves only the explicit options.
+func (g *Git) SetReferencedFields(fields []string, analyzable bool) {
+	g.fieldsAnalyzable = analyzable
+
+	g.referencedFields = make(map[string]bool, len(fields))
+	for _, field := range fields {
+		g.referencedFields[field] = true
+	}
+}
+
+// shouldFetch gates an optional probe: an explicitly configured option wins,
+// preserving the historic opt-in/opt-out behavior unchanged. With the option
+// absent the probe runs iff the analyzed templates reference a field it
+// populates; without a trustworthy analysis the option default (off) applies,
+// so an unanalyzable config never fetches more than it used to.
+func (g *Git) shouldFetch(option options.Option, fields []string) bool {
+	if g.options.Has(option) {
+		return g.options.Bool(option, false)
+	}
+
+	if !g.fieldsAnalyzable {
+		return false
+	}
+
+	return slices.ContainsFunc(fields, func(field string) bool {
+		return g.referencedFields[field]
+	})
+}
+
 func (g *Git) Enabled() bool {
 	g.User = &User{}
 	g.Working = &GitStatus{}
@@ -173,7 +226,7 @@ func (g *Git) Enabled() bool {
 		return false
 	}
 
-	fetchUser := g.options.Bool(FetchUser, false)
+	fetchUser := g.shouldFetch(FetchUser, gitUserFields)
 	g.RepoName = g.repoName()
 
 	if g.IsBare {
@@ -190,7 +243,7 @@ func (g *Git) Enabled() bool {
 		return true
 	}
 
-	displayStatus := g.options.Bool(FetchStatus, false)
+	displayStatus := g.shouldFetch(FetchStatus, gitStatusFields)
 	if displayStatus && g.shouldIgnoreStatus() {
 		displayStatus = false
 	}
@@ -209,7 +262,7 @@ func (g *Git) Enabled() bool {
 		wg.Go(g.setHEADStatus)
 		wg.Go(g.setPushStatus)
 
-		if g.options.Bool(FetchUpstreamIcon, false) {
+		if g.shouldFetch(FetchUpstreamIcon, gitUpstreamIconFields) {
 			wg.Go(func() {
 				g.UpstreamIcon = g.getUpstreamIcon()
 			})
@@ -219,7 +272,7 @@ func (g *Git) Enabled() bool {
 	} else {
 		g.updateHEADReference()
 
-		if g.options.Bool(FetchUpstreamIcon, false) {
+		if g.shouldFetch(FetchUpstreamIcon, gitUpstreamIconFields) {
 			g.UpstreamIcon = g.getUpstreamIcon()
 		}
 	}
@@ -360,7 +413,7 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	if g.options.Bool(FetchBareInfo, false) {
+	if g.shouldFetch(FetchBareInfo, gitBareFields) {
 		g.IsBare = g.isBareRepo(gitdir)
 	}
 
@@ -436,7 +489,7 @@ func (g *Git) getBareRepoInfo() {
 	branchIcon := g.options.String(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
 	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
-	if !g.options.Bool(FetchUpstreamIcon, false) {
+	if !g.shouldFetch(FetchUpstreamIcon, gitUpstreamIconFields) {
 		return
 	}
 
@@ -562,7 +615,7 @@ func (g *Git) setBranchStatus() {
 }
 
 func (g *Git) setPushStatus() {
-	if !g.options.Bool(FetchPushStatus, false) {
+	if !g.shouldFetch(FetchPushStatus, gitPushStatusFields) {
 		return
 	}
 

@@ -2267,3 +2267,127 @@ func realGitPath(t *testing.T, dir, arg string) string {
 	out := runRealGit(t, dir, "rev-parse", "--path-format=absolute", arg)
 	return filepath.FromSlash(strings.TrimSpace(out))
 }
+
+func TestGitShouldFetch(t *testing.T) {
+	cases := []struct {
+		Options    options.Map
+		Case       string
+		Option     options.Option
+		Referenced []string
+		Fields     []string
+		Analyzable bool
+		Expected   bool
+	}{
+		{
+			Case:       "referenced status field fetches",
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Referenced: []string{"Working"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "push field switches status on",
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Referenced: []string{"PushAhead"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "unreferenced unit skips",
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Referenced: []string{"HEAD", "UpstreamIcon"},
+			Analyzable: true,
+			Expected:   false,
+		},
+		{
+			Case:       "explicit true wins over unreferenced",
+			Options:    options.Map{FetchStatus: true},
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Referenced: []string{"HEAD"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "explicit false wins over referenced",
+			Options:    options.Map{FetchStatus: false},
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Referenced: []string{"Working"},
+			Analyzable: true,
+			Expected:   false,
+		},
+		{
+			Case:       "unanalyzable falls back to the option default",
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Referenced: []string{"Working"},
+			Analyzable: false,
+			Expected:   false,
+		},
+		{
+			Case:       "unanalyzable keeps an explicit true",
+			Options:    options.Map{FetchStatus: true},
+			Option:     FetchStatus,
+			Fields:     gitStatusFields,
+			Analyzable: false,
+			Expected:   true,
+		},
+		{
+			Case:       "upstream icon derived",
+			Option:     FetchUpstreamIcon,
+			Fields:     gitUpstreamIconFields,
+			Referenced: []string{"UpstreamIcon"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "user derived",
+			Option:     FetchUser,
+			Fields:     gitUserFields,
+			Referenced: []string{"User"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "bare info derived",
+			Option:     FetchBareInfo,
+			Fields:     gitBareFields,
+			Referenced: []string{"IsBare"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "push status derived",
+			Option:     FetchPushStatus,
+			Fields:     gitPushStatusFields,
+			Referenced: []string{"PushBehind"},
+			Analyzable: true,
+			Expected:   true,
+		},
+		{
+			Case:       "empty analyzable set skips",
+			Option:     FetchUpstreamIcon,
+			Fields:     gitUpstreamIconFields,
+			Referenced: []string{},
+			Analyzable: true,
+			Expected:   false,
+		},
+	}
+
+	for _, tc := range cases {
+		opts := tc.Options
+		if opts == nil {
+			opts = options.Map{}
+		}
+
+		g := &Git{}
+		g.Init(opts, new(mock.Environment))
+		g.SetReferencedFields(tc.Referenced, tc.Analyzable)
+
+		assert.Equal(t, tc.Expected, g.shouldFetch(tc.Option, tc.Fields), tc.Case)
+	}
+}

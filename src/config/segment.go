@@ -5,8 +5,10 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
+	"hash/fnv"
 	"math"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -79,26 +81,32 @@ type Segment struct {
 	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
 	pendingData            json.RawMessage
-	Index                  int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
-	MinWidth               int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
-	Duration               time.Duration `json:"-" toml:"-" yaml:"-"`
-	NameLength             int           `json:"-" toml:"-" yaml:"-"`
-	MaxWidth               int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
-	Timeout                int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
-	Newline                bool          `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
-	Enabled                bool          `json:"-" toml:"-" yaml:"-"`
-	InvertPowerline        bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
-	Force                  bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	restored               bool          `json:"-" toml:"-" yaml:"-"`
-	Toggled                bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
-	Pending                bool          `json:"-" toml:"-" yaml:"-"`
-	Killed                 bool          `json:"-" toml:"-" yaml:"-"`
-	Interactive            bool          `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	MultilineKeepPrompt    bool          `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
-	foregroundResolved     bool
-	backgroundResolved     bool
-	needsEvaluated         bool
-	evaluated              bool
+	// referencedFields is the sorted, analysis-derived set of top-level fields
+	// the config's templates can read from this segment, stamped by
+	// Config.ResolveFieldSets and only trustworthy when fieldsAnalyzable is
+	// true; see FieldSetConsumer.
+	referencedFields    []string
+	Index               int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
+	MinWidth            int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
+	Duration            time.Duration `json:"-" toml:"-" yaml:"-"`
+	NameLength          int           `json:"-" toml:"-" yaml:"-"`
+	MaxWidth            int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	Timeout             int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	Newline             bool          `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	Enabled             bool          `json:"-" toml:"-" yaml:"-"`
+	InvertPowerline     bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	Force               bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+	restored            bool          `json:"-" toml:"-" yaml:"-"`
+	Toggled             bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+	Pending             bool          `json:"-" toml:"-" yaml:"-"`
+	Killed              bool          `json:"-" toml:"-" yaml:"-"`
+	Interactive         bool          `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt bool          `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
+	foregroundResolved  bool
+	backgroundResolved  bool
+	needsEvaluated      bool
+	evaluated           bool
+	fieldsAnalyzable    bool
 }
 
 // A nil presentFields map means presence was never recorded, in which case every
@@ -798,17 +806,46 @@ func (segment *Segment) setCache() {
 }
 
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
+	name := segment.Name()
+
+	// A field-set consuming writer fetches different data per referenced-field
+	// set, so a gob snapshot taken under one set must never be restored under
+	// another: fold the set's fingerprint into the key. Every other writer
+	// keeps its key untouched.
+	if _, ok := segment.writer.(FieldSetConsumer); ok {
+		name = strings.Join([]string{name, segment.fieldSetFingerprint()}, "_")
+	}
+
 	format := "segment_cache_%s"
 	switch segment.Cache.Strategy {
 	case Session:
-		return fmt.Sprintf(format, segment.Name()), cache.Session
+		return fmt.Sprintf(format, name), cache.Session
 	case Device:
-		return fmt.Sprintf(format, segment.Name()), cache.Device
+		return fmt.Sprintf(format, name), cache.Device
 	case Folder:
 		fallthrough
 	default:
-		return fmt.Sprintf(format, strings.Join([]string{segment.Name(), segment.folderKey()}, "_")), cache.Device
+		return fmt.Sprintf(format, strings.Join([]string{name, segment.folderKey()}, "_")), cache.Device
 	}
+}
+
+// fieldSetFingerprint condenses the stamped field set (and whether it is
+// trustworthy) into a short stable token for the segment cache key.
+// referencedFields is sorted by ResolveFieldSets, so equal sets always
+// fingerprint identically.
+func (segment *Segment) fieldSetFingerprint() string {
+	h := fnv.New64a()
+
+	if segment.fieldsAnalyzable {
+		_, _ = h.Write([]byte{1})
+	}
+
+	for _, field := range segment.referencedFields {
+		_, _ = h.Write([]byte(field))
+		_, _ = h.Write([]byte{0})
+	}
+
+	return strconv.FormatUint(h.Sum64(), 36)
 }
 
 func (segment *Segment) folderKey() string {

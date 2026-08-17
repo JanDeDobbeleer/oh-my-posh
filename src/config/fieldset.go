@@ -18,18 +18,25 @@ type FieldSetConsumer interface {
 	SetReferencedFields(fields []string, analyzable bool)
 }
 
+// analyzeFields is the template analyzer behind ResolveFieldSets, swappable
+// in tests to observe whether an analysis actually ran.
+var analyzeFields = template.AnalyzeFields
+
 // ResolveFieldSets analyzes every template in the config and stamps each
 // renderable segment with the set of top-level context fields those templates
 // can read from it - its own templates plus any .Segments.<name> reference
 // from another segment, an extra prompt, a tooltip, or the console title.
 // MapSegmentWithWriter hands the stamped set to writers implementing
-// FieldSetConsumer. Idempotent, so callers can resolve defensively.
+// FieldSetConsumer. Idempotent, so callers can resolve defensively: the
+// FieldSetsResolved marker survives the session cache's gob round trip
+// (Store stamps before encoding), making this a no-op on restored configs -
+// analysis runs once per config content per shell session, not per prompt.
 func (cfg *Config) ResolveFieldSets() {
-	if cfg.fieldSetsResolved {
+	if cfg.FieldSetsResolved {
 		return
 	}
 
-	cfg.fieldSetsResolved = true
+	cfg.FieldSetsResolved = true
 
 	analysis := newFieldAnalysis()
 
@@ -140,7 +147,7 @@ func (a *fieldAnalysis) analyzeSegment(segment *Segment) {
 	sources[0] = segment.analysisTemplate()
 
 	for _, text := range sources {
-		refs := template.AnalyzeFields(text)
+		refs := analyzeFields(text)
 
 		for field := range refs.Own {
 			ownSet[field] = true
@@ -155,7 +162,7 @@ func (a *fieldAnalysis) analyzeSegment(segment *Segment) {
 }
 
 func (a *fieldAnalysis) analyzeGlobal(text string) {
-	refs := template.AnalyzeFields(text)
+	refs := analyzeFields(text)
 
 	// the global context embeds .Segments, so losing track of the own dot
 	// here can hide a reference to any segment
@@ -205,6 +212,6 @@ func (a *fieldAnalysis) stamp(segment *Segment) {
 
 	slices.Sort(fields)
 
-	segment.referencedFields = fields
-	segment.fieldsAnalyzable = !a.opaque && !a.ownOpaque[segment] && !a.crossOpaque[name]
+	segment.ReferencedFields = fields
+	segment.FieldsAnalyzable = !a.opaque && !a.ownOpaque[segment] && !a.crossOpaque[name]
 }

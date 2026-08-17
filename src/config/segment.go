@@ -81,11 +81,13 @@ type Segment struct {
 	Needs                  []string       `json:"-" toml:"-" yaml:"-"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty" yaml:"foreground_templates,omitempty"`
 	pendingData            json.RawMessage
-	// referencedFields is the sorted, analysis-derived set of top-level fields
+	// ReferencedFields is the sorted, analysis-derived set of top-level fields
 	// the config's templates can read from this segment, stamped by
-	// Config.ResolveFieldSets and only trustworthy when fieldsAnalyzable is
-	// true; see FieldSetConsumer.
-	referencedFields    []string
+	// Config.ResolveFieldSets and only trustworthy when FieldsAnalyzable is
+	// true; see FieldSetConsumer. Exported (but kept out of every config
+	// format, like Needs) so the session cache's gob round trip preserves
+	// the analysis instead of forcing a re-run on every render.
+	ReferencedFields    []string      `json:"-" toml:"-" yaml:"-"`
 	Index               int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
 	MinWidth            int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
 	Duration            time.Duration `json:"-" toml:"-" yaml:"-"`
@@ -106,7 +108,7 @@ type Segment struct {
 	backgroundResolved  bool
 	needsEvaluated      bool
 	evaluated           bool
-	fieldsAnalyzable    bool
+	FieldsAnalyzable    bool `json:"-" toml:"-" yaml:"-"`
 }
 
 // A nil presentFields map means presence was never recorded, in which case every
@@ -831,16 +833,16 @@ func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
 
 // fieldSetFingerprint condenses the stamped field set (and whether it is
 // trustworthy) into a short stable token for the segment cache key.
-// referencedFields is sorted by ResolveFieldSets, so equal sets always
+// ReferencedFields is sorted by ResolveFieldSets, so equal sets always
 // fingerprint identically.
 func (segment *Segment) fieldSetFingerprint() string {
 	h := fnv.New64a()
 
-	if segment.fieldsAnalyzable {
+	if segment.FieldsAnalyzable {
 		_, _ = h.Write([]byte{1})
 	}
 
-	for _, field := range segment.referencedFields {
+	for _, field := range segment.ReferencedFields {
 		_, _ = h.Write([]byte(field))
 		_, _ = h.Write([]byte{0})
 	}

@@ -299,7 +299,7 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	// deliver a nil set with analyzable false: the consumer's option-default
 	// behavior, exactly as before the analysis existed.
 	if consumer, ok := writer.(FieldSetConsumer); ok {
-		consumer.SetReferencedFields(segment.referencedFields, segment.fieldsAnalyzable)
+		consumer.SetReferencedFields(segment.ReferencedFields, segment.FieldsAnalyzable)
 	}
 
 	segment.writer = writer

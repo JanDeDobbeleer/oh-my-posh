@@ -1,10 +1,15 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -148,8 +153,8 @@ func TestResolveFieldSets(t *testing.T) {
 		tc.Config.ResolveFieldSets()
 
 		segment := tc.Config.Blocks[0].Segments[0]
-		assert.Equal(t, tc.ExpectedFields, segment.referencedFields, tc.Case)
-		assert.Equal(t, tc.ExpectedAnalyzable, segment.fieldsAnalyzable, tc.Case)
+		assert.Equal(t, tc.ExpectedFields, segment.ReferencedFields, tc.Case)
+		assert.Equal(t, tc.ExpectedAnalyzable, segment.FieldsAnalyzable, tc.Case)
 	}
 }
 
@@ -221,4 +226,101 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 
 		env.AssertNotCalled(t, "RunCommand", "git", gitArgs)
 	}
+}
+
+// countAnalyzerCalls swaps the field-set analyzer for a counting wrapper so a
+// test can assert whether ResolveFieldSets actually analyzed anything.
+func countAnalyzerCalls(t *testing.T) *int {
+	t.Helper()
+
+	origAnalyzer := analyzeFields
+	t.Cleanup(func() { analyzeFields = origAnalyzer })
+
+	count := new(int)
+	analyzeFields = func(text string) *template.Refs {
+		*count++
+		return origAnalyzer(text)
+	}
+
+	return count
+}
+
+func TestFieldSetStampsSurviveGobRoundTrip(t *testing.T) {
+	cfg := &Config{
+		Blocks: []*Block{{Segments: []*Segment{
+			{Type: GIT, Template: "{{ .HEAD }}"},
+		}}},
+	}
+
+	cfg.ResolveFieldSets()
+
+	restored := &Config{}
+	require.NoError(t, restored.Restore(cfg.Base64()))
+
+	assert.True(t, restored.FieldSetsResolved, "the stamped marker must round-trip")
+
+	segment := restored.Blocks[0].Segments[0]
+	assert.Equal(t, []string{"HEAD"}, segment.ReferencedFields)
+	assert.True(t, segment.FieldsAnalyzable)
+
+	count := countAnalyzerCalls(t)
+
+	restored.ResolveFieldSets()
+	assert.Zero(t, *count, "a restored, stamped config must skip re-analysis")
+}
+
+func TestGetUpgradesLegacyUnstampedCacheEntry(t *testing.T) {
+	resetCache(t)
+
+	// a pre-stamp binary cached the config without field sets: same payload
+	// shape, FieldSetsResolved never set
+	legacy := &Config{
+		Blocks: []*Block{{Segments: []*Segment{
+			{Type: GIT, Template: "{{ .HEAD }}"},
+		}}},
+	}
+	cache.Session.Set(configKey, legacy.Base64(), cache.INFINITE)
+
+	count := countAnalyzerCalls(t)
+
+	cfg := Get("", false)
+	assert.True(t, cfg.FieldSetsResolved, "a legacy entry must be analyzed on restore")
+	assert.Positive(t, *count, "the legacy entry requires one analysis")
+	assert.Equal(t, []string{"HEAD"}, cfg.Blocks[0].Segments[0].ReferencedFields)
+
+	// the upgrade re-stored the entry, so the next restore skips analysis
+	*count = 0
+
+	cfg = Get("", false)
+	assert.True(t, cfg.FieldSetsResolved)
+	assert.Zero(t, *count, "the upgraded entry must restore stamped")
+	assert.Equal(t, []string{"HEAD"}, cfg.Blocks[0].Segments[0].ReferencedFields)
+}
+
+func TestGetReloadRefreshesFieldSets(t *testing.T) {
+	resetCache(t)
+
+	writeConfig := func(template string) string {
+		t.Helper()
+
+		file := filepath.Join(t.TempDir(), "reload.omp.json")
+		data := fmt.Sprintf(`{"version":3,"blocks":[{"type":"prompt","segments":[{"type":"git","template":"%s"}]}]}`, template)
+		require.NoError(t, os.WriteFile(file, []byte(data), 0o600))
+
+		return file
+	}
+
+	file := writeConfig("{{ .HEAD }}")
+	cache.Session.Set(SourceKey, file, cache.INFINITE)
+
+	cfg := Get(file, true)
+	assert.Equal(t, []string{"HEAD"}, cfg.Blocks[0].Segments[0].ReferencedFields)
+
+	// same session, edited config content: reload must re-analyze
+	file = writeConfig("{{ .HEAD }}{{ if .Working.Changed }}!{{ end }}")
+	cache.Session.Set(SourceKey, file, cache.INFINITE)
+
+	cfg = Get(file, true)
+	assert.Equal(t, []string{"HEAD", "Working"}, cfg.Blocks[0].Segments[0].ReferencedFields)
+	assert.True(t, cfg.FieldSetsResolved)
 }

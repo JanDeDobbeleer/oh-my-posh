@@ -374,6 +374,27 @@ func (term *Terminal) HasFolder(folder string) bool {
 	return isDir
 }
 
+// StatFile reports the modification time and size of the file at filePath.
+// It works the same way on every platform (a plain os.Stat), so a cache key
+// built from it invalidates correctly on Windows and darwin too, not just
+// unix.
+func (term *Terminal) StatFile(filePath string) (FileStat, error) {
+	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
+		return FileStat{}, errDataOnly
+	}
+	defer log.Trace(time.Now(), filePath)
+
+	info, err := os.Stat(filePath)
+	if err != nil {
+		log.Error(err)
+		return FileStat{}, err
+	}
+
+	stat := FileStat{ModTime: info.ModTime().Unix(), Size: info.Size()}
+	log.Debugf("%+v", stat)
+	return stat, nil
+}
+
 func (term *Terminal) ResolveSymlink(input string) (string, error) {
 	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
 		return "", errDataOnly

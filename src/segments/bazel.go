@@ -33,6 +33,11 @@ func (b *Bazel) Activation() Activation {
 func (b *Bazel) loadSpec() {
 	b.extensions = []string{"*.bazel", "*.bzl", "BUILD", "WORKSPACE", ".bazelrc", ".bazelversion"}
 	b.folders = []string{"bazel-bin", "bazel-out", "bazel-testlogs"}
+	// Not marked versionCacheable: the officially recommended way to install
+	// "bazel" is bazelisk, whose own file never changes but which resolves
+	// the actual Bazel release to run from the project's .bazelversion (one
+	// of this segment's own file triggers above) or MODULE.bazel - so the
+	// same resolved binary can report a different version per project.
 	b.tooling = map[string]*cmd{
 		bazelToolName: {
 			executable: bazelToolName,

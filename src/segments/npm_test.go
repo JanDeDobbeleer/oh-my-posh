@@ -23,6 +23,7 @@ func TestNpm(t *testing.T) {
 			extension:     "package.json",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		npm := &Npm{}
 		npm.Init(props, env)
 		assert.True(t, npm.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

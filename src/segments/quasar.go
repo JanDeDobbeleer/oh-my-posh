@@ -49,10 +49,14 @@ func (q *Quasar) loadSpec() {
 
 	q.projectFiles = []string{"quasar.config", "quasar.config.js"}
 	q.tooling = map[string]*cmd{
+		// quasar --version reports the Quasar CLI's own version, not the
+		// project's quasar/vite dependency versions - those are read
+		// separately from package-lock.json by fetchDependencies below.
 		quasarToolName: {
-			executable: quasarToolName,
-			args:       []string{versionFlagArg},
-			regex:      versionRegex,
+			executable:       quasarToolName,
+			args:             []string{versionFlagArg},
+			regex:            versionRegex,
+			versionCacheable: true,
 		},
 	}
 	q.defaultTooling = []string{quasarToolName}

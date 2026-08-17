@@ -48,7 +48,16 @@ func (p *Python) loadSpec() {
 	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
 	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
 
-	// Define all available tooling options for Python
+	// None of this tooling is marked versionCacheable. "pyenv" goes through
+	// getVersion (see pyenvVersion) so the flag would be inert there anyway,
+	// but the deeper reason applies to python/python3/py too: whichever of
+	// them pyenv is managing resolves from PATH to a shim script whose own
+	// path/mtime/size never change while its target version does, per
+	// directory (via .python-version or $PYENV_VERSION) - and there is no
+	// way at cmd-definition time to tell a pyenv shim apart from a real
+	// interpreter that would otherwise be safe to cache. "uv" is unambiguous:
+	// `uv run` resolves the interpreter from the current project's
+	// pyproject.toml/venv, so its output is directory-dependent by design.
 	p.tooling = map[string]*cmd{
 		"pyenv": {
 			getVersion: p.pyenvVersion,

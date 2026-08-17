@@ -23,6 +23,7 @@ func TestBuf(t *testing.T) {
 			extension:     "buf.yaml",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		b := &Buf{}
 		b.Init(props, env)
 		assert.True(t, b.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

@@ -24,6 +24,7 @@ func TestFlutter(t *testing.T) {
 		}
 
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		env.On("HasCommand", "fvm").Return(false)
 
 		d := &Flutter{}

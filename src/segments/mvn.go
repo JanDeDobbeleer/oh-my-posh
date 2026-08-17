@@ -26,6 +26,13 @@ func (m *Mvn) Activation() Activation {
 
 func (m *Mvn) loadSpec() {
 	m.extensions = []string{"pom.xml"}
+	// Not marked versionCacheable: Enabled() below can swap executable for a
+	// project's mvnw wrapper. A wrapper script is typically boilerplate
+	// copied verbatim across projects and its own mtime/size can stay
+	// unchanged even when .mvn/wrapper/maven-wrapper.properties is bumped to
+	// pin a different Maven distribution - so wrapper output depends on that
+	// project config, not on the script's own identity. Left off for the
+	// non-wrapper "mvn" case too since this is the same *cmd either way.
 	m.tooling = map[string]*cmd{
 		mvnToolName: {
 			executable: mvnToolName,

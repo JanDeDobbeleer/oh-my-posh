@@ -90,6 +90,11 @@ func (env *Environment) HasCommand(command string) bool {
 	return args.Bool(0)
 }
 
+func (env *Environment) StatFile(path string) (runtime.FileStat, error) {
+	args := env.Called(path)
+	return args.Get(0).(runtime.FileStat), args.Error(1)
+}
+
 func (env *Environment) RunCommand(command string, args ...string) (string, error) {
 	arguments := env.Called(command, args)
 	return arguments.String(0), arguments.Error(1)

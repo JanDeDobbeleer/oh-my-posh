@@ -62,6 +62,7 @@ func TestQuasar(t *testing.T) {
 			extension:     "quasar.config",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 
 		env.On("HasFilesInDir", "/usr/home/project", "package-lock.json").Return(tc.HasPackageLockFile)
 		fileInfo := &runtime.FileInfo{ParentFolder: "/usr/home/project", IsDir: true}

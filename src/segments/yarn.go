@@ -24,6 +24,12 @@ func (n *Yarn) Activation() Activation {
 func (n *Yarn) loadSpec() {
 	n.extensions = []string{fileName, "yarn.lock"}
 	n.tooling = map[string]*cmd{
+		// Not marked versionCacheable: when Corepack manages yarn (the
+		// officially recommended setup for yarn >=2), the "yarn" resolved
+		// from PATH is a Corepack shim whose own file never changes but which
+		// dispatches to whatever version the current project's package.json
+		// "packageManager" field pins - so the same resolved path/mtime/size
+		// can legitimately report different versions in different projects.
 		yarnToolName: {
 			executable: yarnToolName,
 			args:       []string{versionFlagArg},

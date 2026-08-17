@@ -25,9 +25,10 @@ func (d *Deno) loadSpec() {
 	d.extensions = []string{"*.js", "*.ts", "deno.json"}
 	d.tooling = map[string]*cmd{
 		denoToolName: {
-			executable: denoToolName,
-			args:       []string{versionFlagArg},
-			regex:      versionRegexPrefixed,
+			executable:       denoToolName,
+			args:             []string{versionFlagArg},
+			regex:            versionRegexPrefixed,
+			versionCacheable: true,
 		},
 	}
 	d.defaultTooling = []string{denoToolName}

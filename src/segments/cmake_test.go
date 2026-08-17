@@ -25,6 +25,7 @@ func TestCmake(t *testing.T) {
 			extension:     "*.cmake",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 		c := &Cmake{}
 		c.Init(props, env)
 		failMsg := fmt.Sprintf("Failed in case: %s", tc.Case)

@@ -40,6 +40,13 @@ func (g *Golang) loadSpec() {
 			regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?))`,
 			getVersion: g.getVersion,
 		},
+		// Not marked versionCacheable: with GOTOOLCHAIN=auto (the default
+		// since Go 1.21), `go version` itself - not just build/run/test -
+		// reads the nearest go.mod/go.work's go/toolchain directive and can
+		// switch to a different installed (or downloaded) toolchain before
+		// reporting its version. The same resolved "go" binary can therefore
+		// print a different version depending on the project it runs in;
+		// verified directly against this repo's toolchain.
 		"go": {
 			executable: "go",
 			args:       []string{versionArg},

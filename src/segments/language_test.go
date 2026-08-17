@@ -5,11 +5,13 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -628,6 +630,13 @@ type mockedLanguageParams struct {
 }
 
 func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, options.Map) {
+	// Each call sets up one test case, often sharing the same command name
+	// (and therefore the same mocked path/stat, so the same cache key) with
+	// other cases in the same table. Without this, a cache entry a later
+	// case's mock intends to miss would instead be served stale from an
+	// earlier case that happened to run first.
+	cache.Device.DeleteAll()
+
 	env := new(mock.Environment)
 	env.On("HasCommand", params.cmd).Return(true)
 	env.On("RunCommandWithEnv", params.cmd, params.envs, []string{params.versionParam}).Return(params.versionOutput, nil)
@@ -635,11 +644,225 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, opti
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
 
+	// Only consulted for a cmd with versionCacheable set; harmless, and
+	// registered with Maybe so callers that never reach that branch aren't
+	// forced to satisfy it. CommandPath/StatFile are deliberately not
+	// stubbed here (unlike Flags): python.go calls CommandPath itself for
+	// venv detection, unrelated to version caching, and a blanket stub here
+	// would shadow whatever value that test wants back. Segments that opted
+	// a command into versionCacheable get their CommandPath/StatFile stubs
+	// via mockVersionCacheable below instead.
+	env.On("Flags").Return(&runtime.Flags{}).Maybe()
+
 	props := options.Map{
 		options.FetchVersion: true,
 	}
 
 	return env, props
+}
+
+// mockVersionCacheable stubs CommandPath and StatFile for executable so a
+// versionCacheable command resolves through Language's keyed cache path
+// during a test. Tests for segments that did not opt any command into that
+// cache never need this.
+func mockVersionCacheable(env *mock.Environment, executable string) {
+	path := "/usr/bin/" + executable
+	env.On("CommandPath", executable).Return(path)
+	env.On("StatFile", path).Return(runtime.FileStat{ModTime: 1700000000, Size: 12345}, nil)
+}
+
+// cacheableUnicornLanguage returns a Language wired with one versionCacheable
+// command ("unicorn --version") plus the mocks needed to resolve it: env
+// must additionally stub RunCommandWithEnv per test.
+func cacheableUnicornLanguage(env *mock.Environment) (*Language, *cmd) {
+	env.On("Pwd").Return("/usr/home/project")
+	env.On("Home").Return("/usr/home")
+	env.On("Flags").Return(&runtime.Flags{})
+	env.On("HasCommand", "unicorn").Return(true)
+
+	command := &cmd{
+		executable:       "unicorn",
+		args:             []string{"--version"},
+		regex:            "(?P<version>.*)",
+		versionCacheable: true,
+	}
+
+	l := &Language{}
+	l.Init(options.Map{}, env)
+
+	return l, command
+}
+
+// TestLanguageVersionCommandCachedOnFirstRun covers the first-call path: the
+// command runs, and its output lands in the device cache under the key
+// versionCacheKey computes from the resolved executable's identity.
+func TestLanguageVersionCommandCachedOnFirstRun(t *testing.T) {
+	cache.Device.DeleteAll()
+
+	env := new(mock.Environment)
+	l, command := cacheableUnicornLanguage(env)
+	env.On("CommandPath", "unicorn").Return("/usr/bin/unicorn")
+	env.On("StatFile", "/usr/bin/unicorn").Return(runtime.FileStat{ModTime: 100, Size: 10}, nil)
+	env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return("unicorn 1.3.307", nil).Once()
+
+	out, err := l.runCommand(command)
+	require.NoError(t, err)
+	assert.Equal(t, "unicorn 1.3.307", out)
+
+	key, cacheable := l.versionCacheKey(command)
+	require.True(t, cacheable)
+
+	cached, found := cache.Device.Get[string](key)
+	require.True(t, found, "the first successful run should have cached under versionCacheKey's key")
+	assert.Equal(t, "unicorn 1.3.307", cached)
+
+	env.AssertNumberOfCalls(t, "RunCommandWithEnv", 1)
+}
+
+// TestLanguageVersionCommandCacheHitSkipsSecondRun covers the second-call
+// path: with the same resolved path/mtime/size/args, runCommand must serve
+// the cached output instead of invoking RunCommandWithEnv again - enforced
+// here by mocking it .Once(), which panics on a second call.
+func TestLanguageVersionCommandCacheHitSkipsSecondRun(t *testing.T) {
+	cache.Device.DeleteAll()
+
+	env := new(mock.Environment)
+	l, command := cacheableUnicornLanguage(env)
+	env.On("CommandPath", "unicorn").Return("/usr/bin/unicorn")
+	env.On("StatFile", "/usr/bin/unicorn").Return(runtime.FileStat{ModTime: 100, Size: 10}, nil)
+	env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return("unicorn 1.3.307", nil).Once()
+
+	first, err := l.runCommand(command)
+	require.NoError(t, err)
+
+	second, err := l.runCommand(command)
+	require.NoError(t, err)
+
+	assert.Equal(t, first, second)
+	env.AssertNumberOfCalls(t, "RunCommandWithEnv", 1)
+}
+
+// TestLanguageVersionCommandCacheKeyInvalidation covers the miss side of
+// versionCacheKey: any change to what the output actually depends on - the
+// resolved path, the executable's mtime, its size, or the args - must
+// produce a different key than a fixed baseline, so runCommand re-runs
+// instead of serving a stale value.
+func TestLanguageVersionCommandCacheKeyInvalidation(t *testing.T) {
+	baseline := &cmd{executable: "unicorn", args: []string{"--version"}, versionCacheable: true}
+	baselinePath := "/usr/bin/unicorn"
+	baselineStat := runtime.FileStat{ModTime: 100, Size: 10}
+
+	cases := []struct {
+		Case    string
+		Command *cmd
+		Path    string
+		Stat    runtime.FileStat
+	}{
+		{Case: "baseline", Command: baseline, Path: baselinePath, Stat: baselineStat},
+		{Case: "changed mtime", Command: baseline, Path: baselinePath, Stat: runtime.FileStat{ModTime: 200, Size: 10}},
+		{Case: "changed size", Command: baseline, Path: baselinePath, Stat: runtime.FileStat{ModTime: 100, Size: 20}},
+		{Case: "changed path", Command: baseline, Path: "/usr/local/bin/unicorn", Stat: baselineStat},
+		{
+			Case:    "changed args",
+			Command: &cmd{executable: "unicorn", args: []string{"--version", "--extra"}, versionCacheable: true},
+			Path:    baselinePath,
+			Stat:    baselineStat,
+		},
+	}
+
+	env := new(mock.Environment)
+	env.On("Flags").Return(&runtime.Flags{})
+
+	l := &Language{}
+	l.Init(options.Map{}, env)
+
+	keys := make(map[string]bool, len(cases))
+
+	for _, tc := range cases {
+		env.On("CommandPath", tc.Command.executable).Return(tc.Path).Once()
+		env.On("StatFile", tc.Path).Return(tc.Stat, nil).Once()
+
+		key, cacheable := l.versionCacheKey(tc.Command)
+		require.True(t, cacheable, tc.Case)
+
+		assert.False(t, keys[key], "%s: expected a key not seen before, got a collision", tc.Case)
+		keys[key] = true
+	}
+}
+
+// TestLanguageVersionCommandFailureNotCached covers the failure path: a
+// command that exits with an error must not populate the cache, so a
+// transient failure cannot pin a bad (or empty) result for the cache's TTL.
+func TestLanguageVersionCommandFailureNotCached(t *testing.T) {
+	cache.Device.DeleteAll()
+
+	env := new(mock.Environment)
+	l, command := cacheableUnicornLanguage(env)
+	env.On("CommandPath", "unicorn").Return("/usr/bin/unicorn")
+	env.On("StatFile", "/usr/bin/unicorn").Return(runtime.FileStat{ModTime: 100, Size: 10}, nil)
+	env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return("", &runtime.CommandError{ExitCode: 1})
+
+	_, err := l.runCommand(command)
+	require.Error(t, err)
+
+	key, cacheable := l.versionCacheKey(command)
+	require.True(t, cacheable)
+
+	_, found := cache.Device.Get[string](key)
+	assert.False(t, found, "a failed run must not populate the cache")
+}
+
+// TestLanguageVersionCommandNonCacheableNeverConsultsCache covers a cmd that
+// did not opt in: runCommand must never call CommandPath, StatFile, or
+// Flags for it - enforced by leaving those unstubbed, which panics if
+// runCommand calls them anyway - and never write to the cache.
+func TestLanguageVersionCommandNonCacheableNeverConsultsCache(t *testing.T) {
+	cache.Device.DeleteAll()
+
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/usr/home/project")
+	env.On("Home").Return("/usr/home")
+	env.On("HasCommand", "unicorn").Return(true)
+	env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return("unicorn 1.3.307", nil)
+
+	command := &cmd{executable: "unicorn", args: []string{"--version"}}
+
+	l := &Language{}
+	l.Init(options.Map{}, env)
+
+	out, err := l.runCommand(command)
+	require.NoError(t, err)
+	assert.Equal(t, "unicorn 1.3.307", out)
+
+	assert.Equal(t, "Store device is empty", cache.Device.Print())
+}
+
+// TestLanguageVersionCommandDataOnlyUntouched covers DataOnly: even for a
+// versionCacheable command whose HasCommand still answers true (as it would
+// not under a real DataOnly environment - see terminal.go - this isolates
+// the language-layer guard from that separate guarantee), runCommand must
+// skip the cache entirely while leaving the command's own execution
+// unaffected.
+func TestLanguageVersionCommandDataOnlyUntouched(t *testing.T) {
+	cache.Device.DeleteAll()
+
+	env := new(mock.Environment)
+	env.On("Pwd").Return("/usr/home/project")
+	env.On("Home").Return("/usr/home")
+	env.On("Flags").Return(&runtime.Flags{DataOnly: true})
+	env.On("HasCommand", "unicorn").Return(true)
+	env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return("unicorn 1.3.307", nil)
+
+	command := &cmd{executable: "unicorn", args: []string{"--version"}, versionCacheable: true}
+
+	l := &Language{}
+	l.Init(options.Map{}, env)
+
+	out, err := l.runCommand(command)
+	require.NoError(t, err)
+	assert.Equal(t, "unicorn 1.3.307", out, "DataOnly must not change the command's own result")
+
+	assert.Equal(t, "Store device is empty", cache.Device.Print())
 }
 
 func TestNodePackageVersion(t *testing.T) {

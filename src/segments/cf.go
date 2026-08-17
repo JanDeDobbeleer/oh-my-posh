@@ -25,9 +25,10 @@ func (c *Cf) loadSpec() {
 	c.extensions = []string{"manifest.yml", "mta.yaml"}
 	c.tooling = map[string]*cmd{
 		"cf": {
-			executable: "cf",
-			args:       []string{versionArg},
-			regex:      versionRegexPrefixed,
+			executable:       "cf",
+			args:             []string{versionArg},
+			regex:            versionRegexPrefixed,
+			versionCacheable: true,
 		},
 	}
 	c.defaultTooling = []string{"cf"}

@@ -29,6 +29,12 @@ func (g *Gradle) Enabled() bool {
 		executable = gradlew.Path
 	}
 
+	// Not marked versionCacheable: getVersion is always set below, so this
+	// command never takes runCommand's executable-invocation branch (the
+	// only one the flag affects) regardless of whether one is set. Left
+	// unset anyway to document why - the wrapper (gradlew) case this
+	// executable can resolve to reports a version pinned by the project's
+	// gradle-wrapper.properties, not by the script's own identity.
 	g.tooling = map[string]*cmd{
 		gradle: {
 			executable: executable,

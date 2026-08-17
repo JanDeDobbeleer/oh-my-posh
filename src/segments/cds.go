@@ -26,6 +26,11 @@ func (c *Cds) Activation() Activation {
 
 func (c *Cds) loadSpec() {
 	c.extensions = []string{".cdsrc.json", ".cdsrc-private.json", "*.cds"}
+	// Not marked versionCacheable: `cds --version` reports the @sap/cds
+	// dependency version resolved from the nearest node_modules (the exact
+	// line this regex targets), not just the cds-dk CLI's own version - so
+	// the same globally resolved binary reports a different version per
+	// project.
 	c.tooling = map[string]*cmd{
 		cdsToolName: {
 			executable: cdsToolName,

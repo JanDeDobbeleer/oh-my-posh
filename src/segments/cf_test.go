@@ -48,6 +48,7 @@ func TestCFSegment(t *testing.T) {
 			extension:     "manifest.yml",
 		}
 		env, props := getMockedLanguageEnv(params)
+		mockVersionCacheable(env, params.cmd)
 
 		props[DisplayMode] = tc.DisplayMode
 

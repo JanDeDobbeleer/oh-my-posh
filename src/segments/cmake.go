@@ -27,9 +27,10 @@ func (c *Cmake) loadSpec() {
 	c.extensions = []string{"*.cmake", "CMakeLists.txt"}
 	c.tooling = map[string]*cmd{
 		cmakeToolName: {
-			executable: cmakeToolName,
-			args:       []string{versionFlagArg},
-			regex:      `cmake version ` + versionRegex,
+			executable:       cmakeToolName,
+			args:             []string{versionFlagArg},
+			regex:            `cmake version ` + versionRegex,
+			versionCacheable: true,
 		},
 	}
 	c.defaultTooling = []string{cmakeToolName}

@@ -294,6 +294,14 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 		writer.Init(segment.Options, env)
 	}
 
+	// After Init, so the writer can layer the analyzed field set on top of a
+	// fully initialized state. Unstamped segments (config never resolved)
+	// deliver a nil set with analyzable false: the consumer's option-default
+	// behavior, exactly as before the analysis existed.
+	if consumer, ok := writer.(FieldSetConsumer); ok {
+		consumer.SetReferencedFields(segment.referencedFields, segment.fieldsAnalyzable)
+	}
+
 	segment.writer = writer
 
 	return nil

@@ -936,6 +936,13 @@ func newEngine(cfg *config.Config, env runtime.Environment) *Engine {
 
 	template.Init(env, cfg.Var, cfg.Maps)
 
+	// Stamp every segment with the field set its templates reference before
+	// anything executes: MapSegmentWithWriter hands the sets to writers that
+	// derive their fetches from them (see config.FieldSetConsumer). The
+	// session-cached config is rebuilt from gob each invocation, so this runs
+	// once per prompt render - a handful of small template parses.
+	cfg.ResolveFieldSets()
+
 	flags.HasExtra = cfg.DebugPrompt != nil ||
 		cfg.SecondaryPrompt != nil ||
 		cfg.TransientPrompt != nil ||

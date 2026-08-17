@@ -66,6 +66,10 @@ differs per shell:
 Requires PowerShell 6 or later for the background process; Windows PowerShell 5.1 and
 sessions in `ConstrainedLanguage` mode use a streaming process per prompt instead.
 
+Streaming is skipped entirely inside PowerShell Editor Services - the host behind the VS Code
+PowerShell extension and Neovim's PSES client - because that host runs its own pipelines from
+the idle hook streaming relies on. The prompt renders synchronously there.
+
 - **live updates**: the prompt repaints in place as pending segments resolve, even while
   you're already typing
 - **transient prompt**: streamed along with the primary prompt and cached, so pressing

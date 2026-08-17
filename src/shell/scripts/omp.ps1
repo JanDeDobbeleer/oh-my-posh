@@ -992,7 +992,35 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     function Set-PoshContext([bool]$originalStatus) {
     }
 
+    function Test-PoshEditorServicesHost {
+        # PSES is the only host that defines $psEditor. Read it via Get-Variable
+        # for the same reason as $global:_ompAsyncInit above: a bare read of an
+        # unset variable throws under Set-StrictMode.
+        if ($null -ne (Get-Variable -Name psEditor -Scope Global -ErrorAction Ignore -ValueOnly)) {
+            return $true
+        }
+
+        # $env:TERM_PROGRAM is deliberately not used as a fallback: it is also
+        # 'vscode' in VS Code's regular terminal, which runs a plain console
+        # host where streaming works.
+        return $Host.Name -eq 'Visual Studio Code Host' -or $Host.Name -eq 'PowerShell Editor Services Host'
+    }
+
     function Enable-PoshStreaming {
+        # PowerShell Editor Services - the host behind the VS Code PowerShell
+        # extension and nvim's PSES client - invokes its own synchronous
+        # pipelines from the same PSReadLine idle hook, and only pumps them
+        # while the runspace has event subscribers. Registering
+        # PowerShell.OnIdle below is therefore what creates a second pipeline
+        # invoker on the same runspace and the ~300ms race that
+        # DoConcurrentCheck aborts with "Pipelines cannot be run concurrently"
+        # (issue #7809). The exception is thrown from inside the host's own
+        # invocation, so script code can neither observe nor synchronize
+        # against it - streaming stays off and the prompt renders synchronously.
+        if (Test-PoshEditorServicesHost) {
+            return
+        }
+
         $global:_ompStreaming = $true
 
         if (-not $script:ServeSupported) {

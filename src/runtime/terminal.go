@@ -201,7 +201,15 @@ func (term *Terminal) dirIndex(dir string, dirEntries []fs.DirEntry) *dirIndex {
 	}
 
 	idx := newDirIndex(dirEntries)
-	term.dirIndexMap.Set(dir, idx)
+
+	// readDir deliberately never caches an empty listing - an empty directory
+	// is re-read on every probe - so an index built from one must not be
+	// cached either: a file appearing mid-render would show up in the fresh
+	// listing (and in linearMatch fallbacks) while a cached empty index kept
+	// answering false for the fast-path shapes.
+	if len(dirEntries) > 0 {
+		term.dirIndexMap.Set(dir, idx)
+	}
 
 	return idx
 }

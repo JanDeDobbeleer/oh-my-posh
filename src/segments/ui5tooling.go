@@ -33,11 +33,14 @@ func (u *UI5Tooling) loadSpec() {
 	u.extensions = []string{UI5ToolingYamlPattern}
 	u.displayMode = u.options.String(DisplayMode, DisplayModeContext)
 	u.tooling = map[string]*cmd{
+		// Not marked versionCacheable: the global @ui5/cli shim delegates to
+		// a project-local node_modules installation when one exists, so the
+		// same binary reports per-project versions its own identity cannot
+		// key.
 		ui5ToolName: {
-			executable:       ui5ToolName,
-			args:             []string{versionFlagArg},
-			regex:            versionRegexPrefixed,
-			versionCacheable: true,
+			executable: ui5ToolName,
+			args:       []string{versionFlagArg},
+			regex:      versionRegexPrefixed,
 		},
 	}
 	u.defaultTooling = []string{ui5ToolName}

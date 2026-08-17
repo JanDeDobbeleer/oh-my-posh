@@ -318,11 +318,14 @@ var languageDefinitions = map[string]languageDefinition{
 	"swift": {
 		extensions: []string{"*.swift", "*.SWIFT", "Podfile"},
 		tooling: map[string]*cmd{
+			// Not marked versionCacheable: on macOS /usr/bin/swift is an
+			// xcrun shim that dispatches per xcode-select/DEVELOPER_DIR, so
+			// the shim's identity stays fixed while the reported version
+			// follows the selected toolchain (the rustup-proxy class).
 			swiftToolName: {
-				executable:       swiftToolName,
-				args:             []string{versionFlagArg},
-				regex:            `Swift version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)((.|-)(?P<patch>[0-9]+|dev))?))`,
-				versionCacheable: true,
+				executable: swiftToolName,
+				args:       []string{versionFlagArg},
+				regex:      `Swift version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)((.|-)(?P<patch>[0-9]+|dev))?))`,
 			},
 		},
 		defaultTooling:     []string{swiftToolName},

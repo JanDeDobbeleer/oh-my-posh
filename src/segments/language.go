@@ -447,12 +447,12 @@ func (l *Language) runCommand(command *cmd) (string, error) {
 // executable path.
 //
 // The key mixes the resolved absolute path with the executable's mtime and
-// size and the exact arguments, so a PATH change, a reinstalled or upgraded
-// binary, or different args all produce a different key and therefore a
-// cache miss - invalidation follows from what the output depends on, not
-// from a guessed TTL. The TTL passed to cache.Set (see runCommand) exists
-// only so a device cache nobody prunes doesn't grow forever; it plays no
-// part in correctness.
+// size, the exact arguments, and any extra environment the command runs
+// with, so a PATH change, a reinstalled or upgraded binary, different args,
+// or different envs all produce a different key and therefore a cache miss -
+// invalidation follows from what the output depends on, not from a guessed
+// TTL. The TTL passed to cache.Set (see runCommand) exists only so a device
+// cache nobody prunes doesn't grow forever; it plays no part in correctness.
 func (l *Language) versionCacheKey(command *cmd) (string, bool) {
 	if !command.versionCacheable || l.env.Flags().DataOnly {
 		return "", false
@@ -473,6 +473,12 @@ func (l *Language) versionCacheKey(command *cmd) (string, bool) {
 
 	for _, arg := range command.args {
 		fmt.Fprintf(h, "\x00%s", arg)
+	}
+
+	// No cacheable cmd sets envs today, but the key must not silently
+	// under-specify one that does: the output can depend on them.
+	for _, env := range command.envs {
+		fmt.Fprintf(h, "\x00env:%s", env)
 	}
 
 	return fmt.Sprintf("version_%x", h.Sum64()), true

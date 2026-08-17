@@ -47,11 +47,15 @@ func (j *Java) loadSpec() {
 	}
 
 	j.tooling = map[string]*cmd{
+		// Not marked versionCacheable: on macOS /usr/bin/java is Apple's
+		// stub, resolving the actual JDK via java_home at run time - the
+		// stub's identity stays fixed while the reported version follows
+		// whichever JDK is installed/selected. The java_home cmd below stays
+		// cacheable because there the resolved path itself keys correctly.
 		javaToolName: {
-			executable:       javaToolName,
-			args:             []string{"-Xinternalversion"},
-			regex:            javaRegex,
-			versionCacheable: true,
+			executable: javaToolName,
+			args:       []string{"-Xinternalversion"},
+			regex:      javaRegex,
 		},
 	}
 	j.defaultTooling = []string{javaToolName}

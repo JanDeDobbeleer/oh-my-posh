@@ -87,7 +87,14 @@ type Segment struct {
 	// true; see FieldSetConsumer. Exported (but kept out of every config
 	// format, like Needs) so the session cache's gob round trip preserves
 	// the analysis instead of forcing a re-run on every render.
-	ReferencedFields    []string      `json:"-" toml:"-" yaml:"-"`
+	ReferencedFields []string `json:"-" toml:"-" yaml:"-"`
+	// HeuristicSources is the whole-config text corpus the fallback
+	// heuristic scans when FieldsAnalyzable is false - stamped (and
+	// gob-persisted) because the reference that defeated the analysis can
+	// live outside this segment, in texts the segment cannot reconstruct
+	// from its own fields. Nil for analyzable segments and for configs that
+	// never went through ResolveFieldSets.
+	HeuristicSources    []string      `json:"-" toml:"-" yaml:"-"`
 	Index               int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
 	MinWidth            int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
 	Duration            time.Duration `json:"-" toml:"-" yaml:"-"`
@@ -851,7 +858,7 @@ func (segment *Segment) fieldSetFingerprint() string {
 	}
 
 	if !segment.FieldsAnalyzable {
-		for _, source := range segment.heuristicSources() {
+		for _, source := range segment.fallbackSources() {
 			_, _ = h.Write([]byte(source))
 			_, _ = h.Write([]byte{0})
 		}

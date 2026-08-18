@@ -104,10 +104,6 @@
             "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
             "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
           ],
-          "options": {
-            "fetch_status": true,
-            "fetch_upstream_icon": true
-          },
           "style": "diamond",
           "template": "<#000000>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }} ",
           "type": "git"

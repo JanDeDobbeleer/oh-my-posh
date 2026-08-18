@@ -27,8 +27,7 @@
         {
           "foreground": "#48D1CC",
           "options": {
-            "branch_icon": "",
-            "fetch_upstream_icon": false
+            "branch_icon": ""
           },
           "style": "plain",
           "template": "HEAD:{{ .UpstreamIcon }}{{ .HEAD }} ",

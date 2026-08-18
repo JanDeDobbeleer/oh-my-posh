@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -191,14 +192,15 @@ func TestPoshGitSegment(t *testing.T) {
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", origin}).Return("github.com/cli", nil)
 
-		props := &options.Map{
-			FetchUpstreamIcon: tc.FetchUpstreamIcon,
-		}
-
 		g := &Git{
 			command: GITCOMMAND,
 		}
-		g.Init(props, env)
+		g.Init(options.Map{}, env)
+
+		// the upstream icon probe is derived from template references now
+		if tc.FetchUpstreamIcon {
+			g.SetReferencedFields(template.RefSet{Fields: gitUpstreamIconFields, Analyzable: true})
+		}
 
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {

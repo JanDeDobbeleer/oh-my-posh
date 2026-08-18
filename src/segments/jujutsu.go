@@ -37,12 +37,17 @@ func (s *JujutsuStatus) add(code byte) {
 	}
 }
 
+// jujutsuStatusFields lists what setJujutsuStatus populates: the single
+// probe this segment derives from its templates (see FieldRefs).
+var jujutsuStatusFields = []string{workingField, "ChangeID", "ChangeIDPrefix", "ChangeIDRest"}
+
 type Jujutsu struct {
 	Working        *JujutsuStatus
 	ChangeID       string
 	ChangeIDPrefix string
 	ChangeIDRest   string
 	Scm
+	FieldRefs
 }
 
 func (jj *Jujutsu) Template() string {
@@ -55,7 +60,7 @@ func (jj *Jujutsu) Activation() Activation {
 }
 
 func (jj *Jujutsu) Enabled() bool {
-	displayStatus := jj.options.Bool(FetchStatus, false)
+	displayStatus := jj.fetchUnit(jujutsuStatusFields...)
 
 	if !jj.shouldDisplay(displayStatus) {
 		return false

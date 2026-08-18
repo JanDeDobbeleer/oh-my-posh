@@ -23,9 +23,6 @@
         {
           "foreground": "#14A5AE",
           "powerline_symbol": "\ue0b0",
-          "options": {
-            "fetch_upstream_icon": true
-          },
           "style": "plain",
           "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"

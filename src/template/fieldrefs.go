@@ -1,9 +1,85 @@
 package template
 
 import (
+	"slices"
 	"strings"
 	"text/template/parse"
 )
+
+// RefSet is the field-reference information the config-level template
+// analysis derives for one segment, as delivered to writers that decide what
+// to fetch from it. Fields is always a trustworthy lower bound: every entry
+// is a genuine reference (own or cross-segment). Analyzable reports whether
+// it is also complete; when false, Sources carries the segment's raw
+// template and option texts and Referenced falls back to a conservative
+// substring heuristic over them.
+type RefSet struct {
+	Fields     []string
+	Sources    []string
+	Analyzable bool
+}
+
+// Referenced reports whether a data unit populating the given fields should
+// be fetched. Exact references always win. For an unanalyzable set the
+// heuristic scans the raw sources for each field name as a standalone
+// identifier (case-sensitive, non-identifier runes or text edges on both
+// sides), so laundering shapes that still name a field - $g := .Segments.Git
+// followed by $g.Working - keep fetching it, while sources that never
+// mention a unit's fields don't pay for it. The known limit: a truly opaque
+// shape naming no fields ({{ . }} printed whole) fetches nothing extra.
+func (r RefSet) Referenced(fields ...string) bool {
+	for _, field := range fields {
+		if slices.Contains(r.Fields, field) {
+			return true
+		}
+	}
+
+	if r.Analyzable {
+		return false
+	}
+
+	for _, field := range fields {
+		for _, source := range r.Sources {
+			if containsIdentifier(source, field) {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// containsIdentifier reports whether text contains word bounded by
+// non-identifier characters (or the text's edges), so "Ahead" never matches
+// inside "PushAhead". Field names are ASCII, making byte checks sufficient.
+func containsIdentifier(text, word string) bool {
+	if word == "" {
+		return false
+	}
+
+	for start := 0; ; {
+		idx := strings.Index(text[start:], word)
+		if idx < 0 {
+			return false
+		}
+
+		idx += start
+		end := idx + len(word)
+
+		startsWord := idx == 0 || !isIdentifierByte(text[idx-1])
+		endsWord := end == len(text) || !isIdentifierByte(text[end])
+
+		if startsWord && endsWord {
+			return true
+		}
+
+		start = idx + 1
+	}
+}
+
+func isIdentifierByte(b byte) bool {
+	return b == '_' || (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
+}
 
 // Refs is the outcome of statically analyzing template text for the top-level
 // context fields its rendering can touch. Own collects the fields referenced

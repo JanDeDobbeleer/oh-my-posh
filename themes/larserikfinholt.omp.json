@@ -37,9 +37,7 @@
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
           "options": {
-            "branch_template": "{{ trunc 25 .Branch }}",
-            "fetch_status": true,
-            "fetch_upstream_icon": true
+            "branch_template": "{{ trunc 25 .Branch }}"
           },
           "style": "powerline",
           "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",

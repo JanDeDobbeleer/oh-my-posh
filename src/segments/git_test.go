@@ -18,6 +18,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -524,13 +525,17 @@ func TestEnabledInBareLayout(t *testing.T) {
 		env.MockGitCommand(root+"/", "", "describe", "--tags", "--exact-match")
 		env.MockGitCommand(root+"/", "", "remote")
 
-		props := options.Map{}
-		if tc.FetchBareInfo {
-			props = options.Map{FetchBareInfo: true}
-		}
-
 		g := &Git{}
-		g.Init(props, env)
+		g.Init(options.Map{}, env)
+
+		// fetch_bare_info no longer exists: bare-repo detection derives from
+		// the config referencing .IsBare, so seed the refs the way
+		// ResolveFieldSets would.
+		refs := template.RefSet{Analyzable: true}
+		if tc.FetchBareInfo {
+			refs.Fields = []string{"IsBare"}
+		}
+		g.SetReferencedFields(refs)
 
 		assert.True(t, g.Enabled(), tc.Case)
 		assert.Equal(t, tc.FetchBareInfo, g.IsBare, tc.Case)
@@ -598,7 +603,8 @@ func TestIsBareRepoResolvesPointer(t *testing.T) {
 		}
 
 		g := &Git{}
-		g.Init(options.Map{FetchBareInfo: true}, env)
+		g.Init(options.Map{}, env)
+		g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
 
 		assert.True(t, g.shouldDisplay(), tc.Case)
 		assert.Equal(t, tc.ExpectedIsBare, g.IsBare, tc.Case)
@@ -629,7 +635,8 @@ func TestShouldDisplayInitializesWSLBeforeBareRepoDetection(t *testing.T) {
 	env.On("ConvertToWindowsPath", "/repo/").Return("C:/repo")
 
 	g := &Git{}
-	g.Init(options.Map{FetchBareInfo: true}, env)
+	g.Init(options.Map{}, env)
+	g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
 
 	assert.True(t, g.shouldDisplay())
 	assert.True(t, g.IsBare)
@@ -667,12 +674,10 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
 		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
 
-		props := options.Map{
-			FetchBareInfo: true,
-		}
-
 		g := &Git{}
-		g.Init(props, env)
+		g.Init(options.Map{}, env)
+		// bare info is derived: the config references .IsBare
+		g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
 
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {
@@ -1355,12 +1360,9 @@ func TestGitTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := options.Map{
-			FetchStatus: true,
-		}
 		env := new(mock.Environment)
 		tc.Git.env = env
-		tc.Git.options = props
+		tc.Git.options = options.Map{}
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Git), tc.Case)
 	}
 }
@@ -2155,11 +2157,9 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 			Ref:         "main",
 		}
 
-		props := options.Map{
-			FetchPushStatus: true,
-		}
-
-		g.Init(props, env)
+		g.Init(options.Map{}, env)
+		// push status is derived: the config references .PushAhead
+		g.SetReferencedFields(template.RefSet{Fields: []string{"PushAhead"}, Analyzable: true})
 
 		g.configOnce = sync.Once{}
 		g.configOnce.Do(func() {
@@ -2268,19 +2268,17 @@ func realGitPath(t *testing.T, dir, arg string) string {
 	return filepath.FromSlash(strings.TrimSpace(out))
 }
 
-func TestGitShouldFetch(t *testing.T) {
+func TestGitFetchUnits(t *testing.T) {
 	cases := []struct {
-		Options    options.Map
 		Case       string
-		Option     options.Option
 		Referenced []string
+		Sources    []string
 		Fields     []string
 		Analyzable bool
 		Expected   bool
 	}{
 		{
 			Case:       "referenced status field fetches",
-			Option:     FetchStatus,
 			Fields:     gitStatusFields,
 			Referenced: []string{"Working"},
 			Analyzable: true,
@@ -2288,7 +2286,6 @@ func TestGitShouldFetch(t *testing.T) {
 		},
 		{
 			Case:       "push field switches status on",
-			Option:     FetchStatus,
 			Fields:     gitStatusFields,
 			Referenced: []string{"PushAhead"},
 			Analyzable: true,
@@ -2296,49 +2293,13 @@ func TestGitShouldFetch(t *testing.T) {
 		},
 		{
 			Case:       "unreferenced unit skips",
-			Option:     FetchStatus,
 			Fields:     gitStatusFields,
 			Referenced: []string{"HEAD", "UpstreamIcon"},
 			Analyzable: true,
 			Expected:   false,
 		},
 		{
-			Case:       "explicit true wins over unreferenced",
-			Options:    options.Map{FetchStatus: true},
-			Option:     FetchStatus,
-			Fields:     gitStatusFields,
-			Referenced: []string{"HEAD"},
-			Analyzable: true,
-			Expected:   true,
-		},
-		{
-			Case:       "explicit false wins over referenced",
-			Options:    options.Map{FetchStatus: false},
-			Option:     FetchStatus,
-			Fields:     gitStatusFields,
-			Referenced: []string{"Working"},
-			Analyzable: true,
-			Expected:   false,
-		},
-		{
-			Case:       "unanalyzable falls back to the option default",
-			Option:     FetchStatus,
-			Fields:     gitStatusFields,
-			Referenced: []string{"Working"},
-			Analyzable: false,
-			Expected:   false,
-		},
-		{
-			Case:       "unanalyzable keeps an explicit true",
-			Options:    options.Map{FetchStatus: true},
-			Option:     FetchStatus,
-			Fields:     gitStatusFields,
-			Analyzable: false,
-			Expected:   true,
-		},
-		{
 			Case:       "upstream icon derived",
-			Option:     FetchUpstreamIcon,
 			Fields:     gitUpstreamIconFields,
 			Referenced: []string{"UpstreamIcon"},
 			Analyzable: true,
@@ -2346,7 +2307,6 @@ func TestGitShouldFetch(t *testing.T) {
 		},
 		{
 			Case:       "user derived",
-			Option:     FetchUser,
 			Fields:     gitUserFields,
 			Referenced: []string{"User"},
 			Analyzable: true,
@@ -2354,7 +2314,6 @@ func TestGitShouldFetch(t *testing.T) {
 		},
 		{
 			Case:       "bare info derived",
-			Option:     FetchBareInfo,
 			Fields:     gitBareFields,
 			Referenced: []string{"IsBare"},
 			Analyzable: true,
@@ -2362,7 +2321,6 @@ func TestGitShouldFetch(t *testing.T) {
 		},
 		{
 			Case:       "push status derived",
-			Option:     FetchPushStatus,
 			Fields:     gitPushStatusFields,
 			Referenced: []string{"PushBehind"},
 			Analyzable: true,
@@ -2370,24 +2328,55 @@ func TestGitShouldFetch(t *testing.T) {
 		},
 		{
 			Case:       "empty analyzable set skips",
-			Option:     FetchUpstreamIcon,
 			Fields:     gitUpstreamIconFields,
 			Referenced: []string{},
 			Analyzable: true,
 			Expected:   false,
 		},
+		{
+			// laundering shapes still name the field, so the substring
+			// heuristic keeps the probe alive
+			Case:     "unanalyzable heuristic catches a laundered reference",
+			Fields:   gitStatusFields,
+			Sources:  []string{"{{ $g := .Segments.Git }}{{ $g.Working.String }}"},
+			Expected: true,
+		},
+		{
+			Case:     "unanalyzable heuristic skips units never mentioned",
+			Fields:   gitStatusFields,
+			Sources:  []string{"{{ trunc 25 .Branch }}", "{{ .HEAD }}"},
+			Expected: false,
+		},
+		{
+			// PushAhead must not satisfy an Ahead lookup: identifier-bounded
+			Case:     "heuristic matches whole identifiers only",
+			Fields:   []string{"Ahead"},
+			Sources:  []string{"{{ .PushAhead }}"},
+			Expected: false,
+		},
+		{
+			// the documented limit: a whole-dot print names no fields
+			Case:     "truly opaque source fetches nothing",
+			Fields:   gitStatusFields,
+			Sources:  []string{"{{ . }}"},
+			Expected: false,
+		},
+		{
+			// exact cross-segment references stay authoritative even when
+			// the segment's own sources are unanalyzable
+			Case:       "unanalyzable still honors exact references",
+			Fields:     gitUserFields,
+			Referenced: []string{"User"},
+			Sources:    []string{"{{ trunc 25 .Branch }}"},
+			Expected:   true,
+		},
 	}
 
 	for _, tc := range cases {
-		opts := tc.Options
-		if opts == nil {
-			opts = options.Map{}
-		}
-
 		g := &Git{}
-		g.Init(opts, new(mock.Environment))
-		g.SetReferencedFields(tc.Referenced, tc.Analyzable)
+		g.Init(options.Map{}, new(mock.Environment))
+		g.SetReferencedFields(template.RefSet{Fields: tc.Referenced, Sources: tc.Sources, Analyzable: tc.Analyzable})
 
-		assert.Equal(t, tc.Expected, g.shouldFetch(tc.Option, tc.Fields), tc.Case)
+		assert.Equal(t, tc.Expected, g.fetchUnit(tc.Fields...), tc.Case)
 	}
 }

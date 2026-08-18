@@ -25,11 +25,16 @@ func (s *PlasticStatus) add(code string) {
 	}
 }
 
+// plasticStatusFields lists what setPlasticStatus populates: the single
+// probe this segment derives from its templates (see FieldRefs).
+var plasticStatusFields = []string{"Status", "Behind", "MergePending"}
+
 type Plastic struct {
 	Status                 *PlasticStatus
 	Selector               string
 	plasticWorkspaceFolder string
 	Scm
+	FieldRefs
 	Behind       bool
 	MergePending bool
 }
@@ -58,7 +63,7 @@ func (p *Plastic) Enabled() bool {
 	}
 
 	p.plasticWorkspaceFolder = wkdir.ParentFolder
-	displayStatus := p.options.Bool(FetchStatus, false)
+	displayStatus := p.fetchUnit(plasticStatusFields...)
 	p.setSelector()
 	if displayStatus {
 		p.setPlasticStatus()

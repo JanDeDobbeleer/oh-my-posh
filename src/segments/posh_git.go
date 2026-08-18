@@ -73,7 +73,7 @@ func (g *Git) hasPoshGitStatus() bool {
 
 	g.setBranchStatus()
 
-	if len(g.Upstream) != 0 && g.options.Bool(FetchUpstreamIcon, false) {
+	if len(g.Upstream) != 0 && g.fetchUnit(gitUpstreamIconFields...) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
 

@@ -173,9 +173,7 @@
         {
           "foreground": "#e0f8ff",
           "options": {
-            "branch_icon": "\ue725 ",
-            "fetch_status": true,
-            "fetch_upstream_icon": true
+            "branch_icon": "\ue725 "
           },
           "style": "plain",
           "template": "<#ffffff>[</>{{ .HEAD }}{{ if .Staging.Changed }}<#00AA00> \u25cf {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> \u25cf {{ .Working.String }}</>{{ end }}<#ffffff>]-</>",

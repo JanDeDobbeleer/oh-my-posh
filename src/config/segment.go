@@ -834,7 +834,10 @@ func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {
 // fieldSetFingerprint condenses the stamped field set (and whether it is
 // trustworthy) into a short stable token for the segment cache key.
 // ReferencedFields is sorted by ResolveFieldSets, so equal sets always
-// fingerprint identically.
+// fingerprint identically. An unanalyzable set fetches by the heuristic
+// over the raw sources instead, so those sources join the fingerprint -
+// two configs with identical (empty) field sets but different templated
+// content must never share a snapshot.
 func (segment *Segment) fieldSetFingerprint() string {
 	h := fnv.New64a()
 
@@ -845,6 +848,13 @@ func (segment *Segment) fieldSetFingerprint() string {
 	for _, field := range segment.ReferencedFields {
 		_, _ = h.Write([]byte(field))
 		_, _ = h.Write([]byte{0})
+	}
+
+	if !segment.FieldsAnalyzable {
+		for _, source := range segment.heuristicSources() {
+			_, _ = h.Write([]byte(source))
+			_, _ = h.Write([]byte{0})
+		}
 	}
 
 	return strconv.FormatUint(h.Sum64(), 36)

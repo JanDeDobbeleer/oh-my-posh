@@ -29,9 +29,6 @@ import Config from "@site/src/components/Config.js";
     ],
     template:
       "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}",
-    options: {
-      fetch_status: true,
-    },
   }}
 />
 
@@ -45,12 +42,12 @@ by leaving a like!
 
 ### Fetching information
 
-As doing multiple `cm` calls can slow down the prompt experience, we do not fetch information by default.
-You can set the following property to `true` to enable fetching additional information (and populate the template).
+As doing multiple `cm` calls can slow down the prompt experience, the status is fetched only when your
+templates reference one of its fields (`.Status`, `.Behind`, `.MergePending`): fetching is driven entirely
+by what you render. The `fetch_status` option no longer exists and is ignored silently in existing configs.
 
 | Name              |        Type         | Default | Description                                                                                                                                                                                                                                                      |
 | ----------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`    |      `boolean`      | `false` | fetch the local changes                                                                                                                                                                                                                                          |
 | `native_fallback` |      `boolean`      | `false` | when set to `true` and `cm.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native `cm` executable to fetch data. Not all information can be displayed in this case                                                        |
 | `status_formats`  | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides |
 

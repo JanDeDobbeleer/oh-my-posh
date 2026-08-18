@@ -15,9 +15,7 @@
           {
             "foreground": "#BFA8BF",
             "options": {
-              "branch_icon": "\ue725 ",
-              "fetch_status": true,
-              "fetch_upstream_icon": true
+              "branch_icon": "\ue725 "
             },
             "style": "diamond",
             "template": "<#fff>{{ .UpstreamIcon }}</>{{ .HEAD }}",

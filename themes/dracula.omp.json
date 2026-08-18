@@ -28,9 +28,7 @@
           "foreground": "#f8f8f2",
           "powerline_symbol": "\ue0b0",
           "options": {
-            "branch_icon": "",
-            "fetch_status": false,
-            "fetch_upstream_icon": true
+            "branch_icon": ""
           },
           "style": "powerline",
           "template": " \ue725 ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }}) ",

@@ -26,8 +26,7 @@
           "foreground": "#62beff",
           "options": {
             "branch_icon": "\uf418",
-            "branch_identical_icon": "\u2261",
-            "fetch_status": true
+            "branch_identical_icon": "\u2261"
           },
           "style": "plain",
           "template": "\u27e8{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \u2206{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}\u27e9",

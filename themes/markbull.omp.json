@@ -58,8 +58,6 @@
             "branch_icon": "\ue0a0 ",
             "branch_identical_icon": "\uf4c4 ",
             "commit_icon": "\uf417 ",
-            "fetch_status": true,
-            "fetch_upstream_icon": true,
             "git_icon": "\uf1d3 ",
             "github_icon": "\uf408 ",
             "gitlab_icon": "\uf296 ",

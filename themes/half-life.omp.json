@@ -35,7 +35,6 @@
             "branch_identical_icon": "",
             "cherry_pick_icon": "",
             "commit_icon": "",
-            "fetch_status": true,
             "merge_icon": "",
             "rebase_icon": "",
             "revert_icon": "",

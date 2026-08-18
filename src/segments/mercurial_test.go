@@ -6,6 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -135,9 +136,7 @@ A Added.File
 			IsDir:        true,
 		}
 
-		props := options.Map{
-			FetchStatus: true,
-		}
+		props := options.Map{}
 
 		env := new(mock.Environment)
 		env.On("InWSLSharedDrive").Return(false)
@@ -153,6 +152,8 @@ A Added.File
 
 		hg := &Mercurial{}
 		hg.Init(props, env)
+		// the status probe is derived from template references now
+		hg.SetReferencedFields(template.RefSet{Fields: mercurialStatusFields, Analyzable: true})
 
 		if tc.ExpectedWorking != nil {
 			tc.ExpectedWorking.Formats = map[string]string{}

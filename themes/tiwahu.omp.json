@@ -355,8 +355,6 @@
             "branch_icon": "\ue725 ",
             "cherry_pick_icon": "\ue29b ",
             "commit_icon": "\uf417 ",
-            "fetch_status": true,
-            "fetch_upstream_icon": false,
             "merge_icon": "\ue727 ",
             "no_commits_icon": "\uf0c3 ",
             "rebase_icon": "\ue728 ",

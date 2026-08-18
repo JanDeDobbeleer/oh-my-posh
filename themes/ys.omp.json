@@ -49,10 +49,7 @@
         {
           "style": "plain",
           "template": "<darkGray>on</> <white>git:</><cyan>{{ .HEAD }}</>{{ if .Working.Changed }}<red> x</>{{ end }} ",
-          "type": "git",
-          "options": {
-            "fetch_status": true
-          }
+          "type": "git"
         },
         {
           "foreground": "darkGray",

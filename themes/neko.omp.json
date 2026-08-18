@@ -26,8 +26,7 @@
           {
             "foreground": "#D0666F",
             "options": {
-              "branch_icon": "",
-              "fetch_status": false
+              "branch_icon": ""
             },
             "style": "plain",
             "template":  "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",

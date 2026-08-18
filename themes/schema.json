@@ -2063,40 +2063,10 @@
             "properties": {
               "options": {
                 "properties": {
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not.",
-                    "default": false
-                  },
                   "native_status": {
                     "type": "boolean",
                     "title": "Use the Native Status Engine",
                     "description": "Fetch the status information using the built-in engine instead of the git CLI (experimental, falls back to git automatically).",
-                    "default": false
-                  },
-                  "fetch_push_status": {
-                    "type": "boolean",
-                    "title": "Display Push Status",
-                    "description": "Display the push-remote ahead/behind information or not.",
-                    "default": false
-                  },
-                  "fetch_upstream_icon": {
-                    "type": "boolean",
-                    "title": "Display Upstream Icon",
-                    "description": "Display upstream icon or not.",
-                    "default": false
-                  },
-                  "fetch_bare_info": {
-                    "type": "boolean",
-                    "title": "Fetch info when in a bare repo",
-                    "description": "Fetch info when in a bare repo or not.",
-                    "default": false
-                  },
-                  "fetch_user": {
-                    "type": "boolean",
-                    "title": "Fetch the user",
-                    "description": "Fetch the current configured user for the repository.",
                     "default": false
                   },
                   "disable_with_jj": {
@@ -2576,12 +2546,6 @@
                     "description": "Minimum length of the change ID to display.",
                     "default": 0
                   },
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the changes in the working copy.",
-                    "default": false
-                  },
                   "ignore_working_copy": {
                     "type": "boolean",
                     "title": "Ignore Working Copy",
@@ -2904,12 +2868,6 @@
             "properties": {
               "options": {
                 "properties": {
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not.",
-                    "default": false
-                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
                   },
@@ -3982,12 +3940,6 @@
             "properties": {
               "options": {
                 "properties": {
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not.",
-                    "default": false
-                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
                   },
@@ -4468,12 +4420,6 @@
             "properties": {
               "options": {
                 "properties": {
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not.",
-                    "default": true
-                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
                   },
@@ -4750,12 +4696,6 @@
             "properties": {
               "options": {
                 "properties": {
-                  "fetch_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not.",
-                    "default": false
-                  },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
                   },

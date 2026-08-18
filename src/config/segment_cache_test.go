@@ -116,11 +116,15 @@ func TestGitMainWorktreeRestoresLiveContextLazilyAfterSegmentCacheHit(t *testing
 		adminDir       = commonDir + "/worktrees/linked"
 	)
 
+	// the snapshot source mirrors the executing segment's config exactly:
+	// an unanalyzable segment's cache key fingerprints its raw template
+	// sources, so a differing template would (correctly) miss the cache
 	segmentCache := &Cache{Duration: "5h", Strategy: Session}
 	source := &Segment{
-		Type:  GIT,
-		Alias: alias,
-		Cache: segmentCache,
+		Type:     GIT,
+		Alias:    alias,
+		Cache:    segmentCache,
+		Template: "{{ .MainWorktree }}|{{ .MainWorktree }}",
 		writer: &segments.Git{
 			IsWorkTree: true,
 		},

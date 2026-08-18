@@ -23,8 +23,7 @@
         {
           "foreground": "#D0666F",
           "options": {
-            "branch_icon": "",
-            "fetch_status": true
+            "branch_icon": ""
           },
           "style": "plain",
           "template": " <#5FAAE8>git:(</>{{ .HEAD }}{{ if .Working.Changed }} <#FFEB3B>{{ .Working.String }}</>{{ end }}<#5FAAE8>)</>{{ if or .Working.Changed .Staging.Changed }} <#FFEB3B>\u2717</>{{ end }}",

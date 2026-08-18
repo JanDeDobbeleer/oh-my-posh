@@ -251,6 +251,7 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 	gitArgs := append([]string{"-C", repoRoot, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, statusArgs...)
 
 	cases := []struct {
+		Options      options.Map
 		Case         string
 		Template     string
 		ExpectStatus bool
@@ -263,6 +264,22 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 		{
 			Case:         "working changes trigger the status probe",
 			Template:     "{{ .HEAD }}{{ if .Working.Changed }}!{{ end }}",
+			ExpectStatus: true,
+		},
+		{
+			// a templated option makes the segment unanalyzable; the
+			// heuristic still sees no status field named anywhere
+			Case:         "unanalyzable config without status mentions skips the probe",
+			Template:     "{{ .HEAD }}",
+			Options:      options.Map{"custom": "{{ .Env.POSH_UNUSED }}"},
+			ExpectStatus: false,
+		},
+		{
+			// unanalyzable, but the raw template still names Working: the
+			// substring heuristic keeps the probe alive
+			Case:         "unanalyzable config naming a status field probes",
+			Template:     "{{ .HEAD }}{{ if .Working.Changed }}!{{ end }}",
+			Options:      options.Map{"custom": "{{ .Env.POSH_UNUSED }}"},
 			ExpectStatus: true,
 		},
 	}
@@ -288,7 +305,7 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 
 		cfg := &Config{
 			Blocks: []*Block{{Segments: []*Segment{
-				{Type: GIT, Template: tc.Template},
+				{Type: GIT, Template: tc.Template, Options: tc.Options},
 			}}},
 		}
 

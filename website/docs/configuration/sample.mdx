@@ -67,7 +67,6 @@ import Config from "@site/src/components/Config.js";
               " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }} ",
             options: {
               branch_template: "{{ trunc 25 .Branch }}",
-              fetch_status: true,
             },
             style: "powerline",
             type: "git",

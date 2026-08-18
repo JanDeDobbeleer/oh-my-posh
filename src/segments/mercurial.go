@@ -30,6 +30,12 @@ func (s *MercurialStatus) add(code string) {
 	}
 }
 
+// mercurialStatusFields lists what setMercurialStatus populates: the single
+// probe this segment derives from its templates (see FieldRefs).
+var mercurialStatusFields = []string{
+	workingField, "LocalCommitNumber", "ChangeSetID", "ChangeSetIDShort", "Branch", "Bookmarks", "Tags", "IsTip",
+}
+
 type Mercurial struct {
 	Working           *MercurialStatus
 	LocalCommitNumber string
@@ -39,7 +45,8 @@ type Mercurial struct {
 	Scm
 	Bookmarks []string
 	Tags      []string
-	IsTip     bool
+	FieldRefs
+	IsTip bool
 }
 
 func (hg *Mercurial) Template() string {
@@ -59,7 +66,7 @@ func (hg *Mercurial) Enabled() bool {
 	statusFormats := hg.options.KeyValueMap(StatusFormats, map[string]string{})
 	hg.Working = &MercurialStatus{Formats: statusFormats}
 
-	displayStatus := hg.options.Bool(FetchStatus, false)
+	displayStatus := hg.fetchUnit(mercurialStatusFields...)
 	if displayStatus {
 		hg.setMercurialStatus()
 	}

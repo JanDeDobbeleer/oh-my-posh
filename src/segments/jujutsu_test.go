@@ -7,6 +7,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -169,7 +170,6 @@ R {renamed_file => new_file}`,
 			}
 
 			props := options.Map{
-				FetchStatus:    true,
 				ChangeIDMinLen: tc.ChangeIDMinLen,
 			}
 
@@ -181,6 +181,8 @@ R {renamed_file => new_file}`,
 
 			jj := &Jujutsu{}
 			jj.Init(props, env)
+			// the status probe is derived from template references now
+			jj.SetReferencedFields(template.RefSet{Fields: jujutsuStatusFields, Analyzable: true})
 
 			tc.ExpectedWorking.Formats = map[string]string{}
 

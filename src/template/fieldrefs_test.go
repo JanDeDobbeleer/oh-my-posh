@@ -173,3 +173,71 @@ func TestAnalyzeFields(t *testing.T) {
 		assert.Equal(t, tc.ExpectedOpaque, refs.Opaque, tc.Case)
 	}
 }
+
+func TestRefSetReferenced(t *testing.T) {
+	cases := []struct {
+		Case       string
+		Fields     []string
+		Sources    []string
+		Unit       []string
+		Analyzable bool
+		Expected   bool
+	}{
+		{
+			Case:       "analyzable exact hit",
+			Analyzable: true,
+			Fields:     []string{"Working"},
+			Unit:       []string{"Working", "Staging"},
+			Expected:   true,
+		},
+		{
+			Case:       "analyzable miss ignores sources",
+			Analyzable: true,
+			Fields:     []string{"HEAD"},
+			Sources:    []string{"{{ .Working }}"},
+			Unit:       []string{"Working"},
+			Expected:   false,
+		},
+		{
+			Case:     "heuristic catches a laundered reference",
+			Sources:  []string{"{{ $g := .Segments.Git }}{{ $g.Working.String }}"},
+			Unit:     []string{"Working"},
+			Expected: true,
+		},
+		{
+			Case:     "heuristic is identifier-bounded",
+			Sources:  []string{"{{ .PushAhead }}"},
+			Unit:     []string{"Ahead"},
+			Expected: false,
+		},
+		{
+			Case:     "heuristic misses a whole-dot print",
+			Sources:  []string{"{{ . }}"},
+			Unit:     []string{"Working"},
+			Expected: false,
+		},
+		{
+			Case:     "exact fields stay authoritative when unanalyzable",
+			Fields:   []string{"Working"},
+			Sources:  []string{"{{ .HEAD }}"},
+			Unit:     []string{"Working"},
+			Expected: true,
+		},
+		{
+			Case:     "heuristic matches at source edges",
+			Sources:  []string{"Working"},
+			Unit:     []string{"Working"},
+			Expected: true,
+		},
+		{
+			Case:     "empty set fetches nothing",
+			Unit:     []string{"Working"},
+			Expected: false,
+		},
+	}
+
+	for _, tc := range cases {
+		refs := RefSet{Fields: tc.Fields, Sources: tc.Sources, Analyzable: tc.Analyzable}
+		assert.Equal(t, tc.Expected, refs.Referenced(tc.Unit...), tc.Case)
+	}
+}

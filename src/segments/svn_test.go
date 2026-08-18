@@ -6,6 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -142,12 +143,11 @@ func TestSvnTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := options.Map{
-			FetchStatus: true,
-		}
 		env := new(mock.Environment)
 		tc.Svn.env = env
-		tc.Svn.options = props
+		tc.Svn.options = options.Map{}
+		// the status probe is derived from template references now
+		tc.Svn.SetReferencedFields(template.RefSet{Fields: svnStatusFields, Analyzable: true})
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Svn), tc.Case)
 	}
 }
@@ -228,14 +228,12 @@ R       Moved.File`,
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "relative-url"}).Return(tc.BranchOutput, nil)
 		env.On("RunCommand", "svn", []string{"status", ""}).Return(tc.StatusOutput, nil)
 
-		props := options.Map{
-			FetchStatus: true,
-		}
-
 		s := &Svn{
 			command: SVNCOMMAND,
 		}
-		s.Init(props, env)
+		s.Init(options.Map{}, env)
+		// the status probe is derived from template references now
+		s.SetReferencedFields(template.RefSet{Fields: svnStatusFields, Analyzable: true})
 
 		s.setSvnStatus()
 		if tc.ExpectedWorking == nil {

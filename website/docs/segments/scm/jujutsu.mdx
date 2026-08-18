@@ -20,7 +20,6 @@ import Config from "@site/src/components/Config.js";
     foreground: "#193549",
     background: "#ffeb3b",
     options: {
-      fetch_status: true,
       ignore_working_copy: false,
       fetch_ahead_counter: true,
       ahead_icon: "\u21e1",
@@ -33,12 +32,13 @@ import Config from "@site/src/components/Config.js";
 ### Fetching information
 
 As doing Jujutsu (jj) calls can slow down the prompt experience, we do not fetch information by default.
-Set `status_formats` to `true` to enable fetching additional information (and populate the template).
+Working-copy status is fetched when your templates reference one of its fields (`.Working`, `.ChangeID`,
+...): fetching is driven entirely by what you render. The `fetch_status` option no longer exists and is
+ignored silently in existing configs.
 
 | Name                  |        Type         | Default  | Description                                                                                                                                                                                                                                                      |
 | --------------------- | :-----------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `change_id_min_len`   |        `int`        |   `0`    | `ChangeID` will be at least this many characters, even if a shorter one would be unique                                                                                                                                                                          |
-| `fetch_status`        |      `boolean`      | `false`  | fetch the local changes                                                                                                                                                                                                                                          |
 | `ignore_working_copy` |      `boolean`      |  `true`  | don't snapshot/update the working copy                                                                                                                                                                                                                           |
 | `fetch_ahead_counter` |      `boolean`      | `false`  | fetch a counter for number of changes between working copy and closest bookmark                                                                                                                                                                                  |
 | `ahead_icon`          |      `string`       | `\u21e1` | icon/character between bookmark and ahead counter                                                                                                                                                                                                                |

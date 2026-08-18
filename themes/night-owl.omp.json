@@ -51,8 +51,6 @@
           "powerline_symbol": "\ue0b0",
           "options": {
             "branch_icon": "\ue725 ",
-            "fetch_status": true,
-            "fetch_upstream_icon": true,
             "mapped_branches": {
               "feat/*": "🚀 ",
               "bug/*": "🐛 "

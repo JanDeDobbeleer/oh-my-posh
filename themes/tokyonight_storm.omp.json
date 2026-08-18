@@ -51,7 +51,6 @@
           ],
           "template": "({{ .HEAD}})",
           "options": {
-            "fetch_status": true,
             "branch_icon": "\ue725 "
           }
         },

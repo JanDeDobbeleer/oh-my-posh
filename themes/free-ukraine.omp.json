@@ -47,10 +47,6 @@
           "background": "#0057b7",
           "foreground": "#ffd700",
           "powerline_symbol": "\ue0b0",
-          "options": {
-            "fetch_status": true,
-            "fetch_upstream_icon": true
-          },
           "style": "powerline",
           "template": " \uf1d3  {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\ueb4b {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} ",
           "type": "git"
@@ -65,10 +61,6 @@
           ],
           "foreground": "#0057b7",
           "powerline_symbol": "\ue0b0",
-          "options": {
-            "fetch_status": false,
-            "fetch_upstream_icon": false
-          },
           "style": "powerline",
           "template": "\uf105",
           "type": "git"

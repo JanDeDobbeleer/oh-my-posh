@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 func TestSetDir(t *testing.T) {
@@ -209,14 +210,16 @@ func TestSetHeadContext(t *testing.T) {
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(output, nil)
 		env.On("RunCommand", "sl", []string{"status"}).Return(tc.Output, nil)
 
-		props := &options.Map{
-			FetchStatus: tc.FetchStatus,
-		}
-
 		sl := &Sapling{
 			command: SAPLINGCOMMAND,
 		}
-		sl.Init(props, env)
+		sl.Init(options.Map{}, env)
+
+		// the status probe is derived from template references now: a config
+		// that renders .Working fetches, one that does not skips the scan
+		if tc.FetchStatus {
+			sl.SetReferencedFields(template.RefSet{Fields: saplingStatusFields, Analyzable: true})
+		}
 
 		sl.setHeadContext()
 		got := sl.Working.String()

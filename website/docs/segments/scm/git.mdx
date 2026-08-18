@@ -29,8 +29,6 @@ import Config from "@site/src/components/Config.js";
     template:
       "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf0c7 {{ .StashCount }}{{ end }}",
     options: {
-      fetch_status: true,
-      fetch_upstream_icon: true,
       untracked_modes: {
         "/Users/user/Projects/oh-my-posh/": "no",
       },
@@ -53,20 +51,15 @@ references, extra prompts, tooltips, fillers, palette values and the console tit
 when one of them references a field it populates. For example, `.Working` or `.Staging` in a template
 enables the status fetch, `.UpstreamIcon` the upstream icon fetch, and so on.
 
-The `fetch_*` options below remain available as explicit overrides: setting one to `true` or `false` always
-wins over what the templates imply. When a template is too dynamic to analyze, or the segment uses template
-syntax inside its options (`branch_template`, for example), only the explicitly enabled options fetch,
-matching the previous opt-in behavior.
+When a template is too dynamic to analyze exactly - template syntax inside an option value
+(`branch_template`, for example) - Oh My Posh conservatively scans the raw template and option texts for
+field names instead, so anything your config names still gets fetched. The one shape it cannot see through
+is a template that prints its whole context (`{{ . }}`) without naming any field.
 
 | Name                  |        Type         | Default | Description                                                                                                                                                                                                                                                                                                                           |
 | --------------------- | :-----------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`        |      `boolean`      | `false` | fetch the local changes                                                                                                                                                                                                                                                                                                               |
 | `native_status`       |      `boolean`      | `false` | fetch the status information using the built-in engine instead of the git CLI (experimental, falls back to git automatically). Falls back to the git CLI for sparse/split index, reftables, and submodule repositories                                                                                                                |
-| `fetch_push_status`   |      `boolean`      | `false` | fetch the push-remote ahead/behind information. Requires `fetch_status` to be enabled                                                                                                                                                                                                                                                 |
 | `ignore_status`       |     `[]string`      |         | do not fetch status for these repo's. Uses the repo's root folder and same logic as the [exclude_folders][exclude_folders] property                                                                                                                                                                                                   |
-| `fetch_upstream_icon` |      `boolean`      | `false` | fetch upstream icon                                                                                                                                                                                                                                                                                                                   |
-| `fetch_bare_info`     |      `boolean`      | `false` | fetch bare repo info                                                                                                                                                                                                                                                                                                                  |
-| `fetch_user`          |   [`User`](#user)   | `false` | fetch the current configured user for the repository                                                                                                                                                                                                                                                                                  |
 | `untracked_modes`     | `map[string]string` |         | map of repo's where to override the default [untracked files mode][untracked]:<ul><li>`no`</li><li>`normal`</li><li>`all`</li></ul>For example `"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use `*` to set the mode instead of the repo path |
 | `ignore_submodules`   | `map[string]string` |         | map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`). For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode instead of the repo path                                                     |
 | `native_fallback`     |      `boolean`      | `false` | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native `git` executable to fetch data. Not all information can be displayed in this case                                                                                                                           |
@@ -148,7 +141,7 @@ matching the previous opt-in behavior.
 | `.WorktreeCount`  | `int`               | the worktree count                                                                                                               |
 | `.IsWorkTree`     | `boolean`           | if in a worktree repo or not                                                                                                     |
 | `.MainWorktree`   | `string`            | the absolute path to the main worktree; empty unless the current repository is a linked worktree                                 |
-| `.IsBare`         | `boolean`           | if in a bare repo or not, only set when `fetch_bare_info` is set to `true`                                                       |
+| `.IsBare`         | `boolean`           | if in a bare repo or not, fetched when referenced in a template                                                                  |
 | `.Dir`            | `string`            | the repository's root directory                                                                                                  |
 | `.RelativeDir`    | `string`            | the current directory relative to the root directory                                                                             |
 | `.Kraken`         | `string`            | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
@@ -158,7 +151,7 @@ matching the previous opt-in behavior.
 | `.Rebase`         | `Rebase`            | contains the relevant information when in a rebase                                                                               |
 | `.CherryPick`     | `boolean`           | true when in a cherry pick                                                                                                       |
 | `.Revert`         | `boolean`           | true when in a revert                                                                                                            |
-| `.User`           | `User`              | the current configured user (requires `fetch_user` to be enabled)                                                                |
+| `.User`           | `User`              | the current configured user, fetched when referenced in a template                                                               |
 | `.Remotes`        | `map[string]string` | a map of remote names to their URLs                                                                                              |
 | `.LatestTag`      | `string`            | the latest tag name                                                                                                              |
 
@@ -246,7 +239,6 @@ not limited to what `Write-GitStatus` prints, and nothing relies on ANSI escape 
     template:
       "[{{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Staging.Changed }} +{{ .Staging.Added }} ~{{ .Staging.Modified }} -{{ .Staging.Deleted }}{{ if gt .Staging.Unmerged 0 }} !{{ .Staging.Unmerged }}{{ end }}{{ end }}{{ if and .Staging.Changed .Working.Changed }} |{{ end }}{{ if .Working.Changed }} +{{ add .Working.Added .Working.Untracked }} ~{{ .Working.Modified }} -{{ .Working.Deleted }}{{ if gt .Working.Unmerged 0 }} !{{ .Working.Unmerged }}{{ end }}{{ end }}{{ if .Working.Changed }} !{{ else if .Staging.Changed }} ~{{ end }}]",
     options: {
-      fetch_status: true,
       source: "pwsh",
     },
   }}

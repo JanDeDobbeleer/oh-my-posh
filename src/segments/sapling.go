@@ -43,6 +43,10 @@ const (
 	SLCOMMITTEMPLATE = "no:{node}\nns:{sl_node}\nnd:{sl_date}\nun:{sl_user}\nbm:{activebookmark}\ndn:{desc|firstline}"
 )
 
+// saplingStatusFields lists what the `sl status` scan populates: the single
+// probe this segment derives from its templates (see FieldRefs).
+var saplingStatusFields = []string{workingField}
+
 type Sapling struct {
 	Working     *SaplingStatus
 	ShortHash   string
@@ -52,6 +56,7 @@ type Sapling struct {
 	Bookmark    string
 	Description string
 	Scm
+	FieldRefs
 	New bool
 }
 
@@ -122,7 +127,7 @@ func (sl *Sapling) setHeadContext() {
 	statusFormats := sl.options.KeyValueMap(StatusFormats, map[string]string{})
 	sl.Working = &SaplingStatus{Formats: statusFormats}
 
-	displayStatus := sl.options.Bool(FetchStatus, true)
+	displayStatus := sl.fetchUnit(saplingStatusFields...)
 	if !displayStatus {
 		return
 	}

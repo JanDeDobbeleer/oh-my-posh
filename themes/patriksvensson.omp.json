@@ -33,8 +33,6 @@
             "{{ if gt .Behind 0 }}green{{ end }}"
           ],
           "options": {
-            "fetch_status": true,
-            "fetch_upstream_icon": true,
             "github_icon": "\uf408 "
           },
           "style": "plain",

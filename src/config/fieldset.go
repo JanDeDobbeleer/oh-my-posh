@@ -8,16 +8,43 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
-// FieldSetConsumer is implemented by segment writers that adapt what they
-// fetch to the fields the config's templates actually reference.
-// SetReferencedFields runs right after Init when the config was analyzed
-// (see Config.ResolveFieldSets): fields is the sorted union of top-level
-// context fields any template in the config can read from this segment, and
-// analyzable reports whether that set can be trusted - false means at least
-// one template escaped the analysis, so the writer must fall back to its
-// option defaults.
+// FieldSetConsumer is implemented by segment writers whose data fetching is
+// derived entirely from the fields the config's templates reference.
+// SetReferencedFields runs right after Init: refs carries the sorted union
+// of top-level context fields any template in the config can read from this
+// segment (see Config.ResolveFieldSets), whether that union is complete
+// (analyzable), and - when it is not - the segment's raw template/option
+// texts backing template.RefSet's substring fallback heuristic.
 type FieldSetConsumer interface {
-	SetReferencedFields(fields []string, analyzable bool)
+	SetReferencedFields(refs template.RefSet)
+}
+
+// refSet assembles the delivery for FieldSetConsumer writers from the
+// stamped analysis. The heuristic sources are only materialized for an
+// unanalyzable set - they are recomputed from the segment's own (persisted)
+// config fields rather than stamped, so a session-cache round trip cannot
+// desynchronize them from the config content.
+func (segment *Segment) refSet() template.RefSet {
+	refs := template.RefSet{
+		Fields:     segment.ReferencedFields,
+		Analyzable: segment.FieldsAnalyzable,
+	}
+
+	if !segment.FieldsAnalyzable {
+		refs.Sources = segment.heuristicSources()
+	}
+
+	return refs
+}
+
+// heuristicSources returns every raw text the fallback heuristic may scan:
+// the template sources (with the writer default substituted for an empty
+// template) plus any templated option values.
+func (segment *Segment) heuristicSources() []string {
+	sources := segment.templateSources()
+	sources[0] = segment.analysisTemplate()
+
+	return append(sources, segment.templatedOptionValues()...)
 }
 
 // analyzeFields is the template analyzer behind ResolveFieldSets, swappable

@@ -33,7 +33,7 @@ Options are declared as `options.Option` string constants in the segment's `cons
 ```go
 const (
     BranchIcon    options.Option = "branch_icon"    // option name used in config
-    FetchStatus   options.Option = "fetch_status"
+    NativeStatus  options.Option = "native_status"
 )
 ```
 

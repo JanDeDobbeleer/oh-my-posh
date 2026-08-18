@@ -252,8 +252,10 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 
 	cases := []struct {
 		Options      options.Map
+		Extra        *Segment
 		Case         string
 		Template     string
+		ConsoleTitle string
 		ExpectStatus bool
 	}{
 		{
@@ -282,6 +284,36 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 			Options:      options.Map{"custom": "{{ .Env.POSH_UNUSED }}"},
 			ExpectStatus: true,
 		},
+		{
+			// the reviewer scenario: another segment launders the git
+			// reference through a variable, defeating exact analysis for
+			// git - the heuristic must scan that OTHER segment's text too,
+			// or the laundered .Working reference renders permanent zeros
+			Case:     "cross-segment laundering triggers the status probe",
+			Template: "{{ .HEAD }}",
+			Extra: &Segment{
+				Type:     TEXT,
+				Template: "{{ $g := .Segments.Git }}{{ $g.Working.String }}",
+			},
+			ExpectStatus: true,
+		},
+		{
+			// same shape from a global nil-context text
+			Case:         "console title laundering triggers the status probe",
+			Template:     "{{ .HEAD }}",
+			ConsoleTitle: "{{ $g := .Segments.Git }}{{ $g.Working.String }}",
+			ExpectStatus: true,
+		},
+		{
+			// laundering elsewhere must not force units nobody names
+			Case:     "cross-segment laundering without status mentions skips the probe",
+			Template: "{{ .HEAD }}",
+			Extra: &Segment{
+				Type:     TEXT,
+				Template: "{{ $g := .Segments.Git }}{{ $g.RepoName }}",
+			},
+			ExpectStatus: false,
+		},
 	}
 
 	for _, tc := range cases {
@@ -303,10 +335,16 @@ func TestGitFetchDerivedFromTemplates(t *testing.T) {
 		env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(false)
 		env.MockGitCommand(repoRoot, "", statusArgs...)
 
+		segments := []*Segment{
+			{Type: GIT, Template: tc.Template, Options: tc.Options},
+		}
+		if tc.Extra != nil {
+			segments = append(segments, tc.Extra)
+		}
+
 		cfg := &Config{
-			Blocks: []*Block{{Segments: []*Segment{
-				{Type: GIT, Template: tc.Template, Options: tc.Options},
-			}}},
+			Blocks:               []*Block{{Segments: segments}},
+			ConsoleTitleTemplate: tc.ConsoleTitle,
 		}
 
 		cfg.ResolveFieldSets()
@@ -447,4 +485,49 @@ func TestGetRefreshesOutdatedStampVersion(t *testing.T) {
 	cfg = Get("", false)
 	assert.Equal(t, fieldSetAnalysisVersion, cfg.FieldSetsVersion)
 	assert.Zero(t, *count, "the refreshed entry must restore with current stamps")
+}
+
+// TestFieldSetFingerprintDeterministic pins the segment cache key against
+// Go's randomized map iteration: an unanalyzable segment's fingerprint
+// hashes its heuristic sources, which include templated option values
+// collected from (nested) option maps - without sorted iteration the key
+// would change per process and the segment cache would never hit.
+func TestFieldSetFingerprintDeterministic(t *testing.T) {
+	build := func() *Segment {
+		// fresh maps per call, as an independently parsed config would have
+		return &Segment{
+			Type:     GIT,
+			Template: "{{ .HEAD }}",
+			Options: options.Map{
+				"cab": "{{ .Env.C }}",
+				"abc": "{{ .Env.A }}",
+				"bca": "{{ .Env.B }}",
+				"nested": map[string]any{
+					"zed":   "{{ .Env.Z }}",
+					"alpha": "{{ .Env.AA }}",
+					"mixed": map[any]any{
+						"two": "{{ .Env.TWO }}",
+						"one": "{{ .Env.ONE }}",
+					},
+				},
+			},
+		}
+	}
+
+	reference := build()
+
+	cfg := &Config{Blocks: []*Block{{Segments: []*Segment{reference}}}}
+	cfg.ResolveFieldSets()
+	require.False(t, reference.FieldsAnalyzable, "templated options must make the segment unanalyzable")
+
+	expected := reference.fieldSetFingerprint()
+
+	for range 32 {
+		segment := build()
+
+		fresh := &Config{Blocks: []*Block{{Segments: []*Segment{segment}}}}
+		fresh.ResolveFieldSets()
+
+		assert.Equal(t, expected, segment.fieldSetFingerprint(), "fingerprint must be stable across processes/parses")
+	}
 }

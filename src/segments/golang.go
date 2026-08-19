@@ -12,8 +12,8 @@ type Golang struct {
 }
 
 const (
-	ParseModFile  options.Option = "parse_mod_file"
-	ParseWorkFile options.Option = "parse_work_file"
+	ParseModFile    options.Option = "parse_mod_file"
+	ParseGoWorkFile options.Option = "parse_go_work_file"
 )
 
 func (g *Golang) Template() string {
@@ -44,7 +44,7 @@ func (g *Golang) getVersion() (string, error) {
 		return g.parseModFile()
 	}
 
-	if g.options.Bool(ParseWorkFile, false) {
+	if g.options.Bool(ParseGoWorkFile, false) {
 		return g.parseWorkFile()
 	}
 

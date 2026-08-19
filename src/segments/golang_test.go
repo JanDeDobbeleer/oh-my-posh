@@ -94,7 +94,7 @@ func TestGolang(t *testing.T) {
 		}
 
 		if tc.ParseGoWorkFile {
-			props[ParseWorkFile] = tc.ParseGoWorkFile
+			props[ParseGoWorkFile] = true
 			fileInfo := &runtime.FileInfo{
 				Path:         "../test/go.work",
 				ParentFolder: "./",

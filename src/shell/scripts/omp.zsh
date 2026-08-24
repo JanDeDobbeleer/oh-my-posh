@@ -615,7 +615,7 @@ function _omp_zle-line-init() {
     zvm_zle-line-init
   fi
 
-  (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
+  (( $+zle_bracketed_paste )) && print -r -n - "$zle_bracketed_paste[1]"
 
   local -i ret=0
   if [[ $POSH_MULTILINE_KEEPPROMPT == "true" ]]; then
@@ -640,7 +640,7 @@ function _omp_zle-line-init() {
     ret=$?
   fi
 
-  (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
+  (( $+zle_bracketed_paste )) && print -r -n - "$zle_bracketed_paste[2]"
 
   # We need this workaround because when the `filler` is set,
   # there will be a redundant blank line below the transient prompt if the input is empty.

@@ -57,6 +57,16 @@ linters:
       - third_party$
       - builtin$
       - examples$
+    rules:
+      # GetAccentColor's unix stub (colors_unix.go) always errors, so staticcheck
+      # sees the success path here as statically unreachable when analyzed under
+      # a unix GOOS - even though the darwin/windows implementations can succeed.
+      # An inline //nolint would be flagged as unused (nolintlint) on those
+      # platforms' builds, so exclude by config instead.
+      - path: cli/get.go
+        linters:
+          - staticcheck
+        text: SA4023
 formatters:
   enable:
     - gofmt

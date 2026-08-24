@@ -40,6 +40,25 @@
 - Never pass a possibly-zero pid to `kill -0` - `kill -0 0` signals the caller's own process group
   and always succeeds.
 
+## GLOB_SUBST footgun (verified 2026-08-24, issue #7816)
+
+- An unquoted `$var`/`$var[n]` expansion used as a command argument is normally only
+  word-split, never glob-expanded - **unless** the user's zsh has `setopt GLOB_SUBST`
+  active anywhere (their own config, a framework, a distro snippet). Under `GLOB_SUBST`
+  the expansion result is treated as if typed literally and becomes eligible for filename
+  generation.
+- `_omp_zle-line-init`'s bracketed-paste signal - `print -r -n - $zle_bracketed_paste[1]`,
+  copied from zsh's own `zshzle(1)` example - expands to the raw escape sequence
+  `\e[?2004h`. Under `GLOB_SUBST`, `[?2004h` parses as an unterminated bracket expression;
+  zsh's default `BAD_PATTERN` option turns that into a hard error
+  (`_omp_zle-line-init:N: bad pattern: ^[[?2004h`) that aborts the widget mid-execution,
+  before it reaches `zle .recursive-edit`.
+- Fix: quote the expansion (`"$zle_bracketed_paste[1]"`). Reproduces reliably with
+  `zsh -c 'setopt glob_subst; zle_bracketed_paste=($'"'"'\e[?2004h'"'"' ...); print -r -n - $zle_bracketed_paste[1]'`.
+- General lesson: any unquoted parameter expansion fed to a zsh command argument in this
+  codebase is a latent `GLOB_SUBST` footgun if its value can ever contain `[`, `?`, `*`,
+  or `#` - quote it even when the current default options make it look safe.
+
 ## Footguns
 
 - A redirection-only `exec` applies EVERY listed redirection to the shell permanently:

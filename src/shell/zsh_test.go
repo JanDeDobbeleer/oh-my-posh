@@ -42,6 +42,40 @@ func zshIsBufferComplete(t *testing.T) string {
 	return signature + body + "\n}\n"
 }
 
+// Under setopt GLOB_SUBST, an unquoted parameter expansion is eligible for
+// filename generation as if it had been typed literally. The bracketed-paste
+// escape sequence (\e[?2004h) then parses as an unterminated bracket
+// expression, which zsh's default BAD_PATTERN option turns into a hard
+// error - see https://github.com/JanDeDobbeleer/oh-my-posh/issues/7816.
+func TestZshBracketedPasteGlobSubst(t *testing.T) {
+	if _, err := exec.LookPath("zsh"); err != nil {
+		t.Skip("zsh is not installed")
+	}
+
+	const signature = "function _omp_zle-line-init() {"
+	_, body, found := strings.Cut(zshInit, signature)
+	require.True(t, found, "_omp_zle-line-init is missing from omp.zsh")
+
+	var lines []string
+	for line := range strings.SplitSeq(body, "\n") {
+		if strings.Contains(line, "zle_bracketed_paste") {
+			lines = append(lines, strings.TrimSpace(line))
+		}
+	}
+	require.Len(t, lines, 2, "expected exactly two zle_bracketed_paste statements in _omp_zle-line-init")
+
+	script := "setopt glob_subst\n" +
+		`zle_bracketed_paste=($'\e[?2004h' $'\e[?2004l')` + "\n" +
+		strings.Join(lines, "\n")
+
+	home := t.TempDir()
+	cmd := exec.CommandContext(t.Context(), "zsh", "-f", "-c", script)
+	cmd.Env = []string{"HOME=" + home, "PATH=" + os.Getenv("PATH")}
+
+	out, err := cmd.CombinedOutput()
+	assert.NoError(t, err, string(out))
+}
+
 // Zsh reports an unterminated here-document as syntactically fine, so the
 // here-document cases below are the interesting ones.
 func TestZshIsBufferComplete(t *testing.T) {

@@ -36,11 +36,13 @@ Enable-PoshVIMode`
 func TestSourceCommandAsyncPwsh(t *testing.T) {
 	got := sourceCommandAsync(PWSH, "C:/cache/init.pwsh.ps1")
 
-	want := "if (-not (Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore -ValueOnly)) { $global:_ompOriginalPromptFunction = $Function:prompt }; " +
+	want := "if (-not (Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore -ValueOnly)) { " +
+		"$global:_ompOriginalPromptFunction = $Function:prompt; " +
 		"$global:_ompPromptFunction = $null; " +
 		"$global:_ompInitialized = $false; " +
 		"function prompt() { if (-not $global:_ompInitialized) { $global:_ompAsyncInit = $true; & 'C:/cache/init.pwsh.ps1'; return }; " +
-		"if ($global:_ompPromptFunction) { & $global:_ompPromptFunction } }"
+		"if ($global:_ompPromptFunction) { & $global:_ompPromptFunction } } " +
+		"}"
 
 	assert.Equal(t, want, got)
 }

@@ -116,30 +116,30 @@ type Rebase struct {
 }
 
 type Git struct {
-	configErr      error
-	config         *ini.File
+	commonCfgErr   error
 	Working        *GitStatus
 	Staging        *GitStatus
 	commit         *Commit
 	Rebase         *Rebase
 	User           *User
-	ShortHash      string
+	commonCfg      *ini.File
 	Hash           string
-	BranchStatus   string
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string
 	Ref            string
 	RawUpstreamURL string
 	mainWorktree   string
+	BranchStatus   string
+	ShortHash      string
 	Scm
-	stashCount       int
 	Ahead            int
-	PushAhead        int
 	PushBehind       int
 	Behind           int
 	worktreeCount    int
-	configOnce       sync.Once
+	PushAhead        int
+	stashCount       int
+	commonCfgOnce    sync.Once
 	mainWorktreeOnce sync.Once
 	IsWorkTree       bool
 	Merge            bool
@@ -397,15 +397,16 @@ func (g *Git) setUser() {
 func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 	defer log.Trace(time.Now())
 
-	if gitDir.IsDir {
-		g.mainSCMDir = gitDir.Path
-	} else {
+	bareDir := gitDir.Path
+	if !gitDir.IsDir {
 		content := g.fileContent(gitDir.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.mainSCMDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
+		bareDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
 	}
 
-	cfg, err := g.getGitConfig()
+	g.mainSCMDir = bareDir
+
+	cfg, err := loadGitConfig(g.env, bareDir)
 	if err != nil {
 		log.Error(err)
 		return false
@@ -484,8 +485,8 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 			g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
 			// resolve relative paths (worktree.useRelativePaths = true)
 			g.repoRootDir = resolveGitPath(g.scmDir, g.repoRootDir)
-			g.scmDir = moduleDir[:worktreeIndex]
 			g.mainSCMDir = g.scmDir
+			g.scmDir = moduleDir[:worktreeIndex]
 			g.IsWorkTree = true
 			return true
 		}
@@ -512,13 +513,9 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		}
 	}
 
-	// check for separate git folder(--separate-git-dir)
-	// check if the folder contains a HEAD file
 	if g.env.HasFilesInDir(g.mainSCMDir, "HEAD") {
-		gitFolder := strings.TrimSuffix(g.scmDir, ".git")
+		g.repoRootDir = strings.TrimSuffix(g.scmDir, ".git")
 		g.scmDir = g.mainSCMDir
-		g.mainSCMDir = gitFolder
-		g.repoRootDir = gitFolder
 		return true
 	}
 
@@ -561,7 +558,7 @@ func (g *Git) setPushStatus() {
 		return
 	}
 
-	pushRemote := g.getPushRemote()
+	pushRemote := g.pushRef()
 	if pushRemote == "" {
 		return
 	}
@@ -583,64 +580,68 @@ func (g *Git) setPushStatus() {
 	wg.Wait()
 }
 
+// pushRef resolves the destination of a push once, so both counts below describe the
+// same comparison. An empty rev-list result is a genuine failure, never a retry signal.
+func (g *Git) pushRef() string {
+	if ref := g.getGitCommandOutput("rev-parse", "--abbrev-ref", "@{push}"); ref != "" {
+		return ref
+	}
+
+	return g.getPushRemote()
+}
+
 func (g *Git) getPushRemote() string {
-	upstream := g.Upstream
-	if idx := strings.Index(upstream, "/"); idx != -1 {
-		upstream = upstream[:idx]
-	}
-
-	if upstream == "" {
-		upstream = origin
-	}
-
 	branch := g.Ref
 	if branch == "" {
 		return ""
 	}
 
-	cfg, err := g.getGitConfig()
-	if err != nil {
-		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
-		if pushRemote == "" {
-			pushRemote = upstream
-		}
-
-		return strings.TrimSpace(pushRemote) + "/" + branch
-	}
-
-	sectionName := fmt.Sprintf(`branch "%s"`, branch)
-	section := cfg.Section(sectionName)
-	pushRemote := section.Key("pushRemote").String()
+	pushRemote := g.getGitCommandOutput("config", "--get", fmt.Sprintf("branch.%s.pushRemote", branch))
 	if pushRemote == "" {
-		pushRemote = cfg.Section("remote").Key("pushDefault").String()
+		pushRemote = g.getGitCommandOutput("config", "--get", "remote.pushDefault")
 	}
 
 	if pushRemote == "" {
-		pushRemote = upstream
+		pushRemote = regex.ReplaceAllString("/.*", g.Upstream, "")
 	}
 
-	return pushRemote + "/" + branch
+	if pushRemote == "" {
+		pushRemote = origin
+	}
+
+	return strings.TrimSpace(pushRemote) + "/" + branch
 }
 
-func (g *Git) getGitConfig() (*ini.File, error) {
-	g.configOnce.Do(func() {
-		configData := g.fileContent(g.mainSCMDir, "config")
-		if configData == "" {
-			log.Debug("git config file not found")
-			g.configErr = fmt.Errorf("git config file not found")
-			return
-		}
+func loadGitConfigFile(env runtime.Environment, dir, file string) (*ini.File, error) {
+	if dir == "" {
+		return nil, fmt.Errorf("no git directory to read %s from", file)
+	}
 
-		cfg, err := ini.Load(configData)
-		if err != nil {
-			g.configErr = err
-			return
-		}
+	configData := strings.Trim(env.FileContent(dir+"/"+file), " \r\n")
+	if configData == "" {
+		return nil, fmt.Errorf("%s not found", file)
+	}
 
-		g.config = cfg
+	return ini.Load(configData)
+}
+
+func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
+	return loadGitConfigFile(env, dir, "config")
+}
+
+// commonConfig reads the repository's shared config. It refuses to memoize a failure
+// against an unknown directory, which a cache-restored segment would otherwise poison.
+func (g *Git) commonConfig() (*ini.File, error) {
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return nil, fmt.Errorf("common git directory is unknown")
+	}
+
+	g.commonCfgOnce.Do(func() {
+		g.commonCfg, g.commonCfgErr = loadGitConfig(g.env, commonDir)
 	})
 
-	return g.config, g.configErr
+	return g.commonCfg, g.commonCfgErr
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {
@@ -1111,15 +1112,19 @@ func (g *Git) WorktreeCount() int {
 		return g.worktreeCount
 	}
 
-	worktreesFolder := filepath.Join(g.mainSCMDir, "worktrees")
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return 0
+	}
+
+	worktreesFolder := filepath.Join(commonDir, "worktrees")
 
 	if !g.env.HasFolder(worktreesFolder) {
 		return 0
 	}
 
-	worktreeFolders := g.env.LsDir(worktreesFolder)
 	var count int
-	for _, folder := range worktreeFolders {
+	for _, folder := range g.env.LsDir(worktreesFolder) {
 		if folder.IsDir() {
 			count++
 		}
@@ -1189,12 +1194,18 @@ func (g *Git) ensureMainWorktreeContext() bool {
 }
 
 func (g *Git) commonGitDir() string {
+	// scmDir is the common git directory at every discovery exit. The worktrees cut
+	// below is only for partially initialized state, where scmDir is not yet set.
+	if g.scmDir != "" {
+		return filepath.ToSlash(g.scmDir)
+	}
+
 	mainSCMDir := filepath.ToSlash(g.mainSCMDir)
 	if worktreeIndex := strings.LastIndex(mainSCMDir, "/worktrees/"); worktreeIndex > -1 {
 		return mainSCMDir[:worktreeIndex]
 	}
 
-	return filepath.ToSlash(g.scmDir)
+	return ""
 }
 
 // isModuleAdminDir reports whether target is a submodule administrative directory
@@ -1220,9 +1231,12 @@ func (g *Git) isModuleAdminDir(target, parent string) bool {
 		return true
 	}
 
-	cfg, err := ini.Load(g.fileContent(target, "config"))
+	// A missing or unreadable config is simply not a submodule git dir, not an error
+	// worth reporting: every --separate-git-dir target spelled with a modules component
+	// lands here.
+	cfg, err := loadGitConfig(g.env, target)
 	if err != nil {
-		log.Error(err)
+		log.Debug("no readable config in", target, "- not a submodule git dir")
 		return false
 	}
 
@@ -1282,24 +1296,23 @@ func (g *Git) getRemoteURL() string {
 		upstream = origin
 	}
 
-	cfg, err := g.getGitConfig()
-	if err != nil {
-		return g.getGitCommandOutput("remote", "get-url", upstream)
-	}
-
-	url := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
-	if len(url) != 0 {
-		log.Debug("remote url found in config:", url)
+	// Ask git first because it applies insteadOf rewriting and reads the merged configuration.
+	if url := g.getGitCommandOutput("remote", "get-url", upstream); url != "" {
 		return url
 	}
 
-	return g.getGitCommandOutput("remote", "get-url", upstream)
+	cfg, err := g.commonConfig()
+	if err != nil {
+		return ""
+	}
+
+	return cfg.Section("remote \"" + upstream + "\"").Key("url").String()
 }
 
 func (g *Git) Remotes() map[string]string {
 	var remotes = make(map[string]string)
 
-	cfg, err := g.getGitConfig()
+	cfg, err := g.commonConfig()
 	if err != nil {
 		return remotes
 	}
@@ -1347,10 +1360,50 @@ func (g *Git) repoName() string {
 		return path.Base(g.convertToLinuxPath(g.repoRootDir))
 	}
 
-	ind := strings.LastIndex(g.mainSCMDir, ".git/worktrees")
-	if ind > -1 {
-		return path.Base(g.mainSCMDir[:ind])
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return ""
+	}
+
+	if parent := filepath.Dir(commonDir); g.gitEntryResolvesTo(parent, commonDir) {
+		return path.Base(g.convertToLinuxPath(parent))
+	}
+
+	for _, file := range []string{"config.worktree", "config"} {
+		cfg, err := loadGitConfigFile(g.env, commonDir, file)
+		if err != nil {
+			continue
+		}
+
+		worktree := cfg.Section("core").Key("worktree").String()
+		if worktree == "" {
+			continue
+		}
+
+		return path.Base(g.convertToLinuxPath(resolveGitPath(commonDir, worktree)))
 	}
 
 	return ""
+}
+
+func (g *Git) gitEntryResolvesTo(parent, commonDir string) bool {
+	gitEntry := parent + "/.git"
+	commonDir = filepath.ToSlash(filepath.Clean(commonDir))
+
+	if g.env.HasFolder(gitEntry) {
+		return filepath.ToSlash(filepath.Clean(gitEntry)) == commonDir
+	}
+
+	if !g.env.HasFilesInDir(parent, ".git") {
+		return false
+	}
+
+	content := strings.Trim(g.env.FileContent(gitEntry), " \r\n")
+	target, found := strings.CutPrefix(content, "gitdir: ")
+	if !found {
+		return false
+	}
+
+	target = g.convertToLinuxPath(target)
+	return filepath.ToSlash(filepath.Clean(resolveGitPath(parent, target))) == commonDir
 }

@@ -245,6 +245,7 @@ $RECYCLE.BIN/
 *.cab
 *.msi
 *.msix
+*.appinstaller
 *.msm
 *.msp
 

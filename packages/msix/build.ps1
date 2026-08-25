@@ -22,7 +22,7 @@
     When specified, copies the appropriate executable from the dist folder before packaging.
 
 .PARAMETER DownloadUrl
-    The base URL where releases are published, used in the generated App Installer file.
+    The base URL where releases are published, used in the embedded App Installer file.
     Defaults to "https://cdn.ohmyposh.dev/releases".
 
 .EXAMPLE
@@ -221,23 +221,10 @@ try {
     $manifestDocument.Package.Identity.ProcessorArchitecture = $Architecture
     $manifestDocument.Save($manifestPath)
 
-    # Build MSIX package
-    Write-Verbose "Building MSIX: $msixPackagePath" -Verbose
-    & "$makeappxPath" pack /p $msixPackagePath /v /o /m $manifestPath /f $mappingFilePath
+    Write-Verbose "Creating App Installer file" -Verbose
 
-    if (-not (Test-Path $msixPackagePath)) {
-        throw "MSIX package was not created successfully"
-    }
-}
-catch {
-    Write-Error "Failed to create MSIX package: ${_}"
-    throw
-}
-
-Write-Verbose "Creating App Installer file" -Verbose
-
-try {
     $appInstallerPath = "$currentPath/out/install-$Architecture.appinstaller"
+    $embeddedAppInstallerPath = "$currentPath/dist/install.appinstaller"
     $identity = $manifestDocument.Package.Identity
 
     # The App Installer file lives at a stable URL so Windows can poll it for updates,
@@ -255,11 +242,19 @@ try {
 "@
 
     $appInstaller | Out-File -FilePath $appInstallerPath -Encoding UTF8
+    Copy-Item -Path $appInstallerPath -Destination $embeddedAppInstallerPath -Force
 
     Write-Verbose "Created App Installer file: $appInstallerPath" -Verbose
+    # Build MSIX package
+    Write-Verbose "Building MSIX: $msixPackagePath" -Verbose
+    & "$makeappxPath" pack /p $msixPackagePath /v /o /m $manifestPath /f $mappingFilePath
+
+    if (-not (Test-Path $msixPackagePath)) {
+        throw "MSIX package was not created successfully"
+    }
 }
 catch {
-    Write-Error "Failed to create App Installer file: ${_}"
+    Write-Error "Failed to create MSIX package: ${_}"
     throw
 }
 

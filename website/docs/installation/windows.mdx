@@ -29,7 +29,6 @@ When using oh-my-posh inside the WSL, make sure to follow the [Linux][linux] ins
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'manual', value: 'manual', },
-    { label: 'App Installer', value: 'appinstaller', },
     { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
@@ -48,20 +47,6 @@ Open a PowerShell prompt and run the following command:
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
-```
-
-</TabItem>
-<TabItem value="appinstaller">
-
-Installing via App Installer keeps Oh My Posh up to date automatically:
-Windows checks for a new version in the background and updates the package
-without any interaction needed.
-
-Open a PowerShell prompt and run the following command:
-
-```powershell
-$arch = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64' } else { 'x64' }
-Add-AppxPackage -AppInstallerFile "https://cdn.ohmyposh.dev/releases/latest/install-$arch.appinstaller"
 ```
 
 </TabItem>
@@ -91,7 +76,6 @@ choco install oh-my-posh
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'manual', value: 'manual', },
-    { label: 'App Installer', value: 'appinstaller', },
     { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
@@ -101,17 +85,6 @@ Open a PowerShell prompt and run the following command:
 
 ```powershell
 winget upgrade JanDeDobbeleer.OhMyPosh --source winget
-```
-
-</TabItem>
-<TabItem value="appinstaller">
-
-No action needed, Windows updates Oh My Posh automatically in the background.
-To force an update check, run the install command again:
-
-```powershell
-$arch = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64' } else { 'x64' }
-Add-AppxPackage -AppInstallerFile "https://cdn.ohmyposh.dev/releases/latest/install-$arch.appinstaller"
 ```
 
 </TabItem>

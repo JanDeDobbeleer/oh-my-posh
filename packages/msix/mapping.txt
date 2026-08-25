@@ -4,6 +4,7 @@
 
 [Files]
 "./dist/oh-my-posh.exe" "oh-my-posh.exe"
+"./dist/install.appinstaller" "install.appinstaller"
 "./icons/icon.png" "/icons/icon.png"
 "./icons/44.png" "/icons/44.png"
 "./dsc/oh-my-posh.config.dsc.resource.json" "oh-my-posh.config.dsc.resource.json"

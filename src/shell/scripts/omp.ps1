@@ -1,5 +1,5 @@
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
-    Remove-Module -Name "oh-my-posh-core" -Force
+    return
 }
 
 $env:VIRTUAL_ENV_DISABLE_PROMPT = 1

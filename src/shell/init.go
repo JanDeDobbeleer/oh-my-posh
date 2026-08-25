@@ -273,12 +273,20 @@ func sourceCommandAsync(shell, scriptPath string) string {
 		// Get-Variable, not a bare $global: dereference, for the "has this
 		// ever run before" check - on the very first run nothing has set
 		// $global:_ompOriginalPromptFunction yet, and a bare read of an
-		// unset variable throws under Set-StrictMode.
+		// unset variable throws under Set-StrictMode. The whole block is
+		// gated on that same check so re-sourcing the profile after the
+		// trampoline is installed is a true no-op - otherwise it would wipe
+		// $global:_ompPromptFunction/_ompInitialized that the module's real
+		// init set, and the module-load guard at the top of the init script
+		// returns before those get set again, leaving prompt() a permanent
+		// no-op.
 		return fmt.Sprintf(
-			"if (-not (Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore -ValueOnly)) { $global:_ompOriginalPromptFunction = $Function:prompt }; "+
+			"if (-not (Get-Variable -Name _ompOriginalPromptFunction -Scope Global -ErrorAction Ignore -ValueOnly)) { "+
+				"$global:_ompOriginalPromptFunction = $Function:prompt; "+
 				"$global:_ompPromptFunction = $null; "+
 				"$global:_ompInitialized = $false; "+
-				"function prompt() { if (-not $global:_ompInitialized) { $global:_ompAsyncInit = $true; & %s; return }; if ($global:_ompPromptFunction) { & $global:_ompPromptFunction } }",
+				"function prompt() { if (-not $global:_ompInitialized) { $global:_ompAsyncInit = $true; & %s; return }; if ($global:_ompPromptFunction) { & $global:_ompPromptFunction } } "+
+				"}",
 			quotePwshStr(scriptPath),
 		)
 	case ZSH:

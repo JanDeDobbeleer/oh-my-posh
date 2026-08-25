@@ -28,10 +28,15 @@ Example usage in GitHub Copilot CLI settings (%USERPROFILE%\.copilot\statusline.
 		shell.COPILOTCLI,
 		cache.COPILOTCLICACHE,
 		func(d *segments.CopilotCLIData) string { return d.SessionID },
+		copilotPWD,
 		config.CopilotCLI,
 	),
 }
 
 func init() {
 	RootCmd.AddCommand(copilotCmd)
+}
+
+func copilotPWD(d *segments.CopilotCLIData) string {
+	return workingDirectory(d.Workspace.CurrentDir, d.CWD)
 }

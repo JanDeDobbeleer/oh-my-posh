@@ -30,6 +30,39 @@ const (
 	dotGitSubmodule = "dev/.git/modules/submodule"
 )
 
+func TestWorktreeAdminIndex(t *testing.T) {
+	cases := []struct {
+		Case string
+		Path string
+		// Expected is the common git directory a caller slices out, or "" when Path is
+		// not a worktree administrative directory.
+		Expected string
+	}{
+		{Case: "admin dir", Path: "/repo/.git/worktrees/feat", Expected: "/repo/.git"},
+		{Case: "trailing separator", Path: "/repo/.git/worktrees/feat/", Expected: "/repo/.git"},
+		{Case: "dot component", Path: "/repo/.git/worktrees/feat/.", Expected: "/repo/.git"},
+		{Case: "doubled separator", Path: "/repo/.git/worktrees//feat", Expected: "/repo/.git"},
+		{Case: "nested worktrees keeps the last", Path: "/a/.git/worktrees/x/.git/worktrees/y", Expected: "/a/.git/worktrees/x/.git"},
+		{Case: "two components after worktrees", Path: "/repo/.git/worktrees/a/b", Expected: ""},
+		{Case: "repo under a worktrees component", Path: "/home/me/worktrees/proj/.bare", Expected: ""},
+		{Case: "no name after worktrees", Path: "/repo/.git/worktrees/", Expected: ""},
+		{Case: "no worktrees segment", Path: "/repo/.git", Expected: ""},
+		{Case: "empty", Path: "", Expected: ""},
+		// Shape alone cannot reject this one: the remainder is a single component. Task 2's
+		// metadata back-reference check is what keeps it out of the worktree branch.
+		{Case: "bare layout in a dir named worktrees", Path: "/home/me/worktrees/.bare", Expected: "/home/me"},
+	}
+
+	for _, tc := range cases {
+		var got string
+		if index := worktreeAdminIndex(tc.Path); index > -1 {
+			got = filepath.ToSlash(filepath.Clean(tc.Path))[:index]
+		}
+
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
@@ -76,101 +109,532 @@ func TestResolveEmptyGitPath(t *testing.T) {
 }
 
 func TestEnabledInWorktree(t *testing.T) {
+	// Field order below is what fieldalignment wants, so the groups a reader would expect
+	// together are not adjacent. The comments travel with the fields instead.
 	cases := []struct {
-		Case                  string
-		WorkingFolder         string
-		WorkingFolderAddon    string
-		WorkingFolderContent  string
-		ExpectedRealFolder    string
-		ExpectedWorkingFolder string
-		ExpectedRootFolder    string
-		ExpectedEnabled       bool
+		// nil reserves directory-role assertions for a later decision.
+		ExpectedWorkingFolder *string
+		ExpectedRootFolder    *string
+		ExpectedRealFolder    *string
+		// For a worktree topology, the discovered parent is the worktree root and must
+		// match the metadata back-reference. See DiscoveredGitFile below.
+		DiscoveredParent  string
+		MetadataAddon     string
+		MetadataContent   string
+		ExpectedProbedDir string
+		// TargetConfig is the config file found in the directory the pointer names. The
+		// modules classifier reads core.worktree out of it to tell a submodule git dir
+		// from a --separate-git-dir target, which has no core.worktree at all.
+		TargetConfig string
+		Case         string
+		Pointer      string
+		// DiscoveredGitFile is the .git file HasParentFilePath found, whose parent is
+		// DiscoveredParent above.
+		DiscoveredGitFile string
+		// RawGitFile overrides the whole .git file body. Use it when the test is about
+		// the file's syntax rather than the pointer it carries; leave it empty and the
+		// loop writes "gitdir: <Pointer>".
+		RawGitFile         string
+		ExpectedIsWorkTree bool
+		ExpectedEnabled    bool
 	}{
 		{
 			Case:                  "worktree",
 			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + "dev/.git/worktrees/folder_worktree",
-			WorkingFolderAddon:    "gitdir",
-			WorkingFolderContent:  TestRootPath + "dev/worktree.git\n",
-			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
-			ExpectedRealFolder:    TestRootPath + "dev/worktree",
-			ExpectedRootFolder:    TestRootPath + dotGit,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:     TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:      TestRootPath + "dev/worktree",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       TestRootPath + "dev/worktree.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/worktrees/folder_worktree",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/worktrees/folder_worktree"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + dotGit),
 		},
 		{
+			// The discovered .git file sits in the submodule's own checkout, and the git
+			// dir points back at it through core.worktree. Both are what git writes.
 			Case:                  "submodule",
 			ExpectedEnabled:       true,
-			WorkingFolder:         "./.git/modules/submodule",
-			ExpectedWorkingFolder: TestRootPath + dotGitSubmodule,
-			ExpectedRealFolder:    TestRootPath + dotGitSubmodule,
-			ExpectedRootFolder:    TestRootPath + dotGitSubmodule,
+			Pointer:               "../.git/modules/submodule",
+			DiscoveredGitFile:     TestRootPath + "dev/sub/.git",
+			DiscoveredParent:      TestRootPath + "dev/sub",
+			ExpectedProbedDir:     TestRootPath + dotGitSubmodule,
+			TargetConfig:          "[core]\n\tworktree = ../../../sub",
+			ExpectedWorkingFolder: new(TestRootPath + dotGitSubmodule),
+			ExpectedRealFolder:    new(TestRootPath + dotGitSubmodule),
+			ExpectedRootFolder:    new(TestRootPath + dotGitSubmodule),
 		},
 		{
 			Case:                  "submodule with root working folder",
 			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + dotGitSubmodule,
-			ExpectedWorkingFolder: TestRootPath + dotGitSubmodule,
-			ExpectedRealFolder:    TestRootPath + dotGitSubmodule,
-			ExpectedRootFolder:    TestRootPath + dotGitSubmodule,
+			Pointer:               TestRootPath + dotGitSubmodule,
+			DiscoveredGitFile:     TestRootPath + "dev/sub/.git",
+			DiscoveredParent:      TestRootPath + "dev/sub",
+			ExpectedProbedDir:     TestRootPath + dotGitSubmodule,
+			TargetConfig:          "[core]\n\tworktree = ../../../sub",
+			ExpectedWorkingFolder: new(TestRootPath + dotGitSubmodule),
+			ExpectedRealFolder:    new(TestRootPath + dotGitSubmodule),
+			ExpectedRootFolder:    new(TestRootPath + dotGitSubmodule),
 		},
 		{
-			Case:                  "submodule with worktrees",
-			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + "dev/.git/modules/module/path/worktrees/location",
-			WorkingFolderAddon:    "gitdir",
-			WorkingFolderContent:  TestRootPath + "dev/worktree.git\n",
-			ExpectedWorkingFolder: TestRootPath + "dev/.git/modules/module/path",
-			ExpectedRealFolder:    TestRootPath + "dev/worktree",
-			ExpectedRootFolder:    TestRootPath + "dev/.git/modules/module/path",
+			// Directory-role assertions are reserved for a later decision.
+			Case:               "submodule with worktrees",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			DiscoveredGitFile:  TestRootPath + dotGit,
+			DiscoveredParent:   TestRootPath + "dev",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "dev/worktree.git\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/modules/module/path/worktrees/location",
 		},
 		{
-			Case:                  "separate git dir",
+			// Directory-role assertions are reserved for a later decision.
+			Case:              "separate git dir",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "dev/separate/.git/posh",
+			DiscoveredGitFile: TestRootPath + dotGit,
+			DiscoveredParent:  TestRootPath + "dev",
+			ExpectedProbedDir: TestRootPath + "dev/separate/.git/posh",
+		},
+		{
+			// The pointer's spelling contains a "modules" component, but the directory
+			// before it is an ordinary folder, not a superproject git dir. This is a
+			// separate git dir, so repoRootDir must be the working tree root and not the
+			// git dir the pointer names.
+			Case:              "separate git dir under a modules path component",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "srv/modules/project.git",
+			DiscoveredGitFile: TestRootPath + "work/project/.git",
+			DiscoveredParent:  TestRootPath + "work/project",
+			ExpectedProbedDir: TestRootPath + "srv/modules/project.git",
+			// A --separate-git-dir target records no core.worktree.
+			TargetConfig:       "[core]\n\trepositoryformatversion = 0",
+			ExpectedRealFolder: new(TestRootPath + "work/project/"),
+		},
+		{
+			// A submodule's name is its path, so it can hold separators. Rejecting this
+			// is what a "one component after modules" rule would do.
+			Case:                  "submodule at a nested path",
 			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + "dev/separate/.git/posh",
-			ExpectedWorkingFolder: TestRootPath + "dev/",
-			ExpectedRealFolder:    TestRootPath + "dev/",
-			ExpectedRootFolder:    TestRootPath + "dev/separate/.git/posh",
+			Pointer:               "../../.git/modules/vendor/libfoo",
+			DiscoveredGitFile:     TestRootPath + "dev/vendor/libfoo/.git",
+			DiscoveredParent:      TestRootPath + "dev/vendor/libfoo",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/vendor/libfoo",
+			TargetConfig:          "[core]\n\tworktree = ../../../../vendor/libfoo",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/vendor/libfoo"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/.git/modules/vendor/libfoo"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/vendor/libfoo"),
+		},
+		{
+			// When the superproject itself uses --separate-git-dir, the folder in front of
+			// modules is not called .git. Rejecting this is what a ".git/modules" rule
+			// would do.
+			Case:                  "submodule of a separate-git-dir superproject",
+			ExpectedEnabled:       true,
+			Pointer:               "../../sepgit/modules/sub",
+			DiscoveredGitFile:     TestRootPath + "dev/sep/sub/.git",
+			DiscoveredParent:      TestRootPath + "dev/sep/sub",
+			ExpectedProbedDir:     TestRootPath + "dev/sepgit/modules/sub",
+			TargetConfig:          "[core]\n\tworktree = ../../../sep/sub",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/sepgit/modules/sub"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/sepgit/modules/sub"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/sepgit/modules/sub"),
+		},
+		{
+			// A submodule checked out at modules/foo doubles the segment. Rejecting this
+			// is what keying on the last modules occurrence would do, because the prefix
+			// then lands on .git/modules, which is a container and not a git dir.
+			Case:                  "submodule checked out below a modules folder",
+			ExpectedEnabled:       true,
+			Pointer:               "../../.git/modules/modules/foo",
+			DiscoveredGitFile:     TestRootPath + "dev/modules/foo/.git",
+			DiscoveredParent:      TestRootPath + "dev/modules/foo",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/modules/foo",
+			TargetConfig:          "[core]\n\tworktree = ../../../../modules/foo",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/modules/foo"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/.git/modules/modules/foo"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/modules/foo"),
+		},
+		{
+			// core.worktree present but pointing at another checkout: the git dir is not
+			// this checkout's, so it must not be treated as its submodule.
+			Case:               "module dir whose core.worktree points elsewhere",
+			ExpectedEnabled:    true,
+			Pointer:            TestRootPath + "dev/.git/modules/stale",
+			DiscoveredGitFile:  TestRootPath + "dev/sub/.git",
+			DiscoveredParent:   TestRootPath + "dev/sub",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/modules/stale",
+			TargetConfig:       "[core]\n\tworktree = ../../../elsewhere",
+			ExpectedRealFolder: new(TestRootPath + "dev/sub/"),
 		},
 		{
 			Case:                  "worktree with relative gitdir path",
 			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + "dev/.git/worktrees/folder_worktree",
-			WorkingFolderAddon:    "gitdir",
-			WorkingFolderContent:  "../../../worktree/.git\n",
-			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
-			ExpectedRealFolder:    TestRootPath + "dev/worktree",
-			ExpectedRootFolder:    TestRootPath + dotGit,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:     TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:      TestRootPath + "dev/worktree",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       "../../../worktree/.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/worktrees/folder_worktree",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/worktrees/folder_worktree"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + dotGit),
 		},
 		{
 			Case:                  "worktree with relative gitdir path, no trailing newline",
 			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + "dev/.git/worktrees/folder_worktree",
-			WorkingFolderAddon:    "gitdir",
-			WorkingFolderContent:  "../../../worktree/.git",
-			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
-			ExpectedRealFolder:    TestRootPath + "dev/worktree",
-			ExpectedRootFolder:    TestRootPath + dotGit,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:     TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:      TestRootPath + "dev/worktree",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       "../../../worktree/.git",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/worktrees/folder_worktree",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/worktrees/folder_worktree"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + dotGit),
+		},
+		{
+			// Shape matches, but metadata does not point back to the discovered .git file.
+			Case:              "bare layout in a dir named worktrees",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "me/worktrees/.bare",
+			DiscoveredGitFile: TestRootPath + "me/worktrees/.git",
+			DiscoveredParent:  TestRootPath + "me/worktrees",
+			MetadataAddon:     "gitdir",
+			ExpectedProbedDir: TestRootPath + "me/worktrees/.bare",
+		},
+		{
+			Case:               "worktree metadata is whitespace only",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: false,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/.git/worktrees/folder_worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/.git/worktrees/folder_worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    " \n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			Case:               "worktree metadata points somewhere else",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: false,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "dev/moved-elsewhere/.git\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			Case:               "worktree metadata spelled with a trailing separator",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "dev/worktree/.git\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			Case:               "worktree metadata is garbage that resolves nowhere",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: false,
+			Pointer:            TestRootPath + "dev/.git/worktrees/folder_worktree",
+			DiscoveredGitFile:  TestRootPath + "dev/worktree/.git",
+			DiscoveredParent:   TestRootPath + "dev/worktree",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    "not-a-path-at-all\n",
+			ExpectedProbedDir:  TestRootPath + "dev/.git/worktrees/folder_worktree",
+		},
+		{
+			// Both spelling forms must reject a shape match whose metadata does not match.
+			Case:              "repo under a worktrees path component, absolute spelling",
+			ExpectedEnabled:   true,
+			Pointer:           TestRootPath + "me/worktrees/proj/.bare",
+			DiscoveredGitFile: TestRootPath + "me/worktrees/proj/.git",
+			DiscoveredParent:  TestRootPath + "me/worktrees/proj",
+			ExpectedProbedDir: TestRootPath + "me/worktrees/proj/.bare",
+		},
+		{
+			Case:               "genuine worktree whose common dir is under a worktrees component",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "me/worktrees/proj/.git/worktrees/feat",
+			DiscoveredGitFile:  TestRootPath + "me/checkouts/feat/.git",
+			DiscoveredParent:   TestRootPath + "me/checkouts/feat",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "me/checkouts/feat/.git\n",
+			ExpectedProbedDir:  TestRootPath + "me/worktrees/proj/.git/worktrees/feat",
+		},
+		{
+			Case:              "bare layout, dot-slash relative pointer",
+			ExpectedEnabled:   true,
+			Pointer:           "./.bare",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/.bare",
+		},
+		{
+			Case:              "bare layout, bare relative pointer",
+			ExpectedEnabled:   true,
+			Pointer:           ".bare",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/.bare",
+		},
+		{
+			Case:              "relative pointer into a subdirectory",
+			ExpectedEnabled:   true,
+			Pointer:           "sub/git",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/sub/git",
+		},
+		{
+			// Absolute pointers retain their trailing separator; filepath.Join cleans relative ones.
+			Case:               "absolute pointer ending in a separator",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            TestRootPath + "repo/.git/worktrees/feat/",
+			DiscoveredGitFile:  TestRootPath + "repo/feat/.git",
+			DiscoveredParent:   TestRootPath + "repo/feat",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "repo/feat/.git\n",
+			ExpectedProbedDir:  TestRootPath + "repo/.git/worktrees/feat/",
+		},
+		{
+			// This pins the existing trim; Git treats a trailing space as part of the path.
+			Case:              "pointer with trailing whitespace is trimmed",
+			ExpectedEnabled:   true,
+			RawGitFile:        "gitdir: ./.bare \n",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo/.bare",
+		},
+		{
+			Case:              "malformed .git file with no gitdir line",
+			ExpectedEnabled:   false,
+			RawGitFile:        "not a gitdir line",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo",
+		},
+		{
+			Case:              "gitdir line with an empty pointer",
+			ExpectedEnabled:   false,
+			RawGitFile:        "gitdir: ",
+			DiscoveredGitFile: TestRootPath + "repo/.git",
+			DiscoveredParent:  TestRootPath + "repo",
+			ExpectedProbedDir: TestRootPath + "repo",
+		},
+		{
+			// Keep this check on the raw pointer: resolving it first changes the branch.
+			Case:               "worktree with a relative pointer under a modules component",
+			ExpectedEnabled:    true,
+			ExpectedIsWorkTree: true,
+			Pointer:            "../.git/worktrees/feat",
+			DiscoveredGitFile:  TestRootPath + "modules/repo/feat/.git",
+			DiscoveredParent:   TestRootPath + "modules/repo/feat",
+			MetadataAddon:      "gitdir",
+			MetadataContent:    TestRootPath + "modules/repo/feat/.git\n",
+			ExpectedProbedDir:  TestRootPath + "modules/repo/.git/worktrees/feat",
 		},
 	}
-	fileInfo := &runtime.FileInfo{
-		Path:         TestRootPath + dotGit,
-		ParentFolder: TestRootPath + "dev",
-	}
+
 	for _, tc := range cases {
+		fileInfo := &runtime.FileInfo{Path: tc.DiscoveredGitFile, ParentFolder: tc.DiscoveredParent}
 		env := new(mock.Environment)
-		env.On("FileContent", TestRootPath+dotGit).Return(fmt.Sprintf("gitdir: %s", tc.WorkingFolder))
-		env.On("FileContent", filepath.Join(tc.WorkingFolder, tc.WorkingFolderAddon)).Return(tc.WorkingFolderContent)
-		env.On("HasFilesInDir", tc.WorkingFolder, tc.WorkingFolderAddon).Return(true)
-		env.On("HasFilesInDir", tc.WorkingFolder, "HEAD").Return(true)
+		gitFileContent := fmt.Sprintf("gitdir: %s", tc.Pointer)
+		if tc.RawGitFile != "" {
+			gitFileContent = tc.RawGitFile
+		}
+		env.On("FileContent", tc.DiscoveredGitFile).Return(gitFileContent)
+		env.On("FileContent", filepath.Join(tc.ExpectedProbedDir, tc.MetadataAddon)).Return(tc.MetadataContent)
+		env.On("HasFilesInDir", tc.ExpectedProbedDir, tc.MetadataAddon).Return(tc.MetadataAddon != "")
+		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
+		env.On("FileContent", tc.ExpectedProbedDir+"/config").Return(tc.TargetConfig)
 		env.On("PathSeparator").Return(string(os.PathSeparator))
 
 		g := &Git{}
 		g.Init(options.Map{}, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, g.hasWorktree(fileInfo), tc.Case)
-		assert.Equal(t, tc.ExpectedWorkingFolder, g.mainSCMDir, tc.Case)
-		assert.Equal(t, tc.ExpectedRealFolder, g.repoRootDir, tc.Case)
-		assert.Equal(t, tc.ExpectedRootFolder, g.scmDir, tc.Case)
+		assert.Equal(t, tc.ExpectedIsWorkTree, g.IsWorkTree, tc.Case)
+
+		if tc.ExpectedWorkingFolder != nil {
+			assert.Equal(t, *tc.ExpectedWorkingFolder, g.mainSCMDir, tc.Case)
+		}
+
+		if tc.ExpectedRealFolder != nil {
+			assert.Equal(t, *tc.ExpectedRealFolder, g.repoRootDir, tc.Case)
+		}
+
+		if tc.ExpectedRootFolder != nil {
+			assert.Equal(t, *tc.ExpectedRootFolder, g.scmDir, tc.Case)
+		}
+
+		if tc.ExpectedEnabled {
+			assert.True(t, filepath.IsAbs(g.mainSCMDir), tc.Case+": mainSCMDir must be absolute")
+			assert.True(t, filepath.IsAbs(g.scmDir), tc.Case+": scmDir must be absolute")
+		}
 	}
+}
+
+func TestEnabledInBareLayout(t *testing.T) {
+	cases := []struct {
+		Case          string
+		FetchBareInfo bool
+	}{
+		{Case: "bare layout without fetch_bare_info", FetchBareInfo: false},
+		{Case: "bare layout with fetch_bare_info", FetchBareInfo: true},
+	}
+
+	for _, tc := range cases {
+		// Fixtures are built from TestRootPath so the paths are absolute on the platform
+		// the test binary runs on. filepath.IsAbs below is the real one, not the mocked
+		// GOOS, so a literal "/repo" would not be absolute on Windows.
+		root := TestRootPath + "repo"
+
+		fileInfo := &runtime.FileInfo{
+			Path:         root + "/.git",
+			ParentFolder: root,
+		}
+
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("HasCommand", "git").Return(true)
+		env.On("GOOS").Return("")
+		env.On("IsWsl").Return(false)
+		env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+		env.On("PathSeparator").Return("/")
+		env.On("Home").Return(poshHome)
+		env.On("Getenv", poshGitEnv).Return("")
+		env.On("DirMatchesOneOf", testify_.Anything, testify_.Anything).Return(false)
+		env.On("FileContent", root+"/.git").Return("gitdir: ./.bare")
+		env.On("HasFilesInDir", root+"/.bare", "HEAD").Return(true)
+		env.On("FileContent", root+"/.bare/config").Return("[core]\n\tbare = true")
+		env.On("FileContent", root+"//HEAD").Return("")
+		env.MockGitCommand(root+"/", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
+		env.MockGitCommand(root+"/", "", "describe", "--tags", "--exact-match")
+		env.MockGitCommand(root+"/", "", "remote")
+
+		props := options.Map{}
+		if tc.FetchBareInfo {
+			props = options.Map{FetchBareInfo: true}
+		}
+
+		g := &Git{}
+		g.Init(props, env)
+
+		assert.True(t, g.Enabled(), tc.Case)
+		assert.Equal(t, tc.FetchBareInfo, g.IsBare, tc.Case)
+		assert.True(t, filepath.IsAbs(g.mainSCMDir), tc.Case+": mainSCMDir must be absolute")
+		assert.True(t, filepath.IsAbs(g.scmDir), tc.Case+": scmDir must be absolute")
+	}
+}
+
+func TestIsBareRepoResolvesPointer(t *testing.T) {
+	// Fixtures are built from TestRootPath so that "absolute pointer" really is absolute
+	// on the platform the test binary runs on. A literal "/repo/.bare" is only
+	// disk-relative on Windows, which would exercise a different resolveGitPath branch
+	// than the one these cases are about.
+	root := TestRootPath + "repo"
+
+	cases := []struct {
+		Case              string
+		Pointer           string
+		ExpectedProbedDir string
+		ExpectedIsBare    bool
+	}{
+		{
+			Case:              "relative pointer",
+			Pointer:           "./.bare",
+			ExpectedProbedDir: root + "/.bare",
+			ExpectedIsBare:    true,
+		},
+		{
+			Case:              "absolute pointer",
+			Pointer:           root + "/.bare",
+			ExpectedProbedDir: root + "/.bare",
+			ExpectedIsBare:    true,
+		},
+		{
+			Case:              "absolute pointer to a non-bare git dir",
+			Pointer:           TestRootPath + "elsewhere/gitdir",
+			ExpectedProbedDir: TestRootPath + "elsewhere/gitdir",
+			ExpectedIsBare:    false,
+		},
+	}
+
+	for _, tc := range cases {
+		fileInfo := &runtime.FileInfo{
+			Path:         root + "/.git",
+			ParentFolder: root,
+		}
+
+		expectedConfig := tc.ExpectedProbedDir + "/config"
+		// What the old filepath.Join produced: the same path for a relative pointer, and
+		// the pointer concatenated onto the parent for an absolute one. Derived rather
+		// than written out so it stays correct under Windows path semantics too.
+		oldConfig := filepath.Join(fileInfo.ParentFolder, tc.Pointer) + "/config"
+
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("HasCommand", "git").Return(true)
+		env.On("GOOS").Return("")
+		env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+		env.On("FileContent", root+"/.git").Return(fmt.Sprintf("gitdir: %s", tc.Pointer))
+		env.On("FileContent", expectedConfig).Return(fmt.Sprintf("[core]\n\tbare = %t", tc.ExpectedIsBare))
+		env.On("HasFilesInDir", tc.ExpectedProbedDir, "HEAD").Return(true)
+
+		if oldConfig != expectedConfig {
+			env.On("FileContent", oldConfig).Return("")
+		}
+
+		g := &Git{}
+		g.Init(options.Map{FetchBareInfo: true}, env)
+
+		assert.True(t, g.shouldDisplay(), tc.Case)
+		assert.Equal(t, tc.ExpectedIsBare, g.IsBare, tc.Case)
+		env.AssertCalled(t, "FileContent", expectedConfig)
+
+		if oldConfig != expectedConfig {
+			env.AssertNotCalled(t, "FileContent", oldConfig)
+		}
+	}
+}
+
+func TestShouldDisplayInitializesWSLBeforeBareRepoDetection(t *testing.T) {
+	fileInfo := &runtime.FileInfo{
+		Path:         "/repo/.git",
+		ParentFolder: "/repo",
+	}
+
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(true)
+	env.On("HasCommand", "git.exe").Return(true)
+	env.On("GOOS").Return("")
+	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+	env.On("ConvertToLinuxPath").Return("/mnt/c/repo/.bare")
+	env.On("FileContent", "/repo/.git").Return("gitdir: C:/repo/.bare")
+	env.On("FileContent", "/repo/C:/repo/.bare/config").Return("")
+	env.On("FileContent", "/mnt/c/repo/.bare/config").Return("[core]\n\tbare = true")
+	env.On("HasFilesInDir", "/mnt/c/repo/.bare", "HEAD").Return(true)
+	env.On("ConvertToWindowsPath", "/repo/").Return("C:/repo")
+
+	g := &Git{}
+	g.Init(options.Map{FetchBareInfo: true}, env)
+
+	assert.True(t, g.shouldDisplay())
+	assert.True(t, g.IsBare)
+	env.AssertNumberOfCalls(t, "ConvertToLinuxPath", 2)
+	env.AssertCalled(t, "FileContent", "/mnt/c/repo/.bare/config")
 }
 
 func TestEnabledInBareRepo(t *testing.T) {
@@ -1461,7 +1925,7 @@ func TestGitMainWorktreeSessionCache(t *testing.T) {
 	}
 	secondAdminDir := commonDir + "/worktrees/linked-two"
 	secondEnv.On("FileContent", secondGitFile.Path).Return("gitdir: ../main/.git/worktrees/linked-two")
-	secondEnv.On("FileContent", filepath.Join(secondAdminDir, "gitdir")).Return("../../../linked-two/.git")
+	secondEnv.On("FileContent", filepath.Join(secondAdminDir, "gitdir")).Return("../../../../linked-two/.git")
 	second := &Git{}
 	second.Init(options.Map{}, secondEnv)
 	require.True(t, second.hasWorktree(secondGitFile))

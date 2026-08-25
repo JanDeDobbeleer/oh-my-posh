@@ -27,10 +27,15 @@ Example usage in Claude Code settings:
 		shell.CLAUDE,
 		cache.CLAUDECACHE,
 		func(d *segments.ClaudeData) string { return d.SessionID },
+		claudePWD,
 		config.Claude,
 	),
 }
 
 func init() {
 	RootCmd.AddCommand(claudeCmd)
+}
+
+func claudePWD(d *segments.ClaudeData) string {
+	return workingDirectory(d.Workspace.CurrentDir, d.CWD)
 }

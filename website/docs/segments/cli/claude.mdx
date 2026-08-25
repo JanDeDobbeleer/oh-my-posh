@@ -12,6 +12,19 @@ Shows a visual gauge of context window usage and formatted cost/token informatio
 This segment integrates with [Claude Code's statusline functionality][claude-docs]
 to provide real-time session data in your prompt.
 
+:::info Working directory
+
+`oh-my-posh claude` renders directory-aware segments — `path`, `git`, `project` and the language segments — and the
+`.PWD`, `.Folder` and `.AbsolutePWD` template values against the directory the payload reports in
+`workspace.current_dir`, falling back to `cwd`. When the payload reports neither, or reports a path that is not an
+existing absolute directory, the renderer's own working directory is used, as before.
+
+The renderer's working directory itself is not changed, so external commands — including version manager shims — and
+the `cmd`, `readFile` and `glob` template functions still resolve relative to the directory Claude Code started the
+renderer in, not to `workspace.current_dir`.
+
+:::
+
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";

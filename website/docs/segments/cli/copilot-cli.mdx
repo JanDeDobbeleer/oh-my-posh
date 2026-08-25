@@ -15,6 +15,19 @@ to provide real-time session data in your prompt.
 
 For setup instructions, see [Change your prompt](/docs/installation/prompt?shell=copilot).
 
+:::info Working directory
+
+`oh-my-posh copilot` renders directory-aware segments — `path`, `git`, `project` and the language segments — and the
+`.PWD`, `.Folder` and `.AbsolutePWD` template values against the directory the payload reports in
+`workspace.current_dir`, falling back to `cwd`. When the payload reports neither, or reports a path that is not an
+existing absolute directory, the renderer's own working directory is used, as before.
+
+The renderer's working directory itself is not changed, so external commands — including version manager shims — and
+the `cmd`, `readFile` and `glob` template functions still resolve relative to the directory GitHub Copilot CLI started
+the renderer in, not to `workspace.current_dir`.
+
+:::
+
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";

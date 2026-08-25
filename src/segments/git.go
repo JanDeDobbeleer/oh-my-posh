@@ -347,12 +347,12 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	if g.options.Bool(FetchBareInfo, false) {
-		g.IsBare = g.isBareRepo(gitdir)
-	}
-
 	if !g.hasCommand(GITCOMMAND) {
 		return false
+	}
+
+	if g.options.Bool(FetchBareInfo, false) {
+		g.IsBare = g.isBareRepo(gitdir)
 	}
 
 	return g.isRepo(gitdir)
@@ -402,7 +402,7 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 	} else {
 		content := g.fileContent(gitDir.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.mainSCMDir = filepath.Join(gitDir.ParentFolder, dir)
+		g.mainSCMDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
 	}
 
 	cfg, err := g.getGitConfig()
@@ -458,23 +458,25 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		return false
 	}
 
-	// if we open a worktree file in a WSL shared folder, we have to convert it back
-	// to the mounted path
-	g.mainSCMDir = g.convertToLinuxPath(matches["dir"])
+	// Convert before resolving because filepath.IsAbs("C:/repo/.git") is false on Linux.
+	raw := g.convertToLinuxPath(matches["dir"])
+	g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, raw)
 
-	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
-	// scmDir needs to become path/.git
-	// repoRootDir needs to become path
-	worktreeIndex := strings.LastIndex(g.mainSCMDir, "/worktrees/")
+	// The returned index only applies to the normalized path.
+	adminDir := filepath.ToSlash(filepath.Clean(g.mainSCMDir))
+	worktreeIndex := worktreeAdminIndex(adminDir)
 
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
-	// we need the parent folder to detect where the real .git folder is
-	if strings.Contains(g.mainSCMDir, "/modules/") {
-		g.scmDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
+	// we need the parent folder to detect where the real .git folder is. Test raw rather
+	// than the resolved path: a checkout below a folder named modules would otherwise
+	// drag every genuine worktree in it into this branch.
+	if strings.Contains(raw, "/modules/") && g.isModuleAdminDir(g.mainSCMDir, gitdir.ParentFolder) {
+		g.scmDir = g.mainSCMDir
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
 		// between worktree and a module path containing the word 'worktree,' however.
-		worktreeIndex = strings.LastIndex(g.scmDir, "/worktrees/")
+		moduleDir := filepath.ToSlash(filepath.Clean(g.scmDir))
+		worktreeIndex = worktreeAdminIndex(moduleDir)
 		if worktreeIndex > -1 && g.env.HasFilesInDir(g.scmDir, "gitdir") {
 			gitDir := filepath.Join(g.scmDir, "gitdir")
 			realGitFolder := g.env.FileContent(gitDir)
@@ -482,7 +484,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 			g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
 			// resolve relative paths (worktree.useRelativePaths = true)
 			g.repoRootDir = resolveGitPath(g.scmDir, g.repoRootDir)
-			g.scmDir = g.scmDir[:worktreeIndex]
+			g.scmDir = moduleDir[:worktreeIndex]
 			g.mainSCMDir = g.scmDir
 			g.IsWorkTree = true
 			return true
@@ -493,22 +495,21 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		return true
 	}
 
-	// convert to absolute path for worktrees only
-	if strings.HasPrefix(g.mainSCMDir, "..") {
-		g.mainSCMDir = resolveGitPath(gitdir.ParentFolder, g.mainSCMDir)
-		worktreeIndex = strings.LastIndex(g.mainSCMDir, "/worktrees/")
-	}
-
 	if worktreeIndex > -1 {
-		gitDir := filepath.Join(g.mainSCMDir, "gitdir")
-		g.scmDir = g.mainSCMDir[:worktreeIndex]
-		gitDirContent := g.env.FileContent(gitDir)
-		g.repoRootDir = strings.TrimSuffix(strings.TrimRight(gitDirContent, "\n\r "), ".git")
-		g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
+		gitDirContent := g.env.FileContent(filepath.Join(g.mainSCMDir, "gitdir"))
+		gitDirPath := strings.TrimRight(gitDirContent, "\n\r ")
+		root := strings.TrimSuffix(gitDirPath, ".git")
+		root = g.convertToLinuxPath(root)
 		// resolve relative paths (worktree.useRelativePaths = true)
-		g.repoRootDir = resolveGitPath(g.mainSCMDir, g.repoRootDir)
-		g.IsWorkTree = true
-		return true
+		root = resolveGitPath(g.mainSCMDir, root)
+
+		// A genuine worktree's metadata points back at the .git file we just read.
+		if gitDirPath != "" && filepath.Clean(root) == filepath.Clean(gitdir.ParentFolder) {
+			g.scmDir = adminDir[:worktreeIndex]
+			g.repoRootDir = root
+			g.IsWorkTree = true
+			return true
+		}
 	}
 
 	// check for separate git folder(--separate-git-dir)
@@ -1194,6 +1195,65 @@ func (g *Git) commonGitDir() string {
 	}
 
 	return filepath.ToSlash(g.scmDir)
+}
+
+// isModuleAdminDir reports whether target is a submodule administrative directory
+// belonging to the checkout at parent, or a linked worktree inside one.
+//
+// A pointer whose spelling merely contains a modules component is not enough: a
+// --separate-git-dir target such as /srv/modules/project.git spells the same substring
+// without being a submodule. Nor does the shape help the way it does for worktrees. A
+// submodule's name is its path, so it may hold separators (.git/modules/vendor/libfoo),
+// it may nest (.../modules/vendor/libfoo/modules/inner), and the folder in front of
+// modules is only called .git when the superproject has no --separate-git-dir of its own
+// (../../sepgit/modules/sub is a real pointer).
+//
+// What does hold is that git records core.worktree in a submodule's git dir, pointing
+// back at the checkout, and never records it in a --separate-git-dir target. That
+// back-reference is the same kind of proof the worktree branch takes from its gitdir
+// metadata.
+func (g *Git) isModuleAdminDir(target, parent string) bool {
+	// A linked worktree inside a module dir keeps no config of its own, so it cannot
+	// carry core.worktree. Its gitdir metadata identifies it instead, which is what the
+	// worktree case in the caller goes on to validate.
+	if worktreeAdminIndex(target) > -1 && g.env.HasFilesInDir(target, "gitdir") {
+		return true
+	}
+
+	cfg, err := ini.Load(g.fileContent(target, "config"))
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+
+	worktree := cfg.Section("core").Key("worktree").String()
+	if worktree == "" {
+		log.Debug("no core.worktree in", target, "- not a submodule git dir")
+		return false
+	}
+
+	// core.worktree is relative to the git dir holding it, and may need the same WSL
+	// conversion as the pointer itself.
+	root := resolveGitPath(target, g.convertToLinuxPath(worktree))
+
+	return filepath.Clean(root) == filepath.Clean(parent)
+}
+
+func worktreeAdminIndex(dir string) int {
+	const segment = "/worktrees/"
+
+	normalised := filepath.ToSlash(filepath.Clean(dir))
+	index := strings.LastIndex(normalised, segment)
+	if index < 0 {
+		return -1
+	}
+
+	name := normalised[index+len(segment):]
+	if name == "" || strings.Contains(name, "/") {
+		return -1
+	}
+
+	return index
 }
 
 func parseMainWorktree(output string) (string, bool) {

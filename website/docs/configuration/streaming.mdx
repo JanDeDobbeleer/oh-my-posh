@@ -64,7 +64,9 @@ differs per shell:
 <TabItem value="powershell">
 
 Requires PowerShell 6 or later for the background process; Windows PowerShell 5.1 and
-sessions in `ConstrainedLanguage` mode use a streaming process per prompt instead.
+sessions in `ConstrainedLanguage` mode use a streaming process per prompt instead. Streaming
+is disabled in PowerShell Editor Services sessions, including the VS Code PowerShell extension,
+because its idle event processing can run pipelines concurrently.
 
 - **live updates**: the prompt repaints in place as pending segments resolve, even while
   you're already typing

@@ -9,6 +9,8 @@ src/test/umbraco/obj/
 src/keys
 *.prof
 packages/msix/Microsoft.Trusted.Signing.Client
+packages/msix/Update.appinstaller
+packages/msix/out/*.appinstaller
 .claude
 .styles
 

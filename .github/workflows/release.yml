@@ -132,6 +132,7 @@ jobs:
           name: msix-artifact-${{ matrix.arch }}
           path: |
             packages/msix/out/install-${{ matrix.arch }}.msix
+            packages/msix/out/install-${{ matrix.arch }}.appinstaller
   release:
     runs-on: ubuntu-latest
     needs:
@@ -143,13 +144,20 @@ jobs:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           merge-multiple: true
-      - name: Upload version file
+      - name: Upload versioned files
         env:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.CDN_CONNECTIONSTRING }}
         run: |
           echo v${{ needs.changelog.outputs.version }} > version.txt
           az storage blob upload-batch --destination releases/v${{ needs.changelog.outputs.version }} --source .
-          az storage blob upload-batch --destination releases/latest --overwrite true --source .
+          for architecture in x64 arm64; do
+            az storage blob upload \
+              --container-name releases \
+              --name "v${{ needs.changelog.outputs.version }}/install-${architecture}.appinstaller" \
+              --file "install-${architecture}.appinstaller" \
+              --content-type application/appinstaller \
+              --overwrite true
+          done
       - name: Create draft release 📝
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228
         with:
@@ -164,6 +172,19 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: gh release edit ${{ needs.changelog.outputs.tag }} --draft=false --repo ${{ github.repository }}
+      - name: Update latest files
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.CDN_CONNECTIONSTRING }}
+        run: |
+          az storage blob upload-batch --destination releases/latest --overwrite true --source .
+          for architecture in x64 arm64; do
+            az storage blob upload \
+              --container-name releases \
+              --name "latest/install-${architecture}.appinstaller" \
+              --file "install-${architecture}.appinstaller" \
+              --content-type application/appinstaller \
+              --overwrite true
+          done
   winget:
     runs-on: windows-latest
     needs:

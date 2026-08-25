@@ -3,8 +3,8 @@
     Builds the MSIX package for Oh My Posh.
 
 .DESCRIPTION
-    This script creates the MSIX installer package for Oh My Posh with the specified architecture and version.
-    It can optionally copy the executable and sign the package.
+    This script creates the MSIX installer package and App Installer update feed for Oh My Posh with the
+    specified architecture and version. It can optionally copy the executable and sign the package.
 
 .PARAMETER Architecture
     The target architecture for the package. Must be either 'x64' or 'arm64'.
@@ -32,7 +32,7 @@
     Creates and signs the MSIX package for arm64 architecture with version 1.2.3.
 
 .OUTPUTS
-    Creates install-{Architecture}.msix in the 'out' directory.
+    Creates install-{Architecture}.msix and install-{Architecture}.appinstaller in the 'out' directory.
 
 .NOTES
     Requires the Windows SDK for MSIX packaging and signing.
@@ -149,6 +149,91 @@ function Invoke-PackageSigning {
     }
 }
 
+function New-AppInstallerFile {
+    <#
+    .SYNOPSIS
+        Creates the architecture-specific App Installer update feed.
+
+    .PARAMETER Architecture
+        The target package architecture.
+
+    .PARAMETER Name
+        The package identity name.
+
+    .PARAMETER Publisher
+        The package identity publisher.
+
+    .PARAMETER PackageVersion
+        The four-part package version.
+
+    .PARAMETER ReleaseVersion
+        The three-part GitHub release version.
+
+    .PARAMETER Path
+        The output path for the App Installer file.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateSet('x64', 'arm64')]
+        [string]$Architecture,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Publisher,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$PackageVersion,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseVersion,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Path
+    )
+
+    $namespace = 'http://schemas.microsoft.com/appx/appinstaller/2021'
+    $feedUri = "https://cdn.ohmyposh.dev/releases/latest/install-$Architecture.appinstaller"
+    $packageUri = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$ReleaseVersion/install-$Architecture.msix"
+    $settings = [System.Xml.XmlWriterSettings]::new()
+    $settings.Encoding = [System.Text.UTF8Encoding]::new($false)
+    $settings.Indent = $true
+
+    $writer = [System.Xml.XmlWriter]::Create($Path, $settings)
+    try {
+        $writer.WriteStartDocument()
+        $writer.WriteStartElement($null, 'AppInstaller', $namespace)
+        $writer.WriteAttributeString('Version', $PackageVersion)
+        $writer.WriteAttributeString('Uri', $feedUri)
+
+        $writer.WriteStartElement($null, 'MainPackage', $namespace)
+        $writer.WriteAttributeString('Name', $Name)
+        $writer.WriteAttributeString('Publisher', $Publisher)
+        $writer.WriteAttributeString('Version', $PackageVersion)
+        $writer.WriteAttributeString('ProcessorArchitecture', $Architecture)
+        $writer.WriteAttributeString('Uri', $packageUri)
+        $writer.WriteEndElement()
+
+        $writer.WriteStartElement($null, 'UpdateSettings', $namespace)
+        $writer.WriteStartElement($null, 'OnLaunch', $namespace)
+        $writer.WriteAttributeString('HoursBetweenUpdateChecks', '24')
+        $writer.WriteEndElement()
+        $writer.WriteEndElement()
+        $writer.WriteEndElement()
+        $writer.WriteEndDocument()
+    }
+    finally {
+        $writer.Dispose()
+    }
+}
+
 #endregion
 
 #region Main Script
@@ -194,6 +279,8 @@ try {
     $manifestPath = "$currentPath/appxmanifest.xml"
     $mappingFilePath = "$currentPath/mapping.txt"
     $msixPackagePath = "$currentPath/out/install-$Architecture.msix"
+    $appInstallerPath = "$currentPath/Update.appinstaller"
+    $appInstallerFeedPath = "$currentPath/out/install-$Architecture.appinstaller"
     $makeappxPath = "C:/Program Files (x86)/Windows Kits/10/bin/$SDKVersion/x64/makeappx.exe"
 
     # Validate required files exist
@@ -207,11 +294,27 @@ try {
         throw "makeappx.exe not found at: $makeappxPath"
     }
 
-    # Update manifest with version and architecture
+    if ($Version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+$') {
+        throw "Version must contain three numeric components: $Version"
+    }
+
+    [version]$packageVersion = "$Version.0"
+    $packageVersionString = $packageVersion.ToString(4)
+    $releaseVersion = $packageVersion.ToString(3)
+
+    # Update manifest and App Installer feed with version and architecture
     [xml]$manifestDocument = Get-Content $manifestPath
-    $manifestDocument.Package.Identity.Version = "$Version.0"
+    $manifestDocument.Package.Identity.Version = $packageVersionString
     $manifestDocument.Package.Identity.ProcessorArchitecture = $Architecture
     $manifestDocument.Save($manifestPath)
+
+    New-AppInstallerFile `
+        -Architecture $Architecture `
+        -Name $manifestDocument.Package.Identity.Name `
+        -Publisher $manifestDocument.Package.Identity.Publisher `
+        -PackageVersion $packageVersionString `
+        -ReleaseVersion $releaseVersion `
+        -Path $appInstallerPath
 
     # Build MSIX package
     Write-Verbose "Building MSIX: $msixPackagePath" -Verbose
@@ -230,6 +333,8 @@ if ($Sign) {
     $signingTools = Initialize-SigningEnvironment -SDKVersion $SDKVersion
     Invoke-PackageSigning -PackagePath $msixPackagePath -SigningTools $signingTools
 }
+
+Copy-Item -Path $appInstallerPath -Destination $appInstallerFeedPath -Force
 
 Write-Verbose "Successfully completed building the MSIX package" -Verbose
 

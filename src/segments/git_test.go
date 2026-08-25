@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,6 +18,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -732,77 +734,199 @@ func TestShouldDisplayInitializesWSLBeforeBareRepoDetection(t *testing.T) {
 
 func TestEnabledInBareRepo(t *testing.T) {
 	cases := []struct {
-		Case            string
-		HEAD            string
-		GitDirPath      string
-		GitFileContent  string
-		Config          string
-		ExpectedRemotes int
-		GitDirIsDir     bool
-		IsBare          bool
+		Case             string
+		HEAD             string
+		SymbolicName     string
+		RevParse         string
+		Tag              string
+		ExpectedRef      string
+		ExpectedHEAD     string
+		IsBare           bool
+		ExpectedDetached bool
 	}{
 		{
-			Case:        "Bare repo on main",
-			IsBare:      true,
-			GitDirPath:  "git",
-			GitDirIsDir: true,
-			HEAD:        "ref: refs/heads/main",
-			Config:      "[core]\n\tbare = true",
+			Case:         "Bare repo on main",
+			IsBare:       true,
+			HEAD:         "ref: refs/heads/main",
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
 		},
 		{
-			Case:        "Not a bare repo",
-			IsBare:      false,
-			GitDirPath:  "git",
-			GitDirIsDir: true,
-			HEAD:        "ref: refs/heads/main",
-			Config:      "[core]\n\tbare = false",
+			Case:         "Not a bare repo",
+			HEAD:         "ref: refs/heads/main",
+			IsBare:       false,
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
 		},
 		{
-			Case:            "Linked worktree probe does not poison the remotes memo",
-			IsBare:          false,
-			GitDirPath:      "/repo/.git",
-			GitDirIsDir:     false,
-			GitFileContent:  "gitdir: /repo/.git/worktrees/linked",
-			Config:          "[remote \"origin\"]\n\turl = git@github.com:JanDeDobbeleer/test.git",
-			ExpectedRemotes: 1,
+			Case:         "Reftables resolve to the real branch",
+			IsBare:       true,
+			HEAD:         "ref: refs/heads/.invalid",
+			SymbolicName: "refs/heads/main",
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
+		},
+		{
+			Case:             "Detached on a commit",
+			IsBare:           true,
+			HEAD:             "1234567890123456789012345678901234567890",
+			RevParse:         "1234567890123456789012345678901234567890",
+			ExpectedRef:      "1234567",
+			ExpectedHEAD:     "commit 1234567",
+			ExpectedDetached: true,
+		},
+		{
+			Case:             "Detached on a tag",
+			IsBare:           true,
+			HEAD:             "1234567890123456789012345678901234567890",
+			RevParse:         "1234567890123456789012345678901234567890",
+			Tag:              "v1.2.3",
+			ExpectedRef:      "v1.2.3",
+			ExpectedHEAD:     "tag v1.2.3",
+			ExpectedDetached: true,
+		},
+		{
+			Case:         "Unborn branch still names the branch",
+			IsBare:       true,
+			HEAD:         "ref: refs/heads/main",
+			RevParse:     "",
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
+		},
+		{
+			// PINNED LIMITATION, spec section 3.5 and 6: reftables plus an unborn HEAD loses the
+			// branch name, because rev-parse --symbolic-full-name HEAD fails and the error is mapped
+			// to an empty string. Pre-existing in the shared resolver and shared with the non-bare
+			// path, so out of scope here. This row asserts today's WRONG output on purpose; whoever
+			// fixes the resolver flips it to ExpectedRef "main".
+			Case:             "Reftables and unborn loses the branch name (known limitation)",
+			IsBare:           true,
+			HEAD:             "ref: refs/heads/.invalid",
+			SymbolicName:     "",
+			RevParse:         "",
+			ExpectedRef:      "",
+			ExpectedHEAD:     "no commits",
+			ExpectedDetached: true,
 		},
 	}
+
 	for _, tc := range cases {
-		t.Run(tc.Case, func(t *testing.T) {
-			env := new(mock.Environment)
-			env.On("InWSLSharedDrive").Return(false)
-			env.On("GOOS").Return("")
-			env.On("HasCommand", "git").Return(true)
-			env.On("PathSeparator").Return("/")
+		path := "git"
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("GOOS").Return("")
+		env.On("IsWsl").Return(false)
+		env.On("HasCommand", "git").Return(true)
 
-			fileInfo := &runtime.FileInfo{
-				IsDir:        tc.GitDirIsDir,
-				Path:         tc.GitDirPath,
-				ParentFolder: "/repo",
-			}
-			env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
-			env.On("FileContent", tc.GitDirPath).Return(tc.GitFileContent)
-			env.On("FileContent", "/repo/.git/worktrees/linked/gitdir").Return("/repo/linked/.git\n")
-			env.On("FileContent", tc.GitDirPath+"/HEAD").Return(tc.HEAD)
-			env.On("FileContent", testify_.Anything).Return(tc.Config)
-			env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(true)
-			env.On("HasFolder", testify_.Anything).Return(false)
-			env.On("RunCommand", testify_.Anything, testify_.Anything).Return("", nil)
+		configData := fmt.Sprintf(`[core]
+		bare = %s`, strconv.FormatBool(tc.IsBare))
 
-			g := &Git{}
-			g.Init(options.Map{}, env)
-			// bare info is derived: the config references .IsBare
-			g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
+		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
+		env.On("FileContent", "git/config").Return(configData)
+		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
+		env.MockGitCommand("git", tc.SymbolicName, "rev-parse", "--symbolic-full-name", "HEAD")
+		env.MockGitCommand("git", tc.RevParse, "rev-parse", "HEAD")
+		env.MockGitCommand("git", tc.Tag, "describe", "--tags", "--exact-match")
 
-			_ = g.Enabled()
+		props := options.Map{
+			BranchIcon:    "branch ",
+			CommitIcon:    "commit ",
+			TagIcon:       "tag ",
+			NoCommitsIcon: "no commits",
+		}
 
-			assert.Equal(t, tc.IsBare, g.IsBare, tc.Case)
+		g := &Git{}
+		g.Init(props, env)
+		// bare info is derived: the config references .IsBare
+		g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
 
-			if tc.ExpectedRemotes > 0 {
-				assert.Len(t, g.Remotes(), tc.ExpectedRemotes, "%s: remotes must survive the bare probe", tc.Case)
-			}
-		})
+		_ = g.Enabled()
+
+		assert.Equal(t, tc.IsBare, g.IsBare, tc.Case)
+		assert.Equal(t, tc.ExpectedRef, g.Ref, tc.Case)
+		assert.Equal(t, tc.ExpectedHEAD, g.HEAD, tc.Case)
+		assert.Equal(t, tc.ExpectedDetached, g.Detached, tc.Case)
 	}
+}
+
+func TestEnabledLinkedWorktreeProbeDoesNotPoisonRemotesMemo(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("GOOS").Return("")
+	env.On("HasCommand", "git").Return(true)
+	env.On("PathSeparator").Return("/")
+
+	fileInfo := &runtime.FileInfo{
+		IsDir:        false,
+		Path:         "/repo/.git",
+		ParentFolder: "/repo",
+	}
+	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+	env.On("FileContent", "/repo/.git").Return("gitdir: /repo/.git/worktrees/linked")
+	env.On("FileContent", "/repo/.git/worktrees/linked/gitdir").Return("/repo/linked/.git\n")
+	env.On("FileContent", "/repo/.git/HEAD").Return("")
+	env.On("FileContent", testify_.Anything).Return("[remote \"origin\"]\n\turl = git@github.com:JanDeDobbeleer/test.git")
+	env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(true)
+	env.On("HasFolder", testify_.Anything).Return(false)
+	env.On("RunCommand", testify_.Anything, testify_.Anything).Return("", nil)
+
+	g := &Git{}
+	g.Init(options.Map{}, env)
+	// bare info is derived: the config references .IsBare
+	g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
+
+	_ = g.Enabled()
+
+	assert.False(t, g.IsBare)
+	assert.Len(t, g.Remotes(), 1, "remotes must survive the bare probe")
+}
+
+// TestEnabledInBareRepoSeparateGitDir pins D2's dependency on D3 Option 2. In a bare layout reached
+// through a .git FILE, HEAD lives in the git directory, and only the repaired mainSCMDir points there.
+// If this fails, the base is missing D1 or D3-O2 - rebase, do not weaken the assertion.
+func TestEnabledInBareRepoSeparateGitDir(t *testing.T) {
+	const (
+		root   = "/r"
+		gitPtr = "/r/.git"
+		gitDir = "/r/.bare"
+	)
+
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("GOOS").Return("")
+	env.On("IsWsl").Return(false)
+	env.On("HasCommand", "git").Return(true)
+	env.On("PathSeparator").Return("/")
+
+	env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{
+		IsDir:        false,
+		Path:         gitPtr,
+		ParentFolder: root,
+	}, nil)
+
+	// Serves both isBareRepo's fileContent(ParentFolder, ".git") and hasWorktree's FileContent(Path).
+	env.On("FileContent", gitPtr).Return("gitdir: " + gitDir)
+	env.On("FileContent", gitDir+"/config").Return("[core]\n\tbare = true")
+	env.On("HasFilesInDir", gitDir, "HEAD").Return(true)
+	// HEAD is readable ONLY under the git directory, never under the working-tree root.
+	env.On("FileContent", gitDir+"/HEAD").Return("ref: refs/heads/main")
+
+	props := options.Map{
+		BranchIcon: "branch ",
+	}
+
+	g := &Git{}
+	g.Init(props, env)
+	// bare info is derived: the config references .IsBare
+	g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
+
+	require.True(t, g.Enabled())
+
+	assert.True(t, g.IsBare)
+	assert.Equal(t, gitDir, g.mainSCMDir, "D3-O2 must leave mainSCMDir on the git directory")
+	assert.Equal(t, "main", g.Ref)
+	assert.Equal(t, "branch main", g.HEAD)
+	assert.False(t, g.Detached)
 }
 
 func TestIsBareRepoDoesNotReuseConfigMemo(t *testing.T) {
@@ -833,6 +957,374 @@ func TestGetGitOutputForCommand(t *testing.T) {
 
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
+}
+
+func TestFallbackRemote(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Remotes  []string
+	}{
+		{Case: "origin among several", Remotes: []string{"fork", "origin"}, Expected: "origin"},
+		{Case: "sole non-origin remote", Remotes: []string{"hub"}, Expected: "hub"},
+		{Case: "several unranked remotes", Remotes: []string{"fork", "hub"}, Expected: ""},
+		{Case: "no remotes", Remotes: nil, Expected: ""},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, fallbackRemote(tc.Remotes), tc.Case)
+	}
+}
+
+func TestBareUpstream(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Ref              string
+		Output           string
+		ExpectedUpstream string
+		ExpectedRemote   string
+		Detached         bool
+		NoCommand        bool
+	}{
+		{
+			Case:             "conventional upstream",
+			Ref:              "main",
+			Output:           "origin/main\x00origin\x00refs/heads/main",
+			ExpectedUpstream: "origin/main",
+			ExpectedRemote:   "origin",
+		},
+		{
+			Case:             "refspec lands in another remote's namespace",
+			Ref:              "main",
+			Output:           "origin/main\x00r\x00refs/heads/main",
+			ExpectedUpstream: "origin/main",
+			ExpectedRemote:   "r",
+		},
+		{
+			Case:             "upstream is a tag",
+			Ref:              "main",
+			Output:           "v0.1.0\x00r\x00refs/heads/main",
+			ExpectedUpstream: "v0.1.0",
+			ExpectedRemote:   "r",
+		},
+		{
+			Case:             "local upstream has no attributable remote",
+			Ref:              "main",
+			Output:           "main\x00.\x00refs/heads/main",
+			ExpectedUpstream: "main",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:             "branch exists but has no upstream",
+			Ref:              "main",
+			Output:           "\x00\x00refs/heads/main",
+			ExpectedUpstream: "",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:             "no output at all",
+			Ref:              "main",
+			Output:           "",
+			ExpectedUpstream: "",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:             "pattern matched a different ref",
+			Ref:              "feature",
+			Output:           "origin/main\x00origin\x00refs/heads/feature/x",
+			ExpectedUpstream: "",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:      "detached issues no command",
+			Ref:       "v1.2.3",
+			Detached:  true,
+			NoCommand: true,
+		},
+		{
+			Case:      "empty ref issues no command",
+			Ref:       "",
+			NoCommand: true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("GOOS").Return("unix")
+		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", tc.Output, "for-each-ref",
+			"--format=%(upstream:short)%00%(upstream:remotename)%00%(refname)", "refs/heads/"+tc.Ref)
+
+		g := &Git{
+			command:  GITCOMMAND,
+			Ref:      tc.Ref,
+			Detached: tc.Detached,
+		}
+		g.Init(options.Map{}, env)
+
+		upstream, remote := g.bareUpstream()
+
+		assert.Equal(t, tc.ExpectedUpstream, upstream, tc.Case)
+		assert.Equal(t, tc.ExpectedRemote, remote, tc.Case)
+
+		if tc.NoCommand {
+			env.AssertNotCalled(t, "RunCommand", testify_.Anything, testify_.Anything)
+		}
+	}
+}
+
+func TestBareRemoteNames(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Output   string
+		Expected []string
+	}{
+		{Case: "no remotes", Output: "", Expected: nil},
+		{Case: "one remote", Output: "origin", Expected: []string{"origin"}},
+		{Case: "several remotes", Output: "fork\norigin", Expected: []string{"fork", "origin"}},
+		{Case: "trailing newline is trimmed", Output: "hub\n", Expected: []string{"hub"}},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("GOOS").Return("unix")
+		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", tc.Output, "remote")
+
+		g := &Git{command: GITCOMMAND}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, tc.Expected, g.bareRemoteNames(), tc.Case)
+	}
+}
+
+func TestBareUpstreamIcon(t *testing.T) {
+	origTemplateCache := template.Cache
+	t.Cleanup(func() {
+		template.Cache = origTemplateCache
+	})
+
+	cases := []struct {
+		Case             string
+		ForEachRef       string
+		RemoteOutput     string
+		RemoteURL        string
+		ExpectedRemote   string
+		BranchTemplate   string
+		ExpectedUpstream string
+		ExpectedIcon     string
+		ExpectedURL      string
+		ExpectedHEAD     string
+		HEAD             string
+		FetchUpstream    bool
+		NoRemoteCommand  bool
+	}{
+		{
+			Case:             "resolved upstream drives the icon and skips the inventory",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "origin/main\x00origin\x00refs/heads/main",
+			RemoteURL:        "https://github.com/a/b.git",
+			ExpectedRemote:   "origin",
+			FetchUpstream:    true,
+			ExpectedUpstream: "origin/main",
+			ExpectedIcon:     "GH",
+			ExpectedURL:      "https://github.com/a/b.git",
+			NoRemoteCommand:  true,
+		},
+		{
+			Case:             "no upstream falls back to origin",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "\x00\x00refs/heads/main",
+			RemoteOutput:     "fork\norigin",
+			RemoteURL:        "https://github.com/a/b.git",
+			ExpectedRemote:   "origin",
+			FetchUpstream:    true,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "GH",
+			ExpectedURL:      "https://github.com/a/b.git",
+		},
+		{
+			Case:             "local upstream is reported with no remote and no icon",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "main\x00.\x00refs/heads/main",
+			RemoteOutput:     "",
+			FetchUpstream:    true,
+			ExpectedUpstream: "main",
+			ExpectedIcon:     "",
+			ExpectedURL:      "",
+		},
+		{
+			Case:             "unranked remotes keep the generic icon",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "\x00\x00refs/heads/main",
+			RemoteOutput:     "fork\nhub",
+			FetchUpstream:    true,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "G",
+			ExpectedURL:      "",
+		},
+		{
+			Case:             "sole remote reachable only through an include still resolves",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "\x00\x00refs/heads/main",
+			RemoteOutput:     "hub",
+			RemoteURL:        "https://gitlab.com/a/b.git",
+			ExpectedRemote:   "hub",
+			FetchUpstream:    true,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "GL",
+			ExpectedURL:      "https://gitlab.com/a/b.git",
+		},
+		{
+			Case:             "option absent leaves every upstream field alone",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "origin/main\x00origin\x00refs/heads/main",
+			RemoteOutput:     "origin",
+			FetchUpstream:    false,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "",
+			ExpectedURL:      "",
+			NoRemoteCommand:  true,
+		},
+		{
+			Case:             "branch_template sees an empty upstream",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "origin/main\x00origin\x00refs/heads/main",
+			RemoteURL:        "https://github.com/a/b.git",
+			ExpectedRemote:   "origin",
+			BranchTemplate:   "{{ .Branch }}[{{ .Upstream }}]",
+			FetchUpstream:    true,
+			ExpectedUpstream: "origin/main",
+			ExpectedIcon:     "GH",
+			ExpectedURL:      "https://github.com/a/b.git",
+			ExpectedHEAD:     "branch main[]",
+			NoRemoteCommand:  true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("GOOS").Return("")
+		env.On("IsWsl").Return(false)
+		env.On("HasCommand", "git").Return(true)
+		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: "git"}, nil)
+		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
+		env.On("FileContent", "git/config").Return("[core]\n\tbare = true")
+
+		env.MockGitCommand("git", tc.ForEachRef, "for-each-ref",
+			"--format=%(upstream:short)%00%(upstream:remotename)%00%(refname)", "refs/heads/main")
+		env.MockGitCommand("git", tc.RemoteOutput, "remote")
+		if tc.ExpectedRemote != "" {
+			env.MockGitCommand("git", tc.RemoteURL, "remote", "get-url", tc.ExpectedRemote)
+		}
+
+		props := options.Map{
+			BranchIcon: "branch ",
+			GithubIcon: "GH",
+			GitlabIcon: "GL",
+			GitIcon:    "G",
+		}
+
+		if tc.BranchTemplate != "" {
+			props[BranchTemplate] = tc.BranchTemplate
+			env.On("Shell").Return(shell.BASH)
+			template.Cache = new(cache.Template)
+			template.Init(env, nil, nil)
+		}
+
+		g := &Git{}
+		g.Init(props, env)
+
+		// bare info is always derived; the upstream icon probe is derived
+		// from template references, mirroring tc.FetchUpstream.
+		refs := template.RefSet{Fields: []string{"IsBare"}, Analyzable: true}
+		if tc.FetchUpstream {
+			refs.Fields = append(refs.Fields, gitUpstreamIconFields...)
+		}
+		g.SetReferencedFields(refs)
+
+		_ = g.Enabled()
+
+		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
+		assert.Equal(t, tc.ExpectedIcon, g.UpstreamIcon, tc.Case)
+		assert.Equal(t, tc.ExpectedURL, g.RawUpstreamURL, tc.Case)
+
+		if tc.ExpectedHEAD != "" {
+			assert.Equal(t, tc.ExpectedHEAD, g.HEAD, tc.Case)
+		}
+
+		if tc.ExpectedRemote != "" {
+			env.AssertCalled(t, "RunCommand", GITCOMMAND, []string{
+				"-C", "git", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false",
+				"remote", "get-url", tc.ExpectedRemote,
+			})
+		}
+
+		if tc.NoRemoteCommand {
+			env.AssertNotCalled(t, "RunCommand", GITCOMMAND, []string{
+				"-C", "git", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false",
+				"remote",
+			})
+		}
+	}
+}
+
+func TestKrakenBareAttribution(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Upstream         string
+		ExpectedKraken   string
+		ExpectedUpstream string
+		WrongURL         string
+		IsBare           bool
+		FetchUpstream    bool
+	}{
+		{
+			Case:             "non-bare without an upstream still queries origin",
+			Upstream:         "",
+			ExpectedKraken:   "gitkraken://repolink/abc1234/commit/abc1234?url=" + url.QueryEscape("https://github.com/a/b.git"),
+			ExpectedUpstream: "",
+		},
+		{
+			Case:             "bare with a local upstream does not re-derive a remote",
+			Upstream:         "main",
+			IsBare:           true,
+			FetchUpstream:    true,
+			ExpectedKraken:   "gitkraken://repolink/abc1234/commit/abc1234?url=",
+			ExpectedUpstream: "main",
+			WrongURL:         url.QueryEscape("https://example.com/wrong.git"),
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("GOOS").Return("unix")
+		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", "abc1234", "rev-list", "--max-parents=0", "HEAD")
+		env.MockGitCommand("", "abc1234", "rev-parse", "HEAD")
+		env.MockGitCommand("", "https://github.com/a/b.git", "remote", "get-url", "origin")
+		env.MockGitCommand("", "https://example.com/wrong.git", "remote", "get-url", "main")
+
+		g := &Git{
+			command:  GITCOMMAND,
+			Upstream: tc.Upstream,
+			IsBare:   tc.IsBare,
+		}
+		g.Init(options.Map{}, env)
+
+		if tc.FetchUpstream {
+			g.SetReferencedFields(template.RefSet{Fields: gitUpstreamIconFields, Analyzable: true})
+		}
+
+		kraken := g.Kraken()
+
+		assert.Equal(t, tc.ExpectedKraken, kraken, tc.Case)
+		if tc.WrongURL != "" {
+			assert.NotContains(t, kraken, tc.WrongURL, tc.Case)
+		}
+		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
+	}
 }
 
 func TestSetGitHEADContextClean(t *testing.T) {
@@ -1306,11 +1798,31 @@ func TestGitCleanSSHURL(t *testing.T) {
 	}
 }
 
-func TestGitUpstream(t *testing.T) {
+func TestRemoteNameOrOrigin(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected string
 		Upstream string
+		Expected string
+	}{
+		{Case: "remote and branch", Upstream: "origin/main", Expected: "origin"},
+		{Case: "remote only", Upstream: "origin", Expected: "origin"},
+		{Case: "non-origin remote", Upstream: "hub/main", Expected: "hub"},
+		{Case: "nested branch", Upstream: "origin/feature/x", Expected: "origin"},
+		{Case: "empty defaults to origin", Upstream: "", Expected: "origin"},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, remoteNameOrOrigin(tc.Upstream), tc.Case)
+	}
+}
+
+func TestGitUpstream(t *testing.T) {
+	cases := []struct {
+		Case      string
+		Expected  string
+		Upstream  string
+		Remote    string
+		RemoteSet bool
 	}{
 		{Case: "No upstream", Expected: "G", Upstream: ""},
 		{Case: "SSH url", Expected: "G", Upstream: "ssh://git@git.my.domain:3001/ADIX7/dotconfig.git"},
@@ -1325,6 +1837,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
 		{Case: "GitHub with dash", Expected: "GH", Upstream: "github.com:pixel48/custom-reg"},
+		{Case: "No attributable remote yields the fallback icon", Expected: "G", RemoteSet: true, Remote: ""},
 	}
 	for _, tc := range cases {
 		env := &mock.Environment{}
@@ -1352,7 +1865,12 @@ func TestGitUpstream(t *testing.T) {
 		}
 		g.Init(props, env)
 
-		upstreamIcon := g.getUpstreamIcon()
+		remote := tc.Remote
+		if !tc.RemoteSet {
+			remote = remoteNameOrOrigin(g.Upstream)
+		}
+
+		upstreamIcon := g.getUpstreamIcon(remote)
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
 }
@@ -2984,7 +3502,7 @@ func TestGetRemoteURL(t *testing.T) {
 			}
 			g.Init(options.Map{}, env)
 
-			assert.Equal(t, tc.Expected, g.getRemoteURL())
+			assert.Equal(t, tc.Expected, g.getRemoteURL(remoteNameOrOrigin(g.Upstream)))
 		})
 	}
 }

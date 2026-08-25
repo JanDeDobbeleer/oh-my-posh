@@ -229,7 +229,7 @@ func (g *Git) Enabled() bool {
 
 		if g.fetchUnit(gitUpstreamIconFields...) {
 			wg.Go(func() {
-				g.UpstreamIcon = g.getUpstreamIcon()
+				g.UpstreamIcon = g.getUpstreamIcon(remoteNameOrOrigin(g.Upstream))
 			})
 		}
 
@@ -238,7 +238,7 @@ func (g *Git) Enabled() bool {
 		g.updateHEADReference()
 
 		if g.fetchUnit(gitUpstreamIconFields...) {
-			g.UpstreamIcon = g.getUpstreamIcon()
+			g.UpstreamIcon = g.getUpstreamIcon(remoteNameOrOrigin(g.Upstream))
 		}
 	}
 
@@ -383,11 +383,14 @@ func (g *Git) Kraken() string {
 	root := g.getGitCommandOutput("rev-list", "--max-parents=0", "HEAD")
 	root, _, _ = strings.Cut(root, "\n")
 
-	if g.RawUpstreamURL == "" {
-		if g.Upstream == "" {
-			g.Upstream = origin
-		}
-		g.RawUpstreamURL = g.getRemoteURL()
+	// In a bare repository whose config references the upstream icon fields, getBareRepoInfo has
+	// already made the authoritative attribution: an empty RawUpstreamURL there means "no
+	// attributable remote", not "not tried yet". .Upstream may legitimately be a bare branch name
+	// (remote = .), which must never be read as a remote name.
+	bareAttributionDone := g.IsBare && g.fetchUnit(gitUpstreamIconFields...)
+
+	if g.RawUpstreamURL == "" && !bareAttributionDone {
+		g.RawUpstreamURL = g.getRemoteURL(remoteNameOrOrigin(g.Upstream))
 	}
 
 	if g.Hash == "" && g.scmDir != "" && g.options.Bool(NativeStatus, false) {
@@ -514,18 +517,95 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 }
 
 func (g *Git) getBareRepoInfo() {
-	head := g.fileContent(g.mainSCMDir, "HEAD")
-	branchIcon := g.options.String(BranchIcon, "\uE0A0")
-	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
-	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
+	// The non-bare resolver already reads HEAD from mainSCMDir and already handles the symbolic
+	// branch, the reftables sentinel and a detached HEAD. Sharing it is what keeps the two paths
+	// from diverging again.
+	g.updateHEADReference()
 	if !g.fetchUnit(gitUpstreamIconFields...) {
 		return
 	}
 
-	g.Upstream = g.getGitCommandOutput("remote")
-	if len(g.Upstream) != 0 {
-		g.UpstreamIcon = g.getUpstreamIcon()
+	// Assigned before any early return: a local upstream (remote = .) is a real upstream even in a
+	// repository with no remotes at all. Assigned after updateHEADReference so a branch_template
+	// referencing .Upstream still sees the empty value it sees today.
+	upstream, remote := g.bareUpstream()
+	g.Upstream = upstream
+
+	// An upstream implies its remote exists, so the inventory is not needed.
+	if remote != "" {
+		g.UpstreamIcon = g.getUpstreamIcon(remote)
+		return
 	}
+
+	remotes := g.bareRemoteNames()
+	if len(remotes) == 0 {
+		return // no remote to attribute; UpstreamIcon and UpstreamURL stay empty, as today
+	}
+
+	g.UpstreamIcon = g.getUpstreamIcon(fallbackRemote(remotes))
+}
+
+// bareUpstream asks git for the upstream of HEAD's branch, and for the remote that upstream
+// resolves to. Letting git answer is not a convenience: git applies fetch-refspec mapping,
+// accepts merge refs outside refs/heads/, spells a local upstream as the bare branch name, and
+// reads the merged configuration from every scope.
+func (g *Git) bareUpstream() (string, string) {
+	// Ref can be a short hash or an exact tag name when detached, either of which can name a real
+	// branch, so a detached HEAD must never be looked up as one.
+	if g.Detached || g.Ref == "" {
+		return "", ""
+	}
+
+	ref := "refs/heads/" + g.Ref
+
+	// NUL-delimited so the fields survive RunCommand's whitespace trimming, the same reason
+	// MainWorktree uses -z.
+	output := g.getGitCommandOutput("for-each-ref",
+		"--format=%(upstream:short)%00%(upstream:remotename)%00%(refname)", ref)
+
+	upstream, rest, _ := strings.Cut(output, "\x00")
+	remote, refname, _ := strings.Cut(rest, "\x00")
+
+	// for-each-ref takes a pattern, and a pattern matches at "/" boundaries: querying
+	// refs/heads/feature also matches refs/heads/feature/x. Verify the matched ref before using it.
+	if refname != ref {
+		return "", ""
+	}
+
+	if remote == "." {
+		remote = ""
+	}
+
+	return upstream, remote
+}
+
+// bareRemoteNames returns the configured remote names. It asks git rather than parsing the config
+// file, because git reports the merged configuration - system, global, local and include.path - and a
+// remote supplied through an include or a global scope is visible today.
+func (g *Git) bareRemoteNames() []string {
+	// Trimmed here rather than relying on the command runner: cmd.RunWithEnv trims, but the test
+	// mock returns its canned string verbatim, so the contract belongs in this function.
+	output := strings.TrimSpace(g.getGitCommandOutput("remote"))
+	if output == "" {
+		return nil // Split would otherwise yield a one-element slice holding ""
+	}
+
+	return strings.Split(output, "\n")
+}
+
+// fallbackRemote picks a remote to attribute URLs to when HEAD has no upstream, or "" when nothing
+// ranks them. Push settings are deliberately absent: branch.<ref>.pushRemote and remote.pushDefault
+// name a push destination, not an upstream, and no other caller of getUpstreamIcon consults them.
+func fallbackRemote(remotes []string) string {
+	if slices.Contains(remotes, origin) {
+		return origin
+	}
+
+	if len(remotes) == 1 {
+		return remotes[0]
+	}
+
+	return "" // several unranked remotes: keep today's generic icon and empty URL
 }
 
 func (g *Git) setDir(dir string) {
@@ -814,10 +894,10 @@ func (g *Git) cleanUpstreamURL(url string) string {
 	return fmt.Sprintf("https://%s/%s", match["URL"], strings.TrimSuffix(match["PATH"], ".git"))
 }
 
-func (g *Git) getUpstreamIcon() string {
+func (g *Git) getUpstreamIcon(remote string) string {
 	fallback := g.options.String(GitIcon, "\uE5FB ")
 
-	g.RawUpstreamURL = g.getRemoteURL()
+	g.RawUpstreamURL = g.getRemoteURL(remote)
 	if g.RawUpstreamURL == "" {
 		return fallback
 	}
@@ -1440,11 +1520,22 @@ func parseMainWorktree(output string) (string, bool) {
 	return mainWorktree, true
 }
 
-func (g *Git) getRemoteURL() string {
-	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
-	if upstream == "" {
-		upstream = origin
+// remoteNameOrOrigin derives the remote to attribute URLs to from an upstream reference,
+// reproducing the historical behaviour: "origin/main" -> "origin", "" -> "origin".
+func remoteNameOrOrigin(upstream string) string {
+	if remote := regex.ReplaceAllString("/.*", upstream, ""); remote != "" {
+		return remote
 	}
+
+	return origin
+}
+
+func (g *Git) getRemoteURL(remote string) string {
+	if remote == "" {
+		return ""
+	}
+
+	upstream := remote
 
 	// Ask git first because it applies insteadOf rewriting and reads the merged configuration.
 	if url := g.getGitCommandOutput("remote", "get-url", upstream); url != "" {

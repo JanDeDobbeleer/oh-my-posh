@@ -74,7 +74,7 @@ func (g *Git) hasPoshGitStatus() bool {
 	g.setBranchStatus()
 
 	if len(g.Upstream) != 0 && g.fetchUnit(gitUpstreamIconFields...) {
-		g.UpstreamIcon = g.getUpstreamIcon()
+		g.UpstreamIcon = g.getUpstreamIcon(remoteNameOrOrigin(g.Upstream))
 	}
 
 	g.poshgit = true

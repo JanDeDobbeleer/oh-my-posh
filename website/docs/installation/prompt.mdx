@@ -217,16 +217,18 @@ to only require remote scripts to be signed using `Set-ExecutionPolicy -Executio
 Add the following snippet as the last line to your PowerShell profile script:
 
 ```powershell
-oh-my-posh init pwsh | Invoke-Expression
+$(if (Get-Command 'oh-my-posh' -ErrorAction Ignore) {
+    oh-my-posh init pwsh
+    # Set output encoding to UTF-8
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    # Set input encoding to UTF-8 (for reading user input with non-ASCII chars)
+    [Console]::InputEncoding = [System.Text.Encoding]::UTF8
+}) | Invoke-Expression
 ```
 
 :::tip Execution policy
 In case the execution policy disables executing unsigned scripts on your system, you can fallback to evaluating
-the script instead. Use the `--eval` flag to do so:
-
-```powershell
-oh-my-posh init pwsh --eval | Invoke-Expression
-```
+the script instead. Add the `--eval` flag to the `oh-my-posh init pwsh` command above.
 
 Be aware this will make initializing the shell slower.
 :::

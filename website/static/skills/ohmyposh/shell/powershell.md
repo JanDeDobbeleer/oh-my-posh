@@ -18,7 +18,13 @@ notepad $PROFILE
 Add this as the **last line**:
 
 ```powershell
-oh-my-posh init pwsh | Invoke-Expression
+$(if (Get-Command 'oh-my-posh' -ErrorAction Ignore) {
+    oh-my-posh init pwsh
+    # Set output encoding to UTF-8
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    # Set input encoding to UTF-8 (for reading user input with non-ASCII chars)
+    [Console]::InputEncoding = [System.Text.Encoding]::UTF8
+}) | Invoke-Expression
 ```
 
 Reload the profile:
@@ -35,11 +41,7 @@ Reload the profile:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
 ```
 
-Or use the `--eval` flag (slightly slower startup):
-
-```powershell
-oh-my-posh init pwsh --eval | Invoke-Expression
-```
+Or add the `--eval` flag to the `oh-my-posh init pwsh` command above (slightly slower startup).
 
 ## Next step
 

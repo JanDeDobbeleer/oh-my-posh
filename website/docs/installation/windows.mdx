@@ -60,10 +60,9 @@ without any interaction needed.
 Open a PowerShell prompt and run the following command:
 
 ```powershell
-Add-AppxPackage -AppInstallerFile https://cdn.ohmyposh.dev/releases/latest/install-x64.appinstaller
+$arch = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64' } else { 'x64' }
+Add-AppxPackage -AppInstallerFile "https://cdn.ohmyposh.dev/releases/latest/install-$arch.appinstaller"
 ```
-
-For ARM64, use `install-arm64.appinstaller` instead.
 
 </TabItem>
 <TabItem value="chocolatey">
@@ -111,7 +110,8 @@ No action needed, Windows updates Oh My Posh automatically in the background.
 To force an update check, run the install command again:
 
 ```powershell
-Add-AppxPackage -AppInstallerFile https://cdn.ohmyposh.dev/releases/latest/install-x64.appinstaller
+$arch = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64' } else { 'x64' }
+Add-AppxPackage -AppInstallerFile "https://cdn.ohmyposh.dev/releases/latest/install-$arch.appinstaller"
 ```
 
 </TabItem>

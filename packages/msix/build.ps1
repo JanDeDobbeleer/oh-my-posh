@@ -21,6 +21,10 @@
 .PARAMETER Copy
     When specified, copies the appropriate executable from the dist folder before packaging.
 
+.PARAMETER DownloadUrl
+    The base URL where releases are published, used in the generated App Installer file.
+    Defaults to "https://cdn.ohmyposh.dev/releases".
+
 .EXAMPLE
     .\build.ps1 -Architecture x64 -Version "1.2.3" -Copy
 
@@ -32,7 +36,7 @@
     Creates and signs the MSIX package for arm64 architecture with version 1.2.3.
 
 .OUTPUTS
-    Creates install-{Architecture}.msix in the 'out' directory.
+    Creates install-{Architecture}.msix and install-{Architecture}.appinstaller in the 'out' directory.
 
 .NOTES
     Requires the Windows SDK for MSIX packaging and signing.
@@ -56,7 +60,11 @@ param(
     [switch]$Sign,
 
     [Parameter()]
-    [switch]$Copy
+    [switch]$Copy,
+
+    [Parameter()]
+    [ValidateNotNullOrEmpty()]
+    [string]$DownloadUrl = "https://cdn.ohmyposh.dev/releases"
 )
 
 # Set error handling preferences
@@ -223,6 +231,35 @@ try {
 }
 catch {
     Write-Error "Failed to create MSIX package: ${_}"
+    throw
+}
+
+Write-Verbose "Creating App Installer file" -Verbose
+
+try {
+    $appInstallerPath = "$currentPath/out/install-$Architecture.appinstaller"
+    $identity = $manifestDocument.Package.Identity
+
+    # The App Installer file lives at a stable URL so Windows can poll it for updates,
+    # while the package URL is immutable per version to avoid mid-publish races.
+    $appInstaller = @"
+<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018" Version="$Version.0" Uri="$DownloadUrl/latest/install-$Architecture.appinstaller">
+  <MainPackage Name="$($identity.Name)" Version="$Version.0" Publisher="$($identity.Publisher)" ProcessorArchitecture="$Architecture" Uri="$DownloadUrl/v$Version/install-$Architecture.msix" />
+  <UpdateSettings>
+    <OnLaunch HoursBetweenUpdateChecks="24" />
+    <AutomaticBackgroundTask />
+    <ForceUpdateFromAnyVersion>true</ForceUpdateFromAnyVersion>
+  </UpdateSettings>
+</AppInstaller>
+"@
+
+    $appInstaller | Out-File -FilePath $appInstallerPath -Encoding UTF8
+
+    Write-Verbose "Created App Installer file: $appInstallerPath" -Verbose
+}
+catch {
+    Write-Error "Failed to create App Installer file: ${_}"
     throw
 }
 

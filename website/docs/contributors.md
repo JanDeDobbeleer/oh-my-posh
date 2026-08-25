@@ -529,6 +529,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://jinli.io"><img src="https://avatars.githubusercontent.com/u/26253144?v=4?s=100" width="100px;" alt="lijin"/><br /><sub><b>lijin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jin-li" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://ezquieldev.vercel.app/"><img src="https://avatars.githubusercontent.com/u/115424590?v=4?s=100" width="100px;" alt="Ezequiel Salazar"/><br /><sub><b>Ezequiel Salazar</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Ezequie1Sc" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://peng.ly"><img src="https://avatars.githubusercontent.com/u/23277273?v=4?s=100" width="100px;" alt="Iain"/><br /><sub><b>Iain</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=NotAFlightRisk" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://hachyderm.io/@thelocehiliosan"><img src="https://avatars.githubusercontent.com/u/1503609?v=4?s=100" width="100px;" alt="Tim Byrne"/><br /><sub><b>Tim Byrne</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=TheLocehiliosan" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

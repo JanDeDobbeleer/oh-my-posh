@@ -14,7 +14,10 @@ Tier definitions and per-vendor model examples: [model-tiers.md](model-tiers.md)
   - **Executor:** Coordinator itself, or a same-tier subagent for parallelism
 
 - **Task profile:** Hits an escalation trigger (see [escalate.md](escalate.md))
-  - **Executor:** Escalation-tier subagent, for that one specific question
+  - **Executor:** Escalation-tier subagent, for that one specific question — this is a bounded
+    Q&A call, not a task assignment. It never appears as a task list's `executor_tier` value (see
+    [artifacts.md](artifacts.md)); a task's `executor_tier` stays trivial, implementer, or
+    coordinator-direct even when an escalation was used to unblock it.
 
 - The coordinator typically runs at implementer tier itself, so standard tasks are usually executed directly rather than
   delegated. Delegate anyway when there's real parallelism — independent tasks, each in its own worktree — or to shed

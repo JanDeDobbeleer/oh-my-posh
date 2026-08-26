@@ -34,7 +34,7 @@ what the expected result is.
 Running the gates and the functional proof stays with the coordinator. If the result is
 ambiguous, or the change is high-blast-radius (migrations, security, irreversible operations), get
 the strongest available model to judge the evidence before declaring done — see
-[references/escalate.md](references/escalate.md).
+[escalate.md](escalate.md).
 
 ## Documentation
 
@@ -46,6 +46,33 @@ user-visible behavior change:
 
 ## On failure
 
-A failed gate or a wrong functional result sends the task back to Phase 4 (fix via the
-implementer) or Phase 1 (the analysis was wrong). Never weaken a gate, skip a linter, or delete
-a test to get to green.
+Pick the destination by what actually broke, not by default:
+
+- Gate failure (build, test, lint) or a diff that doesn't match the spec → back to Phase 4
+  (fix via the implementer). The spec was right; the execution wasn't.
+- Functional proof contradicts the stated root cause, or the fix didn't change the observed
+  behavior at all → back to Phase 1. The spec was built on a wrong diagnosis. Re-entering Phase 1
+  re-arms its stop gate: report the revised analysis and wait for a go again before replanning,
+  same as first entry — a Verify bounce is not a standing authorization to keep implementing
+  unattended.
+
+Never weaken a gate, skip a linter, or delete a test to get to green.
+
+## Retry cap
+
+There is no memory across turns other than what is written down, so the count must be carried as
+text, not tracked mentally. Every time Verify fails, state explicitly in the report handed to the
+next phase: the attempt number for this task, what broke, and the destination chosen. "The same
+task" means the same originating user request — a revised diagnosis on a Phase 1 bounce is still
+the same task; it does not reset the count.
+
+On the second consecutive failure for that task — regardless of whether cycle 1 and cycle 2 went
+to the same destination — stop cycling before sending it back a third time. Escalate the specific
+question (why the fix isn't landing, or why the root cause keeps missing) to Escalation tier. See
+[escalate.md](escalate.md).
+
+If the cycle that follows the escalation answer *also* fails, do not escalate again and do not
+send it back a fourth time. Stop the loop entirely and report to the user: the two prior attempts,
+the escalation question and answer, and the latest failure evidence. Continuing to cycle past that
+point means the workflow itself isn't converging on this task, and that decision belongs to the
+user, not to another escalation call.

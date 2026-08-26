@@ -1,7 +1,10 @@
 # Special case — Issue triage
 
-Entry point when the task is "look at issue #n". This is Phase 1 with a sharper deliverable:
-the analysis itself is the product; implementation only happens on an explicit go.
+Entry point when the task is bare triage — "look at issue #n", "triage #n", "is #n still valid" —
+with no fix requested. This is Phase 1 with a sharper deliverable: the analysis itself is the
+product; implementation only happens on an explicit go. If the request already asks for a fix
+("fix issue #n"), use [analyze.md](analyze.md) directly instead — that phrasing already carries
+the go past the stop gate, which this deliverable-only entry point does not.
 
 ## Steps
 
@@ -22,6 +25,10 @@ An analysis report to the user:
 3. Proposed fix and its scope, or the reason no fix is warranted (works-as-intended, duplicate,
    environment problem).
 4. Suggested reply to the issue when the finding should be communicated upstream.
+
+This maps onto the same `root_cause` / `proposed_change` / `out_of_scope` / `repro_status` /
+`open_questions` artifact Phase 1 produces — see [artifacts.md](artifacts.md) — so Plan can pick it
+up unchanged.
 
 ## Gate
 

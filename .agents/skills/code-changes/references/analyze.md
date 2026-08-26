@@ -1,7 +1,12 @@
 # Phase 1 — Analyze
 
-Start every task here, no matter how it arrived: issue link, PR number, verbal idea, bug report.
-No code gets written or edited during this phase.
+Start every task here, no matter how it arrived: issue link, PR number, verbal idea, bug report —
+with two exceptions that use a sharper deliverable instead: a bare "look at/triage issue #n" with
+no implementation asked for goes to [issue-triage.md](issue-triage.md), and "handle the review
+comments on PR #n" goes to [pr-review-comments.md](pr-review-comments.md). If the request already
+asks for a fix ("fix issue #n", "issue #n: users can't log in"), analysis and an implicit go are
+both present — use this file directly, not issue-triage.md. No code gets written or edited during
+this phase.
 
 ## Gather the full context
 
@@ -30,7 +35,7 @@ hardware, credentials), say so explicitly in the report and mark the fix as unve
 
 If root cause can't be pinned with confidence, or the fix looks architectural, security-sensitive,
 or irreversible, hand the specific question to the strongest available model instead of guessing —
-see [references/escalate.md](references/escalate.md). Resume ownership of the phase once the
+see [escalate.md](escalate.md). Resume ownership of the phase once the
 question is answered.
 
 ## Output of this phase
@@ -42,8 +47,14 @@ A short analysis report to the user containing:
 3. What is intentionally out of scope.
 4. Open questions, if any remain.
 
+This is the `root_cause` / `proposed_change` / `out_of_scope` / `repro_status` / `open_questions`
+artifact defined in [artifacts.md](artifacts.md) — Plan reads it in that shape regardless of which
+entry point produced it.
+
 ## Stop gate
 
-Report the analysis and wait for a go before implementing. Skip the gate only when the user
-already gave the go in the request itself ("do it", "fix it and commit", "implement with
-Sonnet"). A go given for analysis is not a go for implementation.
+Report the analysis and wait for a go before implementing. This applies every time this phase is
+entered — including a return trip from Verify (see [verify.md](verify.md)) — not only the first
+time. Skip the gate only when the user already gave the go in the request itself ("do it", "fix it
+and commit", "implement with Sonnet"). A go given for analysis is not a go for implementation, and
+a go given for the first pass does not carry forward to a re-diagnosis after a Verify failure.

@@ -953,6 +953,8 @@ func TestDotnetSolutionResolvesTargetFramework(t *testing.T) {
 func TestPowerShellModuleProject(t *testing.T) {
 	cases := []struct {
 		Case            string
+		FileName        string
+		Content         string
 		ExpectedString  string
 		HasFiles        bool
 		ExpectedEnabled bool
@@ -961,7 +963,24 @@ func TestPowerShellModuleProject(t *testing.T) {
 			Case:            "valid PowerShell module file",
 			HasFiles:        true,
 			ExpectedEnabled: true,
+			FileName:        "oh-my-posh.psd1",
 			ExpectedString:  "\uf487 1.0.0.0 oh-my-posh",
+		},
+		{
+			Case:            "root module name ending on a character of its extension",
+			HasFiles:        true,
+			ExpectedEnabled: true,
+			FileName:        "Terminal-Icons.psd1",
+			Content:         "@{\nModuleVersion = '0.11.0'\nRootModule = 'Terminal-Icons.psm1'\n}",
+			ExpectedString:  "\uf487 0.11.0 Terminal-Icons",
+		},
+		{
+			Case:            "binary root module",
+			HasFiles:        true,
+			ExpectedEnabled: true,
+			FileName:        "Microsoft.PowerShell.Archive.psd1",
+			Content:         "@{\nModuleVersion = '2.0.1'\nRootModule = 'Microsoft.PowerShell.Archive.dll'\n}",
+			ExpectedString:  "\uf487 2.0.1 Microsoft.PowerShell.Archive",
 		},
 	}
 
@@ -977,15 +996,15 @@ func TestPowerShellModuleProject(t *testing.T) {
 		env.On("Pwd").Return("posh")
 		env.On("LsDir", "posh").Return([]fs.DirEntry{
 			&MockDirEntry{
-				name: "oh-my-posh.psd1",
+				name: tc.FileName,
 			},
 		})
-		var moduleContent string
-		if tc.HasFiles {
+		moduleContent := tc.Content
+		if tc.HasFiles && moduleContent == "" {
 			content, _ := os.ReadFile("../test/oh-my-posh.psd1")
 			moduleContent = string(content)
 		}
-		env.On("FileContent", "oh-my-posh.psd1").Return(moduleContent)
+		env.On("FileContent", tc.FileName).Return(moduleContent)
 		pkg := &Project{}
 		pkg.Init(options.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)

@@ -454,7 +454,7 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 		case "ModuleVersion":
 			data.Version = value
 		case "RootModule":
-			data.Name = strings.TrimRight(value, ".psm1")
+			data.Name = strings.TrimSuffix(value, filepath.Ext(value))
 		}
 	}
 

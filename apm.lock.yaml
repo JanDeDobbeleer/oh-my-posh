@@ -1,11 +1,11 @@
 lockfile_version: '1'
-generated_at: '2026-08-09T10:07:39.061154+00:00'
+generated_at: '2026-08-26T05:57:04.782415+00:00'
 apm_version: 0.26.0
 dependencies:
 - repo_url: ast-grep/agent-skill
   name: ast-grep
   host: github.com
-  resolved_commit: c2a9bc154f4ffe08b25d28d5e852dfac8c0d0d8a
+  resolved_commit: 6b668aa526afdc623c1a9ed1d6ae920e04a717ad
   version: unknown
   virtual_path: ast-grep/skills/ast-grep
   is_virtual: true
@@ -26,7 +26,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic-golang
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
@@ -40,7 +40,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic-markdown
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
@@ -54,7 +54,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: agentic-powershell
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
@@ -68,7 +68,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: code-changes
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: unknown
   virtual_path: skills/code-changes
   is_virtual: true
@@ -77,6 +77,7 @@ dependencies:
   - .agents/skills/code-changes
   - .agents/skills/code-changes/SKILL.md
   - .agents/skills/code-changes/references/analyze.md
+  - .agents/skills/code-changes/references/artifacts.md
   - .agents/skills/code-changes/references/delegate.md
   - .agents/skills/code-changes/references/deliver.md
   - .agents/skills/code-changes/references/escalate.md
@@ -89,6 +90,7 @@ dependencies:
   - .claude/skills/code-changes
   - .claude/skills/code-changes/SKILL.md
   - .claude/skills/code-changes/references/analyze.md
+  - .claude/skills/code-changes/references/artifacts.md
   - .claude/skills/code-changes/references/delegate.md
   - .claude/skills/code-changes/references/deliver.md
   - .claude/skills/code-changes/references/escalate.md
@@ -99,33 +101,35 @@ dependencies:
   - .claude/skills/code-changes/references/supervise.md
   - .claude/skills/code-changes/references/verify.md
   deployed_file_hashes:
-    .agents/skills/code-changes/SKILL.md: sha256:e8332f89a1b1c4bfbf897d563357a939bacd607116708062726720c0c74ec184
-    .agents/skills/code-changes/references/analyze.md: sha256:0a1e4825d315f44f58f13851716b42a9a6a54f6b7a6b17aa101b97d3d1fde75b
-    .agents/skills/code-changes/references/delegate.md: sha256:cfb559d02fd17dd323d89261bea6fa4ce7a59a01ac616c06a43cf88173df2ba0
+    .agents/skills/code-changes/SKILL.md: sha256:771a48bafca900cee079502ef8af193be014bc1c9a34385f1b0603758a3b1baa
+    .agents/skills/code-changes/references/analyze.md: sha256:2903a720b0c1c878b9b79b2019587a37b667b559c7c86aff8570950008dc6f47
+    .agents/skills/code-changes/references/artifacts.md: sha256:6abe20b74c0ac6df3163c0b618dd2bcbe4695f7d2a54e92874ad20bdcf6c9af5
+    .agents/skills/code-changes/references/delegate.md: sha256:da1cf4c094248eecd9bbfaef9b32a4b3fab0ae6ceba148057e5afbe9987516c0
     .agents/skills/code-changes/references/deliver.md: sha256:f4bdbb7f85966aa281c7831acaac981691882960fba14752ffe43e5a3a90cca7
-    .agents/skills/code-changes/references/escalate.md: sha256:b240512bcc3764ee82fbf880c11d74f4b73e4bee640e64d55ad62fea70484874
-    .agents/skills/code-changes/references/issue-triage.md: sha256:7e92dad2274802263787f22f80ca5dcf2a2614fd4460650b19cfc5ec904169c2
-    .agents/skills/code-changes/references/model-tiers.md: sha256:0d21f6f1456bd2ff7f97ece0e181660c9e6270eb1530ad81a6d5a1b324dc0111
-    .agents/skills/code-changes/references/plan.md: sha256:6f299e0b7c5e7677277bc570d1b76e92f4387a8d37de4877447225e80db36801
-    .agents/skills/code-changes/references/pr-review-comments.md: sha256:ff3d4be9488c4363b55947ddea07dc350e52d26fe656b4155b5a621cdb37a1c9
-    .agents/skills/code-changes/references/supervise.md: sha256:6c17cd74c4cac7bfc73d7be7e271f1470662e569e26c6667a5b16a702bd6d9c3
-    .agents/skills/code-changes/references/verify.md: sha256:54530e1e5c4d54000b1046f141cd621e834aeb0c6176f95b76dca35a33c53fc9
-    .claude/skills/code-changes/SKILL.md: sha256:e8332f89a1b1c4bfbf897d563357a939bacd607116708062726720c0c74ec184
-    .claude/skills/code-changes/references/analyze.md: sha256:0a1e4825d315f44f58f13851716b42a9a6a54f6b7a6b17aa101b97d3d1fde75b
-    .claude/skills/code-changes/references/delegate.md: sha256:cfb559d02fd17dd323d89261bea6fa4ce7a59a01ac616c06a43cf88173df2ba0
+    .agents/skills/code-changes/references/escalate.md: sha256:b0218545626e0f111eed9a1bfde3c1f84ac939aed82733f3dc8ad1068b50f48c
+    .agents/skills/code-changes/references/issue-triage.md: sha256:d31b0b3bd1446048615831c9ecde92d2415f7baddd943fc7ef6d01a03df52e48
+    .agents/skills/code-changes/references/model-tiers.md: sha256:4302ceeba9fdde15dd4ce8c3f8eb73fb7e82de7d9eb8bf00e87010c2e931eeb1
+    .agents/skills/code-changes/references/plan.md: sha256:75ba686c53ca03931bdbeb3aef687ca27defca771a343e7f8d8fcf7b3e9e9a9c
+    .agents/skills/code-changes/references/pr-review-comments.md: sha256:476ed5e8c5e2aed65daebcab0d58b37bea462f8157b517041babc4a8c14f17ad
+    .agents/skills/code-changes/references/supervise.md: sha256:58bbc439fe9db553ace4c358e12606fb9a48f23dd008a672a92bee2d9b107f2a
+    .agents/skills/code-changes/references/verify.md: sha256:f11e1c674667a8c5be617c430c0370f6d900f8bfb4879ebb19c7b8a8d64c6d67
+    .claude/skills/code-changes/SKILL.md: sha256:771a48bafca900cee079502ef8af193be014bc1c9a34385f1b0603758a3b1baa
+    .claude/skills/code-changes/references/analyze.md: sha256:2903a720b0c1c878b9b79b2019587a37b667b559c7c86aff8570950008dc6f47
+    .claude/skills/code-changes/references/artifacts.md: sha256:6abe20b74c0ac6df3163c0b618dd2bcbe4695f7d2a54e92874ad20bdcf6c9af5
+    .claude/skills/code-changes/references/delegate.md: sha256:da1cf4c094248eecd9bbfaef9b32a4b3fab0ae6ceba148057e5afbe9987516c0
     .claude/skills/code-changes/references/deliver.md: sha256:f4bdbb7f85966aa281c7831acaac981691882960fba14752ffe43e5a3a90cca7
-    .claude/skills/code-changes/references/escalate.md: sha256:b240512bcc3764ee82fbf880c11d74f4b73e4bee640e64d55ad62fea70484874
-    .claude/skills/code-changes/references/issue-triage.md: sha256:7e92dad2274802263787f22f80ca5dcf2a2614fd4460650b19cfc5ec904169c2
-    .claude/skills/code-changes/references/model-tiers.md: sha256:0d21f6f1456bd2ff7f97ece0e181660c9e6270eb1530ad81a6d5a1b324dc0111
-    .claude/skills/code-changes/references/plan.md: sha256:6f299e0b7c5e7677277bc570d1b76e92f4387a8d37de4877447225e80db36801
-    .claude/skills/code-changes/references/pr-review-comments.md: sha256:ff3d4be9488c4363b55947ddea07dc350e52d26fe656b4155b5a621cdb37a1c9
-    .claude/skills/code-changes/references/supervise.md: sha256:6c17cd74c4cac7bfc73d7be7e271f1470662e569e26c6667a5b16a702bd6d9c3
-    .claude/skills/code-changes/references/verify.md: sha256:54530e1e5c4d54000b1046f141cd621e834aeb0c6176f95b76dca35a33c53fc9
-  content_hash: sha256:7d139c7ade1661932608375f7c46751c3664a8cc8e39b4cd7d24560da32dcca6
+    .claude/skills/code-changes/references/escalate.md: sha256:b0218545626e0f111eed9a1bfde3c1f84ac939aed82733f3dc8ad1068b50f48c
+    .claude/skills/code-changes/references/issue-triage.md: sha256:d31b0b3bd1446048615831c9ecde92d2415f7baddd943fc7ef6d01a03df52e48
+    .claude/skills/code-changes/references/model-tiers.md: sha256:4302ceeba9fdde15dd4ce8c3f8eb73fb7e82de7d9eb8bf00e87010c2e931eeb1
+    .claude/skills/code-changes/references/plan.md: sha256:75ba686c53ca03931bdbeb3aef687ca27defca771a343e7f8d8fcf7b3e9e9a9c
+    .claude/skills/code-changes/references/pr-review-comments.md: sha256:476ed5e8c5e2aed65daebcab0d58b37bea462f8157b517041babc4a8c14f17ad
+    .claude/skills/code-changes/references/supervise.md: sha256:58bbc439fe9db553ace4c358e12606fb9a48f23dd008a672a92bee2d9b107f2a
+    .claude/skills/code-changes/references/verify.md: sha256:f11e1c674667a8c5be617c430c0370f6d900f8bfb4879ebb19c7b8a8d64c6d67
+  content_hash: sha256:7b462a8dcbc472f5bc2744e116a600e79ef61ede01496a93a4b0e26009328190
 - repo_url: jandedobbeleer/agentic
   name: conventional-commit
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: unknown
   virtual_path: skills/conventional-commit
   is_virtual: true
@@ -142,7 +146,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: golang
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: unknown
   virtual_path: skills/golang
   is_virtual: true
@@ -153,13 +157,13 @@ dependencies:
   - .claude/skills/golang
   - .claude/skills/golang/SKILL.md
   deployed_file_hashes:
-    .agents/skills/golang/SKILL.md: sha256:89ff95bbb7d575eafb790bb079e7bdaf6392a71de67b1b835ff70bad1133af2d
-    .claude/skills/golang/SKILL.md: sha256:89ff95bbb7d575eafb790bb079e7bdaf6392a71de67b1b835ff70bad1133af2d
-  content_hash: sha256:db25f5feecfd446cb39eb18d32d4efb478fcd7c5452f7b3faf676ba4b6afdbde
+    .agents/skills/golang/SKILL.md: sha256:27e6905b4fa8756a2a2fe7ab3facad8e4f39c0cbe5e48291d8147b5b70cd6aba
+    .claude/skills/golang/SKILL.md: sha256:27e6905b4fa8756a2a2fe7ab3facad8e4f39c0cbe5e48291d8147b5b70cd6aba
+  content_hash: sha256:b78bbcbe96ff6fccedc828343c08ded4a9426cac245b2e6c5fca1c7778e9a4a9
 - repo_url: jandedobbeleer/agentic
   name: markdown
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: unknown
   virtual_path: skills/markdown
   is_virtual: true
@@ -176,7 +180,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: powershell
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: unknown
   virtual_path: skills/powershell
   is_virtual: true
@@ -193,7 +197,7 @@ dependencies:
 - repo_url: jandedobbeleer/agentic
   name: writing-clearly-and-concisely
   host: github.com
-  resolved_commit: b5f7b6fe301b714aa0281eb47d6cfbdf7bce0cb0
+  resolved_commit: e276d99d85e7f5951e45d524fbcfe7436ee78a37
   version: unknown
   virtual_path: skills/writing-clearly-and-concisely
   is_virtual: true
@@ -307,7 +311,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:e8332f89a1b1c4bfbf897d563357a939bacd607116708062726720c0c74ec184
+  content_hash: sha256:771a48bafca900cee079502ef8af193be014bc1c9a34385f1b0603758a3b1baa
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/analyze.md
@@ -316,7 +320,16 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:0a1e4825d315f44f58f13851716b42a9a6a54f6b7a6b17aa101b97d3d1fde75b
+  content_hash: sha256:2903a720b0c1c878b9b79b2019587a37b667b559c7c86aff8570950008dc6f47
+- kind: project-relative
+  target: claude
+  value: .claude/skills/code-changes/references/artifacts.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:6abe20b74c0ac6df3163c0b618dd2bcbe4695f7d2a54e92874ad20bdcf6c9af5
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/delegate.md
@@ -325,7 +338,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:cfb559d02fd17dd323d89261bea6fa4ce7a59a01ac616c06a43cf88173df2ba0
+  content_hash: sha256:da1cf4c094248eecd9bbfaef9b32a4b3fab0ae6ceba148057e5afbe9987516c0
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/deliver.md
@@ -343,7 +356,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:b240512bcc3764ee82fbf880c11d74f4b73e4bee640e64d55ad62fea70484874
+  content_hash: sha256:b0218545626e0f111eed9a1bfde3c1f84ac939aed82733f3dc8ad1068b50f48c
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/issue-triage.md
@@ -352,7 +365,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:7e92dad2274802263787f22f80ca5dcf2a2614fd4460650b19cfc5ec904169c2
+  content_hash: sha256:d31b0b3bd1446048615831c9ecde92d2415f7baddd943fc7ef6d01a03df52e48
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/model-tiers.md
@@ -361,7 +374,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:0d21f6f1456bd2ff7f97ece0e181660c9e6270eb1530ad81a6d5a1b324dc0111
+  content_hash: sha256:4302ceeba9fdde15dd4ce8c3f8eb73fb7e82de7d9eb8bf00e87010c2e931eeb1
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/plan.md
@@ -370,7 +383,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:6f299e0b7c5e7677277bc570d1b76e92f4387a8d37de4877447225e80db36801
+  content_hash: sha256:75ba686c53ca03931bdbeb3aef687ca27defca771a343e7f8d8fcf7b3e9e9a9c
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/pr-review-comments.md
@@ -379,7 +392,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:ff3d4be9488c4363b55947ddea07dc350e52d26fe656b4155b5a621cdb37a1c9
+  content_hash: sha256:476ed5e8c5e2aed65daebcab0d58b37bea462f8157b517041babc4a8c14f17ad
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/supervise.md
@@ -388,7 +401,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:6c17cd74c4cac7bfc73d7be7e271f1470662e569e26c6667a5b16a702bd6d9c3
+  content_hash: sha256:58bbc439fe9db553ace4c358e12606fb9a48f23dd008a672a92bee2d9b107f2a
 - kind: project-relative
   target: claude
   value: .claude/skills/code-changes/references/verify.md
@@ -397,7 +410,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:54530e1e5c4d54000b1046f141cd621e834aeb0c6176f95b76dca35a33c53fc9
+  content_hash: sha256:f11e1c674667a8c5be617c430c0370f6d900f8bfb4879ebb19c7b8a8d64c6d67
 - kind: project-relative
   target: claude
   value: .claude/skills/conventional-commit
@@ -433,7 +446,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/golang
   active_owner: jandedobbeleer/agentic/skills/golang
-  content_hash: sha256:89ff95bbb7d575eafb790bb079e7bdaf6392a71de67b1b835ff70bad1133af2d
+  content_hash: sha256:27e6905b4fa8756a2a2fe7ab3facad8e4f39c0cbe5e48291d8147b5b70cd6aba
 - kind: project-relative
   target: claude
   value: .claude/skills/markdown
@@ -595,7 +608,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:e8332f89a1b1c4bfbf897d563357a939bacd607116708062726720c0c74ec184
+  content_hash: sha256:771a48bafca900cee079502ef8af193be014bc1c9a34385f1b0603758a3b1baa
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/analyze.md
@@ -604,7 +617,16 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:0a1e4825d315f44f58f13851716b42a9a6a54f6b7a6b17aa101b97d3d1fde75b
+  content_hash: sha256:2903a720b0c1c878b9b79b2019587a37b667b559c7c86aff8570950008dc6f47
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/code-changes/references/artifacts.md
+  runtime: null
+  scope: project
+  owners:
+  - jandedobbeleer/agentic/skills/code-changes
+  active_owner: jandedobbeleer/agentic/skills/code-changes
+  content_hash: sha256:6abe20b74c0ac6df3163c0b618dd2bcbe4695f7d2a54e92874ad20bdcf6c9af5
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/delegate.md
@@ -613,7 +635,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:cfb559d02fd17dd323d89261bea6fa4ce7a59a01ac616c06a43cf88173df2ba0
+  content_hash: sha256:da1cf4c094248eecd9bbfaef9b32a4b3fab0ae6ceba148057e5afbe9987516c0
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/deliver.md
@@ -631,7 +653,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:b240512bcc3764ee82fbf880c11d74f4b73e4bee640e64d55ad62fea70484874
+  content_hash: sha256:b0218545626e0f111eed9a1bfde3c1f84ac939aed82733f3dc8ad1068b50f48c
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/issue-triage.md
@@ -640,7 +662,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:7e92dad2274802263787f22f80ca5dcf2a2614fd4460650b19cfc5ec904169c2
+  content_hash: sha256:d31b0b3bd1446048615831c9ecde92d2415f7baddd943fc7ef6d01a03df52e48
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/model-tiers.md
@@ -649,7 +671,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:0d21f6f1456bd2ff7f97ece0e181660c9e6270eb1530ad81a6d5a1b324dc0111
+  content_hash: sha256:4302ceeba9fdde15dd4ce8c3f8eb73fb7e82de7d9eb8bf00e87010c2e931eeb1
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/plan.md
@@ -658,7 +680,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:6f299e0b7c5e7677277bc570d1b76e92f4387a8d37de4877447225e80db36801
+  content_hash: sha256:75ba686c53ca03931bdbeb3aef687ca27defca771a343e7f8d8fcf7b3e9e9a9c
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/pr-review-comments.md
@@ -667,7 +689,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:ff3d4be9488c4363b55947ddea07dc350e52d26fe656b4155b5a621cdb37a1c9
+  content_hash: sha256:476ed5e8c5e2aed65daebcab0d58b37bea462f8157b517041babc4a8c14f17ad
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/supervise.md
@@ -676,7 +698,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:6c17cd74c4cac7bfc73d7be7e271f1470662e569e26c6667a5b16a702bd6d9c3
+  content_hash: sha256:58bbc439fe9db553ace4c358e12606fb9a48f23dd008a672a92bee2d9b107f2a
 - kind: project-relative
   target: copilot
   value: .agents/skills/code-changes/references/verify.md
@@ -685,7 +707,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/code-changes
   active_owner: jandedobbeleer/agentic/skills/code-changes
-  content_hash: sha256:54530e1e5c4d54000b1046f141cd621e834aeb0c6176f95b76dca35a33c53fc9
+  content_hash: sha256:f11e1c674667a8c5be617c430c0370f6d900f8bfb4879ebb19c7b8a8d64c6d67
 - kind: project-relative
   target: copilot
   value: .agents/skills/conventional-commit
@@ -721,7 +743,7 @@ deployments:
   owners:
   - jandedobbeleer/agentic/skills/golang
   active_owner: jandedobbeleer/agentic/skills/golang
-  content_hash: sha256:89ff95bbb7d575eafb790bb079e7bdaf6392a71de67b1b835ff70bad1133af2d
+  content_hash: sha256:27e6905b4fa8756a2a2fe7ab3facad8e4f39c0cbe5e48291d8147b5b70cd6aba
 - kind: project-relative
   target: copilot
   value: .agents/skills/markdown

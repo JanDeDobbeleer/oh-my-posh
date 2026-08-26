@@ -42,6 +42,17 @@ Write the spec down before delegating anything. It contains:
 - Isolated worktree: everything else, especially parallel tasks — they must never share a
   working tree.
 
+## Plan the merge
+
+When any tasks run in parallel worktrees, name the integration step now, before delegating:
+
+- The order branches merge back, and who executes that merge and resolves any conflict it
+  surfaces: the coordinator, at integration time in Phase 4 — never an implementer, since an
+  isolated worktree branch never sees another task's branch and so can never hit or resolve a
+  conflict against it.
+- That Verify (Phase 5) only runs once, on the merged state, after every parallel task has landed
+  — never per-branch. A per-task green run is not the gate.
+
 ## Output of this phase
 
 A task list where each entry names its executor tier (see Phase 3), its workspace, its

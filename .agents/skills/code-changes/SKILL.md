@@ -13,7 +13,9 @@ The workflow for going from an issue, pull request, idea, or feature request to 
 order. Analysis always comes first; code comes last.
 
 Each phase has a reference file with the full instructions. **Read the reference file when you enter the phase** — not
-before, and never skip it because the phase "looks obvious".
+before, and never skip it because the phase "looks obvious". Every phase boundary carries a named artifact — see
+[references/artifacts.md](references/artifacts.md) — so a phase can be re-entered later (a Verify failure, an
+escalation answer) without re-deriving context from scratch.
 
 ## Roles
 
@@ -31,6 +33,10 @@ owns every phase by default, and knows when it's out of its depth.
 - **Role:** Implementer
   - **Capability tier:** Same tier as coordinator, or smaller for trivial edits
   - **Owns:** Executing one pinned, self-contained task
+
+- **Role:** Trivial
+  - **Capability tier:** Small, fast model for mechanical, unambiguous edits
+  - **Owns:** Batched renames, config tweaks, typo fixes, doc touch-ups — never judgment calls
 
 Concrete model names per vendor (Anthropic, OpenAI, Google) and how to run the split in Claude Code, GitHub Copilot,
 Codex, or IDE agents: [references/model-tiers.md](references/model-tiers.md).
@@ -50,8 +56,8 @@ coordinator is equipped to make itself.
    coordinator-tier by default.
 4. **Supervise** ([references/supervise.md](references/supervise.md)) — monitor, unblock, and critically review
    implementer output.
-5. **Verify** ([references/verify.md](references/verify.md)) — quality gates plus functional proof, never delegated
-   downward.
+5. **Verify** ([references/verify.md](references/verify.md)) — quality gates plus functional proof, on the merged state,
+   never delegated downward. A second consecutive failed cycle escalates instead of looping a third time.
 6. **Deliver** ([references/deliver.md](references/deliver.md)) — conventional commits and an outcome-first report.
 
 Analyze, Supervise, and Verify each carry an escalation checkpoint — see
@@ -64,7 +70,11 @@ Sonnet").
 
 ## Special cases
 
-These entry points replace or extend Phase 1; the rest of the flow applies unchanged.
+These are alternate Phase 1 entry points, not a separate track: each one must still produce the same analysis-report
+artifact defined in [references/artifacts.md](references/artifacts.md), so Plan can consume it without knowing which
+door the task came in through. The rest of the flow (Phases 2–6) applies unchanged. Use [references/analyze.md](
+references/analyze.md) directly whenever the request already implies a fix (its opening section states the exact
+predicate); reserve these two for their narrower deliverable:
 
 - Pull request review comments → [references/pr-review-comments.md](references/pr-review-comments.md)
 - Issue triage → [references/issue-triage.md](references/issue-triage.md)

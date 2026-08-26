@@ -31,8 +31,8 @@ not by nostalgia.
   - **Google:** Gemini Flash-Lite
 
 - **Escalation** — the strongest reasoning model available, called only when a trigger in [escalate.md](escalate.md)
-  fires: unclear root cause, architectural risk, security sensitivity, an irreversible operation, repeated spec gaps, or
-  low confidence in a review. Answers one specific question, then hands control back to the coordinator.
+  fires. See that file for the canonical, current trigger list — this file only names the tier, not the triggers, so
+  the two never drift apart. Answers one specific question, then hands control back to the coordinator.
 - **Coordinator** — a capable mid-tier model, resident for the whole task. Owns analysis, planning, supervision, and
   verification by default. It's capable enough for the large majority of work, and cheap enough relative to Escalation
   tier that most tasks never need to call up at all — that's the point of the split.

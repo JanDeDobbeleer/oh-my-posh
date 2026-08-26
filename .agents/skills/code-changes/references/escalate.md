@@ -13,7 +13,14 @@ Escalate when one of these is actually true, not on a general feeling that the t
 - The code is security-, auth-, crypto-, payments-, or data-migration-sensitive.
 - The operation is irreversible or high-blast-radius (schema migration, deletion, force-push,
   production config).
-- An implementer has reported a spec gap or contradiction more than once on the same task.
+- An implementer has reported a spec gap or contradiction more than once on the same task. Track
+  this the same way as the Verify retry count — state it explicitly in the report each time,
+  since there is no memory across turns besides what was written down.
+- Verify has sent the same task back a second consecutive time (to Supervise or to Analyze) —
+  see the retry cap in [verify.md](verify.md). Two failed cycles means the diagnosis isn't
+  converging, not that the third attempt will. This trigger fires once per task, for that second
+  failure only — if the post-escalation cycle fails again, verify.md's terminal step applies
+  instead: stop looping and report to the user rather than escalating a second time.
 - Reviewing a diff leaves the coordinator unsure whether the fix is correct or merely plausible.
 - The user explicitly asked for a second opinion or an adversarial review.
 

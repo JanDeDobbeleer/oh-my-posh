@@ -2,6 +2,22 @@
 
 Delegation is not fire-and-forget. The coordinator tracks delivery and owns the outcome.
 
+## Integrate before reviewing
+
+Before any diff review can happen, the merged state must exist:
+
+- Confirm every task this phase is waiting on has reported done, per its dependencies from
+  Phase 2's task list.
+- Execute the `merge_plan` pinned in Phase 2: merge each worktree branch back in the stated order.
+  The coordinator resolves any conflict that lands — an implementer's isolated worktree branch
+  never sees, and can never resolve, a conflict against another task's branch.
+- Only once every parallel task has merged does the "reviewed diff" for this phase exist. Verify
+  runs once on that merged state next — never per-branch, and never before this step completes.
+
+When the task ran with no parallelism (single task, coordinator-direct or one implementer, no
+worktree fan-out), there is nothing to merge — this step is a no-op and the diff to review is
+simply that task's own change.
+
 ## Monitor and unblock
 
 - Track each subagent's progress against its spec.
@@ -12,7 +28,9 @@ Delegation is not fire-and-forget. The coordinator tracks delivery and owns the 
 
 ## Review the output critically
 
-Review every subagent diff as if it were an external PR:
+Review every subagent diff as if it were an external PR — and when the coordinator executed the
+task directly (no subagent), apply the same critical pass to its own diff before Verify, rather
+than skipping this phase because there is no one else's work to review:
 
 - Check the diff against the spec: everything asked for, nothing beyond it.
 - Override solutions that are wrong or overbuilt. Prefer the change that removes code over the
@@ -43,7 +61,7 @@ guarantee — one assertion per property, not one assertion per implementation c
 If a diff leaves you unsure whether the fix is correct or merely plausible, or it touches
 security, data-migration, or otherwise irreversible territory, get a second read from the
 strongest available model before signing off — see
-[references/escalate.md](references/escalate.md). Don't rubber-stamp a diff you can't fully
+[escalate.md](escalate.md). Don't rubber-stamp a diff you can't fully
 verify yourself.
 
 ## Trust nothing unverified

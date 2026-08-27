@@ -25,6 +25,8 @@ func newSegmentWriter(segmentType SegmentType) (SegmentWriter, error) {
 func init() {
 	gob.Register(&segments.Angular{})
 	gob.Register(&segments.Version{})
+	gob.Register(&segments.Antigravity{})
+	gob.Register(&segments.AntigravityData{})
 	gob.Register(&segments.Argocd{})
 	gob.Register(&segments.Aspire{})
 	gob.Register(&segments.Aurelia{})
@@ -144,6 +146,7 @@ func init() {
 
 var Segments = map[SegmentType]func() SegmentWriter{
 	ANGULAR:         func() SegmentWriter { return &segments.Angular{} },
+	ANTIGRAVITY:     func() SegmentWriter { return &segments.Antigravity{} },
 	ARGOCD:          func() SegmentWriter { return &segments.Argocd{} },
 	ASPIRE:          func() SegmentWriter { return &segments.Aspire{} },
 	AURELIA:         func() SegmentWriter { return &segments.Aurelia{} },

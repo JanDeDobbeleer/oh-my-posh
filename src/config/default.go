@@ -235,6 +235,10 @@ func CopilotCLI() *Config {
 	return statuslineCLIConfig(1234567891, COPILOTCLI, " \uec1e {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ")
 }
 
+func Antigravity() *Config {
+	return statuslineCLIConfig(1234567892, ANTIGRAVITY, " \uf135 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} ")
+}
+
 // The left block is always PATH + GIT; the right block contains a single
 // segment of the given type and template.
 func statuslineCLIConfig(hash uint64, segmentType SegmentType, template string) *Config {

@@ -4,6 +4,10 @@
     "docId": "angular"
   },
   {
+    "type": "antigravity",
+    "docId": "antigravity"
+  },
+  {
     "type": "argocd",
     "docId": "argocd"
   },

@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:dupl
 func TestCopilotCLISegment(t *testing.T) {
 	cases := []struct {
 		Data            *CopilotCLIData
@@ -280,6 +281,7 @@ func TestCopilotCLITokenGaugeCustomChars(t *testing.T) {
 	assert.Contains(t, gauge, "█")
 }
 
+//nolint:dupl
 func TestCopilotCLIRemainingPercent(t *testing.T) {
 	cases := []struct {
 		Case          string

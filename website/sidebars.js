@@ -108,6 +108,7 @@ export default {
           },
           items: [
             "segments/cli/angular",
+            "segments/cli/antigravity",
             "segments/cli/argocd",
             "segments/cli/aspire",
             "segments/cli/aurelia",

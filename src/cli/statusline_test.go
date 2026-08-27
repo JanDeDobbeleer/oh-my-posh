@@ -134,6 +134,44 @@ func TestCopilotPWD(t *testing.T) {
 	}
 }
 
+func TestAntigravityPWD(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Data     *segments.AntigravityData
+		Expected string
+	}{
+		{
+			Case:     "both set, disagreeing: current_dir wins",
+			Data:     &segments.AntigravityData{CWD: "/b", Workspace: segments.AntigravityWorkspace{CurrentDir: "/a"}},
+			Expected: "/a",
+		},
+		{
+			Case:     "only current_dir",
+			Data:     &segments.AntigravityData{Workspace: segments.AntigravityWorkspace{CurrentDir: "/a"}},
+			Expected: "/a",
+		},
+		{
+			Case:     "only cwd",
+			Data:     &segments.AntigravityData{CWD: "/b"},
+			Expected: "/b",
+		},
+		{
+			Case:     "neither",
+			Data:     &segments.AntigravityData{},
+			Expected: "",
+		},
+		{
+			Case:     "project_dir is not a fallback",
+			Data:     &segments.AntigravityData{Workspace: segments.AntigravityWorkspace{ProjectDir: "/p"}},
+			Expected: "",
+		},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, antigravityPWD(tc.Data), tc.Case)
+	}
+}
+
 func TestRunStatuslineRendersToWriter(t *testing.T) {
 	t.Setenv("OMP_CACHE_DIR", t.TempDir())
 	t.Setenv("POSH_SESSION_ID", "d4-writer")

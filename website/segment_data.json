@@ -42,6 +42,149 @@
       },
       "enabled": true
     },
+    "antigravity": {
+      "data": {
+        "AgentState": "idle",
+        "ArtifactCount": 3,
+        "CWD": "~/dev/oh-my-posh",
+        "ContextWindow": {
+          "ContextWindowSize": 1000000,
+          "CurrentUsage": null,
+          "RemainingPercentage": null,
+          "TotalInputTokens": 52000,
+          "TotalOutputTokens": 3200,
+          "UsedPercentage": 34,
+          "context_window_size": 1000000,
+          "current_usage": null,
+          "remaining_percentage": null,
+          "total_input_tokens": 52000,
+          "total_output_tokens": 3200,
+          "used_percentage": 34
+        },
+        "ConversationID": "conv-7f3a9b21",
+        "Email": "",
+        "Exceeds200KTokens": false,
+        "ExecutionMode": "agent",
+        "FormattedTokens": "55.2K",
+        "Model": {
+          "DisplayName": "Gemini 3 Pro",
+          "ID": "gemini-3-pro",
+          "display_name": "Gemini 3 Pro",
+          "id": "gemini-3-pro"
+        },
+        "PendingInputCount": 0,
+        "PlanTier": "pro",
+        "Product": "antigravity",
+        "Quota": {
+          "gemini-weekly": {
+            "reset_time": "2026-08-27T18:00:00Z",
+            "remaining_fraction": 0.64,
+            "reset_in_seconds": 3600
+          }
+        },
+        "RemainingPercent": 66,
+        "Sandbox": {
+          "AllowNetwork": true,
+          "Enabled": true,
+          "allow_network": true,
+          "enabled": true
+        },
+        "Segment": {
+          "Index": 6,
+          "Text": " x "
+        },
+        "SessionID": "f6a1c2d3-e4b5-4678-9012-3456789abcde",
+        "TaskCount": 2,
+        "TerminalWidth": 120,
+        "Text": " x ",
+        "TokenGauge": "",
+        "TokenGaugeUsed": "",
+        "TokenUsagePercent": 34,
+        "ToolConfirmationPending": false,
+        "TranscriptPath": "",
+        "VCS": {
+          "Branch": "next",
+          "Dirty": true,
+          "Type": "git",
+          "branch": "next",
+          "dirty": true,
+          "type": "git"
+        },
+        "Version": "0.4.2",
+        "Vim": null,
+        "Workspace": {
+          "CurrentDir": "~/dev/oh-my-posh",
+          "ProjectDir": "~/dev/oh-my-posh",
+          "current_dir": "~/dev/oh-my-posh",
+          "project_dir": "~/dev/oh-my-posh"
+        },
+        "agent_state": "idle",
+        "artifact_count": 3,
+        "context_window": {
+          "ContextWindowSize": 1000000,
+          "CurrentUsage": null,
+          "RemainingPercentage": null,
+          "TotalInputTokens": 52000,
+          "TotalOutputTokens": 3200,
+          "UsedPercentage": 34,
+          "context_window_size": 1000000,
+          "current_usage": null,
+          "remaining_percentage": null,
+          "total_input_tokens": 52000,
+          "total_output_tokens": 3200,
+          "used_percentage": 34
+        },
+        "conversation_id": "conv-7f3a9b21",
+        "cwd": "~/dev/oh-my-posh",
+        "email": "",
+        "exceeds_200k_tokens": false,
+        "execution_mode": "agent",
+        "model": {
+          "DisplayName": "Gemini 3 Pro",
+          "ID": "gemini-3-pro",
+          "display_name": "Gemini 3 Pro",
+          "id": "gemini-3-pro"
+        },
+        "pending_input_count": 0,
+        "plan_tier": "pro",
+        "product": "antigravity",
+        "quota": {
+          "gemini-weekly": {
+            "reset_time": "2026-08-27T18:00:00Z",
+            "remaining_fraction": 0.64,
+            "reset_in_seconds": 3600
+          }
+        },
+        "sandbox": {
+          "AllowNetwork": true,
+          "Enabled": true,
+          "allow_network": true,
+          "enabled": true
+        },
+        "session_id": "f6a1c2d3-e4b5-4678-9012-3456789abcde",
+        "task_count": 2,
+        "terminal_width": 120,
+        "tool_confirmation_pending": false,
+        "transcript_path": "",
+        "vcs": {
+          "Branch": "next",
+          "Dirty": true,
+          "Type": "git",
+          "branch": "next",
+          "dirty": true,
+          "type": "git"
+        },
+        "version": "0.4.2",
+        "vim": null,
+        "workspace": {
+          "CurrentDir": "~/dev/oh-my-posh",
+          "ProjectDir": "~/dev/oh-my-posh",
+          "current_dir": "~/dev/oh-my-posh",
+          "project_dir": "~/dev/oh-my-posh"
+        }
+      },
+      "enabled": true
+    },
     "argocd": {
       "data": {
         "Name": "contoso-prod",

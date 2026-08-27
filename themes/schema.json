@@ -416,6 +416,7 @@
           "description": "The segment type, which determines what information is displayed and which options are available.",
           "enum": [
             "angular",
+            "antigravity",
             "argocd",
             "aspire",
             "aurelia",
@@ -701,6 +702,38 @@
                     ]
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "antigravity"
+              }
+            }
+          },
+          "then": {
+            "title": "Antigravity CLI Segment",
+            "description": "Display Antigravity CLI session information including the current AI model, token usage, and workspace details. Shows a visual gauge of context window usage and formatted token information for monitoring your Antigravity session.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "gauge_marked_char": {
+                    "type": "string",
+                    "title": "Gauge marked character",
+                    "description": "The character used for the filled part of the token usage gauge.",
+                    "default": "▰"
+                  },
+                  "gauge_unmarked_char": {
+                    "type": "string",
+                    "title": "Gauge unmarked character",
+                    "description": "The character used for the empty part of the token usage gauge.",
+                    "default": "▱"
+                  }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

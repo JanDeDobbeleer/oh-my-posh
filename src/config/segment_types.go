@@ -30,6 +30,8 @@ const (
 	Diamond SegmentStyle = "diamond"
 	// ANGULAR writes which angular cli version us currently active
 	ANGULAR SegmentType = "angular"
+	// ANTIGRAVITY writes Antigravity CLI session information
+	ANTIGRAVITY SegmentType = "antigravity"
 	// ARGOCD writes the current argocd context
 	ARGOCD SegmentType = "argocd"
 	// ASPIRE writes the Aspire apphost status

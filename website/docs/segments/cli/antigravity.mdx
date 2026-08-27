@@ -1,0 +1,192 @@
+---
+id: antigravity
+title: Antigravity CLI
+sidebar_label: Antigravity CLI
+---
+
+## What
+
+Display Antigravity CLI session information including the current AI model, token usage, and
+workspace details. Shows a visual gauge of context window usage and formatted token information
+for monitoring your Antigravity session.
+
+This segment integrates with [Antigravity CLI's statusline functionality][antigravity-docs]
+to provide real-time session data in your prompt.
+
+For setup instructions, see [Change your prompt](/docs/installation/prompt?shell=antigravity).
+
+:::info Working directory
+
+`oh-my-posh antigravity` renders directory-aware segments — `path`, `git`, `project` and the language segments — and
+the `.PWD`, `.Folder` and `.AbsolutePWD` template values against the directory the payload reports in
+`workspace.current_dir`, falling back to `cwd`. When the payload reports neither, or reports a path that is not an
+existing absolute directory, the renderer's own working directory is used, as before.
+
+The renderer's working directory itself is not changed, so external commands — including version manager shims — and
+the `cmd`, `readFile` and `glob` template functions still resolve relative to the directory Antigravity CLI started
+the renderer in, not to `workspace.current_dir`.
+
+:::
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "antigravity",
+    style: "diamond",
+    leading_diamond: "\ue0b6",
+    trailing_diamond: "\ue0b4",
+    foreground: "#111111",
+    background: "#AECBFA",
+    template: " \uf135 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }} "
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uf135 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }}
+```
+
+:::
+
+## Options
+
+| Name                  | Type     | Default | Description                                              |
+| --------------------- | -------- | ------- | -------------------------------------------------------- |
+| `gauge_marked_char`   | `string` | `▰`     | Character used for filled blocks in gauge visualizations |
+| `gauge_unmarked_char` | `string` | `▱`     | Character used for empty blocks in gauge visualizations  |
+
+### Properties
+
+| Name                       | Type               | Description                                                                          |
+| -------------------------- | ------------------ | ------------------------------------------------------------------------------------ |
+| `.CWD`                     | `string`           | Directory Antigravity CLI was launched from                                          |
+| `.SessionID`               | `string`           | Unique identifier for the Antigravity session                                        |
+| `.ConversationID`          | `string`           | Identifier for the current conversation; empty when absent                           |
+| `.TranscriptPath`          | `string`           | Path to the conversation transcript file                                             |
+| `.Model`                   | `Model`            | AI model information                                                                 |
+| `.Workspace`               | `Workspace`        | Workspace directory information                                                      |
+| `.Version`                 | `string`           | Antigravity CLI version                                                              |
+| `.Product`                 | `string`           | Product name reported by the payload; empty when absent                              |
+| `.ContextWindow`           | `ContextWindow`    | Token usage information                                                              |
+| `.Exceeds200KTokens`       | `bool`             | Whether the most recent API response exceeded 200K total tokens                      |
+| `.Quota`                   | `map[string]Quota` | Per-model quota information, keyed by model id                                       |
+| `.VCS`                     | `VCS`              | Version control status for the workspace; nil when absent                            |
+| `.Sandbox`                 | `Sandbox`          | Sandbox execution state; nil when absent                                             |
+| `.Vim`                     | `Vim`              | Vim mode information; nil when absent                                                |
+| `.AgentState`              | `string`           | Current agent state; empty when absent                                               |
+| `.ArtifactCount`           | `int`              | Number of artifacts produced in the session                                          |
+| `.PlanTier`                | `string`           | Subscription plan tier; empty when absent                                            |
+| `.Email`                   | `string`           | Authenticated user email; empty when absent                                          |
+| `.PendingInputCount`       | `int`              | Number of pending input requests                                                     |
+| `.ToolConfirmationPending` | `bool`             | Whether a tool call is waiting on user confirmation                                  |
+| `.TaskCount`               | `int`              | Number of tasks tracked in the session                                               |
+| `.TerminalWidth`           | `int`              | Reported terminal width in columns                                                   |
+| `.ExecutionMode`           | `string`           | Current execution mode; empty when absent                                            |
+| `.TokenUsagePercent`       | `Percentage`       | Percentage of context window used (0-100)                                            |
+| `.TokenGauge`              | `string`           | Gauge showing remaining context capacity using configured characters (e.g., `▰▰▰▱▱`) |
+| `.TokenGaugeUsed`          | `string`           | Gauge showing used context capacity using configured characters (e.g., `▰▰▱▱▱`)      |
+| `.RemainingPercent`        | `Percentage`       | Percentage of context window remaining (0-100)                                       |
+| `.FormattedTokens`         | `string`           | Human-readable token count (e.g., "1.2K", "15.3M")                                   |
+
+:::tip nil pointer fields
+`.VCS`, `.Sandbox`, and `.Vim` are all `nil` when the underlying data is absent. Guard direct field
+access with `{{if .VCS}}{{.VCS.Branch}}{{end}}` to avoid template errors.
+:::
+
+#### Model Properties
+
+| Name           | Type     | Description                                      |
+| -------------- | -------- | ------------------------------------------------ |
+| `.ID`          | `string` | Technical model identifier                       |
+| `.DisplayName` | `string` | Human-readable model name (e.g., "Gemini 3 Pro") |
+
+#### Workspace Properties
+
+| Name          | Type     | Description                                           |
+| ------------- | -------- | ----------------------------------------------------- |
+| `.CurrentDir` | `string` | Current working directory                             |
+| `.ProjectDir` | `string` | Project root directory; may differ from `.CurrentDir` |
+
+#### ContextWindow Properties
+
+| Name                   | Type           | Description                                           |
+| ---------------------- | -------------- | ----------------------------------------------------- |
+| `.TotalInputTokens`    | `int`          | Total input tokens used in the session                |
+| `.TotalOutputTokens`   | `int`          | Total output tokens generated in the session          |
+| `.ContextWindowSize`   | `int`          | Maximum context window size for the model             |
+| `.CurrentUsage`        | `CurrentUsage` | Current message token usage; nil when absent          |
+| `.UsedPercentage`      | `*float64`     | Pre-calculated usage percentage; nil when unknown     |
+| `.RemainingPercentage` | `*float64`     | Pre-calculated remaining percentage; nil when unknown |
+
+#### CurrentUsage Properties
+
+| Name                        | Type  | Description                              |
+| --------------------------- | ----- | ---------------------------------------- |
+| `.InputTokens`              | `int` | Input tokens for the current message     |
+| `.OutputTokens`             | `int` | Output tokens for the current message    |
+| `.CacheCreationInputTokens` | `int` | Tokens used to create a new cache entry  |
+| `.CacheReadInputTokens`     | `int` | Tokens read from an existing cache entry |
+
+#### Quota Properties
+
+Keyed by a model or quota bucket id, e.g. `{{ (index .Quota "gemini-weekly").RemainingFraction }}`.
+
+| Name                 | Type       | Description                                         |
+| -------------------- | ---------- | --------------------------------------------------- |
+| `.RemainingFraction` | `*float64` | Fraction of quota remaining (0-1); nil when unknown |
+| `.ResetTime`         | `string`   | ISO 8601 timestamp the quota resets at              |
+| `.ResetInSeconds`    | `*int`     | Seconds until the quota resets; nil when unknown    |
+
+#### VCS Properties
+
+| Name      | Type     | Description                                      |
+| --------- | -------- | ------------------------------------------------ |
+| `.Type`   | `string` | Version control system in use, e.g. `git`        |
+| `.Branch` | `string` | Current branch name; empty when absent           |
+| `.Dirty`  | `bool`   | Whether the working tree has uncommitted changes |
+
+#### Sandbox Properties
+
+| Name            | Type    | Description                                               |
+| --------------- | ------- | --------------------------------------------------------- |
+| `.Enabled`      | `bool`  | Whether sandboxed execution is active                     |
+| `.AllowNetwork` | `*bool` | Whether the sandbox allows network access; nil when unset |
+
+#### Vim Properties
+
+| Name    | Type     | Description                                       |
+| ------- | -------- | ------------------------------------------------- |
+| `.Mode` | `string` | Current vim mode; empty when vim mode is disabled |
+
+### Percentage Methods
+
+The `Percentage` type (returned by `.TokenUsagePercent`, `.RemainingPercent`) provides
+additional methods for direct use in templates:
+
+| Method       | Returns  | Description                                                                |
+| ------------ | -------- | -------------------------------------------------------------------------- |
+| `.Gauge`     | `string` | Visual gauge showing remaining capacity using hardcoded `▰`/`▱` characters |
+| `.GaugeUsed` | `string` | Visual gauge showing used capacity using hardcoded `▰`/`▱` characters      |
+| `.String`    | `string` | Numeric percentage value (e.g., "75" for use in templates)                 |
+
+:::tip Custom gauge characters
+Use `.TokenGauge` and `.TokenGaugeUsed` instead of the raw `.Percentage` methods above — they
+respect the `gauge_marked_char` and `gauge_unmarked_char` options.
+:::
+
+## How it works
+
+The `oh-my-posh antigravity` command reads Antigravity CLI's session JSON from stdin, caches the
+parsed data, then renders your configured prompt. Antigravity CLI sends a fresh JSON payload on
+every statusline refresh.
+
+The segment is only visible when Antigravity CLI is actively providing session data.
+
+[antigravity-docs]: https://antigravity.google/docs/cli/statusline
+[templates]: /docs/configuration/templates

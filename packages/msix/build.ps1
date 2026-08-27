@@ -234,7 +234,6 @@ try {
 <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018" Version="$Version.0" Uri="$DownloadUrl/latest/install-$Architecture.appinstaller">
   <MainPackage Name="$($identity.Name)" Version="$Version.0" Publisher="$($identity.Publisher)" ProcessorArchitecture="$Architecture" Uri="$DownloadUrl/v$Version/install-$Architecture.msix" />
   <UpdateSettings>
-    <OnLaunch HoursBetweenUpdateChecks="24" />
     <AutomaticBackgroundTask />
     <ForceUpdateFromAnyVersion>true</ForceUpdateFromAnyVersion>
   </UpdateSettings>

@@ -2,7 +2,7 @@
 
 > Oh My Posh is the most customizable and fastest prompt theme engine for any shell.
 > It renders beautifully themed prompts displaying Git status, language versions, cloud context,
-> system metrics and more — 117 segments in all — on Windows, macOS, and Linux.
+> system metrics and more — 118 segments in all — on Windows, macOS, and Linux.
 
 Website: https://ohmyposh.dev
 Repository: https://github.com/JanDeDobbeleer/oh-my-posh

@@ -227,7 +227,7 @@ If you're already using Oh My Posh, adding Claude Code integration is as simple 
 3. Optionally create your own configuration including the `claude` segment
 4. Start a Claude Code session and watch your prompt come alive
 
-For detailed configuration options and all available properties, check out the [complete Claude segment documentation](https://ohmyposh.dev/docs/segments/cli/claude).
+For detailed configuration options and all available properties, check out the [complete Claude segment documentation](https://ohmyposh.dev/docs/segments/agents/claude).
 
 ## What's Next?
 

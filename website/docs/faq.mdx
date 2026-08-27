@@ -137,6 +137,17 @@ Adjust it by adding `\u2800` immediately after the icon.
   }}
 />
 
+## Windows Terminal: Powerline separator color doesn't match the adjacent segment
+
+Windows Terminal's [Adjust indistinguishable colors][wt-adjust-colors] setting can brighten or darken a foreground or
+background color when it judges the contrast too low. Because a powerline separator's color is derived from the
+adjacent segment's background, this setting can adjust the separator without adjusting the segment's actual
+background fill (or vice versa), causing a visible mismatch right at the seam between two segments — even though the
+theme's colors and Oh My Posh's own output (verified via `oh-my-posh debug`) are correct.
+
+Disable it by setting `"adjustIndistinguishableColors": "never"` in Windows Terminal's `settings.json`, or via
+**Settings → Profile → Appearance**.
+
 ## Jetbrains terminals: Icons do not render
 
 They need to work on their terminal, somehow it only supports UTF-8 and not UTF-16.
@@ -381,6 +392,7 @@ This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 [git-gc]: https://git-scm.com/docs/git-gc
 [new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new/choose
 [latest]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
+[wt-adjust-colors]: https://learn.microsoft.com/en-us/windows/terminal/customize-settings/profile-appearance#adjust-indistinguishable-colors
 [wt-glyph]: https://github.com/microsoft/terminal/issues/3546
 [wt-glyphs]: https://github.com/microsoft/terminal/issues?q=is%3Aissue+is%3Aopen+unicode+width
 [export]: installation/customize.mdx#custom-configuration

@@ -79,7 +79,7 @@ func (p *Plastic) setPlasticStatus() {
 	p.Behind = headChangeset > currentChangeset
 
 	statusFormats := p.options.KeyValueMap(StatusFormats, map[string]string{})
-	p.Status = &PlasticStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	p.Status = &PlasticStatus{Formats: statusFormats}
 
 	// parse file state
 	p.MergePending = false

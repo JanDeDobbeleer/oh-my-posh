@@ -196,9 +196,7 @@ func TestPoshGitSegment(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				command: GITCOMMAND,
-			},
+			command: GITCOMMAND,
 		}
 		g.Init(props, env)
 

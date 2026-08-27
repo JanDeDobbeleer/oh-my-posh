@@ -54,11 +54,9 @@ func TestIpifySegment(t *testing.T) {
 		api.On("Get").Return(tc.IPDate, tc.Error)
 
 		ipify := &IPify{
-			api: api,
-			Base: Base{
-				env:     &mock.Environment{},
-				options: options.Map{},
-			},
+			api:     api,
+			env:     &mock.Environment{},
+			options: options.Map{},
 		}
 
 		enabled := ipify.Enabled()

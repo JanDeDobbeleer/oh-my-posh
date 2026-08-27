@@ -48,9 +48,7 @@ func TestCursorStyleTemplate(t *testing.T) {
 		env.On("Shell").Return(shell.GENERIC)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: shell.GENERIC,
-			},
+			Shell:    shell.GENERIC,
 			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)

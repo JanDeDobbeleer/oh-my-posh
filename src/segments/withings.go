@@ -179,10 +179,8 @@ func (w *Withings) initAPI() {
 		SegmentName:     "withings",
 		AccessToken:     w.options.Template(options.AccessToken, "", w),
 		RefreshToken:    w.options.Template(options.RefreshToken, "", w),
-		Request: http.Request{
-			Env:         w.env,
-			HTTPTimeout: w.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
-		},
+		Env:             w.env,
+		HTTPTimeout:     w.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
 	}
 
 	w.api = &withingsAPI{

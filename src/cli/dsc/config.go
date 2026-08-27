@@ -32,7 +32,7 @@ var configurationSchema string
 
 func ConfigDSC() *ConfigResource {
 	return &ConfigResource{
-		Resource: basedsc.Resource[*Configuration]{SchemaJSON: configurationSchema},
+		SchemaJSON: configurationSchema,
 	}
 }
 

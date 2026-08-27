@@ -115,7 +115,7 @@ func (sl *Sapling) setHeadContext() {
 	sl.setCommitContext()
 
 	statusFormats := sl.options.KeyValueMap(StatusFormats, map[string]string{})
-	sl.Working = &SaplingStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	sl.Working = &SaplingStatus{Formats: statusFormats}
 
 	displayStatus := sl.options.Bool(FetchStatus, true)
 	if !displayStatus {

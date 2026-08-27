@@ -16,7 +16,7 @@ var fontSchema string
 
 func DSC() *Resource {
 	return &Resource{
-		Resource: dsc.Resource[*Font]{SchemaJSON: fontSchema},
+		SchemaJSON: fontSchema,
 	}
 }
 

@@ -40,9 +40,7 @@ type AccessTokenResponse struct {
 
 func NewCopilot(env runtime.Environment) *CopilotAuth {
 	flow := &CopilotAuth{
-		model: model{
-			env: env,
-		},
+		env: env,
 	}
 
 	flow.model.status = flow.status

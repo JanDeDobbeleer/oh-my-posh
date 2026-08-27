@@ -102,10 +102,8 @@ func TestClaudeSegment(t *testing.T) {
 
 		env := new(mock.Environment)
 		claude := &Claude{
-			Base: Base{
-				env:     env,
-				options: options.Map{},
-			},
+			env:     env,
+			options: options.Map{},
 		}
 
 		enabled := claude.Enabled()
@@ -153,10 +151,8 @@ func TestClaudeWorkspaceGitWorktree(t *testing.T) {
 
 		env := new(mock.Environment)
 		claude := &Claude{
-			Base: Base{
-				env:     env,
-				options: options.Map{},
-			},
+			env:     env,
+			options: options.Map{},
 		}
 
 		assert.True(t, claude.Enabled(), tc.Case)
@@ -210,10 +206,8 @@ func TestClaudeEffortAndThinking(t *testing.T) {
 
 		env := new(mock.Environment)
 		claude := &Claude{
-			Base: Base{
-				env:     env,
-				options: options.Map{},
-			},
+			env:     env,
+			options: options.Map{},
 		}
 
 		assert.True(t, claude.Enabled(), tc.Case)
@@ -925,12 +919,10 @@ func TestClaudeGaugeOptionsReadInEnabled(t *testing.T) {
 
 	env := new(mock.Environment)
 	claude := &Claude{
-		Base: Base{
-			env: env,
-			options: options.Map{
-				gaugeMarkedChar:   "█",
-				gaugeUnmarkedChar: "░",
-			},
+		env: env,
+		options: options.Map{
+			gaugeMarkedChar:   "█",
+			gaugeUnmarkedChar: "░",
 		},
 	}
 

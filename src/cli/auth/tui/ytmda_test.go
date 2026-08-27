@@ -82,9 +82,7 @@ func TestYtdma_Authenticate(t *testing.T) {
 			env.On("HTTPRequest", tokenURL).Return([]byte(tc.requestTokenResponse), tc.requestTokenError)
 
 			ytmda := &Ytmda{
-				model: model{
-					env: env,
-				},
+				env: env,
 			}
 
 			ytmda.Authenticate()

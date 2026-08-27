@@ -357,9 +357,7 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("Shell").Return(shell.GENERIC)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: "bash",
-			},
+			Shell: "bash",
 		}
 		template.Init(env, nil, nil)
 
@@ -644,13 +642,11 @@ func TestAgnosterMaxWidth(t *testing.T) {
 			env.On("Shell").Return(shell.BASH)
 
 			path := &Path{
-				Base: Base{
-					env: env,
-					options: options.Map{
-						DisplayRoot:         tc.displayRoot,
-						FolderIcon:          tc.folderIcon,
-						FolderSeparatorIcon: tc.separator,
-					},
+				env: env,
+				options: options.Map{
+					DisplayRoot:         tc.displayRoot,
+					FolderIcon:          tc.folderIcon,
+					FolderSeparatorIcon: tc.separator,
 				},
 				pathSeparator: tc.separator,
 			}
@@ -837,12 +833,10 @@ func TestFishPath(t *testing.T) {
 			env.On("Shell").Return(shell.BASH)
 
 			path := &Path{
-				Base: Base{
-					env: env,
-					options: options.Map{
-						DirLength:      tc.dirLength,
-						FullLengthDirs: tc.fullLengthDirs,
-					},
+				env: env,
+				options: options.Map{
+					DirLength:      tc.dirLength,
+					FullLengthDirs: tc.fullLengthDirs,
 				},
 				pathSeparator: tc.separator,
 			}

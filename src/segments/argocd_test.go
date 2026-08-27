@@ -36,10 +36,8 @@ func TestArgocdGetConfigFromOpts(t *testing.T) {
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
-			Base: Base{
-				env:     env,
-				options: options.Map{},
-			},
+			env:     env,
+			options: options.Map{},
 		}
 		config := argocd.getConfigFromOpts()
 		assert.Equal(t, tc.Expected, config, tc.Case)
@@ -64,10 +62,8 @@ func TestArgocdGetConfigPath(t *testing.T) {
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
-			Base: Base{
-				env:     env,
-				options: options.Map{},
-			},
+			env:     env,
+			options: options.Map{},
 		}
 		assert.Equal(t, tc.Expected, argocd.getConfigPath())
 	}
@@ -161,10 +157,8 @@ users:
 		env.On("FileContent", configFile).Return(tc.Config)
 
 		argocd := &Argocd{
-			Base: Base{
-				env:     env,
-				options: options.Map{},
-			},
+			env:     env,
+			options: options.Map{},
 		}
 		if len(tc.ExpectedError) > 0 {
 			_, err := argocd.parseConfig(configFile)

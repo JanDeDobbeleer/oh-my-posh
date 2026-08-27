@@ -695,9 +695,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("GOOS").Return("unix")
 
 	g := &Git{
-		Scm: Scm{
-			command: GITCOMMAND,
-		},
+		command: GITCOMMAND,
 	}
 	g.Init(options.Map{}, env)
 
@@ -851,9 +849,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				command: GITCOMMAND,
-			},
+			command:   GITCOMMAND,
 			ShortHash: "1234567",
 			Ref:       tc.Ref,
 		}
@@ -904,9 +900,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				command: GITCOMMAND,
-			},
+			command:   GITCOMMAND,
 			ShortHash: tc.ShortHash,
 		}
 		g.Init(props, env)
@@ -947,8 +941,8 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking:      &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
-			ExpectedStaging:      &GitStatus{ScmStatus: ScmStatus{Added: 1}},
+			ExpectedWorking:      &GitStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1},
+			ExpectedStaging:      &GitStatus{Added: 1},
 			ExpectedHash:         "1234567",
 			ExpectedRef:          "rework-git-status",
 			ExpectedUpstreamGone: true,
@@ -970,8 +964,8 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
-			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Added: 1}},
+			ExpectedWorking:  &GitStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1},
+			ExpectedStaging:  &GitStatus{Added: 1},
 			ExpectedUpstream: "origin/rework-git-status",
 			ExpectedHash:     "1234567",
 			ExpectedRef:      "rework-git-status",
@@ -1016,7 +1010,7 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedUpstream: "origin/main",
 			ExpectedHash:     "1234567",
 			ExpectedRef:      "main",
-			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Untracked: 3}},
+			ExpectedWorking:  &GitStatus{Untracked: 3},
 		},
 		{
 			Case: "remote branch was deleted",
@@ -1044,7 +1038,7 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedHash:     "1234567",
 			ExpectedRef:      "rework-git-status",
 			Rebase:           true,
-			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Unmerged: 2}},
+			ExpectedStaging:  &GitStatus{Unmerged: 2},
 		},
 		{
 			Case: "merge with 4 merge conflicts",
@@ -1062,7 +1056,7 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedHash:     "1234567",
 			ExpectedRef:      "rework-git-status",
 			Merge:            true,
-			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Unmerged: 4}},
+			ExpectedStaging:  &GitStatus{Unmerged: 4},
 		},
 	}
 	for _, tc := range cases {
@@ -1072,9 +1066,7 @@ func TestSetGitStatus(t *testing.T) {
 		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 
 		g := &Git{
-			Scm: Scm{
-				command: GITCOMMAND,
-			},
+			command: GITCOMMAND,
 		}
 		g.Init(options.Map{}, env)
 
@@ -1119,9 +1111,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
 
 		g := &Git{
-			Scm: Scm{
-				mainSCMDir: "",
-			},
+			mainSCMDir: "",
 		}
 		g.Init(options.Map{}, env)
 
@@ -1200,10 +1190,8 @@ func TestGitUpstream(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				command:  GITCOMMAND,
-				Upstream: "origin/main",
-			},
+			command:  GITCOMMAND,
+			Upstream: "origin/main",
 		}
 		g.Init(props, env)
 
@@ -1244,9 +1232,7 @@ func TestGetBranchStatus(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				Upstream: tc.Upstream,
-			},
+			Upstream:     tc.Upstream,
 			Ahead:        tc.Ahead,
 			Behind:       tc.Behind,
 			UpstreamGone: tc.UpstreamGone,
@@ -1281,10 +1267,8 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-					},
+					Added:    2,
+					Modified: 3,
 				},
 			},
 		},
@@ -1304,16 +1288,12 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-					},
+					Added:    2,
+					Modified: 3,
 				},
 				Staging: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    5,
-						Modified: 1,
-					},
+					Added:    5,
+					Modified: 1,
 				},
 			},
 		},
@@ -1324,16 +1304,12 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-					},
+					Added:    2,
+					Modified: 3,
 				},
 				Staging: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    5,
-						Modified: 1,
-					},
+					Added:    5,
+					Modified: 1,
 				},
 			},
 		},
@@ -1344,16 +1320,12 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-					},
+					Added:    2,
+					Modified: 3,
 				},
 				Staging: &GitStatus{
-					ScmStatus: ScmStatus{
-						Added:    5,
-						Modified: 1,
-					},
+					Added:    5,
+					Modified: 1,
 				},
 				stashCount: 3,
 				poshgit:    true,
@@ -1433,9 +1405,7 @@ func TestGitUntrackedMode(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				repoRootDir: "foo",
-			},
+			repoRootDir: "foo",
 		}
 		g.Init(props, new(mock.Environment))
 
@@ -1478,9 +1448,7 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 		}
 
 		g := &Git{
-			Scm: Scm{
-				repoRootDir: "foo",
-			},
+			repoRootDir: "foo",
 		}
 		g.Init(props, new(mock.Environment))
 
@@ -1610,9 +1578,7 @@ func TestGitCommit(t *testing.T) {
 		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
 
 		g := &Git{
-			Scm: Scm{
-				command: GITCOMMAND,
-			},
+			command: GITCOMMAND,
 		}
 		g.Init(options.Map{}, env)
 
@@ -1693,9 +1659,7 @@ func TestGitRemotes(t *testing.T) {
 		env := new(mock.Environment)
 
 		g := &Git{
-			Scm: Scm{
-				repoRootDir: "foo",
-			},
+			repoRootDir: "foo",
 		}
 		g.Init(options.Map{}, env)
 
@@ -1750,11 +1714,9 @@ func TestGitRepoName(t *testing.T) {
 		env.On("GOOS").Return(runtime.LINUX)
 
 		g := &Git{
-			Scm: Scm{
-				repoRootDir: tc.RealDir,
-				mainSCMDir:  tc.WorkingDir,
-			},
-			IsWorkTree: tc.IsWorkTree,
+			repoRootDir: tc.RealDir,
+			mainSCMDir:  tc.WorkingDir,
+			IsWorkTree:  tc.IsWorkTree,
 		}
 		g.Init(options.Map{}, env)
 
@@ -1869,12 +1831,10 @@ func TestGitMainWorktree(t *testing.T) {
 			}
 
 			g := &Git{
-				Scm: Scm{
-					command:     GITCOMMAND,
-					repoRootDir: "/repo/linked",
-					scmDir:      commonDir,
-				},
-				IsWorkTree: tc.Linked,
+				command:     GITCOMMAND,
+				repoRootDir: "/repo/linked",
+				scmDir:      commonDir,
+				IsWorkTree:  tc.Linked,
 			}
 			g.Init(options.Map{}, env)
 
@@ -1967,13 +1927,11 @@ func TestGitMainWorktreeConvertsWSLPath(t *testing.T) {
 	env.On("ConvertToLinuxPath").Return(linuxPath).Once()
 
 	g := &Git{
-		Scm: Scm{
-			command:         "git.exe",
-			repoRootDir:     linkedWorktree,
-			mainSCMDir:      commonDir + "/worktrees/linked",
-			IsWslSharedPath: true,
-		},
-		IsWorkTree: true,
+		command:         "git.exe",
+		repoRootDir:     linkedWorktree,
+		mainSCMDir:      commonDir + "/worktrees/linked",
+		IsWslSharedPath: true,
+		IsWorkTree:      true,
 	}
 	g.Init(options.Map{}, env)
 
@@ -2019,10 +1977,8 @@ func TestGitMainWorktreeFromWindowsGitInWSL(t *testing.T) {
 	env.On("ConvertToLinuxPath").Return(linuxMain).Once()
 
 	g := &Git{
-		Scm: Scm{
-			command:         "git.exe",
-			IsWslSharedPath: true,
-		},
+		command:         "git.exe",
+		IsWslSharedPath: true,
 	}
 	g.Init(options.Map{}, env)
 
@@ -2036,14 +1992,12 @@ func TestGitMainWorktreeFromWindowsGitInWSL(t *testing.T) {
 func TestGitMainWorktreeIsLazy(t *testing.T) {
 	env := new(mock.Environment)
 	g := &Git{
-		Working: &GitStatus{},
-		Staging: &GitStatus{},
-		Scm: Scm{
-			command:     GITCOMMAND,
-			repoRootDir: "/repo/linked",
-			scmDir:      "/repo/.git",
-		},
-		IsWorkTree: true,
+		Working:     &GitStatus{},
+		Staging:     &GitStatus{},
+		command:     GITCOMMAND,
+		repoRootDir: "/repo/linked",
+		scmDir:      "/repo/.git",
+		IsWorkTree:  true,
 	}
 	g.Init(options.Map{}, env)
 
@@ -2194,13 +2148,11 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		env.On("FileContent", "/dir/.git/config").Return("")
 
 		g := &Git{
-			Scm: Scm{
-				command:     "git",
-				repoRootDir: "/dir",
-				scmDir:      "/dir/.git",
-				Upstream:    "origin/main",
-			},
-			Ref: "main",
+			command:     "git",
+			repoRootDir: "/dir",
+			scmDir:      "/dir/.git",
+			Upstream:    "origin/main",
+			Ref:         "main",
 		}
 
 		props := options.Map{
@@ -2269,7 +2221,7 @@ func TestSetStatusNative(t *testing.T) {
 	env := new(mock.Environment)
 	env.MockGitCommand(repoRoot, porcelain, "status", "-unormal", "--branch", "--porcelain=2")
 
-	gExec := &Git{Scm: Scm{command: GITCOMMAND, repoRootDir: repoRoot}}
+	gExec := &Git{command: GITCOMMAND, repoRootDir: repoRoot}
 	gExec.Init(options.Map{}, env)
 	gExec.setStatus()
 
@@ -2277,11 +2229,10 @@ func TestSetStatusNative(t *testing.T) {
 	// accidental exec fallback would either panic on an unmet expectation
 	// or, since Scm.command is unset here, silently return empty output —
 	// either way the sanity check below would catch it.
-	gNative := &Git{Scm: Scm{
+	gNative := &Git{
 		mainSCMDir:  worktreeGitDir,
 		scmDir:      commonGitDir,
-		repoRootDir: repoRoot,
-	}}
+		repoRootDir: repoRoot}
 	gNative.Init(options.Map{NativeStatus: true}, new(mock.Environment))
 	gNative.setStatus()
 

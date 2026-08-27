@@ -35,11 +35,9 @@ func newRecordedSessionSegment(t *testing.T, alias string) *config.Segment {
 func TestBuildDataDocument_EnvSectionDropsInternalKeysKeepsRest(t *testing.T) {
 	template.Cache = &cache.Template{
 		Segments: maps.NewConcurrent[any](),
-		SimpleTemplate: cache.SimpleTemplate{
-			PWD:      "/home/jan",
-			UserName: "jan",
-			Var:      maps.Simple[any]{"foo": "bar"},
-		},
+		PWD:      "/home/jan",
+		UserName: "jan",
+		Var:      maps.Simple[any]{"foo": "bar"},
 	}
 
 	cfg := &config.Config{}

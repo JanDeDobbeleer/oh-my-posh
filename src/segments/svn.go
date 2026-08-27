@@ -106,7 +106,7 @@ func (s *Svn) setSvnStatus() {
 	}
 
 	statusFormats := s.options.KeyValueMap(StatusFormats, map[string]string{})
-	s.Working = &SvnStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	s.Working = &SvnStatus{Formats: statusFormats}
 
 	displayStatus := s.options.Bool(FetchStatus, false)
 	if !displayStatus {

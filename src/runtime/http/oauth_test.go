@@ -143,10 +143,8 @@ func TestOauthResult(t *testing.T) {
 			SegmentName:     "test",
 			AccessToken:     tc.AccessToken,
 			RefreshToken:    tc.RefreshToken,
-			Request: Request{
-				Env:         env,
-				HTTPTimeout: 20,
-			},
+			Env:             env,
+			HTTPTimeout:     20,
 		}
 
 		got, err := OauthResult[*data](oauth, url, nil)

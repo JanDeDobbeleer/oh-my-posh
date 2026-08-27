@@ -27,9 +27,7 @@ func newBenchEngine() *Engine {
 	env.Init(flags)
 
 	template.Cache = &cache.Template{
-		SimpleTemplate: cache.SimpleTemplate{
-			Shell: shell.GENERIC,
-		},
+		Shell:    shell.GENERIC,
 		Segments: maps.NewConcurrent[any](),
 	}
 	template.Init(env, nil, nil)

@@ -244,9 +244,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		}
 
 		Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				OS: "darwin",
-			},
+			OS: "darwin",
 		}
 		Init(env, nil, nil)
 

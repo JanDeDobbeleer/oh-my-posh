@@ -57,7 +57,7 @@ func (jj *Jujutsu) Enabled() bool {
 	}
 
 	statusFormats := jj.options.KeyValueMap(StatusFormats, map[string]string{})
-	jj.Working = &JujutsuStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	jj.Working = &JujutsuStatus{Formats: statusFormats}
 
 	if displayStatus {
 		jj.setJujutsuStatus()

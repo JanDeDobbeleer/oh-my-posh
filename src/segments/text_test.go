@@ -37,13 +37,11 @@ func TestTextSegment(t *testing.T) {
 		txt.Init(options.Map{}, env)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				UserName: "Posh",
-				HostName: "MyHost",
-				Shell:    "terminal",
-				Root:     true,
-				Folder:   "posh",
-			},
+			UserName: "Posh",
+			HostName: "MyHost",
+			Shell:    "terminal",
+			Root:     true,
+			Folder:   "posh",
 		}
 
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, txt), tc.Case)

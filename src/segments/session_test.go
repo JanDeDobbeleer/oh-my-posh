@@ -119,11 +119,9 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		session.Init(options.Map{}, env)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				UserName: tc.UserName,
-				HostName: tc.ComputerName,
-				Root:     tc.Root,
-			},
+			UserName: tc.UserName,
+			HostName: tc.ComputerName,
+			Root:     tc.Root,
 		}
 
 		_ = session.Enabled()

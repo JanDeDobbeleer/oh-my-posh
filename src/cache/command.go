@@ -86,14 +86,14 @@ func PersistCommandPath(command, path string, found bool) {
 		ttl = CommandPathNegativeTTL
 	}
 
-	Set(Session, commandPathKey(command), entry, ttl)
+	Session.Set(commandPathKey(command), entry, ttl)
 }
 
 // An entry persisted under a different PATH(+PATHEXT) environment is treated
 // as a miss, so the caller falls through to a fresh exec.LookPath (which
 // overwrites the entry with the current environment's hash).
 func GetPersistedCommandPath(command string) (path string, found, ok bool) {
-	entry, exists := Get[commandPathEntry](Session, commandPathKey(command))
+	entry, exists := Session.Get[commandPathEntry](commandPathKey(command))
 	if !exists {
 		return "", false, false
 	}

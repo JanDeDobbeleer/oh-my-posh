@@ -919,7 +919,7 @@ func New(flags *runtime.Flags) *Engine {
 	env := &runtime.Terminal{}
 	env.Init(flags)
 
-	reload, _ := cache.Get[bool](cache.Device, config.RELOAD)
+	reload, _ := cache.Device.Get[bool](config.RELOAD)
 	cfg := config.Get(flags.ConfigPath, reload)
 
 	return newEngine(cfg, env)

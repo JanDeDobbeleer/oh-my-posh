@@ -26,13 +26,13 @@ func (term *Terminal) QueryMediaPlayer(_ string) (*MediaInfo, error) {
 func (term *Terminal) IsWsl() bool {
 	defer log.Trace(time.Now())
 	const key = "is_wsl"
-	if val, found := cache.Get[bool](cache.Device, key); found {
+	if val, found := cache.Device.Get[bool](key); found {
 		return val
 	}
 
 	var val bool
 	defer func() {
-		cache.Set(cache.Device, key, val, cache.INFINITE)
+		cache.Device.Set(key, val, cache.INFINITE)
 	}()
 
 	val = term.HasCommand("wslpath")
@@ -95,13 +95,13 @@ func resolveTerminalWidth(width uint, terminalErr error, columns string) (uint, 
 
 func (term *Terminal) Platform() string {
 	const key = "environment_platform"
-	if val, found := cache.Get[string](cache.Device, key); found {
+	if val, found := cache.Device.Get[string](key); found {
 		return val
 	}
 
 	var platform string
 	defer func() {
-		cache.Set(cache.Device, key, platform, cache.INFINITE)
+		cache.Device.Set(key, platform, cache.INFINITE)
 	}()
 
 	if wsl := term.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {

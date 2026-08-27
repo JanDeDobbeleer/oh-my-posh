@@ -610,14 +610,14 @@ func (term *Terminal) setPromptCount() {
 	defer log.Trace(time.Now())
 
 	var count int
-	if val, found := cache.Get[int](cache.Session, cache.PROMPTCOUNTCACHE); found {
+	if val, found := cache.Session.Get[int](cache.PROMPTCOUNTCACHE); found {
 		count = val
 	}
 
 	// Only update the count if we're generating a primary prompt.
 	if term.CmdFlags.Type == PRIMARY {
 		count++
-		cache.Set(cache.Session, cache.PROMPTCOUNTCACHE, count, cache.ONEDAY)
+		cache.Session.Set(cache.PROMPTCOUNTCACHE, count, cache.ONEDAY)
 	}
 
 	term.CmdFlags.PromptCount = count

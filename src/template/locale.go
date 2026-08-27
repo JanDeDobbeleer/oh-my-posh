@@ -25,11 +25,11 @@ type localeCache interface {
 type deviceLocaleCache struct{}
 
 func (deviceLocaleCache) get(key string) (string, bool) {
-	return cache.Get[string](cache.Device, key)
+	return cache.Device.Get[string](key)
 }
 
 func (deviceLocaleCache) set(key, val string) {
-	cache.Set(cache.Device, key, val, cache.INFINITE)
+	cache.Device.Set(key, val, cache.INFINITE)
 }
 
 var (

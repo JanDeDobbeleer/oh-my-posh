@@ -26,8 +26,8 @@ const (
 func (cfg *Config) Store() {
 	defer log.Trace(time.Now())
 
-	cache.Set(cache.Session, SourceKey, cfg.Source, cache.INFINITE)
-	cache.Set(cache.Session, configKey, cfg.Base64(), cache.INFINITE)
+	cache.Session.Set(SourceKey, cfg.Source, cache.INFINITE)
+	cache.Session.Set(configKey, cfg.Base64(), cache.INFINITE)
 }
 
 func Get(configFile string, reload bool) *Config {
@@ -35,14 +35,14 @@ func Get(configFile string, reload bool) *Config {
 
 	if reload {
 		log.Debug("reload mode enabled")
-		if source, OK := cache.Get[string](cache.Session, SourceKey); OK {
+		if source, OK := cache.Session.Get[string](SourceKey); OK {
 			cfg := Load(source)
 			cfg.Store()
 			return cfg
 		}
 	}
 
-	if base64String, found := cache.Get[string](cache.Session, configKey); found {
+	if base64String, found := cache.Session.Get[string](configKey); found {
 		var cfg Config
 		if err := cfg.Restore(base64String); err == nil {
 			return &cfg
@@ -51,7 +51,7 @@ func Get(configFile string, reload bool) *Config {
 		log.Debug("failed to restore config from cache")
 		// the entry is corrupted beyond repair, drop it so subsequent renders
 		// skip the decode attempt and go straight to recovery
-		cache.Delete(cache.Session, configKey)
+		cache.Session.Delete(configKey)
 	} else {
 		log.Debug("no cached config found")
 	}

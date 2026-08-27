@@ -254,7 +254,7 @@ func (l *Language) setVersion() error {
 
 	cacheKey := fmt.Sprintf("version_%s", l.name)
 
-	if versionCache, OK := cache.Get[Version](cache.Device, cacheKey); OK {
+	if versionCache, OK := cache.Device.Get[Version](cacheKey); OK {
 		l.Version = versionCache
 		return nil
 	}
@@ -283,7 +283,7 @@ func (l *Language) setVersion() error {
 		l.Executable = command.executable
 
 		duration := l.options.String(options.CacheDuration, string(cache.NONE))
-		cache.Set(cache.Device, cacheKey, l.Version, cache.Duration(duration))
+		cache.Device.Set(cacheKey, l.Version, cache.Duration(duration))
 
 		return nil
 	}

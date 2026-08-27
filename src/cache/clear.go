@@ -83,7 +83,7 @@ func Clear(force bool, excludedFiles ...string) error {
 }
 
 func GetTTL() int {
-	cacheTTL, OK := Get[int](Device, TTL)
+	cacheTTL, OK := Device.Get[int](TTL)
 	if !OK || cacheTTL <= 0 {
 		cacheTTL = 7
 	}

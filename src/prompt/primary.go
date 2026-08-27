@@ -137,8 +137,8 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 	// Only handle tooltip caching in regular (non-cached) rendering, once per
 	// prompt rather than once per block.
 	if !fromCache && !e.Config.ToolTipsAction.IsDefault() {
-		cache.Set(cache.Session, RPromptKey, e.rprompt, cache.INFINITE)
-		cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
+		cache.Session.Set(RPromptKey, e.rprompt, cache.INFINITE)
+		cache.Session.Set(RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {

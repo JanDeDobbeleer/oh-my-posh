@@ -30,7 +30,7 @@ You can export or edit the config (via the editor specified in the environment v
 		switch args[0] {
 		case "edit":
 			cache.Init(os.Getenv("POSH_SHELL"))
-			if configPath, OK := cache.Get[string](cache.Session, config.SourceKey); OK {
+			if configPath, OK := cache.Session.Get[string](config.SourceKey); OK {
 				exitcode = editFileWithEditor(configPath)
 				return
 			}

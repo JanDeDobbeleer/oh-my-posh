@@ -337,8 +337,8 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 	// in prompt.New checks to bypass its own config cache after an edit -
 	// without this the daemon would keep serving the old config until
 	// restarted).
-	cache.Refresh(cache.Session)
-	cache.Refresh(cache.Device)
+	cache.Session.Refresh()
+	cache.Device.Refresh()
 
 	// Apply the env overlay BEFORE constructing the engine so segment
 	// execution and config templates observe the calling shell's

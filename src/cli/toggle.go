@@ -30,7 +30,7 @@ var toggleCmd = &cmdtree.Command{
 		}()
 
 		// Get current toggles from cache as a map
-		currentToggleSet, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+		currentToggleSet, _ := cache.Session.Get[map[string]bool](cache.TOGGLECACHE)
 		if currentToggleSet == nil {
 			currentToggleSet = make(map[string]bool)
 		}
@@ -48,7 +48,7 @@ var toggleCmd = &cmdtree.Command{
 		}
 
 		// Store the map directly in cache
-		cache.Set(cache.Session, cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
+		cache.Session.Set(cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
 	},
 }
 

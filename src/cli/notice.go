@@ -24,7 +24,7 @@ var noticeCmd = &cmdtree.Command{
 		defer cache.Close()
 
 		// Skip if we already checked within the configured interval
-		if _, ok := cache.Get[string](cache.Device, upgrade.CACHEKEY); ok {
+		if _, ok := cache.Device.Get[string](upgrade.CACHEKEY); ok {
 			return
 		}
 
@@ -32,7 +32,7 @@ var noticeCmd = &cmdtree.Command{
 
 		defer func() {
 			// Set the cache key after the notice check to prevent redundant checks
-			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
+			cache.Device.Set(upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
 		}()
 
 		if notice, hasNotice := cfg.Upgrade.Notice(); hasNotice {

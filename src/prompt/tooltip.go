@@ -11,12 +11,12 @@ import (
 )
 
 func (e *Engine) tooltipFallback() string {
-	rprompt, OK := cache.Get[string](cache.Session, RPromptKey)
+	rprompt, OK := cache.Session.Get[string](RPromptKey)
 	if !OK {
 		return ""
 	}
 
-	rpromptLength, OK := cache.Get[int](cache.Session, RPromptLengthKey)
+	rpromptLength, OK := cache.Session.Get[int](RPromptLengthKey)
 	if !OK {
 		return rprompt
 	}
@@ -103,12 +103,12 @@ func (e *Engine) handleToolTipAction(text string, length int) (string, int) {
 		return text, length
 	}
 
-	rprompt, OK := cache.Get[string](cache.Session, RPromptKey)
+	rprompt, OK := cache.Session.Get[string](RPromptKey)
 	if !OK {
 		return text, length
 	}
 
-	rpromptLength, OK := cache.Get[int](cache.Session, RPromptLengthKey)
+	rpromptLength, OK := cache.Session.Get[int](RPromptLengthKey)
 	if !OK {
 		return text, length
 	}

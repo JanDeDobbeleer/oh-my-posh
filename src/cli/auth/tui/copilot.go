@@ -88,7 +88,7 @@ func (c *CopilotAuth) Authenticate() {
 		return
 	}
 
-	cache.Set(cache.Device, auth.CopilotTokenKey, token, cache.TWOYEARS)
+	cache.Device.Set(auth.CopilotTokenKey, token, cache.TWOYEARS)
 
 	setState(done)
 }

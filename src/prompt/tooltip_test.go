@@ -14,8 +14,8 @@ import (
 )
 
 func TestTooltipFallback_NoCacheReturnsEmpty(t *testing.T) {
-	cache.Delete(cache.Session, RPromptKey)
-	cache.Delete(cache.Session, RPromptLengthKey)
+	cache.Session.Delete(RPromptKey)
+	cache.Session.Delete(RPromptLengthKey)
 
 	env := new(mock.Environment)
 	env.On("Shell").Return(shell.ZSH)
@@ -32,10 +32,10 @@ func TestTooltipFallback_NoCacheReturnsEmpty(t *testing.T) {
 }
 
 func TestTooltipFallback_NoMatchReturnsRPromptText(t *testing.T) {
-	cache.Delete(cache.Session, RPromptKey)
-	cache.Delete(cache.Session, RPromptLengthKey)
-	cache.Set(cache.Session, RPromptKey, "my-rprompt", cache.INFINITE)
-	cache.Set(cache.Session, RPromptLengthKey, 10, cache.INFINITE)
+	cache.Session.Delete(RPromptKey)
+	cache.Session.Delete(RPromptLengthKey)
+	cache.Session.Set(RPromptKey, "my-rprompt", cache.INFINITE)
+	cache.Session.Set(RPromptLengthKey, 10, cache.INFINITE)
 
 	env := new(mock.Environment)
 	env.On("Shell").Return(shell.ZSH)
@@ -52,10 +52,10 @@ func TestTooltipFallback_NoMatchReturnsRPromptText(t *testing.T) {
 }
 
 func TestTooltipFallback_PwshNoMatchReturnsCursorPositionedRPrompt(t *testing.T) {
-	cache.Delete(cache.Session, RPromptKey)
-	cache.Delete(cache.Session, RPromptLengthKey)
-	cache.Set(cache.Session, RPromptKey, "my-rprompt", cache.INFINITE)
-	cache.Set(cache.Session, RPromptLengthKey, 10, cache.INFINITE)
+	cache.Session.Delete(RPromptKey)
+	cache.Session.Delete(RPromptLengthKey)
+	cache.Session.Set(RPromptKey, "my-rprompt", cache.INFINITE)
+	cache.Session.Set(RPromptLengthKey, 10, cache.INFINITE)
 
 	env := new(mock.Environment)
 	env.On("Shell").Return(shell.PWSH)
@@ -76,11 +76,11 @@ func TestTooltipFallback_PwshNoMatchReturnsCursorPositionedRPrompt(t *testing.T)
 }
 
 func TestTooltipFallback_PwshNoRoomReturnsEmpty(t *testing.T) {
-	cache.Delete(cache.Session, RPromptKey)
-	cache.Delete(cache.Session, RPromptLengthKey)
-	cache.Set(cache.Session, RPromptKey, "my-rprompt", cache.INFINITE)
+	cache.Session.Delete(RPromptKey)
+	cache.Session.Delete(RPromptLengthKey)
+	cache.Session.Set(RPromptKey, "my-rprompt", cache.INFINITE)
 	// rprompt length exceeds available terminal space
-	cache.Set(cache.Session, RPromptLengthKey, 200, cache.INFINITE)
+	cache.Session.Set(RPromptLengthKey, 200, cache.INFINITE)
 
 	env := new(mock.Environment)
 	env.On("Shell").Return(shell.PWSH)

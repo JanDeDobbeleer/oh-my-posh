@@ -499,7 +499,7 @@ func (segment *Segment) Writer() SegmentWriter {
 }
 
 func (segment *Segment) isToggled() bool {
-	togglesMap, OK := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+	togglesMap, OK := cache.Session.Get[map[string]bool](cache.TOGGLECACHE)
 	if !OK || len(togglesMap) == 0 {
 		log.Debug("no toggles found")
 		return false
@@ -520,7 +520,7 @@ func (segment *Segment) restoreCache() bool {
 
 	key, store := segment.cacheKeyAndStore()
 
-	data, OK := cache.Get[any](store, key)
+	data, OK := store.Get[any](key)
 	if !OK {
 		log.Debugf("no cache found for segment: %s, key: %s", segment.Name(), key)
 		return false
@@ -534,17 +534,17 @@ func (segment *Segment) restoreCache() bool {
 		// any method relying on it panics after a restore.
 		if err := gob.NewDecoder(bytes.NewReader(v)).Decode(segment.writer); err != nil {
 			log.Error(err)
-			cache.Delete(store, key)
+			store.Delete(key)
 			return false
 		}
 	case string:
 		// legacy JSON cache entry, remove it so it gets re-cached in the new format
 		log.Debugf("removing legacy cache key: %s", key)
-		cache.Delete(store, key)
+		store.Delete(key)
 		return false
 	default:
 		log.Debugf("unexpected cache type for segment: %s, key: %s", segment.Name(), key)
-		cache.Delete(store, key)
+		store.Delete(key)
 		return false
 	}
 
@@ -752,7 +752,7 @@ func (segment *Segment) setCache() {
 	}
 
 	key, store := segment.cacheKeyAndStore()
-	cache.Set(store, key, data.Bytes(), segment.Cache.Duration)
+	store.Set(key, data.Bytes(), segment.Cache.Duration)
 }
 
 func (segment *Segment) cacheKeyAndStore() (string, cache.Store) {

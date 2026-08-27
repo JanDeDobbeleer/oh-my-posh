@@ -175,7 +175,7 @@ func (c *Claude) Enabled() bool {
 	log.Debug("claude segment: checking if enabled")
 
 	// Try to get Claude data from session cache
-	claudeData, found := cache.Get[ClaudeData](cache.Session, cache.CLAUDECACHE)
+	claudeData, found := cache.Session.Get[ClaudeData](cache.CLAUDECACHE)
 	if !found {
 		log.Debug("claude segment: no Claude data found in session cache")
 		return false

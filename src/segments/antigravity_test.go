@@ -53,9 +53,9 @@ func TestAntigravitySegment(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			if tc.Data != nil {
-				cache.Set(cache.Session, cache.ANTIGRAVITYCACHE, *tc.Data, cache.INFINITE)
+				cache.Session.Set(cache.ANTIGRAVITYCACHE, *tc.Data, cache.INFINITE)
 			} else {
-				cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+				cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 			}
 
 			env := new(mock.Environment)
@@ -72,14 +72,14 @@ func TestAntigravitySegment(t *testing.T) {
 				assert.Equal(t, tc.ExpectedSession, segment.SessionID, tc.Case)
 			}
 
-			cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+			cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 		})
 	}
 }
 
 func TestAntigravityTokenUsagePercent(t *testing.T) {
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+		cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 	})
 
 	cases := []struct {
@@ -135,7 +135,7 @@ func TestAntigravityTokenUsagePercent(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			data := AntigravityData{ContextWindow: tc.ContextWindow}
-			cache.Set(cache.Session, cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
+			cache.Session.Set(cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
@@ -147,7 +147,7 @@ func TestAntigravityTokenUsagePercent(t *testing.T) {
 			assert.True(t, enabled, tc.Case)
 			assert.Equal(t, tc.ExpectedPercent, segment.TokenUsagePercent(), tc.Case)
 
-			cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+			cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 		})
 	}
 }
@@ -183,7 +183,7 @@ func TestAntigravityRemainingPercent(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			data := AntigravityData{ContextWindow: tc.ContextWindow}
-			cache.Set(cache.Session, cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
+			cache.Session.Set(cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
@@ -194,7 +194,7 @@ func TestAntigravityRemainingPercent(t *testing.T) {
 			segment.Enabled()
 			assert.Equal(t, tc.Expected, segment.RemainingPercent(), tc.Case)
 
-			cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+			cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 		})
 	}
 }
@@ -232,7 +232,7 @@ func TestAntigravityFormattedTokens(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			data := AntigravityData{ContextWindow: tc.ContextWindow}
-			cache.Set(cache.Session, cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
+			cache.Session.Set(cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
@@ -243,7 +243,7 @@ func TestAntigravityFormattedTokens(t *testing.T) {
 			segment.Enabled()
 			assert.Equal(t, tc.Expected, segment.FormattedTokens(), tc.Case)
 
-			cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+			cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 		})
 	}
 }
@@ -255,8 +255,8 @@ func TestAntigravityTokenGaugeCustomChars(t *testing.T) {
 			UsedPercentage: &usedPct,
 		},
 	}
-	cache.Set(cache.Session, cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
-	defer cache.Delete(cache.Session, cache.ANTIGRAVITYCACHE)
+	cache.Session.Set(cache.ANTIGRAVITYCACHE, data, cache.INFINITE)
+	defer cache.Session.Delete(cache.ANTIGRAVITYCACHE)
 
 	env := new(mock.Environment)
 	segment := &Antigravity{

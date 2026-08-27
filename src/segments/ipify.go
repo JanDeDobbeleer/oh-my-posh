@@ -22,7 +22,7 @@ type ipAPI struct {
 
 func (i *ipAPI) Get() (*ipData, error) {
 	url := "https://api.ipify.org?format=json"
-	return http.Do[*ipData](&i.Request, url, nil)
+	return i.Do[*ipData](url, nil)
 }
 
 type IPify struct {
@@ -43,7 +43,7 @@ func (i *IPify) Template() string {
 func (i *IPify) Enabled() bool {
 	const key = "IP"
 
-	if ip, ok := cache.Get[string](cache.Device, key); ok {
+	if ip, ok := cache.Device.Get[string](key); ok {
 		i.IP = ip
 		return true
 	}
@@ -58,7 +58,7 @@ func (i *IPify) Enabled() bool {
 	i.IP = ip
 
 	duration := i.options.String(options.CacheDuration, string(cache.ONEDAY))
-	cache.Set(cache.Device, key, i.IP, cache.Duration(duration))
+	cache.Device.Set(key, i.IP, cache.Duration(duration))
 
 	return true
 }

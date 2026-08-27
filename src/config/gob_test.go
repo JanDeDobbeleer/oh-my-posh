@@ -29,8 +29,8 @@ func resetCache(t *testing.T) {
 	t.Setenv("OSTYPE", "")
 
 	reset := func() {
-		cache.DeleteAll(cache.Session)
-		cache.DeleteAll(cache.Device)
+		cache.Session.DeleteAll()
+		cache.Device.DeleteAll()
 	}
 
 	reset()
@@ -52,7 +52,7 @@ func TestGetRecoversFromEnvironmentWhenSessionCacheLost(t *testing.T) {
 	assert.Equal(t, file, cfg.Source, "should render the configured theme instead of the default")
 
 	// Recovery should self-heal the session cache so subsequent renders are fast.
-	_, found := cache.Get[string](cache.Session, configKey)
+	_, found := cache.Session.Get[string](configKey)
 	assert.True(t, found, "recovery should repopulate the session config cache")
 }
 
@@ -90,7 +90,7 @@ func TestGetDropsCorruptedSessionCacheEntry(t *testing.T) {
 	resetCache(t)
 
 	// valid base64, but not a gob-encoded Config
-	cache.Set(cache.Session, configKey, "Y29ycnVwdGVkIGVudHJ5", cache.INFINITE)
+	cache.Session.Set(configKey, "Y29ycnVwdGVkIGVudHJ5", cache.INFINITE)
 
 	file := filepath.Join(t.TempDir(), "missing.omp.json")
 	t.Setenv(envKey, file)
@@ -99,7 +99,7 @@ func TestGetDropsCorruptedSessionCacheEntry(t *testing.T) {
 
 	assert.NotNil(t, cfg)
 
-	_, found := cache.Get[string](cache.Session, configKey)
+	_, found := cache.Session.Get[string](configKey)
 	assert.False(t, found, "a corrupted session config entry should be dropped after a failed restore")
 }
 
@@ -116,6 +116,6 @@ func TestGetFallsBackToDefaultWhenRecoverySourceInvalid(t *testing.T) {
 
 	// The source may only be temporarily unavailable: the default must not be
 	// cached, otherwise the next render can no longer retry the recovery.
-	_, found := cache.Get[string](cache.Session, configKey)
+	_, found := cache.Session.Get[string](configKey)
 	assert.False(t, found, "a failed recovery should not pin the default in the session cache")
 }

@@ -43,8 +43,8 @@ func (e *Engine) RPrompt() string {
 	}
 
 	if !e.Config.ToolTipsAction.IsDefault() {
-		cache.Set(cache.Session, RPromptKey, text, cache.INFINITE)
-		cache.Set(cache.Session, RPromptLengthKey, e.rpromptLength, cache.INFINITE)
+		cache.Session.Set(RPromptKey, text, cache.INFINITE)
+		cache.Session.Set(RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
 
 	return text

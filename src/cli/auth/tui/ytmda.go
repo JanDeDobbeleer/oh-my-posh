@@ -63,7 +63,7 @@ func (y *Ytmda) Authenticate() {
 		return
 	}
 
-	cache.Set(cache.Device, auth.YTMDATOKEN, token, cache.INFINITE)
+	cache.Device.Set(auth.YTMDATOKEN, token, cache.INFINITE)
 
 	setState(done)
 }

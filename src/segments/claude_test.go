@@ -95,9 +95,9 @@ func TestClaudeSegment(t *testing.T) {
 	for _, tc := range cases {
 		// Setup cache for test
 		if tc.ClaudeData != nil {
-			cache.Set(cache.Session, cache.CLAUDECACHE, *tc.ClaudeData, cache.INFINITE)
+			cache.Session.Set(cache.CLAUDECACHE, *tc.ClaudeData, cache.INFINITE)
 		} else {
-			cache.Delete(cache.Session, cache.CLAUDECACHE)
+			cache.Session.Delete(cache.CLAUDECACHE)
 		}
 
 		env := new(mock.Environment)
@@ -119,7 +119,7 @@ func TestClaudeSegment(t *testing.T) {
 
 func TestClaudeWorkspaceGitWorktree(t *testing.T) {
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, cache.CLAUDECACHE)
+		cache.Session.Delete(cache.CLAUDECACHE)
 	})
 
 	cases := []struct {
@@ -147,7 +147,7 @@ func TestClaudeWorkspaceGitWorktree(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{Workspace: tc.Workspace}, cache.INFINITE)
+		cache.Session.Set(cache.CLAUDECACHE, ClaudeData{Workspace: tc.Workspace}, cache.INFINITE)
 
 		env := new(mock.Environment)
 		claude := &Claude{
@@ -162,7 +162,7 @@ func TestClaudeWorkspaceGitWorktree(t *testing.T) {
 
 func TestClaudeEffortAndThinking(t *testing.T) {
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, cache.CLAUDECACHE)
+		cache.Session.Delete(cache.CLAUDECACHE)
 	})
 
 	cases := []struct {
@@ -199,7 +199,7 @@ func TestClaudeEffortAndThinking(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{
+		cache.Session.Set(cache.CLAUDECACHE, ClaudeData{
 			Effort:   tc.Effort,
 			Thinking: tc.Thinking,
 		}, cache.INFINITE)
@@ -910,10 +910,10 @@ func TestClaudeGaugeMethods(t *testing.T) {
 
 func TestClaudeGaugeOptionsReadInEnabled(t *testing.T) {
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, cache.CLAUDECACHE)
+		cache.Session.Delete(cache.CLAUDECACHE)
 	})
 
-	cache.Set(cache.Session, cache.CLAUDECACHE, ClaudeData{
+	cache.Session.Set(cache.CLAUDECACHE, ClaudeData{
 		Model: AIModel{DisplayName: "Opus"},
 	}, cache.INFINITE)
 

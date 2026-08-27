@@ -57,9 +57,9 @@ func TestCopilotCLISegment(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			if tc.Data != nil {
-				cache.Set(cache.Session, cache.COPILOTCLICACHE, *tc.Data, cache.INFINITE)
+				cache.Session.Set(cache.COPILOTCLICACHE, *tc.Data, cache.INFINITE)
 			} else {
-				cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+				cache.Session.Delete(cache.COPILOTCLICACHE)
 			}
 
 			env := new(mock.Environment)
@@ -76,14 +76,14 @@ func TestCopilotCLISegment(t *testing.T) {
 				assert.Equal(t, tc.ExpectedSession, segment.SessionID, tc.Case)
 			}
 
-			cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+			cache.Session.Delete(cache.COPILOTCLICACHE)
 		})
 	}
 }
 
 func TestCopilotCLITokenUsagePercent(t *testing.T) {
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+		cache.Session.Delete(cache.COPILOTCLICACHE)
 	})
 
 	cases := []struct {
@@ -146,7 +146,7 @@ func TestCopilotCLITokenUsagePercent(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			data := CopilotCLIData{ContextWindow: tc.ContextWindow}
-			cache.Set(cache.Session, cache.COPILOTCLICACHE, data, cache.INFINITE)
+			cache.Session.Set(cache.COPILOTCLICACHE, data, cache.INFINITE)
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
@@ -158,7 +158,7 @@ func TestCopilotCLITokenUsagePercent(t *testing.T) {
 			assert.True(t, enabled, tc.Case)
 			assert.Equal(t, tc.ExpectedPercent, segment.TokenUsagePercent(), tc.Case)
 
-			cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+			cache.Session.Delete(cache.COPILOTCLICACHE)
 		})
 	}
 }
@@ -208,7 +208,7 @@ func TestCopilotCLIFormattedTokens(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			data := CopilotCLIData{ContextWindow: tc.ContextWindow}
-			cache.Set(cache.Session, cache.COPILOTCLICACHE, data, cache.INFINITE)
+			cache.Session.Set(cache.COPILOTCLICACHE, data, cache.INFINITE)
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
@@ -219,7 +219,7 @@ func TestCopilotCLIFormattedTokens(t *testing.T) {
 			segment.Enabled()
 			assert.Equal(t, tc.Expected, segment.FormattedTokens(), tc.Case)
 
-			cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+			cache.Session.Delete(cache.COPILOTCLICACHE)
 		})
 	}
 }
@@ -231,8 +231,8 @@ func TestCopilotCLIFormattedDuration(t *testing.T) {
 			TotalAPIDurationMS: 30000, // 0m 30s
 		},
 	}
-	cache.Set(cache.Session, cache.COPILOTCLICACHE, data, cache.INFINITE)
-	defer cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+	cache.Session.Set(cache.COPILOTCLICACHE, data, cache.INFINITE)
+	defer cache.Session.Delete(cache.COPILOTCLICACHE)
 
 	env := new(mock.Environment)
 	segment := &CopilotCLI{
@@ -252,8 +252,8 @@ func TestCopilotCLITokenGaugeCustomChars(t *testing.T) {
 			UsedPercentage: &usedPct,
 		},
 	}
-	cache.Set(cache.Session, cache.COPILOTCLICACHE, data, cache.INFINITE)
-	defer cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+	cache.Session.Set(cache.COPILOTCLICACHE, data, cache.INFINITE)
+	defer cache.Session.Delete(cache.COPILOTCLICACHE)
 
 	env := new(mock.Environment)
 	segment := &CopilotCLI{
@@ -301,7 +301,7 @@ func TestCopilotCLIRemainingPercent(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.Case, func(t *testing.T) {
 			data := CopilotCLIData{ContextWindow: tc.ContextWindow}
-			cache.Set(cache.Session, cache.COPILOTCLICACHE, data, cache.INFINITE)
+			cache.Session.Set(cache.COPILOTCLICACHE, data, cache.INFINITE)
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
@@ -312,7 +312,7 @@ func TestCopilotCLIRemainingPercent(t *testing.T) {
 			segment.Enabled()
 			assert.Equal(t, tc.Expected, segment.RemainingPercent(), tc.Case)
 
-			cache.Delete(cache.Session, cache.COPILOTCLICACHE)
+			cache.Session.Delete(cache.COPILOTCLICACHE)
 		})
 	}
 }

@@ -42,12 +42,12 @@ type OAuthRequest struct {
 
 func (o *OAuthRequest) getAccessToken() (string, error) {
 	// get directly from cache
-	if accessToken, OK := cache.Get[string](cache.Device, o.AccessTokenKey); OK && len(accessToken) != 0 {
+	if accessToken, OK := cache.Device.Get[string](o.AccessTokenKey); OK && len(accessToken) != 0 {
 		return accessToken, nil
 	}
 
 	// use cached refresh token to get new access token
-	if refreshToken, OK := cache.Get[string](cache.Device, o.RefreshTokenKey); OK && len(refreshToken) != 0 {
+	if refreshToken, OK := cache.Device.Get[string](o.RefreshTokenKey); OK && len(refreshToken) != 0 {
 		if accessToken, err := o.refreshToken(refreshToken); err == nil {
 			return accessToken, nil
 		}
@@ -90,15 +90,15 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 	}
 
 	// add tokens to cache
-	cache.Set(cache.Device, o.AccessTokenKey, tokens.AccessToken, cache.ToDuration(tokens.ExpiresIn))
-	cache.Set(cache.Device, o.RefreshTokenKey, tokens.RefreshToken, cache.TWOYEARS)
+	cache.Device.Set(o.AccessTokenKey, tokens.AccessToken, cache.ToDuration(tokens.ExpiresIn))
+	cache.Device.Set(o.RefreshTokenKey, tokens.RefreshToken, cache.TWOYEARS)
 	return tokens.AccessToken, nil
 }
 
-func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...RequestModifier) (a, error) {
+func (o *OAuthRequest) Result[T any](url string, body io.Reader, requestModifiers ...RequestModifier) (T, error) {
 	accessToken, err := o.getAccessToken()
 	if err != nil {
-		var data a
+		var data T
 		return data, err
 	}
 
@@ -113,5 +113,5 @@ func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModi
 
 	requestModifiers = append(requestModifiers, addAuthHeader)
 
-	return Do[a](&o.Request, url, body, requestModifiers...)
+	return o.Do[T](url, body, requestModifiers...)
 }

@@ -95,12 +95,12 @@ func TestYtdma_Authenticate(t *testing.T) {
 			}
 
 			if tc.shouldSetToken {
-				token, ok := cache.Get[string](cache.Device, auth.YTMDATOKEN)
+				token, ok := cache.Device.Get[string](auth.YTMDATOKEN)
 				require.True(t, ok)
 				assert.Equal(t, tc.expectedToken, token)
 			}
 
-			cache.DeleteAll(cache.Device)
+			cache.Device.DeleteAll()
 		})
 	}
 }

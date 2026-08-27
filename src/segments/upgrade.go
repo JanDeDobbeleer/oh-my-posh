@@ -48,7 +48,7 @@ func (u *Upgrade) Enabled() bool {
 }
 
 func (u *Upgrade) upgradeCache() (*UpgradeCache, error) {
-	data, ok := cache.Get[*UpgradeCache](cache.Device, UPGRADECACHEKEY)
+	data, ok := cache.Device.Get[*UpgradeCache](UPGRADECACHEKEY)
 	if !ok {
 		return nil, errors.New("no cache data")
 	}
@@ -75,7 +75,7 @@ func (u *Upgrade) checkUpdate(current string) (*UpgradeCache, error) {
 		Current: current,
 	}
 
-	cache.Set(cache.Device, UPGRADECACHEKEY, cacheData, cache.Duration(duration))
+	cache.Device.Set(UPGRADECACHEKEY, cacheData, cache.Duration(duration))
 
 	return cacheData, nil
 }

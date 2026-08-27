@@ -168,8 +168,8 @@ func TestFeaturesShellIntegration(t *testing.T) {
 func TestFeaturesStreaming(t *testing.T) {
 	cases := []struct {
 		Case             string
-		Streaming        int
 		DisableStreaming string
+		Streaming        int
 		ExpectedFeats    shell.Features
 	}{
 		{

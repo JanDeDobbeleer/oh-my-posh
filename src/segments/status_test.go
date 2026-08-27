@@ -35,9 +35,7 @@ func TestStatusWriterEnabled(t *testing.T) {
 		}
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Code: 133,
-			},
+			Code: 133,
 		}
 		template.Init(env, nil, nil)
 
@@ -107,9 +105,7 @@ func TestFormatStatus(t *testing.T) {
 		s.Init(props, env)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Code: tc.Status,
-			},
+			Code: tc.Status,
 		}
 		template.Init(env, nil, nil)
 

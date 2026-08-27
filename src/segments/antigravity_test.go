@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//nolint:dupl
 func TestAntigravitySegment(t *testing.T) {
 	cases := []struct {
 		Data            *AntigravityData
@@ -61,10 +60,8 @@ func TestAntigravitySegment(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			enabled := segment.Enabled()
@@ -142,10 +139,8 @@ func TestAntigravityTokenUsagePercent(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			enabled := segment.Enabled()
@@ -192,10 +187,8 @@ func TestAntigravityRemainingPercent(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			segment.Enabled()
@@ -243,10 +236,8 @@ func TestAntigravityFormattedTokens(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &Antigravity{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			segment.Enabled()
@@ -269,12 +260,10 @@ func TestAntigravityTokenGaugeCustomChars(t *testing.T) {
 
 	env := new(mock.Environment)
 	segment := &Antigravity{
-		Base: Base{
-			env: env,
-			options: options.Map{
-				gaugeMarkedChar:   "█",
-				gaugeUnmarkedChar: "░",
-			},
+		env: env,
+		options: options.Map{
+			gaugeMarkedChar:   "█",
+			gaugeUnmarkedChar: "░",
 		},
 	}
 

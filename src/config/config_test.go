@@ -96,9 +96,7 @@ func TestGetPalette(t *testing.T) {
 		env.On("Shell").Return("bash")
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: "bash",
-			},
+			Shell: "bash",
 		}
 		template.Init(env, nil, nil)
 
@@ -149,9 +147,7 @@ func TestFeaturesShellIntegration(t *testing.T) {
 		env.On("Shell").Return(tc.Shell)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: tc.Shell,
-			},
+			Shell: tc.Shell,
 		}
 		template.Init(env, nil, nil)
 
@@ -268,9 +264,7 @@ func TestFeaturesVIMode(t *testing.T) {
 		env.On("Shell").Return(tc.Shell)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: tc.Shell,
-			},
+			Shell: tc.Shell,
 		}
 		template.Init(env, nil, nil)
 

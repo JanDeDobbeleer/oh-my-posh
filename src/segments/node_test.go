@@ -41,9 +41,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 		env.On("FileContent", ".nvmrc").Return(tc.RCVersion)
 
 		node := &Node{
-			Language: Language{
-				Version: nodeVersion,
-			},
+			Version: nodeVersion,
 		}
 		node.Init(options.Map{}, env)
 

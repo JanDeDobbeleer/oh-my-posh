@@ -265,13 +265,11 @@ func TestPlasticParseSmartbranchSelector(t *testing.T) {
 func TestPlasticStatus(t *testing.T) {
 	p := &Plastic{
 		Status: &PlasticStatus{
-			ScmStatus: ScmStatus{
-				Added:    1,
-				Modified: 2,
-				Deleted:  3,
-				Moved:    4,
-				Unmerged: 5,
-			},
+			Added:    1,
+			Modified: 2,
+			Deleted:  3,
+			Moved:    4,
+			Unmerged: 5,
 		},
 	}
 	status := p.Status.String()
@@ -302,12 +300,10 @@ func TestPlasticTemplateString(t *testing.T) {
 			Plastic: &Plastic{
 				Selector: "/main",
 				Status: &PlasticStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-						Deleted:  1,
-						Moved:    4,
-					},
+					Added:    2,
+					Modified: 3,
+					Deleted:  1,
+					Moved:    4,
 				},
 			},
 		},

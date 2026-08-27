@@ -101,10 +101,8 @@ func (s *Strava) initAPI() {
 		SegmentName:     "strava",
 		AccessToken:     s.options.Template(options.AccessToken, "", s),
 		RefreshToken:    s.options.Template(options.RefreshToken, "", s),
-		Request: http.Request{
-			Env:         s.env,
-			HTTPTimeout: s.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
-		},
+		Env:             s.env,
+		HTTPTimeout:     s.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
 	}
 
 	s.api = &stravaAPI{

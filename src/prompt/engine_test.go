@@ -96,9 +96,7 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Host").Return("host", nil)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: tc.Shell,
-			},
+			Shell:    tc.Shell,
 			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
@@ -179,9 +177,7 @@ func TestPrintPWDWSL(t *testing.T) {
 		}
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: tc.Shell,
-			},
+			Shell:    tc.Shell,
 			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
@@ -277,14 +273,12 @@ func TestGetTitle(t *testing.T) {
 		terminal.Init(shell.GENERIC)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell:    tc.ShellName,
-				UserName: "MyUser",
-				Root:     tc.Root,
-				HostName: "MyHost",
-				PWD:      tc.Cwd,
-				Folder:   "vagrant",
-			},
+			Shell:    tc.ShellName,
+			UserName: "MyUser",
+			Root:     tc.Root,
+			HostName: "MyHost",
+			PWD:      tc.Cwd,
+			Folder:   "vagrant",
 			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
@@ -343,12 +337,10 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		terminal.Init(shell.GENERIC)
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell:    tc.ShellName,
-				UserName: "MyUser",
-				Root:     tc.Root,
-				HostName: "",
-			},
+			Shell:    tc.ShellName,
+			UserName: "MyUser",
+			Root:     tc.Root,
+			HostName: "",
 			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)
@@ -464,9 +456,7 @@ func TestShouldFill(t *testing.T) {
 		}
 
 		template.Cache = &cache.Template{
-			SimpleTemplate: cache.SimpleTemplate{
-				Shell: shell.GENERIC,
-			},
+			Shell:    shell.GENERIC,
 			Segments: maps.NewConcurrent[any](),
 		}
 		template.Init(env, nil, nil)

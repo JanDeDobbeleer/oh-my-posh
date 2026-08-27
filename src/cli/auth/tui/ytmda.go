@@ -22,9 +22,7 @@ const (
 
 func NewYtmda(env runtime.Environment) *Ytmda {
 	flow := &Ytmda{
-		model: model{
-			env: env,
-		},
+		env: env,
 	}
 
 	flow.model.status = flow.status

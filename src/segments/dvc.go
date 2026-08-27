@@ -43,7 +43,7 @@ func (d *Dvc) Enabled() bool {
 	}
 
 	statusFormats := d.options.KeyValueMap(StatusFormats, map[string]string{})
-	d.Status = &DvcStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	d.Status = &DvcStatus{Formats: statusFormats}
 
 	output, err := d.env.RunCommand(d.command, "status", "--json")
 	if err != nil {

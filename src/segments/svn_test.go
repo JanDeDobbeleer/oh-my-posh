@@ -63,15 +63,13 @@ func TestSvnTemplateString(t *testing.T) {
 				Branch:  "trunk",
 				BaseRev: 2,
 				Working: &SvnStatus{
-					ScmStatus: ScmStatus{
-						Untracked:  9,
-						Added:      2,
-						Conflicted: 1,
-						Deleted:    7,
-						Modified:   3,
-						Moved:      13,
-						Unmerged:   5,
-					},
+					Untracked:  9,
+					Added:      2,
+					Conflicted: 1,
+					Deleted:    7,
+					Modified:   3,
+					Moved:      13,
+					Unmerged:   5,
 				},
 			},
 		},
@@ -91,10 +89,8 @@ func TestSvnTemplateString(t *testing.T) {
 			Svn: &Svn{
 				Branch: "trunk",
 				Working: &SvnStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-					},
+					Added:    2,
+					Modified: 3,
 				},
 			},
 		},
@@ -124,10 +120,8 @@ func TestSvnTemplateString(t *testing.T) {
 				Branch:  "trunk",
 				BaseRev: 2,
 				Working: &SvnStatus{
-					ScmStatus: ScmStatus{
-						Added:    2,
-						Modified: 3,
-					},
+					Added:    2,
+					Modified: 3,
 				},
 			},
 		},
@@ -139,11 +133,9 @@ func TestSvnTemplateString(t *testing.T) {
 				Branch:  "trunk",
 				BaseRev: 2,
 				Working: &SvnStatus{
-					ScmStatus: ScmStatus{
-						Added:      2,
-						Modified:   3,
-						Conflicted: 7,
-					},
+					Added:      2,
+					Modified:   3,
+					Conflicted: 7,
 				},
 			},
 		},
@@ -182,15 +174,14 @@ D       FileMarkedAs.Deleted
 M       Modified.File
 C       Conflicted.File
 R       Moved.File`,
-			ExpectedWorking: &SvnStatus{ScmStatus: ScmStatus{
+			ExpectedWorking: &SvnStatus{
 				Modified:   1,
 				Added:      1,
 				Deleted:    1,
 				Moved:      2,
 				Untracked:  1,
 				Conflicted: 1,
-				Formats:    map[string]string{},
-			}},
+				Formats:    map[string]string{}},
 			RefOutput:         "1133",
 			ExpectedRef:       1133,
 			BranchOutput:      "^/trunk",
@@ -201,21 +192,20 @@ R       Moved.File`,
 		{
 			Case:         "conflict",
 			StatusOutput: `C       build.cake`,
-			ExpectedWorking: &SvnStatus{ScmStatus: ScmStatus{
+			ExpectedWorking: &SvnStatus{
 				Conflicted: 1,
-				Formats:    map[string]string{},
-			}},
+				Formats:    map[string]string{}},
 			ExpectedChanged:   true,
 			ExpectedConflicts: true,
 		},
 		{
 			Case:            "no change",
-			ExpectedWorking: &SvnStatus{ScmStatus: ScmStatus{Formats: map[string]string{}}},
+			ExpectedWorking: &SvnStatus{Formats: map[string]string{}},
 			ExpectedChanged: false,
 		},
 		{
 			Case:            "not an integer ref",
-			ExpectedWorking: &SvnStatus{ScmStatus: ScmStatus{Formats: map[string]string{}}},
+			ExpectedWorking: &SvnStatus{Formats: map[string]string{}},
 			ExpectedChanged: false,
 			RefOutput:       "not an integer",
 		},
@@ -243,9 +233,7 @@ R       Moved.File`,
 		}
 
 		s := &Svn{
-			Scm: Scm{
-				command: SVNCOMMAND,
-			},
+			command: SVNCOMMAND,
 		}
 		s.Init(props, env)
 
@@ -293,9 +281,7 @@ func TestRepo(t *testing.T) {
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "repos-root-url"}).Return(tc.Repo, nil)
 
 		s := &Svn{
-			Scm: Scm{
-				command: SVNCOMMAND,
-			},
+			command: SVNCOMMAND,
 		}
 		s.Init(options.Map{}, env)
 

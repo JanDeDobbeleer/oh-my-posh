@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//nolint:dupl
 func TestCopilotCLISegment(t *testing.T) {
 	cases := []struct {
 		Data            *CopilotCLIData
@@ -65,10 +64,8 @@ func TestCopilotCLISegment(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			enabled := segment.Enabled()
@@ -153,10 +150,8 @@ func TestCopilotCLITokenUsagePercent(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			enabled := segment.Enabled()
@@ -217,10 +212,8 @@ func TestCopilotCLIFormattedTokens(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			segment.Enabled()
@@ -243,10 +236,8 @@ func TestCopilotCLIFormattedDuration(t *testing.T) {
 
 	env := new(mock.Environment)
 	segment := &CopilotCLI{
-		Base: Base{
-			env:     env,
-			options: options.Map{},
-		},
+		env:     env,
+		options: options.Map{},
 	}
 
 	segment.Enabled()
@@ -266,12 +257,10 @@ func TestCopilotCLITokenGaugeCustomChars(t *testing.T) {
 
 	env := new(mock.Environment)
 	segment := &CopilotCLI{
-		Base: Base{
-			env: env,
-			options: options.Map{
-				gaugeMarkedChar:   "█",
-				gaugeUnmarkedChar: "░",
-			},
+		env: env,
+		options: options.Map{
+			gaugeMarkedChar:   "█",
+			gaugeUnmarkedChar: "░",
 		},
 	}
 
@@ -316,10 +305,8 @@ func TestCopilotCLIRemainingPercent(t *testing.T) {
 
 			env := new(mock.Environment)
 			segment := &CopilotCLI{
-				Base: Base{
-					env:     env,
-					options: options.Map{},
-				},
+				env:     env,
+				options: options.Map{},
 			}
 
 			segment.Enabled()

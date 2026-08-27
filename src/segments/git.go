@@ -770,8 +770,8 @@ func (g *Git) setStatus() {
 	g.UpstreamGone = true
 	statusFormats := g.options.KeyValueMap(StatusFormats, map[string]string{})
 
-	g.Working = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
-	g.Staging = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	g.Working = &GitStatus{Formats: statusFormats}
+	g.Staging = &GitStatus{Formats: statusFormats}
 
 	if g.options.Bool(NativeStatus, false) && g.setStatusNative() {
 		return
@@ -1190,8 +1190,8 @@ func (g *Git) ensureMainWorktreeContext() bool {
 
 func (g *Git) commonGitDir() string {
 	mainSCMDir := filepath.ToSlash(g.mainSCMDir)
-	if worktreeIndex := strings.LastIndex(mainSCMDir, "/worktrees/"); worktreeIndex > -1 {
-		return mainSCMDir[:worktreeIndex]
+	if commonDir, _, found := strings.CutLast(mainSCMDir, "/worktrees/"); found {
+		return commonDir
 	}
 
 	return filepath.ToSlash(g.scmDir)
@@ -1347,9 +1347,8 @@ func (g *Git) repoName() string {
 		return path.Base(g.convertToLinuxPath(g.repoRootDir))
 	}
 
-	ind := strings.LastIndex(g.mainSCMDir, ".git/worktrees")
-	if ind > -1 {
-		return path.Base(g.mainSCMDir[:ind])
+	if repoRoot, _, found := strings.CutLast(g.mainSCMDir, ".git/worktrees"); found {
+		return path.Base(repoRoot)
 	}
 
 	return ""

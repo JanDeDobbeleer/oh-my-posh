@@ -49,12 +49,12 @@ func parse(src string, verbatim bool) (*File, error) {
 		}
 
 		if line[0] == '[' {
-			end := strings.LastIndexByte(line, ']')
-			if end < 1 {
+			name, _, found := strings.CutLast(line, "]")
+			if !found {
 				return nil, errors.New("unclosed section: " + line)
 			}
 
-			current = file.section(strings.TrimSpace(line[1:end]))
+			current = file.section(strings.TrimSpace(name[1:]))
 			continue
 		}
 

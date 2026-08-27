@@ -86,11 +86,10 @@ const (
 )
 
 func (u *Unity) GetCSharpVersion() (version string, err error) {
-	lastDotIndex := strings.LastIndex(u.UnityVersion, ".")
-	if lastDotIndex == -1 {
+	shortUnityVersion, _, found := strings.CutLast(u.UnityVersion, ".")
+	if !found {
 		return "", errors.New("lastDotIndex")
 	}
-	shortUnityVersion := u.UnityVersion[0:lastDotIndex]
 
 	var csharpVersionsByUnityVersion = map[string]string{
 		"2017.1": csharp6,

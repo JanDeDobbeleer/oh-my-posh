@@ -165,6 +165,45 @@ func TestFeaturesShellIntegration(t *testing.T) {
 	}
 }
 
+func TestFeaturesStreaming(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Streaming        int
+		DisableStreaming string
+		ExpectedFeats    shell.Features
+	}{
+		{
+			Case:          "streaming enabled",
+			Streaming:     100,
+			ExpectedFeats: shell.Streaming | shell.KeyHandlers,
+		},
+		{
+			Case:          "streaming not configured",
+			ExpectedFeats: 0,
+		},
+		{
+			Case:             "POSH_DISABLE_STREAMING overrides the config",
+			Streaming:        100,
+			DisableStreaming: "1",
+			ExpectedFeats:    0,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Shell").Return(shell.PWSH)
+		env.On("Getenv", "POSH_DISABLE_STREAMING").Return(tc.DisableStreaming)
+
+		cfg := &Config{
+			Streaming: tc.Streaming,
+			Upgrade:   &upgrade.Config{},
+		}
+
+		got := cfg.Features(env)
+		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
+	}
+}
+
 func TestFeaturesTransientRightPrompt(t *testing.T) {
 	cases := []struct {
 		Case          string

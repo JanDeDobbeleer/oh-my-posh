@@ -149,7 +149,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 		}
 	}
 
-	if cfg.Streaming > 0 {
+	if cfg.Streaming > 0 && env.Getenv("POSH_DISABLE_STREAMING") != "1" {
 		log.Debug("streaming enabled")
 		feats |= shell.Streaming
 	}

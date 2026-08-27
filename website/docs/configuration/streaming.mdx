@@ -45,6 +45,23 @@ Setting a very low timeout (e.g., 0 or 50ms) may cause visual glitches depending
 We recommend starting with a timeout of around 100ms and adjusting based on your experience.
 :::
 
+:::info
+If you're running inside a host or tool that doesn't get along with streaming's background
+repaint, set the `POSH_DISABLE_STREAMING` environment variable to `1` before initializing
+Oh My Posh to force it off entirely, regardless of what `streaming` is set to in your
+configuration. This lets you decide when to disable it using whatever check makes sense for
+your setup:
+
+```powershell
+if ($Host.Name -eq 'SomeIncompatibleHost') {
+    $env:POSH_DISABLE_STREAMING = '1'
+}
+
+oh-my-posh init pwsh --config ~/.mytheme.omp.json | Invoke-Expression
+```
+
+:::
+
 ## Shell support
 
 Streaming is supported in `powershell`, `zsh`, `fish` and `cmd`. For any other shell, the

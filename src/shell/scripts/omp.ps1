@@ -371,17 +371,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # InvalidPipelineStateException ("Cannot invoke pipeline because it has
         # already been invoked") under rapid prompt cycles.
         $script:StreamingOnIdleJob = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -Action {
-            # $psEditor is only defined once PSES finishes its own host initialization,
-            # which is not guaranteed to happen before Enable-PoshStreaming runs at
-            # profile-load time. Re-check on every idle tick so a late-arriving PSES
-            # host is still caught, and self-disable instead of calling InvokePrompt():
-            # that call starts a pipeline invocation on this runspace, and PSES's own
-            # OnPowerShellIdle handler invoking one concurrently is exactly what throws
-            # PSInvalidOperationException ("a pipeline is already running") - see #7829.
-            # $EventSubscriber is this action's own automatic variable, so this only
-            # ever unregisters this subscription, never another module's.
-            if (($null -ne (Get-Variable -Name psEditor -Scope Global -ErrorAction Ignore -ValueOnly)) -or
-                ($Host.GetType().FullName -like 'Microsoft.PowerShell.EditorServices.*')) {
+            # Defense in depth: self-disable and unregister instead of calling InvokePrompt()
+            # when running under PSES. That call starts a pipeline invocation on this
+            # runspace, and PSES's own OnPowerShellIdle handler invoking one concurrently
+            # is exactly what throws PSInvalidOperationException ("a pipeline is already
+            # running"). $EventSubscriber is this action's own automatic variable, so this
+            # only ever unregisters this subscription, never another module's.
+            if ($Host.GetType().FullName -like 'Microsoft.PowerShell.EditorServices.*') {
                 $global:_ompStreaming = $false
                 if ($null -ne $EventSubscriber) {
                     Unregister-Event -SubscriptionId $EventSubscriber.SubscriptionId -ErrorAction Ignore
@@ -1011,16 +1007,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshStreaming {
-        # PSES processes idle events through its own pipelines, which can race the streaming repaint pipeline.
-        # $psEditor is PSES's own marker, but some PSES clients (e.g. minimal Neovim setups)
-        # never define it. The host type is a second, independent signal that identifies
-        # PSES itself: every PSES client (VS Code, Neovim, ...) hosts the runspace with
-        # PsesInternalHost, whereas $Host.Name is just a caller-supplied display string
-        # each client sets on it (VS Code passes "Visual Studio Code Host" today, but
-        # that's not a contract - matching the shared host type avoids depending on it
-        # or on tracking every client's chosen label).
-        if (($null -ne (Get-Variable -Name psEditor -Scope Global -ErrorAction Ignore -ValueOnly)) -or
-            ($Host.GetType().FullName -like 'Microsoft.PowerShell.EditorServices.*')) {
+        # PSES (PowerShell Editor Services, e.g. the VS Code PowerShell extension or Neovim's
+        # PSES client) processes idle events through its own pipelines, which can race the
+        # streaming repaint pipeline. Every PSES client hosts the runspace with PsesInternalHost,
+        # so matching the host type - rather than a caller-supplied display string like
+        # $Host.Name, which each client sets for itself and isn't a stable contract - detects
+        # PSES itself, regardless of which client is hosting it.
+        if ($Host.GetType().FullName -like 'Microsoft.PowerShell.EditorServices.*') {
             return
         }
 

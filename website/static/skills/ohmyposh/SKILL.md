@@ -7,7 +7,7 @@ description: "Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell ini
 
 > Oh My Posh is a cross-shell, cross-platform prompt theme engine. It displays Git status,
 > language versions, cloud context, system metrics and more in a beautifully themed
-> terminal prompt — 117 segments in all.
+> terminal prompt — 118 segments in all.
 
 ## How to use this skill
 

@@ -7,7 +7,7 @@ description: Install, configure, or troubleshoot Oh My Posh/ohmyposh: shell init
 
 > Oh My Posh is a cross-shell, cross-platform prompt theme engine for Windows, macOS, and Linux.
 > It renders beautifully themed prompts with Git status, language versions, cloud context,
-> and more — 117 segments in all.
+> and more — 118 segments in all.
 
 Full skill (folder-based, with per-OS and per-shell guides):
 [/skills/ohmyposh/SKILL.md](/skills/ohmyposh/SKILL.md)

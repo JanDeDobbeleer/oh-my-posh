@@ -993,11 +993,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshStreaming {
-        # PSES processes idle events through its own pipelines, which can race the streaming repaint pipeline.
-        if ($null -ne (Get-Variable -Name psEditor -Scope Global -ErrorAction Ignore -ValueOnly)) {
-            return
-        }
-
         $global:_ompStreaming = $true
 
         if (-not $script:ServeSupported) {

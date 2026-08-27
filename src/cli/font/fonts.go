@@ -79,13 +79,13 @@ func fonts() ([]*Asset, error) {
 
 	sort.Slice(assets, func(i, j int) bool { return assets[i].Name < assets[j].Name })
 
-	cache.Set(cache.Device, cache.FONTLISTCACHE, assets, cache.ONEDAY)
+	cache.Device.Set(cache.FONTLISTCACHE, assets, cache.ONEDAY)
 
 	return assets, nil
 }
 
 func getCachedFontData() ([]*Asset, error) {
-	list, OK := cache.Get[[]*Asset](cache.Device, cache.FONTLISTCACHE)
+	list, OK := cache.Device.Get[[]*Asset](cache.FONTLISTCACHE)
 	if !OK {
 		return nil, errors.New("cache not found")
 	}

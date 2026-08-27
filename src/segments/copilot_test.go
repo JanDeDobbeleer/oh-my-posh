@@ -173,9 +173,9 @@ func TestCopilotSegment(t *testing.T) {
 
 			// Setup cached token mock
 			if tc.HasToken {
-				cache.Set(cache.Device, auth.CopilotTokenKey, "ghp_test_token", cache.INFINITE)
+				cache.Device.Set(auth.CopilotTokenKey, "ghp_test_token", cache.INFINITE)
 			} else {
-				cache.Delete(cache.Device, auth.CopilotTokenKey)
+				cache.Device.Delete(auth.CopilotTokenKey)
 			}
 
 			// Setup HTTP request mock
@@ -287,7 +287,7 @@ func TestCopilotRemainingPercentage(t *testing.T) {
 		"quota_reset_date": "2025-02-15T00:00:00Z"
 	}`
 
-	cache.Set(cache.Device, auth.CopilotTokenKey, "ghp_test_token", cache.INFINITE)
+	cache.Device.Set(auth.CopilotTokenKey, "ghp_test_token", cache.INFINITE)
 	env.On("HTTPRequest", copilotTestURL).Return([]byte(jsonResponse), nil)
 
 	c := &Copilot{}
@@ -334,7 +334,7 @@ func TestCopilotBillingCycleEnd(t *testing.T) {
 		"quota_reset_date": "2025-02-15T00:00:00Z"
 	}`
 
-	cache.Set(cache.Device, auth.CopilotTokenKey, "ghp_test_token", cache.INFINITE)
+	cache.Device.Set(auth.CopilotTokenKey, "ghp_test_token", cache.INFINITE)
 	env.On("HTTPRequest", copilotTestURL).Return([]byte(jsonResponse), nil)
 
 	c := &Copilot{}

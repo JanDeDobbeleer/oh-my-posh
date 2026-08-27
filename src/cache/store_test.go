@@ -43,7 +43,7 @@ func TestStore(t *testing.T) {
 				return testStore
 			},
 			testFunc: func(t *testing.T) {
-				result := Print(Session)
+				result := Session.Print()
 				assert.Contains(t, result, "Key: test_key1")
 				assert.Contains(t, result, `Value: "test_value1"`) // Note: quotes are included in output
 				assert.Contains(t, result, "Type: string")
@@ -67,7 +67,7 @@ func TestStore(t *testing.T) {
 				return testStore
 			},
 			testFunc: func(t *testing.T) {
-				result := Print(Session)
+				result := Session.Print()
 				assert.Contains(t, result, "Store session is empty")
 			},
 		},
@@ -80,7 +80,7 @@ func TestStore(t *testing.T) {
 			},
 			testFunc: func(t *testing.T) {
 				// Since get() always creates a store, we test empty store behavior
-				result := Print(Session)
+				result := Session.Print()
 				assert.Contains(t, result, "Store session is empty")
 			},
 		},
@@ -154,7 +154,7 @@ func TestGetSurvivesGobPointerRegistration(t *testing.T) {
 	writer.persist = true
 	device = writer
 
-	Set(Device, "test_key", storeGobPointerType{Name: "value"}, Duration("1h"))
+	Device.Set("test_key", storeGobPointerType{Name: "value"}, Duration("1h"))
 	Device.close()
 
 	// Second process: fresh store, loaded from disk. This is the gob decode
@@ -162,7 +162,7 @@ func TestGetSurvivesGobPointerRegistration(t *testing.T) {
 	device = nil
 	Device.init(fileName, true)
 
-	got, ok := Get[storeGobPointerType](Device, "test_key")
+	got, ok := Device.Get[storeGobPointerType]("test_key")
 	require.True(t, ok, "expected a cache hit after a gob round-trip of a pointer-registered type")
 	assert.Equal(t, "value", got.Name)
 }
@@ -212,15 +212,15 @@ func TestRefreshMergesExternalWriteByTimestamp(t *testing.T) {
 	// Back to the daemon's perspective: refresh should pick up the new
 	// toggle_cache key from disk...
 	session = daemon
-	Refresh(Session)
+	Session.Refresh()
 
-	toggled, found := Get[map[string]bool](Session, TOGGLECACHE)
+	toggled, found := Session.Get[map[string]bool](TOGGLECACHE)
 	require.True(t, found, "toggle_cache written externally should be visible after Refresh")
 	assert.True(t, toggled["shell"])
 
 	// ...without clobbering the daemon's own newer value for a key both
 	// sides touched.
-	shared, found := Get[string](Session, "shared_key")
+	shared, found := Session.Get[string]("shared_key")
 	require.True(t, found)
 	assert.Equal(t, "daemon-value", shared, "a newer in-memory value must win over an older on-disk one")
 }
@@ -272,11 +272,11 @@ func TestCloseRefreshesBeforePersistingToAvoidClobber(t *testing.T) {
 
 	session = &store{cache: onDisk.ToConcurrent()}
 
-	toggled, found := Get[map[string]bool](Session, TOGGLECACHE)
+	toggled, found := Session.Get[map[string]bool](TOGGLECACHE)
 	require.True(t, found, "the external write must survive the daemon's own shutdown flush")
 	assert.True(t, toggled["shell"])
 
-	count, found := Get[int](Session, "prompt_count_cache")
+	count, found := Session.Get[int]("prompt_count_cache")
 	require.True(t, found)
 	assert.Equal(t, 3, count)
 }
@@ -310,9 +310,9 @@ func TestRefreshPicksUpDeviceStoreWrite(t *testing.T) {
 	Device.close()
 
 	device = daemon
-	Refresh(Device)
+	Device.Refresh()
 
-	reload, found := Get[bool](Device, "reload")
+	reload, found := Device.Get[bool]("reload")
 	require.True(t, found, "`enable reload` written externally should be visible after Refresh")
 	assert.True(t, reload)
 }

@@ -49,6 +49,6 @@ func toggleFeature(cmd *cmdtree.Command, feature string, enable bool) {
 	}
 
 	cache.Init(os.Getenv("POSH_SHELL"), cache.Persist)
-	cache.Set(cache.Device, feature, enable, cache.INFINITE)
+	cache.Device.Set(feature, enable, cache.INFINITE)
 	cache.Close()
 }

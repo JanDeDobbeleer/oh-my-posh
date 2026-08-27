@@ -331,15 +331,15 @@ func TestUpgradeFeatures(t *testing.T) {
 
 	for _, tc := range cases {
 		if tc.UpgradeCacheKeyExists {
-			cache.Set(cache.Device, upgrade.CACHEKEY, "", cache.INFINITE)
+			cache.Device.Set(upgrade.CACHEKEY, "", cache.INFINITE)
 		}
 
 		if tc.AutoUpgradeKey {
-			cache.Set(cache.Device, AUTOUPGRADE, true, cache.INFINITE)
+			cache.Device.Set(AUTOUPGRADE, true, cache.INFINITE)
 		}
 
 		if tc.NoticeKey {
-			cache.Set(cache.Device, UPGRADENOTICE, true, cache.INFINITE)
+			cache.Device.Set(UPGRADENOTICE, true, cache.INFINITE)
 		}
 
 		cfg := &Config{
@@ -353,6 +353,6 @@ func TestUpgradeFeatures(t *testing.T) {
 		got := cfg.upgradeFeatures()
 		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
 
-		cache.DeleteAll(cache.Device)
+		cache.Device.DeleteAll()
 	}
 }

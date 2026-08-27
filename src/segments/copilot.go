@@ -65,7 +65,7 @@ func (c *Copilot) Enabled() bool {
 
 func (c *Copilot) getAccessToken() string {
 	// Check cache from `oh-my-posh auth copilot`
-	if cachedToken, OK := cache.Get[string](cache.Device, auth.CopilotTokenKey); OK && len(cachedToken) != 0 {
+	if cachedToken, OK := cache.Device.Get[string](auth.CopilotTokenKey); OK && len(cachedToken) != 0 {
 		return cachedToken
 	}
 

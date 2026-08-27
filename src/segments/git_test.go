@@ -1813,9 +1813,9 @@ func TestGitMainWorktree(t *testing.T) {
 		t.Run(tc.Case, func(t *testing.T) {
 			commonDir := fmt.Sprintf("/repo/%d/.git", index)
 			key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
-			cache.Delete(cache.Session, key)
+			cache.Session.Delete(key)
 			t.Cleanup(func() {
-				cache.Delete(cache.Session, key)
+				cache.Session.Delete(key)
 			})
 
 			env := new(mock.Environment)
@@ -1855,9 +1855,9 @@ func TestGitMainWorktreeSessionCache(t *testing.T) {
 	)
 
 	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
-	cache.Delete(cache.Session, key)
+	cache.Session.Delete(key)
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, key)
+		cache.Session.Delete(key)
 	})
 
 	firstEnv := new(mock.Environment)
@@ -1911,9 +1911,9 @@ func TestGitMainWorktreeConvertsWSLPath(t *testing.T) {
 	)
 
 	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
-	cache.Delete(cache.Session, key)
+	cache.Session.Delete(key)
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, key)
+		cache.Session.Delete(key)
 	})
 
 	env := new(mock.Environment)
@@ -1951,9 +1951,9 @@ func TestGitMainWorktreeFromWindowsGitInWSL(t *testing.T) {
 	)
 
 	key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, linuxCommonDir)
-	cache.Delete(cache.Session, key)
+	cache.Session.Delete(key)
 	t.Cleanup(func() {
-		cache.Delete(cache.Session, key)
+		cache.Session.Delete(key)
 	})
 
 	env := new(mock.Environment)

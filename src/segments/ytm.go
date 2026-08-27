@@ -46,7 +46,7 @@ type ytmdaStatusResponse struct {
 }
 
 func (y *Ytm) setStatus() error {
-	token, OK := cache.Get[string](cache.Device, auth.YTMDATOKEN)
+	token, OK := cache.Device.Get[string](auth.YTMDATOKEN)
 	if !OK || token == "" {
 		return errors.New("YTMDA token not found, please authenticate using `oh-my-posh auth ytmda`")
 	}

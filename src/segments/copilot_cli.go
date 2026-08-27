@@ -66,7 +66,7 @@ func (c *CopilotCLI) Template() string {
 func (c *CopilotCLI) Enabled() bool {
 	log.Debug("copilot_cli segment: checking if enabled")
 
-	data, found := cache.Get[CopilotCLIData](cache.Session, cache.COPILOTCLICACHE)
+	data, found := cache.Session.Get[CopilotCLIData](cache.COPILOTCLICACHE)
 	if !found {
 		log.Debug("copilot_cli segment: no data found in session cache")
 		return false

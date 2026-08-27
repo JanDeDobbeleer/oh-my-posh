@@ -84,7 +84,7 @@ This command is used to get the value of the following variables:
 
 		switch args[0] {
 		case "toggles":
-			togglesMap, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+			togglesMap, _ := cache.Session.Get[map[string]bool](cache.TOGGLECACHE)
 			if len(togglesMap) == 0 {
 				fmt.Println("No segments are toggled off")
 				return

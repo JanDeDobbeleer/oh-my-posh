@@ -1140,7 +1140,7 @@ func (g *Git) MainWorktree() string {
 
 		commonDir := g.commonGitDir()
 		key := fmt.Sprintf("%s@%s", mainWorktreeCacheKey, commonDir)
-		if mainWorktree, found := cache.Get[string](cache.Session, key); found {
+		if mainWorktree, found := cache.Session.Get[string](key); found {
 			g.mainWorktree = mainWorktree
 			return
 		}
@@ -1153,7 +1153,7 @@ func (g *Git) MainWorktree() string {
 		}
 
 		g.mainWorktree = g.convertToLinuxPath(mainWorktree)
-		cache.Set(cache.Session, key, g.mainWorktree, cache.INFINITE)
+		cache.Session.Set(key, g.mainWorktree, cache.INFINITE)
 	})
 
 	return g.mainWorktree

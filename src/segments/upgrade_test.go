@@ -71,7 +71,7 @@ func TestUpgrade(t *testing.T) {
 				Latest:  tc.LatestVersion,
 				Current: tc.CachedVersion,
 			}
-			cache.Set(cache.Device, UPGRADECACHEKEY, data, cache.INFINITE)
+			cache.Device.Set(UPGRADECACHEKEY, data, cache.INFINITE)
 		}
 
 		build.Version = tc.CurrentVersion
@@ -83,6 +83,6 @@ func TestUpgrade(t *testing.T) {
 
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 
-		cache.DeleteAll(cache.Device)
+		cache.Device.DeleteAll()
 	}
 }

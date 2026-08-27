@@ -88,7 +88,7 @@ func (a *Antigravity) Template() string {
 func (a *Antigravity) Enabled() bool {
 	log.Debug("antigravity segment: checking if enabled")
 
-	data, found := cache.Get[AntigravityData](cache.Session, cache.ANTIGRAVITYCACHE)
+	data, found := cache.Session.Get[AntigravityData](cache.ANTIGRAVITYCACHE)
 	if !found {
 		log.Debug("antigravity segment: no data found in session cache")
 		return false

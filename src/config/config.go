@@ -241,13 +241,13 @@ func (cfg *Config) upgradeFeatures() shell.Features {
 	var feats shell.Features
 
 	autoUpgrade := cfg.Upgrade.Auto
-	if val, OK := cache.Get[bool](cache.Device, AUTOUPGRADE); OK {
+	if val, OK := cache.Device.Get[bool](AUTOUPGRADE); OK {
 		log.Debug("auto upgrade key found, overriding config")
 		autoUpgrade = val
 	}
 
 	upgradeNotice := cfg.Upgrade.DisplayNotice
-	if val, OK := cache.Get[bool](cache.Device, UPGRADENOTICE); OK {
+	if val, OK := cache.Device.Get[bool](UPGRADENOTICE); OK {
 		log.Debug("upgrade notice key found, overriding config")
 		upgradeNotice = val
 	}
@@ -291,7 +291,7 @@ func (cfg *Config) migrateSegmentProperties() {
 }
 
 func (cfg *Config) toggleSegments() {
-	currentToggleSet, _ := cache.Get[map[string]bool](cache.Session, cache.TOGGLECACHE)
+	currentToggleSet, _ := cache.Session.Get[map[string]bool](cache.TOGGLECACHE)
 	if currentToggleSet == nil {
 		currentToggleSet = make(map[string]bool)
 	}
@@ -310,5 +310,5 @@ func (cfg *Config) toggleSegments() {
 	}
 
 	// Update cache with the map directly
-	cache.Set(cache.Session, cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
+	cache.Session.Set(cache.TOGGLECACHE, currentToggleSet, cache.INFINITE)
 }

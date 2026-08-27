@@ -20,8 +20,8 @@ type Environment interface {
 	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...RequestModifier) ([]byte, error)
 }
 
-func Do[a any](r *Request, url string, body io.Reader, requestModifiers ...RequestModifier) (a, error) {
-	var data a
+func (r *Request) Do[T any](url string, body io.Reader, requestModifiers ...RequestModifier) (T, error) {
+	var data T
 	httpTimeout := r.HTTPTimeout // r.props.GetInt(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	responseBody, err := r.Env.HTTPRequest(url, body, httpTimeout, requestModifiers...)

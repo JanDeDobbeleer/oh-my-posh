@@ -141,7 +141,7 @@ func setConfigFlag() {
 		return
 	}
 
-	if configPath, OK := cache.Get[string](cache.Session, config.SourceKey); OK {
+	if configPath, OK := cache.Session.Get[string](config.SourceKey); OK {
 		configFlag = configPath
 	}
 }

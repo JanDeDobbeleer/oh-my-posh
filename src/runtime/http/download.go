@@ -31,14 +31,14 @@ func Download(url string, isCacheEnabled bool) ([]byte, error) {
 
 	request.Header.Add("User-Agent", "oh-my-posh")
 	// if we have an etag, add it to the request to check if the file changed
-	etag, OK := cache.Get[string](cache.Device, etagKey(url))
+	etag, OK := cache.Device.Get[string](etagKey(url))
 	if OK {
 		log.Debugf("found etag in cache: %s", etag)
 		request.Header.Set("If-None-Match", etag)
 	}
 
 	cachedData := func() ([]byte, error) {
-		cachedData, OK := cache.Get[[]byte](cache.Device, dataKey(url))
+		cachedData, OK := cache.Device.Get[[]byte](dataKey(url))
 		if OK {
 			return cachedData, nil
 		}
@@ -67,7 +67,7 @@ func Download(url string, isCacheEnabled bool) ([]byte, error) {
 
 	etag = response.Header.Get("ETag")
 	if etag != "" && isCacheEnabled {
-		cache.Set(cache.Device, etagKey(url), etag, cache.INFINITE)
+		cache.Device.Set(etagKey(url), etag, cache.INFINITE)
 	}
 
 	data, err := io.ReadAll(response.Body)
@@ -77,7 +77,7 @@ func Download(url string, isCacheEnabled bool) ([]byte, error) {
 	}
 
 	if isCacheEnabled {
-		cache.Set(cache.Device, dataKey(url), data, cache.INFINITE)
+		cache.Device.Set(dataKey(url), data, cache.INFINITE)
 	}
 
 	return data, nil

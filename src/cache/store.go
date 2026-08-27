@@ -148,7 +148,7 @@ func touchSessionFile(filePath string) {
 // process (serve) that keeps its cache in memory for the session: without
 // it, a write from another process (e.g. `toggle`, `enable`/`disable`)
 // would stay invisible until the daemon exits.
-func Refresh(s Store) {
+func (s Store) Refresh() {
 	defer log.Trace(time.Now(), string(s))
 
 	store := s.get()
@@ -202,7 +202,7 @@ func (s Store) close() {
 	// (e.g. right before the shell exits) isn't clobbered by this store's
 	// own, possibly stale, in-memory copy.
 	if store != nil && !store.locked && store.persist && store.dirty {
-		Refresh(s)
+		s.Refresh()
 	}
 
 	if store == nil || store.locked || !store.persist || !store.dirty {
@@ -250,7 +250,7 @@ func (s Store) close() {
 	}
 }
 
-func Get[T any](s Store, key string) (T, bool) {
+func (s Store) Get[T any](key string) (T, bool) {
 	var zero T
 	defer log.Trace(time.Now(), string(s), key)
 
@@ -293,7 +293,7 @@ func Get[T any](s Store, key string) (T, bool) {
 	return zero, false
 }
 
-func Set[T any](s Store, key string, value T, duration Duration) {
+func (s Store) Set[T any](key string, value T, duration Duration) {
 	defer log.Trace(time.Now(), string(s), key)
 
 	store := s.get()
@@ -318,7 +318,7 @@ func Set[T any](s Store, key string, value T, duration Duration) {
 	store.dirty = true
 }
 
-func Delete(s Store, key string) {
+func (s Store) Delete(key string) {
 	defer log.Trace(time.Now(), string(s), key)
 
 	store := s.get()
@@ -332,7 +332,7 @@ func Delete(s Store, key string) {
 	store.dirty = true
 }
 
-func DeleteAll(s Store) {
+func (s Store) DeleteAll() {
 	defer log.Trace(time.Now(), string(s))
 
 	store := s.get()
@@ -345,7 +345,7 @@ func DeleteAll(s Store) {
 	store.dirty = true
 }
 
-func Print(s Store) string {
+func (s Store) Print() string {
 	defer log.Trace(time.Now(), string(s))
 
 	store := s.get()

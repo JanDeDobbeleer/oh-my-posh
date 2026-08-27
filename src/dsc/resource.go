@@ -29,7 +29,7 @@ type State[T any] interface {
 }
 
 func (resource *Resource[T]) Load() {
-	states, ok := cache.Get[[]T](cache.Device, resource.cacheKey())
+	states, ok := cache.Device.Get[[]T](resource.cacheKey())
 	if !ok {
 		log.Debug("no states found in cache")
 		return
@@ -39,7 +39,7 @@ func (resource *Resource[T]) Load() {
 }
 
 func (resource *Resource[T]) Save() {
-	cache.Set(cache.Device, resource.cacheKey(), resource.States, cache.INFINITE)
+	cache.Device.Set(resource.cacheKey(), resource.States, cache.INFINITE)
 }
 
 func (resource *Resource[T]) Add(item T) {

@@ -147,7 +147,7 @@ func overlayEnvData(tmpl *cache.Template) {
 func restoreCache() bool {
 	defer log.Trace(time.Now())
 
-	val, OK := cache.Get[cache.SimpleTemplate](cache.Session, cache.TEMPLATECACHE)
+	val, OK := cache.Session.Get[cache.SimpleTemplate](cache.TEMPLATECACHE)
 	if !OK {
 		return false
 	}
@@ -169,5 +169,5 @@ func SaveCache() {
 
 	Cache.SegmentsCache = Cache.Segments.ToSimple()
 
-	cache.Set(cache.Session, cache.TEMPLATECACHE, &Cache.SimpleTemplate, cache.ONEDAY)
+	cache.Session.Set(cache.TEMPLATECACHE, &Cache.SimpleTemplate, cache.ONEDAY)
 }

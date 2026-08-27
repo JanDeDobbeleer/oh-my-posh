@@ -19,7 +19,7 @@ import (
 // download fetches a font zip, reporting how much has arrived so a caller can draw a bar. report
 // may be nil, which is what the DSC path and the tests pass.
 func download(fontURL string, report func(fraction float64)) ([]byte, error) {
-	if zipPath, OK := cache.Get[string](cache.Device, fontURL); OK {
+	if zipPath, OK := cache.Device.Get[string](fontURL); OK {
 		if b, err := os.ReadFile(zipPath); err == nil {
 			return b, nil
 		}
@@ -57,7 +57,7 @@ func download(fontURL string, report func(fraction float64)) ([]byte, error) {
 		return b, nil
 	}
 
-	cache.Set(cache.Device, fontURL, zipPath, cache.ONEDAY)
+	cache.Device.Set(fontURL, zipPath, cache.ONEDAY)
 
 	return b, nil
 }

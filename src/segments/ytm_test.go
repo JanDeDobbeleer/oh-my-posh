@@ -84,7 +84,7 @@ func TestYTM(t *testing.T) {
 		env.On("HTTPRequest", ytmdaStatusURL).Return([]byte(tc.JSONResponse), tc.HTTPError)
 
 		if tc.HasToken {
-			cache.Set(cache.Device, auth.YTMDATOKEN, "test_token", cache.INFINITE)
+			cache.Device.Set(auth.YTMDATOKEN, "test_token", cache.INFINITE)
 		}
 
 		props := options.Map{
@@ -98,7 +98,7 @@ func TestYTM(t *testing.T) {
 		ytm.Init(props, env)
 
 		assert.Equal(t, tc.ExpectedEnabled, ytm.Enabled(), tc.Case)
-		cache.DeleteAll(cache.Device)
+		cache.Device.DeleteAll()
 
 		if !tc.ExpectedEnabled {
 			continue

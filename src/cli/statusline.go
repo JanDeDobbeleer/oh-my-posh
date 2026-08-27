@@ -138,7 +138,7 @@ func processStatuslineData[T any](stdinData []byte, shellConst, cacheKey string,
 	}
 
 	cache.Init(shellConst, cache.Persist)
-	cache.Set(cache.Session, cacheKey, data, cache.INFINITE)
+	cache.Session.Set(cacheKey, data, cache.INFINITE)
 	log.Debugf("stored %s data in session cache", shellConst)
 
 	return &data

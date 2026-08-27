@@ -62,7 +62,7 @@ func TestIpifySegment(t *testing.T) {
 		enabled := ipify.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 
-		cache.DeleteAll(cache.Device)
+		cache.Device.DeleteAll()
 
 		if !enabled {
 			continue

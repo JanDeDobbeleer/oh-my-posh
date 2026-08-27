@@ -66,7 +66,7 @@ var upgradeCmd = &cmdtree.Command{
 		cache.Init(sh, cache.Persist)
 
 		// Only respect the cache interval when using --auto flag
-		if _, OK := cache.Get[string](cache.Device, upgrade.CACHEKEY); OK && auto {
+		if _, OK := cache.Device.Get[string](upgrade.CACHEKEY); OK && auto {
 			log.Debug("upgrade check already performed recently, skipping")
 			return
 		}
@@ -82,7 +82,7 @@ var upgradeCmd = &cmdtree.Command{
 			fmt.Print(terminal.StopProgress())
 
 			// Set the cache key after any upgrade check to prevent redundant checks
-			cache.Set(cache.Device, upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
+			cache.Device.Set(upgrade.CACHEKEY, "true", cfg.Upgrade.Interval)
 
 			cache.Close()
 

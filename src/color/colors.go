@@ -250,7 +250,7 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 	// get the resolved OS accent color from the device cache first, regardless
 	// of whether a default was configured, so we never repeat the underlying
 	// OS query (e.g. a DWM registry read) once we know the answer.
-	accent, OK := cache.Get[*Set](cache.Device, accentColor)
+	accent, OK := cache.Device.Get[*Set](accentColor)
 	if !OK {
 		rgb, err := GetAccentColor(env)
 		if err != nil {
@@ -265,7 +265,7 @@ func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 			}
 		}
 
-		cache.Set(cache.Device, accentColor, accent, cache.INFINITE)
+		cache.Device.Set(accentColor, accent, cache.INFINITE)
 	}
 
 	if accent.Foreground.IsEmpty() && accent.Background.IsEmpty() {

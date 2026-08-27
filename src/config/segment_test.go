@@ -531,8 +531,8 @@ func TestSegment_RestoreDataOverlaysOnTopOfACacheHit(t *testing.T) {
 
 	var warm bytes.Buffer
 	require.NoError(t, gob.NewEncoder(&warm).Encode(&segments.Session{SSHSession: false}))
-	cache.Set(store, key, warm.Bytes(), cache.INFINITE)
-	t.Cleanup(func() { cache.Delete(store, key) })
+	store.Set(key, warm.Bytes(), cache.INFINITE)
+	t.Cleanup(func() { store.Delete(key) })
 
 	flags := &runtime.Flags{
 		SegmentData: map[string]json.RawMessage{
@@ -683,8 +683,8 @@ func TestDecodeRecordedSegment(t *testing.T) {
 }
 
 func TestSegment_RestoreDataToggledOffStaysDisabled(t *testing.T) {
-	cache.Set(cache.Session, cache.TOGGLECACHE, map[string]bool{"text": true}, cache.INFINITE)
-	defer cache.Delete(cache.Session, cache.TOGGLECACHE)
+	cache.Session.Set(cache.TOGGLECACHE, map[string]bool{"text": true}, cache.INFINITE)
+	defer cache.Session.Delete(cache.TOGGLECACHE)
 
 	flags := &runtime.Flags{
 		SegmentData: map[string]json.RawMessage{
@@ -826,8 +826,8 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 		}
 
 		key, store := segment.cacheKeyAndStore()
-		_, found := cache.Get[string](store, key)
-		cache.Delete(store, key)
+		_, found := store.Get[string](key)
+		store.Delete(key)
 		assert.False(t, found, tc.Case)
 	}
 }

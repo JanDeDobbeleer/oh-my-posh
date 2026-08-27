@@ -5,9 +5,9 @@
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
-      // Update the VARIANT arg to pick a version of Go: 1, 1.25, 1.26
+      // Update the VARIANT arg to pick a version of Go: 1, 1.26, 1.27
       // Append -trixie, -bookworm or -bullseye to pin to an OS version.
-      "VARIANT": "2-1.26-trixie",
+      "VARIANT": "2-1.27-trixie",
 
       // Override me with your own timezone:
       "TZ": "UTC",

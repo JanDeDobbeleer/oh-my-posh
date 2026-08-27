@@ -118,7 +118,9 @@ func funcSpec() (string, int) {
 
 		// Found first non-log.go frame
 		fn := frame.Function
-		fn = fn[strings.LastIndex(fn, ".")+1:]
+		if _, after, found := strings.CutLast(fn, "."); found {
+			fn = after
+		}
 		file := filepath.Base(frame.File)
 
 		if strings.HasPrefix(fn, "func") {

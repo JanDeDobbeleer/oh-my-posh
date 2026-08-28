@@ -231,7 +231,9 @@ func TestActivationThenEnabledStaysConsistent(t *testing.T) {
 	env.On("HasFiles", "bun.lock").Return(false)
 
 	bun := &Bun{}
-	bun.Init(options.Map{options.FetchVersion: false}, env)
+	bun.Init(options.Map{}, env)
+	// gate consistency is what's under test, not the version subprocess
+	setVersionRefs(bun, false)
 
 	activation := bun.Activation()
 	assert.False(t, activation.Always)

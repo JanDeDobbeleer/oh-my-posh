@@ -77,12 +77,12 @@ func TestMojoTemplate(t *testing.T) {
 		mockVersionCacheable(env, params.cmd)
 		env.On("Getenv", "PIXI_ENVIRONMENT_NAME").Return(tc.VirtualEnvName)
 		props[options.DisplayDefault] = tc.DisplayDefault
-		props[options.FetchVersion] = tc.FetchVersion
 		props[FetchVirtualEnv] = tc.FetchVirtualEnv
 		props[DisplayMode] = DisplayModeAlways
 
 		mojo := &Mojo{}
 		mojo.Init(props, env)
+		setVersionRefs(mojo, tc.FetchVersion)
 		assert.True(t, mojo.Enabled())
 		assert.Equal(t, tc.Expected, renderTemplate(env, mojo.Template(), mojo), tc.Case)
 	}

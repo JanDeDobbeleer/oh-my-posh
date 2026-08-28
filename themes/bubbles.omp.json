@@ -41,9 +41,6 @@
           "background": "#29315A",
           "foreground": "#E4F34A",
           "leading_diamond": " \ue0b6",
-          "options": {
-            "fetch_version": false
-          },
           "style": "diamond",
           "template": "\ue235{{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4",
@@ -53,9 +50,6 @@
           "background": "#29315A",
           "foreground": "#7FD5EA",
           "leading_diamond": " \ue0b6",
-          "options": {
-            "fetch_version": false
-          },
           "style": "diamond",
           "template": "\ue626{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4",
@@ -65,9 +59,6 @@
           "background": "#29315A",
           "foreground": "#42E66C",
           "leading_diamond": " \ue0b6",
-          "options": {
-            "fetch_version": false
-          },
           "style": "diamond",
           "template": "\ue718{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
           "trailing_diamond": "\ue0b4",
@@ -77,9 +68,6 @@
           "background": "#29315A",
           "foreground": "#E64747",
           "leading_diamond": " \ue0b6",
-          "options": {
-            "fetch_version": false
-          },
           "style": "diamond",
           "template": "\ue791{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4",
@@ -89,9 +77,6 @@
           "background": "#29315A",
           "foreground": "#E64747",
           "leading_diamond": " \ue0b6",
-          "options": {
-            "fetch_version": false
-          },
           "style": "diamond",
           "template": "\ue738{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4",
@@ -101,9 +86,6 @@
           "background": "#29315A",
           "foreground": "#9B6BDF",
           "leading_diamond": " \ue0b6",
-          "options": {
-            "fetch_version": false
-          },
           "style": "diamond",
           "template": "\ue624{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "trailing_diamond": "\ue0b4",

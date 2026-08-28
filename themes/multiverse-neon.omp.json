@@ -54,7 +54,6 @@
           "options": {
             "display_mode": "files",
             "fetch_package_manager": true,
-            "fetch_version": true,
             "bun_icon": "<#e5dbcc>\ue76f bun</>",
             "npm_icon": "<#e5272d>\ue616 npm</> ",
             "pnpm_icon": "<#e5a100>\ue865 pnpm</> ",
@@ -65,8 +64,7 @@
         {
           "foreground": "#4063D8",
           "options": {
-            "display_mode": "files",
-            "fetch_version": true
+            "display_mode": "files"
           },
           "style": "plain",
           "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
@@ -75,8 +73,7 @@
         {
           "foreground": "#DE3F24",
           "options": {
-            "display_mode": "files",
-            "fetch_version": true
+            "display_mode": "files"
           },
           "style": "plain",
           "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",

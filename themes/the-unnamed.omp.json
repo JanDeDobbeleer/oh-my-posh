@@ -30,9 +30,6 @@
         },
         {
           "foreground": "#44FFD2",
-          "options": {
-            "fetch_version": true
-          },
           "style": "plain",
           "template": "<#F3EFF5>via</> \ue718 {{ .Full }} ",
           "type": "node"

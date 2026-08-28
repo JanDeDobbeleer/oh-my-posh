@@ -52,9 +52,6 @@
           "foreground": "#ffffff",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "options": {
-            "fetch_version": true
-          },
           "style": "powerline",
           "template": " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} \ue718 ",
           "type": "node"
@@ -64,9 +61,6 @@
           "foreground": "#111111",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "options": {
-            "fetch_version": true
-          },
           "style": "powerline",
           "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue627 ",
           "type": "go"
@@ -76,9 +70,6 @@
           "foreground": "#111111",
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
-          "options": {
-            "fetch_version": true
-          },
           "style": "powerline",
           "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue624 ",
           "type": "julia"
@@ -102,8 +93,7 @@
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
           "options": {
-            "display_mode": "files",
-            "fetch_version": true
+            "display_mode": "files"
           },
           "style": "powerline",
           "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue791 ",
@@ -115,8 +105,7 @@
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
           "options": {
-            "display_mode": "files",
-            "fetch_version": false
+            "display_mode": "files"
           },
           "style": "powerline",
           "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \uf0e7",

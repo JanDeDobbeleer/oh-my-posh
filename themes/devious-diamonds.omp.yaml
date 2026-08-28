@@ -41,16 +41,12 @@ blocks:
         powerline_symbol: 
         background: lightRed
         foreground: black
-        options:
-          fetch_version: true
         template: " 󰚲 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: aurelia
         style: powerline
         powerline_symbol: 
         background: magenta
         foreground: white
-        options:
-          fetch_version: true
         template: " α {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: aws
         style: powerline
@@ -73,15 +69,12 @@ blocks:
         foreground: black
         options:
           display_mode: files
-          fetch_version: false
         template: " ﴃ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: go
         style: powerline
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        options:
-          fetch_version: true
         template: " 󰟓 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: java
         style: powerline
@@ -94,8 +87,6 @@ blocks:
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        options:
-          fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: kubectl
         style: powerline
@@ -108,8 +99,6 @@ blocks:
         powerline_symbol: 
         background: lightGreen
         foreground: black
-        options:
-          fetch_version: true
         template: " 󰎙 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
       - type: php
         style: powerline
@@ -139,7 +128,6 @@ blocks:
         foreground: black
         options:
           display_mode: files
-          fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: rust
         style: powerline
@@ -148,7 +136,6 @@ blocks:
         foreground: black
         options:
           display_mode: files
-          fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: swift
         style: powerline
@@ -157,7 +144,6 @@ blocks:
         foreground: black
         options:
           display_mode: files
-          fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: time
         style: powerline

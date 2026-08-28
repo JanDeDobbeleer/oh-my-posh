@@ -14,11 +14,17 @@ const (
 	Command options.Option = "command"
 )
 
+// terraformVersionFields lists what the version fetch populates: the single
+// derived unit of this segment (see FieldRefs). Default-off historically,
+// so the unanalyzable fallback narrows by the substring heuristic like the
+// SCM units, unlike the language segments' fail-open version fetch.
+var terraformVersionFields = []string{"Version"}
+
 type Terraform struct {
 	Base
-
 	TerraformBlock
 	WorkspaceName string
+	FieldRefs
 }
 
 func (tf *Terraform) Template() string {
@@ -47,8 +53,11 @@ func (tf *Terraform) contextConditions(fetchVersion bool) (folders, globs []stri
 // Activation gates on the context conditions: the segment can only activate
 // when the cwd carries the .terraform folder or one of the files the
 // context check reacts to.
+// The reference set is delivered right after Init, before the engine
+// consults the gate, so the version-file conditions join exactly when the
+// version fetch is derived on.
 func (tf *Terraform) Activation() Activation {
-	folders, globs := tf.contextConditions(tf.options.Bool(options.FetchVersion, false))
+	folders, globs := tf.contextConditions(tf.fetchUnit(terraformVersionFields...))
 
 	return Activation{
 		Folders:   folders,
@@ -74,7 +83,7 @@ func (tf *Terraform) inContext(fetchVersion bool) bool {
 
 func (tf *Terraform) Enabled() bool {
 	cmd := tf.options.String(Command, "terraform")
-	fetchVersion := tf.options.Bool(options.FetchVersion, false)
+	fetchVersion := tf.fetchUnit(terraformVersionFields...)
 
 	if !tf.env.HasCommand(cmd) || !tf.inContext(fetchVersion) {
 		return false

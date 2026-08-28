@@ -93,8 +93,7 @@ func TestDotnetSDKVersion(t *testing.T) {
 
 	for _, tc := range cases {
 		props := options.Map{
-			FetchSDKVersion:      tc.FetchSDK,
-			options.FetchVersion: false,
+			FetchSDKVersion: tc.FetchSDK,
 		}
 
 		env, _ := getMockedLanguageEnv(params)
@@ -111,6 +110,8 @@ func TestDotnetSDKVersion(t *testing.T) {
 
 		dotnet := &Dotnet{}
 		dotnet.Init(props, env)
+		// this test pins SDK-version resolution only, no version fetch
+		setVersionRefs(dotnet, false)
 
 		assert.True(t, dotnet.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedSDK, dotnet.SDKVersion, tc.Case)

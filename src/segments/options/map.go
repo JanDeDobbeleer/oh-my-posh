@@ -45,7 +45,6 @@ type Option string
 // general options used across Segments
 const (
 	Style         Option = "style"
-	FetchVersion  Option = "fetch_version"
 	AlwaysEnabled Option = "always_enabled"
 	// VersionURLTemplate is the template to use when building language segment hyperlink
 	VersionURLTemplate Option = "version_url_template"

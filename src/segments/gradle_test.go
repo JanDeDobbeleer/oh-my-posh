@@ -84,7 +84,7 @@ func TestGradle(t *testing.T) {
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
 
-		props := options.Map{options.FetchVersion: true}
+		props := options.Map{}
 		g := &Gradle{}
 		g.Init(props, env)
 		activation := g.Activation()

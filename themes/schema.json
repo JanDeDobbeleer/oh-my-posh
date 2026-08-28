@@ -75,12 +75,6 @@
       "description": "Display the segment in the HOME folder.",
       "default": false
     },
-    "fetch_version": {
-      "type": "boolean",
-      "title": "Fetch Version",
-      "description": "Fetch the version number.",
-      "default": true
-    },
     "http_timeout": {
       "type": "integer",
       "title": "Http request timeout",
@@ -160,9 +154,6 @@
       "properties": {
         "home_enabled": {
           "$ref": "#/definitions/home_enabled"
-        },
-        "fetch_version": {
-          "$ref": "#/definitions/fetch_version"
         },
         "cache_duration": {
           "$ref": "#/definitions/cache_duration"
@@ -4869,12 +4860,6 @@
                     "title": "Terraform Command",
                     "description": "The terraform command to use.",
                     "default": "terraform"
-                  },
-                  "fetch_version": {
-                    "type": "boolean",
-                    "title": "Fetch Version",
-                    "description": "Fetch the version number from tenv (TFENV_TERRAFORM_VERSION / TOFUENV_TOFU_VERSION or .terraform-version / .opentofu-version), versions.tf, main.tf or terraform.tfstate.",
-                    "default": false
                   }
                 },
                 "unevaluatedProperties": false

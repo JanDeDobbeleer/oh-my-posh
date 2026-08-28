@@ -275,6 +275,10 @@ func (g *Git) Commit() *Commit {
 		Refs:      &Refs{},
 	}
 
+	if g.options.Bool(NativeStatus, false) && g.setCommitNative() {
+		return g.commit
+	}
+
 	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D", "--decorate=full")
 	splitted := strings.SplitSeq(strings.TrimSpace(commitBody), "\n")
 	for line := range splitted {
@@ -325,6 +329,42 @@ func (g *Git) Commit() *Commit {
 	return g.commit
 }
 
+// setCommitNative populates g.commit using the built-in gitstatus engine
+// instead of spawning git. It returns false when HEAD or the commit it
+// points at can't be resolved natively, leaving g.commit untouched so the
+// caller falls back to the exec path.
+func (g *Git) setCommitNative() bool {
+	if g.scmDir == "" {
+		return false
+	}
+
+	if g.Hash == "" {
+		head, err := gitstatus.LoadHead(g.mainSCMDir, g.scmDir)
+		if err != nil {
+			return false
+		}
+		g.Hash = head.Hash
+	}
+
+	info, err := gitstatus.LoadCommit(g.scmDir, g.Hash)
+	if err != nil {
+		return false
+	}
+
+	g.commit.Author.Name = info.Author.Name
+	g.commit.Author.Email = info.Author.Email
+	g.commit.Committer.Name = info.Committer.Name
+	g.commit.Committer.Email = info.Committer.Email
+	g.commit.Timestamp = info.Timestamp
+	g.commit.Subject = info.Subject
+	g.commit.Sha = info.Hash
+	g.commit.Refs.Heads = info.Refs.Heads
+	g.commit.Refs.Tags = info.Refs.Tags
+	g.commit.Refs.Remotes = info.Refs.Remotes
+
+	return true
+}
+
 func (g *Git) StashCount() int {
 	if g.poshgit || g.stashCount != 0 {
 		return g.stashCount
@@ -348,6 +388,12 @@ func (g *Git) Kraken() string {
 			g.Upstream = origin
 		}
 		g.RawUpstreamURL = g.getRemoteURL()
+	}
+
+	if g.Hash == "" && g.scmDir != "" && g.options.Bool(NativeStatus, false) {
+		if head, err := gitstatus.LoadHead(g.mainSCMDir, g.scmDir); err == nil {
+			g.Hash = head.Hash
+		}
 	}
 
 	if g.Hash == "" {
@@ -405,6 +451,23 @@ func (g *Git) isRepo(gitdir *runtime.FileInfo) bool {
 }
 
 func (g *Git) setUser() {
+	// user.name/user.email are very commonly set only in the user's global
+	// gitconfig, which getGitConfig() never reads (repo-local config only).
+	// Trust the local read only when it has both keys; anything less falls
+	// back to exec git, which merges every config scope the way `git
+	// config` itself does.
+	if cfg, err := g.getGitConfig(); err == nil {
+		section := cfg.Section("user")
+		name := section.Key("name").String()
+		email := section.Key("email").String()
+
+		if name != "" && email != "" {
+			g.User.Name = name
+			g.User.Email = email
+			return
+		}
+	}
+
 	output := g.getGitCommandOutput("config", "--get-regexp", "^user\\.")
 	for line := range strings.SplitSeq(output, "\n") {
 		key, val, ok := strings.Cut(line, " ")
@@ -593,6 +656,10 @@ func (g *Git) setPushStatus() {
 		return
 	}
 
+	if g.options.Bool(NativeStatus, false) && g.setPushStatusNative(pushRemote) {
+		return
+	}
+
 	var wg sync.WaitGroup
 
 	wg.Go(func() {
@@ -608,6 +675,33 @@ func (g *Git) setPushStatus() {
 	})
 
 	wg.Wait()
+}
+
+// setPushStatusNative computes PushAhead/PushBehind using the built-in
+// gitstatus engine instead of two `git rev-list --count` spawns. pushRemote
+// is a "<remote>/<branch>"-shaped rev the way getPushRemote returns it; the
+// overwhelming majority of the time that's a remote-tracking ref, so this
+// only tries the exact refs/remotes/<pushRemote> path and defers anything
+// else (a local branch, a tag with a matching name, ...) to exec git rather
+// than risk resolving the wrong ref.
+func (g *Git) setPushStatusNative(pushRemote string) bool {
+	if g.Hash == "" || g.scmDir == "" {
+		return false
+	}
+
+	theirs, found, err := gitstatus.ResolveRef(g.scmDir, "refs/remotes/"+pushRemote)
+	if err != nil || !found {
+		return false
+	}
+
+	ahead, behind, err := gitstatus.AheadBehind(g.scmDir, g.Hash, theirs)
+	if err != nil {
+		return false
+	}
+
+	g.PushAhead = ahead
+	g.PushBehind = behind
+	return true
 }
 
 func (g *Git) getPushRemote() string {
@@ -1108,29 +1202,58 @@ func (g *Git) updateHEADReference() {
 }
 
 func (g *Git) resolveDetachedHEAD() {
-	HEADRef := g.getGitCommandOutput("rev-parse", "HEAD")
-
-	if len(HEADRef) >= 7 {
-		g.ShortHash = HEADRef[0:7]
-		g.Hash = HEADRef[0:]
+	if !g.resolveDetachedHash() {
+		g.HEAD = g.options.String(NoCommitsIcon, "\U000F0095 ")
+		return
 	}
+
 	g.Ref = g.ShortHash
 
-	// check for tag
-	tagName := g.getGitCommandOutput("describe", "--tags", "--exact-match")
-	if len(tagName) > 0 {
+	if tagName, found := g.resolveExactTag(); found {
 		g.Ref = tagName
 		g.HEAD = fmt.Sprintf("%s%s", g.options.String(TagIcon, "\uF412"), tagName)
 		return
 	}
 
-	// fallback to no commits found
-	if g.ShortHash == "" {
-		g.HEAD = g.options.String(NoCommitsIcon, "\U000F0095 ")
-		return
+	g.HEAD = fmt.Sprintf("%s%s", g.options.String(CommitIcon, "\uF417"), g.ShortHash)
+}
+
+// resolveDetachedHash fills g.Hash/g.ShortHash for a detached HEAD, reading
+// .git/HEAD directly before falling back to `git rev-parse HEAD` (reftables
+// HEAD, corrupt refs, ...). It reports false only when neither path finds a
+// commit, i.e. a brand-new, commit-less repo.
+func (g *Git) resolveDetachedHash() bool {
+	if g.scmDir != "" && g.options.Bool(NativeStatus, false) {
+		if head, err := gitstatus.LoadHead(g.mainSCMDir, g.scmDir); err == nil && head.Hash != "" {
+			g.Hash = head.Hash
+			g.ShortHash = g.formatSHA(head.Hash)
+			return true
+		}
 	}
 
-	g.HEAD = fmt.Sprintf("%s%s", g.options.String(CommitIcon, "\uF417"), g.ShortHash)
+	HEADRef := g.getGitCommandOutput("rev-parse", "HEAD")
+	if len(HEADRef) < 7 {
+		return false
+	}
+
+	g.ShortHash = HEADRef[0:7]
+	g.Hash = HEADRef
+	return true
+}
+
+// resolveExactTag looks up a tag pointing exactly at g.Hash, native first
+// and falling back to `git describe --tags --exact-match` whenever the
+// native lookup can't answer confidently (an ambiguous match, or a repo
+// shape gitstatus doesn't support).
+func (g *Git) resolveExactTag() (string, bool) {
+	if g.scmDir != "" && g.options.Bool(NativeStatus, false) {
+		if tag, found, err := gitstatus.ExactTag(g.scmDir, g.Hash); err == nil {
+			return tag, found
+		}
+	}
+
+	tagName := g.getGitCommandOutput("describe", "--tags", "--exact-match")
+	return tagName, len(tagName) > 0
 }
 
 func (g *Git) WorktreeCount() int {

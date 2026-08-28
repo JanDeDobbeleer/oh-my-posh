@@ -217,3 +217,153 @@ R {renamed_file => new_file}`,
 		})
 	}
 }
+
+func TestJujutsuClosestBookmarks(t *testing.T) {
+	cases := []struct {
+		Options  options.Map
+		Case     string
+		Output   string
+		Expected string
+		Error    bool
+	}{
+		{
+			Case:     "undecorated bookmark names",
+			Output:   "main feature/x\nnoise",
+			Expected: "main feature/x",
+		},
+		{
+			Case:  "command error",
+			Error: true,
+		},
+		{
+			Case: "no bookmarks",
+		},
+		{
+			// the fetch_ahead_counter/ahead_icon options no longer exist;
+			// leftover keys must parse silently and change nothing
+			Case:     "dead option keys are ignored",
+			Options:  options.Map{"fetch_ahead_counter": true, "ahead_icon": "⇡"},
+			Output:   "main",
+			Expected: "main",
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+
+		bookmarkArgs := []string{"--repository", "/repo", "--no-pager", "--color", "never", "--ignore-working-copy", "log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks"} //nolint:lll
+		if tc.Error {
+			env.On("RunCommand", "jj", bookmarkArgs).Return("", errors.New("failed")).Once()
+		} else {
+			env.On("RunCommand", "jj", bookmarkArgs).Return(tc.Output, nil).Once()
+		}
+
+		opts := tc.Options
+		if opts == nil {
+			opts = options.Map{}
+		}
+
+		jj := &Jujutsu{
+			command:     JUJUTSUCOMMAND,
+			repoRootDir: "/repo",
+		}
+		jj.Init(opts, env)
+
+		// a second call must serve the memo, not a second jj invocation
+		// (the .Once() mock above panics otherwise)
+		assert.Equal(t, tc.Expected, jj.ClosestBookmarks(), tc.Case)
+		assert.Equal(t, tc.Expected, jj.ClosestBookmarks(), tc.Case)
+		env.AssertNumberOfCalls(t, "RunCommand", 1)
+	}
+}
+
+func TestJujutsuAheadCount(t *testing.T) {
+	cases := []struct {
+		Case          string
+		Bookmarks     string
+		ExpectedRange string
+		AheadOutput   string
+		Expected      int
+		AheadError    bool
+		Invoke        bool
+	}{
+		{
+			// referencing the method is the fetch trigger: without an
+			// invocation the distance query must never run
+			Case:      "not referenced, not fetched",
+			Bookmarks: "main",
+			Invoke:    false,
+		},
+		{
+			Case:          "distance to the closest bookmark",
+			Bookmarks:     "main feature/x",
+			ExpectedRange: "main..@",
+			AheadOutput:   "...",
+			Expected:      3,
+			Invoke:        true,
+		},
+		{
+			// conflicted bookmarks are marked with a trailing *
+			Case:          "conflicted bookmark marker is trimmed",
+			Bookmarks:     "main*",
+			ExpectedRange: "main..@",
+			AheadOutput:   ".",
+			Expected:      1,
+			Invoke:        true,
+		},
+		{
+			Case:      "no bookmarks skips the distance query",
+			Bookmarks: "",
+			Expected:  0,
+			Invoke:    true,
+		},
+		{
+			Case:          "distance query error",
+			Bookmarks:     "main",
+			ExpectedRange: "main..@",
+			AheadError:    true,
+			Expected:      0,
+			Invoke:        true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+
+		cli := []string{"--repository", "/repo", "--no-pager", "--color", "never", "--ignore-working-copy"}
+		bookmarkArgs := append(append([]string{}, cli...), "log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
+		env.On("RunCommand", "jj", bookmarkArgs).Return(tc.Bookmarks, nil).Once()
+
+		aheadCalls := 0
+		if tc.ExpectedRange != "" {
+			aheadCalls = 1
+			aheadArgs := append(append([]string{}, cli...), "log", "--no-graph", "-T", "'.'", "-r", tc.ExpectedRange)
+
+			if tc.AheadError {
+				env.On("RunCommand", "jj", aheadArgs).Return("", errors.New("failed")).Once()
+			} else {
+				env.On("RunCommand", "jj", aheadArgs).Return(tc.AheadOutput, nil).Once()
+			}
+		}
+
+		jj := &Jujutsu{
+			command:     JUJUTSUCOMMAND,
+			repoRootDir: "/repo",
+		}
+		jj.Init(options.Map{}, env)
+
+		// the bookmarks memo is shared: AheadCount reuses ClosestBookmarks'
+		// single jj call instead of querying the bookmarks again
+		assert.Equal(t, tc.Bookmarks, jj.ClosestBookmarks(), tc.Case)
+
+		if !tc.Invoke {
+			env.AssertNumberOfCalls(t, "RunCommand", 1)
+			continue
+		}
+
+		// a second call must serve the memo (the .Once() mocks panic otherwise)
+		assert.Equal(t, tc.Expected, jj.AheadCount(), tc.Case)
+		assert.Equal(t, tc.Expected, jj.AheadCount(), tc.Case)
+		env.AssertNumberOfCalls(t, "RunCommand", 1+aheadCalls)
+	}
+}

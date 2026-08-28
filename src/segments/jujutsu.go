@@ -16,8 +16,6 @@ const (
 
 	IgnoreWorkingCopy options.Option = "ignore_working_copy"
 	ChangeIDMinLen    options.Option = "change_id_min_len"
-	FetchAhead        options.Option = "fetch_ahead_counter"
-	AheadIcon         options.Option = "ahead_icon"
 )
 
 type JujutsuStatus struct {
@@ -42,12 +40,16 @@ func (s *JujutsuStatus) add(code byte) {
 var jujutsuStatusFields = []string{workingField, "ChangeID", "ChangeIDPrefix", "ChangeIDRest"}
 
 type Jujutsu struct {
-	Working        *JujutsuStatus
-	ChangeID       string
-	ChangeIDPrefix string
-	ChangeIDRest   string
+	Working          *JujutsuStatus
+	ChangeID         string
+	ChangeIDPrefix   string
+	ChangeIDRest     string
+	closestBookmarks string
 	Scm
 	FieldRefs
+	aheadCount          int
+	closestBookmarksSet bool
+	aheadCountSet       bool
 }
 
 func (jj *Jujutsu) Template() string {
@@ -85,52 +87,60 @@ func (jj *Jujutsu) CacheKey() (string, bool) {
 	return dir.Path, true
 }
 
+// ClosestBookmarks returns the bookmark name(s) on the closest bookmarked
+// ancestor(s) of the working copy, undecorated. Resolved lazily on first
+// template use and memoized, so a template can reference it more than once
+// per render at the cost of a single jj call.
 func (jj *Jujutsu) ClosestBookmarks() string {
+	if jj.closestBookmarksSet {
+		return jj.closestBookmarks
+	}
+
+	jj.closestBookmarksSet = true
+
 	statusString, err := jj.getJujutsuCommandOutput("log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
 	if err != nil {
 		return ""
 	}
 
-	line, _, _ := strings.Cut(statusString, "\n")
+	jj.closestBookmarks, _, _ = strings.Cut(statusString, "\n")
 
-	if !jj.options.Bool(FetchAhead, false) || len(line) == 0 {
-		return line
+	return jj.closestBookmarks
+}
+
+// AheadCount returns the number of changes between the working copy and the
+// closest bookmark (see ClosestBookmarks). Referencing it in a template is
+// what triggers the extra jj call: it runs on first use, memoized, and
+// returns 0 when there is no bookmark or the call fails. Templates compose
+// their own decoration, e.g. {{ if gt .AheadCount 0 }}\u21e1{{ .AheadCount }}{{ end }}.
+func (jj *Jujutsu) AheadCount() int {
+	if jj.aheadCountSet {
+		return jj.aheadCount
 	}
 
-	aheadIcon := jj.options.String(AheadIcon, "\u21e1")
+	jj.aheadCountSet = true
+
+	// closest bookmarks all share the same distance from the working copy,
+	// so the first one measures for all of them - reusing ClosestBookmarks'
+	// memoized call instead of querying the bookmarks twice
+	line := jj.ClosestBookmarks()
+	if line == "" {
+		return 0
+	}
+
 	marks := strings.Split(line, " ")
-	// String to return for status
-	var endString strings.Builder
-
-	// Closest bookmarks are all the same distance away from the working copy
-	// so retrieve the distance to the first one and use it for all of them
-
 	rangeString := strings.Trim(marks[0], "*") + "..@"
 
 	aheadString, err := jj.getJujutsuCommandOutput("log", "--no-graph", "-T", "'.'", "-r", rangeString)
 	if err != nil {
-		return line
+		return 0
 	}
 
-	aheadCounter := len(aheadString)
-	aheadCounterString := ""
+	jj.aheadCount = len(aheadString)
 
-	if aheadCounter != 0 {
-		aheadCounterString = aheadIcon + strconv.Itoa(aheadCounter)
-	}
+	log.Debug("distance to nearest jj bookmark: " + strconv.Itoa(jj.aheadCount))
 
-	log.Debug("distance to nearest jj bookmark:" + aheadCounterString)
-
-	// Loop through each bookmark
-	for index, mark := range marks {
-		if index > 0 {
-			endString.WriteString(" ")
-		}
-
-		endString.WriteString(mark + aheadCounterString)
-	}
-
-	return endString.String()
+	return jj.aheadCount
 }
 
 func (jj *Jujutsu) shouldDisplay(displayStatus bool) bool {

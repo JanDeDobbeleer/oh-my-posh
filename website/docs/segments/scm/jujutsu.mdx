@@ -21,8 +21,6 @@ import Config from "@site/src/components/Config.js";
     background: "#ffeb3b",
     options: {
       ignore_working_copy: false,
-      fetch_ahead_counter: true,
-      ahead_icon: "\u21e1",
     },
   }}
 />
@@ -40,8 +38,6 @@ ignored silently in existing configs.
 | --------------------- | :-----------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `change_id_min_len`   |        `int`        |   `0`    | `ChangeID` will be at least this many characters, even if a shorter one would be unique                                                                                                                                                                          |
 | `ignore_working_copy` |      `boolean`      |  `true`  | don't snapshot/update the working copy                                                                                                                                                                                                                           |
-| `fetch_ahead_counter` |      `boolean`      | `false`  | fetch a counter for number of changes between working copy and closest bookmark                                                                                                                                                                                  |
-| `ahead_icon`          |      `string`       | `\u21e1` | icon/character between bookmark and ahead counter                                                                                                                                                                                                                |
 | `native_fallback`     |      `boolean`      | `false`  | when set to `true` and `jj.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native `jj` executable to fetch data. Not all information can be displayed in this case                                                        |
 | `status_formats`      | `map[string]string` |          | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides |
 
@@ -64,6 +60,7 @@ ignored silently in existing configs.
 | `.ChangeIDPrefix`   | `string` | The shortest unique prefix of the working copy change ID                                                                                                                         |
 | `.ChangeIDRest`     | `string` | The additional portion displayed after `.ChangeIDPrefix` to satisfy `change_id_min_len`; empty when the unique prefix already meets or exceeds that minimum                      |
 | `.ClosestBookmarks` | `string` | Closest bookmark(s) on ancestors                                                                                                                                                 |
+| `.AheadCount`       | `int`    | Number of changes between the working copy and the closest bookmark; fetched lazily when referenced, e.g. `{{ if gt .AheadCount 0 }}\u21e1{{ .AheadCount }}{{ end }}`            |
 
 `.ChangeIDRest` is not the remainder of the full canonical change ID and isn't independently usable as an identifier.
 

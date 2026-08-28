@@ -29,310 +29,66 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-type batteryQueryInformation struct {
-	BatteryTag       uint32
-	InformationLevel int32
-	AtRate           int32
+// systemPowerStatus mirrors the Win32 SYSTEM_POWER_STATUS struct. GetSystemPowerStatus
+// reads a value the OS already maintains, so unlike the battery miniclass IOCTLs
+// (IOCTL_BATTERY_QUERY_TAG/INFORMATION/STATUS) it never round-trips to the embedded
+// controller, which is what made the previous SetupAPI-based implementation slow.
+type systemPowerStatus struct {
+	ACLineStatus        byte
+	BatteryFlag         byte
+	BatteryLifePercent  byte
+	SystemStatusFlag    byte
+	BatteryLifeTime     uint32
+	BatteryFullLifeTime uint32
 }
 
-type batteryInformation struct {
-	Capabilities        uint32
-	Technology          uint8
-	Reserved            [3]uint8
-	Chemistry           [4]uint8
-	DesignedCapacity    uint32
-	FullChargedCapacity uint32
-	DefaultAlert1       uint32
-	DefaultAlert2       uint32
-	CriticalBias        uint32
-	CycleCount          uint32
-}
+const (
+	batteryFlagCharging  = 0x08
+	batteryFlagCritical  = 0x04
+	batteryFlagNoBattery = 0x80
+	batteryFlagUnknown   = 0xFF
 
-type batteryWaitStatus struct {
-	BatteryTag   uint32
-	Timeout      uint32
-	PowerState   uint32
-	LowCapacity  uint32
-	HighCapacity uint32
-}
+	batteryLifePercentUnknown = 0xFF
 
-type batteryStatus struct {
-	PowerState uint32
-	Capacity   uint32
-	Voltage    uint32
-	Rate       int32
-}
+	acLineOnline = 1
+)
 
-type guid struct {
-	Data1 uint32
-	Data2 uint16
-	Data3 uint16
-	Data4 [8]byte
-}
-
-type spDeviceInterfaceData struct {
-	cbSize             uint32
-	InterfaceClassGuid guid
-	Flags              uint32
-	Reserved           uint
-}
-
-var guidDeviceBattery = guid{
-	0x72631e54,
-	0x78A4,
-	0x11d0,
-	[8]byte{0xbc, 0xf7, 0x00, 0xaa, 0x00, 0xb7, 0xb3, 0x2a},
-}
-
-func uint32ToFloat64(num uint32) (float64, error) {
-	if num == 0xffffffff { // BATTERY_UNKNOWN_CAPACITY
-		return 0, errors.New("unknown value received")
-	}
-	return float64(num), nil
-}
-
-func setupDiSetup(proc *windows.LazyProc, args ...uintptr) (uintptr, error) {
-	r1, _, errno := syscall.SyscallN(proc.Addr(), args...)
-	if windows.Handle(r1) == windows.InvalidHandle {
-		if errno != 0 {
-			return 0, error(errno)
-		}
-		return 0, syscall.EINVAL
-	}
-	return r1, nil
-}
-
-func setupDiCall(proc *windows.LazyProc, args ...uintptr) syscall.Errno {
-	r1, _, errno := syscall.SyscallN(proc.Addr(), args...)
-	if r1 == 0 {
-		if errno != 0 {
-			return errno
-		}
-		return syscall.EINVAL
-	}
-	return 0
-}
-
-var setupapi = &windows.LazyDLL{Name: "setupapi.dll", System: true}
-var setupDiGetClassDevsW = setupapi.NewProc("SetupDiGetClassDevsW")
-var setupDiEnumDeviceInterfaces = setupapi.NewProc("SetupDiEnumDeviceInterfaces")
-var setupDiGetDeviceInterfaceDetailW = setupapi.NewProc("SetupDiGetDeviceInterfaceDetailW")
-var setupDiDestroyDeviceInfoList = setupapi.NewProc("SetupDiDestroyDeviceInfoList")
-
-func readState(powerState uint32) State {
-	switch {
-	case powerState&0x00000004 != 0:
-		return Charging
-	case powerState&0x00000008 != 0:
-		return Empty
-	case powerState&0x00000002 != 0:
-		return Discharging
-	case powerState&0x00000001 != 0:
-		return Full
-	default:
-		return Unknown
-	}
-}
-
-func systemGet(idx int) (*battery, error) {
-	hdev, err := setupDiSetup(
-		setupDiGetClassDevsW,
-		uintptr(unsafe.Pointer(&guidDeviceBattery)),
-		0,
-		0,
-		2|16, // DIGCF_PRESENT|DIGCF_DEVICEINTERFACE
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		_, _, _ = syscall.SyscallN(setupDiDestroyDeviceInfoList.Addr(), hdev)
-	}()
-
-	var did spDeviceInterfaceData
-	did.cbSize = uint32(unsafe.Sizeof(did))
-	errno := setupDiCall(
-		setupDiEnumDeviceInterfaces,
-		hdev,
-		0,
-		uintptr(unsafe.Pointer(&guidDeviceBattery)),
-		uintptr(idx),
-		uintptr(unsafe.Pointer(&did)),
-	)
-
-	if errno == 259 { // ERROR_NO_MORE_ITEMS
-		return nil, ErrNotFound
-	}
-
-	if errno != 0 {
-		return nil, errno
-	}
-
-	var cbRequired uint32
-	errno = setupDiCall(
-		setupDiGetDeviceInterfaceDetailW,
-		hdev,
-		uintptr(unsafe.Pointer(&did)),
-		0,
-		0,
-		uintptr(unsafe.Pointer(&cbRequired)),
-		0,
-	)
-
-	if errno != 0 && errno != 122 { // ERROR_INSUFFICIENT_BUFFER
-		return nil, errno
-	}
-
-	if cbRequired == 0 {
-		return nil, errors.New("no buffer information returned")
-	}
-
-	// The god damn struct with ANYSIZE_ARRAY of utf16 in it is crazy.
-	// So... let's emulate it with array of uint16 ;-D.
-	// Keep in mind that the first two elements are actually cbSize.
-	didd := make([]uint16, cbRequired/2)
-	cbSize := (*uint32)(unsafe.Pointer(&didd[0]))
-	if unsafe.Sizeof(uint(0)) == 8 {
-		*cbSize = 8
-	} else {
-		*cbSize = 6
-	}
-
-	errno = setupDiCall(
-		setupDiGetDeviceInterfaceDetailW,
-		hdev,
-		uintptr(unsafe.Pointer(&did)),
-		uintptr(unsafe.Pointer(&didd[0])),
-		uintptr(cbRequired),
-		uintptr(unsafe.Pointer(&cbRequired)),
-		0,
-	)
-
-	if errno != 0 {
-		return nil, errno
-	}
-
-	devicePath := &didd[2:][0]
-
-	handle, err := windows.CreateFile(
-		devicePath,
-		windows.GENERIC_READ|windows.GENERIC_WRITE,
-		windows.FILE_SHARE_READ|windows.FILE_SHARE_WRITE,
-		nil,
-		windows.OPEN_EXISTING,
-		windows.FILE_ATTRIBUTE_NORMAL,
-		0,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		_ = windows.CloseHandle(handle)
-	}()
-
-	var dwOut uint32
-
-	var dwWait uint32
-	var bqi batteryQueryInformation
-	err = windows.DeviceIoControl(
-		handle,
-		2703424, // IOCTL_BATTERY_QUERY_TAG
-		(*byte)(unsafe.Pointer(&dwWait)),
-		uint32(unsafe.Sizeof(dwWait)),
-		(*byte)(unsafe.Pointer(&bqi.BatteryTag)),
-		uint32(unsafe.Sizeof(bqi.BatteryTag)),
-		&dwOut,
-		nil,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if bqi.BatteryTag == 0 {
-		return nil, errors.New("battery tag not returned")
-	}
-
-	b := &battery{}
-
-	var bi batteryInformation
-	err = windows.DeviceIoControl(
-		handle,
-		2703428, // IOCTL_BATTERY_QUERY_INFORMATION
-		(*byte)(unsafe.Pointer(&bqi)),
-		uint32(unsafe.Sizeof(bqi)),
-		(*byte)(unsafe.Pointer(&bi)),
-		uint32(unsafe.Sizeof(bi)),
-		&dwOut,
-		nil,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	b.Full = float64(bi.FullChargedCapacity)
-
-	bws := batteryWaitStatus{BatteryTag: bqi.BatteryTag}
-
-	var bs batteryStatus
-	err = windows.DeviceIoControl(
-		handle,
-		2703436, // IOCTL_BATTERY_QUERY_STATUS
-		(*byte)(unsafe.Pointer(&bws)),
-		uint32(unsafe.Sizeof(bws)),
-		(*byte)(unsafe.Pointer(&bs)),
-		uint32(unsafe.Sizeof(bs)),
-		&dwOut,
-		nil,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if b.Current, err = uint32ToFloat64(bs.Capacity); err != nil {
-		return nil, err
-	}
-
-	if b.Voltage, err = uint32ToFloat64(bs.Voltage); err != nil {
-		return nil, err
-	}
-
-	b.Voltage /= 1000
-	b.State = readState(bs.PowerState)
-
-	return b, nil
-}
+var kernel32 = &windows.LazyDLL{Name: "kernel32.dll", System: true}
+var getSystemPowerStatus = kernel32.NewProc("GetSystemPowerStatus")
 
 func systemGetAll() ([]*battery, error) {
-	var batteries []*battery
-	var i int
-	var errs Errors
+	var sps systemPowerStatus
 
-	for i = 0; ; i++ {
-		b, err := systemGet(i)
-		if err == ErrNotFound {
-			break
+	r1, _, errno := syscall.SyscallN(getSystemPowerStatus.Addr(), uintptr(unsafe.Pointer(&sps)))
+	if r1 == 0 {
+		if errno != 0 {
+			return nil, error(errno)
 		}
-		if err != nil {
-			errs = append(errs, err)
-			continue
-		}
-		batteries = append(batteries, b)
+		return nil, syscall.EINVAL
 	}
 
-	if i == 0 {
+	if sps.BatteryFlag&batteryFlagNoBattery != 0 || sps.BatteryFlag == batteryFlagUnknown {
 		return nil, &NoBatteryError{}
 	}
 
-	if len(batteries) == 0 {
-		return nil, errs
+	if sps.BatteryLifePercent == batteryLifePercentUnknown {
+		return nil, errors.New("unknown value received")
 	}
 
-	return batteries, nil
+	b := &battery{Full: 100, Current: float64(min(sps.BatteryLifePercent, 100))}
+
+	switch {
+	case sps.BatteryFlag&batteryFlagCharging != 0:
+		b.State = Charging
+	case sps.BatteryLifePercent == 100 && sps.ACLineStatus == acLineOnline:
+		b.State = Full
+	case sps.ACLineStatus == acLineOnline:
+		b.State = NotCharging
+	case sps.BatteryFlag&batteryFlagCritical != 0:
+		b.State = Empty
+	default:
+		b.State = Discharging
+	}
+
+	return []*battery{b}, nil
 }

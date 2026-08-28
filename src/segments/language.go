@@ -112,6 +112,20 @@ var languageVersionFields = []string{
 	"URL", "Executable", "Expected", "Error", "Mismatch",
 }
 
+// versionFields is the version unit's complete field list: the shared
+// languageVersionFields plus whatever the concrete segment declared through
+// extraVersionFields.
+func (l *Language) versionFields() []string {
+	if len(l.extraVersionFields) == 0 {
+		return languageVersionFields
+	}
+
+	fields := make([]string, 0, len(languageVersionFields)+len(l.extraVersionFields))
+	fields = append(fields, languageVersionFields...)
+
+	return append(fields, l.extraVersionFields...)
+}
+
 type Language struct {
 	Base
 	tooling            map[string]*cmd
@@ -129,8 +143,19 @@ type Language struct {
 	commands           []*cmd
 	folders            []string
 	extensions         []string
-	contextEnvVars     []string
-	contextFiles       []string
+	// contextEnvVars declares the environment variables whose presence can
+	// make inContext return true, so environment/context display modes can
+	// gate on them instead of falling back to Always.
+	contextEnvVars []string
+	// contextFiles declares the cwd files inContext reads, same purpose.
+	contextFiles []string
+	// extraVersionFields declares additional template-visible fields this
+	// concrete segment populates inside the gated version fetch (custom
+	// getVersion closures and friends - gradle's JVMVersion, dotnet's
+	// Unsupported, python's pyenv Venv override). Set in the segment's
+	// spec/loadSpec; versionFields appends them to the shared list so
+	// referencing one of them alone still triggers the fetch.
+	extraVersionFields []string
 	FieldRefs
 	exitCode    int
 	homeEnabled bool
@@ -229,7 +254,7 @@ func (l *Language) Enabled() bool {
 
 	l.loadTooling()
 
-	if !enabled || !l.fetchUnitFailOpen(languageVersionFields...) {
+	if !enabled || !l.fetchUnitFailOpen(l.versionFields()...) {
 		return enabled
 	}
 

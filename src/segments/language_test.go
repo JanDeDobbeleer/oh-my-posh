@@ -1023,3 +1023,29 @@ func TestLanguageVersionFetchDerived(t *testing.T) {
 		env.AssertNotCalled(t, "RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"})
 	}
 }
+
+// TestLanguageVersionFieldsHook pins the extra-version-fields mechanism:
+// declared extras join the derivation, segments without any keep the shared
+// list, and composing never mutates it.
+func TestLanguageVersionFieldsHook(t *testing.T) {
+	shared := slices.Clone(languageVersionFields)
+
+	plain := &Language{}
+	assert.Equal(t, languageVersionFields, plain.versionFields(), "no hook keeps the shared list")
+
+	hooked := &Language{extraVersionFields: []string{"JVMVersion", "KotlinVersion"}}
+	fields := hooked.versionFields()
+
+	for _, field := range append(slices.Clone(languageVersionFields), "JVMVersion", "KotlinVersion") {
+		assert.Contains(t, fields, field)
+	}
+
+	assert.Equal(t, shared, languageVersionFields, "composing must not mutate the shared list")
+
+	// and the extras actually drive the fetch decision
+	hooked.SetReferencedFields(template.RefSet{Fields: []string{"JVMVersion"}, Analyzable: true})
+	assert.True(t, hooked.fetchUnitFailOpen(hooked.versionFields()...))
+
+	plain.SetReferencedFields(template.RefSet{Fields: []string{"JVMVersion"}, Analyzable: true})
+	assert.False(t, plain.fetchUnitFailOpen(plain.versionFields()...), "undeclared fields stay outside the unit")
+}

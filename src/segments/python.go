@@ -47,6 +47,11 @@ func (p *Python) Activation() Activation {
 func (p *Python) loadSpec() {
 	p.extensions = []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"}
 	p.folders = []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"}
+	// the pyenv getVersion overrides Venv with the pyenv-resolved virtualenv
+	// name, so a .Venv-only template must still trigger the fetch to keep
+	// that naming (a slight over-fetch for non-pyenv users, deliberately:
+	// wrong display costs more)
+	p.extraVersionFields = []string{"Venv"}
 
 	// None of this tooling is marked versionCacheable. "pyenv" goes through
 	// getVersion (see pyenvVersion) so the flag would be inert there anyway,

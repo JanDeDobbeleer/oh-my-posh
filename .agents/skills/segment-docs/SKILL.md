@@ -53,7 +53,6 @@ segments without appearing in a segment-specific `const` block:
 
 | Option name | Type | Default |
 | ----------- | ---- | ------- |
-| `fetch_version` | `boolean` | varies |
 | `always_enabled` | `boolean` | `false` |
 | `display_default` | `boolean` | `true` |
 | `display_error` | `boolean` | `true` |

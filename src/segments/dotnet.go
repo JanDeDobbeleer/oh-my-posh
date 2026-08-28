@@ -78,6 +78,8 @@ func (d *Dotnet) loadSpec() {
 		"*.fsproj",
 		"global.json",
 	}
+	// derived from the gated fetch's exit code (see Enabled)
+	d.extraVersionFields = []string{"Unsupported"}
 	d.tooling = map[string]*cmd{
 		// Not marked versionCacheable: `dotnet --version` reads global.json
 		// from the working directory (or a parent) and reports the pinned

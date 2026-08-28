@@ -60,6 +60,8 @@ func (g *Gradle) Activation() Activation {
 // that stays in Enabled().
 func (g *Gradle) loadSpec() {
 	g.extensions = []string{"*.gradle", "*.gradle.kts"}
+	// populated by parseExtraVersions inside the gated getVersion closure
+	g.extraVersionFields = []string{"KotlinVersion", "GroovyVersion", "AntVersion", "JVMVersion"}
 }
 
 func (g *Gradle) buildGetVersion(executable string) getVersion {

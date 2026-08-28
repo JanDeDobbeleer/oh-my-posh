@@ -139,3 +139,59 @@ func TestGradle(t *testing.T) {
 		})
 	}
 }
+
+// TestGradleDerivedExtraVersionFields pins the extra-version-fields hook:
+// gradle's Kotlin/Groovy/Ant/JVM versions are populated only inside the
+// gated version fetch, so referencing one of them alone must trigger it -
+// and a template referencing none of the unit's fields must not.
+func TestGradleDerivedExtraVersionFields(t *testing.T) {
+	cases := []struct {
+		Case        string
+		ExpectedJVM string
+		Referenced  []string
+		ExpectFetch bool
+	}{
+		{
+			Case:        "JVMVersion-only template fetches",
+			Referenced:  []string{"JVMVersion"},
+			ExpectedJVM: "21.0.9",
+			ExpectFetch: true,
+		},
+		{
+			Case:       "no version field referenced skips the command",
+			Referenced: []string{"Segment"},
+		},
+	}
+
+	for _, tc := range cases {
+		params := &mockedLanguageParams{
+			cmd:           gradle,
+			versionParam:  "--version",
+			versionOutput: gradleVersionOutput,
+			extension:     "*.gradle",
+		}
+		env, props := getMockedLanguageEnv(params)
+		env.On("HasFiles", "*.gradle.kts").Return(false)
+		env.On("Shell").Return("bash")
+		env.On("HasParentFilePath", "gradlew", false).Return(&runtime.FileInfo{}, errors.New("no match"))
+
+		if template.Cache == nil {
+			template.Cache = &cache.Template{}
+		}
+		template.Init(env, nil, nil)
+
+		g := &Gradle{}
+		g.Init(props, env)
+		g.SetReferencedFields(template.RefSet{Fields: tc.Referenced, Analyzable: true})
+
+		assert.True(t, g.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedJVM, g.JVMVersion, tc.Case)
+
+		if tc.ExpectFetch {
+			env.AssertCalled(t, "RunCommandWithEnv", gradle, []string(nil), []string{"--version"})
+			continue
+		}
+
+		env.AssertNotCalled(t, "RunCommandWithEnv", gradle, []string(nil), []string{"--version"})
+	}
+}

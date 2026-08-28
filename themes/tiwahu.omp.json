@@ -84,9 +84,6 @@
         {
           "background": "#63B132",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue768 ",
           "type": "clojure"
@@ -94,9 +91,6 @@
         {
           "background": "#000000",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue62f ",
           "type": "crystal"
@@ -104,9 +98,6 @@
         {
           "background": "#0175C2",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue798 ",
           "type": "dart"
@@ -114,9 +105,6 @@
         {
           "background": "#512bd4",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \udb82\udeae ",
           "type": "dotnet"
@@ -124,9 +112,6 @@
         {
           "background": "#4B275F",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue62d ",
           "type": "elixir"
@@ -134,9 +119,6 @@
         {
           "background": "#734F96",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \udb84\ude1a ",
           "type": "fortran"
@@ -144,9 +126,6 @@
         {
           "background": "#00add8",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue65e ",
           "type": "go"
@@ -154,9 +133,6 @@
         {
           "background": "#5e5086",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue61f ",
           "type": "haskell"
@@ -164,9 +140,6 @@
         {
           "background": "#ED8B00",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue738 ",
           "type": "java"
@@ -174,9 +147,6 @@
         {
           "background": "#9558B2",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue624 ",
           "type": "julia"
@@ -184,9 +154,6 @@
         {
           "background": "#7F52FF",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue634 ",
           "type": "kotlin"
@@ -194,9 +161,6 @@
         {
           "background": "#000080",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue620 ",
           "type": "lua"
@@ -204,9 +168,6 @@
         {
           "background": "#FF4F00",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ud83d\udd25 ",
           "type": "mojo"
@@ -214,9 +175,6 @@
         {
           "background": "#FFE953",
           "foreground": "#1a1a2e",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue841 ",
           "type": "nim"
@@ -224,9 +182,6 @@
         {
           "background": "#339933",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue718 ",
           "type": "node"
@@ -234,9 +189,6 @@
         {
           "background": "#EC6813",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue67a ",
           "type": "ocaml"
@@ -244,9 +196,6 @@
         {
           "background": "#39457E",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue769 ",
           "type": "perl"
@@ -254,9 +203,6 @@
         {
           "background": "#777BB4",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue73d ",
           "type": "php"
@@ -264,9 +210,6 @@
         {
           "background": "#306998",
           "foreground": "#ffd43b",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue235 ",
           "type": "python"
@@ -274,9 +217,6 @@
         {
           "background": "#2266B8",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue68a ",
           "type": "r"
@@ -284,9 +224,6 @@
         {
           "background": "#CC342D",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue791 ",
           "type": "ruby"
@@ -294,9 +231,6 @@
         {
           "background": "#1e2650",
           "foreground": "#d34516",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue7a8 ",
           "type": "rust"
@@ -304,9 +238,6 @@
         {
           "background": "#F05138",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue755 ",
           "type": "swift"
@@ -314,9 +245,6 @@
         {
           "background": "#5D87BF",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue6ac ",
           "type": "v"
@@ -324,9 +252,6 @@
         {
           "background": "#7239B3",
           "foreground": "#ffffff",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue69e ",
           "type": "vala"
@@ -334,9 +259,6 @@
         {
           "background": "#F7A41D",
           "foreground": "#1a1a2e",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": " \ue6a9 ",
           "type": "zig"

@@ -34,9 +34,6 @@
         },
         {
           "foreground": "#98C379",
-          "options": {
-            "fetch_version": true
-          },
           "style": "plain",
           "template": "<#ffffff>\u25e6</> \u2622{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"

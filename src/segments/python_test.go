@@ -121,12 +121,12 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("PathSeparator").Return("")
 		env.On("ResolveSymlink", testify_.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 
-		props[options.FetchVersion] = tc.FetchVersion
 		props[UsePythonVersionFile] = true
 		props[DisplayMode] = DisplayModeAlways
 
 		python := &Python{}
 		python.Init(props, env)
+		setVersionRefs(python, tc.FetchVersion)
 		assert.Equal(t, !tc.ExpectedDisabled, python.Enabled(), tc.Case)
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, python), tc.Case)
 	}

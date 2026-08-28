@@ -38,9 +38,6 @@
           "background": "#f78fb3",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "options": {
-            "fetch_version": false
-          },
           "style": "powerline",
           "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
           "type": "python"

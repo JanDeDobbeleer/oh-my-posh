@@ -45,9 +45,7 @@ func TestBun(t *testing.T) {
 		}
 		template.Init(env, nil, nil)
 
-		props := options.Map{
-			options.FetchVersion: true,
-		}
+		props := options.Map{}
 
 		b := &Bun{}
 		b.Init(props, env)

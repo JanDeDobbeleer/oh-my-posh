@@ -143,10 +143,9 @@ func TestConfiguredLanguageRubyPreset(t *testing.T) {
 		env.On("HasFiles", "Rakefile").Return(tc.HasRakeFile)
 		env.On("HasFiles", "Gemfile").Return(tc.HasGemFile)
 
-		props[options.FetchVersion] = tc.FetchVersion
-
 		ruby := NewLanguage("ruby")
 		ruby.Init(props, env)
+		setVersionRefs(ruby, tc.FetchVersion)
 
 		assert.True(t, ruby.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, ruby.Template(), ruby), tc.Case)
@@ -740,9 +739,8 @@ func TestConfiguredLanguageCustomTools(t *testing.T) {
 	env.On("Home").Return("/usr/home")
 
 	props := options.Map{
-		options.FetchVersion: true,
-		LanguageName:         "mylang",
-		LanguageExtensions:   []string{"*.myl"},
+		LanguageName:       "mylang",
+		LanguageExtensions: []string{"*.myl"},
 		Tools: []any{
 			map[string]any{
 				"name":       "mytool",

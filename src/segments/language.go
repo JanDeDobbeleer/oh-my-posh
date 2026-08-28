@@ -102,33 +102,39 @@ func (c *cmd) parse(versionInfo string) (*Version, error) {
 	return version, nil
 }
 
+// languageVersionFields lists what the version fetch populates: the
+// embedded Version struct's promoted fields (plus the embedded field name
+// itself), the fetch-path errors, and the version-file mismatch state.
+// setVersion and the mismatch check only run when one of these is
+// referenced; see fetchUnitFailOpen for the fail-open polarity.
+var languageVersionFields = []string{
+	"Version", "Full", "Major", "Minor", "Patch", "Prerelease", "BuildMetadata",
+	"URL", "Executable", "Expected", "Error", "Mismatch",
+}
+
 type Language struct {
 	Base
-
+	tooling            map[string]*cmd
 	projectRoot        *runtime.FileInfo
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
 	Version
-	displayMode        string
+	name               string
 	Error              string
 	versionURLTemplate string
-	name               string
-	commands           []*cmd
-	tooling            map[string]*cmd
-	defaultTooling     []string
+	displayMode        string
 	projectFiles       []string
+	defaultTooling     []string
+	commands           []*cmd
 	folders            []string
 	extensions         []string
-	// contextEnvVars declares the environment variables whose presence can
-	// make inContext return true, so environment/context display modes can
-	// gate on them instead of falling back to Always.
-	contextEnvVars []string
-	// contextFiles declares the cwd files inContext reads, same purpose.
-	contextFiles []string
-	exitCode     int
-	homeEnabled  bool
-	Mismatch     bool
+	contextEnvVars     []string
+	contextFiles       []string
+	FieldRefs
+	exitCode    int
+	homeEnabled bool
+	Mismatch    bool
 }
 
 const (
@@ -223,7 +229,7 @@ func (l *Language) Enabled() bool {
 
 	l.loadTooling()
 
-	if !enabled || !l.options.Bool(options.FetchVersion, true) {
+	if !enabled || !l.fetchUnitFailOpen(languageVersionFields...) {
 		return enabled
 	}
 

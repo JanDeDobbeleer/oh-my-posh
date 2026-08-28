@@ -16,7 +16,6 @@
         {
           "foreground": "yellow",
           "options": {
-            "fetch_version": false,
             "fetch_virtual_env": true
           },
           "style": "plain",

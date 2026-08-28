@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -35,6 +36,19 @@ type languageArgs struct {
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
 	return slices.Contains(list, value)
+}
+
+// setVersionRefs seeds the derived version-fetch decision for a writer in
+// tests: fetch mirrors an analyzable template referencing .Full, !fetch an
+// analyzable template referencing no version field. Tests that seed nothing
+// exercise the fail-open default (never-delivered set -> fetch).
+func setVersionRefs(consumer interface{ SetReferencedFields(template.RefSet) }, fetch bool) {
+	refs := template.RefSet{Analyzable: true}
+	if fetch {
+		refs.Fields = []string{"Full"}
+	}
+
+	consumer.SetReferencedFields(refs)
 }
 
 func bootStrapLanguageTest(args *languageArgs) *Language {
@@ -90,9 +104,6 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
-	props := options.Map{
-		options.FetchVersion: false,
-	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -102,9 +113,10 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testin
 		},
 		extensions:        []string{uni},
 		enabledExtensions: []string{uni},
-		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
+	// no version field referenced -> the version fetch is skipped
+	setVersionRefs(lang, false)
 	assert.True(t, lang.Enabled(), "unicorn is not available")
 }
 
@@ -273,9 +285,6 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
-	props := options.Map{
-		options.FetchVersion: false,
-	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -288,36 +297,32 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
+	// no version field referenced -> the version fetch is skipped
+	setVersionRefs(lang, false)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full, "unicorn is available and uni and corn files are found")
 	assert.Equal(t, "", lang.Executable, "no version was found")
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
-	props := options.Map{
-		options.FetchVersion: false,
-	}
 	args := &languageArgs{
 		commands:          []*cmd{},
 		extensions:        []string{uni, corn},
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		options:           props,
 	}
 	lang := bootStrapLanguageTest(args)
+	setVersionRefs(lang, false)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full, "unicorn is unavailable and uni and corn files are found")
 	assert.Equal(t, "", lang.Executable, "no executable was found")
 }
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
-	props := options.Map{
-		options.FetchVersion: true,
-	}
+	props := options.Map{}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -590,9 +595,7 @@ func TestLanguageTooling(t *testing.T) {
 			env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return(tc.ToolVersion, nil)
 		}
 
-		props := options.Map{
-			options.FetchVersion: true,
-		}
+		props := options.Map{}
 		if tc.Tooling != nil {
 			props[Tooling] = tc.Tooling
 		}
@@ -654,9 +657,9 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, opti
 	// via mockVersionCacheable below instead.
 	env.On("Flags").Return(&runtime.Flags{}).Maybe()
 
-	props := options.Map{
-		options.FetchVersion: true,
-	}
+	// fetch_version no longer exists: the fail-open default (no refs
+	// delivered) fetches, matching the option's old default of true
+	props := options.Map{}
 
 	return env, props
 }
@@ -942,5 +945,81 @@ func TestVersionCacheWrapperOptOuts(t *testing.T) {
 	for _, tc := range cases {
 		require.NotNil(t, tc.Command, tc.Case)
 		assert.Equal(t, tc.Cacheable, tc.Command.versionCacheable, tc.Case)
+	}
+}
+
+// TestLanguageVersionFetchDerived pins the derived version fetch: the unit
+// runs iff a version field is referenced, and the unanalyzable/undelivered
+// fallback fails OPEN, matching the removed fetch_version option's default
+// of true.
+func TestLanguageVersionFetchDerived(t *testing.T) {
+	cases := []struct {
+		Refs            *template.RefSet
+		Case            string
+		ExpectedVersion string
+		ExpectFetch     bool
+	}{
+		{
+			Case:            "referenced field fetches",
+			Refs:            &template.RefSet{Fields: []string{"Full"}, Analyzable: true},
+			ExpectedVersion: universion,
+			ExpectFetch:     true,
+		},
+		{
+			Case:            "embedded Version reference fetches",
+			Refs:            &template.RefSet{Fields: []string{"Version"}, Analyzable: true},
+			ExpectedVersion: universion,
+			ExpectFetch:     true,
+		},
+		{
+			Case: "unreferenced analyzable skips the command",
+			Refs: &template.RefSet{Fields: []string{"Venv"}, Analyzable: true},
+		},
+		{
+			Case:            "unanalyzable fails open",
+			Refs:            &template.RefSet{Analyzable: false},
+			ExpectedVersion: universion,
+			ExpectFetch:     true,
+		},
+		{
+			Case:            "never-delivered set fails open",
+			ExpectedVersion: universion,
+			ExpectFetch:     true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("HasCommand", "unicorn").Return(true)
+		env.On("RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"}).Return(universion, nil)
+		env.On("HasFiles", uni).Return(true)
+		env.On("Pwd").Return("/usr/home/project")
+		env.On("Home").Return("/usr/home")
+
+		lang := &Language{
+			extensions: []string{uni},
+			commands: []*cmd{
+				{
+					executable: "unicorn",
+					args:       []string{"--version"},
+					regex:      "(?P<version>.*)",
+				},
+			},
+		}
+		lang.Init(options.Map{}, env)
+
+		if tc.Refs != nil {
+			lang.SetReferencedFields(*tc.Refs)
+		}
+
+		assert.True(t, lang.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedVersion, lang.Full, tc.Case)
+
+		if tc.ExpectFetch {
+			env.AssertCalled(t, "RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"})
+			continue
+		}
+
+		env.AssertNotCalled(t, "RunCommandWithEnv", "unicorn", []string(nil), []string{"--version"})
 	}
 }

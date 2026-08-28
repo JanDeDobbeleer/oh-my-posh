@@ -81,9 +81,6 @@
         },
         {
           "foreground": "#81ff91",
-          "options": {
-            "fetch_version": true
-          },
           "style": "powerline",
           "template": "<#cc7eda> \u007C </><#7eb8da>\ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
           "type": "node"

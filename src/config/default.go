@@ -133,9 +133,6 @@ func Default(configError error) *Config {
 						Foreground: paletteBlue,
 						Background: backgroundTransparent,
 						Template:   "\ue626 ",
-						Options: options.Map{
-							options.FetchVersion: false,
-						},
 					},
 					{
 						Type:       PYTHON,
@@ -144,9 +141,8 @@ func Default(configError error) *Config {
 						Background: backgroundTransparent,
 						Template:   "\ue235 ",
 						Options: options.Map{
-							options.FetchVersion: false,
-							displayMode:          "files",
-							fetchVirtualEnv:      false,
+							displayMode:     "files",
+							fetchVirtualEnv: false,
 						},
 					},
 					{

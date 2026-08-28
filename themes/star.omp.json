@@ -27,9 +27,6 @@
         },
         {
           "foreground": "#98C379",
-          "options": {
-            "fetch_version": true
-          },
           "style": "plain",
           "template": "<#ffffff>via</> \ue781 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"

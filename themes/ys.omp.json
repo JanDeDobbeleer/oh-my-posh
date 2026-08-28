@@ -6,9 +6,6 @@
       "segments": [
         {
           "foreground": "white",
-          "options": {
-            "fetch_version": false
-          },
           "style": "plain",
           "template": "({{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }})",
           "type": "python"

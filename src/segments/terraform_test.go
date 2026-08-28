@@ -6,6 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -207,16 +208,22 @@ func TestTerraform(t *testing.T) {
 		}
 
 		props := options.Map{
-			options.FetchVersion: tc.FetchVersion,
-			Command:              cmd,
+			Command: cmd,
 		}
 
 		tf := &Terraform{}
 		tf.Init(props, env)
 
-		template := tc.Template
-		if template == "" {
-			template = tf.Template()
+		// the version fetch derives from a .Version reference now
+		refs := template.RefSet{Analyzable: true}
+		if tc.FetchVersion {
+			refs.Fields = []string{"Version"}
+		}
+		tf.SetReferencedFields(refs)
+
+		tmpl := tc.Template
+		if tmpl == "" {
+			tmpl = tf.Template()
 		}
 		// Enabled must stay standalone-correct (Force and pinned data bypass
 		// the gate), and the gate composition must agree with it
@@ -224,7 +231,40 @@ func TestTerraform(t *testing.T) {
 		activation := tf.Activation()
 		enabled := activation.Active(env) && tf.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
-		var got = renderTemplate(env, template, tf)
+		var got = renderTemplate(env, tmpl, tf)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
+	}
+}
+
+// TestTerraformActivationDerivesVersionConditions pins the activation gate's
+// version-file conditions to the derived fetch: the tenv/version-file globs
+// join only when a template references .Version (refs arrive right after
+// Init, before the engine consults the gate).
+func TestTerraformActivationDerivesVersionConditions(t *testing.T) {
+	cases := []struct {
+		Case          string
+		Referenced    []string
+		ExpectedGlobs []string
+	}{
+		{
+			Case:          "version referenced widens the gate",
+			Referenced:    []string{"Version"},
+			ExpectedGlobs: []string{".tf", ".tfplan", ".tfstate", "versions.tf", "main.tf", "terraform.tfstate", ".terraform-version"},
+		},
+		{
+			Case:          "workspace-only template keeps the base gate",
+			Referenced:    []string{"WorkspaceName"},
+			ExpectedGlobs: []string{".tf", ".tfplan", ".tfstate"},
+		},
+	}
+
+	for _, tc := range cases {
+		tf := &Terraform{}
+		tf.Init(options.Map{}, new(mock.Environment))
+		tf.SetReferencedFields(template.RefSet{Fields: tc.Referenced, Analyzable: true})
+
+		activation := tf.Activation()
+		assert.Equal(t, tc.ExpectedGlobs, activation.FileGlobs, tc.Case)
+		assert.Equal(t, []string{".terraform"}, activation.Folders, tc.Case)
 	}
 }

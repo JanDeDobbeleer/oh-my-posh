@@ -32,9 +32,9 @@ type CommitInfo struct {
 	Timestamp time.Time
 	Author    Ident
 	Committer Ident
-	Refs      CommitRefs
 	Subject   string
 	Hash      string
+	Refs      CommitRefs
 }
 
 // LoadCommit reads the commit hashHex points at, plus every local branch,

@@ -2268,6 +2268,209 @@ func realGitPath(t *testing.T, dir, arg string) string {
 	return filepath.FromSlash(strings.TrimSpace(out))
 }
 
+// TestCommitNative builds a real repo whose HEAD commit carries a local
+// branch, two tags (lightweight and annotated), and a remote-tracking
+// branch, then asserts Commit()'s native path (gitstatus.LoadCommit) reports
+// the exact same fields as the existing exec+`git log --decorate=full` path
+// for that repo.
+func TestCommitNative(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	remote := t.TempDir()
+	runRealGit(t, remote, "init", "-q", "--bare", "-b", "main")
+
+	dir := t.TempDir()
+	runRealGit(t, dir, "init", "-q", "-b", "main", ".")
+	runRealGit(t, dir, "config", "user.email", "test@example.com")
+	runRealGit(t, dir, "config", "user.name", "Test")
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), []byte("a\n"), 0o644))
+	runRealGit(t, dir, "add", ".")
+	runRealGit(t, dir, "commit", "-q", "-m", "feat: a commit with decoration")
+	runRealGit(t, dir, "tag", "v1.0")
+	runRealGit(t, dir, "tag", "-a", "v1.1", "-m", "annotated")
+	runRealGit(t, dir, "remote", "add", "origin", remote)
+	runRealGit(t, dir, "push", "-q", "-u", "origin", "main")
+
+	worktreeGitDir := realGitPath(t, dir, "--git-dir")
+	commonGitDir := realGitPath(t, dir, "--git-common-dir")
+	repoRoot := realGitPath(t, dir, "--show-toplevel")
+	hash := strings.TrimSpace(runRealGit(t, dir, "rev-parse", "HEAD"))
+
+	pretty := "format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H%nrf:%D"
+	commitBody := runRealGit(t, dir, "log", "-1", "--pretty="+pretty, "--decorate=full")
+
+	env := new(mock.Environment)
+	env.MockGitCommand(repoRoot, commitBody, "log", "-1", "--pretty="+pretty, "--decorate=full")
+
+	gExec := &Git{command: GITCOMMAND, repoRootDir: repoRoot, Hash: hash}
+	gExec.Init(options.Map{}, env)
+	wantCommit := gExec.Commit()
+
+	gNative := &Git{
+		mainSCMDir:  worktreeGitDir,
+		scmDir:      commonGitDir,
+		repoRootDir: repoRoot,
+		Hash:        hash,
+	}
+	gNative.Init(options.Map{NativeStatus: true}, new(mock.Environment))
+	gotCommit := gNative.Commit()
+
+	// sanity: make sure this scenario actually exercises decoration before
+	// comparing, so a broken fixture (or a silent fallback) can't pass by
+	// both sides being all-empty.
+	require.NotEmpty(t, gotCommit.Refs.Tags)
+	require.NotEmpty(t, gotCommit.Refs.Heads)
+	require.NotEmpty(t, gotCommit.Refs.Remotes)
+
+	assert.Equal(t, wantCommit.Author, gotCommit.Author)
+	assert.Equal(t, wantCommit.Committer, gotCommit.Committer)
+	assert.Equal(t, wantCommit.Subject, gotCommit.Subject)
+	assert.Equal(t, wantCommit.Timestamp, gotCommit.Timestamp)
+	assert.Equal(t, wantCommit.Sha, gotCommit.Sha)
+	assert.ElementsMatch(t, wantCommit.Refs.Tags, gotCommit.Refs.Tags)
+	assert.ElementsMatch(t, wantCommit.Refs.Heads, gotCommit.Refs.Heads)
+	assert.ElementsMatch(t, wantCommit.Refs.Remotes, gotCommit.Refs.Remotes)
+}
+
+// TestSetUserNative asserts setUser() reads user.name/user.email from the
+// repo-local config natively, without ever spawning git: the bare
+// mock.Environment has no RunCommand expectations configured, so any
+// accidental exec fallback fails the test outright.
+func TestSetUserNative(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	dir := t.TempDir()
+	runRealGit(t, dir, "init", "-q", "-b", "main", ".")
+	runRealGit(t, dir, "config", "user.email", "local@example.com")
+	runRealGit(t, dir, "config", "user.name", "Local User")
+
+	gitDir := realGitPath(t, dir, "--git-dir")
+	configData, err := os.ReadFile(filepath.Join(gitDir, "config"))
+	require.NoError(t, err)
+
+	// A bare mock.Environment would panic on the FileContent() call
+	// getGitConfig() makes (getGitConfig always reads through the mocked
+	// env, unlike the gitstatus package). Stubbing only FileContent, with
+	// no RunCommand expectation at all, proves setUser reads the local
+	// config without ever spawning git.
+	env := new(mock.Environment)
+	env.On("FileContent", gitDir+"/config").Return(string(configData))
+
+	g := &Git{mainSCMDir: gitDir}
+	g.Init(options.Map{}, env)
+	g.User = &User{}
+
+	g.setUser()
+
+	assert.Equal(t, "Local User", g.User.Name)
+	assert.Equal(t, "local@example.com", g.User.Email)
+}
+
+// TestSetPushStatusNativeReal builds a real repo pushed to a bare remote,
+// then diverges the local branch ahead of it, and asserts
+// setPushStatusNative computes the same PushAhead/PushBehind counts as the
+// existing `git rev-list --count` exec path for that exact repo.
+func TestSetPushStatusNativeReal(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	remote := t.TempDir()
+	runRealGit(t, remote, "init", "-q", "--bare", "-b", "main")
+
+	dir := t.TempDir()
+	runRealGit(t, dir, "init", "-q", "-b", "main", ".")
+	runRealGit(t, dir, "config", "user.email", "test@example.com")
+	runRealGit(t, dir, "config", "user.name", "Test")
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), []byte("a\n"), 0o644))
+	runRealGit(t, dir, "add", ".")
+	runRealGit(t, dir, "commit", "-q", "-m", "base")
+	runRealGit(t, dir, "remote", "add", "origin", remote)
+	runRealGit(t, dir, "push", "-q", "-u", "origin", "main")
+
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "b.txt"), []byte("b\n"), 0o644))
+	runRealGit(t, dir, "add", ".")
+	runRealGit(t, dir, "commit", "-q", "-m", "local only")
+
+	commonGitDir := realGitPath(t, dir, "--git-common-dir")
+	hash := strings.TrimSpace(runRealGit(t, dir, "rev-parse", "HEAD"))
+	wantAhead := strings.TrimSpace(runRealGit(t, dir, "rev-list", "--count", "origin/main..HEAD"))
+	wantBehind := strings.TrimSpace(runRealGit(t, dir, "rev-list", "--count", "HEAD..origin/main"))
+
+	g := &Git{scmDir: commonGitDir, Hash: hash}
+	g.Init(options.Map{}, new(mock.Environment))
+
+	ok := g.setPushStatusNative("origin/main")
+
+	require.True(t, ok)
+	assert.Equal(t, wantAhead, strconv.Itoa(g.PushAhead))
+	assert.Equal(t, wantBehind, strconv.Itoa(g.PushBehind))
+}
+
+// TestResolveDetachedHEADNative checks out a tag (a detached HEAD) in a real
+// repo and asserts the native resolveDetachedHash/resolveExactTag path
+// reports the same hash and tag name as the existing exec path for that
+// exact repo state.
+func TestResolveDetachedHEADNative(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	dir := t.TempDir()
+	runRealGit(t, dir, "init", "-q", "-b", "main", ".")
+	runRealGit(t, dir, "config", "user.email", "test@example.com")
+	runRealGit(t, dir, "config", "user.name", "Test")
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), []byte("a\n"), 0o644))
+	runRealGit(t, dir, "add", ".")
+	runRealGit(t, dir, "commit", "-q", "-m", "base")
+	runRealGit(t, dir, "tag", "v1.0")
+	runRealGit(t, dir, "checkout", "-q", "v1.0")
+
+	worktreeGitDir := realGitPath(t, dir, "--git-dir")
+	commonGitDir := realGitPath(t, dir, "--git-common-dir")
+	hash := strings.TrimSpace(runRealGit(t, dir, "rev-parse", "HEAD"))
+
+	env := new(mock.Environment)
+	env.MockGitCommand(worktreeGitDir, hash, "rev-parse", "HEAD")
+	env.MockGitCommand(worktreeGitDir, "v1.0", "describe", "--tags", "--exact-match")
+
+	gExec := &Git{command: GITCOMMAND, repoRootDir: worktreeGitDir}
+	gExec.Init(options.Map{}, env)
+	gExec.resolveDetachedHEAD()
+
+	gNative := &Git{mainSCMDir: worktreeGitDir, scmDir: commonGitDir}
+	gNative.Init(options.Map{NativeStatus: true}, new(mock.Environment))
+	gNative.resolveDetachedHEAD()
+
+	assert.Equal(t, hash, gNative.Hash)
+	assert.Equal(t, gExec.Ref, gNative.Ref)
+	assert.Equal(t, gExec.HEAD, gNative.HEAD)
+}
+
 func TestGitFetchUnits(t *testing.T) {
 	cases := []struct {
 		Case       string

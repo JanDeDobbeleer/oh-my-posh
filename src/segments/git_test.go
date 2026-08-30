@@ -2368,7 +2368,7 @@ func TestSetUserNative(t *testing.T) {
 	// no RunCommand expectation at all, proves setUser reads the local
 	// config without ever spawning git.
 	env := new(mock.Environment)
-	env.On("FileContent", filepath.Join(gitDir, "config")).Return(string(configData))
+	env.On("FileContent", gitDir+"/config").Return(string(configData))
 
 	g := &Git{mainSCMDir: gitDir}
 	g.Init(options.Map{}, env)

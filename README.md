@@ -33,7 +33,7 @@ This repo was made with love using GitKraken.
           <img alt="CodeRabbit" height="44" src="https://victorious-bubble-f69a016683.media.strapiapp.com/Orange_Typemark_43bf516c9d.svg" />
     </picture>
 </a>
-<!-- markdownlint-enable no-inline-html line-length -->J
+<!-- markdownlint-enable no-inline-html line-length -->
 
 [Want to become a sponsor?][sponsor-link]
 

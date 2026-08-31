@@ -8,6 +8,11 @@ sidebar_label: GCP
 
 Display the currently active [GCP][gcp] project, region and account
 
+When a template references one of the auth properties, the segment also runs
+`gcloud config config-helper --format=json` to determine the current auth
+status. The auth check is on-demand and does not run when those properties are
+unused.
+
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";
@@ -41,6 +46,10 @@ import Config from "@site/src/components/Config.js";
 | `.Account`      | `string` | the currently active account                                             |
 | `.Region`       | `string` | default region for the active context                                    |
 | `.ActiveConfig` | `string` | the active configuration name                                            |
+| `.Authorized`   | `bool`   | true when `gcloud` can currently provide an access token                 |
+| `.AuthStatus`   | `string` | the current auth status: `authorized`, `unauthorized`, or `unknown`      |
+| `.TokenExpiry`  | `string` | the current access token expiry reported by `gcloud`                     |
+| `.AuthError`    | `string` | the auth probe error when the status cannot be refreshed cleanly         |
 | `.Error`        | `string` | contains any error messages generated when trying to load the GCP config |
 
 [templates]: /docs/configuration/templates

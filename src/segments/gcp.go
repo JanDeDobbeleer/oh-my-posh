@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"encoding/json"
 	"errors"
 	"path"
 
@@ -12,15 +13,33 @@ import (
 
 const (
 	GCPNOACTIVECONFIG = "NO ACTIVE CONFIG FOUND"
+
+	gcpAuthStatusAuthorized   = "authorized"
+	gcpAuthStatusUnauthorized = "unauthorized"
+	gcpAuthStatusUnknown      = "unknown"
+	gcpCommand                = "gcloud"
 )
+
+var gcpAuthFields = []string{"Authorized", "AuthStatus", "TokenExpiry", "AuthError"}
 
 type Gcp struct {
 	Base
-
 	Account      string
 	Project      string
 	Region       string
 	ActiveConfig string
+	TokenExpiry  string
+	AuthError    string
+	AuthStatus   string
+	FieldRefs
+	Authorized bool
+}
+
+type gcpConfigHelper struct {
+	Credential struct {
+		AccessToken string `json:"access_token"`
+		TokenExpiry string `json:"token_expiry"`
+	} `json:"credential"`
 }
 
 func (g *Gcp) Template() string {
@@ -54,6 +73,11 @@ func (g *Gcp) Enabled() bool {
 	g.Account = data.Section("core").Key("account").String()
 	g.Region = data.Section("compute").Key("region").String()
 
+	if !g.fetchUnit(gcpAuthFields...) {
+		return true
+	}
+
+	g.loadAuthStatus()
 	return true
 }
 
@@ -83,4 +107,42 @@ func (g *Gcp) getConfigDirectory() string {
 	}
 
 	return path.Join(g.env.Home(), ".config", "gcloud")
+}
+
+func (g *Gcp) loadAuthStatus() {
+	g.AuthStatus = gcpAuthStatusUnknown
+
+	if !g.env.HasCommand(gcpCommand) {
+		return
+	}
+
+	output, err := g.env.RunCommand(gcpCommand, "config", "config-helper", "--format=json")
+	if err != nil {
+		g.AuthStatus = gcpAuthStatusUnauthorized
+		g.AuthError = err.Error()
+		return
+	}
+
+	if output == "" {
+		g.AuthStatus = gcpAuthStatusUnauthorized
+		g.AuthError = "empty auth response"
+		return
+	}
+
+	var helper gcpConfigHelper
+	err = json.Unmarshal([]byte(output), &helper)
+	if err != nil {
+		log.Error(err)
+		g.AuthError = err.Error()
+		return
+	}
+
+	if helper.Credential.AccessToken == "" {
+		g.AuthStatus = gcpAuthStatusUnauthorized
+		return
+	}
+
+	g.Authorized = true
+	g.AuthStatus = gcpAuthStatusAuthorized
+	g.TokenExpiry = helper.Credential.TokenExpiry
 }

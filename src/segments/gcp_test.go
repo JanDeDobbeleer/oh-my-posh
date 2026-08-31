@@ -1,24 +1,36 @@
 package segments
 
 import (
+	"errors"
 	"path"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGcpSegment(t *testing.T) {
 	cases := []struct {
-		Case            string
-		CfgData         string
-		ActiveConfig    string
-		EnvActiveConfig string
-		ExpectedString  string
-		ExpectedEnabled bool
+		ConfigHelperError   error
+		ExpectedAuthError   string
+		CfgData             string
+		ActiveConfig        string
+		EnvActiveConfig     string
+		Case                string
+		RenderTemplate      string
+		ConfigHelperOutput  string
+		ExpectedString      string
+		ExpectedTokenExpiry string
+		ExpectedAuthStatus  string
+		ReferencedFields    []string
+		ExpectedAuthorized  bool
+		ExpectedEnabled     bool
+		ExpectAuthProbe     bool
+		HasGcloud           bool
 	}{
 		{
 			Case:            "happy path",
@@ -33,6 +45,114 @@ func TestGcpSegment(t *testing.T) {
 			region = europe-test1
 			`,
 			ExpectedString: "test-test-test :: europe-test1 :: test@example.com",
+		},
+		{
+			Case:            "does not fetch auth without auth references",
+			ExpectedEnabled: true,
+			ActiveConfig:    "production",
+			CfgData: `
+			[core]
+			account = test@example.com
+			project = test-test-test
+
+			[compute]
+			region = europe-test1
+			`,
+			ReferencedFields:   []string{"Project"},
+			ExpectedAuthStatus: "",
+		},
+		{
+			Case:            "fetches authorized status when referenced",
+			ExpectedEnabled: true,
+			ActiveConfig:    "production",
+			CfgData: `
+			[core]
+			account = test@example.com
+			project = test-test-test
+
+			[compute]
+			region = europe-test1
+			`,
+			ReferencedFields:    []string{"Authorized"},
+			RenderTemplate:      "{{.Authorized}} :: {{.AuthStatus}} :: {{.TokenExpiry}}",
+			ExpectAuthProbe:     true,
+			HasGcloud:           true,
+			ConfigHelperOutput:  `{"credential":{"access_token":"token","token_expiry":"2026-08-31T16:00:00Z"}}`,
+			ExpectedString:      "true :: authorized :: 2026-08-31T16:00:00Z",
+			ExpectedAuthStatus:  "authorized",
+			ExpectedAuthorized:  true,
+			ExpectedTokenExpiry: "2026-08-31T16:00:00Z",
+		},
+		{
+			Case:            "fetches unauthorized status when config helper fails",
+			ExpectedEnabled: true,
+			ActiveConfig:    "production",
+			CfgData: `
+			[core]
+			account = test@example.com
+			project = test-test-test
+
+			[compute]
+			region = europe-test1
+			`,
+			ReferencedFields:   []string{"AuthStatus"},
+			ExpectAuthProbe:    true,
+			HasGcloud:          true,
+			ConfigHelperError:  errors.New("reauthentication required"),
+			ExpectedAuthStatus: "unauthorized",
+			ExpectedAuthError:  "reauthentication required",
+		},
+		{
+			Case:            "fetches unknown status when gcloud is unavailable",
+			ExpectedEnabled: true,
+			ActiveConfig:    "production",
+			CfgData: `
+			[core]
+			account = test@example.com
+			project = test-test-test
+
+			[compute]
+			region = europe-test1
+			`,
+			ReferencedFields:   []string{"AuthStatus"},
+			ExpectAuthProbe:    true,
+			ExpectedAuthStatus: "unknown",
+		},
+		{
+			Case:            "fetches unauthorized status when no access token is returned",
+			ExpectedEnabled: true,
+			ActiveConfig:    "production",
+			CfgData: `
+			[core]
+			account = test@example.com
+			project = test-test-test
+
+			[compute]
+			region = europe-test1
+			`,
+			ReferencedFields:   []string{"TokenExpiry"},
+			ExpectAuthProbe:    true,
+			HasGcloud:          true,
+			ConfigHelperOutput: `{"credential":{}}`,
+			ExpectedAuthStatus: "unauthorized",
+		},
+		{
+			Case:            "fetches unauthorized status when config helper returns empty output",
+			ExpectedEnabled: true,
+			ActiveConfig:    "production",
+			CfgData: `
+			[core]
+			account = test@example.com
+			project = test-test-test
+
+			[compute]
+			region = europe-test1
+			`,
+			ReferencedFields:   []string{"AuthError"},
+			ExpectAuthProbe:    true,
+			HasGcloud:          true,
+			ExpectedAuthStatus: "unauthorized",
+			ExpectedAuthError:  "empty auth response",
 		},
 		{
 			Case:            "no active config",
@@ -87,11 +207,36 @@ func TestGcpSegment(t *testing.T) {
 
 		g := &Gcp{}
 		g.Init(options.Map{}, env)
+		if len(tc.ReferencedFields) != 0 {
+			g.SetReferencedFields(template.RefSet{Fields: tc.ReferencedFields, Analyzable: true})
+		}
+		if tc.ExpectAuthProbe {
+			env.On("HasCommand", gcpCommand).Return(tc.HasGcloud)
+		}
+		if tc.HasGcloud {
+			env.On("RunCommand", gcpCommand, []string{"config", "config-helper", "--format=json"}).
+				Return(tc.ConfigHelperOutput, tc.ConfigHelperError)
+		}
 
 		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)
-		if tc.ExpectedEnabled {
-			assert.Equal(t, tc.ExpectedString, renderTemplate(env, "{{.Project}} :: {{.Region}} :: {{.Account}}", g), tc.Case)
+		assert.Equal(t, tc.ExpectedAuthStatus, g.AuthStatus, tc.Case)
+		assert.Equal(t, tc.ExpectedAuthError, g.AuthError, tc.Case)
+		assert.Equal(t, tc.ExpectedAuthorized, g.Authorized, tc.Case)
+		assert.Equal(t, tc.ExpectedTokenExpiry, g.TokenExpiry, tc.Case)
+		if !tc.ExpectAuthProbe {
+			env.AssertNotCalled(t, "HasCommand", gcpCommand)
 		}
+
+		if !tc.ExpectedEnabled || tc.ExpectedString == "" {
+			continue
+		}
+
+		renderTemplateText := tc.RenderTemplate
+		if renderTemplateText == "" {
+			renderTemplateText = "{{.Project}} :: {{.Region}} :: {{.Account}}"
+		}
+
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, renderTemplateText, g), tc.Case)
 	}
 }
 

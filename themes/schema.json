@@ -456,6 +456,7 @@
             "julia",
             "kotlin",
             "kubectl",
+            "language",
             "lastfm",
             "lua",
             "mercurial",
@@ -5447,7 +5448,11 @@
     "pwd": {
       "anyOf": [
         {
-          "enum": ["osc99", "osc7", "osc51"]
+          "enum": [
+            "osc99",
+            "osc7",
+            "osc51"
+          ]
         },
         {
           "type": "string"

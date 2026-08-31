@@ -1,4 +1,4 @@
-if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
+if (($null -ne (Get-Module -Name "oh-my-posh-core")) -and $global:_ompInitialized) {
     return
 }
 

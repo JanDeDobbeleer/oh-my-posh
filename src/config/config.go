@@ -137,7 +137,7 @@ func (cfg *Config) getPalette() color.Palette {
 }
 
 // streamingEnabled reports whether streaming should be enabled: it's configured.
-func (cfg *Config) streamingEnabled(env runtime.Environment) bool {
+func (cfg *Config) streamingEnabled(_ runtime.Environment) bool {
 	return cfg.Streaming > 0
 }
 

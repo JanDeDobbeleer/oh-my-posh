@@ -33,7 +33,7 @@ else
     os.execute(string.format('"%s" notice', omp_executable))
 end`
 	case Streaming:
-		return "if os.getenv(\"POSH_DISABLE_STREAMING\") ~= \"1\" then\n    serve_enabled = true\nend"
+		return "if os.getenv(\"POSH_DISABLE_STREAMING\") == nil then\n    serve_enabled = true\nend"
 	case PromptMark, PoshGit, Azure, LineError, Jobs, CursorPositioning, Async, KeyHandlers, VIMode:
 		fallthrough
 	default:

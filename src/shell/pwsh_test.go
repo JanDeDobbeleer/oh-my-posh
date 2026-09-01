@@ -34,7 +34,7 @@ Enable-PoshVIMode`
 }
 
 func TestPwshStreamingGuard(t *testing.T) {
-	assert.Contains(t, pwshInit, "if ($env:POSH_DISABLE_STREAMING -eq '1') {")
+	assert.Contains(t, pwshInit, "if (Test-Path Env:POSH_DISABLE_STREAMING) {")
 	assert.Contains(t, pwshInit, "return")
 }
 

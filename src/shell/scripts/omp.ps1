@@ -993,6 +993,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshStreaming {
+        if (Test-Path Env:POSH_DISABLE_STREAMING) {
+            return
+        }
+
         $global:_ompStreaming = $true
 
         if (-not $script:ServeSupported) {

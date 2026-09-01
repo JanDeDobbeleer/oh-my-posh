@@ -22,7 +22,7 @@ func (f Features) Zsh() Code {
 	case Notice:
 		return unixNotice
 	case Streaming:
-		return "_omp_enable_streaming=1"
+		return "if [[ \"${POSH_DISABLE_STREAMING:-}\" != \"1\" ]]; then _omp_enable_streaming=1; fi"
 	case VIMode:
 		return "_omp_enable_vimode"
 	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Async, KeyHandlers:

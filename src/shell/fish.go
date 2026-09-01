@@ -24,7 +24,7 @@ func (f Features) Fish() Code {
 	case Tooltips:
 		return "enable_poshtooltips"
 	case Streaming:
-		return "set --global _omp_enable_streaming 1"
+		return "if test \"$POSH_DISABLE_STREAMING\" != \"1\"; set --global _omp_enable_streaming 1; end"
 	case Upgrade:
 		return unixUpgrade
 	case Notice:

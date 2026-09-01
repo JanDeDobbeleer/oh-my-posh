@@ -33,6 +33,11 @@ Enable-PoshVIMode`
 	assert.Equal(t, want, got)
 }
 
+func TestPwshStreamingGuard(t *testing.T) {
+	assert.Contains(t, pwshInit, "if ($env:POSH_DISABLE_STREAMING -eq '1') {")
+	assert.Contains(t, pwshInit, "return")
+}
+
 func TestSourceCommandAsyncPwsh(t *testing.T) {
 	got := sourceCommandAsync(PWSH, "C:/cache/init.pwsh.ps1")
 

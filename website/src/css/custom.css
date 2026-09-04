@@ -44,10 +44,12 @@ html[data-theme="dark"] {
   --omp-card-border-color: var(--ifm-color-emphasis-200);
   --omp-card-background: var(--ifm-color-emphasis-100);
   --omp-card-radius: 8px;
+  --omp-frame-shadow: var(--ifm-color-emphasis-400);
 }
 
 html[data-theme="dark"] {
   --omp-card-background: var(--ifm-background-surface-color);
+  --omp-frame-shadow: var(--ifm-color-emphasis-900);
 }
 
 /* Shared "show only the render matching the reader's light/dark toggle" pair - any component
@@ -288,9 +290,9 @@ iframe.youtube {
 }
 
 :root {
-  --ifm-font-family-monospace: "Victor Mono", "Symbols Nerd Font Mono",
+  --ifm-font-family-monospace: "JetBrains Mono", "Victor Mono", "Symbols Nerd Font Mono",
     "Symbols Nerd Font", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --ifm-font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ifm-font-family-base: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --ifm-heading-font-weight: 600;
   --ifm-heading-line-height: 1.2;
 }
@@ -326,6 +328,73 @@ pre[class*="language-"] {
   font-family: var(--ifm-font-family-monospace);
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "calt" 0;
+}
+
+/* Hunk's code windows use a compact title bar, a strong outline and a small offset shadow. Keep
+   the treatment in the site's own blue and purple palette while applying it to Docusaurus's
+   generated code block wrappers. */
+.theme-code-block {
+  overflow: hidden;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-card-radius);
+  box-shadow: 3px 3px 0 var(--omp-frame-shadow);
+}
+
+.theme-code-block [class*="codeBlockTitle"] {
+  padding: var(--omp-space-1) var(--omp-space-2);
+  border-bottom: 1px solid var(--omp-card-border-color);
+  background: var(--omp-card-background);
+  color: var(--omp-text-secondary);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  font-weight: 500;
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+}
+
+.theme-code-block [class*="codeBlockContent"] {
+  border-radius: 0;
+}
+
+.theme-code-block pre {
+  border-radius: 0;
+}
+
+/* Tabs use the same title-bar rhythm as code blocks, with a blue active rule instead of a
+   separate pill for each item. */
+.tabs {
+  margin-bottom: var(--omp-space-2);
+  border-bottom: 1px solid var(--omp-card-border-color);
+  gap: 0;
+}
+
+.tabs__item {
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: var(--omp-space-1) var(--omp-space-2);
+  color: var(--omp-text-secondary);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-label-size);
+  font-weight: 500;
+  letter-spacing: var(--omp-label-tracking);
+  text-transform: uppercase;
+}
+
+.tabs__item:hover {
+  background: var(--omp-card-background);
+  color: var(--ifm-color-primary);
+}
+
+.tabs__item--active {
+  border-bottom-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+code:not([class*="language-"]) {
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-radius-sm);
+  background: var(--omp-card-background);
+  padding: 0.1rem 0.3rem;
 }
 
 table {

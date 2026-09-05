@@ -2,6 +2,7 @@ package template
 
 import (
 	"encoding/gob"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -66,6 +67,85 @@ var chevronReplacer = strings.NewReplacer("<", "<<>", ">", "<>>")
 // interface fails to encode and the whole segment entry is silently dropped.
 func init() {
 	gob.Register(Markup(""))
+}
+
+// markupJSONKey tags a Markup in JSON: {"$markup": "<red>text</>"}. A bare
+// string would decode as plain data on the writer-less restore path (the
+// website build has no segment writers, so recorded data lands in a
+// map[string]any) and lose its trust, which escapes every recorded anchor.
+const markupJSONKey = "$markup"
+
+func (m Markup) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]string{markupJSONKey: string(m)})
+}
+
+// UnmarshalJSON accepts the tagged form and, for hand-written data files and
+// fixtures recorded before the tag existed, a bare string.
+func (m *Markup) UnmarshalJSON(b []byte) error {
+	if len(b) > 0 && b[0] == '"' {
+		var s string
+		if err := json.Unmarshal(b, &s); err != nil {
+			return err
+		}
+
+		*m = Markup(s)
+
+		return nil
+	}
+
+	var tagged map[string]string
+	if err := json.Unmarshal(b, &tagged); err != nil {
+		return err
+	}
+
+	text, ok := tagged[markupJSONKey]
+	if !ok {
+		return fmt.Errorf("markup JSON object is missing the %q key", markupJSONKey)
+	}
+
+	*m = Markup(text)
+
+	return nil
+}
+
+// ReviveMarkup walks a generically decoded JSON value and turns every tagged
+// markup object (see markupJSONKey) back into a Markup, in place for maps and
+// slices. It is what lets a map[string]any carry the same trust as the writer
+// struct it was recorded from.
+func ReviveMarkup(value any) any {
+	switch typed := value.(type) {
+	case map[string]any:
+		if text, ok := taggedMarkup(typed); ok {
+			return text
+		}
+
+		for key, nested := range typed {
+			typed[key] = ReviveMarkup(nested)
+		}
+
+		return typed
+	case []any:
+		for i, nested := range typed {
+			typed[i] = ReviveMarkup(nested)
+		}
+
+		return typed
+	default:
+		return value
+	}
+}
+
+func taggedMarkup(object map[string]any) (Markup, bool) {
+	if len(object) != 1 {
+		return "", false
+	}
+
+	text, ok := object[markupJSONKey].(string)
+	if !ok {
+		return "", false
+	}
+
+	return Markup(text), true
 }
 
 const noValue = "<no value>"

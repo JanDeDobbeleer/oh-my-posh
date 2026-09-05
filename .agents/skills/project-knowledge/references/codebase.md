@@ -69,6 +69,17 @@
   line, that field is lost. Use a record format that retains a final non-whitespace delimiter or
   sentinel, and validate the record before assigning parsed state.
 
+## Terminal output sanitization
+
+- `prompt.Engine.write` (src/prompt/engine.go) appends straight to the prompt builder and
+  bypasses the per-rune control filter in `terminal.write` (src/terminal/writer.go). Any
+  attacker-influenceable string passed to `e.write` in one shot (console title, OSC payloads)
+  must sanitize itself with `terminal.stripControlRunes`; `trimAnsi` alone is insufficient -
+  it ignores strings without ESC (a bare BEL survives) and its regex misses CSI `! p`, APC,
+  SOS, and ST (verified 2026-09-05, GHSA-fwjx-9p69-h25h follow-up in `FormatTitle`).
+- `terminal.AnsiRegex`'s final-byte class intentionally omits `!`, `_`, `X` and `\`; do not
+  extend it as a sanitization fix - strip control runes instead.
+
 ## Cache
 
 - Cache persistence only happens with the hidden `--save-cache` flag (print/stream commands);

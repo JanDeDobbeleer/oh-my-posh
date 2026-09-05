@@ -70,6 +70,7 @@ ul.formatTabs li + li {
   border: 1px solid var(--omp-card-border-color);
   border-radius: var(--omp-card-radius);
   overflow: visible;
+  box-shadow: 4px 4px 0 var(--omp-frame-shadow);
 }
 
 .editorWindow:focus-within {
@@ -80,19 +81,27 @@ ul.formatTabs li + li {
    window - it has nothing to click and nothing to announce, hence aria-hidden in index.js. */
 .editorChrome {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0.35rem;
-  padding: var(--omp-space-1) var(--omp-space-2);
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0.7rem 0.9rem;
   background: var(--omp-card-background);
   border-bottom: 1px solid var(--omp-card-border-color);
   border-radius: var(--omp-card-radius) var(--omp-card-radius) 0 0;
 }
 
-.chromeDot {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 50%;
-  background: var(--ifm-color-emphasis-300);
+.chromeControl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.9rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--omp-text-secondary);
+  opacity: 0.9;
 }
 
 /* No position: relative needed here any more - CodeMirror's own gutter is a child of

@@ -7,6 +7,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type StravaAPI interface {
@@ -26,7 +27,7 @@ type Strava struct {
 	Base
 
 	api   StravaAPI
-	Icon  string
+	Icon  template.Markup
 	Ago   string
 	Error string
 	URL   string
@@ -123,22 +124,22 @@ func (s *Strava) getAgo() string {
 	return fmt.Sprintf("%d", s.Hours) + string("h")
 }
 
-func (s *Strava) getActivityIcon() string {
+func (s *Strava) getActivityIcon() template.Markup {
 	switch s.Type {
 	case "VirtualRide":
 		fallthrough
 	case "Ride":
-		return s.options.String(RideIcon, "\uf206")
+		return s.options.Markup(RideIcon, "\uf206")
 	case "Run":
-		return s.options.String(RunIcon, "\ue213")
+		return s.options.Markup(RunIcon, "\ue213")
 	case "NordicSki":
 	case "AlpineSki":
 	case "BackcountrySki":
-		return s.options.String(SkiingIcon, "\ue213")
+		return s.options.Markup(SkiingIcon, "\ue213")
 	case "WorkOut":
-		return s.options.String(WorkOutIcon, "\ue213")
+		return s.options.Markup(WorkOutIcon, "\ue213")
 	default:
-		return s.options.String(UnknownActivityIcon, "\ue213")
+		return s.options.Markup(UnknownActivityIcon, "\ue213")
 	}
-	return s.options.String(UnknownActivityIcon, "\ue213")
+	return s.options.Markup(UnknownActivityIcon, "\ue213")
 }

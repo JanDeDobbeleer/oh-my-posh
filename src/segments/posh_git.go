@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 const (
@@ -81,19 +82,19 @@ func (g *Git) hasPoshGitStatus() bool {
 	return true
 }
 
-func (g *Git) parsePoshGitHEAD(head string) string {
+func (g *Git) parsePoshGitHEAD(head string) template.Markup {
 	// commit
 	if strings.HasSuffix(head, "...)") {
 		head = strings.TrimLeft(head, "(")
 		head = strings.TrimRight(head, ".)")
-		return fmt.Sprintf("%s%s", g.options.String(CommitIcon, "\uF417"), head)
+		return template.JoinMarkup(g.options.Markup(CommitIcon, "\uF417"), template.EscapeMarkup(head))
 	}
 	// tag
 	if strings.HasPrefix(head, "(") {
 		head = strings.TrimLeft(head, "(")
 		head = strings.TrimRight(head, ")")
-		return fmt.Sprintf("%s%s", g.options.String(TagIcon, "\uF412"), head)
+		return template.JoinMarkup(g.options.Markup(TagIcon, "\uF412"), template.EscapeMarkup(head))
 	}
 	// regular branch
-	return fmt.Sprintf("%s%s", g.options.String(BranchIcon, "\uE0A0"), g.formatBranch(head))
+	return template.JoinMarkup(g.options.Markup(BranchIcon, "\uE0A0"), g.formatBranch(head))
 }

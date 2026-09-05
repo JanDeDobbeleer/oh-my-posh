@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 const ZigIcon options.Option = "zigicon"
@@ -12,7 +13,7 @@ type Zvm struct {
 	Base
 
 	Version string
-	ZigIcon string
+	ZigIcon template.Markup
 }
 
 func (z *Zvm) Template() string {
@@ -24,7 +25,7 @@ func (z *Zvm) Enabled() bool {
 		return false
 	}
 
-	z.ZigIcon = z.options.String(ZigIcon, "ZVM")
+	z.ZigIcon = z.options.Markup(ZigIcon, "ZVM")
 
 	// Disable colors so the output has no ANSI escape codes to parse.
 	output, err := z.env.RunCommand("zvm", "--color=false", "list")

@@ -57,8 +57,10 @@ func TestTerraform(t *testing.T) {
 			FetchVersion:   true,
 		},
 		{
-			Case:              "files",
-			ExpectedString:    ">= 1.0.10",
+			Case: "files",
+			// required_version is repo-controlled data: its chevrons are escaped
+			// by the renderer and resolved back to >= by the writer
+			ExpectedString:    "<>>= 1.0.10",
 			ExpectedEnabled:   true,
 			WorkspaceName:     "default",
 			Template:          "{{ .Version }}",

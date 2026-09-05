@@ -125,6 +125,6 @@ func TestDvcStatus(t *testing.T) {
 			continue
 		}
 
-		assert.Equal(t, tc.ExpectedStatus, d.Status.String(), tc.Case)
+		assert.Equal(t, tc.ExpectedStatus, d.Status.String().String(), tc.Case)
 	}
 }

@@ -84,7 +84,7 @@ func getLocaleLayouts() (string, string) {
 // Example:
 //
 //	{{ localeShortDate .SomeTime }}
-func localeShortDate(date any) string {
+func localeShortDate(date any) Markup {
 	layout, _ := getLocaleLayouts()
 	return dateInZone(layout, date, "Local")
 }
@@ -94,7 +94,7 @@ func localeShortDate(date any) string {
 // Example:
 //
 //	{{ localeShortTime .SomeTime }}
-func localeShortTime(date any) string {
+func localeShortTime(date any) Markup {
 	_, layout := getLocaleLayouts()
 	return dateInZone(layout, date, "Local")
 }

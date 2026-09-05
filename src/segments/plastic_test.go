@@ -273,7 +273,7 @@ func TestPlasticStatus(t *testing.T) {
 			Unmerged: 5,
 		},
 	}
-	status := p.Status.String()
+	status := p.Status.String().String()
 	expected := "+1 ~2 -3 >4 x5"
 	assert.Equal(t, expected, status)
 }
@@ -290,7 +290,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			Expected: "/main",
 			Template: "{{ .Selector }}",
 			Plastic: &Plastic{
-				Selector: "/main",
+				Selector: template.RawMarkup("/main"),
 				Behind:   false,
 			},
 		},
@@ -299,7 +299,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			Expected: "/main \uF044 +2 ~3 -1 >4",
 			Template: "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ .Status.String }}{{ end }}",
 			Plastic: &Plastic{
-				Selector: "/main",
+				Selector: template.RawMarkup("/main"),
 				Status: &PlasticStatus{
 					Added:    2,
 					Modified: 3,
@@ -313,7 +313,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			Expected: "/main",
 			Template: "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ .Status.String }}{{ end }}",
 			Plastic: &Plastic{
-				Selector: "/main",
+				Selector: template.RawMarkup("/main"),
 				Status:   &PlasticStatus{},
 			},
 		},

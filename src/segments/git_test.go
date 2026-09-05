@@ -862,7 +862,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		g.mainSCMDir = ""
 
 		g.setHEADStatus()
-		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
+		assert.Equal(t, tc.Expected, g.HEAD.String(), tc.Case)
 	}
 }
 
@@ -912,7 +912,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		g.mainSCMDir = ""
 
 		g.updateHEADReference()
-		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
+		assert.Equal(t, tc.Expected, g.HEAD.String(), tc.Case)
 	}
 }
 
@@ -1206,7 +1206,7 @@ func TestGitUpstream(t *testing.T) {
 		})
 
 		upstreamIcon := g.getUpstreamIcon()
-		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
+		assert.Equal(t, tc.Expected, upstreamIcon.String(), tc.Case)
 	}
 }
 
@@ -1245,7 +1245,7 @@ func TestGetBranchStatus(t *testing.T) {
 		g.Init(props, new(mock.Environment))
 
 		g.setBranchStatus()
-		assert.Equal(t, tc.Expected, g.BranchStatus, tc.Case)
+		assert.Equal(t, tc.Expected, g.BranchStatus.String(), tc.Case)
 	}
 }
 
@@ -1261,7 +1261,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: branchName,
 			Template: "{{ .HEAD }}",
 			Git: &Git{
-				HEAD:   branchName,
+				HEAD:   template.RawMarkup(branchName),
 				Behind: 2,
 			},
 		},
@@ -1270,7 +1270,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "main \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
 			Git: &Git{
-				HEAD: branchName,
+				HEAD: template.RawMarkup(branchName),
 				Working: &GitStatus{
 					Added:    2,
 					Modified: 3,
@@ -1282,7 +1282,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: branchName,
 			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
 			Git: &Git{
-				HEAD:    branchName,
+				HEAD:    template.RawMarkup(branchName),
 				Working: &GitStatus{},
 			},
 		},
@@ -1291,7 +1291,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "main \uF046 +5 ~1 \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
 			Git: &Git{
-				HEAD: branchName,
+				HEAD: template.RawMarkup(branchName),
 				Working: &GitStatus{
 					Added:    2,
 					Modified: 3,
@@ -1307,7 +1307,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}", //nolint:lll
 			Git: &Git{
-				HEAD: branchName,
+				HEAD: template.RawMarkup(branchName),
 				Working: &GitStatus{
 					Added:    2,
 					Modified: 3,
@@ -1323,7 +1323,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \ueb4b 3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }}", //nolint:lll
 			Git: &Git{
-				HEAD: branchName,
+				HEAD: template.RawMarkup(branchName),
 				Working: &GitStatus{
 					Added:    2,
 					Modified: 3,
@@ -1341,7 +1341,7 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: branchName,
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
 			Git: &Git{
-				HEAD:    branchName,
+				HEAD:    template.RawMarkup(branchName),
 				Staging: &GitStatus{},
 				Working: &GitStatus{},
 			},
@@ -1351,10 +1351,10 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "from GitHub on main",
 			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }}",
 			Git: &Git{
-				HEAD:         branchName,
+				HEAD:         template.RawMarkup(branchName),
 				Staging:      &GitStatus{},
 				Working:      &GitStatus{},
-				UpstreamIcon: "GitHub",
+				UpstreamIcon: template.RawMarkup("GitHub"),
 			},
 		},
 	}

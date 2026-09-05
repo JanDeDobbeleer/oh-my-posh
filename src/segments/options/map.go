@@ -32,6 +32,7 @@ type Provider interface {
 	Color(option Option, defaultValue color.Ansi) color.Ansi
 	Bool(option Option, defaultValue bool) bool
 	String(option Option, defaultValue string) string
+	Markup(option Option, defaultValue string) template.Markup
 	Template(option Option, defaultValue string, context any) string
 	Float64(option Option, defaultValue float64) float64
 	Int(option Option, defaultValue int) int
@@ -79,6 +80,13 @@ func (m Map) String(option Option, defaultValue string) string {
 	value := fmt.Sprint(val)
 	debugf("%s: %s", option, value)
 	return value
+}
+
+// Markup returns the option's value as trusted terminal markup: option values
+// are user configuration and may carry <...> anchors, unlike data a segment
+// reads from the filesystem, a VCS, or the network.
+func (m Map) Markup(option Option, defaultValue string) template.Markup {
+	return template.RawMarkup(m.String(option, defaultValue))
 }
 
 // Supports template syntax like {{ .Env.MY_API_KEY }} in configuration values; falls back to

@@ -9,6 +9,7 @@ import (
 	runtimehttp "github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -118,7 +119,7 @@ func TestHTTPSegmentCache(t *testing.T) {
 	// Create and populate HTTP segment
 	original := &HTTP{
 		Segment: &Segment{
-			Text:  " Electron: v39.2.6 ",
+			Text:  template.RawMarkup(" Electron: v39.2.6 "),
 			Index: 1,
 		},
 	}

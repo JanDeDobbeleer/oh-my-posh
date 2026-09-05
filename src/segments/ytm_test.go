@@ -7,6 +7,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -88,10 +89,10 @@ func TestYTM(t *testing.T) {
 		}
 
 		props := options.Map{
-			StoppedIcon: "Stopped ",
-			PlayingIcon: "Playing ",
-			PausedIcon:  "Paused ",
-			AdIcon:      "Ad ",
+			StoppedIcon: template.RawMarkup("Stopped "),
+			PlayingIcon: template.RawMarkup("Playing "),
+			PausedIcon:  template.RawMarkup("Paused "),
+			AdIcon:      template.RawMarkup("Ad "),
 		}
 
 		ytm := new(Ytm)

@@ -108,8 +108,8 @@ type Segment struct {
 	Force            bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
 	restored         bool          `json:"-" toml:"-" yaml:"-"`
 	Toggled          bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
-	// pending is set by the streaming timeout on one goroutine and read by the
-	// render on another; the atomic gives that read a defined value.
+	// Written by the streaming timeout and read by the render, on different
+	// goroutines.
 	pending             atomic.Bool
 	Killed              bool `json:"-" toml:"-" yaml:"-"`
 	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
@@ -121,8 +121,8 @@ type Segment struct {
 	FieldsAnalyzable    bool `json:"-" toml:"-" yaml:"-"`
 }
 
-// IsPending reports whether the segment timed out under streaming and is still
-// executing in the background, in which case it renders its placeholder.
+// IsPending reports whether the segment timed out while streaming and is still
+// running in the background. A pending segment renders its placeholder.
 func (segment *Segment) IsPending() bool {
 	return segment.pending.Load()
 }
@@ -725,8 +725,8 @@ func (segment *Segment) restoreInto(raw, methods json.RawMessage) error {
 		MergeRecordedMethods(data, overlay)
 	}
 
-	// Markup fields were recorded tagged (see template.Markup's JSON form);
-	// revive them or every recorded anchor renders escaped on this path.
+	// Recorded Markup fields are tagged objects. Turn them back into Markup
+	// here, or the anchors they carry render as literal text.
 	segment.data = template.ReviveMarkup(normalizeNumbers(data)).(map[string]any)
 
 	return nil

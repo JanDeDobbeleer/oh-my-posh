@@ -833,8 +833,9 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 	}
 }
 
-// Without a writer (the website build) recorded data lands in a map; the
-// tagged markup it carries must come back as Markup so the anchors render.
+// Without a writer (the website build) recorded data lands in a map. The
+// tagged markup in it must come back as Markup, or its anchors render as
+// literal text.
 func TestRestoreIntoRevivesMarkupWithoutWriter(t *testing.T) {
 	segment := &Segment{}
 

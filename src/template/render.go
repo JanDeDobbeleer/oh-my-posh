@@ -107,9 +107,9 @@ func parsedTemplate(text *Text) (*template.Template, error) {
 	text.patchTemplate()
 
 	// Parse into a fresh template with the func map matching this render's trust
-	// level. missingkey=zero so a missing map key yields a typed nil that
-	// escapeActionValue can render as <no value> instead of erroring on an
-	// invalid reflect.Value — same visible output as the default option.
+	// level. missingkey=zero makes a missing map key a typed nil, which
+	// escapeActionValue renders as <no value> instead of failing on an invalid
+	// reflect.Value. The visible output matches the default option.
 	tmpl, err := template.New("cache").Funcs(funcMap(text.trusted)).Option("missingkey=zero").Parse(text.template)
 	if err != nil {
 		return nil, err

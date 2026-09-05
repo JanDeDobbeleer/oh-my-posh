@@ -17,11 +17,10 @@ const TransientMarker = "\x1e"
 // wait for it to return before starting a new cycle - Abort blocks until the
 // producer goroutine has fully exited.
 func (e *Engine) StreamPrimary() <-chan string {
-	// Initialize streaming infrastructure BEFORE launching goroutine
-	// This ensures the channel exists when segments start timing out.
-	// Every segment notifies at most once, so a buffer sized to the segment
-	// count guarantees the non-blocking send in notifySegmentCompletion
-	// never drops a completion while the producer is still consuming.
+	// The channel must exist before any segment can time out. One slot per
+	// segment: each segment notifies at most once, so the non-blocking send
+	// in notifySegmentCompletion can never drop a completion the producer
+	// still wants.
 	e.streamingResults = make(chan *config.Segment, max(e.segmentCount(), 1))
 	e.allBlocks = e.Config.Blocks
 	e.abort = make(chan struct{})
@@ -105,21 +104,18 @@ func (e *Engine) StreamPrimary() <-chan string {
 
 		sendTransient()
 
-		// Re-render on every completion until nothing is pending AND no
-		// completion is queued. Checking the pending count alone is a race:
-		// a segment that finishes right after a render read its Pending flag
-		// (and printed the placeholder) deregisters itself before this check
-		// runs, so the count reads 0 while its notification sits unread in
-		// the buffer - the prompt then stays on "..." forever. The queued
-		// notification is what forces the render that picks up the result.
+		// Keep re-rendering until nothing is registered as pending and no
+		// completion is waiting in the channel. The count alone is not
+		// enough: a segment that finishes right after a render printed its
+		// placeholder would have its completion sitting unread in the buffer
+		// while the count already reads zero, and the prompt would keep the
+		// placeholder for good.
 		//
-		// streamingResults is never closed: a segment that timed out keeps
-		// executing in the background (trackPendingSegment) and notifies
-		// whenever it finishes, possibly after this goroutine returned - a
-		// send on a closed channel would panic in a goroutine with no
-		// recover, which takes down the serve daemon. notifySegmentCompletion
-		// sends via select/default so a late sender never blocks either; the
-		// channel is garbage collected with the Engine.
+		// The channel is never closed. A timed-out segment keeps running and
+		// notifies whenever it finishes, possibly after this goroutine is
+		// gone. A send on a closed channel would panic in a goroutine without
+		// recover and take the serve daemon down with it. Late sends are
+		// non-blocking, and the channel is collected together with the engine.
 		refreshed := false
 
 		for e.countPendingSegments() > 0 || len(e.streamingResults) > 0 {
@@ -135,10 +131,10 @@ func (e *Engine) StreamPrimary() <-chan string {
 				return
 			}
 
-			// Only the consumer deregisters a timed-out segment: it stays
-			// registered from timeout until its completion has been taken off
-			// the channel, so the loop condition above can never observe
-			// "nothing registered, nothing queued" while a render is still owed.
+			// Only this loop removes a timed-out segment from the pending set,
+			// and only once its completion is out of the channel. The loop
+			// condition above can then never see an empty set and an empty
+			// channel while a render is still owed.
 			e.pendingSegments.Delete(segment.Name())
 
 			if !sendRecord(e.renderFromBlocks()) {
@@ -221,9 +217,9 @@ func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
 }
 
 // notifySegmentCompletion queues a re-render for a segment that finished
-// after timing out. It deliberately leaves the segment registered: the
-// producer deregisters it when it consumes the notification, so there is
-// no moment at which the segment is neither registered nor queued.
+// after timing out. It leaves the segment registered on purpose: the
+// producer removes it when it consumes the notification, so there is never
+// a moment at which the segment is neither registered nor queued.
 func (e *Engine) notifySegmentCompletion(segment *config.Segment) {
 	if e.streamingResults == nil {
 		return
@@ -236,8 +232,8 @@ func (e *Engine) notifySegmentCompletion(segment *config.Segment) {
 	select {
 	case e.streamingResults <- segment:
 	default:
-		// The buffer holds one slot per segment, so this only triggers for
-		// an engine whose cycle already ended and will never consume again.
+		// The buffer has one slot per segment, so this only happens for an
+		// engine whose cycle already ended and that will never consume again.
 	}
 }
 

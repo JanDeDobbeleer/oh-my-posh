@@ -256,11 +256,10 @@ func (pt *Path) setStyle() {
 
 	// make sure we resolve all templates
 	//
-	// styled is composed from raw filesystem folder names (chevron-escaped by
-	// replaceMappedLocations) plus already-rendered config templates, so it
-	// must never get the func map entries that touch the OS
-	// (cmd/readFile/stat/glob) — use the restricted renderer, not
-	// template.RenderTrusted. Literal text (including the config anchors)
+	// styled mixes raw folder names (chevrons already escaped by
+	// replaceMappedLocations) with rendered config templates, so it must not
+	// get the functions that touch the OS (cmd, readFile, stat, glob): use
+	// the restricted renderer. Literal text, including the config anchors,
 	// passes through unchanged; embedded actions render escaped.
 	if txt, err := template.RenderUntrusted(styled, pt); err == nil {
 		styled = txt
@@ -681,8 +680,8 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 	rootN := pt.normalize(root)
 	relativeN := pt.normalize(relative)
 
-	// folder names are untrusted filesystem data; the renderer would parse
-	// their chevrons as anchors
+	// folder names are untrusted; the renderer would read their chevrons as
+	// anchors
 	escape := template.EscapeText
 
 	handleRegex := func(key string) (string, bool) {

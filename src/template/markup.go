@@ -69,10 +69,10 @@ func init() {
 	gob.Register(Markup(""))
 }
 
-// markupJSONKey tags a Markup in JSON: {"$markup": "<red>text</>"}. A bare
-// string would decode as plain data on the writer-less restore path (the
-// website build has no segment writers, so recorded data lands in a
-// map[string]any) and lose its trust, which escapes every recorded anchor.
+// markupJSONKey tags a Markup in JSON: {"$markup": "<red>text</>"}. Recorded
+// as a bare string it would come back as plain data wherever a data file is
+// decoded into a map (the website build has no segment writers), and every
+// recorded anchor would render as literal text.
 const markupJSONKey = "$markup"
 
 func (m Markup) MarshalJSON() ([]byte, error) {
@@ -158,11 +158,11 @@ var (
 // markupAware adapts a template function so Markup values can pass through it.
 // text/template refuses a Markup where a function expects a string, which
 // would make every string function (contains, replace, trimSuffix, ...) fail
-// on a field of that type. The wrapper feeds the string parameters the
+// on a field of that type. The wrapper hands the string parameters the
 // markup's text instead. When the function returns a string and any argument
-// was Markup, the result is Markup again so the anchors survive; the plain
-// string arguments of such a call are escaped first, since they would
-// otherwise ride into the trusted result unchecked.
+// was Markup, the result is Markup again so the anchors survive. The plain
+// string arguments of such a call are escaped first; otherwise they would end
+// up inside the trusted result without ever being escaped.
 //
 // Functions that neither take nor return strings are returned untouched.
 func markupAware(name string, fn any) any {
@@ -408,8 +408,8 @@ func touchesStrings(ft reflect.Type) bool {
 	return false
 }
 
-// argValue mirrors the coercions text/template applies to a typed parameter
-// before the wrapper hid the real signature behind a variadic any one.
+// argValue applies the checks text/template would have done against the real
+// parameter types; the wrapper accepts any arguments, so they happen here.
 func argValue(name string, arg any, param reflect.Type) (reflect.Value, error) {
 	if arg == nil {
 		switch param.Kind() {

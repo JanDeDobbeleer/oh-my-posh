@@ -112,18 +112,12 @@ func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan 
 				segment.Execute(e.Env)
 			}
 
-			// A pre-registered segment that finished in time never gets a
-			// completion notification, so it must leave the pending set here,
-			// and before its result is handed over: the producer renders as
-			// soon as every result is in and then waits for a notification per
-			// segment still registered - a deregistration landing after that
-			// check would leave it waiting for one that never comes.
-			// A timed-out one is owned by trackPendingSegment from now on: it
-			// resets segment.IsPending() and deregisters the segment itself, and
-			// re-reading segment.IsPending() here would race that reset - a
-			// completion landing between the timeout and this line would get
-			// deregistered twice, once before the notification was sent,
-			// which the producer then never sees.
+			// A segment that finished in time sends no completion notification,
+			// so it leaves the pending set here, before its result is handed
+			// over. The producer starts waiting for notifications as soon as
+			// every result is in; an entry removed after that point would be
+			// waited on forever. A segment that timed out stays registered
+			// until the producer consumes its notification.
 			if e.Env.Flags().Streaming && segment.Timeout > 0 && !timedOut {
 				e.pendingSegments.Delete(segment.Name())
 			}
@@ -159,18 +153,15 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) bool {
 
 	log.Errorf("timeout after %dms for segment: %s", segment.Timeout, segment.Name())
 
-	// When streaming is enabled, don't kill goroutines - let them continue executing
+	// Streaming lets the segment keep running and renders a placeholder
+	// until it reports back. Only the pending flag is set here: Enabled is
+	// still being written by Execute on the other goroutine.
 	if e.Env.Flags().Streaming {
 		segment.SetPending(true)
-		// Note: Do NOT set segment.Enabled here - that would race with Execute()
-		// Rendering logic handles Pending state to display "..." text
-
-		// Track this segment as pending and continue execution in background
 		e.trackPendingSegment(segment, done)
 		return true
 	}
 
-	// For non-streaming mode, kill the goroutine
 	segment.Killed = true
 	if err := runjobs.KillGoroutineChildren(gid); err != nil {
 		log.Errorf("failed to kill child processes for goroutine %d (segment: %s): %v", gid, segment.Name(), err)

@@ -946,13 +946,13 @@ func TestStreamPrimary_Abort_ThenNewCycleWorks(t *testing.T) {
 	assert.Len(t, prompts, 2, "A new cycle after abort should render normally")
 }
 
-// A segment that finishes right around its streaming timeout - after the
-// initial render printed its placeholder but before the producer decided
-// whether anything was still pending - must still get its refresh: the
-// prompt (and the transient rendered from it) would otherwise stay on "..."
-// for good. The window is a few microseconds wide, so this drives the real
-// StreamPrimary flow through it repeatedly with a segment whose duration
-// straddles the timeout, the way a fast native git status does at 5ms.
+// A segment that finishes right around its streaming timeout, after the
+// first render printed its placeholder but before the producer checked
+// whether anything was still pending, must still get its refresh. Otherwise
+// the prompt and the transient rendered from it keep the placeholder for
+// good. The window is microseconds wide, so this runs the real StreamPrimary
+// flow repeatedly with a segment whose duration straddles the timeout, the
+// way a fast git status does at 5ms.
 func TestStreamPrimary_CompletionAroundTimeoutIsRendered(t *testing.T) {
 	env := setupStreamingTestEnv()
 	env.On("Getenv", testifymock.Anything).Return("")

@@ -96,6 +96,6 @@ func TestNodeInContext(t *testing.T) {
 		node.Init(props, env)
 
 		node.loadContext()
-		assert.Equal(t, tc.ExpectedString, node.PackageManagerIcon, tc.Case)
+		assert.Equal(t, tc.ExpectedString, node.PackageManagerIcon.String(), tc.Case)
 	}
 }

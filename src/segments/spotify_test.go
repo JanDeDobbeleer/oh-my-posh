@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +18,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 		Artist: "Candlemass",
 		Track:  "Spellbreaker",
 		Status: "playing",
-		Icon:   "\ue602 ",
+		Icon:   template.RawMarkup("\ue602 "),
 	}
 	s.Init(options.Map{}, env)
 
@@ -32,7 +33,7 @@ func TestSpotifyStringStoppedSong(t *testing.T) {
 		Artist: "Candlemass",
 		Track:  "Spellbreaker",
 		Status: "stopped",
-		Icon:   "\uf04d ",
+		Icon:   template.RawMarkup("\uf04d "),
 	}
 	s.Init(options.Map{}, env)
 

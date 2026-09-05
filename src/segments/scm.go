@@ -49,7 +49,10 @@ func (s *ScmStatus) Changed() bool {
 		s.Ignored > 0
 }
 
-func (s *ScmStatus) String() string {
+// String composes the status from config formats (status_formats) and counts,
+// so the result is trusted markup: the `>` moved-prefix and any anchors in a
+// configured format must survive rendering.
+func (s *ScmStatus) String() template.Markup {
 	status := text.NewBuilder()
 
 	if s.Formats == nil {
@@ -81,7 +84,7 @@ func (s *ScmStatus) String() string {
 	stringIfValue(s.Clean, "Clean", "=")
 	stringIfValue(s.Ignored, "Ignored", "Ø")
 
-	return strings.TrimSpace(status.String())
+	return template.RawMarkup(strings.TrimSpace(status.String()))
 }
 
 type Scm struct {
@@ -124,7 +127,13 @@ func (s *Scm) RelativeDir() string {
 	return rel
 }
 
-func (s *Scm) formatBranch(branch string) string {
+// formatBranch returns the branch name as markup: the branch itself is
+// untrusted VCS data (a repository controls it), so its chevrons are escaped,
+// while mapped_branches values and the branch_template render are user
+// configuration and keep their anchors. branchTemplate receives the mapped
+// branch as a plain string so trunc and friends keep working; anchors in a
+// mapped value only survive when no branch_template is set.
+func (s *Scm) formatBranch(branch string) template.Markup {
 	mappedBranches := s.options.KeyValueMap(MappedBranches, make(map[string]string))
 
 	// sort the keys alphabetically
@@ -136,9 +145,15 @@ func (s *Scm) formatBranch(branch string) string {
 
 	const wildcard = "*"
 
+	display := branch
+	displayMarkup := template.EscapeMarkup(branch)
+
 	for _, key := range keys {
-		if key == wildcard {
-			branch = mappedBranches[key]
+		mappedBranch := mappedBranches[key]
+
+		if key == wildcard || branch == key {
+			display = mappedBranch
+			displayMarkup = template.RawMarkup(mappedBranch)
 			break
 		}
 
@@ -146,29 +161,24 @@ func (s *Scm) formatBranch(branch string) string {
 		subfolderKey := strings.TrimSuffix(key, wildcard)
 
 		if matchSubFolders && strings.HasPrefix(branch, subfolderKey) {
-			branch = strings.Replace(branch, subfolderKey, mappedBranches[key], 1)
+			remainder := strings.TrimPrefix(branch, subfolderKey)
+			display = mappedBranch + remainder
+			displayMarkup = template.JoinMarkup(template.RawMarkup(mappedBranch), template.EscapeMarkup(remainder))
 			break
 		}
-
-		if matchSubFolders || branch != key {
-			continue
-		}
-
-		branch = strings.Replace(branch, key, mappedBranches[key], 1)
-		break
 	}
 
 	branchTemplate := s.options.String(BranchTemplate, "")
 	if branchTemplate == "" {
-		return branch
+		return displayMarkup
 	}
 
-	txt, err := template.RenderTrusted(branchTemplate, struct{ Branch, Upstream string }{Branch: branch, Upstream: s.Upstream})
+	txt, err := template.RenderTrusted(branchTemplate, struct{ Branch, Upstream string }{Branch: display, Upstream: s.Upstream})
 	if err != nil {
-		return branch
+		return displayMarkup
 	}
 
-	return txt
+	return template.RawMarkup(txt)
 }
 
 func (s *Scm) fileContent(folder, file string) string {

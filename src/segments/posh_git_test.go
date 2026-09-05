@@ -245,6 +245,6 @@ func TestParsePoshGitHEAD(t *testing.T) {
 		g := &Git{}
 		g.Init(&options.Map{}, new(mock.Environment))
 
-		assert.Equal(t, tc.ExpectedString, g.parsePoshGitHEAD(tc.HEAD), tc.Case)
+		assert.Equal(t, tc.ExpectedString, g.parsePoshGitHEAD(tc.HEAD).String(), tc.Case)
 	}
 }

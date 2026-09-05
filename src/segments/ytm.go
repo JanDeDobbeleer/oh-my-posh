@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 const (
@@ -59,18 +60,18 @@ func (y *Ytm) setStatus() error {
 	switch status.Player.TrackState {
 	case 1, 2: // playing or buffering
 		y.Status = playing
-		y.Icon = y.options.String(PlayingIcon, "\uf04b ")
+		y.Icon = y.options.Markup(PlayingIcon, "\uf04b ")
 	case -1: // stopped
 		y.Status = stopped
-		y.Icon = y.options.String(StoppedIcon, "\uf04d ")
+		y.Icon = y.options.Markup(StoppedIcon, "\uf04d ")
 	default: // paused
 		y.Status = paused
-		y.Icon = y.options.String(PausedIcon, "\uf04c ")
+		y.Icon = y.options.Markup(PausedIcon, "\uf04c ")
 	}
 
 	if status.Player.AdPlaying {
-		ad := y.options.String(AdIcon, "\ueebb ")
-		y.Icon = ad + y.Icon
+		ad := y.options.Markup(AdIcon, "\ueebb ")
+		y.Icon = template.JoinMarkup(ad, y.Icon)
 	}
 
 	y.Artist = status.Video.Author

@@ -944,7 +944,15 @@ func write(s rune, isInvisible bool) {
 			return
 		}
 
-		
+		// the OSC 8 URI region must survive the shell's prompt expansion
+		// intact, so apply the same shell escaping as visible runes; a URI
+		// backslash reaching bash's @P unescaped would be re-interpreted
+		if !Interactive {
+			if escaped, shouldEscape := formats.EscapeSequences[s]; shouldEscape {
+				builder.WriteString(escaped)
+				return
+			}
+		}
 
 		builder.WriteRune(s)
 

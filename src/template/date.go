@@ -7,9 +7,13 @@ import (
 
 // dateInZone is a replacement for sprig's dateInZone that adds support for string
 // epoch values. Sprig's unixEpoch returns a string, which sprig's own date functions
-// do not handle — they fall through to time.Now(). This wrapper parses numeric strings
+// do not handle: they fall through to time.Now(). This wrapper parses numeric strings
 // as Unix timestamps so that patterns like `{{ now | unixEpoch | date "..." }}` work.
-func dateInZone(fmt string, date any, zone string) string {
+//
+// The result is Markup: the layout is user configuration and may carry anchors
+// (e.g. a time_format of "Monday <#ffffff>at</> 15:04"), while the substituted
+// values are formatted time components and cannot contain chevrons.
+func dateInZone(fmt string, date any, zone string) Markup {
 	var t time.Time
 
 	switch v := date.(type) {
@@ -34,7 +38,7 @@ func dateInZone(fmt string, date any, zone string) string {
 		loc, _ = time.LoadLocation("UTC")
 	}
 
-	return t.In(loc).Format(fmt)
+	return RawMarkup(t.In(loc).Format(fmt))
 }
 
 // parseDateString reads the two shapes a date reaches a template as text in: a Unix epoch, which
@@ -54,18 +58,18 @@ func parseDateString(value string) time.Time {
 	return time.Now()
 }
 
-func ompDate(fmt string, date any) string {
+func ompDate(fmt string, date any) Markup {
 	return dateInZone(fmt, date, "Local")
 }
 
-func ompDateInZone(fmt string, date any, zone string) string {
+func ompDateInZone(fmt string, date any, zone string) Markup {
 	return dateInZone(fmt, date, zone)
 }
 
-func ompHTMLDate(date any) string {
+func ompHTMLDate(date any) Markup {
 	return dateInZone("2006-01-02", date, "Local")
 }
 
-func ompHTMLDateInZone(date any, zone string) string {
+func ompHTMLDateInZone(date any, zone string) Markup {
 	return dateInZone("2006-01-02", date, zone)
 }

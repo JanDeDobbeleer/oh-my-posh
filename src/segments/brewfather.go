@@ -11,15 +11,16 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Brewfather struct {
 	Base
 
 	DaysBottledOrFermented *uint
-	TemperatureTrendIcon   string
-	StatusIcon             string
-	DayIcon                string
+	TemperatureTrendIcon   template.Markup
+	StatusIcon             template.Markup
+	DayIcon                template.Markup
 	URL                    string
 	Batch
 	ReadingAge     int
@@ -129,58 +130,58 @@ func (bf *Brewfather) Enabled() bool {
 		bf.URL = fmt.Sprintf("https://web.brewfather.app/tabs/batches/batch/%s", batchID)
 	}
 
-	bf.DayIcon = bf.options.String(BFDayIcon, "d")
+	bf.DayIcon = bf.options.Markup(BFDayIcon, "d")
 
 	return true
 }
 
-func (bf *Brewfather) getTrendIcon(trend float64) string {
+func (bf *Brewfather) getTrendIcon(trend float64) template.Markup {
 	// Not a fan of this logic - wondering if Go lets us do something cleaner...
 	if trend >= 0 {
 		if trend > 4 {
-			return bf.options.String(BFDoubleUpIcon, "↑↑")
+			return bf.options.Markup(BFDoubleUpIcon, "↑↑")
 		}
 
 		if trend > 2 {
-			return bf.options.String(BFSingleUpIcon, "↑")
+			return bf.options.Markup(BFSingleUpIcon, "↑")
 		}
 
 		if trend > 0.5 {
-			return bf.options.String(BFFortyFiveUpIcon, "↗")
+			return bf.options.Markup(BFFortyFiveUpIcon, "↗")
 		}
 
-		return bf.options.String(BFFlatIcon, "→")
+		return bf.options.Markup(BFFlatIcon, "→")
 	}
 
 	if trend < -4 {
-		return bf.options.String(BFDoubleDownIcon, "↓↓")
+		return bf.options.Markup(BFDoubleDownIcon, "↓↓")
 	}
 
 	if trend < -2 {
-		return bf.options.String(BFSingleDownIcon, "↓")
+		return bf.options.Markup(BFSingleDownIcon, "↓")
 	}
 
 	if trend < -0.5 {
-		return bf.options.String(BFFortyFiveDownIcon, "↘")
+		return bf.options.Markup(BFFortyFiveDownIcon, "↘")
 	}
 
-	return bf.options.String(BFFlatIcon, "→")
+	return bf.options.Markup(BFFlatIcon, "→")
 }
 
-func (bf *Brewfather) getBatchStatusIcon(batchStatus string) string {
+func (bf *Brewfather) getBatchStatusIcon(batchStatus string) template.Markup {
 	switch batchStatus {
 	case BFStatusPlanning:
-		return bf.options.String(BFPlanningStatusIcon, "\uF8EA")
+		return bf.options.Markup(BFPlanningStatusIcon, "\uF8EA")
 	case BFStatusBrewing:
-		return bf.options.String(BFBrewingStatusIcon, "\uF7DE")
+		return bf.options.Markup(BFBrewingStatusIcon, "\uF7DE")
 	case BFStatusFermenting:
-		return bf.options.String(BFFermentingStatusIcon, "\uF499")
+		return bf.options.Markup(BFFermentingStatusIcon, "\uF499")
 	case BFStatusConditioning:
-		return bf.options.String(BFConditioningStatusIcon, "\uE372")
+		return bf.options.Markup(BFConditioningStatusIcon, "\uE372")
 	case BFStatusCompleted:
-		return bf.options.String(BFCompletedStatusIcon, "\uF7A5")
+		return bf.options.Markup(BFCompletedStatusIcon, "\uF7A5")
 	case BFStatusArchived:
-		return bf.options.String(BFArchivedStatusIcon, "\uF187")
+		return bf.options.Markup(BFArchivedStatusIcon, "\uF187")
 	default:
 		return ""
 	}

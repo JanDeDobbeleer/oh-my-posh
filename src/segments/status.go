@@ -17,7 +17,7 @@ const (
 type Status struct {
 	Base
 
-	String  string
+	String  template.Markup
 	Meaning string
 	Error   bool
 }
@@ -29,7 +29,7 @@ func (s *Status) Template() string {
 func (s *Status) Enabled() bool {
 	status, pipeStatus := s.env.StatusCodes()
 
-	s.String = s.formatStatus(status, pipeStatus)
+	s.String = template.RawMarkup(s.formatStatus(status, pipeStatus))
 	// Deprecated: Use {{ reason .Code }} instead
 	s.Meaning = template.GetReasonFromStatus(status)
 

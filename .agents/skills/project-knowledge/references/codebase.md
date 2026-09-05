@@ -80,6 +80,33 @@
 - `terminal.AnsiRegex`'s final-byte class intentionally omits `!`, `_`, `X` and `\`; do not
   extend it as a sanitization fix - strip control runes instead.
 
+## Template markup trust boundary (2026-09-05, markup-injection fix)
+
+- The renderer escapes chevrons in every print action's output (`__esc` appended to each
+  pipeline post-parse, `template/render.go` `escapePrintActions`). Literal template text keeps
+  its `<...>` anchors; action output only keeps them when typed `template.Markup`. A new
+  segment that stores attacker-controlled strings (VCS refs, manifest fields, API responses,
+  folder names) in plain string fields is safe by default - do NOT call `template.RawMarkup`
+  on data.
+- `template.Markup` (src/template/markup.go) is the bypass type: a named string, never a
+  struct (text/template treats every struct as true, which broke the `{{ if .BranchStatus }}`
+  guards in 60 shipped themes, and `eq` cannot compare a struct to a string). Constructors:
+  `RawMarkup` (user config only), `EscapeMarkup` (data),
+  `JoinMarkup` (composition). Segment fields composed from option strings with anchors
+  (icons, `branch_icon`, `folder_separator_icon`, `status_formats` - all evidenced in shipped
+  themes) MUST be `template.Markup` or their anchors render as literal text.
+- Known limitations: template funcs typed `string` error on Markup args except the adapted set
+  in `markupStringFuncs` (lower/upper/title/trunc/...). `mapped_branches` values keep anchors
+  only when no `branch_template` is set (the sub-template receives `.Branch` as a plain string
+  so `trunc` keeps working).
+- `terminal.write`'s `isHyperlink` branch (OSC 8 URI region) applies shell escaping
+  (`formats.EscapeSequences`) since 2026-09-05 - bash `@P` would otherwise re-interpret a URI
+  backslash as a prompt escape. Never bypass it there.
+- Regression net: `src/prompt/golden_test.go` renders all 125 shipped themes byte-exact; if a
+  markup change alters golden output, the theme relied on the old (insecure) behavior -
+  regenerate with `go test ./prompt/... -run TestGoldenThemes -update` only after inspecting
+  the diff.
+
 ## Cache
 
 - Cache persistence only happens with the hidden `--save-cache` flag (print/stream commands);

@@ -133,22 +133,22 @@ var (
 )
 
 type Git struct {
-	configErr      error
-	config         *ini.File
+	commonCfgErr   error
 	Working        *GitStatus
 	Staging        *GitStatus
 	commit         *Commit
 	Rebase         *Rebase
 	User           *User
-	ShortHash      string
+	commonCfg      *ini.File
 	Hash           string
-	BranchStatus   string
 	HEAD           string
 	UpstreamIcon   string
 	UpstreamURL    string
 	Ref            string
 	RawUpstreamURL string
 	mainWorktree   string
+	BranchStatus   string
+	ShortHash      string
 	Scm
 	FieldRefs
 	stashCount       int
@@ -157,8 +157,8 @@ type Git struct {
 	PushBehind       int
 	Behind           int
 	worktreeCount    int
+	commonCfgOnce    sync.Once
 	mainWorktreeOnce sync.Once
-	configOnce       sync.Once
 	IsWorkTree       bool
 	Merge            bool
 	CherryPick       bool
@@ -229,7 +229,7 @@ func (g *Git) Enabled() bool {
 
 		if g.fetchUnit(gitUpstreamIconFields...) {
 			wg.Go(func() {
-				g.UpstreamIcon = g.getUpstreamIcon()
+				g.UpstreamIcon = g.getUpstreamIcon(remoteNameOrOrigin(g.Upstream))
 			})
 		}
 
@@ -238,7 +238,7 @@ func (g *Git) Enabled() bool {
 		g.updateHEADReference()
 
 		if g.fetchUnit(gitUpstreamIconFields...) {
-			g.UpstreamIcon = g.getUpstreamIcon()
+			g.UpstreamIcon = g.getUpstreamIcon(remoteNameOrOrigin(g.Upstream))
 		}
 	}
 
@@ -383,11 +383,14 @@ func (g *Git) Kraken() string {
 	root := g.getGitCommandOutput("rev-list", "--max-parents=0", "HEAD")
 	root, _, _ = strings.Cut(root, "\n")
 
-	if g.RawUpstreamURL == "" {
-		if g.Upstream == "" {
-			g.Upstream = origin
-		}
-		g.RawUpstreamURL = g.getRemoteURL()
+	// In a bare repository whose config references the upstream icon fields, getBareRepoInfo has
+	// already made the authoritative attribution: an empty RawUpstreamURL there means "no
+	// attributable remote", not "not tried yet". .Upstream may legitimately be a bare branch name
+	// (remote = .), which must never be read as a remote name.
+	bareAttributionDone := g.IsBare && g.fetchUnit(gitUpstreamIconFields...)
+
+	if g.RawUpstreamURL == "" && !bareAttributionDone {
+		g.RawUpstreamURL = g.getRemoteURL(remoteNameOrOrigin(g.Upstream))
 	}
 
 	if g.Hash == "" && g.scmDir != "" && g.options.Bool(NativeStatus, false) {
@@ -452,11 +455,11 @@ func (g *Git) isRepo(gitdir *runtime.FileInfo) bool {
 
 func (g *Git) setUser() {
 	// user.name/user.email are very commonly set only in the user's global
-	// gitconfig, which getGitConfig() never reads (repo-local config only).
+	// gitconfig, which commonConfig() never reads (repo-local config only).
 	// Trust the local read only when it has both keys; anything less falls
 	// back to exec git, which merges every config scope the way `git
 	// config` itself does.
-	if cfg, err := g.getGitConfig(); err == nil {
+	if cfg, err := g.commonConfig(); err == nil {
 		section := cfg.Section("user")
 		name := section.Key("name").String()
 		email := section.Key("email").String()
@@ -487,15 +490,16 @@ func (g *Git) setUser() {
 func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 	defer log.Trace(time.Now())
 
-	if gitDir.IsDir {
-		g.mainSCMDir = gitDir.Path
-	} else {
+	bareDir := gitDir.Path
+	if !gitDir.IsDir {
 		content := g.fileContent(gitDir.ParentFolder, ".git")
 		dir := strings.TrimPrefix(content, "gitdir: ")
-		g.mainSCMDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
+		bareDir = resolveGitPath(gitDir.ParentFolder, g.convertToLinuxPath(dir))
 	}
 
-	cfg, err := g.getGitConfig()
+	g.mainSCMDir = bareDir
+
+	cfg, err := loadGitConfig(g.env, bareDir)
 	if err != nil {
 		log.Error(err)
 		return false
@@ -513,18 +517,95 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 }
 
 func (g *Git) getBareRepoInfo() {
-	head := g.fileContent(g.mainSCMDir, "HEAD")
-	branchIcon := g.options.String(BranchIcon, "\uE0A0")
-	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
-	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
+	// The non-bare resolver already reads HEAD from mainSCMDir and already handles the symbolic
+	// branch, the reftables sentinel and a detached HEAD. Sharing it is what keeps the two paths
+	// from diverging again.
+	g.updateHEADReference()
 	if !g.fetchUnit(gitUpstreamIconFields...) {
 		return
 	}
 
-	g.Upstream = g.getGitCommandOutput("remote")
-	if len(g.Upstream) != 0 {
-		g.UpstreamIcon = g.getUpstreamIcon()
+	// Assigned before any early return: a local upstream (remote = .) is a real upstream even in a
+	// repository with no remotes at all. Assigned after updateHEADReference so a branch_template
+	// referencing .Upstream still sees the empty value it sees today.
+	upstream, remote := g.bareUpstream()
+	g.Upstream = upstream
+
+	// An upstream implies its remote exists, so the inventory is not needed.
+	if remote != "" {
+		g.UpstreamIcon = g.getUpstreamIcon(remote)
+		return
 	}
+
+	remotes := g.bareRemoteNames()
+	if len(remotes) == 0 {
+		return // no remote to attribute; UpstreamIcon and UpstreamURL stay empty, as today
+	}
+
+	g.UpstreamIcon = g.getUpstreamIcon(fallbackRemote(remotes))
+}
+
+// bareUpstream asks git for the upstream of HEAD's branch, and for the remote that upstream
+// resolves to. Letting git answer is not a convenience: git applies fetch-refspec mapping,
+// accepts merge refs outside refs/heads/, spells a local upstream as the bare branch name, and
+// reads the merged configuration from every scope.
+func (g *Git) bareUpstream() (string, string) {
+	// Ref can be a short hash or an exact tag name when detached, either of which can name a real
+	// branch, so a detached HEAD must never be looked up as one.
+	if g.Detached || g.Ref == "" {
+		return "", ""
+	}
+
+	ref := "refs/heads/" + g.Ref
+
+	// NUL-delimited so the fields survive RunCommand's whitespace trimming, the same reason
+	// MainWorktree uses -z.
+	output := g.getGitCommandOutput("for-each-ref",
+		"--format=%(upstream:short)%00%(upstream:remotename)%00%(refname)", ref)
+
+	upstream, rest, _ := strings.Cut(output, "\x00")
+	remote, refname, _ := strings.Cut(rest, "\x00")
+
+	// for-each-ref takes a pattern, and a pattern matches at "/" boundaries: querying
+	// refs/heads/feature also matches refs/heads/feature/x. Verify the matched ref before using it.
+	if refname != ref {
+		return "", ""
+	}
+
+	if remote == "." {
+		remote = ""
+	}
+
+	return upstream, remote
+}
+
+// bareRemoteNames returns the configured remote names. It asks git rather than parsing the config
+// file, because git reports the merged configuration - system, global, local and include.path - and a
+// remote supplied through an include or a global scope is visible today.
+func (g *Git) bareRemoteNames() []string {
+	// Trimmed here rather than relying on the command runner: cmd.RunWithEnv trims, but the test
+	// mock returns its canned string verbatim, so the contract belongs in this function.
+	output := strings.TrimSpace(g.getGitCommandOutput("remote"))
+	if output == "" {
+		return nil // Split would otherwise yield a one-element slice holding ""
+	}
+
+	return strings.Split(output, "\n")
+}
+
+// fallbackRemote picks a remote to attribute URLs to when HEAD has no upstream, or "" when nothing
+// ranks them. Push settings are deliberately absent: branch.<ref>.pushRemote and remote.pushDefault
+// name a push destination, not an upstream, and no other caller of getUpstreamIcon consults them.
+func fallbackRemote(remotes []string) string {
+	if slices.Contains(remotes, origin) {
+		return origin
+	}
+
+	if len(remotes) == 1 {
+		return remotes[0]
+	}
+
+	return "" // several unranked remotes: keep today's generic icon and empty URL
 }
 
 func (g *Git) setDir(dir string) {
@@ -574,8 +655,8 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 			g.repoRootDir = g.convertToLinuxPath(g.repoRootDir)
 			// resolve relative paths (worktree.useRelativePaths = true)
 			g.repoRootDir = resolveGitPath(g.scmDir, g.repoRootDir)
-			g.scmDir = moduleDir[:worktreeIndex]
 			g.mainSCMDir = g.scmDir
+			g.scmDir = moduleDir[:worktreeIndex]
 			g.IsWorkTree = true
 			return true
 		}
@@ -602,13 +683,9 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 		}
 	}
 
-	// check for separate git folder(--separate-git-dir)
-	// check if the folder contains a HEAD file
 	if g.env.HasFilesInDir(g.mainSCMDir, "HEAD") {
-		gitFolder := strings.TrimSuffix(g.scmDir, ".git")
+		g.repoRootDir = strings.TrimSuffix(g.scmDir, ".git")
 		g.scmDir = g.mainSCMDir
-		g.mainSCMDir = gitFolder
-		g.repoRootDir = gitFolder
 		return true
 	}
 
@@ -651,7 +728,7 @@ func (g *Git) setPushStatus() {
 		return
 	}
 
-	pushRemote := g.getPushRemote()
+	pushRemote := g.pushRef()
 	if pushRemote == "" {
 		return
 	}
@@ -704,64 +781,68 @@ func (g *Git) setPushStatusNative(pushRemote string) bool {
 	return true
 }
 
+// pushRef resolves the destination of a push once, so both counts below describe the
+// same comparison. An empty rev-list result is a genuine failure, never a retry signal.
+func (g *Git) pushRef() string {
+	if ref := g.getGitCommandOutput("rev-parse", "--abbrev-ref", "@{push}"); ref != "" {
+		return ref
+	}
+
+	return g.getPushRemote()
+}
+
 func (g *Git) getPushRemote() string {
-	upstream := g.Upstream
-	if idx := strings.Index(upstream, "/"); idx != -1 {
-		upstream = upstream[:idx]
-	}
-
-	if upstream == "" {
-		upstream = origin
-	}
-
 	branch := g.Ref
 	if branch == "" {
 		return ""
 	}
 
-	cfg, err := g.getGitConfig()
-	if err != nil {
-		pushRemote := g.getGitCommandOutput("config", "--get", "remote.pushDefault")
-		if pushRemote == "" {
-			pushRemote = upstream
-		}
-
-		return strings.TrimSpace(pushRemote) + "/" + branch
-	}
-
-	sectionName := fmt.Sprintf(`branch "%s"`, branch)
-	section := cfg.Section(sectionName)
-	pushRemote := section.Key("pushRemote").String()
+	pushRemote := g.getGitCommandOutput("config", "--get", fmt.Sprintf("branch.%s.pushRemote", branch))
 	if pushRemote == "" {
-		pushRemote = cfg.Section("remote").Key("pushDefault").String()
+		pushRemote = g.getGitCommandOutput("config", "--get", "remote.pushDefault")
 	}
 
 	if pushRemote == "" {
-		pushRemote = upstream
+		pushRemote = regex.ReplaceAllString("/.*", g.Upstream, "")
 	}
 
-	return pushRemote + "/" + branch
+	if pushRemote == "" {
+		pushRemote = origin
+	}
+
+	return strings.TrimSpace(pushRemote) + "/" + branch
 }
 
-func (g *Git) getGitConfig() (*ini.File, error) {
-	g.configOnce.Do(func() {
-		configData := g.fileContent(g.mainSCMDir, "config")
-		if configData == "" {
-			log.Debug("git config file not found")
-			g.configErr = fmt.Errorf("git config file not found")
-			return
-		}
+func loadGitConfigFile(env runtime.Environment, dir, file string) (*ini.File, error) {
+	if dir == "" {
+		return nil, fmt.Errorf("no git directory to read %s from", file)
+	}
 
-		cfg, err := ini.Load(configData)
-		if err != nil {
-			g.configErr = err
-			return
-		}
+	configData := strings.Trim(env.FileContent(dir+"/"+file), " \r\n")
+	if configData == "" {
+		return nil, fmt.Errorf("%s not found", file)
+	}
 
-		g.config = cfg
+	return ini.Load(configData)
+}
+
+func loadGitConfig(env runtime.Environment, dir string) (*ini.File, error) {
+	return loadGitConfigFile(env, dir, "config")
+}
+
+// commonConfig reads the repository's shared config. It refuses to memoize a failure
+// against an unknown directory, which a cache-restored segment would otherwise poison.
+func (g *Git) commonConfig() (*ini.File, error) {
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return nil, fmt.Errorf("common git directory is unknown")
+	}
+
+	g.commonCfgOnce.Do(func() {
+		g.commonCfg, g.commonCfgErr = loadGitConfig(g.env, commonDir)
 	})
 
-	return g.config, g.configErr
+	return g.commonCfg, g.commonCfgErr
 }
 
 func (g *Git) cleanUpstreamURL(url string) string {
@@ -813,10 +894,10 @@ func (g *Git) cleanUpstreamURL(url string) string {
 	return fmt.Sprintf("https://%s/%s", match["URL"], strings.TrimSuffix(match["PATH"], ".git"))
 }
 
-func (g *Git) getUpstreamIcon() string {
+func (g *Git) getUpstreamIcon(remote string) string {
 	fallback := g.options.String(GitIcon, "\uE5FB ")
 
-	g.RawUpstreamURL = g.getRemoteURL()
+	g.RawUpstreamURL = g.getRemoteURL(remote)
 	if g.RawUpstreamURL == "" {
 		return fallback
 	}
@@ -1261,15 +1342,19 @@ func (g *Git) WorktreeCount() int {
 		return g.worktreeCount
 	}
 
-	worktreesFolder := filepath.Join(g.mainSCMDir, "worktrees")
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return 0
+	}
+
+	worktreesFolder := filepath.Join(commonDir, "worktrees")
 
 	if !g.env.HasFolder(worktreesFolder) {
 		return 0
 	}
 
-	worktreeFolders := g.env.LsDir(worktreesFolder)
 	var count int
-	for _, folder := range worktreeFolders {
+	for _, folder := range g.env.LsDir(worktreesFolder) {
 		if folder.IsDir() {
 			count++
 		}
@@ -1339,12 +1424,18 @@ func (g *Git) ensureMainWorktreeContext() bool {
 }
 
 func (g *Git) commonGitDir() string {
+	// scmDir is the common git directory at every discovery exit. The worktrees cut
+	// below is only for partially initialized state, where scmDir is not yet set.
+	if g.scmDir != "" {
+		return filepath.ToSlash(g.scmDir)
+	}
+
 	mainSCMDir := filepath.ToSlash(g.mainSCMDir)
 	if commonDir, _, found := strings.CutLast(mainSCMDir, "/worktrees/"); found {
 		return commonDir
 	}
 
-	return filepath.ToSlash(g.scmDir)
+	return ""
 }
 
 // isModuleAdminDir reports whether target is a submodule administrative directory
@@ -1370,9 +1461,12 @@ func (g *Git) isModuleAdminDir(target, parent string) bool {
 		return true
 	}
 
-	cfg, err := ini.Load(g.fileContent(target, "config"))
+	// A missing or unreadable config is simply not a submodule git dir, not an error
+	// worth reporting: every --separate-git-dir target spelled with a modules component
+	// lands here.
+	cfg, err := loadGitConfig(g.env, target)
 	if err != nil {
-		log.Error(err)
+		log.Debug("no readable config in", target, "- not a submodule git dir")
 		return false
 	}
 
@@ -1426,30 +1520,40 @@ func parseMainWorktree(output string) (string, bool) {
 	return mainWorktree, true
 }
 
-func (g *Git) getRemoteURL() string {
-	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
-	if upstream == "" {
-		upstream = origin
+// remoteNameOrOrigin derives the remote to attribute URLs to from an upstream reference,
+// reproducing the historical behaviour: "origin/main" -> "origin", "" -> "origin".
+func remoteNameOrOrigin(upstream string) string {
+	if remote := regex.ReplaceAllString("/.*", upstream, ""); remote != "" {
+		return remote
 	}
 
-	cfg, err := g.getGitConfig()
-	if err != nil {
-		return g.getGitCommandOutput("remote", "get-url", upstream)
+	return origin
+}
+
+func (g *Git) getRemoteURL(remote string) string {
+	if remote == "" {
+		return ""
 	}
 
-	url := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
-	if len(url) != 0 {
-		log.Debug("remote url found in config:", url)
+	upstream := remote
+
+	// Ask git first because it applies insteadOf rewriting and reads the merged configuration.
+	if url := g.getGitCommandOutput("remote", "get-url", upstream); url != "" {
 		return url
 	}
 
-	return g.getGitCommandOutput("remote", "get-url", upstream)
+	cfg, err := g.commonConfig()
+	if err != nil {
+		return ""
+	}
+
+	return cfg.Section("remote \"" + upstream + "\"").Key("url").String()
 }
 
 func (g *Git) Remotes() map[string]string {
 	var remotes = make(map[string]string)
 
-	cfg, err := g.getGitConfig()
+	cfg, err := g.commonConfig()
 	if err != nil {
 		return remotes
 	}
@@ -1497,9 +1601,50 @@ func (g *Git) repoName() string {
 		return path.Base(g.convertToLinuxPath(g.repoRootDir))
 	}
 
-	if repoRoot, _, found := strings.CutLast(g.mainSCMDir, ".git/worktrees"); found {
-		return path.Base(repoRoot)
+	commonDir := g.commonGitDir()
+	if commonDir == "" {
+		return ""
+	}
+
+	if parent := filepath.Dir(commonDir); g.gitEntryResolvesTo(parent, commonDir) {
+		return path.Base(g.convertToLinuxPath(parent))
+	}
+
+	for _, file := range []string{"config.worktree", "config"} {
+		cfg, err := loadGitConfigFile(g.env, commonDir, file)
+		if err != nil {
+			continue
+		}
+
+		worktree := cfg.Section("core").Key("worktree").String()
+		if worktree == "" {
+			continue
+		}
+
+		return path.Base(g.convertToLinuxPath(resolveGitPath(commonDir, worktree)))
 	}
 
 	return ""
+}
+
+func (g *Git) gitEntryResolvesTo(parent, commonDir string) bool {
+	gitEntry := parent + "/.git"
+	commonDir = filepath.ToSlash(filepath.Clean(commonDir))
+
+	if g.env.HasFolder(gitEntry) {
+		return filepath.ToSlash(filepath.Clean(gitEntry)) == commonDir
+	}
+
+	if !g.env.HasFilesInDir(parent, ".git") {
+		return false
+	}
+
+	content := strings.Trim(g.env.FileContent(gitEntry), " \r\n")
+	target, found := strings.CutPrefix(content, "gitdir: ")
+	if !found {
+		return false
+	}
+
+	target = g.convertToLinuxPath(target)
+	return filepath.ToSlash(filepath.Clean(resolveGitPath(parent, target))) == commonDir
 }

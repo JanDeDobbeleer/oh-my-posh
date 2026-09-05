@@ -4,20 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"testing"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
@@ -61,6 +62,48 @@ func TestWorktreeAdminIndex(t *testing.T) {
 		}
 
 		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestCommonGitDir(t *testing.T) {
+	cases := []struct {
+		Case       string
+		ScmDir     string
+		MainSCMDir string
+		Expected   string
+	}{
+		{
+			Case:       "scmDir wins over the worktrees cut",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git/worktrees/linked",
+			Expected:   "/repo/.git",
+		},
+		{
+			Case:       "checkout path containing worktrees does not fool the cut",
+			ScmDir:     "/x/sepdir",
+			MainSCMDir: "/x/worktrees/trap/",
+			Expected:   "/x/sepdir",
+		},
+		{
+			Case:       "falls back to the cut when scmDir is empty",
+			MainSCMDir: "/repo/.git/worktrees/linked",
+			Expected:   "/repo/.git",
+		},
+		{
+			Case:     "empty when nothing is known",
+			Expected: "",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			g := &Git{
+				scmDir:     tc.ScmDir,
+				mainSCMDir: tc.MainSCMDir,
+			}
+
+			assert.Equal(t, tc.Expected, g.commonGitDir())
+		})
 	}
 }
 
@@ -123,19 +166,19 @@ func TestEnabledInWorktree(t *testing.T) {
 		MetadataAddon     string
 		MetadataContent   string
 		ExpectedProbedDir string
-		// TargetConfig is the config file found in the directory the pointer names. The
-		// modules classifier reads core.worktree out of it to tell a submodule git dir
-		// from a --separate-git-dir target, which has no core.worktree at all.
-		TargetConfig string
-		Case         string
-		Pointer      string
+		Case              string
+		Pointer           string
 		// DiscoveredGitFile is the .git file HasParentFilePath found, whose parent is
 		// DiscoveredParent above.
 		DiscoveredGitFile string
 		// RawGitFile overrides the whole .git file body. Use it when the test is about
 		// the file's syntax rather than the pointer it carries; leave it empty and the
 		// loop writes "gitdir: <Pointer>".
-		RawGitFile         string
+		RawGitFile string
+		// TargetConfig is the config file found in the directory the pointer names. The
+		// modules classifier reads core.worktree out of it to tell a submodule git dir
+		// from a --separate-git-dir target, which has no core.worktree at all.
+		TargetConfig       string
 		ExpectedIsWorkTree bool
 		ExpectedEnabled    bool
 	}{
@@ -180,25 +223,68 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRootFolder:    new(TestRootPath + dotGitSubmodule),
 		},
 		{
-			// Directory-role assertions are reserved for a later decision.
-			Case:               "submodule with worktrees",
-			ExpectedEnabled:    true,
-			ExpectedIsWorkTree: true,
-			Pointer:            TestRootPath + "dev/.git/modules/module/path/worktrees/location",
-			DiscoveredGitFile:  TestRootPath + dotGit,
-			DiscoveredParent:   TestRootPath + "dev",
-			MetadataAddon:      "gitdir",
-			MetadataContent:    TestRootPath + "dev/worktree.git\n",
-			ExpectedProbedDir:  TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			Case:                  "submodule with worktrees",
+			ExpectedEnabled:       true,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       TestRootPath + "dev/worktree.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/module/path/worktrees/location"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/module/path"),
 		},
 		{
-			// Directory-role assertions are reserved for a later decision.
-			Case:              "separate git dir",
-			ExpectedEnabled:   true,
-			Pointer:           TestRootPath + "dev/separate/.git/posh",
-			DiscoveredGitFile: TestRootPath + dotGit,
-			DiscoveredParent:  TestRootPath + "dev",
-			ExpectedProbedDir: TestRootPath + "dev/separate/.git/posh",
+			Case:                  "submodule worktree with a relative gitdir path",
+			ExpectedEnabled:       true,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       "../../../../../../worktree/.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/module/path/worktrees/location",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/module/path/worktrees/location"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/worktree"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/module/path"),
+		},
+		{
+			Case:                  "nested submodule worktree",
+			ExpectedEnabled:       true,
+			ExpectedIsWorkTree:    true,
+			Pointer:               TestRootPath + "dev/.git/modules/outer/modules/inner/worktrees/location",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			MetadataAddon:         "gitdir",
+			MetadataContent:       TestRootPath + "dev/inner-wt.git\n",
+			ExpectedProbedDir:     TestRootPath + "dev/.git/modules/outer/modules/inner/worktrees/location",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.git/modules/outer/modules/inner/worktrees/location"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/inner-wt"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.git/modules/outer/modules/inner"),
+		},
+		{
+			Case:                  "separate git dir",
+			ExpectedEnabled:       true,
+			Pointer:               TestRootPath + "dev/separate/.git/posh",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			ExpectedProbedDir:     TestRootPath + "dev/separate/.git/posh",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/separate/.git/posh"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/separate/.git/posh"),
+		},
+		{
+			Case:                  "bare repo through a .git pointer",
+			ExpectedEnabled:       true,
+			Pointer:               TestRootPath + "dev/.bare",
+			DiscoveredGitFile:     TestRootPath + dotGit,
+			DiscoveredParent:      TestRootPath + "dev",
+			ExpectedProbedDir:     TestRootPath + "dev/.bare",
+			ExpectedWorkingFolder: new(TestRootPath + "dev/.bare"),
+			ExpectedRealFolder:    new(TestRootPath + "dev/"),
+			ExpectedRootFolder:    new(TestRootPath + "dev/.bare"),
 		},
 		{
 			// The pointer's spelling contains a "modules" component, but the directory
@@ -520,7 +606,9 @@ func TestEnabledInBareLayout(t *testing.T) {
 		env.On("FileContent", root+"/.git").Return("gitdir: ./.bare")
 		env.On("HasFilesInDir", root+"/.bare", "HEAD").Return(true)
 		env.On("FileContent", root+"/.bare/config").Return("[core]\n\tbare = true")
-		env.On("FileContent", root+"//HEAD").Return("")
+		// HEAD lives in the bare git dir, not the working tree root: mainSCMDir holds the
+		// current checkout's git directory now.
+		env.On("FileContent", root+"/.bare/HEAD").Return("")
 		env.MockGitCommand(root+"/", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 		env.MockGitCommand(root+"/", "", "describe", "--tags", "--exact-match")
 		env.MockGitCommand(root+"/", "", "remote")
@@ -646,48 +734,211 @@ func TestShouldDisplayInitializesWSLBeforeBareRepoDetection(t *testing.T) {
 
 func TestEnabledInBareRepo(t *testing.T) {
 	cases := []struct {
-		Case   string
-		HEAD   string
-		IsBare bool
+		Case             string
+		HEAD             string
+		SymbolicName     string
+		RevParse         string
+		Tag              string
+		ExpectedRef      string
+		ExpectedHEAD     string
+		IsBare           bool
+		ExpectedDetached bool
 	}{
 		{
-			Case:   "Bare repo on main",
-			IsBare: true,
-			HEAD:   "ref: refs/heads/main",
+			Case:         "Bare repo on main",
+			IsBare:       true,
+			HEAD:         "ref: refs/heads/main",
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
 		},
 		{
-			Case:   "Not a bare repo",
-			HEAD:   "ref: refs/heads/main",
-			IsBare: false,
+			Case:         "Not a bare repo",
+			HEAD:         "ref: refs/heads/main",
+			IsBare:       false,
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
+		},
+		{
+			Case:         "Reftables resolve to the real branch",
+			IsBare:       true,
+			HEAD:         "ref: refs/heads/.invalid",
+			SymbolicName: "refs/heads/main",
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
+		},
+		{
+			Case:             "Detached on a commit",
+			IsBare:           true,
+			HEAD:             "1234567890123456789012345678901234567890",
+			RevParse:         "1234567890123456789012345678901234567890",
+			ExpectedRef:      "1234567",
+			ExpectedHEAD:     "commit 1234567",
+			ExpectedDetached: true,
+		},
+		{
+			Case:             "Detached on a tag",
+			IsBare:           true,
+			HEAD:             "1234567890123456789012345678901234567890",
+			RevParse:         "1234567890123456789012345678901234567890",
+			Tag:              "v1.2.3",
+			ExpectedRef:      "v1.2.3",
+			ExpectedHEAD:     "tag v1.2.3",
+			ExpectedDetached: true,
+		},
+		{
+			Case:         "Unborn branch still names the branch",
+			IsBare:       true,
+			HEAD:         "ref: refs/heads/main",
+			RevParse:     "",
+			ExpectedRef:  "main",
+			ExpectedHEAD: "branch main",
+		},
+		{
+			// PINNED LIMITATION, spec section 3.5 and 6: reftables plus an unborn HEAD loses the
+			// branch name, because rev-parse --symbolic-full-name HEAD fails and the error is mapped
+			// to an empty string. Pre-existing in the shared resolver and shared with the non-bare
+			// path, so out of scope here. This row asserts today's WRONG output on purpose; whoever
+			// fixes the resolver flips it to ExpectedRef "main".
+			Case:             "Reftables and unborn loses the branch name (known limitation)",
+			IsBare:           true,
+			HEAD:             "ref: refs/heads/.invalid",
+			SymbolicName:     "",
+			RevParse:         "",
+			ExpectedRef:      "",
+			ExpectedHEAD:     "no commits",
+			ExpectedDetached: true,
 		},
 	}
+
 	for _, tc := range cases {
 		path := "git"
 		env := new(mock.Environment)
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return("")
+		env.On("IsWsl").Return(false)
 		env.On("HasCommand", "git").Return(true)
 
 		configData := fmt.Sprintf(`[core]
 		bare = %s`, strconv.FormatBool(tc.IsBare))
 
 		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
+		env.On("FileContent", "git/config").Return(configData)
 		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
+		env.MockGitCommand("git", tc.SymbolicName, "rev-parse", "--symbolic-full-name", "HEAD")
+		env.MockGitCommand("git", tc.RevParse, "rev-parse", "HEAD")
+		env.MockGitCommand("git", tc.Tag, "describe", "--tags", "--exact-match")
+
+		props := options.Map{
+			BranchIcon:    "branch ",
+			CommitIcon:    "commit ",
+			TagIcon:       "tag ",
+			NoCommitsIcon: "no commits",
+		}
 
 		g := &Git{}
-		g.Init(options.Map{}, env)
+		g.Init(props, env)
 		// bare info is derived: the config references .IsBare
 		g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
-
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.config, g.configErr = ini.Load(configData)
-		})
 
 		_ = g.Enabled()
 
 		assert.Equal(t, tc.IsBare, g.IsBare, tc.Case)
+		assert.Equal(t, tc.ExpectedRef, g.Ref, tc.Case)
+		assert.Equal(t, tc.ExpectedHEAD, g.HEAD, tc.Case)
+		assert.Equal(t, tc.ExpectedDetached, g.Detached, tc.Case)
 	}
+}
+
+func TestEnabledLinkedWorktreeProbeDoesNotPoisonRemotesMemo(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("GOOS").Return("")
+	env.On("HasCommand", "git").Return(true)
+	env.On("PathSeparator").Return("/")
+
+	fileInfo := &runtime.FileInfo{
+		IsDir:        false,
+		Path:         "/repo/.git",
+		ParentFolder: "/repo",
+	}
+	env.On("HasParentFilePath", ".git", true).Return(fileInfo, nil)
+	env.On("FileContent", "/repo/.git").Return("gitdir: /repo/.git/worktrees/linked")
+	env.On("FileContent", "/repo/.git/worktrees/linked/gitdir").Return("/repo/linked/.git\n")
+	env.On("FileContent", "/repo/.git/HEAD").Return("")
+	env.On("FileContent", testify_.Anything).Return("[remote \"origin\"]\n\turl = git@github.com:JanDeDobbeleer/test.git")
+	env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(true)
+	env.On("HasFolder", testify_.Anything).Return(false)
+	env.On("RunCommand", testify_.Anything, testify_.Anything).Return("", nil)
+
+	g := &Git{}
+	g.Init(options.Map{}, env)
+	// bare info is derived: the config references .IsBare
+	g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
+
+	_ = g.Enabled()
+
+	assert.False(t, g.IsBare)
+	assert.Len(t, g.Remotes(), 1, "remotes must survive the bare probe")
+}
+
+// TestEnabledInBareRepoSeparateGitDir pins D2's dependency on D3 Option 2. In a bare layout reached
+// through a .git FILE, HEAD lives in the git directory, and only the repaired mainSCMDir points there.
+// If this fails, the base is missing D1 or D3-O2 - rebase, do not weaken the assertion.
+func TestEnabledInBareRepoSeparateGitDir(t *testing.T) {
+	const (
+		root   = "/r"
+		gitPtr = "/r/.git"
+		gitDir = "/r/.bare"
+	)
+
+	env := new(mock.Environment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("GOOS").Return("")
+	env.On("IsWsl").Return(false)
+	env.On("HasCommand", "git").Return(true)
+	env.On("PathSeparator").Return("/")
+
+	env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{
+		IsDir:        false,
+		Path:         gitPtr,
+		ParentFolder: root,
+	}, nil)
+
+	// Serves both isBareRepo's fileContent(ParentFolder, ".git") and hasWorktree's FileContent(Path).
+	env.On("FileContent", gitPtr).Return("gitdir: " + gitDir)
+	env.On("FileContent", gitDir+"/config").Return("[core]\n\tbare = true")
+	env.On("HasFilesInDir", gitDir, "HEAD").Return(true)
+	// HEAD is readable ONLY under the git directory, never under the working-tree root.
+	env.On("FileContent", gitDir+"/HEAD").Return("ref: refs/heads/main")
+
+	props := options.Map{
+		BranchIcon: "branch ",
+	}
+
+	g := &Git{}
+	g.Init(props, env)
+	// bare info is derived: the config references .IsBare
+	g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare"}, Analyzable: true})
+
+	require.True(t, g.Enabled())
+
+	assert.True(t, g.IsBare)
+	assert.Equal(t, gitDir, g.mainSCMDir, "D3-O2 must leave mainSCMDir on the git directory")
+	assert.Equal(t, "main", g.Ref)
+	assert.Equal(t, "branch main", g.HEAD)
+	assert.False(t, g.Detached)
+}
+
+func TestIsBareRepoDoesNotReuseConfigMemo(t *testing.T) {
+	env := new(mock.Environment)
+	env.On("FileContent", "first/config").Return("[core]\n\tbare = false")
+	env.On("FileContent", "second/config").Return("[core]\n\tbare = true")
+
+	g := &Git{}
+	g.Init(options.Map{}, env)
+
+	assert.False(t, g.isBareRepo(&runtime.FileInfo{Path: "first", IsDir: true}))
+	assert.True(t, g.isBareRepo(&runtime.FileInfo{Path: "second", IsDir: true}))
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
@@ -706,6 +957,374 @@ func TestGetGitOutputForCommand(t *testing.T) {
 
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
+}
+
+func TestFallbackRemote(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Remotes  []string
+	}{
+		{Case: "origin among several", Remotes: []string{"fork", "origin"}, Expected: "origin"},
+		{Case: "sole non-origin remote", Remotes: []string{"hub"}, Expected: "hub"},
+		{Case: "several unranked remotes", Remotes: []string{"fork", "hub"}, Expected: ""},
+		{Case: "no remotes", Remotes: nil, Expected: ""},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, fallbackRemote(tc.Remotes), tc.Case)
+	}
+}
+
+func TestBareUpstream(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Ref              string
+		Output           string
+		ExpectedUpstream string
+		ExpectedRemote   string
+		Detached         bool
+		NoCommand        bool
+	}{
+		{
+			Case:             "conventional upstream",
+			Ref:              "main",
+			Output:           "origin/main\x00origin\x00refs/heads/main",
+			ExpectedUpstream: "origin/main",
+			ExpectedRemote:   "origin",
+		},
+		{
+			Case:             "refspec lands in another remote's namespace",
+			Ref:              "main",
+			Output:           "origin/main\x00r\x00refs/heads/main",
+			ExpectedUpstream: "origin/main",
+			ExpectedRemote:   "r",
+		},
+		{
+			Case:             "upstream is a tag",
+			Ref:              "main",
+			Output:           "v0.1.0\x00r\x00refs/heads/main",
+			ExpectedUpstream: "v0.1.0",
+			ExpectedRemote:   "r",
+		},
+		{
+			Case:             "local upstream has no attributable remote",
+			Ref:              "main",
+			Output:           "main\x00.\x00refs/heads/main",
+			ExpectedUpstream: "main",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:             "branch exists but has no upstream",
+			Ref:              "main",
+			Output:           "\x00\x00refs/heads/main",
+			ExpectedUpstream: "",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:             "no output at all",
+			Ref:              "main",
+			Output:           "",
+			ExpectedUpstream: "",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:             "pattern matched a different ref",
+			Ref:              "feature",
+			Output:           "origin/main\x00origin\x00refs/heads/feature/x",
+			ExpectedUpstream: "",
+			ExpectedRemote:   "",
+		},
+		{
+			Case:      "detached issues no command",
+			Ref:       "v1.2.3",
+			Detached:  true,
+			NoCommand: true,
+		},
+		{
+			Case:      "empty ref issues no command",
+			Ref:       "",
+			NoCommand: true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("GOOS").Return("unix")
+		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", tc.Output, "for-each-ref",
+			"--format=%(upstream:short)%00%(upstream:remotename)%00%(refname)", "refs/heads/"+tc.Ref)
+
+		g := &Git{
+			command:  GITCOMMAND,
+			Ref:      tc.Ref,
+			Detached: tc.Detached,
+		}
+		g.Init(options.Map{}, env)
+
+		upstream, remote := g.bareUpstream()
+
+		assert.Equal(t, tc.ExpectedUpstream, upstream, tc.Case)
+		assert.Equal(t, tc.ExpectedRemote, remote, tc.Case)
+
+		if tc.NoCommand {
+			env.AssertNotCalled(t, "RunCommand", testify_.Anything, testify_.Anything)
+		}
+	}
+}
+
+func TestBareRemoteNames(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Output   string
+		Expected []string
+	}{
+		{Case: "no remotes", Output: "", Expected: nil},
+		{Case: "one remote", Output: "origin", Expected: []string{"origin"}},
+		{Case: "several remotes", Output: "fork\norigin", Expected: []string{"fork", "origin"}},
+		{Case: "trailing newline is trimmed", Output: "hub\n", Expected: []string{"hub"}},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("GOOS").Return("unix")
+		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", tc.Output, "remote")
+
+		g := &Git{command: GITCOMMAND}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, tc.Expected, g.bareRemoteNames(), tc.Case)
+	}
+}
+
+func TestBareUpstreamIcon(t *testing.T) {
+	origTemplateCache := template.Cache
+	t.Cleanup(func() {
+		template.Cache = origTemplateCache
+	})
+
+	cases := []struct {
+		Case             string
+		ForEachRef       string
+		RemoteOutput     string
+		RemoteURL        string
+		ExpectedRemote   string
+		BranchTemplate   string
+		ExpectedUpstream string
+		ExpectedIcon     string
+		ExpectedURL      string
+		ExpectedHEAD     string
+		HEAD             string
+		FetchUpstream    bool
+		NoRemoteCommand  bool
+	}{
+		{
+			Case:             "resolved upstream drives the icon and skips the inventory",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "origin/main\x00origin\x00refs/heads/main",
+			RemoteURL:        "https://github.com/a/b.git",
+			ExpectedRemote:   "origin",
+			FetchUpstream:    true,
+			ExpectedUpstream: "origin/main",
+			ExpectedIcon:     "GH",
+			ExpectedURL:      "https://github.com/a/b.git",
+			NoRemoteCommand:  true,
+		},
+		{
+			Case:             "no upstream falls back to origin",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "\x00\x00refs/heads/main",
+			RemoteOutput:     "fork\norigin",
+			RemoteURL:        "https://github.com/a/b.git",
+			ExpectedRemote:   "origin",
+			FetchUpstream:    true,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "GH",
+			ExpectedURL:      "https://github.com/a/b.git",
+		},
+		{
+			Case:             "local upstream is reported with no remote and no icon",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "main\x00.\x00refs/heads/main",
+			RemoteOutput:     "",
+			FetchUpstream:    true,
+			ExpectedUpstream: "main",
+			ExpectedIcon:     "",
+			ExpectedURL:      "",
+		},
+		{
+			Case:             "unranked remotes keep the generic icon",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "\x00\x00refs/heads/main",
+			RemoteOutput:     "fork\nhub",
+			FetchUpstream:    true,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "G",
+			ExpectedURL:      "",
+		},
+		{
+			Case:             "sole remote reachable only through an include still resolves",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "\x00\x00refs/heads/main",
+			RemoteOutput:     "hub",
+			RemoteURL:        "https://gitlab.com/a/b.git",
+			ExpectedRemote:   "hub",
+			FetchUpstream:    true,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "GL",
+			ExpectedURL:      "https://gitlab.com/a/b.git",
+		},
+		{
+			Case:             "option absent leaves every upstream field alone",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "origin/main\x00origin\x00refs/heads/main",
+			RemoteOutput:     "origin",
+			FetchUpstream:    false,
+			ExpectedUpstream: "",
+			ExpectedIcon:     "",
+			ExpectedURL:      "",
+			NoRemoteCommand:  true,
+		},
+		{
+			Case:             "branch_template sees an empty upstream",
+			HEAD:             "ref: refs/heads/main",
+			ForEachRef:       "origin/main\x00origin\x00refs/heads/main",
+			RemoteURL:        "https://github.com/a/b.git",
+			ExpectedRemote:   "origin",
+			BranchTemplate:   "{{ .Branch }}[{{ .Upstream }}]",
+			FetchUpstream:    true,
+			ExpectedUpstream: "origin/main",
+			ExpectedIcon:     "GH",
+			ExpectedURL:      "https://github.com/a/b.git",
+			ExpectedHEAD:     "branch main[]",
+			NoRemoteCommand:  true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("GOOS").Return("")
+		env.On("IsWsl").Return(false)
+		env.On("HasCommand", "git").Return(true)
+		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: "git"}, nil)
+		env.On("FileContent", "git/HEAD").Return(tc.HEAD)
+		env.On("FileContent", "git/config").Return("[core]\n\tbare = true")
+
+		env.MockGitCommand("git", tc.ForEachRef, "for-each-ref",
+			"--format=%(upstream:short)%00%(upstream:remotename)%00%(refname)", "refs/heads/main")
+		env.MockGitCommand("git", tc.RemoteOutput, "remote")
+		if tc.ExpectedRemote != "" {
+			env.MockGitCommand("git", tc.RemoteURL, "remote", "get-url", tc.ExpectedRemote)
+		}
+
+		props := options.Map{
+			BranchIcon: "branch ",
+			GithubIcon: "GH",
+			GitlabIcon: "GL",
+			GitIcon:    "G",
+		}
+
+		if tc.BranchTemplate != "" {
+			props[BranchTemplate] = tc.BranchTemplate
+			env.On("Shell").Return(shell.BASH)
+			template.Cache = new(cache.Template)
+			template.Init(env, nil, nil)
+		}
+
+		g := &Git{}
+		g.Init(props, env)
+
+		// bare info is always derived; the upstream icon probe is derived
+		// from template references, mirroring tc.FetchUpstream.
+		refs := template.RefSet{Fields: []string{"IsBare"}, Analyzable: true}
+		if tc.FetchUpstream {
+			refs.Fields = append(refs.Fields, gitUpstreamIconFields...)
+		}
+		g.SetReferencedFields(refs)
+
+		_ = g.Enabled()
+
+		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
+		assert.Equal(t, tc.ExpectedIcon, g.UpstreamIcon, tc.Case)
+		assert.Equal(t, tc.ExpectedURL, g.RawUpstreamURL, tc.Case)
+
+		if tc.ExpectedHEAD != "" {
+			assert.Equal(t, tc.ExpectedHEAD, g.HEAD, tc.Case)
+		}
+
+		if tc.ExpectedRemote != "" {
+			env.AssertCalled(t, "RunCommand", GITCOMMAND, []string{
+				"-C", "git", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false",
+				"remote", "get-url", tc.ExpectedRemote,
+			})
+		}
+
+		if tc.NoRemoteCommand {
+			env.AssertNotCalled(t, "RunCommand", GITCOMMAND, []string{
+				"-C", "git", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false",
+				"remote",
+			})
+		}
+	}
+}
+
+func TestKrakenBareAttribution(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Upstream         string
+		ExpectedKraken   string
+		ExpectedUpstream string
+		WrongURL         string
+		IsBare           bool
+		FetchUpstream    bool
+	}{
+		{
+			Case:             "non-bare without an upstream still queries origin",
+			Upstream:         "",
+			ExpectedKraken:   "gitkraken://repolink/abc1234/commit/abc1234?url=" + url.QueryEscape("https://github.com/a/b.git"),
+			ExpectedUpstream: "",
+		},
+		{
+			Case:             "bare with a local upstream does not re-derive a remote",
+			Upstream:         "main",
+			IsBare:           true,
+			FetchUpstream:    true,
+			ExpectedKraken:   "gitkraken://repolink/abc1234/commit/abc1234?url=",
+			ExpectedUpstream: "main",
+			WrongURL:         url.QueryEscape("https://example.com/wrong.git"),
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("GOOS").Return("unix")
+		env.On("IsWsl").Return(false)
+		env.MockGitCommand("", "abc1234", "rev-list", "--max-parents=0", "HEAD")
+		env.MockGitCommand("", "abc1234", "rev-parse", "HEAD")
+		env.MockGitCommand("", "https://github.com/a/b.git", "remote", "get-url", "origin")
+		env.MockGitCommand("", "https://example.com/wrong.git", "remote", "get-url", "main")
+
+		g := &Git{
+			command:  GITCOMMAND,
+			Upstream: tc.Upstream,
+			IsBare:   tc.IsBare,
+		}
+		g.Init(options.Map{}, env)
+
+		if tc.FetchUpstream {
+			g.SetReferencedFields(template.RefSet{Fields: gitUpstreamIconFields, Analyzable: true})
+		}
+
+		kraken := g.Kraken()
+
+		assert.Equal(t, tc.ExpectedKraken, kraken, tc.Case)
+		if tc.WrongURL != "" {
+			assert.NotContains(t, kraken, tc.WrongURL, tc.Case)
+		}
+		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
+	}
 }
 
 func TestSetGitHEADContextClean(t *testing.T) {
@@ -864,6 +1483,31 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		g.setHEADStatus()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
 	}
+}
+
+func TestSubmoduleWorktreeReadsItsOwnHEAD(t *testing.T) {
+	const (
+		commonDir = "/super/.git/modules/sub"
+		adminDir  = commonDir + "/worktrees/subwt"
+	)
+
+	env := new(mock.Environment)
+	env.On("FileContent", adminDir+"/HEAD").Return("ref: refs/heads/subfeature")
+	env.On("FileContent", commonDir+"/HEAD").Return("ref: refs/heads/main")
+	env.On("HasFilesInDir", testify_.Anything, testify_.Anything).Return(false)
+	env.On("HasFolder", testify_.Anything).Return(false)
+	env.On("GOOS").Return("unix")
+
+	g := &Git{
+		scmDir:     commonDir,
+		mainSCMDir: adminDir,
+		IsWorkTree: true,
+	}
+	g.Init(options.Map{}, env)
+
+	g.updateHEADReference()
+
+	assert.Equal(t, "subfeature", g.Ref)
 }
 
 func TestSetPrettyHEADName(t *testing.T) {
@@ -1154,11 +1798,31 @@ func TestGitCleanSSHURL(t *testing.T) {
 	}
 }
 
-func TestGitUpstream(t *testing.T) {
+func TestRemoteNameOrOrigin(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected string
 		Upstream string
+		Expected string
+	}{
+		{Case: "remote and branch", Upstream: "origin/main", Expected: "origin"},
+		{Case: "remote only", Upstream: "origin", Expected: "origin"},
+		{Case: "non-origin remote", Upstream: "hub/main", Expected: "hub"},
+		{Case: "nested branch", Upstream: "origin/feature/x", Expected: "origin"},
+		{Case: "empty defaults to origin", Upstream: "", Expected: "origin"},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, remoteNameOrOrigin(tc.Upstream), tc.Case)
+	}
+}
+
+func TestGitUpstream(t *testing.T) {
+	cases := []struct {
+		Case      string
+		Expected  string
+		Upstream  string
+		Remote    string
+		RemoteSet bool
 	}{
 		{Case: "No upstream", Expected: "G", Upstream: ""},
 		{Case: "SSH url", Expected: "G", Upstream: "ssh://git@git.my.domain:3001/ADIX7/dotconfig.git"},
@@ -1173,6 +1837,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
 		{Case: "GitHub with dash", Expected: "GH", Upstream: "github.com:pixel48/custom-reg"},
+		{Case: "No attributable remote yields the fallback icon", Expected: "G", RemoteSet: true, Remote: ""},
 	}
 	for _, tc := range cases {
 		env := &mock.Environment{}
@@ -1200,12 +1865,12 @@ func TestGitUpstream(t *testing.T) {
 		}
 		g.Init(props, env)
 
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.configErr = errors.New("no config")
-		})
+		remote := tc.Remote
+		if !tc.RemoteSet {
+			remote = remoteNameOrOrigin(g.Upstream)
+		}
 
-		upstreamIcon := g.getUpstreamIcon()
+		upstreamIcon := g.getUpstreamIcon(remote)
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
 }
@@ -1594,23 +2259,24 @@ func TestGitRemotes(t *testing.T) {
 		ExpectedRemotes map[string]string
 		Case            string
 		Config          string
+		ScmDir          string
 		Expected        int
 	}{
 		{
 			Case:            "Empty config file",
+			ScmDir:          "/repo/.git",
 			Expected:        0,
 			ExpectedRemotes: map[string]string{},
 		},
 		{
 			Case:     "Two remotes",
+			ScmDir:   "/repo/.git",
 			Expected: 2,
 			Config: `
 [remote "origin"]
 	url = git@github.com:JanDeDobbeleer/test.git
-	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "upstream"]
 	url = git@github.com:microsoft/test.git
-	fetch = +refs/heads/*:refs/remotes/upstream/*
 `,
 			ExpectedRemotes: map[string]string{
 				"origin":   "https://github.com/JanDeDobbeleer/test",
@@ -1619,11 +2285,11 @@ func TestGitRemotes(t *testing.T) {
 		},
 		{
 			Case:     "One remote",
+			ScmDir:   "/repo/.git",
 			Expected: 1,
 			Config: `
 [remote "origin"]
 	url = git@github.com:JanDeDobbeleer/test.git
-	fetch = +refs/heads/*:refs/remotes/origin/*
 `,
 			ExpectedRemotes: map[string]string{
 				"origin": "https://github.com/JanDeDobbeleer/test",
@@ -1631,12 +2297,14 @@ func TestGitRemotes(t *testing.T) {
 		},
 		{
 			Case:            "Broken config",
+			ScmDir:          "/repo/.git",
 			Expected:        0,
 			Config:          "{{}}",
 			ExpectedRemotes: map[string]string{},
 		},
 		{
 			Case:     "Three remotes with different URL formats",
+			ScmDir:   "/repo/.git",
 			Expected: 3,
 			Config: `
 [remote "origin"]
@@ -1655,75 +2323,148 @@ func TestGitRemotes(t *testing.T) {
 				"fork":     "https://gitlab.com/user/test",
 			},
 		},
+		{
+			Case:     "Linked worktree reads the common config",
+			ScmDir:   "/repo/.git",
+			Expected: 1,
+			Config: `
+[remote "origin"]
+	url = git@github.com:JanDeDobbeleer/test.git
+`,
+			ExpectedRemotes: map[string]string{
+				"origin": "https://github.com/JanDeDobbeleer/test",
+			},
+		},
+		{
+			Case:            "Empty common dir returns empty without reading",
+			ScmDir:          "",
+			Expected:        0,
+			ExpectedRemotes: map[string]string{},
+		},
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			if tc.ScmDir != "" {
+				env.On("FileContent", tc.ScmDir+"/config").Return(tc.Config)
+			}
 
-		g := &Git{
-			repoRootDir: "foo",
-		}
-		g.Init(options.Map{}, env)
+			g := &Git{
+				repoRootDir: "foo",
+				scmDir:      tc.ScmDir,
+			}
+			g.Init(options.Map{}, env)
 
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.config, g.configErr = ini.Load(tc.Config)
+			got := g.Remotes()
+			assert.Equal(t, tc.Expected, len(got), tc.Case)
+
+			for name, expectedURL := range tc.ExpectedRemotes {
+				actualURL, exists := got[name]
+				assert.True(t, exists, "%s: expected remote '%s' to exist", tc.Case, name)
+				assert.Equal(t, expectedURL, actualURL, "%s: remote '%s' URL mismatch", tc.Case, name)
+			}
+
+			if tc.ScmDir == "" {
+				env.AssertNotCalled(t, "FileContent", testify_.Anything)
+			}
 		})
-
-		got := g.Remotes()
-		assert.Equal(t, tc.Expected, len(got), tc.Case)
-
-		// Verify the actual remote names and URLs
-		for name, expectedURL := range tc.ExpectedRemotes {
-			actualURL, exists := got[name]
-			assert.True(t, exists, "%s: expected remote '%s' to exist", tc.Case, name)
-			assert.Equal(t, expectedURL, actualURL, "%s: remote '%s' URL mismatch", tc.Case, name)
-		}
 	}
 }
 
 func TestGitRepoName(t *testing.T) {
 	cases := []struct {
-		Case       string
-		Expected   string
-		WorkingDir string
-		RealDir    string
-		IsWorkTree bool
+		Case            string
+		Expected        string
+		ScmDir          string
+		RepoRootDir     string
+		ParentGitFile   string
+		WorktreeConfig  string
+		CommonConfig    string
+		ConvertedGitDir string
+		ConvertedParent string
+		ParentGitIsDir  bool
+		IsWorkTree      bool
+		IsWslSharedPath bool
 	}{
 		{
-			Case:       "In worktree",
-			Expected:   "oh-my-posh",
-			IsWorkTree: true,
-			WorkingDir: "/Users/jan/Code/oh-my-posh/.git/worktrees/oh-my-posh2",
+			Case:        "not in a worktree",
+			Expected:    "oh-my-posh",
+			RepoRootDir: "/Users/jan/Code/oh-my-posh",
 		},
 		{
-			Case:       "Not in worktree",
-			Expected:   "oh-my-posh",
-			IsWorkTree: false,
-			RealDir:    "/Users/jan/Code/oh-my-posh",
+			Case:           "ordinary linked worktree",
+			Expected:       "normal",
+			IsWorkTree:     true,
+			ScmDir:         "/code/normal/.git",
+			ParentGitIsDir: true,
 		},
 		{
-			Case:       "In worktree, unexpected dir",
+			Case:          "bare-backed linked worktree",
+			Expected:      "barelayout",
+			IsWorkTree:    true,
+			ScmDir:        "/code/barelayout/.bare",
+			ParentGitFile: "gitdir: ./.bare",
+		},
+		{
+			Case:            "bare-backed linked worktree through Windows git in WSL",
+			Expected:        "barelayout",
+			IsWorkTree:      true,
+			IsWslSharedPath: true,
+			ScmDir:          "/mnt/c/code/barelayout/.bare",
+			ParentGitFile:   "gitdir: C:/code/barelayout/.bare",
+			ConvertedGitDir: "/mnt/c/code/barelayout/.bare",
+			ConvertedParent: "/mnt/c/code/barelayout",
+		},
+		{
+			Case:         "submodule linked worktree resolves core.worktree",
+			Expected:     "sub",
+			IsWorkTree:   true,
+			ScmDir:       "/super/.git/modules/logical",
+			CommonConfig: "[core]\n\tworktree = ../../../sub",
+		},
+		{
+			Case:           "submodule linked worktree with extensions.worktreeConfig",
+			Expected:       "sub",
+			IsWorkTree:     true,
+			ScmDir:         "/super/.git/modules/logical",
+			WorktreeConfig: "[core]\n\tworktree = ../../../sub",
+		},
+		{
+			Case:       "external separate git dir stays empty",
 			Expected:   "",
 			IsWorkTree: true,
-			WorkingDir: "/Users/jan/Code/oh-my-posh2",
+			ScmDir:     "/x/sepdir",
 		},
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("PathSeparator").Return("/")
-		env.On("GOOS").Return(runtime.LINUX)
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("PathSeparator").Return("/")
+			env.On("GOOS").Return(runtime.LINUX)
 
-		g := &Git{
-			repoRootDir: tc.RealDir,
-			mainSCMDir:  tc.WorkingDir,
-			IsWorkTree:  tc.IsWorkTree,
-		}
-		g.Init(options.Map{}, env)
+			parent := filepath.Dir(tc.ScmDir)
+			env.On("HasFolder", parent+"/.git").Return(tc.ParentGitIsDir)
+			env.On("HasFilesInDir", parent, ".git").Return(tc.ParentGitFile != "")
+			env.On("FileContent", parent+"/.git").Return(tc.ParentGitFile)
+			env.On("FileContent", tc.ScmDir+"/config.worktree").Return(tc.WorktreeConfig)
+			env.On("FileContent", tc.ScmDir+"/config").Return(tc.CommonConfig)
+			if tc.ConvertedGitDir != "" {
+				env.On("ConvertToLinuxPath").Return(tc.ConvertedGitDir).Once()
+				env.On("ConvertToLinuxPath").Return(tc.ConvertedParent).Once()
+			}
 
-		got := g.repoName()
-		assert.Equal(t, tc.Expected, got, tc.Case)
+			g := &Git{
+				repoRootDir:     tc.RepoRootDir,
+				scmDir:          tc.ScmDir,
+				IsWslSharedPath: tc.IsWslSharedPath,
+				IsWorkTree:      tc.IsWorkTree,
+			}
+			g.Init(options.Map{}, env)
+
+			assert.Equal(t, tc.Expected, g.repoName(), tc.Case)
+		})
 	}
 }
 
@@ -2093,7 +2834,6 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		Case               string
 		PushAheadCount     string
 		PushBehindCount    string
-		Config             string
 		ExpectedPushAhead  int
 		ExpectedPushBehind int
 	}{
@@ -2125,22 +2865,14 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 			ExpectedPushAhead:  0,
 			ExpectedPushBehind: 0,
 		},
-		{
-			Case:               "remote from config",
-			PushAheadCount:     "2",
-			PushBehindCount:    "0",
-			ExpectedPushAhead:  2,
-			ExpectedPushBehind: 0,
-			Config: `
-			[branch "main"]
-				remote = origin
-				merge = refs/heads/main
-			`,
-		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "rev-parse", "--abbrev-ref", "@{push}"}).Return("", nil)
+		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "config", "--get", "branch.main.pushRemote"}).Return("", nil)
 		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "config", "--get", "remote.pushDefault"}).Return("", nil)
 		env.On("RunCommand", "git", []string{"-C", "/dir", "--no-optional-locks", "-c", "core.quotepath=false",
@@ -2161,21 +2893,143 @@ func TestPushStatusAheadAndBehind(t *testing.T) {
 		// push status is derived: the config references .PushAhead
 		g.SetReferencedFields(template.RefSet{Fields: []string{"PushAhead"}, Analyzable: true})
 
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			if len(tc.Config) > 0 {
-				g.config, g.configErr = ini.Load(tc.Config)
-				return
-			}
-
-			g.configErr = errors.New("no config")
-		})
-
 		g.setPushStatus()
 
 		assert.Equal(t, tc.ExpectedPushAhead, g.PushAhead, tc.Case)
 		assert.Equal(t, tc.ExpectedPushBehind, g.PushBehind, tc.Case)
 	}
+}
+
+func TestPushRef(t *testing.T) {
+	args := func(extra ...string) []string {
+		return append([]string{
+			"-C", "/repo", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false",
+		}, extra...)
+	}
+
+	t.Run("uses @{push} when it resolves", func(t *testing.T) {
+		env := new(mock.Environment)
+		env.On("IsWsl").Return(false)
+		env.On("GOOS").Return("unix")
+		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("origin/main", nil)
+
+		g := &Git{
+			command:     GITCOMMAND,
+			repoRootDir: "/repo",
+			Ref:         "main",
+		}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, "origin/main", g.pushRef())
+		env.AssertNotCalled(t, "RunCommand", GITCOMMAND, args("config", "--get", "remote.pushDefault"))
+	})
+
+	t.Run("falls back to per-branch pushRemote when @{push} is unresolvable", func(t *testing.T) {
+		env := new(mock.Environment)
+		env.On("IsWsl").Return(false)
+		env.On("GOOS").Return("unix")
+		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("", errors.New("cannot resolve 'simple' push to a single destination"))
+		env.On("RunCommand", GITCOMMAND, args("config", "--get", "branch.main.pushRemote")).Return("fork", nil)
+
+		g := &Git{
+			command:     GITCOMMAND,
+			repoRootDir: "/repo",
+			Ref:         "main",
+		}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, "fork/main", g.pushRef())
+	})
+
+	t.Run("falls back to remote.pushDefault when the branch has no pushRemote", func(t *testing.T) {
+		env := new(mock.Environment)
+		env.On("IsWsl").Return(false)
+		env.On("GOOS").Return("unix")
+		env.On("RunCommand", GITCOMMAND, args("rev-parse", "--abbrev-ref", "@{push}")).Return("", errors.New("cannot resolve push destination"))
+		env.On("RunCommand", GITCOMMAND, args("config", "--get", "branch.main.pushRemote")).Return("", nil)
+		env.On("RunCommand", GITCOMMAND, args("config", "--get", "remote.pushDefault")).Return("fork", nil)
+
+		g := &Git{
+			command:     GITCOMMAND,
+			repoRootDir: "/repo",
+			Ref:         "main",
+		}
+		g.Init(options.Map{}, env)
+
+		assert.Equal(t, "fork/main", g.pushRef())
+	})
+}
+
+func TestSetStatusNativeDirRoles(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
+	}
+
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+
+	t.Run("separate git dir", func(t *testing.T) {
+		root := t.TempDir()
+		repo := filepath.Join(root, "worktree")
+		gitDir := filepath.Join(root, "gitdir")
+		runRealGit(t, root, "init", "-q", "-b", "main", "--separate-git-dir", gitDir, repo)
+		prepareNativeStatusRepo(t, repo)
+
+		g := nativeStatusGit(t, repo)
+		require.Equal(t, g.scmDir, g.mainSCMDir)
+		require.True(t, g.setStatusNative())
+		assert.Equal(t, 1, g.Working.Modified)
+		assert.Equal(t, "main", g.Ref)
+	})
+
+	t.Run("submodule worktree", func(t *testing.T) {
+		root := t.TempDir()
+		source := filepath.Join(root, "source")
+		super := filepath.Join(root, "super")
+		subWorktree := filepath.Join(root, "sub-worktree")
+
+		runRealGit(t, root, "init", "-q", "-b", "main", source)
+		prepareNativeStatusRepo(t, source)
+		runRealGit(t, root, "init", "-q", "-b", "main", super)
+		prepareNativeStatusRepo(t, super)
+		runRealGit(t, super, "-c", "protocol.file.allow=always", "submodule", "add", "-q", source, "sub")
+		runRealGit(t, super, "commit", "-q", "-m", "add submodule")
+		runRealGit(t, filepath.Join(super, "sub"), "worktree", "add", "-q", "-b", "feature", subWorktree)
+		require.NoError(t, os.WriteFile(filepath.Join(subWorktree, "a.txt"), []byte("changed again\n"), 0o644))
+
+		g := nativeStatusGit(t, subWorktree)
+		require.NotEqual(t, g.scmDir, g.mainSCMDir)
+		require.True(t, g.setStatusNative())
+		assert.Equal(t, 1, g.Working.Modified)
+		assert.Equal(t, "feature", g.Ref)
+	})
+}
+
+func prepareNativeStatusRepo(t *testing.T, repo string) {
+	t.Helper()
+	runRealGit(t, repo, "config", "user.email", "test@example.com")
+	runRealGit(t, repo, "config", "user.name", "Test")
+	runRealGit(t, repo, "config", "core.autocrlf", "false")
+	require.NoError(t, os.WriteFile(filepath.Join(repo, "a.txt"), []byte("a\n"), 0o644))
+	runRealGit(t, repo, "add", ".")
+	runRealGit(t, repo, "commit", "-q", "-m", "init")
+	require.NoError(t, os.WriteFile(filepath.Join(repo, "a.txt"), []byte("changed\n"), 0o644))
+}
+
+func nativeStatusGit(t *testing.T, repo string) *Git {
+	t.Helper()
+	g := &Git{
+		mainSCMDir:  realGitPath(t, repo, "--git-dir"),
+		scmDir:      realGitPath(t, repo, "--git-common-dir"),
+		repoRootDir: realGitPath(t, repo, "--show-toplevel"),
+		Working:     &GitStatus{},
+		Staging:     &GitStatus{},
+	}
+	g.Init(options.Map{}, new(mock.Environment))
+	return g
 }
 
 // TestSetStatusNative builds a real temp repo with the git CLI (skipped when
@@ -2363,14 +3217,18 @@ func TestSetUserNative(t *testing.T) {
 	require.NoError(t, err)
 
 	// A bare mock.Environment would panic on the FileContent() call
-	// getGitConfig() makes (getGitConfig always reads through the mocked
+	// commonConfig() makes (commonConfig always reads through the mocked
 	// env, unlike the gitstatus package). Stubbing only FileContent, with
 	// no RunCommand expectation at all, proves setUser reads the local
 	// config without ever spawning git.
 	env := new(mock.Environment)
-	env.On("FileContent", gitDir+"/config").Return(string(configData))
+	// commonConfig() reads through commonGitDir(), which normalizes the directory
+	// to forward slashes, so the expectation has to be spelled that way on Windows too.
+	env.On("FileContent", filepath.ToSlash(gitDir)+"/config").Return(string(configData))
 
-	g := &Git{mainSCMDir: gitDir}
+	// A plain, non-worktree checkout: mainSCMDir and scmDir (checkout-specific
+	// vs repository-wide common dir) are the same directory.
+	g := &Git{mainSCMDir: gitDir, scmDir: gitDir}
 	g.Init(options.Map{}, env)
 	g.User = &User{}
 
@@ -2581,5 +3439,148 @@ func TestGitFetchUnits(t *testing.T) {
 		g.SetReferencedFields(template.RefSet{Fields: tc.Referenced, Sources: tc.Sources, Analyzable: tc.Analyzable})
 
 		assert.Equal(t, tc.Expected, g.fetchUnit(tc.Fields...), tc.Case)
+	}
+}
+
+func TestGetRemoteURL(t *testing.T) {
+	const configWithOrigin = "[remote \"origin\"]\n\turl = gh:example/repo.git"
+
+	cases := []struct {
+		Case      string
+		Upstream  string
+		CLIOutput string
+		CLIError  error
+		Config    string
+		ScmDir    string
+		Expected  string
+	}{
+		{
+			Case:      "CLI wins over the raw config value (insteadOf is applied)",
+			Upstream:  "origin/main",
+			CLIOutput: "https://github.com/example/repo.git",
+			Config:    configWithOrigin,
+			ScmDir:    "/repo/.git",
+			Expected:  "https://github.com/example/repo.git",
+		},
+		{
+			Case:     "falls back to the common config when the CLI fails",
+			Upstream: "origin/main",
+			CLIError: errors.New("git unavailable"),
+			Config:   configWithOrigin,
+			ScmDir:   "/repo/.git",
+			Expected: "gh:example/repo.git",
+		},
+		{
+			Case:     "empty when the CLI fails and there is no common config",
+			Upstream: "origin/main",
+			CLIError: errors.New("git unavailable"),
+			Config:   configWithOrigin,
+			ScmDir:   "",
+			Expected: "",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("IsWsl").Return(false)
+			env.On("GOOS").Return("unix")
+			env.On("RunCommand", GITCOMMAND, []string{
+				"-C", "/repo", "--no-optional-locks", "-c", "core.quotepath=false",
+				"-c", "color.status=false", "remote", "get-url", "origin",
+			}).Return(tc.CLIOutput, tc.CLIError)
+
+			if tc.ScmDir != "" {
+				env.On("FileContent", tc.ScmDir+"/config").Return(tc.Config)
+			}
+
+			g := &Git{
+				command:     GITCOMMAND,
+				repoRootDir: "/repo",
+				scmDir:      tc.ScmDir,
+				Upstream:    tc.Upstream,
+			}
+			g.Init(options.Map{}, env)
+
+			assert.Equal(t, tc.Expected, g.getRemoteURL(remoteNameOrOrigin(g.Upstream)))
+		})
+	}
+}
+
+func TestWorktreeCount(t *testing.T) {
+	cases := []struct {
+		Case       string
+		ScmDir     string
+		MainSCMDir string
+		Entries    []fs.DirEntry
+		Expected   int
+		HasFolder  bool
+	}{
+		{
+			Case:       "plain clone with no registry",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git",
+			HasFolder:  false,
+			Expected:   0,
+		},
+		{
+			Case:       "linked worktree counts the common registry",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git/worktrees/linked",
+			HasFolder:  true,
+			Entries: []fs.DirEntry{
+				&MockDirEntry{name: "linked", isDir: true},
+				&MockDirEntry{name: "other", isDir: true},
+			},
+			Expected: 2,
+		},
+		{
+			Case:       "files in the registry are not counted",
+			ScmDir:     "/repo/.git",
+			MainSCMDir: "/repo/.git",
+			HasFolder:  true,
+			Entries: []fs.DirEntry{
+				&MockDirEntry{name: "linked", isDir: true},
+				&MockDirEntry{name: "README", isDir: false},
+			},
+			Expected: 1,
+		},
+		{
+			Case:       "separate git dir counts its external registry",
+			ScmDir:     "/x/sepdir",
+			MainSCMDir: "/x/worktrees/trap/",
+			HasFolder:  true,
+			Entries:    []fs.DirEntry{&MockDirEntry{name: "wt", isDir: true}},
+			Expected:   1,
+		},
+		{
+			Case:     "unknown common dir touches nothing",
+			Expected: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+
+			if tc.ScmDir != "" {
+				worktrees := filepath.Join(tc.ScmDir, "worktrees")
+				env.On("HasFolder", worktrees).Return(tc.HasFolder)
+				env.On("LsDir", worktrees).Return(tc.Entries)
+			}
+
+			g := &Git{
+				scmDir:     tc.ScmDir,
+				mainSCMDir: tc.MainSCMDir,
+			}
+			g.Init(options.Map{}, env)
+
+			assert.Equal(t, tc.Expected, g.WorktreeCount())
+
+			if tc.ScmDir == "" {
+				env.AssertNotCalled(t, "HasFolder", testify_.Anything)
+				env.AssertNotCalled(t, "LsDir", testify_.Anything)
+			}
+		})
 	}
 }

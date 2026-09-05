@@ -71,10 +71,11 @@ func TestEncodeColumnsScalesCanvasWidth(t *testing.T) {
 }
 
 // TestEncodeWindowChromeElements pins every distinct piece of window chrome:
-// the header bar path, the content pane path, the border rect (stroked,
-// unfilled), and the "−"/"▢"/"×" window-control glyphs in fixed left-to-right
-// order - no drop shadow, and so no filter to reference (see
-// windowGeometry's doc comment), and no title or "+"/"⌄" tab-control glyphs
+// the hard offset shadow silhouette that matches the website's framed code
+// blocks (a filled rect, not a filter — see shadowOffset's doc comment), the
+// header bar path, the content pane path, the border rect (stroked,
+// unfilled), and the "−"/"▢"/"×" window-control glyphs in fixed
+// left-to-right order. No title or "+"/"⌄" tab-control glyphs are present
 // (see writeWindowChrome's doc comment on why those were dropped).
 func TestEncodeWindowChromeElements(t *testing.T) {
 	rows := [][]terminal.Run{{contentRun("hi")}}
@@ -82,14 +83,23 @@ func TestEncodeWindowChromeElements(t *testing.T) {
 	doc := Encode(rows, testOptions())
 	decodeXML(t, doc)
 
+	assert.Contains(t, doc, `class="omp-window-shadow"`)
 	assert.Contains(t, doc, `class="omp-window-header"`)
 	assert.Contains(t, doc, `class="omp-window-content"`)
+	assert.Contains(t, doc, `class="omp-window-divider"`)
 	assert.Contains(t, doc, `class="omp-window" x="`)
 	assert.Contains(t, doc, `rx="`)
-	assert.Contains(t, doc, `stroke="#404040"`)
+	assert.Contains(t, doc, `stroke="#ffffff"`)
+	assert.Contains(t, doc, `stroke-width="1"`)
+	assert.Contains(t, doc, `stroke-opacity="0.8"`)
 	assert.Contains(t, doc, `fill="none"`)
 	assert.NotContains(t, doc, "<feDropShadow")
 	assert.NotContains(t, doc, "filter=")
+
+	// The shadow must be painted before the window it sits behind.
+	shadowIdx := strings.Index(doc, `class="omp-window-shadow"`)
+	windowIdx := strings.Index(doc, `class="omp-window" x="`)
+	assert.Less(t, shadowIdx, windowIdx, "the shadow silhouette must be painted before the window covering it")
 
 	assert.NotContains(t, doc, `class="omp-window-title"`)
 	assert.NotContains(t, doc, `class="omp-tab-control"`)
@@ -140,6 +150,23 @@ func TestEncodeWindowControlsStayLegibleOnLightHeader(t *testing.T) {
 
 	assert.Contains(t, doc, `fill="`+hexString(defaultForegroundNearBlack)+`" text-anchor="middle">`+"\u2212</text>")
 	assert.NotContains(t, doc, `fill="#cfcfcf"`)
+}
+
+func TestEncodeWindowBorderUsesThemeAwareStrokeAndShadow(t *testing.T) {
+	lightOpts := testOptions()
+	light := color.RGB{R: 0xf5, G: 0xf5, B: 0xf0}
+	lightOpts.CanvasBackground = &light
+	lightDoc := Encode([][]terminal.Run{{contentRun("hi")}}, lightOpts)
+	assert.Contains(t, lightDoc, `stroke="#dadde1"`)
+	assert.Contains(t, lightDoc, `class="omp-window-shadow"`)
+	assert.Contains(t, lightDoc, `fill="#0f1722"`)
+
+	darkOpts := testOptions()
+	dark := color.RGB{R: 0x0f, G: 0x17, B: 0x22}
+	darkOpts.CanvasBackground = &dark
+	darkDoc := Encode([][]terminal.Run{{contentRun("hi")}}, darkOpts)
+	assert.Contains(t, darkDoc, `stroke="#ffffff"`)
+	assert.Contains(t, darkDoc, `fill="#ffffff"`)
 }
 
 // TestEncodeWindowFillMatchesCanvasBackground pins Options.CanvasBackground's
@@ -193,8 +220,9 @@ func TestEncodeAppendsCursorAndWatermark(t *testing.T) {
 	assert.Contains(t, doc[textStart:watermarkIdx], `font-weight="bold"`)
 
 	// The cursor paints no rect of its own: exactly one <rect> for "hi"'s
-	// own background, plus the window's, none for the cursor.
-	assert.Equal(t, 2, strings.Count(doc, "<rect"))
+	// own background, plus the window's border rect and the shadow
+	// silhouette (see writeWindowChrome), none for the cursor.
+	assert.Equal(t, 3, strings.Count(doc, "<rect"))
 }
 
 // TestEncodeEmptyRowsStillGetsChromeAndDecoration pins that even a
@@ -211,9 +239,10 @@ func TestEncodeEmptyRowsStillGetsChromeAndDecoration(t *testing.T) {
 }
 
 // TestNewWindowGeometryScalesWithFontSize pins the FontSize/48 scaling the
-// task brief specifies: at FontSize 48 (the retired PNG renderer's own
-// reference em), padding/titleOffset/corner/strokeWidth equal the PNG
-// renderer's own pixel value verbatim.
+// task brief specifies: at FontSize 48, the window retains the reference
+// padding/titleOffset/corner ratios while the border stays at the website
+// code blocks' 1px (see minStrokeWidth) rather than the retired PNG
+// renderer's thicker 2px line.
 func TestNewWindowGeometryScalesWithFontSize(t *testing.T) {
 	opts := Options{FontSize: 48}
 	geo := newWindowGeometry(&opts)
@@ -221,7 +250,7 @@ func TestNewWindowGeometryScalesWithFontSize(t *testing.T) {
 	assert.InDelta(t, 48, geo.padding, 0.001)
 	assert.InDelta(t, 80, geo.titleOffset, 0.001)
 	assert.InDelta(t, 12, geo.corner, 0.001)
-	assert.InDelta(t, 2, geo.strokeWidth, 0.001)
+	assert.InDelta(t, 1, geo.strokeWidth, 0.001)
 	assert.InDelta(t, 80*0.55, geo.controlSize, 0.001)
 	assert.InDelta(t, 80*1.15, geo.controlGap, 0.001)
 
@@ -234,9 +263,10 @@ func TestNewWindowGeometryScalesWithFontSize(t *testing.T) {
 	assert.InDelta(t, geo.controlGap/2, geoHalf.controlGap, 0.001)
 }
 
-// TestNewCanvasSizeHasNoOuterMargin pins that the window fills the canvas
-// exactly: no transparent gutter on any side, which is what a caller
-// embedding the SVG gets to lay out against.
+// TestNewCanvasSizeHasNoOuterMargin pins that the window sits flush at the
+// canvas origin with no transparent gutter on the top or left, and that the
+// canvas grows by exactly shadowOffset on the right and bottom so the hard
+// offset silhouette (see shadowOffset) is never clipped by the viewBox.
 func TestNewCanvasSizeHasNoOuterMargin(t *testing.T) {
 	opts := Options{FontSize: 48}
 	geo := newWindowGeometry(&opts)
@@ -244,6 +274,6 @@ func TestNewCanvasSizeHasNoOuterMargin(t *testing.T) {
 
 	assert.Zero(t, size.windowX)
 	assert.Zero(t, size.windowY)
-	assert.InDelta(t, size.width, size.windowWidth, 0.001)
-	assert.InDelta(t, size.height, size.windowHeight, 0.001)
+	assert.InDelta(t, size.windowWidth+shadowOffset, size.width, 0.001)
+	assert.InDelta(t, size.windowHeight+shadowOffset, size.height, 0.001)
 }

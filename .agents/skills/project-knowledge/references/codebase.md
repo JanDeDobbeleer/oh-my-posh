@@ -137,3 +137,19 @@
 - `config.Get` prefers the session gob cache over `POSH_THEME`.
 - Go guarantees exactly 2 records per wait-mode serve request even on segment panic
   (`renderComplete`) - blocking clients (Clink) rely on this.
+- Streaming pending-segment bookkeeping (`pendingSegments` map, `segment.Pending`,
+  `streamingResults` channel) has no lock; correctness relies on ordering (verified 2026-09-05).
+  A segment that finishes right around the streaming timeout used to leave the prompt (and the
+  transient rendered from it) stuck on "..." for good - the producer's "nothing pending" check
+  read 0 while the completion sat unread in the channel buffer, or the cleanup goroutine raced
+  the tracker's deregistration and the notification was never sent. Invariants now: deregister
+  an in-time segment BEFORE handing over its result, a timed-out one is deregistered only by
+  the producer when it consumes the notification (so "neither registered nor queued" cannot
+  happen while a render is owed), the producer exits only when nothing is registered AND the
+  buffer is empty, the buffer holds one slot per segment so a send never drops, and
+  `streamingResults` is never closed (a late tracker send on a closed channel panics in a
+  goroutine with no recover and kills the serve daemon).
+- Reproducing timing races in the daemon: `oh-my-posh debug` timings are cold-process numbers;
+  the warm in-daemon segment duration is what has to straddle `streaming`. Sweep the timeout in
+  a config copy against a scripted serve session (JSON line + env blob on stdin, count cycles
+  whose last record still holds the placeholder) instead of trusting a single value.

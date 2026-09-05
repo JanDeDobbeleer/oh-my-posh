@@ -178,19 +178,28 @@ func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
 
 	// Nothing reads from the channel: the producer will saturate the record
 	// buffer and block in a send while processing the completions. Feed them
-	// directly (bypassing notifySegmentCompletion, which would drain
-	// pendingSegments and end the cycle early).
+	// from a goroutine: the completion buffer holds one slot per configured
+	// segment (none here), so a direct send would block this test as soon as
+	// the producer does.
 	_ = engine.StreamPrimary()
 
-	for _, segment := range segments {
-		segment.Pending = false
-		engine.streamingResults <- segment
-	}
+	done := make(chan struct{})
+
+	go func() {
+		for _, segment := range segments {
+			segment.Pending = false
+
+			select {
+			case engine.streamingResults <- segment:
+			case <-done:
+				return
+			}
+		}
+	}()
 
 	// Give the producer time to fill the record buffer and block.
 	time.Sleep(100 * time.Millisecond)
 
-	done := make(chan struct{})
 	go func() {
 		engine.Abort()
 		close(done)
@@ -334,9 +343,9 @@ func TestTrackPendingSegment(t *testing.T) {
 		t.Error("Expected segment completion notification")
 	}
 
-	// Verify segment is no longer tracked
+	// The consumer owns deregistration, so the entry survives the notification.
 	_, ok = engine.pendingSegments.Load(segment.Name())
-	assert.False(t, ok, "Segment should no longer be tracked")
+	assert.True(t, ok, "Segment stays tracked until its completion is consumed")
 }
 
 func TestRenderFromBlocks(_ *testing.T) {
@@ -482,9 +491,9 @@ func TestStreamingWithTimeout(t *testing.T) {
 		t.Error("Timeout waiting for segment completion")
 	}
 
-	// Verify no longer pending
+	// The consumer owns deregistration, so the entry survives the notification.
 	_, isPending = engine.pendingSegments.Load(segment.Name())
-	assert.False(t, isPending, "Segment should no longer be pending")
+	assert.True(t, isPending, "Segment stays tracked until its completion is consumed")
 }
 
 func setupStreamingTestEnv() *mock.Environment {
@@ -931,4 +940,74 @@ func TestStreamPrimary_Abort_ThenNewCycleWorks(t *testing.T) {
 	prompts := collectChannelOutput(secondOut, 100*time.Millisecond)
 
 	assert.Len(t, prompts, 2, "A new cycle after abort should render normally")
+}
+
+// A segment that finishes right around its streaming timeout - after the
+// initial render printed its placeholder but before the producer decided
+// whether anything was still pending - must still get its refresh: the
+// prompt (and the transient rendered from it) would otherwise stay on "..."
+// for good. The window is a few microseconds wide, so this drives the real
+// StreamPrimary flow through it repeatedly with a segment whose duration
+// straddles the timeout, the way a fast native git status does at 5ms.
+func TestStreamPrimary_CompletionAroundTimeoutIsRendered(t *testing.T) {
+	env := setupStreamingTestEnv()
+	env.On("Getenv", testifymock.Anything).Return("")
+
+	const timeoutMs = 5
+
+	var delay time.Duration
+	env.On("Platform").Run(func(_ testifymock.Arguments) {
+		time.Sleep(delay)
+	}).Return(runtime.WINDOWS)
+
+	for i := range 100 {
+		delay = time.Duration(4500+(i*20)%2000) * time.Microsecond
+
+		fast := &config.Segment{Type: "text", Template: "FAST"}
+		slow := &config.Segment{Type: "session", Template: "SLOW"}
+
+		engine := &Engine{
+			Config: &config.Config{
+				Streaming: timeoutMs,
+				Blocks: []*config.Block{{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{fast, slow},
+				}},
+				TransientPrompt: &config.Segment{Template: "T:{{ if .Segments.Session }}{{ .Segments.Session.Segment.Text }}{{ end }}"},
+			},
+			Env: env,
+		}
+
+		var primaries, transients []string
+
+		out := engine.StreamPrimary()
+		deadline := time.After(10 * time.Second)
+
+	collect:
+		for {
+			select {
+			case record, ok := <-out:
+				if !ok {
+					break collect
+				}
+
+				if strings.HasPrefix(record, TransientMarker) {
+					transients = append(transients, record)
+					continue
+				}
+
+				primaries = append(primaries, record)
+			case <-deadline:
+				engine.Abort()
+				t.Fatalf("cycle %d (delay %s): output channel never closed", i, delay)
+			}
+		}
+
+		require.NotEmpty(t, primaries, "cycle %d (delay %s)", i, delay)
+		require.NotEmpty(t, transients, "cycle %d (delay %s)", i, delay)
+		assert.NotContains(t, primaries[len(primaries)-1], "...", "cycle %d (delay %s): final primary still pending", i, delay)
+		assert.Contains(t, primaries[len(primaries)-1], "SLOW", "cycle %d (delay %s): final primary lacks the resolved segment", i, delay)
+		assert.NotContains(t, transients[len(transients)-1], "...", "cycle %d (delay %s): final transient still pending", i, delay)
+	}
 }

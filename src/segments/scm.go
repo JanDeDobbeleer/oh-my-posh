@@ -130,9 +130,7 @@ func (s *Scm) RelativeDir() string {
 // formatBranch returns the branch name as markup: the branch itself is
 // untrusted VCS data (a repository controls it), so its chevrons are escaped,
 // while mapped_branches values and the branch_template render are user
-// configuration and keep their anchors. branchTemplate receives the mapped
-// branch as a plain string so trunc and friends keep working; anchors in a
-// mapped value only survive when no branch_template is set.
+// configuration and keep their anchors.
 func (s *Scm) formatBranch(branch string) template.Markup {
 	mappedBranches := s.options.KeyValueMap(MappedBranches, make(map[string]string))
 
@@ -145,15 +143,13 @@ func (s *Scm) formatBranch(branch string) template.Markup {
 
 	const wildcard = "*"
 
-	display := branch
-	displayMarkup := template.EscapeMarkup(branch)
+	display := template.EscapeMarkup(branch)
 
 	for _, key := range keys {
 		mappedBranch := mappedBranches[key]
 
 		if key == wildcard || branch == key {
-			display = mappedBranch
-			displayMarkup = template.RawMarkup(mappedBranch)
+			display = template.RawMarkup(mappedBranch)
 			break
 		}
 
@@ -162,20 +158,24 @@ func (s *Scm) formatBranch(branch string) template.Markup {
 
 		if matchSubFolders && strings.HasPrefix(branch, subfolderKey) {
 			remainder := strings.TrimPrefix(branch, subfolderKey)
-			display = mappedBranch + remainder
-			displayMarkup = template.JoinMarkup(template.RawMarkup(mappedBranch), template.EscapeMarkup(remainder))
+			display = template.JoinMarkup(template.RawMarkup(mappedBranch), template.EscapeMarkup(remainder))
 			break
 		}
 	}
 
 	branchTemplate := s.options.String(BranchTemplate, "")
 	if branchTemplate == "" {
-		return displayMarkup
+		return display
 	}
 
-	txt, err := template.RenderTrusted(branchTemplate, struct{ Branch, Upstream string }{Branch: display, Upstream: s.Upstream})
+	context := struct {
+		Branch   template.Markup
+		Upstream string
+	}{Branch: display, Upstream: s.Upstream}
+
+	txt, err := template.RenderTrusted(branchTemplate, context)
 	if err != nil {
-		return displayMarkup
+		return display
 	}
 
 	return template.RawMarkup(txt)

@@ -1,7 +1,7 @@
 package template
 
 import (
-	"maps"
+	"fmt"
 	"path/filepath"
 	"sync"
 	"text/template"
@@ -112,6 +112,14 @@ func localFuncMap() map[string]any {
 		"hresult":      hresult,
 		"dir":          filepath.Dir,
 		"base":         filepath.Base,
+		"trunc":        trunc,
+		"truncE":       TruncE,
+		// The print builtins format through fmt and return plain strings, so
+		// they would drop the trust of a Markup argument; these overrides go
+		// through markupAware like every other function.
+		"print":   fmt.Sprint,
+		"printf":  fmt.Sprintf,
+		"println": fmt.Sprintln,
 		// Locale-aware date/time formatting using OS regional settings.
 		"localeShortDate": localeShortDate,
 		"localeShortTime": localeShortTime,
@@ -123,9 +131,22 @@ func localFuncMap() map[string]any {
 		"htmlDateInZone": ompHTMLDateInZone,
 	}
 
-	maps.Copy(fm, markupStringFuncs())
-
 	return fm
+}
+
+// wrapMarkupAware replaces every function in fm with its Markup-aware form
+// (see markupAware). The escape function is the one exception: it is the
+// boundary the wrapper protects, and must see the raw value.
+func wrapMarkupAware(fm map[string]any) template.FuncMap {
+	for name, fn := range fm {
+		if name == escapeFuncName {
+			continue
+		}
+
+		fm[name] = markupAware(name, fn)
+	}
+
+	return template.FuncMap(fm)
 }
 
 func baseFuncMap() map[string]any {
@@ -177,7 +198,7 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 		}
 	}
 
-	return template.FuncMap(fm)
+	return wrapMarkupAware(fm)
 })
 
 // Reused across all restricted template constructions (see RenderUntrusted).
@@ -202,7 +223,7 @@ var restrictedFuncMap = sync.OnceValue(func() template.FuncMap {
 		}
 	}
 
-	return template.FuncMap(fm)
+	return wrapMarkupAware(fm)
 })
 
 func funcMap(trusted bool) template.FuncMap {

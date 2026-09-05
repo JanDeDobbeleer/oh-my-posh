@@ -95,10 +95,12 @@
   `JoinMarkup` (composition). Segment fields composed from option strings with anchors
   (icons, `branch_icon`, `folder_separator_icon`, `status_formats` - all evidenced in shipped
   themes) MUST be `template.Markup` or their anchors render as literal text.
-- Known limitations: template funcs typed `string` error on Markup args except the adapted set
-  in `markupStringFuncs` (lower/upper/title/trunc/...). `mapped_branches` values keep anchors
-  only when no `branch_template` is set (the sub-template receives `.Branch` as a plain string
-  so `trunc` keeps working).
+- Every func-map entry is wrapped by `markupAware` (src/template/markup.go): Markup arguments
+  feed `string` parameters as text, a string result becomes Markup when any argument was Markup,
+  and the plain-string arguments of such a call are escaped first. Common signatures have
+  reflection-free fast paths (`markupAwareTyped`); the reflect path costs a few allocations
+  per call, so add a typed case there before optimizing anything else when a function shows
+  up hot. `print`/`printf`/`println` are overridden in the local map for the same reason.
 - `terminal.write`'s `isHyperlink` branch (OSC 8 URI region) applies shell escaping
   (`formats.EscapeSequences`) since 2026-09-05 - bash `@P` would otherwise re-interpret a URI
   backslash as a prompt escape. Never bypass it there.

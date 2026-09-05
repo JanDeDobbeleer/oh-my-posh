@@ -20,6 +20,21 @@
   `git config core.autocrlf false` for the duration of the rebase (restore it after), rather than
   trying to resolve a conflict that doesn't reflect the actual diff.
 
+## SVG renderer (src/svg)
+
+- The window chrome's "shadow" must be a filled silhouette rect offset +4/+4 behind the window
+  (`writeWindowChrome`, `shadowOffset`), never an `feDropShadow` filter (verified 2026-09-04).
+  A filter casts the silhouette of what is actually painted; the window's border rect is
+  `fill="none"`, so a filter shadows only the 1px stroke and no solid block appears on the
+  right/bottom. The CSS it mirrors is `box-shadow: 4px 4px 0 var(--omp-frame-shadow)` on
+  `.theme-code-block` in `website/src/css/custom.css` - a solid offset block, black-ish in
+  light mode, white in dark mode.
+- The canvas grows by exactly `shadowOffset` on the right/bottom so the silhouette is not
+  clipped by the viewBox; tests that count `<rect` elements must include the shadow rect.
+- After changing `src/svg/`, regenerate the website previews or the homepage/theme gallery stay
+  stale: build from `src/` (`go build -o ..\oh-my-posh.exe .`), then run
+  `node website/export_themes.mjs` with `OMP_BIN` pointing at that binary.
+
 ## Dev environment
 
 - The Go module root is `src/`, not the repo root - run all `go` commands from there.

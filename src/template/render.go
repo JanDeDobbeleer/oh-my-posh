@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"text/template/parse"
 	"unicode"
 	"unicode/utf8"
 
@@ -105,15 +106,76 @@ func parsedTemplate(text *Text) (*template.Template, error) {
 	// Cache miss: patch the raw template into its executable form.
 	text.patchTemplate()
 
-	// Parse into a fresh template with the func map matching this render's trust level.
-	tmpl, err := template.New("cache").Funcs(funcMap(text.trusted)).Parse(text.template)
+	// Parse into a fresh template with the func map matching this render's trust
+	// level. missingkey=zero makes a missing map key a typed nil, which
+	// escapeActionValue renders as <no value> instead of failing on an invalid
+	// reflect.Value. The visible output matches the default option.
+	tmpl, err := template.New("cache").Funcs(funcMap(text.trusted)).Option("missingkey=zero").Parse(text.template)
 	if err != nil {
 		return nil, err
 	}
 
+	escapePrintActions(tmpl)
+
 	// Store; if another goroutine already stored an equivalent template, use theirs.
 	actual, _ := parsedTemplates.LoadOrStore(key, tmpl)
 	return actual.(*template.Template), nil
+}
+
+// escapePrintActions appends escapeActionValue to every print action's
+// pipeline, so interpolated values get their chevrons neutralized (unless the
+// value is Markup) while literal template text keeps its anchors. This is the
+// boundary between user-authored markup and attacker-influenceable data
+// (branch names, manifest fields, folder names): without it both land in the
+// writer as indistinguishable text and data can forge anchors.
+func escapePrintActions(tmpl *template.Template) {
+	for _, t := range tmpl.Templates() {
+		if t.Tree == nil {
+			continue
+		}
+
+		escapeListActions(t.Tree, t.Root)
+	}
+}
+
+func escapeListActions(tree *parse.Tree, list *parse.ListNode) {
+	if list == nil {
+		return
+	}
+
+	for _, node := range list.Nodes {
+		switch n := node.(type) {
+		case *parse.ActionNode:
+			escapePipe(tree, n.Pipe)
+		case *parse.IfNode:
+			escapeBranchActions(tree, &n.BranchNode)
+		case *parse.RangeNode:
+			escapeBranchActions(tree, &n.BranchNode)
+		case *parse.WithNode:
+			escapeBranchActions(tree, &n.BranchNode)
+		}
+	}
+}
+
+func escapeBranchActions(tree *parse.Tree, branch *parse.BranchNode) {
+	escapeListActions(tree, branch.List)
+	escapeListActions(tree, branch.ElseList)
+}
+
+func escapePipe(tree *parse.Tree, pipe *parse.PipeNode) {
+	// assignments and declarations produce no output
+	if pipe == nil || len(pipe.Decl) != 0 || len(pipe.Cmds) == 0 {
+		return
+	}
+
+	pos := pipe.Cmds[len(pipe.Cmds)-1].Position()
+	ident := parse.NewIdentifier(escapeFuncName).SetTree(tree).SetPos(pos)
+	cmd := &parse.CommandNode{
+		NodeType: parse.NodeCommand,
+		Pos:      pos,
+		Args:     []parse.Node{ident},
+	}
+	pipe.Cmds = append(pipe.Cmds, cmd)
 }
 
 func (t *renderer) execute(text *Text) (string, error) {
@@ -135,7 +197,7 @@ func (t *renderer) execute(text *Text) (string, error) {
 
 	// issue with missingkey=zero ignored for map[string]any
 	// https://github.com/golang/go/issues/24963
-	output = strings.ReplaceAll(output, "<no value>", "")
+	output = strings.ReplaceAll(output, noValue, "")
 
 	return output, nil
 }

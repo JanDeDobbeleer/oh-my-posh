@@ -1,9 +1,12 @@
 package segments
 
-import "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+import (
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
+)
 
 type Bazel struct {
-	Icon string
+	Icon template.Markup
 	Language
 }
 
@@ -49,5 +52,5 @@ func (b *Bazel) loadSpec() {
 	// Use the correct URL for Bazel >5.4.1, since they do not have the docs subdomain.
 	b.versionURLTemplate = "https://{{ if lt .Major 6 }}docs.{{ end }}bazel.build/versions/{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
 
-	b.Icon = b.options.String(Icon, "\ue63a")
+	b.Icon = b.options.Markup(Icon, "\ue63a")
 }

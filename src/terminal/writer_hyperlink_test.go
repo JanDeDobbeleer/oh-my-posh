@@ -98,6 +98,21 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 			ShellName: shell.FISH,
 			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://evil]0;HACKED.com\x1b\\google\x1b]8;;\x1b\\\x1b[0m",
 		},
+		{
+			// a backslash in the OSC 8 URI is doubled for bash so @P prompt
+			// expansion hands the terminal exactly one backslash; undoubled it
+			// would be re-interpreted as a prompt escape (\e -> ESC)
+			Text:      `<LINK>C:\temp<TEXT>x</TEXT></LINK>`,
+			ShellName: shell.BASH,
+			Expected:  "\\[\x1b[47m\\]\\[\x1b[30m\\]\\[\x1b]8;;C:\\\\temp\x1b\\\\\\]x\\[\x1b]8;;\x1b\\\\\\]\\[\x1b[0m\\]",
+		},
+		{
+			// same for zsh: a % in the URI is doubled so prompt expansion
+			// does not treat it as a prompt escape
+			Text:      `<LINK>http://example.com/100%<TEXT>x</TEXT></LINK>`,
+			ShellName: shell.ZSH,
+			Expected:  "%{\x1b[47m%}%{\x1b[30m%}%{\x1b]8;;http://example.com/100%%\x1b\\%}x%{\x1b]8;;\x1b\\%}%{\x1b[0m%}",
+		},
 	}
 	for _, tc := range cases {
 		Init(tc.ShellName)

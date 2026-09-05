@@ -77,7 +77,7 @@ func TestFossilStatus(t *testing.T) {
 		if tc.ExpectedDisabled {
 			continue
 		}
-		assert.Equal(t, tc.ExpectedStatus, f.Status.String(), tc.Case)
+		assert.Equal(t, tc.ExpectedStatus, f.Status.String().String(), tc.Case)
 		assert.Equal(t, tc.ExpectedBranch, f.Branch, tc.Case)
 	}
 }

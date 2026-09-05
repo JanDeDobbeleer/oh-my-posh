@@ -86,3 +86,24 @@ func BenchmarkPatchTemplate(b *testing.B) {
 		t.patchTemplate()
 	}
 }
+
+// Models a segment template that leans on functions: every call crosses the
+// Markup-aware wrapper, so this is where its cost shows up.
+func BenchmarkRenderFunctions(b *testing.B) {
+	setupTemplateBench()
+	type ctx struct {
+		Folder  string
+		Branch  string
+		Version string
+	}
+	data := ctx{
+		Folder:  "oh-my-posh",
+		Branch:  "perf/rendering-engine",
+		Version: "23.4.1",
+	}
+	tmpl := `{{ .Folder | upper }} {{ trunc 5 .Branch }}{{ if contains "perf" .Branch }} perf{{ end }} {{ printf "v%s" .Version }} {{ .Branch | replace "/" " " }}`
+	b.ReportAllocs()
+	for b.Loop() {
+		_, _ = RenderTrusted(tmpl, data)
+	}
+}

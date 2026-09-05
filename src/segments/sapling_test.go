@@ -222,7 +222,7 @@ func TestSetHeadContext(t *testing.T) {
 		}
 
 		sl.setHeadContext()
-		got := sl.Working.String()
+		got := sl.Working.String().String()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

@@ -17,9 +17,11 @@ const TransientMarker = "\x1e"
 // wait for it to return before starting a new cycle - Abort blocks until the
 // producer goroutine has fully exited.
 func (e *Engine) StreamPrimary() <-chan string {
-	// Initialize streaming infrastructure BEFORE launching goroutine
-	// This ensures the channel exists when segments start timing out
-	e.streamingResults = make(chan *config.Segment, 100)
+	// The channel must exist before any segment can time out. One slot per
+	// segment: each segment notifies at most once, so the non-blocking send
+	// in notifySegmentCompletion can never drop a completion the producer
+	// still wants.
+	e.streamingResults = make(chan *config.Segment, max(e.segmentCount(), 1))
 	e.allBlocks = e.Config.Blocks
 	e.abort = make(chan struct{})
 	e.done = make(chan struct{})
@@ -102,47 +104,49 @@ func (e *Engine) StreamPrimary() <-chan string {
 
 		sendTransient()
 
-		if e.countPendingSegments() == 0 {
-			// No segment is executing in the background, so nothing can send
-			// on streamingResults after this point - safe to close.
-			close(e.streamingResults)
-			return
-		}
+		// Keep re-rendering until nothing is registered as pending and no
+		// completion is waiting in the channel. The count alone is not
+		// enough: a segment that finishes right after a render printed its
+		// placeholder would have its completion sitting unread in the buffer
+		// while the count already reads zero, and the prompt would keep the
+		// placeholder for good.
+		//
+		// The channel is never closed. A timed-out segment keeps running and
+		// notifies whenever it finishes, possibly after this goroutine is
+		// gone. A send on a closed channel would panic in a goroutine without
+		// recover and take the serve daemon down with it. Late sends are
+		// non-blocking, and the channel is collected together with the engine.
+		refreshed := false
 
-		// Listen for segment completions. A segment that timed out keeps
-		// executing in the background (trackPendingSegment) even after this
-		// loop returns; notifySegmentCompletion sends via select/default so
-		// it never blocks such a goroutine, but that also means
-		// streamingResults must NOT be closed here on the abort path - a
-		// stray late send on a closed channel would panic. Only close it once
-		// every pending segment has actually reported in (countPendingSegments
-		// reaches 0), which is the one path guaranteed to have no further
-		// senders. On abort, leave the channel open and let it be garbage
-		// collected once the last stray sender (and this Engine) is dropped.
-		for {
+		for e.countPendingSegments() > 0 || len(e.streamingResults) > 0 {
+			var segment *config.Segment
+
 			select {
 			case <-e.abort:
 				return
-			case _, ok := <-e.streamingResults:
-				if !ok {
-					return
-				}
-
-				if aborted() {
-					continue
-				}
-
-				if !sendRecord(e.renderFromBlocks()) {
-					return
-				}
-
-				if e.countPendingSegments() == 0 {
-					// refresh the transient prompt now the context is fully resolved
-					sendTransient()
-					close(e.streamingResults)
-					return
-				}
+			case segment = <-e.streamingResults:
 			}
+
+			if aborted() {
+				return
+			}
+
+			// Only this loop removes a timed-out segment from the pending set,
+			// and only once its completion is out of the channel. The loop
+			// condition above can then never see an empty set and an empty
+			// channel while a render is still owed.
+			e.pendingSegments.Delete(segment.Name())
+
+			if !sendRecord(e.renderFromBlocks()) {
+				return
+			}
+
+			refreshed = true
+		}
+
+		if refreshed {
+			// refresh the transient prompt now the context is fully resolved
+			sendTransient()
 		}
 	}()
 
@@ -207,23 +211,37 @@ func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
 	// Segment is already pre-registered in pendingSegments map
 	go func() {
 		<-done
-		segment.Pending = false
+		segment.SetPending(false)
 		e.notifySegmentCompletion(segment)
 	}()
 }
 
+// notifySegmentCompletion queues a re-render for a segment that finished
+// after timing out. It leaves the segment registered on purpose: the
+// producer removes it when it consumes the notification, so there is never
+// a moment at which the segment is neither registered nor queued.
 func (e *Engine) notifySegmentCompletion(segment *config.Segment) {
 	if e.streamingResults == nil {
 		return
 	}
 
-	if _, ok := e.pendingSegments.LoadAndDelete(segment.Name()); ok {
-		select {
-		case e.streamingResults <- segment:
-			// Successfully notified consumer
-		default:
-			// Consumer not ready or already exited
-			// This can happen if segment completes after consumer finishes
-		}
+	if _, ok := e.pendingSegments.Load(segment.Name()); !ok {
+		return
 	}
+
+	select {
+	case e.streamingResults <- segment:
+	default:
+		// The buffer has one slot per segment, so this only happens for an
+		// engine whose cycle already ended and that will never consume again.
+	}
+}
+
+func (e *Engine) segmentCount() int {
+	count := 0
+	for _, block := range e.Config.Blocks {
+		count += len(block.Segments)
+	}
+
+	return count
 }

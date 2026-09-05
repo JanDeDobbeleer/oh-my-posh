@@ -8,12 +8,13 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Nightscout struct {
 	Base
 
-	TrendIcon string
+	TrendIcon template.Markup
 	NightscoutData
 }
 
@@ -91,22 +92,22 @@ func (ns *Nightscout) Enabled() bool {
 	return true
 }
 
-func (ns *Nightscout) getTrendIcon() string {
+func (ns *Nightscout) getTrendIcon() template.Markup {
 	switch ns.Direction {
 	case "DoubleUp":
-		return ns.options.String(DoubleUpIcon, "↑↑")
+		return ns.options.Markup(DoubleUpIcon, "↑↑")
 	case "SingleUp":
-		return ns.options.String(SingleUpIcon, "↑")
+		return ns.options.Markup(SingleUpIcon, "↑")
 	case "FortyFiveUp":
-		return ns.options.String(FortyFiveUpIcon, "↗")
+		return ns.options.Markup(FortyFiveUpIcon, "↗")
 	case "Flat":
-		return ns.options.String(FlatIcon, "→")
+		return ns.options.Markup(FlatIcon, "→")
 	case "FortyFiveDown":
-		return ns.options.String(FortyFiveDownIcon, "↘")
+		return ns.options.Markup(FortyFiveDownIcon, "↘")
 	case "SingleDown":
-		return ns.options.String(SingleDownIcon, "↓")
+		return ns.options.Markup(SingleDownIcon, "↓")
 	case "DoubleDown":
-		return ns.options.String(DoubleDownIcon, "↓↓")
+		return ns.options.Markup(DoubleDownIcon, "↓↓")
 	default:
 		return ""
 	}

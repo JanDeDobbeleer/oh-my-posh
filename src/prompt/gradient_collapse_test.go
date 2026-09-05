@@ -113,7 +113,7 @@ func TestPendingSegmentKeepsGradientPlaceholder(t *testing.T) {
 		Background: gradientStops,
 	}
 	assert.NoError(t, pending.MapSegmentWithWriter(engine.Env))
-	pending.Pending = true
+	pending.SetPending(true)
 	pending.Render(0, false)
 
 	engine.setActiveSegment(pending)

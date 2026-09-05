@@ -6,10 +6,11 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Node struct {
-	PackageManagerIcon string
+	PackageManagerIcon template.Markup
 	PackageManagerName string
 
 	Language
@@ -112,7 +113,7 @@ func (n *Node) loadContext() {
 	for _, pm := range packageManagerDefinitions {
 		if n.env.HasFiles(pm.fileName) {
 			n.PackageManagerName = pm.name
-			n.PackageManagerIcon = n.options.String(pm.iconProperty, pm.defaultIcon)
+			n.PackageManagerIcon = n.options.Markup(pm.iconProperty, pm.defaultIcon)
 			break
 		}
 	}

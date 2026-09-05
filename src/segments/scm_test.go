@@ -104,7 +104,7 @@ func TestScmStatusString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		assert.Equal(t, tc.Expected, tc.Status.String(), tc.Case)
+		assert.Equal(t, tc.Expected, tc.Status.String().String(), tc.Case)
 	}
 }
 
@@ -216,6 +216,53 @@ func TestFormatBranch(t *testing.T) {
 			Upstream:       "origin",
 			BranchTemplate: "{{ .Branch }}{{ if .Upstream }}@{{ .Upstream }}{{ end }}",
 		},
+		{
+			// a branch name is repo-controlled: its chevrons must be escaped so
+			// the writer cannot parse them as anchors (the writer renders
+			// <<>red<>> as literal <red>)
+			Case:     "Branch name with anchor-shaped text is escaped",
+			Input:    "<red>pwned-branch",
+			Expected: "<<>red<>>pwned-branch",
+		},
+		{
+			Case:     "Branch name with hyperlink markup is escaped",
+			Input:    "<LINK>https://attacker.example<TEXT>x",
+			Expected: "<<>LINK<>>https://attacker.example<<>TEXT<>>x",
+		},
+		{
+			// the mapped value is user configuration and keeps its anchors
+			Case:     "Mapped branch value keeps markup",
+			Input:    "feat/x",
+			Expected: "<#ff0000>feat</> x",
+			MappedBranches: map[string]string{
+				"feat/*": "<#ff0000>feat</> ",
+			},
+		},
+		{
+			// data flows through branch_template escaped; config text keeps anchors
+			Case:           "Branch template escapes data, keeps config anchors",
+			Input:          "<red>x",
+			Expected:       "<b><<>red<>>x</>",
+			BranchTemplate: "<b>{{ .Branch }}</>",
+		},
+		{
+			Case:           "Mapped branch keeps markup through the branch template",
+			Input:          "feat/x",
+			Expected:       "<#ff0000>feat</> x (mapped)",
+			BranchTemplate: "{{ .Branch }} (mapped)",
+			MappedBranches: map[string]string{
+				"feat/*": "<#ff0000>feat</> ",
+			},
+		},
+		{
+			Case:           "Mapped branch survives string functions in the branch template",
+			Input:          "feat/my-new-feature",
+			Expected:       "<#FF0000>FEAT</> MY-NEW",
+			BranchTemplate: "{{ .Branch | trimSuffix \"-feature\" | upper }}",
+			MappedBranches: map[string]string{
+				"feat/*": "<#ff0000>feat</> ",
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -235,6 +282,6 @@ func TestFormatBranch(t *testing.T) {
 		template.Init(env, nil, nil)
 
 		got := s.formatBranch(tc.Input)
-		assert.Equal(t, tc.Expected, got, tc.Case)
+		assert.Equal(t, tc.Expected, got.String(), tc.Case)
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -94,28 +95,40 @@ type Segment struct {
 	// live outside this segment, in texts the segment cannot reconstruct
 	// from its own fields. Nil for analyzable segments and for configs that
 	// never went through ResolveFieldSets.
-	HeuristicSources    []string      `json:"-" toml:"-" yaml:"-"`
-	Index               int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
-	MinWidth            int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
-	Duration            time.Duration `json:"-" toml:"-" yaml:"-"`
-	NameLength          int           `json:"-" toml:"-" yaml:"-"`
-	MaxWidth            int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
-	Timeout             int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
-	Newline             bool          `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
-	Enabled             bool          `json:"-" toml:"-" yaml:"-"`
-	InvertPowerline     bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
-	Force               bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	restored            bool          `json:"-" toml:"-" yaml:"-"`
-	Toggled             bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
-	Pending             bool          `json:"-" toml:"-" yaml:"-"`
-	Killed              bool          `json:"-" toml:"-" yaml:"-"`
-	Interactive         bool          `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	MultilineKeepPrompt bool          `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
+	HeuristicSources []string      `json:"-" toml:"-" yaml:"-"`
+	Index            int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
+	MinWidth         int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
+	Duration         time.Duration `json:"-" toml:"-" yaml:"-"`
+	NameLength       int           `json:"-" toml:"-" yaml:"-"`
+	MaxWidth         int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	Timeout          int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	Newline          bool          `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	Enabled          bool          `json:"-" toml:"-" yaml:"-"`
+	InvertPowerline  bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	Force            bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+	restored         bool          `json:"-" toml:"-" yaml:"-"`
+	Toggled          bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+	// Written by the streaming timeout and read by the render, on different
+	// goroutines.
+	pending             atomic.Bool
+	Killed              bool `json:"-" toml:"-" yaml:"-"`
+	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt bool `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
 	foregroundResolved  bool
 	backgroundResolved  bool
 	needsEvaluated      bool
 	evaluated           bool
 	FieldsAnalyzable    bool `json:"-" toml:"-" yaml:"-"`
+}
+
+// IsPending reports whether the segment timed out while streaming and is still
+// running in the background. A pending segment renders its placeholder.
+func (segment *Segment) IsPending() bool {
+	return segment.pending.Load()
+}
+
+func (segment *Segment) SetPending(pending bool) {
+	segment.pending.Store(pending)
 }
 
 // A nil presentFields map means presence was never recorded, in which case every
@@ -373,7 +386,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 	segment.backgroundResolved = false
 
 	// Allow pending segments to render (they'll show "..." text)
-	if !segment.Pending && !segment.Enabled && !force {
+	if !segment.IsPending() && !segment.Enabled && !force {
 		return segment.renderFallback(index)
 	}
 
@@ -386,7 +399,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 	rendered := segment.string()
 
 	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
-	if !segment.Pending {
+	if !segment.IsPending() {
 		segment.Enabled = segment.Force || strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' })
 
 		if !segment.Enabled {
@@ -712,7 +725,9 @@ func (segment *Segment) restoreInto(raw, methods json.RawMessage) error {
 		MergeRecordedMethods(data, overlay)
 	}
 
-	segment.data = normalizeNumbers(data).(map[string]any)
+	// Recorded Markup fields are tagged objects. Turn them back into Markup
+	// here, or the anchors they carry render as literal text.
+	segment.data = template.ReviveMarkup(normalizeNumbers(data)).(map[string]any)
 
 	return nil
 }
@@ -794,7 +809,7 @@ func (segment *Segment) setCache() {
 	}
 
 	// Never cache pending state to avoid polluting cache with incomplete data
-	if segment.Pending {
+	if segment.IsPending() {
 		return
 	}
 
@@ -892,7 +907,7 @@ func (segment *Segment) templateContext() any {
 
 func (segment *Segment) string() string {
 	// Use simple pending text if segment is still pending
-	if segment.Pending {
+	if segment.IsPending() {
 		if segment.Placeholder != "" {
 			return segment.Placeholder
 		}

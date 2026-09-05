@@ -1,6 +1,9 @@
 package segments
 
-import "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+import (
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
+)
 
 type Spotify struct {
 	Base
@@ -12,7 +15,7 @@ type MusicPlayer struct {
 	Status string
 	Artist string
 	Track  string
-	Icon   string
+	Icon   template.Markup
 }
 
 const (
@@ -35,12 +38,12 @@ func (s *Spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:
 		// in this case, no artist or track info
-		s.Icon = s.options.String(StoppedIcon, " ")
+		s.Icon = s.options.Markup(StoppedIcon, " ")
 	case paused:
-		s.Icon = s.options.String(PausedIcon, " ")
+		s.Icon = s.options.Markup(PausedIcon, " ")
 	case playing:
-		s.Icon = s.options.String(PlayingIcon, " ")
+		s.Icon = s.options.Markup(PlayingIcon, " ")
 	case ad:
-		s.Icon = s.options.String(AdIcon, " ")
+		s.Icon = s.options.Markup(AdIcon, " ")
 	}
 }

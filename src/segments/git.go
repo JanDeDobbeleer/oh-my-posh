@@ -17,6 +17,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ini"
 )
@@ -104,8 +105,8 @@ const (
 )
 
 type Rebase struct {
-	HEAD    string
-	Onto    string
+	HEAD    template.Markup
+	Onto    template.Markup
 	Current int
 	Total   int
 }
@@ -142,9 +143,9 @@ type Git struct {
 	User           *User
 	ShortHash      string
 	Hash           string
-	BranchStatus   string
-	HEAD           string
-	UpstreamIcon   string
+	BranchStatus   template.Markup
+	HEAD           template.Markup
+	UpstreamIcon   template.Markup
 	UpstreamURL    string
 	Ref            string
 	RawUpstreamURL string
@@ -514,9 +515,9 @@ func (g *Git) isBareRepo(gitDir *runtime.FileInfo) bool {
 
 func (g *Git) getBareRepoInfo() {
 	head := g.fileContent(g.mainSCMDir, "HEAD")
-	branchIcon := g.options.String(BranchIcon, "\uE0A0")
+	branchIcon := g.options.Markup(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
-	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.formatBranch(g.Ref))
+	g.HEAD = template.JoinMarkup(branchIcon, g.formatBranch(g.Ref))
 	if !g.fetchUnit(gitUpstreamIconFields...) {
 		return
 	}
@@ -639,7 +640,7 @@ func (g *Git) setBranchStatus() {
 		}
 		return ""
 	}
-	g.BranchStatus = getBranchStatus()
+	g.BranchStatus = template.RawMarkup(getBranchStatus())
 }
 
 func (g *Git) setPushStatus() {
@@ -813,8 +814,8 @@ func (g *Git) cleanUpstreamURL(url string) string {
 	return fmt.Sprintf("https://%s/%s", match["URL"], strings.TrimSuffix(match["PATH"], ".git"))
 }
 
-func (g *Git) getUpstreamIcon() string {
-	fallback := g.options.String(GitIcon, "\uE5FB ")
+func (g *Git) getUpstreamIcon() template.Markup {
+	fallback := g.options.Markup(GitIcon, "\uE5FB ")
 
 	g.RawUpstreamURL = g.getRemoteURL()
 	if g.RawUpstreamURL == "" {
@@ -827,7 +828,7 @@ func (g *Git) getUpstreamIcon() string {
 	custom := g.options.KeyValueMap(UpstreamIcons, map[string]string{})
 	for key, value := range custom {
 		if strings.Contains(g.UpstreamURL, key) {
-			return value
+			return template.RawMarkup(value)
 		}
 	}
 
@@ -846,7 +847,7 @@ func (g *Git) getUpstreamIcon() string {
 
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {
-			return g.options.String(value.Icon, value.Default)
+			return g.options.Markup(value.Icon, value.Default)
 		}
 	}
 
@@ -1007,30 +1008,30 @@ func (g *Git) getGitCommandOutput(args ...string) string {
 }
 
 func (g *Git) setHEADStatus() {
-	branchIcon := g.options.String(BranchIcon, "\uE0A0")
+	branchIcon := g.options.Markup(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.Detached = true
 		g.resolveDetachedHEAD()
 	} else {
 		head := g.formatBranch(g.Ref)
-		g.HEAD = fmt.Sprintf("%s%s", branchIcon, head)
+		g.HEAD = template.JoinMarkup(branchIcon, head)
 	}
 
-	formatDetached := func() string {
+	formatDetached := func() template.Markup {
 		if g.Detached {
-			return fmt.Sprintf("%sdetached at %s", branchIcon, g.HEAD)
+			return template.JoinMarkup(branchIcon, template.RawMarkup("detached at "), g.HEAD)
 		}
 		return g.HEAD
 	}
 
-	getPrettyNameOrigin := func(file string) string {
-		var origin string
+	getPrettyNameOrigin := func(file string) template.Markup {
+		var origin template.Markup
 		head := g.fileContent(g.mainSCMDir, file)
 		if head == "detached HEAD" {
 			origin = formatDetached()
 		} else {
 			head = strings.Replace(head, "refs/heads/", "", 1)
-			origin = branchIcon + g.formatBranch(head)
+			origin = template.JoinMarkup(branchIcon, g.formatBranch(head))
 		}
 		return origin
 	}
@@ -1043,19 +1044,20 @@ func (g *Git) setHEADStatus() {
 	if g.env.HasFolder(g.mainSCMDir + "/rebase-merge") {
 		head := getPrettyNameOrigin("rebase-merge/head-name")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
-		onto = g.formatBranch(onto)
+		ontoMarkup := g.formatBranch(onto)
 		current := parseInt("rebase-merge/msgnum")
 		total := parseInt("rebase-merge/end")
-		icon := g.options.String(RebaseIcon, "\uE728 ")
+		icon := g.options.Markup(RebaseIcon, "\uE728 ")
 
 		g.Rebase = &Rebase{
 			HEAD:    head,
-			Onto:    onto,
+			Onto:    ontoMarkup,
 			Current: current,
 			Total:   total,
 		}
 
-		g.HEAD = fmt.Sprintf("%s%s onto %s%s (%d/%d) at %s", icon, head, branchIcon, onto, current, total, g.HEAD)
+		progress := template.RawMarkup(fmt.Sprintf(" (%d/%d) at ", current, total))
+		g.HEAD = template.JoinMarkup(icon, head, template.RawMarkup(" onto "), branchIcon, ontoMarkup, progress, g.HEAD)
 		return
 	}
 
@@ -1063,7 +1065,7 @@ func (g *Git) setHEADStatus() {
 		head := getPrettyNameOrigin("rebase-apply/head-name")
 		current := parseInt("rebase-apply/next")
 		total := parseInt("rebase-apply/last")
-		icon := g.options.String(RebaseIcon, "\uE728 ")
+		icon := g.options.Markup(RebaseIcon, "\uE728 ")
 
 		g.Rebase = &Rebase{
 			HEAD:    head,
@@ -1071,33 +1073,33 @@ func (g *Git) setHEADStatus() {
 			Total:   total,
 		}
 
-		g.HEAD = fmt.Sprintf("%s%s (%d/%d) at %s", icon, head, current, total, g.HEAD)
+		g.HEAD = template.JoinMarkup(icon, head, template.RawMarkup(fmt.Sprintf(" (%d/%d) at ", current, total)), g.HEAD)
 		return
 	}
 
 	// merge
-	commitIcon := g.options.String(CommitIcon, "\uF417")
+	commitIcon := g.options.Markup(CommitIcon, "\uF417")
 
 	if g.hasGitFile("MERGE_MSG") {
 		g.Merge = true
-		icon := g.options.String(MergeIcon, "\uE727 ")
+		icon := g.options.Markup(MergeIcon, "\uE727 ")
 		mergeContext := g.fileContent(g.mainSCMDir, "MERGE_MSG")
 		matches := regex.FindNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
 		// head := g.getGitRefFileSymbolicName("ORIG_HEAD")
 		if matches != nil && matches["theirs"] != "" {
-			var headIcon, theirs string
+			var headIcon, theirs template.Markup
 			switch matches["type"] {
 			case "tag":
-				headIcon = g.options.String(TagIcon, "\uF412")
-				theirs = matches["theirs"]
+				headIcon = g.options.Markup(TagIcon, "\uF412")
+				theirs = template.EscapeMarkup(matches["theirs"])
 			case "commit":
 				headIcon = commitIcon
-				theirs = g.formatSHA(matches["theirs"])
+				theirs = template.EscapeMarkup(g.formatSHA(matches["theirs"]))
 			default:
 				headIcon = branchIcon
 				theirs = g.formatBranch(matches["theirs"])
 			}
-			g.HEAD = fmt.Sprintf("%s%s%s into %s", icon, headIcon, theirs, formatDetached())
+			g.HEAD = template.JoinMarkup(icon, headIcon, theirs, template.RawMarkup(" into "), formatDetached())
 			return
 		}
 	}
@@ -1110,16 +1112,16 @@ func (g *Git) setHEADStatus() {
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		g.CherryPick = true
 		sha := g.fileContent(g.mainSCMDir, "CHERRY_PICK_HEAD")
-		cherry := g.options.String(CherryPickIcon, "\uE29B ")
-		g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
+		cherry := g.options.Markup(CherryPickIcon, "\uE29B ")
+		g.HEAD = g.sequenceHEAD(cherry, commitIcon, sha, formatDetached())
 		return
 	}
 
 	if g.hasGitFile("REVERT_HEAD") {
 		g.Revert = true
 		sha := g.fileContent(g.mainSCMDir, "REVERT_HEAD")
-		revert := g.options.String(RevertIcon, "\uF0E2 ")
-		g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
+		revert := g.options.Markup(RevertIcon, "\uF0E2 ")
+		g.HEAD = g.sequenceHEAD(revert, commitIcon, sha, formatDetached())
 		return
 	}
 
@@ -1132,19 +1134,23 @@ func (g *Git) setHEADStatus() {
 			switch action {
 			case "p", "pick":
 				g.CherryPick = true
-				cherry := g.options.String(CherryPickIcon, "\uE29B ")
-				g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
+				cherry := g.options.Markup(CherryPickIcon, "\uE29B ")
+				g.HEAD = g.sequenceHEAD(cherry, commitIcon, sha, formatDetached())
 				return
 			case "revert":
 				g.Revert = true
-				revert := g.options.String(RevertIcon, "\uF0E2 ")
-				g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
+				revert := g.options.Markup(RevertIcon, "\uF0E2 ")
+				g.HEAD = g.sequenceHEAD(revert, commitIcon, sha, formatDetached())
 				return
 			}
 		}
 	}
 
 	g.HEAD = formatDetached()
+}
+
+func (g *Git) sequenceHEAD(actionIcon, commitIcon template.Markup, sha string, detached template.Markup) template.Markup {
+	return template.JoinMarkup(actionIcon, commitIcon, template.EscapeMarkup(g.formatSHA(sha)), template.RawMarkup(" onto "), detached)
 }
 
 func (g *Git) formatSHA(sha string) string {
@@ -1193,7 +1199,7 @@ func (g *Git) updateHEADReference() {
 		log.Debug("current HEAD is a branch:", branchName)
 
 		g.Ref = branchName
-		g.HEAD = fmt.Sprintf("%s%s", g.options.String(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
+		g.HEAD = template.JoinMarkup(g.options.Markup(BranchIcon, "\uE0A0"), g.formatBranch(branchName))
 
 		return
 	}
@@ -1203,7 +1209,7 @@ func (g *Git) updateHEADReference() {
 
 func (g *Git) resolveDetachedHEAD() {
 	if !g.resolveDetachedHash() {
-		g.HEAD = g.options.String(NoCommitsIcon, "\U000F0095 ")
+		g.HEAD = g.options.Markup(NoCommitsIcon, "\U000F0095 ")
 		return
 	}
 
@@ -1211,11 +1217,11 @@ func (g *Git) resolveDetachedHEAD() {
 
 	if tagName, found := g.resolveExactTag(); found {
 		g.Ref = tagName
-		g.HEAD = fmt.Sprintf("%s%s", g.options.String(TagIcon, "\uF412"), tagName)
+		g.HEAD = template.JoinMarkup(g.options.Markup(TagIcon, "\uF412"), template.EscapeMarkup(tagName))
 		return
 	}
 
-	g.HEAD = fmt.Sprintf("%s%s", g.options.String(CommitIcon, "\uF417"), g.ShortHash)
+	g.HEAD = template.JoinMarkup(g.options.Markup(CommitIcon, "\uF417"), template.EscapeMarkup(g.ShortHash))
 }
 
 // resolveDetachedHash fills g.Hash/g.ShortHash for a detached HEAD, reading

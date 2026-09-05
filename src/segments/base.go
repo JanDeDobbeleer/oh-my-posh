@@ -3,6 +3,7 @@ package segments
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Base struct {
@@ -13,16 +14,20 @@ type Base struct {
 }
 
 type Segment struct {
-	Text  string
+	// Text is the fully rendered markup (anchors intact), stored for
+	// cross-segment references like {{ .Segments.Git.Segment.Text }} in
+	// transient and tooltip templates. It must be Markup or a re-render
+	// escapes its anchors back into literal text.
+	Text  template.Markup
 	Index int
 }
 
 func (b *Base) Text() string {
-	return b.Segment.Text
+	return b.Segment.Text.String()
 }
 
 func (b *Base) SetText(text string) {
-	b.Segment.Text = text
+	b.Segment.Text = template.RawMarkup(text)
 }
 
 func (b *Base) SetIndex(index int) {

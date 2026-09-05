@@ -7,6 +7,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type LastFM struct {
@@ -15,7 +16,7 @@ type LastFM struct {
 	Artist string
 	Track  string
 	Full   string
-	Icon   string
+	Icon   template.Markup
 	Status string
 }
 
@@ -106,10 +107,10 @@ func (d *LastFM) setStatus() error {
 	isPlaying := track.Info != nil && track.Info.IsPlaying != nil && *track.Info.IsPlaying == "true"
 
 	if isPlaying {
-		d.Icon = d.options.String(PlayingIcon, "\uE602 ")
+		d.Icon = d.options.Markup(PlayingIcon, "\uE602 ")
 		d.Status = "playing"
 	} else {
-		d.Icon = d.options.String(StoppedIcon, "\uF04D ")
+		d.Icon = d.options.Markup(StoppedIcon, "\uF04D ")
 		d.Status = "stopped"
 	}
 

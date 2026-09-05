@@ -1,11 +1,11 @@
 package segments
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type PlasticStatus struct {
@@ -31,7 +31,7 @@ var plasticStatusFields = []string{"Status", "Behind", "MergePending"}
 
 type Plastic struct {
 	Status                 *PlasticStatus
-	Selector               string
+	Selector               template.Markup
 	plasticWorkspaceFolder string
 	Scm
 	FieldRefs
@@ -150,24 +150,26 @@ func (p *Plastic) setSelector() {
 	// changeset
 	ref = p.parseChangesetSelector(selector)
 	if len(ref) > 0 {
-		p.Selector = fmt.Sprintf("%s%s", p.options.String(CommitIcon, "\uF417"), ref)
+		p.Selector = template.JoinMarkup(p.options.Markup(CommitIcon, "\uF417"), template.EscapeMarkup(ref))
 		return
 	}
 
 	// fallback to label
 	ref = p.parseLabelSelector(selector)
 	if len(ref) > 0 {
-		p.Selector = fmt.Sprintf("%s%s", p.options.String(TagIcon, "\uF412"), ref)
+		p.Selector = template.JoinMarkup(p.options.Markup(TagIcon, "\uF412"), template.EscapeMarkup(ref))
 		return
 	}
 
 	// fallback to branch/smartbranch
 	ref = p.parseBranchSelector(selector)
+
+	branch := template.EscapeMarkup(ref)
 	if len(ref) > 0 {
-		ref = p.formatBranch(ref)
+		branch = p.formatBranch(ref)
 	}
 
-	p.Selector = fmt.Sprintf("%s%s", p.options.String(BranchIcon, "\uE0A0"), ref)
+	p.Selector = template.JoinMarkup(p.options.Markup(BranchIcon, "\uE0A0"), branch)
 }
 
 func (p *Plastic) parseChangesetSelector(selector string) string {

@@ -1,6 +1,7 @@
 package template
 
 import (
+	"fmt"
 	"path/filepath"
 	"sync"
 	"text/template"
@@ -86,12 +87,18 @@ var restrictedAllowedSprigFuncs = map[string]bool{
 	"wrapWith": true,
 }
 
+// escapeFuncName is the internal function appended to every print action's
+// pipeline after parsing (see escapePrintActions). It must resolve in both
+// trust levels, so it lives in the shared local map.
+const escapeFuncName = "__esc"
+
 // localFuncMap holds oh-my-posh's own template functions, including ones
 // that intentionally override a sprig function of the same name (e.g. date,
 // to support string epoch values). These are unconditionally available in
 // both the trusted and restricted func maps.
 func localFuncMap() map[string]any {
-	return map[string]any{
+	fm := map[string]any{
+		escapeFuncName: escapeActionValue,
 		"secondsRound": secondsRound,
 		"url":          url,
 		"path":         filePath,
@@ -103,10 +110,16 @@ func localFuncMap() map[string]any {
 		"random":       random,
 		"reason":       GetReasonFromStatus,
 		"hresult":      hresult,
-		"trunc":        trunc,
-		"truncE":       TruncE,
 		"dir":          filepath.Dir,
 		"base":         filepath.Base,
+		"trunc":        trunc,
+		"truncE":       TruncE,
+		// The print builtins format through fmt and return plain strings, so
+		// they would drop the trust of a Markup argument; these overrides go
+		// through markupAware like every other function.
+		"print":   fmt.Sprint,
+		"printf":  fmt.Sprintf,
+		"println": fmt.Sprintln,
 		// Locale-aware date/time formatting using OS regional settings.
 		"localeShortDate": localeShortDate,
 		"localeShortTime": localeShortTime,
@@ -117,6 +130,23 @@ func localFuncMap() map[string]any {
 		"htmlDate":       ompHTMLDate,
 		"htmlDateInZone": ompHTMLDateInZone,
 	}
+
+	return fm
+}
+
+// wrapMarkupAware replaces every function in fm with its Markup-aware form
+// (see markupAware). The escape function is the one exception: it is the
+// boundary the wrapper protects, and must see the raw value.
+func wrapMarkupAware(fm map[string]any) template.FuncMap {
+	for name, fn := range fm {
+		if name == escapeFuncName {
+			continue
+		}
+
+		fm[name] = markupAware(name, fn)
+	}
+
+	return template.FuncMap(fm)
 }
 
 func baseFuncMap() map[string]any {
@@ -168,7 +198,7 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 		}
 	}
 
-	return template.FuncMap(fm)
+	return wrapMarkupAware(fm)
 })
 
 // Reused across all restricted template constructions (see RenderUntrusted).
@@ -193,7 +223,7 @@ var restrictedFuncMap = sync.OnceValue(func() template.FuncMap {
 		}
 	}
 
-	return template.FuncMap(fm)
+	return wrapMarkupAware(fm)
 })
 
 func funcMap(trusted bool) template.FuncMap {

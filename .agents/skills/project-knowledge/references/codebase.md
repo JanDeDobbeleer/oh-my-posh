@@ -69,6 +69,46 @@
   line, that field is lost. Use a record format that retains a final non-whitespace delimiter or
   sentinel, and validate the record before assigning parsed state.
 
+## Terminal output sanitization
+
+- `prompt.Engine.write` (src/prompt/engine.go) appends straight to the prompt builder and
+  bypasses the per-rune control filter in `terminal.write` (src/terminal/writer.go). Any
+  attacker-influenceable string passed to `e.write` in one shot (console title, OSC payloads)
+  must sanitize itself with `terminal.stripControlRunes`; `trimAnsi` alone is insufficient -
+  it ignores strings without ESC (a bare BEL survives) and its regex misses CSI `! p`, APC,
+  SOS, and ST (verified 2026-09-05, GHSA-fwjx-9p69-h25h follow-up in `FormatTitle`).
+- `terminal.AnsiRegex`'s final-byte class intentionally omits `!`, `_`, `X` and `\`; do not
+  extend it as a sanitization fix - strip control runes instead.
+
+## Template markup trust boundary (2026-09-05, markup-injection fix)
+
+- The renderer escapes chevrons in every print action's output (`__esc` appended to each
+  pipeline post-parse, `template/render.go` `escapePrintActions`). Literal template text keeps
+  its `<...>` anchors; action output only keeps them when typed `template.Markup`. A new
+  segment that stores attacker-controlled strings (VCS refs, manifest fields, API responses,
+  folder names) in plain string fields is safe by default - do NOT call `template.RawMarkup`
+  on data.
+- `template.Markup` (src/template/markup.go) is the bypass type: a named string, never a
+  struct (text/template treats every struct as true, which broke the `{{ if .BranchStatus }}`
+  guards in 60 shipped themes, and `eq` cannot compare a struct to a string). Constructors:
+  `RawMarkup` (user config only), `EscapeMarkup` (data),
+  `JoinMarkup` (composition). Segment fields composed from option strings with anchors
+  (icons, `branch_icon`, `folder_separator_icon`, `status_formats` - all evidenced in shipped
+  themes) MUST be `template.Markup` or their anchors render as literal text.
+- Every func-map entry is wrapped by `markupAware` (src/template/markup.go): Markup arguments
+  feed `string` parameters as text, a string result becomes Markup when any argument was Markup,
+  and the plain-string arguments of such a call are escaped first. Common signatures have
+  reflection-free fast paths (`markupAwareTyped`); the reflect path costs a few allocations
+  per call, so add a typed case there before optimizing anything else when a function shows
+  up hot. `print`/`printf`/`println` are overridden in the local map for the same reason.
+- `terminal.write`'s `isHyperlink` branch (OSC 8 URI region) applies shell escaping
+  (`formats.EscapeSequences`) since 2026-09-05 - bash `@P` would otherwise re-interpret a URI
+  backslash as a prompt escape. Never bypass it there.
+- Regression net: `src/prompt/golden_test.go` renders all 125 shipped themes byte-exact; if a
+  markup change alters golden output, the theme relied on the old (insecure) behavior -
+  regenerate with `go test ./prompt/... -run TestGoldenThemes -update` only after inspecting
+  the diff.
+
 ## Cache
 
 - Cache persistence only happens with the hidden `--save-cache` flag (print/stream commands);
@@ -99,3 +139,19 @@
 - `config.Get` prefers the session gob cache over `POSH_THEME`.
 - Go guarantees exactly 2 records per wait-mode serve request even on segment panic
   (`renderComplete`) - blocking clients (Clink) rely on this.
+- Streaming pending-segment bookkeeping (`pendingSegments` map, `segment.Pending`,
+  `streamingResults` channel) has no lock; correctness relies on ordering (verified 2026-09-05).
+  A segment that finishes right around the streaming timeout used to leave the prompt (and the
+  transient rendered from it) stuck on "..." for good - the producer's "nothing pending" check
+  read 0 while the completion sat unread in the channel buffer, or the cleanup goroutine raced
+  the tracker's deregistration and the notification was never sent. Invariants now: deregister
+  an in-time segment BEFORE handing over its result, a timed-out one is deregistered only by
+  the producer when it consumes the notification (so "neither registered nor queued" cannot
+  happen while a render is owed), the producer exits only when nothing is registered AND the
+  buffer is empty, the buffer holds one slot per segment so a send never drops, and
+  `streamingResults` is never closed (a late tracker send on a closed channel panics in a
+  goroutine with no recover and kills the serve daemon).
+- Reproducing timing races in the daemon: `oh-my-posh debug` timings are cold-process numbers;
+  the warm in-daemon segment duration is what has to straddle `streaming`. Sweep the timeout in
+  a config copy against a scripted serve session (JSON line + env blob on stdin, count cycles
+  whose last record still holds the placeholder) instead of trusting a single value.

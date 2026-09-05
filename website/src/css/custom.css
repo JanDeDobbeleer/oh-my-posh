@@ -1,4 +1,11 @@
 /* stylelint-disable docusaurus/copyright-header */
+/* Commit Mono is the site's body and code face. Self-hosted via Fontsource (it's not on
+   Google Fonts) so the site carries no third-party font request for it; only the latin
+   subsets of the four weights the design uses are bundled. */
+@import "@fontsource/commit-mono/latin-400.css";
+@import "@fontsource/commit-mono/latin-500.css";
+@import "@fontsource/commit-mono/latin-600.css";
+@import "@fontsource/commit-mono/latin-700.css";
 /**
  * Any CSS included here will be global. The classic template
  * bundles Infima by default. Infima is a CSS framework designed to
@@ -290,9 +297,9 @@ iframe.youtube {
 }
 
 :root {
-  --ifm-font-family-monospace: "JetBrains Mono", "Victor Mono", "Symbols Nerd Font Mono",
+  --ifm-font-family-monospace: "Commit Mono", "Victor Mono", "Symbols Nerd Font Mono",
     "Symbols Nerd Font", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --ifm-font-family-base: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ifm-font-family-base: "Commit Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --ifm-heading-font-weight: 600;
   --ifm-heading-line-height: 1.2;
 }

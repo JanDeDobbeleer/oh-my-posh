@@ -27,6 +27,7 @@
     "@docusaurus/core": "^3.10.2",
     "@docusaurus/preset-classic": "^3.10.2",
     "@docusaurus/theme-search-algolia": "^3.10.2",
+    "@fontsource/commit-mono": "^5.3.0",
     "@lezer/highlight": "^1.2.3",
     "@mdx-js/react": "^3.1.1",
     "classnames": "^2.5.1",

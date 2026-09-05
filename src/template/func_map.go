@@ -1,6 +1,7 @@
 package template
 
 import (
+	"maps"
 	"path/filepath"
 	"sync"
 	"text/template"
@@ -122,9 +123,7 @@ func localFuncMap() map[string]any {
 		"htmlDateInZone": ompHTMLDateInZone,
 	}
 
-	for name, fn := range markupStringFuncs() {
-		fm[name] = fn
-	}
+	maps.Copy(fm, markupStringFuncs())
 
 	return fm
 }

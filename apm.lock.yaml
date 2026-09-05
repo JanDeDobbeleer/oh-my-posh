@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-08-26T05:57:04.782415+00:00'
+generated_at: '2026-09-05T09:31:56.571829+00:00'
 apm_version: 0.26.0
 dependencies:
 - repo_url: ast-grep/agent-skill
@@ -30,6 +30,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/golang.md
   - .github/instructions/golang.instructions.md
@@ -44,6 +45,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/markdown.md
   - .github/instructions/markdown.instructions.md
@@ -58,6 +60,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/powershell.md
   - .github/instructions/powershell.instructions.md

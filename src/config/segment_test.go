@@ -832,3 +832,19 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 		assert.False(t, found, tc.Case)
 	}
 }
+
+// Without a writer (the website build) recorded data lands in a map; the
+// tagged markup it carries must come back as Markup so the anchors render.
+func TestRestoreIntoRevivesMarkupWithoutWriter(t *testing.T) {
+	segment := &Segment{}
+
+	raw := json.RawMessage(`{"HEAD":{"$markup":"<red>main</>"},"Ref":"<b>","Total":2}`)
+	methods := json.RawMessage(`{"Working":{"String":{"$markup":"<b>~1</>"}}}`)
+
+	require.NoError(t, segment.restoreInto(raw, methods))
+
+	assert.Equal(t, template.RawMarkup("<red>main</>"), segment.data["HEAD"])
+	assert.Equal(t, "<b>", segment.data["Ref"])
+	assert.Equal(t, 2, segment.data["Total"])
+	assert.Equal(t, template.RawMarkup("<b>~1</>"), segment.data["Working"].(map[string]any)["String"])
+}

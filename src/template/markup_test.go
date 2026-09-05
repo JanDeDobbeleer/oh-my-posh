@@ -3,6 +3,7 @@ package template
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -244,6 +245,68 @@ func TestMarkupGobInterfaceRoundtrip(t *testing.T) {
 	got, ok := out["HEAD"].(Markup)
 	require.True(t, ok, "HEAD decoded as %T", out["HEAD"])
 	assert.Equal(t, "<red>safe</>", got.String())
+}
+
+func TestMarkupJSON(t *testing.T) {
+	cases := []struct {
+		Case     string
+		JSON     string
+		Expected Markup
+		Error    bool
+	}{
+		{Case: "tagged form", JSON: `{"$markup":"<red>x</>"}`, Expected: RawMarkup("<red>x</>")},
+		{Case: "bare string from an older fixture", JSON: `"<red>x</>"`, Expected: RawMarkup("<red>x</>")},
+		{Case: "empty tagged form", JSON: `{"$markup":""}`, Expected: RawMarkup("")},
+		{Case: "object without the tag", JSON: `{"text":"x"}`, Error: true},
+	}
+
+	for _, tc := range cases {
+		var got Markup
+		err := json.Unmarshal([]byte(tc.JSON), &got)
+
+		if tc.Error {
+			assert.Error(t, err, tc.Case)
+			continue
+		}
+
+		require.NoError(t, err, tc.Case)
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+
+	encoded, err := json.Marshal(struct {
+		HEAD Markup
+		Ref  string
+	}{HEAD: RawMarkup("<red>x</>"), Ref: "<b>"})
+	require.NoError(t, err)
+	assert.JSONEq(t, `{"HEAD":{"$markup":"<red>x</>"},"Ref":"<b>"}`, string(encoded))
+}
+
+// A generically decoded document (the writer-less restore path) must carry
+// the same trust as the struct it was recorded from: tagged objects become
+// Markup, everything else stays data.
+func TestReviveMarkup(t *testing.T) {
+	var decoded map[string]any
+	require.NoError(t, json.Unmarshal([]byte(`{
+		"HEAD": {"$markup": "<red>main</>"},
+		"Ref": "<b>",
+		"Rebase": {"Onto": {"$markup": "<b>x</>"}, "Total": 2},
+		"Items": [{"$markup": "<i>y</>"}, "plain"],
+		"Shaped": {"$markup": "x", "extra": 1}
+	}`), &decoded))
+
+	got := ReviveMarkup(decoded).(map[string]any)
+
+	assert.Equal(t, RawMarkup("<red>main</>"), got["HEAD"])
+	assert.Equal(t, "<b>", got["Ref"])
+	assert.Equal(t, RawMarkup("<b>x</>"), got["Rebase"].(map[string]any)["Onto"])
+	assert.Equal(t, RawMarkup("<i>y</>"), got["Items"].([]any)[0])
+	assert.Equal(t, "plain", got["Items"].([]any)[1])
+	_, stillObject := got["Shaped"].(map[string]any)
+	assert.True(t, stillObject, "an object with more than the tag is not markup")
+
+	text, err := RenderTrusted(`{{ .HEAD }}|{{ .Ref }}`, got)
+	require.NoError(t, err)
+	assert.Equal(t, "<red>main</>|<<>b<>>", text)
 }
 
 func TestEscapeText(t *testing.T) {

@@ -712,7 +712,9 @@ func (segment *Segment) restoreInto(raw, methods json.RawMessage) error {
 		MergeRecordedMethods(data, overlay)
 	}
 
-	segment.data = normalizeNumbers(data).(map[string]any)
+	// Markup fields were recorded tagged (see template.Markup's JSON form);
+	// revive them or every recorded anchor renders escaped on this path.
+	segment.data = template.ReviveMarkup(normalizeNumbers(data)).(map[string]any)
 
 	return nil
 }

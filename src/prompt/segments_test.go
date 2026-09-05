@@ -173,7 +173,7 @@ func TestExecuteSegmentWithTimeout_Streaming(t *testing.T) {
 	engine.pendingSegments.Store(segment.Name(), true)
 
 	// Mark as pending and track (simulating what executeSegmentWithTimeout does)
-	segment.Pending = true
+	segment.SetPending(true)
 	engine.trackPendingSegment(segment, done)
 
 	// Verify it was tracked as pending
@@ -184,7 +184,7 @@ func TestExecuteSegmentWithTimeout_Streaming(t *testing.T) {
 	select {
 	case completed := <-engine.streamingResults:
 		assert.Equal(t, segment, completed)
-		assert.False(t, completed.Pending, "Segment should no longer be pending after completion")
+		assert.False(t, completed.IsPending(), "Segment should no longer be pending after completion")
 	case <-time.After(200 * time.Millisecond):
 		t.Error("Expected segment completion notification")
 	}
@@ -237,9 +237,9 @@ func TestExecuteSegmentWithTimeout_CachedValueFallback(t *testing.T) {
 
 	segment := &config.Segment{
 		Type:     "text",
-		Pending:  true,
 		Template: "actual content",
 	}
+	segment.SetPending(true)
 
 	// Initialize the segment writer
 	err := segment.MapSegmentWithWriter(env)
@@ -251,7 +251,7 @@ func TestExecuteSegmentWithTimeout_CachedValueFallback(t *testing.T) {
 	assert.Equal(t, "...", text, "Pending segment should show ...")
 
 	// After completion, render again with actual content
-	segment.Pending = false
+	segment.SetPending(false)
 	segment.Render(0, true)
 	text = segment.Text()
 	assert.NotEqual(t, "...", text, "Non-pending segment should show actual content")

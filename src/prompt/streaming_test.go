@@ -82,10 +82,10 @@ func TestStreamPrimary_TransientRecord_RefreshedAfterCompletion(t *testing.T) {
 	slowSegment := &config.Segment{
 		Type:       "text",
 		Template:   "SLOW",
-		Pending:    true,
 		Foreground: "#ffffff",
 		Background: "#000000",
 	}
+	slowSegment.SetPending(true)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -110,7 +110,7 @@ func TestStreamPrimary_TransientRecord_RefreshedAfterCompletion(t *testing.T) {
 
 	go func() {
 		time.Sleep(50 * time.Millisecond)
-		slowSegment.Pending = false
+		slowSegment.SetPending(false)
 		engine.notifySegmentCompletion(slowSegment)
 	}()
 
@@ -172,7 +172,8 @@ func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
 	// keeps looping over completions instead of finishing the cycle.
 	segments := make([]*config.Segment, 20)
 	for i := range segments {
-		segments[i] = &config.Segment{Type: config.SegmentType(fmt.Sprintf("test-%d", i)), Pending: true}
+		segments[i] = &config.Segment{Type: config.SegmentType(fmt.Sprintf("test-%d", i))}
+		segments[i].SetPending(true)
 		engine.pendingSegments.Store(segments[i].Name(), true)
 	}
 
@@ -187,7 +188,7 @@ func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
 
 	go func() {
 		for _, segment := range segments {
-			segment.Pending = false
+			segment.SetPending(false)
 
 			select {
 			case engine.streamingResults <- segment:
@@ -218,9 +219,9 @@ func TestStreamPrimary_WithPendingSegments(t *testing.T) {
 	}
 
 	segment := &config.Segment{
-		Type:    "text",
-		Pending: true,
+		Type: "text",
 	}
+	segment.SetPending(true)
 
 	// Track as pending
 	engine.pendingSegments.Store(segment.Name(), true)
@@ -228,7 +229,7 @@ func TestStreamPrimary_WithPendingSegments(t *testing.T) {
 	// Simulate segment completion in background
 	go func() {
 		time.Sleep(50 * time.Millisecond)
-		segment.Pending = false
+		segment.SetPending(false)
 		engine.notifySegmentCompletion(segment)
 	}()
 
@@ -236,7 +237,7 @@ func TestStreamPrimary_WithPendingSegments(t *testing.T) {
 	select {
 	case completed := <-engine.streamingResults:
 		assert.Equal(t, segment, completed)
-		assert.False(t, completed.Pending)
+		assert.False(t, completed.IsPending())
 	case <-time.After(200 * time.Millisecond):
 		t.Error("Expected segment completion notification")
 	}
@@ -315,9 +316,9 @@ func TestTrackPendingSegment(t *testing.T) {
 	}
 
 	segment := &config.Segment{
-		Type:    "test",
-		Pending: true,
+		Type: "test",
 	}
+	segment.SetPending(true)
 
 	done := make(chan bool)
 
@@ -338,7 +339,7 @@ func TestTrackPendingSegment(t *testing.T) {
 	select {
 	case completed := <-engine.streamingResults:
 		assert.Equal(t, segment, completed)
-		assert.False(t, segment.Pending, "Segment should no longer be pending")
+		assert.False(t, segment.IsPending(), "Segment should no longer be pending")
 	case <-time.After(100 * time.Millisecond):
 		t.Error("Expected segment completion notification")
 	}
@@ -420,9 +421,9 @@ func TestSegmentPendingState(t *testing.T) {
 
 	segment := &config.Segment{
 		Type:     "text",
-		Pending:  true,
 		Template: "test template",
 	}
+	segment.SetPending(true)
 	err := segment.MapSegmentWithWriter(env)
 	require.NoError(t, err)
 
@@ -432,7 +433,7 @@ func TestSegmentPendingState(t *testing.T) {
 	assert.Equal(t, "...", text, "Pending segment should show ...")
 
 	// After completion
-	segment.Pending = false
+	segment.SetPending(false)
 	segment.Render(0, true)
 	text = segment.Text()
 	assert.NotEqual(t, "...", text, "Non-pending segment should show actual content")
@@ -535,10 +536,10 @@ func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
 	slowSegment := &config.Segment{
 		Type:       "text",
 		Template:   "SLOW",
-		Pending:    true, // Initially pending
 		Foreground: "#ffffff",
 		Background: "#000000",
 	}
+	slowSegment.SetPending(true)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -569,7 +570,7 @@ func TestStreamPrimary_FullFlow_WithRendering(t *testing.T) {
 	// Simulate slow segment completion after delay
 	go func() {
 		time.Sleep(50 * time.Millisecond)
-		slowSegment.Pending = false
+		slowSegment.SetPending(false)
 		engine.notifySegmentCompletion(slowSegment)
 	}()
 
@@ -603,8 +604,8 @@ func TestStreamPrimary_MultipleBlocks_MixedSpeed(t *testing.T) {
 	slow1 := &config.Segment{
 		Type:     "text",
 		Template: "SLOW1",
-		Pending:  true,
 	}
+	slow1.SetPending(true)
 
 	// Block 3: Another fast segment
 	fast2 := &config.Segment{
@@ -638,7 +639,7 @@ func TestStreamPrimary_MultipleBlocks_MixedSpeed(t *testing.T) {
 	// Simulate completion
 	go func() {
 		time.Sleep(50 * time.Millisecond)
-		slow1.Pending = false
+		slow1.SetPending(false)
 		engine.notifySegmentCompletion(slow1)
 	}()
 
@@ -740,9 +741,12 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	// - segmentA: Completes quickly after Primary()
 	// - segmentB: Completes during loop
 	// - segmentC: Completes last
-	segmentA := &config.Segment{Type: "test-a", Pending: true}
-	segmentB := &config.Segment{Type: "test-b", Pending: true}
-	segmentC := &config.Segment{Type: "test-c", Pending: true}
+	segmentA := &config.Segment{Type: "test-a"}
+	segmentA.SetPending(true)
+	segmentB := &config.Segment{Type: "test-b"}
+	segmentB.SetPending(true)
+	segmentC := &config.Segment{Type: "test-c"}
+	segmentC.SetPending(true)
 
 	// Pre-register all three as pending (simulates timeout during Primary())
 	engine.pendingSegments.Store(segmentA.Name(), true)
@@ -754,20 +758,20 @@ func TestStreamPrimary_RaceConditionFix(t *testing.T) {
 	go func() {
 		// Small delay to ensure StreamPrimary has been called but before counting
 		time.Sleep(5 * time.Millisecond)
-		segmentA.Pending = false
+		segmentA.SetPending(false)
 		engine.notifySegmentCompletion(segmentA)
 	}()
 
 	// Simulate segmentB and segmentC completing during the loop
 	go func() {
 		time.Sleep(30 * time.Millisecond)
-		segmentB.Pending = false
+		segmentB.SetPending(false)
 		engine.notifySegmentCompletion(segmentB)
 	}()
 
 	go func() {
 		time.Sleep(50 * time.Millisecond)
-		segmentC.Pending = false
+		segmentC.SetPending(false)
 		engine.notifySegmentCompletion(segmentC)
 	}()
 
@@ -805,10 +809,10 @@ func TestStreamPrimary_Abort_StopsRenderingAndDrains(t *testing.T) {
 	slowSegment := &config.Segment{
 		Type:       "text",
 		Template:   "SLOW",
-		Pending:    true,
 		Foreground: "#ffffff",
 		Background: "#000000",
 	}
+	slowSegment.SetPending(true)
 
 	engine := &Engine{
 		Config: &config.Config{
@@ -837,7 +841,7 @@ func TestStreamPrimary_Abort_StopsRenderingAndDrains(t *testing.T) {
 	// this notification without rendering (and without blocking the sender).
 	go func() {
 		time.Sleep(20 * time.Millisecond)
-		slowSegment.Pending = false
+		slowSegment.SetPending(false)
 		engine.notifySegmentCompletion(slowSegment)
 	}()
 

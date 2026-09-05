@@ -328,9 +328,9 @@ func TestSegment_NoCachingWhenPending(t *testing.T) {
 
 	segment := &Segment{
 		Type:     SESSION,
-		Pending:  true,
 		Template: "test",
 	}
+	segment.SetPending(true)
 
 	err := segment.MapSegmentWithWriter(env)
 	assert.NoError(t, err)
@@ -344,14 +344,14 @@ func TestSegment_NoCachingWhenPending(t *testing.T) {
 	segment.setCache() // Should return early, not attempt to cache
 
 	// Verify this doesn't panic and segment still works
-	assert.True(t, segment.Pending, "Segment should still be pending")
+	assert.True(t, segment.IsPending(), "Segment should still be pending")
 
 	// Now with Pending=false, setCache will attempt to cache
-	segment.Pending = false
+	segment.SetPending(false)
 	segment.restored = false
 	segment.setCache() // Should attempt to cache (may fail but shouldn't panic)
 
-	assert.False(t, segment.Pending, "Segment should not be pending")
+	assert.False(t, segment.IsPending(), "Segment should not be pending")
 }
 
 func TestSegment_DataKey(t *testing.T) {

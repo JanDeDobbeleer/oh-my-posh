@@ -119,8 +119,8 @@ func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan 
 			// segment still registered - a deregistration landing after that
 			// check would leave it waiting for one that never comes.
 			// A timed-out one is owned by trackPendingSegment from now on: it
-			// resets segment.Pending and deregisters the segment itself, and
-			// re-reading segment.Pending here would race that reset - a
+			// resets segment.IsPending() and deregisters the segment itself, and
+			// re-reading segment.IsPending() here would race that reset - a
 			// completion landing between the timeout and this line would get
 			// deregistered twice, once before the notification was sent,
 			// which the producer then never sees.
@@ -161,7 +161,7 @@ func (e *Engine) executeSegmentWithTimeout(segment *config.Segment) bool {
 
 	// When streaming is enabled, don't kill goroutines - let them continue executing
 	if e.Env.Flags().Streaming {
-		segment.Pending = true
+		segment.SetPending(true)
 		// Note: Do NOT set segment.Enabled here - that would race with Execute()
 		// Rendering logic handles Pending state to display "..." text
 
@@ -210,7 +210,7 @@ func (e *Engine) writeSegments(results []*config.Segment, block *config.Block, e
 
 func (e *Engine) writeSegment(block *config.Block, segment *config.Segment) {
 	// Allow pending segments to render (they show "..." text)
-	if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+	if !segment.IsPending() && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 		return
 	}
 

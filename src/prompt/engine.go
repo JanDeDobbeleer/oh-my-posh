@@ -375,7 +375,7 @@ func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) b
 	// Re-render all segments in the block
 	for segmentIndex, segment := range block.Segments {
 		// Allow pending segments to render (they show "..." text)
-		if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+		if !segment.IsPending() && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 			continue
 		}
 
@@ -468,7 +468,7 @@ func (e *Engine) setActiveSegment(segment *config.Segment) {
 	// parent color references) agrees on the same solid color; see collapseGradient.
 	// Pending placeholders are exempt: they are transient and should preview the
 	// segment's gradient rather than flash a collapsed solid color mid-stream.
-	if !segment.Pending && (background.IsGradient() || foreground.IsGradient()) {
+	if !segment.IsPending() && (background.IsGradient() || foreground.IsGradient()) {
 		cells := terminal.VisibleCells(segment.Text())
 
 		if collapsed, ok := collapseGradient(background, cells); ok {
@@ -686,7 +686,7 @@ func (e *Engine) renderActiveSegment() {
 		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Accordion:
 		// Render accordion segments if enabled OR pending (pending shows "..." text)
-		if e.activeSegment.Enabled || e.activeSegment.Pending {
+		if e.activeSegment.Enabled || e.activeSegment.IsPending() {
 			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 		}
 	}

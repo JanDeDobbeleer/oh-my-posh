@@ -215,7 +215,7 @@ func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
 	// Segment is already pre-registered in pendingSegments map
 	go func() {
 		<-done
-		segment.Pending = false
+		segment.SetPending(false)
 		e.notifySegmentCompletion(segment)
 	}()
 }

@@ -111,6 +111,45 @@ func TestRenderEscapesActionOutput(t *testing.T) {
 			Context:  struct{ HEAD Markup }{HEAD: RawMarkup("main")},
 			Expected: "yes",
 		},
+		{
+			Case:     "predicates accept markup",
+			Template: `{{ if contains "ma" .HEAD }}yes{{ end }}{{ if hasPrefix "x" .HEAD }}no{{ end }}`,
+			Context:  struct{ HEAD Markup }{HEAD: RawMarkup("<red>main</>")},
+			Expected: "yes",
+		},
+		{
+			Case:     "transforms keep markup anchors",
+			Template: `{{ .HEAD | trimSuffix "-wip" | upper }}{{ .HEAD | replace "main" "dev" }}`,
+			Context:  struct{ HEAD Markup }{HEAD: RawMarkup("<red>main</>-wip")},
+			Expected: "<RED>MAIN</><red>dev</>-wip",
+		},
+		{
+			Case:     "transforms on data stay escaped",
+			Template: `{{ .Branch | trimSuffix "-wip" }} {{ .Branch | upper }}`,
+			Context:  struct{ Branch string }{Branch: "<b>-wip"},
+			Expected: "<<>b<>> <<>B<>>-WIP",
+		},
+		{
+			Case:     "data mixed into a markup call is escaped",
+			Template: `{{ printf "%s%s" .Icon .Branch }}|{{ cat .Icon .Branch }}|{{ .Icon | replace "x" .Branch }}`,
+			Context: struct {
+				Icon   Markup
+				Branch string
+			}{Icon: RawMarkup("<red>x</>"), Branch: "<b>"},
+			Expected: "<red>x</><<>b<>>|<red>x</> <<>b<>>|<red><<>b<>></>",
+		},
+		{
+			Case:     "markup-free calls are unchanged",
+			Template: `{{ printf "<%s>" .Branch }}{{ trunc 2 .Branch }}{{ if contains "a" .Branch }}!{{ end }}`,
+			Context:  struct{ Branch string }{Branch: "main"},
+			Expected: "<<>main<>>ma!",
+		},
+		{
+			Case:     "numeric literals reach typed parameters",
+			Template: `{{ repeat 2 .HEAD }}{{ substr 0 3 .HEAD }}{{ add 1 2 }}`,
+			Context:  struct{ HEAD Markup }{HEAD: RawMarkup("<red>ab</>")},
+			Expected: "<red>ab</><red>ab</><re3",
+		},
 	}
 
 	origCache := Cache

@@ -245,6 +245,24 @@ func TestFormatBranch(t *testing.T) {
 			Expected:       "<b><<>red<>>x</>",
 			BranchTemplate: "<b>{{ .Branch }}</>",
 		},
+		{
+			Case:           "Mapped branch keeps markup through the branch template",
+			Input:          "feat/x",
+			Expected:       "<#ff0000>feat</> x (mapped)",
+			BranchTemplate: "{{ .Branch }} (mapped)",
+			MappedBranches: map[string]string{
+				"feat/*": "<#ff0000>feat</> ",
+			},
+		},
+		{
+			Case:           "Mapped branch survives string functions in the branch template",
+			Input:          "feat/my-new-feature",
+			Expected:       "<#FF0000>FEAT</> MY-NEW",
+			BranchTemplate: "{{ .Branch | trimSuffix \"-feature\" | upper }}",
+			MappedBranches: map[string]string{
+				"feat/*": "<#ff0000>feat</> ",
+			},
+		},
 	}
 
 	for _, tc := range cases {

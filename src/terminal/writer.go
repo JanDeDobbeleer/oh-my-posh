@@ -427,13 +427,15 @@ func ClearAfter() string {
 }
 
 func FormatTitle(title string) string {
+	// The title bypasses write()'s per-rune control filter, and trimAnsi's regex
+	// doesn't cover every escape form (a bare BEL, CSI ! p, APC, SOS, ST).
+	title = stripControlRunes(trimAnsi(title))
+
 	switch Shell {
 	// These shells don't support setting the console title.
 	case shell.ELVISH, shell.XONSH:
 		return ""
 	case shell.BASH, shell.ZSH, shell.YASH:
-		title = trimAnsi(title)
-
 		sb := text.NewBuilder()
 
 		// We have to do this to prevent the shell from misidentifying escape sequences.
@@ -449,7 +451,7 @@ func FormatTitle(title string) string {
 
 		return fmt.Sprintf(formats.Title, sb.String())
 	default:
-		return fmt.Sprintf(formats.Title, trimAnsi(title))
+		return fmt.Sprintf(formats.Title, title)
 	}
 }
 
@@ -941,6 +943,8 @@ func write(s rune, isInvisible bool) {
 		if Plain {
 			return
 		}
+
+		
 
 		builder.WriteRune(s)
 

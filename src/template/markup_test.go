@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -24,6 +25,7 @@ func TestRenderEscapesActionOutput(t *testing.T) {
 		Template string
 		Context  any
 		Expected string
+		Error    bool
 	}{
 		{
 			Case:     "chevrons in data are neutralized",
@@ -146,6 +148,44 @@ func TestRenderEscapesActionOutput(t *testing.T) {
 			Expected: "<<>main<>>ma!",
 		},
 		{
+			Case:     "containers and errors keep the result plain",
+			Template: `{{ printf "%s %s" .Icon .Heads }}|{{ .Heads | join .Icon }}|{{ printf "%s %s" .Icon .Err }}|{{ cat .Icon (list .Branch) }}`,
+			Context: struct {
+				Err    error
+				Icon   Markup
+				Branch string
+				Heads  []string
+			}{Icon: RawMarkup("<red>x</>"), Heads: []string{"<b>"}, Err: errors.New("<i>"), Branch: "<b>"},
+			Expected: "<<>red<>>x<<>/<>> [<<>b<>>]|<<>b<>>|<<>red<>>x<<>/<>> <<>i<>>|<<>red<>>x<<>/<>> [<<>b<>>]",
+		},
+		{
+			Case:     "string pointers are followed",
+			Template: `{{ trimPrefix "v" .Ptr }} {{ .Ptr | upper }} {{ printf "%s%s" .Icon .Ptr }}`,
+			Context: struct {
+				Ptr  *string
+				Icon Markup
+			}{Ptr: new("v<1>"), Icon: RawMarkup("<red>x</>")},
+			Expected: "<<>1<>> V<<>1<>> <red>x</>v<<>1<>>",
+		},
+		{
+			Case:     "decoders never produce markup",
+			Template: `{{ b64dec .Enc }}`,
+			Context:  struct{ Enc Markup }{Enc: RawMarkup("PGI+")},
+			Expected: "<<>b<>>",
+		},
+		{
+			Case:     "a fraction is not an integer argument",
+			Template: `{{ repeat 2.5 .Icon }}`,
+			Context:  struct{ Icon Markup }{Icon: RawMarkup("x")},
+			Error:    true,
+		},
+		{
+			Case:     "errors print through Error",
+			Template: `{{ .Err }}`,
+			Context:  struct{ Err error }{Err: errors.New("<b>oom")},
+			Expected: "<<>b<>>oom",
+		},
+		{
 			Case:     "numeric literals reach typed parameters",
 			Template: `{{ repeat 2 .HEAD }}{{ substr 0 3 .HEAD }}{{ add 1 2 }}`,
 			Context:  struct{ HEAD Markup }{HEAD: RawMarkup("<red>ab</>")},
@@ -163,10 +203,17 @@ func TestRenderEscapesActionOutput(t *testing.T) {
 		Init(env, nil, nil)
 
 		text, err := RenderTrusted(tc.Template, tc.Context)
+		if tc.Error {
+			assert.Error(t, err, tc.Case)
+			continue
+		}
+
 		require.NoError(t, err, tc.Case)
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }
+
+//go:fix inline
 
 func TestRenderUntrustedEscapesActionOutput(t *testing.T) {
 	origCache := Cache
@@ -195,9 +242,9 @@ func TestURLMarkup(t *testing.T) {
 			Expected: "<LINK>https://ohmyposh.dev<TEXT>a<<>b</TEXT></LINK>",
 		},
 		{
-			Case:        "chevrons in the URL are rejected",
-			Template:    `{{ url "link" "https://ohmyposh.dev/<TEXT>" }}`,
-			ShouldError: true,
+			Case:     "chevrons in the URL drop the link, keep the label",
+			Template: `{{ url "link" "https://ohmyposh.dev/<TEXT>" }}`,
+			Expected: "link",
 		},
 	}
 
@@ -258,6 +305,8 @@ func TestMarkupJSON(t *testing.T) {
 		{Case: "bare string from an older fixture", JSON: `"<red>x</>"`, Expected: RawMarkup("<red>x</>")},
 		{Case: "empty tagged form", JSON: `{"$markup":""}`, Expected: RawMarkup("")},
 		{Case: "object without the tag", JSON: `{"text":"x"}`, Error: true},
+		{Case: "object with more than the tag", JSON: `{"$markup":"x","extra":"y"}`, Error: true},
+		{Case: "null leaves the value alone", JSON: `null`, Expected: RawMarkup("")},
 	}
 
 	for _, tc := range cases {
@@ -307,6 +356,12 @@ func TestReviveMarkup(t *testing.T) {
 	text, err := RenderTrusted(`{{ .HEAD }}|{{ .Ref }}`, got)
 	require.NoError(t, err)
 	assert.Equal(t, "<red>main</>|<<>b<>>", text)
+
+	// data escaped at record time is not escaped a second time on replay
+	recorded := ReviveMarkup(map[string]any{"HEAD": map[string]any{"$markup": "<b><<>x<>></>"}})
+	text, err = RenderTrusted(`{{ .HEAD }}`, recorded)
+	require.NoError(t, err)
+	assert.Equal(t, "<b><<>x<>></>", text)
 }
 
 func TestEscapeText(t *testing.T) {

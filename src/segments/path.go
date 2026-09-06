@@ -663,9 +663,13 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 		pt.RootDir = true
 	}
 
+	// folder names are untrusted; unescaped chevrons would reach the writer
+	// as anchors
+	escape := template.EscapeText
+
 	pt.setMappedLocations()
 	if len(pt.mappedLocations) == 0 {
-		return root, relative
+		return escape(root), escape(relative)
 	}
 
 	// sort map keys in reverse order
@@ -679,10 +683,6 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 
 	rootN := pt.normalize(root)
 	relativeN := pt.normalize(relative)
-
-	// folder names are untrusted; the renderer would read their chevrons as
-	// anchors
-	escape := template.EscapeText
 
 	handleRegex := func(key string) (string, bool) {
 		if !strings.HasPrefix(key, regexPrefix) {
@@ -723,7 +723,8 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 
 	for _, key := range keys {
 		if input, OK := handleRegex(key); OK {
-			return pt.parsePath(input)
+			mappedRoot, mappedRelative := pt.parsePath(input)
+			return escape(mappedRoot), escape(mappedRelative)
 		}
 
 		keyRoot, keyRelative := pt.parsePath(key)

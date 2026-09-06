@@ -88,6 +88,11 @@
   segment that stores attacker-controlled strings (VCS refs, manifest fields, API responses,
   folder names) in plain string fields is safe by default - do NOT call `template.RawMarkup`
   on data.
+- Untrusted templates (`RenderUntrusted`, used for the path segment where folder names are
+  template source) bind the output escape to `escapeUntrustedActionValue`, which escapes Markup
+  results too: `{{ url ... }}` or `{{ date "<red>" }}` in a folder name must not forge anchors.
+  The path segment escapes folder names on every branch of `replaceMappedLocations` (no mapped
+  locations, regex mappings, prefix mappings); a new early return there needs its own escape.
 - `template.Markup` (src/template/markup.go) is the bypass type: a named string, never a
   struct (text/template treats every struct as true, which broke the `{{ if .BranchStatus }}`
   guards in 60 shipped themes, and `eq` cannot compare a struct to a string). Constructors:
@@ -96,11 +101,15 @@
   (icons, `branch_icon`, `folder_separator_icon`, `status_formats` - all evidenced in shipped
   themes) MUST be `template.Markup` or their anchors render as literal text.
 - Every func-map entry is wrapped by `markupAware` (src/template/markup.go): Markup arguments
-  feed `string` parameters as text, a string result becomes Markup when any argument was Markup,
-  and the plain-string arguments of such a call are escaped first. Common signatures have
-  reflection-free fast paths (`markupAwareTyped`); the reflect path costs a few allocations
-  per call, so add a typed case there before optimizing anything else when a function shows
-  up hot. `print`/`printf`/`println` are overridden in the local map for the same reason.
+  feed `string` parameters as text; a string result becomes Markup only when the call had a
+  Markup argument and every other argument was a string, number or bool (a slice, struct,
+  error or pointer may hide data the wrapper cannot escape, so such calls stay plain). Plain
+  strings, printf formats included, are escaped when promoting. Functions whose output is not
+  their input (`readFile`, `cmd`, `b64dec`, `env`, ...) sit in `noPromote`. Common signatures
+  have reflection-free fast paths (`markupAwareTyped`); add a typed case there before optimizing
+  anything else when a function shows up hot. `print`/`printf`/`println` are overridden in the
+  local map. Sprig functions with attacker-chosen counts (`repeat`, `seq`, `until`, `rand*`)
+  are in `dangerousFuncs`, trusted templates only.
 - `terminal.write`'s `isHyperlink` branch (OSC 8 URI region) applies shell escaping
   (`formats.EscapeSequences`) since 2026-09-05 - bash `@P` would otherwise re-interpret a URI
   backslash as a prompt escape. Never bypass it there.

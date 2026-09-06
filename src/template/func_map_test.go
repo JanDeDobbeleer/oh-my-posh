@@ -17,6 +17,10 @@ func TestRestrictedAllowedSprigFuncsCoversAllSprigFuncs(t *testing.T) {
 	localOverrides := localFuncMap()
 
 	for name := range sprig.TxtFuncMap() {
+		if dangerousFuncs[name] && restrictedAllowedSprigFuncs[name] {
+			t.Errorf("sprig function %q is in both lists", name)
+		}
+
 		if dangerousFuncs[name] || restrictedAllowedSprigFuncs[name] {
 			continue
 		}

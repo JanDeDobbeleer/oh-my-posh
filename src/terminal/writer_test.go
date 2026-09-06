@@ -735,6 +735,11 @@ func TestStripControlRunes(t *testing.T) {
 			Expected: "jan @ 世界 café",
 		},
 		{
+			Case:     "raw C1 byte in invalid UTF-8 cannot start a sequence",
+			Input:    "x\x9b2J",
+			Expected: "x\uFFFD2J",
+		},
+		{
 			Case:     "C0 and C1 control runes removed",
 			Input:    "evil\x1b\\\x1b]0;PWNED\x07rest",
 			Expected: "evil\\]0;PWNEDrest",

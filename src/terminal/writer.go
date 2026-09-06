@@ -427,8 +427,7 @@ func ClearAfter() string {
 }
 
 func FormatTitle(title string) string {
-	// The title bypasses write()'s per-rune control filter, and trimAnsi's regex
-	// doesn't cover every escape form (a bare BEL, CSI ! p, APC, SOS, ST).
+	// The title bypasses write()'s per-rune control filter.
 	title = stripControlRunes(trimAnsi(title))
 
 	switch Shell {
@@ -1021,7 +1020,10 @@ func isOSCPayloadControlRune(s rune) bool {
 // Kept separate from write/isControlRune, which guard the streaming render
 // path instead.
 func stripControlRunes(s string) string {
-	if !strings.ContainsFunc(s, isOSCPayloadControlRune) {
+	// An invalid byte decodes as U+FFFD, which is not a control rune, so
+	// a raw C1 byte such as 0x9b would slip through the fast path; the
+	// loop below rewrites it to U+FFFD.
+	if utf8.ValidString(s) && !strings.ContainsFunc(s, isOSCPayloadControlRune) {
 		return s
 	}
 
@@ -1637,7 +1639,7 @@ func asAnsiColorsWithSource(background, foreground color.Ansi) (bg, fg, bgSource
 }
 
 func trimAnsi(txt string) string {
-	if txt == "" || !strings.Contains(txt, "\x1b") {
+	if txt == "" || !strings.ContainsAny(txt, "\x1b\u009b") {
 		return txt
 	}
 	return regex.ReplaceAllString(AnsiRegex, txt, "")

@@ -663,9 +663,10 @@ func (pt *Path) replaceMappedLocations(inputPath string) (string, string) {
 		pt.RootDir = true
 	}
 
-	// folder names are untrusted; unescaped chevrons would reach the writer
-	// as anchors
-	escape := template.EscapeText
+	// folder names are untrusted and end up as template source (setStyle
+	// renders the styled path): chevrons would reach the writer as anchors and
+	// a template delimiter would run as an action
+	escape := template.EscapeSource
 
 	pt.setMappedLocations()
 	if len(pt.mappedLocations) == 0 {

@@ -574,6 +574,11 @@ var testFullAndFolderPathCases = []testFullAndFolderPathCase{
 	{Style: Full, Pwd: homeDir + abc, Expected: homeDir + abc, DisableMappedLocations: true},
 	{Style: Full, Pwd: abcd, Expected: abcd},
 
+	// folder names are template source in setStyle; delimiters must print, never run
+	{Style: Full, Pwd: homeDir + `/{{ url "click" "https://evil.example" }}`, Expected: `~/{{ url "click" "https:/evil.example" }}`}, // the path cleaner folds the double slash
+	{Style: FolderType, Pwd: homeDir + "/{{ upper .Path }}", Expected: "{{ upper .Path }}"},
+	{Style: Full, Pwd: homeDir + "/<red>{{ .Path }}</>", Expected: "~/<<>red<>>{{ .Path }}<<>/<>>"},
+
 	{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "~"},
 	{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "/home|someone", DisableMappedLocations: true},
 	{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir + abc, Expected: "~|abc"},

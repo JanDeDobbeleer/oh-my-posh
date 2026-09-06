@@ -364,6 +364,38 @@ func TestReviveMarkup(t *testing.T) {
 	assert.Equal(t, "<b><<>x<>></>", text)
 }
 
+// Data that becomes template source (folder names in the styled path) must
+// come out of the untrusted renderer exactly as it went in: no action may
+// run, and chevrons stay literal.
+func TestEscapeSource(t *testing.T) {
+	origCache := Cache
+	t.Cleanup(func() { Cache = origCache })
+
+	env := new(mock.Environment)
+	env.On("Shell").Return("foo")
+	Cache = new(cache.Template)
+	Init(env, nil, nil)
+
+	cases := []struct {
+		Case     string
+		Input    string
+		Expected string
+	}{
+		{Case: "plain", Input: "src", Expected: "src"},
+		{Case: "function call", Input: `{{ url "click" "https://evil.example" }}`, Expected: `{{ url "click" "https://evil.example" }}`},
+		{Case: "field access", Input: "{{ .Path }}Z", Expected: "{{ .Path }}Z"},
+		{Case: "chevrons and delimiters", Input: "<red>{{ upper .Path }}</>", Expected: "<<>red<>>{{ upper .Path }}<<>/<>>"},
+		{Case: "doubled delimiters", Input: "{{{{ x }}}}", Expected: "{{{{ x }}}}"},
+		{Case: "closing delimiter alone", Input: "a }} b", Expected: "a }} b"},
+	}
+
+	for _, tc := range cases {
+		text, err := RenderUntrusted("~/"+EscapeSource(tc.Input), nil)
+		require.NoError(t, err, tc.Case)
+		assert.Equal(t, "~/"+tc.Expected, text, tc.Case)
+	}
+}
+
 func TestEscapeText(t *testing.T) {
 	assert.Equal(t, "<<>red<>>x<<>/<>>", EscapeText("<red>x</>"))
 	assert.Equal(t, "plain", EscapeText("plain"))

@@ -62,6 +62,17 @@ func EscapeText(s string) string {
 
 var chevronReplacer = strings.NewReplacer("<", "<<>", ">", "<>>")
 
+// EscapeSource prepares data that becomes template source (a folder name
+// inside the path segment's styled path) so the renderer prints it as it
+// is: chevrons are escaped like any data, and a template delimiter becomes
+// an action that prints the delimiter, so the data can never open an
+// action of its own.
+func EscapeSource(s string) string {
+	return delimiterReplacer.Replace(EscapeText(s))
+}
+
+var delimiterReplacer = strings.NewReplacer("{{", `{{"{{"}}`)
+
 // The session cache stores segment data as map[string]any (interface values)
 // and gob-encodes it per process; an unregistered concrete type inside an
 // interface fails to encode and the whole segment entry is silently dropped.

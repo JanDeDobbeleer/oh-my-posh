@@ -422,13 +422,21 @@ var testFullAndFolderPathCases = []testFullAndFolderPathCase{
 	{Style: Full, FolderSeparatorIcon: `\`, Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: `\`, GOOS: runtime.WINDOWS},
 	{Style: Full, FolderSeparatorIcon: `\`, Pwd: "C:\\Users\\posh", Expected: "C:\\Users\\posh", PathSeparator: `\`, GOOS: runtime.WINDOWS},
 
-	// A folder name containing template syntax must never execute the `cmd` function
-	// once it is spliced into pt.Path and re-rendered in setStyle(): the render uses
-	// the restricted func map, so parsing fails and pt.Path keeps its raw, unexecuted
-	// text instead.
+	// A folder name containing template syntax is spliced into pt.Path and
+	// re-rendered in setStyle(); its delimiters must print, never run.
 	{
 		Style: FolderType, FolderSeparatorIcon: `\`,
 		Pwd: homeDirWindows + "\\{{ cmd `whoami` }}", Expected: "{{ cmd `whoami` }}",
+		PathSeparator: `\`, GOOS: runtime.WINDOWS,
+	},
+	{
+		Style: Full, FolderSeparatorIcon: `\`,
+		Pwd: homeDirWindows + "\\{{ upper .Path }}", Expected: "~\\{{ upper .Path }}",
+		PathSeparator: `\`, GOOS: runtime.WINDOWS,
+	},
+	{
+		Style: Full, FolderSeparatorIcon: `\`,
+		Pwd: homeDirWindows + "\\{{ printf `INJECTED-%s` `x` }}", Expected: "~\\{{ printf `INJECTED-%s` `x` }}",
 		PathSeparator: `\`, GOOS: runtime.WINDOWS,
 	},
 }

@@ -1,7 +1,6 @@
 package template
 
 import (
-	"errors"
 	"fmt"
 	link "net/url"
 	"slices"
@@ -22,14 +21,11 @@ func labelMarkup(v any) Markup {
 }
 
 func textValue(v any) string {
-	switch s := v.(type) {
-	case Markup:
-		return string(s)
-	case string:
+	if s, ok := v.(string); ok {
 		return s
-	default:
-		return fmt.Sprint(v)
 	}
+
+	return fmt.Sprint(v)
 }
 
 func url(label, rawURL any) (Markup, error) {
@@ -43,13 +39,14 @@ func url(label, rawURL any) (Markup, error) {
 		return labelMarkup(label), nil
 	}
 
+	// A URL a repository controls (a remote) can be anything; a bad one
+	// drops the link rather than the whole segment.
 	if strings.ContainsAny(url, "<>") {
-		return "", errors.New("url contains chevrons")
+		return labelMarkup(label), nil
 	}
 
-	_, err := link.ParseRequestURI(url)
-	if err != nil {
-		return "", err
+	if _, err := link.ParseRequestURI(url); err != nil {
+		return labelMarkup(label), nil
 	}
 
 	return RawMarkup(fmt.Sprintf("<LINK>%s<TEXT>%s</TEXT></LINK>", url, labelMarkup(label))), nil

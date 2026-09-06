@@ -17,7 +17,7 @@ func TestUrl(t *testing.T) {
 		ShouldError bool
 	}{
 		{Case: "valid url", Expected: "<LINK>https://ohmyposh.dev<TEXT>link</TEXT></LINK>", Template: `{{ url "link" "https://ohmyposh.dev" }}`},
-		{Case: "invalid url", Expected: "", Template: `{{ url "link" "Foo" }}`, ShouldError: true},
+		{Case: "invalid url keeps the label", Expected: "link", Template: `{{ url "link" "Foo" }}`},
 	}
 
 	env := &mock.Environment{}

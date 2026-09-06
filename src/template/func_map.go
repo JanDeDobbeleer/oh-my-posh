@@ -42,6 +42,17 @@ var dangerousFuncs = map[string]bool{
 	"encryptAES":               true,
 	"decryptAES":               true,
 	"randBytes":                true,
+
+	// Attacker-chosen counts: a crafted folder name can allocate gigabytes
+	// or spin for minutes with these.
+	"repeat":       true,
+	"seq":          true,
+	"until":        true,
+	"untilStep":    true,
+	"randAlpha":    true,
+	"randAlphaNum": true,
+	"randAscii":    true,
+	"randNumeric":  true,
 }
 
 // restrictedAllowedSprigFuncs is a frozen allowlist of sprig functions that
@@ -73,16 +84,16 @@ var restrictedAllowedSprigFuncs = map[string]bool{
 	"mustToRawJson": true, "mustUniq": true, "mustWithout": true, "must_date_modify": true, "nindent": true,
 	"nospace": true, "now": true, "omit": true, "osBase": true, "osClean": true, "osDir": true, "osExt": true,
 	"osIsAbs": true, "pick": true, "pluck": true, "plural": true, "prepend": true, "push": true, "quote": true,
-	"randAlpha": true, "randAlphaNum": true, "randAscii": true, "randInt": true, "randNumeric": true,
+	"randInt":   true,
 	"regexFind": true, "regexFindAll": true, "regexMatch": true, "regexQuoteMeta": true, "regexReplaceAll": true,
-	"regexReplaceAllLiteral": true, "regexSplit": true, "repeat": true, "replace": true, "rest": true,
-	"reverse": true, "round": true, "semver": true, "semverCompare": true, "seq": true, "set": true, "sha1sum": true,
+	"regexReplaceAllLiteral": true, "regexSplit": true, "replace": true, "rest": true,
+	"reverse": true, "round": true, "semver": true, "semverCompare": true, "set": true, "sha1sum": true,
 	"sha256sum": true, "sha512sum": true, "shuffle": true, "slice": true, "snakecase": true, "sortAlpha": true,
 	"split": true, "splitList": true, "splitn": true, "squote": true, "sub": true, "subf": true, "substr": true,
 	"swapcase": true, "ternary": true, "title": true, "toDate": true, "toDecimal": true, "toJson": true,
 	"toPrettyJson": true, "toRawJson": true, "toString": true, "toStrings": true, "trim": true, "trimAll": true,
 	"trimPrefix": true, "trimSuffix": true, "trimall": true, "tuple": true, "typeIs": true, "typeIsLike": true,
-	"typeOf": true, "uniq": true, "unixEpoch": true, "unset": true, "until": true, "untilStep": true, "untitle": true,
+	"typeOf": true, "uniq": true, "unixEpoch": true, "unset": true, "untitle": true,
 	"upper": true, "urlJoin": true, "urlParse": true, "uuidv4": true, "values": true, "without": true, "wrap": true,
 	"wrapWith": true,
 }
@@ -97,7 +108,7 @@ const escapeFuncName = "__esc"
 // to support string epoch values). These are unconditionally available in
 // both the trusted and restricted func maps.
 func localFuncMap() map[string]any {
-	fm := map[string]any{
+	return map[string]any{
 		escapeFuncName: escapeActionValue,
 		"secondsRound": secondsRound,
 		"url":          url,
@@ -123,15 +134,12 @@ func localFuncMap() map[string]any {
 		// Locale-aware date/time formatting using OS regional settings.
 		"localeShortDate": localeShortDate,
 		"localeShortTime": localeShortTime,
-		// Override sprig date functions to support string epoch values (e.g. output of unixEpoch).
-		"date":           ompDate,
-		"date_in_zone":   ompDateInZone,
-		"dateInZone":     ompDateInZone,
-		"htmlDate":       ompHTMLDate,
-		"htmlDateInZone": ompHTMLDateInZone,
+		"date":            ompDate,
+		"date_in_zone":    ompDateInZone,
+		"dateInZone":      ompDateInZone,
+		"htmlDate":        ompHTMLDate,
+		"htmlDateInZone":  ompHTMLDateInZone,
 	}
-
-	return fm
 }
 
 // wrapMarkupAware replaces every function in fm with its Markup-aware form
@@ -174,25 +182,7 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 	fm["glob"] = glob
 
 	sprigFuncs := sprig.TxtFuncMap()
-	for _, name := range []string{
-		"env",
-		"expandenv",
-		"getHostByName",
-		"genPrivateKey",
-		"genCA",
-		"genCAWithKey",
-		"genSelfSignedCert",
-		"genSelfSignedCertWithKey",
-		"genSignedCert",
-		"genSignedCertWithKey",
-		"buildCustomCert",
-		"bcrypt",
-		"htpasswd",
-		"derivePassword",
-		"encryptAES",
-		"decryptAES",
-		"randBytes",
-	} {
+	for name := range dangerousFuncs {
 		if fn, ok := sprigFuncs[name]; ok {
 			fm[name] = fn
 		}
@@ -208,12 +198,9 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 // reviewed change to that list.
 var restrictedFuncMap = sync.OnceValue(func() template.FuncMap {
 	fm := localFuncMap()
+	fm[escapeFuncName] = escapeUntrustedActionValue
 
 	for key, fun := range sprig.TxtFuncMap() {
-		if dangerousFuncs[key] {
-			continue
-		}
-
 		if !restrictedAllowedSprigFuncs[key] {
 			continue
 		}

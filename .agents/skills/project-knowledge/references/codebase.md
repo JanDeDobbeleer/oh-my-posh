@@ -91,8 +91,10 @@
 - Untrusted templates (`RenderUntrusted`, used for the path segment where folder names are
   template source) bind the output escape to `escapeUntrustedActionValue`, which escapes Markup
   results too: `{{ url ... }}` or `{{ date "<red>" }}` in a folder name must not forge anchors.
-  The path segment escapes folder names on every branch of `replaceMappedLocations` (no mapped
-  locations, regex mappings, prefix mappings); a new early return there needs its own escape.
+  The path segment escapes folder names with `template.EscapeSource` on every branch of
+  `replaceMappedLocations` (no mapped locations, regex mappings, prefix mappings): chevrons
+  become literal and `{{` becomes an action that prints `{{`, so a folder name can no longer
+  call any template function. A new early return there needs its own escape.
 - `template.Markup` (src/template/markup.go) is the bypass type: a named string, never a
   struct (text/template treats every struct as true, which broke the `{{ if .BranchStatus }}`
   guards in 60 shipped themes, and `eq` cannot compare a struct to a string). Constructors:

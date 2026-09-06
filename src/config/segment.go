@@ -48,7 +48,11 @@ type Segment struct {
 	data map[string]any
 	// text is where the rendered text lives when there is no writer to hold it: the writer
 	// normally stores it (SegmentWriter.SetText/Text), which a build with no writers cannot do.
-	text                   string
+	text string
+	// cache is the template cache Execute publishes into, taken when Execute
+	// starts: in the serve daemon an aborted cycle's Execute can outlive the
+	// cycle, and the package-level cache belongs to the next one by then.
+	cache                  *cache.Template
 	env                    runtime.Environment
 	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
@@ -201,7 +205,19 @@ func (segment *Segment) Name() string {
 	return name
 }
 
+// templateCache is the cache Execute took at its start, or the current one
+// for the restore paths tests drive directly.
+func (segment *Segment) templateCache() *cache.Template {
+	if segment.cache != nil {
+		return segment.cache
+	}
+
+	return template.Cache
+}
+
 func (segment *Segment) Execute(env runtime.Environment) {
+	segment.cache = template.Cache
+
 	// segment timings for debug purposes
 	var start time.Time
 	if env.Flags().Debug {
@@ -267,7 +283,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	defer func() {
 		if segment.Enabled {
-			template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
+			segment.templateCache().AddSegmentData(segment.Name(), segment.templateContext())
 		}
 	}()
 
@@ -372,14 +388,20 @@ func (segment *Segment) Render(index int, force bool) bool {
 	segment.foregroundResolved = false
 	segment.backgroundResolved = false
 
+	// A killed segment's Execute is still running, so none of its other
+	// flags may be read.
+	if segment.Killed {
+		return false
+	}
+
 	// Allow pending segments to render (they'll show "..." text)
 	if !segment.Pending && !segment.Enabled && !force {
 		return segment.renderFallback(index)
 	}
 
-	if force {
-		segment.Force = true
-	}
+	// Force stays local: Execute may still be reading the field on its own
+	// goroutine for a pending segment.
+	forced := force || segment.Force
 
 	segment.setIndex(index)
 
@@ -387,7 +409,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 
 	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
 	if !segment.Pending {
-		segment.Enabled = segment.Force || strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' })
+		segment.Enabled = forced || strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' })
 
 		if !segment.Enabled {
 			template.Cache.RemoveSegmentData(segment.Name())
@@ -396,9 +418,15 @@ func (segment *Segment) Render(index int, force bool) bool {
 	}
 
 	segment.SetText(rendered)
-	segment.setCache()
 
-	// We do this to make `.Text` available for a cross-segment reference in an extra prompt.
+	// A pending segment's writer is still being filled in by Execute; the
+	// resolved render caches it and publishes it for cross-segment
+	// references (`.Segments.X.Segment.Text` in an extra prompt).
+	if segment.Pending {
+		return true
+	}
+
+	segment.setCache()
 	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	return true
@@ -413,7 +441,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 // than evaluated, because their Execute goroutine keeps running after the
 // kill and may still complete the evaluation before rendering starts.
 func (segment *Segment) renderFallback(index int) bool {
-	if segment.FallbackTemplate == "" || !segment.evaluated || segment.Killed {
+	if segment.FallbackTemplate == "" || segment.Killed || !segment.evaluated {
 		return false
 	}
 
@@ -608,7 +636,7 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	segment.Enabled = true
-	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
+	segment.templateCache().AddSegmentData(segment.Name(), segment.templateContext())
 
 	log.Debug("restored segment from cache: ", segment.Name())
 
@@ -677,7 +705,7 @@ func (segment *Segment) restoreData() bool {
 	segment.Enabled = true
 	segment.restored = true
 
-	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
+	segment.templateCache().AddSegmentData(segment.Name(), segment.templateContext())
 
 	log.Debug("restored segment from data: ", segment.Name())
 

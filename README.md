@@ -39,9 +39,9 @@ This repo was made with love using GitKraken.
 
 ## Join the community
 
-![Mastodon badge](https://img.shields.io/mastodon/follow/110275292073181892?domain=https%3A%2F%2Fhachyderm.io&label=Mastodon&style=social)
+[![Mastodon badge](https://img.shields.io/mastodon/follow/110275292073181892?domain=hachyderm.io&style=social&label=Mastodon)](https://hachyderm.io/@jandedobbeleer)
 
-![Discord badge](https://img.shields.io/discord/1023597603331526656)
+[![Discord badge](https://img.shields.io/discord/1023597603331526656?logo=discord&logoColor=white)](https://discord.com/invite/n7E3DkXssv)
 
 What started as the offspring of [oh-my-posh2](https://github.com/JanDeDobbeleer/oh-my-posh2) for PowerShell
 resulted in a cross platform, highly customizable and extensible prompt theme engine. After 4 years of working

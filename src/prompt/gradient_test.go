@@ -128,7 +128,7 @@ func TestWriteSeparatorTrailingDiamondGradient(t *testing.T) {
 		assert.NoError(t, segment.MapSegmentWithWriter(engine.Env))
 		segment.Render(0, true)
 
-		engine.setActiveSegment(segment)
+		engine.setActiveSegment(segment, false)
 		engine.writeSeparator(true)
 
 		out, _ := terminal.String()
@@ -174,8 +174,8 @@ func TestRenderActiveSegmentDiamondPreviousGradient(t *testing.T) {
 		assert.NoError(t, previous.MapSegmentWithWriter(engine.Env))
 		previous.Render(0, true)
 
-		engine.setActiveSegment(previous)
-		engine.renderActiveSegment()
+		engine.setActiveSegment(previous, false)
+		engine.renderActiveSegment(true)
 		terminal.String() // drain the previous segment's own output
 
 		next := &config.Segment{
@@ -189,8 +189,8 @@ func TestRenderActiveSegmentDiamondPreviousGradient(t *testing.T) {
 		assert.NoError(t, next.MapSegmentWithWriter(engine.Env))
 		next.Render(1, true)
 
-		engine.setActiveSegment(next)
-		engine.renderActiveSegment()
+		engine.setActiveSegment(next, false)
+		engine.renderActiveSegment(true)
 
 		out, _ := terminal.String()
 
@@ -231,8 +231,8 @@ func TestParentBackgroundKeywordCollapsesGradientLastStop(t *testing.T) {
 		assert.NoError(t, previous.MapSegmentWithWriter(engine.Env))
 		previous.Render(0, true)
 
-		engine.setActiveSegment(previous)
-		engine.renderActiveSegment()
+		engine.setActiveSegment(previous, false)
+		engine.renderActiveSegment(true)
 		terminal.String()
 
 		next := &config.Segment{
@@ -245,8 +245,8 @@ func TestParentBackgroundKeywordCollapsesGradientLastStop(t *testing.T) {
 		assert.NoError(t, next.MapSegmentWithWriter(engine.Env))
 		next.Render(1, true)
 
-		engine.setActiveSegment(next)
-		engine.renderActiveSegment()
+		engine.setActiveSegment(next, false)
+		engine.renderActiveSegment(true)
 
 		out, _ := terminal.String()
 		return out

@@ -1,7 +1,11 @@
 package prompt
 
 import (
+	"runtime/debug"
+	"time"
+
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
@@ -10,6 +14,100 @@ import (
 // the transient prompt on Enter needs no additional CLI call.
 const TransientMarker = "\x1e"
 
+// pendingSegmentLimit bounds how long a timed-out segment may stay pending before the cycle
+// abandons it and renders without it. A package variable so tests can shorten it.
+var pendingSegmentLimit = 30 * time.Second
+
+type segmentEventKind uint8
+
+const (
+	segmentTimedOut segmentEventKind = iota
+	segmentCompleted
+	segmentAbandoned
+)
+
+type segmentEvent struct {
+	segment *config.Segment
+	kind    segmentEventKind
+}
+
+// streamCycle holds the state of one StreamPrimary run. events is the only channel between
+// segment goroutines and the producer goroutine. pending and abandoned are owned by the producer
+// goroutine: nothing else reads or writes them, so they need no lock.
+type streamCycle struct {
+	events    chan segmentEvent
+	pending   map[*config.Segment]struct{}
+	abandoned map[*config.Segment]struct{}
+	abort     chan struct{}
+	done      chan struct{}
+}
+
+// newStreamCycle creates the event queue for one StreamPrimary run. events is sized to
+// 2*segmentCount + 1: every segment emits at most two events (timedOut, then exactly one of
+// completed/abandoned), so a send can never block and is never dropped. Every send on this
+// channel is a plain send, never a select/default, because the buffer is provably big enough.
+func newStreamCycle(segmentCount int) *streamCycle {
+	return &streamCycle{
+		events:    make(chan segmentEvent, 2*segmentCount+1),
+		pending:   make(map[*config.Segment]struct{}),
+		abandoned: make(map[*config.Segment]struct{}),
+		abort:     make(chan struct{}),
+		done:      make(chan struct{}),
+	}
+}
+
+func (c *streamCycle) timedOut(segment *config.Segment) {
+	c.events <- segmentEvent{segment: segment, kind: segmentTimedOut}
+}
+
+func (c *streamCycle) completed(segment *config.Segment) {
+	c.events <- segmentEvent{segment: segment, kind: segmentCompleted}
+}
+
+// abandon queues a segmentAbandoned event. Named to avoid colliding with the abandoned field.
+func (c *streamCycle) abandon(segment *config.Segment) {
+	c.events <- segmentEvent{segment: segment, kind: segmentAbandoned}
+}
+
+// apply folds one event into the pending/abandoned sets. Producer goroutine only.
+func (c *streamCycle) apply(ev segmentEvent) {
+	switch ev.kind {
+	case segmentTimedOut:
+		if _, ok := c.abandoned[ev.segment]; ok {
+			return
+		}
+
+		c.pending[ev.segment] = struct{}{}
+	case segmentCompleted:
+		delete(c.pending, ev.segment)
+	case segmentAbandoned:
+		delete(c.pending, ev.segment)
+		c.abandoned[ev.segment] = struct{}{}
+	}
+}
+
+// absorb drains every event already queued without blocking. Producer goroutine only.
+func (c *streamCycle) absorb() {
+	for {
+		select {
+		case ev := <-c.events:
+			c.apply(ev)
+		default:
+			return
+		}
+	}
+}
+
+func (c *streamCycle) isPending(segment *config.Segment) bool {
+	_, ok := c.pending[segment]
+	return ok
+}
+
+func (c *streamCycle) isAbandoned(segment *config.Segment) bool {
+	_, ok := c.abandoned[segment]
+	return ok
+}
+
 // The engine + terminal package globals are not thread-safe, so at most one
 // StreamPrimary producer goroutine may be rendering at any given time. Callers
 // that need to interrupt an in-flight cycle (e.g. a long-lived server handling
@@ -17,13 +115,7 @@ const TransientMarker = "\x1e"
 // wait for it to return before starting a new cycle - Abort blocks until the
 // producer goroutine has fully exited.
 func (e *Engine) StreamPrimary() <-chan string {
-	// Initialize streaming infrastructure BEFORE launching goroutine
-	// This ensures the channel exists when segments start timing out
-	e.streamingResults = make(chan *config.Segment, 100)
-	e.allBlocks = e.Config.Blocks
-	e.abort = make(chan struct{})
-	e.done = make(chan struct{})
-
+	e.stream = newStreamCycle(e.segmentCount())
 	out := make(chan string, 10)
 
 	// sendRecord delivers a record unless the cycle gets aborted. A plain
@@ -35,7 +127,7 @@ func (e *Engine) StreamPrimary() <-chan string {
 		select {
 		case out <- record:
 			return true
-		case <-e.abort:
+		case <-e.stream.abort:
 			return false
 		}
 	}
@@ -45,7 +137,7 @@ func (e *Engine) StreamPrimary() <-chan string {
 	// terminal package globals again - those are shared with the next cycle.
 	aborted := func() bool {
 		select {
-		case <-e.abort:
+		case <-e.stream.abort:
 			return true
 		default:
 			return false
@@ -80,69 +172,55 @@ func (e *Engine) StreamPrimary() <-chan string {
 	}
 
 	go func() {
-		defer close(e.done)
+		defer close(e.stream.done)
 		defer close(out)
 		// Registered last so it runs first during unwinding: a panic in
 		// segment/render code then costs this one cycle instead of the whole
 		// process - which matters for the long-lived serve daemon. The closes
 		// above still run afterwards, so Abort() and the record consumer both
-		// observe a normally-ended cycle.
+		// observe a normally-ended cycle. The recover MUST log; a silent
+		// recover previously hid the very bug this rewrite fixes.
 		defer func() {
-			_ = recover()
+			r := recover()
+			if r == nil {
+				return
+			}
+
+			log.Errorf("streaming: render cycle panicked: %v\n%s", r, debug.Stack())
 		}()
 
 		if aborted() {
 			return
 		}
 
-		// Render and send initial prompt with pending segments
 		if !sendRecord(e.Primary()) {
 			return
 		}
 
 		sendTransient()
 
-		if e.countPendingSegments() == 0 {
-			// No segment is executing in the background, so nothing can send
-			// on streamingResults after this point - safe to close.
-			close(e.streamingResults)
-			return
+		refreshed := false
+
+		for len(e.stream.pending) > 0 {
+			select {
+			case <-e.stream.abort:
+				return
+			case ev := <-e.stream.events:
+				e.stream.apply(ev)
+			}
+
+			// Coalesce whatever else already queued so simultaneous completions cost one render.
+			e.stream.absorb()
+
+			if !sendRecord(e.renderFromBlocks()) {
+				return
+			}
+
+			refreshed = true
 		}
 
-		// Listen for segment completions. A segment that timed out keeps
-		// executing in the background (trackPendingSegment) even after this
-		// loop returns; notifySegmentCompletion sends via select/default so
-		// it never blocks such a goroutine, but that also means
-		// streamingResults must NOT be closed here on the abort path - a
-		// stray late send on a closed channel would panic. Only close it once
-		// every pending segment has actually reported in (countPendingSegments
-		// reaches 0), which is the one path guaranteed to have no further
-		// senders. On abort, leave the channel open and let it be garbage
-		// collected once the last stray sender (and this Engine) is dropped.
-		for {
-			select {
-			case <-e.abort:
-				return
-			case _, ok := <-e.streamingResults:
-				if !ok {
-					return
-				}
-
-				if aborted() {
-					continue
-				}
-
-				if !sendRecord(e.renderFromBlocks()) {
-					return
-				}
-
-				if e.countPendingSegments() == 0 {
-					// refresh the transient prompt now the context is fully resolved
-					sendTransient()
-					close(e.streamingResults)
-					return
-				}
-			}
+		if refreshed {
+			sendTransient()
 		}
 	}()
 
@@ -156,37 +234,25 @@ func (e *Engine) StreamPrimary() <-chan string {
 // or the cycle has already finished on its own.
 //
 // Abort does not wait for segments still executing in the background after a
-// per-segment timeout (see trackPendingSegment) - those belong to this
-// Engine instance only and are expected to be abandoned along with it; they
-// will report to a now-unread streamingResults channel (via
-// notifySegmentCompletion's non-blocking send) until they finish on their own
-// and get garbage collected with this Engine.
+// per-segment timeout (see awaitPendingSegment) - those belong to this Engine
+// instance only and are expected to be abandoned along with it.
 func (e *Engine) Abort() {
-	if e.abort == nil {
+	if e.stream == nil {
 		return
 	}
 
 	select {
-	case <-e.abort:
+	case <-e.stream.abort:
 		// already aborted
 	default:
-		close(e.abort)
+		close(e.stream.abort)
 	}
 
-	if e.done != nil {
-		<-e.done
-	}
+	<-e.stream.done
 }
 
-func (e *Engine) countPendingSegments() int {
-	count := 0
-	e.pendingSegments.Range(func(_, _ any) bool {
-		count++
-		return true
-	})
-	return count
-}
-
+// renderFromBlocks resets the prompt builder state a fresh render pass needs and re-renders
+// the primary prompt from the segments' already-executed state (the cache path).
 func (e *Engine) renderFromBlocks() string {
 	// Reset prompt builder
 	e.prompt.Reset()
@@ -199,31 +265,19 @@ func (e *Engine) renderFromBlocks() string {
 	return e.primaryInternal(true)
 }
 
-func (e *Engine) trackPendingSegment(segment *config.Segment, done chan bool) {
-	if e.streamingResults == nil {
-		return
-	}
-
-	// Segment is already pre-registered in pendingSegments map
-	go func() {
-		<-done
-		segment.Pending = false
-		e.notifySegmentCompletion(segment)
-	}()
+func (e *Engine) segmentPending(segment *config.Segment) bool {
+	return e.stream != nil && e.stream.isPending(segment)
 }
 
-func (e *Engine) notifySegmentCompletion(segment *config.Segment) {
-	if e.streamingResults == nil {
-		return
+func (e *Engine) segmentAbandoned(segment *config.Segment) bool {
+	return e.stream != nil && e.stream.isAbandoned(segment)
+}
+
+func (e *Engine) segmentCount() int {
+	count := 0
+	for _, block := range e.Config.Blocks {
+		count += len(block.Segments)
 	}
 
-	if _, ok := e.pendingSegments.LoadAndDelete(segment.Name()); ok {
-		select {
-		case e.streamingResults <- segment:
-			// Successfully notified consumer
-		default:
-			// Consumer not ready or already exited
-			// This can happen if segment completes after consumer finishes
-		}
-	}
+	return count
 }

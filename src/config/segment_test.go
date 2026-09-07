@@ -319,41 +319,6 @@ func TestEvaluateNeeds(t *testing.T) {
 	}
 }
 
-func TestSegment_NoCachingWhenPending(t *testing.T) {
-	env := new(mock.Environment)
-	env.On("Shell").Return("pwsh")
-	env.On("Flags").Return(&runtime.Flags{})
-	env.On("Pwd").Return("/test")
-	env.On("Home").Return("/home")
-
-	segment := &Segment{
-		Type:     SESSION,
-		Pending:  true,
-		Template: "test",
-	}
-
-	err := segment.MapSegmentWithWriter(env)
-	assert.NoError(t, err)
-
-	// When Pending=true, setCache should return early without caching
-	// We can't easily mock cache.Set, but we can verify the method doesn't panic
-	// and that the behavior differs between Pending=true and Pending=false
-
-	// With Pending=true, setCache returns early
-	segment.Cache = &Cache{Duration: "5h"}
-	segment.setCache() // Should return early, not attempt to cache
-
-	// Verify this doesn't panic and segment still works
-	assert.True(t, segment.Pending, "Segment should still be pending")
-
-	// Now with Pending=false, setCache will attempt to cache
-	segment.Pending = false
-	segment.restored = false
-	segment.setCache() // Should attempt to cache (may fail but shouldn't panic)
-
-	assert.False(t, segment.Pending, "Segment should not be pending")
-}
-
 func TestSegment_DataKey(t *testing.T) {
 	aliased := &Segment{Type: SESSION, Alias: "work"}
 	assert.Equal(t, "work", aliased.DataKey())
@@ -833,8 +798,9 @@ func TestSegment_FallbackTemplate(t *testing.T) {
 	}
 }
 
-// Without a writer (the website build) recorded data lands in a map; the
-// tagged markup it carries must come back as Markup so the anchors render.
+// Without a writer (the website build) recorded data lands in a map. The
+// tagged markup in it must come back as Markup, or its anchors render as
+// literal text.
 func TestRestoreIntoRevivesMarkupWithoutWriter(t *testing.T) {
 	segment := &Segment{}
 

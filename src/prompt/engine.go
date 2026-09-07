@@ -3,7 +3,6 @@ package prompt
 import (
 	"slices"
 	"strings"
-	"sync"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
@@ -26,53 +25,23 @@ const DefaultRPromptBreathingRoom = 30
 type Engine struct {
 	Env                   runtime.Environment
 	activeSegment         *config.Segment
-	done                  chan struct{}
 	Config                *config.Config
-	streamingResults      chan *config.Segment
-	abort                 chan struct{}
+	stream                *streamCycle
 	previousActiveSegment *config.Segment
-	pendingSegments       sync.Map
 	Overflow              config.Overflow
 	rprompt               string
 	prompt                strings.Builder
-	// blockTailColors is a snapshot of terminal.ParentColors captured just
-	// before previousActiveSegment resets to nil at the end of a block. A
-	// block's own Filler (see shouldFill) renders after terminal.String()
-	// has already cleared the parent stack for the next block, so a filler
-	// template using <parentBackground>/<parentForeground> needs this to
-	// resolve against the block it is padding rather than an empty stack.
-	// A full copy, not just the tail entry: the tail segment's own stored
-	// color can itself be an unresolved parentBackground/parentForeground
-	// keyword, and resolving that requires walking the rest of the chain
-	// the same way the block's own last segment did.
-	blockTailColors []*color.Set
-	// capturedRows/rpromptRuns are the Run stream's engine-side counterpart to
-	// prompt/rprompt above, populated only when terminal.CaptureRuns is set
-	// (see runs.go). rpromptRuns persists on the Engine, mirroring e.rprompt,
-	// because writeBlock's RPrompt case stores it for a later CapturedRuns
-	// consumer to read back; the block/filler runs a single writeBlock call
-	// consumes immediately (formerly pendingBlockRuns/pendingFillerRuns) now
-	// flow as return values instead, the same way blockText/length already do
-	// (renderBlockSegments/captureBlockRuns -> renderLaunchedBlock -> writeBlock,
-	// and shouldFill's own expanded filler runs).
-	capturedRows [][]terminal.Run
-	allBlocks    []*config.Block
-	rpromptRuns  []terminal.Run
-	// RPromptBreathingRoom overrides how many cells canWriteRightBlock insists on leaving free
-	// between the prompt and an rprompt. Zero keeps the interactive default. An export has no
-	// one typing into it, which is the only thing that margin protects, so a renderer can ask
-	// for a smaller one - see render.Config.
-	RPromptBreathingRoom int
-	rpromptLength        int
-	Padding              int
-	currentLineLength    int
-	// cursorRow/cursorRun locate the end of the primary prompt's own output
-	// within capturedRows — where the shell leaves the cursor. -1 means
-	// unset; see markCursorAnchor/CursorAnchor.
-	cursorRow   int
-	cursorRun   int
-	Plain       bool
-	forceRender bool
+	blockTailColors       []*color.Set
+	capturedRows          [][]terminal.Run
+	rpromptRuns           []terminal.Run
+	RPromptBreathingRoom  int
+	rpromptLength         int
+	Padding               int
+	currentLineLength     int
+	cursorRow             int
+	cursorRun             int
+	Plain                 bool
+	forceRender           bool
 }
 
 const (
@@ -372,30 +341,17 @@ func (e *Engine) renderBlockFromCache(block *config.Block, cancelNewline bool) b
 		cycle = &e.Config.Cycle
 	}
 
-	// Re-render all segments in the block
-	for segmentIndex, segment := range block.Segments {
-		// Allow pending segments to render (they show "..." text)
-		if !segment.Pending && !segment.Enabled && segment.ResolveStyle() != config.Accordion {
-			continue
+	// Two intentional behavior alignments with the first-pass path: the index passed to Render
+	// counts enabled segments instead of the position in the block, so index-dependent templates
+	// no longer jump between the first render and a streamed refresh; and a disabled accordion
+	// segment renders collapsed on refresh exactly as writeSegment renders it on the first pass.
+	// The color cycle / leading diamond lines that used to live in this loop now live inside
+	// writeSegment, shared with the first-pass path via renderSegment.
+	segmentIndex := 0
+	for _, segment := range block.Segments {
+		if e.renderSegment(block, segment, segmentIndex) {
+			segmentIndex++
 		}
-
-		// Render segment text (will use pending state if still pending)
-		if !segment.Render(segmentIndex, e.forceRender) {
-			continue
-		}
-
-		if colors, newCycle := cycle.Loop(); colors != nil {
-			cycle = &newCycle
-			segment.Foreground = colors.Foreground
-			segment.Background = colors.Background
-		}
-
-		if terminal.Len() == 0 && len(block.LeadingDiamond) > 0 {
-			segment.LeadingDiamond = block.LeadingDiamond
-		}
-
-		e.setActiveSegment(segment)
-		e.renderActiveSegment()
 	}
 
 	if e.activeSegment != nil && len(block.TrailingDiamond) > 0 {
@@ -445,7 +401,7 @@ func (e *Engine) applyPowerShellBleedPatch() {
 // whole channel with the gradient's last stop.
 const minGradientCellsPerStop = 2
 
-func (e *Engine) setActiveSegment(segment *config.Segment) {
+func (e *Engine) setActiveSegment(segment *config.Segment, pending bool) {
 	e.activeSegment = segment
 	terminal.Interactive = segment.Interactive
 
@@ -468,7 +424,7 @@ func (e *Engine) setActiveSegment(segment *config.Segment) {
 	// parent color references) agrees on the same solid color; see collapseGradient.
 	// Pending placeholders are exempt: they are transient and should preview the
 	// segment's gradient rather than flash a collapsed solid color mid-stream.
-	if !segment.Pending && (background.IsGradient() || foreground.IsGradient()) {
+	if !pending && (background.IsGradient() || foreground.IsGradient()) {
 		cells := terminal.VisibleCells(segment.Text())
 
 		if collapsed, ok := collapseGradient(background, cells); ok {
@@ -668,7 +624,7 @@ func (e *Engine) resolveLeadingDiamond() string {
 	return resolveBackgroundKeyword(diamond, edge)
 }
 
-func (e *Engine) renderActiveSegment() {
+func (e *Engine) renderActiveSegment(enabled bool) {
 	e.writeSeparator(false)
 
 	switch e.activeSegment.ResolveStyle() {
@@ -685,8 +641,7 @@ func (e *Engine) renderActiveSegment() {
 		terminal.Write(background, color.Background, e.resolveLeadingDiamond())
 		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 	case config.Accordion:
-		// Render accordion segments if enabled OR pending (pending shows "..." text)
-		if e.activeSegment.Enabled || e.activeSegment.Pending {
+		if enabled {
 			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text())
 		}
 	}

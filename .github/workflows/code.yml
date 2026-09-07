@@ -41,3 +41,6 @@ jobs:
         modernize "./..."
     - name: Unit Tests
       run: go test "./..."
+    - name: Race Detector
+      if: matrix.os == 'ubuntu-latest'
+      run: go test -race -count=1 ./prompt/... ./config/... ./cli/... ./template/... ./cache/... ./gitstatus/...

@@ -40,24 +40,20 @@ func (s *SegmentStyle) resolve(context any) SegmentStyle {
 
 type Segment struct {
 	writer SegmentWriter
+	env    runtime.Environment
 	// data is what templates evaluate against when there is no writer to evaluate against: a
 	// build with no segment packages linked restores recorded data into a plain map instead of
 	// into a writer struct. Nil everywhere else, and templateContext picks whichever of the two is
 	// present. Go templates resolve a name against a map key exactly as they resolve it against a
 	// field or a method, so a recorded value reads the same either way.
-	data map[string]any
+	data          map[string]any
+	Options       options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
+	Properties    options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
+	Cache         *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
+	presentFields map[string]bool
 	// text is where the rendered text lives when there is no writer to hold it: the writer
 	// normally stores it (SegmentWriter.SetText/Text), which a build with no writers cannot do.
-	text string
-	// cache is the template cache Execute publishes into, taken when Execute
-	// starts: in the serve daemon an aborted cycle's Execute can outlive the
-	// cycle, and the package-level cache belongs to the next one by then.
-	cache                  *cache.Template
-	env                    runtime.Environment
-	Options                options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
-	Properties             options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
-	Cache                  *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
-	presentFields          map[string]bool
+	text                   string
 	Alias                  string `json:"alias,omitempty" toml:"alias,omitempty" yaml:"alias,omitempty"`
 	styleCache             SegmentStyle
 	foregroundCache        color.Ansi
@@ -98,23 +94,25 @@ type Segment struct {
 	// live outside this segment, in texts the segment cannot reconstruct
 	// from its own fields. Nil for analyzable segments and for configs that
 	// never went through ResolveFieldSets.
-	HeuristicSources    []string      `json:"-" toml:"-" yaml:"-"`
-	Index               int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
-	MinWidth            int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
-	Duration            time.Duration `json:"-" toml:"-" yaml:"-"`
-	NameLength          int           `json:"-" toml:"-" yaml:"-"`
-	MaxWidth            int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
-	Timeout             int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
-	Newline             bool          `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
-	Enabled             bool          `json:"-" toml:"-" yaml:"-"`
-	InvertPowerline     bool          `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
-	Force               bool          `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
-	restored            bool          `json:"-" toml:"-" yaml:"-"`
-	Toggled             bool          `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
-	Pending             bool          `json:"-" toml:"-" yaml:"-"`
-	Killed              bool          `json:"-" toml:"-" yaml:"-"`
-	Interactive         bool          `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
-	MultilineKeepPrompt bool          `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
+	HeuristicSources []string      `json:"-" toml:"-" yaml:"-"`
+	Index            int           `json:"index,omitempty" toml:"index,omitempty" yaml:"index,omitempty"`
+	MinWidth         int           `json:"min_width,omitempty" toml:"min_width,omitempty" yaml:"min_width,omitempty"`
+	Duration         time.Duration `json:"-" toml:"-" yaml:"-"`
+	NameLength       int           `json:"-" toml:"-" yaml:"-"`
+	MaxWidth         int           `json:"max_width,omitempty" toml:"max_width,omitempty" yaml:"max_width,omitempty"`
+	Timeout          int           `json:"timeout,omitempty" toml:"timeout,omitempty" yaml:"timeout,omitempty"`
+	// placeholder is set while the segment shows its streaming placeholder; the writer is off
+	// limits until the segment completes, so Text serves text instead.
+	placeholder         bool
+	Newline             bool `json:"newline,omitempty" toml:"newline,omitempty" yaml:"newline,omitempty"`
+	Enabled             bool `json:"-" toml:"-" yaml:"-"`
+	InvertPowerline     bool `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty" yaml:"invert_powerline,omitempty"`
+	Force               bool `json:"force,omitempty" toml:"force,omitempty" yaml:"force,omitempty"`
+	restored            bool `json:"-" toml:"-" yaml:"-"`
+	Toggled             bool `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
+	Killed              bool `json:"-" toml:"-" yaml:"-"`
+	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	MultilineKeepPrompt bool `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
 	foregroundResolved  bool
 	backgroundResolved  bool
 	needsEvaluated      bool
@@ -205,19 +203,7 @@ func (segment *Segment) Name() string {
 	return name
 }
 
-// templateCache is the cache Execute took at its start, or the current one
-// for the restore paths tests drive directly.
-func (segment *Segment) templateCache() *cache.Template {
-	if segment.cache != nil {
-		return segment.cache
-	}
-
-	return template.Cache
-}
-
 func (segment *Segment) Execute(env runtime.Environment) {
-	segment.cache = template.Cache
-
 	// segment timings for debug purposes
 	var start time.Time
 	if env.Flags().Debug {
@@ -283,7 +269,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	defer func() {
 		if segment.Enabled {
-			segment.templateCache().AddSegmentData(segment.Name(), segment.templateContext())
+			template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 		}
 	}()
 
@@ -380,6 +366,13 @@ func (segment *Segment) overlayData() {
 }
 
 func (segment *Segment) Render(index int, force bool) bool {
+	// Leaving the placeholder behind: the style cached while pending was resolved without the
+	// writer (see RenderPlaceholder) and must not survive into the resolved render.
+	if segment.placeholder {
+		segment.placeholder = false
+		segment.styleCache = ""
+	}
+
 	// Foreground/background may be overridden directly (e.g. color cycling) between
 	// render passes, so the memoized values must not survive across calls to Render.
 	// This reset must precede the early return below: a disabled segment without a
@@ -388,48 +381,48 @@ func (segment *Segment) Render(index int, force bool) bool {
 	segment.foregroundResolved = false
 	segment.backgroundResolved = false
 
-	// A killed segment's Execute is still running, so none of its other
-	// flags may be read.
-	if segment.Killed {
-		return false
-	}
-
-	// Allow pending segments to render (they'll show "..." text)
-	if !segment.Pending && !segment.Enabled && !force {
+	if !segment.Enabled && !force {
 		return segment.renderFallback(index)
 	}
 
-	// Force stays local: Execute may still be reading the field on its own
-	// goroutine for a pending segment.
-	forced := force || segment.Force
+	if force {
+		segment.Force = true
+	}
 
 	segment.setIndex(index)
 
 	rendered := segment.string()
 
-	// Only update Enabled if segment is NOT pending (avoid race with Execute goroutine)
-	if !segment.Pending {
-		segment.Enabled = forced || strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' })
+	segment.Enabled = segment.Force || strings.ContainsFunc(rendered, func(r rune) bool { return r != ' ' })
 
-		if !segment.Enabled {
-			template.Cache.RemoveSegmentData(segment.Name())
-			return false
-		}
+	if !segment.Enabled {
+		template.Cache.RemoveSegmentData(segment.Name())
+		return false
 	}
 
 	segment.SetText(rendered)
-
-	// A pending segment's writer is still being filled in by Execute; the
-	// resolved render caches it and publishes it for cross-segment
-	// references (`.Segments.X.Segment.Text` in an extra prompt).
-	if segment.Pending {
-		return true
-	}
 
 	segment.setCache()
 	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	return true
+}
+
+// RenderPlaceholder renders the streaming placeholder for a segment whose Execute goroutine is
+// still running. It reads configuration fields only: the writer is being written by that
+// goroutine, so SetText, SetIndex, the color templates and the style template are all data races
+// here. Colors are the raw Foreground/Background, and a style template that needs writer data
+// falls back to Plain until the segment resolves.
+func (segment *Segment) RenderPlaceholder() {
+	segment.placeholder = true
+	segment.text = segment.Placeholder
+	if segment.text == "" {
+		segment.text = "..."
+	}
+
+	segment.CollapseForeground(segment.Foreground)
+	segment.CollapseBackground(segment.Background)
+	segment.styleCache = segment.Style.resolve(nil)
 }
 
 // renderFallback attempts to render FallbackTemplate when a segment would
@@ -441,7 +434,7 @@ func (segment *Segment) Render(index int, force bool) bool {
 // than evaluated, because their Execute goroutine keeps running after the
 // kill and may still complete the evaluation before rendering starts.
 func (segment *Segment) renderFallback(index int) bool {
-	if segment.FallbackTemplate == "" || segment.Killed || !segment.evaluated {
+	if segment.FallbackTemplate == "" || !segment.evaluated || segment.Killed {
 		return false
 	}
 
@@ -473,6 +466,10 @@ func (segment *Segment) renderFallback(index int) bool {
 }
 
 func (segment *Segment) Text() string {
+	if segment.placeholder {
+		return segment.text
+	}
+
 	if segment.writer == nil {
 		return segment.text
 	}
@@ -636,7 +633,7 @@ func (segment *Segment) restoreCache() bool {
 	}
 
 	segment.Enabled = true
-	segment.templateCache().AddSegmentData(segment.Name(), segment.templateContext())
+	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	log.Debug("restored segment from cache: ", segment.Name())
 
@@ -705,7 +702,7 @@ func (segment *Segment) restoreData() bool {
 	segment.Enabled = true
 	segment.restored = true
 
-	segment.templateCache().AddSegmentData(segment.Name(), segment.templateContext())
+	template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
 
 	log.Debug("restored segment from data: ", segment.Name())
 
@@ -740,8 +737,6 @@ func (segment *Segment) restoreInto(raw, methods json.RawMessage) error {
 		MergeRecordedMethods(data, overlay)
 	}
 
-	// Markup fields were recorded tagged (see template.Markup's JSON form);
-	// revive them or every recorded anchor renders escaped on this path.
 	segment.data = template.ReviveMarkup(normalizeNumbers(data)).(map[string]any)
 
 	return nil
@@ -820,11 +815,6 @@ func decodeRecordedSegment(raw json.RawMessage) (RecordedSegment, bool) {
 
 func (segment *Segment) setCache() {
 	if segment.restored || !segment.hasCache() {
-		return
-	}
-
-	// Never cache pending state to avoid polluting cache with incomplete data
-	if segment.Pending {
 		return
 	}
 
@@ -921,15 +911,6 @@ func (segment *Segment) templateContext() any {
 }
 
 func (segment *Segment) string() string {
-	// Use simple pending text if segment is still pending
-	if segment.Pending {
-		if segment.Placeholder != "" {
-			return segment.Placeholder
-		}
-
-		return "..."
-	}
-
 	context := segment.templateContext()
 
 	result := segment.Templates.Resolve(context, "", segment.TemplatesLogic)

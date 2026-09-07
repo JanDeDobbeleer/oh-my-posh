@@ -37,8 +37,8 @@ func renderPowerlineSegment(t *testing.T, background color.Ansi, template string
 	assert.NoError(t, segment.MapSegmentWithWriter(engine.Env))
 	segment.Render(0, true)
 
-	engine.setActiveSegment(segment)
-	engine.renderActiveSegment()
+	engine.setActiveSegment(segment, false)
+	engine.renderActiveSegment(true)
 
 	out, _ := terminal.String()
 	return out
@@ -113,11 +113,10 @@ func TestPendingSegmentKeepsGradientPlaceholder(t *testing.T) {
 		Background: gradientStops,
 	}
 	assert.NoError(t, pending.MapSegmentWithWriter(engine.Env))
-	pending.Pending = true
-	pending.Render(0, false)
+	pending.RenderPlaceholder()
 
-	engine.setActiveSegment(pending)
-	engine.renderActiveSegment()
+	engine.setActiveSegment(pending, true)
+	engine.renderActiveSegment(true)
 
 	out, _ := terminal.String()
 
@@ -151,8 +150,8 @@ func TestPaletteReferencedGradientCollapses(t *testing.T) {
 	assert.NoError(t, segment.MapSegmentWithWriter(engine.Env))
 	segment.Render(0, true)
 
-	engine.setActiveSegment(segment)
-	engine.renderActiveSegment()
+	engine.setActiveSegment(segment, false)
+	engine.renderActiveSegment(true)
 
 	out, _ := terminal.String()
 

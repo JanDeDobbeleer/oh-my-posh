@@ -34,9 +34,12 @@ func Init(environment runtime.Environment, vars maps.Simple[any], aliases *maps.
 	env = environment
 	shell = env.Shell()
 
-	// Reset per-process caches so tests that call Init multiple times stay isolated.
-	knownFields = sync.Map{}
-	parsedTemplates = sync.Map{}
+	// Reset per-process caches so tests that call Init multiple times stay isolated. Clear, not
+	// a struct reassignment: the serve daemon calls Init once per prompt while segment goroutines
+	// abandoned by the previous cycle may still be mid-Load on these maps, and overwriting a live
+	// sync.Map is a data race that can end in a fatal runtime throw.
+	knownFields.Clear()
+	parsedTemplates.Clear()
 
 	renderPool = generics.NewPool(func() *renderer {
 		return &renderer{

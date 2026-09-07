@@ -10,6 +10,7 @@ package tui
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
@@ -17,6 +18,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/upgrade"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
+
+const barLabel = "  Downloading"
 
 func stageMessage(cfg *upgrade.Config, stage upgrade.Stage) string {
 	switch stage {
@@ -34,48 +37,27 @@ func stageMessage(cfg *upgrade.Config, stage upgrade.Stage) string {
 }
 
 func Run(cfg *upgrade.Config) error {
-	status := ui.NewStatus(os.Stdout)
-	bar := ui.NewProgress(os.Stdout, "  Downloading")
+	reporter := &reporter{
+		cfg:    cfg,
+		writer: os.Stdout,
+		status: ui.NewStatus(os.Stdout),
+		bar:    ui.NewProgress(os.Stdout, barLabel),
+	}
 
 	// cli/upgrade reports through plain callbacks precisely so it never has to know what is
 	// drawing - see its own report.go. This subscribes for the duration of the run and hands them
 	// back afterwards, so nothing keeps writing to a terminal after the command returns.
-	downloading := false
-
-	upgrade.SetStageReporter(func(stage upgrade.Stage) {
-		// The bar and the status line both own the same line, so only one may paint at a time.
-		// Downloading is the only stage with a bar, and reaching any other stage ends it.
-		if downloading && stage != upgrade.StageDownloading {
-			downloading = false
-
-			bar.Done()
-		}
-
-		if stage == upgrade.StageDownloading {
-			downloading = true
-
-			status.Set(stageMessage(cfg, stage))
-
-			return
-		}
-
-		status.Set(stageMessage(cfg, stage))
-	})
-
-	upgrade.SetProgressReporter(func(percent float64) {
-		if downloading {
-			bar.Set(percent)
-		}
-	})
+	upgrade.SetStageReporter(reporter.stage)
+	upgrade.SetProgressReporter(reporter.progress)
 
 	defer upgrade.SetStageReporter(nil)
 	defer upgrade.SetProgressReporter(nil)
 
-	status.Start(stageMessage(cfg, upgrade.StageValidating))
+	reporter.status.Start(stageMessage(cfg, upgrade.StageValidating))
 
 	if err := upgrade.Install(cfg); err != nil {
 		log.Debug("failed to install")
-		status.Stop(fmt.Sprintf(" ❌ upgrade failed: %v", err))
+		reporter.fail(err)
 
 		return err
 	}
@@ -88,7 +70,61 @@ func Run(cfg *upgrade.Config) error {
 		message += ", restart your shell to take full advantage of the new functionality"
 	}
 
-	status.Stop(message)
+	reporter.status.Stop(message)
 
 	return nil
+}
+
+// reporter owns the single line the upgrade draws on. The status spinner and the progress bar
+// both repaint that line, so only one may paint at a time: the spinner runs for every stage
+// except the download, which hands the line to the bar. Painting both at once is what made the
+// bar and the status text flicker over each other.
+type reporter struct {
+	status      *ui.Status
+	bar         *ui.Progress
+	writer      io.Writer
+	cfg         *upgrade.Config
+	downloading bool
+}
+
+func (r *reporter) stage(stage upgrade.Stage) {
+	if stage == upgrade.StageDownloading {
+		r.downloading = true
+		r.status.Stop("")
+
+		return
+	}
+
+	if r.downloading {
+		r.downloading = false
+		r.bar.Done()
+		r.status.Start(stageMessage(r.cfg, stage))
+
+		return
+	}
+
+	r.status.Set(stageMessage(r.cfg, stage))
+}
+
+func (r *reporter) progress(fraction float64) {
+	if !r.downloading {
+		return
+	}
+
+	r.bar.Set(fraction)
+}
+
+func (r *reporter) fail(err error) {
+	message := fmt.Sprintf(" ❌ upgrade failed: %v", err)
+
+	// Mid-download the status line is stopped, where Stop is a no-op that would swallow the
+	// message - so the bar is cleared and the failure printed plainly instead.
+	if r.downloading {
+		r.bar.Done()
+		fmt.Fprintln(r.writer, message)
+
+		return
+	}
+
+	r.status.Stop(message)
 }

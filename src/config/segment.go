@@ -204,6 +204,13 @@ func (segment *Segment) Name() string {
 }
 
 func (segment *Segment) Execute(env runtime.Environment) {
+	// Capture the template cache once: a timed-out segment keeps running in a
+	// background goroutine and publishes below after its cycle is gone, when
+	// the serve daemon has reset the package-level cache for the next cycle.
+	// Reading the global there would race that reset (verified by the CI race
+	// detector on the streaming tests).
+	renderCache := template.Cache
+
 	// segment timings for debug purposes
 	var start time.Time
 	if env.Flags().Debug {
@@ -269,7 +276,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 
 	defer func() {
 		if segment.Enabled {
-			template.Cache.AddSegmentData(segment.Name(), segment.templateContext())
+			renderCache.AddSegmentData(segment.Name(), segment.templateContext())
 		}
 	}()
 

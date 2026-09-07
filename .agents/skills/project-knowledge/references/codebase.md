@@ -134,6 +134,19 @@
 
 ## Streaming and serve daemon
 
+- CONFIRMED data race (CI race detector, 2026-09-07): a segment that times out under streaming keeps
+  running in a background goroutine and can outlive its render cycle. When it publishes via
+  `template.Cache.AddSegmentData` in `config/segment.go` (the deferred publish in `Execute`, and also
+  `restoreCache`/`restoreData` on that same background path), it reads the package-level
+  `template.Cache` - which the serve daemon RESETS per cycle and the streaming tests reassign in
+  `setupStreamingTestEnv`. That read races the reset/reassignment. Fix pattern: capture
+  `renderCache := template.Cache` at the top of `Execute` and publish through the captured pointer,
+  never the global, on any code path that can run after the cycle ends. The `Execute` deferred site
+  is fixed; `restoreCache` (line ~636) and `restoreData` (line ~705) still read the global and need
+  the same capture if a cached/recorded segment ever times out. `-race` is unavailable on
+  windows/arm64, so this class only shows up on CI (amd64) - run the streaming tests there after any
+  change to the background-goroutine cache path.
+
 - Streaming is enabled by the top-level `"streaming": <ms>` config key. That value is ALSO each
   segment's pending-timeout and overwrites segment-level `timeout`.
 - `stream` always emits the transient prompt as a `\x1e`-prefixed NUL record (initial + refreshed

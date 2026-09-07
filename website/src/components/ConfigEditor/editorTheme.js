@@ -1,32 +1,38 @@
 // The editor's colors, kept independent of the language extensions (editorExtensions.js) and
 // swapped into index.js's own theme Compartment whenever @docusaurus/theme-common's colorMode
-// flips - the same two palettes the old prism-react-renderer setup used (see the removed
-// DARK_CODE_THEME/LIGHT_CODE_THEME in index.js's git history: palenight for dark, github for
-// light), reproduced as a CodeMirror HighlightStyle/EditorView.theme pair so a doc's fenced code
-// (still prism-react-renderer, via @theme/CodeBlock) and this editor keep reading as the same
-// family even though the two no longer share a tokenizer.
+// flips - the same two palettes the docs' fenced code blocks use (docusaurus.config.js's
+// prism.theme/darkTheme: Night Owl Light for light, Night Owl for dark), reproduced as a
+// CodeMirror HighlightStyle/EditorView.theme pair so a doc's fenced code
+// (prism-react-renderer via @theme/CodeBlock) and this editor keep reading as the same
+// family even though the two do not share a tokenizer.
 import { EditorView } from '@codemirror/view';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 
+// Night Owl: prism-react-renderer's nightOwl values. Number and boolean differ there
+// (#f78c6c vs #ff5874); the editor's single literal role takes the number's color.
 const DARK_COLORS = {
-  background: '#292d3e',
-  foreground: '#bfc7d5',
-  property: '#c792ea',
-  string: '#c3e88d',
+  background: '#011627',
+  foreground: '#d6deeb',
+  keyword: '#7fdbca',
+  property: '#80cbc4',
+  string: '#addb67',
   literal: '#f78c6c',
-  comment: '#697098',
-  punctuation: '#89ddff',
+  comment: '#637777',
+  punctuation: '#c792ea',
 };
 
+// Night Owl Light: prism-react-renderer's nightOwlLight values. Number and boolean differ
+// there (#aa0982 vs #bc5454); the editor's single literal role takes the number's color.
 const LIGHT_COLORS = {
-  background: '#f6f8fa',
-  foreground: '#24292e',
-  property: '#005cc5',
-  string: '#032f62',
-  literal: '#005cc5',
-  comment: '#6a737d',
-  punctuation: '#24292e',
+  background: '#fbfbfb',
+  foreground: '#403f53',
+  keyword: '#0c969b',
+  property: '#0c969b',
+  string: '#4876d6',
+  literal: '#aa0982',
+  comment: '#989fb1',
+  punctuation: '#994cc3',
 };
 
 // Shared between both palettes: only the color values differ, not which tags map to which
@@ -38,7 +44,7 @@ function buildHighlightStyle(colors) {
     { tag: [tags.propertyName, tags.definition(tags.propertyName), tags.attributeName], color: colors.property },
     { tag: tags.string, color: colors.string },
     { tag: [tags.number, tags.bool, tags.null], color: colors.literal },
-    { tag: tags.keyword, color: colors.property },
+    { tag: tags.keyword, color: colors.keyword },
     { tag: tags.comment, color: colors.comment, fontStyle: 'italic' },
     { tag: tags.punctuation, color: colors.punctuation },
   ]);

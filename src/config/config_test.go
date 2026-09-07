@@ -163,10 +163,9 @@ func TestFeaturesShellIntegration(t *testing.T) {
 
 func TestFeaturesStreaming(t *testing.T) {
 	cases := []struct {
-		Case             string
-		DisableStreaming string
-		Streaming        int
-		ExpectedFeats    shell.Features
+		Case          string
+		Streaming     int
+		ExpectedFeats shell.Features
 	}{
 		{
 			Case:          "streaming enabled",
@@ -177,18 +176,11 @@ func TestFeaturesStreaming(t *testing.T) {
 			Case:          "streaming not configured",
 			ExpectedFeats: 0,
 		},
-		{
-			Case:             "POSH_DISABLE_STREAMING overrides the config",
-			Streaming:        100,
-			DisableStreaming: "1",
-			ExpectedFeats:    0,
-		},
 	}
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("Shell").Return(shell.PWSH)
-		env.On("Getenv", "POSH_DISABLE_STREAMING").Return(tc.DisableStreaming)
 
 		cfg := &Config{
 			Streaming: tc.Streaming,

@@ -1,4 +1,11 @@
 /* stylelint-disable docusaurus/copyright-header */
+/* Commit Mono is the site's body and code face. Self-hosted via Fontsource (it's not on
+   Google Fonts) so the site carries no third-party font request for it; only the latin
+   subsets of the four weights the design uses are bundled. */
+@import "@fontsource/commit-mono/latin-400.css";
+@import "@fontsource/commit-mono/latin-500.css";
+@import "@fontsource/commit-mono/latin-600.css";
+@import "@fontsource/commit-mono/latin-700.css";
 /**
  * Any CSS included here will be global. The classic template
  * bundles Infima by default. Infima is a CSS framework designed to
@@ -21,7 +28,7 @@
      unrelated scales. 14px was tried and read as too small; the ratios below are what
      matter and they are unchanged. */
   --ifm-font-size-base: 100%;
-  --ifm-pre-background: #232136;
+  --ifm-pre-background: var(--omp-card-background);
 }
 
 html[data-theme="dark"] {
@@ -32,6 +39,7 @@ html[data-theme="dark"] {
   --ifm-color-primary-light: #6eadf1;
   --ifm-color-primary-lighter: #7ab5f3;
   --ifm-color-primary-lightest: #a3cbf7;
+  --ifm-pre-background: var(--omp-card-background);
 }
 
 /* Card surface: the border/background/radius recipe shared by the homepage feature cards
@@ -41,13 +49,16 @@ html[data-theme="dark"] {
    segment catalog's) as the one true value going forward. The dark-mode override is the piece
    most likely to drift again if left duplicated, so it lives here once instead of per-page. */
 :root {
-  --omp-card-border-color: var(--ifm-color-emphasis-200);
+  --omp-card-border-color: var(--ifm-color-emphasis-300);
   --omp-card-background: var(--ifm-color-emphasis-100);
   --omp-card-radius: 8px;
+  --omp-frame-shadow: rgba(15, 23, 34, 0.82);
 }
 
 html[data-theme="dark"] {
+  --omp-card-border-color: rgba(255, 255, 255, 0.8);
   --omp-card-background: var(--ifm-background-surface-color);
+  --omp-frame-shadow: rgba(255, 255, 255, 0.72);
 }
 
 /* Shared "show only the render matching the reader's light/dark toggle" pair - any component
@@ -86,6 +97,9 @@ html[data-theme="dark"] .omp-dark-only.omp-dark-only {
   --omp-text-body: 1rem;
   --omp-label-size: 0.8rem;
   --omp-label-tracking: 0.12em;
+  --omp-window-title-size: 0.75rem;
+  --omp-window-title-tracking: 0.14em;
+  --omp-window-title-weight: 600;
   --omp-text-secondary: var(--ifm-color-emphasis-700);
   --omp-radius-sm: 4px;
   --omp-space-1: 0.375rem;
@@ -288,9 +302,9 @@ iframe.youtube {
 }
 
 :root {
-  --ifm-font-family-monospace: "Victor Mono", "Symbols Nerd Font Mono",
+  --ifm-font-family-monospace: "Commit Mono", "Victor Mono", "Symbols Nerd Font Mono",
     "Symbols Nerd Font", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --ifm-font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ifm-font-family-base: "Commit Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --ifm-heading-font-weight: 600;
   --ifm-heading-line-height: 1.2;
 }
@@ -326,6 +340,209 @@ pre[class*="language-"] {
   font-family: var(--ifm-font-family-monospace);
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "calt" 0;
+}
+
+/* Hunk's code windows use a compact title bar, a strong outline and a small offset shadow. Keep
+   the treatment in the site's own blue and purple palette while applying it to Docusaurus's
+   generated code block wrappers. */
+.theme-code-block {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--omp-card-border-color) !important;
+  border-radius: var(--omp-card-radius) !important;
+  box-shadow: 4px 4px 0 var(--omp-frame-shadow) !important;
+  background: var(--omp-card-background) !important;
+}
+
+html[data-theme="dark"] .theme-code-block {
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+/* The title bar height mirrors the SVG window chrome's header (src/svg/window.go's
+   titleOffset: 80 units at the PNG renderer's 48px reference em, i.e. 26.7px at the website
+   previews' 16px font size, which render at natural size on desktop). The control glyphs'
+   vertical offset below centers them in that same bar height. */
+.theme-code-block::before {
+  content: "";
+  display: block;
+  height: 1.67rem;
+  background: var(--omp-card-background);
+  border-bottom: 1px solid var(--omp-card-border-color);
+}
+
+.theme-code-block:has(> [class*="codeBlockTitle"])::before {
+  display: none;
+}
+
+.theme-code-block::after {
+  content: "−\00a0\00a0□\00a0\00a0×";
+  position: absolute;
+  top: 0.45rem;
+  right: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(15, 23, 34, 0.7);
+  z-index: 1;
+}
+
+html[data-theme="dark"] .theme-code-block::after {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.theme-code-block [class*="codeBlockTitle"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.45rem 0.9rem;
+  border-bottom: 1px solid var(--omp-card-border-color);
+  background: var(--omp-card-background);
+  color: var(--omp-text-secondary);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-window-title-size);
+  font-weight: var(--omp-window-title-weight);
+  letter-spacing: var(--omp-window-title-tracking);
+  line-height: 1;
+  text-transform: uppercase;
+  min-height: 1.67rem;
+}
+
+.theme-code-block [class*="codeBlockTitle"]::before {
+  content: "−\00a0\00a0□\00a0\00a0×";
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-left: auto;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(15, 23, 34, 0.7);
+}
+
+html[data-theme="dark"] .theme-code-block [class*="codeBlockTitle"]::before {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.theme-code-block [class*="codeBlockContent"] {
+  position: relative;
+  border-radius: 0;
+  padding: 0.15rem 0;
+  background: var(--omp-card-background) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.theme-code-block pre.prism-code,
+.theme-code-block pre.prism-code code,
+.theme-code-block code[class*="codeBlockLines"] {
+  background: var(--omp-card-background) !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  box-shadow: none !important;
+}
+
+.theme-code-block pre.prism-code {
+  background-color: var(--omp-card-background) !important;
+}
+
+/* The copy/wrap buttons only appear while the block is hovered (or one of them has keyboard
+   focus, so tabbing still reaches them) - the framed window reads as a clean render until the
+   reader actually needs the actions. */
+.theme-code-block [class*="buttonGroup"] {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+}
+
+.theme-code-block:hover [class*="buttonGroup"],
+.theme-code-block:focus-within [class*="buttonGroup"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.theme-code-block [class*="buttonGroup"] button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0.25rem;
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: 0.35rem;
+  background: rgba(255, 255, 255, 0.28);
+  color: var(--omp-text-secondary);
+  opacity: 0.8;
+}
+
+html[data-theme="dark"] .theme-code-block [class*="buttonGroup"] button {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.theme-code-block [class*="buttonGroup"] button:hover,
+.theme-code-block [class*="buttonGroup"] button:focus-visible {
+  opacity: 1;
+}
+
+.theme-code-block pre {
+  border-radius: 0;
+  padding: 0.9rem 0.95rem 1rem;
+}
+
+/* Tabs use the same title-bar rhythm as code blocks, with a blue active rule instead of a
+   separate pill for each item. */
+.tabs {
+  margin-bottom: var(--omp-space-2);
+  border-bottom: 1px solid var(--omp-card-border-color);
+  gap: 0;
+}
+
+.tabs__item {
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: var(--omp-space-1) var(--omp-space-2);
+  color: var(--omp-text-secondary);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--omp-window-title-size);
+  font-weight: var(--omp-window-title-weight);
+  letter-spacing: var(--omp-window-title-tracking);
+  text-transform: uppercase;
+}
+
+.tabs__item:hover {
+  background: var(--omp-card-background);
+  color: var(--ifm-color-primary);
+}
+
+.tabs__item--active {
+  border-bottom-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.theme-code-block code:not([class*="language-"]) {
+  border: none !important;
+  border-radius: 0;
+  background: transparent !important;
+  padding: 0;
+}
+
+code:not([class*="language-"]) {
+  border: 1px solid var(--omp-card-border-color);
+  border-radius: var(--omp-radius-sm);
+  background: var(--omp-card-background);
+  padding: 0.1rem 0.3rem;
 }
 
 table {

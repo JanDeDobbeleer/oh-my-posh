@@ -124,13 +124,14 @@ func TestEncodeSkipsZeroCellRuns(t *testing.T) {
 	assert.Contains(t, doc, `x="`+formatFloat(wantX)+`"`)
 
 	// One <rect> for each of the two visible runs, plus the window's own
-	// border rect (see writeWindowChrome; the header/content fills are now
-	// <path> elements, not <rect>s); one <text> for each of the two visible
-	// runs, plus the cursor, the watermark decorate always appends (see
-	// decorate), and the "−"/"▢"/"×" window-control glyphs the chrome draws
-	// (no title/tab-control text since those were dropped — see
+	// border rect and the shadow silhouette (see writeWindowChrome; the
+	// header/content fills are now <path> elements, not <rect>s); one
+	// <text> for each of the two visible runs, plus the cursor, the
+	// watermark decorate always appends (see decorate), and the
+	// "−"/"▢"/"×" window-control glyphs the chrome draws (no
+	// title/tab-control text since those were dropped — see
 	// writeWindowChrome's doc comment).
-	assert.Equal(t, 3, strings.Count(doc, "<rect"))
+	assert.Equal(t, 4, strings.Count(doc, "<rect"))
 	assert.Equal(t, 7, strings.Count(doc, "<text"))
 }
 
@@ -248,7 +249,9 @@ func TestEncodeCarriesForwardOnEmptySource(t *testing.T) {
 	red := hexString(color.RGB{R: 222, G: 56, B: 43})
 
 	assert.Equal(t, 2, strings.Count(doc, `fill="`+red+`"`))
-	assert.Equal(t, 2, strings.Count(doc, "<rect"))
+	// One <rect> for the run's own background, plus the window chrome's
+	// border rect and shadow silhouette (see writeWindowChrome).
+	assert.Equal(t, 3, strings.Count(doc, "<rect"))
 }
 
 // TestEncodeClearsBackgroundOnEmptySource ensures a separator-like run with no
@@ -264,7 +267,9 @@ func TestEncodeClearsBackgroundOnEmptySource(t *testing.T) {
 	doc := Encode(rows, testOptions())
 	decodeXML(t, doc)
 
-	assert.Equal(t, 2, strings.Count(doc, "<rect"))
+	// One <rect> for the first run's background, plus the window chrome's
+	// border rect and shadow silhouette (see writeWindowChrome).
+	assert.Equal(t, 3, strings.Count(doc, "<rect"))
 }
 
 // TestEncodeAttributes maps every Run.Attributes slot (see knownStyles'

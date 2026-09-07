@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Create changelog ✍️
         id: changelog
-        uses: TriPSs/conventional-changelog-action@ee43def3241429afddab215ba89090cbf64fb45c
+        uses: TriPSs/conventional-changelog-action@469f0e5e35831fbd1962706f29f65daf0a5723f2
         with:
           github-token: ${{ secrets.github_token }}
           skip-version-file: "true"
@@ -154,7 +154,7 @@ jobs:
           az storage blob upload-batch --destination releases/latest --overwrite true --source .
           az storage blob upload-batch --destination releases/latest --overwrite true --source . --pattern "*.appinstaller" --content-type "application/appinstaller"
       - name: Create draft release 📝
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}

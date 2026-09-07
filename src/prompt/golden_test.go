@@ -53,7 +53,7 @@ const regenerateFixtureCommand = "go run . config export data --sanitize --theme
 
 // fixturePath is the single sanitized --data fixture every bundled theme
 // renders against - see the package comment above for why one shared fixture
-// replaces what used to be 124 per-theme files.
+// replaces what used to be 125 per-theme files.
 var fixturePath = filepath.Join("testdata", "fixtures", "prompt.data.json")
 
 // sanitizedPWD is the PWD value cli/sanitize.go bakes into fixturePath (see
@@ -69,7 +69,7 @@ var update = flag.Bool("update", false, "regenerate the golden manifest and repr
 // fixture. code.yml runs `go test ./...` on ubuntu, macOS and windows, so all
 // three matter, not just this machine.
 func TestMain(m *testing.M) {
-	// 65 of 124 themes render a time segment through dateInZone(fmt, date,
+	// 65 of 125 themes render a time segment through dateInZone(fmt, date,
 	// "Local") (template/date.go). The segment's own state is baked into the
 	// fixture at record time (restoreData never re-probes it), but formatting
 	// that recorded instant still happens at render time in the process's
@@ -216,7 +216,7 @@ func renderTheme(t *testing.T, themePath, fixturePath string) []byte {
 	// template.Init only rebuilds the package-level template.Cache singleton
 	// when it is nil (template/init.go) - by design, for the serve daemon,
 	// which stays alive across many renders and calls ResetCache itself
-	// between them (cli/serve.go). This harness renders 124 different themes
+	// between them (cli/serve.go). This harness renders 125 different themes
 	// (each with its own env identity) in one process, and other tests in
 	// this package also populate Cache directly, so without forcing a rebuild
 	// here every render after the first would silently reuse whichever env
@@ -314,13 +314,13 @@ func contextWindow(b []byte, offset int) []byte {
 }
 
 // TestGoldenThemes renders every bundled theme from its committed fixture and
-// checks it two ways: a sha256 line in the manifest (all 124 themes) and,
+// checks it two ways: a sha256 line in the manifest (all 125 themes) and,
 // additionally for representativeThemes, a byte-for-byte comparison against a
 // committed golden file. Run with -update to regenerate both instead of
 // comparing.
 func TestGoldenThemes(t *testing.T) {
 	themePaths := themeFiles(t)
-	require.Lenf(t, themePaths, 124, "expected 124 bundled themes (122 .omp.json + 2 .omp.yaml); "+
+	require.Lenf(t, themePaths, 125, "expected 125 bundled themes (123 .omp.json + 2 .omp.yaml); "+
 		"if this changed intentionally, update the fixture/golden set for the new/removed theme(s)")
 
 	type manifestEntry struct {

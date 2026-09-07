@@ -51,12 +51,14 @@ export default {
       respectPrefersColorScheme: false,
     },
     prism: {
-      // Matches ConfigEditor's own DARK_CODE_THEME/LIGHT_CODE_THEME pair (see
-      // src/components/ConfigEditor/index.js) so every fenced code block in the docs follows
-      // the site's light/dark switch the same way the config editor does, instead of staying on
-      // one theme regardless of colour mode.
-      theme: prismThemes.github,
-      darkTheme: prismThemes.palenight,
+      // Matches ConfigEditor's own DARK_COLORS/LIGHT_COLORS pair (see
+      // src/components/ConfigEditor/editorTheme.js) so every fenced code block in the docs
+      // follows the site's light/dark switch the same way the config editor does, instead of
+      // staying on one theme regardless of colour mode. Night Owl: a blue-forward pair that
+      // sits close to the site's own palette while coloring far more token types than the
+      // previous github/palenight pair, which read flat inside the framed blocks.
+      theme: prismThemes.nightOwlLight,
+      darkTheme: prismThemes.nightOwl,
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],
     },
     docs: {

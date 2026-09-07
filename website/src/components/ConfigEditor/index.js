@@ -310,9 +310,9 @@ function ConfigEditor({
       </label>
       <div className={styles.editorWindow}>
         <div className={styles.editorChrome} aria-hidden="true">
-          <span className={styles.chromeDot} />
-          <span className={styles.chromeDot} />
-          <span className={styles.chromeDot} />
+          <span className={styles.chromeControl}>−</span>
+          <span className={styles.chromeControl}>□</span>
+          <span className={styles.chromeControl}>×</span>
         </div>
         <div className={styles.editorBody}>
           <div ref={hostRef} className={styles.editorHost} />

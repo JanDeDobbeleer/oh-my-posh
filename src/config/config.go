@@ -136,10 +136,9 @@ func (cfg *Config) getPalette() color.Palette {
 	return palette
 }
 
-// streamingEnabled reports whether streaming should be enabled: it's configured, and not
-// force-disabled via POSH_DISABLE_STREAMING regardless of that configuration.
-func (cfg *Config) streamingEnabled(env runtime.Environment) bool {
-	return cfg.Streaming > 0 && env.Getenv("POSH_DISABLE_STREAMING") != "1"
+// streamingEnabled reports whether streaming should be enabled: it's configured.
+func (cfg *Config) streamingEnabled(_ runtime.Environment) bool {
+	return cfg.Streaming > 0
 }
 
 func (cfg *Config) Features(env runtime.Environment) shell.Features {

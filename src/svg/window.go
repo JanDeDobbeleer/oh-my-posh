@@ -19,11 +19,12 @@ import (
 // proportions at this package's actual FontSize (16px by default) instead
 // of reproducing the PNG renderer's pixel values verbatim.
 //
-// The PNG renderer's own margin 96 and its stackblur drop shadow are gone.
-// The margin existed only to give that shadow somewhere to fall, and drawing
-// both meant every export carried a transparent gutter — 32px a side at the
-// default font size — that a caller then had to crop or lay out around. The
-// canvas is the window now, edge to edge.
+// The PNG renderer's own margin 96 is gone. Its stackblur drop shadow is
+// replaced with a hard offset silhouette (see shadowOffset) so the window
+// reads like the website's framed code blocks without carrying a transparent
+// gutter that a caller then had to crop or lay out around. The canvas grows
+// by exactly the shadow's offset on the right and bottom so the silhouette
+// is never clipped by the viewBox.
 //
 // The header's own controlSize/controlGap are new with the two-tone header
 // (see writeWindowChrome): unlike the retired PNG renderer's fixed macOS
@@ -41,15 +42,22 @@ type windowGeometry struct {
 }
 
 // minStrokeWidth is the floor writeWindowChrome's border stroke never
-// scales below: below the default FontSize (16, scale ~0.33) the plain
-// 2*scale formula drops under 1px - thin enough that anti-aliasing fades it
-// to near-nothing, which is what left the window's rounded corners barely
-// visible at every FontSize this package is actually used at (the website's
-// theme gallery and Studio preview both render at the default). 1px is
-// still crisp at FontSize 48's own scale=1 (2*1 > 1, so the clamp is a
-// no-op there and TestNewWindowGeometryScalesWithFontSize's pinned value of
-// 2 is untouched).
+// scales below. The website's framed code blocks draw every line — the
+// outer border and the title-bar divider alike — at 1px in
+// --omp-card-border-color (see custom.css's .theme-code-block), with the
+// bold right/bottom edge coming from the offset silhouette (shadowOffset),
+// not from a heavier stroke. The SVG window uses the same 1px weight so its
+// lines read as the same frame rather than a heavier lookalike.
 const minStrokeWidth = 1.0
+
+// shadowOffset mirrors the website's framed code blocks exactly: custom.css
+// gives them box-shadow 4px 4px 0, a solid silhouette of the whole box
+// shifted 4px right and down with no blur. writeWindowChrome reproduces that
+// as a filled rounded rect behind the window rather than an feDropShadow
+// filter — a filter casts the silhouette of what is actually painted, and
+// the window's border rect is fill="none", so a filter would shadow only the
+// 1px stroke instead of the solid block the CSS shadow produces.
+const shadowOffset = 4.0
 
 func newWindowGeometry(opts *Options) windowGeometry {
 	scale := opts.FontSize / 48.0
@@ -58,7 +66,7 @@ func newWindowGeometry(opts *Options) windowGeometry {
 		padding:     48 * scale,
 		titleOffset: 80 * scale,
 		corner:      12 * scale,
-		strokeWidth: max(2*scale, minStrokeWidth),
+		strokeWidth: max(scale, minStrokeWidth),
 	}
 
 	geo.controlSize = geo.titleOffset * 0.55
@@ -70,9 +78,10 @@ func newWindowGeometry(opts *Options) windowGeometry {
 // canvasSize is every box the window chrome and content grid need, computed
 // once from a row count and geometry: the window itself (the rounded rect
 // with the title bar and content inside it) and the content grid's own
-// top-left corner inside it. The window fills the canvas exactly, so the two
-// share an origin; windowX/windowY are kept rather than folded away because
-// every chrome coordinate is written relative to them.
+// top-left corner inside it. The window sits at the canvas origin; the
+// canvas itself is shadowOffset wider and taller than the window so the
+// hard offset silhouette (see shadowOffset) has room to paint on the right
+// and bottom instead of being clipped by the viewBox.
 type canvasSize struct {
 	width, height             float64 // the full <svg> canvas
 	windowX, windowY          float64
@@ -88,8 +97,8 @@ func newCanvasSize(geo *windowGeometry, columns int, cellWidth float64, rows int
 	windowHeight := contentHeight + 2*geo.padding + geo.titleOffset
 
 	return canvasSize{
-		width:  windowWidth,
-		height: windowHeight,
+		width:  windowWidth + shadowOffset,
+		height: windowHeight + shadowOffset,
 
 		windowX:      0,
 		windowY:      0,
@@ -104,8 +113,9 @@ func newCanvasSize(geo *windowGeometry, columns int, cellWidth float64, rows int
 // writeWindowChrome draws the terminal window itself: a header bar across
 // the top (the window's own rounded top corners) and the content pane below
 // it (the rounded bottom corners), each its own fill, plus the border
-// stroke and the "−"/"▢"/"×" minimize/maximize/close glyphs flush against
-// the header's right edge. No title text and no "+"/"⌄" tab controls: this
+// stroke, the header/content divider line (same color and weight, matching
+// the code blocks' title-bar border-bottom), and the "−"/"▢"/"×"
+// minimize/maximize/close glyphs flush against the header's right edge. No title text and no "+"/"⌄" tab controls: this
 // package tried a title/tab-strip row too (see the now-removed macOS
 // traffic-light and Windows Terminal tab-control chrome this replaced), but
 // a window this small never has real room for a title next to controls
@@ -132,6 +142,20 @@ func writeWindowChrome(b *strings.Builder, size canvasSize, geo *windowGeometry,
 	w, h, r := size.windowWidth, size.windowHeight, geo.corner
 
 	header := headerColor(contentFill)
+	border := windowBorderColor(contentFill)
+	borderOpacity := windowBorderOpacity(contentFill)
+	shadow := windowShadowColor(contentFill)
+	shadowOpacity := windowShadowOpacity(contentFill)
+
+	// The shadow is a filled silhouette of the whole window shifted
+	// shadowOffset right and down — see shadowOffset's doc comment on why
+	// this is a real rect and not an feDropShadow filter. Painted first so
+	// the window covers its left and top, leaving the solid block visible
+	// only on the right and bottom edges, exactly like the CSS box-shadow.
+	fmt.Fprintf(b, `<rect class="omp-window-shadow" x="%s" y="%s" width="%s" height="%s" rx="%s" `+
+		`fill="%s" fill-opacity="%s"/>`+"\n",
+		formatFloat(x0+shadowOffset), formatFloat(y0+shadowOffset), formatFloat(w), formatFloat(h),
+		formatFloat(r), hexString(shadow), formatFloat(shadowOpacity))
 
 	fmt.Fprintf(b, `<path class="omp-window-header" fill="%s" d="M %s,%s H %s A %s,%s 0 0 1 %s,%s `+
 		`V %s H %s V %s A %s,%s 0 0 1 %s,%s Z"/>`+"\n",
@@ -158,10 +182,18 @@ func writeWindowChrome(b *strings.Builder, size canvasSize, geo *windowGeometry,
 	// every edge instead of only the top/left ever reading as intended.
 	half := geo.strokeWidth / 2
 
+	// The header/content divider matches the code block's title bar, which
+	// carries border-bottom: 1px solid --omp-card-border-color — same color,
+	// same weight as the outer border.
+	fmt.Fprintf(b, `<line class="omp-window-divider" x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" `+
+		`stroke-width="%s" stroke-opacity="%s"/>`+"\n",
+		formatFloat(x0), formatFloat(y0+geo.titleOffset), formatFloat(x0+w), formatFloat(y0+geo.titleOffset),
+		hexString(border), formatFloat(geo.strokeWidth), formatFloat(borderOpacity))
+
 	fmt.Fprintf(b, `<rect class="omp-window" x="%s" y="%s" width="%s" height="%s" rx="%s" fill="none" `+
-		`stroke="#404040" stroke-width="%s"/>`+"\n",
+		`stroke="%s" stroke-width="%s" stroke-opacity="%s"/>`+"\n",
 		formatFloat(x0+half), formatFloat(y0+half), formatFloat(w-geo.strokeWidth), formatFloat(h-geo.strokeWidth),
-		formatFloat(r), formatFloat(geo.strokeWidth))
+		formatFloat(r), hexString(border), formatFloat(geo.strokeWidth), formatFloat(borderOpacity))
 
 	barMidY := y0 + geo.titleOffset/2
 	rightEdge := x0 + w
@@ -205,6 +237,43 @@ func controlColor(header color.RGB) color.RGB {
 	}
 
 	return defaultForegroundNearBlack
+}
+
+// windowBorderColor and windowBorderOpacity mirror the docs code blocks'
+// --omp-card-border-color exactly (custom.css): Infima's
+// --ifm-color-emphasis-300 (#dadde1) in light mode, rgba(255, 255, 255, 0.8)
+// in dark mode — the latter split into color and opacity so it composites
+// over the window fill the same way the CSS rgba value does.
+func windowBorderColor(bg color.RGB) color.RGB {
+	if luminance(bg) < 128 {
+		return color.RGB{R: 0xff, G: 0xff, B: 0xff}
+	}
+
+	return color.RGB{R: 0xda, G: 0xdd, B: 0xe1}
+}
+
+func windowBorderOpacity(bg color.RGB) float64 {
+	if luminance(bg) < 128 {
+		return 0.8
+	}
+
+	return 1
+}
+
+func windowShadowColor(bg color.RGB) color.RGB {
+	if luminance(bg) < 128 {
+		return color.RGB{R: 0xff, G: 0xff, B: 0xff}
+	}
+
+	return color.RGB{R: 0x0f, G: 0x17, B: 0x22}
+}
+
+func windowShadowOpacity(bg color.RGB) float64 {
+	if luminance(bg) < 128 {
+		return 0.72
+	}
+
+	return 0.82
 }
 
 // headerColor gives the header bar a shade related to bg but visually

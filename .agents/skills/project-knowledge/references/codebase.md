@@ -56,9 +56,10 @@
 
 ## Segments and panics
 
-- Segment `Execute` runs in bare goroutines with **no recover** (`src/prompt/segments.go`), and
-  template rendering re-panics runtime errors. Any panic there kills the whole process - the user
-  sees a completely blank prompt. So when a user reports a blank prompt: find the panic.
+- Segment `Execute` goroutines recover a panic since 2026-09-05 (`src/prompt/segments.go`): the
+  segment logs the panic and renders as disabled, and the serve daemon survives. Template
+  rendering still re-panics runtime errors in the producer, which the streaming producer also
+  recovers. A completely blank prompt therefore points at a panic outside those two places.
 - If the panic trigger persists (e.g. a poisoned cache entry with a TTL), every prompt crashes
   until the entry expires.
 - Segment writers gob-encode only exported fields. `segments.Base.env/options` are unexported and
@@ -150,3 +151,31 @@
 - `config.Get` prefers the session gob cache over `POSH_THEME`.
 - Go guarantees exactly 2 records per wait-mode serve request even on segment panic
   (`renderComplete`) - blocking clients (Clink) rely on this.
+- Streaming lifecycle (rewritten 2026-09-07, `src/prompt/streaming.go`): one `streamCycle` per
+  `StreamPrimary` run. Segment goroutines send `timedOut` / `completed` / `abandoned` events on a
+  channel sized `2*segments+1`, so a send never blocks and is never dropped (plain sends, no
+  `select`/`default`). The producer goroutine owns the `pending` set, folds events into it, and
+  loops until it is empty; the last record is therefore always rendered after the last state
+  change. `timedOut` is queued before the segment's block result is delivered, so the
+  `absorb()` after `drainBlockResults` sees every timeout of the first pass. A panicking
+  `Execute` is recovered in `executeSegment` and still reports `completed`; a segment still
+  running after `pendingSegmentLimit` (30s, package var) is `abandoned`, its children killed, and
+  the cycle finishes without it. The producer's recover logs with a stack; a silent recover is what
+  hid the original bug.
+- The streaming bug that motivated the rewrite (git segment stuck on "..." with native status
+  and `streaming: 5`) was never in the bookkeeping: four loop rewrites left it in place. The render
+  goroutine touched the live writer of a pending segment (SetText, SetIndex, color and style
+  templates, `Needs`) while `Execute` was writing it. Rule now: a pending segment renders through
+  `Segment.RenderPlaceholder`, which reads configuration only (`Placeholder`, raw
+  `Foreground`/`Background`, style resolved with a nil context) and stores its text in the
+  writer-less `text` field; `canRenderSegment` is skipped for pending segments; `Name()` is
+  resolved before the goroutines start. Never read or write `segment.writer` for a segment the
+  cycle still has as pending, and never reintroduce a `Pending` flag on `config.Segment`.
+- `-race` is unavailable on the arm64 Windows dev machine and in its WSL (no C compiler, no sudo).
+  CI's `Race Detector` step (`code.yml`, ubuntu only) is the only race gate; the fake writer in
+  `prompt/streaming_writer_test.go` writes multi-word fields late on purpose so that step has
+  something to catch when a render touches a pending writer again.
+- Reproducing timing races in the daemon: `oh-my-posh debug` timings are cold-process numbers;
+  the warm in-daemon segment duration is what has to straddle `streaming`. Sweep the timeout in
+  a config copy against a scripted serve session (JSON line + env blob on stdin, count cycles
+  whose last record still holds the placeholder) instead of trusting a single value.

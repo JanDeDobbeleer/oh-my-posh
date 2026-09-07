@@ -66,11 +66,7 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 	cycle = &e.Config.Cycle
 	var cancelNewline, didRender bool
 
-	// Choose block source based on whether we're rendering from cache
 	blocks := e.Config.Blocks
-	if fromCache {
-		blocks = e.allBlocks
-	}
 
 	// Launch execution for every segment of every block up front so they all
 	// run concurrently; blocks are still rendered sequentially afterward, in
@@ -104,6 +100,13 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 
 			allResults[i] = drainBlockResults(launched[i], len(block.Segments), executed)
 		}
+	}
+
+	// Every segment that timed out queued its event before its block result was delivered
+	// (see executeSegmentWithTimeout), so absorbing the queue here, after the drain, yields the
+	// exact pending set for this pass.
+	if e.stream != nil {
+		e.stream.absorb()
 	}
 
 	for i, block := range blocks {

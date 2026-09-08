@@ -1,8 +1,6 @@
 package segments
 
 import (
-	"errors"
-	"sync"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -201,11 +199,6 @@ func TestPoshGitSegment(t *testing.T) {
 		if tc.FetchUpstreamIcon {
 			g.SetReferencedFields(template.RefSet{Fields: gitUpstreamIconFields, Analyzable: true})
 		}
-
-		g.configOnce = sync.Once{}
-		g.configOnce.Do(func() {
-			g.configErr = errors.New("no config")
-		})
 
 		if tc.Template == "" {
 			tc.Template = g.Template()

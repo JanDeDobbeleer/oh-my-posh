@@ -130,7 +130,7 @@ is a template that prints its whole context (`{{ . }}`) without naming any field
 | `.PushBehind`     | `int`               | commits behind of push remote                                                                                                    |
 | `.PushAhead`      | `int`               | commits ahead of push remote                                                                                                     |
 | `.BranchStatus`   | `string`            | the current branch context (ahead/behind string representation)                                                                  |
-| `.Upstream`       | `string`            | the upstream name (remote)                                                                                                       |
+| `.Upstream`       | `string`            | the upstream reference, e.g. `origin/main`; empty when no upstream is configured                                                 |
 | `.UpstreamGone`   | `boolean`           | whether the upstream is gone (no remote)                                                                                         |
 | `.UpstreamIcon`   | `string`            | the upstream icon (based on the icons above)                                                                                     |
 | `.UpstreamURL`    | `string`            | the upstream URL for use in [hyperlinks][hyperlinks] in templates: `{{ url .UpstreamIcon .UpstreamURL }}`                        |

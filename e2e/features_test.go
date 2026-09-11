@@ -145,6 +145,30 @@ var featureScenarios = []scenario{
 		},
 	},
 	{
+		// syntax-error types an invalid command in fish and asserts the parse error
+		// reads as fish's own, without attribution to oh-my-posh's enter key handler
+		// or init script (#7862). Only fish rebinds Enter to a handler function that
+		// executes the buffer from within that function, so only fish is affected by
+		// the misattribution and only fish is exercised here.
+		name: "syntax-error",
+		skips: map[string]string{
+			"bash": "fish-specific: only fish rebinds Enter to a handler function, causing parse error misattribution (#7862)",
+			"zsh":  "fish-specific: only fish rebinds Enter to a handler function, causing parse error misattribution (#7862)",
+			"pwsh": "fish-specific: only fish rebinds Enter to a handler function, causing parse error misattribution (#7862)",
+			"nu":   "fish-specific: only fish rebinds Enter to a handler function, causing parse error misattribution (#7862)",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			s.SendLine("echo $$")
+
+			screen := s.WaitFor(regexp.MustCompile(regexp.QuoteMeta("$$ is not the pid")))
+
+			assert.Contains(t, screen, "fish: $$ is not the pid. In fish, please use $fish_pid.",
+				"%s: parse error should read as fish's own:\n%s", sh.Name, screen)
+			assert.NotContains(t, screen, "_omp_enter_key_handler",
+				"%s: parse error must not be attributed to oh-my-posh's key handler:\n%s", sh.Name, screen)
+		},
+	},
+	{
 		// ftcs boots with the shell_integration overlay and asserts all four FTCS
 		// (Final Term Control Sequence) marks land in the raw byte stream: prompt
 		// start (133;A) and command start (133;B) around the first prompt, then

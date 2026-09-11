@@ -1769,6 +1769,51 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 	}
 }
 
+func TestStashCountRevList(t *testing.T) {
+	cases := []struct {
+		name          string
+		fileContent   string
+		gitOutput     string
+		expectedCount int
+	}{
+		// File-based path (logs/refs/stash exists)
+		{name: "file empty string", fileContent: "", gitOutput: "0", expectedCount: 0},
+		{name: "file single entry", fileContent: "entry1\n", gitOutput: "", expectedCount: 1},
+		{name: "file multiple entries", fileContent: "a\nb\nc\n", gitOutput: "", expectedCount: 3},
+
+		// Rev-list fallback path (file missing/empty)
+		{name: "revlist zero", fileContent: "", gitOutput: "0", expectedCount: 0},
+		{name: "revlist few", fileContent: "", gitOutput: "2", expectedCount: 2},
+		{name: "revlist multiple", fileContent: "", gitOutput: "5", expectedCount: 5},
+
+		// Edge cases
+		{name: "revlist whitespace", fileContent: "", gitOutput: "3\n", expectedCount: 3},
+		{name: "revlist carriage return", fileContent: "", gitOutput: "4\r\n", expectedCount: 4},
+		{name: "revlist parse fail", fileContent: "", gitOutput: "invalid", expectedCount: 0},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("FileContent", "/logs/refs/stash").Return(tc.fileContent)
+
+			// Only mock git command if file is empty and we're testing rev-list path
+			if tc.fileContent == "" {
+				env.MockGitCommand("", tc.gitOutput, "rev-list", "--walk-reflogs", "--ignore-missing", "--count", "refs/stash")
+			}
+
+			g := &Git{
+				command:    GITCOMMAND,
+				mainSCMDir: "",
+			}
+			g.Init(options.Map{}, env)
+
+			got := g.StashCount()
+			assert.Equal(t, tc.expectedCount, got, tc.name)
+		})
+	}
+}
+
 func TestGitCleanSSHURL(t *testing.T) {
 	cases := []struct {
 		Case     string

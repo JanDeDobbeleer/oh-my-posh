@@ -674,7 +674,21 @@ function _omp_enter_key_handler
         return
     end
 
-    if commandline --is-valid || test -z (commandline --current-buffer | string trim -l | string collect)
+    commandline --is-valid
+    set --local validity $status
+
+    # an erroneous buffer executed from a key binding makes fish attribute its
+    # parse error to this init script and function - rethrow it through a
+    # pristine parser so it surfaces as fish's own error
+    if test $validity -eq 1
+        set --local fish_bin (status fish-path 2>/dev/null)
+        test -n "$fish_bin"; or set fish_bin fish
+        commandline --current-buffer | string collect | $fish_bin --no-execute
+        commandline --function repaint
+        return
+    end
+
+    if test $validity -eq 0 || test -z (commandline --current-buffer | string trim -l | string collect)
         set --global _omp_new_prompt 1
         set --global _omp_tooltip_command ''
 

@@ -1,0 +1,73 @@
+---
+id: pear
+title: Pear Desktop
+sidebar_label: Pear Desktop
+---
+
+## What
+
+Shows the currently playing song in [Pear Desktop][pear-desktop].
+
+## Setup
+
+You need to enable the API Server plugin in the Pear Desktop settings.
+To do this, open the app, go to `Plugins > API Server` and enable it.
+
+From the CLI, run the following command to set the authentication token:
+
+```bash
+oh-my-posh auth pear
+```
+
+This triggers a pop-up window in Pear Desktop asking you to allow access. Once allowed,
+the segment is authenticated and ready to use. The authentication flow assumes the API Server
+runs on the default port (`26538`); set the `port` option if you configured a different one.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "pear",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#FF0000",
+    options: {
+      playing_icon: "\uf04b ",
+      paused_icon: "\uf04c ",
+    },
+  }}
+/>
+
+## Options
+
+| Name           |   Type   |  Default  | Description                                        |
+| -------------- | :------: | :-------: | -------------------------------------------------- |
+| `port`         |  `int`   |  `26538`  | the port of the Pear Desktop API Server            |
+| `playing_icon` | `string` | `\uf04b ` | text/icon to show when playing                     |
+| `paused_icon`  | `string` | `\uf04c ` | text/icon to show when paused                      |
+| `http_timeout` |  `int`   |  `5000`   | in milliseconds - the timeout for http request     |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Icon }}{{ .Artist }} - {{ .Track }}
+```
+
+:::
+
+### Properties
+
+| Name      | Type     | Description                            |
+| --------- | -------- | -------------------------------------- |
+| `.Status` | `string` | player status (`playing`, `paused`)    |
+| `.Artist` | `string` | current artist                         |
+| `.Track`  | `string` | current track                          |
+| `.Icon`   | `string` | icon (based on `.Status`)              |
+
+[templates]: /docs/configuration/templates
+[pear-desktop]: https://github.com/pear-devs/pear-desktop

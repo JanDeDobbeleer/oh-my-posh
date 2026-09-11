@@ -96,6 +96,7 @@ func init() {
 	gob.Register(&segments.Owm{})
 	gob.Register(&segments.Path{})
 	gob.Register(&segments.Folders{})
+	gob.Register(&segments.Pear{})
 	gob.Register(&segments.Plastic{})
 	gob.Register(&segments.PlasticStatus{})
 	gob.Register(&segments.Pnpm{})
@@ -215,6 +216,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },
 	PATH:            func() SegmentWriter { return &segments.Path{} },
+	PEAR:            func() SegmentWriter { return &segments.Pear{} },
 	PERL:            func() SegmentWriter { return segments.NewLanguage(string(PERL)) },
 	PHP:             func() SegmentWriter { return segments.NewLanguage(string(PHP)) },
 	PLASTIC:         func() SegmentWriter { return &segments.Plastic{} },

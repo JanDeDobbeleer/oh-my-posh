@@ -19,9 +19,11 @@ var authCmd = &cmdtree.Command{
 Available services:
 
 - copilot: GitHub Copilot API
+- pear: Pear Desktop API
 - ytmda: YouTube Music Desktop App (YTMDA) API`,
 	ValidArgs: []string{
 		copilotServiceName,
+		"pear",
 		"ytmda",
 	},
 	Args: NoArgsOrOneValidArg,
@@ -47,6 +49,12 @@ Available services:
 		switch args[0] {
 		case copilotServiceName:
 			authenticator := tui.NewCopilot(env)
+			if err := tui.Run(authenticator); err != nil {
+				log.Error(err)
+				exitcode = 70
+			}
+		case "pear":
+			authenticator := tui.NewPear(env)
 			if err := tui.Run(authenticator); err != nil {
 				log.Error(err)
 				exitcode = 70

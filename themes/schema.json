@@ -475,6 +475,7 @@
             "os",
             "owm",
             "path",
+            "pear",
             "perl",
             "php",
             "plastic",
@@ -3824,6 +3825,47 @@
                     "title": "Full Length Dirs",
                     "description": "Indicates how many full length directory names should be displayed in fish style.",
                     "default": 1
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pear"
+              }
+            }
+          },
+          "then": {
+            "title": "Pear Desktop Segment",
+            "description": "Shows the currently playing song in Pear Desktop.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "port": {
+                    "type": "integer",
+                    "title": "Port",
+                    "description": "The port of the Pear Desktop API Server.",
+                    "default": 26538
+                  },
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "Playing Icon",
+                    "description": "Text/icon to show when playing.",
+                    "default": " "
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "Paused Icon",
+                    "description": "Text/icon to show when paused.",
+                    "default": " "
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
                   }
                 },
                 "unevaluatedProperties": false

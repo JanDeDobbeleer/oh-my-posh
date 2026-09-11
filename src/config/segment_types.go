@@ -174,6 +174,8 @@ const (
 	OWM SegmentType = "owm"
 	// PATH represents the current path segment
 	PATH SegmentType = "path"
+	// PEAR writes the currently playing song in Pear Desktop
+	PEAR SegmentType = "pear"
 	// PERL writes which perl version is currently active
 	PERL SegmentType = "perl"
 	// PHP writes which php version is currently active

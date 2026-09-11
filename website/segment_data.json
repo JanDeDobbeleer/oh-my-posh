@@ -2070,6 +2070,20 @@
         }
       }
     },
+    "pear": {
+      "data": {
+        "Artist": "Men I Trust",
+        "Icon": " ",
+        "Segment": {
+          "Index": 68,
+          "Text": " x "
+        },
+        "Status": "playing",
+        "Text": " x ",
+        "Track": "Show Me How"
+      },
+      "enabled": true
+    },
     "perl": {
       "data": {
         "BuildMetadata": "",

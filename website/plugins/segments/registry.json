@@ -276,6 +276,10 @@
     "docId": "path"
   },
   {
+    "type": "pear",
+    "docId": "pear"
+  },
+  {
     "type": "perl",
     "docId": "perl"
   },

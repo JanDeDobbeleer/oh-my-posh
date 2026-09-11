@@ -250,6 +250,7 @@ export default {
           },
           items: [
             "segments/music/lastfm",
+            "segments/music/pear",
             "segments/music/spotify",
             "segments/music/ytm",
           ],

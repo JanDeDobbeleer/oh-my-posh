@@ -2,14 +2,13 @@
 
 ## Docs linting
 
-- Two markdown gates cover skill docs (updated 2026-07-30): the Vale CI workflow
-  (`.github/workflows/vale.yml`) explicitly lints `AGENTS.md`, `.github/copilot-instructions.md`,
-  and `.agents/skills`, and `markdownlint-cli2`'s `**/*.md` glob in `.markdownlint-cli2.yaml` also
-  reaches `.agents/skills` - only the two explicit `ignores` entries there are excluded. Lint skill
-  doc changes with both `vale <path>` and `npx markdownlint-cli2 --config .markdownlint-cli2.yaml
-  <path>` before pushing.
-- Vale fails CI on error-level findings only; warnings pass. Justified terms (Go interface
-  wording, zsh feature names) get file-scoped rule overrides in `.vale.ini`, each with a comment.
+- One markdown gate covers skill docs: `markdownlint-cli2`'s `**/*.md` glob in
+  `.markdownlint-cli2.yaml` reaches `.agents/skills` - only the four explicit `ignores` entries
+  there are excluded. Lint skill doc changes with `npx markdownlint-cli2 --config
+  .markdownlint-cli2.yaml <path>` before pushing.
+- Vale was removed on 2026-08-03 in `9f8196e1`, along with `.github/workflows/vale.yml` and
+  `.vale.ini`. No prose-style gate runs in CI any more, so wording is a review matter rather than
+  a check.
 
 ## Windows git rebase with core.autocrlf=true
 

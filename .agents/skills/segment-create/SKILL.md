@@ -30,7 +30,7 @@ Contract
   links, or schema entries.
 - Alphabetical insertions where applicable.
 - Compile-ready Go code, formatted.
-- Docs lint clean according to the `markdown` skill (`.github/skills/markdown/SKILL.md`).
+- Docs lint clean according to the `markdown` skill (`.agents/skills/markdown/SKILL.md`).
 
 Implementation steps
 
@@ -88,7 +88,7 @@ func (s *{{goType}}) Template() string {
 
 1. Documentation file
 
-- Consult the `segment-docs` skill (`.github/skills/segment-docs/SKILL.md`) for the
+- Consult the `segment-docs` skill (`.agents/skills/segment-docs/SKILL.md`) for the
   Go-to-documentation type mapping and rules for extracting options and template properties.
 - Path: `website/docs/segments/{{category}}/{{id}}.mdx`.
 - If file exists, skip. Else create with this template:

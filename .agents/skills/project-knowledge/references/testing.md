@@ -24,6 +24,12 @@ for usage. Gotchas baked into it, relevant to any future pty work:
 
 ## WSL basics
 
+- Running the e2e suite from a Windows worktree (verified 2026-09-11): the e2e go.mod may
+  require a newer Go than the WSL distro's (system go was 1.24.1 vs go.mod's 1.26 - a tarball
+  from go.dev into ~/go-sdk works). Cross-compile the omp binary on Windows
+  (`GOOS=linux GOARCH=arm64 go build`) and run inside WSL straight from the /mnt/c worktree:
+  `cd /mnt/c/.../e2e && OMP_E2E_BINARY=/mnt/c/.../oh-my-posh ~/go-sdk/go/bin/go test .`.
+
 - WSL `/tmp` is wiped between separate `wsl.exe` invocations (instance auto-shutdown). Either make
   a test fully self-contained in ONE `wsl -e` call, or stage everything under `$HOME` (e.g.
   `~/omp-test`).

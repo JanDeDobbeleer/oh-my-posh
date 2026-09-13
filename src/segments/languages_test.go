@@ -738,8 +738,8 @@ func TestConfiguredLanguageValaPreset(t *testing.T) {
 // is kept for backwards compatibility with older decoders/inputs.
 func TestConfiguredLanguageCustomTools(t *testing.T) {
 	cases := []struct {
-		Case  string
 		Entry any
+		Case  string
 	}{
 		{
 			Case: "map[string]any (JSON/TOML)",

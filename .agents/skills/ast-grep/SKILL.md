@@ -93,6 +93,7 @@ ast-grep scan --rule test_rule.yml test_example.js
 2. Add `stopBy: end` to relational rules if not present
 3. Use `--debug-query` to understand the AST structure (see below)
 4. Check if `kind` values are correct for the language
+5. For zero matches from `run --pattern` (not rules), see the "Zero Matches?" tip below
 
 ### Step 5: Search the Codebase
 
@@ -187,6 +188,31 @@ ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
 - Quick searches without complex logic
 - When you don't need relational rules (inside/has)
 
+### Reading `--json` Output
+
+`--json` prints a bare JSON **array** of matches (no `matches` wrapper). For pattern `foo($ARG, $$$REST)`:
+
+```json
+[{
+  "text": "foo(\"value\", 1, 2)",
+  "file": "src/app.js",
+  "range": { "start": { "line": 41, "column": 10 }, "end": { "line": 41, "column": 27 } },
+  "metaVariables": {
+    "single": { "ARG": { "text": "\"value\"" } },
+    "multi": { "REST": [ { "text": "1" }, { "text": "2" } ] }
+  }
+}]
+```
+
+`scan --json` uses the same schema.
+
+(Each match also includes `lines` and `language`.) `range.start.line` is 0-based. Named metavariables (`$ARG`) land in `single`, list metavariables (`$$$REST`) in `multi` as a list (empty if nothing captured). Extract with jq:
+
+```bash
+ast-grep run --pattern 'foo($ARG)' --lang javascript --json . \
+  | jq -r '.[] | "\(.file):\(.range.start.line + 1): \(.metaVariables.single.ARG.text)"'
+```
+
 ### Search with Rules (scan)
 
 YAML rule-based search for complex structural queries:
@@ -251,6 +277,13 @@ When rules don't match:
 2. Check if metavariables are being detected correctly
 3. Verify the node `kind` matches what you expect
 4. Ensure relational rules are searching in the right direction
+
+### Zero Matches? Patterns Match Whole AST Nodes
+
+`run --pattern` matches complete AST nodes, not text substrings, so zero matches can mean "code absent" or "pattern has the wrong node shape":
+
+- Qualified paths are whole nodes: `env::var($ENV)` does NOT match `std::env::var("X")`. Try both bare and fully-qualified forms, or use `$$$` to absorb extra intermediate nodes.
+- To tell them apart: test the pattern on a snippet known to contain the code, and inspect how ast-grep parsed it with `--debug-query=pattern` (works for `run`, not just `scan`/rules). For zero matches from rules instead, follow the Step 4 debugging checklist.
 
 ### Escaping in Inline Rules
 

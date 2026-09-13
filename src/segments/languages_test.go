@@ -12,6 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
+	yaml "go.yaml.in/yaml/v3"
 )
 
 func TestConfiguredLanguageFortranPreset(t *testing.T) {
@@ -730,19 +731,37 @@ func TestConfiguredLanguageValaPreset(t *testing.T) {
 
 // TestConfiguredLanguageCustomTools exercises the `tools` option path used by the public
 // "language" segment type, which has no built-in preset and relies entirely on user config.
+//
+// It covers each concrete map type a `tools` entry can decode as, depending on the config
+// format: JSON/TOML decode entries as map[string]any, YAML decodes them as options.Map
+// (yaml.v3 propagates the enclosing options.Map type to nested mappings), and map[any]any
+// is kept for backwards compatibility with older decoders/inputs.
 func TestConfiguredLanguageCustomTools(t *testing.T) {
-	env := new(mock.Environment)
-	env.On("HasCommand", "mytool").Return(true)
-	env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return("mytool version 1.2.3", nil)
-	env.On("HasFiles", "*.myl").Return(true)
-	env.On("Pwd").Return("/usr/home/project")
-	env.On("Home").Return("/usr/home")
-
-	props := options.Map{
-		LanguageName:       "mylang",
-		LanguageExtensions: []string{"*.myl"},
-		Tools: []any{
-			map[string]any{
+	cases := []struct {
+		Case  string
+		Entry any
+	}{
+		{
+			Case: "map[string]any (JSON/TOML)",
+			Entry: map[string]any{
+				"name":       "mytool",
+				"executable": "mytool",
+				"args":       []any{"--version"},
+				"regex":      `mytool version (?P<version>(?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))`,
+			},
+		},
+		{
+			Case: "options.Map (YAML)",
+			Entry: options.Map{
+				"name":       "mytool",
+				"executable": "mytool",
+				"args":       []any{"--version"},
+				"regex":      `mytool version (?P<version>(?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))`,
+			},
+		},
+		{
+			Case: "map[any]any",
+			Entry: map[any]any{
 				"name":       "mytool",
 				"executable": "mytool",
 				"args":       []any{"--version"},
@@ -751,10 +770,69 @@ func TestConfiguredLanguageCustomTools(t *testing.T) {
 		},
 	}
 
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("HasCommand", "mytool").Return(true)
+			env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return("mytool version 1.2.3", nil)
+			env.On("HasFiles", "*.myl").Return(true)
+			env.On("Pwd").Return("/usr/home/project")
+			env.On("Home").Return("/usr/home")
+
+			props := options.Map{
+				LanguageName:       "mylang",
+				LanguageExtensions: []string{"*.myl"},
+				Tools:              []any{tc.Entry},
+			}
+
+			l := &ConfiguredLanguage{}
+			l.Init(props, env)
+
+			assert.True(t, l.Enabled())
+			assert.Empty(t, l.Error)
+			assert.Equal(t, "1.2.3", renderTemplate(env, l.Template(), l))
+			assert.Equal(t, []string{"mytool"}, l.defaultTooling)
+		})
+	}
+}
+
+// TestConfiguredLanguageCustomToolsYAMLDecode is a regression test for
+// https://github.com/JanDeDobbeleer/oh-my-posh/issues/7868: yaml.v3 propagates the enclosing
+// options.Map type to nested mappings, so a `tools` entry decoded from an actual YAML config
+// (unlike a Go literal built directly in a test) surfaces as options.Map. This exercises that
+// real decode path end to end, rather than constructing the options.Map in Go.
+func TestConfiguredLanguageCustomToolsYAMLDecode(t *testing.T) {
+	yml := `
+options:
+  name: mylang
+  extensions:
+    - "*.myl"
+  tools:
+    - name: mytool
+      executable: mytool
+      args: ["--version"]
+      regex: 'mytool version (?P<version>(?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))'
+`
+
+	var decoded struct {
+		Options options.Map `yaml:"options"`
+	}
+
+	err := yaml.Unmarshal([]byte(yml), &decoded)
+	assert.NoError(t, err)
+
+	env := new(mock.Environment)
+	env.On("HasCommand", "mytool").Return(true)
+	env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return("mytool version 1.2.3", nil)
+	env.On("HasFiles", "*.myl").Return(true)
+	env.On("Pwd").Return("/usr/home/project")
+	env.On("Home").Return("/usr/home")
+
 	l := &ConfiguredLanguage{}
-	l.Init(props, env)
+	l.Init(decoded.Options, env)
 
 	assert.True(t, l.Enabled())
+	assert.Empty(t, l.Error)
 	assert.Equal(t, "1.2.3", renderTemplate(env, l.Template(), l))
 	assert.Equal(t, []string{"mytool"}, l.defaultTooling)
 }

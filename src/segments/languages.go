@@ -494,6 +494,15 @@ func toStringMap(value any) (map[string]any, bool) {
 	switch v := value.(type) {
 	case map[string]any:
 		return v, true
+	case options.Map:
+		// yaml.v3 propagates the enclosing options.Map type to nested mappings,
+		// so entries under a `tools:` list decode as options.Map instead of
+		// map[string]any (unlike JSON/TOML).
+		out := make(map[string]any, len(v))
+		for key, val := range v {
+			out[string(key)] = val
+		}
+		return out, true
 	case map[any]any:
 		out := make(map[string]any, len(v))
 		for key, val := range v {

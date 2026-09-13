@@ -500,6 +500,12 @@ func toStringMap(value any) (map[string]any, bool) {
 			out[fmt.Sprint(key)] = val
 		}
 		return out, true
+	case options.Map:
+		out := make(map[string]any, len(v))
+		for key, val := range v {
+			out[string(key)] = val
+		}
+		return out, true
 	default:
 		return nil, false
 	}

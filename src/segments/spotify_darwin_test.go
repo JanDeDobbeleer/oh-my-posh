@@ -21,7 +21,7 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 	}{
 		{BatchedCase: "false|||||0", Expected: "", Enabled: false},
 		{BatchedCase: "false||", Expected: "", Error: errors.New("oops"), Enabled: false},
-		{BatchedCase: "true|playing|Candlemass|Spellbreaker|Nightfall|3", Expected: "\ue602 Candlemass - Spellbreaker", Enabled: true},
+		{BatchedCase: "true|playing|Candlemass|Spellbreaker|Nightfall|3", Expected: "\uf04b Candlemass - Spellbreaker", Enabled: true},
 		{BatchedCase: "true|paused|Candlemass|Spellbreaker|Nightfall|3", Expected: "\uf04c Candlemass - Spellbreaker", Enabled: true},
 		{BatchedCase: "true|playing||アコム【公式】||0", Expected: "\ueebb  - アコム【公式】", Enabled: true},
 		{BatchedCase: "true|stopped||||0", Expected: "", Enabled: false},

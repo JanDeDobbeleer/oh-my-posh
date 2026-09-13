@@ -731,32 +731,43 @@ func TestConfiguredLanguageValaPreset(t *testing.T) {
 // TestConfiguredLanguageCustomTools exercises the `tools` option path used by the public
 // "language" segment type, which has no built-in preset and relies entirely on user config.
 func TestConfiguredLanguageCustomTools(t *testing.T) {
-	env := new(mock.Environment)
-	env.On("HasCommand", "mytool").Return(true)
-	env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return("mytool version 1.2.3", nil)
-	env.On("HasFiles", "*.myl").Return(true)
-	env.On("Pwd").Return("/usr/home/project")
-	env.On("Home").Return("/usr/home")
+	regex := `mytool version (?P<version>(?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))`
 
-	props := options.Map{
-		LanguageName:       "mylang",
-		LanguageExtensions: []string{"*.myl"},
-		Tools: []any{
-			map[string]any{
-				"name":       "mytool",
-				"executable": "mytool",
-				"args":       []any{"--version"},
-				"regex":      `mytool version (?P<version>(?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))`,
-			},
+	cases := []struct {
+		Tool any
+		Case string
+	}{
+		{
+			Case: "JSON and TOML decode tool entries as map[string]any",
+			Tool: map[string]any{"name": "mytool", "executable": "mytool", "args": []any{"--version"}, "regex": regex},
+		},
+		{
+			Case: "YAML decodes tool entries as options.Map",
+			Tool: options.Map{"name": "mytool", "executable": "mytool", "args": []any{"--version"}, "regex": regex},
 		},
 	}
 
-	l := &ConfiguredLanguage{}
-	l.Init(props, env)
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("HasCommand", "mytool").Return(true)
+		env.On("RunCommandWithEnv", "mytool", []string(nil), []string{"--version"}).Return("mytool version 1.2.3", nil)
+		env.On("HasFiles", "*.myl").Return(true)
+		env.On("Pwd").Return("/usr/home/project")
+		env.On("Home").Return("/usr/home")
 
-	assert.True(t, l.Enabled())
-	assert.Equal(t, "1.2.3", renderTemplate(env, l.Template(), l))
-	assert.Equal(t, []string{"mytool"}, l.defaultTooling)
+		props := options.Map{
+			LanguageName:       "mylang",
+			LanguageExtensions: []string{"*.myl"},
+			Tools:              []any{tc.Tool},
+		}
+
+		l := &ConfiguredLanguage{}
+		l.Init(props, env)
+
+		assert.True(t, l.Enabled(), tc.Case)
+		assert.Equal(t, "1.2.3", renderTemplate(env, l.Template(), l), tc.Case)
+		assert.Equal(t, []string{"mytool"}, l.defaultTooling, tc.Case)
+	}
 }
 
 func TestConfiguredLanguageZigPreset(t *testing.T) {

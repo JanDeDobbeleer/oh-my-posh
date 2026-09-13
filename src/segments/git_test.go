@@ -1102,26 +1102,53 @@ func TestSetGitStatus(t *testing.T) {
 	}
 }
 
-func TestGetStashContextZeroEntries(t *testing.T) {
-	cases := []struct {
-		StashContent string
-		Expected     int
-	}{
-		{Expected: 0, StashContent: ""},
-		{Expected: 2, StashContent: "1\n2\n"},
-		{Expected: 4, StashContent: "1\n2\n3\n4\n\n"},
+// TestStashNative builds a real repo that will be have one commit with
+// a single file in it. This file will then be modified a number of
+// times and each time that change will be stashed. Then the number of
+// stashes is found and the result is mocked for the git segment. This
+// then calculates the stash count and compares it to the number of
+// stashes that were created.
+func TestStashNative(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found on PATH")
 	}
+
+	cases := []struct {
+		Iterations int
+	}{
+		{Iterations: 0},
+		{Iterations: 2},
+		{Iterations: 4},
+	}
+
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
+		dir := t.TempDir()
+		runRealGit(t, dir, "init", "-q", "-b", "main", ".")
+		runRealGit(t, dir, "config", "user.email", "test@example.com")
+		runRealGit(t, dir, "config", "user.name", "Test")
 
-		g := &Git{
-			mainSCMDir: "",
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), []byte("a\n"), 0o644))
+		runRealGit(t, dir, "add", ".")
+		runRealGit(t, dir, "commit", "-q", "-m", "feat: a commit with decoration")
+
+		for i := 0; i < tc.Iterations; i++ {
+			require.NoError(t, os.WriteFile(filepath.Join(dir, "a.txt"), fmt.Appendf(nil, "%d\n", i), 0o644))
+			runRealGit(t, dir, "stash", "push", "-u", "-m", fmt.Sprintf("Stashed Change %d", i))
 		}
-		g.Init(options.Map{}, env)
 
-		got := g.StashCount()
-		assert.Equal(t, tc.Expected, got)
+		repoRoot := realGitPath(t, dir, "--show-toplevel")
+		hash := strings.TrimSpace(runRealGit(t, dir, "rev-parse", "HEAD"))
+
+		stashBody := runRealGit(t, dir, "rev-list", "--walk-reflogs", "--ignore-missing", "--count", "refs/stash")
+
+		env := new(mock.Environment)
+		env.MockGitCommand(repoRoot, stashBody, "rev-list", "--walk-reflogs", "--ignore-missing", "--count", "refs/stash")
+
+		gExec := &Git{command: GITCOMMAND, repoRootDir: repoRoot, Hash: hash}
+		gExec.Init(options.Map{}, env)
+		got := gExec.StashCount()
+
+		assert.Equal(t, tc.Iterations, got)
 	}
 }
 

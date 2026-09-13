@@ -371,12 +371,14 @@ func (g *Git) StashCount() int {
 		return g.stashCount
 	}
 
-	stashContent := g.fileContent(g.scmDir, "logs/refs/stash")
-	if stashContent == "" {
+	stashCountStr := g.getGitCommandOutput("rev-list", "--walk-reflogs", "--ignore-missing", "--count", "refs/stash")
+	stashCountTrimmed := regex.ReplaceAllString(`[\r\n]*`, stashCountStr, "")
+	stashCountParsed, err := strconv.Atoi(stashCountTrimmed)
+	if err != nil {
 		return 0
 	}
 
-	g.stashCount = strings.Count(stashContent, "\n") + 1 // +1: fileContent() trims
+	g.stashCount = stashCountParsed
 	return g.stashCount
 }
 

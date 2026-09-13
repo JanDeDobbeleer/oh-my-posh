@@ -31,7 +31,7 @@ func TestSpotifyLinux(t *testing.T) {
 			Status: "paused", Artist: "Candlemass", Track: "Spellbreaker", Album: "Nightfall", TrackNumber: "3",
 		},
 		{
-			Case: "playing", ExpectedEnabled: true, Expected: "\ue602 Candlemass - Spellbreaker",
+			Case: "playing", ExpectedEnabled: true, Expected: "\uf04b Candlemass - Spellbreaker",
 			Status: "playing", Artist: "Candlemass", Track: "Spellbreaker", Album: "Nightfall", TrackNumber: "3",
 		},
 		{Case: "ad", ExpectedEnabled: true, Expected: "\ueebb Spotify - Try Premium for free", Status: "playing", Artist: "Spotify", Track: "Try Premium for free"},
@@ -69,7 +69,7 @@ func TestSpotifyWSL(t *testing.T) {
 		{
 			Case:            "playing",
 			Output:          "playing|Spellbreaker|Candlemass|Nightfall|3",
-			Expected:        "\ue602 Candlemass - Spellbreaker",
+			Expected:        "\uf04b Candlemass - Spellbreaker",
 			ExpectedEnabled: true,
 		},
 		{

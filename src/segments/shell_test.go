@@ -31,14 +31,18 @@ func TestUseMappedShellNames(t *testing.T) {
 		{Shell: "zsh", Expected: "zsh"},
 		{Shell: "pwsh", Expected: "PS"},
 		{Shell: "PWSH", Expected: "PS"},
+		{Shell: "nu", Expected: "<p:green>></>"},
+		// an unmapped shell name is not user configuration: its chevrons must
+		// be escaped so the writer cannot parse them as anchors.
+		{Shell: "<red>evil</>", Expected: "<<>red<>>evil<<>/<>>"},
 	}
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Shell").Return(tc.Expected, nil)
+		env.On("Shell").Return(tc.Shell, nil)
 		env.On("Flags").Return(&runtime.Flags{ShellVersion: "1.2.3"})
 
 		props := options.Map{
-			MappedShellNames: map[string]string{"pwsh": "PS"},
+			MappedShellNames: map[string]string{"pwsh": "PS", "nu": "<p:green>></>"},
 		}
 
 		s := &Shell{}
@@ -46,6 +50,6 @@ func TestUseMappedShellNames(t *testing.T) {
 
 		_ = s.Enabled()
 		got := renderTemplate(env, s.Template(), s)
-		assert.Equal(t, tc.Expected, got)
+		assert.Equal(t, tc.Expected, got, tc.Shell)
 	}
 }

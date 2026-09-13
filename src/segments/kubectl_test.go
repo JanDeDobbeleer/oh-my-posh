@@ -133,6 +133,31 @@ func TestKubectlSegment(t *testing.T) {
 			ExpectedEnabled: true,
 		},
 		{
+			// context_aliases/cluster_aliases are user configuration and may
+			// carry <...> anchors, unlike the raw kubeconfig-sourced names.
+			Case:            "kubeconfig context and cluster alias with markup",
+			Template:        testKubectlAllInfoTemplate,
+			ParseKubeConfig: true,
+			Files:           testKubeConfigFiles,
+			ContextAliases:  map[string]string{"aaa": "<p:blue>ctx</>"},
+			ClusterAliases:  map[string]string{"ddd": "<p:green>cluster</>"},
+			ExpectedString:  "<p:blue>ctx</> :: bbb :: ccc :: <p:green>cluster</>",
+			ExpectedEnabled: true,
+		},
+		{
+			// an unaliased context/cluster name is not user configuration: its
+			// chevrons must be escaped so the writer cannot parse them as anchors.
+			Case:            "kubectl context with anchor-shaped text is escaped",
+			Template:        testKubectlAllInfoTemplate,
+			KubectlExists:   true,
+			Context:         "<red>pwned",
+			Namespace:       "bbb",
+			UserName:        "ccc",
+			Cluster:         "ddd",
+			ExpectedString:  "<<>red<>>pwned :: bbb :: ccc :: ddd",
+			ExpectedEnabled: true,
+		},
+		{
 			Case:            "kubeconfig multiple current marker first",
 			Template:        testKubectlAllInfoTemplate,
 			ParseKubeConfig: true,

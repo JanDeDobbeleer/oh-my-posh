@@ -1,11 +1,11 @@
 lockfile_version: '1'
-generated_at: '2026-08-26T05:57:04.782415+00:00'
+generated_at: '2026-09-11T11:55:48.879336+00:00'
 apm_version: 0.26.0
 dependencies:
 - repo_url: ast-grep/agent-skill
   name: ast-grep
   host: github.com
-  resolved_commit: 6b668aa526afdc623c1a9ed1d6ae920e04a717ad
+  resolved_commit: affe2b9b7c608f4e354d7e83d0583ed35e845650
   version: unknown
   virtual_path: ast-grep/skills/ast-grep
   is_virtual: true
@@ -18,11 +18,11 @@ dependencies:
   - .claude/skills/ast-grep/SKILL.md
   - .claude/skills/ast-grep/references/rule_reference.md
   deployed_file_hashes:
-    .agents/skills/ast-grep/SKILL.md: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+    .agents/skills/ast-grep/SKILL.md: sha256:a18b68ab555758b85915937cf252d70b0261f930a07ce52095e7cafbbd304782
     .agents/skills/ast-grep/references/rule_reference.md: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
-    .claude/skills/ast-grep/SKILL.md: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+    .claude/skills/ast-grep/SKILL.md: sha256:a18b68ab555758b85915937cf252d70b0261f930a07ce52095e7cafbbd304782
     .claude/skills/ast-grep/references/rule_reference.md: sha256:9f6d2ba2f2dbde059f61f426c262abe943f548984496962c43c7cc6e44813ad6
-  content_hash: sha256:e812630c21ec2215bd0abfe33835ae382059112e990411b588b84bb24c4f0a4f
+  content_hash: sha256:cc2ab26ddaecb8c15db65514dd2db0f74aaea0c489a53c219411dcc0c9a1079a
 - repo_url: jandedobbeleer/agentic
   name: agentic-golang
   host: github.com
@@ -30,6 +30,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/golang.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/golang.md
   - .github/instructions/golang.instructions.md
@@ -44,6 +45,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/markdown.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/markdown.md
   - .github/instructions/markdown.instructions.md
@@ -58,6 +60,7 @@ dependencies:
   version: 1.0.0
   virtual_path: instructions/powershell.instructions.md
   is_virtual: true
+  package_type: apm_package
   deployed_files:
   - .claude/rules/powershell.md
   - .github/instructions/powershell.instructions.md
@@ -284,7 +287,7 @@ deployments:
   owners:
   - ast-grep/agent-skill/ast-grep/skills/ast-grep
   active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
-  content_hash: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+  content_hash: sha256:a18b68ab555758b85915937cf252d70b0261f930a07ce52095e7cafbbd304782
 - kind: project-relative
   target: claude
   value: .claude/skills/ast-grep/references/rule_reference.md
@@ -581,7 +584,7 @@ deployments:
   owners:
   - ast-grep/agent-skill/ast-grep/skills/ast-grep
   active_owner: ast-grep/agent-skill/ast-grep/skills/ast-grep
-  content_hash: sha256:1d356580b6d3af4feb5722e820b1c34041f6e90162c063f1c63fce3f21c72543
+  content_hash: sha256:a18b68ab555758b85915937cf252d70b0261f930a07ce52095e7cafbbd304782
 - kind: project-relative
   target: copilot
   value: .agents/skills/ast-grep/references/rule_reference.md

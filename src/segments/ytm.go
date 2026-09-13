@@ -1,15 +1,13 @@
 package segments
 
 import (
-	"encoding/json"
 	"errors"
 	httplib "net/http"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
-	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 const (
@@ -27,12 +25,7 @@ func (y *Ytm) Template() string {
 }
 
 func (y *Ytm) Enabled() bool {
-	err := y.setStatus()
-	if err != nil {
-		log.Error(err)
-	}
-
-	return err == nil
+	return y.Enable(y.setStatus)
 }
 
 type ytmdaStatusResponse struct {
@@ -60,22 +53,19 @@ func (y *Ytm) setStatus() error {
 	switch status.Player.TrackState {
 	case 1, 2: // playing or buffering
 		y.Status = playing
-		y.Icon = y.options.Markup(PlayingIcon, "\uf04b ")
 	case -1: // stopped
 		y.Status = stopped
-		y.Icon = y.options.Markup(StoppedIcon, "\uf04d ")
 	default: // paused
 		y.Status = paused
-		y.Icon = y.options.Markup(PausedIcon, "\uf04c ")
 	}
 
 	if status.Player.AdPlaying {
-		ad := y.options.Markup(AdIcon, "\ueebb ")
-		y.Icon = template.JoinMarkup(ad, y.Icon)
+		y.Status = ad
 	}
 
 	y.Artist = status.Video.Author
 	y.Track = status.Video.Title
+	y.resolveIcon(y.options)
 
 	return nil
 }
@@ -86,13 +76,11 @@ func (y *Ytm) requestStatus(token string) (*ytmdaStatusResponse, error) {
 		request.Header.Set("Content-Type", "application/json")
 	}
 
-	httpTimeout := y.options.Int(options.HTTPTimeout, 5000)
-	response, err := y.env.HTTPRequest(ytmdaStatusURL, nil, httpTimeout, setHeaders)
-	if err != nil {
-		return nil, err
+	request := &http.Request{
+		Env:         y.env,
+		HTTPTimeout: y.options.Int(options.HTTPTimeout, 5000),
 	}
 
-	var result ytmdaStatusResponse
-	err = json.Unmarshal(response, &result)
-	return &result, err
+	status, err := request.Do[ytmdaStatusResponse](ytmdaStatusURL, nil, setHeaders)
+	return &status, err
 }

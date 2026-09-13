@@ -24,7 +24,7 @@ func TestSpotifyWindowsSMTC(t *testing.T) {
 		{
 			Case:            "playing",
 			Info:            &runtime.MediaInfo{Status: "playing", Title: "Spellbreaker", Artist: "Candlemass", Album: "Nightfall", TrackNumber: 3},
-			ExpectedString:  " Candlemass - Spellbreaker",
+			ExpectedString:  " Candlemass - Spellbreaker",
 			ExpectedEnabled: true,
 		},
 		{
@@ -52,7 +52,7 @@ func TestSpotifyWindowsSMTC(t *testing.T) {
 		{
 			Case:            "track with parentheses and quotes",
 			Info:            &runtime.MediaInfo{Status: "playing", Title: `Collapsing (feat. Björn "Speed" Strid)`, Artist: "Demon Hunter", Album: "The World Is a Thorn", TrackNumber: 9},
-			ExpectedString:  " Demon Hunter - Collapsing (feat. Björn \"Speed\" Strid)",
+			ExpectedString:  " Demon Hunter - Collapsing (feat. Björn \"Speed\" Strid)",
 			ExpectedEnabled: true,
 		},
 		{
@@ -87,7 +87,7 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 	}{
 		{
 			Case:            "playing",
-			ExpectedString:  " Sarah, the Illstrumentalist - Snow in Stockholm",
+			ExpectedString:  " Sarah, the Illstrumentalist - Snow in Stockholm",
 			ExpectedEnabled: true,
 			Title:           "Spotify - Snow in Stockholm • Sarah, the Illstrumentalist",
 		},

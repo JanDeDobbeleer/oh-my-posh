@@ -1,49 +1,11 @@
 package segments
 
-import (
-	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-	"github.com/jandedobbeleer/oh-my-posh/src/template"
-)
-
 type Spotify struct {
 	Base
 
 	MusicPlayer
 }
 
-type MusicPlayer struct {
-	Status string
-	Artist string
-	Track  string
-	Icon   template.Markup
-}
-
-const (
-	PlayingIcon options.Option = "playing_icon"
-	PausedIcon  options.Option = "paused_icon"
-	StoppedIcon options.Option = "stopped_icon"
-	AdIcon      options.Option = "ad_icon"
-
-	playing = "playing"
-	stopped = "stopped"
-	paused  = "paused"
-	ad      = "ad"
-)
-
 func (s *Spotify) Template() string {
 	return " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} "
-}
-
-func (s *Spotify) resolveIcon() {
-	switch s.Status {
-	case stopped:
-		// in this case, no artist or track info
-		s.Icon = s.options.Markup(StoppedIcon, " ")
-	case paused:
-		s.Icon = s.options.Markup(PausedIcon, " ")
-	case playing:
-		s.Icon = s.options.Markup(PlayingIcon, " ")
-	case ad:
-		s.Icon = s.options.Markup(AdIcon, " ")
-	}
 }

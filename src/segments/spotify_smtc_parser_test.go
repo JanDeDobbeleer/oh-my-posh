@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Expected strings carry the default Nerd Font icons resolveIcon assigns (playing , paused , ad ).
+// Expected strings carry the default Nerd Font icons resolveIcon assigns (playing , paused , ad ).
 func TestParseSMTCLineAndApply(t *testing.T) {
 	cases := []struct {
 		Case            string
@@ -24,7 +24,7 @@ func TestParseSMTCLineAndApply(t *testing.T) {
 		{
 			Case:            "playing",
 			Output:          "playing|Spellbreaker|Candlemass|Nightfall|3",
-			ExpectedString:  " Candlemass - Spellbreaker",
+			ExpectedString:  " Candlemass - Spellbreaker",
 			ExpectedStatus:  playing,
 			ExpectedEnabled: true,
 			ExpectedParseOK: true,
@@ -48,7 +48,7 @@ func TestParseSMTCLineAndApply(t *testing.T) {
 		{
 			Case:            "track with parentheses and quotes",
 			Output:          `playing|Collapsing (feat. Björn "Speed" Strid)|Demon Hunter|The World Is a Thorn|9`,
-			ExpectedString:  " Demon Hunter - Collapsing (feat. Björn \"Speed\" Strid)",
+			ExpectedString:  " Demon Hunter - Collapsing (feat. Björn \"Speed\" Strid)",
 			ExpectedStatus:  playing,
 			ExpectedEnabled: true,
 			ExpectedParseOK: true,

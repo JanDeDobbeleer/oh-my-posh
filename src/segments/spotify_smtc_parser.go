@@ -29,6 +29,6 @@ func (s *Spotify) applyMediaInfo(info *runtime.MediaInfo) bool {
 		s.Status = ad
 	}
 
-	s.resolveIcon()
+	s.resolveIcon(s.options)
 	return true
 }

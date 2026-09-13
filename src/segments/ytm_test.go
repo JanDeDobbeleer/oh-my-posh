@@ -77,7 +77,7 @@ func TestYTM(t *testing.T) {
 			HasToken:        true,
 			ExpectedEnabled: true,
 			JSONResponse:    `{"video": {"author": "Author", "title": "Title"}, "player": {"trackState": 1, "adPlaying": true}}`,
-			ExpectedString:  "Ad Playing Author - Title",
+			ExpectedString:  "Ad Author - Title",
 		},
 	}
 	for _, tc := range cases {

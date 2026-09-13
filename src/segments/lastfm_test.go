@@ -26,13 +26,13 @@ func TestLFMSegmentSingle(t *testing.T) {
 		{
 			Case:            "All Defaults",
 			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"#text":"C.Gambino"},"name":"Automatic","@attr":{"nowplaying":"true"}}]}}`,
-			ExpectedString:  "\uE602 C.Gambino - Automatic",
+			ExpectedString:  "\uf04b C.Gambino - Automatic",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:            "Custom Template",
 			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"#text":"C.Gambino"},"name":"Automatic","@attr":{"nowplaying":"true"}}]}}`,
-			ExpectedString:  "\uE602 C.Gambino - Automatic",
+			ExpectedString:  "\uf04b C.Gambino - Automatic",
 			ExpectedEnabled: true,
 			Template:        "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Full }}{{ end }}",
 		},

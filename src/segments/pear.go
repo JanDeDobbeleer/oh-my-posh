@@ -1,14 +1,13 @@
 package segments
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	httplib "net/http"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/cli/auth"
-	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
@@ -28,12 +27,7 @@ func (p *Pear) Template() string {
 }
 
 func (p *Pear) Enabled() bool {
-	err := p.setStatus()
-	if err != nil {
-		log.Error(err)
-	}
-
-	return err == nil
+	return p.Enable(p.setStatus)
 }
 
 type pearSongInfo struct {
@@ -54,15 +48,14 @@ func (p *Pear) setStatus() error {
 	}
 
 	p.Status = playing
-	p.Icon = p.options.Markup(PlayingIcon, "\uf04b ")
 
 	if status.IsPaused {
 		p.Status = paused
-		p.Icon = p.options.Markup(PausedIcon, "\uf04c ")
 	}
 
 	p.Artist = status.Artist
 	p.Track = status.Title
+	p.resolveIcon(p.options)
 
 	return nil
 }
@@ -75,13 +68,11 @@ func (p *Pear) requestSongInfo(token string) (*pearSongInfo, error) {
 		request.Header.Set("Authorization", "Bearer "+token)
 	}
 
-	httpTimeout := p.options.Int(options.HTTPTimeout, 5000)
-	response, err := p.env.HTTPRequest(url, nil, httpTimeout, setHeaders)
-	if err != nil {
-		return nil, err
+	request := &http.Request{
+		Env:         p.env,
+		HTTPTimeout: p.options.Int(options.HTTPTimeout, 5000),
 	}
 
-	var result pearSongInfo
-	err = json.Unmarshal(response, &result)
-	return &result, err
+	status, err := request.Do[pearSongInfo](url, nil, setHeaders)
+	return &status, err
 }

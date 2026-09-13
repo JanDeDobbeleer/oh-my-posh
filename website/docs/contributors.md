@@ -531,6 +531,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="http://peng.ly"><img src="https://avatars.githubusercontent.com/u/23277273?v=4?s=100" width="100px;" alt="Iain"/><br /><sub><b>Iain</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=NotAFlightRisk" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://hachyderm.io/@thelocehiliosan"><img src="https://avatars.githubusercontent.com/u/1503609?v=4?s=100" width="100px;" alt="Tim Byrne"/><br /><sub><b>Tim Byrne</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=TheLocehiliosan" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://stuff.interfree.ca"><img src="https://avatars.githubusercontent.com/u/32251258?v=4?s=100" width="100px;" alt="Samuel Proulx"/><br /><sub><b>Samuel Proulx</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=fastfinge" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.tanbirramim.com"><img src="https://avatars.githubusercontent.com/u/96797470?v=4?s=100" width="100px;" alt="Tanbir Hossain Ramim"/><br /><sub><b>Tanbir Hossain Ramim</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=TanbirRamim" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

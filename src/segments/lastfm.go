@@ -1,23 +1,19 @@
 package segments
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type LastFM struct {
 	Base
 
-	Artist string
-	Track  string
-	Full   string
-	Icon   template.Markup
-	Status string
+	MusicPlayer
+
+	Full string
 }
 
 const (
@@ -52,14 +48,7 @@ type lfmDataResponse struct {
 }
 
 func (d *LastFM) Enabled() bool {
-	err := d.setStatus()
-
-	if err != nil {
-		log.Error(err)
-		return false
-	}
-
-	return true
+	return d.Enable(d.setStatus)
 }
 
 func (d *LastFM) Template() string {
@@ -67,25 +56,18 @@ func (d *LastFM) Template() string {
 }
 
 func (d *LastFM) getResult() (*lfmDataResponse, error) {
-	response := new(lfmDataResponse)
-
 	apikey := d.options.Template(APIKey, ".", d)
 	username := d.options.Template(Username, ".", d)
-	httpTimeout := d.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout)
 
 	url := fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
 
-	body, err := d.env.HTTPRequest(url, nil, httpTimeout)
-	if err != nil {
-		return new(lfmDataResponse), err
+	request := &http.Request{
+		Env:         d.env,
+		HTTPTimeout: d.options.Int(options.HTTPTimeout, options.DefaultHTTPTimeout),
 	}
 
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		return new(lfmDataResponse), err
-	}
-
-	return response, nil
+	response, err := request.Do[lfmDataResponse](url, nil)
+	return &response, err
 }
 
 func (d *LastFM) setStatus() error {
@@ -107,12 +89,12 @@ func (d *LastFM) setStatus() error {
 	isPlaying := track.Info != nil && track.Info.IsPlaying != nil && *track.Info.IsPlaying == "true"
 
 	if isPlaying {
-		d.Icon = d.options.Markup(PlayingIcon, "\uE602 ")
-		d.Status = "playing"
+		d.Status = playing
 	} else {
-		d.Icon = d.options.Markup(StoppedIcon, "\uF04D ")
-		d.Status = "stopped"
+		d.Status = stopped
 	}
+
+	d.resolveIcon(d.options)
 
 	return nil
 }

@@ -35,6 +35,6 @@ func (s *Spotify) parseWebTitle(windowTitle string) bool {
 	s.Track = before
 	s.Artist = after
 	s.Status = playing
-	s.resolveIcon()
+	s.resolveIcon(s.options)
 	return true
 }

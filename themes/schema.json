@@ -2765,7 +2765,7 @@
                     "type": "string",
                     "title": "Playing Icon",
                     "description": "Text/icon to show when playing.",
-                    "default": "\ue602 "
+                    "default": "\uf04b "
                   },
                   "stopped_icon": {
                     "type": "string",
@@ -4544,7 +4544,7 @@
                     "type": "string",
                     "title": "Playing Icon",
                     "description": "Text/icon to show when playing.",
-                    "default": "\ue602 "
+                    "default": "\uf04b "
                   },
                   "paused_icon": {
                     "type": "string",

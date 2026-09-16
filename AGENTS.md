@@ -149,8 +149,8 @@ schema file.
 
 Agent skills live in `.agents/skills/` - the vendor-neutral Agent Skills location that Copilot,
 Codex, Claude Code, and most other agents discover automatically. Most skills are installed via
-APM (see [CONTRIBUTING.md](CONTRIBUTING.md)) and gitignored; the repository embeds three of its
-own: `segment-create`, `segment-docs`, and `project-knowledge`.
+APM (see [CONTRIBUTING.md](CONTRIBUTING.md)) and gitignored; the repository embeds four of its
+own: `architecture`, `segment-create`, `segment-docs`, and `project-knowledge`.
 
 ## Project Knowledge
 

@@ -481,7 +481,7 @@ func (segment *Segment) Text() string {
 		return segment.text
 	}
 
-	return segment.writer.Text()
+	return segment.writer.Text().String()
 }
 
 func (segment *Segment) SetText(value string) {

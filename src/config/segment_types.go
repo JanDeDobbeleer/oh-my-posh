@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 // SegmentType the type of segment, for more information, see the constants
@@ -20,7 +21,7 @@ type SegmentWriter interface {
 	Template() string
 	SetText(text string)
 	SetIndex(index int)
-	Text() string
+	Text() template.Markup
 	Init(props options.Provider, env runtime.Environment)
 	CacheKey() (string, bool)
 }

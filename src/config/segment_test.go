@@ -678,7 +678,7 @@ func (w *fallbackWriter) Activation() runtime.Activation                 { retur
 func (w *fallbackWriter) Template() string                               { return w.template }
 func (w *fallbackWriter) SetText(text string)                            { w.text = text }
 func (w *fallbackWriter) SetIndex(_ int)                                 {}
-func (w *fallbackWriter) Text() string                                   { return w.text }
+func (w *fallbackWriter) Text() template.Markup                          { return template.Markup(w.text) }
 func (w *fallbackWriter) Init(_ options.Provider, _ runtime.Environment) {}
 func (w *fallbackWriter) CacheKey() (string, bool)                       { return "", false }
 

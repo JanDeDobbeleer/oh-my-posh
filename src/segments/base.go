@@ -15,15 +15,15 @@ type Base struct {
 
 type Segment struct {
 	// Text is the fully rendered markup (anchors intact), stored for
-	// cross-segment references like {{ .Segments.Git.Segment.Text }} in
-	// transient and tooltip templates. It must be Markup or a re-render
-	// escapes its anchors back into literal text.
+	// cross-segment references like {{ .Segments.Git.Text }} in transient and
+	// tooltip templates. It must be Markup or a re-render escapes its anchors
+	// back into literal text.
 	Text  template.Markup
 	Index int
 }
 
-func (b *Base) Text() string {
-	return b.Segment.Text.String()
+func (b *Base) Text() template.Markup {
+	return b.Segment.Text
 }
 
 func (b *Base) SetText(text string) {

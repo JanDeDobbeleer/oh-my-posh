@@ -150,6 +150,31 @@ func ReviveMarkup(value any) any {
 	}
 }
 
+// TrustMarkup walks a generically decoded value and promotes every string to
+// Markup, in place for maps and slices. It marks user-authored configuration
+// data (the var section) as trusted; never call it with data read from the
+// filesystem, a VCS, or the network.
+func TrustMarkup(value any) any {
+	switch typed := value.(type) {
+	case string:
+		return Markup(typed)
+	case map[string]any:
+		for key, nested := range typed {
+			typed[key] = TrustMarkup(nested)
+		}
+
+		return typed
+	case []any:
+		for i, nested := range typed {
+			typed[i] = TrustMarkup(nested)
+		}
+
+		return typed
+	default:
+		return value
+	}
+}
+
 func taggedMarkup(object map[string]any) (Markup, bool) {
 	if len(object) != 1 {
 		return "", false

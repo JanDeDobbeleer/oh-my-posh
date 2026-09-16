@@ -96,6 +96,12 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 
 	overlayEnvData(tmpl)
 
+	// Var is user configuration (or a hand-written data file), so its strings
+	// are trusted markup like a template body.
+	for key, value := range tmpl.Var {
+		tmpl.Var[key] = TrustMarkup(value)
+	}
+
 	// Alias mapping must apply to a data-provided value exactly as it does to
 	// a live one, so it runs after the overlay, on whichever value won.
 	tmpl.Shell = aliases.GetShellName(tmpl.Shell)

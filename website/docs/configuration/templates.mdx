@@ -42,10 +42,10 @@ it with `.$` to reference it directly.
 
 ### Segment
 
-| Name             | Type     | Description                               |
-| ---------------- | -------- | ----------------------------------------- |
-| `.Segment.Index` | `int`    | the current segment's index (as rendered) |
-| `.Segment.Text`  | `string` | the segment's rendered text               |
+| Name             | Type     | Description                                 |
+| ---------------- | -------- | ------------------------------------------- |
+| `.Segment.Index` | `int`    | the current segment's index (as rendered)   |
+| `.Segment.Text`  | `Markup` | the segment's rendered text, anchors intact |
 
 ## Environment variables
 
@@ -121,9 +121,9 @@ $env.SET_POSHCONTEXT = {
 
 ## Config variables
 
-| Name           | Type  | Description                                              |
-| -------------- | ----- | -------------------------------------------------------- |
-| `.Var.VarName` | `any` | Any config variable where `VarName` is the variable name |
+| Name           | Type  | Description                                                                              |
+| -------------- | ----- | ---------------------------------------------------------------------------------------- |
+| `.Var.VarName` | `any` | Any config variable; string values are trusted markup, so color and style anchors render |
 
 ### Example
 

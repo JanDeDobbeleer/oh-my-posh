@@ -340,5 +340,5 @@ func TestPlasticInitializesBaseSegment(t *testing.T) {
 	p.SetText("main")
 	p.SetIndex(1)
 
-	assert.Equal(t, "main", p.Text())
+	assert.Equal(t, "main", p.Text().String())
 }

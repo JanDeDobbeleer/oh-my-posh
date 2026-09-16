@@ -364,6 +364,55 @@ func TestReviveMarkup(t *testing.T) {
 	assert.Equal(t, "<b><<>x<>></>", text)
 }
 
+// TrustMarkup marks the var section (user configuration, or a hand-written
+// data file) as trusted the same way a template body is: every string
+// promoted to Markup, everything else left as the plain value it decoded to.
+func TestTrustMarkup(t *testing.T) {
+	cases := []struct {
+		Value    any
+		Expected any
+		Case     string
+	}{
+		{
+			Case:     "plain string is promoted",
+			Value:    "<red>x</>",
+			Expected: RawMarkup("<red>x</>"),
+		},
+		{
+			Case: "nested map promotes only its strings",
+			Value: map[string]any{
+				"Text":    "<b>hi</>",
+				"Count":   3,
+				"Enabled": true,
+			},
+			Expected: map[string]any{
+				"Text":    RawMarkup("<b>hi</>"),
+				"Count":   3,
+				"Enabled": true,
+			},
+		},
+		{
+			Case:     "slice of strings is promoted element by element",
+			Value:    []any{"<red>a</>", "<blue>b</>"},
+			Expected: []any{RawMarkup("<red>a</>"), RawMarkup("<blue>b</>")},
+		},
+		{
+			Case:     "a value already markup is unchanged",
+			Value:    RawMarkup("<red>x</>"),
+			Expected: RawMarkup("<red>x</>"),
+		},
+		{
+			Case:     "nil is unchanged",
+			Value:    nil,
+			Expected: nil,
+		},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, TrustMarkup(tc.Value), tc.Case)
+	}
+}
+
 // Data that becomes template source (folder names in the styled path) must
 // come out of the untrusted renderer exactly as it went in: no action may
 // run, and chevrons stay literal.

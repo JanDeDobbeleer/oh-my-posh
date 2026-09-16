@@ -64,7 +64,7 @@ func TestSegmentCache(t *testing.T) {
 		// MapSegmentWithWriter, not replace it: a replacement would drop the
 		// writer's runtime state (env, options) and panic on first use.
 		assert.Same(t, initializedWriter, newSegment.writer, "restore should reuse the initialized writer")
-		assert.Equal(t, "Hello, Cache!", newSegment.writer.Text(), "restored text should match")
+		assert.Equal(t, "Hello, Cache!", newSegment.writer.Text().String(), "restored text should match")
 	})
 
 	t.Run("cached snapshot is immutable", func(t *testing.T) {
@@ -79,7 +79,7 @@ func TestSegmentCache(t *testing.T) {
 		newSegment := newCachedTextSegment(env, "immutable_segment", Folder)
 
 		assert.True(t, newSegment.restoreCache(), "cache should be restored")
-		assert.Equal(t, "original", newSegment.writer.Text(), "cache should hold the state at cache time")
+		assert.Equal(t, "original", newSegment.writer.Text().String(), "cache should hold the state at cache time")
 	})
 
 	t.Run("legacy JSON entry is removed", func(t *testing.T) {

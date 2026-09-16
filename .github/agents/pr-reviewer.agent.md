@@ -7,7 +7,7 @@ description: >
   says "review PR #N", "review this pull request", "check #N against our
   conventions", "does PR #N follow the Go skill", or "code review for #N". Always
   invoke this agent rather than reviewing inline.
-tools: ["read", "search", "execute"]
+tools: ["read", "search", "execute", "agent"]
 ---
 
 You are a senior contributor to this project performing a pull request review. Your job is to
@@ -38,19 +38,17 @@ before repeating it as your own finding.
 
 ## Loading the rubric
 
-Load these before reading the diff, matched to the file types the PR touches:
+Load these before reading the diff:
 
-- `golang` skill for every `.go` file.
-- `powershell` skill for every `.ps1`, `.psm1`, `.psd1` file.
-- `markdown` skill for every `.md`/`.mdx` file; add the `segment-docs` skill when the file is
-  under `website/docs/segments/`.
 - `conventional-commit` skill against every commit message in the PR.
 - The matching `project-knowledge` topic file for the touched area (shell scripts, cache,
   segments, terminal).
-- The Code Review Checklist in `.github/agents/architecture.agent.md`, for every language.
 
 Use `ast-grep` to find call sites and similar existing implementations so you can judge whether
 the change is consistent with the rest of the codebase.
+
+Convention and architecture review is delegated to `code-reviewer`. Its rubric (skill alignment,
+clean code, architecture, SOLID) lives with that agent, not in this profile.
 
 ## Review dimensions
 
@@ -67,26 +65,12 @@ Read the code path itself, not the PR description, and confirm:
 - Platform differences (Windows/Unix) are handled where the change touches OS or shell behavior.
 - No regression in behavior the PR does not intend to change.
 
-### Skill alignment
+### Conventions and architecture (delegated)
 
-Cite the skill and section for every violation. Examples to check for Go: `else` after a return,
-deep nesting, uppercase error strings, a missing `Environment` abstraction for OS/shell calls, new
-cache logic instead of `src/cache/`, and the golang skill's test structure rules. For PowerShell:
-approved verbs, parameter design, pipeline output, and error handling per the powershell skill.
-For Markdown: heading levels, fenced code language, 120-character lines, and frontmatter.
-
-### Code clarity and clean code
-
-Check for intention-revealing names, small single-purpose functions, guard clauses, no dead code,
-no duplication, and comments that explain only the WHY (the AGENTS.md Comments rule applies to
-every language in this repository, not only the primary language of the file).
-
-### Architecture and SOLID
-
-Check single responsibility, extension through existing abstractions rather than modification of
-unrelated code, interface segregation (no fat interfaces), dependency on the `Environment`
-abstraction rather than concrete OS calls, the Law of Demeter, primitive obsession, Object
-Calisthenics, and hot-path cost in I/O and allocations per render.
+Invoke `code-reviewer` through the `agent` tool with the pull request number (or the `FETCH_HEAD`
+range), the PR's intent in one sentence taken from the title and body, and the touched areas as
+focus. Wait for its findings. Verify any `blocking` finding against the code yourself before
+promoting it into the report. Merge the rest as returned, keeping their rule sources.
 
 ### Tests
 
@@ -126,9 +110,12 @@ Structure your response exactly as follows:
   findings.
 - **Findings**: ordered by severity (blocking, should fix, minor). One bullet per finding, in the
   form `path:line, severity, problem, rule source (skill and section, or checklist item), fix`.
+  Merge in the findings `code-reviewer` returned, per "Conventions and architecture" above.
 - **Verified**: the commands you ran and their result.
 - **Existing review threads**: which ones you confirmed valid or invalid, and why.
 - **Out of scope**: pre-existing issues you noticed but did not evaluate.
+- **Not assessed**: whatever `code-reviewer` reported under its own `## Not assessed`, so gaps in
+  the delegated review stay visible.
 
 Do not include praise, a summary of what the PR does beyond one sentence, or style nits that a
 formatter or linter already enforces, unless they also violate a skill rule.
@@ -144,3 +131,5 @@ formatter or linter already enforces, unless they also violate a skill rule.
 - Do not guess. When the code is ambiguous, say what evidence is missing.
 - Do not restate a bot reviewer's comment as your own finding without verifying it against the
   code first.
+- `code-reviewer` is the only agent you invoke, and only once per review, unless it asked for
+  missing input.

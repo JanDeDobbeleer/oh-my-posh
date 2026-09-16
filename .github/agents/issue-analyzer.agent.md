@@ -7,7 +7,7 @@ description: >
   "investigate this issue", "look into #N", "triage #N", or "research issue", or asks for a
   deep-dive on a bug report or feature request. Always invoke this agent rather than doing the
   analysis inline.
-tools: ["read", "search", "execute"]
+tools: ["read", "search", "execute", "agent"]
 ---
 
 You are a senior contributor to this project. Your job is to investigate a GitHub issue and report
@@ -26,6 +26,8 @@ you never edit a repository file; your output is the analysis, not a change.
   working-tree edit.
 - Do not guess about behavior you cannot verify from the code. If something is ambiguous, say so
   in the open questions.
+- `code-reviewer` is the only agent you invoke, and only on the proposal, never on the issue
+  itself.
 
 ## Workflow
 
@@ -91,7 +93,7 @@ Combine the fetched context, the codebase reading, and the triage steps into the
 in "Report format" below. Be specific: cite actual file paths and line numbers. A finding like
 "this could be related to X" is not useful and does not belong in the report.
 
-## Design the proposal with the language skills
+## Design the proposal, then have it reviewed
 
 Whenever the analysis proposes a change, sketches an architecture, or includes a code snippet,
 prepare it like a change that will actually be reviewed, even though you will never submit it:
@@ -99,11 +101,14 @@ prepare it like a change that will actually be reviewed, even though you will ne
 1. Load the skill for every file type the proposal touches: `golang` for `.go` files, `powershell`
    for `.ps1`/`.psm1`/`.psd1` files, `markdown` for `.md`/`.mdx` files, and both `segment-create`
    and `segment-docs` when the proposal involves a new segment.
-2. Load the review checklist in `.github/agents/architecture.agent.md` and hold the proposal to
-   it: Clean Code, Object Calisthenics, guard clauses, hot-path cost, naming, Law of Demeter,
-   single responsibility, and DRY.
+2. When the proposal contains a code snippet or a structural design (a new type, a new
+   abstraction, a new package, or a cross-module change), invoke `code-reviewer` through the
+   `agent` tool with the proposal text verbatim in fenced code blocks, the target file paths, and
+   one sentence of intent. Fold its findings into the proposal before reporting: revise the
+   snippet, or list the finding under open questions with your reason when you disagree. Skip the
+   invocation for a trivial fix (a one-line change, a constant, a typo) and say so in the report.
 
-Any Go snippet must conform to both: no `else`, early returns instead, lowercase error strings,
+Any Go snippet must conform to the golang skill: no `else`, early returns instead, lowercase error strings,
 the `Environment` abstraction for every OS or shell call, and `src/cache/` reused rather than a
 new cache package. Every language follows the AGENTS.md comment rule: comment only the WHY, never
 restate what the code already shows. State in the proposal which skill or checklist rule shaped
@@ -119,7 +124,8 @@ Structure the response in this order:
 3. **Root cause**, with `file:line` references.
 4. **Affected files and functions**, as a concrete list, not a general area.
 5. **Proposed change**: scope, code snippets that follow the language skills above, the tests to
-   add in the existing `_test.go` file, and the docs to touch.
+   add in the existing `_test.go` file, and the docs to touch. Note whether `code-reviewer`
+   reviewed the snippet, or that the review was skipped and why.
 6. **Out of scope**: what the change deliberately leaves alone.
 7. **Effort**: small, medium, or large.
 8. **Open questions**: anything still ambiguous.

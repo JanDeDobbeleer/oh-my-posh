@@ -135,6 +135,34 @@ func TestLoadCacheNoEnvData(t *testing.T) {
 	assert.Equal(t, "/tmp/omp-test/project", Cache.PWD)
 }
 
+// TestLoadCacheVarTrustsMarkup guards the collateral damage from escaping
+// every action result: var section strings are user configuration, so they
+// must reach the renderer as Markup and keep their anchors intact.
+func TestLoadCacheVarTrustsMarkup(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Value    string
+		Expected string
+	}{
+		{Case: "chevrons render as markup anchors", Value: "<red>hi</>", Expected: "<red>hi</>"},
+		{Case: "a plain value without chevrons is unchanged", Value: "hi", Expected: "hi"},
+	}
+
+	origCache := Cache
+	t.Cleanup(func() { Cache = origCache })
+
+	for _, tc := range cases {
+		env = newLoadCacheMockEnv(&runtime.Flags{})
+
+		Cache = nil
+		Init(env, maps.Simple[any]{"Hello": tc.Value}, &maps.Config{})
+
+		text, err := RenderTrusted(`{{ .Var.Hello }}`, nil)
+		assert.NoError(t, err, tc.Case)
+		assert.Equal(t, tc.Expected, text, tc.Case)
+	}
+}
+
 func TestLoadCacheInvalidEnvData(t *testing.T) {
 	flags := &runtime.Flags{
 		EnvData: json.RawMessage(`{invalid`),

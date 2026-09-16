@@ -3,9 +3,10 @@ config:
     line_length: 120
     code_blocks: false
   MD024: false
+  MD041:
+    front_matter_title: '^\s*(title|name)\s*[:=]'
 gitignore: true
 ignores:
   - node_modules/
-  - .github/agents/*.agent.md
   - .github/PULL_REQUEST_TEMPLATE.md
   - .agents/skills/ast-grep

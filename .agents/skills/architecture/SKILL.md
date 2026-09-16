@@ -1,10 +1,12 @@
 ---
-name: Architecture and Design
-description: >-
-  Cross-language architectural guidance for designing scalable, maintainable,
-  and performant code. Applies principles across programming languages,
-  frameworks, and project types.
+name: architecture
+description: >
+  Cross-language architecture and clean-code principles for this project: Clean Code, Object
+  Calisthenics, SOLID, guard clauses, hot-path cost, and the code review checklist. Apply when
+  designing a change, writing code in any language, or reviewing code for clarity and structure.
 ---
+
+# Architecture and Design
 
 ## Overview
 
@@ -150,6 +152,15 @@ When reviewing code:
 - **Responsibility:** Verify each class/function has a single reason to
   change
 - **Duplication:** Flag repeated logic as DRY violations
+- **Single responsibility:** Confirm each type or function has one reason to change
+- **Open/closed:** Confirm new behavior extends through existing abstractions, such as
+  `Environment` and `SegmentWriter`, instead of editing unrelated code
+- **Liskov substitution:** Confirm implementations honor the interface contract, with no
+  panics or no-ops where callers expect real behavior
+- **Interface segregation:** Flag fat interfaces; confirm callers depend on the narrowest
+  interface that meets their needs
+- **Dependency inversion:** Confirm code depends on the `Environment` abstraction, never on
+  concrete OS or shell calls
 
 ## Core Principles
 

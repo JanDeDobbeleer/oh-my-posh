@@ -252,3 +252,18 @@ func TestTemplate(t *testing.T) {
 		assert.Equal(t, tc.Expected, value, tc.Case)
 	}
 }
+
+func TestKeyValueMapNonStringValues(t *testing.T) {
+	options := Map{Foo: map[string]any{"prod": 1}}
+	assert.Equal(t, map[string]string{"prod": "1"}, options.KeyValueMap(Foo, map[string]string{}))
+
+	options = Map{Foo: map[any]any{"prod": true}}
+	assert.Equal(t, map[string]string{"prod": "true"}, options.KeyValueMap(Foo, map[string]string{}))
+
+	options = Map{Foo: Map{"prod": 1.5}}
+	assert.Equal(t, map[string]string{"prod": "1.5"}, options.KeyValueMap(Foo, map[string]string{}))
+
+	// the list form of the very same option already coerces
+	options = Map{Foo: []any{[]any{"prod", 1}}}
+	assert.Equal(t, map[string]string{"prod": "1"}, options.KeyValueMap(Foo, map[string]string{}))
+}

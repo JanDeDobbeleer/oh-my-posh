@@ -252,7 +252,7 @@ func parseKeyValueArray(param any) map[string]string {
 	case map[any]any:
 		keyValueArray := make(map[string]string)
 		for key, value := range v {
-			val := value.(string)
+			val := fmt.Sprint(value)
 			keyString := fmt.Sprintf("%v", key)
 			keyValueArray[keyString] = val
 		}
@@ -260,7 +260,7 @@ func parseKeyValueArray(param any) map[string]string {
 	case map[string]any:
 		keyValueArray := make(map[string]string)
 		for key, value := range v {
-			val := value.(string)
+			val := fmt.Sprint(value)
 			keyValueArray[key] = val
 		}
 		return keyValueArray
@@ -278,7 +278,7 @@ func parseKeyValueArray(param any) map[string]string {
 	case Map:
 		keyValueArray := make(map[string]string)
 		for key, value := range v {
-			val := value.(string)
+			val := fmt.Sprint(value)
 			keyString := fmt.Sprintf("%v", key)
 			keyValueArray[keyString] = val
 		}

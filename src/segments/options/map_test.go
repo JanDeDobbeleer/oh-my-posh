@@ -252,3 +252,39 @@ func TestTemplate(t *testing.T) {
 		assert.Equal(t, tc.Expected, value, tc.Case)
 	}
 }
+
+func TestKeyValueMapNonStringValues(t *testing.T) {
+	cases := []struct {
+		Value    any
+		Expected map[string]string
+		Case     string
+	}{
+		{
+			Case:     "map[string]any",
+			Value:    map[string]any{"prod": 1},
+			Expected: map[string]string{"prod": "1"},
+		},
+		{
+			Case:     "map[any]any",
+			Value:    map[any]any{"prod": true},
+			Expected: map[string]string{"prod": "true"},
+		},
+		{
+			Case:     "Map",
+			Value:    Map{"prod": 1.5},
+			Expected: map[string]string{"prod": "1.5"},
+		},
+		{
+			// the list form of the very same option already coerces
+			Case:     "list",
+			Value:    []any{[]any{"prod", 1}},
+			Expected: map[string]string{"prod": "1"},
+		},
+	}
+
+	for _, tc := range cases {
+		options := Map{Foo: tc.Value}
+		value := options.KeyValueMap(Foo, map[string]string{})
+		assert.Equal(t, tc.Expected, value, tc.Case)
+	}
+}

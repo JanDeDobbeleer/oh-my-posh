@@ -522,7 +522,10 @@ func (g *Git) getBareRepoInfo() {
 		return
 	}
 
-	g.Upstream = g.getGitCommandOutput("remote")
+	if g.Ref != "" && g.Ref != DETACHED {
+		g.Upstream = g.getGitCommandOutput("rev-parse", "--abbrev-ref", g.Ref+"@{upstream}")
+	}
+
 	if len(g.Upstream) != 0 {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}

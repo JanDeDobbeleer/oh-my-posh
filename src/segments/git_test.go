@@ -690,6 +690,64 @@ func TestEnabledInBareRepo(t *testing.T) {
 	}
 }
 
+func TestBareRepoUpstreamIsTrackingBranchNotRemoteList(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Head             string
+		RevParseOutput   string
+		RevParseError    error
+		ExpectedUpstream string
+	}{
+		{
+			Case:             "branch has an upstream",
+			Head:             "ref: refs/heads/main",
+			RevParseOutput:   "origin/main",
+			ExpectedUpstream: "origin/main",
+		},
+		{
+			Case:             "branch has no upstream configured",
+			Head:             "ref: refs/heads/main",
+			RevParseError:    errors.New("fatal: no upstream configured for branch 'main'"),
+			ExpectedUpstream: "",
+		},
+	}
+
+	for _, tc := range cases {
+		path := "git"
+		env := new(mock.Environment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("GOOS").Return("")
+		env.On("HasCommand", "git").Return(true)
+
+		configData := "[core]\n\tbare = true\n[remote \"origin\"]\n\turl = https://github.com/example/example.git"
+
+		env.On("HasParentFilePath", ".git", true).Return(&runtime.FileInfo{IsDir: true, Path: path}, nil)
+		env.On("FileContent", "git/HEAD").Return(tc.Head)
+
+		revParseArgs := []string{
+			"-C", path, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false",
+			"rev-parse", "--abbrev-ref", "main@{upstream}",
+		}
+		env.On("RunCommand", "git", revParseArgs).Return(tc.RevParseOutput, tc.RevParseError)
+
+		g := &Git{}
+		g.Init(options.Map{}, env)
+		g.SetReferencedFields(template.RefSet{Fields: []string{"IsBare", "Upstream"}, Analyzable: true})
+
+		g.configOnce = sync.Once{}
+		g.configOnce.Do(func() {
+			g.config, g.configErr = ini.Load(configData)
+		})
+
+		_ = g.Enabled()
+
+		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
+		env.AssertNotCalled(t, "RunCommand", "git", testify_.MatchedBy(func(args []string) bool {
+			return len(args) > 0 && args[len(args)-1] == "remote"
+		}))
+	}
+}
+
 func TestGetGitOutputForCommand(t *testing.T) {
 	args := []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}

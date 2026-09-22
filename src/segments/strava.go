@@ -132,14 +132,11 @@ func (s *Strava) getActivityIcon() template.Markup {
 		return s.options.Markup(RideIcon, "\uf206")
 	case "Run":
 		return s.options.Markup(RunIcon, "\ue213")
-	case "NordicSki":
-	case "AlpineSki":
-	case "BackcountrySki":
+	case "NordicSki", "AlpineSki", "BackcountrySki":
 		return s.options.Markup(SkiingIcon, "\ue213")
 	case "WorkOut":
 		return s.options.Markup(WorkOutIcon, "\ue213")
 	default:
 		return s.options.Markup(UnknownActivityIcon, "\ue213")
 	}
-	return s.options.Markup(UnknownActivityIcon, "\ue213")
 }

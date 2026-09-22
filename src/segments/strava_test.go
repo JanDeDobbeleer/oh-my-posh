@@ -30,6 +30,7 @@ func TestStravaSegment(t *testing.T) {
 
 	cases := []struct {
 		APIError        error
+		Options         options.Map
 		Case            string
 		ExpectedString  string
 		Template        string
@@ -62,6 +63,32 @@ func TestStravaSegment(t *testing.T) {
 			},
 			Template:        "{{.Ago}} {{.Icon}}",
 			ExpectedString:  "4d \ue213",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:    "Nordic ski uses the skiing icon",
+			Options: options.Map{SkiingIcon: "\uf7d0"},
+			StravaData: []*StravaData{
+				{
+					Type:      "NordicSki",
+					StartDate: sixHoursAgo,
+				},
+			},
+			Template:        "{{.Icon}}",
+			ExpectedString:  "\uf7d0",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:    "Alpine ski uses the skiing icon",
+			Options: options.Map{SkiingIcon: "\uf7d0"},
+			StravaData: []*StravaData{
+				{
+					Type:      "AlpineSki",
+					StartDate: sixHoursAgo,
+				},
+			},
+			Template:        "{{.Icon}}",
+			ExpectedString:  "\uf7d0",
 			ExpectedEnabled: true,
 		},
 		{
@@ -98,7 +125,7 @@ func TestStravaSegment(t *testing.T) {
 		strava := &Strava{
 			api: api,
 		}
-		strava.Init(options.Map{}, nil)
+		strava.Init(tc.Options, nil)
 
 		enabled := strava.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

@@ -3845,6 +3845,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Sarcastic-Soul",
+      "name": "Anish Kumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/142567151?v=4",
+      "profile": "https://anish-k.vercel.app/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

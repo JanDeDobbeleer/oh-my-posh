@@ -1,0 +1,179 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#0077c2",
+          "foreground": "#ffffff",
+          "leading_diamond": "╭─ ",
+          "style": "diamond",
+          "template": " 💻 {{ .Name }} ",
+          "trailing_diamond": " ",
+          "type": "shell"
+        },
+        {
+          "background": "#ef5350",
+          "foreground": "#FFFB38",
+          "style": "diamond",
+          "template": " ⚡ root ",
+          "trailing_diamond": " ",
+          "type": "root"
+        },
+        {
+          "background": "#FF9248",
+          "foreground": "#2d3436",
+          "style": "diamond",
+          "options": {
+            "folder_icon": "📁 ",
+            "home_icon": "🏠",
+            "style": "folder"
+          },
+          "template": " 📁 {{ .Path }} ",
+          "trailing_diamond": " ",
+          "type": "path"
+        },
+        {
+          "background": "#FFFB38",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffeb95{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#fbc531{{ end }}",
+            "{{ if gt .Ahead 0 }}#C792EA{{ end }}",
+            "{{ if gt .Behind 0 }}#74b9ff{{ end }}"
+          ],
+          "foreground": "#011627",
+          "style": "diamond",
+          "options": {
+            "branch_icon": "🌿 ",
+            "github_icon": "🐙 ",
+            "gitlab_icon": "🦊 ",
+            "bitbucket_icon": "🔷 ",
+            "git_icon": "🌱 "
+          },
+          "template": " {{ if .UpstreamIcon }}{{ .UpstreamIcon }}{{ else }}🌱 {{ end }}{{ .HEAD }}{{ if gt .Ahead 0 }} 🚀{{ .Ahead }}{{ end }}{{ if gt .Behind 0 }} 📥{{ .Behind }}{{ end }}{{ if and (eq .Ahead 0) (eq .Behind 0) }} ✨{{ end }}{{ if gt .StashCount 0 }} 💼{{ .StashCount }}{{ end }}{{ if .Working.Changed }} 📝 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }}<#2ed573> ✅ {{ .Staging.String }}</>{{ end }}{{ if gt .Working.Unmerged 0 }}<#ff4757> 💥{{ .Working.Unmerged }}</>{{ end }}{{ if .Merge }} 🔀 MERGE{{ end }}{{ if .CherryPick }} 🍒 CHERRY-PICK{{ end }}{{ if .Rebase }} 🔄 REBASE{{ end }} ",
+          "trailing_diamond": " ",
+          "type": "git"
+        },
+        {
+          "background": "#83769c",
+          "foreground": "#ffffff",
+          "options": {
+            "threshold": 0
+          },
+          "style": "diamond",
+          "template": " ⚡ {{ .FormattedMs }} ",
+          "type": "executiontime"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "#303030",
+          "foreground": "#3C873A",
+          "leading_diamond": " ",
+          "style": "diamond",
+          "template": " 📦 {{ .Full }} ",
+          "type": "node"
+        },
+        {
+          "background": "#306998",
+          "foreground": "#FFE873",
+          "leading_diamond": " ",
+          "style": "diamond",
+          "template": " 🐍 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
+          "type": "python"
+        },
+        {
+          "background": "#0e8ac8",
+          "foreground": "#ffffff",
+          "leading_diamond": " ",
+          "style": "diamond",
+          "template": " ☕ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "type": "java"
+        },
+        {
+          "background": "#0e0e0e",
+          "foreground": "#0d6da8",
+          "leading_diamond": " ",
+          "style": "diamond",
+          "template": " 🔷 {{ if .Unsupported }}⚠️{{ else }}{{ .Full }}{{ end }} ",
+          "type": "dotnet"
+        },
+        {
+          "background": "#ffffff",
+          "foreground": "#06aad5",
+          "leading_diamond": " ",
+          "style": "diamond",
+          "template": " 🐹 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "type": "go"
+        },
+        {
+          "background": "#f3f0ec",
+          "foreground": "#925837",
+          "leading_diamond": " ",
+          "style": "diamond",
+          "template": " 🦀 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "type": "rust"
+        },
+        {
+          "background": "#f36943",
+          "background_templates": [
+            "{{if eq \"Charging\" .State.String}}#b8e994{{end}}",
+            "{{if eq \"Discharging\" .State.String}}#fff34e{{end}}",
+            "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
+          ],
+          "foreground": "#262626",
+          "leading_diamond": " ",
+          "options": {
+            "charged_icon": "🔋 ",
+            "charging_icon": "⚡ ",
+            "discharging_icon": "🪫 "
+          },
+          "style": "diamond",
+          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}%{{ end }}{{ .Error }} ",
+          "type": "battery"
+        },
+        {
+          "background": "#40c4ff",
+          "foreground": "#ffffff",
+          "leading_diamond": " ",
+          "options": {
+            "time_format": "_2, 15:04"
+          },
+          "style": "diamond",
+          "template": " 🕒 {{ .CurrentDate | date .Format }} ",
+          "type": "time"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#21c7c7",
+          "style": "plain",
+          "template": "╰─",
+          "type": "text"
+        },
+        {
+          "foreground": "#e0f8ff",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
+          "options": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "{{ if gt .Code 0 }}❌{{ else }}❯{{ end }} ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 4
+}

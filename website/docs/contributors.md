@@ -535,6 +535,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://nextgen-labs.net/"><img src="https://avatars.githubusercontent.com/u/188639646?v=4?s=100" width="100px;" alt="Leo Camus"/><br /><sub><b>Leo Camus</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Dev-next-gen" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://anish-k.vercel.app/"><img src="https://avatars.githubusercontent.com/u/142567151?v=4?s=100" width="100px;" alt="Anish Kumar"/><br /><sub><b>Anish Kumar</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Sarcastic-Soul" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

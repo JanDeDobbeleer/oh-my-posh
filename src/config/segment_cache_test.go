@@ -13,6 +13,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
 	testifymock "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func newCachedTextSegment(env *mock.Environment, alias string, strategy Strategy) *Segment {
@@ -172,4 +173,48 @@ func TestGitMainWorktreeRestoresLiveContextLazilyAfterSegmentCacheHit(t *testing
 	env.AssertNumberOfCalls(t, "HasParentFilePath", 1)
 	env.AssertNumberOfCalls(t, "HasCommand", 1)
 	env.AssertNumberOfCalls(t, "RunCommand", 1)
+}
+
+func TestSegmentExecuteCacheHitSkipsLiveProbeUnderStreaming(t *testing.T) {
+	previousTemplateCache := template.Cache
+	template.Cache = &cache.Template{
+		Segments: maps.NewConcurrent[any](),
+	}
+
+	defer func() {
+		template.Cache = previousTemplateCache
+		cache.Session.DeleteAll()
+	}()
+
+	const alias = "streaming_cache_segment"
+
+	source := &Segment{
+		Type:  SESSION,
+		Alias: alias,
+		Cache: &Cache{Strategy: Session, Duration: cache.Duration("10m")},
+	}
+	require.NoError(t, source.MapSegmentWithWriter(new(mock.Environment)))
+	source.writer.(*segments.Session).SSHSession = true
+	source.setCache()
+
+	// Getenv and Platform stay unstubbed: Session.Enabled() calls both, so a fall-through to the
+	// live probe panics.
+	streamingEnv := new(mock.Environment)
+	streamingEnv.On("Pwd").Return("/test")
+	streamingEnv.On("DirMatchesOneOf", testifymock.Anything, testifymock.Anything).Return(false)
+	streamingEnv.On("Flags").Return(&runtime.Flags{Streaming: true})
+
+	segment := &Segment{
+		Type:  SESSION,
+		Alias: alias,
+		Cache: &Cache{Strategy: Session, Duration: cache.Duration("10m")},
+	}
+
+	assert.NotPanics(t, func() {
+		segment.Execute(streamingEnv)
+	}, "a cache hit must short-circuit before the writer's live Enabled() runs, even under streaming")
+
+	assert.True(t, segment.Enabled, "cache hit should mark the segment enabled")
+	streamingEnv.AssertNotCalled(t, "Getenv", testifymock.Anything)
+	streamingEnv.AssertNotCalled(t, "Platform")
 }

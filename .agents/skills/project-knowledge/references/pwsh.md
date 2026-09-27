@@ -23,6 +23,33 @@
 - OnIdle needs ~300ms of idle time. Anything the user can trigger sooner (transient prompt on a
   fast Enter) must ALSO drain synchronously at its call site or it pays a CLI-spawn fallback.
 
+## PSReadLine prompt redraws
+
+- Verified 2026-09-27, PSReadLine 2.4.5 (pwsh 7.6.5 Windows) and 2.3.6 (pwsh 7.5.2 Linux):
+  `InvokePrompt()` blanks `ExtraPromptLineCount + 1` rows above its input line **before** it
+  calls the prompt function. The value the prompt function sets during that call only affects the
+  *next* redraw. Padding the transient prompt to the primary prompt's height cannot fix
+  under-erasure (the fix suggested in starship#7737 does not carry over).
+- `ExtraPromptLineCount` must count screen rows, not logical lines. `Measure-Object -Line`
+  ignores wrapping, so a long path left the extra rows on screen after the transient prompt
+  (#7881). The engine now computes the row the cursor ends on (`terminal.CursorRow`) and prefixes
+  pwsh primary, transient and debug prompts with `ESC]7777;<row>BEL`. `Set-PoshExtraPromptLineCount`
+  in `omp.ps1` strips it. Don't measure the prompt in PowerShell: a regex plus
+  `LengthInBufferCells` has to guess which bytes are zero width.
+- Too high a count is as bad as too low. A first attempt counted the rprompt's `ESC 7` / `ESC 8`
+  (cursor save/restore) as 2 cells, so a single-line prompt with an rprompt counted 2 rows. The
+  transient redraw then erased the previous output line, or at the top of the screen
+  `InvokePrompt` silently returned (`newY < 0`) before calling the prompt function. That left
+  `$script:TransientPrompt` set, so the next primary prompt rendered as the transient one.
+- Match escape-prefixed strings with `-match '^\u001b...'`, not `StartsWith`: culture-aware
+  `StartsWith` ignores ESC, so `"abc".StartsWith("$([char]27)a")` is `True` (pwsh 7.6.5 Windows
+  and 7.5.2 Linux).
+- `Measure-Object -Line` also skips empty array elements: `@("","a","b")` counts 2.
+- A typed parameter keeps its type on reassignment: after `$p = $p -join "`n"`, a
+  `[string[]]$p` is still an array. When a prompt function throws, the host falls back to `PS>`.
+- A prompt with several logical lines and no wrapping clears correctly. To reproduce redraw bugs,
+  make a line wrap (the e2e `harness.MultiLine` overlay does this).
+
 ## Exit lifecycle
 
 - pwsh cannot exit while a `[powershell]::Create()` pipeline thread runs - pipeline threads are

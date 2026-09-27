@@ -135,6 +135,8 @@ func TestExtraPromptTransientPWSH(t *testing.T) {
 	saveCursor := terminal.SaveCursorPosition()
 	restoreCursor := terminal.RestoreCursorPosition()
 	clearAfter := terminal.ClearAfter()
+	// the rprompt returns the cursor to the left part, so every case stays on row 0
+	marker := terminal.CursorRowMarker(0)
 
 	cases := []struct {
 		TerminalErr   error
@@ -148,21 +150,21 @@ func TestExtraPromptTransientPWSH(t *testing.T) {
 		{
 			Case:     "no right template - byte identical to previous behavior",
 			Template: "L>",
-			Expected: "L>" + clearAfter,
+			Expected: marker + "L>" + clearAfter,
 		},
 		{
 			Case:          "no right template with filler - byte identical to previous behavior",
 			Template:      "L>",
 			Filler:        "-",
 			TerminalWidth: 20,
-			Expected:      "L>" + strings.Repeat("-", 18) + clearAfter,
+			Expected:      marker + "L>" + strings.Repeat("-", 18) + clearAfter,
 		},
 		{
 			Case:          "right template",
 			Template:      "L>",
 			RightTemplate: "R>",
 			TerminalWidth: 20,
-			Expected:      "L>" + clearAfter + saveCursor + strings.Repeat(" ", 16) + "R>" + restoreCursor,
+			Expected:      marker + "L>" + clearAfter + saveCursor + strings.Repeat(" ", 16) + "R>" + restoreCursor,
 		},
 		{
 			Case:          "right template with filler - padding inside cursor save/restore",
@@ -170,28 +172,28 @@ func TestExtraPromptTransientPWSH(t *testing.T) {
 			RightTemplate: "R>",
 			Filler:        "-",
 			TerminalWidth: 20,
-			Expected:      "L>" + clearAfter + saveCursor + strings.Repeat("-", 16) + "R>" + restoreCursor,
+			Expected:      marker + "L>" + clearAfter + saveCursor + strings.Repeat("-", 16) + "R>" + restoreCursor,
 		},
 		{
 			Case:          "right template, exact fit",
 			Template:      "L>",
 			RightTemplate: "R>",
 			TerminalWidth: 4,
-			Expected:      "L>" + clearAfter + saveCursor + "R>" + restoreCursor,
+			Expected:      marker + "L>" + clearAfter + saveCursor + "R>" + restoreCursor,
 		},
 		{
 			Case:          "right template, insufficient width - right side omitted",
 			Template:      "L>",
 			RightTemplate: "R>",
 			TerminalWidth: 3,
-			Expected:      "L>" + clearAfter,
+			Expected:      marker + "L>" + clearAfter,
 		},
 		{
 			Case:          "right template, unknown terminal width - right side omitted",
 			Template:      "L>",
 			RightTemplate: "R>",
 			TerminalErr:   errors.New("burp"),
-			Expected:      "L>" + clearAfter,
+			Expected:      marker + "L>" + clearAfter,
 		},
 	}
 
@@ -233,7 +235,7 @@ func TestExtraPromptTransientPWSHNewline(t *testing.T) {
 
 	got := engine.ExtraPrompt(Transient)
 	// the leading newline has no width and must not shift the right side
-	expected := "\nL>" + terminal.ClearAfter() + terminal.SaveCursorPosition() + strings.Repeat(" ", 16) + "R>" + terminal.RestoreCursorPosition()
+	expected := terminal.CursorRowMarker(1) + "\nL>" + terminal.ClearAfter() + terminal.SaveCursorPosition() + strings.Repeat(" ", 16) + "R>" + terminal.RestoreCursorPosition()
 	assert.Equal(t, expected, got)
 }
 
@@ -331,6 +333,9 @@ func TestExtraPromptTransientShellIntegration(t *testing.T) {
 		}
 
 		got := engine.ExtraPrompt(Transient)
+		if tc.Shell == shell.PWSH {
+			got = strings.TrimPrefix(got, terminal.CursorRowMarker(0))
+		}
 
 		start := terminal.CommandFinished(3, false) + terminal.PromptStart()
 		end := terminal.CommandStart()

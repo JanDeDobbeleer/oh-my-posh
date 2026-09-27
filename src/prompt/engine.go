@@ -72,6 +72,26 @@ func (e *Engine) string() string {
 	return txt
 }
 
+// PSReadLine erases that many rows above its input line when it redraws the
+// prompt, and only the engine knows which bytes are zero width or wrap.
+func (e *Engine) withCursorRow(prompt string) string {
+	if e.Env.Shell() != shell.PWSH || e.Env.Flags().Plain {
+		return prompt
+	}
+
+	width, err := e.Env.TerminalWidth()
+	if err != nil {
+		width = 0
+	}
+
+	// rectifyTerminalWidth narrowed the layout width by one, the terminal still wraps at the real one
+	if e.Config.PatchPwshBleed && width > 0 {
+		width++
+	}
+
+	return terminal.CursorRowMarker(terminal.CursorRow(prompt, width)) + prompt
+}
+
 func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 	if rprompt && (e.rprompt == "") {
 		return 0, false

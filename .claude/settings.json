@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "go run \"$CLAUDE_PROJECT_DIR/.agents/hooks/main.go\" --harness claude",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -9,7 +9,8 @@ src/test/umbraco/obj/
 src/keys
 *.prof
 packages/msix/Microsoft.Trusted.Signing.Client
-.claude
+.claude/*
+!.claude/settings.json
 .styles
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,go,visualstudiocode

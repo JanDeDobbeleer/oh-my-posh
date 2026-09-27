@@ -1,6 +1,8 @@
 package prompt
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"math/rand/v2"
 	"strings"
@@ -14,6 +16,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -171,15 +174,15 @@ func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
 
 	const segmentCount = 15
 
-	segments := make([]*config.Segment, segmentCount)
-	for i := range segments {
-		segments[i] = &config.Segment{Type: config.SESSION, Timeout: 1}
+	slowSegments := make([]*config.Segment, segmentCount)
+	for i := range slowSegments {
+		slowSegments[i] = &config.Segment{Type: config.SESSION, Timeout: 1}
 	}
 
 	engine := &Engine{
 		Config: &config.Config{
 			Blocks: []*config.Block{
-				{Type: config.Prompt, Alignment: config.Left, Segments: segments},
+				{Type: config.Prompt, Alignment: config.Left, Segments: slowSegments},
 			},
 		},
 		Env: env,
@@ -202,6 +205,52 @@ func TestStreamPrimary_AbortUnblocksSaturatedProducer(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("Abort must unblock a producer stuck in a record send")
 	}
+}
+
+// seedSessionCache mirrors the key config.Segment.cacheKeyAndStore builds for the Session strategy.
+func seedSessionCache(t *testing.T, name string) {
+	t.Helper()
+
+	var data bytes.Buffer
+	require.NoError(t, gob.NewEncoder(&data).Encode(&segments.Session{}))
+
+	cache.Session.Set(fmt.Sprintf("segment_cache_%s", name), data.Bytes(), cache.Duration("10m"))
+}
+
+func TestStreamPrimary_CacheHitSkipsLiveProbe(t *testing.T) {
+	t.Cleanup(func() { cache.Session.DeleteAll() })
+
+	env := setupStreamingTestEnv()
+	// Outlives Timeout, so falling through to the live probe would render the segment as pending.
+	mockSlowSession(env, 50*time.Millisecond)
+
+	cachedSegment := &config.Segment{
+		Type:    config.SESSION,
+		Timeout: 5,
+		Cache:   &config.Cache{Strategy: config.Session, Duration: cache.Duration("10m")},
+	}
+
+	seedSessionCache(t, cachedSegment.Name())
+
+	engine := &Engine{
+		Config: &config.Config{
+			Blocks: []*config.Block{
+				{Type: config.Prompt, Alignment: config.Left, Segments: []*config.Segment{cachedSegment}},
+			},
+		},
+		Env: env,
+	}
+
+	for cycle := 1; cycle <= 2; cycle++ {
+		prompts := collectChannelOutput(engine.StreamPrimary(), 200*time.Millisecond)
+
+		assert.Len(t, prompts, 2, "cycle %d: expected only the primary prompt and its transient record", cycle)
+		for _, prompt := range prompts {
+			assert.NotContains(t, prompt, "...", "cycle %d: cached segment rendered as pending", cycle)
+		}
+	}
+
+	env.AssertNotCalled(t, "Getenv", "SSH_CONNECTION")
 }
 
 func setupStreamingTestEnv() *mock.Environment {

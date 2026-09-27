@@ -239,7 +239,7 @@ func (segment *Segment) Execute(env runtime.Environment) {
 	}
 
 	cacheRestored := segment.restoreCache()
-	if cacheRestored && !env.Flags().Streaming {
+	if cacheRestored {
 		// A hand-written entry stashed itself in pendingData above instead of
 		// short-circuiting, expecting the overlay to run once live/derived
 		// state is available (see overlayData). A cache hit is exactly such

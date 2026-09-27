@@ -145,6 +145,14 @@
   the same capture if a cached/recorded segment ever times out. `-race` is unavailable on
   windows/arm64, so this class only shows up on CI (amd64) - run the streaming tests there after any
   change to the background-goroutine cache path.
+- Streaming no longer bypasses the segment cache (2026-09-27, #7882): `Execute` used to gate its
+  cache-hit early return on `!env.Flags().Streaming`, so every cached segment ran its live
+  `Enabled()` on each streamed render. The original intent ("show cache first, refresh behind it")
+  never materialized: a pending segment renders `RenderPlaceholder`, which is config-only and never
+  shows cached data. With the gate gone, a cache hit returns before the live probe, which removes one
+  way for a cached segment to time out and reach the `restoreCache` race above. The race itself
+  (`restoreCache`/`restoreData` reading the global `template.Cache` on a background goroutine) is
+  still open and out of scope for that fix.
 
 - Streaming is enabled by the top-level `"streaming": <ms>` config key. That value is ALSO each
   segment's pending-timeout and overwrites segment-level `timeout`.

@@ -22,6 +22,17 @@ const (
 )
 
 func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
+	txt := e.extraPrompt(promptType)
+
+	switch promptType {
+	case Transient, Debug:
+		return e.withCursorRow(txt)
+	default:
+		return txt
+	}
+}
+
+func (e *Engine) extraPrompt(promptType ExtraPromptType) string {
 	var prompt *config.Segment
 
 	switch promptType {

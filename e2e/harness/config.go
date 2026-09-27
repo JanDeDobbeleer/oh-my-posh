@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -47,6 +48,33 @@ func Transient(cfg map[string]any) {
 		"style":    "plain",
 		"template": "TR> ",
 	}
+}
+
+// MultiLine prepends two prompt blocks, each on its own line, so the primary prompt spans
+// three logical lines ending in "E2E:<code>>". The first line runs from "ML1" to "ML1END"
+// and is wider than the 120-column pty, so it wraps onto a second screen row; the second
+// renders "ML2".
+func MultiLine(cfg map[string]any) {
+	blocks, _ := cfg["blocks"].([]any)
+	last, _ := blocks[0].(map[string]any)
+	last["newline"] = true
+
+	textBlock := func(template string, newline bool) map[string]any {
+		return map[string]any{
+			"type":      "prompt",
+			"alignment": "left",
+			"newline":   newline,
+			"segments": []any{
+				map[string]any{
+					"type":     "text",
+					"style":    "plain",
+					"template": template,
+				},
+			},
+		}
+	}
+
+	cfg["blocks"] = append([]any{textBlock("ML1"+strings.Repeat("-", 130)+"ML1END", false), textBlock("ML2", true)}, blocks...)
 }
 
 // RPrompt appends a right-aligned prompt block rendering the fixed marker "RMARK".

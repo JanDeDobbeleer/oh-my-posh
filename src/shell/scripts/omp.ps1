@@ -233,6 +233,21 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $terminalWidth
     }
 
+    # PSReadLine blanks ExtraPromptLineCount + 1 rows before it redraws the prompt (#7881);
+    # the engine prefixes pwsh prompts with ESC]7777;<row>BEL, the screen row the cursor ends on.
+    function Set-PoshExtraPromptLineCount {
+        param([string]$Prompt)
+
+        $lineCount = 0
+        if ($Prompt -match '^\u001b\]7777;(\d+)\u0007') {
+            $lineCount = [int]$Matches[1]
+            $Prompt = $Prompt.Substring($Matches[0].Length)
+        }
+
+        Set-PSReadLineOption -ExtraPromptLineCount $lineCount
+        $Prompt
+    }
+
     function Set-TransientPrompt {
         $previousOutputEncoding = [Console]::OutputEncoding
         try {
@@ -899,9 +914,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # InvokePrompt() call during an active streaming cycle (RUNNING state) which
         # isn't rendering a transient prompt.
         if ($script:PromptType -ne 'transient' -and $script:Streaming.State -ne 'NEW') {
-            # So PSReadLine properly clears the previous prompt.
-            Set-PSReadLineOption -ExtraPromptLineCount (($script:Streaming.Prompt | Measure-Object -Line).Lines - 1)
-            return $script:Streaming.Prompt
+            return Set-PoshExtraPromptLineCount $script:Streaming.Prompt
         }
 
         Stop-ActiveRenderCycle
@@ -947,10 +960,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $output = Get-PoshPrompt $script:PromptType
         }
 
-        # make sure PSReadLine knows if we have a multiline prompt
-        Set-PSReadLineOption -ExtraPromptLineCount (($output | Measure-Object -Line).Lines - 1)
-
-        $output = $output -join "`n"
+        $output = Set-PoshExtraPromptLineCount $output
 
         if ($script:PromptType -eq 'transient') {
             # Workaround to prevent a command from eating the tail of a transient prompt, when we're at the end of the line.

@@ -90,6 +90,76 @@ var featureScenarios = []scenario{
 		},
 	},
 	{
+		// transient-multiline boots with a three-line primary prompt whose first line
+		// wraps (see harness.MultiLine) plus the transient overlay, and asserts that
+		// after Enter no row of it is left above the accepted command line (#7881).
+		// It fails when the prompt height is counted in logical lines instead of
+		// screen rows.
+		name:     "transient-multiline",
+		overlays: []harness.Overlay{harness.MultiLine, harness.Transient},
+		skips: map[string]string{
+			"bash": "bash only supports a transient prompt inside a ble.sh session; not supported by this harness",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			const echoedText = "transient-multiline-check"
+
+			s.SendLine("echo " + echoedText)
+
+			readyRe := regexp.MustCompile(`(?s)` + echoedText + `.*` + echoedText + `.*E2E:\d+>`)
+			screen := s.WaitFor(readyRe)
+
+			lines := s.ScreenLines()
+			commandRow := -1
+			for i, line := range lines {
+				if strings.Contains(line, "echo "+echoedText) {
+					commandRow = i
+					break
+				}
+			}
+
+			require.NotEqual(t, -1, commandRow,
+				"%s: could not find the accepted command line on screen:\n%s", sh.Name, screen)
+
+			// ML1 starts the topmost row of the primary prompt and ML1END ends its
+			// wrapped continuation, so any stale row leaves one of them behind.
+			for _, line := range lines[:commandRow] {
+				assert.NotContains(t, line, "ML1",
+					"%s: stale primary prompt row left above the transient prompt:\n%s", sh.Name, screen)
+			}
+		},
+	},
+	{
+		// transient-rprompt boots with a single-line primary prompt carrying a right
+		// prompt plus the transient overlay, runs two commands, and asserts the first
+		// command's output survives the second Enter. The right prompt pads its line
+		// to full width between cursor save/restore sequences, so counting those
+		// bytes as cells makes the transient redraw erase the row above the prompt.
+		name:     "transient-rprompt",
+		overlays: []harness.Overlay{harness.RPrompt, harness.Transient},
+		skips: map[string]string{
+			"bash": "bash only supports a transient prompt inside a ble.sh session; not supported by this harness",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			const firstOutput = "first-output"
+
+			s.SendLine("echo " + firstOutput)
+			s.WaitFor(regexp.MustCompile(`(?s)` + firstOutput + `.*` + firstOutput + `.*E2E:\d+>`))
+
+			s.SendLine("echo second-output")
+			screen := s.WaitFor(regexp.MustCompile(`(?s)second-output.*second-output.*E2E:\d+>`))
+
+			var found bool
+			for _, line := range s.ScreenLines() {
+				if strings.TrimSpace(line) == firstOutput {
+					found = true
+					break
+				}
+			}
+
+			assert.True(t, found, "%s: the first command's output was erased by the transient prompt:\n%s", sh.Name, screen)
+		},
+	},
+	{
 		// rprompt boots with the rprompt overlay and asserts the fixed "RMARK"
 		// marker renders on the same screen row as the primary "E2E:0>" prompt,
 		// right-aligned near the pty's 120th column.

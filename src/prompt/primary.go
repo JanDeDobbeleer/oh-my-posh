@@ -48,7 +48,7 @@ func (e *Engine) primaryInternal(fromCache bool) string {
 		e.writePrimaryRightPrompt()
 	}
 
-	return e.string()
+	return e.withCursorRow(e.string())
 }
 
 func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {

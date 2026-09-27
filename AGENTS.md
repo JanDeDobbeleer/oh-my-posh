@@ -150,6 +150,16 @@ schema file.
 Agent skills live in `.agents/skills/` - the vendor-neutral Agent Skills location that Copilot,
 Codex, Claude Code, and most other agents discover automatically.
 
+## Agent Hooks
+
+A shared program, `.agents/hooks/main.go`, runs when an agent finishes its turn. For the changed
+files it auto-fixes formatting, `modernize` and Markdown, then runs `fieldalignment`,
+`golangci-lint`, `go test` and `markdownlint`. Platform-specific Go files also get a build and lint
+for the other operating systems. Failures go back to the agent, so it fixes them before CI does.
+Claude Code wires it via `.claude/settings.json`; GitHub Copilot (CLI, cloud agent, VS Code) wires
+it via `.github/hooks/quality.json`. Keep both configs in sync by hand; generating them with APM
+proved unreliable in cloud sessions.
+
 ## Project Knowledge
 
 The `project-knowledge` skill (`.agents/skills/project-knowledge/`) is the project's durable

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "hooks": {
+    "agentStop": [
+      {
+        "type": "command",
+        "bash": "go run .agents/hooks/main.go --harness copilot",
+        "powershell": "go run .agents/hooks/main.go --harness copilot",
+        "cwd": ".",
+        "timeoutSec": 600
+      }
+    ]
+  }
+}

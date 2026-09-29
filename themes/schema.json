@@ -2062,6 +2062,12 @@
                     "description": "Fetch the status information using the built-in engine instead of the git CLI (experimental, falls back to git automatically).",
                     "default": false
                   },
+                  "resolve_rebase_target": {
+                    "type": "boolean",
+                    "title": "Resolve Rebase Target",
+                    "description": "Resolve the rebase target commit to a ref name. Set to false to display its short commit hash without running git name-rev.",
+                    "default": true
+                  },
                   "disable_with_jj": {
                     "type": "boolean",
                     "title": "Disable with Jujutsu",

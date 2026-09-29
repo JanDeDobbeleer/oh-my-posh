@@ -64,11 +64,12 @@ func (s *GitStatus) add(code string) {
 }
 
 const (
-	NativeStatus     options.Option = "native_status"
-	IgnoreStatus     options.Option = "ignore_status"
-	UntrackedModes   options.Option = "untracked_modes"
-	IgnoreSubmodules options.Option = "ignore_submodules"
-	MappedBranches   options.Option = "mapped_branches"
+	NativeStatus        options.Option = "native_status"
+	IgnoreStatus        options.Option = "ignore_status"
+	UntrackedModes      options.Option = "untracked_modes"
+	IgnoreSubmodules    options.Option = "ignore_submodules"
+	MappedBranches      options.Option = "mapped_branches"
+	ResolveRebaseTarget options.Option = "resolve_rebase_target"
 	// Disables the git segment when a .jj directory exists in the parent file path
 	DisableWithJJ options.Option = "disable_with_jj"
 
@@ -1254,6 +1255,9 @@ func (g *Git) hasGitFile(file string) bool {
 
 func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 	ref := g.fileContent(g.mainSCMDir, refFile)
+	if !g.options.Bool(ResolveRebaseTarget, true) {
+		return g.formatSHA(ref)
+	}
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
@@ -1619,10 +1623,14 @@ func (g *Git) repoName() string {
 		return ""
 	}
 
-	if parent := filepath.Dir(commonDir); g.gitEntryResolvesTo(parent, commonDir) {
+	// If commonDir is a .git directory, the repo name is its parent's basename
+	commonDirSlash := filepath.ToSlash(filepath.Clean(commonDir))
+	if strings.HasSuffix(commonDirSlash, "/.git") {
+		parent := filepath.Dir(commonDir)
 		return path.Base(g.convertToLinuxPath(parent))
 	}
 
+	// Otherwise in a worktree or bare repo; read config to find the actual working directory
 	for _, file := range []string{"config.worktree", "config"} {
 		cfg, err := loadGitConfigFile(g.env, commonDir, file)
 		if err != nil {
@@ -1638,26 +1646,4 @@ func (g *Git) repoName() string {
 	}
 
 	return ""
-}
-
-func (g *Git) gitEntryResolvesTo(parent, commonDir string) bool {
-	gitEntry := parent + "/.git"
-	commonDir = filepath.ToSlash(filepath.Clean(commonDir))
-
-	if g.env.HasFolder(gitEntry) {
-		return filepath.ToSlash(filepath.Clean(gitEntry)) == commonDir
-	}
-
-	if !g.env.HasFilesInDir(parent, ".git") {
-		return false
-	}
-
-	content := strings.Trim(g.env.FileContent(gitEntry), " \r\n")
-	target, found := strings.CutPrefix(content, "gitdir: ")
-	if !found {
-		return false
-	}
-
-	target = g.convertToLinuxPath(target)
-	return filepath.ToSlash(filepath.Clean(resolveGitPath(parent, target))) == commonDir
 }

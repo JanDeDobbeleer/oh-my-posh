@@ -69,6 +69,25 @@ is a template that prints its whole context (`{{ . }}`) without naming any field
 | `branch_template`     |      `string`       |         | a [template][templates] to format that branch name. You can use `{{ .Branch }}` as reference to the original branch name and `{{ .Upstream }}` as reference to the upstream name                                                                                                                                                      |
 | `disable_with_jj`     |      `boolean`      | `false` | disable the git segment in case of a [Jujutsu] collocated repository                                                                                                                                                                                                                                                                  |
 
+### Rebase target resolution
+
+The `resolve_rebase_target` boolean option defaults to `true`. During a merge-style rebase, Oh My Posh
+runs `git name-rev` to display a ref name for the target commit. This lookup can slow down prompts in
+repositories with many refs.
+
+Set `resolve_rebase_target` to `false` in the Git segment's options to display the target's seven-character
+commit hash instead, without running `git name-rev`. This affects `.HEAD` and `.Rebase.Onto`; Git status
+and rebase progress remain available.
+
+```json
+{
+  "type": "git",
+  "options": {
+    "resolve_rebase_target": false
+  }
+}
+```
+
 ### Icons
 
 #### Branch

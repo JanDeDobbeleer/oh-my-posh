@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -768,6 +769,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 
 func TestSetGitHEADContextClean(t *testing.T) {
 	cases := []struct {
+		Options     options.Map
 		Ours        string
 		Expected    string
 		Ref         string
@@ -791,6 +793,28 @@ func TestSetGitHEADContextClean(t *testing.T) {
 			RebaseMerge: true,
 			Ours:        "refs/heads/origin/main",
 			Theirs:      "main",
+			Step:        "1",
+			Total:       "2",
+		},
+		{
+			Case:        "rebase merge with target resolution enabled",
+			Options:     options.Map{ResolveRebaseTarget: true},
+			Ref:         DETACHED,
+			Expected:    "rebase branch origin/main onto branch main (1/2) at commit 1234567",
+			RebaseMerge: true,
+			Ours:        "refs/heads/origin/main",
+			Theirs:      "main",
+			Step:        "1",
+			Total:       "2",
+		},
+		{
+			Case:        "rebase merge with target resolution disabled",
+			Options:     options.Map{ResolveRebaseTarget: false},
+			Ref:         DETACHED,
+			Expected:    "rebase branch origin/main onto branch 89abcde (1/2) at commit 1234567",
+			RebaseMerge: true,
+			Ours:        "refs/heads/origin/main",
+			Theirs:      "89abcdef0123456789abcdef0123456789abcdef01",
 			Step:        "1",
 			Total:       "2",
 		},
@@ -875,8 +899,10 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("IsWsl").Return(false)
 		env.MockGitCommand("", "1234567890abcdef1234567890abcdef12345678", "rev-parse", "HEAD")
 		env.MockGitCommand("", "", "describe", "--tags", "--exact-match")
-		env.MockGitCommand("", tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
-		env.MockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
+		if tc.Options[ResolveRebaseTarget] != false {
+			env.MockGitCommand("", tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
+			env.MockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
+		}
 		// rebase merge
 		env.On("HasFolder", "/rebase-merge").Return(tc.RebaseMerge)
 		env.On("FileContent", "/rebase-merge/head-name").Return(tc.Ours)
@@ -910,6 +936,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 			TagIcon:        "tag ",
 			RevertIcon:     "revert ",
 		}
+		maps.Copy(props, tc.Options)
 
 		g := &Git{
 			command:   GITCOMMAND,

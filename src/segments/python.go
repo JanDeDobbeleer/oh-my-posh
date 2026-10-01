@@ -60,9 +60,9 @@ func (p *Python) loadSpec() {
 	// path/mtime/size never change while its target version does, per
 	// directory (via .python-version or $PYENV_VERSION) - and there is no
 	// way at cmd-definition time to tell a pyenv shim apart from a real
-	// interpreter that would otherwise be safe to cache. "uv" is unambiguous:
-	// `uv run` resolves the interpreter from the current project's
-	// pyproject.toml/venv, so its output is directory-dependent by design.
+	// interpreter that would otherwise be safe to cache. "uv" resolves the
+	// interpreter from the current project's pyproject.toml/venv, so its
+	// output is directory-dependent by design (see uvVersion).
 	p.tooling = map[string]*cmd{
 		"pyenv": {
 			getVersion: p.pyenvVersion,
@@ -85,7 +85,7 @@ func (p *Python) loadSpec() {
 		},
 		"uv": {
 			executable: "uv",
-			args:       []string{"run", "--no-sync", "--quiet", "--no-python-downloads", pythonToolName, versionFlagArg},
+			getVersion: p.uvVersion,
 			regex:      pythonVersionRegex,
 		},
 	}
@@ -214,6 +214,26 @@ func (p *Python) pyenvVersion() (string, error) {
 	}
 
 	return parts[0], nil
+}
+
+// uvVersion avoids `uv run`, which creates a missing project .venv even with
+// --no-sync, silently resurrecting a deleted environment on every prompt.
+func (p *Python) uvVersion() (string, error) {
+	if !p.env.HasCommand("uv") {
+		return "", errors.New(noVersion)
+	}
+
+	interpreter, err := p.env.RunCommand("uv", "python", "find", "--no-python-downloads")
+	if err != nil {
+		return "", err
+	}
+
+	interpreter = strings.TrimSpace(interpreter)
+	if interpreter == "" {
+		return "", errors.New("no python interpreter found by uv")
+	}
+
+	return p.env.RunCommand(interpreter, versionFlagArg)
 }
 
 func (p *Python) pyvenvCfgPrompt() string {

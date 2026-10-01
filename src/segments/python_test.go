@@ -315,7 +315,8 @@ func TestPythonUVTooling(t *testing.T) {
 
 		if tc.HasUVCommand {
 			env.On("HasCommand", "uv").Return(true)
-			env.On("RunCommandWithEnv", "uv", []string(nil), []string{"run", "--no-sync", "--quiet", "--no-python-downloads", "python", "--version"}).Return(tc.UVVersionOutput, nil)
+			env.On("RunCommand", "uv", []string{"python", "find", "--no-python-downloads"}).Return("/project/.venv/bin/python\n", nil)
+			env.On("RunCommand", "/project/.venv/bin/python", []string{"--version"}).Return(tc.UVVersionOutput, nil)
 		} else {
 			env.On("HasCommand", "uv").Return(false)
 		}

@@ -85,7 +85,7 @@ func (p *Python) loadSpec() {
 		},
 		"uv": {
 			executable: "uv",
-			args:       []string{"run", "--no-sync", "--quiet", "--no-python-downloads", pythonToolName, versionFlagArg},
+			args:       []string{"run", "--isolated", "--no-sync", "--no-python-downloads", pythonToolName, versionFlagArg},
 			regex:      pythonVersionRegex,
 		},
 	}

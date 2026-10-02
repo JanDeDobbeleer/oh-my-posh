@@ -104,8 +104,8 @@ To execute the tests, run the following command from the `/src` folder.
 go test "./..."
 ```
 
-[themes-discussion]: [https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes]
-[discord-link]: [https://discord.com/channels/1023597603331526656/1055533233309233252]
+[themes-discussion]: <https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes>
+[discord-link]: <https://discord.com/channels/1023597603331526656/1055533233309233252>
 [docs]: <https://ohmyposh.dev/docs>
 [guide]: <https://ohmyposh.dev/docs/contributing/started>
 [cc]: <https://www.conventionalcommits.org/en/v1.0.0/#summary>

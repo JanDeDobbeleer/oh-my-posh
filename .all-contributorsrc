@@ -3807,7 +3807,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/23277273?v=4",
       "profile": "http://peng.ly",
       "contributions": [
-        "code"
+        "code",
+        "doc"
       ]
     },
     {
@@ -3853,6 +3854,15 @@
       "profile": "https://anish-k.vercel.app/",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "minKasent",
+      "name": "dangkhoa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/211428799?v=4",
+      "profile": "https://zalo.me/0868484572",
+      "contributions": [
+        "doc"
       ]
     }
   ],

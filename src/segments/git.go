@@ -64,11 +64,12 @@ func (s *GitStatus) add(code string) {
 }
 
 const (
-	NativeStatus     options.Option = "native_status"
-	IgnoreStatus     options.Option = "ignore_status"
-	UntrackedModes   options.Option = "untracked_modes"
-	IgnoreSubmodules options.Option = "ignore_submodules"
-	MappedBranches   options.Option = "mapped_branches"
+	NativeStatus        options.Option = "native_status"
+	IgnoreStatus        options.Option = "ignore_status"
+	UntrackedModes      options.Option = "untracked_modes"
+	IgnoreSubmodules    options.Option = "ignore_submodules"
+	MappedBranches      options.Option = "mapped_branches"
+	ResolveRebaseTarget options.Option = "resolve_rebase_target"
 	// Disables the git segment when a .jj directory exists in the parent file path
 	DisableWithJJ options.Option = "disable_with_jj"
 
@@ -1169,6 +1170,9 @@ func (g *Git) hasGitFile(file string) bool {
 
 func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 	ref := g.fileContent(g.mainSCMDir, refFile)
+	if !g.options.Bool(ResolveRebaseTarget, true) {
+		return g.formatSHA(ref)
+	}
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 

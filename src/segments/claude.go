@@ -27,6 +27,7 @@ type ClaudeData struct {
 	Thinking          *ClaudeThinking     `json:"thinking"`
 	PR                *ClaudePR           `json:"pr"`
 	Agent             *ClaudeAgent        `json:"agent"`
+	PromptCache       *ClaudePromptCache  `json:"prompt_cache"`
 	Model             AIModel             `json:"model"`
 	TranscriptPath    string              `json:"transcript_path"`
 	PromptID          string              `json:"prompt_id"`
@@ -128,6 +129,32 @@ type ClaudeRateLimitWindow struct {
 type ClaudeRateLimits struct {
 	FiveHour *ClaudeRateLimitWindow `json:"five_hour"`
 	SevenDay *ClaudeRateLimitWindow `json:"seven_day"`
+}
+
+// Nil until the first API response of the session (Claude Code v2.1.251+).
+type ClaudePromptCache struct {
+	ExpiresAt           *int64               `json:"expires_at"`
+	HitRatio            *float64             `json:"hit_ratio"`
+	LastMissAt          *int64               `json:"last_miss_at"`
+	RecacheTokensIfCold *int                 `json:"recache_tokens_if_cold"`
+	LastMissCause       *ClaudeLastMissCause `json:"last_miss_cause"`
+	MissCauses          map[string]int       `json:"miss_causes"`
+	TTL                 string               `json:"ttl"`
+	Requests            int                  `json:"requests"`
+	Misses              int                  `json:"misses"`
+	ExpectedRebuilds    int                  `json:"expected_rebuilds"`
+	CacheWriteTokens    int                  `json:"cache_write_tokens"`
+	MissRecacheTokens   int                  `json:"miss_recache_tokens"`
+	Warm                bool                 `json:"warm"`
+	CachingObserved     bool                 `json:"caching_observed"`
+}
+
+// Nil until the first miss or when no cause was identified (Claude Code v2.1.260+).
+type ClaudeLastMissCause struct {
+	Causes          []string `json:"causes"`
+	ToolsAdded      int      `json:"tools_added"`
+	ToolsRemoved    int      `json:"tools_removed"`
+	SystemCharDelta int      `json:"system_char_delta"`
 }
 
 type ClaudeContextWindow struct {
@@ -369,4 +396,61 @@ func (c *Claude) FormattedTokens() string {
 	}
 
 	return formatTokenCount(currentTokens)
+}
+
+// Returns 0 when the hit ratio is unavailable.
+func (c *Claude) PromptCacheHitRatio() text.Percentage {
+	if c.PromptCache == nil || c.PromptCache.HitRatio == nil {
+		return 0
+	}
+
+	percent := int(*c.PromptCache.HitRatio*100 + 0.5)
+	if percent < 0 {
+		return 0
+	}
+
+	if percent > 100 {
+		return 100
+	}
+
+	return text.Percentage(percent)
+}
+
+func (c *Claude) PromptCacheGauge() string {
+	return c.PromptCacheHitRatio().GaugeUsedWith(c.markedChar, c.unmarkedChar)
+}
+
+// Returns the zero time when the cache has no cached prefix.
+func (c *Claude) PromptCacheExpiresAt() time.Time {
+	if c.PromptCache == nil || c.PromptCache.ExpiresAt == nil {
+		return time.Time{}
+	}
+
+	return time.Unix(*c.PromptCache.ExpiresAt, 0)
+}
+
+// Returns 0 when unavailable, negative when the cache already expired.
+func (c *Claude) PromptCacheExpiresIn() time.Duration {
+	t := c.PromptCacheExpiresAt()
+	if t.IsZero() {
+		return 0
+	}
+
+	return time.Until(t)
+}
+
+func (c *Claude) FormattedCacheWriteTokens() string {
+	if c.PromptCache == nil {
+		return formatTokenCount(0)
+	}
+
+	return formatTokenCount(c.PromptCache.CacheWriteTokens)
+}
+
+func (c *Claude) FormattedMissRecacheTokens() string {
+	if c.PromptCache == nil {
+		return formatTokenCount(0)
+	}
+
+	return formatTokenCount(c.PromptCache.MissRecacheTokens)
 }

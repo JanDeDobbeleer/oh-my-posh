@@ -97,6 +97,13 @@ import Config from "@site/src/components/Config.js";
 | `.FormattedAPIDuration` | `string`        | API wait time (e.g., "0m 45s")                                                       |
 | `.FiveHourUsage`        | `Percentage`    | 5-hour rolling rate limit usage (0-100)                                              |
 | `.SevenDayUsage`        | `Percentage`    | 7-day rate limit usage (0-100)                                                       |
+| `.PromptCache`          | `PromptCache`   | Prompt cache statistics; nil until the first API response (requires v2.1.251)        |
+| `.PromptCacheHitRatio`  | `Percentage`    | Prompt cache hit ratio (0-100); 0 when unavailable                                   |
+| `.PromptCacheGauge`     | `string`        | Gauge showing the prompt cache hit ratio using configured characters                  |
+| `.PromptCacheExpiresAt` | `time.Time`     | When the cached prefix goes cold; zero time when unavailable                         |
+| `.PromptCacheExpiresIn` | `time.Duration` | Time until the cache goes cold; 0=unavailable, neg=past                              |
+| `.FormattedCacheWriteTokens` | `string`   | Human-readable tokens written to the cache this session (e.g., "352.0K")             |
+| `.FormattedMissRecacheTokens` | `string`  | Human-readable tokens re-cached because of misses (e.g., "310.2K")                   |
 
 #### Model Properties
 
@@ -124,7 +131,7 @@ import Config from "@site/src/components/Config.js";
 | `.Name`  | `string` | Repository name; empty when absent                           |
 
 :::tip nil pointer fields
-`.OutputStyle`, `.Effort`, `.Thinking`, `.Vim`, `.Agent`, `.PR`, `.Worktree`, and `.Workspace.Repo`
+`.OutputStyle`, `.Effort`, `.Thinking`, `.Vim`, `.Agent`, `.PR`, `.Worktree`, `.PromptCache`, and `.Workspace.Repo`
 are all `nil` when the underlying data is absent. Guard direct field access with
 `{{if .Effort}}{{.Effort.Level}}{{end}}` to avoid template errors.
 :::
@@ -198,10 +205,54 @@ are all `nil` when the underlying data is absent. Guard direct field access with
 
 #### CurrentUsage Properties
 
-| Name            | Type  | Description                           |
-| --------------- | ----- | ------------------------------------- |
-| `.InputTokens`  | `int` | Input tokens for the current message  |
-| `.OutputTokens` | `int` | Output tokens for the current message |
+| Name                        | Type  | Description                                                   |
+| --------------------------- | ----- | ------------------------------------------------------------- |
+| `.InputTokens`              | `int` | Input tokens for the current message                          |
+| `.OutputTokens`             | `int` | Output tokens for the current message                         |
+| `.CacheCreationInputTokens` | `int` | Tokens used to create the prompt cache in the current message |
+| `.CacheReadInputTokens`     | `int` | Tokens read from the prompt cache in the current message      |
+
+#### PromptCache Properties
+
+Statistics for the main conversation's [prompt cache][prompt-cache]. Access via `.PromptCache`.
+The object is `nil` until the first API response of the session and requires Claude Code v2.1.251 or later;
+fields marked v2.1.260 additionally require Claude Code v2.1.260 or later.
+Timestamps are Unix epoch seconds.
+
+| Name                    | Type                | Description                                                                                         |
+| ----------------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| `.Warm`                 | `bool`              | Whether the cached prefix is still within its TTL                                                   |
+| `.CachingObserved`      | `bool`              | Whether any response reported cache tokens; `false` means caching is off or not reported            |
+| `.TTL`                  | `string`            | Cache lifetime of the current cached prefix: `5m` or `1h`                                           |
+| `.ExpiresAt`            | `*int64`            | When the cached prefix goes cold; nil when the last response reported no cache tokens               |
+| `.Requests`             | `int`               | API requests recorded for the main conversation                                                     |
+| `.Misses`               | `int`               | Requests that re-processed content the cache already held                                           |
+| `.ExpectedRebuilds`     | `int`               | Cache rebuilds that followed a compaction or a clearing of old tool results                         |
+| `.HitRatio`             | `*float64`          | Cache read tokens as a fraction (0-1) of all input tokens; nil while no tokens were counted         |
+| `.CacheWriteTokens`     | `int`               | All tokens written to the cache this session                                                        |
+| `.MissRecacheTokens`    | `int`               | Tokens written to the cache by requests counted as misses                                           |
+| `.LastMissAt`           | `*int64`            | When the last miss happened; nil while there are no misses                                          |
+| `.LastMissCause`        | `LastMissCause`     | Likely cause of the last miss; nil when there is none or it is unknown (v2.1.260)                   |
+| `.MissCauses`           | `map[string]int`    | Number of diagnosed misses per cause (v2.1.260)                                                     |
+| `.RecacheTokensIfCold`  | `*int`              | Tokens the next request re-caches if the cache goes cold; nil right after a compaction              |
+
+#### LastMissCause Properties
+
+| Name               | Type       | Description                                                                                        |
+| ------------------ | ---------- | -------------------------------------------------------------------------------------------------- |
+| `.Causes`          | `[]string` | Cause names, such as `tools_changed`, `system_prompt_changed`, `ttl_expired_5m`, `likely_server_side` |
+| `.ToolsAdded`      | `int`      | Tools added to the request, reported with `tools_changed`                                          |
+| `.ToolsRemoved`    | `int`      | Tools removed from the request, reported with `tools_changed`                                      |
+| `.SystemCharDelta` | `int`      | Change in system prompt length in characters, reported with `system_prompt_changed`                |
+
+:::tip Prompt cache example
+Guard against the object being absent so older Claude Code versions keep working:
+
+```template
+{{ if .PromptCache }}{{ .PromptCacheGauge }} {{ .PromptCacheHitRatio }}%{{ if not .PromptCache.Warm }} cold{{ end }}{{ end }}
+```
+
+:::
 
 #### RateLimits Properties
 
@@ -247,4 +298,5 @@ The segment reads session information from the `POSH_CLAUDE_STATUS` environment 
 The segment only displays when Claude Code is actively providing session data.
 
 [claude-docs]: https://code.claude.com/docs/en/statusline
+[prompt-cache]: https://code.claude.com/docs/en/statusline#prompt-cache-fields
 [templates]: /docs/configuration/templates

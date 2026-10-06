@@ -11,6 +11,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/text"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestClaudeSegment(t *testing.T) {
@@ -1061,4 +1062,171 @@ func TestClaudeRateLimitResetsIn(t *testing.T) {
 		assertSign(t, claude.FiveHourResetsIn(), tc.FiveHourSign, tc.Case+" (FiveHour)")
 		assertSign(t, claude.SevenDayResetsIn(), tc.SevenDaySign, tc.Case+" (SevenDay)")
 	}
+}
+
+func TestClaudePromptCacheJSONShape(t *testing.T) {
+	cases := []struct {
+		Expected *ClaudePromptCache
+		Case     string
+		JSON     string
+	}{
+		{
+			Case:     "Absent before first API response or on older Claude Code",
+			JSON:     `{"session_id": "abc"}`,
+			Expected: nil,
+		},
+		{
+			Case:     "Explicit null",
+			JSON:     `{"prompt_cache": null}`,
+			Expected: nil,
+		},
+		{
+			Case: "v2.1.251 payload without miss cause fields",
+			JSON: `{"prompt_cache": {
+				"warm": true,
+				"caching_observed": true,
+				"ttl": "5m",
+				"expires_at": 1738429200,
+				"requests": 3,
+				"misses": 0,
+				"expected_rebuilds": 0,
+				"hit_ratio": 0.5,
+				"cache_write_tokens": 1000,
+				"miss_recache_tokens": 0,
+				"last_miss_at": null,
+				"recache_tokens_if_cold": 800
+			}}`,
+			Expected: &ClaudePromptCache{
+				Warm:                true,
+				CachingObserved:     true,
+				TTL:                 "5m",
+				ExpiresAt:           new(int64(1738429200)),
+				Requests:            3,
+				HitRatio:            new(0.5),
+				CacheWriteTokens:    1000,
+				RecacheTokensIfCold: new(800),
+			},
+		},
+		{
+			Case: "Full payload with null counters",
+			JSON: `{"prompt_cache": {
+				"warm": false,
+				"caching_observed": true,
+				"ttl": "1h",
+				"expires_at": null,
+				"requests": 14,
+				"misses": 2,
+				"expected_rebuilds": 1,
+				"hit_ratio": null,
+				"cache_write_tokens": 352000,
+				"miss_recache_tokens": 310200,
+				"last_miss_at": 1738425230,
+				"last_miss_cause": {
+					"causes": ["tools_changed", "system_prompt_changed"],
+					"tools_added": 2,
+					"tools_removed": 1,
+					"system_char_delta": -40
+				},
+				"miss_causes": {"tools_changed": 2},
+				"recache_tokens_if_cold": null
+			}}`,
+			Expected: &ClaudePromptCache{
+				CachingObserved:   true,
+				TTL:               "1h",
+				Requests:          14,
+				Misses:            2,
+				ExpectedRebuilds:  1,
+				CacheWriteTokens:  352000,
+				MissRecacheTokens: 310200,
+				LastMissAt:        new(int64(1738425230)),
+				LastMissCause: &ClaudeLastMissCause{
+					Causes:          []string{"tools_changed", "system_prompt_changed"},
+					ToolsAdded:      2,
+					ToolsRemoved:    1,
+					SystemCharDelta: -40,
+				},
+				MissCauses: map[string]int{"tools_changed": 2},
+			},
+		},
+		{
+			Case: "Null last_miss_cause",
+			JSON: `{"prompt_cache": {"warm": true, "misses": 1, "last_miss_cause": null}}`,
+			Expected: &ClaudePromptCache{
+				Warm:   true,
+				Misses: 1,
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		var data ClaudeData
+
+		require.NoError(t, json.Unmarshal([]byte(tc.JSON), &data), tc.Case)
+		assert.Equal(t, tc.Expected, data.PromptCache, tc.Case)
+	}
+}
+
+func TestClaudePromptCacheHitRatio(t *testing.T) {
+	cases := []struct {
+		PromptCache *ClaudePromptCache
+		Case        string
+		Expected    text.Percentage
+	}{
+		{Case: "Nil prompt cache", PromptCache: nil, Expected: 0},
+		{Case: "Nil hit ratio", PromptCache: &ClaudePromptCache{}, Expected: 0},
+		{Case: "Zero", PromptCache: &ClaudePromptCache{HitRatio: new(0.0)}, Expected: 0},
+		{Case: "Rounds up", PromptCache: &ClaudePromptCache{HitRatio: new(0.915)}, Expected: 92},
+		{Case: "Rounds down", PromptCache: &ClaudePromptCache{HitRatio: new(0.914)}, Expected: 91},
+		{Case: "Full", PromptCache: &ClaudePromptCache{HitRatio: new(1.0)}, Expected: 100},
+		{Case: "Above one is capped", PromptCache: &ClaudePromptCache{HitRatio: new(1.5)}, Expected: 100},
+		{Case: "Negative is floored", PromptCache: &ClaudePromptCache{HitRatio: new(-0.5)}, Expected: 0},
+	}
+
+	for _, tc := range cases {
+		claude := &Claude{}
+		claude.PromptCache = tc.PromptCache
+
+		assert.Equal(t, tc.Expected, claude.PromptCacheHitRatio(), tc.Case)
+	}
+}
+
+func TestClaudePromptCacheGauge(t *testing.T) {
+	claude := &Claude{markedChar: "█", unmarkedChar: "░"}
+	assert.Equal(t, "░░░░░", claude.PromptCacheGauge(), "nil prompt cache")
+
+	claude.PromptCache = &ClaudePromptCache{HitRatio: new(0.6)}
+	assert.Equal(t, "███░░", claude.PromptCacheGauge())
+}
+
+func TestClaudePromptCacheExpires(t *testing.T) {
+	claude := &Claude{}
+	assert.True(t, claude.PromptCacheExpiresAt().IsZero(), "nil prompt cache")
+	assert.Zero(t, claude.PromptCacheExpiresIn(), "nil prompt cache")
+
+	claude.PromptCache = &ClaudePromptCache{}
+	assert.True(t, claude.PromptCacheExpiresAt().IsZero(), "nil expires_at")
+	assert.Zero(t, claude.PromptCacheExpiresIn(), "nil expires_at")
+
+	future := libtime.Now().Add(10 * libtime.Minute).Unix()
+	claude.PromptCache.ExpiresAt = &future
+	assert.Equal(t, libtime.Unix(future, 0), claude.PromptCacheExpiresAt())
+	assert.Greater(t, claude.PromptCacheExpiresIn(), 9*libtime.Minute)
+
+	past := libtime.Now().Add(-10 * libtime.Minute).Unix()
+	claude.PromptCache.ExpiresAt = &past
+	assert.Less(t, claude.PromptCacheExpiresIn(), libtime.Duration(0))
+}
+
+func TestClaudeFormattedCacheTokens(t *testing.T) {
+	claude := &Claude{}
+	assert.Equal(t, "0", claude.FormattedCacheWriteTokens(), "nil prompt cache")
+	assert.Equal(t, "0", claude.FormattedMissRecacheTokens(), "nil prompt cache")
+
+	claude.PromptCache = &ClaudePromptCache{CacheWriteTokens: 352000, MissRecacheTokens: 310200}
+	assert.Equal(t, "352.0K", claude.FormattedCacheWriteTokens())
+	assert.Equal(t, "310.2K", claude.FormattedMissRecacheTokens())
+
+	claude.PromptCache = &ClaudePromptCache{CacheWriteTokens: 999, MissRecacheTokens: 2500000}
+	assert.Equal(t, "999", claude.FormattedCacheWriteTokens())
+	assert.Equal(t, "2.5M", claude.FormattedMissRecacheTokens())
 }

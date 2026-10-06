@@ -3864,6 +3864,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "St0rmingBr4in",
+      "name": "Julien DOCHE",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6610087?v=4",
+      "profile": "https://www.st0rmingbr4in.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

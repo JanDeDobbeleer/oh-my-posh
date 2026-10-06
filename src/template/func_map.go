@@ -15,12 +15,13 @@ import (
 // RenderTrusted (see text.go) — never to RenderUntrusted, which may contain
 // or be composed from runtime data.
 var dangerousFuncs = map[string]bool{
-	"cmd":       true,
-	"readFile":  true,
-	"stat":      true,
-	"glob":      true,
-	"env":       true,
-	"expandenv": true,
+	"cmd":           true,
+	"cmdNoFallback": true,
+	"readFile":      true,
+	"stat":          true,
+	"glob":          true,
+	"env":           true,
+	"expandenv":     true,
 
 	// getHostByName does a live DNS lookup, which can be used to exfiltrate
 	// data (e.g. an env var) from an untrusted template over DNS.
@@ -177,6 +178,7 @@ var sharedFuncMap = sync.OnceValue(func() template.FuncMap {
 	fm := baseFuncMap()
 
 	fm["cmd"] = cmd
+	fm["cmdNoFallback"] = cmdNoFallback
 	fm["readFile"] = readFile
 	fm["stat"] = stat
 	fm["glob"] = glob

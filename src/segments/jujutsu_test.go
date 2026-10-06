@@ -45,7 +45,7 @@ func TestJujutsuEnabledInWorkingDirectory(t *testing.T) {
 	assert.Empty(t, jj.ChangeID)
 	assert.Empty(t, jj.ChangeIDPrefix)
 	assert.Empty(t, jj.ChangeIDRest)
-	env.AssertNotCalled(t, "RunCommand")
+	env.AssertNotCalled(t, "RunCommandNoFallback")
 }
 
 func TestJujutsuLogTemplate(t *testing.T) {
@@ -200,7 +200,7 @@ R {renamed_file => new_file}`,
 				"-T",
 				jj.logTemplate(),
 			}
-			env.On("RunCommand", "jj", commandArgs).Return(tc.LogOutput, tc.CommandError)
+			env.On("RunCommandNoFallback", "jj", commandArgs).Return(tc.LogOutput, tc.CommandError)
 
 			assert.True(t, jj.Enabled())
 			assert.Equal(t, fileInfo.Path, jj.mainSCMDir)
@@ -212,7 +212,7 @@ R {renamed_file => new_file}`,
 			if tc.ValidHeader {
 				assert.Equal(t, jj.ChangeIDPrefix+jj.ChangeIDRest, jj.ChangeID)
 			}
-			env.AssertNumberOfCalls(t, "RunCommand", 1)
+			env.AssertNumberOfCalls(t, "RunCommandNoFallback", 1)
 			env.AssertExpectations(t)
 		})
 	}
@@ -253,9 +253,9 @@ func TestJujutsuClosestBookmarks(t *testing.T) {
 
 		bookmarkArgs := []string{"--repository", "/repo", "--no-pager", "--color", "never", "--ignore-working-copy", "log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks"} //nolint:lll
 		if tc.Error {
-			env.On("RunCommand", "jj", bookmarkArgs).Return("", errors.New("failed")).Once()
+			env.On("RunCommandNoFallback", "jj", bookmarkArgs).Return("", errors.New("failed")).Once()
 		} else {
-			env.On("RunCommand", "jj", bookmarkArgs).Return(tc.Output, nil).Once()
+			env.On("RunCommandNoFallback", "jj", bookmarkArgs).Return(tc.Output, nil).Once()
 		}
 
 		opts := tc.Options
@@ -273,7 +273,7 @@ func TestJujutsuClosestBookmarks(t *testing.T) {
 		// (the .Once() mock above panics otherwise)
 		assert.Equal(t, tc.Expected, jj.ClosestBookmarks(), tc.Case)
 		assert.Equal(t, tc.Expected, jj.ClosestBookmarks(), tc.Case)
-		env.AssertNumberOfCalls(t, "RunCommand", 1)
+		env.AssertNumberOfCalls(t, "RunCommandNoFallback", 1)
 	}
 }
 
@@ -332,7 +332,7 @@ func TestJujutsuAheadCount(t *testing.T) {
 
 		cli := []string{"--repository", "/repo", "--no-pager", "--color", "never", "--ignore-working-copy"}
 		bookmarkArgs := append(append([]string{}, cli...), "log", "-r", "heads(::@ & bookmarks())", "--no-graph", "-T", "bookmarks")
-		env.On("RunCommand", "jj", bookmarkArgs).Return(tc.Bookmarks, nil).Once()
+		env.On("RunCommandNoFallback", "jj", bookmarkArgs).Return(tc.Bookmarks, nil).Once()
 
 		aheadCalls := 0
 		if tc.ExpectedRange != "" {
@@ -340,9 +340,9 @@ func TestJujutsuAheadCount(t *testing.T) {
 			aheadArgs := append(append([]string{}, cli...), "log", "--no-graph", "-T", "'.'", "-r", tc.ExpectedRange)
 
 			if tc.AheadError {
-				env.On("RunCommand", "jj", aheadArgs).Return("", errors.New("failed")).Once()
+				env.On("RunCommandNoFallback", "jj", aheadArgs).Return("", errors.New("failed")).Once()
 			} else {
-				env.On("RunCommand", "jj", aheadArgs).Return(tc.AheadOutput, nil).Once()
+				env.On("RunCommandNoFallback", "jj", aheadArgs).Return(tc.AheadOutput, nil).Once()
 			}
 		}
 
@@ -357,13 +357,13 @@ func TestJujutsuAheadCount(t *testing.T) {
 		assert.Equal(t, tc.Bookmarks, jj.ClosestBookmarks(), tc.Case)
 
 		if !tc.Invoke {
-			env.AssertNumberOfCalls(t, "RunCommand", 1)
+			env.AssertNumberOfCalls(t, "RunCommandNoFallback", 1)
 			continue
 		}
 
 		// a second call must serve the memo (the .Once() mocks panic otherwise)
 		assert.Equal(t, tc.Expected, jj.AheadCount(), tc.Case)
 		assert.Equal(t, tc.Expected, jj.AheadCount(), tc.Case)
-		env.AssertNumberOfCalls(t, "RunCommand", 1+aheadCalls)
+		env.AssertNumberOfCalls(t, "RunCommandNoFallback", 1+aheadCalls)
 	}
 }

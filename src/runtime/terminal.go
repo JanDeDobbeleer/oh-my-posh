@@ -485,10 +485,18 @@ func (term *Terminal) Home() string {
 }
 
 func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
-	return term.RunCommandWithEnv(command, nil, args...)
+	return term.runCommand(command, nil, true, args...)
+}
+
+func (term *Terminal) RunCommandNoFallback(command string, args ...string) (string, error) {
+	return term.runCommand(command, nil, false, args...)
 }
 
 func (term *Terminal) RunCommandWithEnv(command string, envs []string, args ...string) (string, error) {
+	return term.runCommand(command, envs, true, args...)
+}
+
+func (term *Terminal) runCommand(command string, envs []string, fallbackToStderr bool, args ...string) (string, error) {
 	if term.CmdFlags != nil && term.CmdFlags.DataOnly {
 		return "", errDataOnly
 	}
@@ -498,7 +506,11 @@ func (term *Terminal) RunCommandWithEnv(command string, envs []string, args ...s
 		command = cacheCommand
 	}
 
-	output, err := cmd.RunWithEnv(command, envs, args...)
+	run := cmd.RunWithEnv
+	if !fallbackToStderr {
+		run = cmd.RunWithEnvNoFallback
+	}
+	output, err := run(command, envs, args...)
 	if err != nil {
 		log.Error(err)
 	}

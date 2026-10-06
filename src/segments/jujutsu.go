@@ -220,5 +220,5 @@ func (jj *Jujutsu) getJujutsuCommandOutput(command string, args ...string) (stri
 	cli = append(cli, command)
 	cli = append(cli, args...)
 
-	return jj.env.RunCommand(jj.command, cli...)
+	return jj.env.RunCommandNoFallback(jj.command, cli...)
 }

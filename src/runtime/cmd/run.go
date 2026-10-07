@@ -49,9 +49,5 @@ func RunWithEnv(command string, envs []string, args ...string) (string, error) {
 		return output, err
 	}
 
-	result := strings.TrimSpace(out.String())
-	if result == "" {
-		result = strings.TrimSpace(errb.String())
-	}
-	return result, nil
+	return strings.TrimSpace(out.String()), nil
 }

@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -655,6 +656,91 @@ func TestAgnosterMaxWidth(t *testing.T) {
 			path.setPaths()
 
 			got := path.getAgnosterMaxWidth(tc.maxWidth)
+			assert.Equal(t, tc.expected, got, tc.name)
+		})
+	}
+}
+
+func TestAgnosterGitPath(t *testing.T) {
+	cases := []struct {
+		name     string
+		pwd      string
+		gitDir   *runtime.FileInfo
+		expected string
+		maxWidth int
+	}{
+		{
+			name:     "max_width 0 returns the full path unchanged",
+			pwd:      "/foob/user/repo/src/platform/deep/current",
+			gitDir:   &runtime.FileInfo{IsDir: true, ParentFolder: "/foob/user/repo"},
+			maxWidth: 0,
+			expected: "foob/user/repo/src/platform/deep/current",
+		},
+		{
+			name:     "path fits within max_width, nothing is folded",
+			pwd:      "/foob/user/repo/src/platform/deep/current",
+			gitDir:   &runtime.FileInfo{IsDir: true, ParentFolder: "/foob/user/repo"},
+			maxWidth: 100,
+			expected: "foob/user/repo/src/platform/deep/current",
+		},
+		{
+			name:     "repository root is never folded, even under a tight budget",
+			pwd:      "/foob/user/repo/src/platform/deep/current",
+			gitDir:   &runtime.FileInfo{IsDir: true, ParentFolder: "/foob/user/repo"},
+			maxWidth: 15,
+			expected: "foob/../repo/../current",
+		},
+		{
+			name:     "consecutive folded folders collapse into a single icon",
+			pwd:      "/foob/user/repo/src/platform/deep/current",
+			gitDir:   &runtime.FileInfo{IsDir: true, ParentFolder: "/foob/user/repo"},
+			maxWidth: 30,
+			expected: "foob/../repo/../deep/current",
+		},
+		{
+			name:     "linked git worktree (.git file) is treated like a repository root",
+			pwd:      "/foob/user/repo/src/platform/deep/current",
+			gitDir:   &runtime.FileInfo{ParentFolder: "/foob/user/repo"},
+			maxWidth: 15,
+			expected: "foob/../repo/../current",
+		},
+		{
+			name:     "no repository found falls back to folding everything but root and current",
+			pwd:      "/foob/user/repo/src/platform/deep/current",
+			gitDir:   nil,
+			maxWidth: 15,
+			expected: "foob/../current",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			env := &mock.Environment{}
+			env.On("Pwd").Return(tc.pwd)
+			env.On("Home").Return("/home")
+			env.On("GOOS").Return(runtime.LINUX)
+			env.On("Shell").Return(shell.BASH)
+
+			var gitErr error
+			if tc.gitDir == nil {
+				gitErr = errors.New("not found")
+				tc.gitDir = &runtime.FileInfo{}
+			}
+
+			env.On("HasParentFilePath", ".git", false).Return(tc.gitDir, gitErr)
+
+			path := &Path{
+				env: env,
+				options: options.Map{
+					FolderIcon:          "..",
+					FolderSeparatorIcon: "/",
+				},
+				pathSeparator: "/",
+			}
+
+			path.setPaths()
+
+			got := path.getAgnosterGitPath(tc.maxWidth)
 			assert.Equal(t, tc.expected, got, tc.name)
 		})
 	}

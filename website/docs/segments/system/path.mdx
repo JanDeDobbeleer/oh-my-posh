@@ -40,7 +40,7 @@ import Config from "@site/src/components/Config.js";
 | `style`                     |   `enum`   | `agnoster` | how to display the current path                                                                                  |
 | `mixed_threshold`           |  `number`  |    `4`     | the maximum length of a path segment that will be displayed when using `Mixed`                                   |
 | `max_depth`                 |  `number`  |    `1`     | maximum path depth to display before shortening when using `agnoster_short`                                      |
-| `max_width`                 |   `any`    |    `0`     | maximum path length to display when using `powerlevel` or `agnoster`, can leverage [templates]                   |
+| `max_width`                 |   `any`    |    `0`     | maximum path length to display when using `powerlevel`, `agnoster` or `agnoster_git`, can leverage [templates]   |
 | `hide_root_location`        | `boolean`  |  `false`   | hides the root location if it doesn't fit in the last `max_depth` folders when using `agnoster_short`            |
 | `cycle`                     | `[]string` |            | a list of color overrides to cycle through to colorize the individual path folders, e.g. `[ "#ffffff,#111111" ]` |
 | `cycle_folder_separator`    | `boolean`  |  `false`   | colorize the `folder_separator_icon` as well when using a cycle                                                  |
@@ -133,12 +133,13 @@ This turns `~/GitHub/oh-my-posh.worktrees/feature-branch` into the GitHub icon f
 
 ## Style
 
-Style sets the way the path is displayed. Based on previous experience and popular themes, there are 10 flavors.
+Style sets the way the path is displayed. Based on previous experience and popular themes, there are 12 flavors.
 
 - `agnoster`
 - `agnoster_full`
 - `agnoster_short`
 - `agnoster_left`
+- `agnoster_git`
 - `full`
 - `folder`
 - `mixed`
@@ -166,6 +167,13 @@ separated by the `folder_separator_icon`.
 
 Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
 Only the first folder name and its child are displayed in full.
+
+### Agnoster Git
+
+Works like `agnoster`, but when `max_width` is set, the root of the nearest git repository (if any) is
+never replaced by the `folder_icon`, even when the path still exceeds `max_width` after folding every other
+intermediate folder. The first and the last (current) folder name are always displayed as-is, same as `agnoster`.
+When `max_width` is unset, zero, or the full path already fits, the path is displayed unchanged.
 
 ### Full
 

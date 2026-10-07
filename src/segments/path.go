@@ -83,6 +83,8 @@ const (
 	Unique string = "unique"
 	// AgnosterLeft like agnoster, but keeps the left side of the path
 	AgnosterLeft string = "agnoster_left"
+	// AgnosterGit like agnoster, but never folds the nearest git repository root; used in combination with max_width.
+	AgnosterGit string = "agnoster_git"
 	// Powerlevel tries to mimic the powerlevel10k path; used in combination with max_width.
 	Powerlevel             string         = "powerlevel"
 	MixedThreshold         options.Option = "mixed_threshold"
@@ -241,6 +243,9 @@ func (pt *Path) setStyle() {
 		styled = pt.getUniqueLettersPath(0)
 	case AgnosterLeft:
 		styled = pt.getAgnosterLeftPath()
+	case AgnosterGit:
+		maxWidth := pt.getMaxWidth()
+		styled = pt.getAgnosterGitPath(maxWidth)
 	case Full, Short: // "short" is a duplicate of "full", just here for backwards compatibility
 		styled = pt.getFullPath()
 	case FolderType:
@@ -554,6 +559,96 @@ func (pt *Path) getAgnosterMaxWidth(maxWidth int) string {
 	}
 
 	return pt.colorizePath(folderNames[0], folderNames[1:])
+}
+
+// getAgnosterGitPath is like getAgnosterMaxWidth, but never folds the folder that matches the
+// nearest git repository root (if any), so the repository identity survives shortening.
+func (pt *Path) getAgnosterGitPath(maxWidth int) string {
+	separator := pt.getFolderSeparator()
+	folderIcon := pt.options.String(FolderIcon, "..")
+
+	root, folders := pt.getPaths()
+	folderNames := append([]string{root}, folders.List()...)
+
+	n := len(folderNames)
+	if n == 0 {
+		return pt.colorizePath(root, nil)
+	}
+
+	// max_width is a soft limit here: root, the repository root, and the current
+	// folder are landmarks that are never folded away, even if still over width.
+	protected := make([]bool, n)
+	protected[0] = true
+	protected[n-1] = true
+
+	if repoIndex := pt.gitRootFolderIndex(folders); repoIndex >= 0 {
+		protected[repoIndex+1] = true
+	}
+
+	collapsed := func() []string { return mergeFolderIcons(folderNames, folderIcon) }
+
+	if maxWidth <= 0 || utf8.RuneCountInString(strings.Join(collapsed(), separator)) <= maxWidth {
+		merged := collapsed()
+		return pt.colorizePath(merged[0], merged[1:])
+	}
+
+	for i := 1; i < n-1 && utf8.RuneCountInString(strings.Join(collapsed(), separator)) > maxWidth; i++ {
+		if protected[i] {
+			continue
+		}
+
+		folderNames[i] = folderIcon
+	}
+
+	merged := collapsed()
+
+	return pt.colorizePath(merged[0], merged[1:])
+}
+
+// gitRootFolderIndex returns the index in folders matching the nearest git repository root,
+// or -1 if there is none. It shares the (cached) parent-file lookup used by gitdir_format.
+func (pt *Path) gitRootFolderIndex(folders Folders) int {
+	parent, OK := pt.gitRootPath()
+	if !OK {
+		return -1
+	}
+
+	for i, folder := range folders {
+		if folder.Path == parent {
+			return i
+		}
+	}
+
+	return -1
+}
+
+// gitRootPath returns the normalized path of the nearest git repository root above pwd.
+func (pt *Path) gitRootPath() (string, bool) {
+	dir, err := pt.env.HasParentFilePath(".git", false)
+	if err != nil {
+		return "", false
+	}
+
+	// Linked worktrees use a .git file instead of a directory.
+	// Make it consistent with the modified parent.
+	return pt.join(pt.replaceMappedLocations(dir.ParentFolder)), true
+}
+
+// mergeFolderIcons collapses consecutive folder_icon entries into a single one, so folding
+// several adjacent folders never prints the icon more than once in a row.
+func mergeFolderIcons(names []string, icon string) []string {
+	merged := make([]string, 0, len(names))
+
+	for _, name := range names {
+		last := len(merged) - 1
+		if name == icon && last >= 0 && merged[last] == icon {
+			continue
+		}
+
+		merged = append(merged, name)
+	}
+
+	return merged
 }
 
 func (pt *Path) getAgnosterFullPath() string {
@@ -967,15 +1062,17 @@ func (pt *Path) splitPath() Folders {
 func (pt *Path) makeFolderFormatMap() map[string]string {
 	folderFormatMap := make(map[string]string)
 
-	if gitDirFormat := pt.options.String(GitDirFormat, ""); len(gitDirFormat) != 0 {
-		dir, err := pt.env.HasParentFilePath(".git", false)
-		if err == nil {
-			// Linked worktrees use a .git file instead of a directory.
-			// Make it consistent with the modified parent.
-			parent := pt.join(pt.replaceMappedLocations(dir.ParentFolder))
-			folderFormatMap[parent] = gitDirFormat
-		}
+	gitDirFormat := pt.options.String(GitDirFormat, "")
+	if len(gitDirFormat) == 0 {
+		return folderFormatMap
 	}
+
+	parent, OK := pt.gitRootPath()
+	if !OK {
+		return folderFormatMap
+	}
+
+	folderFormatMap[parent] = gitDirFormat
 
 	return folderFormatMap
 }

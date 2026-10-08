@@ -1,14 +1,17 @@
 package segments
 
 import (
+	"os"
 	"path"
 	"testing"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGcpSegment(t *testing.T) {
@@ -92,6 +95,130 @@ func TestGcpSegment(t *testing.T) {
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, "{{.Project}} :: {{.Region}} :: {{.Account}}", g), tc.Case)
 		}
+	}
+}
+
+func TestGcpAuthStatus(t *testing.T) {
+	dbContent, err := os.ReadFile(path.Join("testdata", "gcp_access_tokens.db"))
+	require.NoError(t, err)
+
+	cases := []struct {
+		Case                 string
+		Account              string
+		FetchAuthStatus      bool
+		NoDB                 bool
+		ExpectedAuthorized   bool
+		ExpectedExpiryIsZero bool
+	}{
+		{
+			Case:                 "disabled by default",
+			Account:              "expired@example.com",
+			ExpectedAuthorized:   false,
+			ExpectedExpiryIsZero: true,
+		},
+		{
+			Case:                 "expired token",
+			Account:              "expired@example.com",
+			FetchAuthStatus:      true,
+			ExpectedAuthorized:   false,
+			ExpectedExpiryIsZero: false,
+		},
+		{
+			Case:                 "valid token",
+			Account:              "valid@example.com",
+			FetchAuthStatus:      true,
+			ExpectedAuthorized:   true,
+			ExpectedExpiryIsZero: false,
+		},
+		{
+			Case:                 "account unknown to access_tokens.db",
+			Account:              "unknown@example.com",
+			FetchAuthStatus:      true,
+			ExpectedAuthorized:   true,
+			ExpectedExpiryIsZero: true,
+		},
+		{
+			Case:                 "access_tokens.db missing",
+			Account:              "expired@example.com",
+			FetchAuthStatus:      true,
+			NoDB:                 true,
+			ExpectedAuthorized:   true,
+			ExpectedExpiryIsZero: true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("Getenv", "CLOUDSDK_CONFIG").Return("config")
+		env.On("Getenv", "CLOUDSDK_ACTIVE_CONFIG_NAME").Return("production")
+
+		cfgData := `
+		[core]
+		account = ` + tc.Account + `
+		project = test-project
+		`
+
+		cfgpath := path.Join("config", "configurations", "config_production")
+		env.On("FileContent", cfgpath).Return(cfgData)
+
+		dbPath := path.Join("config", "access_tokens.db")
+		if tc.NoDB {
+			env.On("FileContent", dbPath).Return("")
+		} else {
+			env.On("FileContent", dbPath).Return(string(dbContent))
+		}
+
+		g := &Gcp{}
+		opts := options.Map{}
+		if tc.FetchAuthStatus {
+			opts[FetchAuthStatus] = true
+		}
+		g.Init(opts, env)
+
+		require.True(t, g.Enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedAuthorized, g.Authorized, tc.Case)
+		assert.Equal(t, tc.ExpectedExpiryIsZero, g.TokenExpiresAt.IsZero(), tc.Case)
+	}
+}
+
+func TestParseTokenExpiry(t *testing.T) {
+	cases := []struct {
+		Expected time.Time
+		Case     string
+		Value    string
+		HasError bool
+	}{
+		{
+			Case:     "with microseconds",
+			Value:    "2024-01-01 12:00:00.123456",
+			Expected: time.Date(2024, 1, 1, 12, 0, 0, 123456000, time.UTC),
+		},
+		{
+			Case:     "without microseconds",
+			Value:    "2024-01-01 12:00:00",
+			Expected: time.Date(2024, 1, 1, 12, 0, 0, 0, time.UTC),
+		},
+		{
+			Case:     "empty",
+			Value:    "",
+			HasError: true,
+		},
+		{
+			Case:     "garbage",
+			Value:    "not-a-date",
+			HasError: true,
+		},
+	}
+
+	for _, tc := range cases {
+		got, err := parseTokenExpiry(tc.Value)
+		if tc.HasError {
+			assert.Error(t, err, tc.Case)
+			continue
+		}
+
+		require.NoError(t, err, tc.Case)
+		assert.True(t, tc.Expected.Equal(got), tc.Case)
 	}
 }
 

@@ -20,6 +20,9 @@ import Config from "@site/src/components/Config.js";
     foreground: "#ffffff",
     background: "#47888d",
     template: " \udb84\uddf6 {{.Project}} :: {{.Account}} ",
+    options: {
+      fetch_auth_status: true,
+    },
   }}
 />
 
@@ -35,13 +38,31 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name            | Type     | Description                                                              |
-| --------------- | -------- | ------------------------------------------------------------------------ |
-| `.Project`      | `string` | the currently active project                                             |
-| `.Account`      | `string` | the currently active account                                             |
-| `.Region`       | `string` | default region for the active context                                    |
-| `.ActiveConfig` | `string` | the active configuration name                                            |
-| `.Error`        | `string` | contains any error messages generated when trying to load the GCP config |
+| Name              | Type        | Description                                                              |
+| ----------------- | ----------- | ------------------------------------------------------------------------ |
+| `.Project`        | `string`    | the currently active project                                             |
+| `.Account`        | `string`    | the currently active account                                             |
+| `.Region`         | `string`    | default region for the active context                                    |
+| `.ActiveConfig`   | `string`    | the active configuration name                                            |
+| `.Authorized`     | `bool`      | `false` only when `fetch_auth_status` found an expired token             |
+| `.TokenExpiresAt` | `time.Time` | expiry of the cached access token, zero when unknown                     |
+| `.Error`          | `string`    | contains any error messages generated when trying to load the GCP config |
+
+### Options
+
+| Name                | Type      | Default | Description                                              |
+| ------------------- | :-------: | :-----: | -------------------------------------------------------- |
+| `fetch_auth_status` | `boolean` | `false` | populate `.Authorized` and `.TokenExpiresAt` (see below) |
+
+:::note
+
+`fetch_auth_status` reads `access_tokens.db` for the active account's cached access token.
+`gcloud` org reauth policies (e.g. "require reauthentication every 16 hours") enforce themselves
+through an opaque token with no readable expiry, so this can't predict the exact reauth moment.
+Instead, it reports whether the cached access token itself is still valid, which is a solid proxy:
+it stops refreshing once reauth is required.
+
+:::
 
 [templates]: /docs/configuration/templates
 [gcp]: https://cloud.google.com/

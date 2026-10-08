@@ -2039,7 +2039,20 @@
           },
           "then": {
             "title": "GCP Segment",
-            "description": "Display the currently active GCP project, region and account."
+            "description": "Display the currently active GCP project, region and account.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "fetch_auth_status": {
+                    "type": "boolean",
+                    "title": "Fetch Auth Status",
+                    "description": "Populate .Authorized and .TokenExpiresAt by reading the cached access token's expiry from gcloud's access_tokens.db.",
+                    "default": false
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
           }
         },
         {

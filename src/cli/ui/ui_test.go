@@ -2,6 +2,7 @@ package ui
 
 import (
 	"bytes"
+	"encoding/base64"
 	"strings"
 	"testing"
 
@@ -137,4 +138,76 @@ func TestProgressClampsAndFills(t *testing.T) {
 			assert.Contains(t, out.String(), test.expect)
 		})
 	}
+}
+
+func TestProgramStatusWritesProtocolReports(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Write    func(*ProgramStatus)
+		Expected string
+	}{
+		{
+			Case: "working",
+			Write: func(status *ProgramStatus) {
+				status.Working("Validating current installation")
+			},
+			Expected: "state=working:app=oh-my-posh:msg=" + base64.StdEncoding.EncodeToString([]byte("Validating current installation")),
+		},
+		{
+			Case: "progress is clamped",
+			Write: func(status *ProgramStatus) {
+				status.Progress("Downloading", 120)
+			},
+			Expected: "state=working:app=oh-my-posh:progress=100:msg=" + base64.StdEncoding.EncodeToString([]byte("Downloading")),
+		},
+		{
+			Case: "done",
+			Write: func(status *ProgramStatus) {
+				status.Done("Upgrade complete")
+			},
+			Expected: "state=done:app=oh-my-posh:msg=" + base64.StdEncoding.EncodeToString([]byte("Upgrade complete")),
+		},
+		{
+			Case: "blocked authentication",
+			Write: func(status *ProgramStatus) {
+				status.Blocked("auth", "Please approve access")
+			},
+			Expected: "state=blocked:app=oh-my-posh:kind=auth:msg=" + base64.StdEncoding.EncodeToString([]byte("Please approve access")),
+		},
+		{
+			Case: "error strips controls",
+			Write: func(status *ProgramStatus) {
+				status.Error("upgrade\nfailed\x1b]0;title")
+			},
+			Expected: "state=error:app=oh-my-posh:msg=" + base64.StdEncoding.EncodeToString([]byte("upgradefailed]0;title")),
+		},
+		{
+			Case: "message respects the decoded byte limit",
+			Write: func(status *ProgramStatus) {
+				status.Working(strings.Repeat("é", 1025))
+			},
+			Expected: "state=working:app=oh-my-posh:msg=" + base64.StdEncoding.EncodeToString([]byte(strings.Repeat("é", 1024))),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			var out bytes.Buffer
+
+			tc.Write(NewProgramStatus(&out))
+
+			assert.Equal(t, "\x1b]7501;"+tc.Expected+"\x1b\\", out.String())
+		})
+	}
+}
+
+func TestProgramStatusSuppressesDuplicateReports(t *testing.T) {
+	var out bytes.Buffer
+	status := NewProgramStatus(&out)
+
+	status.Progress("Downloading", 40)
+	first := out.String()
+	status.Progress("Downloading", 40)
+
+	assert.Equal(t, first, out.String())
 }

@@ -22,31 +22,40 @@ func List() ([]*Asset, error) {
 // left is a linear sequence, which is what it always was underneath.
 func Install(name, zipFolder string) (string, error) {
 	status := ui.NewStatus(os.Stdout)
+	programStatus := ui.NewProgramStatus(os.Stdout)
 
 	// A local zip is already on disk: nothing to resolve and nothing to download.
 	if IsLocalZipFile(name) {
 		data, err := os.ReadFile(name)
 		if err != nil {
+			programStatus.Error(err.Error())
 			return "", err
 		}
 
-		status.Start(fmt.Sprintf("Installing %s", name))
+		message := fmt.Sprintf("Installing %s", name)
+		programStatus.Working(message)
+		status.Start(message)
 
 		families, err := InstallZIP(data, zipFolder)
 		if err != nil {
+			programStatus.Error(err.Error())
 			status.Stop("")
 			return "", err
 		}
 
-		status.Stop(installed(name, families))
+		message = installed(name, families)
+		programStatus.Done(message)
+		status.Stop(message)
 
 		return name, nil
 	}
 
+	programStatus.Working("Resolving font")
 	status.Start("Resolving font")
 
 	asset, err := ResolveFontAsset(name)
 	if err != nil {
+		programStatus.Error(err.Error())
 		status.Stop("")
 		return "", err
 	}
@@ -57,25 +66,36 @@ func Install(name, zipFolder string) (string, error) {
 
 	status.Stop("")
 
-	bar := ui.NewProgress(os.Stdout, fmt.Sprintf("Downloading %s", asset.Name))
+	message := fmt.Sprintf("Downloading %s", asset.Name)
+	programStatus.Progress(message, 0)
+	bar := ui.NewProgress(os.Stdout, message)
 
-	zipFile, err := download(asset.URL, bar.Set)
+	zipFile, err := download(asset.URL, func(fraction float64) {
+		programStatus.Progress(message, int(fraction*100))
+		bar.Set(fraction)
+	})
 	if err != nil {
+		programStatus.Error(err.Error())
 		bar.Done()
 		return "", err
 	}
 
 	bar.Done()
 
-	status.Start(fmt.Sprintf("Installing %s", asset.Name))
+	message = fmt.Sprintf("Installing %s", asset.Name)
+	programStatus.Working(message)
+	status.Start(message)
 
 	families, err := InstallZIP(zipFile, zipFolder)
 	if err != nil {
+		programStatus.Error(err.Error())
 		status.Stop("")
 		return "", err
 	}
 
-	status.Stop(installed(asset.Name, families))
+	message = installed(asset.Name, families)
+	programStatus.Done(message)
+	status.Stop(message)
 
 	return asset.Name, nil
 }

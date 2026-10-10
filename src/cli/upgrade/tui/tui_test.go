@@ -43,10 +43,11 @@ func (b *lockedBuffer) Reset() {
 
 func newReporter(out *lockedBuffer) *reporter {
 	return &reporter{
-		cfg:    &upgrade.Config{},
-		writer: out,
-		status: ui.NewStatus(out),
-		bar:    ui.NewProgress(out, barLabel),
+		cfg:           &upgrade.Config{},
+		writer:        out,
+		status:        ui.NewStatus(out),
+		bar:           ui.NewProgress(out, barLabel),
+		programStatus: ui.NewProgramStatus(out),
 	}
 }
 
@@ -106,4 +107,15 @@ func TestReporterFailWhileDownloading(t *testing.T) {
 	r.fail(errors.New("boom"))
 
 	assert.Contains(t, out.String(), "upgrade failed: boom")
+	assert.Contains(t, out.String(), "\x1b]7501;state=error:app=oh-my-posh:")
+}
+
+func TestReporterReportsUpgradeProgress(t *testing.T) {
+	var out lockedBuffer
+
+	r := newReporter(&out)
+	r.stage(upgrade.StageDownloading)
+	r.progress(0.4)
+
+	assert.Contains(t, out.String(), "\x1b]7501;state=working:app=oh-my-posh:progress=40:")
 }

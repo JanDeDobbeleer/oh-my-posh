@@ -1,201 +1,75 @@
 # Codebase
 
-## Docs linting
+## Template markup trust boundary
 
-- One markdown gate covers skill docs: `markdownlint-cli2`'s `**/*.md` glob in
-  `.markdownlint-cli2.yaml` reaches `.agents/skills` - only the four explicit `ignores` entries
-  there are excluded. Lint skill doc changes with `npx markdownlint-cli2 --config
-  .markdownlint-cli2.yaml <path>` before pushing.
-- Vale was removed on 2026-08-03 in `9f8196e1`, along with `.github/workflows/vale.yml` and
-  `.vale.ini`. No prose-style gate runs in CI any more, so wording is a review matter rather than
-  a check.
-
-## Windows git rebase with core.autocrlf=true
-
-- An interactive `git rebase --autosquash` can stop mid-sequence with "Your local changes to
-  `<file>` would be overwritten by merge" on a plain `pick` that has no real content conflict
-  (verified 2026-07-30). Root cause: `core.autocrlf=true` renormalizes line endings on checkout,
-  which git treats as a working-tree modification that blocks the next pick. Toggle
-  `git config core.autocrlf false` for the duration of the rebase (restore it after), rather than
-  trying to resolve a conflict that doesn't reflect the actual diff.
-
-## SVG renderer (src/svg)
-
-- The window chrome's "shadow" must be a filled silhouette rect offset +4/+4 behind the window
-  (`writeWindowChrome`, `shadowOffset`), never an `feDropShadow` filter (verified 2026-09-04).
-  A filter casts the silhouette of what is actually painted; the window's border rect is
-  `fill="none"`, so a filter shadows only the 1px stroke and no solid block appears on the
-  right/bottom. The CSS it mirrors is `box-shadow: 4px 4px 0 var(--omp-frame-shadow)` on
-  `.theme-code-block` in `website/src/css/custom.css` - a solid offset block, black-ish in
-  light mode, white in dark mode.
-- The canvas grows by exactly `shadowOffset` on the right/bottom so the silhouette is not
-  clipped by the viewBox; tests that count `<rect` elements must include the shadow rect.
-- After changing `src/svg/`, regenerate the website previews or the homepage/theme gallery stay
-  stale: build from `src/` (`go build -o ..\oh-my-posh.exe .`), then run
-  `node website/export_themes.mjs` with `OMP_BIN` pointing at that binary.
-
-## Dev environment
-
-- The Go module root is `src/`, not the repo root - run all `go` commands from there.
-- On windows/arm64 dev machines `go test -race` is NOT supported. Concurrency-sensitive changes
-  must rely on CI (amd64) for race detection.
-- Rendering hot-path benchmarks live in `src/template/bench_test.go`,
-  `src/terminal/bench_test.go`, and `src/prompt/bench_test.go`; compare runs with `benchstat`.
-- `template.Init` resets the parsed-template cache - a macro benchmark that calls it per iteration
-  measures the cold-parse path, not steady state.
-
-## Shell integration scripts
-
-- Everything under `src/shell/scripts/` is **embedded at build time** (`go:embed`). After editing a
-  script, rebuild the binary before testing; `oh-my-posh init <shell> --print` shows the generated
-  output and is the fastest way to inspect what a user actually sources.
-- Features (transient prompt, tooltips, vi mode, streaming) are emitted per shell from
-  `src/shell/<shell>.go` - a script function is dead code unless the feature switch emits its
-  activation line.
-
-## Segments and panics
-
-- Segment `Execute` goroutines recover a panic since 2026-09-05 (`src/prompt/segments.go`): the
-  segment logs the panic and renders as disabled, and the serve daemon survives. Template
-  rendering still re-panics runtime errors in the producer, which the streaming producer also
-  recovers. A completely blank prompt therefore points at a panic outside those two places.
-- If the panic trigger persists (e.g. a poisoned cache entry with a TTL), every prompt crashes
-  until the entry expires.
-- Segment writers gob-encode only exported fields. `segments.Base.env/options` are unexported and
-  MUST survive a cache restore: overlay the restored data onto the writer initialized by
-  `MapSegmentWithWriter`, never replace the writer.
-- `runtime/cmd.RunWithEnv` applies `strings.TrimSpace` to the complete command output before
-  returning it (verified 2026-07-26). If a segment encodes an empty final field as a trailing blank
-  line, that field is lost. Use a record format that retains a final non-whitespace delimiter or
-  sentinel, and validate the record before assigning parsed state.
+- Print-action output is chevron-escaped (`escapePrintActions`); only `template.Markup` values keep `<...>`
+  anchors. Keep attacker-controlled data (VCS refs, API responses, folder names) in plain strings. `RawMarkup` is for
+  user config only, `EscapeMarkup` for data, `JoinMarkup` for composition.
+- Segment fields built from option strings that carry anchors (icons, `branch_icon`, `folder_separator_icon`,
+  `status_formats`) must be `template.Markup`, or the anchors render as literal text.
+- Keep `template.Markup` a named string, never a struct: text/template treats every struct as true (breaks
+  `{{ if .BranchStatus }}` guards in shipped themes) and `eq` cannot compare it to a string.
+- Untrusted templates (`RenderUntrusted`, path segment) escape Markup results too. The path segment escapes folder
+  names with `template.EscapeSource` on every branch of `replaceMappedLocations`; a new early return needs its own
+  escape.
+- New func-map entries: output not derived from input (`readFile`, `cmd`, `b64dec`, `env`) goes in `noPromote`;
+  attacker-chosen counts (`repeat`, `seq`, `until`, `rand*`) go in `dangerousFuncs` (trusted templates only). For a
+  hot function, add a typed case to `markupAwareTyped` first.
+- Never bypass `formats.EscapeSequences` in `terminal.write`'s `isHyperlink` branch: bash `@P` re-interprets a
+  backslash in the OSC 8 URI.
+- `src/prompt/golden_test.go` renders every shipped theme byte-exact. A golden diff after a markup change means a
+  theme relied on the old, insecure behavior: inspect it, then `go test ./prompt/... -run TestGoldenThemes -update`.
 
 ## Terminal output sanitization
 
-- `prompt.Engine.write` (src/prompt/engine.go) appends straight to the prompt builder and
-  bypasses the per-rune control filter in `terminal.write` (src/terminal/writer.go). Any
-  attacker-influenceable string passed to `e.write` in one shot (console title, OSC payloads)
-  must sanitize itself with `terminal.stripControlRunes`; `trimAnsi` alone is insufficient -
-  it ignores strings without ESC (a bare BEL survives) and its regex misses CSI `! p`, APC,
-  SOS, and ST (verified 2026-09-05, GHSA-fwjx-9p69-h25h follow-up in `FormatTitle`).
-- `terminal.AnsiRegex`'s final-byte class intentionally omits `!`, `_`, `X` and `\`; do not
-  extend it as a sanitization fix - strip control runes instead.
+- `prompt.Engine.write` bypasses `terminal.write`'s per-rune control filter. Sanitize attacker-influenceable strings
+  written in one shot (console title, OSC payloads) with `terminal.stripControlRunes`; `trimAnsi` misses ESC-less
+  input (bare BEL) and CSI `! p`, APC, SOS, ST.
+- Don't extend `terminal.AnsiRegex`'s final-byte class (`!`, `_`, `X`, `\` omitted on purpose) as a sanitization fix;
+  strip control runes instead.
 
-## Template markup trust boundary (2026-09-05, markup-injection fix)
+## Segments and cache
 
-- The renderer escapes chevrons in every print action's output (`__esc` appended to each
-  pipeline post-parse, `template/render.go` `escapePrintActions`). Literal template text keeps
-  its `<...>` anchors; action output only keeps them when typed `template.Markup`. A new
-  segment that stores attacker-controlled strings (VCS refs, manifest fields, API responses,
-  folder names) in plain string fields is safe by default - do NOT call `template.RawMarkup`
-  on data.
-- Untrusted templates (`RenderUntrusted`, used for the path segment where folder names are
-  template source) bind the output escape to `escapeUntrustedActionValue`, which escapes Markup
-  results too: `{{ url ... }}` or `{{ date "<red>" }}` in a folder name must not forge anchors.
-  The path segment escapes folder names with `template.EscapeSource` on every branch of
-  `replaceMappedLocations` (no mapped locations, regex mappings, prefix mappings): chevrons
-  become literal and `{{` becomes an action that prints `{{`, so a folder name can no longer
-  call any template function. A new early return there needs its own escape.
-- `template.Markup` (src/template/markup.go) is the bypass type: a named string, never a
-  struct (text/template treats every struct as true, which broke the `{{ if .BranchStatus }}`
-  guards in 60 shipped themes, and `eq` cannot compare a struct to a string). Constructors:
-  `RawMarkup` (user config only), `EscapeMarkup` (data),
-  `JoinMarkup` (composition). Segment fields composed from option strings with anchors
-  (icons, `branch_icon`, `folder_separator_icon`, `status_formats` - all evidenced in shipped
-  themes) MUST be `template.Markup` or their anchors render as literal text.
-- Every func-map entry is wrapped by `markupAware` (src/template/markup.go): Markup arguments
-  feed `string` parameters as text; a string result becomes Markup only when the call had a
-  Markup argument and every other argument was a string, number or bool (a slice, struct,
-  error or pointer may hide data the wrapper cannot escape, so such calls stay plain). Plain
-  strings, printf formats included, are escaped when promoting. Functions whose output is not
-  their input (`readFile`, `cmd`, `b64dec`, `env`, ...) sit in `noPromote`. Common signatures
-  have reflection-free fast paths (`markupAwareTyped`); add a typed case there before optimizing
-  anything else when a function shows up hot. `print`/`printf`/`println` are overridden in the
-  local map. Sprig functions with attacker-chosen counts (`repeat`, `seq`, `until`, `rand*`)
-  are in `dangerousFuncs`, trusted templates only.
-- `terminal.write`'s `isHyperlink` branch (OSC 8 URI region) applies shell escaping
-  (`formats.EscapeSequences`) since 2026-09-05 - bash `@P` would otherwise re-interpret a URI
-  backslash as a prompt escape. Never bypass it there.
-- Regression net: `src/prompt/golden_test.go` renders all 125 shipped themes byte-exact; if a
-  markup change alters golden output, the theme relied on the old (insecure) behavior -
-  regenerate with `go test ./prompt/... -run TestGoldenThemes -update` only after inspecting
-  the diff.
-
-## Cache
-
-- Cache persistence only happens with the hidden `--save-cache` flag (print/stream commands);
-  without it, stores never write on close. Redirect the location with `OMP_CACHE_DIR`.
-- Debug logs are buffered and only printed by the `oh-my-posh debug` command (grep for
-  `restored segment from cache` / `setting entry`). `POSH_TRACE=1` and stderr show nothing for
-  print commands.
-- On Windows the cache file is a memory-mapped 50KB+5 "persistent shared string" with a 4-byte
-  length header; a fresh file is all zeros and logs a harmless `store.go:init EOF` error on first
-  read.
+- Segment writers gob-encode only exported fields; `segments.Base.env/options` are unexported. On cache restore,
+  overlay restored data onto the writer from `MapSegmentWithWriter`; never replace the writer.
+- `runtime/cmd.RunWithEnv` trims whitespace from the whole output, so a trailing empty field is lost. End records
+  with a non-whitespace delimiter or sentinel and validate before assigning parsed state.
+- A blank prompt means a panic outside segment `Execute` and the streaming producer (both recover). A poisoned
+  cache entry replays its failure every prompt until its TTL ends.
+- Caches persist only with the hidden `--save-cache` flag (print/stream); relocate with `OMP_CACHE_DIR`.
+- Logs are buffered and print only via `oh-my-posh debug` (grep `restored segment from cache`, `setting entry`);
+  `POSH_TRACE=1` and stderr show nothing for print commands.
+- Windows: a fresh memory-mapped cache file logs a harmless `store.go:init EOF` on first read.
 
 ## Streaming and serve daemon
 
-- CONFIRMED data race (CI race detector, 2026-09-07): a segment that times out under streaming keeps
-  running in a background goroutine and can outlive its render cycle. When it publishes via
-  `template.Cache.AddSegmentData` in `config/segment.go` (the deferred publish in `Execute`, and also
-  `restoreCache`/`restoreData` on that same background path), it reads the package-level
-  `template.Cache` - which the serve daemon RESETS per cycle and the streaming tests reassign in
-  `setupStreamingTestEnv`. That read races the reset/reassignment. Fix pattern: capture
-  `renderCache := template.Cache` at the top of `Execute` and publish through the captured pointer,
-  never the global, on any code path that can run after the cycle ends. The `Execute` deferred site
-  is fixed; `restoreCache` (line ~636) and `restoreData` (line ~705) still read the global and need
-  the same capture if a cached/recorded segment ever times out. `-race` is unavailable on
-  windows/arm64, so this class only shows up on CI (amd64) - run the streaming tests there after any
-  change to the background-goroutine cache path.
-- Streaming no longer bypasses the segment cache (2026-09-27, #7882): `Execute` used to gate its
-  cache-hit early return on `!env.Flags().Streaming`, so every cached segment ran its live
-  `Enabled()` on each streamed render. The original intent ("show cache first, refresh behind it")
-  never materialized: a pending segment renders `RenderPlaceholder`, which is config-only and never
-  shows cached data. With the gate gone, a cache hit returns before the live probe, which removes one
-  way for a cached segment to time out and reach the `restoreCache` race above. The race itself
-  (`restoreCache`/`restoreData` reading the global `template.Cache` on a background goroutine) is
-  still open and out of scope for that fix.
-
-- Streaming is enabled by the top-level `"streaming": <ms>` config key. That value is ALSO each
-  segment's pending-timeout and overwrites segment-level `timeout`.
-- `stream` always emits the transient prompt as a `\x1e`-prefixed NUL record (initial + refreshed
-  once all segments resolve); serve records are `<id>\x1f<payload>\0`.
-- Serve pitfall class: process-lifetime initializers (`if X != nil return`) pin first-render state
-  in a daemon. `template.Cache` did exactly that (pinned PWD/Folder/Code/Jobs) - fixed with
-  `template.ResetCache()` per render in `startRenderCycle` (flag-based rebuild; never nil the
-  global, abandoned segment goroutines may still read it). Audit for this pattern when extending
-  serve.
-- Do NOT memoize the config in serve: the per-render gob decode is load-bearing - a fresh segment
-  graph per cycle isolates the active render from abandoned-cycle goroutines holding pointers into
-  their own graph.
-- Daemon tests must vary per-request context (cwd, status) across cycles; single-context tests
-  cannot catch one-shot-assumption state.
+- `"streaming": <ms>` also becomes every segment's pending timeout, overriding segment `timeout`.
+- `stream` emits the transient prompt as a `\x1e`-prefixed NUL-terminated record (initial, and again once all
+  segments resolve). Serve records are `<id>\x1f<payload>\0`; a wait-mode request always yields exactly 2, even on
+  segment panic (`renderComplete`), because Clink blocks on that count.
+- A timed-out segment keeps running after its cycle. On any path that can run then, publish through the
+  `renderCache` captured at the top of `Execute`, never the global `template.Cache` (serve resets it per cycle,
+  tests reassign it). `restoreCache`/`restoreData` still read the global (open race, 2026-09).
+- Don't gate `Execute`'s cache-hit early return on streaming: placeholders never show cached data, so skipping the
+  cache only adds live probes that can time out.
+- Never touch `segment.writer` of a segment the cycle still has pending; pending segments render via
+  `Segment.RenderPlaceholder` (config only). Don't add a `Pending` flag to `config.Segment`.
+- The event channel in `prompt/streaming.go` is sized `2*segments+1` so plain sends never block or drop; don't add
+  `select`/`default`. The producer's `recover` must log a stack: a silent recover once hid a stuck-segment bug.
+- `prompt/streaming_writer_test.go`'s fake writer writes fields late on purpose, as race bait. `-race` only runs in
+  CI ([release](release.md)).
+- Serve: process-lifetime initializers (`if X != nil return`) pin first-render state. Reset per render
+  (`template.ResetCache()` in `startRenderCycle`); never nil a global that abandoned goroutines may still read.
+- Don't memoize the config in serve: the per-render gob decode gives each cycle its own segment graph, isolated from
+  abandoned-cycle goroutines.
+- Daemon tests must vary per-request context (cwd, status) across cycles to catch one-shot state.
 - `config.Get` prefers the session gob cache over `POSH_THEME`.
-- Go guarantees exactly 2 records per wait-mode serve request even on segment panic
-  (`renderComplete`) - blocking clients (Clink) rely on this.
-- Streaming lifecycle (rewritten 2026-09-07, `src/prompt/streaming.go`): one `streamCycle` per
-  `StreamPrimary` run. Segment goroutines send `timedOut` / `completed` / `abandoned` events on a
-  channel sized `2*segments+1`, so a send never blocks and is never dropped (plain sends, no
-  `select`/`default`). The producer goroutine owns the `pending` set, folds events into it, and
-  loops until it is empty; the last record is therefore always rendered after the last state
-  change. `timedOut` is queued before the segment's block result is delivered, so the
-  `absorb()` after `drainBlockResults` sees every timeout of the first pass. A panicking
-  `Execute` is recovered in `executeSegment` and still reports `completed`; a segment still
-  running after `pendingSegmentLimit` (30s, package var) is `abandoned`, its children killed, and
-  the cycle finishes without it. The producer's recover logs with a stack; a silent recover is what
-  hid the original bug.
-- The streaming bug that motivated the rewrite (git segment stuck on "..." with native status
-  and `streaming: 5`) was never in the bookkeeping: four loop rewrites left it in place. The render
-  goroutine touched the live writer of a pending segment (SetText, SetIndex, color and style
-  templates, `Needs`) while `Execute` was writing it. Rule now: a pending segment renders through
-  `Segment.RenderPlaceholder`, which reads configuration only (`Placeholder`, raw
-  `Foreground`/`Background`, style resolved with a nil context) and stores its text in the
-  writer-less `text` field; `canRenderSegment` is skipped for pending segments; `Name()` is
-  resolved before the goroutines start. Never read or write `segment.writer` for a segment the
-  cycle still has as pending, and never reintroduce a `Pending` flag on `config.Segment`.
-- `-race` is unavailable on the arm64 Windows dev machine and in its WSL (no C compiler, no sudo).
-  CI's `Race Detector` step (`code.yml`, ubuntu only) is the only race gate; the fake writer in
-  `prompt/streaming_writer_test.go` writes multi-word fields late on purpose so that step has
-  something to catch when a render touches a pending writer again.
-- Reproducing timing races in the daemon: `oh-my-posh debug` timings are cold-process numbers;
-  the warm in-daemon segment duration is what has to straddle `streaming`. Sweep the timeout in
-  a config copy against a scripted serve session (JSON line + env blob on stdin, count cycles
-  whose last record still holds the placeholder) instead of trusting a single value.
+- Timing races: `oh-my-posh debug` timings are cold-process. Sweep the `streaming` value against a scripted serve
+  session (JSON line + env blob on stdin) and count cycles whose last record still holds the placeholder.
+
+## Rendering and statusline
+
+- `template.Init` resets the parsed-template cache: calling it per benchmark iteration measures cold parse.
+- Stale website previews: a set `OMP_BIN` overrides the auto-rebuilt `src/bin` in `ensure-artifacts.mjs`.
+- Unix `terminal-dimensions` runs `stty size` on stdin, which is not a TTY under Claude Code's statusline. A valid
+  `COLUMNS` fallback must clear the `stty` error, or `prompt.Engine.canWriteRightBlock` rejects right-aligned blocks.

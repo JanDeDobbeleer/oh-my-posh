@@ -1,72 +1,35 @@
 # zsh
 
-## zle facts
+## zle
 
-- Every new editor invocation starts in keymap `main`; a `vicmd` selection does not survive into
-  the next line.
-- `$?` after the transient prompt's `zle .send-break` is 1; native Ctrl+C yields 130. Known gap,
-  documented as a TODO in `_omp_zle-line-init` - do not "fix" one without solving the other path.
-- Ubuntu's `/etc/zsh/zshrc` defines a `zle-line-init` (terminfo smkx), so omp's widget takes the
-  decorate path even in minimal setups - never assume the widget slot is empty.
+- Every new editor invocation starts in keymap `main`; a `vicmd` selection does not carry into the next line.
+- `$?` after the transient prompt's `zle .send-break` is 1, native Ctrl+C gives 130 (TODO in `_omp_zle-line-init`).
+  Don't fix one path without the other.
+- Ubuntu's `/etc/zsh/zshrc` defines a `zle-line-init`; never assume the widget slot is empty.
+- zsh-vi-mode always wraps omp's `zle-line-init` (it initializes lazily at first `precmd`), and our
+  `.recursive-edit` swallows the session, so `_omp_zle-line-init` must call `zvm_zle-line-init` up front (guarded on
+  `$+functions[zvm_zle-line-init]` and `ZVM_INIT_DONE`). Keep that call (#5992).
+- Keep `local rawfunc=` at the top of `_omp_zle-line-init`: `zvm_reset_prompt` resolves `$rawfunc` by dynamic
+  scoping and would otherwise re-enter our widget.
+- Debug widget re-entry by logging `${funcstack[*]}` inside the widget.
 
-## zsh-vi-mode (ZVM) interaction (verified 2026-07-14, issue #5992)
+## Quoting
 
-- ZVM initializes lazily at first `precmd`, so it ALWAYS wraps omp's `zle-line-init` regardless of
-  source order: its wrapper runs our widget first, `zvm_zle-line-init` second. Because the
-  transient prompt's `zle .recursive-edit` consumes the whole editing session, ZVM's line-init
-  effectively ran at line END - any line accepted or interrupted from normal mode desynced
-  `ZVM_MODE` from the active keymap, and `zvm_select_vi_mode`'s same-mode early return made the
-  break permanent.
-- Fix in `_omp_zle-line-init`: call `zvm_zle-line-init` up front (guarded on
-  `$+functions[zvm_zle-line-init]` and `ZVM_INIT_DONE == true`). Keep this if the function is ever
-  restructured.
-- Landmine: `zvm_reset_prompt` resolves `$rawfunc` via **dynamic scoping**. Any ZVM code running
-  `zle reset-prompt` while inside our line-init picks up the line-init wrapper's `rawfunc`
-  (`_omp_decorated_zle-line-init`) and re-enters the widget recursively. The `local rawfunc=` at
-  the top of `_omp_zle-line-init` shadows it - load-bearing, keep it.
+- Quote every parameter expansion used as a command argument if its value can contain `[`, `?`, `*` or `#`. Under a
+  user's `setopt GLOB_SUBST` it becomes a glob, and `BAD_PATTERN` aborts the widget (`$zle_bracketed_paste[1]` is
+  `\e[?2004h`, #7816).
 
-## coproc and signals
+## coproc, fds, and signals
 
-- An interactive zsh with MONITOR prints "[n] pid" at coproc spawn; `disown` is too late and a
-  `{ coproc ... } 2>/dev/null` block does NOT suppress it. `setopt localoptions no_monitor` does -
-  side effect: the child inherits SIGINT/SIGQUIT ignored (POSIX no-job-control), which Go
-  preserves.
-- Duplicate coproc fds to session fds (`exec {out}<&p {in}>&p`) - duplicates survive a later
-  `coproc` replacing the slot. `disown %+` keeps the daemon out of `jobs` and the job-count
-  segment.
-- Writing to a dead coproc pipe raises SIGPIPE, which **kills a non-interactive zsh outright**
-  (`2>/dev/null` cannot stop a signal). Guard daemon writes with a `kill -0 $pid` pre-check plus
-  `setopt localoptions localtraps; trap '' PIPE` (function-local, user pipelines unaffected).
-- Never pass a possibly-zero pid to `kill -0` - `kill -0 0` signals the caller's own process group
-  and always succeeds.
-
-## GLOB_SUBST footgun (verified 2026-08-24, issue #7816)
-
-- An unquoted `$var`/`$var[n]` expansion used as a command argument is normally only
-  word-split, never glob-expanded - **unless** the user's zsh has `setopt GLOB_SUBST`
-  active anywhere (their own config, a framework, a distro snippet). Under `GLOB_SUBST`
-  the expansion result is treated as if typed literally and becomes eligible for filename
-  generation.
-- `_omp_zle-line-init`'s bracketed-paste signal - `print -r -n - $zle_bracketed_paste[1]`,
-  copied from zsh's own `zshzle(1)` example - expands to the raw escape sequence
-  `\e[?2004h`. Under `GLOB_SUBST`, `[?2004h` parses as an unterminated bracket expression;
-  zsh's default `BAD_PATTERN` option turns that into a hard error
-  (`_omp_zle-line-init:N: bad pattern: ^[[?2004h`) that aborts the widget mid-execution,
-  before it reaches `zle .recursive-edit`.
-- Fix: quote the expansion (`"$zle_bracketed_paste[1]"`). Reproduces reliably with
-  `zsh -c 'setopt glob_subst; zle_bracketed_paste=($'"'"'\e[?2004h'"'"' ...); print -r -n - $zle_bracketed_paste[1]'`.
-- General lesson: any unquoted parameter expansion fed to a zsh command argument in this
-  codebase is a latent `GLOB_SUBST` footgun if its value can ever contain `[`, `?`, `*`,
-  or `#` - quote it even when the current default options make it look safe.
-
-## Footguns
-
-- A redirection-only `exec` applies EVERY listed redirection to the shell permanently:
-  `exec {fd}<&p {fd}>&p 2>/dev/null` silences the session's stderr for good (caused issue #7653).
-  Scope the stderr suppression with a brace block: `{ exec ... } 2>/dev/null`.
-- zsh 5.9: `read -r -u $fd -d $'\0' -t N` ignores `-t` entirely and blocks forever on a silent fd.
-  Without `-d`, the timeout works.
-- Teardown belongs in `zshexit_functions`; the daemon lifecycle is fd-governed (closing the fds -
-  or the shell dying, even by SIGKILL - EOFs the daemon's stdin).
-- To debug widget re-entry, log `${funcstack[*]}` inside the widget - `zle` calls from shell
-  functions appear on the stack and expose who invoked what.
+- An interactive zsh with MONITOR prints `[n] pid` at coproc spawn; neither `disown` nor `2>/dev/null` stops it.
+  `setopt localoptions no_monitor` does, and the child then inherits SIGINT/SIGQUIT ignored.
+- Duplicate coproc fds to session fds (`exec {out}<&p {in}>&p`) so they survive a later `coproc`; `disown %+` keeps
+  the daemon out of `jobs` and the job-count segment.
+- A redirection-only `exec` applies every listed redirection permanently: `exec {fd}<&p 2>/dev/null` silences the
+  session's stderr (#7653). Scope it: `{ exec ... } 2>/dev/null`.
+- Writing to a dead coproc raises SIGPIPE, which kills a non-interactive zsh. Guard writes with a `kill -0 $pid`
+  check plus `setopt localoptions localtraps; trap '' PIPE`.
+- Never `kill -0` a possibly-zero pid: `kill -0 0` signals your own process group and always succeeds.
+- zsh 5.9 `read -r -u $fd -d $'\0' -t N` ignores `-t` and blocks forever on a silent fd, so the serve path hangs
+  in a non-interactive `zsh script.zsh`; test it in an interactive session.
+- Tear down in `zshexit_functions`; closing the fds (or the shell dying, even by SIGKILL) EOFs the daemon's stdin.

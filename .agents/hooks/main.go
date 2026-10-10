@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"slices"
 	"strconv"
@@ -25,9 +26,13 @@ const (
 	maxOutputChars = 8000
 	failureSummary = "Checks failed on the changed files; fix them before finishing:"
 	lintInstall    = "golangci-lint not installed, lint skipped: https://golangci-lint.run/docs/welcome/install/"
+	noElseHint     = "The codebase does not use else: rewrite with a guard clause, an early return, or a switch."
 )
 
 var targetOSes = []string{"linux", "darwin", "windows"}
+
+// gofmt keeps else on the closing brace's line, so this skips the word in strings and comments.
+var elseBranch = regexp.MustCompile(`^}\s*else\b`)
 
 type hookPayload struct {
 	Cwd            string `json:"cwd"`
@@ -35,10 +40,11 @@ type hookPayload struct {
 }
 
 type changes struct {
-	goFiles       []string
-	markdownFiles []string
-	packages      []string
-	platformCode  bool
+	goFiles          []string
+	untrackedGoFiles []string
+	markdownFiles    []string
+	packages         []string
+	platformCode     bool
 }
 
 type report struct {
@@ -134,6 +140,7 @@ func check(root, harness string, payload hookPayload) {
 	var r report
 	if len(changed.goFiles) != 0 {
 		checkGo(ctx, &r, filepath.Join(root, "src"), changed)
+		checkNoElse(ctx, &r, root, changed)
 	}
 	if len(changed.markdownFiles) != 0 {
 		checkMarkdown(ctx, &r, root, changed.markdownFiles)
@@ -162,13 +169,18 @@ func changedFiles(root string) (changes, error) {
 		}
 		rel := parseStatusPath(line[3:])
 		abs := filepath.Join(root, rel)
+		untracked := strings.HasPrefix(line, "??")
 
 		switch {
 		case strings.HasPrefix(rel, "src/") && strings.HasSuffix(rel, ".go"):
 			addPackage(&c, root, rel)
-			if isFile(abs) {
-				c.goFiles = append(c.goFiles, rel)
-				c.platformCode = c.platformCode || isPlatformSpecific(abs)
+			if !isFile(abs) {
+				continue
+			}
+			c.goFiles = append(c.goFiles, rel)
+			c.platformCode = c.platformCode || isPlatformSpecific(abs)
+			if untracked {
+				c.untrackedGoFiles = append(c.untrackedGoFiles, rel)
 			}
 		case strings.HasSuffix(rel, ".md") && isFile(abs):
 			c.markdownFiles = append(c.markdownFiles, rel)
@@ -313,6 +325,101 @@ func checkOtherPlatforms(ctx context.Context, r *report, srcDir, lint string, ha
 			r.fail("golangci-lint (GOOS="+goos+")", out)
 		}
 	}
+}
+
+func checkNoElse(ctx context.Context, r *report, root string, c changes) {
+	// Untracked files never appear in git diff, so passing them as pathspecs is harmless.
+	args := slices.Concat([]string{"-C", root, "diff", "HEAD", "-U0", "--no-color", "--no-ext-diff", "--dst-prefix=b/", "--"}, c.goFiles)
+	// Output, not CombinedOutput: git writes line-ending warnings to stderr.
+	diff, _ := exec.CommandContext(ctx, "git", args...).Output()
+
+	hits := elseInDiff(string(diff))
+	for _, f := range c.untrackedGoFiles {
+		hits = append(hits, elseInFile(root, f)...)
+	}
+
+	if len(hits) == 0 {
+		return
+	}
+
+	r.fail("no-else", strings.Join(hits, "\n")+"\n"+noElseHint)
+}
+
+func elseInDiff(diff string) []string {
+	var hits []string
+	var path string
+	var lineNo int
+	inHunk := false
+
+	for line := range strings.SplitSeq(diff, "\n") {
+		switch {
+		case strings.HasPrefix(line, "diff --git "):
+			inHunk = false
+		case strings.HasPrefix(line, "@@ "):
+			inHunk = true
+			lineNo = hunkStart(line)
+		case !inHunk:
+			if name, ok := strings.CutPrefix(line, "+++ "); ok {
+				path = diffPath(name)
+			}
+		case strings.HasPrefix(line, "+"):
+			if hit, ok := elseHit(path, lineNo, line[1:]); ok {
+				hits = append(hits, hit)
+			}
+			lineNo++
+		case strings.HasPrefix(line, " "):
+			lineNo++
+		}
+	}
+
+	return hits
+}
+
+// The new-file start line sits in the "+c,d" field of "@@ -a,b +c,d @@".
+func hunkStart(header string) int {
+	fields := strings.Fields(header)
+	if len(fields) < 3 {
+		return 0
+	}
+
+	start, _, _ := strings.Cut(strings.TrimPrefix(fields[2], "+"), ",")
+	n, _ := strconv.Atoi(start)
+	return n
+}
+
+// git appends a tab to names containing a space and quotes names with unusual characters.
+func diffPath(name string) string {
+	name = strings.TrimSuffix(name, "\t")
+	if unquoted, err := strconv.Unquote(name); err == nil {
+		name = unquoted
+	}
+	return strings.TrimPrefix(name, "b/")
+}
+
+func elseInFile(root, rel string) []string {
+	content, err := os.ReadFile(filepath.Join(root, rel))
+	if err != nil {
+		return nil
+	}
+
+	var hits []string
+	lineNo := 0
+	for line := range strings.Lines(string(content)) {
+		lineNo++
+		if hit, ok := elseHit(rel, lineNo, line); ok {
+			hits = append(hits, hit)
+		}
+	}
+
+	return hits
+}
+
+func elseHit(path string, lineNo int, line string) (string, bool) {
+	trimmed := strings.TrimSpace(line)
+	if !elseBranch.MatchString(trimmed) {
+		return "", false
+	}
+	return fmt.Sprintf("%s:%d: %s", path, lineNo, trimmed), true
 }
 
 func checkMarkdown(ctx context.Context, r *report, root string, files []string) {

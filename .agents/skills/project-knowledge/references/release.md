@@ -2,8 +2,13 @@
 
 ## Release (`.github/workflows/release.yml`)
 
-- Releases are immutable: the workflow creates a draft and publishes last. Every asset must be in the draft before the
-  publish step.
+- Releases are immutable: the workflow creates a draft and publishes last. Every asset, including the signed
+  `packslip.sigstore.json`, must be in the draft before the publish step.
+- The `packslip` job signs the `build-artifacts` binaries (`posh-*` minus `.sha256`/`.sig`) with `upload: false`; the
+  bundle reaches the release through the `release` job's merge-multiple download and `files: *`. Android and msix are
+  excluded on purpose.
+- Keep signing in `release.yml`: consumers pin that workflow file. `packslip` is `continue-on-error` so a signing
+  outage never blocks a release.
 
 ## CI
 

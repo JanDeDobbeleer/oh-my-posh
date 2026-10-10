@@ -133,6 +133,43 @@ jobs:
           path: |
             packages/msix/out/install-${{ matrix.arch }}.msix
             packages/msix/out/install-${{ matrix.arch }}.appinstaller
+  packslip:
+    needs:
+      - changelog
+      - artifacts
+    runs-on: ubuntu-latest
+    # The manifest is optional: a signing outage must not block the release.
+    continue-on-error: true
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: build-artifacts
+          path: dist
+      - name: Select the release binaries 📦
+        run: |
+          mkdir stage
+          find dist -maxdepth 1 -type f -name 'posh-*' ! -name '*.sha256' ! -name '*.sig' -exec cp {} stage/ \;
+      - name: Sign the release manifest ✍️
+        id: packslip
+        uses: jdx/packslip@2af36e792faa28130987c8af509e475c7458405d # v1.6.0
+        with:
+          artifacts: stage/posh-*
+          bin: oh-my-posh
+          tag: ${{ needs.changelog.outputs.tag }}
+          version: ${{ needs.changelog.outputs.version }}
+          resources: |
+            skill/ohmyposh=repo:website/static/skills/ohmyposh
+          upload: false
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: packslip-bundle
+          path: ${{ steps.packslip.outputs.bundle }}
+          if-no-files-found: error
+
   release:
     runs-on: ubuntu-latest
     needs:
@@ -140,6 +177,7 @@ jobs:
       - artifacts
       - msix
       - android
+      - packslip
     steps:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:

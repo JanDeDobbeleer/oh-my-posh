@@ -9,4 +9,3 @@ gitignore: true
 ignores:
   - node_modules/
   - .github/PULL_REQUEST_TEMPLATE.md
-  - .agents/skills/ast-grep

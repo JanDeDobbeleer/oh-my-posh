@@ -3,7 +3,6 @@ scripts:
   command: |
     apm install --frozen
     git restore apm.lock.yaml
-    pip install ast-grep-cli
   triggers:
   - session.create
 automation:

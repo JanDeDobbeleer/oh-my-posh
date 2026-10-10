@@ -27,6 +27,10 @@ type Pear struct {
 	model
 }
 
+func (p *Pear) waitingForAuth() bool {
+	return true
+}
+
 func (p *Pear) Authenticate() {
 	type tokenResponse struct {
 		AccessToken string `json:"accessToken"`

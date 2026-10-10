@@ -11,6 +11,7 @@ package tui
 import (
 	"fmt"
 	"io"
+	"math"
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
@@ -38,10 +39,11 @@ func stageMessage(cfg *upgrade.Config, stage upgrade.Stage) string {
 
 func Run(cfg *upgrade.Config) error {
 	reporter := &reporter{
-		cfg:    cfg,
-		writer: os.Stdout,
-		status: ui.NewStatus(os.Stdout),
-		bar:    ui.NewProgress(os.Stdout, barLabel),
+		cfg:           cfg,
+		writer:        os.Stdout,
+		status:        ui.NewStatus(os.Stdout),
+		bar:           ui.NewProgress(os.Stdout, barLabel),
+		programStatus: ui.NewProgramStatus(os.Stdout),
 	}
 
 	// cli/upgrade reports through plain callbacks precisely so it never has to know what is
@@ -53,7 +55,9 @@ func Run(cfg *upgrade.Config) error {
 	defer upgrade.SetStageReporter(nil)
 	defer upgrade.SetProgressReporter(nil)
 
-	reporter.status.Start(stageMessage(cfg, upgrade.StageValidating))
+	message := stageMessage(cfg, upgrade.StageValidating)
+	reporter.programStatus.Working(message)
+	reporter.status.Start(message)
 
 	if err := upgrade.Install(cfg); err != nil {
 		log.Debug("failed to install")
@@ -63,13 +67,14 @@ func Run(cfg *upgrade.Config) error {
 	}
 
 	current := fmt.Sprintf("v%s", build.Version)
-	message := fmt.Sprintf("🚀 Upgraded from %s to %s", current, cfg.Latest)
+	message = fmt.Sprintf("🚀 Upgraded from %s to %s", current, cfg.Latest)
 
 	if current != cfg.Latest {
 		log.Debug("new version installed, user needs to restart shell")
 		message += ", restart your shell to take full advantage of the new functionality"
 	}
 
+	reporter.programStatus.Done(message)
 	reporter.status.Stop(message)
 
 	return nil
@@ -80,14 +85,18 @@ func Run(cfg *upgrade.Config) error {
 // except the download, which hands the line to the bar. Painting both at once is what made the
 // bar and the status text flicker over each other.
 type reporter struct {
-	status      *ui.Status
-	bar         *ui.Progress
-	writer      io.Writer
-	cfg         *upgrade.Config
-	downloading bool
+	status        *ui.Status
+	bar           *ui.Progress
+	programStatus *ui.ProgramStatus
+	writer        io.Writer
+	cfg           *upgrade.Config
+	downloading   bool
 }
 
 func (r *reporter) stage(stage upgrade.Stage) {
+	message := stageMessage(r.cfg, stage)
+	r.programStatus.Working(message)
+
 	if stage == upgrade.StageDownloading {
 		r.downloading = true
 		r.status.Stop("")
@@ -98,12 +107,12 @@ func (r *reporter) stage(stage upgrade.Stage) {
 	if r.downloading {
 		r.downloading = false
 		r.bar.Done()
-		r.status.Start(stageMessage(r.cfg, stage))
+		r.status.Start(message)
 
 		return
 	}
 
-	r.status.Set(stageMessage(r.cfg, stage))
+	r.status.Set(message)
 }
 
 func (r *reporter) progress(fraction float64) {
@@ -111,11 +120,13 @@ func (r *reporter) progress(fraction float64) {
 		return
 	}
 
+	r.programStatus.Progress(stageMessage(r.cfg, upgrade.StageDownloading), int(math.Round(fraction*100)))
 	r.bar.Set(fraction)
 }
 
 func (r *reporter) fail(err error) {
 	message := fmt.Sprintf(" ❌ upgrade failed: %v", err)
+	r.programStatus.Error(message)
 
 	// Mid-download the status line is stopped, where Stop is a no-op that would swallow the
 	// message - so the bar is cleared and the failure printed plainly instead.

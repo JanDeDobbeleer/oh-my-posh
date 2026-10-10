@@ -28,6 +28,7 @@ const (
 // status is the line the running flow paints on. Package-level because the flows report progress
 // from deep inside their own polling loops, the same way they did when this drove a program.
 var status *ui.Status
+var programStatus *ui.ProgramStatus
 
 // current is the flow being run, so a state change can ask it what to say. The flows word their
 // own steps - GitHub names the device code, YouTube Music names its base URL - so the message is
@@ -45,7 +46,15 @@ func setState(next state) {
 		return
 	}
 
-	status.Set(current.message())
+	message := current.message()
+	status.Set(message)
+
+	if next == token {
+		programStatus.Blocked("auth", message)
+		return
+	}
+
+	programStatus.Working(message)
 }
 
 type model struct {
@@ -62,6 +71,10 @@ func (m *model) base() *model {
 	return m
 }
 
+func (m *model) waitingForAuth() bool {
+	return false
+}
+
 func (m *model) message() string {
 	switch m.state {
 	case code:
@@ -73,23 +86,39 @@ func (m *model) message() string {
 	}
 }
 
+func startProgramStatus(flow Flow, message string) {
+	if flow.waitingForAuth() {
+		programStatus.Blocked("auth", message)
+		return
+	}
+
+	programStatus.Working(message)
+}
+
 // Flow is one provider's device-code exchange. Authenticate runs it to completion, reporting
 // progress through setState and leaving its outcome on the embedded model.
 type Flow interface {
 	Authenticate()
 	base() *model
 	message() string
+	waitingForAuth() bool
 }
 
 func Run(flow Flow) error {
 	current = flow
 
 	status = ui.NewStatus(os.Stdout)
-	status.Start(flow.message())
+	programStatus = ui.NewProgramStatus(os.Stdout)
+
+	message := flow.message()
+	startProgramStatus(flow, message)
+
+	status.Start(message)
 
 	defer func() {
 		current = nil
 		status = nil
+		programStatus = nil
 	}()
 
 	// Synchronous: this used to run in a goroutine so a message loop could keep drawing, and the
@@ -97,8 +126,17 @@ func Run(flow Flow) error {
 	flow.Authenticate()
 
 	base := flow.base()
+	message = base.status(base.err)
 
-	status.Stop(base.status(base.err))
+	if base.err != nil {
+		programStatus.Error(message)
+		status.Stop(message)
 
-	return base.err
+		return base.err
+	}
+
+	programStatus.Done(message)
+	status.Stop(message)
+
+	return nil
 }

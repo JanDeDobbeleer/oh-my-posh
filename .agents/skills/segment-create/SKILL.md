@@ -1,169 +1,52 @@
 ---
 name: segment-create
 description: >
-  Full scaffolding workflow for creating a new Oh My Posh segment. Invoke when
-  asked to add a new segment: generates the Go source, registers the type,
-  creates documentation, updates the sidebar and JSON schema.
+  Checklist for adding a new Oh My Posh segment. Use when asked to add or create a new segment:
+  lists every file to touch, the existing segment to copy, and how to verify.
 ---
 
-# Segment scaffolding instructions
+## Template
 
-Goal
+Copy `src/segments/taskwarrior.go` and `src/segments/taskwarrior_test.go`: two options, a
+`Template()`/`Enabled()` pair, and every shell call going through the mocked environment.
 
-- Given user inputs (segment id, Go type name, title, category, description,
-  properties, template), generate all required code and docs to add a new
-  segment end-to-end, following repo conventions.
+- Embed `Base` first in the struct; its exported fields are the template properties.
+- Declare options as `options.Option` constants; read them with `s.options.String(...)`,
+  `s.options.Bool(...)`, `s.options.KeyValueMap(...)` and so on, passing the default there.
+- Reach the OS, shell, files and network only through `s.env` so tests can mock it.
+- Override `Activation()` only for a cheap precondition such as a project file (see
+  `src/segments/dvc.go`); `Base` defaults to always active.
+- Tests are table-driven: a `mock.Environment` from `src/runtime/mock`, options as an
+  `options.Map`, then `Init(props, env)` and assertions on `Enabled()` and the exported fields.
 
-Inputs
+## Checklist
 
-- id: kebab/slug used as `type` and docs filename (e.g., `new`)
-- goType: PascalCase name for the Go struct (e.g., `New`)
-- title: human readable (e.g., `New`)
-- category: one of cli|cloud|health|languages|music|scm|system|web
-- description: one-line description
-- properties: list of { key, type, title, description, default }
-- template: default template string (e.g., ` {{.Text}} `)
+Keep every list sorted alphabetically.
 
-Contract
+1. `src/segments/<id>.go` and `src/segments/<id>_test.go`.
+1. `src/config/segment_types.go`: add the constant `<ID> SegmentType = "<id>"`.
+1. `src/config/segment_registry.go`: add `gob.Register(&segments.<GoType>{})` to `init()` and
+   `<ID>: func() SegmentWriter { return &segments.<GoType>{} }` to `Segments`. A missing map
+   entry fails silently at runtime: the segment never renders.
+1. `themes/schema.json`: add `<id>` to `definitions.segment.properties.type.enum` and an
+   `if`/`then` block to `definitions.segment.allOf` declaring every option. Copy the
+   `taskwarrior` block; its `unevaluatedProperties: false` rejects undeclared options.
+1. `website/docs/segments/<category>/<id>.mdx`, where category is one of agents, cli, cloud,
+   health, languages, music, scm, system or web. Follow the `segment-docs` skill, and keep a
+   `## What` paragraph: the segment catalog plugin reads it.
+1. `website/sidebars.js`: add `"segments/<category>/<id>"` to that category's `items`.
+1. `website/segment_data.json`: add sample data under `<id>`, shaped like the `taskwarrior` entry.
+1. `website/plugins/segments/registry.json`: generated. The first `go test ./config/...` run
+   rewrites it and fails; rerun to confirm, then keep the file.
+1. Credentials needed? Add the doc id to `AUTH_TIERS` in `website/plugins/segments/data.js`.
 
-- Idempotent: do not duplicate registrations, constants, map entries, sidebar
-  links, or schema entries.
-- Alphabetical insertions where applicable.
-- Compile-ready Go code, formatted.
-- Docs lint clean according to the `markdown` skill (`.agents/skills/markdown/SKILL.md`).
+## Verify
 
-Implementation steps
+From `src/`:
 
-1. Create Go writer file: `src/segments/<id>.go`
-
-- If file exists, skip creation.
-- Use this template; include property consts for each property key.
-
-```go
-package segments
-
-import (
-    "github.com/jandedobbeleer/oh-my-posh/src/segments/options"
-    "github.com/jandedobbeleer/oh-my-posh/src/runtime"
-)
-
-type {{goType}} struct {
-    Base
-
-    // computed fields used in template
-    Text string
-}
-
-// properties
-const (
-{{#each properties}}
-    // {{this.title}}: {{this.description}}
-    {{ pascalCase this.key }} options.Property = "{{this.key}}"
-{{/each}})
-
-func (s *{{goType}}) Enabled() bool {
-    // set up data for the template, using defaults from properties
-    {{#if (propExists properties "text")}}
-    s.Text = s.props.GetString({{ pascalCase "text" }}, {{ defaultFor "text" }})
-    {{else}}
-    s.Text = s.props.GetString({{ pascalCase (firstKey properties) }}, "")
-    {{/if}}
-    return true
-}
-
-func (s *{{goType}}) Template() string {
-    return {{ printf "%q" template }}
-}
+```shell
+go test ./segments/... -run Test<GoType>
+go test ./config/...
 ```
 
-1. Register in `src/config/segment_types.go`
-
-- Ensure in `init()` there is `gob.Register(&segments.{{goType}}{})` exactly
-  once.
-- Add constant: `{{ upper id }} SegmentType = "{{id}}"` in the alphabetical
-  block.
-- Add to `var Segments = map[SegmentType]func() SegmentWriter{}` with key
-  `{{ upper id }}` mapping to `&segments.{{goType}}{}`.
-- Keep lists alphabetically sorted. If not sorted, insert at correct position.
-
-1. Documentation file
-
-- Consult the `segment-docs` skill (`.agents/skills/segment-docs/SKILL.md`) for the
-  Go-to-documentation type mapping and rules for extracting options and template properties.
-- Path: `website/docs/segments/{{category}}/{{id}}.mdx`.
-- If file exists, skip. Else create with this template:
-
-````mdx
----
-id: {{id}}
-title: {{title}}
-sidebar_label: {{title}}
----
-
-## What
-
-{{description}}
-
-## Sample Configuration
-
-import Config from '@site/src/components/Config.js';
-
-<Config data={{
-  "type": "{{id}}",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#ffeb3b",
-  "options": {
-{{#each option}}
-    "{{this.key}}": {{ json this.default }},
-{{/each}}
-  }
-}}/>
-
-## Options
-
-| Name | Type | Description | Default |
-| ---- | ---- | ----------- | ------- |
-{{#each option}}| `{{this.key}}` | `{{this.type}}` | {{this.description}} | `{{ stringify this.default }}` |
-{{/each}}
-````
-
-1. Sidebar
-
-- Update `website/sidebars.js` under the correct category array to include
-  `"segments/{{category}}/{{id}}"`.
-- Insert alphabetically; if already present, do nothing.
-
-1. JSON Schema
-
-- File: `themes/schema.json`.
-- Add `"{{id}}"` to `#/definitions/segment/properties/type/enum` if missing.
-- Add an `allOf` entry for this segment guarded by
-  `{ properties: { type: { const: "{{id}}" } } }` that declares each property
-  as defined by inputs. Use appropriate JSON Schema types and include title,
-  description, default.
-- Keep the `allOf` array in a stable order by type name if feasible; otherwise
-  append if not present.
-
-Validation
-
-- After changes, run `go build` (task: build oh-my-posh). Ensure no compile
-  errors.
-- Check markdown formatting; respect 120-char line length and fenced blocks with
-  language.
-
-Notes
-
-- Use UTF-32 escapes (e.g., "\uEFF1") for icon defaults in docs and code.
-- Keep code minimal. Complex logic should be added by maintainers after
-  scaffold if needed.
-
-Optional
-
-1. Tests
-
-- Create a minimal test file at `src/segments/{{id}}_test.go` using the
-  table-driven style. Include at least a happy-path test that asserts
-  `Enabled()` returns true and the template renders expected output with default
-  options.
+Run `npm run build` in `website/` only when docs changed.

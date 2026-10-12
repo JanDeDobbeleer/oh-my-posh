@@ -1,0 +1,136 @@
+---
+id: timewarrior
+title: Timewarrior
+sidebar_label: Timewarrior
+---
+
+## What
+
+Display [Timewarrior][timewarrior] tracking status, active tags, annotation and elapsed time.
+The segment is hidden when no interval is active unless `always_enabled` is set to `true`.
+With `always_enabled: true`, the default template displays `Not tracking` while idle.
+By default it displays a tracking icon, tags joined by spaces, and an annotation separated by `" | "`.
+Untagged tracking uses `\u2205`; annotations longer than 48 Unicode characters end with `\u2026`.
+Only open intervals are collected; completed intervals are ignored.
+
+## Requirements
+
+Requires [Timewarrior 1.3.0 or newer][timewarrior-compatibility], which provides active-interval JSON,
+annotations, and interval IDs.
+Prefer the latest supported Timewarrior release.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "timewarrior",
+    style: "diamond",
+    trailing_diamond: "\uE0C8",
+    foreground: "#cdd6f4",
+    background: "#000000",
+    template: `{{ if .Active }} \uf252 {{ $tags := join .TagSeparator .Tags -}}
+  {{ if not $tags }}{{ $tags = .Untagged }}{{ end }}{{ $tags -}}
+  {{ if .Annotation }}{{ if $tags }}{{ .AnnotationSeparator }}{{ end }}{{ .Annotation }}{{ end }}
+  {{- else }} Not tracking {{ end }}`,
+    options: {
+      annotation_max_length: 48
+    }
+  }}
+/>
+
+## Options
+
+| Name                    |   Type    | Default  | Description                                              |
+| ----------------------- | :-------: | :------: | -------------------------------------------------------- |
+| `always_enabled`        | `boolean` | `false`  | show `Not tracking` while idle with the default template |
+| `annotation_max_length` |   `int`   |   `48`   | annotation's Unicode character limit; `<= 0` disables it |
+| `annotation_separator`  | `string`  | `" \| "` | text between tags or the untagged label and annotation   |
+| `command`               | `string`  | `timew`  | the Timewarrior executable to use                        |
+| `ellipsis`              | `string`  | `\u2026` | suffix for truncated annotations, included in the limit  |
+| `tag_separator`         | `string`  |   ` `    | text between tags                                        |
+| `untagged_text`         | `string`  | `\u2205` | untagged label; an empty string hides it                 |
+
+`annotation_max_length` and `ellipsis` are applied to `.Annotation` when interval data is collected.
+Tags, the untagged label, and separators are never truncated. The limit counts characters, not terminal cells.
+The separator options and untagged label are exposed as template properties used by the default template.
+The ellipsis is shortened if it alone exceeds the limit. An empty ellipsis truncates without a suffix.
+
+The segment checks `timew get dom.active` and, while tracking, reads the open interval using `timew get dom.active.json`.
+This includes intervals started on a previous day without exporting any history.
+Elapsed time updates when the prompt renders. Avoid segment caching if you need current tracking status and duration.
+Missing executables, command failures and malformed output hide the segment, even with `always_enabled`.
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Active }} {{ "\uf252" }} {{ $tags := join .TagSeparator .Tags -}}
+{{ if not $tags }}{{ $tags = .Untagged }}{{ end }}{{ $tags -}}
+{{ if .Annotation }}{{ if $tags }}{{ .AnnotationSeparator }}{{ end }}{{ .Annotation }}{{ end }}
+{{- else }} Not tracking {{ end }}
+```
+
+:::
+
+Customize the template to change the icon or colors, include duration, or change the idle label.
+The default template displays `Not tracking` while idle when `always_enabled: true`.
+
+### Properties
+
+| Name                   |    Type     | Description                                               |
+| ---------------------- | :---------: | --------------------------------------------------------- |
+| `.Active`              |  `boolean`  | whether an open interval is being tracked                 |
+| `.Annotation`          |  `string`   | interval annotation, limited by `annotation_max_length`   |
+| `.AnnotationSeparator` |  `string`   | configured text between tags or the label and annotation  |
+| `.Duration`            |  `string`   | elapsed duration, truncated to seconds, e.g. `1h30m0s`    |
+| `.ID`                  |    `int`    | Timewarrior interval ID                                   |
+| `.Start`               | `time.Time` | open interval's start in UTC                              |
+| `.Tags`                | `[]string`  | full tags attached to the open interval                   |
+| `.TagSeparator`        |  `string`   | configured text between tags                              |
+| `.Untagged`            |  `string`   | configured untagged marker; empty with tags or while idle |
+
+When idle, interval properties have their zero values.
+With `always_enabled: true`, the default template displays `Not tracking`; custom templates can change that label.
+If tracking stops between the status check and the JSON lookup, the lookup can fail and hide the segment,
+even with `always_enabled`. Any completed interval returned by the lookup is discarded without populating its data.
+
+### Examples
+
+Use your palette and the default template:
+
+```toml
+[[blocks.segments]]
+type = "timewarrior"
+style = "diamond"
+foreground = "p:darktext"
+background = "p:black"
+trailing_diamond = "\ue0c8"
+
+[blocks.segments.options]
+annotation_max_length = 48
+annotation_separator = " | "
+ellipsis = "\u2026"
+tag_separator = " "
+untagged_text = "\u2205"
+```
+
+This requires `darktext` and `black` entries in your theme's palette.
+
+Show the annotation when present, falling back to tags:
+
+```template
+ {{ if .Active }}{{ if .Annotation }}{{ .Annotation }}{{ else }}{{ join " " .Tags }}{{ end }} {{ .Duration }}{{ end }}
+```
+
+Show an idle indicator with `always_enabled: true`:
+
+```template
+ {{ if .Active }}{{ "\uf252" }} {{ join .TagSeparator .Tags }}{{ else }}Not tracking{{ end }}
+```
+
+[templates]: /docs/configuration/templates
+[timewarrior]: https://timewarrior.net
+[timewarrior-compatibility]: https://github.com/GothenburgBitFactory/timewarrior/blob/v1.3.0/test/dom.t

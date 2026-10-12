@@ -61,6 +61,7 @@ ignored silently in existing configs.
 | `.ChangeIDRest`     | `string` | The additional portion displayed after `.ChangeIDPrefix` to satisfy `change_id_min_len`; empty when the unique prefix already meets or exceeds that minimum                      |
 | `.ClosestBookmarks` | `string` | Closest bookmark(s) on ancestors                                                                                                                                                 |
 | `.AheadCount`       | `int`    | Number of changes between the working copy and the closest bookmark; fetched lazily when referenced, e.g. `{{ if gt .AheadCount 0 }}\u21e1{{ .AheadCount }}{{ end }}`            |
+| `.Desc`             | `string` | The first line of the working copy commit description                                                                                            |
 
 `.ChangeIDRest` is not the remainder of the full canonical change ID and isn't independently usable as an identifier.
 

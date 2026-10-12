@@ -73,7 +73,7 @@ jobs:
           EOF
 
       - name: Upload size report 📤
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: size-report-${{ matrix.goos }}
           retention-days: 1
@@ -86,7 +86,7 @@ jobs:
         run: echo "${{ github.event.pull_request.number }}" > pr-number.txt
 
       - name: Upload PR number 📤
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: pr-number
           retention-days: 1

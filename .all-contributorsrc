@@ -3875,6 +3875,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "keltroth",
+      "name": "Django Janny",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1488327?v=4",
+      "profile": "https://www.djangojanny.net",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

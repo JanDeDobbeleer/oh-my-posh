@@ -934,3 +934,48 @@ func TestFishPath(t *testing.T) {
 		})
 	}
 }
+
+// fish style cuts folder names that are already escaped as template source:
+// the cut must count the name as it is on disk and keep the escape intact
+func TestFishPathEscapedFolderNames(t *testing.T) {
+	cases := []struct {
+		name      string
+		pwd       string
+		expected  string
+		dirLength int
+	}{
+		{name: "delimiter", pwd: "/tmp/{{abc/d", dirLength: 3, expected: "tmp/{{a/d"},
+		{name: "delimiter cut in half", pwd: "/tmp/{{abc/d", dirLength: 1, expected: "t/{/d"},
+		{name: "action across folders", pwd: `/tmp/{{abc/" | print "x" }}`, dirLength: 3, expected: `tmp/{{a/" | print "x" }}`},
+		{name: "chevron", pwd: "/tmp/<abc>/d", dirLength: 2, expected: "tm/<<>a/d"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			env := new(mock.Environment)
+			env.On("PathSeparator").Return("/")
+			env.On("Home").Return(homeDir)
+			env.On("Pwd").Return(tc.pwd)
+			env.On("GOOS").Return("")
+			env.On("IsWsl").Return(false)
+			env.On("Flags").Return(&runtime.Flags{})
+			env.On("Shell").Return(shell.GENERIC)
+
+			if template.Cache == nil {
+				template.Cache = &cache.Template{}
+			}
+			template.Init(env, nil, nil)
+
+			path := &Path{}
+			path.Init(options.Map{
+				options.Style: Fish,
+				DirLength:     tc.dirLength,
+			}, env)
+
+			path.setPaths()
+			path.setStyle()
+			got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
+			assert.Equal(t, tc.expected, got)
+		})
+	}
+}

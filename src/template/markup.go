@@ -73,6 +73,14 @@ func EscapeSource(s string) string {
 
 var delimiterReplacer = strings.NewReplacer("{{", `{{"{{"}}`)
 
+// UnescapeSource lets code measure or cut escaped data as it was; escape the
+// result again before it goes back into template source.
+func UnescapeSource(s string) string {
+	return sourceUnescaper.Replace(s)
+}
+
+var sourceUnescaper = strings.NewReplacer(`{{"{{"}}`, "{{", "<<>", "<", "<>>", ">")
+
 // The session cache stores segment data as map[string]any (interface values)
 // and gob-encodes it per process; an unregistered concrete type inside an
 // interface fails to encode and the whole segment entry is silently dropped.

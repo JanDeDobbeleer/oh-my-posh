@@ -32,8 +32,8 @@ import Config from "@site/src/components/Config.js";
     trailing_diamond: "\uE0C8",
     foreground: "#cdd6f4",
     background: "#000000",
-    template: `{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}{{ .Untagged }}{{ end -}}
-  {{ if .Annotation }}{{ if or .Tags .Untagged }} | {{ end }}{{ .Annotation }}{{ end }}
+    template: `{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}{{ "\u2205" }}{{ end -}}
+  {{ if .Annotation }} | {{ .Annotation }}{{ end }}
   {{- else }} Not tracking {{ end }}`,
     options: {
       annotation_max_length: 48
@@ -51,7 +51,6 @@ import Config from "@site/src/components/Config.js";
 | `ellipsis`              | `string`  | `\u2026` | suffix for truncated annotations, included in the limit  |
 | `tag_format`            | `string`  | `#%s`    | Go format string applied to each tag                     |
 | `tag_separator`         | `string`  |   ` `    | text between tags                                        |
-| `untagged_text`         | `string`  | `\u2205` | untagged label; an empty string hides it                 |
 
 `annotation_max_length` and `ellipsis` are applied to `.Annotation` when interval data is collected.
 Tags, the untagged label, and separators are never truncated. The limit counts characters, not terminal cells.
@@ -69,8 +68,8 @@ Missing executables, command failures and malformed output hide the segment, eve
 :::note default template
 
 ```template
-{{ if .Active }} {{ "\\uf252" }} {{ if .Tags }}{{ .Tags }}{{ else }}{{ .Untagged }}{{ end -}}
-{{ if .Annotation }}{{ if or .Tags .Untagged }} | {{ end }}{{ .Annotation }}{{ end }}
+{{ if .Active }} {{ "\\uf252" }} {{ if .Tags }}{{ .Tags }}{{ else }}{{ "\u2205" }}{{ end -}}
+{{ if .Annotation }} | {{ .Annotation }}{{ end }}
 {{- else }} Not tracking {{ end }}
 ```
 
@@ -86,10 +85,8 @@ The default template displays `Not tracking` while idle when `always_enabled: tr
 | `.Active`              |  `boolean`  | whether an open interval is being tracked                 |
 | `.Annotation`          |  `string`   | interval annotation, limited by `annotation_max_length`   |
 | `.Duration`            |  `string`   | elapsed duration, truncated to seconds, e.g. `1h30m0s`    |
-| `.ID`                  |    `int`    | Timewarrior interval ID                                   |
 | `.Start`               | `time.Time` | open interval's start in UTC                              |
 | `.Tags`                |  `string`   | formatted tags joined by `tag_separator`                  |
-| `.Untagged`            |  `string`   | configured untagged marker; empty with tags or while idle |
 
 When idle, interval properties have their zero values.
 With `always_enabled: true`, the default template displays `Not tracking`; custom templates can change that label.
@@ -113,7 +110,6 @@ annotation_max_length = 48
 ellipsis = "\u2026"
 tag_format = "[%s]"
 tag_separator = " "
-untagged_text = "\u2205"
 ```
 
 This requires `darktext` and `black` entries in your theme's palette.

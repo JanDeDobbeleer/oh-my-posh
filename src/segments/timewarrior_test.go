@@ -106,12 +106,10 @@ func TestTimewarrior(t *testing.T) {
 			assert.Equal(t, tc.ExpectedTags, segment.Tags)
 			assert.Equal(t, tc.Annotation, segment.Annotation)
 			if !tc.Active {
-				assert.Zero(t, segment.ID)
 				assert.True(t, segment.Start.IsZero())
 				assert.Empty(t, segment.Duration)
 				return
 			}
-			assert.Equal(t, 1, segment.ID)
 			assert.Equal(t, start, segment.Start)
 			duration, err := time.ParseDuration(segment.Duration)
 			require.NoError(t, err)
@@ -170,22 +168,9 @@ func TestTimewarriorTemplate(t *testing.T) {
 			ExpectedAnnotation: "Writing", ExpectedTags: "[work],[project]", Rendered: "\uf252 [work],[project] | Writing",
 		},
 		{
-			Case: "custom marker", Active: true, Annotation: "Writing", Options: options.Map{TimewarriorUntaggedText: "none"},
-			ExpectedAnnotation: "Writing", Rendered: "\uf252 none | Writing",
-		},
-		{
-			Case: "hidden marker", Active: true, Annotation: "Writing", Options: options.Map{TimewarriorUntaggedText: ""},
-			ExpectedAnnotation: "Writing", Rendered: "\uf252 Writing",
-		},
-		{
 			Case: "custom truncation", Active: true, Tags: []string{"work"}, Annotation: "abcdefgh",
 			Options:            options.Map{TimewarriorAnnotationMaxLength: 6, TimewarriorEllipsis: ".."},
 			ExpectedAnnotation: "abcd..", ExpectedTags: "#work", Rendered: "\uf252 #work | abcd..",
-		},
-		{
-			Case: "marker stays intact", Active: true,
-			Options:  options.Map{TimewarriorAnnotationMaxLength: 3, TimewarriorUntaggedText: "none"},
-			Rendered: "\uf252 none",
 		},
 		{
 			Case: "ellipsis longer than limit", Active: true, Annotation: "abcdefgh",

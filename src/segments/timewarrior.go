@@ -16,7 +16,6 @@ const (
 	TimewarriorEllipsis            options.Option = "ellipsis"
 	TimewarriorTagFormat           options.Option = "tag_format"
 	TimewarriorTagSeparator        options.Option = "tag_separator"
-	TimewarriorUntaggedText        options.Option = "untagged_text"
 )
 
 type Timewarrior struct {
@@ -26,13 +25,12 @@ type Timewarrior struct {
 	Annotation string
 	Duration   string
 	Tags       string
-	ID         int
 	Active     bool
 }
 
 func (t *Timewarrior) Template() string {
-	return "{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}{{ .Untagged }}{{ end }}" +
-		"{{ if .Annotation }}{{ if or .Tags .Untagged }} | {{ end }}{{ .Annotation }}{{ end }}" +
+	return "{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}\u2205{{ end }}" +
+		"{{ if .Annotation }} | {{ .Annotation }}{{ end }}" +
 		"{{ else }} Not tracking{{ end }} "
 }
 
@@ -48,14 +46,6 @@ func (t *Timewarrior) annotation(value string) string {
 		return string(ellipsis[:maxLength])
 	}
 	return string(runes[:maxLength-len(ellipsis)]) + string(ellipsis)
-}
-
-func (t *Timewarrior) Untagged() string {
-	if !t.Active || t.Tags != "" {
-		return ""
-	}
-
-	return t.options.String(TimewarriorUntaggedText, "\u2205")
 }
 
 func (t *Timewarrior) Enabled() bool {
@@ -89,7 +79,6 @@ func (t *Timewarrior) Enabled() bool {
 		End        string   `json:"end"`
 		Annotation string   `json:"annotation"`
 		Tags       []string `json:"tags"`
-		ID         int      `json:"id"`
 	}
 	if err := json.Unmarshal([]byte(output), &interval); err != nil {
 		log.Error(err)
@@ -110,7 +99,6 @@ func (t *Timewarrior) Enabled() bool {
 	t.Active = true
 	t.Annotation = t.annotation(interval.Annotation)
 	t.Duration = time.Since(t.Start).Truncate(time.Second).String()
-	t.ID = interval.ID
 	tags := make([]string, len(interval.Tags))
 	tagFormat := t.options.String(TimewarriorTagFormat, "#%s")
 	for index, tag := range interval.Tags {

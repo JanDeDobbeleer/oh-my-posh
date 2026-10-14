@@ -971,6 +971,7 @@ func TestFishPathEscapedFolderNames(t *testing.T) {
 				options.Style: Fish,
 				DirLength:     tc.dirLength,
 			}, env)
+			path.pathSeparator = "/"
 
 			path.setPaths()
 			path.setStyle()

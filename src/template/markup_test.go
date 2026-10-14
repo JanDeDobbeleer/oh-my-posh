@@ -445,6 +445,12 @@ func TestEscapeSource(t *testing.T) {
 	}
 }
 
+func TestUnescapeSource(t *testing.T) {
+	for _, input := range []string{"src", "<red>{{ upper .Path }}</>", "{{{{ x }}}}", `{{"{{"}}`, "<<>>", "a }} b"} {
+		assert.Equal(t, input, UnescapeSource(EscapeSource(input)), input)
+	}
+}
+
 func TestEscapeText(t *testing.T) {
 	assert.Equal(t, "<<>red<>>x<<>/<>>", EscapeText("<red>x</>"))
 	assert.Equal(t, "plain", EscapeText("plain"))

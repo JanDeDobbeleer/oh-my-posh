@@ -3884,6 +3884,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "cmp0xff",
+      "name": "Yi-Fan Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5564164?v=4",
+      "profile": "https://github.com/cmp0xff",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

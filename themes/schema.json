@@ -5019,12 +5019,6 @@
                     "title": "Tag Separator",
                     "description": "Text between formatted active tags.",
                     "default": " "
-                  },
-                  "untagged_text": {
-                    "type": "string",
-                    "title": "Untagged Text",
-                    "description": "Label for an active interval without tags. An empty string hides the label.",
-                    "default": "\u2205"
                   }
                 },
                 "unevaluatedProperties": false

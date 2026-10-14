@@ -2724,7 +2724,7 @@
           "Text": " x "
         },
         "Start": "2026-10-12T09:00:00Z",
-        "Tags": ["project", "work"],
+        "Tags": "#project #work",
         "Text": " x "
       },
       "enabled": true

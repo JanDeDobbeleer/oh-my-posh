@@ -2,6 +2,7 @@ package segments
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -11,9 +12,9 @@ import (
 
 const (
 	TimewarriorAnnotationMaxLength options.Option = "annotation_max_length"
-	TimewarriorAnnotationSeparator options.Option = "annotation_separator"
 	TimewarriorCommand             options.Option = "command"
 	TimewarriorEllipsis            options.Option = "ellipsis"
+	TimewarriorTagFormat           options.Option = "tag_format"
 	TimewarriorTagSeparator        options.Option = "tag_separator"
 	TimewarriorUntaggedText        options.Option = "untagged_text"
 )
@@ -24,14 +25,14 @@ type Timewarrior struct {
 	Start      time.Time
 	Annotation string
 	Duration   string
-	Tags       []string
+	Tags       string
 	ID         int
 	Active     bool
 }
 
 func (t *Timewarrior) Template() string {
-	return "{{ if .Active }} \uf252 {{ $tags := join .TagSeparator .Tags }}{{ if not $tags }}{{ $tags = .Untagged }}{{ end }}" +
-		"{{ $tags }}{{ if .Annotation }}{{ if $tags }}{{ .AnnotationSeparator }}{{ end }}{{ .Annotation }}{{ end }}" +
+	return "{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}{{ .Untagged }}{{ end }}" +
+		"{{ if .Annotation }}{{ if or .Tags .Untagged }} | {{ end }}{{ .Annotation }}{{ end }}" +
 		"{{ else }} Not tracking{{ end }} "
 }
 
@@ -49,16 +50,8 @@ func (t *Timewarrior) annotation(value string) string {
 	return string(runes[:maxLength-len(ellipsis)]) + string(ellipsis)
 }
 
-func (t *Timewarrior) AnnotationSeparator() string {
-	return t.options.String(TimewarriorAnnotationSeparator, " | ")
-}
-
-func (t *Timewarrior) TagSeparator() string {
-	return t.options.String(TimewarriorTagSeparator, " ")
-}
-
 func (t *Timewarrior) Untagged() string {
-	if !t.Active || len(t.Tags) != 0 {
+	if !t.Active || t.Tags != "" {
 		return ""
 	}
 
@@ -118,6 +111,11 @@ func (t *Timewarrior) Enabled() bool {
 	t.Annotation = t.annotation(interval.Annotation)
 	t.Duration = time.Since(t.Start).Truncate(time.Second).String()
 	t.ID = interval.ID
-	t.Tags = interval.Tags
+	tags := make([]string, len(interval.Tags))
+	tagFormat := t.options.String(TimewarriorTagFormat, "#%s")
+	for index, tag := range interval.Tags {
+		tags[index] = fmt.Sprintf(tagFormat, tag)
+	}
+	t.Tags = strings.Join(tags, t.options.String(TimewarriorTagSeparator, " "))
 	return true
 }

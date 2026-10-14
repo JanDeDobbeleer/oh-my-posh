@@ -4996,12 +4996,6 @@
                     "description": "Maximum Unicode character count of Annotation, including the ellipsis. Zero or negative disables truncation.",
                     "default": 48
                   },
-                  "annotation_separator": {
-                    "type": "string",
-                    "title": "Annotation Separator",
-                    "description": "Text between the tags or untagged label and the annotation in the default template.",
-                    "default": " | "
-                  },
                   "command": {
                     "type": "string",
                     "title": "Timewarrior Command",
@@ -5014,10 +5008,16 @@
                     "description": "Suffix for truncated annotations, included in annotation_max_length.",
                     "default": "\u2026"
                   },
+                  "tag_format": {
+                    "type": "string",
+                    "title": "Tag Format",
+                    "description": "Go format string applied to each active tag; use %s as the tag placeholder.",
+                    "default": "#%s"
+                  },
                   "tag_separator": {
                     "type": "string",
                     "title": "Tag Separator",
-                    "description": "Text between active tags in the default template.",
+                    "description": "Text between formatted active tags.",
                     "default": " "
                   },
                   "untagged_text": {

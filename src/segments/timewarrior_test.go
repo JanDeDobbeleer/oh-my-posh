@@ -29,7 +29,7 @@ func TestTimewarrior(t *testing.T) {
 		Status          string
 		Output          string
 		Annotation      string
-		Tags            []string
+		ExpectedTags    string
 		HasCommand      bool
 		AlwaysEnabled   bool
 		ExpectedEnabled bool
@@ -61,11 +61,11 @@ func TestTimewarrior(t *testing.T) {
 		},
 		{
 			Case: "active interval", HasCommand: true, Output: activeOutput,
-			ExpectedEnabled: true, Active: true, Tags: []string{"work", "project"}, Annotation: "Writing code",
+			ExpectedEnabled: true, Active: true, ExpectedTags: "#work #project", Annotation: "Writing code",
 		},
 		{
 			Case: "custom executable", Command: "timew-custom", HasCommand: true, Output: activeOutput,
-			ExpectedEnabled: true, Active: true, Tags: []string{"work", "project"}, Annotation: "Writing code",
+			ExpectedEnabled: true, Active: true, ExpectedTags: "#work #project", Annotation: "Writing code",
 		},
 		{
 			Case: "active without tags", HasCommand: true,
@@ -103,7 +103,7 @@ func TestTimewarrior(t *testing.T) {
 				return
 			}
 			assert.Equal(t, tc.Active, segment.Active)
-			assert.Equal(t, tc.Tags, segment.Tags)
+			assert.Equal(t, tc.ExpectedTags, segment.Tags)
 			assert.Equal(t, tc.Annotation, segment.Annotation)
 			if !tc.Active {
 				assert.Zero(t, segment.ID)
@@ -120,13 +120,13 @@ func TestTimewarrior(t *testing.T) {
 		})
 	}
 }
-
 func TestTimewarriorTemplate(t *testing.T) {
 	cases := []struct {
 		Options            options.Map
 		Case               string
 		Annotation         string
 		ExpectedAnnotation string
+		ExpectedTags       string
 		Rendered           string
 		Tags               []string
 		Active             bool
@@ -135,12 +135,12 @@ func TestTimewarriorTemplate(t *testing.T) {
 		{Case: "idle indicator", Options: options.Map{options.AlwaysEnabled: true}, Rendered: "Not tracking"},
 		{
 			Case: "active with always enabled", Active: true, Tags: []string{"work"},
-			Options: options.Map{options.AlwaysEnabled: true}, Rendered: "\uf252 work",
+			Options: options.Map{options.AlwaysEnabled: true}, ExpectedTags: "#work", Rendered: "\uf252 #work",
 		},
-		{Case: "tags", Active: true, Tags: []string{"work", "project"}, Rendered: "\uf252 work project"},
+		{Case: "tags", Active: true, Tags: []string{"work", "project"}, ExpectedTags: "#work #project", Rendered: "\uf252 #work #project"},
 		{
 			Case: "tags and annotation", Active: true, Tags: []string{"work"}, Annotation: "Writing code",
-			ExpectedAnnotation: "Writing code", Rendered: "\uf252 work | Writing code",
+			ExpectedAnnotation: "Writing code", ExpectedTags: "#work", Rendered: "\uf252 #work | Writing code",
 		},
 		{Case: "untagged", Active: true, Rendered: "\uf252 \u2205"},
 		{
@@ -149,25 +149,25 @@ func TestTimewarriorTemplate(t *testing.T) {
 		},
 		{
 			Case: "real tag beginning with marker", Active: true, Tags: []string{"\u2205work"},
-			Rendered: "\uf252 \u2205work",
+			ExpectedTags: "#\u2205work", Rendered: "\uf252 #\u2205work",
 		},
 		{
 			Case: "long tags stay intact", Active: true, Tags: []string{strings.Repeat("x", 60)},
-			Rendered: "\uf252 " + strings.Repeat("x", 60),
+			ExpectedTags: "#" + strings.Repeat("x", 60), Rendered: "\uf252 #" + strings.Repeat("x", 60),
 		},
 		{
 			Case: "exact annotation limit", Active: true, Tags: []string{"work"}, Annotation: strings.Repeat("x", 48),
-			ExpectedAnnotation: strings.Repeat("x", 48), Rendered: "\uf252 work | " + strings.Repeat("x", 48),
+			ExpectedAnnotation: strings.Repeat("x", 48), ExpectedTags: "#work", Rendered: "\uf252 #work | " + strings.Repeat("x", 48),
 		},
 		{
 			Case: "unicode annotation truncation", Active: true, Tags: []string{"work"}, Annotation: strings.Repeat("\u754c", 49),
-			ExpectedAnnotation: strings.Repeat("\u754c", 47) + "\u2026",
-			Rendered:           "\uf252 work | " + strings.Repeat("\u754c", 47) + "\u2026",
+			ExpectedAnnotation: strings.Repeat("\u754c", 47) + "\u2026", ExpectedTags: "#work",
+			Rendered: "\uf252 #work | " + strings.Repeat("\u754c", 47) + "\u2026",
 		},
 		{
-			Case: "custom separators", Active: true, Tags: []string{"work", "project"}, Annotation: "Writing",
-			Options:            options.Map{TimewarriorTagSeparator: ",", TimewarriorAnnotationSeparator: ": "},
-			ExpectedAnnotation: "Writing", Rendered: "\uf252 work,project: Writing",
+			Case: "custom tag format and separator", Active: true, Tags: []string{"work", "project"}, Annotation: "Writing",
+			Options:            options.Map{TimewarriorTagFormat: "[%s]", TimewarriorTagSeparator: ","},
+			ExpectedAnnotation: "Writing", ExpectedTags: "[work],[project]", Rendered: "\uf252 [work],[project] | Writing",
 		},
 		{
 			Case: "custom marker", Active: true, Annotation: "Writing", Options: options.Map{TimewarriorUntaggedText: "none"},
@@ -180,7 +180,7 @@ func TestTimewarriorTemplate(t *testing.T) {
 		{
 			Case: "custom truncation", Active: true, Tags: []string{"work"}, Annotation: "abcdefgh",
 			Options:            options.Map{TimewarriorAnnotationMaxLength: 6, TimewarriorEllipsis: ".."},
-			ExpectedAnnotation: "abcd..", Rendered: "\uf252 work | abcd..",
+			ExpectedAnnotation: "abcd..", ExpectedTags: "#work", Rendered: "\uf252 #work | abcd..",
 		},
 		{
 			Case: "marker stays intact", Active: true,
@@ -222,7 +222,7 @@ func TestTimewarriorTemplate(t *testing.T) {
 			enabled := segment.Enabled()
 			assert.Equal(t, tc.Active || tc.Options.Bool(options.AlwaysEnabled, false), enabled)
 			assert.Equal(t, tc.ExpectedAnnotation, segment.Annotation)
-			assert.Equal(t, tc.Tags, segment.Tags)
+			assert.Equal(t, tc.ExpectedTags, segment.Tags)
 			rendered := ""
 			if enabled {
 				rendered = renderTemplate(env, segment.Template(), segment)

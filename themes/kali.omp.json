@@ -6,9 +6,7 @@
       "segments": [
         {
           "foreground": "lightBlue",
-          "foreground_templates": [
-            "{{ if .Root }}lightRed{{ end }}"
-          ],
+          "foreground_templates": ["{{ if .Root }}lightRed{{ end }}"],
           "style": "plain",
           "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>\u250c\u2500\u2500(</>{{ .UserName }}{{ if .Root }}💀{{ else }}㉿{{ end }}{{ .HostName }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>)</>",
           "type": "session"
@@ -23,9 +21,9 @@
           "type": "python"
         },
         {
-          "foreground": "lightWhite",
+          "foreground": "default",
           "options": {
-            "folder_separator_icon": "<#c0c0c0>/</>",
+            "folder_separator_icon": "/",
             "style": "full"
           },
           "style": "plain",
@@ -33,7 +31,7 @@
           "type": "path"
         },
         {
-          "foreground": "white",
+          "foreground": "default",
           "style": "plain",
           "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>-[</>{{ .HEAD }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>]</>",
           "type": "git"
@@ -45,7 +43,7 @@
       "alignment": "right",
       "segments": [
         {
-          "foreground": "white",
+          "foreground": "default",
           "options": {
             "always_enabled": true,
             "style": "round"
@@ -56,9 +54,7 @@
         },
         {
           "foreground": "green",
-          "foreground_templates": [
-            "{{ if gt .Code 0 }}red{{ end }}"
-          ],
+          "foreground_templates": ["{{ if gt .Code 0 }}red{{ end }}"],
           "options": {
             "always_enabled": true
           },

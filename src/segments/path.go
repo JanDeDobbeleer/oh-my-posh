@@ -441,15 +441,18 @@ func (pt *Path) getFishPath() string {
 	var elements []string
 	for i := range folderCount {
 		name := folders[i].Name
-		runeCount := utf8.RuneCountInString(name)
+		// cut the folder name as it is on disk, not its escaped form: a cut
+		// inside an escape would leave a dangling delimiter or chevron
+		raw := template.UnescapeSource(name)
+		runeCount := utf8.RuneCountInString(raw)
 		if folders[i].Display || dirLength <= 0 || runeCount < dirLength || i >= stopAt {
 			elements = append(elements, name)
 			continue
 		}
 
 		// Convert string to rune slice to properly handle multi-byte characters
-		runes := []rune(name)
-		elements = append(elements, string(runes[:dirLength]))
+		runes := []rune(raw)
+		elements = append(elements, template.EscapeSource(string(runes[:dirLength])))
 	}
 
 	if len(elements) == 1 {

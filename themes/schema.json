@@ -507,6 +507,7 @@
             "terraform",
             "text",
             "time",
+            "timewarrior",
             "todoist",
             "ui5tooling",
             "umbraco",
@@ -4962,6 +4963,62 @@
                     "title": "Time Format",
                     "description": "The Go time layout string used to format the time, such as 15:04:05 or Mon Jan 2 15:04:05 2006.",
                     "default": "15:04:05"
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "timewarrior"
+              }
+            }
+          },
+          "then": {
+            "title": "Timewarrior Segment",
+            "description": "Display Timewarrior tracking status, active tags, annotation and elapsed time.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "always_enabled": {
+                    "type": "boolean",
+                    "title": "Always Enabled",
+                    "description": "Show the segment even when Timewarrior is not tracking.",
+                    "default": false
+                  },
+                  "annotation_max_length": {
+                    "type": "integer",
+                    "title": "Maximum Annotation Length",
+                    "description": "Maximum Unicode character count of Annotation, including the ellipsis. Zero or negative disables truncation.",
+                    "default": 48
+                  },
+                  "command": {
+                    "type": "string",
+                    "title": "Timewarrior Command",
+                    "description": "The Timewarrior executable to use.",
+                    "default": "timew"
+                  },
+                  "ellipsis": {
+                    "type": "string",
+                    "title": "Ellipsis",
+                    "description": "Suffix for truncated annotations, included in annotation_max_length.",
+                    "default": "\u2026"
+                  },
+                  "tag_format": {
+                    "type": "string",
+                    "title": "Tag Format",
+                    "description": "Go format string applied to each active tag; use %s as the tag placeholder.",
+                    "default": "#%s"
+                  },
+                  "tag_separator": {
+                    "type": "string",
+                    "title": "Tag Separator",
+                    "description": "Text between formatted active tags.",
+                    "default": " "
                   }
                 },
                 "unevaluatedProperties": false

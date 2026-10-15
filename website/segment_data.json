@@ -2713,6 +2713,21 @@
       },
       "enabled": true
     },
+    "timewarrior": {
+      "data": {
+        "Active": true,
+        "Annotation": "Writing code",
+        "Duration": "1h30m0s",
+        "Segment": {
+          "Index": 99,
+          "Text": " x "
+        },
+        "Start": "2026-10-12T09:00:00Z",
+        "Tags": "#project #work",
+        "Text": " x "
+      },
+      "enabled": true
+    },
     "todoist": {
       "data": {
         "GetData": {},

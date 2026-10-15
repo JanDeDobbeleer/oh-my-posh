@@ -37,13 +37,14 @@ func (s *JujutsuStatus) add(code byte) {
 
 // jujutsuStatusFields lists what setJujutsuStatus populates: the single
 // probe this segment derives from its templates (see FieldRefs).
-var jujutsuStatusFields = []string{workingField, "ChangeID", "ChangeIDPrefix", "ChangeIDRest"}
+var jujutsuStatusFields = []string{workingField, "ChangeID", "ChangeIDPrefix", "ChangeIDRest", "Desc"}
 
 type Jujutsu struct {
 	Working          *JujutsuStatus
 	ChangeID         string
 	ChangeIDPrefix   string
 	ChangeIDRest     string
+	Desc             string
 	closestBookmarks string
 	Scm
 	FieldRefs
@@ -193,6 +194,8 @@ func (jj *Jujutsu) setJujutsuStatus() {
 	jj.ChangeIDRest = rest
 	jj.ChangeID = prefix + rest
 
+	jj.Desc, statusString, _ = strings.Cut(statusString, "\n")
+
 	for line := range strings.SplitSeq(statusString, "\n") {
 		if len(line) > 0 {
 			jj.Working.add(line[0])
@@ -204,7 +207,7 @@ func (jj *Jujutsu) logTemplate() string {
 	// https://jj-vcs.github.io/jj/latest/templates/#commit-keywords
 	minLength := jj.options.Int(ChangeIDMinLen, 0)
 	return fmt.Sprintf(
-		`change_id.shortest(%d).prefix() ++ "|" ++ change_id.shortest(%d).rest() ++ "\n" ++ diff.summary()`,
+		`change_id.shortest(%d).prefix() ++ "|" ++ change_id.shortest(%d).rest() ++ "\n" ++ description.first_line() ++ "\n" ++ diff.summary()`,
 		minLength,
 		minLength,
 	)

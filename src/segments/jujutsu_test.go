@@ -45,6 +45,7 @@ func TestJujutsuEnabledInWorkingDirectory(t *testing.T) {
 	assert.Empty(t, jj.ChangeID)
 	assert.Empty(t, jj.ChangeIDPrefix)
 	assert.Empty(t, jj.ChangeIDRest)
+	assert.Empty(t, jj.Desc)
 	env.AssertNotCalled(t, "RunCommand")
 }
 
@@ -54,7 +55,7 @@ func TestJujutsuLogTemplate(t *testing.T) {
 
 	assert.Equal(
 		t,
-		`change_id.shortest(8).prefix() ++ "|" ++ change_id.shortest(8).rest() ++ "\n" ++ diff.summary()`,
+		`change_id.shortest(8).prefix() ++ "|" ++ change_id.shortest(8).rest() ++ "\n" ++ description.first_line() ++ "\n" ++ diff.summary()`,
 		jj.logTemplate(),
 	)
 }
@@ -72,15 +73,17 @@ func TestJujutsuGetIdInfo(t *testing.T) {
 		ExpectedChangeID       string
 		ExpectedChangeIDPrefix string
 		ExpectedChangeIDRest   string
+		ExpectedDesc           string
 		ChangeIDMinLen         int
 		ValidHeader            bool
 	}{
 		{
 			Case:                   "clean with minimum-length rest",
-			LogOutput:              "t|ususrrr",
+			LogOutput:              "t|ususrrr\nmy commit",
 			ExpectedChangeID:       "tususrrr",
 			ExpectedChangeIDPrefix: "t",
 			ExpectedChangeIDRest:   "ususrrr",
+			ExpectedDesc:           "my commit",
 			ChangeIDMinLen:         8,
 			ValidHeader:            true,
 			ExpectedWorking: &JujutsuStatus{ScmStatus{
@@ -108,6 +111,7 @@ func TestJujutsuGetIdInfo(t *testing.T) {
 		{
 			Case: "changed with empty rest",
 			LogOutput: `tususrrr|
+
 D deleted_file
 A added_file
 C {copied_file => new_file}
@@ -116,6 +120,28 @@ R {renamed_file => new_file}`,
 			ExpectedChangeID:       "tususrrr",
 			ExpectedChangeIDPrefix: "tususrrr",
 			ExpectedChangeIDRest:   "",
+			ChangeIDMinLen:         4,
+			ValidHeader:            true,
+			ExpectedWorking: &JujutsuStatus{ScmStatus{
+				Deleted:  1,
+				Added:    2,
+				Modified: 1,
+				Moved:    1,
+			}},
+		},
+		{
+			Case: "changed with description",
+			LogOutput: `tususrrr|
+my commit
+D deleted_file
+A added_file
+C {copied_file => new_file}
+M modified_file
+R {renamed_file => new_file}`,
+			ExpectedChangeID:       "tususrrr",
+			ExpectedChangeIDPrefix: "tususrrr",
+			ExpectedChangeIDRest:   "",
+			ExpectedDesc:           "my commit",
 			ChangeIDMinLen:         4,
 			ValidHeader:            true,
 			ExpectedWorking: &JujutsuStatus{ScmStatus{
@@ -209,6 +235,7 @@ R {renamed_file => new_file}`,
 			assert.Equal(t, tc.ExpectedChangeID, jj.ChangeID)
 			assert.Equal(t, tc.ExpectedChangeIDPrefix, jj.ChangeIDPrefix)
 			assert.Equal(t, tc.ExpectedChangeIDRest, jj.ChangeIDRest)
+			assert.Equal(t, tc.ExpectedDesc, jj.Desc)
 			if tc.ValidHeader {
 				assert.Equal(t, jj.ChangeIDPrefix+jj.ChangeIDRest, jj.ChangeID)
 			}

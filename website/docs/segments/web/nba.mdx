@@ -57,8 +57,10 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
- \udb82\udc06 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
+ \U000F0806 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
 ```
+
+The glyph escape is format-specific; see [Referencing glyphs in your config][glyphs].
 
 :::
 
@@ -82,5 +84,6 @@ import Config from "@site/src/components/Config.js";
 | `.HasStats`       | `boolean` | if the game has game stats or not                           |
 
 [color-schemes]: https://teamcolorcodes.com/nba-team-color-codes/
+[glyphs]: /docs/installation/fonts#referencing-glyphs-in-your-config
 [templates]: /docs/configuration/templates
 [tri-code]: https://liaison.reuters.com/tools/sports-team-codes

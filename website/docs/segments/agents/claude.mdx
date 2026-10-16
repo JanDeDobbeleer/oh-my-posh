@@ -47,8 +47,10 @@ import Config from "@site/src/components/Config.js";
 :::note default template
 
 ```template
- \udb82\udfc9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }}
+ \U000F0BC9 {{ .Model.DisplayName }} \uf2d0 {{ .TokenGauge }}
 ```
+
+The glyph escape is format-specific; see [Referencing glyphs in your config][glyphs].
 
 :::
 
@@ -298,5 +300,6 @@ The segment reads session information from the `POSH_CLAUDE_STATUS` environment 
 The segment only displays when Claude Code is actively providing session data.
 
 [claude-docs]: https://code.claude.com/docs/en/statusline
+[glyphs]: /docs/installation/fonts#referencing-glyphs-in-your-config
 [prompt-cache]: https://code.claude.com/docs/en/statusline#prompt-cache-fields
 [templates]: /docs/configuration/templates

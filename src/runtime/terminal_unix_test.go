@@ -6,8 +6,72 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/shirou/gopsutil/v4/mem"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestSetSwapMemory(t *testing.T) {
+	cases := []struct {
+		SwapStat            *mem.SwapMemoryStat
+		MemoryStat          *mem.VirtualMemoryStat
+		Name                string
+		ExpectedSwapTotal   uint64
+		ExpectedSwapFree    uint64
+		ExpectedSwapPercent float64
+	}{
+		{
+			Name: "swap stats are available",
+			SwapStat: &mem.SwapMemoryStat{
+				Total:       8 * 1024,
+				Free:        4 * 1024,
+				UsedPercent: 50,
+			},
+			MemoryStat: &mem.VirtualMemoryStat{
+				SwapTotal: 16 * 1024,
+				SwapFree:  8 * 1024,
+			},
+			ExpectedSwapTotal:   8 * 1024,
+			ExpectedSwapFree:    4 * 1024,
+			ExpectedSwapPercent: 50,
+		},
+		{
+			Name: "virtual memory swap stats are used when swap stats are unavailable",
+			MemoryStat: &mem.VirtualMemoryStat{
+				SwapTotal: 8 * 1024,
+				SwapFree:  2 * 1024,
+			},
+			ExpectedSwapTotal:   8 * 1024,
+			ExpectedSwapFree:    2 * 1024,
+			ExpectedSwapPercent: 75,
+		},
+		{
+			Name:       "no swap remains zero when swap stats are unavailable",
+			MemoryStat: &mem.VirtualMemoryStat{},
+		},
+		{
+			Name: "free swap greater than total does not underflow",
+			MemoryStat: &mem.VirtualMemoryStat{
+				SwapTotal: 2 * 1024,
+				SwapFree:  4 * 1024,
+			},
+			ExpectedSwapTotal:   2 * 1024,
+			ExpectedSwapFree:    4 * 1024,
+			ExpectedSwapPercent: 0,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Name, func(t *testing.T) {
+			memory := &Memory{}
+
+			setSwapMemory(memory, tc.SwapStat, tc.MemoryStat)
+
+			assert.Equal(t, tc.ExpectedSwapTotal, memory.SwapTotalMemory)
+			assert.Equal(t, tc.ExpectedSwapFree, memory.SwapFreeMemory)
+			assert.InDelta(t, tc.ExpectedSwapPercent, memory.SwapPercentUsed, 0.01)
+		})
+	}
+}
 
 func TestMemoryPercentageCalculation(t *testing.T) {
 	cases := []struct {

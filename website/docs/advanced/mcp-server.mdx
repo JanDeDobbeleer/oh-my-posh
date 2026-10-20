@@ -29,8 +29,8 @@ Configure your MCP-compatible client (like Claude Desktop, Cline, or other AI as
 {
   "mcpServers": {
     "oh-my-posh-validator": {
-      "url": "https://ohmyposh.dev/api/mcp",
-      "transport": "http"
+      "type": "http",
+      "url": "https://ohmyposh.dev/api/mcp"
     }
   }
 }
@@ -88,7 +88,7 @@ curl -X POST https://ohmyposh.dev/api/mcp \
 | Parameter | Type   | Required | Description                                                      |
 |-----------|--------|----------|------------------------------------------------------------------|
 | content   | string | Yes      | The configuration content as a string (JSON, YAML, or TOML)      |
-| format    | string | No       | The format: `json`, `yaml`, `toml`, or `auto` (default: `auto`) |
+| format    | string | No       | The format: `json`, `yaml`, `toml`, or `auto` (default: `auto`)  |
 
 **Returns:**
 
@@ -192,8 +192,8 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 {
   "mcpServers": {
     "oh-my-posh-validator": {
-      "url": "https://ohmyposh.dev/api/mcp",
-      "transport": "http"
+      "type": "http",
+      "url": "https://ohmyposh.dev/api/mcp"
     }
   }
 }

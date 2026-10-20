@@ -147,6 +147,7 @@ export default {
             "segments/cli/pnpm",
             "segments/cli/quasar",
             "segments/cli/react",
+            "segments/cli/sshagent",
             "segments/cli/svelte",
             "segments/cli/talosctl",
             "segments/cli/taskwarrior",

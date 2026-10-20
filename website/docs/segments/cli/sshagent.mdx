@@ -1,0 +1,54 @@
+---
+id: sshagent
+title: SSH Agent
+sidebar_label: SSH Agent
+---
+
+## What
+
+Show whether an [ssh-agent][ssh-agent] is reachable and how many keys it holds. The segment
+runs `ssh-add -l`; on Linux and macOS it skips that call when `SSH_AUTH_SOCK` is not set.
+It always renders its template, so hide it with a condition on `.Running` when needed.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "sshagent",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#4a5568",
+    template: "{{ if .Running }} \uf43d {{ .Count }} {{ end }}",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Running }} {{ "\uf43d" }} {{ .Count }} {{ end }}
+```
+
+:::
+
+### Properties
+
+| Name       | Type      | Description                                   |
+| ---------- | --------- | --------------------------------------------- |
+| `.Running` | `boolean` | whether an ssh-agent is reachable             |
+| `.Count`   | `int`     | the number of keys loaded into the ssh-agent |
+
+### Examples
+
+Show a hint when no agent is running:
+
+```template
+{{ if .Running }} {{ "\uf43d" }} {{ .Count }} {{ else }} no agent {{ end }}
+```
+
+[ssh-agent]: https://man.openbsd.org/ssh-agent
+[templates]: /docs/configuration/templates

@@ -495,6 +495,7 @@
             "shell",
             "sitecore",
             "spotify",
+            "sshagent",
             "status",
             "strava",
             "svelte",
@@ -4589,6 +4590,19 @@
                 "unevaluatedProperties": false
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sshagent"
+              }
+            }
+          },
+          "then": {
+            "title": "SSH Agent Segment",
+            "description": "Show whether an ssh-agent is reachable and how many keys it holds."
           }
         },
         {

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -292,7 +293,7 @@ func (s *scanner) walk(dir, rel string, patterns []gitignore.Pattern) {
 	if ps := readIgnoreFile(filepath.Join(dir, ".gitignore"), splitDomain(rel)); ps != nil {
 		// Full-capacity reslice: appending copies into a new backing
 		// array instead of sharing one with sibling goroutines.
-		patterns = append(patterns[:len(patterns):len(patterns)], ps...)
+		patterns = append(slices.Clip(patterns), ps...)
 	}
 
 	matcher := gitignore.NewMatcher(patterns)

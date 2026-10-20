@@ -1,10 +1,3 @@
-scripts:
-- name: Install Dependencies
-  command: |
-    apm install --frozen
-    git restore apm.lock.yaml
-  triggers:
-  - session.create
 automation:
   auto_issue_session: true
   remote_control: true

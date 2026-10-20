@@ -126,7 +126,7 @@ func marshalsItself(value reflect.Value) bool {
 		return false
 	}
 
-	_, ok := value.Interface().(json.Marshaler)
+	_, ok := reflect.TypeAssert[json.Marshaler](value)
 
 	return ok
 }

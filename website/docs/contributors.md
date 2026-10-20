@@ -544,6 +544,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dhanush0x96c"><img src="https://avatars.githubusercontent.com/u/154754292?v=4?s=100" width="100px;" alt="Dhanush Shetty"/><br /><sub><b>Dhanush Shetty</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dhanush0x96c" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dhanush0x96c" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.planetargon.com/robby"><img src="https://avatars.githubusercontent.com/u/257?v=4?s=100" width="100px;" alt="Robby Russell"/><br /><sub><b>Robby Russell</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=robbyrussell" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

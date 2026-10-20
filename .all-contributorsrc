@@ -3894,6 +3894,17 @@
         "code",
         "design"
       ]
+    },
+    {
+      "login": "sebb0",
+      "name": "Sebastian Semrau",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1463370?v=4",
+      "profile": "https://github.com/sebb0",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

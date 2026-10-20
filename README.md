@@ -50,7 +50,7 @@ on oh-my-posh, a modern and more efficient tool was needed to suit my personal n
 ## :heart: Support :heart:
 
 <!-- markdownlint-disable no-inline-html line-length -->
-<a href="https://commitgoods.com/collections/oh-my-posh?utm_source=github">
+<a href="https://commitgoods.com/collections/oh-my-posh?utm_source=github&amp;utm_medium=referral">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://cdn.shopify.com/s/files/1/0101/8752/files/commitgoods-badge-stacked-navy-dark.svg">
     <img src="https://cdn.shopify.com/s/files/1/0101/8752/files/commitgoods-badge-stacked-navy.svg" height="28" alt="Official merch on commitgoods.com">

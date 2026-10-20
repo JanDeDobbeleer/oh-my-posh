@@ -2478,7 +2478,9 @@
     "sshagent": {
       "data": {
         "Count": 2,
+        "Keys": "personal work@laptop",
         "Running": true,
+        "UnmappedCount": 1,
         "Segment": {
           "Index": 87,
           "Text": " x "

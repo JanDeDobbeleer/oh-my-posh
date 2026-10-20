@@ -182,7 +182,7 @@ export default {
             },
             {
               label: 'Swag',
-              href: 'https://swag.ohmyposh.dev',
+              href: 'https://commitgoods.com/collections/oh-my-posh?utm_source=ohmyposh.dev&utm_medium=referral',
             },
           ],
         },

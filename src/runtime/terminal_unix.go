@@ -201,8 +201,27 @@ func (term *Terminal) Memory() (*Memory, error) {
 		log.Error(err)
 	}
 
-	m.SwapTotalMemory = swapStat.Total
-	m.SwapFreeMemory = swapStat.Free
-	m.SwapPercentUsed = swapStat.UsedPercent
+	setSwapMemory(m, swapStat, memStat)
 	return m, nil
+}
+
+func setSwapMemory(memory *Memory, swapStat *mem.SwapMemoryStat, memStat *mem.VirtualMemoryStat) {
+	if swapStat != nil {
+		memory.SwapTotalMemory = swapStat.Total
+		memory.SwapFreeMemory = swapStat.Free
+		memory.SwapPercentUsed = swapStat.UsedPercent
+		return
+	}
+
+	memory.SwapTotalMemory = memStat.SwapTotal
+	memory.SwapFreeMemory = memStat.SwapFree
+	if memory.SwapTotalMemory == 0 {
+		return
+	}
+
+	used := float64(memory.SwapTotalMemory) - float64(memory.SwapFreeMemory)
+	if used < 0 {
+		used = 0
+	}
+	memory.SwapPercentUsed = used / float64(memory.SwapTotalMemory) * 100
 }

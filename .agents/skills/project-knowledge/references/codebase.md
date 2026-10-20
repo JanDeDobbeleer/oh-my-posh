@@ -30,6 +30,8 @@
 
 ## Segments and cache
 
+- Treat `mem.SwapMemory()` errors as returning a nil stat: gopsutil can fail reading `/proc/vmstat` on Android/Termux,
+  so fall back to `VirtualMemoryStat.SwapTotal` and `SwapFree` instead of dereferencing the result.
 - Segment writers gob-encode only exported fields; `segments.Base.env/options` are unexported. On cache restore,
   overlay restored data onto the writer from `MapSegmentWithWriter`; never replace the writer.
 - `runtime/cmd.RunWithEnv` trims whitespace from the whole output, so a trailing empty field is lost. End records

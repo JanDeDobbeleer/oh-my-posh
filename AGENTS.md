@@ -51,9 +51,9 @@ npm run build    # before a docs pull request
 ```
 
 The Stop hook (`.agents/hooks/main.go`) formats the changed files, runs `modernize`, `fieldalignment`, `golangci-lint`,
-`go test`, `markdownlint`, and the `else` check, and builds platform-specific code for the other operating systems. Fix
-what it reports; never run `fieldalignment -fix`. `.claude/settings.json` and `.github/hooks/quality.json` both wire
-it, so change them together.
+`go test`, `markdownlint`, and the `else` check, and builds, lints, and analyzes platform-specific code for the other
+operating systems. Fix what it reports; never run `fieldalignment -fix`. `.claude/settings.json` and
+`.github/hooks/quality.json` both wire it, so change them together.
 
 ## Docs
 

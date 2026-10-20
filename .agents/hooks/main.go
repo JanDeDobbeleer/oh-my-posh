@@ -27,6 +27,11 @@ const (
 	failureSummary = "Checks failed on the changed files; fix them before finishing:"
 	lintInstall    = "golangci-lint not installed, lint skipped: https://golangci-lint.run/docs/welcome/install/"
 	noElseHint     = "The codebase does not use else: rewrite with a guard clause, an early return, or a switch."
+
+	modernizeModule      = "golang.org/x/tools/go/analysis/passes/modernize/cmd/modernize@latest"
+	fieldalignmentModule = "golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest"
+	analyzersInstall     = "modernize or fieldalignment not installed, other platforms not analyzed: go install " +
+		modernizeModule + " " + fieldalignmentModule
 )
 
 var targetOSes = []string{"linux", "darwin", "windows"}
@@ -276,16 +281,9 @@ func checkGo(ctx context.Context, r *report, srcDir string, c changes) {
 		return
 	}
 
-	modernize := toolCommand("modernize", "golang.org/x/tools/go/analysis/passes/modernize/cmd/modernize@latest")
-	if out, err := runTool(ctx, srcDir, nil, slices.Concat(modernize, []string{"-fix"}, c.packages)); err != nil {
-		r.fail("modernize", out)
-	}
-
-	// fieldalignment -fix is never used because it drops the comments on reordered struct fields.
-	fieldalignment := toolCommand("fieldalignment", "golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest")
-	if out, err := runTool(ctx, srcDir, nil, slices.Concat(fieldalignment, c.packages)); err != nil {
-		r.fail("fieldalignment", out+"\nReorder the fields by hand, keeping their comments, and use named fields in struct literals.")
-	}
+	modernize := toolCommand("modernize", modernizeModule)
+	fieldalignment := toolCommand("fieldalignment", fieldalignmentModule)
+	checkAnalyzers(ctx, r, srcDir, nil, "", modernize, fieldalignment, c.packages)
 
 	if lintErr == nil {
 		if out, err := runTool(ctx, srcDir, nil, slices.Concat([]string{lint, "run"}, c.packages)); err != nil {
@@ -304,17 +302,41 @@ func checkGo(ctx context.Context, r *report, srcDir string, c changes) {
 	}
 }
 
-// CI builds and lints on every OS, but the toolchain only type-checks files for the host.
+func checkAnalyzers(ctx context.Context, r *report, srcDir string, env []string, suffix string, modernize, fieldalignment, packages []string) {
+	if out, err := runTool(ctx, srcDir, env, slices.Concat(modernize, []string{"-fix"}, packages)); err != nil {
+		r.fail("modernize"+suffix, out)
+	}
+
+	// fieldalignment -fix is never used because it drops the comments on reordered struct fields.
+	if out, err := runTool(ctx, srcDir, env, slices.Concat(fieldalignment, packages)); err != nil {
+		r.fail("fieldalignment"+suffix, out+"\nReorder the fields by hand, keeping their comments, and use named fields in struct literals.")
+	}
+}
+
+// CI builds, lints, and analyzes on every OS, but the toolchain only type-checks files for the host.
 func checkOtherPlatforms(ctx context.Context, r *report, srcDir, lint string, hasLint bool, packages []string) {
+	// The go run fallback cannot serve here: it builds the analyzer for the target GOOS.
+	modernize, modernizeErr := exec.LookPath("modernize")
+	fieldalignment, fieldalignmentErr := exec.LookPath("fieldalignment")
+	hasAnalyzers := modernizeErr == nil && fieldalignmentErr == nil
+	if !hasAnalyzers {
+		fmt.Fprintln(os.Stderr, analyzersInstall)
+	}
+
 	for _, goos := range targetOSes {
 		if goos == runtime.GOOS {
 			continue
 		}
 
 		env := []string{"GOOS=" + goos}
+		suffix := " (GOOS=" + goos + ")"
 		if out, err := runTool(ctx, srcDir, env, slices.Concat([]string{"go", "build"}, packages)); err != nil {
-			r.fail("go build (GOOS="+goos+")", out)
+			r.fail("go build"+suffix, out)
 			continue
+		}
+
+		if hasAnalyzers {
+			checkAnalyzers(ctx, r, srcDir, env, suffix, []string{modernize}, []string{fieldalignment}, packages)
 		}
 
 		if !hasLint {
@@ -322,7 +344,7 @@ func checkOtherPlatforms(ctx context.Context, r *report, srcDir, lint string, ha
 		}
 
 		if out, err := runTool(ctx, srcDir, env, slices.Concat([]string{lint, "run"}, packages)); err != nil {
-			r.fail("golangci-lint (GOOS="+goos+")", out)
+			r.fail("golangci-lint"+suffix, out)
 		}
 	}
 }

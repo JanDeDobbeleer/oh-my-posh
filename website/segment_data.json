@@ -2475,6 +2475,18 @@
       },
       "enabled": true
     },
+    "sshagent": {
+      "data": {
+        "Count": 2,
+        "Running": true,
+        "Segment": {
+          "Index": 87,
+          "Text": " x "
+        },
+        "Text": " x "
+      },
+      "enabled": true
+    },
     "status": {
       "data": {
         "Error": false,

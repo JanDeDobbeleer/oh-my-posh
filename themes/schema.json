@@ -4602,7 +4602,35 @@
           },
           "then": {
             "title": "SSH Agent Segment",
-            "description": "Show whether an ssh-agent is reachable and how many keys it holds."
+            "description": "Display whether an ssh-agent is running and which SSH keys are loaded.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "key_separator": {
+                    "type": "string",
+                    "title": "Key Separator",
+                    "description": "Text between rendered keys in .Keys.",
+                    "default": " "
+                  },
+                  "key_template": {
+                    "type": "string",
+                    "title": "Key Template",
+                    "description": "Template rendered per loaded key; exposes .Alias, .Bits, .Comment, .Fingerprint and .Type. Keys that render empty are left out of .Keys.",
+                    "default": "{{ or .Alias .Comment }}"
+                  },
+                  "mapped_keys": {
+                    "type": "object",
+                    "title": "Mapped Keys",
+                    "description": "Map of key fingerprint (SHA256:...) to the text exposed as .Alias in key_template.",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {}
+                  }
+                },
+                "unevaluatedProperties": false
+              }
+            }
           }
         },
         {

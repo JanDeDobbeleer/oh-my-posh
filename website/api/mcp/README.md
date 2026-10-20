@@ -40,8 +40,8 @@ Configure your MCP client to connect to this server:
 {
   "mcpServers": {
     "oh-my-posh-validator": {
-      "url": "https://ohmyposh.dev/api/mcp",
-      "transport": "http"
+      "type": "http",
+      "url": "https://ohmyposh.dev/api/mcp"
     }
   }
 }

@@ -56,8 +56,9 @@ golangci-lint run
   hand.
 - Commit the `modernize` rewrites with the change that triggered them.
 - After touching a `_windows.go`, `_unix.go`, `_darwin.go`, `_linux.go`, or `//go:build` file,
-  also run `go build ./...` and `golangci-lint run` with `GOOS` set to another platform. The host
-  toolchain skips other platforms' files, so their errors otherwise surface in CI.
+  also run `go build ./...`, `golangci-lint run`, `modernize ./...`, and `fieldalignment ./...`
+  with `GOOS` set to another platform. The host toolchain skips other platforms' files, so their
+  errors otherwise surface in CI.
 - `dupl` on near-identical tests: merge them into one table. Reserve `//nolint:dupl`, with a reason,
   for tests that must stay separate. `goconst`: extract a string literal used three or more
   times into a constant.

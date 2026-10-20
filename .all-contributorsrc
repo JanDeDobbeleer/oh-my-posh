@@ -3915,6 +3915,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "robbyrussell",
+      "name": "Robby Russell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/257?v=4",
+      "profile": "https://www.planetargon.com/robby",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

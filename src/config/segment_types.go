@@ -239,6 +239,8 @@ const (
 	TEXT SegmentType = "text"
 	// TIME writes the current timestamp
 	TIME SegmentType = "time"
+	// TIMEWARRIOR writes Timewarrior tracking status, tags and annotation
+	TIMEWARRIOR SegmentType = "timewarrior"
 	// TODOIST segment
 	TODOIST SegmentType = "todoist"
 	// UI5 Tooling segment

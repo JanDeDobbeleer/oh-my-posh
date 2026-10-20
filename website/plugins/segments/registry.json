@@ -404,6 +404,10 @@
     "docId": "time"
   },
   {
+    "type": "timewarrior",
+    "docId": "timewarrior"
+  },
+  {
     "type": "todoist",
     "docId": "todoist"
   },

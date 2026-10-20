@@ -542,6 +542,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/cmp0xff"><img src="https://avatars.githubusercontent.com/u/5564164?v=4?s=100" width="100px;" alt="Yi-Fan Wang"/><br /><sub><b>Yi-Fan Wang</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=cmp0xff" title="Code">💻</a> <a href="#design-cmp0xff" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sebb0"><img src="https://avatars.githubusercontent.com/u/1463370?v=4?s=100" width="100px;" alt="Sebastian Semrau"/><br /><sub><b>Sebastian Semrau</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sebb0" title="Code">💻</a> <a href="#design-sebb0" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sebb0" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dhanush0x96c"><img src="https://avatars.githubusercontent.com/u/154754292?v=4?s=100" width="100px;" alt="Dhanush Shetty"/><br /><sub><b>Dhanush Shetty</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dhanush0x96c" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dhanush0x96c" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

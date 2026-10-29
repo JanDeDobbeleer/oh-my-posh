@@ -180,6 +180,47 @@ Node.js            OpenJS.NodeJS               18.0.0    18.12.1   winget`,
 			},
 		},
 		{
+			Case: "Chinese headers (wide characters)",
+			Output: `名称               ID                          版本      可用      源
+-----------------------------------------------------------------------------------
+Python 3.11        Python.Python.3.11          3.11.0    3.11.5    winget`,
+			ExpectedCount: 1,
+			ExpectedFirst: WinGetPackage{
+				Name:      "Python 3.11",
+				ID:        "Python.Python.3.11",
+				Current:   "3.11.0",
+				Available: "3.11.5",
+			},
+		},
+		{
+			Case: "No Source column",
+			Output: `Name           Id            Version       Available
+----------------------------------------------------
+Zoom Workplace Zoom.Zoom.EXE 7.1.9 (48550) 7.2.1 (48556)
+1 upgrades available.`,
+			ExpectedCount: 1,
+			ExpectedFirst: WinGetPackage{
+				Name:      "Zoom Workplace",
+				ID:        "Zoom.Zoom.EXE",
+				Current:   "7.1.9 (48550)",
+				Available: "7.2.1 (48556)",
+			},
+		},
+		{
+			Case: "Wide characters in package name",
+			Output: `Name       Id                    Version      Available    Source
+-----------------------------------------------------------------
+剪映专业版 ByteDance.JianyingPro 10.9.0.14199 11.6.0.14552 winget
+1 upgrades available.`,
+			ExpectedCount: 1,
+			ExpectedFirst: WinGetPackage{
+				Name:      "剪映专业版",
+				ID:        "ByteDance.JianyingPro",
+				Current:   "10.9.0.14199",
+				Available: "11.6.0.14552",
+			},
+		},
+		{
 			Case: "Fewer than 5 column headers (no panic)",
 			Output: `Name Id Version
 -----------------------------------------------------------------------------------

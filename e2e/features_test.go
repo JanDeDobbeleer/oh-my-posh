@@ -240,6 +240,26 @@ var featureScenarios = []scenario{
 		},
 	},
 	{
+		name: "multiline-enter",
+		skips: map[string]string{
+			"bash": "fish-specific: only fish's enter handler tests the trimmed command buffer",
+			"zsh":  "fish-specific: only fish's enter handler tests the trimmed command buffer",
+			"pwsh": "fish-specific: only fish's enter handler tests the trimmed command buffer",
+			"nu":   "fish-specific: only fish's enter handler tests the trimmed command buffer",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			s.SendLine("if true")
+			s.WaitFor(regexp.MustCompile(`if true`))
+			s.SendLine("echo multiline-enter-ok")
+			s.WaitFor(regexp.MustCompile(`echo multiline-enter-ok`))
+			s.SendLine("end")
+
+			screen := s.WaitFor(regexp.MustCompile(`(?m)^multiline-enter-ok\s*$`))
+			assert.NotContains(t, s.Raw(), "test: unexpected argument",
+				"%s: Enter on an incomplete multiline buffer must not raise an error:\n%s", sh.Name, screen)
+		},
+	},
+	{
 		// empty-enter presses Enter on a blank prompt and asserts a fresh prompt is
 		// drawn (regression: fish reports a strictly empty buffer as invalid via
 		// 'commandline --is-valid', status 1 - the same code as a genuine parse

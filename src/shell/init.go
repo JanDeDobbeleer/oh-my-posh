@@ -325,7 +325,12 @@ func sessionScript(env runtime.Environment) string {
 	case PWSH:
 		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s;", sessionID, quotePwshStr(config))
 	case ZSH, BASH:
-		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, QuotePosixStr(config))
+		script := fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, QuotePosixStr(config))
+		if less := env.Flags().MaxColumnsLess; less > 0 && env.Flags().Shell == BASH {
+			script += fmt.Sprintf(" export POSH_MAX_COLUMNS_LESS=%d;", less)
+		}
+
+		return script
 	case YASH:
 		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, quoteYashStr(config))
 	case XONSH:

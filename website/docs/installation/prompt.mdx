@@ -339,6 +339,26 @@ eval "$(oh-my-posh init bash --strict)"
 Use the equivalent init command for your shell. This keeps the prompt working when the version
 manager updates `PATH` to a new Oh My Posh installation.
 
+## Narrower terminal width
+
+Some hosts, such as an Emacs `shell` buffer or the Claude Code status line, report the full terminal width
+but only display part of it. Right-aligned segments then end up cut off at the edge.
+
+Add `--max-columns-less` to subtract a number of columns from the width the prompt is laid out at. For example,
+to render the prompt 4 columns narrower than the terminal in Bash:
+
+```bash
+eval "$(oh-my-posh init bash --max-columns-less 4)"
+```
+
+The flag is also available on `oh-my-posh print` and `oh-my-posh stream`, where it applies to the width given with
+`--terminal-width` or detected from the terminal. A value that is not smaller than the terminal width is ignored.
+
+:::info
+The init flag is currently only wired up for Bash. Other shells need to pass `--max-columns-less` to
+`oh-my-posh print` themselves.
+:::
+
 [Antigravity segment documentation]: /docs/segments/agents/antigravity
 [Copilot CLI segment documentation]: /docs/segments/agents/copilot-cli
 [clink]: https://chrisant996.github.io/clink/

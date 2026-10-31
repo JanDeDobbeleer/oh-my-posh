@@ -19,9 +19,10 @@ import (
 )
 
 var (
-	printOutput bool
-	strict      bool
-	debug       bool
+	printOutput        bool
+	strict             bool
+	debug              bool
+	initMaxColumnsLess int
 
 	supportedShells = []string{
 		"bash",
@@ -65,6 +66,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "resolve the executable through PATH")
 	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
+	initCmd.Flags().IntVar(&initMaxColumnsLess, "max-columns-less", 0, "number of columns to subtract from the terminal width")
 	initCmd.Flags().BoolVar(&eval, "eval", false, "output the full init script for eval")
 
 	_ = initCmd.MarkPersistentFlagRequired("config")
@@ -91,14 +93,15 @@ func runInit(sh, command string) {
 	cfg := config.Load(configFlag)
 
 	flags := &runtime.Flags{
-		Shell:      sh,
-		ConfigPath: cfg.Source,
-		ConfigHash: cfg.Hash(),
-		Strict:     strict,
-		Debug:      debug,
-		Init:       true,
-		Eval:       eval,
-		Plain:      plain,
+		Shell:          sh,
+		ConfigPath:     cfg.Source,
+		ConfigHash:     cfg.Hash(),
+		Strict:         strict,
+		Debug:          debug,
+		Init:           true,
+		Eval:           eval,
+		MaxColumnsLess: initMaxColumnsLess,
+		Plain:          plain,
 	}
 
 	env := &runtime.Terminal{}

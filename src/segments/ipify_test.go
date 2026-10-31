@@ -71,3 +71,37 @@ func TestIpifySegment(t *testing.T) {
 		assert.Equal(t, tc.ExpectedString, renderTemplate(&mock.Environment{}, ipify.Template(), ipify), tc.Case)
 	}
 }
+
+func TestIpifyURL(t *testing.T) {
+	cases := []struct {
+		Case        string
+		Options     options.Map
+		ExpectedURL string
+	}{
+		{
+			Case:        "Default",
+			Options:     options.Map{},
+			ExpectedURL: "https://api.ipify.org?format=json",
+		},
+		{
+			Case:        "IPv6",
+			Options:     options.Map{URL: "https://api64.ipify.org"},
+			ExpectedURL: "https://api64.ipify.org?format=json",
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("HTTPRequest", tc.ExpectedURL).Return([]byte(`{"ip":"127.0.0.1"}`), nil)
+
+		ipify := &IPify{
+			env:     env,
+			options: tc.Options,
+		}
+
+		assert.True(t, ipify.Enabled(), tc.Case)
+		assert.Equal(t, "127.0.0.1", ipify.IP, tc.Case)
+
+		cache.Device.DeleteAll()
+	}
+}

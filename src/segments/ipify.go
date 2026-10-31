@@ -17,12 +17,12 @@ type IPAPI interface {
 }
 
 type ipAPI struct {
+	url string
 	http.Request
 }
 
 func (i *ipAPI) Get() (*ipData, error) {
-	url := "https://api.ipify.org?format=json"
-	return i.Do[*ipData](url, nil)
+	return i.Do[*ipData](i.url+"?format=json", nil)
 }
 
 type IPify struct {
@@ -87,6 +87,7 @@ func (i *IPify) initAPI() {
 	}
 
 	i.api = &ipAPI{
+		url:     i.options.String(URL, "https://api.ipify.org"),
 		Request: *request,
 	}
 }

@@ -149,6 +149,27 @@ func TestLoadParityLinkedWorktree(t *testing.T) {
 	assertParity(t, worktree, "")
 }
 
+// TestLoadParityExcludePrecedence negates a global excludes pattern from
+// info/exclude, which git ranks above core.excludesFile.
+func TestLoadParityExcludePrecedence(t *testing.T) {
+	skipIfNoGit(t)
+	hermeticHome(t)
+
+	dir := t.TempDir()
+	initGitRepo(t, dir)
+
+	writeFile(t, dir, "a.txt", "a\n")
+	runGit(t, dir, "add", ".")
+	runGit(t, dir, "commit", "-q", "-m", "base")
+
+	writeFile(t, os.Getenv("XDG_CONFIG_HOME"), "git/ignore", "*.log\n")
+	writeFile(t, gitPath(t, dir, "--git-dir"), "info/exclude", "!keep.log\n")
+	writeFile(t, dir, "keep.log", "kept\n")
+	writeFile(t, dir, "drop.log", "dropped\n")
+
+	assertParity(t, dir, "")
+}
+
 // assertParity loads the native status for dir and compares it against what
 // parsePorcelainV2 derives from a real `git status` invocation in the same
 // directory.

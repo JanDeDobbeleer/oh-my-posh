@@ -1,0 +1,114 @@
+---
+id: gpgagent
+title: GPG Agent
+sidebar_label: GPG Agent
+---
+
+## What
+
+Display whether a [gpg-agent][gpg-agent] is running, which of its keys are unlocked and how git signs your commits.
+Spot a locked key before `git commit` asks for a passphrase, and give your keys friendly names with `mapped_keys`.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "gpgagent",
+    style: "powerline",
+    powerline_symbol: "",
+    foreground: "#ffffff",
+    background: "#4a5568",
+    template: "{{ if .Running }}  {{ .Keys }} {{ end }}",
+    options: {
+      key_separator: ", ",
+      mapped_keys: {
+        "A2E8B723CE2E4B367F0B5C3ADCF1F1C1B5698B08": "work",
+      },
+    },
+  }}
+/>
+
+## Options
+
+| Name             | Type                | Default | Description                                   |
+| ---------------- | :-----------------: | :-----: | --------------------------------------------- |
+| `cache_duration` | `string`            | `10s`   | how long the agent and git answers are cached |
+| `key_template`   | `string`            |         | template for each key                         |
+| `key_separator`  | `string`            | `" "`   | text between keys                             |
+| `mapped_keys`    | `map[string]string` |         | keygrip-to-alias map                          |
+
+By default `key_template` is `{{ if .Cached }}{{ or .Alias .Keygrip }}{{ end }}`, so only unlocked keys are listed.
+
+The agent is queried with `gpg-connect-agent --no-autostart`, so the segment never starts an agent by itself. Both the
+agent answer and the git configuration are cached for `cache_duration` to keep the prompt fast.
+
+Use the keygrip as the map key, as listed by `gpg --list-secret-keys --with-keygrip`. Its value is available as `.Alias`
+in `key_template`; see [Key Properties][key-props] for the available properties.
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Running }} {{ "" }} {{ .CachedCount }} {{ end }}
+```
+
+:::
+
+### Properties
+
+| Name           | Type      | Description                                                                        |
+| -------------- | --------- | ---------------------------------------------------------------------------------- |
+| `.Running`     | `boolean` | whether a gpg-agent answered                                                       |
+| `.Count`       | `int`     | the number of keys known to the agent                                              |
+| `.CachedCount` | `int`     | the number of keys whose passphrase is cached, so unlocked                         |
+| `.Keys`        | `string`  | the keys rendered with `key_template`, joined by `key_separator`                   |
+| `.SigningKey`  | `string`  | the git `user.signingkey` of the current directory                                 |
+| `.SignCommits` | `boolean` | whether git `commit.gpgsign` is enabled                                            |
+| `.TTYSet`      | `boolean` | whether `GPG_TTY` is set; without it pinentry often fails to prompt                |
+| `.SSHSupport`  | `boolean` | whether `SSH_AUTH_SOCK` points to the gpg-agent SSH socket (`enable-ssh-support`)  |
+
+Keys for which `key_template` renders nothing are left out of `.Keys`, but still count towards `.Count`.
+
+`.SSHSupport` checks that `SSH_AUTH_SOCK` ends with the default socket name `S.gpg-agent.ssh`. A gpg-agent SSH socket
+under a custom name, for example one set with `--extra-socket`, is not detected.
+
+`.SigningKey` and `.SignCommits` are read with `git config` for the current directory and cached for `cache_duration`.
+
+### Key Properties
+
+Available in `key_template`:
+
+| Name       | Type     | Description                                                               |
+| ---------- | -------- | ------------------------------------------------------------------------- |
+| `.Alias`   | `string` | the `mapped_keys` value for this key's keygrip, if any                    |
+| `.Cached`  | `boolean`| whether the passphrase of this key is cached                              |
+| `.Keygrip` | `string` | the 40 character keygrip identifying the key in the agent                 |
+| `.TTL`     | `int`    | seconds until the cached passphrase expires, `0` when it is not cached    |
+
+### Examples
+
+Warn when a commit would need a passphrase:
+
+```template
+{{ if and .SignCommits (eq .CachedCount 0) }} {{ "" }} locked {{ end }}
+```
+
+Warn about a missing `GPG_TTY`:
+
+```template
+{{ if not .TTYSet }} GPG_TTY unset {{ end }}
+```
+
+List every key and its state, with `key_template` set to
+`{{ or .Alias .Keygrip }}{{ if .Cached }} ({{ .TTL }}s){{ else }} (locked){{ end }}`:
+
+```template
+{{ if .Running }} {{ "" }} {{ .Keys }} {{ end }}
+```
+
+[gpg-agent]: https://www.gnupg.org/documentation/manuals/gnupg/Invoking-GPG_002dAGENT.html
+[key-props]: #key-properties
+[templates]: /docs/configuration/templates

@@ -70,6 +70,7 @@ func init() {
 	gob.Register(&segments.Commit{})
 	gob.Register(&segments.GitVersion{})
 	gob.Register(&segments.Golang{})
+	gob.Register(&segments.GPGAgent{})
 	gob.Register(&segments.Gradle{})
 	gob.Register(&segments.Haskell{})
 	gob.Register(&segments.Helm{})
@@ -188,6 +189,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	GIT:             func() SegmentWriter { return &segments.Git{} },
 	GITVERSION:      func() SegmentWriter { return &segments.GitVersion{} },
 	GOLANG:          func() SegmentWriter { return &segments.Golang{} },
+	GPGAGENT:        func() SegmentWriter { return &segments.GPGAgent{} },
 	GRADLE:          func() SegmentWriter { return &segments.Gradle{} },
 	HASKELL:         func() SegmentWriter { return &segments.Haskell{} },
 	HELM:            func() SegmentWriter { return &segments.Helm{} },

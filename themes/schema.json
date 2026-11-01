@@ -446,6 +446,7 @@
             "git",
             "gitversion",
             "go",
+            "gpgagent",
             "gradle",
             "haskell",
             "helm",
@@ -2307,6 +2308,51 @@
                     ]
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gpgagent"
+              }
+            }
+          },
+          "then": {
+            "title": "GPG Agent Segment",
+            "description": "Display whether a gpg-agent is running, which of its keys are unlocked and how git signs commits.",
+            "properties": {
+              "options": {
+                "properties": {
+                  "cache_duration": {
+                    "$ref": "#/definitions/cache_duration",
+                    "default": "10s"
+                  },
+                  "key_separator": {
+                    "type": "string",
+                    "title": "Key Separator",
+                    "description": "Text between rendered keys in .Keys.",
+                    "default": " "
+                  },
+                  "key_template": {
+                    "type": "string",
+                    "title": "Key Template",
+                    "description": "Template rendered per key known to the agent; exposes .Alias, .Cached, .Keygrip and .TTL. Keys that render empty are left out of .Keys.",
+                    "default": "{{ if .Cached }}{{ or .Alias .Keygrip }}{{ end }}"
+                  },
+                  "mapped_keys": {
+                    "type": "object",
+                    "title": "Mapped Keys",
+                    "description": "Map of key keygrip to the text exposed as .Alias in key_template.",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {}
+                  }
+                },
+                "unevaluatedProperties": false
               }
             }
           }

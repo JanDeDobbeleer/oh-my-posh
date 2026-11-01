@@ -1457,6 +1457,24 @@
       },
       "enabled": true
     },
+    "gpgagent": {
+      "data": {
+        "CachedCount": 1,
+        "Count": 3,
+        "Keys": "work",
+        "Running": true,
+        "SSHSupport": true,
+        "SignCommits": true,
+        "SigningKey": "D3322CFA8DE00CF4280DBD07C025FAB6DC398DE0",
+        "TTYSet": true,
+        "Segment": {
+          "Index": 87,
+          "Text": " x "
+        },
+        "Text": " x "
+      },
+      "enabled": true
+    },
     "gradle": {
       "data": {
         "AntVersion": "1.10.15",

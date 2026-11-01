@@ -13,18 +13,20 @@ import (
 
 // loadBasePatterns returns the ignore patterns that apply repo-wide, before
 // any per-directory .gitignore is layered on during the worktree walk:
-// CommonGitDir/info/exclude, then the resolved global excludes file.
+// the resolved global excludes file, then CommonGitDir/info/exclude. The
+// matcher lets later patterns win, and git ranks info/exclude above
+// core.excludesFile.
 func loadBasePatterns(opts Options, cfg *ini.File) []gitignore.Pattern {
 	var patterns []gitignore.Pattern
-
-	if ps := readIgnoreFile(filepath.Join(opts.CommonGitDir, "info", "exclude"), nil); ps != nil {
-		patterns = append(patterns, ps...)
-	}
 
 	if global := resolveGlobalExcludesFile(cfg); global != "" {
 		if ps := readIgnoreFile(global, nil); ps != nil {
 			patterns = append(patterns, ps...)
 		}
+	}
+
+	if ps := readIgnoreFile(filepath.Join(opts.CommonGitDir, "info", "exclude"), nil); ps != nil {
+		patterns = append(patterns, ps...)
 	}
 
 	return patterns

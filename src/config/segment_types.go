@@ -117,6 +117,8 @@ const (
 	GITVERSION SegmentType = "gitversion"
 	// GOLANG writes which go version is currently active
 	GOLANG SegmentType = "go"
+	// GPGAGENT shows the gpg-agent state, its unlocked keys and the git signing setup
+	GPGAGENT SegmentType = "gpgagent"
 	// GRADLE writes the active gradle version
 	GRADLE SegmentType = "gradle"
 	// HASKELL segment

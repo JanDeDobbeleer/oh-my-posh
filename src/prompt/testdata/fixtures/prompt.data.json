@@ -507,6 +507,23 @@
       },
       "enabled": true
     },
+    "gpgagent": {
+      "data": {
+        "CachedCount": 1,
+        "Count": 3,
+        "Keys": "personal",
+        "Running": true,
+        "SSHSupport": true,
+        "SignCommits": true,
+        "SigningKey": "0123456789ABCDEF0123456789ABCDEF01234567",
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "TTYSet": true
+      },
+      "enabled": true
+    },
     "haskell": {
       "data": {
         "BuildMetadata": "",
@@ -957,6 +974,19 @@
         "Track": ""
       },
       "enabled": false
+    },
+    "sshagent": {
+      "data": {
+        "Count": 2,
+        "Keys": "personal",
+        "Running": true,
+        "Segment": {
+          "Index": 0,
+          "Text": ""
+        },
+        "UnmappedCount": 1
+      },
+      "enabled": true
     },
     "status": {
       "data": {

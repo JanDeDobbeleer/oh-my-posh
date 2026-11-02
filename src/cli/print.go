@@ -13,17 +13,18 @@ import (
 )
 
 var (
-	pwd           string
-	pswd          string
-	status        int
-	pipestatus    string
-	timing        float64
-	stackCount    int
-	terminalWidth int
-	eval          bool
-	cleared       bool
-	jobCount      int
-	saveCache     bool
+	pwd            string
+	pswd           string
+	status         int
+	pipestatus     string
+	timing         float64
+	stackCount     int
+	terminalWidth  int
+	maxColumnsLess int
+	eval           bool
+	cleared        bool
+	jobCount       int
+	saveCache      bool
 
 	command      string
 	shellVersion string
@@ -70,27 +71,28 @@ func createPrintCmd() *cmdtree.Command {
 			}
 
 			flags := &runtime.Flags{
-				ConfigPath:    configFlag,
-				PWD:           pwd,
-				PSWD:          pswd,
-				ErrorCode:     status,
-				PipeStatus:    pipestatus,
-				ExecutionTime: timing,
-				StackCount:    stackCount,
-				TerminalWidth: terminalWidth,
-				Eval:          eval,
-				Shell:         shellName,
-				ShellVersion:  shellVersion,
-				Plain:         plain,
-				Type:          args[0],
-				Cleared:       cleared,
-				NoExitCode:    noStatus,
-				Column:        column,
-				JobCount:      jobCount,
-				IsPrimary:     args[0] == prompt.PRIMARY,
-				Escape:        escape,
-				Force:         force,
-				Interrupted:   interrupted,
+				ConfigPath:     configFlag,
+				PWD:            pwd,
+				PSWD:           pswd,
+				ErrorCode:      status,
+				PipeStatus:     pipestatus,
+				ExecutionTime:  timing,
+				StackCount:     stackCount,
+				TerminalWidth:  terminalWidth,
+				MaxColumnsLess: maxColumnsLess,
+				Eval:           eval,
+				Shell:          shellName,
+				ShellVersion:   shellVersion,
+				Plain:          plain,
+				Type:           args[0],
+				Cleared:        cleared,
+				NoExitCode:     noStatus,
+				Column:         column,
+				JobCount:       jobCount,
+				IsPrimary:      args[0] == prompt.PRIMARY,
+				Escape:         escape,
+				Force:          force,
+				Interrupted:    interrupted,
 			}
 
 			if err := applyDataFile(flags, cmd.Flags().Changed); err != nil {
@@ -152,6 +154,7 @@ func createPrintCmd() *cmdtree.Command {
 	printCmd.Flags().Float64Var(&timing, "execution-time", 0, "timing of the last command")
 	printCmd.Flags().IntVarP(&stackCount, "stack-count", "s", 0, "number of locations on the stack")
 	printCmd.Flags().IntVarP(&terminalWidth, "terminal-width", "w", 0, "width of the terminal")
+	printCmd.Flags().IntVar(&maxColumnsLess, "max-columns-less", 0, "number of columns to subtract from the terminal width")
 	printCmd.Flags().StringVar(&command, "command", "", "tooltip command")
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")

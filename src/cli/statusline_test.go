@@ -195,7 +195,7 @@ blocks:
 	template.ResetCache()
 
 	var out bytes.Buffer
-	runStatusline(bytes.NewReader(payload), &out, cfgPath, shell.CLAUDE, cache.CLAUDECACHE,
+	runStatusline(bytes.NewReader(payload), &out, cfgPath, 0, shell.CLAUDE, cache.CLAUDECACHE,
 		func(d *segments.ClaudeData) string { return d.SessionID }, claudePWD, config.Claude)
 
 	assert.Contains(t, out.String(), "SEAM-OK")
@@ -227,7 +227,7 @@ func TestStatuslineFlags(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		flags := statuslineFlags("cfg.yaml", shell.CLAUDE, tc.Data, claudePWD)
+		flags := statuslineFlags("cfg.yaml", 0, shell.CLAUDE, tc.Data, claudePWD)
 
 		assert.Equal(t, tc.Expected, flags.PWD, tc.Case)
 		assert.Equal(t, "cfg.yaml", flags.ConfigPath, tc.Case)
@@ -299,7 +299,7 @@ blocks:
 	template.ResetCache()
 
 	var out bytes.Buffer
-	runStatusline(bytes.NewReader(payload), &out, cfgPath, shell.CLAUDE, cache.CLAUDECACHE,
+	runStatusline(bytes.NewReader(payload), &out, cfgPath, 0, shell.CLAUDE, cache.CLAUDECACHE,
 		func(d *segments.ClaudeData) string { return d.SessionID }, claudePWD, config.Claude)
 
 	rendered := out.String()
@@ -318,4 +318,30 @@ func runStatuslineGit(t *testing.T, dir string, args ...string) {
 
 	out, err := cmd.CombinedOutput()
 	require.NoErrorf(t, err, "git %s failed: %s", strings.Join(args, " "), out)
+}
+
+func TestStatuslineFlagsMaxColumnsLess(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Width    int
+		Less     int
+		Expected int
+	}{
+		{Case: "reduces the width", Width: 120, Less: 10, Expected: 110},
+		{Case: "no reduction by default", Width: 120, Less: 0, Expected: 120},
+		{Case: "keeps the width when the reduction would leave nothing", Width: 8, Less: 10, Expected: 8},
+	}
+
+	for _, tc := range cases {
+		flags := statuslineFlags[segments.ClaudeData]("", tc.Less, shell.CLAUDE, nil, claudePWD)
+		flags.TerminalWidth = tc.Width
+
+		env := &runtime.Terminal{}
+		env.Init(flags)
+
+		width, err := env.TerminalWidth()
+
+		assert.NoError(t, err, tc.Case)
+		assert.Equal(t, tc.Expected, width, tc.Case)
+	}
 }

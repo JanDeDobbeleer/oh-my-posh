@@ -36,6 +36,7 @@ Example usage in Antigravity CLI settings (~/.gemini/antigravity-cli/settings.js
 }
 
 func init() {
+	addMaxColumnsLessFlag(antigravityCmd)
 	RootCmd.AddCommand(antigravityCmd)
 }
 

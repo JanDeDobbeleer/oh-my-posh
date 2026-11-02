@@ -34,6 +34,7 @@ Example usage in GitHub Copilot CLI settings (%USERPROFILE%\.copilot\statusline.
 }
 
 func init() {
+	addMaxColumnsLessFlag(copilotCmd)
 	RootCmd.AddCommand(copilotCmd)
 }
 

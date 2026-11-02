@@ -82,7 +82,7 @@ func (term *Terminal) TerminalWidth() (int, error) {
 	defer log.Trace(time.Now())
 
 	if term.CmdFlags.TerminalWidth > 0 {
-		return term.CmdFlags.TerminalWidth, nil
+		return reduceTerminalWidth(term.CmdFlags.TerminalWidth, term.CmdFlags.MaxColumnsLess), nil
 	}
 
 	width, err := strconv.Atoi(term.Getenv("COLUMNS"))
@@ -92,7 +92,7 @@ func (term *Terminal) TerminalWidth() (int, error) {
 
 	term.CmdFlags.TerminalWidth = width
 
-	return term.CmdFlags.TerminalWidth, nil
+	return reduceTerminalWidth(width, term.CmdFlags.MaxColumnsLess), nil
 }
 
 // Platform matches the current wasm behavior: host.PlatformInformation errors

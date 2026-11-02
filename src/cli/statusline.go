@@ -29,11 +29,11 @@ func statuslineRun[T any](shellConst, cacheKey string, sessionID, pwd func(*T) s
 			log.Debugf("using explicit config: %s", explicitConfig)
 		}
 
-		runStatusline(os.Stdin, os.Stdout, explicitConfig, shellConst, cacheKey, sessionID, pwd, defaultCfg)
+		runStatusline(os.Stdin, os.Stdout, explicitConfig, maxColumnsLess, shellConst, cacheKey, sessionID, pwd, defaultCfg)
 	}
 }
 
-func runStatusline[T any](in io.Reader, out io.Writer, explicitConfig, shellConst, cacheKey string,
+func runStatusline[T any](in io.Reader, out io.Writer, explicitConfig string, lessColumns int, shellConst, cacheKey string,
 	sessionID, pwd func(*T) string, defaultCfg func() *config.Config,
 ) {
 	log.Debugf("%s command started", shellConst)
@@ -48,7 +48,7 @@ func runStatusline[T any](in io.Reader, out io.Writer, explicitConfig, shellCons
 
 	data := processStatuslineData(stdinData, shellConst, cacheKey, sessionID)
 
-	flags := statuslineFlags(explicitConfig, shellConst, data, pwd)
+	flags := statuslineFlags(explicitConfig, lessColumns, shellConst, data, pwd)
 
 	env := &runtime.Terminal{}
 	env.Init(flags)
@@ -75,6 +75,10 @@ func runStatusline[T any](in io.Reader, out io.Writer, explicitConfig, shellCons
 	}()
 
 	fmt.Fprint(out, eng.Status())
+}
+
+func addMaxColumnsLessFlag(cmd *cmdtree.Command) {
+	cmd.Flags().IntVar(&maxColumnsLess, "max-columns-less", 0, "number of columns to subtract from the terminal width")
 }
 
 func statuslinePWD(candidate string) string {
@@ -104,10 +108,11 @@ func workingDirectory(currentDir, cwd string) string {
 	return cwd
 }
 
-func statuslineFlags[T any](explicitConfig, shellConst string, data *T, pwd func(*T) string) *runtime.Flags {
+func statuslineFlags[T any](explicitConfig string, lessColumns int, shellConst string, data *T, pwd func(*T) string) *runtime.Flags {
 	flags := &runtime.Flags{
-		ConfigPath: explicitConfig,
-		Shell:      shellConst,
+		ConfigPath:     explicitConfig,
+		Shell:          shellConst,
+		MaxColumnsLess: lessColumns,
 	}
 
 	if data == nil {

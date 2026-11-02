@@ -7,8 +7,25 @@ sidebar_label: Aspire
 ## What
 
 Status of your [Aspire][aspire] AppHost in the current repo and whether it is running.
-The segment uses the Aspire CLI to resolve the AppHost with `aspire extension get-apphosts`
-and checks running instances with `aspire ps --format json`.
+By default, the segment detects `apphost.cs`, `apphost.ts`, or `*.AppHost.csproj` in the current directory
+or its parents without launching the Aspire CLI for discovery.
+Enable `fetch_apphost` to use `aspire extension get-apphosts` for CLI-selected or differently named projects,
+with file detection as a fallback.
+
+Running instances are checked with `aspire ps --format json`.
+Set `fetch_running` to `false` to avoid launching the Aspire CLI altogether when using file-based detection.
+
+Use the built-in [segment cache][cache] with the `folder` strategy to avoid repeating CLI calls on every prompt.
+The sample below refreshes the entire segment, including running status, every ten seconds.
+Adjust `cache.duration` to trade freshness for fewer CLI calls, or set it to `none` to refresh on every prompt.
+
+:::note
+
+The segment cache stores visible segments, not unsuccessful AppHost lookups.
+With `fetch_apphost: true`, CLI discovery can still run on every prompt in folders without an AppHost.
+Leave it disabled unless you need CLI discovery; the default file-based detection avoids that delay.
+
+:::
 
 ## Sample Configuration
 
@@ -21,7 +38,12 @@ import Config from "@site/src/components/Config.js";
     powerline_symbol: "\uE0B0",
     foreground: "#193549",
     background: "#ffeb3b",
+    cache: {
+      duration: "10s",
+      strategy: "folder",
+    },
     options: {
+      fetch_apphost: false,
       fetch_running: true,
     },
     template: " \uf423 {{ .Name }}{{ if .Running }} \uf00c{{ end }} ",
@@ -30,9 +52,10 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name            | Type      | Default | Description                                                            |
-| --------------- | --------- | ------- | ---------------------------------------------------------------------- |
-| `fetch_running` | `boolean` | `true`  | query `aspire ps` to determine whether the resolved AppHost is running |
+| Name            | Type      | Default | Description                                                        |
+| --------------- | --------- | ------- | ------------------------------------------------------------------ |
+| `fetch_apphost`  | `boolean` | `false` | use the Aspire CLI for AppHost discovery, with file fallback         |
+| `fetch_running`  | `boolean` | `true`  | query `aspire ps` for running status                                 |
 
 ## Template ([info][templates])
 
@@ -55,4 +78,5 @@ import Config from "@site/src/components/Config.js";
 | `.Running`     | `boolean` | whether the resolved AppHost currently appears in `aspire ps`       |
 
 [templates]: /docs/configuration/templates
+[cache]: /docs/configuration/segment#cache
 [aspire]: https://aspire.dev/

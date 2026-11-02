@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
@@ -26,7 +28,7 @@ var aspireAppHostFiles = []string{
 const aspireCommand = "aspire"
 
 const (
-	// FetchRunning controls whether the segment should query aspire ps.
+	FetchAppHost options.Option = "fetch_apphost"
 	FetchRunning options.Option = "fetch_running"
 )
 
@@ -59,7 +61,7 @@ func (a *Aspire) Enabled() bool {
 }
 
 func (a *Aspire) resolveAppHostPath() string {
-	if a.env.HasCommand(aspireCommand) {
+	if a.options.Bool(FetchAppHost, false) && a.env.HasCommand(aspireCommand) {
 		appHostPath := a.resolveAppHostPathWithCLI()
 		if appHostPath != "" {
 			return appHostPath
@@ -97,8 +99,11 @@ func (a *Aspire) findAppHostCsproj() string {
 }
 
 func (a *Aspire) resolveAppHostPathWithCLI() string {
+	defer log.Trace(time.Now())
+
 	output, err := a.env.RunCommand(aspireCommand, "extension", "get-apphosts")
 	if err != nil {
+		log.Error(err)
 		return ""
 	}
 
@@ -126,17 +131,19 @@ func (a *Aspire) resolveAppHostPathWithCLI() string {
 }
 
 func (a *Aspire) isRunning() bool {
+	defer log.Trace(time.Now())
+
 	if !a.env.HasCommand(aspireCommand) || a.AppHostPath == "" {
 		return false
 	}
 
 	output, err := a.env.RunCommand(aspireCommand, "ps", "--format", "json")
 	if err != nil {
+		log.Error(err)
 		return false
 	}
 
-	running := a.parseRunningAppHosts(output)
-	return running
+	return a.parseRunningAppHosts(output)
 }
 
 func (a *Aspire) parseRunningAppHosts(output string) bool {

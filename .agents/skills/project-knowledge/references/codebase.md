@@ -39,6 +39,8 @@
 - A blank prompt means a panic outside segment `Execute` and the streaming producer (both recover). A poisoned
   cache entry replays its failure every prompt until its TTL ends.
 - Caches persist only with the hidden `--save-cache` flag (print/stream); relocate with `OMP_CACHE_DIR`.
+- `OMP_CACHE_DIR` must name an existing parent directory: `cache.Path` only creates its `oh-my-posh` child and
+  falls back to the normal cache otherwise. Create the parent first when isolating real prompt tests.
 - Logs are buffered and print only via `oh-my-posh debug` (grep `restored segment from cache`, `setting entry`);
   `POSH_TRACE=1` and stderr show nothing for print commands.
 - Windows: a fresh memory-mapped cache file logs a harmless `store.go:init EOF` on first read.

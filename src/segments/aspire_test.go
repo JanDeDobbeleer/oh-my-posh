@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
@@ -27,6 +28,7 @@ func TestAspireSegment(t *testing.T) {
 		ExpectedEnabled bool
 		ExpectedRunning bool
 		FetchRunning    bool
+		FetchAppHost    bool
 		HasProps        bool
 		HasAspire       bool
 	}{
@@ -36,8 +38,15 @@ func TestAspireSegment(t *testing.T) {
 			ExpectedEnabled: false,
 		},
 		{
+			Case:            "installed aspire does not trigger discovery outside apphost folders",
+			HasAspire:       true,
+			FetchRunning:    true,
+			ExpectedEnabled: false,
+		},
+		{
 			Case:            "apphost resolved by aspire cli",
 			HasAspire:       true,
+			FetchAppHost:    true,
 			CLIOutput:       `{"selected_project_file":"test/MyApp.AppHost/MyApp.AppHost.csproj","all_project_file_candidates":["test/MyApp.AppHost/MyApp.AppHost.csproj"]}`,
 			PSOutput:        "[]",
 			ExpectedEnabled: true,
@@ -48,6 +57,7 @@ func TestAspireSegment(t *testing.T) {
 		{
 			Case:            "apphost running from aspire ps",
 			HasAspire:       true,
+			FetchAppHost:    true,
 			CLIOutput:       `{"selected_project_file":"test/MyApp.AppHost/MyApp.AppHost.csproj","all_project_file_candidates":["test/MyApp.AppHost/MyApp.AppHost.csproj"]}`,
 			PSOutput:        `[{"appHostPath":"test/MyApp.AppHost/MyApp.AppHost.csproj","appHostPid":123}]`,
 			ExpectedEnabled: true,
@@ -59,6 +69,7 @@ func TestAspireSegment(t *testing.T) {
 		{
 			Case:            "aspire ps with version",
 			HasAspire:       true,
+			FetchAppHost:    true,
 			CLIOutput:       `{"selected_project_file":"test/MyApp.AppHost/MyApp.AppHost.csproj","all_project_file_candidates":["test/MyApp.AppHost/MyApp.AppHost.csproj"]}`,
 			PSOutput:        `[{"appHostPath":"test/MyApp.AppHost/MyApp.AppHost.csproj","appHostPid":123}]`,
 			ExpectedEnabled: true,
@@ -73,11 +84,58 @@ func TestAspireSegment(t *testing.T) {
 		{
 			Case:            "running lookup can be disabled",
 			HasAspire:       true,
+			FetchAppHost:    true,
 			CLIOutput:       `{"selected_project_file":"test/MyApp.AppHost/MyApp.AppHost.csproj","all_project_file_candidates":["test/MyApp.AppHost/MyApp.AppHost.csproj"]}`,
 			ExpectedEnabled: true,
 			ExpectedName:    "MyApp.AppHost",
 			ExpectedLang:    "cs",
 			FetchRunning:    false,
+		},
+		{
+			Case:            "local apphost avoids cli discovery even when aspire is installed",
+			HasAspire:       true,
+			FallbackFile:    "apphost.cs",
+			ExpectedEnabled: true,
+			ExpectedName:    "MyApp.AppHost",
+			ExpectedLang:    "cs",
+		},
+		{
+			Case:            "local apphost running status is cached",
+			HasAspire:       true,
+			FallbackFile:    "apphost.ts",
+			FetchRunning:    true,
+			PSOutput:        `[{"appHostPath":"test/MyApp.AppHost/apphost.ts"}]`,
+			ExpectedEnabled: true,
+			ExpectedRunning: true,
+			ExpectedName:    "MyApp.AppHost",
+			ExpectedLang:    "ts",
+		},
+		{
+			Case:            "failed discovery is cached and falls back to local apphost",
+			HasAspire:       true,
+			FetchAppHost:    true,
+			CLIError:        errors.New("discovery failed"),
+			FallbackFile:    "apphost.cs",
+			ExpectedEnabled: true,
+			ExpectedName:    "MyApp.AppHost",
+			ExpectedLang:    "cs",
+		},
+		{
+			Case:            "invalid discovery output is cached",
+			HasAspire:       true,
+			FetchAppHost:    true,
+			CLIOutput:       "not json",
+			ExpectedEnabled: false,
+		},
+		{
+			Case:            "failed running status is cached",
+			HasAspire:       true,
+			FallbackFile:    "apphost.cs",
+			FetchRunning:    true,
+			PSError:         errors.New("running lookup failed"),
+			ExpectedEnabled: true,
+			ExpectedName:    "MyApp.AppHost",
+			ExpectedLang:    "cs",
 		},
 		{
 			Case:            "fallback to parent apphost.ts when aspire cli unavailable",
@@ -104,17 +162,32 @@ func TestAspireSegment(t *testing.T) {
 	appHostTS := filepath.Join("test", "MyApp.AppHost", "apphost.ts")
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("Flags").Return(&runtime.Flags{})
-		env.On("Pwd").Return(pwd)
-		env.On("HasCommand", aspireCommand).Return(tc.HasAspire)
-
-		if tc.HasAspire {
-			env.On("RunCommand", aspireCommand, []string{"extension", "get-apphosts"}).Return(tc.CLIOutput, tc.CLIError)
-			if tc.ExpectedEnabled && tc.FetchRunning {
-				env.On("RunCommand", aspireCommand, []string{"ps", "--format", "json"}).Return(tc.PSOutput, tc.PSError)
+		t.Run(tc.Case, func(t *testing.T) {
+			keys := []string{
+				"aspire_apphost_" + pwd,
+				"aspire_running_" + appHostCS,
+				"aspire_running_" + appHostTS,
+				"aspire_running_" + filepath.Join("test", "MyApp.AppHost", "MyApp.AppHost.csproj"),
 			}
-		} else {
+			t.Cleanup(func() {
+				for _, key := range keys {
+					cache.Session.Delete(key)
+				}
+			})
+
+			env := new(mock.Environment)
+			env.On("Flags").Return(&runtime.Flags{})
+			env.On("Pwd").Return(pwd)
+			env.On("HasCommand", aspireCommand).Return(tc.HasAspire)
+
+			if tc.HasAspire {
+				if tc.FetchAppHost {
+					env.On("RunCommand", aspireCommand, []string{"extension", "get-apphosts"}).Return(tc.CLIOutput, tc.CLIError).Once()
+				}
+				if tc.ExpectedEnabled && tc.FetchRunning {
+					env.On("RunCommand", aspireCommand, []string{"ps", "--format", "json"}).Return(tc.PSOutput, tc.PSError).Once()
+				}
+			}
 			switch tc.FallbackFile {
 			case "apphost.cs":
 				env.On("HasParentFilePath", "apphost.cs", false).Return(&runtime.FileInfo{Path: appHostCS, ParentFolder: filepath.Dir(appHostCS)}, nil)
@@ -136,32 +209,46 @@ func TestAspireSegment(t *testing.T) {
 				env.On("LsDir", "test").Return([]fs.DirEntry{})
 				env.On("LsDir", ".").Return([]fs.DirEntry{})
 			}
-		}
 
-		if tc.HasProps {
-			fileInfo := &runtime.FileInfo{
-				Path:         filepath.Join("test", "Directory.Packages.props"),
-				ParentFolder: "test",
+			if tc.HasProps {
+				fileInfo := &runtime.FileInfo{
+					Path:         filepath.Join("test", "Directory.Packages.props"),
+					ParentFolder: "test",
+				}
+				env.On("HasParentFilePath", "Directory.Packages.props", false).Return(fileInfo, nil)
+				env.On("FileContent", filepath.Join("test", "Directory.Packages.props")).Return(tc.PropsContent)
+			} else {
+				env.On("HasParentFilePath", "Directory.Packages.props", false).Return(&runtime.FileInfo{}, errors.New("not found"))
 			}
-			env.On("HasParentFilePath", "Directory.Packages.props", false).Return(fileInfo, nil)
-			env.On("FileContent", filepath.Join("test", "Directory.Packages.props")).Return(tc.PropsContent)
-		} else {
-			env.On("HasParentFilePath", "Directory.Packages.props", false).Return(&runtime.FileInfo{}, errors.New("not found"))
-		}
 
-		aspire := &Aspire{}
-		props := options.Map{FetchRunning: tc.FetchRunning}
-		aspire.Init(props, env)
+			props := options.Map{FetchRunning: tc.FetchRunning}
+			if tc.FetchAppHost {
+				props[FetchAppHost] = true
+			}
+			for range 2 {
+				aspire := &Aspire{}
+				aspire.Init(props, env)
 
-		assert.Equal(t, tc.ExpectedEnabled, aspire.Enabled(), tc.Case)
+				assert.Equal(t, tc.ExpectedEnabled, aspire.Enabled(), tc.Case)
 
-		if tc.ExpectedEnabled {
-			assert.Equal(t, tc.ExpectedName, aspire.Name, tc.Case)
-			assert.Equal(t, tc.ExpectedLang, aspire.Lang, tc.Case)
-			assert.Equal(t, tc.ExpectedVersion, aspire.Version, tc.Case)
-			assert.Equal(t, tc.ExpectedRunning, aspire.Running, tc.Case)
-			assert.Equal(t, tc.ExpectedName, renderTemplate(env, "{{ .Name }}", aspire), tc.Case)
-			assert.Equal(t, tc.ExpectedRunning, renderTemplate(env, "{{ .Running }}", aspire) == "true", tc.Case)
-		}
+				if tc.ExpectedEnabled {
+					assert.Equal(t, tc.ExpectedName, aspire.Name, tc.Case)
+					assert.Equal(t, tc.ExpectedLang, aspire.Lang, tc.Case)
+					assert.Equal(t, tc.ExpectedVersion, aspire.Version, tc.Case)
+					assert.Equal(t, tc.ExpectedRunning, aspire.Running, tc.Case)
+					assert.Equal(t, tc.ExpectedName, renderTemplate(env, "{{ .Name }}", aspire), tc.Case)
+					assert.Equal(t, tc.ExpectedRunning, renderTemplate(env, "{{ .Running }}", aspire) == "true", tc.Case)
+				}
+			}
+
+			commandCount := 0
+			if tc.HasAspire && tc.FetchAppHost {
+				commandCount++
+			}
+			if tc.HasAspire && tc.FetchRunning && tc.ExpectedEnabled {
+				commandCount++
+			}
+			env.AssertNumberOfCalls(t, "RunCommand", commandCount)
+		})
 	}
 }

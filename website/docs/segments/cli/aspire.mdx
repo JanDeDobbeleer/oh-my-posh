@@ -7,8 +7,14 @@ sidebar_label: Aspire
 ## What
 
 Status of your [Aspire][aspire] AppHost in the current repo and whether it is running.
-The segment uses the Aspire CLI to resolve the AppHost with `aspire extension get-apphosts`
-and checks running instances with `aspire ps --format json`.
+By default, the segment detects `apphost.cs`, `apphost.ts`, or `*.AppHost.csproj` in the current directory
+or its parents without launching the Aspire CLI for discovery.
+Enable `fetch_apphost` to use `aspire extension get-apphosts` for CLI-selected or differently named projects,
+with file detection as a fallback. CLI discovery results, including unsuccessful lookups, are cached per directory
+for one minute so an unavailable or slow CLI does not delay every prompt.
+
+Running instances are checked with `aspire ps --format json`, with results cached for ten seconds per AppHost.
+Set `fetch_running` to `false` to avoid launching the Aspire CLI altogether when using file-based detection.
 
 ## Sample Configuration
 
@@ -22,6 +28,7 @@ import Config from "@site/src/components/Config.js";
     foreground: "#193549",
     background: "#ffeb3b",
     options: {
+      fetch_apphost: false,
       fetch_running: true,
     },
     template: " \uf423 {{ .Name }}{{ if .Running }} \uf00c{{ end }} ",
@@ -30,9 +37,10 @@ import Config from "@site/src/components/Config.js";
 
 ## Options
 
-| Name            | Type      | Default | Description                                                            |
-| --------------- | --------- | ------- | ---------------------------------------------------------------------- |
-| `fetch_running` | `boolean` | `true`  | query `aspire ps` to determine whether the resolved AppHost is running |
+| Name            | Type      | Default | Description                                                        |
+| --------------- | --------- | ------- | ------------------------------------------------------------------ |
+| `fetch_apphost`  | `boolean` | `false` | resolve the AppHost with the Aspire CLI, cached for one minute       |
+| `fetch_running`  | `boolean` | `true`  | query `aspire ps` for running status, cached for ten seconds          |
 
 ## Template ([info][templates])
 

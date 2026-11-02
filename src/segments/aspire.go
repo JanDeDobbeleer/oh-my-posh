@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 )
 
@@ -26,6 +29,7 @@ var aspireAppHostFiles = []string{
 const aspireCommand = "aspire"
 
 const (
+	FetchAppHost options.Option = "fetch_apphost"
 	// FetchRunning controls whether the segment should query aspire ps.
 	FetchRunning options.Option = "fetch_running"
 )
@@ -59,8 +63,14 @@ func (a *Aspire) Enabled() bool {
 }
 
 func (a *Aspire) resolveAppHostPath() string {
-	if a.env.HasCommand(aspireCommand) {
-		appHostPath := a.resolveAppHostPathWithCLI()
+	if a.options.Bool(FetchAppHost, false) && a.env.HasCommand(aspireCommand) {
+		key := "aspire_apphost_" + a.env.Pwd()
+		appHostPath, found := cache.Session.Get[string](key)
+		if !found {
+			appHostPath = a.resolveAppHostPathWithCLI()
+			cache.Session.Set(key, appHostPath, "1m")
+		}
+
 		if appHostPath != "" {
 			return appHostPath
 		}
@@ -97,8 +107,11 @@ func (a *Aspire) findAppHostCsproj() string {
 }
 
 func (a *Aspire) resolveAppHostPathWithCLI() string {
+	defer log.Trace(time.Now())
+
 	output, err := a.env.RunCommand(aspireCommand, "extension", "get-apphosts")
 	if err != nil {
+		log.Error(err)
 		return ""
 	}
 
@@ -126,16 +139,24 @@ func (a *Aspire) resolveAppHostPathWithCLI() string {
 }
 
 func (a *Aspire) isRunning() bool {
+	defer log.Trace(time.Now())
+
 	if !a.env.HasCommand(aspireCommand) || a.AppHostPath == "" {
 		return false
 	}
 
-	output, err := a.env.RunCommand(aspireCommand, "ps", "--format", "json")
-	if err != nil {
-		return false
+	key := "aspire_running_" + a.AppHostPath
+	if running, found := cache.Session.Get[bool](key); found {
+		return running
 	}
 
-	running := a.parseRunningAppHosts(output)
+	output, err := a.env.RunCommand(aspireCommand, "ps", "--format", "json")
+	if err != nil {
+		log.Error(err)
+	}
+
+	running := err == nil && a.parseRunningAppHosts(output)
+	cache.Session.Set(key, running, "10s")
 	return running
 }
 

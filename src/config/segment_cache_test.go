@@ -1,7 +1,9 @@
 package config
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"path/filepath"
 	"testing"
 
@@ -10,6 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/stretchr/testify/assert"
 	testifymock "github.com/stretchr/testify/mock"
@@ -217,4 +220,121 @@ func TestSegmentExecuteCacheHitSkipsLiveProbeUnderStreaming(t *testing.T) {
 	assert.True(t, segment.Enabled, "cache hit should mark the segment enabled")
 	streamingEnv.AssertNotCalled(t, "Getenv", testifymock.Anything)
 	streamingEnv.AssertNotCalled(t, "Platform")
+}
+
+func TestAspireSegmentCache(t *testing.T) {
+	cases := []struct {
+		PSError         error
+		Case            string
+		Duration        cache.Duration
+		FetchAppHost    bool
+		SecondFolder    bool
+		ProbeAgain      bool
+		NoAppHost       bool
+		ExpectedRunning bool
+	}{
+		{Case: "file detection reuses running status", Duration: "10s", ExpectedRunning: true},
+		{Case: "CLI discovery reuses the whole segment", Duration: "10s", FetchAppHost: true, ExpectedRunning: true},
+		{Case: "running lookup failure keeps the cached AppHost visible", Duration: "10s", PSError: errors.New("running lookup failed")},
+		{Case: "no cache refreshes running status", ProbeAgain: true},
+		{Case: "disabled cache refreshes CLI discovery and running status", Duration: cache.NONE, FetchAppHost: true, ProbeAgain: true},
+		{Case: "expired cache refreshes CLI discovery and running status", Duration: "0s", FetchAppHost: true, ProbeAgain: true},
+		{Case: "different folders do not share cached state", Duration: "10s", SecondFolder: true, ProbeAgain: true},
+		{Case: "outside an AppHost default discovery never launches the CLI", Duration: "10s", NoAppHost: true},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			previousTemplateCache := template.Cache
+			t.Cleanup(func() { template.Cache = previousTemplateCache })
+
+			appHostDir := filepath.Join(t.TempDir(), "MyApp.AppHost")
+			appHostPath := filepath.Join(appHostDir, "apphost.cs")
+			propsPath := filepath.Join(appHostDir, "Directory.Packages.props")
+			pwd := filepath.Join(appHostDir, "nested")
+
+			newSegment := func() *Segment {
+				segment := &Segment{
+					Type:     ASPIRE,
+					Alias:    t.Name(),
+					Template: "{{ .AppHostPath }}|{{ .Name }}|{{ .Lang }}|{{ .Version }}|{{ .Running }}",
+					Options:  options.Map{segments.FetchAppHost: tc.FetchAppHost},
+				}
+				if tc.Duration != "" {
+					segment.Cache = &Cache{Strategy: Folder, Duration: tc.Duration}
+				}
+				return segment
+			}
+
+			for index := range 2 {
+				directory := pwd
+				if index == 1 && tc.SecondFolder {
+					directory = filepath.Join(appHostDir, "other")
+				}
+
+				env := new(mock.Environment)
+				env.On("Shell").Return("zsh")
+				env.On("Pwd").Return(directory)
+				env.On("DirMatchesOneOf", testifymock.Anything, testifymock.Anything).Return(false)
+				env.On("Flags").Return(&runtime.Flags{})
+				template.Cache = &cache.Template{Segments: maps.NewConcurrent[any]()}
+				template.Init(env, nil, nil)
+
+				probe := !tc.NoAppHost && (index == 0 || tc.ProbeAgain)
+				if probe {
+					env.On("HasCommand", "aspire").Return(true)
+					if tc.FetchAppHost {
+						env.On("RunCommand", "aspire", []string{"extension", "get-apphosts"}).
+							Return(fmt.Sprintf(`{"selected_project_file":%q}`, appHostPath), nil).Once()
+					}
+					if !tc.FetchAppHost {
+						env.On("HasParentFilePath", "apphost.cs", false).
+							Return(&runtime.FileInfo{Path: appHostPath, ParentFolder: appHostDir}, nil).Once()
+					}
+					env.On("HasParentFilePath", "Directory.Packages.props", false).
+						Return(&runtime.FileInfo{Path: propsPath, ParentFolder: appHostDir}, nil).Once()
+					env.On("FileContent", propsPath).
+						Return(`<PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />`).Once()
+
+					output := "[]"
+					var psError error
+					if index == 0 {
+						output = fmt.Sprintf(`[{"appHostPath":%q}]`, appHostPath)
+						psError = tc.PSError
+					}
+					env.On("RunCommand", "aspire", []string{"ps", "--format", "json"}).Return(output, psError).Once()
+				}
+				if tc.NoAppHost {
+					env.On("HasParentFilePath", testifymock.Anything, false).
+						Return(&runtime.FileInfo{}, errors.New("not found"))
+					env.On("LsDir", testifymock.Anything).Return([]fs.DirEntry{})
+				}
+
+				segment := newSegment()
+				segment.Execute(env)
+				assert.Equal(t, !tc.NoAppHost, segment.Enabled)
+				assert.Equal(t, !tc.NoAppHost, segment.Render(0, false))
+
+				if segment.Cache != nil {
+					key, store := segment.cacheKeyAndStore()
+					t.Cleanup(func() { store.Delete(key) })
+				}
+
+				if !tc.NoAppHost {
+					running := index == 0 && tc.PSError == nil || index == 1 && tc.ExpectedRunning
+					assert.Equal(t, fmt.Sprintf("%s|MyApp.AppHost|cs|9.0.0|%t", appHostPath, running), segment.Text())
+				}
+				if !probe {
+					env.AssertNotCalled(t, "HasCommand", testifymock.Anything)
+					env.AssertNotCalled(t, "RunCommand", testifymock.Anything, testifymock.Anything)
+					env.AssertNotCalled(t, "FileContent", testifymock.Anything)
+					if !tc.NoAppHost {
+						env.AssertNotCalled(t, "HasParentFilePath", testifymock.Anything, testifymock.Anything)
+						env.AssertNotCalled(t, "LsDir", testifymock.Anything)
+					}
+				}
+				env.AssertExpectations(t)
+			}
+		})
+	}
 }

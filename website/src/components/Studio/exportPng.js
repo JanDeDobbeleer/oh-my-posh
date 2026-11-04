@@ -28,7 +28,11 @@ function getFontDataUri() {
             reader.onerror = () => reject(reader.error);
             reader.readAsDataURL(blob);
           }),
-      );
+      )
+      .catch((error) => {
+        fontDataUriPromise = null;
+        throw error;
+      });
   }
 
   return fontDataUriPromise;

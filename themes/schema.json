@@ -513,6 +513,7 @@
             "umbraco",
             "uno",
             "unity",
+            "unreal",
             "upgrade",
             "v",
             "vala",
@@ -5135,6 +5136,19 @@
                 "unevaluatedProperties": false
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "unreal"
+              }
+            }
+          },
+          "then": {
+            "title": "Unreal Engine Segment",
+            "description": "Display the Unreal Engine version associated with the current project or engine checkout."
           }
         },
         {

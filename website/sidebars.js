@@ -157,6 +157,7 @@ export default {
             "segments/cli/umbraco",
             "segments/cli/unity",
             "segments/cli/uno",
+            "segments/cli/unreal",
             "segments/cli/xmake",
             "segments/cli/yarn",
             "segments/cli/zvm",

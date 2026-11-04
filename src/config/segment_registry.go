@@ -132,6 +132,7 @@ func init() {
 	gob.Register(&segments.Umbraco{})
 	gob.Register(&segments.Uno{})
 	gob.Register(&segments.Unity{})
+	gob.Register(&segments.Unreal{})
 	gob.Register(&segments.Upgrade{})
 	gob.Register(&segments.UpgradeCache{})
 	gob.Register(&segments.VIMode{})
@@ -255,6 +256,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	UMBRACO:         func() SegmentWriter { return &segments.Umbraco{} },
 	UNO:             func() SegmentWriter { return &segments.Uno{} },
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
+	UNREAL:          func() SegmentWriter { return &segments.Unreal{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
 	V:               func() SegmentWriter { return segments.NewLanguage(string(V)) },
 	VALA:            func() SegmentWriter { return segments.NewLanguage(string(VALA)) },

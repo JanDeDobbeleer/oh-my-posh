@@ -251,6 +251,8 @@ const (
 	UNO SegmentType = "uno"
 	// UNITY writes which Unity version is currently active
 	UNITY SegmentType = "unity"
+	// UNREAL writes the Unreal Engine version of the current project
+	UNREAL SegmentType = "unreal"
 	// UPGRADE lets you know if you can upgrade Oh My Posh
 	UPGRADE SegmentType = "upgrade"
 	// V writes the active vlang version

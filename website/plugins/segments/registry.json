@@ -160,6 +160,10 @@
     "docId": "golang"
   },
   {
+    "type": "gpgagent",
+    "docId": "gpgagent"
+  },
+  {
     "type": "gradle",
     "docId": "gradle"
   },

@@ -36,27 +36,28 @@ Command exits when all segments are resolved.`,
 			}
 
 			flags := &runtime.Flags{
-				ConfigPath:    configFlag,
-				PWD:           pwd,
-				PSWD:          pswd,
-				ErrorCode:     status,
-				PipeStatus:    pipestatus,
-				ExecutionTime: timing,
-				StackCount:    stackCount,
-				TerminalWidth: terminalWidth,
-				Eval:          eval,
-				Shell:         shellName,
-				ShellVersion:  shellVersion,
-				Plain:         plain,
-				Type:          prompt.PRIMARY,
-				Cleared:       cleared,
-				NoExitCode:    noStatus,
-				Column:        column,
-				JobCount:      jobCount,
-				IsPrimary:     true,
-				Escape:        escape,
-				Force:         force,
-				Streaming:     true,
+				ConfigPath:     configFlag,
+				PWD:            pwd,
+				PSWD:           pswd,
+				ErrorCode:      status,
+				PipeStatus:     pipestatus,
+				ExecutionTime:  timing,
+				StackCount:     stackCount,
+				TerminalWidth:  terminalWidth,
+				MaxColumnsLess: maxColumnsLess,
+				Eval:           eval,
+				Shell:          shellName,
+				ShellVersion:   shellVersion,
+				Plain:          plain,
+				Type:           prompt.PRIMARY,
+				Cleared:        cleared,
+				NoExitCode:     noStatus,
+				Column:         column,
+				JobCount:       jobCount,
+				IsPrimary:      true,
+				Escape:         escape,
+				Force:          force,
+				Streaming:      true,
 			}
 
 			options := []cache.Option{}
@@ -91,6 +92,7 @@ Command exits when all segments are resolved.`,
 	streamCmd.Flags().Float64Var(&timing, "execution-time", 0, "timing of the last command")
 	streamCmd.Flags().IntVarP(&stackCount, "stack-count", "s", 0, "number of locations on the stack")
 	streamCmd.Flags().IntVarP(&terminalWidth, "terminal-width", "w", 0, "width of the terminal")
+	streamCmd.Flags().IntVar(&maxColumnsLess, "max-columns-less", 0, "number of columns to subtract from the terminal width")
 	streamCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	streamCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	streamCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")

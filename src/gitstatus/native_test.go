@@ -1,6 +1,7 @@
 package gitstatus
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 
@@ -170,4 +171,73 @@ func TestAheadBehindAndResolveRefParity(t *testing.T) {
 	_, found, err = ResolveRef(commonGitDir, "refs/remotes/origin/does-not-exist")
 	require.NoError(t, err)
 	assert.False(t, found)
+}
+
+// TestAheadBehindMatchesGitOnSkewedDates pins aheadBehind against
+// `git rev-list --left-right --count` for histories where committer dates
+// tie or run backwards, which a date-ordered walk alone gets wrong.
+func TestAheadBehindMatchesGitOnSkewedDates(t *testing.T) {
+	skipIfNoGit(t)
+
+	const (
+		t0 = "2026-01-01T00:00:00Z"
+		t1 = "2026-01-01T00:00:01Z"
+	)
+
+	tests := []struct {
+		Case          string
+		BaseDate      string
+		LocalDates    []string
+		UpstreamDates []string
+	}{
+		{Case: "ahead with every commit sharing a second", BaseDate: t0, LocalDates: []string{t0, t0}},
+		{Case: "ahead with the shared base dated after the local commit", BaseDate: t1, LocalDates: []string{t0}},
+		{Case: "diverged with every commit sharing a second", BaseDate: t0, LocalDates: []string{t0}, UpstreamDates: []string{t0}},
+		{Case: "diverged with the shared base dated after both tips", BaseDate: t1, LocalDates: []string{t0, t0}, UpstreamDates: []string{t0}},
+		{Case: "behind with the shared base dated after the upstream commit", BaseDate: t1, UpstreamDates: []string{t0, t0}},
+		{Case: "ahead with increasing dates", BaseDate: t0, LocalDates: []string{t1}},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Case, func(t *testing.T) {
+			hermeticHome(t)
+
+			dir := t.TempDir()
+			initGitRepo(t, dir)
+
+			commit := func(date string) {
+				t.Setenv("GIT_AUTHOR_DATE", date)
+				t.Setenv("GIT_COMMITTER_DATE", date)
+				runGit(t, dir, "commit", "-q", "--allow-empty", "-m", "c")
+			}
+
+			commit(tc.BaseDate)
+			runGit(t, dir, "branch", "upstream")
+
+			for _, date := range tc.LocalDates {
+				commit(date)
+			}
+
+			runGit(t, dir, "checkout", "-q", "upstream")
+			for _, date := range tc.UpstreamDates {
+				commit(date)
+			}
+
+			counts := strings.Fields(runGit(t, dir, "rev-list", "--left-right", "--count", "main...upstream"))
+			require.Len(t, counts, 2)
+			wantAhead, err := strconv.Atoi(counts[0])
+			require.NoError(t, err)
+			wantBehind, err := strconv.Atoi(counts[1])
+			require.NoError(t, err)
+
+			commonGitDir := gitPath(t, dir, "--git-common-dir")
+			ours := strings.TrimSpace(runGit(t, dir, "rev-parse", "main"))
+			theirs := strings.TrimSpace(runGit(t, dir, "rev-parse", "upstream"))
+
+			ahead, behind, err := AheadBehind(commonGitDir, ours, theirs)
+			require.NoError(t, err)
+			assert.Equal(t, wantAhead, ahead)
+			assert.Equal(t, wantBehind, behind)
+		})
+	}
 }

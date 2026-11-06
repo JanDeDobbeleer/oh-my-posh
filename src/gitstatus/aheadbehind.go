@@ -36,6 +36,16 @@ func (q *commitPQ) Pop() any {
 	return item
 }
 
+func hasNonStale(queue commitPQ, flags map[plumbing.Hash]int) bool {
+	for _, qc := range queue {
+		if flags[qc.hash]&flagStale == 0 {
+			return true
+		}
+	}
+
+	return false
+}
+
 // aheadBehind implements git's paint_down_to_common: walk both tips by
 // committer-date priority, flag reachability from each side, and count the
 // commits reachable from only one side.
@@ -72,20 +82,9 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 		return 0, 0, err
 	}
 
-	ahead, behind := 0, 0
-
-	for queue.Len() > 0 {
+	for hasNonStale(queue, flags) {
 		commit := heap.Pop(&queue).(queuedCommit)
 		flag := flags[commit.hash]
-
-		if flag&flagStale == 0 {
-			switch flag & (flagOurs | flagTheirs) {
-			case flagOurs:
-				ahead++
-			case flagTheirs:
-				behind++
-			}
-		}
 
 		propagate := flag
 		if flag&(flagOurs|flagTheirs) == flagOurs|flagTheirs {
@@ -101,9 +100,8 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 				}
 
 				flags[parent] = merged
-				// Re-queue so the stale flag propagates further; duplicate
-				// entries are harmless because counting checks flags at pop
-				// time, not at push time.
+				// Re-queue so the new flags propagate further; duplicate
+				// entries are harmless because flags are read at pop time.
 				heap.Push(&queue, queuedCommit{hash: parent, info: infos[parent]})
 				continue
 			}
@@ -112,19 +110,22 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 				return 0, 0, err
 			}
 		}
+	}
 
-		// Termination: once every queued commit is flagged on both sides,
-		// nothing one-sided remains to discover.
-		allShared := true
-		for _, qc := range queue {
-			f := flags[qc.hash]
-			if f&(flagOurs|flagTheirs) != flagOurs|flagTheirs {
-				allShared = false
-				break
-			}
+	// Flags only grow, and committer dates can tie or run backwards, so a
+	// commit may gain its second flag after it was popped. Counting while
+	// walking would keep the early, one-sided verdict.
+	ahead, behind := 0, 0
+	for _, flag := range flags {
+		if flag&flagStale != 0 {
+			continue
 		}
-		if allShared {
-			break
+
+		switch flag {
+		case flagOurs:
+			ahead++
+		case flagTheirs:
+			behind++
 		}
 	}
 

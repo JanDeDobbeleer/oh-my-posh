@@ -1,6 +1,7 @@
 package gitstatus
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 
@@ -170,4 +171,78 @@ func TestAheadBehindAndResolveRefParity(t *testing.T) {
 	_, found, err = ResolveRef(commonGitDir, "refs/remotes/origin/does-not-exist")
 	require.NoError(t, err)
 	assert.False(t, found)
+}
+
+// TestAheadBehindClockSkew covers histories where committer dates do not
+// strictly decrease towards the root, which the date-ordered walk cannot
+// trust: commits sharing a second, and a parent dated after its child.
+func TestAheadBehindClockSkew(t *testing.T) {
+	skipIfNoGit(t)
+	hermeticHome(t)
+
+	cases := []struct {
+		Name   string
+		Base   string
+		Ours   []string
+		Theirs []string
+		Ahead  int
+		Behind int
+	}{
+		{
+			Name:  "every commit in the same second",
+			Base:  "2026-01-01T00:00:00Z",
+			Ours:  []string{"2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"},
+			Ahead: 2,
+		},
+		{
+			Name:  "base dated after the local commit",
+			Base:  "2026-01-01T00:00:01Z",
+			Ours:  []string{"2026-01-01T00:00:00Z"},
+			Ahead: 1,
+		},
+		{
+			Name:   "diverged, base dated after both sides",
+			Base:   "2026-01-01T00:00:05Z",
+			Ours:   []string{"2026-01-01T00:00:00Z", "2026-01-01T00:00:01Z"},
+			Theirs: []string{"2026-01-01T00:00:02Z"},
+			Ahead:  2,
+			Behind: 1,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Name, func(t *testing.T) {
+			dir := t.TempDir()
+			initGitRepo(t, dir)
+
+			commitAt := func(date, msg string) string {
+				t.Setenv("GIT_AUTHOR_DATE", date)
+				t.Setenv("GIT_COMMITTER_DATE", date)
+				runGit(t, dir, "commit", "-q", "--allow-empty", "-m", msg)
+				return strings.TrimSpace(runGit(t, dir, "rev-parse", "HEAD"))
+			}
+
+			commitAt(tc.Base, "base")
+			runGit(t, dir, "branch", "upstream")
+
+			ours := strings.TrimSpace(runGit(t, dir, "rev-parse", "HEAD"))
+			for i, date := range tc.Ours {
+				ours = commitAt(date, "ours "+strconv.Itoa(i))
+			}
+
+			runGit(t, dir, "checkout", "-q", "upstream")
+			theirs := strings.TrimSpace(runGit(t, dir, "rev-parse", "HEAD"))
+			for i, date := range tc.Theirs {
+				theirs = commitAt(date, "theirs "+strconv.Itoa(i))
+			}
+
+			want := strings.Fields(runGit(t, dir, "rev-list", "--left-right", "--count", ours+"..."+theirs))
+			require.Equal(t, []string{strconv.Itoa(tc.Ahead), strconv.Itoa(tc.Behind)}, want)
+
+			ahead, behind, err := AheadBehind(gitPath(t, dir, "--git-common-dir"), ours, theirs)
+			require.NoError(t, err)
+			assert.Equal(t, tc.Ahead, ahead, "ahead")
+			assert.Equal(t, tc.Behind, behind, "behind")
+		})
+	}
 }

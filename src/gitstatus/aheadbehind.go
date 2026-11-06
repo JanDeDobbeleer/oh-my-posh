@@ -13,6 +13,12 @@ const (
 	flagStale  = 4
 )
 
+// aheadBehindSlop is how many extra commits the walk pops once everything
+// queued is shared, mirroring git's SLOP: committer dates can tie or run
+// backwards, so a one-sided commit may still be waiting to be reached from
+// the other tip.
+const aheadBehindSlop = 5
+
 type queuedCommit struct {
 	info *commitInfo
 	hash plumbing.Hash
@@ -72,20 +78,11 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 		return 0, 0, err
 	}
 
-	ahead, behind := 0, 0
+	slop := aheadBehindSlop
 
 	for queue.Len() > 0 {
 		commit := heap.Pop(&queue).(queuedCommit)
 		flag := flags[commit.hash]
-
-		if flag&flagStale == 0 {
-			switch flag & (flagOurs | flagTheirs) {
-			case flagOurs:
-				ahead++
-			case flagTheirs:
-				behind++
-			}
-		}
 
 		propagate := flag
 		if flag&(flagOurs|flagTheirs) == flagOurs|flagTheirs {
@@ -101,9 +98,8 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 				}
 
 				flags[parent] = merged
-				// Re-queue so the stale flag propagates further; duplicate
-				// entries are harmless because counting checks flags at pop
-				// time, not at push time.
+				// Re-queue so the new flags propagate further; duplicate
+				// entries are harmless because counting reads the final flags.
 				heap.Push(&queue, queuedCommit{hash: parent, info: infos[parent]})
 				continue
 			}
@@ -113,20 +109,38 @@ func aheadBehind(store *objectStore, ours, theirs plumbing.Hash) (int, int, erro
 			}
 		}
 
-		// Termination: once every queued commit is flagged on both sides,
-		// nothing one-sided remains to discover.
-		allShared := true
-		for _, qc := range queue {
-			f := flags[qc.hash]
-			if f&(flagOurs|flagTheirs) != flagOurs|flagTheirs {
-				allShared = false
-				break
-			}
+		if !allShared(queue, flags) {
+			slop = aheadBehindSlop
+			continue
 		}
-		if allShared {
+
+		slop--
+		if slop <= 0 {
 			break
 		}
 	}
 
+	// Count only after the walk: a commit popped while flagged from one side
+	// can still be reached from the other side later when dates are skewed.
+	ahead, behind := 0, 0
+	for _, flag := range flags {
+		switch flag & (flagOurs | flagTheirs) {
+		case flagOurs:
+			ahead++
+		case flagTheirs:
+			behind++
+		}
+	}
+
 	return ahead, behind, nil
+}
+
+func allShared(queue commitPQ, flags map[plumbing.Hash]int) bool {
+	for _, qc := range queue {
+		if flags[qc.hash]&(flagOurs|flagTheirs) != flagOurs|flagTheirs {
+			return false
+		}
+	}
+
+	return true
 }

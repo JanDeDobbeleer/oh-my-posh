@@ -90,7 +90,7 @@ if you do `Codespaces: Rebuild Container` again, you'll be back to the latest st
 ## Local development
 
 Make sure your local go version matches with the pinned version in [go.mod]. You can build
-oh-my-posh by navigating the to the `/src` folder and executing the following command.
+oh-my-posh by navigating to the `/src` folder and executing the following command.
 
 ```bash
 go build -v -o /path/to/oh-my-posh(.exe)

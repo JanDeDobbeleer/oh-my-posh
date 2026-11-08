@@ -57,9 +57,7 @@ you do not need to keep prompt rendering fast.
 
 :::note default template
 
-```template
- {{ "\uf4a0" }} {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}
-```
+<Config data={{ template: " \uf4a0 {{ range $k, $v := .Commands }}{{ $k }}:{{ $v }} {{ end }}" }} />
 
 :::
 

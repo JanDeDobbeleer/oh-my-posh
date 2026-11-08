@@ -45,9 +45,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
- {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}
-```
+<Config data={{ template: " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} " }} />
 
 :::
 

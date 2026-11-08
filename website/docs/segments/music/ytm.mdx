@@ -69,9 +69,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}
-```
+<Config data={{ template: " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} " }} />
 
 :::
 

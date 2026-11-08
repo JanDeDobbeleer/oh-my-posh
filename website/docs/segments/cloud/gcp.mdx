@@ -30,9 +30,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-{{ if .Error }}{{ .Error }}{{ else }}{{ .Project }}{{ end }}
-```
+<Config data={{ template: " {{ .Project }} " }} />
 
 :::
 

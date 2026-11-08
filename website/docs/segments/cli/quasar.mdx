@@ -42,9 +42,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
- \ue87f {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }}
-```
+<Config data={{ template: " \ue87f {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }} " }} />
 
 :::
 

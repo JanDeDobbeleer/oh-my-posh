@@ -71,9 +71,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
- {{ if .WSL }}WSL at {{ end }}{{.Icon}}
-```
+<Config data={{ template: " {{ if .WSL }}WSL at {{ end }}{{.Icon}} " }} />
 
 :::
 

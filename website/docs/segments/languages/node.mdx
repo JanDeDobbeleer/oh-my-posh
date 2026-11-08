@@ -45,9 +45,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}
-```
+<Config data={{ template: " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} " }} />
 
 :::
 

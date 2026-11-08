@@ -40,9 +40,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-{{ if .Error }}{{ .Icon }} {{ .Error }}{{ else }}{{ url .Icon .URL }} {{ .Full }}{{ end }}
-```
+<Config data={{ template: " {{ if .Error }}{{ .Icon }} {{ .Error }}{{ else }}{{ url .Icon .URL }} {{ .Full }}{{ end }} " }} />
 
 :::
 

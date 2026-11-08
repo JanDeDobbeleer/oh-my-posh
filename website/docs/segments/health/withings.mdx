@@ -58,9 +58,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}
-```
+<Config data={{ template: "{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}" }} />
 
 :::
 

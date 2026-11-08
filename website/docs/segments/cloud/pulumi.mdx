@@ -39,9 +39,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-\ue873 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}
-```
+<Config data={{ template: "\ue873 {{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}" }} />
 
 :::
 

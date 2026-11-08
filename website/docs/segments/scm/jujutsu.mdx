@@ -45,9 +45,7 @@ ignored silently in existing configs.
 
 :::note default template
 
-```template
- \uf1fa{{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
-```
+<Config data={{ template: " \uf1fa{{.ChangeID}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }} " }} />
 
 :::
 

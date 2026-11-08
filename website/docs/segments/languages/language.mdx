@@ -97,9 +97,7 @@ Each entry in `tools` describes one executable that can report the segment's ver
 
 :::note default template
 
-```template
-{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
-```
+<Config data={{ template: " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} " }} />
 
 :::
 

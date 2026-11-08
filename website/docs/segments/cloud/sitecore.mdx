@@ -33,9 +33,7 @@ Display current [Sitecore] environment. Will not be active when sitecore.json an
 
 :::note default template
 
-```template
-{{ .EndpointName }} {{ if .CmHost }}({{ .CmHost }}){{ end }}
-```
+<Config data={{ template: "{{ .EndpointName }} {{ if .CmHost }}({{ .CmHost }}){{ end }}" }} />
 
 :::
 

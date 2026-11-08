@@ -34,9 +34,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-{{if .Org }}{{ .Org }}{{ end }}{{ if .Space }}/{{ .Space }}{{ end }}
-```
+<Config data={{ template: "{{if .Org }}{{ .Org }}{{ end }}{{if .Space }}/{{ .Space }}{{ end }}" }} />
 
 :::
 

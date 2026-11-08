@@ -34,9 +34,7 @@ import Config from '@site/src/components/Config.js';
 
 :::note default template
 
-```template
- {{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\ueba9{{ end }}
-```
+<Config data={{ template: " {{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\ueba9{{ end }} " }} />
 
 :::
 

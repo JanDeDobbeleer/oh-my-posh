@@ -67,11 +67,7 @@ Missing executables, command failures and malformed output hide the segment, eve
 
 :::note default template
 
-```template
-{{ if .Active }} {{ "\\uf252" }} {{ if .Tags }}{{ .Tags }}{{ else }}{{ "\u2205" }}{{ end -}}
-{{ if .Annotation }} | {{ .Annotation }}{{ end }}
-{{- else }} Not tracking {{ end }}
-```
+<Config data={{ template: "{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}∅{{ end }}{{ if .Annotation }} | {{ .Annotation }}{{ end }}{{ else }} Not tracking{{ end }} " }} />
 
 :::
 

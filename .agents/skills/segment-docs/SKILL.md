@@ -85,6 +85,11 @@ func (s *MySegment) Template() string {
 }
 ```
 
+Show it on the doc page as `<Config data={{ template: " {{ .FieldName }} " }} />` inside the
+`:::note default template` admonition, copying the exact string, leading and trailing spaces included.
+A ```` ```template ```` block shows JSON escapes (`\uXXXX`, `\"`) that break when pasted into YAML or TOML;
+`<Config>` serializes the string correctly for each format tab.
+
 ### Nested struct subsection convention
 
 When a property's type is itself a struct, add an `#### TypeName` subsection within

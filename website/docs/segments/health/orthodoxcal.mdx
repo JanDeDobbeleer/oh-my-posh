@@ -38,9 +38,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
-☦ {{ .FastLevelDesc }}{{ if .FastExceptionDesc }} ({{ .FastExceptionDesc }}){{ end }} · {{ .SummaryTitle }}
-```
+<Config data={{ template: " ☦ {{ .FastLevelDesc }}{{ if .FastExceptionDesc }} ({{ .FastExceptionDesc }}){{ end }} · {{ .SummaryTitle }} " }} />
 
 :::
 

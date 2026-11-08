@@ -38,9 +38,7 @@ import Config from "@site/src/components/Config.js";
 
 :::note default template
 
-```template
- {{ if .ZigIcon }}{{ .ZigIcon }} {{ end }}{{ .Version }}
-```
+<Config data={{ template: " {{ if .ZigIcon }}{{ .ZigIcon }} {{ end }}{{ .Version }} " }} />
 
 :::
 

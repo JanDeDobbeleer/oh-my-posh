@@ -814,7 +814,7 @@ func (term *Terminal) setPromptCount() {
 	// Only update the count if we're generating a primary prompt.
 	if term.CmdFlags.Type == PRIMARY {
 		count++
-		cache.Session.Set(cache.PROMPTCOUNTCACHE, count, cache.ONEDAY)
+		cache.Session.Set(cache.PROMPTCOUNTCACHE, count, cache.INFINITE)
 	}
 
 	term.CmdFlags.PromptCount = count

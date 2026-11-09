@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"time"
+
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
 
@@ -10,26 +12,28 @@ type Template struct {
 }
 
 type SimpleTemplate struct {
-	SegmentsCache maps.Simple[any]
-	Var           maps.Simple[any]
-	PWD           string
-	Folder        string
-	PSWD          string
-	UserName      string
-	HostName      string
-	ShellVersion  string
-	Shell         string
-	AbsolutePWD   string
-	OS            string
-	Version       string
-	PromptCount   int
-	SHLVL         int
-	Jobs          int
-	Code          int
-	WSL           bool
-	Root          bool
-	Interrupted   bool
-	Executed      bool
+	PromptArrivedAt time.Time
+	SegmentsCache   maps.Simple[any]
+	Var             maps.Simple[any]
+	PWD             string
+	Folder          string
+	PSWD            string
+	UserName        string
+	HostName        string
+	ShellVersion    string
+	Shell           string
+	AbsolutePWD     string
+	OS              string
+	Version         string
+	PromptCount     int
+	SHLVL           int
+	Jobs            int
+	Code            int
+	IdleTime        int64
+	WSL             bool
+	Root            bool
+	Interrupted     bool
+	Executed        bool
 }
 
 func (t *Template) AddSegmentData(key string, value any) {

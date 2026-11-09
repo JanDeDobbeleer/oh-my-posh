@@ -36,6 +36,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 			// restored blob was saved by the primary prompt (never interrupted),
 			// so it must be refreshed from the current flags.
 			Cache.Interrupted = env.Flags().Interrupted
+			setPromptArrival(Cache)
 			return
 		}
 	}
@@ -57,6 +58,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	tmpl.Var = make(map[string]any)
 	tmpl.Jobs = env.Flags().JobCount
 	tmpl.Version = build.Version
+	setPromptArrival(tmpl)
 
 	if vars != nil {
 		tmpl.Var = vars
@@ -150,6 +152,26 @@ func overlayEnvData(tmpl *cache.Template) {
 	}
 }
 
+// The arrival time has its own session entry without an expiry, because a
+// prompt can wait for input longer than the template cache lives.
+func setPromptArrival(tmpl *cache.Template) {
+	if env.Flags().IsPrimary {
+		// The session entry keeps milliseconds, so the primary prompt uses
+		// the same value a later prompt reads back.
+		tmpl.PromptArrivedAt = time.Now().Truncate(time.Millisecond)
+		return
+	}
+
+	arrivedAt, OK := cache.Session.Get[int64](cache.ARRIVEDATCACHE)
+	if !OK {
+		return
+	}
+
+	tmpl.PromptArrivedAt = time.UnixMilli(arrivedAt)
+	// The clock can step backwards while the prompt waits.
+	tmpl.IdleTime = max(time.Since(tmpl.PromptArrivedAt).Milliseconds(), 0)
+}
+
 func restoreCache() bool {
 	defer log.Trace(time.Now())
 
@@ -176,4 +198,5 @@ func SaveCache() {
 	Cache.SegmentsCache = Cache.Segments.ToSimple()
 
 	cache.Session.Set(cache.TEMPLATECACHE, &Cache.SimpleTemplate, cache.ONEDAY)
+	cache.Session.Set(cache.ARRIVEDATCACHE, Cache.PromptArrivedAt.UnixMilli(), cache.INFINITE)
 }

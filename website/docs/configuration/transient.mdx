@@ -78,6 +78,31 @@ For example, to show a red `^C` in front of the transient prompt when a command 
 }
 ```
 
+### Idle time
+
+The global `.PromptArrivedAt` and `.IdleTime` properties tell how long the primary prompt waited for input.
+`.PromptArrivedAt` is when the primary prompt rendered, which is also when the command above it finished.
+`.IdleTime` is the number of milliseconds from then until the transient prompt renders.
+
+The arrival time is kept in the session cache on its own, so it survives a prompt left waiting for days. When no
+arrival time was recorded, for example after the cache was cleared, `.PromptArrivedAt` is the zero time and
+`.IdleTime` is `0`. Use `.PromptArrivedAt.IsZero` to tell that case apart from a real value.
+
+For example, to show when the prompt arrived and how long it waited:
+
+```json
+{
+  "transient_prompt": {
+    "template": "{{ if not .PromptArrivedAt.IsZero }}{{ .PromptArrivedAt.Format \"15:04:05\" }} idle {{ secondsRound (div .IdleTime 1000) }} {{ end }}{{ .Shell }}> "
+  }
+}
+```
+
+:::caution
+With [streaming][streaming] enabled, the transient prompt renders together with the primary prompt, so `.IdleTime`
+is always `0`.
+:::
+
 ## Enable the feature
 
 Oh My posh handles enabling the feature automatically for all shells except `cmd` when the config contains a
@@ -96,3 +121,4 @@ clink set prompt.transient always
 [cstp]: /docs/configuration/templates#cross-segment-template-properties
 [block-newline]: /docs/configuration/block#newline
 [secondary-prompt]: /docs/configuration/secondary-prompt
+[streaming]: /docs/configuration/streaming

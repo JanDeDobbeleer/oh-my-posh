@@ -46,7 +46,9 @@ jobs:
     needs: changelog
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
-    container: ghcr.io/jandedobbeleer/golang-android-container:latest
+    # The image only has a latest tag, the digest is the one it pointed at on 2026-11-10.
+    # Update it after rebuilding the container.
+    container: ghcr.io/jandedobbeleer/golang-android-container@sha256:5b4f274d337c0873f85384c2c1cb6b75d2d9ee3378ec645f27333b8e6b7f6cdf
     steps:
       - name: Checkout code 👋
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1

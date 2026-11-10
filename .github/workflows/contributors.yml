@@ -4,6 +4,10 @@ on:
     types:
       - closed
 
+# The callee comments with the personal token, the job token only checks out.
+permissions:
+  contents: read
+
 jobs:
   contributors:
     uses: jandedobbeleer/workflows/.github/workflows/contributors.yml@main

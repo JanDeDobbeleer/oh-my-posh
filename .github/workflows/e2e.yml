@@ -10,6 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 name: E2E Tests
+permissions:
+  contents: read
+
 jobs:
   linux:
     runs-on: ubuntu-latest

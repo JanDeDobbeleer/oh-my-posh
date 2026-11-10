@@ -13,6 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 name: Build Code
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: macos-latest

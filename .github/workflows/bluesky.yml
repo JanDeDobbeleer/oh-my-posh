@@ -4,6 +4,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+# The job talks to GitHub with the personal token it is given, never with the job token.
+permissions: {}
+
 jobs:
   bluesky:
     runs-on: ubuntu-latest

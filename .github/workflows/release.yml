@@ -13,9 +13,16 @@ on:
 concurrency:
   group: ${{ github.workflow }}
 
+permissions:
+  contents: read
+
 jobs:
   changelog:
     runs-on: ubuntu-latest
+    permissions:
+      # The changelog action ends with a git push, an empty one here since the
+      # commit and the tag are skipped, and git still asks for write access.
+      contents: write
     outputs:
       version: ${{ steps.changelog.outputs.version }}
       body: ${{ steps.changelog.outputs.clean_changelog }}

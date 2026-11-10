@@ -4,6 +4,10 @@ on:
     types:
       - opened
 
+# The comment and the close go through the personal token, the job token only checks out.
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest

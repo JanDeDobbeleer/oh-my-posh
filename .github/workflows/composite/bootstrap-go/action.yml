@@ -7,7 +7,7 @@ branding:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491
+    - uses: actions/setup-go@v5.0.0
       with:
         go-version: "1.27.0"
         cache-dependency-path: src/go.sum

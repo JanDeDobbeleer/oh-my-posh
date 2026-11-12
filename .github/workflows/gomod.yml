@@ -17,11 +17,11 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
     - name: Checkout code
-      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      uses: actions/checkout@v7.0.1
       with:
         persist-credentials: false
     - name: Install Go 🗳
-      uses: ./.github/workflows/composite/bootstrap-go
+      uses: $/.github/workflows/composite/bootstrap-go
     - name: Check for unused dependencies
       run: |
         go mod tidy

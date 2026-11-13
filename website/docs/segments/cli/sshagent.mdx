@@ -1,0 +1,101 @@
+---
+id: sshagent
+title: SSH Agent
+sidebar_label: SSH Agent
+---
+
+## What
+
+Display whether an [ssh-agent][ssh-agent] is running and which SSH keys are loaded. Give your keys
+friendly names with `mapped_keys`.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "sshagent",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#4a5568",
+    template: "{{ if .Running }} \uf43d {{ .Keys }} {{ end }}",
+    options: {
+      key_separator: ", ",
+      mapped_keys: {
+        "SHA256:Lx2fJq7kX0aT4pWvN8yR3cB5mH1sD9eG6uZoQiYtKwE": "personal",
+      },
+    },
+  }}
+/>
+
+## Options
+
+| Name            | Type                | Default                    | Description              |
+| --------------- | :-----------------: | :------------------------: | ------------------------ |
+| `key_template`  | `string`            | `{{ or .Alias .Comment }}` | template for each key    |
+| `key_separator` | `string`            | `" "`                      | text between keys        |
+| `mapped_keys`   | `map[string]string` |                            | fingerprint-to-alias map |
+
+Use the SHA256 fingerprint shown by `ssh-add -l` as the map key. Its value is available as `.Alias` in
+`key_template`; see [Key Properties][key-props] for the available properties.
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Running }} {{ "\uf43d" }} {{ .Count }} {{ end }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type      | Description                                                             |
+| ---------------- | --------- | ----------------------------------------------------------------------- |
+| `.Running`       | `boolean` | whether an ssh-agent is reachable                                       |
+| `.Count`         | `int`     | the number of keys loaded into the ssh-agent                            |
+| `.Keys`          | `string`  | the loaded keys rendered with `key_template`, joined by `key_separator` |
+| `.UnmappedCount` | `int`     | number of loaded keys without an entry in `mapped_keys`                 |
+
+Keys for which `key_template` renders nothing are left out of `.Keys`, but still count towards `.Count` and
+`.UnmappedCount`.
+
+### Key Properties
+
+Available in `key_template`:
+
+| Name           | Type     | Description                                                |
+| -------------- | -------- | ---------------------------------------------------------- |
+| `.Alias`       | `string` | the `mapped_keys` value for this key's fingerprint, if any |
+| `.Bits`        | `int`    | the key size in bits                                       |
+| `.Comment`     | `string` | the key comment, usually `user@host` or the key file path  |
+| `.Fingerprint` | `string` | the SHA256 fingerprint, e.g. `SHA256:Lx2fJq7k...`          |
+| `.Type`        | `string` | the key type, e.g. `ED25519` or `RSA`                      |
+
+### Examples
+
+Show a hint when no agent is running:
+
+```template
+{{ if .Running }} {{ "\uf43d" }} {{ .Count }} {{ else }} no agent {{ end }}
+```
+
+List the loaded keys, with `key_template` set to `{{ .Comment }} ({{ .Type }})`:
+
+```template
+{{ if .Running }} {{ "\uf43d" }} {{ .Keys }} {{ end }}
+```
+
+Show only mapped keys and the number of remaining keys, e.g. `work, personal +3`, with `key_template`
+set to `{{ .Alias }}` and `key_separator` set to `", "`:
+
+```template
+{{ if .Running }} {{ "\uf43d" }} {{ .Keys }}{{ if gt .UnmappedCount 0 }} +{{ .UnmappedCount }}{{ end }} {{ end }}
+```
+
+[ssh-agent]: https://man.openbsd.org/ssh-agent
+[key-props]: #key-properties
+[templates]: /docs/configuration/templates

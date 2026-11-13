@@ -3,7 +3,9 @@ package template
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -178,4 +180,57 @@ func TestLoadCacheInvalidEnvData(t *testing.T) {
 	assert.Equal(t, "jan", Cache.UserName)
 	assert.Equal(t, "live-host", Cache.HostName)
 	assert.Equal(t, "pwsh", Cache.Shell)
+}
+
+func TestLoadCachePromptArrival(t *testing.T) {
+	cases := []struct {
+		Case              string
+		Waited            time.Duration
+		Saved             bool
+		KeepTemplateCache bool
+		Primary           bool
+	}{
+		{Case: "the primary prompt arrives now", Primary: true},
+		{Case: "restored with the template cache", Saved: true, Waited: time.Minute, KeepTemplateCache: true},
+		{Case: "survives an expired template cache", Saved: true, Waited: 25 * time.Hour},
+		{Case: "unknown when nothing was saved"},
+	}
+
+	origCache := Cache
+	t.Cleanup(func() {
+		Cache = origCache
+		cache.Session.DeleteAll()
+	})
+
+	for _, tc := range cases {
+		cache.Session.DeleteAll()
+
+		var arrivedAt time.Time
+		if tc.Saved {
+			env = newLoadCacheMockEnv(&runtime.Flags{HasExtra: true})
+			loadCache(nil, &maps.Config{})
+			Cache.PromptArrivedAt = Cache.PromptArrivedAt.Add(-tc.Waited)
+			arrivedAt = Cache.PromptArrivedAt
+			SaveCache()
+		}
+
+		if !tc.KeepTemplateCache {
+			cache.Session.Delete(cache.TEMPLATECACHE)
+		}
+
+		flags := &runtime.Flags{}
+		env = newLoadCacheMockEnv(flags)
+		flags.IsPrimary = tc.Primary
+		before := time.Now()
+		loadCache(nil, &maps.Config{})
+
+		if tc.Primary {
+			assert.WithinDuration(t, before, Cache.PromptArrivedAt, time.Second, tc.Case)
+			assert.Zero(t, Cache.IdleTime, tc.Case)
+			continue
+		}
+
+		assert.True(t, arrivedAt.Equal(Cache.PromptArrivedAt), tc.Case)
+		assert.InDelta(t, tc.Waited.Milliseconds(), Cache.IdleTime, float64(time.Second.Milliseconds()), tc.Case)
+	}
 }

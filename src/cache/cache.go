@@ -29,6 +29,7 @@ const (
 	TEMPLATECACHE    = "template_cache"
 	TOGGLECACHE      = "toggle_cache"
 	PROMPTCOUNTCACHE = "prompt_count_cache"
+	ARRIVEDATCACHE   = "prompt_arrived_at_cache"
 	ENGINECACHE      = "engine_cache"
 	FONTLISTCACHE    = "font_list_cache"
 	CLAUDECACHE      = "claude_cache"

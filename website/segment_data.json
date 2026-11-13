@@ -2798,12 +2798,23 @@
       },
       "enabled": true
     },
+    "unreal": {
+      "data": {
+        "Segment": {
+          "Index": 104,
+          "Text": " x "
+        },
+        "Text": " x ",
+        "Version": "5.4.2"
+      },
+      "enabled": true
+    },
     "upgrade": {
       "data": {
         "Current": "26.7.1",
         "Latest": "26.8.0",
         "Segment": {
-          "Index": 104,
+          "Index": 105,
           "Text": " x "
         },
         "Text": " x ",
@@ -2827,7 +2838,7 @@
         "Patch": "9",
         "Prerelease": "",
         "Segment": {
-          "Index": 105,
+          "Index": 106,
           "Text": " x "
         },
         "Text": " x ",
@@ -2849,7 +2860,7 @@
         "Patch": "",
         "Prerelease": "",
         "Segment": {
-          "Index": 106,
+          "Index": 107,
           "Text": " x "
         },
         "Text": " x ",
@@ -2862,7 +2873,7 @@
         "Keymap": "main",
         "Mode": "insert",
         "Segment": {
-          "Index": 107,
+          "Index": 108,
           "Text": " x "
         },
         "Text": " x "
@@ -2879,7 +2890,7 @@
         },
         "End": "2026-07-09T23:59:59Z",
         "Segment": {
-          "Index": 108,
+          "Index": 109,
           "Text": " x "
         },
         "Start": "2026-07-09T00:00:00Z",
@@ -2898,7 +2909,7 @@
     "winget": {
       "data": {
         "Segment": {
-          "Index": 109,
+          "Index": 110,
           "Text": " x "
         },
         "Text": " x ",
@@ -2923,7 +2934,7 @@
     "winreg": {
       "data": {
         "Segment": {
-          "Index": 110,
+          "Index": 111,
           "Text": " x "
         },
         "Text": " x ",
@@ -2934,7 +2945,7 @@
     "withings": {
       "data": {
         "Segment": {
-          "Index": 111,
+          "Index": 112,
           "Text": " x "
         },
         "SleepHours": "7.3",
@@ -2958,7 +2969,7 @@
         "Patch": "6",
         "Prerelease": "",
         "Segment": {
-          "Index": 112,
+          "Index": 113,
           "Text": " x "
         },
         "Text": " x ",
@@ -2980,7 +2991,7 @@
         "Patch": "3",
         "Prerelease": "",
         "Segment": {
-          "Index": 113,
+          "Index": 114,
           "Text": " x "
         },
         "Text": " x ",
@@ -2993,7 +3004,7 @@
         "Artist": "Men I Trust",
         "Icon": " ",
         "Segment": {
-          "Index": 114,
+          "Index": 115,
           "Text": " x "
         },
         "Status": "playing",
@@ -3016,7 +3027,7 @@
         "Patch": "0",
         "Prerelease": "",
         "Segment": {
-          "Index": 115,
+          "Index": 116,
           "Text": " x "
         },
         "Text": " x ",
@@ -3027,7 +3038,7 @@
     "zvm": {
       "data": {
         "Segment": {
-          "Index": 116,
+          "Index": 117,
           "Text": " x "
         },
         "Text": " x ",

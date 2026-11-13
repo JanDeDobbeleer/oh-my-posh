@@ -1,0 +1,51 @@
+---
+id: unreal
+title: Unreal Engine
+sidebar_label: Unreal Engine
+---
+
+## What
+
+Display the [Unreal Engine][unreal] version of the current project.
+
+The segment looks for a `.uproject` file in the current directory or any parent directory, so it also works from
+project subfolders. It reads `EngineAssociation` and, on Windows, resolves the matching engine installation from the
+registry (Launcher installs and registered source builds) to read the full `major.minor.patch` version from
+`Engine/Build/Build.version`. When the installation or version cannot be resolved, the raw `EngineAssociation` value
+is displayed instead. Registry lookups are read-only and need no elevation.
+
+Engine source checkouts are recognized directly through their `Engine/Build/Build.version` file. The segment is hidden
+outside Unreal projects and engine directories.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "unreal",
+    style: "powerline",
+    powerline_symbol: "",
+    foreground: "#ffffff",
+    background: "#0e1128",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ {{ .Version }}
+```
+
+:::
+
+### Properties
+
+| Name       | Type     | Description                                                      |
+| ---------- | -------- | ---------------------------------------------------------------- |
+| `.Version` | `string` | the engine version, or the raw engine association as a fallback |
+
+[unreal]: https://www.unrealengine.com/
+[templates]: /docs/configuration/templates

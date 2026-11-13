@@ -33,6 +33,7 @@ Example usage in Claude Code settings:
 }
 
 func init() {
+	addMaxColumnsLessFlag(claudeCmd)
 	RootCmd.AddCommand(claudeCmd)
 }
 

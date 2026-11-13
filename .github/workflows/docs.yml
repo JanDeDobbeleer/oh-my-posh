@@ -22,14 +22,14 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/checkout@v7.0.1
         with:
           submodules: true
           persist-credentials: false
       - name: Install Go 🗳
-        uses: ./.github/workflows/composite/bootstrap-go
+        uses: $/.github/workflows/composite/bootstrap-go
       - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: 20.9.0
       - name: Build oh-my-posh 🔧

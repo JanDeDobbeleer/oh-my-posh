@@ -13,6 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 name: Validate Code
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
@@ -24,11 +27,13 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
     - name: Checkout code
-      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      uses: actions/checkout@v7.0.1
+      with:
+        persist-credentials: false
     - name: Install Go 🗳
-      uses: ./.github/workflows/composite/bootstrap-go
+      uses: $/.github/workflows/composite/bootstrap-go
     - name: Golang CI
-      uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
+      uses: golangci/golangci-lint-action@v9.3.0
       with:
         working-directory: src
     - name: Fieldalignment

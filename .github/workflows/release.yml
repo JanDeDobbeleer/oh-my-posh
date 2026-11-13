@@ -13,9 +13,16 @@ on:
 concurrency:
   group: ${{ github.workflow }}
 
+permissions:
+  contents: read
+
 jobs:
   changelog:
     runs-on: ubuntu-latest
+    permissions:
+      # The changelog action ends with a git push, an empty one here since the
+      # commit and the tag are skipped, and git still asks for write access.
+      contents: write
     outputs:
       version: ${{ steps.changelog.outputs.version }}
       body: ${{ steps.changelog.outputs.clean_changelog }}
@@ -23,10 +30,10 @@ jobs:
       skipped: ${{ steps.changelog.outputs.skipped }}
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        uses: actions/checkout@v7.0.1
       - name: Create changelog ✍️
         id: changelog
-        uses: TriPSs/conventional-changelog-action@469f0e5e35831fbd1962706f29f65daf0a5723f2
+        uses: TriPSs/conventional-changelog-action@v6.5.0
         with:
           github-token: ${{ secrets.github_token }}
           skip-version-file: "true"
@@ -39,15 +46,19 @@ jobs:
     needs: changelog
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
-    container: ghcr.io/jandedobbeleer/golang-android-container:latest
+    # The image only has a latest tag, the digest is the one it pointed at on 2026-11-10.
+    # Update it after rebuilding the container.
+    container: ghcr.io/jandedobbeleer/golang-android-container@sha256:5b4f274d337c0873f85384c2c1cb6b75d2d9ee3378ec645f27333b8e6b7f6cdf
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - name: Build 🏗
         run: |
           cd src
           go build -o dist/posh-android-arm -ldflags="-s -w -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Version=${{ needs.changelog.outputs.version }}' -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Date=$(date)'"
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: android-artifact
           path: src/dist/posh-android-arm
@@ -62,16 +73,18 @@ jobs:
         working-directory: ${{ github.workspace }}/build
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - name: Install Go 🗳
-        uses: ./.github/workflows/composite/bootstrap-go
+        uses: $/.github/workflows/composite/bootstrap-go
       - name: Pre Build 😸
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         run: |
           ./pre.ps1 -Version ${{ needs.changelog.outputs.version }} -SDKVersion "10.0.26100.0"
       - name: Run GoReleaser 🚀
-        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de
+        uses: goreleaser/goreleaser-action@v7.3.0
         with:
           distribution: goreleaser
           version: v2.3.2
@@ -91,7 +104,7 @@ jobs:
       - name: Post Build 🤐
         run: |
           ./post.ps1
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: build-artifacts
           path: |
@@ -113,8 +126,10 @@ jobs:
         working-directory: ${{ github.workspace }}/packages/msix
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8.0.2
         with:
           name: build-artifacts
           path: dist
@@ -127,7 +142,7 @@ jobs:
         run: |
           $version = '${{ needs.changelog.outputs.version }}'.TrimStart("v")
           ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version -Copy -Sign -SDKVersion "10.0.26100.0"
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: msix-artifact-${{ matrix.arch }}
           path: |
@@ -141,7 +156,7 @@ jobs:
       - msix
       - android
     steps:
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      - uses: actions/download-artifact@v8.0.2
         with:
           merge-multiple: true
       - name: Upload version file
@@ -154,7 +169,7 @@ jobs:
           az storage blob upload-batch --destination releases/latest --overwrite true --source .
           az storage blob upload-batch --destination releases/latest --overwrite true --source . --pattern "*.appinstaller" --content-type "application/appinstaller"
       - name: Create draft release 📝
-        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3
+        uses: softprops/action-gh-release@v3.0.4
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}

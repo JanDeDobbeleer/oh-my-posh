@@ -3,6 +3,9 @@ on:
   release:
     types: [published]
 
+# The callee only posts the release notes to the webhook.
+permissions: {}
+
 jobs:
   notify:
     uses: jandedobbeleer/workflows/.github/workflows/discord.yml@main

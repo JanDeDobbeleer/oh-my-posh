@@ -6,6 +6,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  # commitlint lists the commits of the pull request through the API.
+  pull-requests: read
+
 jobs:
   commitlint:
     uses: jandedobbeleer/workflows/.github/workflows/commits.yml@main

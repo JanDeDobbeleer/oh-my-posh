@@ -3,12 +3,15 @@ on:
   release:
     types: [published]
 
+# The dispatch is sent with the personal token, the job token is not used.
+permissions: {}
+
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
     - name: Notify Homebrew Repo 🙋🏾‍♀️
-      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+      uses: actions/github-script@v9.0.0
       with:
         github-token: ${{ secrets.GH_PAT }}
         script: |

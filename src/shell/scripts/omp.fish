@@ -691,7 +691,7 @@ function _omp_enter_key_handler
         return
     end
 
-    if test $validity -eq 0 || test -z (string trim -l -- "$buffer")
+    if test $validity -eq 0 || test -z (string trim -l -- "$buffer" | string collect)
         set --global _omp_new_prompt 1
         set --global _omp_tooltip_command ''
 

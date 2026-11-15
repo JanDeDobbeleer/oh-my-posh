@@ -18,6 +18,8 @@ Verified on fish 4.1.2 (2026-07 to 2026-09).
 
 ## Key bindings
 
+- Collect multiline command substitutions with `string collect` before passing them to `test`: fish otherwise
+  splits each line into a separate argument, including after `string trim` (#7934).
 - `commandline --is-valid`: 0 valid, 1 erroneous, 2 incomplete. An empty buffer also returns 1, so check the buffer
   is non-empty before treating 1 as an error. A trailing backslash returns 0 (not a continuation).
 - A parse error from `commandline --function execute` inside a binding is attributed to the binding's file and

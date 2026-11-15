@@ -36,6 +36,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 			// restored blob was saved by the primary prompt (never interrupted),
 			// so it must be refreshed from the current flags.
 			Cache.Interrupted = env.Flags().Interrupted
+			setPromptTime(Cache)
 			return
 		}
 	}
@@ -57,6 +58,7 @@ func loadCache(vars maps.Simple[any], aliases *maps.Config) {
 	tmpl.Var = make(map[string]any)
 	tmpl.Jobs = env.Flags().JobCount
 	tmpl.Version = build.Version
+	setPromptTime(tmpl)
 
 	if vars != nil {
 		tmpl.Var = vars
@@ -150,6 +152,24 @@ func overlayEnvData(tmpl *cache.Template) {
 	}
 }
 
+func setPromptTime(tmpl *cache.Template) {
+	tmpl.PromptCreatedAt = time.Time{}
+	tmpl.PromptElapsedTime = 0
+
+	if env.Flags().IsPrimary {
+		tmpl.PromptCreatedAt = time.Now().Truncate(time.Millisecond)
+		return
+	}
+
+	createdAt, OK := cache.Session.Get[int64](cache.PROMPTTIMECACHE)
+	if !OK {
+		return
+	}
+
+	tmpl.PromptCreatedAt = time.UnixMilli(createdAt)
+	tmpl.PromptElapsedTime = max(time.Since(tmpl.PromptCreatedAt).Milliseconds(), 0)
+}
+
 func restoreCache() bool {
 	defer log.Trace(time.Now())
 
@@ -176,4 +196,6 @@ func SaveCache() {
 	Cache.SegmentsCache = Cache.Segments.ToSimple()
 
 	cache.Session.Set(cache.TEMPLATECACHE, &Cache.SimpleTemplate, cache.ONEDAY)
+	// Input can remain open longer than the segment snapshot's lifetime.
+	cache.Session.Set(cache.PROMPTTIMECACHE, Cache.PromptCreatedAt.UnixMilli(), cache.INFINITE)
 }

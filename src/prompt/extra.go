@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -20,6 +21,18 @@ const (
 	Secondary
 	Debug
 )
+
+func (e *Engine) PreRenderTransient() string {
+	prompt := e.Config.TransientPrompt
+	if prompt != nil && prompt.PreRender != nil && !*prompt.PreRender {
+		// The on-demand CLI render cannot read the daemon's in-memory snapshot.
+		template.SaveCache()
+		cache.Close()
+		return ""
+	}
+
+	return e.ExtraPrompt(Transient)
+}
 
 func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	txt := e.extraPrompt(promptType)

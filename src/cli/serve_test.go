@@ -11,7 +11,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -396,6 +399,43 @@ func TestServeLoop_WaitRenderEmitsExactlyTwoRecords(t *testing.T) {
 	assert.Equal(t, "2", records[0].id)
 
 	h.quitAndWait()
+}
+
+func TestRenderCompleteTransientPreRender(t *testing.T) {
+	cases := []struct {
+		PreRender *config.Bool
+		Case      string
+	}{
+		{Case: "default"},
+		{Case: "enabled", PreRender: new(config.Bool(true))},
+		{Case: "disabled", PreRender: new(config.Bool(false))},
+	}
+
+	originalCache := template.Cache
+	t.Cleanup(func() { template.Cache = originalCache })
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			template.ResetCache()
+			engine := prompt.New(&runtime.Flags{Shell: "bash", Plain: true, IsPrimary: true})
+			engine.Config = &config.Config{
+				TransientPrompt: &config.Segment{Template: "TRANSIENT", PreRender: tc.PreRender},
+			}
+
+			var records []string
+			for record := range renderComplete(engine) {
+				records = append(records, record)
+			}
+
+			require.Len(t, records, 2)
+			require.True(t, strings.HasPrefix(records[1], prompt.TransientMarker))
+			if tc.PreRender != nil && !*tc.PreRender {
+				assert.Equal(t, prompt.TransientMarker, records[1])
+				return
+			}
+			assert.Contains(t, records[1], "TRANSIENT")
+		})
+	}
 }
 
 // TestServeLoop_RendersFollowDirectoryChanges guards against per-process

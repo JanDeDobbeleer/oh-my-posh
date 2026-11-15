@@ -356,6 +356,10 @@
     "docId": "spotify"
   },
   {
+    "type": "sshagent",
+    "docId": "sshagent"
+  },
+  {
     "type": "status",
     "docId": "status"
   },

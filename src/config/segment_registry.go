@@ -114,6 +114,7 @@ func init() {
 	gob.Register(&segments.Shell{})
 	gob.Register(&segments.Sitecore{})
 	gob.Register(&segments.Spotify{})
+	gob.Register(&segments.SSHAgent{})
 	gob.Register(&segments.Status{})
 	gob.Register(&segments.Strava{})
 	gob.Register(&segments.Svelte{})
@@ -237,6 +238,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SHELL:           func() SegmentWriter { return &segments.Shell{} },
 	SITECORE:        func() SegmentWriter { return &segments.Sitecore{} },
 	SPOTIFY:         func() SegmentWriter { return &segments.Spotify{} },
+	SSHAGENT:        func() SegmentWriter { return &segments.SSHAgent{} },
 	STATUS:          func() SegmentWriter { return &segments.Status{} },
 	STRAVA:          func() SegmentWriter { return &segments.Strava{} },
 	SVELTE:          func() SegmentWriter { return &segments.Svelte{} },

@@ -215,6 +215,8 @@ const (
 	SITECORE SegmentType = "sitecore"
 	// SPOTIFY writes the SPOTIFY status for Mac
 	SPOTIFY SegmentType = "spotify"
+	// SSHAGENT shows the ssh-agent state and its loaded keys
+	SSHAGENT SegmentType = "sshagent"
 	// STATUS writes the last know command status
 	STATUS SegmentType = "status"
 	// STRAVA is a sports activity tracker

@@ -59,6 +59,15 @@ func Transient(cfg map[string]any) {
 	}
 }
 
+func TransientTiming(cfg map[string]any) {
+	cfg["streaming"] = 100
+	cfg["transient_prompt"] = map[string]any{
+		"pre_render":     false,
+		"right_template": "TR-R",
+		"template":       "TR:{{ if not .PromptCreatedAt.IsZero }}known{{ end }}:{{ .PromptElapsedTime }}:{{ now.UnixMilli }}> ",
+	}
+}
+
 // MultiLine prepends two prompt blocks, each on its own line, so the primary prompt spans
 // three logical lines ending in "E2E:<code>>". The first line runs from "ML1" to "ML1END"
 // and is wider than the 120-column pty, so it wraps onto a second screen row; the second

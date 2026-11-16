@@ -26,6 +26,41 @@ const (
 	cwd = "Projects/oh-my-posh"
 )
 
+func TestTransientPreRenderConfig(t *testing.T) {
+	cases := []struct {
+		Expected *Bool
+		Case     string
+		Format   string
+		Contents string
+	}{
+		{Case: "json default", Format: JSON, Contents: `{"transient_prompt":{}}`},
+		{Case: "json enabled", Format: JSON, Contents: `{"transient_prompt":{"pre_render":true}}`, Expected: new(Bool(true))},
+		{Case: "json disabled", Format: JSON, Contents: `{"transient_prompt":{"pre_render":false}}`, Expected: new(Bool(false))},
+		{Case: "yaml default", Format: YAML, Contents: "transient_prompt: {}"},
+		{Case: "yaml enabled", Format: YAML, Contents: "transient_prompt:\n  pre_render: true", Expected: new(Bool(true))},
+		{Case: "yaml disabled", Format: YAML, Contents: "transient_prompt:\n  pre_render: false", Expected: new(Bool(false))},
+		{Case: "toml default", Format: TOML, Contents: "[transient_prompt]"},
+		{Case: "toml enabled", Format: TOML, Contents: "[transient_prompt]\npre_render = true", Expected: new(Bool(true))},
+		{Case: "toml disabled", Format: TOML, Contents: "[transient_prompt]\npre_render = false", Expected: new(Bool(false))},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			cfg, err := ParseBytes(tc.Format, []byte(tc.Contents))
+			require.NoError(t, err)
+			require.NotNil(t, cfg.TransientPrompt)
+			assert.Equal(t, tc.Expected, cfg.TransientPrompt.PreRender)
+
+			var buf bytes.Buffer
+			require.NoError(t, gob.NewEncoder(&buf).Encode(cfg))
+			var restored Config
+			require.NoError(t, gob.NewDecoder(&buf).Decode(&restored))
+			require.NotNil(t, restored.TransientPrompt)
+			assert.Equal(t, tc.Expected, restored.TransientPrompt.PreRender)
+		})
+	}
+}
+
 func TestMapSegmentWriterCanMap(t *testing.T) {
 	sc := &Segment{
 		Type: SESSION,

@@ -109,6 +109,43 @@ var featureScenarios = []scenario{
 		},
 	},
 	{
+		name:     "transient-timing",
+		overlays: []harness.Overlay{harness.TransientTiming},
+		skips: map[string]string{
+			"bash": "bash only supports a transient prompt inside a ble.sh session; not supported by this harness",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			readyAt := time.Now().UnixMilli()
+			// Pre-rendering would freeze the duration before this wait.
+			time.Sleep(1200 * time.Millisecond)
+			submittedAfter := time.Now().UnixMilli()
+			s.SendLine("echo timing-check")
+			screen := s.WaitFor(regexp.MustCompile(`(?s)timing-check.*timing-check.*E2E:\d+>`))
+
+			var commandLine string
+			for _, line := range s.ScreenLines() {
+				if strings.Contains(line, "echo timing-check") {
+					commandLine = strings.TrimSpace(line)
+					break
+				}
+			}
+
+			var elapsed, renderedAt int64
+			_, err := fmt.Sscanf(commandLine, "TR:known:%d:%d>", &elapsed, &renderedAt)
+			require.NoError(t, err, "%s: missing transient timing:\n%s", sh.Name, screen)
+			assert.GreaterOrEqual(t, elapsed, int64(0))
+
+			// Nushell evaluates its transient closure before Reedline reads input.
+			if sh.Name == "nu" {
+				assert.LessOrEqual(t, renderedAt, readyAt)
+				return
+			}
+
+			assert.GreaterOrEqual(t, renderedAt, submittedAfter)
+			assert.GreaterOrEqual(t, elapsed, int64(1000))
+		},
+	},
+	{
 		// transient-multiline boots with a three-line primary prompt whose first line
 		// wraps (see harness.MultiLine) plus the transient overlay, and asserts that
 		// after Enter no row of it is left above the accepted command line (#7881).

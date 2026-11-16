@@ -55,6 +55,7 @@ You need to extend or create a custom theme with your transient prompt. For exam
 | `right_template`       | `string`  | a go [text/template][go-text-template] template extended with [sprig][sprig], right-aligned at the end of the line. Supported in `zsh`, `powershell`, and `fish`, designed for single line transient prompts |
 | `filler`               | `string`  | when you want to create a line with a repeated set of characters spanning the width of the terminal. Will be added _after_ the `template` text |
 | `newline`              | `boolean` | add a newline before the prompt. The newline will not be printed under the same conditions as for primary prompt [newlines][block-newline].    |
+| `pre_render`           | `boolean` | render ahead of time when streaming; set to `false` to evaluate when the prompt is replaced. Defaults to `true`. |
 
 ## Template ([info][templates])
 
@@ -77,6 +78,48 @@ For example, to show a red `^C` in front of the transient prompt when a command 
   }
 }
 ```
+
+### Prompt timing
+
+The global `.PromptCreatedAt` and `.PromptElapsedTime` properties let a transient prompt show when the primary prompt
+was created and how long it remained open. The elapsed time includes typing, editing, and time away from the terminal;
+it is not a measurement of user inactivity or command execution.
+
+With streaming, the transient prompt is normally rendered ahead of time alongside the primary prompt.
+This keeps submission fast, but freezes time-sensitive values, including `now`, before input is submitted.
+Set `pre_render` to `false` to render when the prompt is replaced instead, while keeping primary-prompt streaming enabled:
+
+<Config
+  data={{
+    streaming: 100,
+    transient_prompt: {
+      pre_render: false,
+      template:
+        '{{ if not .PromptCreatedAt.IsZero }}' +
+        '{{ .PromptCreatedAt.Format "15:04:05" }} open ' +
+        '{{ secondsRound (div .PromptElapsedTime 1000) }} {{ end }}{{ .Shell }}> ',
+    },
+  }}
+/>
+
+For example, a prompt created at `10:00:00` and submitted at `10:00:45` shows `10:00:00 open 45s`.
+The creation time precedes rendering; it is not the previous command's exact finish time, and the elapsed duration
+is sampled when the transient render starts, not at the precise keypress.
+Interrupted input can also replace the prompt without running a command.
+
+The timestamp survives the segment cache's 24-hour expiry. If the session cache was cleared, `.PromptCreatedAt`
+is the zero time and `.PromptElapsedTime` is `0`; the example omits timing in that case.
+
+Rendering on demand adds work when input is submitted and may start an additional Oh My Posh process.
+With the background process, it also writes the prompt snapshot to the session cache so the on-demand render can read it.
+In shells other than Nushell, the transient prompt already renders on demand without streaming, so `pre_render`
+has no effect in that case.
+
+:::caution Nushell
+Nushell evaluates its transient prompt before reading input, independently of Oh My Posh streaming.
+Setting `pre_render` to `false` cannot defer that evaluation. `.PromptCreatedAt` remains available, but
+`.PromptElapsedTime` and `now` reflect the early render, not the moment input is submitted.
+:::
 
 ## Enable the feature
 

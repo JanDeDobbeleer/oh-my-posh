@@ -40,6 +40,23 @@ it with `.$` to reference it directly.
 | `.Version`      | `string`              | the Oh My Posh version                                                            |
 | `.Segment`      | [`Segment`](#segment) | the current segment's metadata                                                    |
 
+### Prompt timing
+
+- `.PromptCreatedAt` (`time.Time`): when the primary prompt's template context was created, before rendering.
+  Extra prompts reuse that timestamp. It is the zero time when no timestamp is available.
+- `.PromptElapsedTime` (`int64`): milliseconds from `.PromptCreatedAt` to the current render.
+  It is `0` on the primary prompt or when the timestamp is unavailable.
+
+These properties do not require a time segment. They measure prompt lifetime, not command execution time or user
+inactivity: elapsed time includes typing and editing. Prompt creation is not the previous command's exact finish time.
+
+The timestamp is stored for the shell session independently of the segment cache's 24-hour expiry.
+Use `.PromptCreatedAt.IsZero` to distinguish an unavailable timestamp from a real value.
+
+Pre-rendered transient prompts use the primary prompt's context, so their `.PromptElapsedTime` is `0`.
+Set [`transient_prompt.pre_render`][transient-timing] to `false` to evaluate it when input is submitted instead.
+Nushell evaluates transient prompts before reading input regardless of this option; see the linked timing details.
+
 ### Segment
 
 | Name             | Type     | Description                                 |
@@ -285,5 +302,6 @@ This can be used in templates and icons/text inside your config.
 [maps]: /docs/configuration/general#maps
 [status]: /docs/segments/system/status
 [templates]: /docs/configuration/segment
+[transient-timing]: /docs/configuration/transient#prompt-timing
 [regexpms]: https://pkg.go.dev/regexp#Regexp.MatchString
 [regexpra]: https://pkg.go.dev/regexp#Regexp.ReplaceAllString

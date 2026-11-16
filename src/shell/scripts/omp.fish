@@ -181,6 +181,7 @@ function _omp_start_streaming
         --pipestatus="$_omp_pipestatus" \
         --no-status=$_omp_no_status \
         --execution-time=$_omp_execution_time \
+        --job-count=$_omp_job_count \
         --stack-count=$_omp_stack_count
 
     $stream_cmd | fish --no-config -c $_omp_streaming_reader_script $fish_pid "$_omp_streaming_tempfile" &
@@ -340,7 +341,7 @@ function _omp_serve_request
         set cleared false
     end
 
-    set --local json '{"command":"render","id":'$_omp_serve_cycle',"shell":"fish","shell-version":"'$FISH_VERSION'","status":'$_omp_status',"pipestatus":"'"$_omp_pipestatus"'","no-status":'$_omp_no_status',"execution-time":'$exec_time',"stack-count":'(count $dirstack)',"terminal-width":'$width',"cleared":'$cleared',"pwd":"'(_omp_serve_escape $PWD)'"}'
+    set --local json '{"command":"render","id":'$_omp_serve_cycle',"shell":"fish","shell-version":"'$FISH_VERSION'","status":'$_omp_status',"pipestatus":"'"$_omp_pipestatus"'","no-status":'$_omp_no_status',"execution-time":'$exec_time',"job-count":'$_omp_job_count',"stack-count":'(count $dirstack)',"terminal-width":'$width',"cleared":'$cleared',"pwd":"'(_omp_serve_escape $PWD)'"}'
 
     # a fifo write with no reader blocks forever - only write while the
     # daemon pipeline is alive (the daemon holds the fifo open read-write,
@@ -443,6 +444,7 @@ function _omp_get_prompt
         --pipestatus="$_omp_pipestatus" \
         --no-status=$_omp_no_status \
         --execution-time=$_omp_execution_time \
+        --job-count=$_omp_job_count \
         --stack-count=$_omp_stack_count \
         $argv[2..]
 end
@@ -477,6 +479,7 @@ function fish_prompt
     set --global _omp_no_status false
     set --global _omp_execution_time "$CMD_DURATION$cmd_duration"
     set --global _omp_stack_count (count $dirstack)
+    set --global _omp_job_count (count (jobs))
 
     # check if variable set, < 3.2 case
     if set --query _omp_last_command && test -z "$_omp_last_command"

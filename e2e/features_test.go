@@ -46,6 +46,25 @@ var featureScenarios = []scenario{
 		},
 	},
 	{
+		name:     "job-count",
+		overlays: []harness.Overlay{harness.JobCount},
+		skips: map[string]string{
+			"bash": "this scenario uses fish job control syntax",
+			"zsh":  "this scenario uses fish job control syntax",
+			"pwsh": "this scenario uses fish job control syntax",
+			"nu":   "this scenario uses fish job control syntax",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			require.Contains(t, s.Screen(), "E2E:0>")
+
+			s.SendLine("sleep 30 &")
+			s.WaitFor(regexp.MustCompile(`E2E:1>`))
+
+			s.SendLine("set job_pids (jobs --pid); kill $job_pids; wait $job_pids; echo jobs-cleared")
+			s.WaitFor(regexp.MustCompile(`(?s)jobs-cleared.*E2E:0>`))
+		},
+	},
+	{
 		// transient boots with the transient_prompt overlay, types a command, and
 		// asserts that once the command's output and the following prompt have both
 		// landed, the screen row that carried the accepted command line was

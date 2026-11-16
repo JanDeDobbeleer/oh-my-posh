@@ -40,6 +40,15 @@ func BaseConfig() map[string]any {
 	}
 }
 
+// JobCount changes the prompt to display the number of shell jobs.
+func JobCount(cfg map[string]any) {
+	blocks, _ := cfg["blocks"].([]any)
+	block, _ := blocks[0].(map[string]any)
+	segments, _ := block["segments"].([]any)
+	segment, _ := segments[0].(map[string]any)
+	segment["template"] = "E2E:{{ .Jobs }}>"
+}
+
 // Transient enables the transient prompt feature. It replaces the primary prompt with
 // "TR> " once a command has been accepted.
 func Transient(cfg map[string]any) {

@@ -50,6 +50,7 @@ type Segment struct {
 	Options       options.Map `json:"options,omitempty" toml:"options,omitempty" yaml:"options,omitempty"`
 	Properties    options.Map `json:"-" toml:"properties,omitempty" yaml:"-"`
 	Cache         *Cache      `json:"cache,omitempty" toml:"cache,omitempty" yaml:"cache,omitempty"`
+	PreRender     *Bool       `json:"pre_render,omitempty" toml:"pre_render,omitempty" yaml:"pre_render,omitempty"`
 	presentFields map[string]bool
 	// text is where the rendered text lives when there is no writer to hold it: the writer
 	// normally stores it (SegmentWriter.SetText/Text), which a build with no writers cannot do.

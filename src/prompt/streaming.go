@@ -156,8 +156,11 @@ func (e *Engine) StreamPrimary() <-chan string {
 		// resets RPROMPT (see _omp_zle-line-init in omp.zsh), so the record
 		// cannot carry a right-aligned template. Skip it to make the script
 		// fall back to the eval path which sets both PS1 and RPROMPT.
-		if e.Env.Shell() == shell.ZSH && e.Config.TransientPrompt != nil && len(e.Config.TransientPrompt.RightTemplate) != 0 {
-			return
+		prompt := e.Config.TransientPrompt
+		if e.Env.Shell() == shell.ZSH && prompt != nil && len(prompt.RightTemplate) != 0 {
+			if prompt.PreRender == nil || *prompt.PreRender {
+				return
+			}
 		}
 
 		// The zsh script renders the transient prompt one column narrower to avoid
@@ -168,7 +171,7 @@ func (e *Engine) StreamPrimary() <-chan string {
 			defer e.rectifyTerminalWidth(1)
 		}
 
-		sendRecord(TransientMarker + e.ExtraPrompt(Transient))
+		sendRecord(TransientMarker + e.PreRenderTransient())
 	}
 
 	go func() {

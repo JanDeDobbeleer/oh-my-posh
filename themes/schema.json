@@ -5719,6 +5719,12 @@
       "anyOf": [
         {
           "properties": {
+            "pre_render": {
+              "type": "boolean",
+              "title": "Pre-render",
+              "description": "Render the transient prompt ahead of time when streaming. Set to false to evaluate time-sensitive templates when the primary prompt is replaced instead. Nushell evaluates transient prompts before reading input regardless of this option.",
+              "default": true
+            },
             "filler": {
               "$ref": "#/definitions/filler"
             },

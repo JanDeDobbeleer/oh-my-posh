@@ -19,6 +19,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	testifymock "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func setupExtraPromptTest(t *testing.T, sh string, flags *runtime.Flags) *mock.Environment {
@@ -427,24 +428,40 @@ func setupExtraStreamingTestEnv(t *testing.T, sh string) *mock.Environment {
 }
 
 func TestStreamPrimary_TransientRecordSkippedForZSHRightTemplate(t *testing.T) {
-	env := setupExtraStreamingTestEnv(t, shell.ZSH)
-
-	engine := &Engine{
-		Config: &config.Config{
-			Blocks: []*config.Block{},
-			TransientPrompt: &config.Segment{
-				Template:      "L>",
-				RightTemplate: "R>",
-			},
-		},
-		Env: env,
+	cases := []struct {
+		PreRender *config.Bool
+		Case      string
+	}{
+		{Case: "default"},
+		{Case: "enabled", PreRender: new(config.Bool(true))},
+		{Case: "disabled", PreRender: new(config.Bool(false))},
 	}
 
-	out := engine.StreamPrimary()
-	prompts := collectChannelOutput(out, 100*time.Millisecond)
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := setupExtraStreamingTestEnv(t, shell.ZSH)
+			engine := &Engine{
+				Config: &config.Config{
+					TransientPrompt: &config.Segment{
+						Template:      "L>",
+						RightTemplate: "R>",
+						PreRender:     tc.PreRender,
+					},
+				},
+				Env: env,
+			}
 
-	for _, prompt := range prompts {
-		assert.False(t, strings.HasPrefix(prompt, TransientMarker), "no transient record should be streamed for zsh with a right template")
+			prompts := collectChannelOutput(engine.StreamPrimary(), time.Second)
+			if tc.PreRender != nil && !*tc.PreRender {
+				require.Len(t, prompts, 2)
+				assert.Equal(t, TransientMarker, prompts[1])
+				return
+			}
+
+			for _, text := range prompts {
+				assert.False(t, strings.HasPrefix(text, TransientMarker))
+			}
+		})
 	}
 }
 

@@ -64,23 +64,60 @@ func TestStreamPrimary_NoSegments(t *testing.T) {
 }
 
 func TestStreamPrimary_TransientRecord(t *testing.T) {
-	env := setupStreamingTestEnv()
-
-	engine := &Engine{
-		Config: &config.Config{
-			Blocks: []*config.Block{},
-		},
-		Env: env,
+	cases := []struct {
+		PreRender *config.Bool
+		Case      string
+		Slow      bool
+	}{
+		{Case: "default"},
+		{Case: "enabled", PreRender: new(config.Bool(true))},
+		{Case: "disabled", PreRender: new(config.Bool(false))},
+		{Case: "default after pending segments", Slow: true},
+		{Case: "enabled after pending segments", PreRender: new(config.Bool(true)), Slow: true},
+		{Case: "disabled after pending segments", PreRender: new(config.Bool(false)), Slow: true},
 	}
 
-	out := engine.StreamPrimary()
-	prompts := collectChannelOutput(out, 100*time.Millisecond)
+	originalCache := template.Cache
+	t.Cleanup(func() { template.Cache = originalCache })
 
-	// Initial prompt followed by a marker-prefixed transient record
-	assert.Len(t, prompts, 2)
-	assert.False(t, strings.HasPrefix(prompts[0], TransientMarker), "Initial prompt should not carry the transient marker")
-	assert.True(t, strings.HasPrefix(prompts[1], TransientMarker), "Second record should carry the transient marker")
-	assert.NotEmpty(t, strings.TrimPrefix(prompts[1], TransientMarker), "Transient record should contain the rendered prompt")
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			env := setupStreamingTestEnv()
+			engine := &Engine{
+				Config: &config.Config{
+					TransientPrompt: &config.Segment{Template: "TRANSIENT", PreRender: tc.PreRender},
+				},
+				Env: env,
+			}
+
+			expectedRecords := 2
+			if tc.Slow {
+				mockSlowSession(env, 50*time.Millisecond)
+				engine.Config.Blocks = []*config.Block{{
+					Type:      config.Prompt,
+					Alignment: config.Left,
+					Segments:  []*config.Segment{{Type: config.SESSION, Timeout: 5}},
+				}}
+				expectedRecords = 4
+			}
+
+			prompts := collectChannelOutput(engine.StreamPrimary(), time.Second)
+			require.Len(t, prompts, expectedRecords)
+			assert.False(t, strings.HasPrefix(prompts[0], TransientMarker))
+			for _, text := range prompts {
+				if !strings.HasPrefix(text, TransientMarker) {
+					continue
+				}
+				if tc.PreRender != nil && !*tc.PreRender {
+					assert.Equal(t, TransientMarker, text)
+					continue
+				}
+				assert.Contains(t, text, "TRANSIENT")
+			}
+
+			assert.Contains(t, engine.ExtraPrompt(Transient), "TRANSIENT", "on-demand rendering remains available")
+		})
+	}
 }
 
 // mockSlowSession configures env's Session-segment dependencies (SSH_CONNECTION,

@@ -30,6 +30,8 @@
 
 ## Segments and cache
 
+- After adding config fields, regenerate the embedded DSC schema with
+  `UPDATE_SCHEMAS=1 go test ./cli/dsc ./cli/font`; shared segment fields affect it even without DSC code changes.
 - Treat `mem.SwapMemory()` errors as returning a nil stat: gopsutil can fail reading `/proc/vmstat` on Android/Termux,
   so fall back to `VirtualMemoryStat.SwapTotal` and `SwapFree` instead of dereferencing the result.
 - Segment writers gob-encode only exported fields; `segments.Base.env/options` are unexported. On cache restore,
@@ -47,6 +49,12 @@
 
 ## Streaming and serve daemon
 
+- Default-on config booleans must preserve an explicit `false` through the gob cache: use `config.Bool` rather
+  than `*bool`, because gob omits a plain pointer-to-false struct field and restores it as nil.
+- Disabling transient pre-rendering must still emit a marker-only transient record: shell integrations fall
+  back to on-demand rendering for an empty payload, and Clink's wait-mode client requires both records.
+- With transient pre-rendering disabled, publish the session snapshot before the marker-only record: the
+  on-demand CLI fallback cannot access the serve daemon's in-memory template context.
 - `"streaming": <ms>` also becomes every segment's pending timeout, overriding segment `timeout`.
 - `stream` emits the transient prompt as a `\x1e`-prefixed NUL-terminated record (initial, and again once all
   segments resolve). Serve records are `<id>\x1f<payload>\0`; a wait-mode request always yields exactly 2, even on

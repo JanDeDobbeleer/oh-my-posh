@@ -439,7 +439,7 @@ func renderComplete(eng *prompt.Engine) <-chan string {
 
 		records <- eng.Primary()
 		sent++
-		records <- prompt.TransientMarker + eng.ExtraPrompt(prompt.Transient)
+		records <- prompt.TransientMarker + eng.PreRenderTransient()
 		sent++
 	}()
 

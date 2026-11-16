@@ -15,6 +15,8 @@
 - go-pty's Windows `Cmd` resolves bare names relative to `Cmd.Dir`; pass absolute binary paths.
 - On Windows, `bash` on PATH is System32's WSL launcher; `harness.LookupShellBinary` derives Git Bash from
   `git.exe`.
+- Nushell evaluates `TRANSIENT_PROMPT_COMMAND` before Reedline reads input. Test its render timestamp against
+  prompt readiness, not submission; `pre_render` only controls Oh My Posh's own streaming pre-render.
 
 ## WSL
 

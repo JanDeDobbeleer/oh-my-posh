@@ -3,12 +3,15 @@ package template
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // newLoadCacheMockEnv builds a mock environment stubbed with sane live values
@@ -178,4 +181,85 @@ func TestLoadCacheInvalidEnvData(t *testing.T) {
 	assert.Equal(t, "jan", Cache.UserName)
 	assert.Equal(t, "live-host", Cache.HostName)
 	assert.Equal(t, "pwsh", Cache.Shell)
+}
+
+func TestLoadCachePromptTime(t *testing.T) {
+	cases := []struct {
+		Case              string
+		Elapsed           time.Duration
+		Saved             bool
+		KeepTemplateCache bool
+		DeletePromptTime  bool
+		Primary           bool
+	}{
+		{Case: "primary creates a timestamp", Primary: true},
+		{Case: "primary replaces the preceding timestamp", Primary: true, Saved: true, Elapsed: time.Hour},
+		{Case: "extra prompt restores the timestamp", Saved: true, KeepTemplateCache: true, Elapsed: time.Minute},
+		{Case: "timestamp survives expired template data", Saved: true, Elapsed: 48 * time.Hour},
+		{Case: "missing timestamp is unknown"},
+		{Case: "cached timestamp is not used when session timing is missing", Saved: true, KeepTemplateCache: true, DeletePromptTime: true},
+		{Case: "clock moving backward never produces a negative duration", Saved: true, Elapsed: -time.Hour},
+	}
+
+	originalCache, originalEnv := Cache, env
+	snapshot, hadSnapshot := cache.Session.Get[cache.SimpleTemplate](cache.TEMPLATECACHE)
+	timestamp, hadTimestamp := cache.Session.Get[int64](cache.PROMPTTIMECACHE)
+	t.Cleanup(func() {
+		Cache, env = originalCache, originalEnv
+		cache.Session.Delete(cache.TEMPLATECACHE)
+		cache.Session.Delete(cache.PROMPTTIMECACHE)
+		if hadSnapshot {
+			cache.Session.Set(cache.TEMPLATECACHE, snapshot, cache.ONEDAY)
+		}
+		if hadTimestamp {
+			cache.Session.Set(cache.PROMPTTIMECACHE, timestamp, cache.INFINITE)
+		}
+	})
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			cache.Session.Delete(cache.TEMPLATECACHE)
+			cache.Session.Delete(cache.PROMPTTIMECACHE)
+
+			var createdAt time.Time
+			if tc.Saved {
+				env = newLoadCacheMockEnv(&runtime.Flags{HasExtra: true})
+				loadCache(nil, &maps.Config{})
+				Cache.PromptCreatedAt = Cache.PromptCreatedAt.Add(-tc.Elapsed)
+				createdAt = Cache.PromptCreatedAt
+				SaveCache()
+				saved, OK := cache.Session.Get[int64](cache.PROMPTTIMECACHE)
+				require.True(t, OK)
+				assert.Equal(t, createdAt.UnixMilli(), saved)
+			}
+
+			if !tc.KeepTemplateCache {
+				cache.Session.Delete(cache.TEMPLATECACHE)
+			}
+			if tc.DeletePromptTime {
+				cache.Session.Delete(cache.PROMPTTIMECACHE)
+				createdAt = time.Time{}
+			}
+
+			flags := &runtime.Flags{}
+			env = newLoadCacheMockEnv(flags)
+			flags.IsPrimary = tc.Primary
+			before := time.Now().Truncate(time.Millisecond)
+			loadCache(nil, &maps.Config{})
+
+			if tc.Primary {
+				assert.False(t, Cache.PromptCreatedAt.Before(before))
+				assert.False(t, Cache.PromptCreatedAt.After(time.Now()))
+				assert.Zero(t, Cache.PromptElapsedTime)
+				return
+			}
+
+			assert.True(t, createdAt.Equal(Cache.PromptCreatedAt))
+			if createdAt.IsZero() || tc.Elapsed < 0 {
+				assert.Zero(t, Cache.PromptElapsedTime)
+				return
+			}
+			assert.InDelta(t, max(tc.Elapsed.Milliseconds(), 0), Cache.PromptElapsedTime, 1000)
+		})
+	}
 }

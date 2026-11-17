@@ -45,10 +45,7 @@ export default {
     colorMode: {
       defaultMode: 'light',
       disableSwitch: false,
-      // false, so the toggle is light <-> dark and nothing else. With it on, Docusaurus adds a
-      // third "system" step to the cycle that looks identical to whichever of the two the OS is
-      // already set to - a click that appears to do nothing.
-      respectPrefersColorScheme: false,
+      respectPrefersColorScheme: true,
     },
     prism: {
       // Matches ConfigEditor's own DARK_COLORS/LIGHT_COLORS pair (see

@@ -1,0 +1,29 @@
+# Plumber overlay: inherits every control from the CLI's built-in
+# baseline, only the differences for this repository are written here.
+# Run 'plumber config resolve' to see the full effective config.
+extends: plumber:default
+version: '2.0'
+
+github:
+  controls:
+    githubActionMustComeFromAuthorizedSources:
+      # Keep the curated default list and trust the release, lint and
+      # housekeeping actions this repository uses on top of it.
+      includePlumberDefaults: true
+      trustedGithubActions:
+        - TriPSs/conventional-changelog-action
+        - softprops/action-gh-release
+        - DavidAnson/markdownlint-cli2-action
+        - dessant/lock-threads
+        - wagoid/commitlint-github-action
+        - sersoft-gmbh/setup-gh-cli-action
+
+    actionsMustBePinnedByCommitSha:
+      # The default owners, plus the maintainer's own repositories: the
+      # shared workflows and the Bluesky action are followed on main on purpose.
+      trustedOwners:
+        - actions
+        - github
+        - dependabot
+        - jandedobbeleer
+        - JanDeDobbeleer

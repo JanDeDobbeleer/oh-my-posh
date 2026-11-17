@@ -83,9 +83,12 @@ func (p *Pulumi) getPulumiStackName() {
 
 	stackNameFile := p.Name + "-" + p.workspaceSHA1 + "-" + "workspace.json"
 
-	homedir := p.env.Home()
+	pulumiHome := p.env.Getenv("PULUMI_HOME")
+	if pulumiHome == "" {
+		pulumiHome = filepath.Join(p.env.Home(), ".pulumi")
+	}
 
-	workspaceCacheDir := filepath.Join(homedir, ".pulumi", "workspaces")
+	workspaceCacheDir := filepath.Join(pulumiHome, "workspaces")
 	if !p.env.HasFolder(workspaceCacheDir) || !p.env.HasFilesInDir(workspaceCacheDir, stackNameFile) {
 		return
 	}

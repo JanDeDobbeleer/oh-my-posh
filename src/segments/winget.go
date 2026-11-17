@@ -1,10 +1,12 @@
 package segments
 
 import (
+	"math"
 	"strings"
 	"unicode"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"golang.org/x/text/width"
 )
 
 type WinGet struct {
@@ -83,6 +85,11 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 		return packages
 	}
 
+	// Without a Source column, Available runs to the end of the line
+	if len(columnIndices) == 4 {
+		columnIndices = append(columnIndices, math.MaxInt)
+	}
+
 	// Second pass: process data lines after separator
 	for i := separatorIndex + 1; i < len(lines); i++ {
 		line := lines[i]
@@ -97,7 +104,7 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 		}
 
 		// Skip lines that are too short to contain all fields
-		if len(line) < columnIndices[3] {
+		if cellCount(line) < columnIndices[3] {
 			continue
 		}
 
@@ -128,16 +135,18 @@ func (w *WinGet) parseWinGetOutput(output string) []WinGetPackage {
 func findColumnIndices(headerLine string) []int {
 	var allIndices []int
 	prevWasLetter := false
+	column := 0
 
-	for i, char := range headerLine {
+	for _, char := range headerLine {
 		isLetter := unicode.IsLetter(char)
 
 		if isLetter && !prevWasLetter {
 			// Found transition from non-letter to letter - this is a column start
-			allIndices = append(allIndices, i)
+			allIndices = append(allIndices, column)
 		}
 
 		prevWasLetter = isLetter
+		column += cellWidth(char)
 	}
 
 	// Get the last 5 column positions (Name, Id, Version, Available, Source)
@@ -159,11 +168,39 @@ func findColumnIndices(headerLine string) []int {
 }
 
 func extractField(line string, startIndex, endIndex int) string {
-	if startIndex >= len(line) {
-		return ""
+	var field strings.Builder
+	column := 0
+
+	for _, char := range line {
+		if column >= endIndex {
+			break
+		}
+
+		if column >= startIndex {
+			field.WriteRune(char)
+		}
+
+		column += cellWidth(char)
 	}
-	if endIndex > len(line) {
-		endIndex = len(line)
+
+	return strings.TrimSpace(field.String())
+}
+
+func cellCount(line string) int {
+	count := 0
+	for _, char := range line {
+		count += cellWidth(char)
 	}
-	return strings.TrimSpace(line[startIndex:endIndex])
+
+	return count
+}
+
+// winget lines its columns up in terminal cells, and wide characters such as CJK take two cells.
+func cellWidth(char rune) int {
+	switch width.LookupRune(char).Kind() {
+	case width.EastAsianWide, width.EastAsianFullwidth:
+		return 2
+	default:
+		return 1
+	}
 }

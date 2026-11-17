@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+	runtimepath "github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -254,6 +255,199 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
 		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestFormat(t *testing.T) {
+	originalCache := template.Cache
+	t.Cleanup(func() {
+		template.Cache = originalCache
+	})
+
+	cases := []struct {
+		name      string
+		inputPath string
+		options   options.Map
+		goos      string
+		expected  string
+		cygPath   bool
+	}{
+		{
+			name:      "home mapping and short style",
+			inputPath: "/home/someone/projects/work/src",
+			options: options.Map{
+				options.Style:       AgnosterShort,
+				HomeIcon:            "H",
+				FolderIcon:          "F",
+				FolderSeparatorIcon: "/",
+				MaxDepth:            1,
+			},
+			goos:     runtime.DARWIN,
+			expected: "H/F/src",
+		},
+		{
+			name:      "custom mapping and short style",
+			inputPath: "/workspace/app/internal/main.go",
+			options: options.Map{
+				options.Style:          AgnosterShort,
+				FolderIcon:             "...",
+				FolderSeparatorIcon:    "/",
+				MaxDepth:               1,
+				MappedLocationsEnabled: false,
+				MappedLocations:        map[string]string{"/workspace": "W"},
+			},
+			goos:     runtime.DARWIN,
+			expected: "W/.../main.go",
+		},
+		{
+			name:      "relative path short style",
+			inputPath: "src/app/internal/main.go",
+			options: options.Map{
+				options.Style:       AgnosterShort,
+				FolderIcon:          "...",
+				FolderSeparatorIcon: "/",
+				MaxDepth:            1,
+			},
+			goos:     runtime.DARWIN,
+			expected: "src/.../main.go",
+		},
+		{
+			name:      "untrusted path text",
+			inputPath: "/workspace/{{ .Location }}/<red>",
+			options: options.Map{
+				options.Style:          Full,
+				MappedLocationsEnabled: false,
+				FolderSeparatorIcon:    "/",
+			},
+			goos:     runtime.DARWIN,
+			expected: runtimepath.Separator() + "workspace/{{ .Location }}/<<>red<>>",
+		},
+		{
+			name:      "cygwin input does not run cygpath",
+			inputPath: `C:\repo\src`,
+			options: options.Map{
+				options.Style: AgnosterGit,
+			},
+			cygPath:  true,
+			goos:     runtime.WINDOWS,
+			expected: "C:/repo/src",
+		},
+		{
+			name:      "windows slash path home mapping",
+			inputPath: "C:/Users/someone/projects/work/src",
+			options: options.Map{
+				options.Style:       AgnosterShort,
+				HomeIcon:            "H",
+				FolderIcon:          "F",
+				FolderSeparatorIcon: "/",
+				MaxDepth:            1,
+			},
+			goos:     runtime.WINDOWS,
+			expected: "H/F/src",
+		},
+		{
+			name:      "windows backslash path home mapping",
+			inputPath: `C:\Users\someone\projects\work\src`,
+			options: options.Map{
+				options.Style:       AgnosterShort,
+				HomeIcon:            "H",
+				FolderIcon:          "F",
+				FolderSeparatorIcon: "/",
+				MaxDepth:            1,
+			},
+			goos:     runtime.WINDOWS,
+			expected: "H/F/src",
+		},
+		{
+			name:      "windows slash path custom mapping",
+			inputPath: "C:/workspace/app/internal/main.go",
+			options: options.Map{
+				options.Style:          AgnosterShort,
+				FolderIcon:             "...",
+				FolderSeparatorIcon:    "/",
+				MaxDepth:               1,
+				MappedLocationsEnabled: false,
+				MappedLocations:        map[string]string{"C:/workspace": "W"},
+			},
+			goos:     runtime.WINDOWS,
+			expected: "W/.../main.go",
+		},
+		{
+			name:      "windows backslash path custom mapping",
+			inputPath: `C:\workspace\app\internal\main.go`,
+			options: options.Map{
+				options.Style:          AgnosterShort,
+				FolderIcon:             "...",
+				FolderSeparatorIcon:    "/",
+				MaxDepth:               1,
+				MappedLocationsEnabled: false,
+				MappedLocations:        map[string]string{`C:\workspace`: "W"},
+			},
+			goos:     runtime.WINDOWS,
+			expected: "W/.../main.go",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.goos == runtime.WINDOWS && !tc.cygPath && runtimepath.Separator() != `\` {
+				t.Skip("requires native Windows path normalization")
+			}
+
+			env := new(mock.Environment)
+			home := homeDir
+			if tc.goos == runtime.WINDOWS {
+				home = homeDirWindows
+			}
+			env.On("Home").Return(home)
+			env.On("GOOS").Return(tc.goos)
+			env.On("IsWsl").Return(false)
+			env.On("Shell").Return(shell.GENERIC)
+			env.On("Flags").Return(&runtime.Flags{})
+			if tc.cygPath {
+				env.On("HasParentFilePath", ".git", false).Return(&runtime.FileInfo{ParentFolder: "C:/repo"}, nil)
+			}
+
+			template.Cache = new(cache.Template)
+			template.Init(env, nil, nil)
+
+			pathSeparator := runtimepath.Separator()
+			if tc.goos == runtime.WINDOWS {
+				pathSeparator = `\`
+			}
+			if tc.cygPath {
+				pathSeparator = "/"
+			}
+			path := &Path{
+				pathSeparator: pathSeparator,
+				cygPath:       tc.cygPath,
+				root:          "/original",
+				relative:      "cwd",
+				pwd:           "/original/cwd",
+				RootDir:       true,
+				Path:          template.Markup("original"),
+				Folders:       Folders{{Name: "cwd", Path: "/original/cwd"}},
+			}
+			path.Init(tc.options, env)
+
+			originalFolder := path.Folders[0]
+			inputPath := tc.inputPath
+			if tc.goos != runtime.WINDOWS {
+				inputPath = strings.ReplaceAll(inputPath, "/", runtimepath.Separator())
+			}
+			got := renderTemplateNoTrimSpace(env, "{{ .Path.Format .InputPath }}", map[string]any{
+				"Path":      path,
+				"InputPath": inputPath,
+			})
+
+			assert.Equal(t, tc.expected, got)
+			assert.Equal(t, "/original", path.root)
+			assert.Equal(t, "cwd", path.relative)
+			assert.Equal(t, "/original/cwd", path.pwd)
+			assert.True(t, path.RootDir)
+			assert.Equal(t, template.Markup("original"), path.Path)
+			assert.Same(t, originalFolder, path.Folders[0])
+		})
 	}
 }
 

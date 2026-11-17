@@ -14,21 +14,24 @@ import (
 
 func TestPulumi(t *testing.T) {
 	cases := []struct {
-		StackError         error
-		AboutError         error
-		About              string
-		YAMLConfig         string
-		JSONConfig         string
-		Case               string
-		ExpectedString     string
-		Stack              string
-		AboutCache         string
-		WorkSpaceFile      string
-		HasCommand         bool
-		FetchAbout         bool
-		HasWorkspaceFolder bool
-		FetchStack         bool
-		ExpectedEnabled    bool
+		StackError                error
+		AboutError                error
+		About                     string
+		YAMLConfig                string
+		JSONConfig                string
+		Case                      string
+		ExpectedString            string
+		Stack                     string
+		AboutCache                string
+		PulumiHome                string
+		WorkSpaceFile             string
+		DefaultWorkSpaceFile      string
+		HasCommand                bool
+		FetchAbout                bool
+		HasWorkspaceFolder        bool
+		HasDefaultWorkspaceFolder bool
+		FetchStack                bool
+		ExpectedEnabled           bool
 	}{
 		{
 			Case:            "no pulumi command",
@@ -59,7 +62,16 @@ description: A Console App
 			JSONConfig:      `{ "name": "oh-my-posh" }`,
 		},
 		{
-			Case:               "no stack present",
+			Case:               "missing workspace file",
+			ExpectedString:     "\ue873",
+			ExpectedEnabled:    true,
+			HasCommand:         true,
+			HasWorkspaceFolder: true,
+			FetchStack:         true,
+			JSONConfig:         `{ "name": "oh-my-posh" }`,
+		},
+		{
+			Case:               "pulumi stack in default home for unset or empty PULUMI_HOME",
 			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
@@ -69,14 +81,38 @@ description: A Console App
 			WorkSpaceFile:      `{ "stack": "1337" }`,
 		},
 		{
-			Case:               "pulumi stack",
+			Case:               "pulumi stack in custom absolute home",
 			ExpectedString:     "\ue873 1337",
 			ExpectedEnabled:    true,
 			HasCommand:         true,
 			HasWorkspaceFolder: true,
 			FetchStack:         true,
+			PulumiHome:         filepath.Clean("/custom/pulumi"),
 			JSONConfig:         `{ "name": "oh-my-posh" }`,
 			WorkSpaceFile:      `{ "stack": "1337" }`,
+		},
+		{
+			Case:               "pulumi stack in custom relative home",
+			ExpectedString:     "\ue873 1337",
+			ExpectedEnabled:    true,
+			HasCommand:         true,
+			HasWorkspaceFolder: true,
+			FetchStack:         true,
+			PulumiHome:         filepath.Join("project", ".pulumi"),
+			JSONConfig:         `{ "name": "oh-my-posh" }`,
+			WorkSpaceFile:      `{ "stack": "1337" }`,
+		},
+		{
+			Case:                      "custom home does not fall back to default home",
+			ExpectedString:            "\ue873",
+			ExpectedEnabled:           true,
+			HasCommand:                true,
+			HasWorkspaceFolder:        true,
+			HasDefaultWorkspaceFolder: true,
+			FetchStack:                true,
+			PulumiHome:                filepath.Clean("/custom/pulumi"),
+			JSONConfig:                `{ "name": "oh-my-posh" }`,
+			DefaultWorkSpaceFile:      `{ "stack": "stale" }`,
 		},
 		{
 			Case:               "pulumi URL",
@@ -164,15 +200,15 @@ description: A Console App
 
 		pwd := "/home/foobar/Work/oh-my-posh/pulumi/projects/awesome-project"
 		env.On("Pwd").Return(pwd)
-		env.On("Home").Return(filepath.Clean("/home/foobar"))
+		home := filepath.Clean("/home/foobar")
+		env.On("Home").Return(home)
+		env.On("Getenv", "PULUMI_HOME").Return(tc.PulumiHome)
 
 		env.On("HasFiles", pulumiYAML).Return(len(tc.YAMLConfig) > 0)
 		env.On("FileContent", pulumiYAML).Return(tc.YAMLConfig, nil)
 
 		env.On("HasFiles", pulumiJSON).Return(len(tc.JSONConfig) > 0)
 		env.On("FileContent", pulumiJSON).Return(tc.JSONConfig, nil)
-
-		env.On("HasFolder", filepath.Clean("/home/foobar/.pulumi/workspaces")).Return(tc.HasWorkspaceFolder)
 
 		pulumi := &Pulumi{}
 
@@ -185,10 +221,21 @@ description: A Console App
 
 		sha1 := pulumi.sha1HexString(pwd + path.Separator() + fileName)
 		workspaceFile := fmt.Sprintf("oh-my-posh-%s-workspace.json", sha1)
+		defaultWorkspaceCacheDir := filepath.Join(home, ".pulumi", "workspaces")
+		workspaceCacheDir := defaultWorkspaceCacheDir
+		if tc.PulumiHome != "" {
+			workspaceCacheDir = filepath.Join(tc.PulumiHome, "workspaces")
+		}
 
-		env.On("HasFilesInDir", filepath.Clean("/home/foobar/.pulumi/workspaces"), workspaceFile).Return(len(tc.WorkSpaceFile) > 0)
+		env.On("HasFolder", workspaceCacheDir).Return(tc.HasWorkspaceFolder)
+		env.On("HasFilesInDir", workspaceCacheDir, workspaceFile).Return(len(tc.WorkSpaceFile) > 0)
+		env.On("FileContent", filepath.Join(workspaceCacheDir, workspaceFile)).Return(tc.WorkSpaceFile)
 
-		env.On("FileContent", filepath.Clean("/home/foobar/.pulumi/workspaces/"+workspaceFile)).Return(tc.WorkSpaceFile, nil)
+		if workspaceCacheDir != defaultWorkspaceCacheDir {
+			env.On("HasFolder", defaultWorkspaceCacheDir).Return(tc.HasDefaultWorkspaceFolder)
+			env.On("HasFilesInDir", defaultWorkspaceCacheDir, workspaceFile).Return(len(tc.DefaultWorkSpaceFile) > 0)
+			env.On("FileContent", filepath.Join(defaultWorkspaceCacheDir, workspaceFile)).Return(tc.DefaultWorkSpaceFile)
+		}
 
 		props := options.Map{
 			FetchStack: tc.FetchStack,

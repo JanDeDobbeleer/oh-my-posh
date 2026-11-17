@@ -35,6 +35,14 @@ import Config from "@site/src/components/Config.js";
 | `fetch_stack` | `boolean` | `false` | fetch the current stack name                                                       |
 | `fetch_about` | `boolean` | `false` | fetch the URL and user for the current stask. Requires `fetch_stack` set to `true` |
 
+## Workspace settings
+
+The segment reads the selected stack from Pulumi's `$PULUMI_HOME/workspaces` directory. When `PULUMI_HOME` is unset or
+empty, it uses `~/.pulumi/workspaces`. To keep workspace settings in a project directory, set
+`PULUMI_HOME=$PWD/.pulumi` before starting Oh My Posh. In POSIX shells, export it with
+`export PULUMI_HOME="$PWD/.pulumi"`; in PowerShell, use `$env:PULUMI_HOME = "$PWD/.pulumi"`. The segment honors that
+explicit override and does not scan the current directory for `.pulumi` implicitly.
+
 ## Template ([info][templates])
 
 :::note default template

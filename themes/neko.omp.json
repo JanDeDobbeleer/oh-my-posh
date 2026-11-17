@@ -1,67 +1,69 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-      {
-        "alignment": "left",
-        "segments": [
-          {
-            "style": "plain",
-            "template": "😺💬<#FF8000> Meow! What should I do next? ...</>",
-            "type": "text"
-          }],
-          "type": "prompt"
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "style": "plain",
+          "template": "{{ random (list \"😼💬 I run this terminal. Your keyboard is on loan.\" \"😺💬 New quest unlocked. What's our next adventure?\" \"😸💬 Beam meow up, Scotty. This branch needs a fresh start.\" \"😹💬 A wizard is never late. A cat arrives when it pleases.\" \"😻💬 Nine lives, endless side quests. Where to next?\" \"🙀💬 The Matrix just glitched. Bug or feature?\" \"😼💬 Feline command has spoken. State your next objective.\" \"😸💬 To the command line and beyond!\" \"😼💬 The plan is flawless. The snacks are classified.\" \"😾💬 Winter is coming. Commit your changes.\" \"😼💬 Look at me. I am the captain meow.\" \"😺💬 The fellowship assembles. Which path shall we take?\" \"😼💬 Mission: Impawsible. I accept the challenge.\" \"😹💬 Plot twist: the cat wrote the script.\" \"😼💬 This is the way. No merge conflicts allowed.\" \"😾💬 Boss music started. Who touched production?\" \"😺💬 Your tiny project manager is ready. What's the sprint?\" \"😽💬 Camera ready. Give me my close-up, human.\" \"😼💬 May the purrs be with you.\" \"😾💬 I find your lack of treats disturbing.\" \"🙀💬 One does not simply push to main on Friday.\" \"😼💬 My precious... keyboard. Hands off.\" \"😹💬 Jurassic Purrk: life finds a way into the keyboard.\" \"😸💬 Great Scott! Back to the last working commit.\" \"😻💬 I love you 3000. Now hand over the treats.\" \"😼💬 I am inevitable. So is the next code review.\" \"🙀💬 Houston, we have a purr-blem.\" \"😼💬 Say hello to my little paws.\" \"😸💬 Why so serious? It's only a side quest.\" \"😾💬 You shall not pass... without code review.\" \"🙀💬 The spice must flow. The CI pipeline must pass.\" \"😺💬 Live long and prosper. Nap longer and purr louder.\" \"😼💬 This message will self-destruct after the next commit.\" \"😹💬 Get out of my swamp! I mean, off my keyboard.\" \"🙀💬 Red pill or blue pill? I ate both.\" \"😾💬 The Upside Down is just our staging environment.\" \"😼💬 I am the one who knocks... things off shelves.\" \"😻💬 Everything is awesome when the build is green!\" \"😹💬 This is fine. The server room is on fire.\" \"😼💬 A Lannister always pays its technical debt.\" \"😺💬 I volunteer as tribute... for the coffee break.\" \"😸💬 Keep your friends close and your laser pointer closer.\" \"😺💬 It's dangerous to go alone. Take this cat.\" \"😼💬 Hey! Listen! I'm the quest marker now.\" \"😸💬 It's-a me, Meow-rio! Let's-a deploy!\" \"😹💬 Sorry, your princess is in another repository.\" \"🙀💬 A wild merge conflict appeared!\" \"😻💬 Gotta catch 'em all. Especially the bugs.\" \"😾💬 The cake is a lie. So is 'just one more task'.\" \"😸💬 Companion Cube? I prefer a cardboard box.\" \"😼💬 Fus Ro Paw! Clear the desk!\" \"😿💬 I took a bug to the knee. My adventuring days are over.\" \"😾💬 YOU DIED. Respawn after a nap.\" \"😼💬 Praise the sun. And my impeccable paw timing.\" \"🙀💬 Why is there boss music in the terminal?\" \"😺💬 Another day, another block of purrgress.\" \"😾💬 Creeper? Aw, man. Not my build!\" \"😼💬 Rip and tear... through this backlog.\" \"😼💬 Wake up, samurai. We've got bugs to burn.\" \"😿💬 My inventory is full, but my treat bowl is empty.\" \"😻💬 One more turn? I have nine lives to spare.\" \"😸💬 The only thing they fear is meow.\" \"😺💬 Stardew morning: water plants, then squash bugs.\" \"😽💬 Animal Crossing called. My villagers miss my purrs.\" \"🙀💬 Emergency meeting! Who broke the build?\" \"😼💬 Sus? No. I'm the catministrator.\" \"😼💬 War. War never changes. Neither do my naps.\" \"😾💬 The wasteland is safer than this production branch.\" \"😻💬 Would you kindly give this cat a treat?\" \"😼💬 Finish him! ...after the tests pass.\" \"😺💬 A new challenger approaches: technical debt.\" \"😸💬 Press F to pay respects to that deleted branch.\" \"😼💬 The objective is mine. The keyboard too.\" \"😻💬 Loot detected. Emotional support treats acquired.\" \"😿💬 Wind's howling... and so is the linter.\" \"😼💬 Kept you waiting, huh? I was napping.\" \"😹💬 Snake? Snake?! SNAKE! ...it's just a shoelace.\" \"😼💬 Roll initiative. The cat has advantage.\" \"😺💬 A short rest should fix everything. Trust me.\" \"😾💬 I need a weapon. Preferably a laser pointer.\" \"😹💬 Boy! Bring me my axe... I mean, my toy mouse.\" \"😺💬 Stay determined. The cat believes in you.\" \"😿💬 This quest has no fast travel. Unacceptable.\" \"😼💬 sudo pet the cat. Permission granted.\" \"😾💬 Permission denied: insufficient treats.\" \"🙀💬 404: the missing semicolon was in production.\" \"😹💬 It works on my machine. The cat ate yours.\" \"😼💬 All your base are belong to cats.\" \"😸💬 git purr --rebase. History is now adorable.\" \"😾💬 Merge conflicts? That's a future human problem.\" \"😻💬 Green tests, warm sunbeams, zero meetings.\" \"🙀💬 I deployed on Friday. Pray for my nine lives.\" \"😹💬 There is no cloud. Only someone else's cat tree.\" \"😿💬 The build failed. Even my whiskers are disappointed.\" \"😽💬 You had me at 'all tests passed'.\" \"😼💬 The cat approves this pull request. Probably.\" \"😺💬 Hello, world. I am your feline overlord.\" \"😾💬 The only thing more stubborn than me is this regex.\") }}",
+          "type": "text",
+          "foreground": "#FF8000"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#56B6C2",
+          "options": {
+            "style": "folder"
+          },
+          "style": "plain",
+          "template": "🏡 {{ .Path }} ",
+          "type": "path"
         },
-      {
-        "alignment": "right",
-        "segments": [
-          {
-            "foreground": "#56B6C2",
-            "options": {
-              "style": "folder"
-            },
-            "style": "plain",
-            "template": "🏡 {{ .Path }} ",
-            "type": "path"
+        {
+          "foreground": "#D0666F",
+          "options": {
+            "branch_icon": ""
           },
-          {
-            "foreground": "#D0666F",
-            "options": {
-              "branch_icon": ""
-            },
-            "style": "plain",
-            "template":  "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
-            "type": "git"
+          "style": "plain",
+          "template": "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
+          "type": "git"
+        },
+        {
+          "foreground": "#1a415d",
+          "style": "plain",
+          "template": "⌚",
+          "type": "text"
+        },
+        {
+          "foreground": "#1a415d",
+          "options": {
+            "time_format": "15:04"
           },
-          {
-            "foreground": "#1a415d",
-						"style": "plain",
-						"template": "⌚",
-						"type": "text"
-					},
-          {
-            "foreground": "#1a415d",
-            "options": {
-              "time_format": "15:04"
-            },
-            "style": "plain",
-            "template": " {{ .CurrentDate | date .Format }} ",
-            "type": "time"
-          }
-        ],
-        "type": "prompt"
-      },
-			{
-				"alignment": "left",
-				"segments": [
-					{
-						"foreground": "#FF8000",
-						"style": "plain",
-						"template": "😀💬<#FF8000> ~ </>",
-						"type": "text"
-					}
-				],
-				"type": "prompt"
-			}
-    ],
-    "version": 4
-  }
+          "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} ",
+          "type": "time"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#FF8000",
+          "style": "plain",
+          "template": "😀💬<#FF8000> ~ </>",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 4
+}

@@ -61,6 +61,8 @@ var fixturePath = filepath.Join("testdata", "fixtures", "prompt.data.json")
 // different packages that must not import each other (see applyFixtureData).
 const sanitizedPWD = "~/dev/oh-my-posh"
 
+const goldenNekoMessage = "😼💬 I run this terminal. Your keyboard is on loan."
+
 var update = flag.Bool("update", false, "regenerate the golden manifest and representative golden files")
 
 // TestMain neutralises every ambient input identified while building this
@@ -238,6 +240,11 @@ func renderTheme(t *testing.T, themePath, fixturePath string) []byte {
 
 	cfg := config.Load(themePath)
 	require.NotEmptyf(t, cfg.Source, "config.Load(%s) fell back to the default theme - it failed to parse", themePath)
+
+	// Keep the golden stable while the actual theme chooses a random message.
+	if themeStem(themePath) == "neko" {
+		cfg.Blocks[0].Segments[0].Template = goldenNekoMessage
+	}
 
 	eng := newEngine(cfg, env)
 

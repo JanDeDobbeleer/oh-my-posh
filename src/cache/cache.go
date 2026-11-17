@@ -18,6 +18,7 @@ func init() {
 	gob.Register(SimpleTemplate{})
 	gob.Register((*Duration)(nil))
 	gob.Register(map[string]bool{})
+	gob.Register(map[string]uint8{})
 	gob.Register(commandPathEntry{})
 }
 

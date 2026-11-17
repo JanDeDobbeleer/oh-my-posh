@@ -16,6 +16,12 @@ func (e *Engine) Primary() string {
 }
 
 func (e *Engine) primaryInternal(fromCache bool) string {
+	e.renderedSegments = nil
+	if e.needsTooltipContext() {
+		e.renderedSegments = make(map[string]uint8)
+		defer e.cacheRenderedSegments()
+	}
+	e.rpromptBlock = nil
 	e.startRunCapture()
 
 	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
@@ -38,6 +44,7 @@ func (e *Engine) primaryInternal(fromCache bool) string {
 
 		prompt := fmt.Sprintf("PS1=%s", shell.QuotePosixStr(e.string()))
 		prompt += fmt.Sprintf("\nRPROMPT=%s", shell.QuotePosixStr(e.rprompt))
+		e.recordRenderedSegments(e.rpromptBlock)
 
 		return prompt
 	default:
@@ -137,9 +144,7 @@ func (e *Engine) writePrimaryPromptInternal(needsPrimaryRPrompt, fromCache bool)
 		}
 	}
 
-	// Only handle tooltip caching in regular (non-cached) rendering, once per
-	// prompt rather than once per block.
-	if !fromCache && !e.Config.ToolTipsAction.IsDefault() {
+	if e.shouldCacheRPrompt() {
 		cache.Session.Set(RPromptKey, e.rprompt, cache.INFINITE)
 		cache.Session.Set(RPromptLengthKey, e.rpromptLength, cache.INFINITE)
 	}
@@ -202,6 +207,7 @@ func (e *Engine) writePrimaryRightPrompt() {
 	e.write(terminal.SaveCursorPosition())
 	e.write(strings.Repeat(" ", space))
 	e.write(e.rprompt)
+	e.recordRenderedSegments(e.rpromptBlock)
 	e.write(terminal.RestoreCursorPosition())
 	e.appendCapturedRuns(gapRun(space), e.rpromptRuns)
 }

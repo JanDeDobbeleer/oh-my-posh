@@ -157,6 +157,9 @@
               "interactive": {
                 "type": "boolean"
               },
+              "hide_if_segment": {
+                "type": "boolean"
+              },
               "multiline_keepprompt": {
                 "type": "boolean"
               }
@@ -313,6 +316,9 @@
               "interactive": {
                 "type": "boolean"
               },
+              "hide_if_segment": {
+                "type": "boolean"
+              },
               "multiline_keepprompt": {
                 "type": "boolean"
               }
@@ -446,6 +452,9 @@
                 "type": "boolean"
               },
               "interactive": {
+                "type": "boolean"
+              },
+              "hide_if_segment": {
                 "type": "boolean"
               },
               "multiline_keepprompt": {
@@ -583,6 +592,9 @@
               "interactive": {
                 "type": "boolean"
               },
+              "hide_if_segment": {
+                "type": "boolean"
+              },
               "multiline_keepprompt": {
                 "type": "boolean"
               }
@@ -716,6 +728,9 @@
                 "type": "boolean"
               },
               "interactive": {
+                "type": "boolean"
+              },
+              "hide_if_segment": {
                 "type": "boolean"
               },
               "multiline_keepprompt": {
@@ -956,6 +971,9 @@
                       "interactive": {
                         "type": "boolean"
                       },
+                      "hide_if_segment": {
+                        "type": "boolean"
+                      },
                       "multiline_keepprompt": {
                         "type": "boolean"
                       }
@@ -1116,6 +1134,9 @@
                   "type": "boolean"
                 },
                 "interactive": {
+                  "type": "boolean"
+                },
+                "hide_if_segment": {
                   "type": "boolean"
                 },
                 "multiline_keepprompt": {

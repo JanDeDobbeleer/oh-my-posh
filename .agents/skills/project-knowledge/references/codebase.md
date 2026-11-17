@@ -41,6 +41,8 @@
 - A blank prompt means a panic outside segment `Execute` and the streaming producer (both recover). A poisoned
   cache entry replays its failure every prompt until its TTL ends.
 - Caches persist only with the hidden `--save-cache` flag (print/stream); relocate with `OMP_CACHE_DIR`.
+- Don't infer segment visibility from template data: segments populate it before a whole right-aligned block can be
+  rejected for overflow. Tooltip suppression uses the accepted-output visibility snapshot instead.
 - `OMP_CACHE_DIR` must name an existing parent directory: `cache.Path` only creates its `oh-my-posh` child and
   falls back to the normal cache otherwise. Create the parent first when isolating real prompt tests.
 - Logs are buffered and print only via `oh-my-posh debug` (grep `restored segment from cache`, `setting entry`);
@@ -64,7 +66,8 @@
   tests reassign it). `restoreCache`/`restoreData` still read the global (open race, 2026-09).
 - Don't gate `Execute`'s cache-hit early return on streaming: placeholders never show cached data, so skipping the
   cache only adds live probes that can time out.
-- Never touch `segment.writer` of a segment the cycle still has pending; pending segments render via
+- Never read a killed, pending, or abandoned segment's mutable state (`writer`, `Enabled`): its `Execute` goroutine can
+  still write after the cycle stops waiting. Check these states first; pending segments render through
   `Segment.RenderPlaceholder` (config only). Don't add a `Pending` flag to `config.Segment`.
 - The event channel in `prompt/streaming.go` is sized `2*segments+1` so plain sends never block or drop; don't add
   `select`/`default`. The producer's `recover` must log a stack: a silent recover once hid a stuck-segment bug.

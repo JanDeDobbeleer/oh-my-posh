@@ -73,6 +73,49 @@ followed by a space.
   }}
 />
 
+## Hide duplicate information
+
+Set `hide_if_segment: true` on a tooltip to skip it when the corresponding segment is already present in the cached
+primary prompt. The default is `false`, so tooltips continue to render independently unless you opt in.
+
+Segments match by their `alias`, or by their `type` when no alias is set. Use the same alias on the contextual segment
+and its tooltip when you have multiple segments of the same type. The check covers the entire primary prompt,
+including the right prompt, and uses the last saved render rather than evaluating the contextual segment again.
+Segments that were omitted, rendered empty, or hidden by block overflow do not suppress a tooltip.
+Tooltips do not suppress one another.
+
+For example, show the Python version in Python projects, and show it on demand elsewhere:
+
+<Config
+  data={{
+    blocks: [
+      {
+        type: "rprompt",
+        segments: [
+          {
+            type: "python",
+            style: "plain",
+            options: { display_mode: "context" },
+          },
+        ],
+      },
+    ],
+    tooltips_action: "prepend",
+    tooltips: [
+      {
+        type: "python",
+        style: "plain",
+        tips: ["python", "pip", "pyenv"],
+        hide_if_segment: true,
+        options: { display_mode: "always", home_enabled: true },
+      },
+    ],
+  }}
+/>
+
+Command matching is unchanged. If every matching tooltip is skipped, the existing right prompt remains visible,
+including unrelated segments. Otherwise, `tooltips_action` controls how the remaining tooltips are displayed.
+
 ## Tooltips action
 
 You can configure the tooltips to display in extension to the current rprompt (if any) or replace it (default behavior).

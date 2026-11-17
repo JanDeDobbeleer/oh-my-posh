@@ -82,38 +82,39 @@ type Environment interface {
 }
 
 type Flags struct {
-	SegmentData   map[string]json.RawMessage
-	Type          string
-	PipeStatus    string
-	ConfigPath    string
-	PSWD          string
-	Shell         string
-	ShellVersion  string
-	PWD           string
-	AbsolutePWD   string
-	EnvData       json.RawMessage
-	ExecutionTime float64
-	PromptCount   int
-	Column        int
-	TerminalWidth int
-	ErrorCode     int
-	StackCount    int
-	ConfigHash    uint64
-	JobCount      int
-	Cleared       bool
-	Strict        bool
-	Debug         bool
-	HasExtra      bool
-	NoExitCode    bool
-	Init          bool
-	Migrate       bool
-	Eval          bool
-	Escape        bool
-	IsPrimary     bool
-	Plain         bool
-	Force         bool
-	Streaming     bool
-	Interrupted   bool
+	SegmentData    map[string]json.RawMessage
+	Type           string
+	PipeStatus     string
+	ConfigPath     string
+	PSWD           string
+	Shell          string
+	ShellVersion   string
+	PWD            string
+	AbsolutePWD    string
+	EnvData        json.RawMessage
+	ExecutionTime  float64
+	PromptCount    int
+	Column         int
+	TerminalWidth  int
+	MaxColumnsLess int
+	ErrorCode      int
+	StackCount     int
+	ConfigHash     uint64
+	JobCount       int
+	Cleared        bool
+	Strict         bool
+	Debug          bool
+	HasExtra       bool
+	NoExitCode     bool
+	Init           bool
+	Migrate        bool
+	Eval           bool
+	Escape         bool
+	IsPrimary      bool
+	Plain          bool
+	Force          bool
+	Streaming      bool
+	Interrupted    bool
 	// DataOnly cuts this environment off from the machine: every method that
 	// would read a file, list a directory, resolve a symlink, run a command,
 	// make a request or read an OS variable answers empty or errDataOnly (see

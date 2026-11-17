@@ -130,7 +130,8 @@ function _omp_get_primary() {
                 --execution-time="$_omp_execution_time" \
                 --job-count="$_omp_job_count" \
                 --stack-count="$_omp_stack_count" \
-                --terminal-width="${COLUMNS-0}" |
+                --terminal-width="${COLUMNS-0}" \
+                --max-columns-less="${POSH_MAX_COLUMNS_LESS-0}" |
                 tr -d '\0'
         )
     fi

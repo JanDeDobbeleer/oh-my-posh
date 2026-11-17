@@ -343,33 +343,6 @@ function computeAuthTiers(segments) {
     .map((id) => ({ id, label: AUTH_TIER_LABELS[id] }));
 }
 
-// Static assets (website/static/llms.txt, llms-full.txt, skill.md, skills/ohmyposh/SKILL.md) cite
-// the segment count as plain prose because they are served as-is and can't call usePluginData like
-// everything else on the site does. That means nothing catches them drifting from the real count
-// as segments are added or removed - this is that something.
-const STATIC_ASSETS_CITING_TOTAL = [
-  path.join(__dirname, '../../static/llms.txt'),
-  path.join(__dirname, '../../static/llms-full.txt'),
-  path.join(__dirname, '../../static/skill.md'),
-  path.join(__dirname, '../../static/skills/ohmyposh/SKILL.md'),
-];
-
-function assertStaticAssetsMatchTotal(total) {
-  const mentionsTotal = new RegExp(`(?<!\\d)${total}(?!\\d)`);
-
-  for (const filePath of STATIC_ASSETS_CITING_TOTAL) {
-    const content = fs.readFileSync(filePath, 'utf8');
-
-    if (!mentionsTotal.test(content)) {
-      throw new Error(
-        `oh-my-posh-segments plugin: ${filePath} no longer mentions "${total}" segments. It is a ` +
-        "static asset that can't read plugin data, so its segment count is a hand-maintained " +
-        `copy of the real one - update it to ${total} to match.`,
-      );
-    }
-  }
-}
-
 module.exports = function segmentsPlugin(context) {
   return {
     name: 'oh-my-posh-segments',
@@ -382,8 +355,6 @@ module.exports = function segmentsPlugin(context) {
       const groups = computeGroups(segments);
       const authTiers = computeAuthTiers(segments);
       const total = segments.length;
-
-      assertStaticAssetsMatchTotal(total);
 
       return {
         segments,

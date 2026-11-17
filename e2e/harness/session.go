@@ -319,10 +319,14 @@ func (s *Session) MarkerColor(marker string) (fg, bg vt10x.Color, found bool) {
 
 // SendLine writes cmd followed by a carriage return to the pty, as if typed interactively.
 func (s *Session) SendLine(cmd string) {
+	s.SendText(cmd + "\r")
+}
+
+func (s *Session) SendText(text string) {
 	s.writeMu.Lock()
 	defer s.writeMu.Unlock()
 
-	_, _ = s.pty.Write([]byte(cmd + "\r"))
+	_, _ = s.pty.Write([]byte(text))
 }
 
 // ExpectExit sends "exit\r" and waits up to 15s for the process to terminate. It fails the

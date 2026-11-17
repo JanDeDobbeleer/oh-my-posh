@@ -18,6 +18,8 @@ Verified on fish 4.1.2 (2026-07 to 2026-09).
 
 ## Key bindings
 
+- In `fish_mode_prompt`, invalidate the prompt only when `POSH_VI_MODE` changes: fish calls the function on every
+  repaint, so unconditional invalidation overwrites a tooltip's cached right prompt.
 - Collect multiline command substitutions with `string collect` before passing them to `test`: fish otherwise
   splits each line into a separate argument, including after `string trim` (#7934).
 - `commandline --is-valid`: 0 valid, 1 erroneous, 2 incomplete. An empty buffer also returns 1, so check the buffer

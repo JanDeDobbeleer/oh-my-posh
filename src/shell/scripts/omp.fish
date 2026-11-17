@@ -783,10 +783,13 @@ function _omp_enable_vimode
     # fish calls `fish_mode_prompt` when the bind mode is changed, and this is
     # more reliable than `function --on-variable`.
     function fish_mode_prompt
+        set --local previous_mode $POSH_VI_MODE
         _omp_set_vimode
+        if test "$POSH_VI_MODE" != "$previous_mode"
+            set --global _omp_new_prompt 1
+        end
         # if `fish_mode_prompt` produces no output, fish will then call
         # `fish_prompt` so there's no need for full repaint
-        set --global _omp_new_prompt 1
     end
 
     _omp_set_vimode

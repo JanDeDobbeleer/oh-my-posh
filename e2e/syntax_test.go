@@ -26,6 +26,7 @@ var overlaySets = []struct {
 	{Name: "transient", Overlays: []harness.Overlay{harness.Transient}},
 	{Name: "rprompt", Overlays: []harness.Overlay{harness.RPrompt}},
 	{Name: "tooltips", Overlays: []harness.Overlay{harness.Tooltips}},
+	{Name: "vi-mode-tooltip", Overlays: []harness.Overlay{harness.Tooltips, harness.ViMode}},
 	{Name: "shell_integration", Overlays: []harness.Overlay{harness.ShellIntegration}},
 	{Name: "full", Overlays: []harness.Overlay{harness.Full}},
 }

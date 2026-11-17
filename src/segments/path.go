@@ -60,6 +60,7 @@ type Path struct {
 	Writable        bool
 	RootDir         bool
 	cygPath         bool
+	skipCygpath     bool
 }
 
 const (
@@ -197,19 +198,28 @@ func (pt *Path) Parent() string {
 	return sb.String()
 }
 
-func (pt *Path) Format(inputPath string) string {
-	separator := path.Separator()
-
-	elements := strings.Split(inputPath, separator)
-	if len(elements) == 0 {
-		return inputPath
+func (pt *Path) Format(inputPath string) template.Markup {
+	formatted := *pt
+	if formatted.pathSeparator == "" {
+		formatted.pathSeparator = path.Separator()
 	}
 
-	if len(elements) == 1 {
-		return pt.colorizePath(elements[0], nil)
+	formatted.windowsPath = formatted.env.GOOS() == runtime.WINDOWS && !formatted.cygPath
+	if formatted.cygPath {
+		inputPath = strings.ReplaceAll(inputPath, `\`, "/")
+	}
+	if formatted.windowsPath {
+		inputPath = strings.ReplaceAll(inputPath, "/", formatted.pathSeparator)
 	}
 
-	return pt.colorizePath(elements[0], elements[1:])
+	formatted.skipCygpath = true
+	formatted.RootDir = false
+	formatted.root, formatted.relative = formatted.replaceMappedLocations(inputPath)
+	formatted.pwd = formatted.join(formatted.root, formatted.relative)
+	formatted.Folders = formatted.splitPath()
+	formatted.setStyle()
+
+	return formatted.Path
 }
 
 func (pt *Path) setStyle() {
@@ -868,7 +878,7 @@ func (pt *Path) parsePath(inputPath string) (string, string) {
 		return root, relative
 	}
 
-	if pt.cygPath {
+	if pt.cygPath && !pt.skipCygpath {
 		cygPath, err := pt.env.RunCommand("cygpath", "-u", inputPath)
 		if len(cygPath) != 0 {
 			inputPath = cygPath

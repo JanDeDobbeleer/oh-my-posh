@@ -154,37 +154,14 @@ func TestTimewarriorTemplate(t *testing.T) {
 			ExpectedTags: "#" + strings.Repeat("x", 60), Rendered: "\uf252 #" + strings.Repeat("x", 60),
 		},
 		{
-			Case: "exact annotation limit", Active: true, Tags: []string{"work"}, Annotation: strings.Repeat("x", 48),
-			ExpectedAnnotation: strings.Repeat("x", 48), ExpectedTags: "#work", Rendered: "\uf252 #work | " + strings.Repeat("x", 48),
-		},
-		{
-			Case: "unicode annotation truncation", Active: true, Tags: []string{"work"}, Annotation: strings.Repeat("\u754c", 49),
-			ExpectedAnnotation: strings.Repeat("\u754c", 47) + "\u2026", ExpectedTags: "#work",
-			Rendered: "\uf252 #work | " + strings.Repeat("\u754c", 47) + "\u2026",
+			Case: "long annotation stays intact", Active: true, Tags: []string{"work"},
+			Annotation: strings.Repeat("\u754c", 60), ExpectedAnnotation: strings.Repeat("\u754c", 60), ExpectedTags: "#work",
+			Rendered: "\uf252 #work | " + strings.Repeat("\u754c", 60),
 		},
 		{
 			Case: "custom tag format and separator", Active: true, Tags: []string{"work", "project"}, Annotation: "Writing",
 			Options:            options.Map{TimewarriorTagFormat: "[%s]", TimewarriorTagSeparator: ","},
 			ExpectedAnnotation: "Writing", ExpectedTags: "[work],[project]", Rendered: "\uf252 [work],[project] | Writing",
-		},
-		{
-			Case: "custom truncation", Active: true, Tags: []string{"work"}, Annotation: "abcdefgh",
-			Options:            options.Map{TimewarriorAnnotationMaxLength: 6, TimewarriorEllipsis: ".."},
-			ExpectedAnnotation: "abcd..", ExpectedTags: "#work", Rendered: "\uf252 #work | abcd..",
-		},
-		{
-			Case: "ellipsis longer than limit", Active: true, Annotation: "abcdefgh",
-			Options:            options.Map{TimewarriorAnnotationMaxLength: 2, TimewarriorEllipsis: "..."},
-			ExpectedAnnotation: "..", Rendered: "\uf252 \u2205 | ..",
-		},
-		{
-			Case: "unlimited", Active: true, Annotation: strings.Repeat("x", 60), Options: options.Map{TimewarriorAnnotationMaxLength: 0},
-			ExpectedAnnotation: strings.Repeat("x", 60), Rendered: "\uf252 \u2205 | " + strings.Repeat("x", 60),
-		},
-		{
-			Case: "empty ellipsis", Active: true, Annotation: "abcdefgh",
-			Options:            options.Map{TimewarriorAnnotationMaxLength: 3, TimewarriorEllipsis: ""},
-			ExpectedAnnotation: "abc", Rendered: "\uf252 \u2205 | abc",
 		},
 	}
 

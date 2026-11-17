@@ -5033,23 +5033,11 @@
                     "description": "Show the segment even when Timewarrior is not tracking.",
                     "default": false
                   },
-                  "annotation_max_length": {
-                    "type": "integer",
-                    "title": "Maximum Annotation Length",
-                    "description": "Maximum Unicode character count of Annotation, including the ellipsis. Zero or negative disables truncation.",
-                    "default": 48
-                  },
                   "command": {
                     "type": "string",
                     "title": "Timewarrior Command",
                     "description": "The Timewarrior executable to use.",
                     "default": "timew"
-                  },
-                  "ellipsis": {
-                    "type": "string",
-                    "title": "Ellipsis",
-                    "description": "Suffix for truncated annotations, included in annotation_max_length.",
-                    "default": "\u2026"
                   },
                   "tag_format": {
                     "type": "string",

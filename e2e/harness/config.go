@@ -126,6 +126,20 @@ func Tooltips(cfg map[string]any) {
 	}
 }
 
+func ViMode(cfg map[string]any) {
+	blocks, _ := cfg["blocks"].([]any)
+	block, _ := blocks[0].(map[string]any)
+	segments, _ := block["segments"].([]any)
+
+	segments = append(segments, map[string]any{
+		"type":     "vimode",
+		"style":    "plain",
+		"template": "MODE:{{ .Mode }}",
+	})
+
+	block["segments"] = segments
+}
+
 // Full combines Transient, RPrompt and Tooltips.
 func Full(cfg map[string]any) {
 	Transient(cfg)

@@ -254,6 +254,41 @@ var featureScenarios = []scenario{
 		},
 	},
 	{
+		name:     "vi-mode-tooltip",
+		overlays: []harness.Overlay{harness.Tooltips, harness.ViMode},
+		skips: map[string]string{
+			"bash": "this scenario exercises fish vi-mode prompt redraws",
+			"zsh":  "this scenario exercises fish vi-mode prompt redraws",
+			"pwsh": "this scenario exercises fish vi-mode prompt redraws",
+			"nu":   "this scenario exercises fish vi-mode prompt redraws",
+		},
+		run: func(t *testing.T, sh harness.ShellDef, s *harness.Session) {
+			s.SendLine("set -g fish_key_bindings fish_hybrid_key_bindings")
+			screen := s.WaitFor(regexp.MustCompile(`MODE:(insert|normal)`))
+
+			if !strings.Contains(screen, "MODE:insert") {
+				s.SendText("i")
+				screen = s.WaitFor(regexp.MustCompile(`MODE:insert`))
+			}
+
+			s.SendText("git ")
+			screen = s.WaitFor(regexp.MustCompile(`TIP`))
+			assert.Contains(t, screen, "MODE:insert")
+
+			s.SendText("\x0c")
+			screen = s.WaitFor(regexp.MustCompile(`TIP`))
+			assert.Contains(t, screen, "MODE:insert")
+
+			s.SendText("\x1b")
+			screen = s.WaitFor(regexp.MustCompile(`MODE:normal`))
+			assert.NotContains(t, screen, "TIP")
+
+			s.SendText("i")
+			screen = s.WaitFor(regexp.MustCompile(`MODE:insert`))
+			assert.NotContains(t, screen, "TIP")
+		},
+	},
+	{
 		// color boots with the Colored overlay and asserts the fixed "CLR" marker
 		// renders with its configured truecolor foreground/background, verifying
 		// screen-level color rendering rather than just the raw SGR bytes.

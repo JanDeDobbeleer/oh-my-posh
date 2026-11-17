@@ -113,6 +113,7 @@ type Segment struct {
 	Toggled             bool `json:"toggled,omitempty" toml:"toggled,omitempty" yaml:"toggled,omitempty"`
 	Killed              bool `json:"-" toml:"-" yaml:"-"`
 	Interactive         bool `json:"interactive,omitempty" toml:"interactive,omitempty" yaml:"interactive,omitempty"`
+	HideIfSegment       bool `json:"hide_if_segment,omitempty" toml:"hide_if_segment,omitempty" yaml:"hide_if_segment,omitempty"`
 	MultilineKeepPrompt bool `json:"multiline_keepprompt,omitempty" toml:"multiline_keepprompt,omitempty" yaml:"multiline_keepprompt,omitempty"`
 	foregroundResolved  bool
 	backgroundResolved  bool

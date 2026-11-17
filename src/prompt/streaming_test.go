@@ -926,10 +926,15 @@ func runStraddlingIteration(t *testing.T, iteration int, id string) {
 	t.Helper()
 
 	env := setupStreamingTestEnv()
+	env.On("TerminalWidth").Unset()
+	env.On("TerminalWidth").Return(200, nil)
 
 	engine := &Engine{
 		Config: &config.Config{
 			Streaming: 5,
+			Tooltips: []*config.Segment{{
+				Type: streamTestType, Tips: []string{"test"}, Template: "TOOLTIP", HideIfSegment: true,
+			}},
 			Blocks: []*config.Block{
 				{Type: config.Prompt, Alignment: config.Left, Segments: []*config.Segment{streamTestSegment(id)}},
 			},
@@ -946,6 +951,7 @@ func runStraddlingIteration(t *testing.T, iteration int, id string) {
 	last := primaries[len(primaries)-1]
 	assert.Contains(t, last, "resolved/42", "iteration %d: last primary missing resolved/42; records: %v", iteration, records)
 	assert.NotContains(t, last, "PENDING-", "iteration %d: last primary still shows a placeholder; records: %v", iteration, records)
+	assert.Empty(t, engine.Tooltip("test"), "iteration %d: resolved segment should suppress its tooltip", iteration)
 
 	transientCount := len(transients)
 	assert.True(t, transientCount == 1 || transientCount == 2,

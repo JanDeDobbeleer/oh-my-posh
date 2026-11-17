@@ -26,6 +26,8 @@ type Engine struct {
 	Env                   runtime.Environment
 	activeSegment         *config.Segment
 	Config                *config.Config
+	rpromptBlock          *config.Block
+	renderedSegments      map[string]uint8
 	stream                *streamCycle
 	previousActiveSegment *config.Segment
 	Overflow              config.Overflow
@@ -299,6 +301,7 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, r
 			e.currentLineLength += length
 			e.write(blockText)
 			e.appendCapturedRuns(nil, runs)
+			e.recordRenderedSegments(block)
 			return true
 		}
 
@@ -338,6 +341,7 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, r
 			e.write(padText)
 			e.write(blockText)
 			e.appendCapturedRuns(fillerRuns, runs)
+			e.recordRenderedSegments(block)
 			return true
 		}
 
@@ -347,10 +351,12 @@ func (e *Engine) writeBlock(block *config.Block, blockText string, length int, r
 
 		e.write(blockText)
 		e.appendCapturedRuns(gapRun(space), runs)
+		e.recordRenderedSegments(block)
 	case config.RPrompt:
 		e.rprompt = blockText
 		e.rpromptLength = length
 		e.rpromptRuns = runs
+		e.rpromptBlock = block
 	}
 
 	return true

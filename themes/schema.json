@@ -5701,6 +5701,12 @@
           }
         ],
         "properties": {
+          "hide_if_segment": {
+            "type": "boolean",
+            "title": "Hide when the corresponding segment is already in the prompt",
+            "description": "Skip this tooltip when a segment with the same alias, or type when no alias is set, is present in the cached primary prompt.",
+            "default": false
+          },
           "tips": {
             "type": "array",
             "title": "The commands for which you want the segment to show",

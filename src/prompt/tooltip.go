@@ -10,6 +10,54 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
+const renderedSegmentsKey = "rendered_segments"
+
+const (
+	renderedPrompt uint8 = 1 << iota
+	renderedRPrompt
+)
+
+func (e *Engine) needsTooltipContext() bool {
+	return slices.ContainsFunc(e.Config.Tooltips, func(tooltip *config.Segment) bool {
+		return tooltip.HideIfSegment
+	})
+}
+
+func (e *Engine) recordRenderedSegments(block *config.Block) {
+	if e.renderedSegments == nil || block == nil {
+		return
+	}
+
+	var visibility uint8
+	switch block.Type {
+	case config.Prompt:
+		visibility = renderedPrompt
+	case config.RPrompt:
+		visibility = renderedRPrompt
+	default:
+		return
+	}
+
+	for _, segment := range block.Segments {
+		if segment.Killed || e.segmentPending(segment) || e.segmentAbandoned(segment) {
+			continue
+		}
+
+		if segment.Enabled {
+			e.renderedSegments[segment.Name()] |= visibility
+		}
+	}
+}
+
+func (e *Engine) cacheRenderedSegments() {
+	cache.Session.Set(renderedSegmentsKey, e.renderedSegments, cache.ONEDAY)
+	e.renderedSegments = nil
+}
+
+func (e *Engine) shouldCacheRPrompt() bool {
+	return !e.Config.ToolTipsAction.IsDefault() || e.renderedSegments != nil || e.needsTooltipContext()
+}
+
 func (e *Engine) tooltipFallback() string {
 	rprompt, OK := cache.Session.Get[string](RPromptKey)
 	if !OK {
@@ -44,10 +92,22 @@ func (e *Engine) tooltipFallback() string {
 func (e *Engine) Tooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
 	tooltips := make([]*config.Segment, 0, 1)
+	var rendered map[string]uint8
+	contextLoaded := false
 
 	for _, tooltip := range e.Config.Tooltips {
 		if !slices.Contains(tooltip.Tips, tip) {
 			continue
+		}
+
+		if tooltip.HideIfSegment {
+			if !contextLoaded {
+				rendered, _ = cache.Session.Get[map[string]uint8](renderedSegmentsKey)
+				contextLoaded = true
+			}
+			if rendered[tooltip.Name()] != 0 {
+				continue
+			}
 		}
 
 		tooltip.Execute(e.Env)

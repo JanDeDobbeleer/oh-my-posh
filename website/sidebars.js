@@ -136,6 +136,7 @@ export default {
             "segments/cli/firebase",
             "segments/cli/flutter",
             "segments/cli/gitversion",
+            "segments/cli/gpgagent",
             "segments/cli/gradle",
             "segments/cli/helm",
             "segments/cli/kubectl",

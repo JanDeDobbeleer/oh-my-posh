@@ -11,11 +11,9 @@ import (
 )
 
 const (
-	TimewarriorAnnotationMaxLength options.Option = "annotation_max_length"
-	TimewarriorCommand             options.Option = "command"
-	TimewarriorEllipsis            options.Option = "ellipsis"
-	TimewarriorTagFormat           options.Option = "tag_format"
-	TimewarriorTagSeparator        options.Option = "tag_separator"
+	TimewarriorCommand      options.Option = "command"
+	TimewarriorTagFormat    options.Option = "tag_format"
+	TimewarriorTagSeparator options.Option = "tag_separator"
 )
 
 type Timewarrior struct {
@@ -32,20 +30,6 @@ func (t *Timewarrior) Template() string {
 	return "{{ if .Active }} \uf252 {{ if .Tags }}{{ .Tags }}{{ else }}\u2205{{ end }}" +
 		"{{ if .Annotation }} | {{ .Annotation }}{{ end }}" +
 		"{{ else }} Not tracking{{ end }} "
-}
-
-func (t *Timewarrior) annotation(value string) string {
-	maxLength := t.options.Int(TimewarriorAnnotationMaxLength, 48)
-	runes := []rune(value)
-	if maxLength <= 0 || len(runes) <= maxLength {
-		return value
-	}
-
-	ellipsis := []rune(t.options.String(TimewarriorEllipsis, "\u2026"))
-	if len(ellipsis) >= maxLength {
-		return string(ellipsis[:maxLength])
-	}
-	return string(runes[:maxLength-len(ellipsis)]) + string(ellipsis)
 }
 
 func (t *Timewarrior) Enabled() bool {
@@ -97,7 +81,7 @@ func (t *Timewarrior) Enabled() bool {
 	}
 
 	t.Active = true
-	t.Annotation = t.annotation(interval.Annotation)
+	t.Annotation = interval.Annotation
 	t.Duration = time.Since(t.Start).Truncate(time.Second).String()
 	tags := make([]string, len(interval.Tags))
 	tagFormat := t.options.String(TimewarriorTagFormat, "#%s")

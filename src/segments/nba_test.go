@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments/options"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func getTestData(file string) string {
@@ -20,6 +21,8 @@ func getTestData(file string) string {
 func TestNBASegment(t *testing.T) {
 	jsonScheduleData := getTestData("nba/schedule.json")
 	jsonScoreData := getTestData("nba/score.json")
+	loc, err := time.LoadLocation("America/New_York")
+	require.NoError(t, err)
 
 	cases := []struct {
 		Error           error
@@ -80,13 +83,12 @@ func TestNBASegment(t *testing.T) {
 
 		env.On("HTTPRequest", NBAScoreURL).Return([]byte(tc.JSONResponse), tc.Error)
 
-		// Add all the daysOffset to the http request responses
+		nowNYC := time.Now().In(loc)
+		// The schedule search keeps its starting season even when dates cross into July.
+		season := currentNBASeason(nowNYC)
 		for i := 0; i < tc.DaysOffset; i++ {
-			currTime := time.Now().In(time.FixedZone("America/New_York", -5*60*60))
-			// add offset days to currTime so we can query for games in the future
-			currTime = currTime.AddDate(0, 0, i)
-			dateStr := currTime.Format(NBADateFormat)
-			scheduleURLEndpoint := fmt.Sprintf(NBAScheduleURL, currentNBASeason, dateStr)
+			dateStr := nowNYC.AddDate(0, 0, i).Format(NBADateFormat)
+			scheduleURLEndpoint := fmt.Sprintf(NBAScheduleURL, season, dateStr)
 			env.On("HTTPRequest", scheduleURLEndpoint).Return([]byte(tc.JSONResponse), tc.Error)
 		}
 

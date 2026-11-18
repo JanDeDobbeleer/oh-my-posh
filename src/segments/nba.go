@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -39,6 +40,15 @@ func (nba *NBAData) Started() bool {
 	return nba.GameStatus == InProgress || nba.GameStatus == Finished
 }
 
+// NBA seasons span calendar years; July is the cutoff used to select the start year.
+func currentNBASeason(now time.Time) string {
+	year := now.Year()
+	if now.Month() < time.July {
+		year--
+	}
+	return strconv.Itoa(year)
+}
+
 const (
 	NBASeason  options.Option = "season"
 	TeamName   options.Option = "team"
@@ -53,8 +63,8 @@ const (
 
 	UNKNOWN = "unknown"
 
-	currentNBASeason = "2023"
-	NBADateFormat    = "02/01/2006"
+	// The schedule API expects dates in month/day/year order.
+	NBADateFormat = "01/02/2006"
 )
 
 type GameStatus int
@@ -212,9 +222,15 @@ func (nba *Nba) retrieveScoreData(teamName string, httpTimeout int) (*NBAData, e
 func (nba *Nba) retrieveScheduleData(teamName string, httpTimeout int) (*NBAData, error) {
 	// How many days into the future should we look for a game.
 	numDaysToSearch := nba.options.Int(DaysOffset, 8)
-	nbaSeason := nba.options.String(NBASeason, currentNBASeason)
-	// Get the current date in America/New_York
-	nowNYC := time.Now().In(time.FixedZone("America/New_York", -5*60*60))
+	// Schedule dates use Eastern time, which changes offset with daylight saving.
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		// Without timezone data, EST is a fallback and does not account for daylight saving.
+		loc = time.FixedZone("America/New_York", -5*60*60)
+	}
+	nowNYC := time.Now().In(loc)
+
+	nbaSeason := nba.options.String(NBASeason, currentNBASeason(nowNYC))
 
 	// Check to see if a game is scheduled while the numDaysToSearch is greater than 0
 	for numDaysToSearch > 0 {

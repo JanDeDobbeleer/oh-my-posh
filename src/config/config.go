@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/gob"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -136,9 +137,29 @@ func (cfg *Config) getPalette() color.Palette {
 	return palette
 }
 
+// streamingTimeoutEnv mirrors POSH_DISABLE_STREAMING: a streaming timeout in
+// milliseconds for themes that don't configure one themselves.
+const streamingTimeoutEnv = "POSH_STREAMING"
+
+// StreamingTimeout returns the streaming timeout in milliseconds: the effective
+// value is 0 when streaming should stay off, in which case a render never
+// streams. An explicit config value wins over POSH_STREAMING.
+func (cfg *Config) StreamingTimeout(env runtime.Environment) int {
+	if cfg.Streaming > 0 {
+		return cfg.Streaming
+	}
+
+	timeout, err := strconv.Atoi(env.Getenv(streamingTimeoutEnv))
+	if err != nil || timeout < 0 {
+		return 0
+	}
+
+	return timeout
+}
+
 // streamingEnabled reports whether streaming should be enabled: it's configured.
-func (cfg *Config) streamingEnabled(_ runtime.Environment) bool {
-	return cfg.Streaming > 0
+func (cfg *Config) streamingEnabled(env runtime.Environment) bool {
+	return cfg.StreamingTimeout(env) > 0
 }
 
 func (cfg *Config) Features(env runtime.Environment) shell.Features {

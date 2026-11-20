@@ -145,6 +145,7 @@ func TestFeaturesShellIntegration(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("Shell").Return(tc.Shell)
+		env.On("Getenv", "POSH_STREAMING").Return("")
 
 		template.Cache = &cache.Template{
 			Shell: tc.Shell,
@@ -164,6 +165,7 @@ func TestFeaturesShellIntegration(t *testing.T) {
 func TestFeaturesStreaming(t *testing.T) {
 	cases := []struct {
 		Case          string
+		StreamingEnv  string
 		Streaming     int
 		ExpectedFeats shell.Features
 	}{
@@ -173,7 +175,23 @@ func TestFeaturesStreaming(t *testing.T) {
 			ExpectedFeats: shell.Streaming | shell.KeyHandlers,
 		},
 		{
+			Case:          "streaming enabled through the environment",
+			StreamingEnv:  "100",
+			ExpectedFeats: shell.Streaming | shell.KeyHandlers,
+		},
+		{
+			Case:          "config value wins over the environment",
+			Streaming:     100,
+			StreamingEnv:  "250",
+			ExpectedFeats: shell.Streaming | shell.KeyHandlers,
+		},
+		{
 			Case:          "streaming not configured",
+			ExpectedFeats: 0,
+		},
+		{
+			Case:          "invalid environment value",
+			StreamingEnv:  "enabled",
 			ExpectedFeats: 0,
 		},
 	}
@@ -181,6 +199,7 @@ func TestFeaturesStreaming(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("Shell").Return(shell.PWSH)
+		env.On("Getenv", "POSH_STREAMING").Return(tc.StreamingEnv)
 
 		cfg := &Config{
 			Streaming: tc.Streaming,
@@ -189,6 +208,32 @@ func TestFeaturesStreaming(t *testing.T) {
 
 		got := cfg.Features(env)
 		assert.Equal(t, tc.ExpectedFeats, got, tc.Case)
+	}
+}
+
+func TestStreamingTimeout(t *testing.T) {
+	cases := []struct {
+		Case         string
+		StreamingEnv string
+		Streaming    int
+		Expected     int
+	}{
+		{Case: "configured", Streaming: 100, Expected: 100},
+		{Case: "environment", StreamingEnv: "250", Expected: 250},
+		{Case: "config wins", Streaming: 100, StreamingEnv: "250", Expected: 100},
+		{Case: "unset", Expected: 0},
+		{Case: "zero", StreamingEnv: "0", Expected: 0},
+		{Case: "negative", StreamingEnv: "-10", Expected: 0},
+		{Case: "invalid", StreamingEnv: "fast", Expected: 0},
+	}
+
+	for _, tc := range cases {
+		env := &mock.Environment{}
+		env.On("Getenv", "POSH_STREAMING").Return(tc.StreamingEnv)
+
+		cfg := &Config{Streaming: tc.Streaming}
+
+		assert.Equal(t, tc.Expected, cfg.StreamingTimeout(env), tc.Case)
 	}
 }
 
@@ -212,6 +257,7 @@ func TestFeaturesTransientRightPrompt(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("Shell").Return(shell.FISH)
+		env.On("Getenv", "POSH_STREAMING").Return("")
 
 		cfg := &Config{
 			TransientPrompt: &Segment{RightTemplate: tc.RightTemplate},
@@ -254,6 +300,7 @@ func TestFeaturesVIMode(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		env.On("Shell").Return(tc.Shell)
+		env.On("Getenv", "POSH_STREAMING").Return("")
 
 		template.Cache = &cache.Template{
 			Shell: tc.Shell,

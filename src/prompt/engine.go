@@ -42,6 +42,7 @@ type Engine struct {
 	currentLineLength     int
 	cursorRow             int
 	cursorRun             int
+	envStreamingTimeout   int
 	Plain                 bool
 	forceRender           bool
 }
@@ -949,6 +950,11 @@ func newEngine(cfg *config.Config, env runtime.Environment) *Engine {
 		Plain:       flags.Plain,
 		forceRender: flags.Force || len(env.Getenv("POSH_FORCE_RENDER")) > 0,
 		prompt:      strings.Builder{},
+	}
+
+	// resolved here, once per engine, instead of reading the environment for every segment
+	if flags.Streaming {
+		eng.envStreamingTimeout = cfg.StreamingTimeout(env)
 	}
 
 	// Pre-allocate prompt builder capacity to reduce allocations during rendering

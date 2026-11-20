@@ -92,10 +92,20 @@ func (e *Engine) renderBlockSegments(results []*config.Segment, block *config.Bl
 	return text, length, runs
 }
 
+// segmentTimeout is the streaming timeout to apply: the config's explicit value, or
+// POSH_STREAMING as resolved once in newEngine.
+func (e *Engine) segmentTimeout() int {
+	if e.Config.Streaming > 0 {
+		return e.Config.Streaming
+	}
+
+	return e.envStreamingTimeout
+}
+
 func (e *Engine) writeSegmentsConcurrently(segments []*config.Segment, out chan result) {
 	for i, segment := range segments {
-		if e.Env.Flags().Streaming && e.Config.Streaming > 0 {
-			segment.Timeout = e.Config.Streaming
+		if timeout := e.segmentTimeout(); e.Env.Flags().Streaming && timeout > 0 {
+			segment.Timeout = timeout
 		}
 
 		// Name memoizes on first call. Resolve it before the goroutine starts so the render and

@@ -62,6 +62,20 @@ oh-my-posh init pwsh --config ~/.mytheme.omp.json | Invoke-Expression
 
 :::
 
+:::info
+To enable streaming for a theme you don't control, such as a bundled theme, set
+`POSH_STREAMING` to the timeout in milliseconds before initializing Oh My Posh. A
+`streaming` value in the configuration takes precedence, and the variable accepts the same
+timeout as the property:
+
+```powershell
+$env:POSH_STREAMING = 100
+
+oh-my-posh init pwsh --config ~/.mytheme.omp.json | Invoke-Expression
+```
+
+:::
+
 ## Shell support
 
 Streaming is supported in `powershell`, `zsh`, `fish` and `cmd`. For any other shell, the

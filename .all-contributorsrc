@@ -3980,6 +3980,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "suiso11",
+      "name": "mo1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71627189?v=4",
+      "profile": "https://github.com/suiso11",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

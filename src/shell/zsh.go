@@ -24,7 +24,7 @@ func (f Features) Zsh() Code {
 	case Streaming:
 		return "if [[ ! -v POSH_DISABLE_STREAMING ]]; then _omp_enable_streaming=1; fi"
 	case VIMode:
-		return "_omp_enable_vimode"
+		return enableVIMode
 	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Async, KeyHandlers:
 		fallthrough
 	default:

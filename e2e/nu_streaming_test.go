@@ -140,3 +140,94 @@ func TestNuStreamingTracksExecutedCommands(t *testing.T) {
 		session.WaitFor(regexp.MustCompile(fmt.Sprintf(`(?s)%s\s+%s\s+E2E:\d+>`, regexp.QuoteMeta(tc.input), tc.want)))
 	}
 }
+
+func TestNuViMode(t *testing.T) {
+	tests := []struct {
+		name      string
+		editMode  string
+		overlays  []harness.Overlay
+		streaming bool
+	}{
+		{name: "classic vi", editMode: "vi"},
+		{name: "streaming vi", editMode: "vi", streaming: true},
+		{name: "classic helix", editMode: "helix"},
+		{name: "streaming helix", editMode: "helix", streaming: true},
+		{name: "multiline vi", editMode: "vi", overlays: []harness.Overlay{harness.MultiLine}},
+		{name: "multiline streaming vi", editMode: "vi", streaming: true, overlays: []harness.Overlay{harness.MultiLine}},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			overlay := func(cfg map[string]any) {
+				if tc.streaming {
+					cfg["streaming"] = 100
+				}
+				blocks := cfg["blocks"].([]any)
+				block := blocks[len(blocks)-1].(map[string]any)
+				block["segments"] = append(block["segments"].([]any), map[string]any{
+					"type":     "vimode",
+					"style":    "plain",
+					"template": "MODE:{{ .Mode }} ",
+				})
+			}
+
+			session := harness.Start(t, nuShell(t), harness.WriteConfig(t, append(tc.overlays, overlay)...))
+			session.WaitFor(regexp.MustCompile(`E2E:\d+>`))
+			session.SendLine(fmt.Sprintf("$env.config.edit_mode = '%s'", tc.editMode))
+			session.WaitFor(regexp.MustCompile(`MODE:insert`))
+
+			session.SendText("abc")
+			session.WaitFor(regexp.MustCompile(`MODE:insert[^\n]*abc`))
+
+			session.SendText("\x1b")
+			session.WaitFor(regexp.MustCompile(`MODE:normal[^\n]*abc`))
+
+			session.SendText("i")
+			session.WaitFor(regexp.MustCompile(`MODE:insert[^\n]*abc`))
+			assert.NotContains(t, session.Raw(), "Error:")
+		})
+	}
+}
+
+func TestNuStreamingFallsBackWhenDaemonStopsAnswering(t *testing.T) {
+	cfg := harness.WriteConfig(t, func(cfg map[string]any) { cfg["streaming"] = 100 })
+	session := harness.Start(t, nuShell(t), cfg)
+
+	session.SendLine("$env._OMP_SERVE_JOB = (job spawn --auto-kill { sleep 1hr }); print 'armed'")
+	session.WaitFor(regexp.MustCompile(`(?s)print 'armed'\s+armed\s+E2E:0>`))
+
+	session.SendLine("print $env._OMP_ENABLE_STREAMING")
+	session.WaitFor(regexp.MustCompile(`(?s)print \$env\._OMP_ENABLE_STREAMING\s+false\s+E2E:0>`))
+}
+
+func TestNuViModeEditModes(t *testing.T) {
+	overlay := func(cfg map[string]any) {
+		harness.Transient(cfg)
+		blocks := cfg["blocks"].([]any)
+		block := blocks[len(blocks)-1].(map[string]any)
+		block["segments"] = append(block["segments"].([]any), map[string]any{
+			"type":     "vimode",
+			"style":    "plain",
+			"template": "MODE:{{ .Mode }} ",
+		})
+	}
+
+	session := harness.Start(t, nuShell(t), harness.WriteConfig(t, overlay))
+	session.WaitFor(regexp.MustCompile(`MODE:insert`))
+
+	session.SendLine("$env.config.edit_mode = 'vi'")
+	session.WaitFor(regexp.MustCompile(`TR> \$env\.config\.edit_mode = 'vi'`))
+	session.SendLine("print one")
+	// the indicators carry the whole prompt in vi mode and must not leak into the transient prompt
+	session.WaitFor(regexp.MustCompile(`TR> print one\s+one`))
+
+	session.SendLine("$env.config.edit_mode = 'emacs'")
+	session.SendLine("print two")
+	session.WaitFor(regexp.MustCompile(`TR> print two\s+two\s+E2E:\d+>MODE:insert`))
+
+	session.SendLine("$env.config.edit_mode = 'vi'")
+	session.WaitFor(regexp.MustCompile(`(?s)TR> \$env\.config\.edit_mode = 'vi'\s+E2E:\d+>MODE:insert\s*$`))
+	session.SendText("\x1b")
+	session.WaitFor(regexp.MustCompile(`MODE:normal`))
+	assert.NotContains(t, session.Raw(), "Error:")
+}

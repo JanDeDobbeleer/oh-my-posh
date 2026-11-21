@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
@@ -24,6 +25,7 @@ var (
 	cleared       bool
 	jobCount      int
 	saveCache     bool
+	viModes       string
 
 	command      string
 	shellVersion string
@@ -91,6 +93,7 @@ func createPrintCmd() *cmdtree.Command {
 				Escape:        escape,
 				Force:         force,
 				Interrupted:   interrupted,
+				VIModes:       strings.FieldsFunc(viModes, func(r rune) bool { return r == ',' }),
 			}
 
 			if err := applyDataFile(flags, cmd.Flags().Changed); err != nil {
@@ -161,10 +164,12 @@ func createPrintCmd() *cmdtree.Command {
 	printCmd.Flags().BoolVar(&escape, "escape", true, "escape the ANSI sequences for the shell")
 	printCmd.Flags().BoolVarP(&force, "force", "f", false, "force rendering the segments")
 	printCmd.Flags().StringVar(&dataPath, "data", "", "path to a template data file (json/yaml/toml) to render with")
+	printCmd.Flags().StringVar(&viModes, "vi-modes", "", "comma separated vi modes: print the primary prompt for each as a JSON object of mode to prompt")
 	printCmd.Flags().BoolVar(&interrupted, "interrupted", false, "the command was interrupted")
 
 	// Hide flags that are for internal use only.
 	_ = printCmd.Flags().MarkHidden("save-cache")
+	_ = printCmd.Flags().MarkHidden("vi-modes")
 
 	return printCmd
 }

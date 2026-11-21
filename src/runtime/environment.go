@@ -35,6 +35,7 @@ type MediaInfo struct {
 
 type Environment interface {
 	Getenv(key string) string
+	Setenv(key, value string)
 	Pwd() string
 	Home() string
 	User() string
@@ -83,6 +84,7 @@ type Environment interface {
 
 type Flags struct {
 	SegmentData   map[string]json.RawMessage
+	VIModes       []string
 	Type          string
 	PipeStatus    string
 	ConfigPath    string

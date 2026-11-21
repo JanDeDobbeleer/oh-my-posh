@@ -291,6 +291,11 @@ func TestFeaturesVIMode(t *testing.T) {
 			ExpectedFeats: shell.VIMode,
 		},
 		{
+			Case:          "nu enables vi mode tracking",
+			Shell:         shell.NU,
+			ExpectedFeats: shell.VIMode,
+		},
+		{
 			Case:          "bash does not enable vi mode tracking",
 			Shell:         shell.BASH,
 			ExpectedFeats: 0,

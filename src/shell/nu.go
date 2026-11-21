@@ -17,9 +17,11 @@ func (f Features) Nu() Code {
 		return "^$_omp_executable upgrade --auto"
 	case Notice:
 		return "^$_omp_executable notice"
+	case VIMode:
+		return enableVIMode
 	case Streaming:
 		return `if ('POSH_DISABLE_STREAMING' not-in $env) { _omp_enable_streaming }`
-	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, FTCSMarks, CursorPositioning, Async, KeyHandlers, VIMode:
+	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, FTCSMarks, CursorPositioning, Async, KeyHandlers:
 		fallthrough
 	default:
 		return ""

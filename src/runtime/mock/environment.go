@@ -20,6 +20,10 @@ func (env *Environment) Getenv(key string) string {
 	return args.String(0)
 }
 
+func (env *Environment) Setenv(key, value string) {
+	env.Called(key, value)
+}
+
 func (env *Environment) Pwd() string {
 	args := env.Called()
 	return args.String(0)

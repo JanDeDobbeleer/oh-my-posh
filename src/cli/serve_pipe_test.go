@@ -31,12 +31,12 @@ func TestServeLoop_RequestPipe(t *testing.T) {
 	stdoutR, stdoutW, err := os.Pipe()
 	require.NoError(t, err)
 
-	reader := newRecordReader(stdoutR)
+	reader := newRecordReader(stdoutR, false)
 	done := make(chan struct{})
 
 	go func() {
 		defer close(done)
-		runServeLoop(in, stdoutW)
+		runServeLoop(in, stdoutW, false)
 	}()
 
 	t.Cleanup(func() {

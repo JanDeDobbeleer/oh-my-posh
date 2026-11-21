@@ -35,7 +35,7 @@ func TestVIMode(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.Environment)
-		env.On("Getenv", poshVIModeEnv).Return(tc.Env)
+		env.On("Getenv", VIModeEnv).Return(tc.Env)
 
 		v := &VIMode{}
 		v.Init(options.Map{}, env)

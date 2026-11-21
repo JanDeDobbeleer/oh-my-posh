@@ -84,6 +84,14 @@ func (term *Terminal) Getenv(key string) string {
 	return val
 }
 
+func (term *Terminal) Setenv(key, value string) {
+	defer log.Trace(time.Now(), key, value)
+
+	if err := os.Setenv(key, value); err != nil {
+		log.Error(err)
+	}
+}
+
 func (term *Terminal) Pwd() string {
 	return term.cwd
 }

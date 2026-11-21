@@ -16,6 +16,14 @@ func (e *Engine) Primary() string {
 }
 
 func (e *Engine) primaryInternal(fromCache bool) string {
+	if modes := e.Env.Flags().VIModes; len(modes) > 0 {
+		return e.primaryVariants(modes, fromCache)
+	}
+
+	return e.primaryPrompt(fromCache)
+}
+
+func (e *Engine) primaryPrompt(fromCache bool) string {
 	e.renderedSegments = nil
 	if e.needsTooltipContext() {
 		e.renderedSegments = make(map[string]uint8)

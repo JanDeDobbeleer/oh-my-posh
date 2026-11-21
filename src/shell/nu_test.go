@@ -14,7 +14,8 @@ func TestNuFeatures(t *testing.T) {
 $env.TRANSIENT_PROMPT_COMMAND = {|| _omp_transient }
 ^$_omp_executable upgrade --auto
 ^$_omp_executable notice
-if ('POSH_DISABLE_STREAMING' not-in $env) { _omp_enable_streaming }`
+if ('POSH_DISABLE_STREAMING' not-in $env) { _omp_enable_streaming }
+_omp_enable_vimode`
 
 	assert.Equal(t, want, got)
 }

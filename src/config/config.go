@@ -254,7 +254,7 @@ func (cfg *Config) Features(env runtime.Environment) shell.Features {
 				}
 			}
 
-			if segment.Type == VIMODE && slices.Contains([]string{shell.ZSH, shell.PWSH, shell.FISH}, env.Shell()) {
+			if segment.Type == VIMODE && slices.Contains([]string{shell.ZSH, shell.PWSH, shell.FISH, shell.NU}, env.Shell()) {
 				log.Debug("vi mode tracking enabled")
 				feats |= shell.VIMode
 			}

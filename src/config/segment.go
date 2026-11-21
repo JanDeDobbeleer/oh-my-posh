@@ -205,6 +205,13 @@ func (segment *Segment) Name() string {
 	return name
 }
 
+// Refresh executes the segment again without running the rest of the prompt. The resolved style
+// is cleared because it can depend on the state the writer picks up again.
+func (segment *Segment) Refresh(env runtime.Environment) {
+	segment.styleCache = ""
+	segment.Execute(env)
+}
+
 func (segment *Segment) Execute(env runtime.Environment) {
 	// Capture the template cache once: a timed-out segment keeps running in a
 	// background goroutine and publishes below after its cycle is gone, when

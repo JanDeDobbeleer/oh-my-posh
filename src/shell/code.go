@@ -13,6 +13,7 @@ const (
 	unixCursorPositioning Code = "_omp_cursor_positioning=1"
 	unixUpgrade           Code = `"$_omp_executable" upgrade --auto`
 	unixNotice            Code = `"$_omp_executable" notice`
+	enableVIMode          Code = "_omp_enable_vimode"
 )
 
 func (c Code) Indent(spaces int) Code {

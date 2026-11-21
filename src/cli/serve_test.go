@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -27,10 +28,11 @@ type serveHarness struct {
 	stdin    *os.File
 	reader   *recordReader
 	done     chan struct{}
+	json     bool
 	rendered bool
 }
 
-func startServeHarness(t *testing.T) *serveHarness {
+func startServeHarness(t *testing.T, useJSON bool) *serveHarness {
 	t.Helper()
 
 	t.Setenv("OMP_CACHE_DIR", t.TempDir())
@@ -44,13 +46,14 @@ func startServeHarness(t *testing.T) *serveHarness {
 	h := &serveHarness{
 		t:      t,
 		stdin:  stdinW,
-		reader: newRecordReader(stdoutR),
+		reader: newRecordReader(stdoutR, useJSON),
 		done:   make(chan struct{}),
+		json:   useJSON,
 	}
 
 	go func() {
 		defer close(h.done)
-		h.rendered = runServeLoop(stdinR, stdoutW)
+		h.rendered = runServeLoop(stdinR, stdoutW, useJSON)
 	}()
 
 	t.Cleanup(func() {
@@ -71,7 +74,7 @@ func (h *serveHarness) send(v any) {
 	h.t.Helper()
 
 	env := map[string]string{}
-	if m, ok := v.(map[string]any); ok {
+	if m, ok := v.(map[string]any); ok && !h.json {
 		if raw, ok := m["env"]; ok {
 			delete(m, "env")
 			typed, ok := raw.(map[string]string)
@@ -87,13 +90,15 @@ func (h *serveHarness) send(v any) {
 	buf.Write(data)
 	buf.WriteByte('\n')
 
-	for key, value := range env {
-		buf.WriteString(key)
-		buf.WriteByte('=')
-		buf.WriteString(value)
-		buf.WriteByte(0)
+	if !h.json {
+		for key, value := range env {
+			buf.WriteString(key)
+			buf.WriteByte('=')
+			buf.WriteString(value)
+			buf.WriteByte(0)
+		}
+		buf.WriteByte(0) // empty record: terminates the blob
 	}
-	buf.WriteByte(0) // empty record: terminates the blob
 
 	_, err = h.stdin.Write(buf.Bytes())
 	require.NoError(h.t, err)
@@ -161,7 +166,7 @@ type recordReader struct {
 	ch chan serveRecord
 }
 
-func newRecordReader(r *os.File) *recordReader {
+func newRecordReader(r *os.File, useJSON bool) *recordReader {
 	rr := &recordReader{ch: make(chan serveRecord, 64)}
 
 	go func() {
@@ -171,12 +176,26 @@ func newRecordReader(r *os.File) *recordReader {
 		// Match the daemon's request scanner: a record carries a full prompt
 		// payload, which can exceed bufio's 64 KB default token size.
 		scanner.Buffer(make([]byte, 0, 256*1024), 1024*1024)
-		scanner.Split(splitOnNull)
+		if !useJSON {
+			scanner.Split(splitOnNull)
+		}
 
 		for scanner.Scan() {
 			raw := scanner.Text()
 
 			idPart, payload, found := strings.Cut(raw, serveIDMarker)
+			if useJSON {
+				var response struct {
+					Prompt string `json:"prompt"`
+					ID     int64  `json:"id"`
+				}
+				if err := json.Unmarshal([]byte(raw), &response); err != nil {
+					continue
+				}
+				idPart = fmt.Sprint(response.ID)
+				payload = response.Prompt
+				found = true
+			}
 			if !found {
 				continue
 			}
@@ -297,7 +316,7 @@ func TestServeCommand_Creation(t *testing.T) {
 }
 
 func TestServeLoop_RenderProducesIDPrefixedRecords(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -319,8 +338,58 @@ func TestServeLoop_RenderProducesIDPrefixedRecords(t *testing.T) {
 	assert.True(t, h.rendered, "at least one render occurred before quit")
 }
 
+func TestServeLoop_TransportContext(t *testing.T) {
+	tests := []struct {
+		name string
+		json bool
+	}{
+		{name: "raw"},
+		{name: "json", json: true},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			h := startServeHarness(t, tc.json)
+			dir := t.TempDir()
+			configPath := filepath.Join(dir, "prompt.json")
+			require.NoError(t, os.WriteFile(configPath, []byte(`{
+					"version": 4,
+					"blocks": [{"type": "prompt", "alignment": "left", "segments": [
+						{"type": "text", "style": "plain", "template": "{{ .Folder }}:{{ .Code }}"}
+					]}]
+				}`), 0o600))
+			previousConfig := config.Get(configFlag, false)
+			config.Load(configPath).Store()
+			t.Cleanup(previousConfig.Store)
+			const name = "POSH_SERVE_TRANSPORT_TEST"
+			t.Setenv(name, "")
+			chdirBackToWD(t)
+
+			for cycle := range 2 {
+				pwd := filepath.Join(dir, fmt.Sprintf("directory-%d", cycle))
+				require.NoError(t, os.Mkdir(pwd, 0o755))
+				env := map[string]string{}
+				if cycle == 0 {
+					env[name] = "line1\nline2\ttab\"quote\\backslash"
+				}
+				h.send(map[string]any{
+					"command": "render", "shell": "nu", "id": cycle + 1,
+					"pwd": pwd, "status": cycle, "env": env,
+				})
+				records := h.records(500 * time.Millisecond)
+				require.NotEmpty(t, records)
+				assert.Equal(t, fmt.Sprint(cycle+1), records[0].id)
+				assert.Contains(t, records[0].payload, fmt.Sprintf("directory-%d:%d", cycle, cycle))
+				assert.Equal(t, env[name], os.Getenv(name))
+				assert.True(t, records[len(records)-1].transient)
+			}
+			h.quitAndWait()
+			assert.True(t, h.rendered)
+		})
+	}
+}
+
 func TestServeLoop_AbortStopsRecordFlowThenNewRenderWorks(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -378,7 +447,7 @@ func TestRenderCompleteEmitsTwoRecordsOnPanic(t *testing.T) {
 }
 
 func TestServeLoop_WaitRenderEmitsExactlyTwoRecords(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -444,7 +513,7 @@ func TestRenderCompleteTransientPreRender(t *testing.T) {
 // the daemon froze the path segment to the first render's directory until
 // startRenderCycle started resetting it per request.
 func TestServeLoop_RendersFollowDirectoryChanges(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwdOne := filepath.Join(t.TempDir(), "first-dir")
 	pwdTwo := filepath.Join(t.TempDir(), "second-dir")
 	require.NoError(t, os.Mkdir(pwdOne, 0o755))
@@ -470,7 +539,7 @@ func TestServeLoop_RendersFollowDirectoryChanges(t *testing.T) {
 // next (e.g. VIRTUAL_ENV after `deactivate`) must be unset in the daemon,
 // not keep its old value forever.
 func TestServeLoop_EnvOverlayUnsetsVanishedVariables(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -503,7 +572,7 @@ func TestServeLoop_EnvOverlayUnsetsVanishedVariables(t *testing.T) {
 // string escaping (which is exactly what the whitelist-based overlay hid,
 // since it only ever carried PATH/POSH_*-shaped values).
 func TestServeLoop_EnvBlobHandlesArbitraryValues(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -561,7 +630,7 @@ func TestReadEnvBlob_TruncatedBlobReturnsError(t *testing.T) {
 // request's header would be misread as more of the previous blob and the
 // loop would never render again.
 func TestServeLoop_MalformedHeaderStillConsumesBlobThenNextRequestRenders(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -582,7 +651,7 @@ func TestServeLoop_MalformedHeaderStillConsumesBlobThenNextRequestRenders(t *tes
 }
 
 func TestServeLoop_QuitExitsCleanly(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 
 	h.quitAndWait()
 
@@ -594,7 +663,7 @@ func TestServeLoop_QuitExitsCleanly(t *testing.T) {
 }
 
 func TestServeLoop_EOFExitsCleanly(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -613,7 +682,7 @@ func TestServeLoop_EOFExitsCleanly(t *testing.T) {
 }
 
 func TestServeLoop_UnknownCommandIgnored(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 
@@ -632,7 +701,7 @@ func TestServeLoop_UnknownCommandIgnored(t *testing.T) {
 // very first request line (written by .NET's default UTF8 StreamWriter
 // encoding on its first write) does not make the daemon drop the request.
 func TestServeLoop_UTF8BOMOnFirstLine(t *testing.T) {
-	h := startServeHarness(t)
+	h := startServeHarness(t, false)
 	pwd := t.TempDir()
 	chdirBackToWD(t)
 

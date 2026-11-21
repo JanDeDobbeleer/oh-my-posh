@@ -12,12 +12,14 @@ var nuInit string
 func (f Features) Nu() Code {
 	switch f {
 	case Transient:
-		return `$env.TRANSIENT_PROMPT_COMMAND = {|| _omp_get_prompt transient }`
+		return `$env.TRANSIENT_PROMPT_COMMAND = {|| _omp_transient }`
 	case Upgrade:
 		return "^$_omp_executable upgrade --auto"
 	case Notice:
 		return "^$_omp_executable notice"
-	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, FTCSMarks, CursorPositioning, Async, Streaming, KeyHandlers, VIMode:
+	case Streaming:
+		return `if ('POSH_DISABLE_STREAMING' not-in $env) { _omp_enable_streaming }`
+	case PromptMark, RPrompt, PoshGit, Azure, LineError, Jobs, Tooltips, FTCSMarks, CursorPositioning, Async, KeyHandlers, VIMode:
 		fallthrough
 	default:
 		return ""

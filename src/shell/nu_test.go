@@ -11,9 +11,10 @@ func TestNuFeatures(t *testing.T) {
 	got := allFeatures.Lines(NU).String("// these are the features")
 
 	want := `// these are the features
-$env.TRANSIENT_PROMPT_COMMAND = {|| _omp_get_prompt transient }
+$env.TRANSIENT_PROMPT_COMMAND = {|| _omp_transient }
 ^$_omp_executable upgrade --auto
-^$_omp_executable notice`
+^$_omp_executable notice
+if ('POSH_DISABLE_STREAMING' not-in $env) { _omp_enable_streaming }`
 
 	assert.Equal(t, want, got)
 }

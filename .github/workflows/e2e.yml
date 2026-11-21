@@ -17,7 +17,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     env:
-      NU_VERSION: "0.113.1"
+      NU_VERSION: "0.117.0"
       OMP_E2E_REQUIRE: bash,zsh,fish,pwsh,nu
     steps:
     - name: Checkout code
@@ -42,7 +42,7 @@ jobs:
   windows:
     runs-on: windows-latest
     env:
-      NU_VERSION: "0.113.1"
+      NU_VERSION: "0.117.0"
       OMP_E2E_REQUIRE: pwsh,nu
     steps:
     - name: Checkout code

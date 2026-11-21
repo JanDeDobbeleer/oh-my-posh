@@ -78,7 +78,7 @@ oh-my-posh init pwsh --config ~/.mytheme.omp.json | Invoke-Expression
 
 ## Shell support
 
-Streaming is supported in `powershell`, `zsh`, `fish` and `cmd`. For any other shell, the
+Streaming is supported in `powershell`, `zsh`, `fish`, `nu` and `cmd`. For any other shell, the
 setting has no effect and prompts render the classic way. The available functionality
 differs per shell:
 
@@ -89,6 +89,7 @@ differs per shell:
     { label: 'powershell', value: 'powershell', },
     { label: 'zsh', value: 'zsh', },
     { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
     { label: 'cmd', value: 'cmd', },
   ]
 }>
@@ -132,6 +133,20 @@ streaming's own - see the note above for disabling streaming there.
   directory, cleaned up when the shell exits. It restarts automatically when it fails, and
   is abandoned for the session in favor of per-prompt rendering after repeated failures
 - the right prompt renders per prompt and is not streamed
+
+</TabItem>
+<TabItem value="nu">
+
+Requires Nushell `0.115.0` or later. Nushell `0.117.0` or later is recommended because it fixes
+updates that arrive before the prompt is drawn.
+
+- **live updates**: the prompt repaints in place as pending segments resolve, even while
+  you're already typing
+- **background process**: one Nushell job keeps `oh-my-posh serve` running across prompt cycles,
+  sends render requests through its mailbox, and updates the prompt with `commandline set-prompt`.
+  The job restarts automatically when it stops, streaming is disabled for the session when it stops
+  answering, and it is excluded from the prompt's job count
+- the transient prompt comes from the background process; the right prompt still renders per prompt
 
 </TabItem>
 <TabItem value="cmd">

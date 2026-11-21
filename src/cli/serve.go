@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -26,15 +27,14 @@ func init() {
 	RootCmd.AddCommand(serveCmd)
 }
 
-// One JSON object per line on stdin, immediately followed - for every
+// Each JSON request is immediately followed - for every
 // command, not just render - by a raw "KEY=VALUE\x00" record stream
 // terminated by an empty record (a bare NUL); see readEnvBlob. Unknown JSON
 // fields are ignored by encoding/json by default, giving forward
-// compatibility for free.
+// compatibility for free. With --json the environment is part of the request
+// and prompt records are JSON objects, which survive newlines in a prompt.
 type serveRequest struct {
-	// Env is never part of the JSON header - it comes from the raw record
-	// stream that follows every request line, parsed by readEnvBlob.
-	Env           map[string]string `json:"-"`
+	Env           map[string]string `json:"env"`
 	Command       string            `json:"command"`
 	Shell         string            `json:"shell"`
 	ShellVersion  string            `json:"shell-version"`
@@ -72,6 +72,7 @@ const (
 const serveIDMarker = "\x1f"
 
 func createServeCmd() *cmdtree.Command {
+	var jsonProtocol bool
 	serveCmd := &cmdtree.Command{
 		Use:    "serve",
 		Short:  "Start a persistent prompt server that streams prompt updates over stdio",
@@ -97,7 +98,7 @@ func createServeCmd() *cmdtree.Command {
 			// least once (it reads package-level state set there); if the
 			// daemon quits/hits EOF before ever handling a render request,
 			// skip it instead of panicking on that unset state.
-			if renderedAtLeastOnce := runServeLoop(in, os.Stdout); renderedAtLeastOnce {
+			if renderedAtLeastOnce := runServeLoop(in, os.Stdout, jsonProtocol); renderedAtLeastOnce {
 				template.SaveCache()
 			}
 		},
@@ -105,6 +106,7 @@ func createServeCmd() *cmdtree.Command {
 
 	serveCmd.Flags().StringVar(&shellName, "shell", "", "the shell to serve for")
 	serveCmd.Flags().StringVar(&requestPipe, "request-pipe", "", "named pipe (fifo) to read requests from instead of stdin")
+	serveCmd.Flags().BoolVar(&jsonProtocol, "json", false, "exchange newline-delimited JSON requests and prompt records")
 
 	// Hide flags that are for internal use only.
 	_ = serveCmd.Flags().MarkHidden("request-pipe")
@@ -159,7 +161,7 @@ type serveActiveCycle struct {
 // StreamPrimary) so a broken render costs one prompt, not the daemon; the
 // shell additionally redirects this process's stderr so anything unrecovered
 // can never reach the user's terminal.
-func runServeLoop(in, out *os.File) bool {
+func runServeLoop(in, out *os.File, jsonProtocol bool) bool {
 	reader := bufio.NewReader(in)
 
 	var active *serveActiveCycle
@@ -219,16 +221,19 @@ func runServeLoop(in, out *os.File) bool {
 		// stream in sync regardless of the header's command or JSON validity;
 		// a client that skipped it on some commands would desync every
 		// request after the first one that did.
-		env, envErr := readEnvBlob(reader)
-		if envErr != nil {
-			// Truncated/closed mid-blob: nothing more can be recovered.
-			break
+		var req serveRequest
+		jsonErr := json.Unmarshal(line, &req)
+
+		if !jsonProtocol {
+			env, envErr := readEnvBlob(reader)
+			if envErr != nil {
+				break
+			}
+
+			req.Env = env
 		}
 
-		var req serveRequest
-		if err := json.Unmarshal(line, &req); err == nil {
-			req.Env = env
-
+		if jsonErr == nil {
 			switch req.Command {
 			case serveCommandRender:
 				// A new render request implicitly aborts whatever is running.
@@ -237,7 +242,7 @@ func runServeLoop(in, out *os.File) bool {
 				// template.Init may never have run, in which case the shutdown
 				// path must not call template.SaveCache (it dereferences state
 				// only Init sets). A started cycle implies Init completed.
-				if active = startRenderCycle(&req, out, envKeys); active != nil {
+				if active = startRenderCycle(&req, out, envKeys, jsonProtocol); active != nil {
 					renderedAtLeastOnce = true
 				}
 			case serveCommandAbort:
@@ -321,7 +326,7 @@ func applyEnvOverlay(env map[string]string, keys map[string]struct{}) {
 // A panic while setting up the cycle (e.g. in prompt.New) is recovered and
 // reported as "no cycle": the daemon stays alive, the shell's waiter times
 // out and falls back to the legacy path for that prompt.
-func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct{}) (cycle *serveActiveCycle) {
+func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct{}, jsonProtocol bool) (cycle *serveActiveCycle) {
 	defer func() {
 		if r := recover(); r != nil {
 			cycle = nil
@@ -402,7 +407,7 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 
 	return &serveActiveCycle{
 		engine:     eng,
-		copierDone: copyRecords(req.ID, records, out),
+		copierDone: copyRecords(req.ID, records, out, jsonProtocol),
 	}
 }
 
@@ -446,15 +451,27 @@ func renderComplete(eng *prompt.Engine) <-chan string {
 	return records
 }
 
-// copyRecords copies prompt records to out prefixed with the cycle id and
-// closes the returned channel once the source channel is exhausted.
-func copyRecords(id int64, records <-chan string, out *os.File) chan struct{} {
+func copyRecords(id int64, records <-chan string, out *os.File, jsonProtocol bool) chan struct{} {
 	done := make(chan struct{})
 
 	go func() {
 		defer close(done)
 
+		encoder := json.NewEncoder(out)
+		encoder.SetEscapeHTML(false)
+
 		for record := range records {
+			if jsonProtocol {
+				payload := struct {
+					Prompt string `json:"prompt"`
+					ID     int64  `json:"id"`
+				}{Prompt: record, ID: id}
+				if err := encoder.Encode(payload); err != nil {
+					log.Error(err)
+					return
+				}
+				continue
+			}
 			// Single Fprintf call so each record is written to stdout
 			// atomically with respect to other os.Stdout writers in this
 			// process (there are none today, but keep the invariant).

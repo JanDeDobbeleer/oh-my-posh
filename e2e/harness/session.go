@@ -3,6 +3,7 @@ package harness
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 	"sync"
@@ -68,7 +69,8 @@ func Start(t *testing.T, sh ShellDef, cfgPath string) *Session {
 	scriptPath := WriteScript(t, sh.Name, script)
 
 	_, args, env := sh.Launch(t, scriptPath, workDir)
-	env = append(env, "TERM=xterm-256color", "OMP_CACHE_DIR="+t.TempDir())
+	cacheDir := t.TempDir()
+	env = append(env, "TERM=xterm-256color", "OMP_CACHE_DIR="+cacheDir)
 
 	p, err := pty.New()
 	if err != nil {
@@ -109,9 +111,21 @@ func Start(t *testing.T, sh ShellDef, cfgPath string) *Session {
 		if s.takeWaitOwnership() {
 			_ = cmd.Wait()
 		}
+
+		removeWhenQuiet(cacheDir)
 	})
 
 	return s
+}
+
+// removeWhenQuiet removes dir once nothing writes to it anymore. A streaming daemon outlives
+// its killed shell and flushes its cache on the way out, which makes the RemoveAll that
+// t.TempDir registers fail with "directory not empty".
+func removeWhenQuiet(dir string) {
+	deadline := time.Now().Add(5 * time.Second)
+	for os.RemoveAll(dir) != nil && time.Now().Before(deadline) {
+		time.Sleep(10 * time.Millisecond)
+	}
 }
 
 // takeWaitOwnership reports whether the caller is the first to claim responsibility for

@@ -17,6 +17,10 @@
   `git.exe`.
 - Nushell evaluates `TRANSIENT_PROMPT_COMMAND` before Reedline reads input. Test its render timestamp against
   prompt readiness, not submission; `pre_render` only controls Oh My Posh's own streaming pre-render.
+- Keep Nushell daemon handles and cycle counters in `hooks.pre_prompt`, not `PROMPT_COMMAND`: prompt closures
+  discard environment changes after evaluation. Use the prompt closure only to return the prepared prompt.
+- Decode external Nushell protocol records with `lines | each { from json }`; `split row` does not incrementally
+  frame an external byte stream. Parenthesize multiline external invocations so trailing flags are not expressions.
 
 ## WSL
 

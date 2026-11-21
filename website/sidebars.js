@@ -28,7 +28,7 @@ export default {
           ],
         },
         "installation/fonts",
-        "installation/prompt",
+        "installation/shell",
         "installation/customize",
         "installation/upgrade",
       ],

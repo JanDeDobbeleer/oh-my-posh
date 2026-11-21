@@ -49,7 +49,7 @@ func createInitCmd() *cmdtree.Command {
 		Short: "Initialize your shell and config",
 		Long: `Initialize your shell and config.
 
-See the documentation to initialize your shell: https://ohmyposh.dev/docs/installation/prompt.`,
+See the documentation to initialize your shell: https://ohmyposh.dev/docs/installation/shell.`,
 		ValidArgs: supportedShells,
 		Args:      NoArgsOrOneValidArg,
 		Run: func(cmd *cmdtree.Command, args []string) {

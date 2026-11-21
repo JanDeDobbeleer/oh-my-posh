@@ -208,7 +208,7 @@ install() {
 
     install_themes
 
-    info "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt"
+    info "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/shell"
     info "to setup your shell to use oh-my-posh."
     if [ $http_response = "200" ]; then
         info "\nIf you want to use a built-in theme, you can find them in the ${themes_dir} directory:"

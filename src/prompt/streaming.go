@@ -257,15 +257,18 @@ func (e *Engine) Abort() {
 // renderFromBlocks resets the prompt builder state a fresh render pass needs and re-renders
 // the primary prompt from the segments' already-executed state (the cache path).
 func (e *Engine) renderFromBlocks() string {
-	// Reset prompt builder
+	e.resetPromptBuilder()
+
+	return e.primaryInternal(true)
+}
+
+func (e *Engine) resetPromptBuilder() {
 	e.prompt.Reset()
 	e.currentLineLength = 0
 	e.activeSegment = nil
 	e.previousActiveSegment = nil
 	e.rprompt = ""
 	e.rpromptLength = 0
-
-	return e.primaryInternal(true)
 }
 
 func (e *Engine) segmentPending(segment *config.Segment) bool {

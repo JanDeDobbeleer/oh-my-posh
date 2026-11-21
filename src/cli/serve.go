@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
@@ -41,6 +42,7 @@ type serveRequest struct {
 	PWD           string            `json:"pwd"`
 	PSWD          string            `json:"pswd"`
 	PipeStatus    string            `json:"pipestatus"`
+	ViModes       []string          `json:"vi-modes"`
 	ID            int64             `json:"id"`
 	Status        int               `json:"status"`
 	StackCount    int               `json:"stack-count"`
@@ -394,6 +396,7 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 		IsPrimary:     true,
 		Escape:        true,
 		Streaming:     !req.Wait,
+		VIModes:       req.ViModes,
 	}
 
 	eng := prompt.New(flags)
@@ -407,7 +410,7 @@ func startRenderCycle(req *serveRequest, out *os.File, envKeys map[string]struct
 
 	return &serveActiveCycle{
 		engine:     eng,
-		copierDone: copyRecords(req.ID, records, out, jsonProtocol),
+		copierDone: copyRecords(req.ID, records, out, jsonProtocol, len(req.ViModes) > 0),
 	}
 }
 
@@ -451,7 +454,7 @@ func renderComplete(eng *prompt.Engine) <-chan string {
 	return records
 }
 
-func copyRecords(id int64, records <-chan string, out *os.File, jsonProtocol bool) chan struct{} {
+func copyRecords(id int64, records <-chan string, out *os.File, jsonProtocol, viModes bool) chan struct{} {
 	done := make(chan struct{})
 
 	go func() {
@@ -463,9 +466,16 @@ func copyRecords(id int64, records <-chan string, out *os.File, jsonProtocol boo
 		for record := range records {
 			if jsonProtocol {
 				payload := struct {
-					Prompt string `json:"prompt"`
-					ID     int64  `json:"id"`
+					Prompt string          `json:"prompt"`
+					VI     json.RawMessage `json:"vi,omitempty"`
+					ID     int64           `json:"id"`
 				}{Prompt: record, ID: id}
+				// With vi modes the primary prompt already is a JSON object of mode to prompt;
+				// the transient and fallback records are not JSON and stay plain prompts.
+				if viModes && strings.HasPrefix(record, "{") {
+					payload.VI = json.RawMessage(record)
+					payload.Prompt = ""
+				}
 				if err := encoder.Encode(payload); err != nil {
 					log.Error(err)
 					return

@@ -186,14 +186,18 @@ func newRecordReader(r *os.File, useJSON bool) *recordReader {
 			idPart, payload, found := strings.Cut(raw, serveIDMarker)
 			if useJSON {
 				var response struct {
-					Prompt string `json:"prompt"`
-					ID     int64  `json:"id"`
+					Prompt string          `json:"prompt"`
+					VI     json.RawMessage `json:"vi"`
+					ID     int64           `json:"id"`
 				}
 				if err := json.Unmarshal([]byte(raw), &response); err != nil {
 					continue
 				}
 				idPart = fmt.Sprint(response.ID)
 				payload = response.Prompt
+				if len(response.VI) > 0 {
+					payload = string(response.VI)
+				}
 				found = true
 			}
 			if !found {
@@ -386,6 +390,38 @@ func TestServeLoop_TransportContext(t *testing.T) {
 			assert.True(t, h.rendered)
 		})
 	}
+}
+
+func TestServeLoop_ViModes(t *testing.T) {
+	h := startServeHarness(t, true)
+	dir := t.TempDir()
+	configPath := filepath.Join(dir, "prompt.json")
+	require.NoError(t, os.WriteFile(configPath, []byte(`{
+		"version": 4,
+		"blocks": [{"type": "prompt", "alignment": "left", "segments": [
+			{"type": "vimode", "style": "plain", "template": "{{ .Mode }}"}
+		]}]
+	}`), 0o600))
+	previousConfig := config.Get(configFlag, false)
+	config.Load(configPath).Store()
+	t.Cleanup(previousConfig.Store)
+	chdirBackToWD(t)
+
+	h.send(map[string]any{
+		"command": "render", "shell": "nu", "id": 1, "pwd": dir,
+		"vi-modes": []string{"viins", "vicmd"}, "env": map[string]string{},
+	})
+
+	records := h.records(500 * time.Millisecond)
+	require.NotEmpty(t, records)
+
+	var prompts map[string]string
+	require.NoError(t, json.Unmarshal([]byte(records[0].payload), &prompts))
+	assert.Contains(t, prompts["viins"], "insert")
+	assert.Contains(t, prompts["vicmd"], "normal")
+	assert.True(t, records[len(records)-1].transient, "the transient record stays a plain prompt")
+
+	h.quitAndWait()
 }
 
 func TestServeLoop_AbortStopsRecordFlowThenNewRenderWorks(t *testing.T) {

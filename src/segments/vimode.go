@@ -1,7 +1,7 @@
 package segments
 
 const (
-	poshVIModeEnv = "POSH_VI_MODE"
+	VIModeEnv = "POSH_VI_MODE"
 )
 
 type VIMode struct {
@@ -16,7 +16,7 @@ func (v *VIMode) Template() string {
 }
 
 func (v *VIMode) Enabled() bool {
-	v.Keymap = v.env.Getenv(poshVIModeEnv)
+	v.Keymap = v.env.Getenv(VIModeEnv)
 	if v.Keymap == "" {
 		return false
 	}

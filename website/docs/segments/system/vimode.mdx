@@ -8,14 +8,29 @@ sidebar_label: Vi mode
 
 Display the current Vi mode (insert / normal / visual …) in the prompt. Useful
 when using ZSH [keymaps][zsh-vi-mode] via `bindkey -v`, PowerShell PSReadLine
-`-EditMode Vi`, or fish [vi key bindings][fish-vi-mode] so you can tell at a
-glance which mode you are in.
+`-EditMode Vi`, fish [vi key bindings][fish-vi-mode], or Nushell `vi` and `helix`
+[edit modes][nu-edit-mode] so you can tell at a glance which mode you are in.
 
 In ZSH, adding this segment automatically registers a `zle-keymap-select` hook.
 In PowerShell, it registers a PSReadLine [Vi mode change handler][pwsh-vi-mode].
 In fish, it registers an [`--on-variable fish_bind_mode`][fish-bind-mode] handler
 (only when vi or hybrid key bindings are active). All of them re-render the
 prompt every time the active mode changes.
+
+Nushell has no mode change hook. Instead, the prompt is rendered once per mode up front and
+Nushell switches between the results itself through `PROMPT_INDICATOR_VI_INSERT` and
+`PROMPT_INDICATOR_VI_NORMAL`, so changing mode costs no render at all.
+
+:::caution Nushell
+
+Requires Nushell `0.115.0` or later. In `vi` and `helix` mode the whole prompt is handed to Nushell
+as these two indicators, so don't set them yourself. Nushell only knows an insert and a normal
+indicator: vi visual mode and helix select mode show the `normal` prompt, and `.Mode` is never
+`visual` there. Nushell's own `cursor_shape` setting decides the cursor shape, not `cursor_style`.
+The segment only tracks the mode in the left prompt: elsewhere, such as the right prompt, it stays hidden.
+The prompt is prepared by a Nushell hook, so don't replace `$env.config.hooks.pre_prompt` after the init script ran.
+
+:::
 
 :::caution PowerShell cursor indicator
 
@@ -62,12 +77,13 @@ import Config from "@site/src/components/Config.js";
 | Name      |   Type   | Description                                                                                                                                    |
 | --------- | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.Mode`   | `string` | the normalized mode: `insert`, `normal`, `visual`, `viopp`, `replace`, or the raw keymap when unmapped                                         |
-| `.Keymap` | `string` | the raw mode value ([`$KEYMAP`][zsh-keymap] in ZSH, e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`; `viins` or `vicmd` in PowerShell PSReadLine; `viins`, `vicmd`, `visual` or `replace` in fish) |
+| `.Keymap` | `string` | the raw mode value ([`$KEYMAP`][zsh-keymap] in ZSH, e.g. `main`, `viins`, `vicmd`, `visual`, `viopp`; `viins` or `vicmd` in PowerShell PSReadLine; `viins`, `vicmd`, `visual` or `replace` in fish; `viins` or `vicmd` in Nushell, empty outside the left prompt) |
 
 [templates]: /docs/configuration/templates
 [cursor-style]: /docs/configuration/general#settings
 [zsh-vi-mode]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Keymaps
 [zsh-keymap]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#index-KEYMAP
+[nu-edit-mode]: https://www.nushell.sh/book/line_editor.html#setting-the-editing-mode
 [pwsh-vi-mode]: https://learn.microsoft.com/en-us/powershell/module/psreadline/set-psreadlineoption#-vimodechangehandler
 [fish-vi-mode]: https://fishshell.com/docs/current/interactive.html#vi-mode-commands
 [fish-bind-mode]: https://fishshell.com/docs/current/language.html#the-fish-bind-mode-variable

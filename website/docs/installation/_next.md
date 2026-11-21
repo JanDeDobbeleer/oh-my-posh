@@ -6,9 +6,9 @@ get the prompt to look exactly like you want.
 
 - install a [font][fonts]
 - configure your terminal/editor to use the installed font
-- configure your shell to [use Oh My Posh][prompt]
+- configure your shell to [use Oh My Posh][shell]
 - (optional) configure a theme or [custom prompt configuration][customize]
 
 [fonts]: fonts.mdx
-[prompt]: prompt.mdx
+[shell]: shell.mdx
 [customize]: customize.mdx

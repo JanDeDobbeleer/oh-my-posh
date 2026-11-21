@@ -10,7 +10,7 @@
 - [Windows Installation](/docs/installation/windows) — winget, chocolatey, or manual install
 - [macOS Installation](/docs/installation/macos) — Homebrew or MacPorts
 - [Linux Installation](/docs/installation/linux) — curl install script
-- [Shell Setup](/docs/installation/prompt) — per-shell init snippets
+- [Shell Setup](/docs/installation/shell) — per-shell init snippets
 - [Fonts](/docs/installation/fonts) — install a Nerd Font for icons
 - [Themes Gallery](/docs/themes) — browse all bundled themes
 - [Configuration Reference](/docs/configuration/introduction) — full JSON/YAML/TOML schema

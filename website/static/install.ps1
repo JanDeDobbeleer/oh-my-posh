@@ -74,5 +74,5 @@ Done!
 Restart your terminal and have a look at the
 documentation on how to proceed from here.
 
-https://ohmyposh.dev/docs/installation/prompt
+https://ohmyposh.dev/docs/installation/shell
 '@

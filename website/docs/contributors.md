@@ -551,6 +551,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/elreydetodo"><img src="https://avatars.githubusercontent.com/u/711560?v=4&size=100" width="100px" height="100px" alt="Martin Meyer"/><br /><sub><b>Martin Meyer</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=elreydetodo" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/eavendano"><img src="https://avatars.githubusercontent.com/u/4459373?v=4&size=100" width="100px" height="100px" alt="Emanuel "/><br /><sub><b>Emanuel </b></sub></a><br /><a href="#design-eavendano" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gemidriver"><img src="https://avatars.githubusercontent.com/u/50426477?v=4&size=100" width="100px" height="100px" alt="Brad"/><br /><sub><b>Brad</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=gemidriver" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

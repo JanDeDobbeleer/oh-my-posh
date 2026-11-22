@@ -264,3 +264,34 @@ func encodeIndex(t *testing.T, path string, idx *index.Index) {
 
 	require.NoError(t, index.NewEncoder(f).Encode(idx))
 }
+
+func TestDirHasVisibleFile(t *testing.T) {
+	cases := []struct {
+		Files    map[string]string
+		Case     string
+		Expected bool
+	}{
+		{Case: "plain file", Files: map[string]string{"data.txt": "x"}, Expected: true},
+		{Case: "self-ignoring directory", Files: map[string]string{".gitignore": "*\n", "data.txt": "x"}},
+		{
+			Case:     "nested ignore hides only part",
+			Files:    map[string]string{"sub/.gitignore": "hidden.txt\n", "sub/hidden.txt": "x", "sub/shown.txt": "x"},
+			Expected: true,
+		},
+		{Case: "nested ignore hides everything", Files: map[string]string{"sub/.gitignore": "*\n", "sub/a.txt": "x"}},
+		{Case: "empty", Files: map[string]string{}},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			dir := t.TempDir()
+			for name, content := range tc.Files {
+				path := filepath.Join(dir, filepath.FromSlash(name))
+				require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
+				require.NoError(t, os.WriteFile(path, []byte(content), 0o644))
+			}
+
+			assert.Equal(t, tc.Expected, dirHasVisibleFile(dir, "tool", nil))
+		})
+	}
+}

@@ -1,9 +1,9 @@
 package gitstatus
 
 import (
-	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
@@ -131,35 +131,30 @@ func readIgnoreFile(path string, domain []string) []gitignore.Pattern {
 // dirHasVisibleFile reports whether dir contains at least one non-ignored
 // file anywhere beneath it, stopping at the first match. Used by the
 // "normal" untracked mode to decide whether an untracked directory counts
-// as a single untracked entry.
-func dirHasVisibleFile(dir, rel string, ignored func(string, bool) bool) bool {
-	found := false
+// as a single untracked entry. Nested .gitignore files are layered like in
+// the worktree walk, so a directory that ignores itself counts as empty.
+func dirHasVisibleFile(dir, rel string, patterns []gitignore.Pattern) bool {
+	if ps := readIgnoreFile(filepath.Join(dir, ".gitignore"), splitDomain(rel)); ps != nil {
+		patterns = append(slices.Clip(patterns), ps...)
+	}
 
-	_ = filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
-		if err != nil || found {
-			return fs.SkipAll
+	des, err := os.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+
+	matcher := gitignore.NewMatcher(patterns)
+	for _, de := range des {
+		childRel := rel + "/" + de.Name()
+		isDir := de.IsDir()
+		if matcher.Match(strings.Split(childRel, "/"), isDir) {
+			continue
 		}
 
-		r, _ := filepath.Rel(dir, p)
-		if r == "." {
-			return nil
+		if !isDir || dirHasVisibleFile(filepath.Join(dir, de.Name()), childRel, patterns) {
+			return true
 		}
+	}
 
-		childRel := rel + "/" + filepath.ToSlash(r)
-		if d.IsDir() {
-			if ignored(childRel, true) {
-				return fs.SkipDir
-			}
-			return nil
-		}
-
-		if !ignored(childRel, false) {
-			found = true
-			return fs.SkipAll
-		}
-
-		return nil
-	})
-
-	return found
+	return false
 }

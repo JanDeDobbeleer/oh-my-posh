@@ -204,6 +204,10 @@ func (pt *Path) Format(inputPath string) template.Markup {
 		formatted.pathSeparator = path.Separator()
 	}
 
+	if strings.HasPrefix(inputPath, "~") && (len(inputPath) == 1 || path.IsSeparator(inputPath[1])) {
+		inputPath = formatted.env.Home() + inputPath[1:]
+	}
+
 	formatted.windowsPath = formatted.env.GOOS() == runtime.WINDOWS && !formatted.cygPath
 	if formatted.cygPath {
 		inputPath = strings.ReplaceAll(inputPath, `\`, "/")

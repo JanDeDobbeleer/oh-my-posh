@@ -394,7 +394,7 @@ func (s *scanner) walkDir(dir, name, childRel string, patterns []gitignore.Patte
 
 	// "normal": collapse to one untracked entry iff the directory contains
 	// at least one non-ignored file.
-	if dirHasVisibleFile(filepath.Join(dir, name), childRel, match) {
+	if dirHasVisibleFile(filepath.Join(dir, name), childRel, patterns) {
 		s.untracked.Add(1)
 	}
 }
@@ -404,7 +404,8 @@ func symlinkMatches(path string, want plumbing.Hash) bool {
 	if err != nil {
 		return false
 	}
-	return blobSHA([]byte(target)) == want
+	// git stores link targets with forward slashes; Windows reads them back with backslashes
+	return blobSHA([]byte(filepath.ToSlash(target))) == want
 }
 
 // blobMatches hashes the file as a git blob and compares. Falls back to a

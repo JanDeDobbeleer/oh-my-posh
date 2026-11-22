@@ -286,6 +286,30 @@ func TestFormat(t *testing.T) {
 			expected: "H/F/src",
 		},
 		{
+			name:      "tilde input home mapping",
+			inputPath: "~/projects/work/src",
+			options: options.Map{
+				options.Style:       AgnosterShort,
+				HomeIcon:            "H",
+				FolderIcon:          "F",
+				FolderSeparatorIcon: "/",
+				MaxDepth:            1,
+			},
+			goos:     runtime.DARWIN,
+			expected: "H/F/src",
+		},
+		{
+			name:      "bare tilde input home mapping",
+			inputPath: "~",
+			options: options.Map{
+				options.Style:       Full,
+				HomeIcon:            "H",
+				FolderSeparatorIcon: "/",
+			},
+			goos:     runtime.DARWIN,
+			expected: "H",
+		},
+		{
 			name:      "custom mapping and short style",
 			inputPath: "/workspace/app/internal/main.go",
 			options: options.Map{
@@ -359,6 +383,19 @@ func TestFormat(t *testing.T) {
 			expected: "H/F/src",
 		},
 		{
+			name:      "windows tilde input home mapping",
+			inputPath: "~/projects/work/src",
+			options: options.Map{
+				options.Style:       AgnosterShort,
+				HomeIcon:            "H",
+				FolderIcon:          "F",
+				FolderSeparatorIcon: "/",
+				MaxDepth:            1,
+			},
+			goos:     runtime.WINDOWS,
+			expected: "H/F/src",
+		},
+		{
 			name:      "windows slash path custom mapping",
 			inputPath: "C:/workspace/app/internal/main.go",
 			options: options.Map{
@@ -395,7 +432,7 @@ func TestFormat(t *testing.T) {
 			}
 
 			env := new(mock.Environment)
-			home := homeDir
+			home := strings.ReplaceAll(homeDir, "/", runtimepath.Separator())
 			if tc.goos == runtime.WINDOWS {
 				home = homeDirWindows
 			}

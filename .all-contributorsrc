@@ -3990,6 +3990,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "rcoscali",
+      "name": "Rémi COHEN-SCALI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4035461?v=4",
+      "profile": "https://github.com/rcoscali",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

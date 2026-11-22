@@ -58,8 +58,7 @@ func (term *Terminal) TerminalWidth() (int, error) {
 	defer log.Trace(time.Now())
 
 	if term.CmdFlags.TerminalWidth > 0 {
-		log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
-		return term.CmdFlags.TerminalWidth, nil
+		return term.reducedWidth(), nil
 	}
 
 	width, err := terminal.Width()
@@ -72,9 +71,8 @@ func (term *Terminal) TerminalWidth() (int, error) {
 	}
 
 	term.CmdFlags.TerminalWidth = int(width)
-	log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
 
-	return term.CmdFlags.TerminalWidth, err
+	return term.reducedWidth(), err
 }
 
 func resolveTerminalWidth(width uint, terminalErr error, columns string) (uint, error) {

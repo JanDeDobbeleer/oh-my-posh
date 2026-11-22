@@ -214,7 +214,7 @@ curl -X POST https://ohmyposh.dev/api/mcp \
 - `oh-my-posh` not found — restart terminal or add install directory to `$PATH`
 - PowerShell execution policy error — run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
 - Fish version error — upgrade to Fish 4.1.0+
-- Nu version error — upgrade to Nushell v0.104.0+
+- Nu version error — upgrade to Nushell v0.117.0+
 - macOS bash error — update bash with `brew install bash`
 
 Full FAQ: https://ohmyposh.dev/docs/faq

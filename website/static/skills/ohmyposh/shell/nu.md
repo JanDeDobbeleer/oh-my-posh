@@ -1,6 +1,6 @@
 # Oh My Posh — Nu / Nushell Setup
 
-> **Requires Nushell v0.104.0 or later.**
+> **Requires Nushell v0.117.0 or later.**
 
 ## Configure
 

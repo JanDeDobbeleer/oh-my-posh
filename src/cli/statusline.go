@@ -106,8 +106,9 @@ func workingDirectory(currentDir, cwd string) string {
 
 func statuslineFlags[T any](explicitConfig, shellConst string, data *T, pwd func(*T) string) *runtime.Flags {
 	flags := &runtime.Flags{
-		ConfigPath: explicitConfig,
-		Shell:      shellConst,
+		ConfigPath:     explicitConfig,
+		Shell:          shellConst,
+		MaxColumnsLess: maxColumnsLess,
 	}
 
 	if data == nil {

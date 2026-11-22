@@ -319,3 +319,14 @@ func runStatuslineGit(t *testing.T, dir string, args ...string) {
 	out, err := cmd.CombinedOutput()
 	require.NoErrorf(t, err, "git %s failed: %s", strings.Join(args, " "), out)
 }
+
+func TestStatuslineFlagsMaxColumnsLess(t *testing.T) {
+	original := maxColumnsLess
+	t.Cleanup(func() { maxColumnsLess = original })
+
+	maxColumnsLess = 7
+
+	flags := statuslineFlags[segments.ClaudeData]("", shell.CLAUDE, nil, claudePWD)
+
+	assert.Equal(t, 7, flags.MaxColumnsLess)
+}

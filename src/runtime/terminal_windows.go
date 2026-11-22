@@ -88,8 +88,7 @@ func (term *Terminal) TerminalWidth() (int, error) {
 	defer log.Trace(time.Now())
 
 	if term.CmdFlags.TerminalWidth > 0 {
-		log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
-		return term.CmdFlags.TerminalWidth, nil
+		return term.reducedWidth(), nil
 	}
 
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
@@ -105,9 +104,8 @@ func (term *Terminal) TerminalWidth() (int, error) {
 	}
 
 	term.CmdFlags.TerminalWidth = int(info.Size.X)
-	log.Debugf("terminal width: %d", term.CmdFlags.TerminalWidth)
 
-	return term.CmdFlags.TerminalWidth, nil
+	return term.reducedWidth(), nil
 }
 
 func (term *Terminal) Platform() string {

@@ -339,6 +339,34 @@ eval "$(oh-my-posh init bash --strict)"
 Use the equivalent init command for your shell. This keeps the prompt working when the version
 manager updates `PATH` to a new Oh My Posh installation.
 
+## Narrower terminal width
+
+Some hosts, such as an Emacs `shell` buffer or the Claude Code status line, report the full terminal width
+but only display part of it. Right-aligned segments then end up cut off at the edge.
+
+Set `POSH_MAX_COLUMNS_LESS` to subtract a number of columns from the width the prompt is laid out at. It works
+with every shell. For example, to render the prompt 4 columns narrower than the terminal in Bash:
+
+```bash
+export POSH_MAX_COLUMNS_LESS=4
+eval "$(oh-my-posh init bash)"
+```
+
+The `--max-columns-less` flag does the same for a single call. It is available on `oh-my-posh print`,
+`oh-my-posh stream` and the status line commands (`oh-my-posh claude`, `oh-my-posh copilot` and
+`oh-my-posh antigravity`) and takes precedence over the variable. It applies to the width given with
+`--terminal-width` or detected from the terminal. A value that is not smaller than the terminal width is ignored.
+For example, in the Claude Code `settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "oh-my-posh claude --config ~/.config/ohmyposh/claude.toml --max-columns-less 10"
+  }
+}
+```
+
 [Antigravity segment documentation]: /docs/segments/agents/antigravity
 [Copilot CLI segment documentation]: /docs/segments/agents/copilot-cli
 [clink]: https://chrisant996.github.io/clink/

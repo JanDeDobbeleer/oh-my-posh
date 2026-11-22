@@ -61,6 +61,8 @@ func (term *Terminal) Init(flags *Flags) {
 
 	term.setPwd()
 
+	term.setMaxColumnsLess()
+
 	term.cmdCache = &cache.Command{
 		Commands: maps.NewConcurrent[string](),
 	}

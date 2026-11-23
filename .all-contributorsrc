@@ -4001,6 +4001,15 @@
         "doc",
         "design"
       ]
+    },
+    {
+      "login": "b84330808",
+      "name": "Wei-Lun Li",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6395743?v=4",
+      "profile": "https://weilunli.me/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

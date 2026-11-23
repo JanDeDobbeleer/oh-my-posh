@@ -57,9 +57,10 @@
 - With transient pre-rendering disabled, publish the session snapshot before the marker-only record: the
   on-demand CLI fallback cannot access the serve daemon's in-memory template context.
 - `"streaming": <ms>` also becomes every segment's pending timeout, overriding segment `timeout`.
-- `stream` emits the transient prompt as a `\x1e`-prefixed NUL-terminated record (initial, and again once all
-  segments resolve). Serve records are `<id>\x1f<payload>\0`; a wait-mode request always yields exactly 2, even on
-  segment panic (`renderComplete`), because Clink blocks on that count.
+- `stream` emits the transient prompt as a `\x1e`-prefixed NUL-terminated record initially and after the final refresh,
+  except zsh with a transient `right_template` and default/true `pre_render`. Non-JSON serve records are
+  `<id>\x1f<payload>\0`; a wait-mode render that reaches `renderComplete` yields exactly 2, even on segment panic,
+  because Clink blocks on that count.
 - A timed-out segment keeps running after its cycle. On any path that can run then, publish through the
   `renderCache` captured at the top of `Execute`, never the global `template.Cache` (serve resets it per cycle,
   tests reassign it). `restoreCache`/`restoreData` still read the global (open race, 2026-09).

@@ -60,7 +60,7 @@ segments without appearing in a segment-specific `const` block:
 | `cache_duration` | `string` | varies |
 | `access_token` | `string` | `""` |
 | `refresh_token` | `string` | `""` |
-| `version_url_template` | `string` | `""` |
+| `version_url_template` | `string` | varies |
 | `files` | `[]string` | varies |
 
 ## Extracting Template Properties from Go Source

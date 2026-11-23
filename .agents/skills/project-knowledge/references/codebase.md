@@ -38,8 +38,7 @@
   overlay restored data onto the writer from `MapSegmentWithWriter`; never replace the writer.
 - `runtime/cmd.RunWithEnv` trims whitespace from the whole output, so a trailing empty field is lost. End records
   with a non-whitespace delimiter or sentinel and validate before assigning parsed state.
-- A blank prompt means a panic outside segment `Execute` and the streaming producer (both recover). A poisoned
-  cache entry replays its failure every prompt until its TTL ends.
+- A poisoned cache entry replays its failure every prompt until its TTL ends.
 - Caches persist only with the hidden `--save-cache` flag (print/stream); relocate with `OMP_CACHE_DIR`.
 - Don't infer segment visibility from template data: segments populate it before a whole right-aligned block can be
   rejected for overflow. Tooltip suppression uses the accepted-output visibility snapshot instead.

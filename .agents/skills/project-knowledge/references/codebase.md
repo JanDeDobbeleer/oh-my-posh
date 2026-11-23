@@ -78,7 +78,6 @@
 - Don't memoize the config in serve: the per-render gob decode gives each cycle its own segment graph, isolated from
   abandoned-cycle goroutines.
 - Daemon tests must vary per-request context (cwd, status) across cycles to catch one-shot state.
-- `config.Get` prefers the session gob cache over `POSH_THEME`.
 - Timing races: `oh-my-posh debug` timings are cold-process. Sweep the `streaming` value against a scripted serve
   session (JSON line + env blob on stdin) and count cycles whose last record still holds the placeholder.
 

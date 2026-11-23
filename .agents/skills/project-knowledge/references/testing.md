@@ -4,7 +4,6 @@
 
 - `src/shell/scripts/` is embedded at build time: rebuild the binary after every script edit, then inspect what
   users source with `oh-my-posh init <shell> --print`.
-- A script function is dead code unless `src/shell/<shell>.go` emits its activation line for the enabled feature.
 
 ## e2e harness (`e2e/`, see `e2e/README.md`)
 

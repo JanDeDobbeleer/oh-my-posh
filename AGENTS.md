@@ -50,9 +50,11 @@ golangci-lint run
 npm run build    # before a docs pull request
 ```
 
-The Stop hook (`.agents/hooks/main.go`) formats the changed files, runs `modernize`, `fieldalignment`, `golangci-lint`,
-`go test`, `markdownlint`, and the `else` check, and builds, lints, and analyzes platform-specific code for the other
-operating systems. Fix what it reports; never run `fieldalignment -fix`. `.claude/settings.json` and
+For uncached changes, the Stop hook (`.agents/hooks/main.go`) formats changed Go files under `src/` and Markdown
+files, and runs `modernize`, `fieldalignment`, `go test`, `markdownlint`, and the `else` check on selected scopes.
+`golangci-lint` runs when installed. For platform-specific Go changes it also builds other operating systems and
+lints/analyzes them when the tools are installed.
+Fix what it reports; never run `fieldalignment -fix`. `.claude/settings.json` and
 `.github/hooks/quality.json` both wire it, so change them together.
 
 ## Docs

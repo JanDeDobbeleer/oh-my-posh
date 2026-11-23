@@ -610,8 +610,8 @@ end
 # tooltip
 
 function _omp_space_key_handler
-    commandline --function expand-abbr
     commandline --insert ' '
+    commandline --function expand-abbr
 
     set --local tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
 

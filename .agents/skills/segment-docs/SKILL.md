@@ -55,7 +55,7 @@ segments without appearing in a segment-specific `const` block:
 | ----------- | ---- | ------- |
 | `always_enabled` | `boolean` | `false` |
 | `display_default` | `boolean` | `true` |
-| `display_error` | `boolean` | `true` |
+| `display_error` | `boolean` | `false` |
 | `http_timeout` | `int` | `20` |
 | `cache_duration` | `int` | varies |
 | `access_token` | `string` | `""` |

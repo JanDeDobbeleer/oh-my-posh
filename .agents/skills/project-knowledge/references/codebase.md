@@ -83,7 +83,6 @@
 
 ## Rendering and statusline
 
-- `template.Init` resets the parsed-template cache: calling it per benchmark iteration measures cold parse.
 - Stale website previews: a set `OMP_BIN` overrides the auto-rebuilt `src/bin` in `ensure-artifacts.mjs`.
 - Unix `terminal-dimensions` runs `stty size` on stdin, which is not a TTY under Claude Code's statusline. A valid
   `COLUMNS` fallback must clear the `stty` error, or `prompt.Engine.canWriteRightBlock` rejects right-aligned blocks.

@@ -55,12 +55,12 @@ segments without appearing in a segment-specific `const` block:
 | ----------- | ---- | ------- |
 | `always_enabled` | `boolean` | `false` |
 | `display_default` | `boolean` | `true` |
-| `display_error` | `boolean` | `true` |
+| `display_error` | `boolean` | `false` |
 | `http_timeout` | `int` | `20` |
-| `cache_duration` | `int` | varies |
+| `cache_duration` | `string` | varies |
 | `access_token` | `string` | `""` |
 | `refresh_token` | `string` | `""` |
-| `version_url_template` | `string` | `""` |
+| `version_url_template` | `string` | varies |
 | `files` | `[]string` | varies |
 
 ## Extracting Template Properties from Go Source

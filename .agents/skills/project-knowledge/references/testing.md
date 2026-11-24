@@ -4,7 +4,6 @@
 
 - `src/shell/scripts/` is embedded at build time: rebuild the binary after every script edit, then inspect what
   users source with `oh-my-posh init <shell> --print`.
-- A script function is dead code unless `src/shell/<shell>.go` emits its activation line for the enabled feature.
 
 ## e2e harness (`e2e/`, see `e2e/README.md`)
 
@@ -50,7 +49,7 @@
 
 - One `bufio.Scanner` per pipe, ever; a second scanner loses buffered data.
 - Never treat wall-clock silence as "records done": cold-cache CI runs exceed any fixed gap. Wait for a record that
-  proves the assertion (the cycle's transient record comes last) and keep a timeout only as a hang bound. Reproduce
+  proves the assertion and keep a timeout only as a hang bound. Reproduce
   with `go clean -cache && go test -count=1 ./...`.
 
 ## Windows Terminal and ConPTY

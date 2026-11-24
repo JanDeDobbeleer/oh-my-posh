@@ -38,8 +38,7 @@
   overlay restored data onto the writer from `MapSegmentWithWriter`; never replace the writer.
 - `runtime/cmd.RunWithEnv` trims whitespace from the whole output, so a trailing empty field is lost. End records
   with a non-whitespace delimiter or sentinel and validate before assigning parsed state.
-- A blank prompt means a panic outside segment `Execute` and the streaming producer (both recover). A poisoned
-  cache entry replays its failure every prompt until its TTL ends.
+- A poisoned cache entry replays its failure every prompt until its TTL ends.
 - Caches persist only with the hidden `--save-cache` flag (print/stream); relocate with `OMP_CACHE_DIR`.
 - Don't infer segment visibility from template data: segments populate it before a whole right-aligned block can be
   rejected for overflow. Tooltip suppression uses the accepted-output visibility snapshot instead.
@@ -58,9 +57,10 @@
 - With transient pre-rendering disabled, publish the session snapshot before the marker-only record: the
   on-demand CLI fallback cannot access the serve daemon's in-memory template context.
 - `"streaming": <ms>` also becomes every segment's pending timeout, overriding segment `timeout`.
-- `stream` emits the transient prompt as a `\x1e`-prefixed NUL-terminated record (initial, and again once all
-  segments resolve). Serve records are `<id>\x1f<payload>\0`; a wait-mode request always yields exactly 2, even on
-  segment panic (`renderComplete`), because Clink blocks on that count.
+- `stream` emits the transient prompt as a `\x1e`-prefixed NUL-terminated record initially and after the final refresh,
+  except zsh with a transient `right_template` and default/true `pre_render`. Non-JSON serve records are
+  `<id>\x1f<payload>\0`; a wait-mode render that reaches `renderComplete` yields exactly 2, even on segment panic,
+  because Clink blocks on that count.
 - A timed-out segment keeps running after its cycle. On any path that can run then, publish through the
   `renderCache` captured at the top of `Execute`, never the global `template.Cache` (serve resets it per cycle,
   tests reassign it). `restoreCache`/`restoreData` still read the global (open race, 2026-09).
@@ -78,13 +78,11 @@
 - Don't memoize the config in serve: the per-render gob decode gives each cycle its own segment graph, isolated from
   abandoned-cycle goroutines.
 - Daemon tests must vary per-request context (cwd, status) across cycles to catch one-shot state.
-- `config.Get` prefers the session gob cache over `POSH_THEME`.
 - Timing races: `oh-my-posh debug` timings are cold-process. Sweep the `streaming` value against a scripted serve
   session (JSON line + env blob on stdin) and count cycles whose last record still holds the placeholder.
 
 ## Rendering and statusline
 
-- `template.Init` resets the parsed-template cache: calling it per benchmark iteration measures cold parse.
 - Stale website previews: a set `OMP_BIN` overrides the auto-rebuilt `src/bin` in `ensure-artifacts.mjs`.
 - Unix `terminal-dimensions` runs `stty size` on stdin, which is not a TTY under Claude Code's statusline. A valid
   `COLUMNS` fallback must clear the `stty` error, or `prompt.Engine.canWriteRightBlock` rejects right-aligned blocks.

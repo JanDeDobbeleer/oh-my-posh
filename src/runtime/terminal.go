@@ -835,7 +835,7 @@ func (term *Terminal) CursorPosition() (row, col int) {
 		row = number
 	}
 
-	if number, err := strconv.Atoi(term.Getenv("POSH_CURSOR_COLUMN")); err != nil {
+	if number, err := strconv.Atoi(term.Getenv("POSH_CURSOR_COLUMN")); err == nil {
 		col = number
 	}
 

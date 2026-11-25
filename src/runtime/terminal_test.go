@@ -74,3 +74,32 @@ func TestDirMatchesOneOfRegexInvertedNonEscaped(t *testing.T) {
 	}()
 	_ = dirMatchesOneOf("Projects/oh-my-posh", "", LINUX, []string{"(?!Projects/).*"})
 }
+
+func TestCursorPosition(t *testing.T) {
+	cases := []struct {
+		Case        string
+		Line        string
+		Column      string
+		ExpectedRow int
+		ExpectedCol int
+	}{
+		{Case: "both valid", Line: "10", Column: "25", ExpectedRow: 10, ExpectedCol: 25},
+		{Case: "both empty", Line: "", Column: "", ExpectedRow: 0, ExpectedCol: 0},
+		{Case: "invalid line", Line: "abc", Column: "25", ExpectedRow: 0, ExpectedCol: 25},
+		{Case: "invalid column", Line: "10", Column: "xyz", ExpectedRow: 10, ExpectedCol: 0},
+		{Case: "both invalid", Line: "abc", Column: "xyz", ExpectedRow: 0, ExpectedCol: 0},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Case, func(t *testing.T) {
+			t.Setenv("POSH_CURSOR_LINE", tc.Line)
+			t.Setenv("POSH_CURSOR_COLUMN", tc.Column)
+
+			term := &Terminal{}
+			row, col := term.CursorPosition()
+
+			assert.Equal(t, tc.ExpectedRow, row)
+			assert.Equal(t, tc.ExpectedCol, col)
+		})
+	}
+}

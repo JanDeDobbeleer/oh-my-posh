@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
@@ -32,6 +33,7 @@ type Pulumi struct {
 	Name  string
 
 	workspaceSHA1 string
+	projectBackendURL string
 
 	Backend
 }
@@ -42,11 +44,19 @@ type Backend struct {
 }
 
 type pulumiFileSpec struct {
-	Name string `yaml:"name" json:"name"`
+	Name    string `yaml:"name" json:"name"`
+	Backend struct {
+		URL string `yaml:"url" json:"url"`
+	} `yaml:"backend" json:"backend"`
 }
 
 type pulumiWorkSpaceFileSpec struct {
-	Stack string `json:"stack"`
+	Stack  string            `json:"stack"`
+	Stacks map[string]string `json:"stacks"`
+}
+
+type pulumiCredentialsSpec struct {
+	Current string `json:"current"`
 }
 
 func (p *Pulumi) Template() string {
@@ -75,7 +85,44 @@ func (p *Pulumi) Enabled() bool {
 	return true
 }
 
+func (p *Pulumi) cleanStackName(stack string) string {
+	// If fully qualified (e.g. organization/project/stack or owner/project/stack),
+	// extract the leaf stack name.
+	parts := strings.Split(stack, "/")
+	return parts[len(parts)-1]
+}
+
+func (p *Pulumi) getActiveBackendURL(pulumiHome string) string {
+	// 1. Check PULUMI_BACKEND_URL env var
+	if envBackend := p.env.Getenv("PULUMI_BACKEND_URL"); envBackend != "" {
+		return envBackend
+	}
+
+	// 2. Check project backend specified in Pulumi.yaml / Pulumi.json
+	if p.projectBackendURL != "" {
+		return p.projectBackendURL
+	}
+
+	// 3. Check credentials.json "current" logged-in backend
+	if p.env.HasFilesInDir(pulumiHome, "credentials.json") {
+		credsFile := filepath.Join(pulumiHome, "credentials.json")
+		content := p.env.FileContent(credsFile)
+		var creds pulumiCredentialsSpec
+		if err := json.Unmarshal([]byte(content), &creds); err == nil && creds.Current != "" {
+			return creds.Current
+		}
+	}
+
+	return ""
+}
+
 func (p *Pulumi) getPulumiStackName() {
+	// 0. High priority: PULUMI_STACK environment variable
+	if envStack := p.env.Getenv("PULUMI_STACK"); envStack != "" {
+		p.Stack = p.cleanStackName(envStack)
+		return
+	}
+
 	if p.Name == "" || p.workspaceSHA1 == "" {
 		log.Debug("pulumi project name or workspace sha1 is empty")
 		return
@@ -103,8 +150,40 @@ func (p *Pulumi) getPulumiStackName() {
 		return
 	}
 
-	log.Debugf("pulumi stack name: %s", pulumiWorkspaceSpec.Stack)
-	p.Stack = pulumiWorkspaceSpec.Stack
+	// 1. If backend URL is known, resolve the matching stack from the Stacks map
+	backendURL := p.getActiveBackendURL(pulumiHome)
+	if backendURL != "" && len(pulumiWorkspaceSpec.Stacks) > 0 {
+		if stack, ok := pulumiWorkspaceSpec.Stacks[backendURL]; ok && stack != "" {
+			p.Stack = p.cleanStackName(stack)
+			log.Debugf("pulumi stack name from backend %s: %s", backendURL, p.Stack)
+			return
+		}
+	}
+
+	// 2. If only one stack exists in the Stacks map, use it
+	if len(pulumiWorkspaceSpec.Stacks) == 1 {
+		for _, stack := range pulumiWorkspaceSpec.Stacks {
+			p.Stack = p.cleanStackName(stack)
+			log.Debugf("pulumi stack name from single stack entry: %s", p.Stack)
+			return
+		}
+	}
+
+	// 3. Fall back to legacy single stack field if present
+	if pulumiWorkspaceSpec.Stack != "" {
+		p.Stack = p.cleanStackName(pulumiWorkspaceSpec.Stack)
+		log.Debugf("pulumi stack name: %s", p.Stack)
+		return
+	}
+
+	// 4. Fallback for multi-stack when backend URL cannot be resolved: pick any entry
+	if len(pulumiWorkspaceSpec.Stacks) > 0 {
+		for _, stack := range pulumiWorkspaceSpec.Stacks {
+			p.Stack = p.cleanStackName(stack)
+			log.Debugf("pulumi stack name fallback: %s", p.Stack)
+			return
+		}
+	}
 }
 
 func (p *Pulumi) getProjectName() error {
@@ -140,6 +219,7 @@ func (p *Pulumi) getProjectName() error {
 	}
 
 	p.Name = pulumiFileSpec.Name
+	p.projectBackendURL = pulumiFileSpec.Backend.URL
 
 	p.workspaceSHA1 = p.sha1HexString(p.env.Pwd() + path.Separator() + fileName)
 
@@ -159,26 +239,28 @@ func (p *Pulumi) sha1HexString(s string) string {
 }
 
 func (p *Pulumi) getPulumiAbout() {
-	if p.Stack == "" {
-		log.Error(fmt.Errorf("pulumi stack name is empty, use `fetch_stack` property to enable stack fetching"))
-		return
-	}
-
 	aboutOutput, err := p.env.RunCommand("pulumi", "about", "--json")
-
 	if err != nil {
 		log.Error(fmt.Errorf("unable to get pulumi about output"))
 		return
 	}
 
 	var about struct {
-		Backend *Backend `json:"backend"`
+		Backend      *Backend `json:"backend"`
+		CurrentStack struct {
+			Name string `json:"name"`
+		} `json:"currentStack"`
 	}
 
 	err = json.Unmarshal([]byte(aboutOutput), &about)
 	if err != nil {
 		log.Error(fmt.Errorf("pulumi about output decode error"))
 		return
+	}
+
+	// If fetch_stack failed or was disabled, use stack name from `pulumi about`
+	if p.Stack == "" && about.CurrentStack.Name != "" {
+		p.Stack = about.CurrentStack.Name
 	}
 
 	if about.Backend == nil {

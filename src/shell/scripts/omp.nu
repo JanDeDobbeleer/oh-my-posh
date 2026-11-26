@@ -65,11 +65,7 @@ def --wrapped _omp_get_prompt [
     )
 }
 
-$env.PROMPT_MULTILINE_INDICATOR = (
-    ^$_omp_executable print secondary
-        --shell=nu
-        $"--shell-version=($env.POSH_SHELL_VERSION)"
-)
+$env.PROMPT_MULTILINE_INDICATOR = ::SECONDARY_PROMPT::
 
 def --env _omp_start_serve [] {
     $env._OMP_SERVE_JOB = (job spawn --auto-kill {

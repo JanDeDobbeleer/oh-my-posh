@@ -14,7 +14,7 @@ import (
 
 // placeholders lists template tokens that must never survive into a generated init
 // script; their presence means rendering silently failed to substitute a value.
-var placeholders = []string{"::OMP::", "::CONFIG::", "::SESSION_ID::"}
+var placeholders = []string{"::OMP::", "::CONFIG::", "::SESSION_ID::", "::SECONDARY_PROMPT::"}
 
 // overlaySets is the feature-config matrix layer 1 runs against every shell: the base
 // config alone, and each documented overlay (or combination) applied on top of it.

@@ -33,8 +33,9 @@ _omp_serve_pid=${_omp_serve_pid:-0}
 _omp_serve_cycle=0
 _omp_serve_failures=0
 
-# also exports POSH_MULTILINE_KEEPPROMPT
-eval "$($_omp_executable print secondary --shell=zsh --eval)"
+if (( ! ${+_omp_secondary_prompt} )); then
+  eval "$($_omp_executable print secondary --shell=zsh --eval)"
+fi
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander

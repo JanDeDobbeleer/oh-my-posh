@@ -7,10 +7,12 @@ sidebar_label: Secondary prompt
 import Config from "@site/src/components/Config.js";
 
 :::info
-This feature only works in `powershell`, `zsh` and `bash` for the time being.
+This feature works in `powershell`, `zsh`, `bash`, `nushell` and `yash`.
 :::
 
 The secondary prompt is displayed when a command text spans multiple lines. The default is `> `.
+It is rendered once during shell initialization. In Nushell, running `oh-my-posh init nu` refreshes the autoload file.
+The `.ShellVersion` template property is unavailable during initialization.
 
 You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
 Environment variables are available, just like the [`console_title_template`][console-title] functionality.

@@ -43,34 +43,41 @@ func getExecutablePath(env runtime.Environment) (string, error) {
 	return executable, nil
 }
 
-func Init(env runtime.Environment, feats Features) string {
+type SecondaryPrompt struct {
+	Text       string
+	KeepPrompt bool
+}
+
+func Init(env runtime.Environment, feats Features, secondary SecondaryPrompt) string {
 	switch env.Flags().Shell {
 	case PWSH:
 		if !env.Flags().Eval {
-			return generateAndSourceScript(env, feats)
+			return generateAndSourceScript(env, feats, secondary)
 		}
 
 		return recurseInitCommand(env)
 	case ELVISH:
 		return recurseInitCommand(env)
 	case NU:
-		return initNu(env, feats)
+		return initNu(env, feats, secondary)
 	case ZSH, BASH, FISH, CMD, XONSH, YASH:
-		return generateAndSourceScript(env, feats)
+		return generateAndSourceScript(env, feats, secondary)
 	default:
 		return fmt.Sprintf(`echo "%s is not supported by Oh My Posh"`, env.Flags().Shell)
 	}
 }
 
 // Used by the --print flag to output the script to stdout.
-func Script(env runtime.Environment, feats Features) string {
+func Script(env runtime.Environment, feats Features, secondary SecondaryPrompt) string {
 	script := generateScript(env, feats)
-	return fmt.Sprintf("%s\n%s", sessionScript(env), script)
+	script = strings.ReplaceAll(script, "::SECONDARY_PROMPT::", quoteNuStr(secondary.Text))
+	return fmt.Sprintf("%s\n%s", sessionScript(env, secondary), script)
 }
 
 // Used by the --debug flag.
-func Debug(env runtime.Environment, feats Features, startTime *time.Time) string {
+func Debug(env runtime.Environment, feats Features, secondary SecondaryPrompt, startTime *time.Time) string {
 	script := generateScript(env, feats)
+	script = strings.ReplaceAll(script, "::SECONDARY_PROMPT::", quoteNuStr(secondary.Text))
 
 	log.Debug(script)
 
@@ -116,11 +123,11 @@ func recurseInitCommand(env runtime.Environment) string {
 	return fmt.Sprintf(command, executable, env.Flags().Shell, config, additionalParams)
 }
 
-func generateAndSourceScript(env runtime.Environment, feats Features) string {
+func generateAndSourceScript(env runtime.Environment, feats Features, secondary SecondaryPrompt) string {
 	async := feats&Async != 0
 
 	if scriptPath, ok := hasScript(env); ok {
-		return sourceCommand(env, scriptPath, async)
+		return sourceCommand(env, scriptPath, async, secondary)
 	}
 
 	script := generateScript(env, feats)
@@ -132,12 +139,13 @@ func generateAndSourceScript(env runtime.Environment, feats Features) string {
 		return fmt.Sprintf("echo \"Failed to write init script: %s\"", err.Error())
 	}
 
-	return sourceCommand(env, scriptPath, async)
+	return sourceCommand(env, scriptPath, async, secondary)
 }
 
 // Returns empty since Nu automatically loads scripts from the autoload directory.
-func initNu(env runtime.Environment, feats Features) string {
+func initNu(env runtime.Environment, feats Features, secondary SecondaryPrompt) string {
 	script := generateNuScript(env, feats)
+	script = strings.ReplaceAll(script, "::SECONDARY_PROMPT::", quoteNuStr(secondary.Text))
 
 	scriptPath, err := writeScript(env, script)
 	if err != nil {
@@ -226,7 +234,7 @@ func generateNuScript(env runtime.Environment, feats Features) string {
 	return feats.Lines(NU).String(init)
 }
 
-func sourceCommand(env runtime.Environment, scriptPath string, async bool) string {
+func sourceCommand(env runtime.Environment, scriptPath string, async bool, secondary SecondaryPrompt) string {
 	if env.IsCygwin() {
 		var err error
 		scriptPath, err = env.RunCommand("cygpath", "-u", scriptPath)
@@ -236,7 +244,7 @@ func sourceCommand(env runtime.Environment, scriptPath string, async bool) strin
 		}
 	}
 
-	script := sessionScript(env)
+	script := sessionScript(env, secondary)
 
 	if async {
 		return script + sourceCommandAsync(env.Flags().Shell, scriptPath)
@@ -317,17 +325,23 @@ func printDebugInfo(env runtime.Environment, startTime *time.Time) string {
 // resolved configuration source so it can be recovered when the session cache
 // is lost. A healthy session cache always wins, so POSH_CONFIG can not be used
 // to change the configuration mid-session.
-func sessionScript(env runtime.Environment) string {
+func sessionScript(env runtime.Environment, secondary SecondaryPrompt) string {
 	sessionID := cache.SessionID()
 	config := env.Flags().ConfigPath
 
 	switch env.Flags().Shell {
 	case PWSH:
-		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s;", sessionID, quotePwshStr(config))
-	case ZSH, BASH:
-		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, QuotePosixStr(config))
+		return fmt.Sprintf("$env:POSH_SESSION_ID = \"%s\"; $env:POSH_CONFIG = %s; $global:_ompSecondaryPrompt = %s;",
+			sessionID, quotePwshStr(config), quotePwshStr(secondary.Text))
+	case ZSH:
+		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s; _omp_secondary_prompt=%s; POSH_MULTILINE_KEEPPROMPT=%t;",
+			sessionID, QuotePosixStr(config), QuotePosixStr(secondary.Text), secondary.KeepPrompt)
+	case BASH:
+		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s; _omp_secondary_prompt=%s;",
+			sessionID, QuotePosixStr(config), QuotePosixStr(secondary.Text))
 	case YASH:
-		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s;", sessionID, quoteYashStr(config))
+		return fmt.Sprintf("export POSH_SESSION_ID=\"%s\"; export POSH_CONFIG=%s; _omp_secondary_prompt=%s;",
+			sessionID, quoteYashStr(config), quoteYashStr(secondary.Text))
 	case XONSH:
 		return fmt.Sprintf("$POSH_SESSION_ID = \"%s\"; $POSH_CONFIG = %s;", sessionID, quotePythonStr(config))
 	case FISH:

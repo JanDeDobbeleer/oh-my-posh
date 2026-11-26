@@ -907,6 +907,10 @@ func New(flags *runtime.Flags) *Engine {
 	return newEngine(cfg, env)
 }
 
+func NewWithConfig(cfg *config.Config, env runtime.Environment) *Engine {
+	return newEngine(cfg, env)
+}
+
 // newEngine builds an Engine from an already-loaded config, performing every step
 // New normally runs after config.Get: template/terminal init, flags.HasExtra,
 // prompt.Grow, and the per-shell rectifyTerminalWidth adjustments. Extracted so a

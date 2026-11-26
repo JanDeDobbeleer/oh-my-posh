@@ -995,7 +995,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $Function:prompt = $promptFunction
     }
 
-    Set-PSReadLineOption -ContinuationPrompt ((Invoke-Utf8Posh @("print", "secondary", "--shell=$script:ShellName")) -join "`n")
+    $secondary = Get-Variable -Name _ompSecondaryPrompt -Scope Global -ErrorAction Ignore -ValueOnly
+    if ($null -eq $secondary) {
+        $secondary = (Invoke-Utf8Posh @("print", "secondary", "--shell=$script:ShellName")) -join "`n"
+    }
+    Set-PSReadLineOption -ContinuationPrompt $secondary
 
     ### Exported Functions ###
 

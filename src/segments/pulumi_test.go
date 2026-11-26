@@ -24,6 +24,9 @@ func TestPulumi(t *testing.T) {
 		Stack                     string
 		AboutCache                string
 		PulumiHome                string
+		PulumiStack               string
+		PulumiBackendURL          string
+		CredentialsFile           string
 		WorkSpaceFile             string
 		DefaultWorkSpaceFile      string
 		HasCommand                bool
@@ -126,6 +129,68 @@ description: A Console App
 			WorkSpaceFile:      `{ "stack": "1337" }`,
 			About:              `{ "backend": { "url": "s3://test-pulumi-state-test", "user":"posh-user" } }`,
 		},
+		// Multi-stack / Modern workspace format tests
+		{
+			Case:               "pulumi modern workspace.json with single entry in stacks map",
+			ExpectedString:     "\ue873 dev",
+			ExpectedEnabled:    true,
+			HasCommand:         true,
+			HasWorkspaceFolder: true,
+			FetchStack:         true,
+			JSONConfig:         `{ "name": "oh-my-posh" }`,
+			WorkSpaceFile:      `{ "stacks": { "s3://my-dev-bucket": "organization/oh-my-posh/dev" } }`,
+		},
+		{
+			Case:               "pulumi multi-stack matched via credentials.json current backend",
+			ExpectedString:     "\ue873 prd",
+			ExpectedEnabled:    true,
+			HasCommand:         true,
+			HasWorkspaceFolder: true,
+			FetchStack:         true,
+			JSONConfig:         `{ "name": "oh-my-posh" }`,
+			CredentialsFile:    `{ "current": "s3://my-prd-bucket" }`,
+			WorkSpaceFile: `{ "stacks": {
+				"s3://my-dev-bucket": "organization/oh-my-posh/dev",
+				"s3://my-prd-bucket": "organization/oh-my-posh/prd"
+			} }`,
+		},
+		{
+			Case:               "pulumi multi-stack matched via PULUMI_BACKEND_URL",
+			ExpectedString:     "\ue873 dev",
+			ExpectedEnabled:    true,
+			HasCommand:         true,
+			HasWorkspaceFolder: true,
+			FetchStack:         true,
+			PulumiBackendURL:   "s3://my-dev-bucket",
+			JSONConfig:         `{ "name": "oh-my-posh" }`,
+			WorkSpaceFile: `{ "stacks": {
+				"s3://my-dev-bucket": "organization/oh-my-posh/dev",
+				"s3://my-prd-bucket": "organization/oh-my-posh/prd"
+			} }`,
+		},
+		{
+			Case:               "PULUMI_STACK environment variable override",
+			ExpectedString:     "\ue873 staging",
+			ExpectedEnabled:    true,
+			HasCommand:         true,
+			HasWorkspaceFolder: true,
+			FetchStack:         true,
+			PulumiStack:        "staging",
+			JSONConfig:         `{ "name": "oh-my-posh" }`,
+			WorkSpaceFile:      `{ "stack": "dev" }`,
+		},
+		{
+			Case:            "pulumi URL without fetch_stack resolves stack via about",
+			ExpectedString:  "\ue873 prd :: posh-user@s3://test-pulumi-state-test",
+			ExpectedEnabled: true,
+			HasCommand:      true,
+			FetchAbout:      true,
+			JSONConfig:      `{ "name": "oh-my-posh" }`,
+			About: `{
+				"backend": { "url": "s3://test-pulumi-state-test", "user": "posh-user" },
+				"currentStack": { "name": "prd" }
+			}`,
+		},
 		// Error flows
 		{
 			Case:            "pulumi file JSON error",
@@ -146,7 +211,7 @@ description: A Console App
 			HasWorkspaceFolder: true,
 		},
 		{
-			Case:            "pulumi URL, no fetch_stack set",
+			Case:            "pulumi URL, no fetch_stack set and no stack in about",
 			ExpectedString:  "\ue873",
 			ExpectedEnabled: true,
 			HasCommand:      true,
@@ -203,6 +268,18 @@ description: A Console App
 		home := filepath.Clean("/home/foobar")
 		env.On("Home").Return(home)
 		env.On("Getenv", "PULUMI_HOME").Return(tc.PulumiHome)
+		env.On("Getenv", "PULUMI_STACK").Return(tc.PulumiStack)
+		env.On("Getenv", "PULUMI_BACKEND_URL").Return(tc.PulumiBackendURL)
+
+		defaultHome := filepath.Join(home, ".pulumi")
+		targetHome := defaultHome
+		if tc.PulumiHome != "" {
+			targetHome = tc.PulumiHome
+		}
+
+		credsFile := filepath.Join(targetHome, "credentials.json")
+		env.On("HasFilesInDir", targetHome, "credentials.json").Return(len(tc.CredentialsFile) > 0)
+		env.On("FileContent", credsFile).Return(tc.CredentialsFile)
 
 		env.On("HasFiles", pulumiYAML).Return(len(tc.YAMLConfig) > 0)
 		env.On("FileContent", pulumiYAML).Return(tc.YAMLConfig, nil)

@@ -75,7 +75,7 @@ func TestSessionScriptPwshIsPureASCII(t *testing.T) {
 	env := new(mock.Environment)
 	env.On("Flags").Return(&runtime.Flags{Shell: PWSH, ConfigPath: "C:/Users/MyNameE²/omp.json"})
 
-	got := sessionScript(env)
+	got := sessionScript(env, SecondaryPrompt{})
 
 	assert.Contains(t, got, `$env:POSH_CONFIG = "$('C:/Users/MyNameE' + [char]0xB2 + '/omp.json')";`)
 

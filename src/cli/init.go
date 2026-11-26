@@ -12,6 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cmdtree"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/path"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -117,15 +118,17 @@ func runInit(sh, command string) {
 
 	feats := cfg.Features(env)
 
+	secondary := initSecondaryPrompt(cfg, env)
+
 	var output string
 
 	switch {
 	case debug:
-		output = shell.Debug(env, feats, &startTime)
+		output = shell.Debug(env, feats, secondary, &startTime)
 	case printOutput:
-		output = shell.Script(env, feats)
+		output = shell.Script(env, feats, secondary)
 	default:
-		output = shell.Init(env, feats)
+		output = shell.Init(env, feats, secondary)
 	}
 
 	shellDSC := dsc.ShellDSC()
@@ -141,6 +144,34 @@ func runInit(sh, command string) {
 	}
 
 	fmt.Print(output)
+}
+
+func initSecondaryPrompt(cfg *config.Config, env runtime.Environment) shell.SecondaryPrompt {
+	sh := env.Flags().Shell
+	switch sh {
+	case shell.PWSH, shell.BASH, shell.ZSH, shell.NU, shell.YASH:
+	default:
+		return shell.SecondaryPrompt{}
+	}
+
+	if !debug && !printOutput && eval && sh == shell.PWSH {
+		return shell.SecondaryPrompt{}
+	}
+
+	flags := env.Flags()
+	originalEval, originalEscape := flags.Eval, flags.Escape
+	defer func() {
+		flags.Eval, flags.Escape = originalEval, originalEscape
+	}()
+	flags.Eval, flags.Escape = false, true
+
+	engine := prompt.NewWithConfig(cfg, env)
+	secondary := shell.SecondaryPrompt{Text: engine.ExtraPrompt(prompt.Secondary)}
+	if cfg.SecondaryPrompt != nil {
+		secondary.KeepPrompt = cfg.SecondaryPrompt.MultilineKeepPrompt
+	}
+
+	return secondary
 }
 
 func getFullCommand(cmd *cmdtree.Command, args []string) string {

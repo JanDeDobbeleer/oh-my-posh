@@ -22,11 +22,13 @@ _omp_ftcs_marks=0
 # start timer on command start
 PS0='${_omp_start_time:0:$((_omp_start_time="$(_omp_milliseconds)",0))}$(_omp_ftcs_command_start)'
 
-_omp_secondary_prompt=$(
-    "$_omp_executable" print secondary \
-        --shell=bash \
-        --shell-version="$BASH_VERSION"
-)
+if [[ ! ${_omp_secondary_prompt+x} ]]; then
+    _omp_secondary_prompt=$(
+        "$_omp_executable" print secondary \
+            --shell=bash \
+            --shell-version="$BASH_VERSION"
+    )
+fi
 
 function _omp_set_cursor_position() {
     # not supported in Midnight Commander

@@ -87,8 +87,4 @@ YASH_PS1='$(
         --terminal-width="${COLUMNS:-0}"
 )'
 
-YASH_PS2='$(
-    "$_omp_executable" print secondary \
-        --shell=yash \
-        --shell-version="$YASH_VERSION"
-)'
+YASH_PS2='${_omp_secondary_prompt}'

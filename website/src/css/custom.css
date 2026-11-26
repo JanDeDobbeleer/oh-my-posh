@@ -229,6 +229,11 @@ html[data-theme="dark"] div.theme-admonition.theme-admonition-tip a {
   color: #102445;
 }
 
+/* Inline code tint inside the tip, Infima's default for this alert type is green. */
+div.theme-admonition.theme-admonition-tip {
+  --ifm-alert-background-color-highlight: rgba(16, 36, 69, 0.1);
+}
+
 iframe.youtube {
   width: 100%;
   margin-bottom: 15px;
@@ -538,10 +543,16 @@ html[data-theme="dark"] .theme-code-block [class*="buttonGroup"] button {
   padding: 0;
 }
 
+/* Admonitions override this variable, so inline code inside them matches their colors. */
+:root,
+html[data-theme="dark"] {
+  --ifm-code-background: var(--omp-card-background);
+}
+
 code:not([class*="language-"]) {
   border: 1px solid var(--omp-card-border-color);
   border-radius: var(--omp-radius-sm);
-  background: var(--omp-card-background);
+  background: var(--ifm-code-background);
   padding: 0.1rem 0.3rem;
 }
 

@@ -4010,6 +4010,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "timo-cingoez",
+      "name": "Timo Cingöz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74356590?v=4",
+      "profile": "https://github.com/timo-cingoez",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
